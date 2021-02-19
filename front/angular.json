@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "cli": {
+    "defaultCollection": "@nrwl/angular"
+  },
+  "defaultProject": "taiga",
+  "schematics": {
+    "@nrwl/angular": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      },
+      "storybook-configuration": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/angular:application": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "css"
+    }
+  },
+  "projects": {
+    "taiga": {
+      "projectType": "application",
+      "root": "apps/taiga",
+      "sourceRoot": "apps/taiga/src",
+      "prefix": "taiga",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/taiga",
+            "index": "apps/taiga/src/index.html",
+            "main": "apps/taiga/src/main.ts",
+            "polyfills": "apps/taiga/src/polyfills.ts",
+            "tsConfig": "apps/taiga/tsconfig.app.json",
+            "aot": true,
+            "assets": ["apps/taiga/src/favicon.ico", "apps/taiga/src/assets"],
+            "styles": ["apps/taiga/src/styles.css"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/taiga/src/environments/environment.ts",
+                  "with": "apps/taiga/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "taiga:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "taiga:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "taiga:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/taiga/src/**/*.ts",
+              "apps/taiga/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/taiga"],
+          "options": {
+            "jestConfig": "apps/taiga/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "taiga-e2e": {
+      "root": "apps/taiga-e2e",
+      "sourceRoot": "apps/taiga-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/taiga-e2e/cypress.json",
+            "tsConfig": "apps/taiga-e2e/tsconfig.e2e.json",
+            "devServerTarget": "taiga:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "taiga:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/taiga-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    }
+  }
+}

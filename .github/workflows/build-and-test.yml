@@ -1,0 +1,123 @@
+name: CI
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+
+jobs:
+  linters:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.15.5]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Node ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: npm install
+      working-directory: ./front
+      run: npm install
+
+    - name: pass linters
+      working-directory: ./front
+      run: npm run lint
+
+  unit-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.15.5]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Node ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: npm install
+      working-directory: ./front
+      run: npm install
+
+    - name: pass unit test
+      working-directory: ./front
+      run: npm run test
+
+  e2e-test:
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        node-version: [14.15.5]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Node ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: npm install
+      working-directory: ./front
+      run: npm install
+
+    - name: Cypress run
+      uses: cypress-io/github-action@v2
+      with:
+        install: false
+        start: npm run start
+        command: npm run e2e
+        working-directory: ./front/
+
+    - uses: actions/upload-artifact@v1
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: front/dist/cypress/apps/taiga-e2e/screenshots
+
+    - uses: actions/upload-artifact@v1
+      if: always()
+      with:
+        name: cypress-videos
+        path: front/dist/cypress/apps/taiga-e2e/videos

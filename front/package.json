@@ -28,6 +28,12 @@
     "help": "nx help"
   },
   "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "node ./scripts/append-license.js",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS && npm run lint"
+    }
+  },
   "dependencies": {
     "@angular/animations": "^11.2.0",
     "@angular/common": "^11.2.0",
@@ -50,6 +56,8 @@
     "@angular/cli": "~11.0.0",
     "@angular/compiler-cli": "^11.2.0",
     "@angular/language-service": "^11.2.0",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
     "@nrwl/cli": "11.3.0",
     "@nrwl/cypress": "11.3.0",
     "@nrwl/eslint-plugin-nx": "11.3.0",
@@ -66,6 +74,7 @@
     "eslint": "7.10.0",
     "eslint-config-prettier": "6.0.0",
     "eslint-plugin-cypress": "^2.10.3",
+    "husky": "^4.3.8",
     "jest": "26.2.2",
     "jest-preset-angular": "8.3.2",
     "prettier": "2.2.1",

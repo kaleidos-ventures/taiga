@@ -6,4 +6,4 @@
  * the root directory of this source tree.
  */
 
-import 'jest-preset-angular';
+module.exports = {extends: ['@commitlint/config-conventional']}

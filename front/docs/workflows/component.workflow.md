@@ -7,7 +7,7 @@ If you want to create a common component
 ng g component commons/components/Example --export --changeDetection OnPush
 ```
 
-For a regular component 
+For a regular component
 ```bash
 ng g m commons/exampleModule
 ng g component commons/example -m commons/example --export --changeDetection OnPush
@@ -79,11 +79,11 @@ describe('ButtonComponent', () => {
 ## Responsive
 
 For styling purposes you will find media queries under the styles folder, `responsive.css` file.
-When responsive affects Behaviour, we will use the [Layout CDK helper](https://material.angular.io/cdk/layout/overview) 
+When responsive affects Behaviour, we will use the [Layout CDK helper](https://material.angular.io/cdk/layout/overview)
 
 ```ts
 /**
- * Copyright (c) 2014-2020 Taiga Agile LLC
+ * Copyright (c) 2014-2021 Taiga Agile LLC
  *
  * This source code is licensed under the terms of the
  * GNU Affero General Public License found in the LICENSE file in
@@ -123,7 +123,7 @@ As a general rule, for all components we will follow the [basic accesibility pri
 
   * **Text alternatives for non-text content**. All images, icons, charts, labels, forms will have an alternative text if not available
   * We will use **landmarks, headings, and semantic HTML** everywhere to allow users find the content the look for.
-  * We will try to detect color problems, such as contrast. 
+  * We will try to detect color problems, such as contrast.
   * Color should not be the only way to convey information
   * Users should be able to resize up to 200% and see the information _(layout not required)_
   * All functionality that is available by mouse is also available by keyboard

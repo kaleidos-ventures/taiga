@@ -106,7 +106,6 @@ jobs:
       uses: cypress-io/github-action@v2
       with:
         install: false
-        start: npm run start
         command: npm run e2e
         working-directory: ./front/
 

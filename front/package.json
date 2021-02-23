@@ -46,7 +46,13 @@
     "@angular/platform-browser": "^11.2.0",
     "@angular/platform-browser-dynamic": "^11.2.0",
     "@angular/router": "^11.2.0",
+    "@ngrx/effects": "^11.0.1",
+    "@ngrx/router-store": "^11.0.1",
+    "@ngrx/store": "^11.0.1",
+    "@ngrx/store-devtools": "^11.0.1",
     "@nrwl/angular": "11.3.0",
+    "@rx-angular/state": "^1.4.3",
+    "@rx-angular/template": "^1.0.0-beta.18",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
     "zone.js": "^0.10.2"

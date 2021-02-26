@@ -16,9 +16,11 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { PagesModule } from './pages/pages.module';
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    PagesModule,
     BrowserModule,
     AppRoutingModule,
     StoreRouterConnectingModule.forRoot(),

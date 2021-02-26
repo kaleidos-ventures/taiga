@@ -6,11 +6,10 @@
  * the root directory of this source tree.
  */
 
-import { Environment } from './environment.model';
+import { Config } from '@/app/services/config/config.model';
 
-export const environment: Environment = {
-  production: true,
-  configLocal: {
-    api: '',
-  },
-};
+export interface Environment {
+  production: boolean;
+  configLocal?: Config;
+  configRemote?: string;
+}

@@ -21,9 +21,9 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": [
-        "plugin:@nrwl/nx/typescript",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@nrwl/nx/typescript"
       ],
       "parserOptions": { "project": "./tsconfig.*?.json" },
       "rules": {}

@@ -70,6 +70,7 @@
     "@angular/language-service": "^11.2.0",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
+    "@ngneat/spectator": "^7.0.0",
     "@ngrx/schematics": "^11.0.0",
     "@ngrx/store-devtools": "^11.0.0",
     "@nrwl/cli": "11.3.0",

@@ -18,9 +18,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { PagesModule } from './pages/pages.module';
 import { ConfigService } from './services/config/config.service';
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    HttpClientModule,
     PagesModule,
     BrowserModule,
     AppRoutingModule,

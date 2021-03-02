@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { ErrorHandler, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -17,7 +17,6 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { PagesModule } from './pages/pages.module';
-import { CustomErrorHandler } from './custom-error-handler';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -40,12 +39,6 @@ import { CustomErrorHandler } from './custom-error-handler';
     ),
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-  ],
-  providers: [
-    {
-      provide: ErrorHandler,
-      useClass: CustomErrorHandler
-    }
   ],
   bootstrap: [AppComponent],
 })

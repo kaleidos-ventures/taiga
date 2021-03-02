@@ -5,10 +5,3 @@
  * GNU Affero General Public License found in the LICENSE file in
  * the root directory of this source tree.
  */
-
-import { createAction, props } from '@ngrx/store';
-
-export const unhandleError = createAction(
-  '[App] Unhandle error',
-  props<{error: unknown}>()
-);

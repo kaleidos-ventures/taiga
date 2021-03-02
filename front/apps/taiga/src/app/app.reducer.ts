@@ -6,24 +6,3 @@
  * the root directory of this source tree.
  */
 
-import { createReducer, on } from '@ngrx/store';
-import { unhandleError } from './app.actions';
-
-export interface AppState {
-  error: any;
-}
-
-export const initialState: AppState = {
-  error: null
-};
-
-export const reducer = createReducer(
-  initialState,
-
-  on(unhandleError, (state, error) => {
-    return {
-      ...state,
-      error
-    };
-  }),
-);

@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -17,6 +17,7 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { PagesModule } from './pages/pages.module';
+import { ConfigService } from './services/config/config.service';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -41,5 +42,19 @@ import { PagesModule } from './pages/pages.module';
     !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
   bootstrap: [AppComponent],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      deps: [ConfigService],
+      useFactory: (appConfigService: ConfigService) => {
+        return () => {
+          return appConfigService.fetch().then((config) => {
+            return config;
+          });
+        };
+      },
+    },
+  ],
 })
 export class AppModule {}

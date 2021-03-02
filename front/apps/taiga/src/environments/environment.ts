@@ -14,7 +14,10 @@ import { Environment } from './environment.model';
 
 export const environment: Environment = {
   production: false,
-  configRemote: '/configs/config.json',
+  // configRemote: '/configs/config.json',
+  configLocal: {
+    api: 'https://localhost:3000/',
+  },
 };
 
 /*

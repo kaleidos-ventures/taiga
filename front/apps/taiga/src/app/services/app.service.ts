@@ -10,7 +10,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { unexpectedError } from '@/app/app.actions';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AppService {
   public unexpectedHttpErrorResponseAction(error: HttpErrorResponse) {
     return unexpectedError({

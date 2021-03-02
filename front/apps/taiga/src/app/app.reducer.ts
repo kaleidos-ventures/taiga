@@ -10,20 +10,20 @@ import { createReducer, on } from '@ngrx/store';
 import { unexpectedError } from './app.actions';
 
 export interface AppState {
-  unexpectedError: unknown;
+  unexpectedError?: {
+    message: string;
+  };
 }
 
-export const initialState: AppState = {
-  unexpectedError: null
-};
+export const initialState: AppState = {};
 
 export const reducer = createReducer(
   initialState,
 
-  on(unexpectedError, (state, unexpectedError) => {
+  on(unexpectedError, (state, { error }) => {
     return {
       ...state,
-      unexpectedError
+      unexpectedError: error
     };
   }),
 );

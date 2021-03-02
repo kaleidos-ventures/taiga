@@ -7,8 +7,9 @@
  */
 
 import { createAction, props } from '@ngrx/store';
+import { AppState } from './app.reducer';
 
 export const unexpectedError = createAction(
   '[App] Unexpected error',
-  props<{error: unknown}>()
+  props<{error: AppState['unexpectedError']}>()
 );

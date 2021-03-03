@@ -20,9 +20,14 @@ import { PagesModule } from './pages/pages.module';
 import { ConfigService } from './services/config/config.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiRestInterceptorModule } from './commons/api-rest-interceptor/api-rest-interceptor.module';
+import { ApiModule } from '@taiga/api';
+import { UiModule } from '@taiga/ui';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    ApiModule.forRoot(),
+    UiModule.forRoot(),
     HttpClientModule,
     ApiRestInterceptorModule,
     PagesModule,

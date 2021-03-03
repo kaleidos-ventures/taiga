@@ -6,10 +6,16 @@
  * the root directory of this source tree.
  */
 
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
   imports: [CommonModule],
 })
-export class UiModule {}
+export class UiModule {
+  static forRoot(): ModuleWithProviders<UiModule> {
+    return {
+      ngModule: UiModule,
+    };
+  }
+}

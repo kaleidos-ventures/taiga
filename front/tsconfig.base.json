@@ -15,9 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "apps/taiga/src/*"
-      ]
+      "@/*": ["apps/taiga/src/*"],
+      "@taiga/api": ["libs/api/src/index.ts"],
+      "@taiga/ui": ["libs/ui/src/index.ts"]
     },
     "forceConsistentCasingInFileNames": true,
     "strict": true,

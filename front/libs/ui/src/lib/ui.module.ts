@@ -6,6 +6,10 @@
  * the root directory of this source tree.
  */
 
-module.exports = {
-  projects: ['<rootDir>/apps/taiga', '<rootDir>/libs/api', '<rootDir>/libs/ui'],
-};
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@NgModule({
+  imports: [CommonModule],
+})
+export class UiModule {}

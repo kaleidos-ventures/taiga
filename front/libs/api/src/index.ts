@@ -6,6 +6,4 @@
  * the root directory of this source tree.
  */
 
-module.exports = {
-  projects: ['<rootDir>/apps/taiga', '<rootDir>/libs/api', '<rootDir>/libs/ui'],
-};
+export * from './lib/api';

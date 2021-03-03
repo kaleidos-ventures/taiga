@@ -8,8 +8,8 @@
 
 import { createHttpFactory, HttpMethod, SpectatorHttp } from '@ngneat/spectator';
 import { EnvironmentService } from '@/app/services/environment.service';
-import { Config } from './config.model';
 import { ConfigService } from './config.service';
+import { Config } from '@taiga/data';
 
 describe('ConfigService', () => {
   const fakeConfig: Config = {

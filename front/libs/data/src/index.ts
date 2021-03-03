@@ -6,10 +6,4 @@
  * the root directory of this source tree.
  */
 
-import { Config } from '@taiga/data';
-
-export interface Environment {
-  production: boolean;
-  configLocal?: Config;
-  configRemote?: string;
-}
+export * from './lib/config.model';

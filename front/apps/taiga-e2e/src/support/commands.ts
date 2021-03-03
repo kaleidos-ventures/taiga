@@ -15,6 +15,8 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
+/* TODO: DELETE */
+/* eslint-disable */
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Cypress {

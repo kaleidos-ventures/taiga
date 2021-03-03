@@ -5,6 +5,8 @@
  * GNU Affero General Public License found in the LICENSE file in
  * the root directory of this source tree.
  */
+/* TODO: DELETE */
+/* eslint-disable */
 
 import { getGreeting } from '../support/app.po';
 

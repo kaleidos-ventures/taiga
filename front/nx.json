@@ -19,6 +19,7 @@
     "taiga": { "tags": [] },
     "taiga-e2e": { "tags": [], "implicitDependencies": ["taiga"] },
     "ui": { "tags": [] },
-    "api": { "tags": [] }
+    "api": { "tags": [] },
+    "data": { "tags": [] }
   }
 }

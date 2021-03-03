@@ -8,7 +8,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Config } from './config.model';
+import { Config } from '@taiga/data';
 import { EnvironmentService } from '@/app/services/environment.service';
 
 @Injectable({

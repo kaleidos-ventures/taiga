@@ -10,7 +10,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "nx workspace-lint && npm run lint:angular && npm run lint:html && npm run lint:css",
-    "lint:angular": "ng lint",
+    "lint:angular": "nx run-many --all --target=lint",
     "lint:html": "npx htmlhint 'apps/**/*.html'",
     "lint:css": "npx stylelint 'apps/**/*.css'",
     "e2e": "ng e2e",

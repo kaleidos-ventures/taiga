@@ -16,7 +16,7 @@ export const environment: Environment = {
   production: false,
   // configRemote: '/configs/config.json',
   configLocal: {
-    api: 'https://localhost:3000/',
+    api: 'http://localhost:3000/',
   },
 };
 

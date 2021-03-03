@@ -5,5 +5,7 @@
  * GNU Affero General Public License found in the LICENSE file in
  * the root directory of this source tree.
  */
+/* TODO: DELETE */
+/* eslint-disable */
 
 export const getGreeting = () => cy.get('h1');

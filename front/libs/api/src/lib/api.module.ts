@@ -6,10 +6,10 @@
  * the root directory of this source tree.
  */
 
-import { api } from './api';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-describe('api', () => {
-  it('should work', () => {
-    expect(api()).toEqual('api');
-  });
-});
+@NgModule({
+  imports: [CommonModule],
+})
+export class ApiModule {}

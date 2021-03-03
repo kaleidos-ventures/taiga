@@ -7,5 +7,5 @@
  */
 
 module.exports = {
-  projects: ['<rootDir>/apps/taiga', '<rootDir>/libs/api', '<rootDir>/libs/ui'],
+  projects: ['<rootDir>/apps/taiga', '<rootDir>/libs/ui', '<rootDir>/libs/api'],
 };

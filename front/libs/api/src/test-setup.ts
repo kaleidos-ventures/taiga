@@ -6,6 +6,4 @@
  * the root directory of this source tree.
  */
 
-export function api(): string {
-  return 'api';
-}
+import 'jest-preset-angular';

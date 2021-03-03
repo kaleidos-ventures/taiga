@@ -6,4 +6,4 @@
  * the root directory of this source tree.
  */
 
-export * from './lib/api';
+export * from './lib/api.module';

@@ -18,7 +18,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
   constructor(
     private readonly configService: ConfigService) { }
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+  public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const apiUrl = this.configService.apiUrl;
 
     // Only add interceptors to request through the api

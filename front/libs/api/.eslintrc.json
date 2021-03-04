@@ -17,7 +17,11 @@
         "@angular-eslint/component-selector": [
           "error",
           { "type": "element", "prefix": "taiga", "style": "kebab-case" }
-        ]
+        ],
+        "@typescript-eslint/explicit-member-accessibility": ["error", {
+          "accessibility": "explicit",
+          "overrides": { "constructors": "no-public" }
+        }]
       }
     },
     {

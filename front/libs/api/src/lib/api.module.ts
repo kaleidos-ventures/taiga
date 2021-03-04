@@ -13,7 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [HttpClientModule],
 })
 export class ApiModule {
-  static forRoot(): ModuleWithProviders<ApiModule> {
+  public static forRoot(): ModuleWithProviders<ApiModule> {
     return {
       ngModule: ApiModule,
     };

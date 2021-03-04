@@ -13,13 +13,13 @@ import { Config } from '@taiga/data';
   providedIn: 'root',
 })
 export class ApiConfigService {
-  #config!: Config;
+  private config!: Config;
 
   public get apiUrl() {
-    return this.#config.api;
+    return this.config.api;
   }
 
   public setConfig(config: Config) {
-    this.#config = config;
+    this.config = config;
   }
 }

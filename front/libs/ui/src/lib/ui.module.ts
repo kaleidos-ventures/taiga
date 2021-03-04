@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
 })
 export class UiModule {
-  static forRoot(): ModuleWithProviders<UiModule> {
+  public static forRoot(): ModuleWithProviders<UiModule> {
     return {
       ngModule: UiModule,
     };

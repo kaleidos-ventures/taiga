@@ -12,11 +12,11 @@
       "rules": {
         "@angular-eslint/directive-selector": [
           "error",
-          { "type": "attribute", "prefix": "taiga", "style": "camelCase" }
+          { "type": "attribute", "prefix": "tg", "style": "camelCase" }
         ],
         "@angular-eslint/component-selector": [
           "error",
-          { "type": "element", "prefix": "taiga", "style": "kebab-case" }
+          { "type": "element", "prefix": "tg", "style": "kebab-case" }
         ],
         "@typescript-eslint/explicit-member-accessibility": ["error", {
           "accessibility": "explicit",

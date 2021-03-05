@@ -6,6 +6,6 @@
  * the root directory of this source tree.
  */
 
-export * from './lib/config.model';
-export * from './lib/unexpected-error.model';
-
+export interface UnexpectedError {
+  message: string;
+}

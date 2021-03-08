@@ -17,7 +17,9 @@
     "paths": {
       "@/*": ["apps/taiga/src/*"],
       "@taiga/ui": ["libs/ui/src/index.ts"],
+      "@taiga/ui/*": ["libs/ui/src/lib/*"],
       "@taiga/api": ["libs/api/src/index.ts"],
+      "@taiga/api/*": ["libs/api/src/lib/*"],
       "@taiga/data": ["libs/data/src/index.ts"]
     },
     "forceConsistentCasingInFileNames": true,

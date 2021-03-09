@@ -13,3 +13,8 @@ export const unexpectedError = createAction(
   '[App] Unexpected error',
   props<{error: AppState['unexpectedError']}>()
 );
+
+export const wsMessage = createAction(
+  '[App] ws message',
+  props<{data: unknown}>()
+);

@@ -44,4 +44,8 @@ export class ConfigService {
   public get apiUrl(): string {
     return this.config.api;
   }
+
+  public get wsUrl(): string {
+    return this.config.ws;
+  }
 }

@@ -15,7 +15,7 @@ import { UnexpectedError } from '@taiga/data';
   providedIn: 'root',
 })
 export class AppService {
-public formatHttpErrorResponse(error: HttpErrorResponse): UnexpectedError {
+  public formatHttpErrorResponse(error: HttpErrorResponse): UnexpectedError {
     return {
       message: error.message,
     };

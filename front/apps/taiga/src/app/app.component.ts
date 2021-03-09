@@ -7,6 +7,7 @@
  */
 
 import { Component } from '@angular/core';
+import { WsService } from './services/ws/ws.service';
 
 @Component({
   selector: 'tg-root',
@@ -15,4 +16,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   public title = 'taiga';
+
+  constructor(private wsService: WsService) {
+    this.wsService.listen();
+  }
 }

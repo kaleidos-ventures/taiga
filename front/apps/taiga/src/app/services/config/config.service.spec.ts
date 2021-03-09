@@ -14,6 +14,7 @@ import { Config } from '@taiga/data';
 describe('ConfigService', () => {
   const fakeConfig: Config = {
     api: 'http://fake',
+    ws: 'ws://fake:8080',
   };
 
   let spectator: SpectatorHttp<ConfigService>;

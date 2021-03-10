@@ -16,5 +16,5 @@ export const unexpectedError = createAction(
 
 export const wsMessage = createAction(
   '[App] ws message',
-  props<{data: unknown}>()
+  props<{data: { [key in PropertyKey]: unknown }}>()
 );

@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { wsMessage } from '@/app/app.actions';
+import { WS_CONFIG, wsMessage } from '@taiga/ws';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { createEffect } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -14,9 +14,8 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { marbles } from 'rxjs-marbles/jest';
-import { ConfigService } from '@/app/services/config/config.service';
 
-import { WsService } from './ws.service';
+import { WsService } from '@taiga/ws';
 
 describe('AuthService', () => {
   let actions$ = new Observable<Action>();
@@ -28,7 +27,7 @@ describe('AuthService', () => {
     providers: [
       provideMockActions(() => actions$),
       provideMockStore({}),
-      { provide: ConfigService, useValue: {} },
+      { provide: WS_CONFIG, useValue: {} },
     ],
   });
 

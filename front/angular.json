@@ -216,6 +216,28 @@
           }
         }
       }
+    },
+    "ws": {
+      "projectType": "library",
+      "root": "libs/ws",
+      "sourceRoot": "libs/ws/src",
+      "prefix": "taiga",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/ws/src/**/*.ts", "libs/ws/src/**/*.html"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/ws"],
+          "options": {
+            "jestConfig": "libs/ws/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

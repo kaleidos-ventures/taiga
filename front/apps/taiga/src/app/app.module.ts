@@ -22,12 +22,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { ApiRestInterceptorModule } from './commons/api-rest-interceptor/api-rest-interceptor.module';
 import { ApiConfigService, ApiModule } from '@taiga/api';
 import { UiModule } from '@taiga/ui';
+import { WsModule } from '@taiga/ws';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     ApiModule.forRoot(),
     UiModule.forRoot(),
+    WsModule,
     HttpClientModule,
     ApiRestInterceptorModule,
     PagesModule,

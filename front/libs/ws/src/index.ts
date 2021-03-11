@@ -6,10 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { createAction, props } from '@ngrx/store';
-import { AppState } from './app.reducer';
+export * from './lib/ws.module';
 
-export const unexpectedError = createAction(
-  '[App] Unexpected error',
-  props<{error: AppState['unexpectedError']}>()
-);
+export { WsService } from './lib/services/ws.service';
+export * from './lib/ws.actions';

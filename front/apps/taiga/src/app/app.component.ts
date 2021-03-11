@@ -7,7 +7,7 @@
  */
 
 import { Component } from '@angular/core';
-import { WsService } from './services/ws/ws.service';
+import { WsService } from '@taiga/ws';
 
 @Component({
   selector: 'tg-root',

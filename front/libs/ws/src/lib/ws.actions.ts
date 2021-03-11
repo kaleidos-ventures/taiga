@@ -7,9 +7,8 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { AppState } from './app.reducer';
 
-export const unexpectedError = createAction(
-  '[App] Unexpected error',
-  props<{error: AppState['unexpectedError']}>()
+export const wsMessage = createAction(
+  '[Ws] message',
+  props<{data: { [key in PropertyKey]: unknown }}>()
 );

@@ -8,7 +8,7 @@
     "nx": "nx",
     "start": "ng serve",
     "build": "ng build",
-    "test": "ng test",
+    "test": "nx run-many --all --target=test",
     "lint": "nx workspace-lint && npm run lint:angular && npm run lint:html && npm run lint:css",
     "lint:angular": "nx run-many --all --target=lint",
     "lint:html": "npx htmlhint 'apps/**/*.html' 'libs/**/*.html'",

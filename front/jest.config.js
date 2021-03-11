@@ -12,5 +12,6 @@ module.exports = {
     '<rootDir>/libs/ui',
     '<rootDir>/libs/api',
     '<rootDir>/libs/data',
+    '<rootDir>/libs/ws',
   ],
 };

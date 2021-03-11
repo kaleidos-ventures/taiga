@@ -6,10 +6,4 @@
  * the root directory of this source tree.
  */
 
-import { createAction, props } from '@ngrx/store';
-import { AppState } from './app.reducer';
-
-export const unexpectedError = createAction(
-  '[App] Unexpected error',
-  props<{error: AppState['unexpectedError']}>()
-);
+import 'jest-preset-angular';

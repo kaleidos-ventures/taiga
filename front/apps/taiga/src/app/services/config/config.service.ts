@@ -7,9 +7,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Config } from '@taiga/data';
-import { EnvironmentService } from '@/app/services/environment.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,26 +18,6 @@ export class ConfigService {
   }
 
   public _config!: Config;
-
-  constructor(private readonly http: HttpClient, private readonly environmentService: EnvironmentService) {}
-
-  public fetch(): Promise<Config> {
-    const environment = this.environmentService.getEnvironment();
-
-    return new Promise((resolve, reject) => {
-      if (environment.configLocal) {
-        this._config = environment.configLocal;
-        resolve(this.config);
-      } else if (environment.configRemote) {
-        this.http.get<Config>(environment.configRemote).subscribe((config) => {
-          this._config = config;
-          resolve(this.config);
-        });
-      } else {
-        reject('No config provided');
-      }
-    });
-  }
 
   public get apiUrl(): string {
     return this.config.api;

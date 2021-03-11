@@ -21,13 +21,13 @@ export const WS_CONFIG = new InjectionToken(
   imports: [],
 })
 export class WsModule {
-  public static forRoot(wsUrl: string): ModuleWithProviders<WsModule> {
+  public static forRoot(config: WsConfig): ModuleWithProviders<WsModule> {
     return {
       providers: [
         {
           provide: WS_CONFIG,
           useValue: {
-            url: wsUrl,
+            ...config,
           }
         },
       ],

@@ -11,7 +11,8 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Actions, ofType } from '@ngrx/effects';
-import { WS_CONFIG, WsConfig, wsMessage } from '@taiga/ws';
+import { WsConfig, WS_CONFIG } from '@taiga/ws/ws.module';
+import { wsMessage } from '@taiga/ws/ws.actions';
 
 @Injectable({
   providedIn: 'root',

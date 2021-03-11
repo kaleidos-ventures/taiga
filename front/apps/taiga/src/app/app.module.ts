@@ -20,16 +20,21 @@ import { PagesModule } from './pages/pages.module';
 import { ConfigService } from './services/config/config.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiRestInterceptorModule } from './commons/api-rest-interceptor/api-rest-interceptor.module';
-import { ApiConfigService, ApiModule } from '@taiga/api';
+import { ApiModule } from '@taiga/api';
 import { UiModule } from '@taiga/ui';
 import { WsModule } from '@taiga/ws';
+import { EnvironmentService } from './services/environment.service';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    ApiModule.forRoot(),
+    ApiModule.forRoot({
+      url: environment.configLocal!.api,
+    }),
     UiModule.forRoot(),
-    WsModule,
+    WsModule.forRoot({
+      url: environment.configLocal!.ws,
+    }),
     HttpClientModule,
     ApiRestInterceptorModule,
     PagesModule,
@@ -57,13 +62,16 @@ import { WsModule } from '@taiga/ws';
     {
       provide: APP_INITIALIZER,
       multi: true,
-      deps: [ConfigService, ApiConfigService],
-      useFactory: (appConfigService: ConfigService, apiConfigService: ApiConfigService) => {
+      deps: [ConfigService, EnvironmentService],
+      useFactory: (appConfigService: ConfigService, environmentService: EnvironmentService) => {
         return () => {
-          return appConfigService.fetch().then((config) => {
-            apiConfigService.setConfig(config);
-            return config;
-          });
+          const config = environmentService.getEnvironment().configLocal;
+
+          if (config) {
+            appConfigService._config = config;
+          } else {
+            throw new Error('No config provided');
+          }
         };
       },
     },

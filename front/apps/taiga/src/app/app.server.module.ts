@@ -7,15 +7,16 @@
  */
 
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { ServerModule } from '@angular/platform-server';
 
-const routes: Routes = [
-];
+import { AppModule } from './app.module';
+import { AppComponent } from './app.component';
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {
-    initialNavigation: 'enabled'
-  })],
-  exports: [RouterModule],
+  imports: [
+    AppModule,
+    ServerModule,
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppRoutingModule { }
+export class AppServerModule {}

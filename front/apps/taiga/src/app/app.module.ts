@@ -38,7 +38,7 @@ import { EnvironmentService } from './services/environment.service';
     HttpClientModule,
     ApiRestInterceptorModule,
     PagesModule,
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule,
     StoreRouterConnectingModule.forRoot(),
     StoreModule.forRoot(

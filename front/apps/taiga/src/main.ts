@@ -33,6 +33,8 @@ if (environment.configRemote) {
       init();
     });
 } else {
-  init();
+  document.addEventListener('DOMContentLoaded', () => {
+    init();
+  });
 }
 

@@ -47,7 +47,7 @@
                 "externals": "replace"
               }
             },
-            "outputPath": "dist/apps/taiga",
+            "outputPath": "dist/taiga/browser",
             "index": "apps/taiga/src/index.html",
             "main": "apps/taiga/src/main.ts",
             "polyfills": "apps/taiga/src/polyfills.ts",
@@ -119,6 +119,53 @@
           "options": {
             "jestConfig": "apps/taiga/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/taiga/server",
+            "main": "apps/taiga/server.ts",
+            "tsConfig": "apps/taiga/tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "apps/taiga/src/environments/environment.ts",
+                  "with": "apps/taiga/src/environments/environment.prod.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            }
+          }
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": {
+            "browserTarget": "taiga:build",
+            "serverTarget": "taiga:server"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "taiga:build:production",
+              "serverTarget": "taiga:server:production"
+            }
+          }
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "browserTarget": "taiga:build:production",
+            "serverTarget": "taiga:server:production",
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {}
           }
         }
       }

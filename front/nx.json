@@ -21,6 +21,7 @@
     "ui": { "tags": [] },
     "api": { "tags": [] },
     "data": { "tags": [] },
-    "ws": { "tags": [] }
+    "ws": { "tags": [] },
+    "core": { "tags": [] }
   }
 }

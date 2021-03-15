@@ -22,7 +22,9 @@
       "@taiga/api/*": ["libs/api/src/lib/*"],
       "@taiga/data": ["libs/data/src/index.ts"],
       "@taiga/ws": ["libs/ws/src/index.ts"],
-      "@taiga/ws/*": ["libs/ws/src/lib/*"]
+      "@taiga/ws/*": ["libs/ws/src/lib/*"],
+      "@taiga/core": ["libs/core/src/index.ts"],
+      "@taiga/core/*": ["libs/core/src/*"]
     },
     "forceConsistentCasingInFileNames": true,
     "strict": true,

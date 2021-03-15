@@ -8,7 +8,7 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { unexpectedError } from '@/app/app.actions';
+import { unexpectedError } from '@taiga/core';
 import { UnexpectedError } from '@taiga/data';
 
 @Injectable({

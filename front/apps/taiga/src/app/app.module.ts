@@ -23,6 +23,7 @@ import { ApiRestInterceptorModule } from './commons/api-rest-interceptor/api-res
 import { ApiModule } from '@taiga/api';
 import { UiModule } from '@taiga/ui';
 import { WsModule } from '@taiga/ws';
+import { CoreModule } from '@taiga/core';
 import { EnvironmentService } from './services/environment.service';
 
 @NgModule({
@@ -35,6 +36,7 @@ import { EnvironmentService } from './services/environment.service';
     WsModule.forRoot({
       url: environment.configLocal!.ws,
     }),
+    CoreModule,
     HttpClientModule,
     ApiRestInterceptorModule,
     PagesModule,

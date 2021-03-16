@@ -6,9 +6,8 @@
  * the root directory of this source tree.
  */
 
-export * from './lib/ws.module';
+import { InjectionToken } from '@angular/core';
 
-export { WsService } from './lib/services/ws.service';
-export * from './lib/ws.actions';
-export * from './lib/ws.model';
-export * from './lib/ws-config';
+export const API_CONFIG = new InjectionToken(
+  '@taiga/api Config'
+);

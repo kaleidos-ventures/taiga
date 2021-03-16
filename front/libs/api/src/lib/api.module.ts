@@ -6,17 +6,10 @@
  * the root directory of this source tree.
  */
 
-import { NgModule, ModuleWithProviders, InjectionToken } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { Config } from '@taiga/data';
-export interface ApiConfig {
-  url: Config['api'];
-}
-
-export const API_CONFIG = new InjectionToken(
-  '@taiga/api Config'
-);
-
+import { API_CONFIG } from './api-config';
+import { ApiConfig } from './api.model';
 @NgModule({
   imports: [HttpClientModule],
 })

@@ -6,19 +6,16 @@
  * the root directory of this source tree.
  */
 
-import { InjectionToken, ModuleWithProviders, NgModule } from '@angular/core';
-import { Config } from '@taiga/data';
-
-export interface WsConfig {
-  url: Config['ws'];
-}
-
-export const WS_CONFIG = new InjectionToken(
-  '@taiga/ws Config'
-);
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { WsService } from './services/ws.service';
+import { WS_CONFIG } from './ws-config';
+import { WsConfig } from './ws.model';
 
 @NgModule({
   imports: [],
+  providers: [
+    WsService
+  ]
 })
 export class WsModule {
   public static forRoot(config: WsConfig): ModuleWithProviders<WsModule> {

@@ -6,9 +6,8 @@
  * the root directory of this source tree.
  */
 
-export * from './lib/ws.module';
+import { Config } from '@taiga/data';
 
-export { WsService } from './lib/services/ws.service';
-export * from './lib/ws.actions';
-export * from './lib/ws.model';
-export * from './lib/ws-config';
+export interface WsConfig {
+  url: Config['ws'];
+}

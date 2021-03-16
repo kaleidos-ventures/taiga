@@ -11,12 +11,11 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Actions, ofType } from '@ngrx/effects';
-import { WsConfig, WS_CONFIG } from '@taiga/ws/ws.module';
 import { wsMessage } from '@taiga/ws/ws.actions';
+import { WsConfig } from '@taiga/ws/ws.model';
+import { WS_CONFIG } from '@taiga/ws/ws-config';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class WsService {
   private ws!: WebSocket;
 

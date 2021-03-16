@@ -12,7 +12,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ConfigService } from '@/app/services/config/config.service';
 import { Store } from '@ngrx/store';
-import { CoreState, globalLoading } from '@taiga/core';
+import { CoreState, getGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
 @Injectable()
 export class ApiRestInterceptorService implements HttpInterceptor {
@@ -22,15 +22,15 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     private readonly configService: ConfigService,
     private readonly store: Store<CoreState>) {
     this.requests.pipe(
-      concatLatestFrom(() => this.store.select((state) => {
-        console.log(state);
-        return state.loading;
-      }))
+      concatLatestFrom(() => this.store.select(getGlobalLoading))
     ).subscribe(([requests, loading]) => {
       if (requests.length && !loading) {
         this.store.dispatch(globalLoading({ loading: true }))
       } else if (!requests.length && loading) {
-        this.store.dispatch(globalLoading({ loading: false }))
+        // Is async to run this action after http effect actions
+        requestAnimationFrame(() => {
+          this.store.dispatch(globalLoading({ loading: false }))
+        });
       }
     });
   }

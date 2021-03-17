@@ -7,8 +7,10 @@ the root directory of this source tree.
 -->
 
 <div #domPortalContent>
-  <button (click)="close()">Close</button>
-  <div class="modal-content">
-    <ng-content></ng-content>
+  <div *ngIf="open" class="modal-wrapper">
+    <div class="modal-content">
+      <ng-content></ng-content>
+    </div>
+    <button (click)="close()">Close</button>
   </div>
 </div>

@@ -33,11 +33,11 @@ jobs:
           ${{ runner.os }}-
 
     - name: npm install
-      working-directory: ./front
+      working-directory: ./javascript
       run: npm install
 
     - name: pass linters
-      working-directory: ./front
+      working-directory: ./javascript
       run: npm run lint
 
   unit-test:
@@ -66,11 +66,11 @@ jobs:
           ${{ runner.os }}-
 
     - name: npm install
-      working-directory: ./front
+      working-directory: ./javascript
       run: npm install
 
     - name: pass unit test
-      working-directory: ./front
+      working-directory: ./javascript
       run: npm run test
 
   e2e-test:
@@ -99,7 +99,7 @@ jobs:
           ${{ runner.os }}-
 
     - name: npm install
-      working-directory: ./front
+      working-directory: ./javascript
       run: npm install
 
     - name: Cypress run
@@ -107,16 +107,16 @@ jobs:
       with:
         install: false
         command: npm run e2e
-        working-directory: ./front/
+        working-directory: ./javascript/
 
     - uses: actions/upload-artifact@v1
       if: failure()
       with:
         name: cypress-screenshots
-        path: front/dist/cypress/apps/taiga-e2e/screenshots
+        path: javascript/dist/cypress/apps/taiga-e2e/screenshots
 
     - uses: actions/upload-artifact@v1
       if: always()
       with:
         name: cypress-videos
-        path: front/dist/cypress/apps/taiga-e2e/videos
+        path: javascript/dist/cypress/apps/taiga-e2e/videos

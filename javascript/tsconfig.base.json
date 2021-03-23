@@ -17,14 +17,10 @@
     "paths": {
       "@/*": ["apps/taiga/src/*"],
       "@taiga/ui": ["libs/ui/src/index.ts"],
-      "@taiga/ui/*": ["libs/ui/src/lib/*"],
       "@taiga/api": ["libs/api/src/index.ts"],
-      "@taiga/api/*": ["libs/api/src/lib/*"],
       "@taiga/data": ["libs/data/src/index.ts"],
       "@taiga/ws": ["libs/ws/src/index.ts"],
-      "@taiga/ws/*": ["libs/ws/src/lib/*"],
-      "@taiga/core": ["libs/core/src/index.ts"],
-      "@taiga/core/*": ["libs/core/src/*"]
+      "@taiga/core": ["libs/core/src/index.ts"]
     },
     "forceConsistentCasingInFileNames": true,
     "strict": true,

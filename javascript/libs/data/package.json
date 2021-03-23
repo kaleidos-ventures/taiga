@@ -1,0 +1,8 @@
+{
+  "name": "@taiga/data",
+  "version": "0.0.1",
+  "peerDependencies": {},
+  "dependencies": {
+    "tslib": "^2.0.0"
+  }
+}

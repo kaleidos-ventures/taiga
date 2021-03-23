@@ -21,16 +21,16 @@ import {
   Optional,
   Inject
 } from '@angular/core';
-import { ModalService } from '@taiga/ui/modal/services/modal.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { FocusMonitor, ConfigurableFocusTrapFactory, ConfigurableFocusTrap } from '@angular/cdk/a11y';
 import { DOCUMENT } from '@angular/common';
+import { ModalService } from '../services/modal.service';
 
 /*
 Usage example:
 <tg-ui-modal
   [open]="open"
-  (closed)="open = !open">
+  (requestClose)="open = !open">
   <h1>Hi!</h1>
   <my-modal-component></my-modal-component>
 </tg-ui-modal>

@@ -11,9 +11,9 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Actions, ofType } from '@ngrx/effects';
-import { wsMessage } from '@taiga/ws/ws.actions';
-import { WsConfig } from '@taiga/ws/ws.model';
-import { WS_CONFIG } from '@taiga/ws/ws-config';
+import { wsMessage } from '../ws.actions';
+import { WS_CONFIG } from '../ws-config';
+import { WsConfig } from '../ws.model';
 
 @Injectable()
 export class WsService {

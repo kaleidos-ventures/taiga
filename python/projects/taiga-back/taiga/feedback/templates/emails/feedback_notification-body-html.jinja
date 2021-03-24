@@ -1,0 +1,33 @@
+{% extends "emails/base-body-html.jinja" %}
+
+{% block body %}
+    {% trans full_name=feedback_entry.full_name, email=feedback_entry.email %}
+    <h1>Feedback</h1>
+    <p>Taiga has received feedback from {{ full_name }} <{{ email }}></p>
+    {% endtrans %}
+
+    {% trans comment=feedback_entry.comment|linebreaksbr %}
+    <h3>Comment</h3>
+    <p>{{ comment }}</p>
+    {% endtrans %}
+
+    {% if extra %}
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateBody">
+        <tr>
+            <td valign="top" valign="top" class="bodyContent">
+                <h3>{{ _("Extra info") }}</h3>
+                <dl>
+                    {% for k, v in extra.items() %}
+                        <dt>{{ k }}</dt>
+                        <dd>{{ v }}</dd>
+                    {% endfor %}
+                </dl>
+            </td>
+        </tr>
+    </table>
+    {% endif %}
+
+    {% trans signature=sr("signature") %}
+        <p><small>{{ signature }}</small></p>
+    {% endtrans %}
+{% endblock %}

@@ -1,0 +1,292 @@
+{% set excluded_fields = [
+    "description",
+    "description_html",
+    "blocked_note",
+    "blocked_note_html",
+    "content",
+    "content_html",
+    "epics_order",
+    "backlog_order",
+    "kanban_order",
+    "sprint_order",
+    "taskboard_order",
+    "us_order",
+    "custom_attributes",
+    "tribe_gig",
+] %}
+
+{% for field_name, values in changed_fields.items() %}
+    {% if field_name not in excluded_fields %}
+        {# POINTS #}
+        {% if field_name == "points" %}
+            {% for role, points in values.items() %}
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{% trans role=role %}{{ role }} role points{% endtrans %}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    <span>{{ _("from") }}</span><br>
+                    <strong>{{ points.0 }}</strong>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <span>{{ _("to") }}</span><br>
+                    <strong>{{ points.1 }}</strong>
+                </td>
+            </tr>
+            {% endfor %}
+
+    {# ATTACHMENTS #}
+        {% elif field_name == "attachments" %}
+            {% if values.new %}
+                {% for att in values['new']%}
+                <tr>
+                    <td colspan="2">
+                        <h3>{{ _("Added new attachment") }}</h3>
+                        <p>
+                            <a href="{{ att.url }}" target="_blank">
+                                {{ att.filename }}
+                            </a>
+                        </p>
+                        {% if att.description %}
+                        <p>{{ att.description }}</p>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+
+            {% if values.changed %}
+                {% for att in values['changed'] %}
+                <tr>
+                    <td colspan="2">
+                        <h3>{{ _("Updated attachment") }}</h3>
+                        <p>
+                            <a href="{{ att.url }}" target="_blank">
+                                {{ att.filename|linebreaksbr }}
+                                {% if att.changes.is_deprecated %}
+                                    {% if att.changes.is_deprecated.1 %}
+                                        [<i>{{ _("deprecated") }}</i>]
+                                    {% else %}
+                                        [<i>{{ _("not deprecated") }}</i>]
+                                    {% endif %}
+                                {% endif %}
+                            </a>
+                        </p>
+                        {% if att.changes.description %}
+                            <p>{{ att.changes.description.1 }}</p>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+            {% if values.deleted %}
+                {% for att in values['deleted']%}
+                <tr>
+                    <td colspan="2">
+                        <h3>{{ _("Deleted attachment") }}</h3>
+                        <p>{{ att.filename|linebreaksbr }}</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+    {# TAGS AND WATCHERS #}
+        {% elif field_name in ["tags", "watchers"] %}
+            {% set values_from = values.0 or [] %}
+            {% set values_to = values.1 or [] %}
+            {% set values_added = lists_diff(values_to, values_from) %}
+            {% set values_removed = lists_diff(values_from, values_to) %}
+
+            <tr>
+                <td valign="middle" class="update-row-name">
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    {% if values_added %}
+                    <span>{{ _("added") }}</span><br>
+                    <strong>{{ ', '.join(values_added) }}</strong>
+                    {% endif %}
+
+                    {% if values_removed %}
+                    <span>{{ _("removed") }}</span><br>
+                    <strong>{{ ', '.join(values_removed) }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+    {# DESCRIPTIONS, CONTENT, BLOCKED_NOTE #}
+        {% elif field_name in ["description_diff", "content_diff", "blocked_note_diff"] %}
+            <tr>
+                <td colspan="2">
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
+                    <p>{{ mdrender(project, values.1) }}</p>
+                </td>
+            </tr>
+    {# ASSIGNED TO #}
+        {% elif field_name == "assigned_to" %}
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    {% if values.0 != None and values.0 != "" %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ values.0 }}</strong>
+                    {% else %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ _("Unassigned") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    {% if values.1 != None and values.1 != "" %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ values.1 }}</strong>
+                    {% else %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ _("Unassigned") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+    {# DUE DATE #}
+        {% elif field_name == "due_date" %}
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    {% if values.0 != None and values.0 != "" %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ values.0|parse_and_format_date }}</strong>
+                    {% else %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ _("Not set") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    {% if values.1 != None and values.1 != "" %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ values.1|parse_and_format_date }}</strong>
+                    {% else %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ _("Not set") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+    {# ASSIGNED users #}
+        {% elif field_name == "assigned_users" %}
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    {% if values.0 != None and values.0 != "" %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ values.0 }}</strong>
+                    {% else %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ _("Unassigned") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    {% if values.1 != None and values.1 != "" %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ values.1 }}</strong>
+                    {% else %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ _("Unassigned") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+    {# * #}
+        {% else %}
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    <span>{{ _("from") }}</span><br>
+                    <strong>{{ values.0|linebreaksbr }}</strong>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <span>{{ _("to") }}</span><br>
+                    <strong>{{ values.1|linebreaksbr }}</strong>
+                </td>
+            </tr>
+        {% endif %}
+
+    {% elif field_name == "custom_attributes" %}
+    {# CUSTOM ATTRIBUTES #}
+        {% if values.new %}
+            {% for attr in values['new']%}
+                {% if attr.type == "richtext" %}
+                <tr>
+                    <td colspan="2">
+                        <h3>{{ attr.name }}</h3>
+                        <p>{{ mdrender(project, attr.value_diff) }}</p>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td valign="middle" rowspan="2" class="update-row-name">
+                        <h3>{{ attr.name }}</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top">
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ attr.value|linebreaksbr }}</strong>
+                    </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if values.changed %}
+            {% for attr in values['changed'] %}
+                {% if attr.changes.value%}
+                    {% if attr.type == "richtext" %}
+                    <tr>
+                        <td colspan="2">
+                            <h3>{{ attr.name }}</h3>
+                            <p>{{ mdrender(project, attr.value_diff) }}</p>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td valign="middle" rowspan="2" class="update-row-name">
+                            <h3>{{ attr.name }}</h3>
+                        </td>
+                        <td valign="top" class="update-row-from">
+                            <span>{{ _("from") }}</span><br>
+                            <strong>{{ attr.changes.value.0|linebreaksbr }}</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top">
+                            <span>{{ _("to") }}</span><br>
+                            <strong>{{ attr.changes.value.1|linebreaksbr }}</strong>
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if values.deleted %}
+            {% for attr in values['deleted']%}
+            <tr>
+                <td colspan="2">
+                    <h3>{{ attr.name }}</h3>
+                    <p>{{ _("-deleted-") }}</p>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endfor %}

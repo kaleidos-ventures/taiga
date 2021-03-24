@@ -1,0 +1,96 @@
+{% set excluded_fields = [
+    "description_diff",
+    "description_html",
+    "content_diff",
+    "content_html",
+    "epics_order",
+    "backlog_order",
+    "kanban_order",
+    "sprint_order",
+    "taskboard_order",
+    "us_order",
+    "blocked_note_diff",
+    "blocked_note_html",
+    "custom_attributes",
+    "tribe_gig",
+] %}
+{% for field_name, values in changed_fields.items() %}
+    {% if field_name not in excluded_fields %}
+    - {{ verbose_name(obj_class, field_name) }}:
+    {# POINTS #}
+        {% if field_name == "points" %}
+            {% for role, points in values.items() %}
+       * {{ role }} {{ _("to:") }} {{ points.1 }} {{ _("from:") }} {{ points.0 }}
+            {% endfor %}
+
+    {# ATTACHMENTS #}
+        {% elif field_name == "attachments" %}
+            {% if values.new %}
+        * {{ _("Added") }}:
+                {% for att in values['new']%}
+            - {{ att.filename }}
+                {% endfor %}
+            {% endif %}
+
+            {% if values.changed %}
+        * {{ _("Changed") }}
+                {% for att in values['changed'] %}
+            - {{ att.filename }}
+                {% endfor %}
+            {% endif %}
+
+            {% if values.deleted %}
+        * {{ _("Deleted") }}
+                {% for att in values['deleted']%}
+            - {{ att.filename }}
+                {% endfor %}
+            {% endif %}
+
+    {# TAGS AND WATCHERS #}
+        {% elif field_name in ["tags", "watchers"] %}
+            {% set values_from = values.0 or [] %}
+            {% set values_to = values.1 or [] %}
+            {% set values_added = lists_diff(values_to, values_from) %}
+            {% set values_removed = lists_diff(values_from, values_to) %}
+
+            {% if values_added %}
+            * {{ _("added:") }} {{ ', '.join(values_added) }}
+            {% endif %}
+            {% if values_removed %}
+            * {{ _("removed:") }} {{ ', '.join(values_removed) }}
+            {% endif %}
+
+    {# * #}
+        {% else %}
+        * {{ _("From:") }} {{ values.0 }}
+        * {{ _("To:") }} {{ values.1 }}
+        {% endif %}
+
+    {% elif field_name == "custom_attributes" %}
+    {# CUSTOM ATTRIBUTES #}
+        {% if values.new %}
+            {% for attr in values['new']%}
+
+    - {{ attr.name }}:
+        * {{ attr.value }}
+            {% endfor %}
+        {% endif %}
+
+        {% if values.changed %}
+            {% for attr in values['changed'] %}
+                {% if attr.changes.value%}
+    - {{ attr.name }}:
+        * {{ _("From:") }} {{ attr.changes.value.0 }}
+        * {{ _("To:") }} {{ attr.changes.value.1 }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        {% if values.deleted %}
+            {% for attr in values['deleted']%}
+    - {{ attr.name }}: {{ _("-deleted-") }}
+        * {{ attr.value }}
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endfor %}

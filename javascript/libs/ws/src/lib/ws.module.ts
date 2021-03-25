@@ -11,16 +11,12 @@ import { WsService } from './services/ws.service';
 import { WS_CONFIG } from './ws-config';
 import { WsConfig } from './ws.model';
 
-@NgModule({
-  imports: [],
-  providers: [
-    WsService
-  ]
-})
+@NgModule({})
 export class WsModule {
   public static forRoot(config: WsConfig): ModuleWithProviders<WsModule> {
     return {
       providers: [
+        WsService,
         {
           provide: WS_CONFIG,
           useValue: {

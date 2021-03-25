@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalModule } from './modal/modal.module';
 import { ModalService } from './modal/services/modal.service';
@@ -21,10 +21,4 @@ import { ModalService } from './modal/services/modal.service';
     ModalModule
   ]
 })
-export class UiModule {
-  public static forRoot(): ModuleWithProviders<UiModule> {
-    return {
-      ngModule: UiModule,
-    };
-  }
-}
+export class UiModule {}

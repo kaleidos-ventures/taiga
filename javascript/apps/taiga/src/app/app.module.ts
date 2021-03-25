@@ -32,7 +32,7 @@ import { EnvironmentService } from './services/environment.service';
     ApiModule.forRoot({
       url: environment.configLocal!.api,
     }),
-    UiModule.forRoot(),
+    UiModule,
     WsModule.forRoot({
       url: environment.configLocal!.ws,
     }),

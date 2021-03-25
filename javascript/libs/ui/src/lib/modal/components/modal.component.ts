@@ -50,6 +50,9 @@ export class ModalComponent implements OnDestroy, AfterViewInit {
   public requestClose = new EventEmitter<void>();
 
   @Input()
+  public elementFocusWhenClosed?: HTMLElement;
+
+  @Input()
   public set open(value: boolean) {
     this.open$.next(value);
   }
@@ -124,7 +127,9 @@ export class ModalComponent implements OnDestroy, AfterViewInit {
   }
 
   private restoreFocus() {
-    const previousElement = this.elementFocusedBeforeDialogWasOpened;
+    const previousElement = this.elementFocusWhenClosed ?
+      this.elementFocusWhenClosed :
+      this.elementFocusedBeforeDialogWasOpened;
 
     if (previousElement && typeof previousElement.focus === 'function') {
       const activeElement = this.getActiveElement();

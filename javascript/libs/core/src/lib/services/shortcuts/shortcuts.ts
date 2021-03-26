@@ -6,8 +6,10 @@
  * the root directory of this source tree.
  */
 
-export * from './lib/core.module';
-export * from './lib/core.reducer';
-export * from './lib/core.actions';
-export * from './lib/core.selectors';
-export * from './lib/services/shortcuts/shortcuts.services';
+export default [
+  {
+    task: 'modal.close',
+    defaultKey: 'esc',
+    scope: 'modal'
+  }
+]

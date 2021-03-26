@@ -17,14 +17,15 @@ import {
   AfterViewInit,
   Output,
   EventEmitter,
-  HostListener,
   Optional,
-  Inject
+  Inject,
+  OnInit
 } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { FocusMonitor, ConfigurableFocusTrapFactory, ConfigurableFocusTrap } from '@angular/cdk/a11y';
 import { DOCUMENT } from '@angular/common';
 import { ModalService } from '../services/modal.service';
+import { ShortcutsService } from '@taiga/core';
 
 /*
 Usage example:
@@ -41,7 +42,7 @@ Usage example:
   styleUrls: ['./modal.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ModalComponent implements OnDestroy, AfterViewInit {
+export class ModalComponent implements OnDestroy, AfterViewInit, OnInit {
   public open$ = new BehaviorSubject<boolean>(false);
   public subscription!: Subscription;
   public focusTrap?: ConfigurableFocusTrap;
@@ -65,19 +66,27 @@ export class ModalComponent implements OnDestroy, AfterViewInit {
 
   private elementFocusedBeforeDialogWasOpened?: HTMLElement;
 
-  @HostListener('window:keydown', ['$event'])
-  public onEsc(event: KeyboardEvent) {
-    if (event.key === 'Escape' && this.open$.value) {
-      this.close();
-    }
-  }
-
   constructor(
     private modalService: ModalService,
+    private shortcutsService: ShortcutsService,
     private focusTrapFactory:  ConfigurableFocusTrapFactory,
     private focusMonitor: FocusMonitor,
     private elementRef: ElementRef,
     @Optional() @Inject(DOCUMENT) private document: Document) {}
+
+  public ngOnInit() {
+    this.open$.subscribe((open) => {
+      if (open) {
+        this.shortcutsService.setScope('modal');
+      } else {
+        this.shortcutsService.resetScope();
+      }
+    });
+
+    this.shortcutsService.task('modal.close').subscribe(() => {
+      this.close();
+    });
+  }
 
   public ngAfterViewInit() {
     this.domPortal = new DomPortal(this.domPortalContent);

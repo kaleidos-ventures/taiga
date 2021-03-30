@@ -14,7 +14,6 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
-import { AppRoutingModule } from './app-routing.module';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { PagesModule } from './pages/pages.module';
 import { ConfigService } from './services/config/config.service';
@@ -25,7 +24,6 @@ import { UiModule } from '@taiga/ui';
 import { WsModule } from '@taiga/ws';
 import { CoreModule } from '@taiga/core';
 import { EnvironmentService } from './services/environment.service';
-
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -41,7 +39,6 @@ import { EnvironmentService } from './services/environment.service';
     ApiRestInterceptorModule,
     PagesModule,
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
-    AppRoutingModule,
     StoreRouterConnectingModule.forRoot(),
     StoreModule.forRoot(
       {},

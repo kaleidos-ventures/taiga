@@ -1,6 +1,6 @@
 # Ngrx effects testing workflow
 
-Before start you should read [the ngrx effects testings docs](https://ngrx.io/guide/effects/testing), [Testing RxJS Code with Marble Diagrams](https://rxjs.dev/guide/testing/marble-testing) and the [rxjs-marbles docs](https://github.com/just-jeb/jest-marbles) that we usa and wraps RxJS TestScheduler.
+Before start you should read [the ngrx effects testings docs](https://ngrx.io/guide/effects/testing), [Testing RxJS Code with Marble Diagrams](https://rxjs.dev/guide/testing/marble-testing) and the [jest-marbles docs](https://github.com/just-jeb/jest-marbles) that we use and wraps RxJS TestScheduler.
 
 
 ## Example

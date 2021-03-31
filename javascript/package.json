@@ -102,6 +102,7 @@
     "eslint": "7.10.0",
     "eslint-config-prettier": "6.0.0",
     "eslint-plugin-cypress": "^2.10.3",
+    "faker": "^5.5.2",
     "htmlhint": "^0.14.2",
     "husky": "^4.3.8",
     "jest": "26.2.2",

@@ -2,7 +2,6 @@
 
 Before start you should read [the ngrx effects testings docs](https://ngrx.io/guide/effects/testing), [Testing RxJS Code with Marble Diagrams](https://rxjs.dev/guide/testing/marble-testing) and the [jest-marbles docs](https://github.com/just-jeb/jest-marbles) that we use and wraps RxJS TestScheduler.
 
-
 ## Example
 
 This example receives an user login info in the actions props and send it to the service method AuthApiService/login and if it's successful call to the loginSuccess action with the response.

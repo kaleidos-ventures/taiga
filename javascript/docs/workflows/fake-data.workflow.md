@@ -11,7 +11,7 @@ import * as faker from 'faker';
 
 import { User } from './users.model';
 
-export const UserMockFactory = () => {
+export const UserMockFactory = (): User => {
   return {
     bigPhoto: faker.image.avatar(),
     bio: faker.lorem.paragraphs(),
@@ -23,7 +23,7 @@ export const UserMockFactory = () => {
 
 ## Usage
 
-Then in your test you can import the Factory a get the fake data.
+Then in your test you can import the Factory to get the fake data.
 
 ```ts
 import { UserMockFactory } from '@/app/api/user/user.model.mock';

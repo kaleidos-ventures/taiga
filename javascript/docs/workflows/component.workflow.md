@@ -1,16 +1,9 @@
 # Creating a new component
 
-Create an `Example` component in the commons/components folder.
+Create an `Example` component for a feature in the commons/ folder (or any other feature folder).
 
-If you want to create a common component
 ```bash
-ng g component commons/components/Example --export --changeDetection OnPush
-```
-
-For a regular component
-```bash
-ng g m commons/exampleModule
-ng g component commons/example -m commons/example --export --changeDetection OnPush
+ng g component commons/todo-list/Example --export --changeDetection OnPush
 ```
 
 This will generate the component files (html, css, ts, spec) and will add the component to the parent module declarations and exports.
@@ -30,6 +23,7 @@ export class TgExampleComponent {
 
 }
 ```
+
 Where possible, we should try to maintain the same element interface as the standard HTML elements. Let's say we create a tgButton, we can expect it to implement a class, type, disabled or aria-label attributes plus any other required Inputs, such as the variant.
 
 As a reminder
@@ -41,39 +35,63 @@ Implement the `:host` selector in the CSS to set the styles of the host containe
 
 Use the `ChangeDetectionStrategy.OnPush` by default meaning that automatic change detection is deactivated. Change detection can still be explicitly invoked.
 
-### Table component
+## Local state
 
-Table components we will use the CDK table component: https://material.angular.io/cdk/table
-As an example, you will find a basic implementation of a table, for reference under '@app/commons/components/table'
-
-## Testing
-
-For testing we're using [spectator](https://github.com/ngneat/spectator). This is the test of the previous service example.
+For a reactive local state we use [rx-angular](https://github.com/rx-angular/rx-angular/blob/master/libs/state/docs/usage.md). It's recommended to read the documentation, following some usage examples. 
 
 ```ts
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { TgExampleComponent } from './example.component';
+@Component({
+   selector: 'tg-todo-page',
+   template: `
+   <ul>
+      <li *ngFor="let task of tasks$ | push">
+        {{ task.name }} <button (click)="deleteBtn$.next(task.id)">remove<button>
+      </li>
+    </ul>
+   `,
+   providers: [RxState]
+})
+export class TodoPageComponent implements OnInit {
+  public readonly tasks$ = this.state.select('tasks');
+  public readonly deleteBtn$ = new Subject();
 
-describe('ButtonComponent', () => {
-  let spectator: Spectator<TgExampleComponent>;
-  const createComponent = createComponentFactory(TgExampleComponent);
+  constructor(
+    private store: Store,
+    // local state
+    private state: RxState<{
+      loading: boolean,
+      tasks: Task[],
+    }>,
+  ) {
+    this.state.set({
+      loading: false,
+      tasks: [],
+    });
+  }
 
-  beforeEach(() => spectator = createComponent({
-    // The component inputs
-    props: {
-      name: 'example'
-    },
-    // Override the component's providers
-    providers: [],
-    // Whether to run change detection (defaults to true)
-    detectChanges: false
-  }));
+  public ngOnInit(): void {
+    this.store.dispatch(TodoListActions.init());
 
-  it('should have a success class by default', () => {
-    // This test checks that the input attribute name becomes a class in the component structure
-    expect(spectator.query('div')).toHaveClass('example');
-  });
-});
+    // delete task whent the button is pressed
+    this.state.connect(
+      this.deleteBtn$, (state, id) => {
+        return {
+          ...state,
+          tasks: state.tasks.filter(i => i.id !== id)
+        }
+    );
+
+    // connect the ngrx state with the local state
+    this.state.connect(this.store.select(selectTodoListState));
+  }
+
+  public initLoading() {
+    // change the local state
+    this.state.set({
+      loading: true,
+    });
+  }
+}
 ```
 
 ## Responsive

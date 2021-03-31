@@ -13,11 +13,11 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { marbles } from 'rxjs-marbles/jest';
+import { cold, hot } from 'jest-marbles';
 
 import { WsService } from '@taiga/ws';
 
-describe('AuthService', () => {
+describe('WsService', () => {
   let actions$ = new Observable<Action>();
   let spectator: SpectatorService<WsService>;
   let service: WsService;
@@ -36,7 +36,7 @@ describe('AuthService', () => {
     service = spectator.inject(WsService);
   });
 
-  it('filter ws events by type', marbles(m => {
+  it('filter ws events by type', () => {
     const event = {
       data: {
         type: 'test-action',
@@ -44,18 +44,18 @@ describe('AuthService', () => {
       }
     };
 
-    actions$ = m.hot('-a', { a:  wsMessage(event)});
+    actions$ = hot('-a', { a:  wsMessage(event)});
 
     const wsEvents$ = createEffect(() => {
       return service.events<{type: string, msg: string}>('test-action');
     });
 
-    const expected = m.cold('-a', {
+    const expected = cold('-a', {
       a: event.data,
     });
 
-    m.expect(
+    expect(
       wsEvents$
     ).toBeObservable(expected);
-  }));
+  });
 });

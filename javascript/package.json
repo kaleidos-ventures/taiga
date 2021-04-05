@@ -106,6 +106,7 @@
     "jest": "26.2.2",
     "jest-marbles": "^2.5.1",
     "jest-preset-angular": "8.3.2",
+    "ng-mocks": "^11.10.0",
     "ng-packagr": "^11.0.0",
     "postcss-import": "^14.0.0",
     "postcss-mixins": "^7.0.3",

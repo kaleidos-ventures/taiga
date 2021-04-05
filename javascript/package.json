@@ -32,7 +32,8 @@
     "dev:ssr": "ng run taiga:serve-ssr",
     "serve:ssr": "node dist/taiga/server/main.js",
     "build:ssr": "ng build --prod && ng run taiga:server:production",
-    "prerender": "ng run taiga:prerender"
+    "prerender": "ng run taiga:prerender",
+    "process:icons": "node 'apps/taiga/src/assets/icons/process-icons.js'"
   },
   "private": true,
   "husky": {

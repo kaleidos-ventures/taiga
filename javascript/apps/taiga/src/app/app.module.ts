@@ -29,17 +29,10 @@ import {TuiRootModule} from '@taiga-ui/core';
 import {iconsPathFactory, TUI_ICONS_PATH} from '@taiga-ui/core';
 import {TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE} from '@taiga-ui/i18n';
 import { of } from 'rxjs';
-import { TuiButtonModule } from '@taiga-ui/core';
 
 const MAPPER: Record<string, string> = {
-  // Dictionay - iconName: icon
-  tuiIconSearch: 'smile'
-  // tuiIconCalendarLarge: 'date_range-24px',
-  // tuiIconTooltipLarge: 'help-24px',
-  // tuiIconInfo: 'info-16px',
-  // tuiIconCloseLarge: 'clear-24px',
-  // tuiIconChevronLeftLarge: 'keyboard_arrow_left-24px',
-  // tuiIconChevronRightLarge: 'keyboard_arrow_right-24px',
+  // Dictionay - iconName: icon (icon should be in assets/icons)
+  // tuiIconSearch: 'smile'
 };
 
 export function iconsPath(name: string): string {

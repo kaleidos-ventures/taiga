@@ -29,6 +29,7 @@ import {TuiRootModule} from '@taiga-ui/core';
 import {iconsPathFactory, TUI_ICONS_PATH} from '@taiga-ui/core';
 import {TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE} from '@taiga-ui/i18n';
 import { of } from 'rxjs';
+import { TuiButtonModule } from '@taiga-ui/core';
 
 const MAPPER: Record<string, string> = {
   // Dictionay - iconName: icon

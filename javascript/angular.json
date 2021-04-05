@@ -59,7 +59,7 @@
               {
                 "glob": "**/*",
                 "input": "node_modules/@taiga-ui/icons/src",
-                "output": "assets/taiga-ui/icons"
+                "output": "apps/taiga/src/assets/taiga-ui/icons"
               }
             ],
             "styles": [

@@ -10,5 +10,3 @@ export * from './lib/ws.module';
 
 export { WsService } from './lib/services/ws.service';
 export * from './lib/ws.actions';
-export * from './lib/ws.model';
-export * from './lib/ws-config';

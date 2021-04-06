@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpInterceptor, HttpResponse} from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { ConfigService } from '@/app/services/config/config.service';
+import { ConfigService } from '@taiga/core';
 import { Store } from '@ngrx/store';
 import { CoreState, getGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';

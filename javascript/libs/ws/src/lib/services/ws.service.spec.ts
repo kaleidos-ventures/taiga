@@ -6,7 +6,8 @@
  * the root directory of this source tree.
  */
 
-import { WS_CONFIG, wsMessage } from '@taiga/ws';
+import { wsMessage } from '@taiga/ws';
+import { ConfigService } from '@taiga/core';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { createEffect } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -27,7 +28,7 @@ describe('WsService', () => {
     providers: [
       provideMockActions(() => actions$),
       provideMockStore({}),
-      { provide: WS_CONFIG, useValue: {} },
+      { provide: ConfigService, useValue: {} },
     ],
   });
 

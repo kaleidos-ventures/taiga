@@ -12,7 +12,9 @@ import hotkeys from 'hotkeys-js';
 import { Subject } from 'rxjs';
 import { share, finalize } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ShortcutsService {
   public task(taskName: string, options: Parameters<typeof hotkeys>[1] = {}) {
     const subject = new Subject();

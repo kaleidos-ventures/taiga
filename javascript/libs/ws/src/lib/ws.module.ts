@@ -6,25 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { ModuleWithProviders, NgModule } from '@angular/core';
-import { WsService } from './services/ws.service';
-import { WS_CONFIG } from './ws-config';
-import { WsConfig } from './ws.model';
-
+import {  NgModule } from '@angular/core';
 @NgModule({})
 export class WsModule {
-  public static forRoot(config: WsConfig): ModuleWithProviders<WsModule> {
-    return {
-      providers: [
-        WsService,
-        {
-          provide: WS_CONFIG,
-          useValue: {
-            ...config,
-          }
-        },
-      ],
-      ngModule: WsModule,
-    };
-  }
 }

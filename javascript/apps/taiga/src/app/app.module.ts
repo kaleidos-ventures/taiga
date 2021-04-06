@@ -16,7 +16,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { PagesModule } from './pages/pages.module';
-import { ConfigService } from './services/config/config.service';
+import { ConfigService } from '@taiga/core';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiRestInterceptorModule } from './commons/api-rest-interceptor/api-rest-interceptor.module';
 import { ApiModule } from '@taiga/api';
@@ -27,13 +27,9 @@ import { EnvironmentService } from './services/environment.service';
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    ApiModule.forRoot({
-      url: environment.configLocal!.api,
-    }),
+    ApiModule,
     UiModule,
-    WsModule.forRoot({
-      url: environment.configLocal!.ws,
-    }),
+    WsModule,
     CoreModule,
     HttpClientModule,
     ApiRestInterceptorModule,

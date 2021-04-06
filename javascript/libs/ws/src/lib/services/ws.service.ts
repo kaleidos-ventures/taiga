@@ -6,20 +6,21 @@
  * the root directory of this source tree.
  */
 
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Actions, ofType } from '@ngrx/effects';
 import { wsMessage } from '../ws.actions';
-import { WS_CONFIG } from '../ws-config';
-import { WsConfig } from '../ws.model';
+import { ConfigService } from '@taiga/core';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class WsService {
   private ws!: WebSocket;
 
-  constructor(@Inject(WS_CONFIG) private config: WsConfig, private store: Store, private actions$: Actions) {}
+  constructor(private config: ConfigService, private store: Store, private actions$: Actions) {}
 
   public static isEvent<T>(type: string | Array<string>) {
     return (source$: Observable<ReturnType<typeof wsMessage>>) => source$.pipe(
@@ -35,7 +36,7 @@ export class WsService {
   }
 
   public listen() {
-    this.ws = new WebSocket(this.config.url);
+    this.ws = new WebSocket(this.config.wsUrl);
 
     this.ws.addEventListener('message', (event) => {
       const data = JSON.parse(event.data) as { [key in PropertyKey]: unknown };

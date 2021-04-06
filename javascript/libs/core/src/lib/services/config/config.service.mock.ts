@@ -6,8 +6,8 @@
  * the root directory of this source tree.
  */
 
-import { InjectionToken } from '@angular/core';
+export const apiUrl = 'https://fake-url';
 
-export const API_CONFIG = new InjectionToken(
-  '@taiga/api Config'
-);
+export const ConfigServiceMock = {
+  apiUrl,
+};

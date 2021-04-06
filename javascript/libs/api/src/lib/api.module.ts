@@ -6,25 +6,10 @@
  * the root directory of this source tree.
  */
 
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
-import { API_CONFIG } from './api-config';
-import { ApiConfig } from './api.model';
+import { NgModule } from '@angular/core';
+
 @NgModule({
-  imports: [HttpClientModule],
+
 })
 export class ApiModule {
-  public static forRoot(config: ApiConfig): ModuleWithProviders<ApiModule> {
-    return {
-      providers: [
-        {
-          provide: API_CONFIG,
-          useValue: {
-            ...config,
-          }
-        },
-      ],
-      ngModule: ApiModule,
-    };
-  }
 }

@@ -12,7 +12,9 @@ import { BehaviorSubject } from 'rxjs';
 import { DomPortal } from '@angular/cdk/portal';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ModalService {
   private portal$ = new BehaviorSubject<DomPortal|null>(null);
   private overlayRef!: OverlayRef;

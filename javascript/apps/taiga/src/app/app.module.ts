@@ -26,23 +26,30 @@ import { WsModule } from '@taiga/ws';
 import { CoreModule } from '@taiga/core';
 import { EnvironmentService } from './services/environment.service';
 import {TuiRootModule} from '@taiga-ui/core';
-import {iconsPathFactory, TUI_ICONS_PATH} from '@taiga-ui/core';
+import {TUI_ICONS_PATH, TuiButtonModule} from '@taiga-ui/core';
 import {TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE} from '@taiga-ui/i18n';
 import { of } from 'rxjs';
 
 const MAPPER: Record<string, string> = {
-  // Dictionay - iconName: icon (icon should be in assets/icons)
-  // tuiIconSearch: 'smile'
+  // iconName: symbolId<Sprite>
+  tuiIconSearch: 'example'
 };
 
 export function iconsPath(name: string): string {
-    return `assets/icons/${MAPPER[name]}.svg#${MAPPER[name]}`;
+    return `assets/icons/sprite.svg#${MAPPER[name]}`;
 }
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
+<<<<<<< HEAD
     ApiModule,
+=======
+    TuiButtonModule,
+    ApiModule.forRoot({
+      url: environment.configLocal!.api,
+    }),
+>>>>>>> d7967c6 (feat: taigaUI example)
     UiModule,
     WsModule,
     CoreModule,
@@ -93,7 +100,10 @@ export function iconsPath(name: string): string {
     },
     {
       provide: TUI_LANGUAGE,
-      useValue: of(TUI_ENGLISH_LANGUAGE),
+      useFactory: () => {
+        // TODO: Get user language from service
+        return of(TUI_ENGLISH_LANGUAGE)
+      }
     },
   ],
 })

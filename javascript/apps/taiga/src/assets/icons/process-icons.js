@@ -1,16 +1,9 @@
-/**
- * Copyright (c) 2014-2021 Taiga Agile LLC
- *
- * This source code is licensed under the terms of the
- * GNU Affero General Public License found in the LICENSE file in
- * the root directory of this source tree.
- */
-
 const fs = require('fs');
 const glob = require('glob');
 const WIDTH_SEARCH = 'width="';
 const HEIGHT_SEARCH = 'height="';
 const START = '<svg';
+const ID_SEARCH = '<g';
 
 processIcons();
 
@@ -18,7 +11,10 @@ function processIcons() {
     glob('*.svg', {}, (err, files) => {
         files.forEach(file => {
             const src = String(fs.readFileSync(file));
-            const wrapped = wrapIcon(src, file.replace('.svg', ''));
+            const name = file.replace('.svg', '');
+            const wrapped = wrapIcon(src, name);
+            console.log(wrapped);
+            if (!wrapped) return;
             const final =
                 typeof wrapped === 'string'
                     ? wrapped.replace(
@@ -35,6 +31,10 @@ function processIcons() {
 function wrapIcon(source, name) {
     const src = source.substring(source.indexOf(START));
     const attributes = src.substring(0, src.indexOf('>'));
+    const group = src.includes(ID_SEARCH);
+
+    if (group)
+        return;
 
     if (
         !attributes ||
@@ -73,6 +73,7 @@ function wrapIcon(source, name) {
     return {
         width,
         height,
+        name,
         src: `<g id="${name}" xmlns="http://www.w3.org/2000/svg" transform="${transform}"><svg x="50%" y="50%">${src}</svg></g>`,
     };
 }

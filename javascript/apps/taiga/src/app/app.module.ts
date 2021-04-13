@@ -32,7 +32,6 @@ import { of } from 'rxjs';
 
 const MAPPER: Record<string, string> = {
   // iconName: symbolId<Sprite>
-  tuiIconSearch: 'example'
 };
 
 export function iconsPath(name: string): string {

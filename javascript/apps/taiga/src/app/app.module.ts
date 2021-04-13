@@ -26,7 +26,7 @@ import { WsModule } from '@taiga/ws';
 import { CoreModule } from '@taiga/core';
 import { EnvironmentService } from './services/environment.service';
 import {TuiRootModule} from '@taiga-ui/core';
-import {TUI_ICONS_PATH, TuiButtonModule} from '@taiga-ui/core';
+import {TUI_ICONS_PATH} from '@taiga-ui/core';
 import {TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE} from '@taiga-ui/i18n';
 import { of } from 'rxjs';
 
@@ -42,14 +42,7 @@ export function iconsPath(name: string): string {
 @NgModule({
   declarations: [AppComponent],
   imports: [
-<<<<<<< HEAD
     ApiModule,
-=======
-    TuiButtonModule,
-    ApiModule.forRoot({
-      url: environment.configLocal!.api,
-    }),
->>>>>>> d7967c6 (feat: taigaUI example)
     UiModule,
     WsModule,
     CoreModule,

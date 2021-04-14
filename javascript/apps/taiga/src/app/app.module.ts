@@ -8,6 +8,7 @@
 
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
@@ -24,6 +25,19 @@ import { UiModule } from '@taiga/ui';
 import { WsModule } from '@taiga/ws';
 import { CoreModule } from '@taiga/core';
 import { EnvironmentService } from './services/environment.service';
+import {TuiRootModule} from '@taiga-ui/core';
+import {TUI_ICONS_PATH} from '@taiga-ui/core';
+import {TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE} from '@taiga-ui/i18n';
+import { of } from 'rxjs';
+
+const MAPPER: Record<string, string> = {
+  // iconName: symbolId<Sprite>
+};
+
+export function iconsPath(name: string): string {
+    return `assets/icons/sprite.svg#${MAPPER[name]}`;
+}
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -35,6 +49,7 @@ import { EnvironmentService } from './services/environment.service';
     ApiRestInterceptorModule,
     PagesModule,
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
+    BrowserAnimationsModule,
     StoreRouterConnectingModule.forRoot(),
     StoreModule.forRoot(
       {},
@@ -51,6 +66,7 @@ import { EnvironmentService } from './services/environment.service';
     ),
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
+    TuiRootModule,
   ],
   bootstrap: [AppComponent],
   providers: [
@@ -69,6 +85,17 @@ import { EnvironmentService } from './services/environment.service';
           }
         };
       },
+    },
+    {
+        provide: TUI_ICONS_PATH,
+        useValue: iconsPath,
+    },
+    {
+      provide: TUI_LANGUAGE,
+      useFactory: () => {
+        // TODO: Get user language from service
+        return of(TUI_ENGLISH_LANGUAGE)
+      }
     },
   ],
 })

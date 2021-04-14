@@ -53,8 +53,20 @@
             "polyfills": "apps/taiga/src/polyfills.ts",
             "tsConfig": "apps/taiga/tsconfig.app.json",
             "aot": true,
-            "assets": ["apps/taiga/src/favicon.ico", "apps/taiga/src/assets"],
-            "styles": ["apps/taiga/src/styles.css"],
+            "assets": [
+              "apps/taiga/src/favicon.ico",
+              "apps/taiga/src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/@taiga-ui/icons/src",
+                "output": "apps/taiga/src/assets/taiga-ui/icons"
+              }
+            ],
+            "styles": [
+              "apps/taiga/src/styles.css",
+              "node_modules/@taiga-ui/core/styles/taiga-ui-global.less",
+              "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less"
+            ],
             "scripts": []
           },
           "configurations": {

@@ -1,11 +1,3 @@
-/**
- * Copyright (c) 2014-2021 Taiga Agile LLC
- *
- * This source code is licensed under the terms of the
- * GNU Affero General Public License found in the LICENSE file in
- * the root directory of this source tree.
- */
-
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.

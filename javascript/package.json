@@ -40,7 +40,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "node ./scripts/append-license.js",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS && npm run lint"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS && npm run lint:affected"
     }
   },
   "dependencies": {

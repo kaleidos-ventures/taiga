@@ -25,9 +25,9 @@ import { UiModule } from '@taiga/ui';
 import { WsModule } from '@taiga/ws';
 import { CoreModule } from '@taiga/core';
 import { EnvironmentService } from './services/environment.service';
-import {TuiRootModule} from '@taiga-ui/core';
-import {TUI_ICONS_PATH} from '@taiga-ui/core';
-import {TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE} from '@taiga-ui/i18n';
+import { TuiRootModule } from '@taiga-ui/core';
+import { TUI_ICONS_PATH } from '@taiga-ui/core';
+import { TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE } from '@taiga-ui/i18n';
 import { of } from 'rxjs';
 
 const MAPPER: Record<string, string> = {
@@ -35,7 +35,7 @@ const MAPPER: Record<string, string> = {
 };
 
 export function iconsPath(name: string): string {
-    return `assets/icons/sprite.svg#${MAPPER[name]}`;
+  return `assets/icons/sprite.svg#${MAPPER[name]}`;
 }
 
 @NgModule({
@@ -87,8 +87,8 @@ export function iconsPath(name: string): string {
       },
     },
     {
-        provide: TUI_ICONS_PATH,
-        useValue: iconsPath,
+      provide: TUI_ICONS_PATH,
+      useValue: iconsPath,
     },
     {
       provide: TUI_LANGUAGE,

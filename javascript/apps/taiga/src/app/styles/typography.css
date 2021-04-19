@@ -1,0 +1,70 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+:host {
+  /* Font size */
+  --font-size-heading-1: 2.136rem; /* 34.176px */
+  --font-size-heading-2: 1.709rem; /* 27.344px */
+  --font-size-heading-3: 1.367rem; /* 21.872px */
+  --font-size-heading-4: 1.094rem; /* 17.6px */
+  --font-size-medium: .875rem; /* 14px */
+  --font-size-small: .7rem; /* 11.2px */
+
+  /* Font weight */
+  --font-weight-light: 200; /* 34.176px */
+  --font-weight-medium: 400; /* 14px */
+  --font-weight-bold: 700; /* 11.2px */
+}
+
+@define-mixin font-small {
+  font-family: "Ubuntu", sans-serif;
+  font-size: var(--font-size-small);
+  font-weight: 200;
+  letter-spacing: normal;
+  line-height: 1.5;
+}
+
+@define-mixin font-body {
+  font-family: "Ubuntu", sans-serif;
+  font-size: var(--font-size-medium);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.5;
+}
+
+@define-mixin font-heading-4 {
+  font-family: "Ubuntu", sans-serif;
+  font-size: var(--font-size-heading-4);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.5;
+}
+
+@define-mixin font-heading-3 {
+  font-family: "Ubuntu", sans-serif;
+  font-size: var(--font-size-heading-3);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.5;
+}
+
+@define-mixin font-heading-2 {
+  font-family: "Ubuntu", sans-serif;
+  font-size: var(--font-size-heading-2);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.5;
+}
+
+@define-mixin font-heading-1 {
+  font-family: "Ubuntu", sans-serif;
+  font-size: var(--font-size-heading-1);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.5;
+}

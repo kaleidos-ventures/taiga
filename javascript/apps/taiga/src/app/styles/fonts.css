@@ -1,0 +1,64 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+/* VARIABLE FONTS */
+
+@supports (font-variation-settings: normal) {
+  @font-face {
+    font-family: "Roboto";
+    font-stretch: 25% 151%;
+    font-weight: 100 1000;
+    src:
+      url("RobotoFlex-VF.woff2") format("woff2 supports variations"),
+      url("RobotoFlex-VF.woff2") format("woff2-variations");
+  }
+}
+
+/* GENERIC FONT */
+
+@font-face {
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 200;
+  src: url("src/assets/fonts/Ubuntu-L.ttf");
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  font-style: italic;
+  font-weight: 200;
+  src: url("src/assets/fonts/Ubuntu-LI.ttf");
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 400;
+  src: url("src/assets/fonts/Ubuntu-R.ttf");
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  font-style: italic;
+  font-weight: 400;
+  src: url("src/assets/fonts/Ubuntu-RI.ttf");
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 700;
+  src: url("src/assets/fonts/Ubuntu-M.ttf");
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  font-style: italic;
+  font-weight: 700;
+  src: url("src/assets/fonts/Ubuntu-MI.ttf");
+}

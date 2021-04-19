@@ -1,0 +1,202 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  @mixin font-body;
+}
+
+html,
+body {
+  background-color: var(--color-white);
+  color: var(--color-black);
+  font-family: -apple-system, system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* TEXT */
+
+a {
+  color: #1d7484;
+  text-decoration: none;
+
+  &[href] {
+    /* color: var(--accent); */
+    &:visited {
+      /* color: var(--accent); */
+    }
+  }
+
+  &:hover {
+    /* color: var(--accent); */
+  }
+
+  &:visited {
+    /* color: #144f5a; */
+  }
+}
+
+p,
+li,
+h1,
+h2,
+h3,
+h4 {
+  hyphens: auto;
+  word-break: break-word;
+}
+
+p {
+  margin-bottom: 2.5rem;
+  margin-top: 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+blockquote {
+  border-left: 5px solid;
+  margin-bottom: 2.5rem;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 1rem;
+}
+
+/* HEADINGS */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  /* @mixin font-body; */
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  margin-top: 3rem;
+}
+
+h1 {
+  /* @mixin font-heading-1; */
+}
+
+h2 {
+  /* @mixin font-heading-2; */
+}
+
+h3 {
+  /* @mixin font-heading-3; */
+}
+
+h4 {
+  /* @mixin font-heading-4; */
+}
+
+h5 {
+  /* @mixin font-heading-5; */
+}
+
+h6 {
+  /* @mixin font-heading-6; */
+}
+
+/* MEDIA */
+
+img {
+  max-width: 37.5rem; /* 600px /16 */
+}
+
+img,
+video {
+  height: auto;
+  margin-bottom: 2.5rem;
+  margin-top: 0;
+  max-width: 100%;
+}
+
+/* LISTS */
+
+ul {
+  margin-bottom: 2.5rem;
+  margin-top: 0;
+  padding-left: 1.4rem;
+}
+
+li {
+  margin-bottom: .4rem;
+}
+
+/* CODE */
+
+pre,
+code {
+  font-family: "Consolas", "Courier", monospace;
+  line-height: 1.5;
+}
+
+pre {
+  background-color: #f6f6f6;
+  direction: ltr;
+  font-size: 1rem;
+  hyphens: none;
+  line-height: 1.375;
+  margin: .5rem 0;
+  padding: 1rem;
+  tab-size: 2;
+  text-align: left;
+  white-space: pre;
+  word-break: normal;
+  word-spacing: normal;
+}
+
+code {
+  word-break: break-all;
+}
+
+/* TABLES */
+
+table {
+  border-collapse: collapse;
+  text-align: justify;
+  width: 100%;
+}
+
+/* FORMS */
+
+label,
+legend,
+fieldset {
+  display: block;
+  margin-bottom: .5rem;
+}
+
+textarea {
+  width: 100%;
+}
+
+/* MODAL */
+
+.modal {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+
+.modal-bg {
+  background-color: rgba(10, 10, 10, .86);
+}

@@ -19,7 +19,7 @@ cp src/configs/config.example.json src/configs/config.json
 ## Get the compiled version ##
 
 You can get the compiled version of this code in the
-[taiga-front-dist](http://github.com/taigaio/taiga-front-dist) repository
+[taiga-front-dist](https://github.com/kaleidos-ventures/taiga-front-dist) repository
 
 
 ## Contribute to Taiga ##
@@ -45,9 +45,9 @@ Help us keep the Taiga Community open and inclusive. Please read and follow our 
 
 #### License ####
 
-Every code patch accepted in taiga codebase is licensed under [MIT-0](LICENSE). You must be careful to not include any code that can not be licensed under this license.
+Every code patch accepted in taiga codebase is licensed under [MPL-2](LICENSE). You must be careful to not include any code that can not be licensed under this license.
 
-Please read carefully [our license](https://github.com/taigaio/taiga-front/blob/master/LICENSE) and ask us if you have any questions as well as the [Contribution policy](https://github.com/taigaio/taiga-front/blob/master/CONTRIBUTING.md).
+Please read carefully [our license](https://github.com/kaleidos-ventures/taiga-front/blob/main/LICENSE) and ask us if you have any questions as well as the [Contribution policy](https://github.com/kaleidos-ventures/taiga-front/blob/main/CONTRIBUTING.md).
 
 Emoji provided free by [Twemoji](https://github.com/twitter/twemoji)
 
@@ -58,7 +58,7 @@ If you **need help to setup Taiga**, want to **talk about some cool enhancement*
 If you **find a bug** in Taiga you can always report it:
 
 - in our [mailing list](http://groups.google.com/d/forum/taigaio).
-- in [github issues](https://github.com/taigaio/taiga-front/issues).
+- in [github issues](https://github.com/kaleidos-ventures/taiga-front/issues).
 - send us a mail to support@taiga.io if is a bug related to [tree.taiga.io](https://tree.taiga.io).
 - send a mail to security@taiga.io if is a **security bug**.
 
@@ -73,9 +73,9 @@ We are gathering lots of information from our users to build and enhance our doc
 
 Currently, we have authored three main documentation hubs:
 
-- **[API Docs](https://github.com/taigaio/taiga-doc)**: Our API documentation and reference for developing from Taiga API.
-- **[Installation Guide](https://github.com/taigaio/taiga-doc)**: If you need to install Taiga on your own server, this is the place to find some guides.
-- **[Taiga Support](https://github.com/taigaio/taiga-doc)**: This page is intended to be the support reference page for the users. If you find any mistake, please report it.
+- **[API Docs](https://github.com/kaleidos-ventures/taiga-doc)**: Our API documentation and reference for developing from Taiga API.
+- **[Installation Guide](https://github.com/kaleidos-ventures/taiga-doc)**: If you need to install Taiga on your own server, this is the place to find some guides.
+- **[Taiga Support](https://github.com/kaleidos-ventures/taiga-doc)**: This page is intended to be the support reference page for the users. If you find any mistake, please report it.
 
 
 #### Translation ####

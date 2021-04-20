@@ -6,19 +6,19 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
-:host {
+:root {
   /* Font size */
-  --font-size-heading-1: 2.136rem; /* 34.176px */
-  --font-size-heading-2: 1.709rem; /* 27.344px */
-  --font-size-heading-3: 1.367rem; /* 21.872px */
-  --font-size-heading-4: 1.094rem; /* 17.6px */
-  --font-size-medium: .875rem; /* 14px */
-  --font-size-small: .7rem; /* 11.2px */
+  --font-size-heading-1: 2.136rem;
+  --font-size-heading-2: 1.709rem;
+  --font-size-heading-3: 1.367rem;
+  --font-size-heading-4: 1.094rem;
+  --font-size-medium: .875rem;
+  --font-size-small: .7rem;
 
   /* Font weight */
-  --font-weight-light: 200; /* 34.176px */
-  --font-weight-medium: 400; /* 14px */
-  --font-weight-bold: 700; /* 11.2px */
+  --font-weight-light: 200;
+  --font-weight-medium: 400;
+  --font-weight-bold: 700;
 }
 
 @define-mixin font-small {

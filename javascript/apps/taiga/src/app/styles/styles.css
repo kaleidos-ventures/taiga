@@ -1,0 +1,21 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+/*
+This layer holds any **global** settings for your project. This layer should only house settings that need to be accessed from anywhere. Settings like custom properties. This ensures this layer stays simple and slim, and means that most settings can be found alongside the code that uses them, making finding things far simpler. Examples of global settings might be things like the base font size, colour palettes, config and so on.
+*/
+
+@import "@angular/cdk/overlay-prebuilt.css";
+@import "swatches.css";
+@import "typography.css";
+@import "fonts.css";
+@import "responsive.css";
+@import "spacing.css";
+@import "z-index.css";
+@import "generic.css";
+@import "taiga-ui.css";

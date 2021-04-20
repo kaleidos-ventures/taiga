@@ -6,7 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
-:host {
+:root {
   $negative-layer: -1;
   $first-layer: 2;
   $second-layer: 3;

@@ -82,34 +82,27 @@ h3,
 h4,
 h5,
 h6 {
-  /* @mixin font-body; */
+  @mixin font-body;
+
   line-height: 1.1;
   margin-bottom: 1.5rem;
   margin-top: 3rem;
 }
 
 h1 {
-  /* @mixin font-heading-1; */
+  @mixin font-heading-1;
 }
 
 h2 {
-  /* @mixin font-heading-2; */
+  @mixin font-heading-2;
 }
 
 h3 {
-  /* @mixin font-heading-3; */
+  @mixin font-heading-3;
 }
 
 h4 {
-  /* @mixin font-heading-4; */
-}
-
-h5 {
-  /* @mixin font-heading-5; */
-}
-
-h6 {
-  /* @mixin font-heading-6; */
+  @mixin font-heading-4;
 }
 
 /* MEDIA */

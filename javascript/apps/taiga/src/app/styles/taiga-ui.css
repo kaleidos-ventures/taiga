@@ -11,7 +11,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 /* DOM */
-:host {
+:root {
   --tui-autofill: #fff; /* color for native browser autofill */
   --tui-disabled-opacity: 1; /* amount of transparency for disabled elements  */
   --tui-heading-font: "Ubuntu", sans-serif; /* font for headings */

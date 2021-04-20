@@ -6,10 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+const path = require('path');
+
 module.exports = {
   'plugins': [
     require('postcss-import')({
-      from: "/src/styles.css"
+      from: "/src/styles.css",
+      path: [
+        path.resolve(__dirname, './src/'),
+      ]
     }),
     require('postcss-mixins'),
     require('postcss-preset-env')({

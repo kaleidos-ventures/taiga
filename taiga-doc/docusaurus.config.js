@@ -2,13 +2,17 @@
 module.exports = {
   title: 'Taiga Doc',
   tagline: 'Taiga Technical Documentation',
-  url: 'https://doc.taiga.io',
-  baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'taigaio', // Usually your GitHub org/user name.
+  organizationName: 'kaleidos-ventures', // Usually your GitHub org/user name.
   projectName: 'taiga', // Usually your repo name.
+  url: 'https://kaleidos-ventures.github.io/', // github pages url
+  baseUrl: 'https://github.com/kaleidos-ventures/taiga-doc', // docs public url
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'es'],
+  },
   themeConfig: {
     navbar: {
       title: 'Taiga',
@@ -24,6 +28,10 @@ module.exports = {
           label: 'Docs',
         },
         {to: '/blog', label: 'Changelog', position: 'left'},
+        {
+          type: 'localeDropdown',
+          position: 'right',
+        },
         {
           href: 'https://github.com/kaleidos-ventures/taiga',
           label: 'GitHub',

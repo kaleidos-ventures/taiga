@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
-title: 'Getting started'
+title: 'Introducción'
 id: getting-started
 ---
 
-## Installation
+## Instalación
 
-Are you ready to create the documentation site for your open source project?
+¿Quieres crear la documentación de tu aplicación web?
 
 ### Headers
 

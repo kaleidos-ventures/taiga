@@ -1,0 +1,18 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Design": {
+    "message": "Design",
+    "description": "The label for category Design in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Front-end": {
+    "message": "Front-end",
+    "description": "The label for category Front-end in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Back-end": {
+    "message": "Back-end",
+    "description": "The label for category Back-end in sidebar tutorialSidebar"
+  }
+}

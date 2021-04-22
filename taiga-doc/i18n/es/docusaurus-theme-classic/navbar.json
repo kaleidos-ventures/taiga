@@ -1,0 +1,22 @@
+{
+  "title": {
+    "message": "Taiga",
+    "description": "The title in the navbar"
+  },
+  "item.label.Docs": {
+    "message": "Docs",
+    "description": "Navbar item with label Docs"
+  },
+  "item.label.Changelog": {
+    "message": "Changelog",
+    "description": "Navbar item with label Changelog"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  },
+  "item.label.Taiga": {
+    "message": "Taiga",
+    "description": "Navbar item with label Taiga"
+  }
+}

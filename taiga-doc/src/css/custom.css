@@ -23,3 +23,8 @@
   margin: 0 calc(-1 * var(--ifm-pre-padding));
   padding: 0 var(--ifm-pre-padding);
 }
+
+/* redocusaurus is hidding the redoc searchbox by mistake */
+.redocusaurus .menu-content div:first-child {
+  display: block !important;
+}

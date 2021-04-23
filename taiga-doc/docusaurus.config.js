@@ -8,7 +8,7 @@ module.exports = {
   organizationName: 'kaleidos-ventures', // Usually your GitHub org/user name.
   projectName: 'taiga', // Usually your repo name.
   url: 'https://kaleidos-ventures.github.io/', // github pages url
-  baseUrl: 'https://github.com/kaleidos-ventures/taiga-doc', // docs public url
+  baseUrl: '/', // docs public url
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'es'],
@@ -28,6 +28,7 @@ module.exports = {
           label: 'Docs',
         },
         {to: '/blog', label: 'Changelog', position: 'left'},
+        {to: 'api', label: 'API', position: 'left'},
         {
           type: 'localeDropdown',
           position: 'right',
@@ -96,6 +97,15 @@ module.exports = {
   },
   presets: [
     [
+      'redocusaurus',
+      {
+        specs: [{
+          routePath: '/api/',
+          specUrl: './openapi.json',
+        }],
+      }
+    ],
+    [
       '@docusaurus/preset-classic',
       {
         docs: {
@@ -113,6 +123,14 @@ module.exports = {
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
+      },
+    ],
+  ],
+  plugins: [
+    [
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      {
+        hashed: true,
       },
     ],
   ],

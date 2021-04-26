@@ -14,7 +14,7 @@ cp src/configs/config.example.json src/configs/config.json
 # Taiga Front #
 
 [![Managed with Taiga.io](https://img.shields.io/badge/managed%20with-TAIGA.io-709f14.svg)](https://tree.taiga.io/project/taiga/ "Managed with Taiga.io")
-[![CI](https://github.com/taigaio/taiga-front-next/workflows/CI/badge.svg?branch=master)](https://github.com/taigaio/taiga-front-next/actions)
+[![CI](https://github.com/kaleidos-ventures/taiga-front-next/workflows/CI/badge.svg?branch=main)](https://github.com/kaleidos-ventures/taiga-front-next/actions)
 
 ## Get the compiled version ##
 

@@ -6,9 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import * as webpack from 'webpack';
-
-export default function(config: webpack.WebpackOptions) {
+export default function(config) {
   if (config.module) {
     config.module.rules.push(
       {

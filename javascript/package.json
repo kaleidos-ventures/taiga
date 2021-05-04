@@ -59,6 +59,7 @@
     "@ngrx/store": "^11.0.1",
     "@ngrx/store-devtools": "^11.0.1",
     "@nguniversal/express-engine": "^11.2.0",
+    "@ngx-translate/core": "^13.0.0",
     "@nrwl/angular": "12.0.0",
     "@rx-angular/cdk": "^1.0.0-alpha.4",
     "@rx-angular/state": "^1.4.3",

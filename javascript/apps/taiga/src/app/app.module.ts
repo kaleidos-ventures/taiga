@@ -30,6 +30,7 @@ import { TUI_ICONS_PATH } from '@taiga-ui/core';
 import { TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE } from '@taiga-ui/i18n';
 import { of } from 'rxjs';
 import { CommonsModule } from './commons/commons.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 const MAPPER: Record<string, string> = {
   // iconName: symbolId<Sprite>
@@ -69,6 +70,7 @@ export function iconsPath(name: string): string {
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     TuiRootModule,
+    TranslateModule.forRoot(),
   ],
   bootstrap: [AppComponent],
   providers: [

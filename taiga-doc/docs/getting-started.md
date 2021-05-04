@@ -2,6 +2,7 @@
 sidebar_position: 1
 title: 'Getting started'
 id: getting-started
+slug: /
 ---
 
 ## Installation

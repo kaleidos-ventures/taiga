@@ -9,10 +9,6 @@ module.exports = {
   projectName: 'taiga', // Usually your repo name.
   url: 'https://kaleidos-ventures.github.io/', // github pages url
   baseUrl: '/', // docs public url
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'es'],
-  },
   themeConfig: {
     navbar: {
       title: 'Taiga',
@@ -27,11 +23,15 @@ module.exports = {
           position: 'left',
           label: 'Docs',
         },
-        {to: '/blog', label: 'Changelog', position: 'left'},
-        {to: 'api', label: 'API', position: 'left'},
         {
-          type: 'localeDropdown',
-          position: 'right',
+          to: '/blog',
+          label: 'Changelog',
+          position: 'left'
+        },
+        {
+          to: 'api',
+          label: 'API',
+          position: 'left'
         },
         {
           href: 'https://github.com/kaleidos-ventures/taiga',
@@ -97,6 +97,28 @@ module.exports = {
   },
   presets: [
     [
+      '@docusaurus/preset-classic',
+      {
+        docs: {
+          routeBasePath: '/',
+          path: './docs',
+          sidebarPath: require.resolve('./sidebars.js'),
+          // Please change this to your repo.
+          editUrl:
+            'https://github.com/kaleidos-ventures/taiga/edit/main/taiga-doc/doc/',
+        },
+        blog: {
+          showReadingTime: true,
+          // Please change this to your repo.
+          editUrl:
+            'https://github.com/kaleidos-ventures/taiga/edit/main/taiga-doc/blog/',
+        },
+        theme: {
+          customCss: require.resolve('./src/css/custom.css'),
+        },
+      },
+    ],
+    [
       'redocusaurus',
       {
         specs: [{
@@ -104,26 +126,6 @@ module.exports = {
           specUrl: './openapi.json',
         }],
       }
-    ],
-    [
-      '@docusaurus/preset-classic',
-      {
-        docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          editUrl:
-            'https://github.com/kaleidos-ventures/taiga/taiga-doc/edit/master/website/',
-        },
-        blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          editUrl:
-            'https://github.com/kaleidos-ventures/taiga/taiga-doc/edit/master/website/blog/',
-        },
-        theme: {
-          customCss: require.resolve('./src/css/custom.css'),
-        },
-      },
     ],
   ],
   plugins: [

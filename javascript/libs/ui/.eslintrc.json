@@ -9,7 +9,10 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "parserOptions": {
-        "project": ["libs/ui/tsconfig.*?.json"]
+        "project": [
+          "libs/ui/tsconfig.*?.json",
+          "libs/ui/.storybook/tsconfig.json"
+        ]
       },
       "rules": {
         "@angular-eslint/directive-selector": [

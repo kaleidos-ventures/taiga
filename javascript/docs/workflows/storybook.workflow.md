@@ -1,58 +1,60 @@
 # Storybook workflow
 
-Create a component file in `/src/stories/` like `MyComponent.stories.ts`.
+Create the story file next to the componente in `javascript/libs/ui/src/lib/` like `MyComponent.stories.ts`.
 
-Config the story.
-
-```ts
-import { StoryBookTranslationModule } from './utils/translate-local-loader';
-
-export default {
-  // add the module in the path, in this example 'Commons'
-  title: 'Commons/MyComponent',
-  component: MyComponentComponent,
-  decorators: [
-    moduleMetadata({
-      declarations: [],
-      // Needed if you have routes
-      providers: [{provide: APP_BASE_HREF, useValue: '/'}],
-      imports: [
-        // Add local translations from assets/i18n/en.json
-        StoryBookTranslationModule(),
-        // Prevent Storybook error "Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'iframe.html'"
-        RouterModule.forRoot([], { useHash: true }),
-        MyComponentModule,
-      ],
-    }),
-  ],
-} as Meta;
-```
-
-Or you can use the helper function.
+Config the story with the helper function.
 
 ```ts
+import { ConfigureStory } from '@storybook-helper';
+import { Story } from '@storybook/angular';
+
 export default ConfigureStory({
-  // add the module in the path, in this example 'Commons'
-  title: 'Commons/MyComponent',
+  // you can add a folder like `title: 'myfolder/MyComponent'`
+  title: 'MyComponent',
   component: MyComponentComponent,
   extraModules: [MyComponentModule],
 });
 ```
 
-Create the template & the bindings.
+Create the template & the bindings:
 
 ```ts
-const Template: Story<MyComponentComponent> = (args: MyComponentComponent) => ({
+export const Primary = ConfigureTemplate({
+  args: {
+    project: ProjectMockFactory.build(),
+  }
+});
+```
+
+You can also add a template to wrap your component:
+
+```ts
+export const Primary = ConfigureTemplate({
   template: `
+    <h1>Example component</h1>
     <tg-my-component [project]="project"></tg-my-component>
-    <tg-svg-sprite></tg-svg-sprite>
   `,
-  props: args,
+  args: {
+    project: ProjectMockFactory.build(),
+  }
+});
+```
+
+## Full example
+
+```ts
+import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
+import { Story } from '@storybook/angular';
+
+export default ConfigureStory({
+  title: 'MyComponent',
+  component: MyComponentComponent,
+  extraModules: [MyComponentModule],
 });
 
-export const Default = Template.bind({});
-
-Default.args = {
-  project: ProjectMockFactory.build(),
-};
+export const Primary = ConfigureTemplate({
+  args: {
+    project: ProjectMockFactory.build(),
+  }
+});
 ```

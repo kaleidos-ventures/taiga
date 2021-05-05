@@ -20,7 +20,8 @@
       "@taiga/api": ["libs/api/src/index.ts"],
       "@taiga/data": ["libs/data/src/index.ts"],
       "@taiga/ws": ["libs/ws/src/index.ts"],
-      "@taiga/core": ["libs/core/src/index.ts"]
+      "@taiga/core": ["libs/core/src/index.ts"],
+      "@storybook-helper": ["libs/ui/stories-helper.ts"]
     },
     "forceConsistentCasingInFileNames": true,
     "strict": true,

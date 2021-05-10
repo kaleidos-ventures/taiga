@@ -12,6 +12,7 @@ export const environment: Environment = {
   production: true,
   configLocal: {
     api: '',
-    ws: ''
+    ws: '',
+    defaultLanguage: 'en'
   },
 };

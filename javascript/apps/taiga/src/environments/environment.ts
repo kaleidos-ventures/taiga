@@ -17,7 +17,8 @@ export const environment: Environment = {
   // configRemote: '/assets/config.json',
   configLocal: {
     api: 'http://localhost:3000',
-    ws: 'ws://localhost:8080'
+    ws: 'ws://localhost:8080',
+    defaultLanguage: 'en'
   },
 };
 

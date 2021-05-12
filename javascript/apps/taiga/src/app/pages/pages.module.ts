@@ -8,6 +8,7 @@
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
 
 const routes: Routes = [
 
@@ -16,8 +17,10 @@ const routes: Routes = [
 @NgModule({
   declarations: [],
   imports: [
+    QuicklinkModule,
     RouterModule.forRoot(routes, {
-      initialNavigation: 'enabled'
+      initialNavigation: 'enabled',
+      preloadingStrategy: QuicklinkStrategy
     }),
   ],
   providers: [],

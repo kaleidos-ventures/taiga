@@ -12,7 +12,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ConfigService } from '@taiga/core';
 import { Store } from '@ngrx/store';
-import { CoreState, getGlobalLoading, globalLoading } from '@taiga/core';
+import { getGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
 @Injectable()
 export class ApiRestInterceptorService implements HttpInterceptor {
@@ -20,7 +20,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly store: Store<CoreState>) {
+    private readonly store: Store) {
     this.requests.pipe(
       concatLatestFrom(() => this.store.select(getGlobalLoading))
     ).subscribe(([requests, loading]) => {

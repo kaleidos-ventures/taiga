@@ -25,14 +25,14 @@ export const initialState: CoreState = {
 export const reducer = createReducer(
   initialState,
 
-  on(unexpectedError, (state, { error }) => {
+  on(unexpectedError, (state, { error }): CoreState => {
     return {
       ...state,
       unexpectedError: error
     };
   }),
 
-  on(globalLoading, (state, { loading }) => {
+  on(globalLoading, (state, { loading }): CoreState => {
     return {
       ...state,
       loading

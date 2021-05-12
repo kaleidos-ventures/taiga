@@ -116,6 +116,7 @@
     "eslint": "7.22.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-cypress": "^2.10.3",
+    "eslint-plugin-ngrx": "^1.21.1",
     "express": "^4.15.2",
     "faker": "^5.5.2",
     "htmlhint": "^0.14.2",

@@ -1,4 +1,4 @@
-# Testing
+# Component Testing
 
 For testing we're using [spectator](https://github.com/ngneat/spectator). This is the test of the previous service example.
 

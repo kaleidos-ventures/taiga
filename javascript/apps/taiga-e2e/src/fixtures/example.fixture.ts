@@ -6,4 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
- export const getGreeting = () => cy.get('h1');
+import * as faker from 'faker';
+
+faker.seed(6443);
+
+export const exampleFixture = {
+  name: faker.name.firstName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  userStorySubject: faker.lorem.sentence()
+};

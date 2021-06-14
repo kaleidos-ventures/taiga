@@ -6,4 +6,4 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
- export const getGreeting = () => cy.get('h1');
+export const getGreeting = () => cy.get('h1');

@@ -18,7 +18,7 @@ import { environment } from '../environments/environment';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { PagesModule } from './pages/pages.module';
 import { ConfigService } from '@taiga/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { ApiRestInterceptorModule } from './commons/api-rest-interceptor/api-rest-interceptor.module';
 import { ApiModule } from '@taiga/api';
 import { UiModule } from '@taiga/ui';
@@ -30,8 +30,8 @@ import { TUI_ICONS_PATH } from '@taiga-ui/core';
 import { TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE } from '@taiga-ui/i18n';
 import { of } from 'rxjs';
 import { CommonsModule } from './commons/commons.module';
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslocoRootModule } from './transloco/transloco-root.module';
+import { TranslocoService } from '@ngneat/transloco';
 
 const MAPPER: Record<string, string> = {
   // iconName: symbolId<Sprite>
@@ -39,10 +39,6 @@ const MAPPER: Record<string, string> = {
 
 export function iconsPath(name: string): string {
   return `assets/icons/sprite.svg#${MAPPER[name]}`;
-}
-
-export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http);
 }
 
 @NgModule({
@@ -75,26 +71,20 @@ export function HttpLoaderFactory(http: HttpClient) {
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     TuiRootModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    }),
+    TranslocoRootModule,
   ],
   bootstrap: [AppComponent],
   providers: [
     {
       provide: APP_INITIALIZER,
       multi: true,
-      deps: [ConfigService, EnvironmentService, TranslateService],
-      useFactory: (appConfigService: ConfigService, environmentService: EnvironmentService, translate: TranslateService) => {
+      deps: [ConfigService, EnvironmentService, TranslocoService],
+      useFactory: (appConfigService: ConfigService, environmentService: EnvironmentService, translocoService: TranslocoService) => {
         return () => {
           const config = environmentService.getEnvironment().configLocal;
           if (config) {
             appConfigService._config = config;
-            translate.setDefaultLang(config.defaultLanguage);
+            translocoService.setDefaultLang(config.defaultLanguage);
           } else {
             throw new Error('No config provided');
           }

@@ -50,6 +50,21 @@ CREATE apps/taiga/src/app/pages/todo-list/selectors/todo-list.selectors.ts
 UPDATE apps/taiga/src/app/pages/todo-list/todo-list.module.ts
 ```
 
+### Creating models
+
+Add your models in `apps/taiga/src/app/pages/todo-list/models/`.
+
+Example:
+
+```ts
+export interface Todo {
+  id: string;
+  title: string;
+}
+```
+
+Is the new model is used in other modules add it to `libs/data/src/lib/`.
+
 ### Create a feature submodule
 
 If your feature complex enough rememember to create new modules inside the feature.

@@ -14,7 +14,7 @@ import { fetch } from '@nrwl/angular';
   providedIn: 'root',
 })
 class TodoEffects {
-  loadTodos$ = createEffect(() => {
+  public loadTodos$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(TodoListActions.loadTodos),
       fetch({

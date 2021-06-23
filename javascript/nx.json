@@ -1,13 +1,18 @@
 {
   "implicitDependencies": {
     "angular.json": "*",
-    "package.json": { "dependencies": "*", "devDependencies": "*" },
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
     ".eslintrc.json": "*",
     "nx.json": "*"
   },
-  "affected": { "defaultBase": "main" },
+  "affected": {
+    "defaultBase": "main"
+  },
   "npmScope": "taiga",
   "tasksRunnerOptions": {
     "default": {
@@ -24,12 +29,27 @@
     }
   },
   "projects": {
-    "taiga": { "tags": [] },
-    "taiga-e2e": { "tags": [], "implicitDependencies": ["taiga"] },
-    "ui": { "tags": [] },
-    "api": { "tags": [] },
-    "data": { "tags": [] },
-    "ws": { "tags": [] },
-    "core": { "tags": [] }
+    "api": {
+      "tags": ["scope:api"]
+    },
+    "core": {
+      "tags": ["scope:core"]
+    },
+    "data": {
+      "tags": ["scope:data"]
+    },
+    "taiga": {
+      "tags": ["scope:taiga"]
+    },
+    "taiga-e2e": {
+      "tags": ["scope:taiga"],
+      "implicitDependencies": ["taiga"]
+    },
+    "ui": {
+      "tags": ["scope:ui"]
+    },
+    "ws": {
+      "tags": ["scope:ws"]
+    }
   }
 }

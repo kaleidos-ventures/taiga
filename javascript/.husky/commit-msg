@@ -1,0 +1,2 @@
+cd javascript
+npx --no-install commitlint --edit $1 && npm run lint:affected

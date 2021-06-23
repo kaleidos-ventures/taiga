@@ -6,7 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { wsMessage } from '@taiga/ws';
+import { WsService } from '../services/ws.service';
+import { wsMessage  } from '../ws.actions';
 import { ConfigService } from '@taiga/core';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { createEffect } from '@ngrx/effects';
@@ -15,8 +16,6 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { cold, hot } from 'jest-marbles';
-
-import { WsService } from '@taiga/ws';
 
 describe('WsService', () => {
   let actions$ = new Observable<Action>();

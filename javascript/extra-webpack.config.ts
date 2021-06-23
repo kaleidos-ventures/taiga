@@ -6,8 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export default function(config) {
-  if (config.module) {
+import { Configuration } from 'webpack';
+
+export default function(config: Configuration) {
+  if (config?.module?.rules) {
     config.module.rules.push(
       {
         test   : /\.css$/,

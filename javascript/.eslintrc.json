@@ -1,26 +1,16 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "**/*"
-  ],
-  "plugins": [
-    "@nrwl/nx",
-    "ngrx"
-  ],
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nrwl/nx", "ngrx"],
   "overrides": [
     {
-      "files": [
-        "*.ts",
-        "*.tsx",
-        "*.js",
-        "*.jsx"
-      ],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [],
+            "allow": ["@storybook-helper", "@"],
             "depConstraints": [
               {
                 "sourceTag": "*",
@@ -34,10 +24,7 @@
       }
     },
     {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
+      "files": ["*.ts", "*.tsx"],
       "extends": [
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
@@ -47,20 +34,12 @@
       "rules": {
         "@typescript-eslint/unbound-method": "off",
         "indent": "off",
-        "@typescript-eslint/indent": [
-          "error",
-          2
-        ]
+        "@typescript-eslint/indent": ["error", 2]
       }
     },
     {
-      "files": [
-        "*.js",
-        "*.jsx"
-      ],
-      "extends": [
-        "plugin:@nrwl/nx/javascript"
-      ],
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nrwl/nx/javascript"],
       "rules": {}
     }
   ]

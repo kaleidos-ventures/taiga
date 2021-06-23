@@ -15,3 +15,5 @@ rootMain.stories.push(
 );
 
 module.exports = rootMain;
+
+module.exports.core = { ...module.exports.core, builder: 'webpack5' };

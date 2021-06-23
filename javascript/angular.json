@@ -32,6 +32,121 @@
     }
   },
   "projects": {
+    "api": {
+      "projectType": "library",
+      "root": "libs/api",
+      "sourceRoot": "libs/api/src",
+      "prefix": "taiga",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/angular:package",
+          "options": {
+            "tsConfig": "libs/api/tsconfig.lib.json",
+            "project": "libs/api/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/api/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/api/src/**/*.ts",
+              "libs/api/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/api"
+          ],
+          "options": {
+            "jestConfig": "libs/api/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "core": {
+      "projectType": "library",
+      "root": "libs/core",
+      "sourceRoot": "libs/core/src",
+      "prefix": "taiga",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/angular:package",
+          "options": {
+            "tsConfig": "libs/core/tsconfig.lib.json",
+            "project": "libs/core/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/core/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/core/src/**/*.ts",
+              "libs/core/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/core"
+          ],
+          "options": {
+            "jestConfig": "libs/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "data": {
+      "root": "libs/data",
+      "sourceRoot": "libs/data/src",
+      "projectType": "library",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/angular:package",
+          "options": {
+            "tsConfig": "libs/data/tsconfig.lib.json",
+            "project": "libs/data/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/data/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/data/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/data"
+          ],
+          "options": {
+            "jestConfig": "libs/data/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "taiga": {
       "projectType": "application",
       "root": "apps/taiga",
@@ -67,7 +182,8 @@
               "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less",
               "apps/taiga/src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "optimization": false
           },
           "configurations": {
             "production": {
@@ -77,7 +193,14 @@
                   "with": "apps/taiga/src/environments/environment.prod.ts"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
@@ -127,7 +250,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/taiga"],
+          "outputs": [
+            "coverage/apps/taiga"
+          ],
           "options": {
             "jestConfig": "apps/taiga/jest.config.js",
             "passWithNoTests": true
@@ -138,7 +263,9 @@
           "options": {
             "outputPath": "dist/taiga/server",
             "main": "apps/taiga/server.ts",
-            "tsConfig": "apps/taiga/tsconfig.server.json"
+            "tsConfig": "apps/taiga/tsconfig.server.json",
+            "sourceMap": true,
+            "optimization": false
           },
           "configurations": {
             "production": {
@@ -150,9 +277,17 @@
                 }
               ],
               "sourceMap": false,
-              "optimization": true
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              }
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve-ssr": {
           "builder": "@nguniversal/builders:ssr-dev-server",
@@ -172,7 +307,9 @@
           "options": {
             "browserTarget": "taiga:build:production",
             "serverTarget": "taiga:server:production",
-            "routes": ["/"]
+            "routes": [
+              "/"
+            ]
           },
           "configurations": {
             "production": {}
@@ -201,7 +338,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/taiga-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/taiga-e2e/**/*.{js,ts}"
+            ]
           }
         }
       }
@@ -227,12 +366,17 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/ui/src/**/*.ts", "libs/ui/src/**/*.html"]
+            "lintFilePatterns": [
+              "libs/ui/src/**/*.ts",
+              "libs/ui/src/**/*.html"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/ui"],
+          "outputs": [
+            "coverage/libs/ui"
+          ],
           "options": {
             "jestConfig": "libs/ui/jest.config.js",
             "passWithNoTests": true
@@ -255,7 +399,9 @@
         },
         "build-storybook": {
           "builder": "@nrwl/storybook:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "uiFramework": "@storybook/angular",
             "outputPath": "dist/storybook/ui",
@@ -267,76 +413,6 @@
             "ci": {
               "quiet": true
             }
-          }
-        }
-      }
-    },
-    "api": {
-      "projectType": "library",
-      "root": "libs/api",
-      "sourceRoot": "libs/api/src",
-      "prefix": "taiga",
-      "architect": {
-        "build": {
-          "builder": "@nrwl/angular:package",
-          "options": {
-            "tsConfig": "libs/api/tsconfig.lib.json",
-            "project": "libs/api/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "libs/api/tsconfig.lib.prod.json"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/api/src/**/*.ts",
-              "libs/api/src/**/*.html"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api"],
-          "options": {
-            "jestConfig": "libs/api/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "data": {
-      "root": "libs/data",
-      "sourceRoot": "libs/data/src",
-      "projectType": "library",
-      "architect": {
-        "build": {
-          "builder": "@nrwl/angular:package",
-          "options": {
-            "tsConfig": "libs/data/tsconfig.lib.json",
-            "project": "libs/data/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "libs/data/tsconfig.lib.prod.json"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/data/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/data"],
-          "options": {
-            "jestConfig": "libs/data/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }
@@ -362,51 +438,19 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/ws/src/**/*.ts", "libs/ws/src/**/*.html"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/ws"],
-          "options": {
-            "jestConfig": "libs/ws/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "core": {
-      "projectType": "library",
-      "root": "libs/core",
-      "sourceRoot": "libs/core/src",
-      "prefix": "taiga",
-      "architect": {
-        "build": {
-          "builder": "@nrwl/angular:package",
-          "options": {
-            "tsConfig": "libs/core/tsconfig.lib.json",
-            "project": "libs/core/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "libs/core/tsconfig.lib.prod.json"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
             "lintFilePatterns": [
-              "libs/core/src/**/*.ts",
-              "libs/core/src/**/*.html"
+              "libs/ws/src/**/*.ts",
+              "libs/ws/src/**/*.html"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/core"],
+          "outputs": [
+            "coverage/libs/ws"
+          ],
           "options": {
-            "jestConfig": "libs/core/jest.config.js",
+            "jestConfig": "libs/ws/jest.config.js",
             "passWithNoTests": true
           }
         }

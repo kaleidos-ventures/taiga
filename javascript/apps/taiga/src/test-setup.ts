@@ -6,4 +6,4 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import 'jest-preset-angular';
+import 'jest-preset-angular/setup-jest';

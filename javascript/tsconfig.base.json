@@ -16,12 +16,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["apps/taiga/src/*"],
-      "@taiga/ui": ["libs/ui/src/index.ts"],
+      "@storybook-helper": ["libs/ui/stories-helper.ts"],
       "@taiga/api": ["libs/api/src/index.ts"],
-      "@taiga/data": ["libs/data/src/index.ts"],
-      "@taiga/ws": ["libs/ws/src/index.ts"],
       "@taiga/core": ["libs/core/src/index.ts"],
-      "@storybook-helper": ["libs/ui/stories-helper.ts"]
+      "@taiga/data": ["libs/data/src/index.ts"],
+      "@taiga/ui": ["libs/ui/src/index.ts"],
+      "@taiga/ws": ["libs/ws/src/index.ts"]
     },
     "forceConsistentCasingInFileNames": true,
     "strict": true,

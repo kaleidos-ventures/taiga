@@ -6,18 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-/* TODO: DELETE */
-/* eslint-disable */
-
-import { exampleFixture } from '../fixtures/example.fixture';
-import { getGreeting } from '../support/app.po';
-
 describe('taiga', () => {
-  beforeEach(() => cy.visit('/'));
-
-  xit('should display welcome message', () => {
-    cy.login(exampleFixture.email , exampleFixture.name);
-
-    getGreeting().contains('Welcome to taiga!');
+  beforeEach(() => {
+    cy.visit('/');
+    cy.initAxe();
   });
+
+  // it('should display welcome message', () => {
+  //   cy.tgCheckA11y();
+  // });
 });

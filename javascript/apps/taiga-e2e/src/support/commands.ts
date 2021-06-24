@@ -15,29 +15,61 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
-/* TODO: DELETE */
+
+function initAxeCommand(): void {
+  // https://github.com/component-driven/cypress-axe/issues/84
+  cy.readFile('../../../../node_modules/axe-core/axe.js').then(source => {
+    return cy.window({ log: false }).then(window => {
+      window.eval(source);
+    });
+  });
+}
+
+Cypress.Commands.add('initAxe', initAxeCommand);
+
+interface CheckA11yParams {
+  context?: Parameters<typeof cy.checkA11y>[0];
+  axe?: Parameters<typeof cy.checkA11y>[1];
+  violationFeedback?: Parameters<typeof cy.checkA11y>[2];
+}
+
 /* eslint-disable */
+const terminalLog = (violations: any[]) => {
+  cy.task(
+    'log',
+    `${violations.length} accessibility violation${
+      violations.length === 1 ? '' : 's'
+    } ${violations.length === 1 ? 'was' : 'were'} detected`
+  );
+
+  const violationData = violations.map(
+    ({ id, impact, description, nodes }: any) => ({
+      id,
+      impact,
+      description,
+      nodes: nodes.length
+    })
+  );
+
+  cy.task('table', violationData);
+};
+/* eslint-enable */
+
+function checkA11y(params: CheckA11yParams = {}): void {
+  params = {
+    ...params,
+    violationFeedback: terminalLog,
+  };
+
+  cy.checkA11y(params.context, params.axe, params.violationFeedback);
+}
+
+Cypress.Commands.add('tgCheckA11y', checkA11y);
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Cypress {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    login(email: string, password: string): void;
+  interface Chainable {
+    initAxe: typeof initAxeCommand
+    tgCheckA11y: typeof checkA11y
   }
 }
-//
-// -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
-  console.log('Custom command example: Login', email, password);
-});
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })

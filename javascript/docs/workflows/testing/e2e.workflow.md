@@ -23,9 +23,17 @@ To create a new custom command add it to `src/taiga-e2e/src/support/commands`
 Example command
 
 ```js
-Cypress.Commands.add('login', (email, password) => {
+function loginCommand(email, password) {
   console.log('Custom command example: Login', email, password);
-});
+}
+
+Cypress.Commands.add('login', loginCommand);
+
+declare namespace Cypress {
+  interface Chainable {
+    login: typeof loginCommand 
+  }
+}
 ```
 
 And use it as follows:
@@ -68,6 +76,23 @@ export const exampleFixture = {
 };
 ```
 
+## A11y
+
+Init axe.
+```ts
+  beforeEach(() => {
+    cy.visit('/');
+    cy.initAxe();
+  });
+```
+
+Run axe tests
+```ts
+it('is a11y', () => {
+  cy.tgCheckA11y();
+});
+```
+
 And import it to your integration test to fill the data.
 
 ## Full example of e2e test
@@ -86,7 +111,9 @@ describe('taiga', () => {
 });
 ```
 
+## Run
 
-
-
-
+```sh
+npm run e2e
+npm run e2e -- --watch
+```

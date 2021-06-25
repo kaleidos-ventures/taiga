@@ -50,6 +50,47 @@ CREATE apps/taiga/src/app/pages/todo-list/selectors/todo-list.selectors.ts
 UPDATE apps/taiga/src/app/pages/todo-list/todo-list.module.ts
 ```
 
+Ngrx schematics right now doesn't use the new `createFeature` so we have to manually update the files. Here an example of a valid ngrx state.
+
+```ts
+// todo-list.reducer.ts
+interface State {
+  todos: Todo[];
+  filter: string;
+}
+
+const initialState: State = {
+  todos: [],
+  filter: '',
+};
+
+export const todosFeature = createFeature({
+  name: 'todos',
+  reducer: createReducer(
+    initialState,
+    on(TodoListActions.loadSuccess, /* ... */),
+  ),
+});
+
+// todo-list.selectors.ts
+import { todosFeature } from './todo-list.reducer';
+
+export const {
+  selectTodos,
+  selectFilter,
+} = todosFeature;
+
+export const selectFilteredTodos = createSelector(
+  selectTodos,
+  // ...
+);
+
+// todo-list.module.ts
+import { todosFeature } from './todo-list.reducer';
+
+StoreModule.forFeature(todosFeature);
+```
+
 ### Creating models
 
 Add your models in `apps/taiga/src/app/pages/todo-list/models/`.

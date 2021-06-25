@@ -32,6 +32,8 @@
         "plugin:ngrx/recommended"
       ],
       "rules": {
+        "semi": "off",
+        "@typescript-eslint/semi": ["error"],
         "@typescript-eslint/unbound-method": "off",
         "indent": "off",
         "@typescript-eslint/indent": ["error", 2]

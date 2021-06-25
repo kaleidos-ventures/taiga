@@ -12,4 +12,4 @@ export default [
     defaultKey: 'esc',
     scope: 'modal'
   }
-]
+];

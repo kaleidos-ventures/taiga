@@ -25,11 +25,11 @@ export class ApiRestInterceptorService implements HttpInterceptor {
       concatLatestFrom(() => this.store.select(getGlobalLoading))
     ).subscribe(([requests, loading]) => {
       if (requests.length && !loading) {
-        this.store.dispatch(globalLoading({ loading: true }))
+        this.store.dispatch(globalLoading({ loading: true }));
       } else if (!requests.length && loading) {
         // Is async to run this action after http effect actions
         requestAnimationFrame(() => {
-          this.store.dispatch(globalLoading({ loading: false }))
+          this.store.dispatch(globalLoading({ loading: false }));
         });
       }
     });

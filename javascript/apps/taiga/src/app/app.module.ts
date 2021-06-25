@@ -99,7 +99,7 @@ export function iconsPath(name: string): string {
       provide: TUI_LANGUAGE,
       useFactory: () => {
         // TODO: Get user language from service
-        return of(TUI_ENGLISH_LANGUAGE)
+        return of(TUI_ENGLISH_LANGUAGE);
       }
     },
   ],

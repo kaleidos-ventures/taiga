@@ -10,7 +10,7 @@ import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { environment } from './environments/environment';
-import { Config } from '@taiga/data'
+import { Config } from '@taiga/data';
 
 function init() {
   void import('./app/app.module').then((m) => {

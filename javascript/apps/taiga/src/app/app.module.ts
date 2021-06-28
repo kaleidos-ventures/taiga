@@ -41,6 +41,12 @@ export function iconsPath(name: string): string {
   return `assets/icons/sprite.svg#${MAPPER[name]}`;
 }
 
+export function prefersReducedMotion(): boolean {
+  const mediaQueryList = window.matchMedia("(prefers-reduced-motion)");
+
+  return mediaQueryList.matches;
+}
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -53,7 +59,9 @@ export function iconsPath(name: string): string {
     ApiRestInterceptorModule,
     PagesModule,
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
-    BrowserAnimationsModule,
+    BrowserAnimationsModule.withConfig({
+      disableAnimations: prefersReducedMotion()
+    }),
     StoreRouterConnectingModule.forRoot(),
     StoreModule.forRoot(
       {},

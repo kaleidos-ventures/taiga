@@ -17,7 +17,6 @@ zoneConfig.events.disable.UNPATCHED_EVENTS([
   'scroll',
   'mousemove',
   'mouseleave',
-  'click',
   'wheel',
   'focus',
   'blur'

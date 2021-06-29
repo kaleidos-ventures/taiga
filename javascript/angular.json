@@ -36,7 +36,7 @@
       "projectType": "library",
       "root": "libs/api",
       "sourceRoot": "libs/api/src",
-      "prefix": "taiga",
+      "prefix": "tg",
       "architect": {
         "build": {
           "builder": "@nrwl/angular:package",
@@ -75,7 +75,7 @@
       "projectType": "library",
       "root": "libs/core",
       "sourceRoot": "libs/core/src",
-      "prefix": "taiga",
+      "prefix": "tg",
       "architect": {
         "build": {
           "builder": "@nrwl/angular:package",
@@ -151,7 +151,7 @@
       "projectType": "application",
       "root": "apps/taiga",
       "sourceRoot": "apps/taiga/src",
-      "prefix": "taiga",
+      "prefix": "tg",
       "architect": {
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
@@ -349,7 +349,7 @@
       "projectType": "library",
       "root": "libs/ui",
       "sourceRoot": "libs/ui/src",
-      "prefix": "taiga",
+      "prefix": "tg-ui",
       "architect": {
         "build": {
           "builder": "@nrwl/angular:package",
@@ -421,7 +421,7 @@
       "projectType": "library",
       "root": "libs/ws",
       "sourceRoot": "libs/ws/src",
-      "prefix": "taiga",
+      "prefix": "tg",
       "architect": {
         "build": {
           "builder": "@nrwl/angular:package",

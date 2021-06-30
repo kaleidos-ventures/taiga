@@ -15,7 +15,7 @@ import { Config } from '@taiga/data';
 function init() {
   void import('./app/app.module').then((m) => {
     platformBrowserDynamic()
-      .bootstrapModule(m.AppModule)
+      .bootstrapModule(m.AppModule, { ngZoneEventCoalescing: true })
       .catch((err) => console.error(err));
   });
 }

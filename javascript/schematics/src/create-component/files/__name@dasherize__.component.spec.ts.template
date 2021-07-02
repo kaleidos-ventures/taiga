@@ -1,0 +1,50 @@
+import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { <%= classify(name) %>Component } from './<%= dasherize(name) %>.component';
+
+// The selector to mock
+import { selectUser } from './state/user.selectors';
+
+describe('<%= classify(name) %>Component', () => {
+  let spectator: Spectator<<%= classify(name) %>Component>;
+  let store: MockStore;
+  const createComponent = createComponentFactory(<%= classify(name) %>Component);
+
+  // fake state
+  const initialState = { loggedIn: false };
+
+  beforeEach(() => {
+    spectator = createComponent({
+      // The component inputs
+      props: {
+        name: 'example'
+      },
+      // Override the component's providers
+      providers: [
+        provideMockStore({ initialState }),
+      ],
+      // Whether to run change detection (defaults to true)
+      detectChanges: false
+    });
+
+    store = spectator.inject(MockStore);
+  });
+
+  it('example', () => {
+    // change ngrx state
+    store.setState({ loggedIn: true });
+
+    // mock selector
+    store.overrideSelector(selectUser, {
+      id: 1,
+      name: 'test',
+    });
+
+    // trigger emission from all selectors
+    store.refreshState();
+    spectator.detectChanges();
+
+    // This test checks that the input attribute name becomes a class in the component structure
+    expect(spectator.query('div')).toHaveClass('example');
+  });
+});

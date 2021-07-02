@@ -1,0 +1,5 @@
+<ng-container *transloco="let t;">
+<ng-container *ngIf="model$ | async as vm">
+
+</ng-container>
+</ng-container>

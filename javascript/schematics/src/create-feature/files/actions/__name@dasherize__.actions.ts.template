@@ -1,0 +1,5 @@
+import { createAction, props } from '@ngrx/store';
+
+export const example = createAction(
+  '[<%= classify(name) %>] example action',
+);

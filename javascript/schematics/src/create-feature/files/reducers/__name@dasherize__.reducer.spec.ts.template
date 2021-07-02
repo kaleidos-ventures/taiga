@@ -1,0 +1,12 @@
+import { exampleAction } from '../actions/<%= dasherize(name) %>.actions';
+import { <%= camelize(name) %>Feature, initialState } from './<%= dasherize(name) %>.reducer';
+
+describe('<%= classify(name) %> Reducer', () => {
+  it('example', () => {
+    const action = exampleAction();
+
+    const result = <%= camelize(name) %>Feature.reducer(initialState, action);
+
+    expect(result).toBe(initialState);
+  });
+});

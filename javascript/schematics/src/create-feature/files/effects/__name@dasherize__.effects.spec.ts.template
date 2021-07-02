@@ -1,0 +1,27 @@
+import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
+import { provideMockActions } from '@ngrx/effects/testing';
+import { Action } from '@ngrx/store';
+import { Observable } from 'rxjs';
+
+import { <%= classify(name) %>Effects } from './<%= dasherize(name) %>.effects';
+
+describe('<%= classify(name) %>Effects', () => {
+  let actions$: Observable<Action>;
+  let spectator: SpectatorService<<%= classify(name) %>Effects>;
+
+  const createService = createServiceFactory({
+    service: <%= classify(name) %>Effects,
+    providers: [
+      provideMockActions(() => actions$)
+    ],
+    mocks: []
+  });
+
+  beforeEach(() => {
+    spectator = createService();
+  });
+
+  it('should be created', () => {
+    expect(spectator.effects).toBeTruthy();
+  });
+});

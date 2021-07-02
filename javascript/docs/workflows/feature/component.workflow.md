@@ -14,7 +14,11 @@ Depending on the type of component there could be three different locations wher
 Create an `Example` component for a feature in the shared/ folder (or any other feature folder).
 
 ```bash
-ng g component shared/todo-list/Example --export --changeDetection OnPush
+// shared component
+npx schematics ./schematics:create-component --name example --dryRun=false
+
+// feature component
+npx schematics ./schematics:create-component --name list --module todo-list.module --path apps/taiga/src/app/features/todo-list/components --dryRun=false
 ```
 
 This will generate the component files (html, css, ts, spec) and will add the component to the parent module declarations and exports.

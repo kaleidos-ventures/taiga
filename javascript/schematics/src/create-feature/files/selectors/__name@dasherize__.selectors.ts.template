@@ -1,0 +1,7 @@
+import { createSelector } from '@ngrx/store';
+import { <%= camelize(name) %>Feature } from '../reducer/<%= dasherize(name) %>.reducer';
+
+
+export const {
+
+} = <%= camelize(name) %>Feature;

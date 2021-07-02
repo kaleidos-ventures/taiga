@@ -1,0 +1,17 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { StoreModule } from '@ngrx/store';
+import { <%= camelize(name) %>Feature } from './reducers/<%= dasherize(name) %>.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { <%= classify(name) %>Effects } from './effects/<%= dasherize(name) %>.effects';
+
+@NgModule({
+  declarations: [],
+  imports: [
+    CommonModule,
+    StoreModule.forFeature(<%= camelize(name) %>Feature),
+    EffectsModule.forFeature([<%= classify(name) %>Effects])
+  ],
+  exports: []
+})
+export class <%= classify(name) %>Module { }

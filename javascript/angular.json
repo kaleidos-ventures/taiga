@@ -61,9 +61,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api"
-          ],
+          "outputs": ["coverage/libs/api"],
           "options": {
             "jestConfig": "libs/api/jest.config.js",
             "passWithNoTests": true
@@ -100,9 +98,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/core"
-          ],
+          "outputs": ["coverage/libs/core"],
           "options": {
             "jestConfig": "libs/core/jest.config.js",
             "passWithNoTests": true
@@ -130,16 +126,12 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/data/**/*.ts"
-            ]
+            "lintFilePatterns": ["libs/data/**/*.ts"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/data"
-          ],
+          "outputs": ["coverage/libs/data"],
           "options": {
             "jestConfig": "libs/data/jest.config.js",
             "passWithNoTests": true
@@ -250,9 +242,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/taiga"
-          ],
+          "outputs": ["coverage/apps/taiga"],
           "options": {
             "jestConfig": "apps/taiga/jest.config.js",
             "passWithNoTests": true
@@ -307,9 +297,7 @@
           "options": {
             "browserTarget": "taiga:build:production",
             "serverTarget": "taiga:server:production",
-            "routes": [
-              "/"
-            ]
+            "routes": ["/"]
           },
           "configurations": {
             "production": {}
@@ -338,9 +326,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/taiga-e2e/**/*.{js,ts}"
-            ]
+            "lintFilePatterns": ["apps/taiga-e2e/**/*.{js,ts}"]
           }
         }
       }
@@ -366,17 +352,12 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/ui/src/**/*.ts",
-              "libs/ui/src/**/*.html"
-            ]
+            "lintFilePatterns": ["libs/ui/src/**/*.ts", "libs/ui/src/**/*.html"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/ui"
-          ],
+          "outputs": ["coverage/libs/ui"],
           "options": {
             "jestConfig": "libs/ui/jest.config.js",
             "passWithNoTests": true
@@ -399,9 +380,7 @@
         },
         "build-storybook": {
           "builder": "@nrwl/storybook:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "uiFramework": "@storybook/angular",
             "outputPath": "dist/storybook/ui",
@@ -438,17 +417,12 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/ws/src/**/*.ts",
-              "libs/ws/src/**/*.html"
-            ]
+            "lintFilePatterns": ["libs/ws/src/**/*.ts", "libs/ws/src/**/*.html"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/ws"
-          ],
+          "outputs": ["coverage/libs/ws"],
           "options": {
             "jestConfig": "libs/ws/jest.config.js",
             "passWithNoTests": true

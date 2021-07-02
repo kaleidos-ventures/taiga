@@ -9,10 +9,11 @@
 module.exports = {
   stories: [],
   addons: [
+    '@storybook/addon-essentials',
     '@storybook/addon-controls',
     '@storybook/addon-links',
     '@storybook/addon-actions',
     '@storybook/addon-a11y',
-    '@storybook/addon-notes'
+    '@storybook/addon-notes',
   ],
 };

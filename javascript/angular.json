@@ -76,15 +76,27 @@
       "prefix": "tg",
       "architect": {
         "build": {
-          "builder": "@nrwl/angular:package",
+          "builder": "@nrwl/angular:ng-packagr-lite",
+          "outputs": ["dist/libs/core"],
           "options": {
-            "tsConfig": "libs/core/tsconfig.lib.json",
             "project": "libs/core/ng-package.json"
           },
           "configurations": {
             "production": {
               "tsConfig": "libs/core/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/core/tsconfig.lib.json"
             }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/core"],
+          "options": {
+            "jestConfig": "libs/core/jest.config.js",
+            "passWithNoTests": true
           }
         },
         "lint": {
@@ -94,14 +106,6 @@
               "libs/core/src/**/*.ts",
               "libs/core/src/**/*.html"
             ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/core"],
-          "options": {
-            "jestConfig": "libs/core/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }
@@ -147,6 +151,7 @@
       "architect": {
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
+          "outputs": ["{options.outputPath}"],
           "options": {
             "customWebpackConfig": {
               "path": "./extra-webpack.config.ts",
@@ -159,7 +164,6 @@
             "main": "apps/taiga/src/main.ts",
             "polyfills": "apps/taiga/src/polyfills.ts",
             "tsConfig": "apps/taiga/tsconfig.app.json",
-            "aot": true,
             "assets": [
               "apps/taiga/src/favicon.ico",
               "apps/taiga/src/assets",
@@ -174,11 +178,22 @@
               "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less",
               "apps/taiga/src/styles.css"
             ],
-            "scripts": [],
-            "optimization": false
+            "scripts": []
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "apps/taiga/src/environments/environment.ts",
@@ -193,37 +208,30 @@
                 },
                 "fonts": true
               },
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
-                }
-              ]
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
-          "options": {
-            "browserTarget": "taiga:build"
-          },
           "configurations": {
             "production": {
               "browserTarget": "taiga:build:production"
+            },
+            "development": {
+              "browserTarget": "taiga:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -315,7 +323,7 @@
           "options": {
             "cypressConfig": "apps/taiga-e2e/cypress.json",
             "tsConfig": "apps/taiga-e2e/tsconfig.e2e.json",
-            "devServerTarget": "taiga:serve"
+            "devServerTarget": "taiga:serve:development"
           },
           "configurations": {
             "production": {
@@ -403,16 +411,20 @@
       "prefix": "tg",
       "architect": {
         "build": {
-          "builder": "@nrwl/angular:package",
+          "builder": "@nrwl/angular:ng-packagr-lite",
+          "outputs": ["dist/libs/ws"],
           "options": {
-            "tsConfig": "libs/ws/tsconfig.lib.json",
             "project": "libs/ws/ng-package.json"
           },
           "configurations": {
             "production": {
               "tsConfig": "libs/ws/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/core/tsconfig.lib.json"
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",

@@ -16,7 +16,7 @@ import { WsService } from '@taiga/ws';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  public title = 'taiga';
+  public title = 'taiga2';
 
   constructor(private wsService: WsService) {
     this.wsService.listen();

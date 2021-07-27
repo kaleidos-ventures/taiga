@@ -16,8 +16,5 @@ zoneConfig.global.disable.on_property();
 zoneConfig.events.disable.UNPATCHED_EVENTS([
   'scroll',
   'mousemove',
-  'mouseleave',
   'wheel',
-  'focus',
-  'blur'
 ]);

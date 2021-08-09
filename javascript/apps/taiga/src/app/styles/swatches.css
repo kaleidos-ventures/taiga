@@ -1,5 +1,4 @@
-/*
-This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -7,55 +6,21 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 :root {
-  /* CORE COLORS */
-
-  /* Primary */
-  --color-solid-primary: rgb(131, 238, 222);
-  --color-link-primary: rgb(0, 138, 168);
-  --color-link-tertiary: rgb(112, 114, 143);
-
-  /* Grayscale Light */
-  --color-gray100: rgb(249, 249, 251);
-  --color-gray200: rgb(236, 239, 244);
-  --color-gray300: rgb(229, 233, 240);
-  --color-gray400: rgb(216, 222, 233);
-
-  /* Grayscale Black */
-  --color-black600: rgb(76, 86, 106);
-  --color-black700: rgb(67, 76, 94);
-  --color-black800: rgb(59, 66, 82);
-  --color-black900: rgb(46, 52, 64);
-
-  /* Neutral */
-  --color-black: rgb(0, 0, 0);
-  --color-white: rgb(255, 255, 255);
-
-  /* STATE COLORS */
-
-  /* red */
-  --color-solid-red: rgba(228, 64, 87, .5);
-  --color-link-red: rgb(228, 64, 87);
-
-  /* orange */
-  --color-solid-orange: rgba(234, 123, 75, .55);
-  --color-link-orange: rgb(234, 123, 75);
-
-  /* yellow */
-  --color-solid-yellow: rgba(246, 201, 92, .55);
-  --color-link-yellow: rgb(246, 201, 92);
-
-  /* green */
-  --color-solid-green: rgba(147, 196, 93, .55);
-  --color-link-green: rgb(147, 196, 93);
-
-  /* purple */
-  --color-solid-purple: rgba(202, 129, 190, .55);
-  --color-link-purple: rgb(202, 129, 190);
-
-  /* UTILITIES */
-
-  --background: var(--color-white);
-  --middleground: var(--color-gray400);
-  --foreground: var(--color-black);
-  --accent: var(--color-link-primary);
+  --color-primary: rgb(131, 238, 222);
+  --color-secondary: rgb(0, 125, 166);
+  --color-gray10: rgb(249, 249, 251);
+  --color-gray20: rgb(239, 240, 245);
+  --color-gray30: rgb(218, 223, 233);
+  --color-gray40: rgb(190, 199, 216);
+  --color-gray50: rgb(155, 168, 193);
+  --color-gray60: rgb(122, 137, 167);
+  --color-gray70: rgb(102, 117, 145);
+  --color-gray80: rgb(83, 95, 119);
+  --color-gray90: rgb(67, 77, 96);
+  --color-gray100: rgb(45, 52, 66);
+  --color-black: rgb(23, 28, 36);
+  --color-correct: rgb(100, 125, 48);
+  --color-warning: rgb(179, 92, 48);
+  --color-error: rgb(212, 54, 99);
+  --color-info: rgb(178, 67, 199);
 }

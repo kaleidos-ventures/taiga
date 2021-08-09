@@ -6,7 +6,7 @@ This document goal is to create a simple component. If you are willing to create
 Depending on the type of component there could be three different locations where you could save the component:
 
 * **Specific components**: Are only used in one page. Save it in under `/apps/taiga/src/app/pages/${pageName}/${componentName}`
-* **Common components**: Are used in multiple pages but are not part of the Design System. Save it in under `/appstaiga/src/app/common/${componentName}`
+* **Common components**: Are used in multiple pages but are not part of the Design System. Save it in under `/apps/taiga/src/app/common/${componentName}`
 * **Design System**: Will be used in multiple components and pages. Save it in under the ui library `/libs/ui/src/lib/${componentName}`
 
 # Creating a new component
@@ -28,7 +28,7 @@ Set the component name and selector using the `tg` prefix and remove the unused 
   styleUrls: ['./example.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TgExampleComponent {
+export class ExampleComponent {
 
   constructor() { }
 
@@ -48,7 +48,7 @@ Use the `ChangeDetectionStrategy.OnPush` by default meaning that automatic chang
 
 ## Local state
 
-For a reactive local state we use [rx-angular](https://github.com/rx-angular/rx-angular/blob/master/libs/state/docs/usage.md). It's recommended to read the documentation, following some usage examples. 
+For a reactive local state we use [rx-angular](https://github.com/rx-angular/rx-angular/blob/master/libs/state/docs/usage.md). It's recommended to read the documentation, following some usage examples.
 
 ```ts
 @Component({

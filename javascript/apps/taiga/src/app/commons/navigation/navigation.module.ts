@@ -7,26 +7,30 @@
  */
 
 import { NgModule } from '@angular/core';
+import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiAvatarModule } from '@taiga-ui/kit';
+import { NavigationProjectsComponent } from './navigation-projects/navigation-projects.component';
+import { NavigationUserDropdownComponent } from './navigation-user-dropdown/navigation-user-dropdown.component';
 import { NavigationComponent } from './navigation.component';
-import { NavigationUserDropdownComponent } from './navigation-user-dropdown/navigation-user-dropdown/navigation-user-dropdown.component';
-
 
 @NgModule({
   imports: [
     TuiButtonModule,
     TuiAvatarModule,
-    TuiSvgModule
+    TuiSvgModule,
+    TranslocoModule,
   ],
   declarations: [
     NavigationComponent,
     NavigationUserDropdownComponent,
+    NavigationProjectsComponent,
   ],
   providers: [],
   exports: [
     NavigationComponent,
-    NavigationUserDropdownComponent
+    NavigationUserDropdownComponent,
+    NavigationProjectsComponent,
   ]
 })
 export class NavigationModule {}

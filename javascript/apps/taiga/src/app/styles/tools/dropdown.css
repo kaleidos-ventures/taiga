@@ -1,15 +1,16 @@
-<!--
+/*
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
--->
+*/
 
-<tui-root>
-  <main>
-    <tg-navigation></tg-navigation>
-
-    <router-outlet></router-outlet>
-  </main>
-</tui-root>
+@define-mixin dropdown $width: 300px {
+  background-color: var(--color-gray10);
+  border: 1px solid var(--color-gray40);
+  border-radius: 3px;
+  display: block;
+  padding: var(--spacing-2);
+  width: 300px;
+}

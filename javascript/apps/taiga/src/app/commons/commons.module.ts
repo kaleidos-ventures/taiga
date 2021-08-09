@@ -7,13 +7,21 @@
  */
 
 import { NgModule } from '@angular/core';
+import { TranslocoModule } from '@ngneat/transloco';
+import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiAvatarModule } from '@taiga-ui/kit';
 import { NavigationModule } from './navigation/navigation.module';
 
 @NgModule({
   imports: [
+    TuiButtonModule,
+    TuiAvatarModule,
+    TranslocoModule,
+    TuiSvgModule,
     NavigationModule
   ],
   declarations: [
+
   ],
   providers: [],
   exports: [

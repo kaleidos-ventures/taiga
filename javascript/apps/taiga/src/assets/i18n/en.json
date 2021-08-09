@@ -1,1 +1,10 @@
-{}
+{
+  "commons": {
+    "organization": "{plural, select, true {Organizations} other {Organization}}"
+  },
+  "projects-navigation": {
+    "pinned": "Pinned projects",
+    "view_projects": "View your projects",
+    "new_project": "New project"
+  }
+}

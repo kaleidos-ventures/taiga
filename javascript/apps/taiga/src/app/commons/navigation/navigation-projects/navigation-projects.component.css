@@ -1,0 +1,123 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+@import "tools/dropdown.css";
+
+:host {
+  @mixin dropdown;
+
+  left: 0;
+  position: absolute;
+  top: 4rem;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+
+  &::before {
+    border-bottom: 1px solid var(--color-gray30);
+    color: var(--color-gray80);
+    content: attr(aria-label);
+    display: block;
+    font-size: var(--font-size-small);
+    padding-bottom: var(--spacing-1);
+    text-transform: uppercase;
+  }
+}
+
+li {
+  margin-bottom: 0;
+}
+
+.pinned-projects {
+  border-bottom: 1px solid var(--color-gray30);
+  margin-bottom: var(--spacing-2);
+}
+
+.project-name {
+  color: var(--color-gray90);
+}
+
+.project {
+  box-sizing: content-box;
+  display: flex;
+  height: 32px;
+  padding: var(--spacing-1);
+
+  &:hover {
+    background-color: var(--color-gray20);
+
+    & .project-name {
+      color: var(--color-secondary80);
+    }
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--color-secondary);
+  }
+}
+
+.project-data {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-left: .75rem; /* review: spacing? */
+
+  & span {
+    display: block;
+  }
+}
+
+.project-image {
+  & img {
+    all: unset;
+    width: 32px;
+  }
+}
+
+.project-workspace {
+  @mixin font-small;
+
+  color: var(--color-gray70);
+}
+
+.view-projects {
+  color: var(--color-secondary);
+  display: block;
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 1rem;
+}
+
+.new-project {
+  width: 100%;
+}
+
+.organizations {
+  margin-top: 1rem;
+
+  & li {
+    background-color: var(--color-white);
+  }
+
+  & a {
+    color: var(--color-gray80);
+    display: block;
+    padding: var(--spacing-1);
+
+    &:hover {
+      background-color: var(--color-gray20);
+      color: var(--color-secondary80);
+    }
+
+    &:focus-visible {
+      outline: 1px solid var(--color-secondary);
+    }
+  }
+}

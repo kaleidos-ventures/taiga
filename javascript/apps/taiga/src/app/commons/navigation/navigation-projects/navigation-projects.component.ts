@@ -9,11 +9,11 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'tg-navigation',
-  templateUrl: './navigation.component.html',
-  styleUrls: ['./navigation.component.css'],
+  selector: 'tg-navigation-projects',
+  templateUrl: './navigation-projects.component.html',
+  styleUrls: ['./navigation-projects.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavigationComponent  {
+export class NavigationProjectsComponent {
 
 }

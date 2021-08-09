@@ -27,6 +27,26 @@ tui-wrapper[data-appearance="home-button"] {
   }
 }
 
+tui-wrapper[data-appearance="primary"] {
+  border-radius: 4px;
+  color: var(--color-gray80);
+
+  &[data-state="hovered"] {
+    background-color: var(--color-primary40);
+  }
+
+  &._focused {
+    &::after {
+      border-color: var(--color-secondary);
+    }
+  }
+
+  & .icon {
+    height: .7rem;
+    width: .7rem;
+  }
+}
+
 tui-wrapper[data-appearance="tertiary-button"] {
   background: var(--color-gray10);
   border-radius: 3px;

@@ -42,7 +42,8 @@ const MAPPER: Record<string, string> = {
   help: 'help',
   search: 'search',
   bell: 'bell',
-  folder: 'folder'
+  folder: 'folder',
+  plus: 'plus',
 };
 
 export function iconsPath(name: string): string {

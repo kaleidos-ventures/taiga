@@ -32,9 +32,13 @@ import { of } from 'rxjs';
 import { CommonsModule } from './commons/commons.module';
 import { TranslocoRootModule } from './transloco/transloco-root.module';
 import { TranslocoService } from '@ngneat/transloco';
+import {  } from '@taiga-ui/kit';
+
 
 const MAPPER: Record<string, string> = {
-  // iconName: symbolId<Sprite>
+  // iconName: string
+  taigaLogo: 'taiga-logo',
+  discover: 'discover'
 };
 
 export function iconsPath(name: string): string {
@@ -79,7 +83,7 @@ export function prefersReducedMotion(): boolean {
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     TuiRootModule,
-    TranslocoRootModule,
+    TranslocoRootModule
   ],
   bootstrap: [AppComponent],
   providers: [

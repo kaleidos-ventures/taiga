@@ -8,6 +8,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 :root {
   --color-primary: rgb(131, 238, 222);
   --color-secondary: rgb(0, 125, 166);
+  --color-secondary90: rgb(0, 77, 104);
+  --color-white: rgb(255, 255, 255);
   --color-gray10: rgb(249, 249, 251);
   --color-gray20: rgb(239, 240, 245);
   --color-gray30: rgb(218, 223, 233);

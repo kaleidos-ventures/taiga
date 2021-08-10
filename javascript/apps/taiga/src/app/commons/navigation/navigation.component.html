@@ -6,40 +6,67 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<button
-  tuiButton
-  icon="taigaLogo"
-  type="button"
->
-</button>
-<button
-  tuiButton
-  icon="discover"
-  type="button"
->
-  Button
-</button>
-<button
-  tuiButton
-  icon="discover"
-  type="button"
->
-</button>
-<button
-  tuiButton
-  icon="discover"
-  type="button"
->
-</button>
-<button
-  tuiButton
-  icon="discover"
-  type="button"
->
-</button>
-<button
-  tuiButton
-  icon="discover"
-  type="button"
->
-</button>
+<div class="left">
+  <button
+    appearance="home-button"
+    class="home-button"
+    tuiIconButton
+    icon="taigaLogo"
+    type="button"
+  >
+  </button>
+  <button
+    appearance="white-button"
+    tuiButton
+    icon="discover"
+    type="button"
+  >
+    Button
+  </button>
+</div>
+<div class="right">
+  <div class="actions">
+    <button
+      appearance="svg-button"
+      tuiIconButton
+      icon="discover"
+      type="button"
+    >
+    </button>
+    <button
+      appearance="svg-button"
+      tuiIconButton
+      icon="discover"
+      type="button"
+    >
+    </button>
+    <button
+      appearance="svg-button"
+      tuiIconButton
+      icon="discover"
+      type="button"
+    >
+    </button>
+    <div class="notification-button">
+      <div class="counter">13</div>
+      <button
+        appearance="svg-button"
+        tuiIconButton
+        icon="discover"
+        type="button"
+      >
+      </button>
+    </div>
+  </div>
+  <div class="separator"></div>
+  <div class="avatar-holder">
+    <tui-avatar
+      size="s"
+      [avatarUrl]="'https://us-east-1.linodeobjects.com/gunaxin/2011/05/tumblr_li3rl06u9a1qcduzdo1_400.jpg'"
+      [autoColor]="true"
+      [rounded]="true"
+      [text]="'Username'"
+    ></tui-avatar>
+  </div>
+
+</div>

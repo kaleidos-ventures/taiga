@@ -34,7 +34,6 @@ module.exports = {
     'selector-max-specificity': "1,2,1",
     // Miscellanea
     'color-named': 'never',
-    'declaration-no-important': true,
     'declaration-property-unit-allowed-list': {
       "font-size": ["rem"],
       "/^animation/": ["s"]

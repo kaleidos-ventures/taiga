@@ -5,3 +5,49 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
+
+:host {
+  align-items: center;
+  background: var(--color-gray30);
+  display: flex;
+  justify-content: space-between;
+  min-height: 3rem;
+  padding: 0 1rem;
+}
+
+.home-button {
+  margin-right: 1.5rem;
+}
+
+.actions {
+  display: flex;
+}
+
+.left {
+  align-items: center;
+  display: flex;
+}
+
+.right {
+  align-items: center;
+  display: flex;
+
+  & button {
+    margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.separator {
+  background: var(--color-gray40);
+  height: 28px;
+  margin-left: 1rem;
+  width: 1px;
+}
+
+.avatar-holder {
+  padding-left: 1rem;
+}

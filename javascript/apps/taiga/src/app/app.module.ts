@@ -38,7 +38,11 @@ import {  } from '@taiga-ui/kit';
 const MAPPER: Record<string, string> = {
   // iconName: string
   taigaLogo: 'taiga-logo',
-  discover: 'discover'
+  discover: 'discover',
+  help: 'help',
+  search: 'search',
+  bell: 'bell',
+  folder: 'folder'
 };
 
 export function iconsPath(name: string): string {

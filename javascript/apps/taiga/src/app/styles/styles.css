@@ -23,7 +23,7 @@ This layer holds any **global** settings for your project. This layer should onl
 tui-wrapper[data-appearance="svg-button"] {
   background: none;
   color: var(--color-secondary);
-  padding: .25rem !important;
+  padding: .25rem !important; /* stylelint-disable-line declaration-no-important */
 
   &[data-state="hovered"] {
     background: var(--color-gray20);
@@ -33,7 +33,7 @@ tui-wrapper[data-appearance="svg-button"] {
 tui-wrapper[data-appearance="home-button"] {
   background: none;
   color: var(--color-gray100);
-  padding: 0 .25rem !important;
+  padding: 0 .25rem !important; /* stylelint-disable-line declaration-no-important */
 
   &[data-state="hovered"] {
     background: none;
@@ -45,7 +45,7 @@ tui-wrapper[data-appearance="white-button"] {
   background: var(--color-gray10);
   border-radius: 3px;
   color: var(--color-secondary);
-  padding: 0 .8rem !important;
+  padding: 0 .8rem !important; /* stylelint-disable-line declaration-no-important */
 
   &[data-state="hovered"] {
     color: var(--color-secondary90);
@@ -79,6 +79,7 @@ tui-avatar {
     font-size: .6875rem;
     height: 1.1rem;
     justify-content: center;
+    pointer-events: none;
     position: absolute;
     right: 0;
     top: 0;

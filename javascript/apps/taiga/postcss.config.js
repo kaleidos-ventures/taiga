@@ -13,7 +13,7 @@ module.exports = {
     require('postcss-import')({
       from: "/src/styles.css",
       path: [
-        path.resolve(__dirname, './src/'),
+        path.resolve(__dirname, './src/app/styles'),
       ]
     }),
     require('postcss-mixins'),

@@ -21,6 +21,20 @@ This layer holds any **global** settings for your project. This layer should onl
 @import "taiga-ui.css";
 @import "button.css";
 
+.visually-hidden {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: absolute !important; /* stylelint-disable-line declaration-no-important */
+  white-space: nowrap;
+  width: 1px;
+}
+
 tui-avatar {
   border: solid 2px var(--color-gray20);
 }

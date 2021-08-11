@@ -12,40 +12,40 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   font-family: "Ubuntu";
   font-style: normal;
   font-weight: 200;
-  src: url("/app/assets/fonts/Ubuntu-L.ttf");
+  src: url("assets/fonts/Ubuntu-L.ttf");
 }
 
 @font-face {
   font-family: "Ubuntu";
   font-style: italic;
   font-weight: 200;
-  src: url("/app/assets/fonts/Ubuntu-LI.ttf");
+  src: url("assets/fonts/Ubuntu-LI.ttf");
 }
 
 @font-face {
   font-family: "Ubuntu";
   font-style: normal;
   font-weight: 400;
-  src: url("/app/assets/fonts/Ubuntu-R.ttf");
+  src: url("assets/fonts/Ubuntu-R.ttf");
 }
 
 @font-face {
   font-family: "Ubuntu";
   font-style: italic;
   font-weight: 400;
-  src: url("/app/assets/fonts/Ubuntu-RI.ttf");
+  src: url("assets/fonts/Ubuntu-RI.ttf");
 }
 
 @font-face {
   font-family: "Ubuntu";
   font-style: normal;
   font-weight: 700;
-  src: url("/app/assets/fonts/Ubuntu-M.ttf");
+  src: url("assets/fonts/Ubuntu-M.ttf");
 }
 
 @font-face {
   font-family: "Ubuntu";
   font-style: italic;
   font-weight: 700;
-  src: url("/app/assets/fonts/Ubuntu-MI.ttf");
+  src: url("assets/fonts/Ubuntu-MI.ttf");
 }

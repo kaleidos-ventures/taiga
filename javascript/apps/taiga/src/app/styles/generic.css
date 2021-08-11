@@ -21,7 +21,6 @@ html,
 body {
   background-color: var(--color-white);
   color: var(--color-black);
-  font-family: -apple-system, system-ui, sans-serif;
   margin: 0;
   padding: 0;
 }

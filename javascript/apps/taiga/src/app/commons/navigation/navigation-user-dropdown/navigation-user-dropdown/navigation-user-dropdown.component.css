@@ -1,0 +1,42 @@
+:host {
+  left: 0;
+  padding: 1rem;
+  position: absolute;
+  top: 4rem;
+}
+
+.user {
+  border-bottom: solid 1px var(--color-gray30);
+  display: flex;
+  margin-bottom: .5rem;
+  padding-bottom: 1rem;
+
+  & .user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 1rem;
+  }
+
+  & .user-name {
+    font-weight: 700;
+  }
+
+  & .user-mail {
+    color: var(--color-gray70);
+  }
+}
+
+.user-link {
+  color: var(--color-gray80);
+  display: flex;
+  font-weight: 700;
+  padding: .5rem 0;
+
+  &.sign-out {
+    border-top: solid 1px var(--color-gray30);
+    color: var(--color-secondary);
+    margin-top: .75rem;
+    padding-top: .75rem;
+  }
+}

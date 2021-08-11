@@ -10,6 +10,7 @@ import { NgModule } from '@angular/core';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiAvatarModule } from '@taiga-ui/kit';
 import { NavigationComponent } from './navigation.component';
+import { NavigationUserDropdownComponent } from './navigation-user-dropdown/navigation-user-dropdown/navigation-user-dropdown.component';
 
 
 @NgModule({
@@ -20,10 +21,12 @@ import { NavigationComponent } from './navigation.component';
   ],
   declarations: [
     NavigationComponent,
+    NavigationUserDropdownComponent,
   ],
   providers: [],
   exports: [
-    NavigationComponent
+    NavigationComponent,
+    NavigationUserDropdownComponent
   ]
 })
 export class NavigationModule {}

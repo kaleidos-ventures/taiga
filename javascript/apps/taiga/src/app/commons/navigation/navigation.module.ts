@@ -7,17 +7,23 @@
  */
 
 import { NgModule } from '@angular/core';
-import { NavigationModule } from './navigation/navigation.module';
+import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiAvatarModule } from '@taiga-ui/kit';
+import { NavigationComponent } from './navigation.component';
+
 
 @NgModule({
   imports: [
-    NavigationModule
+    TuiButtonModule,
+    TuiAvatarModule,
+    TuiSvgModule
   ],
   declarations: [
+    NavigationComponent,
   ],
   providers: [],
   exports: [
-    NavigationModule
+    NavigationComponent
   ]
 })
-export class CommonsModule {}
+export class NavigationModule {}

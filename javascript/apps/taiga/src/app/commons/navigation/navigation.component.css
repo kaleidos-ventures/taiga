@@ -12,7 +12,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: flex;
   justify-content: space-between;
   min-height: 3rem;
-  padding: 0 1rem;
+  padding: 0 var(--spacing-2);
 }
 
 .home-button {
@@ -33,7 +33,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: flex;
 
   & .actions button {
-    margin-right: 1rem;
+    margin-right: var(--spacing-2);
 
     &:last-child {
       margin-right: 0;
@@ -44,17 +44,21 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .separator {
   background: var(--color-gray40);
   height: 28px;
-  margin-left: 1rem;
+  margin-left: var(--spacing-2);
   width: 1px;
 }
 
 .avatar-holder {
-  padding-left: 1rem;
+  padding-left: var(--spacing-2);
 }
 
 .avatar-dropdown-button {
   all: unset;
   cursor: pointer;
+
+  &:focus tui-avatar {
+    border-color: var(--color-secondary);
+  }
 
   &:hover tui-avatar {
     border-color: var(--color-secondary80);

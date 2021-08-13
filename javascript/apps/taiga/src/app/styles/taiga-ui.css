@@ -88,8 +88,3 @@ tui-dropdown-box {
 
   border: none !important; /* stylelint-disable-line declaration-no-important */
 }
-
-tui-wrapper[data-appearance="flat"] {
-  --tui-secondary-active: transparent;
-  --tui-secondary-hover: transparent;
-}

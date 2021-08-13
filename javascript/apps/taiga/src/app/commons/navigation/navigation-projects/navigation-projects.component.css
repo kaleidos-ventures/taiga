@@ -98,11 +98,8 @@ li {
 .organizations {
   margin-top: 1rem;
 
-  & li {
-    background-color: var(--color-white);
-  }
-
   & a {
+    background-color: var(--color-white);
     color: var(--color-gray80);
     display: block;
     padding: var(--spacing-1);

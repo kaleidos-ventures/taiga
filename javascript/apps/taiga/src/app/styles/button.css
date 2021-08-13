@@ -14,6 +14,12 @@ tui-wrapper[data-appearance="button-form"] {
   &[data-state="hovered"] {
     background: var(--color-gray20);
   }
+
+  &._focused {
+    &::after {
+      border-color: var(--color-secondary);
+    }
+  }
 }
 
 tui-wrapper[data-appearance="home-button"] {
@@ -24,6 +30,12 @@ tui-wrapper[data-appearance="home-button"] {
   &[data-state="hovered"] {
     background: none;
     color: var(--color-secondary);
+  }
+
+  &._focused {
+    &::after {
+      border-color: var(--color-secondary);
+    }
   }
 }
 
@@ -66,5 +78,16 @@ tui-wrapper[data-appearance="tertiary-button"] {
   & .icon {
     height: 1rem;
     width: 1rem;
+  }
+}
+
+tui-wrapper[data-appearance="flat"] {
+  --tui-secondary-active: transparent;
+  --tui-secondary-hover: transparent;
+
+  &._focused {
+    &::after {
+      border-color: var(--color-secondary);
+    }
   }
 }

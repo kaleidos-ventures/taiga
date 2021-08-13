@@ -35,10 +35,6 @@ This layer holds any **global** settings for your project. This layer should onl
   width: 1px;
 }
 
-tui-avatar {
-  border: solid 2px var(--color-gray20);
-}
-
 .notification-button {
   position: relative;
 

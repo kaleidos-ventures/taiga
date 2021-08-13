@@ -15,5 +15,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavigationComponent  {
-
+  public openProjectsDropdown = false;
+  public openUserDropdown = false;
 }

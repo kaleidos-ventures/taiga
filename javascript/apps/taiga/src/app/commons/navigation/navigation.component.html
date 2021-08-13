@@ -17,14 +17,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   >
     <span class="visually-hidden">Go to home</span>
   </a>
-  <button
-    appearance="tertiary-button"
-    tuiButton
-    icon="folder"
-    type="button"
-  >
-    Button
-  </button>
+  <tui-hosted-dropdown
+  [content]="projectsDropdown"
+  [(open)]="openProjectsDropdown">
+    <button
+      appearance="tertiary-button"
+      tuiButton
+      icon="folder"
+      type="button"
+    >
+      Button
+    </button>
+  </tui-hosted-dropdown>
 </div>
 <div class="right">
   <div class="actions">
@@ -62,16 +66,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   </div>
   <div class="separator"></div>
   <div class="avatar-holder">
-    <tui-avatar
-      size="s"
-      [avatarUrl]="'https://us-east-1.linodeobjects.com/gunaxin/2011/05/tumblr_li3rl06u9a1qcduzdo1_400.jpg'"
-      [autoColor]="true"
-      [rounded]="true"
-      [text]="'Username'"
-    ></tui-avatar>
+    <tui-hosted-dropdown
+      [content]="userDropdown"
+      [(open)]="openUserDropdown">
+      <button
+        class="avatar-dropdown-button"
+        type="button">
+        <tui-avatar
+          size="s"
+          [avatarUrl]="'https://us-east-1.linodeobjects.com/gunaxin/2011/05/tumblr_li3rl06u9a1qcduzdo1_400.jpg'"
+          [autoColor]="true"
+          [rounded]="true"
+          [text]="'Username'"></tui-avatar>
+      </button>
+    </tui-hosted-dropdown>
   </div>
-
 </div>
 
-<tg-navigation-user-dropdown></tg-navigation-user-dropdown>
-<tg-navigation-projects></tg-navigation-projects>
+<ng-template #userDropdown>
+  <tg-navigation-user-dropdown></tg-navigation-user-dropdown>
+</ng-template>
+
+<ng-template #projectsDropdown>
+  <tg-navigation-projects></tg-navigation-projects>
+</ng-template>

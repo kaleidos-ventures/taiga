@@ -78,3 +78,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   --tui-clear-hover: #f9f9fb;
   --tui-clear-active: #eceff4;
 }
+
+tui-avatar {
+  border: solid 2px var(--color-gray20);
+}
+
+tui-dropdown-box {
+  --tui-base-01: transparent;
+
+  border: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+tui-wrapper[data-appearance="flat"] {
+  --tui-secondary-active: transparent;
+  --tui-secondary-hover: transparent;
+}

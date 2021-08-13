@@ -32,7 +32,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   align-items: center;
   display: flex;
 
-  & button {
+  & .actions button {
     margin-right: 1rem;
 
     &:last-child {
@@ -50,4 +50,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .avatar-holder {
   padding-left: 1rem;
+}
+
+.avatar-dropdown-button {
+  all: unset;
+  cursor: pointer;
+
+  &:hover tui-avatar {
+    border-color: var(--color-secondary80);
+  }
 }

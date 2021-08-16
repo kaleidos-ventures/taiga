@@ -6,9 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export * from './lib/config.model';
-export * from './lib/unexpected-error.model';
-export * from './lib/auth.model';
-export * from './lib/user.model';
-export * from './lib/roles.model';
-export * from './lib/project.model';
+import * as fromAuth from './auth.actions';
+
+describe('loadAuths', () => {
+  it('should return an action', () => {
+    expect(fromAuth.loadAuths().type).toBe('[Auth] Load Auths');
+  });
+});

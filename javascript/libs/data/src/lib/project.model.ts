@@ -6,9 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export * from './lib/config.model';
-export * from './lib/unexpected-error.model';
-export * from './lib/auth.model';
-export * from './lib/user.model';
-export * from './lib/roles.model';
-export * from './lib/project.model';
+export interface Project {
+  id: string;
+}

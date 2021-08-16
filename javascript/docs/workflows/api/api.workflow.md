@@ -6,7 +6,7 @@ To create a new API service edit and execute this command
 npx ng g @schematics/angular:service --name=example/ExampleApi --project=api --no-interactive
 ```
 
-We also have to create the interface models, in this example in `libs/api/src/lib/example/example.model.ts`
+We also have to create the interface models, in this example in `libs/api/src/lib/example/example.model.ts` or in `libs/data/src/lib/` if the model is common.
 
 Api service example
 

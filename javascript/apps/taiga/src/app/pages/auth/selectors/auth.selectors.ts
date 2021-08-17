@@ -11,4 +11,3 @@ import { authFeature } from '../reducers/auth.reducer';
 export const {
   selectUser
 } = authFeature;
-

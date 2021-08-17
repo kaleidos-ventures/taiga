@@ -11,8 +11,6 @@ import { User } from '@taiga/data';
 import { produce } from 'immer';
 import * as AuthActions from '../actions/auth.actions';
 
-export const authFeatureKey = 'auth';
-
 export interface AuthState {
   user: User | null;
 }
@@ -21,14 +19,14 @@ export const initialState: AuthState = {
   user: null,
 };
 
-
 export const reducer = createReducer(
   initialState,
+  on(AuthActions.setUser, (state, { user }): AuthState => {
+    state.user = user;
 
-  on(AuthActions.loadAuths, state => state),
-
+    return state;
+  }),
 );
-
 
 export const authFeature = createFeature({
   name: 'auth',

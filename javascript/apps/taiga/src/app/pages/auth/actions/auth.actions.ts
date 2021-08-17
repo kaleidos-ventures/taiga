@@ -7,11 +7,19 @@
  */
 
 import { createAction, props } from '@ngrx/store';
+import { Auth, User } from '@taiga/data';
 
-export const loadAuths = createAction(
-  '[Auth] Load Auths'
+export const setUser = createAction(
+  '[Auth] Set user',
+  props<{user: User}>()
 );
 
+export const login = createAction(
+  '[Auth] login',
+  props<{username: User['username'], password: string}>()
+);
 
-
-
+export const loginSuccess = createAction(
+  '[Auth] login success',
+  props<{auth: Auth}>()
+);

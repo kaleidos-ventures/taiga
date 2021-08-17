@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiHostedDropdownModule, TuiSvgModule } from '@taiga-ui/core';
@@ -16,6 +17,7 @@ import { NavigationComponent } from './navigation.component';
 
 @NgModule({
   imports: [
+    CommonModule,
     TuiButtonModule,
     TuiAvatarModule,
     TuiSvgModule,

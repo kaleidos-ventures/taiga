@@ -6,7 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { selectUser } from '@/app/pages/auth/selectors/auth.selectors';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { User } from '@taiga/data';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'tg-navigation',
@@ -17,4 +21,8 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 export class NavigationComponent  {
   public openProjectsDropdown = false;
   public openUserDropdown = false;
+
+  public user$ = this.store.select(selectUser);
+
+  constructor(private store: Store) {}
 }

@@ -6,7 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { User } from '@taiga/data';
 
 @Component({
   selector: 'tg-navigation-user-dropdown',
@@ -15,5 +17,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavigationUserDropdownComponent {
-
+  @Input()
+  public user!: User;
 }

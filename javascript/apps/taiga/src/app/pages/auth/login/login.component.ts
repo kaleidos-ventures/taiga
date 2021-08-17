@@ -7,8 +7,10 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@ngneat/reactive-forms';
+import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
+import { Store } from '@ngrx/store';
 import { AuthApiService } from '@taiga/api';
+import { login } from '../actions/auth.actions';
 
 interface Login {
   username: string;
@@ -23,7 +25,7 @@ interface Login {
 export class LoginComponent implements OnInit {
   public form!: FormGroup;
 
-  constructor(private fb: FormBuilder, private authApiService: AuthApiService) { }
+  constructor(private fb: FormBuilder, private authApiService: AuthApiService, private store: Store) { }
 
   public ngOnInit(): void {
     this.form = this.fb.group<Login>({
@@ -36,13 +38,7 @@ export class LoginComponent implements OnInit {
     const { username, password } = this.form.value as Login;
 
     if (username && password) {
-      this.authApiService.login({
-        type: 'normal',
-        username,
-        password,
-      }).subscribe((auth) => {
-        console.log(auth);
-      });
+      this.store.dispatch(login({ username, password }));
     }
   }
 }

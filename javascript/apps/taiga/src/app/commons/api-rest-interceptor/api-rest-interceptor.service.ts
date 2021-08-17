@@ -7,13 +7,16 @@
  */
 
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpInterceptor, HttpResponse} from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpInterceptor, HttpResponse, HttpParams} from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { ConfigService } from '@taiga/core';
 import { Store } from '@ngrx/store';
 import { getGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
+import { camelCase, snakeCase } from 'change-case';
+import { UtilsService } from '@/app/commons/utils/utils-service.service';
+
 @Injectable()
 export class ApiRestInterceptorService implements HttpInterceptor {
   public requests = new BehaviorSubject([] as HttpRequest<unknown>[]);
@@ -35,7 +38,8 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     });
   }
 
-  public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const apiUrl = this.configService.apiUrl;
 
     // Only add interceptors to request through the api
@@ -43,9 +47,20 @@ export class ApiRestInterceptorService implements HttpInterceptor {
       return next.handle(request);
     }
 
+    if (request instanceof HttpRequest) {
+      request = this.snakeCaseRequestInterceptor(request);
+    }
+
     this.addRequest(request);
 
     return next.handle(request).pipe(
+      map((event) => {
+        if (event instanceof HttpResponse) {
+          return this.camelCaseResponseInterceptor(event);
+        }
+
+        return event;
+      }),
       tap((response) => {
         if (response instanceof HttpErrorResponse || response instanceof HttpResponse) {
           this.remvoveRequest(request);
@@ -57,14 +72,63 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     );
   }
 
-  public addRequest(request: HttpRequest<unknown>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private camelCaseResponseInterceptor(event: HttpResponse<any>): HttpResponse<any> {
+    const body = UtilsService.objKeysTransformer(event.body, camelCase);
+    return event.clone({ body });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public addRequest(request: HttpRequest<any>) {
     this.requests.next([
       ...this.requests.value,
       request
     ]);
   }
 
-  public remvoveRequest(request: HttpRequest<unknown>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public remvoveRequest(request: HttpRequest<any>) {
     this.requests.next(this.requests.value.filter((it) => it !== request));
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private snakeCaseRequestInterceptor(request: HttpRequest<any>): HttpRequest<unknown> {
+    let newRequest = request;
+
+    if (newRequest.body) {
+      const body = UtilsService.objKeysTransformer(newRequest.body, snakeCase);
+      newRequest = newRequest.clone({ body });
+    }
+
+    if (newRequest.params) {
+      let params: HttpParams = new HttpParams();
+
+      newRequest.params.keys().forEach((key) => {
+        const param = newRequest.params.get(key);
+
+        if (param) {
+          params = params.append(snakeCase(key), param);
+        }
+      });
+
+      newRequest = newRequest.clone({ params });
+    }
+
+    return newRequest;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // private authInterceptor(request: HttpRequest<any>): HttpRequest<any> {
+  //   const token = this.localStorageService.get<string>('token');
+
+  //   if (token) {
+  //     return request.clone({
+  //       setHeaders: {
+  //         Authorization: `Bearer ${ token }`,
+  //       },
+  //     });
+  //   }
+
+  //   return request;
+  // }
 }

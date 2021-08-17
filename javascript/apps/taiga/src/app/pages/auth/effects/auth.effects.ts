@@ -9,26 +9,52 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { concatMap } from 'rxjs/operators';
-import { Observable, EMPTY } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import * as AuthActions from '../actions/auth.actions';
-
+import { AuthApiService } from '@taiga/api';
+import { pessimisticUpdate } from '@nrwl/angular';
+import { Auth, User } from '@taiga/data';
 
 @Injectable()
 export class AuthEffects {
 
-
-  loadAuths$ = createEffect(() => {
-    return this.actions$.pipe( 
-
-      ofType(AuthActions.loadAuths),
-      /** An EMPTY observable only emits completion. Replace with your own observable API request */
-      concatMap(() => EMPTY as Observable<{ type: string }>)
+  public login$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.login),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.authApiService.login({
+            type: 'normal',
+            username: action.username,
+            password: action.password,
+          }).pipe(
+            map((auth: Auth) => {
+              return AuthActions.loginSuccess({ auth });
+            })
+          );
+        },
+        onError: () => {
+          return null;
+        }
+      })
     );
   });
 
+  public loginSuccess$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.loginSuccess),
+      map((action) => {
+        const auth = action.auth;
+        const authEntries = Object.entries(auth).filter(([key]) => !['authToken', 'refresh', 'readNewTerms'].includes(key));
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+        const user = Object.fromEntries(authEntries) as User;
 
-  constructor(private actions$: Actions) {}
+        return AuthActions.setUser({ user });
+      })
+    );
+  });
+
+  constructor(private actions$: Actions, private authApiService: AuthApiService) {}
 
 }

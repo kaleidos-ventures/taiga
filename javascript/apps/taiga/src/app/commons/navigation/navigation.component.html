@@ -5,7 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-
+<ng-container *ngIf="user$ | async as user">
 <div class="left">
   <a
     appearance="home-button"
@@ -84,9 +84,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 </div>
 
 <ng-template #userDropdown>
-  <tg-navigation-user-dropdown></tg-navigation-user-dropdown>
+    <tg-navigation-user-dropdown [user]="user"></tg-navigation-user-dropdown>
 </ng-template>
 
 <ng-template #projectsDropdown>
   <tg-navigation-projects></tg-navigation-projects>
 </ng-template>
+</ng-container>

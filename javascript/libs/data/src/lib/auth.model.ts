@@ -12,7 +12,7 @@ import { User } from './user.model';
 export interface Auth extends User {
   authToken: string;
   refresh: string;
-  read_new_terms: boolean;
+  readNewTerms: boolean;
 }
 
 export interface LoginInput {

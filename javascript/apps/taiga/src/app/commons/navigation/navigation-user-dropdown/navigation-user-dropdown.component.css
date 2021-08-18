@@ -23,9 +23,12 @@ li {
 
 .user {
   border-bottom: solid 1px var(--color-gray30);
-  display: flex;
   margin-bottom: var(--spacing-1);
   padding-bottom: var(--spacing-2);
+
+  & .user-inner {
+    display: flex;
+  }
 
   & .user-info {
     display: flex;
@@ -40,6 +43,17 @@ li {
 
   & .user-mail {
     color: var(--color-gray70);
+  }
+
+  &:hover,
+  &:focus {
+    & .user-inner {
+      background-color: var(--color-white);
+    }
+
+    & tg-avatar {
+      --color-border: var(--color-secondary);
+    }
   }
 }
 

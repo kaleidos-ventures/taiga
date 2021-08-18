@@ -6,13 +6,12 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<ng-container *transloco="let t; read: 'projects-navigation'">
-
+<ng-container *transloco="let t; read: 'navigation-projects'">
 <ul
   class="pinned-projects"
   [attr.aria-label]="t('pinned')">
   <li>
-    <a class="project" href="">
+    <a title="Project example 1" class="project" href="">
       <div class="project-image">
         <img src="https://i.picsum.photos/id/778/200/200.jpg?hmac=fgFK_HI_g_N4MzYuYbssOB8ymhT_m0JK61tNJHfdPYU" />
       </div>
@@ -23,7 +22,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </a>
   </li>
   <li>
-    <a class="project" href="">
+    <a title="Project example 2" class="project" href="">
       <div class="project-image">
         <img src="https://i.picsum.photos/id/778/200/200.jpg?hmac=fgFK_HI_g_N4MzYuYbssOB8ymhT_m0JK61tNJHfdPYU" />
       </div>
@@ -42,12 +41,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   tuiButton
   icon="plus"
   type="button"> {{ t('new_project') }}</button>
-
-  <!-- <h2>{{ 'commons.organization' | transloco: { plural: true} }}</h2> -->
-
   <ul
     class="organizations"
-    [attr.aria-label]="'commons.organization' | transloco: { plural: true}">
+    [attr.aria-label]="'commons.organizations' | transloco">
     <li>
       <a href="">Kaleidos Ventures</a>
     </li>

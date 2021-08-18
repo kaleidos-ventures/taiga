@@ -5,6 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
+<ng-container *transloco="let t; read: 'navigation'">
 <ng-container *ngIf="user$ | async as user">
 <div class="left">
   <a
@@ -15,7 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     icon="taigaLogo"
     type="button"
   >
-    <span class="visually-hidden">Go to home</span>
+    <span class="visually-hidden">{{ t('go_home') }}</span>
   </a>
   <tui-hosted-dropdown
   [content]="projectsDropdown"
@@ -24,9 +25,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       appearance="tertiary-button"
       tuiButton
       icon="folder"
-      type="button"
-    >
-      Button
+      type="button">
+      {{ 'commons.projects' | transloco }}
     </button>
   </tui-hosted-dropdown>
 </div>
@@ -59,8 +59,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         appearance="button-form"
         tuiIconButton
         icon="bell"
-        type="button"
-      >
+        type="button">
       </button>
     </div>
   </div>
@@ -85,4 +84,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-template #projectsDropdown>
   <tg-navigation-projects></tg-navigation-projects>
 </ng-template>
+</ng-container>
 </ng-container>

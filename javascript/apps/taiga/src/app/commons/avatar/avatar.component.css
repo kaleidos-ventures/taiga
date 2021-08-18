@@ -7,7 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 :host {
-  --color-border: var(--color-white);
+  --color-border: var(--color-gray20);
 
   & tui-avatar {
     border-color: var(--color-border);

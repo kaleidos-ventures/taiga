@@ -1,8 +1,12 @@
 {
   "commons": {
-    "organization": "{plural, select, true {Organizations} other {Organization}}"
+    "organizations": "Organizations",
+    "projects": "Projects"
   },
-  "projects-navigation": {
+  "navigation": {
+    "go_home": "Go to home"
+  },
+  "navigation-projects": {
     "pinned": "Pinned projects",
     "view_projects": "View your projects",
     "new_project": "New project"

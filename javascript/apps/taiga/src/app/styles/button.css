@@ -18,6 +18,7 @@ tui-wrapper[data-appearance="button-form"] {
   &._focused {
     &::after {
       border-color: var(--color-secondary);
+      border-width: 1px;
     }
   }
 }
@@ -35,6 +36,7 @@ tui-wrapper[data-appearance="home-button"] {
   &._focused {
     &::after {
       border-color: var(--color-secondary);
+      border-width: 1px;
     }
   }
 }
@@ -50,6 +52,7 @@ tui-wrapper[data-appearance="primary"] {
   &._focused {
     &::after {
       border-color: var(--color-secondary);
+      border-width: 1px;
     }
   }
 
@@ -72,6 +75,7 @@ tui-wrapper[data-appearance="tertiary-button"] {
   &._focused {
     &::after {
       border-color: var(--color-secondary);
+      border-width: 1px;
     }
   }
 
@@ -88,6 +92,7 @@ tui-wrapper[data-appearance="flat"] {
   &._focused {
     &::after {
       border-color: var(--color-secondary);
+      border-width: 1px;
     }
   }
 }

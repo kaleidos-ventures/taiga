@@ -13,6 +13,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   box-sizing: border-box;
 }
 
+*:focus-visible {
+  outline: solid 1px var(--color-secondary);
+}
+
 body {
   @mixin font-body;
 }
@@ -40,11 +44,6 @@ a {
 
   &:hover {
     color: var(--color-secondary90);
-  }
-
-  &:focus-visible {
-    border-bottom: 1px solid var(--color-secondary);
-    outline: none;
   }
 
   &:visited {

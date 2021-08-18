@@ -34,7 +34,16 @@ li {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    max-width: 100%;
+    overflow: hidden;
     padding-left: var(--spacing-2);
+
+    & span,
+    & a {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   & .user-name {

@@ -31,7 +31,7 @@ This example receives an user login info in the actions props and send it to the
     const effects = spectator.inject(LoginEffects);
 
     // mock the service response
-    authApiService.login.and.returnValue(
+    authApiService.login.mockReturnValue(
       cold('-b|', { b: response })
     );
 

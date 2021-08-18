@@ -47,7 +47,7 @@ export class AuthEffects {
       ofType(AuthActions.loginSuccess),
       map((action) => {
         const auth = action.auth;
-        const authEntries = Object.entries(auth).filter(([key]) => !['authToken', 'refresh', 'readNewTerms'].includes(key));
+        const authEntries = Object.entries(auth).filter(([key]) => !['authToken', 'refresh'].includes(key));
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
         const user = Object.fromEntries(authEntries) as User;
 

@@ -6,19 +6,31 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { TestBed } from '@angular/core/testing';
-
+import { createHttpFactory, HttpMethod, SpectatorHttp } from '@ngneat/spectator';
+import { provideMockStore } from '@ngrx/store/testing';
+import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { AuthApiService } from './auth-api.service';
 
 describe('AuthApiService', () => {
-  let service: AuthApiService;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(AuthApiService);
+  let spectator: SpectatorHttp<AuthApiService>;
+  const createHttp = createHttpFactory({
+    service: AuthApiService,
+    providers: [
+      { provide: ConfigService, useValue: ConfigServiceMock },
+      provideMockStore(),
+    ],
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  beforeEach(() => spectator = createHttp());
+
+  it('login', () => {
+    const username = 'username1';
+    const password = '1234';
+
+    spectator.service.login({username, password, type: 'normal'}).subscribe();
+
+    const req = spectator.expectOne(`${ConfigServiceMock.apiUrl}/auth`, HttpMethod.POST);
+    expect(req.request.body['username']).toEqual(username);
+    expect(req.request.body['password']).toEqual(password);
   });
 });

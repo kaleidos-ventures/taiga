@@ -40,6 +40,26 @@
       }
     },
     {
+      "files": ["*.spec.ts", "*.tsx"],
+      "extends": [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@nrwl/nx/typescript",
+        "plugin:ngrx/recommended"
+      ],
+      "rules": {
+        "semi": "off",
+        "@typescript-eslint/semi": ["error"],
+        "@typescript-eslint/unbound-method": "off",
+        "indent": "off",
+        "@typescript-eslint/indent": ["error", 2],
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    },
+    {
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nrwl/nx/javascript"],
       "rules": {}

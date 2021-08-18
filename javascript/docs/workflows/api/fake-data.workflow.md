@@ -26,7 +26,7 @@ export const UserMockFactory = (): User => {
 Then in your test you can import the Factory to get the fake data.
 
 ```ts
-import { UserMockFactory } from '@/app/api/user/user.model.mock';
+import { UserMockFactory } from '@taiga/data';
 
 const newUser = UserMockFactory();
 ```

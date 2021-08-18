@@ -37,3 +37,5 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+/apps/taiga/src/assets/config.json

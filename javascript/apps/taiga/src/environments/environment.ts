@@ -14,12 +14,7 @@ import { Environment } from './environment.model';
 
 export const environment: Environment = {
   production: false,
-  // configRemote: '/assets/config.json',
-  configLocal: {
-    api: 'http://localhost:8000/api/v1',
-    ws: 'ws://localhost:8080',
-    defaultLanguage: 'en'
-  },
+  configRemote: '/assets/config.json',
 };
 
 /*

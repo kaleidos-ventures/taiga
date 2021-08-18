@@ -32,8 +32,6 @@ import { of } from 'rxjs';
 import { CommonsModule } from './commons/commons.module';
 import { TranslocoRootModule } from './transloco/transloco-root.module';
 import { TranslocoService } from '@ngneat/transloco';
-import {  } from '@taiga-ui/kit';
-
 
 const MAPPER: Record<string, string> = {
   // iconName: string

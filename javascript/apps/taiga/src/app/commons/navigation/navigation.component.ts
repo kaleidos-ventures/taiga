@@ -9,9 +9,6 @@
 import { selectUser } from '@/app/pages/auth/selectors/auth.selectors';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { User } from '@taiga/data';
-import { filter } from 'rxjs/operators';
-
 @Component({
   selector: 'tg-navigation',
   templateUrl: './navigation.component.html',

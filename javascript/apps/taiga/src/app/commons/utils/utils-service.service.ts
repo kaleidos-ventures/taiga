@@ -32,12 +32,4 @@ export class UtilsService {
       ) as { [k: string]: unknown; };
     }
   }
-
-  public static slugify(data: string) {
-    return data.toLowerCase().trim()
-      .replace(/\s+/g, '-')
-      .replace(/&/g, '-and-')
-      .replace(/[^\w\-]+/g, '')
-      .replace(/\-\-+/g, '-');
-  }
 }

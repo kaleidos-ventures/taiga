@@ -28,7 +28,7 @@ body {
 /* TEXT */
 
 a {
-  color: #1d7484;
+  color: var(--color-secondary);
   text-decoration: none;
 
   &[href] {
@@ -39,7 +39,12 @@ a {
   }
 
   &:hover {
-    /* color: var(--accent); */
+    color: var(--color-secondary90);
+  }
+
+  &:focus-visible {
+    border-bottom: 1px solid var(--color-secondary);
+    outline: none;
   }
 
   &:visited {

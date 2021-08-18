@@ -31,7 +31,6 @@ export class AppComponent {
     const user = this.localStorageService.get<User>('user');
 
     if (user) {
-      console.log(user);
       this.store.dispatch(setUser({ user }));
     }
   }

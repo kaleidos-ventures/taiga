@@ -11,6 +11,7 @@ import { NgModule } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiHostedDropdownModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiAvatarModule } from '@taiga-ui/kit';
+import { AvatarModule } from '../avatar/avatar.component.module';
 import { NavigationProjectsComponent } from './navigation-projects/navigation-projects.component';
 import { NavigationUserDropdownComponent } from './navigation-user-dropdown/navigation-user-dropdown.component';
 import { NavigationComponent } from './navigation.component';
@@ -23,6 +24,7 @@ import { NavigationComponent } from './navigation.component';
     TuiSvgModule,
     TranslocoModule,
     TuiHostedDropdownModule,
+    AvatarModule,
   ],
   declarations: [
     NavigationComponent,

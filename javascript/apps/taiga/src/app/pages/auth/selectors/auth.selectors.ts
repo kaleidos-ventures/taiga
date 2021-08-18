@@ -6,8 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { createSelector } from '@ngrx/store';
 import { authFeature } from '../reducers/auth.reducer';
 
 export const {
   selectUser
 } = authFeature;
+
+export const isLogged = () => {
+  return createSelector(selectUser, (user) => !!user);
+};

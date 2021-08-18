@@ -15,6 +15,7 @@ import * as AuthActions from '../actions/auth.actions';
 import { AuthApiService } from '@taiga/api';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { Auth, User } from '@taiga/data';
+import { LocalStorageService } from '@/app/commons/local-storage/local-storage.service';
 
 @Injectable()
 export class AuthEffects {
@@ -50,11 +51,16 @@ export class AuthEffects {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
         const user = Object.fromEntries(authEntries) as User;
 
+        this.localStorageService.set('user', user);
+
         return AuthActions.setUser({ user });
       })
     );
   });
 
-  constructor(private actions$: Actions, private authApiService: AuthApiService) {}
+  constructor(
+    private actions$: Actions,
+    private authApiService: AuthApiService,
+    private localStorageService: LocalStorageService) {}
 
 }

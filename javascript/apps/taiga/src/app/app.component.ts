@@ -7,7 +7,11 @@
  */
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { User } from '@taiga/data';
 import { WsService } from '@taiga/ws';
+import { LocalStorageService } from './commons/local-storage/local-storage.service';
+import { setUser } from './pages/auth/actions/auth.actions';
 
 @Component({
   selector: 'tg-root',
@@ -18,7 +22,17 @@ import { WsService } from '@taiga/ws';
 export class AppComponent {
   public title = 'taiga2';
 
-  constructor(private wsService: WsService) {
+  constructor(
+    private wsService: WsService,
+    private localStorageService: LocalStorageService,
+    private store: Store) {
     this.wsService.listen();
+
+    const user = this.localStorageService.get<User>('user');
+
+    if (user) {
+      console.log(user);
+      this.store.dispatch(setUser({ user }));
+    }
   }
 }

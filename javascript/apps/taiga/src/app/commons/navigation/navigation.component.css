@@ -56,11 +56,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   all: unset;
   cursor: pointer;
 
-  &:focus tui-avatar {
-    border-color: var(--color-secondary);
+  &:focus tg-avatar {
+    --color-border: var(--color-secondary);
   }
 
-  &:hover tui-avatar {
-    border-color: var(--color-secondary80);
+  &:hover tg-avatar {
+    --color-border: var(--color-secondary80);
   }
 }

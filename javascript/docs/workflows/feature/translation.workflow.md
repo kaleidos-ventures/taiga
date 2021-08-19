@@ -13,6 +13,11 @@ Use structural Directive instead of pipes and use `read` input in the structural
   <p>{{ t('title', { name: 'Transloco' }) }}</p>
 </ng-container>
 ```
+For translations outsite the scope, use this sytax.
+
+```html
+<p>{{ 'commons.projects' | transloco }}</p>
+```
 
 [Follow this guide for more details](https://ngneat.github.io/transloco/docs/translation-in-the-template) 
 

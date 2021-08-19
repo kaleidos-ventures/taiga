@@ -6,9 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Action, createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, createReducer, on } from '@ngrx/store';
+import { immerReducer } from '@/app/commons/utils/store';
 import { User } from '@taiga/data';
-import { produce } from 'immer';
 import * as AuthActions from '../actions/auth.actions';
 
 export interface AuthState {
@@ -30,9 +30,5 @@ export const reducer = createReducer(
 
 export const authFeature = createFeature({
   name: 'auth',
-  reducer: (state: AuthState = initialState, action: Action) => {
-    return produce(state, (draft: AuthState) => {
-      return reducer(draft, action);
-    });
-  }
+  reducer: immerReducer(reducer),
 });

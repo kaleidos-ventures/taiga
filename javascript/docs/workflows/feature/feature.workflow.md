@@ -52,24 +52,35 @@ UPDATE apps/taiga/src/app/pages/todo-list/todo-list.module.ts
 
 Ngrx schematics right now doesn't use the new `createFeature` so we have to manually update the files. Here an example of a valid ngrx state.
 
+We use [immer](https://github.com/immerjs/immer) to mutate the state with the helper function  immerReducer
+
 ```ts
+import { immerReducer } from '@/app/commons/utils/store';
+import { createFeature, createReducer, on } from '@ngrx/store';
+
 // todo-list.reducer.ts
-interface State {
+interface TodosState {
   todos: Todo[];
   filter: string;
 }
 
-const initialState: State = {
+const initialState: TodosState = {
   todos: [],
   filter: '',
 };
 
+const reducer = createReducer(
+  initialState,
+  on(TodoListActions.loadSuccess, (state, { todos }): TodosState => {
+    state.todos = todos;
+
+    return state;
+  }),
+);
+
 export const todosFeature = createFeature({
   name: 'todos',
-  reducer: createReducer(
-    initialState,
-    on(TodoListActions.loadSuccess, /* ... */),
-  ),
+  reducer: immerReducer(reducer),
 });
 
 // todo-list.selectors.ts

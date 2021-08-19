@@ -4,11 +4,23 @@
     "projects": "Projects"
   },
   "navigation": {
-    "go_home": "Go to home"
+    "go_home": "Go to home",
+    "search": "Search",
+    "discover": "Discover",
+    "help": "Help",
+    "notification": "Notification",
+    "user_avatar": "User Avatar"
   },
   "navigation-projects": {
     "pinned": "Pinned projects",
     "view_projects": "View your projects",
     "new_project": "New project"
+  },
+  "navigation-user": {
+    "user_profile": "User Profile",
+    "edit_setting": "Edit setting",
+    "account_setting": "Account settings",
+    "accesibility_setting": "Accesibility settings",
+    "sign_out": "Sign out"
   }
 }

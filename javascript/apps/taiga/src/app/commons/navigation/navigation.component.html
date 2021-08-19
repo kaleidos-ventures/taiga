@@ -6,88 +6,94 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t; read: 'navigation'">
-<ng-container *ngIf="user$ | async as user">
-<div class="left">
-  <a
-    appearance="home-button"
-    title="Home"
-    href="http://google.com"
-    class="home-button"
-    tuiIconButton
-    icon="taigaLogo"
-    type="button"
-  >
-    <span class="visually-hidden">{{ t('go_home') }}</span>
-  </a>
-  <tui-hosted-dropdown
-  [content]="projectsDropdown"
-  [(open)]="openProjectsDropdown">
-    <button
-      appearance="tertiary-button"
-      tuiButton
-      icon="folder"
-      type="button">
-      {{ 'commons.projects' | transloco }}
-    </button>
-  </tui-hosted-dropdown>
-</div>
-<div class="right">
-  <div class="actions">
-    <button
-      appearance="button-form"
-      tuiIconButton
-      title="Search"
-      icon="search"
-      type="button"
-    >
-    </button>
-    <button
-      appearance="button-form"
-      tuiIconButton
-      icon="discover"
-      title="Discover"
-      type="button"
-    >
-    </button>
-    <button
-      appearance="button-form"
-      tuiIconButton
-      icon="help"
-      title="Help"
-      type="button"
-    >
-    </button>
-    <div class="notification-button">
-      <div class="counter">13</div>
-      <button
-        appearance="button-form"
+  <ng-container *ngIf="user$ | async as user">
+    <div class="left">
+      <a
+        appearance="home-button"
+        title="{{ t('go_home') }}"
+        href="#"
+        class="home-button"
         tuiIconButton
-        icon="bell"
-        title="Notifications"
-        type="button">
-      </button>
+        icon="taigaLogo"
+        type="button"
+      >
+        <span class="visually-hidden">{{ t('go_home') }}</span>
+      </a>
+      <tui-hosted-dropdown
+      [content]="projectsDropdown"
+      [(open)]="openProjectsDropdown">
+        <button
+          appearance="tertiary-button"
+          tuiButton
+          icon="folder"
+          type="button">
+          {{ 'commons.projects' | transloco }}
+        </button>
+      </tui-hosted-dropdown>
     </div>
-  </div>
-  <div class="separator"></div>
-  <div class="avatar-holder">
-    <tui-hosted-dropdown
-      [content]="userDropdown"
-      [(open)]="openUserDropdown">
-      <button
-        class="avatar-dropdown-button"
-        type="button">
-        <tg-avatar title="Avatar"></tg-avatar>
-      </button>
-    </tui-hosted-dropdown>
-  </div>
-</div>
+    <div class="right">
+      <div class="actions">
+        <button
+          appearance="button-form"
+          tuiIconButton
+          title="{{ t('search') }}"
+          icon="search"
+          type="button"
+        >
+          <span class="visually-hidden">{{ t('search') }}</span>
+        </button>
+        <button
+          appearance="button-form"
+          tuiIconButton
+          icon="discover"
+          title="{{ t('discover') }}"
+          type="button"
+        >
+          <span class="visually-hidden">{{ t('discovery') }}</span>
+        </button>
+        <button
+          appearance="button-form"
+          tuiIconButton
+          icon="help"
+          title="{{ t('help') }}"
+          type="button"
+        >
+          <span class="visually-hidden">{{ t('help') }}</span>
+        </button>
+        <div class="notification-button">
+          <div class="counter">13</div>
+          <button
+            appearance="button-form"
+            tuiIconButton
+            icon="bell"
+            title="{{ t('notification') }}"
+            type="button">
+            <span class="visually-hidden">{{ t('notification') }}</span>
+            <div class="counter">13</div>
+          </button>
+        </div>
+      </div>
+      <div class="separator"></div>
+      <div class="avatar-holder">
+        <tui-hosted-dropdown
+          [content]="userDropdown"
+          [(open)]="openUserDropdown">
+          <button
+            class="avatar-dropdown-button"
+            type="button">
+            <span class="visually-hidden">{{ t('user_avatar') }}</span>
+            <tg-avatar title="{{ t('user_avatar') }}"></tg-avatar>
+          </button>
+        </tui-hosted-dropdown>
+      </div>
+    </div>
 
-<ng-template #userDropdown>
-    <tg-navigation-user-dropdown [user]="user"></tg-navigation-user-dropdown>
-</ng-template>
+    <ng-template #userDropdown>
+        <tg-navigation-user-dropdown [user]="user"></tg-navigation-user-dropdown>
+    </ng-template>
 
-<ng-template #projectsDropdown>
-  <tg-navigation-projects></tg-navigation-projects>
-</ng-template>
-</ng-container>
+    <ng-template #projectsDropdown>
+      <tg-navigation-projects></tg-navigation-projects>
+    </ng-template>
+  </ng-container>
 </ng-container>

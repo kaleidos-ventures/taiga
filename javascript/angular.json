@@ -153,6 +153,9 @@
           "builder": "@angular-builders/custom-webpack:browser",
           "outputs": ["{options.outputPath}"],
           "options": {
+            "allowedCommonJsDependencies": [
+              "angular2-text-mask"
+            ],
             "customWebpackConfig": {
               "path": "./extra-webpack.config.ts",
               "mergeStrategies": {

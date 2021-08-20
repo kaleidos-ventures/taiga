@@ -13,7 +13,7 @@ Use structural Directive instead of pipes and use `read` input in the structural
   <p>{{ t('title', { name: 'Transloco' }) }}</p>
 </ng-container>
 ```
-For translations outsite the scope, use this sytax.
+For translations outsite the scope, use this sytax or remove read from the *transloco directive
 
 ```html
 <p>{{ 'commons.projects' | transloco }}</p>

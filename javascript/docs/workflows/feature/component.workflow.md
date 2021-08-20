@@ -65,6 +65,7 @@ For a reactive local state we use [rx-angular](https://github.com/rx-angular/rx-
 export class TodoPageComponent implements OnInit {
   public readonly tasks$ = this.state.select('tasks');
   public readonly deleteBtn$ = new Subject();
+  public readonly model$ = this.state.select();
 
   constructor(
     private store: Store,
@@ -93,7 +94,7 @@ export class TodoPageComponent implements OnInit {
     );
 
     // connect the ngrx state with the local state
-    this.state.connect(this.store.select(selectTodoListState));
+    this.state.connect('tasks', this.store.select(seletTasks));
   }
 
   public initLoading() {
@@ -103,6 +104,12 @@ export class TodoPageComponent implements OnInit {
     });
   }
 }
+```
+
+```html
+<ng-container *ngIf="model$ | async as vm">
+  <p>{{ vm.loading }}</p>
+</ng-container>
 ```
 
 ## Responsive

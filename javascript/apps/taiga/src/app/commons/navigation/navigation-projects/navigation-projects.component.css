@@ -65,7 +65,7 @@ li {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-left: .75rem; /* review: spacing? */
+  padding-left: var(--spacing-1);
 
   & span {
     display: block;

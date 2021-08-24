@@ -32,20 +32,10 @@ import { of } from 'rxjs';
 import { CommonsModule } from './commons/commons.module';
 import { TranslocoRootModule } from './transloco/transloco-root.module';
 import { TranslocoService } from '@ngneat/transloco';
-
-const MAPPER: Record<string, string> = {
-  // iconName: string
-  taigaLogo: 'taiga-logo',
-  discover: 'discover',
-  help: 'help',
-  search: 'search',
-  bell: 'bell',
-  folder: 'folder',
-  plus: 'plus',
-};
+import { paramCase } from 'change-case';
 
 export function iconsPath(name: string): string {
-  return `assets/icons/sprite.svg#${MAPPER[name]}`;
+  return `assets/icons/sprite.svg#${paramCase(name)}`;
 }
 
 export function prefersReducedMotion(): boolean {

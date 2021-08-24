@@ -10,6 +10,13 @@ import { APP_BASE_HREF } from '@angular/common';
 import { ICollection, NgModuleMetadata } from '@storybook/angular/dist/ts3.9/client/preview/types';
 import { Args, moduleMetadata, Story } from '@storybook/angular';
 import { Meta } from '@storybook/angular/types-6-0';
+import { TUI_ICONS_PATH } from '@taiga-ui/core';
+import { paramCase } from 'change-case';
+import { Component } from '@angular/core';
+
+export function iconsPath(name: string): string {
+  return `assets/icons/sprite.svg#${paramCase(name)}`;
+}
 
 export const ConfigureStory = (config: {
   title: string,
@@ -30,7 +37,11 @@ export const ConfigureStory = (config: {
       ...config.declarations || [],
     ],
     providers: [
-      { provide: APP_BASE_HREF, useValue: '/' }
+      { provide: APP_BASE_HREF, useValue: '/' },
+      {
+        provide: TUI_ICONS_PATH,
+        useValue: iconsPath,
+      },
     ],
     imports: [
       // Prevent Storybook error "Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'iframe.html'"
@@ -71,3 +82,12 @@ export const ConfigureTemplate = (config: {
 
   return Primary;
 };
+
+@Component({
+  selector: 'tg-ui-emtpy',
+  template: '',
+  styleUrls: [],
+})
+export class EmptyComponent {
+
+}

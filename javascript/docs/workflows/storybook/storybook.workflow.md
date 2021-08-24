@@ -1,6 +1,6 @@
 # Storybook workflow
 
-Create the story file next to the componente in `javascript/libs/ui/src/lib/` like `MyComponent.stories.ts`.
+Create the story file next to the componente in `javascript/libs/ui/src/lib/` like `mycomponent.stories.ts`.
 
 Config the story with the helper function.
 

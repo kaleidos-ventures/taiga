@@ -10,8 +10,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { User } from '@taiga/data';
 import { WsService } from '@taiga/ws';
-import { LocalStorageService } from './commons/local-storage/local-storage.service';
-import { setUser } from './pages/auth/actions/auth.actions';
+import { LocalStorageService } from './shared/local-storage/local-storage.service';
+import { setUser } from './features/auth/actions/auth.actions';
 
 @Component({
   selector: 'tg-root',

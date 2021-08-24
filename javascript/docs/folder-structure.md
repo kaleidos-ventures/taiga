@@ -6,6 +6,7 @@
 │   │   └── src
 │   │       ├── app
 │   │       │   ├── [commons](#commons-module)
+│   │       │   ├── [features](#features-module)
 │   │       │   ├── [pages](#pages-module)
 │   │       │   ├── [services](#services-module)
 │   │       │   └── [styles](#styles)
@@ -24,6 +25,10 @@
 ## Commons Module
 
 Common modules, this means that they will be used in many components and pages or they will not be particularly attached to any page. 
+
+## Features Module
+
+Features modules, the folder contains features, usually with state and multiple componentes.
 
 ## Pages Module
 

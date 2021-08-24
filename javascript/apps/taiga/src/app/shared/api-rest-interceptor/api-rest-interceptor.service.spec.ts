@@ -9,7 +9,7 @@
 import { RouterTestingModule } from '@angular/router/testing';
 import { ApiRestInterceptorService } from './api-rest-interceptor.service';
 import { createHttpFactory, SpectatorHttp } from '@ngneat/spectator/jest';
-import { LocalStorageService } from '@/app/commons/local-storage/local-storage.service';
+import { LocalStorageService } from '@/app/shared/local-storage/local-storage.service';
 import * as faker from 'faker';
 import { HTTP_INTERCEPTORS, HttpRequest, HttpResponse, HttpParams } from '@angular/common/http';
 import { of } from 'rxjs';

@@ -16,10 +16,10 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
-import { PagesModule } from './pages/pages.module';
+import { AppRoutingModule } from './app-routing.module';
 import { ConfigService } from '@taiga/core';
 import { HttpClientModule } from '@angular/common/http';
-import { ApiRestInterceptorModule } from './commons/api-rest-interceptor/api-rest-interceptor.module';
+import { ApiRestInterceptorModule } from './shared/api-rest-interceptor/api-rest-interceptor.module';
 import { ApiModule } from '@taiga/api';
 import { UiModule } from '@taiga/ui';
 import { WsModule } from '@taiga/ws';
@@ -29,10 +29,10 @@ import { TuiRootModule } from '@taiga-ui/core';
 import { TUI_ICONS_PATH } from '@taiga-ui/core';
 import { TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE } from '@taiga-ui/i18n';
 import { of } from 'rxjs';
-import { CommonsModule } from './commons/commons.module';
 import { TranslocoRootModule } from './transloco/transloco-root.module';
 import { TranslocoService } from '@ngneat/transloco';
 import { paramCase } from 'change-case';
+import { NavigationModule } from './shared/navigation/navigation.module';
 
 export function iconsPath(name: string): string {
   return `assets/icons/sprite.svg#${paramCase(name)}`;
@@ -51,10 +51,10 @@ export function prefersReducedMotion(): boolean {
     UiModule,
     WsModule,
     CoreModule,
-    CommonsModule,
     HttpClientModule,
     ApiRestInterceptorModule,
-    PagesModule,
+    NavigationModule,
+    AppRoutingModule,
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     BrowserAnimationsModule.withConfig({
       disableAnimations: prefersReducedMotion()

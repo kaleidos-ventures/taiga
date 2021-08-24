@@ -11,10 +11,10 @@ Depending on the type of component there could be three different locations wher
 
 # Creating a new component
 
-Create an `Example` component for a feature in the commons/ folder (or any other feature folder).
+Create an `Example` component for a feature in the shared/ folder (or any other feature folder).
 
 ```bash
-ng g component commons/todo-list/Example --export --changeDetection OnPush
+ng g component shared/todo-list/Example --export --changeDetection OnPush
 ```
 
 This will generate the component files (html, css, ts, spec) and will add the component to the parent module declarations and exports.

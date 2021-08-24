@@ -8,6 +8,6 @@
 
 export * from './lib/api.module';
 
-export * from './lib/commons/api-utils.service';
+export * from './lib/shared/api-utils.service';
 export * from './lib/auth/auth-api.service';
 

@@ -9,7 +9,7 @@ If you are looking for the worflow on how to create a simple component, follow t
 npx ng g @schematics/angular:module --name=TodoList --project=taiga --module=commons.module --path=apps/taiga/src/app/commons
 ```
 
-Open `/apps/taiga/src/app/commons/commons.module.ts` and add the new module to `exports`.
+WIP: new schematics
 
 ## Page
 
@@ -55,7 +55,7 @@ Ngrx schematics right now doesn't use the new `createFeature` so we have to manu
 We use [immer](https://github.com/immerjs/immer) to mutate the state with the helper function  immerReducer
 
 ```ts
-import { immerReducer } from '@/app/commons/utils/store';
+import { immerReducer } from '@/app/shared/utils/store';
 import { createFeature, createReducer, on } from '@ngrx/store';
 
 // todo-list.reducer.ts

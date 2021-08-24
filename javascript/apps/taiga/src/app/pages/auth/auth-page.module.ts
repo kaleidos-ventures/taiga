@@ -8,24 +8,20 @@
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
+import { LoginComponent } from '@/app/features/auth/login/login.component';
+import { AuthModule } from '@/app/features/auth/auth.module';
 
 const routes: Routes = [
-  { path: 'login', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
+  { path: '', component: LoginComponent }
 ];
 
 @NgModule({
-  declarations: [],
-  imports: [
-    QuicklinkModule,
-    RouterModule.forRoot(routes, {
-      initialNavigation: 'enabled',
-      preloadingStrategy: QuicklinkStrategy
-    }),
+  declarations: [
+
   ],
-  providers: [],
-  exports: [
-    RouterModule
-  ]
+  imports: [
+    AuthModule,
+    RouterModule.forChild(routes),
+  ],
 })
-export class PagesModule { }
+export class AuthPageModule { }

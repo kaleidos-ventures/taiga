@@ -53,3 +53,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   letter-spacing: normal;
   line-height: 1.5;
 }
+
+@define-mixin text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

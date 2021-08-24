@@ -9,7 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 tui-wrapper[data-appearance="button-form"] {
   background: none;
   color: var(--color-secondary);
-  padding: .25rem !important; /* stylelint-disable-line declaration-no-important */
+  padding: var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
 
   &[data-state="hovered"] {
     background: var(--color-gray20);
@@ -26,7 +26,7 @@ tui-wrapper[data-appearance="button-form"] {
 tui-wrapper[data-appearance="home-button"] {
   background: none;
   color: var(--color-gray100);
-  padding: 0 .25rem !important; /* stylelint-disable-line declaration-no-important */
+  padding: 0 var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
 
   &[data-state="hovered"] {
     background: none;
@@ -66,7 +66,7 @@ tui-wrapper[data-appearance="tertiary-button"] {
   background: var(--color-gray10);
   border-radius: 3px;
   color: var(--color-secondary);
-  padding: 0 .8rem !important; /* stylelint-disable-line declaration-no-important */
+  padding: var(--spacing-4) var(--spacing-12) !important; /* stylelint-disable-line declaration-no-important */
 
   &[data-state="hovered"] {
     color: var(--color-secondary90);
@@ -82,6 +82,10 @@ tui-wrapper[data-appearance="tertiary-button"] {
   & .icon {
     height: 1rem;
     width: 1rem;
+  }
+
+  & .left {
+    margin-left: 0;
   }
 }
 

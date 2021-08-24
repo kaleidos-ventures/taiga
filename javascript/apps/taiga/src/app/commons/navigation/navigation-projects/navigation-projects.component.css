@@ -23,7 +23,7 @@ ul {
     content: attr(aria-label);
     display: block;
     font-size: var(--font-size-small);
-    padding-bottom: var(--spacing-1);
+    padding-bottom: var(--spacing-8);
     text-transform: uppercase;
   }
 }
@@ -32,20 +32,52 @@ li {
   margin-bottom: 0;
 }
 
+.project-workspace {
+  @mixin font-small;
+
+  color: var(--color-gray70);
+}
+
 .pinned-projects {
   border-bottom: 1px solid var(--color-gray30);
-  margin-bottom: var(--spacing-2);
+  margin-bottom: var(--spacing-16);
 }
 
 .project-name {
   color: var(--color-gray90);
 }
 
+.project-data {
+  display: flex;
+  flex-direction: column;
+  font-weight: var(--font-weight-bold);
+  justify-content: space-between;
+  max-width: calc(100% - var(--spacing-8));
+  padding-left: var(--spacing-12);
+  padding-right: var(--spacing-16);
+
+  & span {
+    display: block;
+  }
+
+  & .project-name {
+    @mixin text-overflow;
+
+    line-height: 1.4;
+  }
+
+  & .project-workspace {
+    @mixin text-overflow;
+
+    line-height: 1.2;
+  }
+}
+
 .project {
   box-sizing: content-box;
   display: flex;
   height: 32px;
-  padding: var(--spacing-1);
+  padding: var(--spacing-8);
 
   &:hover {
     background-color: var(--color-gray20);
@@ -61,28 +93,11 @@ li {
   }
 }
 
-.project-data {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding-left: var(--spacing-1);
-
-  & span {
-    display: block;
-  }
-}
-
 .project-image {
   & img {
     all: unset;
     width: 32px;
   }
-}
-
-.project-workspace {
-  @mixin font-small;
-
-  color: var(--color-gray70);
 }
 
 .view-projects {
@@ -102,7 +117,7 @@ li {
     background-color: var(--color-white);
     color: var(--color-gray80);
     display: block;
-    padding: var(--spacing-1);
+    padding: var(--spacing-8);
 
     &:hover {
       background-color: var(--color-gray20);

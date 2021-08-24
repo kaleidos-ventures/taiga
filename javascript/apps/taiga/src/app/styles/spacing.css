@@ -7,14 +7,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 :root {
-  --spacing-1: .5rem;
-  --spacing-2: calc(var(--spacing-1) * 2);
-  --spacing-3: calc(var(--spacing-1) * 3);
-  --spacing-4: calc(var(--spacing-1) * 4);
-  --spacing-5: calc(var(--spacing-1) * 5);
-  --spacing-6: calc(var(--spacing-1) * 6);
-  --spacing-7: calc(var(--spacing-1) * 7);
-  --spacing-8: calc(var(--spacing-1) * 8);
-  --spacing-9: calc(var(--spacing-1) * 9);
-  --spacing-10: calc(var(--spacing-1) * 10);
+  --spacing-4: .25rem;
+  --spacing-8: calc(var(--spacing-4) * 2);
+  --spacing-12: calc(var(--spacing-4) * 3);
+  --spacing-16: calc(var(--spacing-4) * 4);
+  --spacing-20: calc(var(--spacing-4) * 5);
+  --spacing-24: calc(var(--spacing-4) * 6);
+  --spacing-28: calc(var(--spacing-4) * 7);
+  --spacing-32: calc(var(--spacing-4) * 8);
+  --spacing-36: calc(var(--spacing-4) * 9);
+  --spacing-40: calc(var(--spacing-4) * 10);
 }

@@ -47,7 +47,7 @@ li {
   }
 
   & .user-name {
-    font-weight: 700;
+    font-weight: var(--font-weight-bold);
   }
 
   & .user-mail {
@@ -69,7 +69,7 @@ li {
 .user-link {
   color: var(--color-gray80);
   display: flex;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   padding: var(--spacing-1);
 
   &:hover {

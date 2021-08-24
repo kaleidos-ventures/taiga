@@ -16,7 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   --font-size-small: .7rem;
 
   /* Font weight */
-  --font-weight-light: 200;
-  --font-weight-medium: 400;
-  --font-weight-bold: 700;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
 }

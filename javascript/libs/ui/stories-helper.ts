@@ -8,7 +8,7 @@
 
 import { APP_BASE_HREF } from '@angular/common';
 import { ICollection, NgModuleMetadata } from '@storybook/angular/dist/ts3.9/client/preview/types';
-import { Args, moduleMetadata, Story } from '@storybook/angular';
+import { Args, ArgTypes, moduleMetadata, Story } from '@storybook/angular';
 import { Meta } from '@storybook/angular/types-6-0';
 import { TUI_ICONS_PATH } from '@taiga-ui/core';
 import { paramCase } from 'change-case';
@@ -67,6 +67,7 @@ export const ConfigureTemplate = (config: {
   template?: string;
   props?: ICollection,
   args?: Partial<Args>,
+  argTypes?: Partial<ArgTypes>,
 }) => {
   const Template: Story<typeof config['args']> = (args: typeof config['args']) => {
     return {
@@ -81,6 +82,7 @@ export const ConfigureTemplate = (config: {
   const Primary = Template.bind({});
 
   Primary.args = config.args;
+  Primary.argTypes = config.argTypes;
 
   return Primary;
 };

@@ -112,6 +112,10 @@ export class TodoPageComponent implements OnInit {
 </ng-container>
 ```
 
+### Translation
+
+Maybe the component could benefict from lazy load translations, check "Lazy load translation files" in translation.workflow.
+
 ## Responsive
 
 For styling purposes you will find media queries under the styles folder, `responsive.css` file.

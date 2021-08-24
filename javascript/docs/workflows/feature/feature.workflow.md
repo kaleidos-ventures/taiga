@@ -145,3 +145,7 @@ https://ngrx.io/guide/store/testing#testing-selectors
 ### Testing reducers
 
 https://ngrx.io/guide/store/testing#testing-reducers
+
+### Translation
+
+It's recommended to lazy load the module translation check "Lazy load translation files" in translation.workflow

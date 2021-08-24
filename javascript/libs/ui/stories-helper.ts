@@ -25,10 +25,12 @@ export const ConfigureStory = (config: {
   extraModules?: unknown[],
   routing?: boolean,
   translations?: boolean,
+  decorators?: Meta['decorators'],
 }) => {
   config = {
     routing: true,
     translations: true,
+    decorators: [],
     ...config,
   };
 
@@ -51,12 +53,12 @@ export const ConfigureStory = (config: {
     ],
   };
 
+  config.decorators?.push(moduleMetadata(module));
+
   return {
     title: config.title,
     component: config.component,
-    decorators: [
-      moduleMetadata(module),
-    ]
+    decorators: config.decorators,
   } as Meta;
 };
 
@@ -74,7 +76,7 @@ export const ConfigureTemplate = (config: {
         ...args
       },
     };
-  }
+  };
 
   const Primary = Template.bind({});
 

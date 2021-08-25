@@ -67,7 +67,7 @@ export const ConfigureTemplate = (config: {
   template?: string;
   props?: ICollection,
   args?: Partial<Args>,
-  argTypes?: Partial<ArgTypes>,
+  argTypes?: ArgTypes,
 }) => {
   const Template: Story<typeof config['args']> = (args: typeof config['args']) => {
     return {

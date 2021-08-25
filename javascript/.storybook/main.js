@@ -16,4 +16,17 @@ module.exports = {
     '@storybook/addon-a11y',
     '@storybook/addon-notes',
   ],
+  webpackFinal: async (config, { configType }) => {
+    if (config?.module?.rules) {
+      config.module.rules.push(
+        {
+          test   : /\.css$/,
+          loader : 'postcss-loader'
+        }
+      );
+    }
+
+    return config;
+
+  },
 };

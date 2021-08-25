@@ -15,6 +15,15 @@
 module.exports = async ({ config, mode }) => {
   // Make whatever fine-grained changes you need
 
+  if (config?.module?.rules) {
+    config.module.rules.push(
+      {
+        test   : /\.css$/,
+        loader : 'postcss-loader'
+      }
+    );
+  }
+
   // Return the altered config
   return config;
 };

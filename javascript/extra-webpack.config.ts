@@ -13,14 +13,7 @@ export default function(config: Configuration) {
     config.module.rules.push(
       {
         test   : /\.css$/,
-        loader : 'postcss-loader',
-        options: {
-          postcssOptions: {
-            plugins: [
-              require('postcss-preset-env')(),
-            ]
-          }
-        }
+        loader : 'postcss-loader'
       }
     );
   }

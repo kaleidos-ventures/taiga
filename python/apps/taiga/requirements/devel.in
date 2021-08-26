@@ -1,0 +1,3 @@
+-r commons.in
+
+-e file:../../taiga6/taiga-back#egg=taiga6

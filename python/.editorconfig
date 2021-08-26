@@ -1,0 +1,14 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = false
+
+[*.py]
+charset = utf-8
+indent_style = space
+indent_size = 4
+
+[{*.{json,yml,yaml}]
+indent_style = space
+indent_size = 2

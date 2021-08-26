@@ -1,0 +1,23 @@
+{#
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+#}
+
+{% trans owner_name=project.owner.get_full_name(), requester_name=requester.get_full_name(), project_name=project.name %}
+Hi {{owner_name}},
+{{ requester_name }} has requested to become the project owner of "{{project_name}}".
+{% endtrans %}
+
+{% trans %}
+Please, go to your project settings if you would like to start the project transfer from the administration panel.
+{% endtrans %}
+
+{{ _("Go to your project settings:") }} {{ resolve_front_url("project-admin", project.slug) }}
+
+{% trans signature=sr("signature") %}
+---
+{{ signature }}
+{% endtrans %}

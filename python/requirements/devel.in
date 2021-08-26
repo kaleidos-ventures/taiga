@@ -1,0 +1,6 @@
+# pre-commit
+pre-commit
+mypy
+
+# requirements tooling
+pip-tools

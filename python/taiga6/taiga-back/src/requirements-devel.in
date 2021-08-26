@@ -1,0 +1,7 @@
+-c requirements.txt
+coverage
+coveralls
+pytest
+pytest-django
+factory-boy
+python-jose>=3.0.0

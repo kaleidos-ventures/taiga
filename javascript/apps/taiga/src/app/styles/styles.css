@@ -20,38 +20,7 @@ This layer holds any **global** settings for your project. This layer should onl
 @import "generic.css";
 @import "taiga-ui.css";
 @import "button.css";
+@import "accesibility.css";
 
-.visually-hidden {
-  border: 0;
-  clip: rect(1px 1px 1px 1px);
-  clip: rect(1px, 1px, 1px, 1px);
-  clip-path: inset(50%);
-  height: 1px;
-  margin: 0;
-  overflow: hidden;
-  padding: 0;
-  position: absolute !important; /* stylelint-disable-line declaration-no-important */
-  white-space: nowrap;
-  width: 1px;
-}
-
-.notification-button {
-  position: relative;
-
-  & .counter {
-    align-items: center;
-    background: var(--color-error);
-    border-radius: 100%;
-    color: var(--color-white);
-    display: flex;
-    font-size: .6875rem;
-    height: 1.1rem;
-    justify-content: center;
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 1.1rem;
-    z-index: 1;
-  }
-}
+/* todo fix https://github.com/storybookjs/storybook/issues/15855 */
+@import "../../../../../libs/ui/.storybook/styles-stories.css";

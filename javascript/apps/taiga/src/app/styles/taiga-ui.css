@@ -16,8 +16,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   --tui-disabled-opacity: 1; /* amount of transparency for disabled elements  */
   --tui-heading-font: "Ubuntu", sans-serif; /* font for headings */
   --tui-text-font: "Ubuntu", sans-serif; /* font for text */
-  --tui-height-l: 32px;   /* large elements height (i.e. inputs, buttons); */
-  --tui-height-m: 32px;
+  --tui-height-l: 2rem;   /* large elements height (i.e. inputs, buttons); */
+  --tui-height-m: 1.5rem;
   --tui-height-s: 4px;
   --tui-height-xs: 0;
   --tui-radius-l: 0; /* border radius for containers (i.e. hint, accordion)  */

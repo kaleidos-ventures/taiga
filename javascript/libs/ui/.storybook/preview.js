@@ -7,3 +7,6 @@
  */
 
 import './styles-stories.css';
+export const parameters = {
+  layout: 'centered',
+};

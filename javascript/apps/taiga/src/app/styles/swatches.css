@@ -22,6 +22,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   --color-gray80: rgb(83, 95, 119);
   --color-gray90: rgb(67, 77, 96);
   --color-gray100: rgb(45, 52, 66);
+  --color-red20: rgb(255, 236, 239);
+  --color-red70: rgb(212, 54, 99);
+  --color-red80: rgb(170, 40, 80);
   --color-black: rgb(23, 28, 36);
   --color-correct: rgb(100, 125, 48);
   --color-warning: rgb(179, 92, 48);

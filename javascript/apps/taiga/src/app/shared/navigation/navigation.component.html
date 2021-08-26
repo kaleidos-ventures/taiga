@@ -23,7 +23,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [content]="projectsDropdown"
       [(open)]="openProjectsDropdown">
         <button
-          appearance="tertiary-button"
+          appearance="tertiary"
           tuiButton
           icon="folder"
           type="button">
@@ -33,6 +33,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
     <div class="right">
       <div class="actions">
+        <button
+          appearance="button-form"
+          tuiIconButton
+          title="{{ t('search') }}"
+          icon="search"
+          type="button"
+        >
+          <span class="visually-hidden">{{ t('search') }}</span>
+        </button>
         <button
           appearance="button-form"
           tuiIconButton

@@ -1,12 +1,14 @@
 {
+  "alt-require": true,
   "attr-lowercase": false,
   "attr-no-duplication": true,
   "attr-unsafe-chars": true,
   "attr-value-double-quotes": true,
   "doctype-first": false,
   "doctype-html5": true,
+  "empty-tag-not-self-closed": true,
   "id-class-ad-disabled": true,
-  "id-class-value": false,
+  "id-class-value": "dash",
   "id-unique": true,
   "inline-style-disabled": true,
   "space-tab-mixed-disabled": "space",
@@ -14,6 +16,5 @@
   "src-not-empty": true,
   "style-disabled": true,
   "tag-pair": true,
-  "tag-self-close": true,
   "tagname-lowercase": ["clipPath", "linearGradient"]
 }

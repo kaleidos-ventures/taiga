@@ -18,7 +18,7 @@ metadata = {
 router = APIRouter(prefix="/projects", tags=["projects"])
 
 
-@router.get("/", name="projects.list", summary="List projects", response_model=list[ProjectSerializer])
+@router.get("", name="projects.list", summary="List projects", response_model=list[ProjectSerializer])
 def list_projects(
     offset: int = Query(0, description="number of projects to skip"),
     limit: int = Query(100, description="number of projects to show"),

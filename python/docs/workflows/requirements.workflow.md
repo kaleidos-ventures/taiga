@@ -1,6 +1,5 @@
 # Manage requirements(*).[in|txt] files
 
-
 ## How to add a new dependency (requirements/ directory)
 
 `requirements/` directories contains requirements files:
@@ -20,7 +19,6 @@
    git diff requirements/
    ```
 
-
 ## How to add a new dependency (legacy, requirements(.*).in files)
 
 1. Edit `<requirements_filename>.in` file.
@@ -33,13 +31,9 @@
    git diff <requirements_filename>.txt
    ```
 
+## How to create a requirements file by composition
 
-## Tips and tricks
-
-### Requirements composition HOWTO.
-
-You can use requirements files composition to create complex files, for example if you need different requirements for
-developmen and production environments, you can do some thing like this:
+You can use requirements files composition to create complex files, for example if you need different requirements for development and production environments, you can do some thing like this:
 
 ```
 file: requirements/comons.in
@@ -69,8 +63,7 @@ pytest
 
 So you can install `requirements/prod.txt` in production environments and `requiremsnts/devel.in` in development environments.
 
-
-### Add local package to .in files
+## How to add local package to .in files
 
 To add a local package with name <package_name> in `<relative_path>` use this
 ```

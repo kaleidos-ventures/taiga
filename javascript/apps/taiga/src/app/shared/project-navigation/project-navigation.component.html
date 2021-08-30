@@ -1,0 +1,144 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t; read: 'main-project-navigation'">
+<!-- <ng-container *ngIf="model$ | async as vm">
+
+</ng-container> -->
+  <div class="main-project-nav">
+    <div class="main-project-nav-inner">
+      <div class="workspace">
+        <img class="project-logo" src="https://placeimg.com/640/480/nature" alt="">
+        <div class="workspace-data">
+          <a
+            class="workspace-data-project"
+            href="">
+            The Princess Bride
+          </a>
+          <a
+            class="workspace-data-workspace"
+            href="">
+            {{ t('personal-workspace') }}
+          </a>
+        </div>
+      </div>
+      <nav class="primary-menu">
+        <ul>
+          <li class="menu-option">
+            <a href="">
+              <svg>
+                <use href="#overview" />
+              </svg>
+              <span class="menu-option-text">
+                {{ 'commons.overview' | transloco }}
+              </span>
+            </a>
+          </li>
+          <li class="menu-option">
+            <a href="">
+              <svg>
+                <use href="#epics" />
+              </svg>
+              <span class="menu-option-text">
+                {{ 'commons.epics' | transloco }}
+              </span>
+            </a>
+          </li>
+          <li class="menu-option">
+            <a href="">
+              <svg>
+                <use href="#scrum" />
+              </svg>
+              <span class="menu-option-text">
+                {{ 'commons.scrum' | transloco }}
+              </span>
+            </a>
+          </li>
+          <li class="menu-option">
+            <a href="">
+              <svg>
+                <use href="#kanban" />
+              </svg>
+              <span class="menu-option-text">
+                {{ 'commons.kanban' | transloco }}
+              </span>
+            </a>
+          </li>
+        <li class="menu-option">
+          <a href="">
+            <svg>
+              <use href="#issues" />
+            </svg>
+            <span class="menu-option-text">
+              {{ 'commons.issues' | transloco }}
+            </span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <hr>
+    <div class="goto">{{ t('goto') }}</div>
+    <nav class="secondary-menu">
+      <ul>
+        <li class="menu-option">
+          <a href="">
+            <svg>
+              <use href="#wiki" />
+            </svg>
+            <span class="menu-option-text">
+              {{ 'commons.wiki' | transloco }}
+            </span>
+          </a>
+        </li>
+        <li class="menu-option">
+          <a href="">
+            <svg>
+              <use href="#meetup" />
+            </svg>
+            <span class="menu-option-text">
+              {{ 'commons.meetup' | transloco }}
+            </span>
+          </a>
+        </li>
+        <li class="menu-option">
+          <a href="">
+            <svg>
+              <use href="#team" />
+            </svg>
+            <span class="menu-option-text">
+              {{ 'commons.team' | transloco }}
+            </span>
+          </a>
+        </li>
+      </ul>
+      </nav>
+      <div class="bottom-menu">
+        <div class="menu-option">
+          <a href="">
+            <svg>
+              <use href="#team" />
+            </svg>
+            <span class="menu-option-text">
+              {{ t('project-settings') }}
+            </span>
+          </a>
+        </div>
+        <button
+          type="button"
+          class="collapse">
+          <span>
+            {{ t('collapse-menu') }}
+          </span>
+          <svg>
+            <use href="#chevrons-left" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>

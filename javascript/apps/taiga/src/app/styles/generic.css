@@ -179,6 +179,11 @@ textarea {
   inline-size: 100%;
 }
 
+svg {
+  height: 1rem;
+  width: 1rem;
+}
+
 /* MODAL */
 
 .modal {

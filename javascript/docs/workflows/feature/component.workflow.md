@@ -6,7 +6,7 @@ This document goal is to create a simple component. If you are willing to create
 Depending on the type of component there could be three different locations where you could save the component:
 
 * **Specific components**: Are only used in one page. Save it in under `/apps/taiga/src/app/pages/${pageName}/${componentName}`
-* **Common components**: Are used in multiple pages but are not part of the Design System. Save it in under `/apps/taiga/src/app/common/${componentName}`
+* **Common components**: Are used in multiple pages but are not part of the Design System. Save it in under `/apps/taiga/src/app/shared/${componentName}`
 * **Design System**: Will be used in multiple components and pages. Save it in under the ui library `/libs/ui/src/lib/${componentName}`
 
 # Creating a new component
@@ -155,21 +155,7 @@ For specific media queries (avoid if not specifically required by design) you ca
 
 ## Accesibility
 
-As a general rule, for all components we will follow the [basic accesibility principles](https://www.w3.org/WAI/fundamentals/accessibility-principles/):
-
-  * **Text alternatives for non-text content**. All images, icons, charts, labels, forms will have an alternative text if not available
-  * We will use **landmarks, headings, and semantic HTML** everywhere to allow users find the content the look for.
-  * We will try to detect color problems, such as contrast.
-  * Color should not be the only way to convey information
-  * Users should be able to resize up to 200% and see the information _(layout not required)_
-  * All functionality that is available by mouse is also available by keyboard
-  * Keyboard focus does not get trapped in any part of the content that can only be exited using a mouse or pointing device.
-  * The keyboard focus is visible, and the focus order follows a meaningful sequence
-
-Then, in complex component, we can find some examples and tutorials to follow:
-
-  * [Web Accessibility Tutorials](https://www.w3.org/WAI/tutorials/): Very common components tutorial on accesibility.
-  * [WAI ARIA Design Patterns and Widgets](https://w3c.github.io/aria-practices/): Displays examples of accesible common components
+Please review our accessibility statement in 
 
 ## Testing
 

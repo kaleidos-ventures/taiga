@@ -1,7 +1,15 @@
 {
   "commons": {
     "organizations": "Organizations",
-    "projects": "Projects"
+    "projects": "Projects",
+    "overview": "Overview",
+    "epics": "Epics",
+    "scrum": "Scrum",
+    "kanban": "Kanban",
+    "issues": "Issues",
+    "wiki": "Wiki",
+    "meetup": "Meetup",
+    "team": "Team"
   },
   "navigation": {
     "go_home": "Go to home",
@@ -22,5 +30,11 @@
     "account_setting": "Account settings",
     "accesibility_setting": "Accesibility settings",
     "sign_out": "Sign out"
+  },
+  "main-project-navigation": {
+    "personal-workspace": "Personal workspace",
+    "goto": "Go to",
+    "project-settings": "Project settings",
+    "collapse-menu": "Collapse menu"
   }
 }

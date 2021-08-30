@@ -1,0 +1,54 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+:host {
+  background: var(--color-gray100);
+  block-size: 100%;
+  block-size: calc(100vh - 48px); /* Remove when grid set */
+  color: var(--color-gray40);
+  display: block;
+  inline-size: 200px;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  position: relative;
+}
+
+a {
+  color: var(--color-gray40);
+}
+
+.main-project-nav {
+  block-size: 100%;
+  overflow-block: auto;
+  overflow-inline: hidden;
+}
+
+.main-project-nav-inner {
+  block-size: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  inline-size: 200px;
+}
+
+.workspace {
+  align-items: center;
+  display: flex;
+}
+
+.project-logo {
+  aspect-ratio: 1/1;
+  block-size: 32px;
+  border-radius: 2px;
+  inline-size: 32px;
+  margin-inline-end: .75rem;
+}
+
+.workspace-data-project {
+  font-size: var(--font-size-heading-4);
+}

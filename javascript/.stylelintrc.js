@@ -9,7 +9,10 @@
 module.exports = {
   root: true,
   extends: ['stylelint-config-standard'],
-  plugins: ['stylelint-order'],
+  plugins: [
+    'stylelint-order',
+    'stylelint-use-logical-spec'
+  ],
   rules: {
     'at-rule-no-unknown': [
       true,
@@ -60,5 +63,6 @@ module.exports = {
         ignore: ['comments'],
       }
     ],
+    'liberty/use-logical-spec': 'always'
   },
 };

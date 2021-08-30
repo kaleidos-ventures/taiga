@@ -145,6 +145,7 @@
     "stylelint": "^13.13.1",
     "stylelint-config-standard": "^22.0.0",
     "stylelint-order": "^4.1.0",
+    "stylelint-use-logical-spec": "^3.2.2",
     "ts-jest": "27.0.5",
     "ts-node": "~10.2.1",
     "type-fest": "^2.0.0",

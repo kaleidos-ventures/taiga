@@ -96,6 +96,7 @@ li {
 .project-image {
   & img {
     all: unset;
+    aspect-ratio: 1/1;
     width: 32px;
   }
 }
@@ -103,7 +104,7 @@ li {
 .view-projects {
   display: inline-block;
   font-weight: var(--font-weight-semibold);
-  margin-bottom: 1rem;
+  margin-block-end: 1rem;
 }
 
 .new-project {

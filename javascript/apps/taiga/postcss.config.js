@@ -18,7 +18,10 @@ module.exports = {
     }),
     require('postcss-mixins'),
     require('postcss-preset-env')({
-      stage: 0
+      stage: 0,
+      features: {
+        'logical-properties-and-values': false
+      }
     })
   ]
 }

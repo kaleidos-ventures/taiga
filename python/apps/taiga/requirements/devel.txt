@@ -21,6 +21,7 @@ asgiref==3.4.1
 attrs==21.2.0
     # via
     #   psd-tools
+    #   pytest
     #   taiga6
 backoff==1.6.0
     # via
@@ -123,6 +124,8 @@ idna==2.8
     #   taiga6
 importlib-metadata==4.5.0
     # via taiga6
+iniconfig==1.1.1
+    # via pytest
 jinja2==3.0.1
     # via
     #   django-jinja
@@ -156,6 +159,7 @@ oauthlib[signedtoken]==3.1.1
 packaging==20.9
     # via
     #   bleach
+    #   pytest
     #   taiga6
 pillow==8.2.0
     # via
@@ -163,12 +167,16 @@ pillow==8.2.0
     #   easy-thumbnails
     #   psd-tools
     #   taiga6
+pluggy==0.13.1
+    # via pytest
 premailer==3.0.1
     # via taiga6
 psd-tools==1.8.38
     # via taiga6
 psycopg2-binary==2.8.5
     # via taiga6
+py==1.10.0
+    # via pytest
 pycparser==2.20
     # via
     #   cffi
@@ -187,6 +195,12 @@ pyparsing==2.4.7
     # via
     #   packaging
     #   taiga6
+pytest==6.2.4
+    # via
+    #   -r requirements/devel.in
+    #   pytest-django
+pytest-django==4.4.0
+    # via -r requirements/devel.in
 python-dateutil==2.7.5
     # via
     #   rudder-sdk-python
@@ -245,6 +259,8 @@ tinycss2==1.1.0
     #   cairosvg
     #   cssselect2
     #   taiga6
+toml==0.10.2
+    # via pytest
 typing-extensions==3.10.0.0
     # via
     #   pydantic

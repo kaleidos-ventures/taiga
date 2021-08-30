@@ -62,19 +62,18 @@ h4 {
 }
 
 p {
-  margin-bottom: 2.5rem;
-  margin-top: 0;
+  margin-block: 2.5rem;
+  margin-block-start: 0;
 
   &:last-child {
-    margin-bottom: 0;
+    margin-block-end: 0;
   }
 }
 
 blockquote {
-  border-left: 5px solid;
-  margin-bottom: 2.5rem;
-  margin-left: 0;
-  margin-right: 0;
+  border-inline-start: 5px solid;
+  margin-block-end: 2.5rem;
+  margin-inline: 0;
   padding: 1rem;
 }
 
@@ -89,8 +88,7 @@ h6 {
   @mixin font-body;
 
   line-height: 1.1;
-  margin-bottom: 1.5rem;
-  margin-top: 3rem;
+  margin-block: 3rem 1.5rem;
 }
 
 h1 {
@@ -112,27 +110,25 @@ h4 {
 /* MEDIA */
 
 img {
-  max-width: 37.5rem; /* 600px /16 */
+  max-inline-size: 37.5rem; /* 600px /16 */
 }
 
 img,
 video {
-  height: auto;
-  margin-bottom: 0;
-  margin-top: 0;
-  max-width: 100%;
+  block-size: auto;
+  margin-block: 0;
+  max-inline-size: 100%;
 }
 
 /* LISTS */
 
 ul {
-  margin-bottom: 2.5rem;
-  margin-top: 0;
-  padding-left: 1.4rem;
+  margin-block: 0 2.5rem;
+  padding-inline-start: 1.4rem;
 }
 
 li {
-  margin-bottom: .4rem;
+  margin-block-end: .4rem;
 }
 
 /* CODE */
@@ -152,7 +148,7 @@ pre {
   margin: .5rem 0;
   padding: 1rem;
   tab-size: 2;
-  text-align: left;
+  text-align: start;
   white-space: pre;
   word-break: normal;
   word-spacing: normal;
@@ -166,8 +162,8 @@ code {
 
 table {
   border-collapse: collapse;
+  inline-size: 100%;
   text-align: justify;
-  width: 100%;
 }
 
 /* FORMS */
@@ -176,22 +172,22 @@ label,
 legend,
 fieldset {
   display: block;
-  margin-bottom: .5rem;
+  margin-block-end: .5rem;
 }
 
 textarea {
-  width: 100%;
+  inline-size: 100%;
 }
 
 /* MODAL */
 
 .modal {
   align-items: center;
+  block-size: 100%;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  inline-size: 100%;
   justify-content: center;
-  width: 100%;
 }
 
 .modal-bg {

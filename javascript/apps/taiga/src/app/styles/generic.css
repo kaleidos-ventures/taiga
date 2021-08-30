@@ -172,7 +172,7 @@ label,
 legend,
 fieldset {
   display: block;
-  margin-block-end: .5rem;
+  margin-block-end: var(--spacing-4);
 }
 
 textarea {

@@ -9,16 +9,20 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalModule } from './modal/modal.module';
+import { InputsModule } from './inputs/inputs.module';
+
 
 @NgModule({
   imports: [
     CommonModule,
-    ModalModule
+    ModalModule,
+    InputsModule
   ],
   declarations: [],
   providers: [],
   exports: [
-    ModalModule
+    ModalModule,
+    InputsModule,
   ]
 })
 export class UiModule {}

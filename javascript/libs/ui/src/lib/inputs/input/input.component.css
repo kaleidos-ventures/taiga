@@ -1,0 +1,92 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+.input-container {
+  display: flex;
+  max-inline-size: 100%;
+  position: relative;
+}
+
+label {
+  color: var(--color-secondary);
+  margin-block-end: var(--spacing-4);
+  margin-inline-start: var(--spacing-4);
+  min-inline-size: 0;
+}
+
+.icon {
+  block-size: 1rem;
+  fill: var(--color-secondary);
+  inline-size: 1rem;
+}
+
+::ng-deep {
+  & input {
+    block-size: 2rem;
+    border: solid 2px var(--color-gray60);
+    border-radius: 3px;
+    flex-basis: 100%;
+    margin-block-end: var(--spacing-4);
+    min-inline-size: 0;
+    padding: var(--spacing-8) var(--spacing-12);
+
+    &:focus {
+      border-color: var(--color-secondary);
+      border-radius: 3px;
+      outline: 0;
+    }
+
+    &:read-only {
+      background: var(--color-gray20);
+      border-color: var(--color-white);
+      color: var(--color-gray80);
+      pointer-events: none;
+    }
+  }
+
+  & .has-icon {
+    & .icon {
+      inset-block-start: var(--spacing-12);
+      inset-inline-end: var(--spacing-8);
+      position: absolute;
+    }
+
+    & input {
+      padding-inline-end: var(--spacing-28);
+    }
+  }
+
+  & .error {
+    & .label-error {
+      color: var(--color-red70);
+      margin-inline-start: var(--spacing-4);
+    }
+
+    & input {
+      border-color: var(--color-red80);
+
+      &:read-only {
+        border-color: var(--color-white);
+      }
+
+      &:focus {
+        border-color: var(--color-secondary);
+        border-radius: 3px;
+        outline: 0;
+      }
+    }
+
+    & label {
+      color: var(--color-red80);
+    }
+  }
+}
+
+:host {
+  display: block;
+}

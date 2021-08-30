@@ -20,6 +20,9 @@ module.exports = {
         ignoreAtRules: ['define-mixin', 'mixin'],
       },
     ],
+    "selector-pseudo-element-no-unknown" : [true, {
+      "ignorePseudoElements": ["ng-deep"]
+    }],
     // Using quotes
     'font-family-name-quotes': 'always-unless-keyword',
     'function-url-quotes': 'always',

@@ -1,14 +1,30 @@
+# Test commands
+
+```bash
+# Run all test suit
+npm run test
+
+# Run especific file test
+npm run test -- --test-file input.component.spec.ts
+```
+
 # Component Testing
 
 For testing we're using [spectator](https://github.com/ngneat/spectator). This is the test of the previous service example.
 
 ```ts
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { TgExampleComponent } from './example.component';
+import { ExampleComponent } from './example.component';
+import { ExampleModule } from './example.module';
 
 describe('ButtonComponent', () => {
-  let spectator: Spectator<TgExampleComponent>;
-  const createComponent = createComponentFactory(TgExampleComponent);
+  let spectator: Spectator<ExampleComponent>;
+  const createComponent = createComponentFactory({
+    component: ExampleComponent,
+    // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
+    imports [ExampleModule],
+    declareComponent: false
+  });
 
   beforeEach(() => {
     spectator = createComponent({
@@ -39,13 +55,18 @@ The previous example with a fake ngrx state.
 ```ts
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { TgExampleComponent } from './example.component';
+import { ExampleComponent } from './example.component';
+import { ExampleModule } from './example.module';
 
 describe('ButtonComponent', () => {
-  let spectator: Spectator<TgExampleComponent>;
+  let spectator: Spectator<ExampleComponent>;
   let store: MockStore;
-  const createComponent = createComponentFactory(TgExampleComponent);
-
+  const createComponent = createComponentFactory({
+    component: ExampleComponent,
+    // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
+    imports [ExampleModule],
+    declareComponent: false
+  });
   // fake state
   const initialState = { loggedIn: false };
 
@@ -85,15 +106,21 @@ describe('ButtonComponent', () => {
 ```ts
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { TgExampleComponent } from './example.component';
+import { ExampleComponent } from './example.component';
+import { ExampleModule } from './example.module';
 
 // The selector to mock
 import { selectUser } from './state/user.selectors';
 
 describe('ButtonComponent', () => {
-  let spectator: Spectator<TgExampleComponent>;
+  let spectator: Spectator<ExampleComponent>;
   let store: MockStore;
-  const createComponent = createComponentFactory(TgExampleComponent);
+  const createComponent = createComponentFactory({
+    component: ExampleComponent,
+    // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
+    imports [ExampleModule],
+    declareComponent: false
+  });
 
   // fake state
   const initialState = { loggedIn: false };
@@ -135,7 +162,7 @@ describe('ButtonComponent', () => {
 });
 ```
 
-## RxState 
+## RxState
 
 // Todo
 

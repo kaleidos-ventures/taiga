@@ -1,9 +1,14 @@
 -r commons.in
 
+# Testing
 pytest
 pytest-pythonpath
 pytest-cov
 pytest-django
+pytest-factoryboy
 
 # library required by taiga.base.mocks
 sampledata
+
+# Typing stubs
+django-stubs<1.8.0      # For Django 2.2

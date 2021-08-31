@@ -4,17 +4,18 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+
 from pydantic.schema import datetime
 from taiga.base.serializer import BaseModel
 
 
 class ProjectSerializer(BaseModel):
-    class Config:
-        orm_mode = True
-
     id: int
     name: str
     slug: str
     modified_date: datetime
     total_milestones: int
     is_contact_activated: bool
+
+    class Config:
+        orm_mode = True

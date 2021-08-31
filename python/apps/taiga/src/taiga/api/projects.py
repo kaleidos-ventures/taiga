@@ -13,7 +13,7 @@ from taiga.services import projects as projects_services
 
 metadata = {
     "name": "projects",
-    "description": "Endpoint projects.",
+    "description": "Endpoint for projects resources.",
 }
 
 router = APIRouter(prefix="/projects", tags=["projects"])

@@ -9,6 +9,17 @@ $ cd python/apps/taiga/
 (taiga)$ pytest
 ```
 
+## Databese
+
+Currently we are reusing the test database (`--reuse-db`) by default to improve the speed.
+
+If you **create some new migration**, remeber to run the test with `--create-db` to drop
+the current db and recreate a new one.
+
+```shell
+(taiga)$ pytest --create-db
+```
+
 ## Coverage
 
 To run tests and het the coverage info run:

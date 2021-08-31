@@ -1,10 +1,14 @@
 # Common API packages
 fastapi
+pydantic[email,dotenv]
+python-multipart
 uvicorn
 
 # camelCase/snake_case
 pyhumps
 
+# For auth
+PyJWT
 
 # Taiga 6
 #   we use -e for dev and prod because relative path in pip-compile only works with -e

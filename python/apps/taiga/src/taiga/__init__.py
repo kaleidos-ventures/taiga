@@ -5,4 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+__title__ = "Taiga"
+__description__ = "The opensource project management tool for multi-functional agile teams"
 __version__ = "0.0.0"

@@ -6,10 +6,17 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.exceptions import HTTPException
+from taiga import __description__, __title__, __version__
+from taiga.conf import settings
+from taiga.exceptions.handlers import http_exception_handler, request_validation_exception_handler
 from taiga.routers import router, tags_metadata
 
-api = FastAPI(openapi_tags=tags_metadata, debug=True)
+api = FastAPI(
+    title=__title__, description=__description__, version=__version__, openapi_tags=tags_metadata, debug=settings.DEBUG
+)
 
 # Setup CORS
 api.add_middleware(
@@ -20,4 +27,9 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
+# Override exception handlers
+api.exception_handler(HTTPException)(http_exception_handler)
+api.exception_handler(RequestValidationError)(request_validation_exception_handler)
+
+# Add routers
 api.include_router(router)

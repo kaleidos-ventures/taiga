@@ -13,7 +13,7 @@ from taiga.main import api
 pytestmark = pytest.mark.django_db
 
 
-def test_get_projects() -> None:
+def test_get_projects():
     client = TestClient(api)
     response = client.get("/projects")
     assert response.status_code == 200

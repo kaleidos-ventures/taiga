@@ -4,3 +4,6 @@ mypy
 
 # requirements tooling
 pip-tools
+
+# Typing stubs (needed for mypy plugin)
+django-stubs<1.8.0      # For Django 2.2

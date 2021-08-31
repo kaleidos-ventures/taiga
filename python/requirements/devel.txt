@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements/devel.in
 #
+asgiref==3.4.1
+    # via django
 backports.entry-points-selectable==1.1.0
     # via virtualenv
 cfgv==3.3.0
@@ -12,12 +14,18 @@ click==8.0.1
     # via pip-tools
 distlib==0.3.2
     # via virtualenv
+django==3.2.7
+    # via django-stubs
+django-stubs==1.7.0
+    # via -r requirements/devel.in
 filelock==3.0.12
     # via virtualenv
 identify==2.2.13
     # via pre-commit
 mypy==0.910
-    # via -r requirements/devel.in
+    # via
+    #   -r requirements/devel.in
+    #   django-stubs
 mypy-extensions==0.4.3
     # via mypy
 nodeenv==1.6.0
@@ -30,10 +38,14 @@ platformdirs==2.2.0
     # via virtualenv
 pre-commit==2.14.0
     # via -r requirements/devel.in
+pytz==2021.1
+    # via django
 pyyaml==5.4.1
     # via pre-commit
 six==1.16.0
     # via virtualenv
+sqlparse==0.4.2
+    # via django
 toml==0.10.2
     # via
     #   mypy
@@ -41,7 +53,9 @@ toml==0.10.2
 tomli==1.2.1
     # via pep517
 typing-extensions==3.10.0.0
-    # via mypy
+    # via
+    #   django-stubs
+    #   mypy
 virtualenv==20.7.2
     # via pre-commit
 wheel==0.37.0

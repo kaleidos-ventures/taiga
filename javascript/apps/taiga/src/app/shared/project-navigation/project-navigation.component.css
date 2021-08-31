@@ -6,13 +6,15 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
+@import "tools/typography.css";
+
 :host {
   background: var(--color-gray100);
   block-size: 100%;
   block-size: calc(100vh - 48px); /* Remove when grid set */
   color: var(--color-gray40);
   display: block;
-  inline-size: 200px;
+  inline-size: 200px; /* Remove when grid set */
   inset-block-start: 0;
   inset-inline-start: 0;
   position: relative;
@@ -20,10 +22,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 a {
   color: var(--color-gray40);
-}
-
-svg {
-  fill: var(--color-gray40);
 }
 
 ul {
@@ -48,26 +46,123 @@ ul {
 .workspace {
   align-items: center;
   background: var(--color-black);
+  cursor: pointer;
   display: flex;
-  padding: .5rem;
+  padding: var(--spacing-8);
 }
 
 .workspace-data {
-  line-height: 1rem;
-
   & a {
     display: block;
+  }
+
+  & .workspace-data-project {
+    @mixin text-overflow;
+
+    max-inline-size: 140px;
+  }
+
+  & .workspace-data-workspace {
+    @mixin font-small;
   }
 }
 
 .project-logo {
   aspect-ratio: 1/1;
-  block-size: 32px;
+  block-size: var(--spacing-32);
   border-radius: 2px;
-  inline-size: 32px;
-  margin-inline-end: .75rem;
+  inline-size: var(--spacing-32);
+  margin-inline-end: var(--spacing-12);
 }
 
-.workspace-data-project {
-  font-size: var(--font-size-heading-4);
+.menu-wrapper {
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-block: auto;
+  overflow-y: hidden;
+  padding: var(--spacing-8);
+}
+
+.menu-separator {
+  background: var(--color-gray90);
+  margin-block: var(--spacing-16);
+}
+
+.goto {
+  @mixin font-small;
+
+  color: var(--color-gray60);
+  font-weight: var(--font-weight-medium);
+  margin-block-end: var(--spacing-8);
+  text-transform: uppercase;
+}
+
+.menu-option {
+  & a {
+    @mixin font-inline;
+
+    align-items: center;
+    block-size: var(--spacing-32);
+    display: flex;
+    padding: var(--spacing-8);
+
+    &:hover {
+      background: var(--color-gray90);
+      color: var(--color-primary);
+    }
+  }
+
+  &.active {
+    background: var(--color-secondary90);
+    color: var(--color-white);
+
+    & a {
+      color: var(--color-white);
+      font-weight: var(--font-weight-medium);
+    }
+  }
+
+  & svg {
+    aspect-ratio: 1/1;
+    block-size: var(--spacing-24);
+    inline-size: var(--spacing-24);
+    margin-inline-end: var(--spacing-16);
+  }
+}
+
+
+.bottom-menu {
+  margin-block-start: auto;
+
+  & .menu-option {
+    & a {
+      background: var(--color-black);
+
+      &:hover {
+        background: var(--color-gray90);
+        color: var(--color-primary);
+      }
+    }
+  }
+}
+
+.collapse {
+  @mixin font-small;
+
+  align-items: center;
+  appearance: none;
+  background: none;
+  block-size: var(--spacing-32);
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--spacing-8);
+  inline-size: 100%;
+
+  & svg {
+    color: var(--color-primary);
+    margin-inline-start: var(--spacing-16);
+  }
 }

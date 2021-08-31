@@ -181,6 +181,7 @@ textarea {
 
 svg {
   block-size: 1rem;
+  fill: currentColor;
   inline-size: 1rem;
 }
 

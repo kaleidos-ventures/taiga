@@ -5,13 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from pydantic import BaseModel
+from taiga.base.serializer import BaseModel
 
 
 class ProjectSerializer(BaseModel):
+    class Config:
+        orm_mode = True
+
     id: int
     name: str
     slug: str
-
-    class Config:
-        orm_mode = True

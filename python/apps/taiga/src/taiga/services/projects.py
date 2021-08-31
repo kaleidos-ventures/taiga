@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
+from typing import Iterable, Optional
 
 from taiga.models.projects import Project
 from taiga.repositories import projects
@@ -15,5 +15,5 @@ def get_project(slug: str) -> Optional[Project]:
     return projects.get_project(slug)
 
 
-def get_projects(offset: int = 0, limit: int = 100) -> list[Project]:
-    return list(projects.get_projects(offset, limit))
+def get_projects(offset: int = 0, limit: int = 100) -> Iterable[Project]:
+    return projects.get_projects(offset, limit)

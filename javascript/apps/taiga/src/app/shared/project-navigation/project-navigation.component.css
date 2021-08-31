@@ -22,6 +22,15 @@ a {
   color: var(--color-gray40);
 }
 
+svg {
+  fill: var(--color-gray40);
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
 .main-project-nav {
   block-size: 100%;
   overflow-block: auto;
@@ -38,7 +47,17 @@ a {
 
 .workspace {
   align-items: center;
+  background: var(--color-black);
   display: flex;
+  padding: .5rem;
+}
+
+.workspace-data {
+  line-height: 1rem;
+
+  & a {
+    display: block;
+  }
 }
 
 .project-logo {

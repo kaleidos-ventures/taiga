@@ -131,7 +131,6 @@ ul {
   }
 }
 
-
 .bottom-menu {
   margin-block-start: auto;
 
@@ -157,12 +156,23 @@ ul {
   border: 0;
   cursor: pointer;
   display: flex;
-  justify-content: flex-end;
-  padding: var(--spacing-8);
   inline-size: 100%;
+  justify-content: flex-end;
+  margin-block-start: var(--spacing-8);
 
   & svg {
+    block-size: var(--spacing-32);
+    border-radius: 50%;
+    box-sizing: border-box;
     color: var(--color-primary);
+    inline-size: var(--spacing-32);
     margin-inline-start: var(--spacing-16);
+    padding: var(--spacing-8);
+  }
+
+  &:hover {
+    & svg {
+      background: var(--color-gray90);
+    }
   }
 }

@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
@@ -26,8 +26,14 @@ export class ProjectNavigationComponent {
   public readonly todo$ = this.state.select('todo');
   public readonly model$ = this.state.select();
 
+  public scrumVisible = false;
+  public collapseText = true;
+
   @Input()
   public project!: Project;
+
+  @HostBinding('class.collapsed')
+  public collapsed = false;
 
   constructor(
     private store: Store,
@@ -38,5 +44,14 @@ export class ProjectNavigationComponent {
 
     // connect the ngrx state with the local state
     // this.state.connect('todo', this.store.select(selectTodo));
+  }
+
+  public toggleCollapse() {
+    this.collapsed = !this.collapsed;
+    // localStorage.setItem('projectnav-collapsed', String(this.collapsed));
+
+    if (this.collapsed) {
+      this.scrumVisible = false;
+    }
   }
 }

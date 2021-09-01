@@ -131,6 +131,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </div>
           <button
             type="button"
+            [class.collapsed]="collapseText"
+            (click)="toggleCollapse()"
             class="collapse">
             <span>
               {{ t('collapse-menu') }}

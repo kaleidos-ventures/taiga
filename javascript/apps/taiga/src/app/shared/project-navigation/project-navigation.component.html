@@ -35,7 +35,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#overview" />
                 </svg>
-                <span class="menu-option-text">
+                <span class="menu-option-text" data-animation="text">
                   {{ 'commons.overview' | transloco }}
                 </span>
               </a>
@@ -45,7 +45,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#epics" />
                 </svg>
-                <span class="menu-option-text">
+                <span class="menu-option-text" data-animation="text">
                   {{ 'commons.epics' | transloco }}
                 </span>
               </a>
@@ -55,7 +55,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#scrum" />
                 </svg>
-                <span class="menu-option-text">
+                <span class="menu-option-text" data-animation="text">
                   {{ 'commons.scrum' | transloco }}
                 </span>
               </a>
@@ -65,7 +65,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#kanban" />
                 </svg>
-                <span class="menu-option-text">
+                <span class="menu-option-text" data-animation="text">
                   {{ 'commons.kanban' | transloco }}
                 </span>
               </a>
@@ -75,7 +75,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#issues" />
                 </svg>
-                <span class="menu-option-text">
+                <span class="menu-option-text" data-animation="text">
                   {{ 'commons.issues' | transloco }}
                 </span>
               </a>
@@ -83,7 +83,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </ul>
         </nav>
         <hr class="menu-separator">
-        <div class="goto">{{ t('goto') }}</div>
+        <div *ngIf="!collapsed" class="goto">{{ t('goto') }}</div>
         <nav class="secondary-menu">
           <ul>
             <li class="menu-option">
@@ -91,7 +91,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#wiki" />
                 </svg>
-                <span class="menu-option-text">
+                <span class="menu-option-text" data-animation="text">
                   {{ 'commons.wiki' | transloco }}
                 </span>
               </a>
@@ -101,7 +101,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#meetup" />
                 </svg>
-                <span class="menu-option-text">
+                <span class="menu-option-text" data-animation="text">
                   {{ 'commons.meetup' | transloco }}
                 </span>
               </a>
@@ -111,7 +111,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#team" />
                 </svg>
-                <span class="menu-option-text">
+                <span class="menu-option-text" data-animation="text">
                   {{ 'commons.team' | transloco }}
                 </span>
               </a>
@@ -124,7 +124,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <svg>
                 <use href="assets/icons/sprite.svg#settings" />
               </svg>
-              <span class="menu-option-text">
+              <span class="menu-option-text" data-animation="text">
                 {{ t('project-settings') }}
               </span>
             </a>
@@ -133,12 +133,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             type="button"
             [class.collapsed]="collapseText"
             (click)="toggleCollapse()"
-            class="collapse">
-            <span>
+            class="button-collapse">
+            <span data-animation="text">
               {{ t('collapse-menu') }}
             </span>
             <svg>
-              <use href="assets/icons/sprite.svg#collapse-left" />
+              <use [attr.href]="getCollapseIcon()" />
             </svg>
           </button>
         </div>

@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { animate, query, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -20,7 +21,23 @@ interface ComponentViewModel {
   templateUrl: './project-navigation.component.html',
   styleUrls: ['./project-navigation.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState]
+  providers: [RxState],
+  animations: [
+    trigger('openCollapse', [
+      transition('open => collapsed', [
+        query('[data-animation="text"]', style({ opacity: 1 })),
+        query(':self', style({ width: '200px' })),
+
+        query('[data-animation="text"]', animate(100, style({ opacity: 0 }))),
+        query(':self', animate(200, style({ width: '48px' }))),
+      ]),
+      transition('collapsed => open', [
+        query(':self', style({ width: '48px' })),
+
+        query(':self', animate(200, style({ width: '200px' }))),
+      ]),
+    ]),
+  ],
 })
 export class ProjectNavigationComponent {
   public readonly todo$ = this.state.select('todo');
@@ -28,13 +45,17 @@ export class ProjectNavigationComponent {
 
   public scrumVisible = false;
   public collapseText = true;
-
+  
   @Input()
   public project!: Project;
-
+  
   @HostBinding('class.collapsed')
   public collapsed = false;
-
+  
+  @HostBinding('@openCollapse') public get openCollapseAnimation() {
+    return this.collapsed ? 'collapsed' : 'open';
+  }
+  
   constructor(
     private store: Store,
     private state: RxState<ComponentViewModel>,
@@ -53,5 +74,11 @@ export class ProjectNavigationComponent {
     if (this.collapsed) {
       this.scrumVisible = false;
     }
+  }
+
+  public getCollapseIcon() {
+    const url = 'assets/icons/sprite.svg';
+    const icon = this.collapsed ? 'collapse-right' : 'collapse-left';
+    return `${url}#${icon}`;
   }
 }

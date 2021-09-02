@@ -7,14 +7,15 @@
  */
 
 import { animate, query, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
+// import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
-interface ComponentViewModel {
-  todo: string;
-}
+// interface ComponentViewModel {
+//   todo: string;
+// }
 
 @Component({
   selector: 'tg-project-navigation',
@@ -39,12 +40,12 @@ interface ComponentViewModel {
     ]),
   ],
 })
-export class ProjectNavigationComponent {
-  public readonly todo$ = this.state.select('todo');
-  public readonly model$ = this.state.select();
+export class ProjectNavigationComponent implements OnInit {
+  // public readonly todo$ = this.state.select('todo');
+  // public readonly model$ = this.state.select();
 
-  public scrumVisible = false;
   public collapseText = true;
+  public scrumChildMenuVisible = false;
   
   @Input()
   public project!: Project;
@@ -57,8 +58,9 @@ export class ProjectNavigationComponent {
   }
   
   constructor(
-    private store: Store,
-    private state: RxState<ComponentViewModel>,
+    private localStorage: LocalStorageService,
+    // private store: Store,
+    // private state: RxState<ComponentViewModel>,
   ) {
     // initial state
     // this.state.set({});
@@ -67,12 +69,16 @@ export class ProjectNavigationComponent {
     // this.state.connect('todo', this.store.select(selectTodo));
   }
 
+  public ngOnInit() {
+    this.collapsed = (this.localStorage.get('projectnav-collapsed') === 'true');
+  }
+
   public toggleCollapse() {
     this.collapsed = !this.collapsed;
-    // localStorage.setItem('projectnav-collapsed', String(this.collapsed));
+    this.localStorage.set('projectnav-collapsed', String(this.collapsed));
 
     if (this.collapsed) {
-      this.scrumVisible = false;
+      this.scrumChildMenuVisible = false;
     }
   }
 
@@ -80,5 +86,9 @@ export class ProjectNavigationComponent {
     const url = 'assets/icons/sprite.svg';
     const icon = this.collapsed ? 'collapse-right' : 'collapse-left';
     return `${url}#${icon}`;
+  }
+
+  public toggleScrumChildMenu() {
+    this.scrumChildMenuVisible = !this.scrumChildMenuVisible;
   }
 }

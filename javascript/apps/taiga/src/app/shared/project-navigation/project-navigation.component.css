@@ -31,6 +31,8 @@ ul {
   padding: 0;
 }
 
+/* WORKSPACE */
+
 .workspace {
   align-items: center;
   background: var(--color-black);
@@ -40,6 +42,17 @@ ul {
   padding-inline-start: var(--spacing-16);
   transition: padding var(--transition);
   transition-delay: 150ms;
+}
+
+.project-logo {
+  margin-inline-end: var(--spacing-12);
+
+  & .project-logo-image {
+    aspect-ratio: 1/1;
+    block-size: var(--spacing-32);
+    border-radius: 2px;
+    inline-size: var(--spacing-32);
+  }
 }
 
 .workspace-data {
@@ -58,57 +71,7 @@ ul {
   }
 }
 
-.menu-option {
-  & a {
-    @mixin font-inline;
-
-    align-items: center;
-    block-size: var(--spacing-32);
-    border-radius: 3px;
-    display: flex;
-    padding: var(--spacing-4);
-    padding-inline-start: var(--spacing-12);
-    transition: padding var(--transition);
-    transition-delay: 150ms;
-
-    &:hover {
-      background: var(--color-gray90);
-      color: var(--color-primary);
-    }
-  }
-
-  &.active {
-    color: var(--color-white);
-
-    & a {
-      background: var(--color-secondary90);
-      color: var(--color-white);
-      font-weight: var(--font-weight-medium);
-    }
-  }
-
-  & svg {
-    aspect-ratio: 1/1;
-    block-size: var(--spacing-24);
-    inline-size: var(--spacing-24);
-    margin-inline-end: var(--spacing-16);
-  }
-}
-
-.bottom-menu {
-  margin-block-start: auto;
-
-  & .menu-option {
-    & a {
-      background: var(--color-black);
-
-      &:hover {
-        background: var(--color-gray90);
-        color: var(--color-primary);
-      }
-    }
-  }
-}
+/* MENU */
 
 .main-project-nav {
   block-size: 100%;
@@ -124,23 +87,12 @@ ul {
   inline-size: 200px;
 }
 
-.project-logo {
-  margin-inline-end: var(--spacing-12);
-
-  & img {
-    aspect-ratio: 1/1;
-    block-size: var(--spacing-32);
-    border-radius: 2px;
-    inline-size: var(--spacing-32);
-  }
-}
-
 .menu-wrapper {
   block-size: 100%;
   display: flex;
   flex-direction: column;
-  overflow-block: auto;
-  overflow-y: hidden;
+  overflow-block: hidden;
+  overflow-y: auto;
   padding: var(--spacing-8);
 }
 
@@ -158,11 +110,139 @@ ul {
   text-transform: uppercase;
 }
 
+@define-mixin menu-option-item {
+  @mixin font-inline;
+
+  align-items: center;
+  block-size: var(--spacing-32);
+  border-radius: 3px;
+  display: flex;
+  padding: var(--spacing-4);
+  padding-inline-start: var(--spacing-12);
+  transition: padding var(--transition);
+  transition-delay: 150ms;
+}
+
+@define-mixin menu-option-icon {
+  aspect-ratio: 1/1;
+  block-size: var(--spacing-24);
+  inline-size: var(--spacing-24);
+  margin-inline-end: var(--spacing-16);
+}
+
+.menu-option-item {
+  @mixin menu-option-item;
+
+  &:hover {
+    background: var(--color-gray90);
+    color: var(--color-primary);
+  }
+}
+
+.menu-option-icon {
+  @mixin menu-option-icon;
+}
+
+.menu-option {
+  &.active {
+    color: var(--color-white);
+
+    & .menu-option-item {
+      background: var(--color-secondary90);
+      color: var(--color-white);
+      font-weight: var(--font-weight-medium);
+    }
+  }
+
+  & .menu-option-icon {
+    aspect-ratio: 1/1;
+    block-size: var(--spacing-24);
+    inline-size: var(--spacing-24);
+    margin-inline-end: var(--spacing-16);
+  }
+}
+
+.menu-option-scrum {
+  & .scrum-button {
+    @mixin menu-option-item;
+
+    align-items: center;
+    appearance: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    inline-size: 100%;
+
+    &:focus-visible {
+      outline: solid 1px var(--color-secondary);
+    }
+
+    & .scrum-button-icon {
+      @mixin menu-option-icon;
+    }
+
+    & .chevron {
+      block-size: var(--spacing-16);
+      inline-size: var(--spacing-16);
+      margin-inline-start: auto;
+      transform: rotate(180deg);
+
+      &.active {
+        transform: rotate(0);
+      }
+    }
+  }
+
+  &.scrum-active {
+    & .scrum-button {
+      background: var(--color-gray90);
+      color: var(--color-primary);
+    }
+  }
+}
+
+.menu-child-scrum {
+  background: var(--color-gray90);
+  padding: var(--spacing-8);
+
+  & .menu-child-option-item {
+    @mixin menu-option-item;
+
+    &:hover,
+    &.active {
+      color: var(--color-primary);
+    }
+
+    &:hover {
+      background: var(--color-gray80);
+    }
+
+    &.active {
+      background: var(--color-secondary80);
+    }
+  }
+}
+
+.bottom-menu {
+  margin-block-start: auto;
+
+  & .bottom-menu-option-item {
+    @mixin menu-option-item;
+
+    background: var(--color-black);
+
+    &:hover {
+      background: var(--color-gray90);
+      color: var(--color-primary);
+    }
+  }
+}
+
 .button-collapse {
   @mixin font-small;
 
   align-items: center;
-  appearance: none;
   background: none;
   block-size: var(--spacing-32);
   border: 0;
@@ -172,7 +252,7 @@ ul {
   justify-content: flex-end;
   margin-block-start: var(--spacing-8);
 
-  & svg {
+  & .collapse-icon {
     block-size: var(--spacing-32);
     border-radius: 50%;
     color: var(--color-primary);
@@ -182,9 +262,13 @@ ul {
   }
 
   &:hover {
-    & svg {
+    & .collapse-icon {
       background: var(--color-gray90);
     }
+  }
+
+  &:focus-visible {
+    outline: solid 1px var(--color-secondary);
   }
 }
 
@@ -212,29 +296,36 @@ ul {
     margin-inline-end: 0;
   }
 
-  & .menu-option {
-    & a {
-      padding-inline-start: var(--spacing-4);
-      transition: padding var(--transition);
-      transition-delay: var(--transition-delay);
-    }
+  & .menu-option-item,
+  & .bottom-menu-option-item,
+  & .scrum-button {
+    padding-inline-start: var(--spacing-4);
+    transition: padding var(--transition);
+    transition-delay: var(--transition-delay);
   }
 
-  & svg {
+  & .menu-option-icon,
+  & .scrum-button-icon {
     margin-inline-end: 0;
     transition: all var(--transition);
     transition-delay: var(--transition-delay);
+  }
+
+  & .menu-option-scrum {
+    & .scrum-button-icon {
+      margin-inline-end: 0;
+    }
   }
 
   & .button-collapse {
     justify-content: start;
     padding: 0;
 
-    & span {
+    & .button-collapse-text {
       display: none;
     }
 
-    & svg {
+    & .collapse-icon {
       margin-inline-start: 0;
     }
   }

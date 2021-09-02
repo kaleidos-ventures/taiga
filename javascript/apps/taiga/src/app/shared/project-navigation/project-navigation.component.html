@@ -14,7 +14,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <div class="main-project-nav-inner">
       <div class="workspace">
         <a class="project-logo" href="">
-          <img  src="https://placeimg.com/640/480/nature" alt="">
+          <img class="project-logo-image" src="https://placeimg.com/640/480/nature" alt="">
         </a>
         <div *ngIf="!collapsed" class="workspace-data">
           <a
@@ -33,8 +33,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <nav class="primary-menu">
           <ul>
             <li class="menu-option">
-              <a href="">
-                <svg>
+              <a
+                class="menu-option-item"
+                href="">
+                <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#overview" />
                 </svg>
                 <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
@@ -42,9 +44,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </span>
               </a>
             </li>
-            <li class="menu-option">
-              <a href="">
-                <svg>
+            <li class="menu-option active">
+              <a
+                class="menu-option-item"
+                href="">
+                <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#epics" />
                 </svg>
                 <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
@@ -52,19 +56,59 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </span>
               </a>
             </li>
-            <li class="menu-option active">
-              <a href="">
-                <svg>
+            <li
+              class="menu-option-scrum"
+              [class.scrum-active]="scrumChildMenuVisible">
+
+              <button
+                class="scrum-button"
+                type="button"
+                (click)="toggleScrumChildMenu()"
+                >
+                <svg class="scrum-button-icon">
                   <use href="assets/icons/sprite.svg#scrum" />
                 </svg>
-                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
+                <span
+                  *ngIf="!collapsed"
+                  class="scrum-button-text"
+                  data-animation="text">
                   {{ 'commons.scrum' | transloco }}
                 </span>
-              </a>
+                <svg
+                  *ngIf="!collapsed"
+                  class="chevron"
+                  [class.active]="scrumChildMenuVisible">
+                  <use href="assets/icons/sprite.svg#chevron" />
+                </svg>
+              </button>
+              <ul
+                *ngIf="!collapsed && scrumChildMenuVisible"
+                class="menu-child-scrum">
+                <li class="menu-child-option">
+                  <a
+                    class="menu-child-option-item"
+                    href="">
+                    <span class="menu-child-option-text">
+                      {{ 'commons.backlog' | transloco }}
+                    </span>
+                  </a>
+                </li>
+                <li class="menu-child-option">
+                  <a
+                    class="menu-child-option-item"
+                    href="">
+                    <span class="menu-child-option-text">
+                      Sprint name
+                    </span>
+                  </a>
+                </li>
+              </ul>
             </li>
             <li class="menu-option">
-              <a href="">
-                <svg>
+              <a
+                class="menu-option-item"
+                href="">
+                <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#kanban" />
                 </svg>
                 <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
@@ -73,8 +117,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </a>
             </li>
             <li class="menu-option">
-              <a href="">
-                <svg>
+              <a
+                class="menu-option-item"
+                href="">
+                <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#issues" />
                 </svg>
                 <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
@@ -89,8 +135,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <nav class="secondary-menu">
           <ul>
             <li class="menu-option">
-              <a href="">
-                <svg>
+              <a
+                class="menu-option-item"
+                href="">
+                <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#wiki" />
                 </svg>
                 <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
@@ -99,8 +147,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </a>
             </li>
             <li class="menu-option">
-              <a href="">
-                <svg>
+              <a
+                class="menu-option-item"
+                href="">
+                <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#meetup" />
                 </svg>
                 <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
@@ -109,8 +159,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </a>
             </li>
             <li class="menu-option">
-              <a href="">
-                <svg>
+              <a
+                class="menu-option-item"
+                href="">
+                <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#team" />
                 </svg>
                 <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
@@ -121,12 +173,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </ul>
         </nav>
         <div class="bottom-menu">
-          <div class="menu-option">
-            <a href="">
-              <svg>
+          <div class="bottom-menu-option">
+            <a
+              class="bottom-menu-option-item"
+              href="">
+              <svg class="menu-option-icon">
                 <use href="assets/icons/sprite.svg#settings" />
               </svg>
-              <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
+              <span *ngIf="!collapsed" class="bottom-menu-option-text" data-animation="text">
                 {{ t('project-settings') }}
               </span>
             </a>
@@ -136,10 +190,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [class.collapsed]="collapseText"
             (click)="toggleCollapse()"
             class="button-collapse">
-            <span *ngIf="!collapsed" data-animation="text">
+            <span
+              *ngIf="!collapsed"
+              class="button-collapse-text"
+              data-animation="text">
               {{ t('collapse-menu') }}
             </span>
-            <svg>
+            <svg class="collapse-icon">
               <use [attr.href]="getCollapseIcon()" />
             </svg>
           </button>

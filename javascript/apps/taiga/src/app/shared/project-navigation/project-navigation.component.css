@@ -125,11 +125,14 @@ ul {
 }
 
 .project-logo {
-  aspect-ratio: 1/1;
-  block-size: var(--spacing-32);
-  border-radius: 2px;
-  inline-size: var(--spacing-32);
   margin-inline-end: var(--spacing-12);
+
+  & img {
+    aspect-ratio: 1/1;
+    block-size: var(--spacing-32);
+    border-radius: 2px;
+    inline-size: var(--spacing-32);
+  }
 }
 
 .menu-wrapper {
@@ -172,7 +175,6 @@ ul {
   & svg {
     block-size: var(--spacing-32);
     border-radius: 50%;
-    box-sizing: border-box;
     color: var(--color-primary);
     inline-size: var(--spacing-32);
     margin-inline-start: var(--spacing-16);
@@ -194,10 +196,20 @@ ul {
 
   inline-size: 48px;
 
+  & .main-project-nav-inner {
+    inline-size: 48px;
+    transition: all var(--transition);
+    transition-delay: 300ms;
+  }
+
   & .workspace {
     padding-inline-start: var(--spacing-8);
     transition: padding var(--transition);
     transition-delay: var(--transition-delay);
+  }
+
+  & .project-logo {
+    margin-inline-end: 0;
   }
 
   & .menu-option {
@@ -208,8 +220,15 @@ ul {
     }
   }
 
+  & svg {
+    margin-inline-end: 0;
+    transition: all var(--transition);
+    transition-delay: var(--transition-delay);
+  }
+
   & .button-collapse {
     justify-content: start;
+    padding: 0;
 
     & span {
       display: none;
@@ -217,7 +236,6 @@ ul {
 
     & svg {
       margin-inline-start: 0;
-      padding: var(--spacing-8);
     }
   }
 

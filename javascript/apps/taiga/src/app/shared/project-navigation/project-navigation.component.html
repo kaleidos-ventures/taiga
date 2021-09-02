@@ -13,8 +13,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <div class="main-project-nav">
     <div class="main-project-nav-inner">
       <div class="workspace">
-        <img class="project-logo" src="https://placeimg.com/640/480/nature" alt="">
-        <div class="workspace-data">
+        <a class="project-logo" href="">
+          <img  src="https://placeimg.com/640/480/nature" alt="">
+        </a>
+        <div *ngIf="!collapsed" class="workspace-data">
           <a
             class="workspace-data-project"
             href="">
@@ -35,7 +37,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#overview" />
                 </svg>
-                <span class="menu-option-text" data-animation="text">
+                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
                   {{ 'commons.overview' | transloco }}
                 </span>
               </a>
@@ -45,7 +47,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#epics" />
                 </svg>
-                <span class="menu-option-text" data-animation="text">
+                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
                   {{ 'commons.epics' | transloco }}
                 </span>
               </a>
@@ -55,7 +57,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#scrum" />
                 </svg>
-                <span class="menu-option-text" data-animation="text">
+                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
                   {{ 'commons.scrum' | transloco }}
                 </span>
               </a>
@@ -65,7 +67,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#kanban" />
                 </svg>
-                <span class="menu-option-text" data-animation="text">
+                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
                   {{ 'commons.kanban' | transloco }}
                 </span>
               </a>
@@ -75,7 +77,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#issues" />
                 </svg>
-                <span class="menu-option-text" data-animation="text">
+                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
                   {{ 'commons.issues' | transloco }}
                 </span>
               </a>
@@ -91,7 +93,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#wiki" />
                 </svg>
-                <span class="menu-option-text" data-animation="text">
+                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
                   {{ 'commons.wiki' | transloco }}
                 </span>
               </a>
@@ -101,7 +103,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#meetup" />
                 </svg>
-                <span class="menu-option-text" data-animation="text">
+                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
                   {{ 'commons.meetup' | transloco }}
                 </span>
               </a>
@@ -111,7 +113,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg>
                   <use href="assets/icons/sprite.svg#team" />
                 </svg>
-                <span class="menu-option-text" data-animation="text">
+                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
                   {{ 'commons.team' | transloco }}
                 </span>
               </a>
@@ -124,7 +126,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <svg>
                 <use href="assets/icons/sprite.svg#settings" />
               </svg>
-              <span class="menu-option-text" data-animation="text">
+              <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
                 {{ t('project-settings') }}
               </span>
             </a>
@@ -134,7 +136,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [class.collapsed]="collapseText"
             (click)="toggleCollapse()"
             class="button-collapse">
-            <span data-animation="text">
+            <span *ngIf="!collapsed" data-animation="text">
               {{ t('collapse-menu') }}
             </span>
             <svg>

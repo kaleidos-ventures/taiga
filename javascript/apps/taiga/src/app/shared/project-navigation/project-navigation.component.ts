@@ -29,12 +29,12 @@ interface ComponentViewModel {
         query(':self', style({ width: '200px' })),
 
         query('[data-animation="text"]', animate(100, style({ opacity: 0 }))),
-        query(':self', animate(200, style({ width: '48px' }))),
+        query(':self', animate("200ms ease-out", style({ width: '48px' }))),
       ]),
       transition('collapsed => open', [
         query(':self', style({ width: '48px' })),
 
-        query(':self', animate(200, style({ width: '200px' }))),
+        query(':self', animate("200ms ease-in", style({ width: '200px' }))),
       ]),
     ]),
   ],

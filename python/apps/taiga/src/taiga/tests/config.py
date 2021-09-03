@@ -6,6 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
+import os
+
 from taiga6.settings.common import *  # noqa, pylint: disable=unused-wildcard-import
 
 DEBUG = True
@@ -26,3 +28,16 @@ DATABASES = {
         "PORT": "5432",
     }
 }
+
+# This is only for GitHubActions
+if os.getenv("GITHUB_WORKFLOW"):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "taiga",
+            "USER": "postgres",
+            "PASSWORD": "postgres",
+            "HOST": "localhost",
+            "PORT": "5432",
+        }
+    }

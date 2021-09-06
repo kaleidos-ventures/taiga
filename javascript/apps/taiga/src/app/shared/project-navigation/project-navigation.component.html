@@ -248,7 +248,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </ul>
         </nav>
         <div class="bottom-menu">
-          <div class="bottom-menu-option">
+          <div
+            class="bottom-menu-option"
+            [attr.data-text]="t('project-settings')"
+            (pointerenter)="popup($event, 'project-settings')"
+            (pointerleave)="out()">
             <a
               (focus)="popup($event, 'project-settings')"
               (focusout)="out()"

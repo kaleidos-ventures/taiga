@@ -199,7 +199,10 @@ pytest==6.2.4
     # via
     #   -r requirements/devel.in
     #   pytest-django
+    #   pytest-pythonpath
 pytest-django==4.4.0
+    # via -r requirements/devel.in
+pytest-pythonpath==0.7.3
     # via -r requirements/devel.in
 python-dateutil==2.7.5
     # via

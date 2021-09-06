@@ -1,6 +1,7 @@
 -r commons.in
 
-pytest-django
 pytest
+pytest-pythonpath
+pytest-django
 
 -e file:../../taiga6/taiga-back#egg=taiga6

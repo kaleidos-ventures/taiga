@@ -7,15 +7,27 @@
  */
 
 import { animate, query, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
-// import { Store } from '@ngrx/store';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, OnInit } from '@angular/core';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
+import { TimeoutError } from 'rxjs';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 
-// interface ComponentViewModel {
-//   todo: string;
-// }
+interface ProjectMenuDialog {
+  hover: boolean;
+  open: boolean;
+  link: string;
+  type: string;
+  top: number;
+  left: number;
+  text: string;
+  height: number;
+  mainLinkHeight: number;
+  // children: {
+  //  text: string;
+  //  link: string[];
+  // }[];
+}
 
 @Component({
   selector: 'tg-project-navigation',
@@ -46,28 +58,36 @@ export class ProjectNavigationComponent implements OnInit {
 
   public collapseText = true;
   public scrumChildMenuVisible = false;
-  
+
   @Input()
   public project!: Project;
-  
+
   @HostBinding('class.collapsed')
   public collapsed = false;
-  
+
   @HostBinding('@openCollapse') public get openCollapseAnimation() {
     return this.collapsed ? 'collapsed' : 'open';
   }
-  
+
+  public dialog: ProjectMenuDialog = {
+    open: false,
+    hover: false,
+    mainLinkHeight: 0,
+    type: '',
+    link: '',
+    top: 0,
+    left: 0,
+    text: '',
+    height: 0,
+    // children: [],
+  };
+
+  private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
+
   constructor(
     private localStorage: LocalStorageService,
-    // private store: Store,
-    // private state: RxState<ComponentViewModel>,
-  ) {
-    // initial state
-    // this.state.set({});
-
-    // connect the ngrx state with the local state
-    // this.state.connect('todo', this.store.select(selectTodo));
-  }
+    private readonly cd: ChangeDetectorRef
+  ) {}
 
   public ngOnInit() {
     this.collapsed = (this.localStorage.get('projectnav-collapsed') === 'true');
@@ -90,5 +110,68 @@ export class ProjectNavigationComponent implements OnInit {
 
   public toggleScrumChildMenu() {
     this.scrumChildMenuVisible = !this.scrumChildMenuVisible;
+  }
+
+  public popup(event: MouseEvent | FocusEvent, type: string) {
+    console.log(1);
+    if (!this.collapsed) {
+      return;
+    }
+
+    this.initDialog(event.target as HTMLElement, type);
+    this.dialog.type = type;
+  }
+
+  public initDialog(el: HTMLElement, type: string) {
+
+    console.log({el, type});
+
+    if (this.dialogCloseTimeout) {
+      clearTimeout(this.dialogCloseTimeout);
+    }
+
+    const text = el.getAttribute('data-text');
+    console.log({text});
+
+    if (text) {
+      const link = 'http://taiga.io';
+
+      if (link) {
+        this.dialog.link = link;
+      } else {
+        this.dialog.link = '';
+      }
+
+      const navigationBarWidth = 40;
+
+      this.dialog.hover = false;
+      this.dialog.mainLinkHeight = el.offsetHeight;
+      this.dialog.left = navigationBarWidth;
+      this.dialog.top = el.offsetTop;
+      this.dialog.open = true;
+      this.dialog.text = text;
+      // this.dialog.children = children;
+      this.dialog.type = type;
+    }
+  }
+
+  public out() {
+    this.dialogCloseTimeout = setTimeout(() => {
+      if (!this.dialog.hover) {
+        this.dialog.open = false;
+        this.dialog.type = '';
+        this.cd.detectChanges();
+      }
+    }, 100);
+  }
+
+  public enterDialog() {
+    this.dialog.open = true;
+    this.dialog.hover = true;
+  }
+
+  public outDialog() {
+    this.dialog.hover = false;
+    this.out();
   }
 }

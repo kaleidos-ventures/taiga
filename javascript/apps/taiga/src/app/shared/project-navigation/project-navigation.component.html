@@ -12,11 +12,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 </ng-container> -->
   <div class="main-project-nav">
     <div class="main-project-nav-inner">
-      <div class="workspace">
+      <div
+        (pointerenter)="popup($event, 'project')"
+        (pointerleave)="out()"
+        class="workspace">
         <a class="project-logo" href="">
-          <img class="project-logo-image" src="https://placeimg.com/640/480/nature" alt="">
+          <img class="project-logo-image" src="https://placeimg.com/640/480/nature" alt="Project logo">
         </a>
-        <div *ngIf="!collapsed" class="workspace-data">
+        <div
+          *ngIf="!collapsed"
+          class="workspace-data"
+          data-pop>
           <a
             class="workspace-data-project"
             href="">
@@ -32,26 +38,50 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div class="menu-wrapper">
         <nav class="primary-menu">
           <ul>
-            <li class="menu-option">
+            <li
+              class="menu-option"
+              [attr.data-text]="'commons.overview' | transloco"
+              (pointerenter)="popup($event, 'overview')"
+              (pointerleave)="out()">
               <a
+                (focus)="popup($event, 'overview')"
+                (focusout)="out()"
+                [attr.data-text]="'commons.overview' | transloco"
+                [attr.aria-label]="collapsed ? ('commons.overview' | transloco) : null"
                 class="menu-option-item"
-                href="">
+                [class.active-dialog]="dialog.type === 'overview'"
+                [attr.href]="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#overview" />
                 </svg>
-                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
+                <span
+                  *ngIf="!collapsed"
+                  class="menu-option-text"
+                  data-animation="text">
                   {{ 'commons.overview' | transloco }}
                 </span>
               </a>
             </li>
-            <li class="menu-option active">
+            <li
+              class="menu-option"
+              [attr.data-text]="'commons.epics' | transloco "
+              (pointerenter)="popup($event, 'epics')"
+              (pointerleave)="out()">
               <a
+                (focus)="popup($event, 'epics')"
+                (focusout)="out()"
+                [attr.data-text]="'commons.epics' | transloco"
+                [attr.aria-label]="collapsed ? ('commons.epics' | transloco) : null"
                 class="menu-option-item"
-                href="">
+                [class.active-dialog]="dialog.type === 'epics'"
+                href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#epics" />
                 </svg>
-                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
+                <span
+                  *ngIf="!collapsed"
+                  class="menu-option-text"
+                  data-animation="text">
                   {{ 'commons.epics' | transloco }}
                 </span>
               </a>
@@ -63,8 +93,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <button
                 class="scrum-button"
                 type="button"
-                (click)="toggleScrumChildMenu()"
-                >
+                (click)="toggleScrumChildMenu()">
                 <svg class="scrum-button-icon">
                   <use href="assets/icons/sprite.svg#scrum" />
                 </svg>
@@ -104,10 +133,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </li>
               </ul>
             </li>
-            <li class="menu-option">
+            
+            <li
+              class="menu-option"
+              [attr.data-text]="'commons.kanban' | transloco "
+              (pointerenter)="popup($event, 'kanban')"
+              (pointerleave)="out()">
               <a
+                (focus)="popup($event, 'kanban')"
+                (focusout)="out()"
+                [attr.data-text]="'commons.kanban' | transloco"
+                [attr.aria-label]="collapsed ? ('commons.kanban' | transloco) : null"
                 class="menu-option-item"
-                href="">
+                [class.active-dialog]="dialog.type === 'kanban'"
+                href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#kanban" />
                 </svg>
@@ -116,10 +155,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </span>
               </a>
             </li>
-            <li class="menu-option">
+            <li
+              class="menu-option"
+              [attr.data-text]="'commons.issues' | transloco "
+              (pointerenter)="popup($event, 'issues')"
+              (pointerleave)="out()">
               <a
+                (focus)="popup($event, 'issues')"
+                (focusout)="out()"
+                [attr.data-text]="'commons.issues' | transloco"
+                [attr.aria-label]="collapsed ? ('commons.issues' | transloco) : null"
                 class="menu-option-item"
-                href="">
+                [class.active-dialog]="dialog.type === 'issues'"
+                href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#issues" />
                 </svg>
@@ -134,10 +182,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <div *ngIf="!collapsed" class="goto">{{ t('goto') }}</div>
         <nav class="secondary-menu">
           <ul>
-            <li class="menu-option">
+            <li
+              class="menu-option"
+              [attr.data-text]="'commons.wiki' | transloco "
+              (pointerenter)="popup($event, 'wiki')"
+              (pointerleave)="out()">
               <a
+                (focus)="popup($event, 'wiki')"
+                (focusout)="out()"
+                [attr.data-text]="'commons.wiki' | transloco"
+                [attr.aria-label]="collapsed ? ('commons.wiki' | transloco) : null"
                 class="menu-option-item"
-                href="">
+                [class.active-dialog]="dialog.type === 'wiki'"
+                href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#wiki" />
                 </svg>
@@ -146,10 +203,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </span>
               </a>
             </li>
-            <li class="menu-option">
+            <li
+              class="menu-option"
+              [attr.data-text]="'commons.meetup' | transloco "
+              (pointerenter)="popup($event, 'meetup')"
+              (pointerleave)="out()">
               <a
+                (focus)="popup($event, 'meetup')"
+                (focusout)="out()"
+                [attr.data-text]="'commons.meetup' | transloco"
+                [attr.aria-label]="collapsed ? ('commons.meetup' | transloco) : null"
                 class="menu-option-item"
-                href="">
+                [class.active-dialog]="dialog.type === 'meetup'"
+                href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#meetup" />
                 </svg>
@@ -158,10 +224,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </span>
               </a>
             </li>
-            <li class="menu-option">
+            <li
+              class="menu-option"
+              [attr.data-text]="'commons.team' | transloco "
+              (pointerenter)="popup($event, 'team')"
+              (pointerleave)="out()">
               <a
+                (focus)="popup($event, 'team')"
+                (focusout)="out()"
+                [attr.data-text]="'commons.team' | transloco"
+                [attr.aria-label]="collapsed ? ('commons.team' | transloco) : null"
                 class="menu-option-item"
-                href="">
+                [class.active-dialog]="dialog.type === 'team'"
+                href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#team" />
                 </svg>
@@ -175,8 +250,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <div class="bottom-menu">
           <div class="bottom-menu-option">
             <a
-              class="bottom-menu-option-item"
-              href="">
+              (focus)="popup($event, 'project-settings')"
+              (focusout)="out()"
+              [attr.data-text]="t('project-settings')"
+              [attr.aria-label]="collapsed ? t('project-settings') : null"
+              class="menu-option-item"
+              [class.active-dialog]="dialog.type === 'project-settings'"
+              href="dialog.link">
               <svg class="menu-option-icon">
                 <use href="assets/icons/sprite.svg#settings" />
               </svg>
@@ -203,5 +283,21 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </div>
       </div>
     </div>
+  </div>
+  <div
+    class="project-menu-dialog"
+    (pointerenter)="enterDialog()"
+    (pointerleave)="outDialog()"
+    [class.open]="dialog.open"
+    [style.top.px]="dialog.top"
+    [style.left.px]="dialog.left">
+    <a
+      [attr.href]=""
+      [style.height.px]="dialog.mainLinkHeight"
+      class="main-link">
+        <span class="dialog-text">
+          {{ dialog.text }}
+        </span>
+    </a>
   </div>
 </ng-container>

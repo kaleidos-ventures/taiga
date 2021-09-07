@@ -14,10 +14,15 @@
    pip-compile requirements/devel.txt
    pip-compile requirements/prod.txt
    ```
-4. Check changes with git diff
+3. Check changes with git diff
    ```bash
    git diff requirements/
    ```
+   
+4. Remeber to install either `requirements/devel.txt` or `requirements/prod.txt`
+    ```
+    pip install -r requirements/devel.txt
+    ```
 
 ## How to add a new dependency (legacy, requirements(.*).in files)
 
@@ -62,6 +67,11 @@ pytest
 ```
 
 So you can install `requirements/prod.txt` in production environments and `requiremsnts/devel.in` in development environments.
+
+```
+    pip install -r requirements/prod.txt
+    pip install -r requirements/devel.txt
+```
 
 ## How to add local package to .in files
 

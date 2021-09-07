@@ -1,3 +1,4 @@
 # Common API packages
 fastapi
 uvicorn
+pyhumps

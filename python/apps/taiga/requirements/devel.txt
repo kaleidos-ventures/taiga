@@ -185,6 +185,8 @@ pydantic==1.8.2
     # via fastapi
 pygments==2.9.0
     # via taiga6
+pyhumps==3.0.2
+    # via -r requirements/commons.in
 pyjwt==2.1.0
     # via
     #   oauthlib

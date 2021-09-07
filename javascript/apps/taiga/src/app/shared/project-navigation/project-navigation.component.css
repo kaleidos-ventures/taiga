@@ -60,16 +60,16 @@ ul {
   & a {
     display: block;
   }
+}
 
-  & .workspace-data-project {
-    @mixin text-overflow;
+.workspace-data-project {
+  @mixin text-overflow;
 
-    max-inline-size: 140px;
-  }
+  max-inline-size: 140px;
+}
 
-  & .workspace-data-workspace {
-    @mixin font-small;
-  }
+.workspace-data-workspace {
+  @mixin font-small;
 }
 
 /* MENU */
@@ -359,7 +359,6 @@ ul {
 
   & .main-link {
     align-items: center;
-    background-color: var(--color-black900);
     color: var(--color-white);
     display: flex;
     padding: 0 var(--spacing-2);
@@ -374,10 +373,10 @@ ul {
     }
   }
 
-  & a.main-link,
-  & button.main-link {
-    &:hover {
-      color: var(--color-solid-primary);
-    }
+  & .dialog-project {
+    background: var(--color-black);
+    color: var(--color-gray-40);
+    padding: var(--spacing-8);
+    padding-inline-start: var(--spacing-24);
   }
 }

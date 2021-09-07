@@ -113,7 +113,6 @@ export class ProjectNavigationComponent implements OnInit {
   }
 
   public popup(event: MouseEvent | FocusEvent, type: string) {
-    console.log(1);
     if (!this.collapsed) {
       return;
     }
@@ -131,7 +130,7 @@ export class ProjectNavigationComponent implements OnInit {
     }
 
     const text = el.getAttribute('data-text');
-    console.log({text});
+    console.log({el});
 
     if (text) {
       const link = 'http://taiga.io';

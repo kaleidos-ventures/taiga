@@ -15,14 +15,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div
         (pointerenter)="popup($event, 'project')"
         (pointerleave)="out()"
+        [attr.data-text]="'project'"
         class="workspace">
-        <a class="project-logo" href="">
-          <img class="project-logo-image" src="https://placeimg.com/640/480/nature" alt="Project logo">
+        <a
+          class="project-logo"
+          (focus)="popup($event, 'project')"
+          (focusout)="out()"
+          [class.active-dialog]="dialog.type === 'project'"
+          [attr.href]="dialog.link">
+          <img
+            class="project-logo-image"
+            src="https://placeimg.com/640/480/nature"
+            alt="Project logo">
         </a>
         <div
           *ngIf="!collapsed"
-          class="workspace-data"
-          data-pop>
+          class="workspace-data">
           <a
             class="workspace-data-project"
             href="">
@@ -133,7 +141,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </li>
               </ul>
             </li>
-            
             <li
               class="menu-option"
               [attr.data-text]="'commons.kanban' | transloco "
@@ -296,6 +303,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [style.top.px]="dialog.top"
     [style.left.px]="dialog.left">
     <a
+      *ngIf="dialog.type !== 'scrum' && dialog.type !== 'project'"
       [attr.href]=""
       [style.height.px]="dialog.mainLinkHeight"
       class="main-link">
@@ -303,5 +311,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ dialog.text }}
         </span>
     </a>
+    <div
+      *ngIf="dialog.type === 'project'"
+      class="dialog-project"
+      [style.height.px]="dialog.mainLinkHeight">
+      <a
+        class="workspace-data-project"
+        href="">
+        The Princess Bride
+      </a>
+      <a
+        class="workspace-data-workspace"
+        href="">
+        {{ t('personal-workspace') }}
+      </a>
+    </div>
   </div>
 </ng-container>

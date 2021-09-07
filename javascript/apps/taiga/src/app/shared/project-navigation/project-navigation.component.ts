@@ -53,8 +53,6 @@ interface ProjectMenuDialog {
   ],
 })
 export class ProjectNavigationComponent implements OnInit {
-  // public readonly todo$ = this.state.select('todo');
-  // public readonly model$ = this.state.select();
 
   public collapseText = true;
   public scrumChildMenuVisible = false;
@@ -131,6 +129,7 @@ export class ProjectNavigationComponent implements OnInit {
       return;
     }
 
+    // TODO WHEN REAL DATA
     // const children: ProjectMenuDialog['children'] = this.milestones.map((milestone) => {
     //   return {
     //     text: milestone.name,
@@ -147,8 +146,6 @@ export class ProjectNavigationComponent implements OnInit {
   }
 
   public initDialog(el: HTMLElement, type: string, children: ProjectMenuDialog['children'] = []) {
-
-    console.log({el, type});
 
     if (this.dialogCloseTimeout) {
       clearTimeout(this.dialogCloseTimeout);

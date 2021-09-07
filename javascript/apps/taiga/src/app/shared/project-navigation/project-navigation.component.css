@@ -334,11 +334,9 @@ ul {
       margin-inline-start: 0;
     }
   }
-
-  /* & .scrum .child-menu {
-    display: none;
-  } */
 }
+
+/* FLOATING DIALOG */
 
 .dialog-scrum {
   & .child-menu-option-item {
@@ -366,21 +364,6 @@ ul {
   &.open {
     display: block;
   }
-
-  /* & .menu-option {
-    margin-bottom: 0;
-  }
-
-  & .child-menu {
-    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.29);
-    display: block;
-    margin: 0;
-    padding: 0;
-
-    & a {
-      padding-left: var(--spacing-4);
-    }
-  } */
 
   & .main-link {
     align-items: center;

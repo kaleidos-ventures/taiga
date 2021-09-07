@@ -6,136 +6,117 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<ng-container *transloco="let t; read: 'main-project-navigation'">
+<ng-container *transloco="let t;">
   <div class="main-project-nav">
     <div class="main-project-nav-inner">
-      <div
-        (pointerenter)="popup($event, 'project')"
+      <div (pointerenter)="popup($event, 'project')"
         (pointerleave)="out()"
         [attr.data-text]="'project'"
         class="workspace">
-        <a
-          class="project-logo"
+        <a class="project-logo"
           (focus)="popup($event, 'project')"
           (focusout)="out()"
           [class.active-dialog]="dialog.type === 'project'"
           [attr.href]="dialog.link">
-          <img
-            class="project-logo-image"
+          <img class="project-logo-image"
             src="https://placeimg.com/640/480/nature"
             alt="Project logo">
         </a>
-        <div
-          *ngIf="!collapsed"
+        <div *ngIf="!collapsed"
           class="workspace-data">
-          <a
-            class="workspace-data-project"
+          <a class="workspace-data-project"
             href="">
             The Princess Bride
           </a>
-          <a
-            class="workspace-data-workspace"
+          <a class="workspace-data-workspace"
             href="">
-            {{ t('personal-workspace') }}
+            {{ t('main-project-navigation.personal-workspace') }}
           </a>
         </div>
       </div>
       <div class="menu-wrapper">
         <nav class="primary-menu">
           <ul>
-            <li
-              class="menu-option"
-              [attr.data-text]="'commons.overview' | transloco"
+            <li class="menu-option"
+              [attr.data-text]="t('commons.overview')"
               (pointerenter)="popup($event, 'overview')"
               (pointerleave)="out()">
-              <a
-                (focus)="popup($event, 'overview')"
+              <a (focus)="popup($event, 'overview')"
                 (focusout)="out()"
-                [attr.data-text]="'commons.overview' | transloco"
-                [attr.aria-label]="collapsed ? ('commons.overview' | transloco) : null"
+                [attr.data-text]="t('commons.overview')"
+                [attr.aria-label]="collapsed ? t('commons.overview') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'overview'"
                 [attr.href]="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#overview" />
                 </svg>
-                <span
-                  *ngIf="!collapsed"
+                <span *ngIf="!collapsed"
                   class="menu-option-text"
                   data-animation="text">
-                  {{ 'commons.overview' | transloco }}
+                  {{ t('commons.overview') }}
                 </span>
               </a>
             </li>
-            <li
-              class="menu-option"
-              [attr.data-text]="'commons.epics' | transloco "
+            <li class="menu-option"
+              [attr.data-text]="t('commons.epics')"
               (pointerenter)="popup($event, 'epics')"
               (pointerleave)="out()">
-              <a
-                (focus)="popup($event, 'epics')"
+              <a (focus)="popup($event, 'epics')"
                 (focusout)="out()"
-                [attr.data-text]="'commons.epics' | transloco"
-                [attr.aria-label]="collapsed ? ('commons.epics' | transloco) : null"
+                [attr.data-text]="t('commons.epics')"
+                [attr.aria-label]="collapsed ? t('commons.epics') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'epics'"
                 href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#epics" />
                 </svg>
-                <span
-                  *ngIf="!collapsed"
+                <span *ngIf="!collapsed"
                   class="menu-option-text"
                   data-animation="text">
-                  {{ 'commons.epics' | transloco }}
+                  {{ t('commons.epics') }}
                 </span>
               </a>
             </li>
-            <li
-              class="menu-option-scrum"
+            <li class="menu-option-scrum"
               (mouseenter)="popupScrum($event)"
               (mouseleave)="out()"
-              [attr.data-text]="'commons.scrum' | transloco"
+              [attr.data-text]="t('commons.scrum')"
               [class.scrum-active]="scrumChildMenuVisible">
-              <button
-                (focus)="popupScrum($event)"
+              <button (focus)="popupScrum($event)"
                 (focusout)="out()"
                 type="button"
                 class="scrum-button"
                 [class.active-dialog]="dialog.type === 'scrum'"
-                [attr.aria-label]="collapsed ? ('commons.scrum' | transloco) : null"
+                [attr.aria-label]="collapsed ? t('commons.scrum') : null"
                 (click)="toggleScrumChildMenu()">
                 <svg class="scrum-button-icon">
                   <use href="assets/icons/sprite.svg#scrum" />
                 </svg>
-                <span
-                  *ngIf="!collapsed"
+                <span *ngIf="!collapsed"
                   class="scrum-button-text"
                   data-animation="text">
-                  {{ 'commons.scrum' | transloco }}
+                  {{ t('commons.scrum') }}
                 </span>
-                <svg
-                  *ngIf="!collapsed"
+                <svg *ngIf="!collapsed"
                   class="chevron"
                   [class.active]="scrumChildMenuVisible">
                   <use href="assets/icons/sprite.svg#chevron" />
                 </svg>
               </button>
-              <ul
-                *ngIf="!collapsed && scrumChildMenuVisible"
+              <ul *ngIf="!collapsed && scrumChildMenuVisible"
                 class="menu-child-scrum">
                 <li class="menu-child-option">
-                  <a
-                    class="menu-child-option-item"
+                  <a class="menu-child-option-item"
                     href="">
                     <span class="menu-child-option-text">
-                      {{ 'commons.backlog' | transloco }}
+                      {{ t('commons.backlog') }}
                     </span>
                   </a>
                 </li>
                 <li class="menu-child-option">
-                  <a
-                    class="menu-child-option-item"
+                  <a class="menu-child-option-item"
                     href="">
                     <span class="menu-child-option-text">
                       Sprint name
@@ -144,151 +125,150 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </li>
               </ul>
             </li>
-            <li
-              class="menu-option"
-              [attr.data-text]="'commons.kanban' | transloco "
+            <li class="menu-option"
+              [attr.data-text]="t('commons.kanban')"
               (pointerenter)="popup($event, 'kanban')"
               (pointerleave)="out()">
-              <a
-                (focus)="popup($event, 'kanban')"
+              <a (focus)="popup($event, 'kanban')"
                 (focusout)="out()"
-                [attr.data-text]="'commons.kanban' | transloco"
-                [attr.aria-label]="collapsed ? ('commons.kanban' | transloco) : null"
+                [attr.data-text]="t('commons.kanban')"
+                [attr.aria-label]="collapsed ? t('commons.kanban') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'kanban'"
                 href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#kanban" />
                 </svg>
-                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
-                  {{ 'commons.kanban' | transloco }}
+                <span *ngIf="!collapsed"
+                  class="menu-option-text"
+                  data-animation="text">
+                  {{ t('commons.kanban') }}
                 </span>
               </a>
             </li>
-            <li
-              class="menu-option"
-              [attr.data-text]="'commons.issues' | transloco "
+            <li class="menu-option"
+              [attr.data-text]="t('commons.issues')"
               (pointerenter)="popup($event, 'issues')"
               (pointerleave)="out()">
-              <a
-                (focus)="popup($event, 'issues')"
+              <a (focus)="popup($event, 'issues')"
                 (focusout)="out()"
-                [attr.data-text]="'commons.issues' | transloco"
-                [attr.aria-label]="collapsed ? ('commons.issues' | transloco) : null"
+                [attr.data-text]="t('commons.issues')"
+                [attr.aria-label]="collapsed ? t('commons.issues') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'issues'"
                 href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#issues" />
                 </svg>
-                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
-                  {{ 'commons.issues' | transloco }}
+                <span *ngIf="!collapsed"
+                  class="menu-option-text"
+                  data-animation="text">
+                  {{ t('commons.issues') }}
                 </span>
               </a>
             </li>
           </ul>
         </nav>
         <hr class="menu-separator">
-        <div *ngIf="!collapsed" class="goto">{{ t('goto') }}</div>
+        <div *ngIf="!collapsed"
+          class="goto">{{ t('main-project-navigation.goto') }}</div>
         <nav class="secondary-menu">
           <ul>
-            <li
-              class="menu-option"
-              [attr.data-text]="'commons.wiki' | transloco "
+            <li class="menu-option"
+              [attr.data-text]="t('commons.wiki')"
               (pointerenter)="popup($event, 'wiki')"
               (pointerleave)="out()">
-              <a
-                (focus)="popup($event, 'wiki')"
+              <a (focus)="popup($event, 'wiki')"
                 (focusout)="out()"
-                [attr.data-text]="'commons.wiki' | transloco"
-                [attr.aria-label]="collapsed ? ('commons.wiki' | transloco) : null"
+                [attr.data-text]="t('commons.wiki')"
+                [attr.aria-label]="collapsed ? t('commons.wiki') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'wiki'"
                 href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#wiki" />
                 </svg>
-                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
-                  {{ 'commons.wiki' | transloco }}
+                <span *ngIf="!collapsed"
+                  class="menu-option-text"
+                  data-animation="text">
+                  {{ t('commons.wiki') }}
                 </span>
               </a>
             </li>
-            <li
-              class="menu-option"
-              [attr.data-text]="'commons.meetup' | transloco "
+            <li class="menu-option"
+              [attr.data-text]="t('commons.meetup')"
               (pointerenter)="popup($event, 'meetup')"
               (pointerleave)="out()">
-              <a
-                (focus)="popup($event, 'meetup')"
+              <a (focus)="popup($event, 'meetup')"
                 (focusout)="out()"
-                [attr.data-text]="'commons.meetup' | transloco"
-                [attr.aria-label]="collapsed ? ('commons.meetup' | transloco) : null"
+                [attr.data-text]="t('commons.meetup')"
+                [attr.aria-label]="collapsed ? t('commons.meetup') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'meetup'"
                 href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#meetup" />
                 </svg>
-                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
-                  {{ 'commons.meetup' | transloco }}
+                <span *ngIf="!collapsed"
+                  class="menu-option-text"
+                  data-animation="text">
+                  {{ t('commons.meetup') }}
                 </span>
               </a>
             </li>
-            <li
-              class="menu-option"
-              [attr.data-text]="'commons.team' | transloco "
+            <li class="menu-option"
+              [attr.data-text]="t('commons.team')"
               (pointerenter)="popup($event, 'team')"
               (pointerleave)="out()">
-              <a
-                (focus)="popup($event, 'team')"
+              <a (focus)="popup($event, 'team')"
                 (focusout)="out()"
-                [attr.data-text]="'commons.team' | transloco"
-                [attr.aria-label]="collapsed ? ('commons.team' | transloco) : null"
+                [attr.data-text]="('commons.team')"
+                [attr.aria-label]="collapsed ? ('commons.team') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'team'"
                 href="dialog.link">
                 <svg class="menu-option-icon">
                   <use href="assets/icons/sprite.svg#team" />
                 </svg>
-                <span *ngIf="!collapsed" class="menu-option-text" data-animation="text">
-                  {{ 'commons.team' | transloco }}
+                <span *ngIf="!collapsed"
+                  class="menu-option-text"
+                  data-animation="text">
+                  {{ ('commons.team') }}
                 </span>
               </a>
             </li>
           </ul>
         </nav>
         <div class="bottom-menu">
-          <div
-            class="bottom-menu-option"
-            [attr.data-text]="t('project-settings')"
+          <div class="bottom-menu-option"
+            [attr.data-text]="t('main-project-navigation.project-settings')"
             (pointerenter)="popup($event, 'project-settings')"
             (pointerleave)="out()">
-            <a
-              (focus)="popup($event, 'project-settings')"
+            <a (focus)="popup($event, 'project-settings')"
               (focusout)="out()"
-              [attr.data-text]="t('project-settings')"
-              [attr.aria-label]="collapsed ? t('project-settings') : null"
+              [attr.data-text]="t('main-project-navigation.project-settings')"
+              [attr.aria-label]="collapsed ? t('main-project-navigation.project-settings') : null"
               class="menu-option-item"
               [class.active-dialog]="dialog.type === 'project-settings'"
               href="dialog.link">
               <svg class="menu-option-icon">
                 <use href="assets/icons/sprite.svg#settings" />
               </svg>
-              <span *ngIf="!collapsed" class="bottom-menu-option-text" data-animation="text">
-                {{ t('project-settings') }}
+              <span *ngIf="!collapsed"
+                class="bottom-menu-option-text"
+                data-animation="text">
+                {{ t('main-project-navigation.project-settings') }}
               </span>
             </a>
           </div>
-          <button
-            type="button"
+          <button type="button"
             [class.collapsed]="collapseText"
             (click)="toggleCollapse()"
             class="button-collapse">
-            <span
-              *ngIf="!collapsed"
+            <span *ngIf="!collapsed"
               class="button-collapse-text"
               data-animation="text">
-              {{ t('collapse-menu') }}
+              {{ t('main-project-navigation.collapse-menu') }}
             </span>
             <svg class="collapse-icon">
               <use [attr.href]="getCollapseIcon()" />
@@ -298,38 +278,33 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
     </div>
   </div>
-  <div
-    class="project-menu-dialog"
+  <div class="project-menu-dialog"
     (pointerenter)="enterDialog()"
     (pointerleave)="outDialog()"
     [class.open]="dialog.open"
     [style.top.px]="dialog.top"
     [style.left.px]="dialog.left">
-    <a
-      *ngIf="dialog.type !== 'scrum' && dialog.type !== 'project'"
+    <a *ngIf="dialog.type !== 'scrum' && dialog.type !== 'project'"
       [attr.href]=""
       [style.height.px]="dialog.mainLinkHeight"
       class="main-link">
-        <span class="dialog-text">
-          {{ dialog.text }}
-        </span>
+      <span class="dialog-text">
+        {{ dialog.text }}
+      </span>
     </a>
-    <div
-      *ngIf="dialog.type === 'scrum'"
+    <div *ngIf="dialog.type === 'scrum'"
       [attr.href]=""
       [style.min-height.px]="dialog.mainLinkHeight"
       class="dialog-scrum">
       <ul class="child-menu">
         <li class="child-menu-option">
-          <a
-            class="child-menu-option-item"
+          <a class="child-menu-option-item"
             href="">
-              Milestone 1
+            Milestone 1
           </a>
         </li>
         <li class="menu-option">
-          <a
-            class="child-menu-option-item"
+          <a class="child-menu-option-item"
             href="">
             <span class="menu-option-text">
               Milestone 1
@@ -338,20 +313,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </li>
       </ul>
     </div>
-    
-    <div
-      *ngIf="dialog.type === 'project'"
+
+    <div *ngIf="dialog.type === 'project'"
       class="dialog-project"
       [style.height.px]="dialog.mainLinkHeight">
-      <a
-        class="workspace-data-project"
+      <a class="workspace-data-project"
         href="">
         The Princess Bride
       </a>
-      <a
-        class="workspace-data-workspace"
+      <a class="workspace-data-workspace"
         href="">
-        {{ t('personal-workspace') }}
+        {{ t('main-project-navigation.personal-workspace') }}
       </a>
     </div>
   </div>

@@ -141,6 +141,7 @@ ul {
   &.active-dialog {
     background: var(--color-gray90);
     color: var(--color-primary);
+    inline-size: 48px;
   }
 }
 
@@ -177,6 +178,13 @@ ul {
 
     &:focus-visible {
       outline: solid 1px var(--color-secondary);
+    }
+
+    &:hover,
+    &.active-dialog {
+      background: var(--color-gray90);
+      color: var(--color-primary);
+      inline-size: 48px;
     }
 
     & .scrum-button-icon {
@@ -332,6 +340,23 @@ ul {
   } */
 }
 
+.dialog-scrum {
+  & .child-menu-option-item {
+    border-radius: 3px;
+    display: block;
+    padding: var(--spacing-8);
+
+    &:hover {
+      background: var(--color-gray80);
+      color: var(--color-primary);
+    }
+
+    &.active {
+      background: var(--color-secondary80);
+    }
+  }
+}
+
 .project-menu-dialog {
   background-color: var(--color-gray90);
   display: none;
@@ -378,5 +403,10 @@ ul {
     color: var(--color-gray-40);
     padding: var(--spacing-8);
     padding-inline-start: var(--spacing-24);
+  }
+
+  & .dialog-scrum {
+    color: var(--color-gray-40);
+    padding: var(--spacing-8);
   }
 }

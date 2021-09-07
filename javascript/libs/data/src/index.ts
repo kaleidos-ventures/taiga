@@ -14,3 +14,4 @@ export * from './lib/user.model';
 export * from './lib/user.model.mock';
 export * from './lib/roles.model';
 export * from './lib/project.model';
+export * from './lib/milestone.model';

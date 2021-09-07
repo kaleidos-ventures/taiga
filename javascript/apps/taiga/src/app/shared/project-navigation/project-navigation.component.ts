@@ -8,9 +8,9 @@
 
 import { animate, query, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, OnInit } from '@angular/core';
+import { TranslocoService } from '@ngneat/transloco';
 import { RxState } from '@rx-angular/state';
-import { Project } from '@taiga/data';
-import { TimeoutError } from 'rxjs';
+import { Project, Milestone } from '@taiga/data';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 
 interface ProjectMenuDialog {
@@ -23,10 +23,10 @@ interface ProjectMenuDialog {
   text: string;
   height: number;
   mainLinkHeight: number;
-  // children: {
-  //  text: string;
-  //  link: string[];
-  // }[];
+  children: {
+    text: string;
+    link: string[];
+  }[];
 }
 
 @Component({
@@ -79,18 +79,23 @@ export class ProjectNavigationComponent implements OnInit {
     left: 0,
     text: '',
     height: 0,
-    // children: [],
+    children: [],
   };
 
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
 
   constructor(
     private localStorage: LocalStorageService,
-    private readonly cd: ChangeDetectorRef
+    private readonly cd: ChangeDetectorRef,
+    private translocoService: TranslocoService
   ) {}
 
   public ngOnInit() {
     this.collapsed = (this.localStorage.get('projectnav-collapsed') === 'true');
+  }
+
+  public get milestones(): Milestone[] {
+    return this.project.milestones.filter((milestone) => !milestone.closed).reverse().slice(0, 7);
   }
 
   public toggleCollapse() {
@@ -121,7 +126,27 @@ export class ProjectNavigationComponent implements OnInit {
     this.dialog.type = type;
   }
 
-  public initDialog(el: HTMLElement, type: string) {
+  public popupScrum(event: MouseEvent | FocusEvent) {
+    if (!this.collapsed) {
+      return;
+    }
+
+    // const children: ProjectMenuDialog['children'] = this.milestones.map((milestone) => {
+    //   return {
+    //     text: milestone.name,
+    //     link: ['http://taiga.io']
+    //   };
+    // });
+
+    // children.unshift({
+    //   text: this.translocoService.translate('common.backlog'),
+    //   link: ['http://taiga.io']
+    // });
+
+    this.initDialog(event.target as HTMLElement, 'scrum', /* children */);
+  }
+
+  public initDialog(el: HTMLElement, type: string, children: ProjectMenuDialog['children'] = []) {
 
     console.log({el, type});
 
@@ -130,7 +155,6 @@ export class ProjectNavigationComponent implements OnInit {
     }
 
     const text = el.getAttribute('data-text');
-    console.log({el});
 
     if (text) {
       const link = 'http://taiga.io';
@@ -141,16 +165,16 @@ export class ProjectNavigationComponent implements OnInit {
         this.dialog.link = '';
       }
 
-      const navigationBarWidth = 40;
+      const navigationBarWidth = 48;
 
       this.dialog.hover = false;
       this.dialog.mainLinkHeight = el.offsetHeight;
-      this.dialog.left = navigationBarWidth;
       this.dialog.top = el.offsetTop;
       this.dialog.open = true;
       this.dialog.text = text;
-      // this.dialog.children = children;
+      this.dialog.children = children;
       this.dialog.type = type;
+      this.dialog.left = navigationBarWidth;
     }
   }
 

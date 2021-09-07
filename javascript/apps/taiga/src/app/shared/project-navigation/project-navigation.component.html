@@ -96,11 +96,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </li>
             <li
               class="menu-option-scrum"
+              (mouseenter)="popupScrum($event)"
+              (mouseleave)="out()"
+              [attr.data-text]="'commons.scrum' | transloco"
               [class.scrum-active]="scrumChildMenuVisible">
-
               <button
-                class="scrum-button"
+                (focus)="popupScrum($event)"
+                (focusout)="out()"
                 type="button"
+                class="scrum-button"
+                [class.active-dialog]="dialog.type === 'scrum'"
+                [attr.aria-label]="collapsed ? ('commons.scrum' | transloco) : null"
                 (click)="toggleScrumChildMenu()">
                 <svg class="scrum-button-icon">
                   <use href="assets/icons/sprite.svg#scrum" />
@@ -311,6 +317,31 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ dialog.text }}
         </span>
     </a>
+    <div
+      *ngIf="dialog.type === 'scrum'"
+      [attr.href]=""
+      [style.min-height.px]="dialog.mainLinkHeight"
+      class="dialog-scrum">
+      <ul class="child-menu">
+        <li class="child-menu-option">
+          <a
+            class="child-menu-option-item"
+            href="">
+              Milestone 1
+          </a>
+        </li>
+        <li class="menu-option">
+          <a
+            class="child-menu-option-item"
+            href="">
+            <span class="menu-option-text">
+              Milestone 1
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    
     <div
       *ngIf="dialog.type === 'project'"
       class="dialog-project"

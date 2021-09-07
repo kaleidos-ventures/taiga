@@ -6,6 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Milestone } from "./milestone.model";
+
 export interface Project {
   id: string;
+  slug: string;
+  milestones: Milestone[];
 }

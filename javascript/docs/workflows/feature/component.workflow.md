@@ -155,7 +155,7 @@ For specific media queries (avoid if not specifically required by design) you ca
 
 ## Accesibility
 
-Please review our accessibility statement in 
+Please review our accessibility statement here: https://drive.google.com/drive/folders/1H63BloH6ReR4FABHrFWRRoEkgPfn0632?usp=sharing
 
 ## Testing
 

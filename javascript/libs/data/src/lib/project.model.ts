@@ -9,7 +9,7 @@
 import { Milestone } from "./milestone.model";
 
 export interface Project {
-  id: string;
+  id: number;
   slug: string;
   milestones: Milestone[];
 }

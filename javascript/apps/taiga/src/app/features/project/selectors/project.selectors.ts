@@ -6,9 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export * from './lib/api.module';
+import { createSelector } from '@ngrx/store';
+import { projectFeature } from '../reducers/project.reducer';
 
-export * from './lib/shared/api-utils.service';
-export * from './lib/auth/auth-api.service';
-export * from './lib/project/project-api.service';
+export const {
+  selectProject
+} = projectFeature;
 
+export const getProject = () => {
+  return createSelector(selectProject, (project) => !!project);
+};
+ 

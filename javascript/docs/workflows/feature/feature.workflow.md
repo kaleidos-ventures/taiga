@@ -6,7 +6,7 @@ If you are looking for the worflow on how to create a simple component, follow t
 ## Create feature
 
 ```bash
-schematics ./schematics:create-feature --name todoList --no-interactive  --dryRun=false
+npx schematics ./schematics:create-feature --name todoList --no-interactive  --dryRun=false
 ```
 
 ## Page

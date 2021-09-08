@@ -19,7 +19,7 @@
    git diff requirements/
    ```
    
-4. Remeber to install either `requirements/devel.txt` or `requirements/prod.txt`
+4. Remember to install either `requirements/devel.txt` or `requirements/prod.txt`
     ```
     pip install -r requirements/devel.txt
     ```

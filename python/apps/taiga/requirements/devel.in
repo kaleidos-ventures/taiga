@@ -3,3 +3,6 @@
 pytest
 pytest-pythonpath
 pytest-django
+
+# library required by taiga.base.mocks
+sampledata

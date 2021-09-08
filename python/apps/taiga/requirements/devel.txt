@@ -237,6 +237,7 @@ rudder-sdk-python==1.0.0b1
     # via taiga6
 sampledata==0.3.7
     # via
+    #   -r requirements/devel.in
     #   django-sampledatahelper
     #   taiga6
 serpy==0.1.1

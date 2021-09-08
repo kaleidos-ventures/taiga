@@ -42,7 +42,7 @@ repos:
       - id: mypy
         language: system
         files: 'python/apps/taiga/'
-        exclude: 'python/taiga6/'
+        exclude: 'python/taiga6/|/tests/' 
         args: [--config-file=python/.mypy.ini]
 
   - repo: https://github.com/PyCQA/isort

@@ -8,18 +8,20 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StoreModule } from '@ngrx/store';
-import { projectFeature } from './reducers/project.reducer';
-import { EffectsModule } from '@ngrx/effects';
-import { ProjectEffects } from './effects/project.effects';
+
+import { ProjectRoutingModule } from './project-routing.module';
+import { ProjectComponent } from './project.component';
+import { ProjectNavigationModule } from '@/app/shared/project-navigation/project-navigation.module';
+
+
 @NgModule({
   declarations: [
+    ProjectComponent
   ],
   imports: [
     CommonModule,
-    StoreModule.forFeature(projectFeature),
-    EffectsModule.forFeature([ProjectEffects]),
-  ],
-  exports: []
+    ProjectRoutingModule,
+    ProjectNavigationModule
+  ]
 })
 export class ProjectModule { }

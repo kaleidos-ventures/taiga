@@ -7,11 +7,14 @@
  */
 
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
 
 import { Project } from '@taiga/data';
 
-
+@Injectable({
+  providedIn: 'root'
+})
 export class ProjectApiService {
   constructor(
     private http: HttpClient,

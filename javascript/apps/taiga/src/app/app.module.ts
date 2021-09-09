@@ -33,7 +33,6 @@ import { TranslocoRootModule } from './transloco/transloco-root.module';
 import { TranslocoService } from '@ngneat/transloco';
 import { paramCase } from 'change-case';
 import { NavigationModule } from './shared/navigation/navigation.module';
-import { ProjectNavigationModule } from './shared/project-navigation/project-navigation.module';
 
 export function iconsPath(name: string): string {
   return `assets/icons/sprite.svg#${paramCase(name)}`;
@@ -55,7 +54,6 @@ export function prefersReducedMotion(): boolean {
     HttpClientModule,
     ApiRestInterceptorModule,
     NavigationModule,
-    ProjectNavigationModule,
     AppRoutingModule,
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     BrowserAnimationsModule.withConfig({

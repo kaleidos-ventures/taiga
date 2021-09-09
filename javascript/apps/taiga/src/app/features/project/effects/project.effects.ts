@@ -13,7 +13,7 @@ import { map } from 'rxjs/operators';
 
 import * as ProjectActions from '../actions/project.actions';
 import { ProjectApiService } from '@taiga/api';
-import { pessimisticUpdate } from '@nrwl/angular';
+import { fetch } from '@nrwl/angular';
 import { Project } from '@taiga/data';
 
 
@@ -21,19 +21,16 @@ import { Project } from '@taiga/data';
 export class ProjectEffects {
 
 
-  public loadProjects$ = createEffect(() => {
+  public loadProject$ = createEffect(() => {
     return this.actions$.pipe( 
       ofType(ProjectActions.getProject),
-      pessimisticUpdate({
+      fetch({
         run: (action) => {
           return this.projectApiService.getProject(action.id).pipe(
             map((project: Project) => {
               return ProjectActions.setProject({ project });
             })
           );
-        },
-        onError: () => {
-          return null;
         }
       })
     );

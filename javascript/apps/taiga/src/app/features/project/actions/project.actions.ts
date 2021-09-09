@@ -10,12 +10,12 @@ import { createAction, props } from '@ngrx/store';
 import { Project } from '@taiga/data';
 
 export const setProject = createAction(
-  '[Api] Set project',
+  '[Project] Set',
   props<{project: Project}>()
 );
 
 export const getProject = createAction(
-  '[Api] Get project',
+  '[Project] Get',
   props<{id: Project['id']}>()
 );
  

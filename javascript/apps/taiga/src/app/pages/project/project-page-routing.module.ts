@@ -8,12 +8,12 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProjectComponent } from './project.component';
+import { ProjectPageComponent } from './project-page.component';
 
-const routes: Routes = [{ path: '', component: ProjectComponent }];
+const routes: Routes = [{ path: '', component: ProjectPageComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ProjectRoutingModule { }
+export class ProjectPageRoutingModule { }

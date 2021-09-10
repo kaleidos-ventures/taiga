@@ -9,19 +9,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ProjectRoutingModule } from './project-routing.module';
-import { ProjectComponent } from './project.component';
+import { ProjectPageComponent } from './project-page.component';
+import { ProjectPageRoutingModule } from './project-page-routing.module';
 import { ProjectNavigationModule } from '@/app/shared/project-navigation/project-navigation.module';
+import { ProjectModule } from '@/app/features/project/project.module';
 
 
 @NgModule({
   declarations: [
-    ProjectComponent
+    ProjectPageComponent
   ],
   imports: [
     CommonModule,
-    ProjectRoutingModule,
-    ProjectNavigationModule
+    ProjectPageRoutingModule,
+    ProjectNavigationModule,
+    ProjectModule
   ]
 })
-export class ProjectModule { }
+export class ProjectPageModule { }

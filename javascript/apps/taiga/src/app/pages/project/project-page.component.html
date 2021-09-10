@@ -5,8 +5,10 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-
-<div class="project-page">
-  <tg-project-navigation></tg-project-navigation>
+<ng-container *ngIf="project$ | async as project">
+  <tg-project-navigation [project]="project"></tg-project-navigation>
+  <main>
+    <h1>Project works</h1>
+  </main>
   <router-outlet></router-outlet>
-</div>
+</ng-container>

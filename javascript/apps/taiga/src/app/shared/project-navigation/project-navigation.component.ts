@@ -89,6 +89,7 @@ export class ProjectNavigationComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
+    console.log({project: this.project});
     this.collapsed = (this.localStorage.get('projectnav-collapsed') === 'true');
   }
 

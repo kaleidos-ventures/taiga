@@ -12,7 +12,7 @@ import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
 
 const routes: Routes = [
   { path: 'login', loadChildren: () => import('./pages/auth/auth-page.module').then(m => m.AuthPageModule) },
-  { path: 'project', loadChildren: () => import('./pages/project/project.module').then(m => m.ProjectModule) },
+  { path: 'project', loadChildren: () => import('./pages/project/project-page.module').then(m => m.ProjectPageModule) },
 ];
 
 @NgModule({

@@ -4,8 +4,8 @@
 #
 #    pip-compile requirements/devel.in
 #
--e file:../../taiga6/taiga-back#egg=taiga6
-    # via -r requirements/devel.in
+-e file:./../../taiga6/taiga-back#egg=taiga6
+    # via -r requirements/commons.in
 aggdraw==1.3.12
     # via
     #   psd-tools

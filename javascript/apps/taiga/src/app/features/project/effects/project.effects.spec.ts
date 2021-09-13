@@ -9,9 +9,14 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
+import { AuthApiService, ProjectApiService } from '@taiga/api';
 import { Observable } from 'rxjs';
+import { cold, hot } from 'jasmine-marbles';
+import * as faker from 'faker';
 
 import { ProjectEffects } from './project.effects';
+import { getProject, setProject } from '../actions/project.actions';
+import { ProjectMockFactory } from '@taiga/data';
 
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
@@ -22,14 +27,27 @@ describe('ProjectEffects', () => {
     providers: [
       provideMockActions(() => actions$)
     ],
-    mocks: []
+    mocks: [ AuthApiService, ProjectApiService ],
   });
 
   beforeEach(() => {
     spectator = createService();
   });
 
-  it('should be created', () => {
-    expect(spectator.effects).toBeTruthy();
+  it('load project', () => {
+    const projectId = faker.datatype.number();
+    const project = ProjectMockFactory();
+    const effects = spectator.inject(ProjectEffects);
+
+    actions$ = hot('-a', { a:  getProject({ id: projectId })});
+
+    const expected = cold('-a', {
+      a: setProject({ project }),
+    });
+
+    expect(
+      effects.loadProject$
+    ).toBeObservable(expected);
   });
+
 });

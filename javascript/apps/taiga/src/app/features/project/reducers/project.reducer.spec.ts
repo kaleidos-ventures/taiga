@@ -6,12 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { exampleAction } from '../actions/project.actions';
 import { projectFeature, initialState } from './project.reducer';
 
 describe('Project Reducer', () => {
-  it('example', () => {
-    const action = exampleAction();
+  it('unknown action', () => {
+    const action = {} as any;
 
     const result = projectFeature.reducer(initialState, action);
 

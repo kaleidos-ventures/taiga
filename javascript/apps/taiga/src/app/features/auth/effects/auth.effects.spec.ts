@@ -7,7 +7,6 @@
  */
 
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { cold, hot } from 'jasmine-marbles';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Observable } from 'rxjs';
 import { AuthApiService } from '@taiga/api';
@@ -17,6 +16,7 @@ import { Action } from '@ngrx/store';
 import { login, loginSuccess, setUser } from '../actions/auth.actions';
 import { AuthMockFactory, UserMockFactory } from '@taiga/data';
 import * as faker from 'faker';
+import { cold, hot } from 'jest-marbles';
 
 describe('AuthEffects', () => {
   let actions$: Observable<Action>;

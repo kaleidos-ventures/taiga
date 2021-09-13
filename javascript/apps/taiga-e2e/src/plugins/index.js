@@ -26,17 +26,17 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
 
   // Preprocess Typescript file using Nx helper
-  on('file:preprocessor', preprocessTypescript(config));
+
   on('task', {
     log(message) {
-      console.log(message)
+      console.log(message);
 
-      return null
+      return null;
     },
     table(message) {
-      console.table(message)
+      console.table(message);
 
-      return null
-    }
-  })
+      return null;
+    },
+  });
 };

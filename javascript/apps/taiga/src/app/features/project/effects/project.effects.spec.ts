@@ -6,17 +6,17 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
+import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { AuthApiService, ProjectApiService } from '@taiga/api';
+import { ProjectApiService } from '@taiga/api';
 import { Observable } from 'rxjs';
-import { cold, hot } from 'jest-marbles';
 import * as faker from 'faker';
 
 import { ProjectEffects } from './project.effects';
 import { getProject, setProject } from '../actions/project.actions';
 import { ProjectMockFactory } from '@taiga/data';
+import { cold, hot } from 'jest-marbles';
 
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
@@ -27,7 +27,7 @@ describe('ProjectEffects', () => {
     providers: [
       provideMockActions(() => actions$)
     ],
-    mocks: [ AuthApiService, ProjectApiService ],
+    mocks: [ ProjectApiService ],
   });
 
   beforeEach(() => {
@@ -35,13 +35,18 @@ describe('ProjectEffects', () => {
   });
 
   it('load project', () => {
-    const projectId = faker.datatype.number();
+    const id = faker.datatype.number();
     const project = ProjectMockFactory();
+    const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectEffects);
 
-    actions$ = hot('-a', { a:  getProject({ id: projectId })});
+    projectApiService.getProject.mockReturnValue(
+      cold('-b|', { b: project })
+    );
 
-    const expected = cold('-a', {
+    actions$ = hot('-a', { a:  getProject({ id })});
+
+    const expected = cold('--a', {
       a: setProject({ project }),
     });
 

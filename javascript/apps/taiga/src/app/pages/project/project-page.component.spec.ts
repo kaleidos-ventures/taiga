@@ -6,28 +6,62 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { selectProject } from '@/app/features/project/selectors/project.selectors';
+import { ProjectNavigationComponent } from '@/app/shared/project-navigation/project-navigation.component';
+import { By } from '@angular/platform-browser';
+import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import * as faker from 'faker';
 import { ProjectPageComponent } from './project-page.component';
+import { ProjectPageModule } from './project-page.module';
 
-describe('ProjectComponent', () => {
-  let component: ProjectPageComponent;
-  let fixture: ComponentFixture<ProjectPageComponent>;
+const initialState = { 
+  project: {
+    id: 0,
+    slug: '',
+    children: []
+  } 
+};
+describe('ProjectPageComponent', () => {
+  let spectator: Spectator<ProjectPageComponent>;
+  let store: MockStore;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ ProjectPageComponent ]
-    })
-      .compileComponents();
+  const createComponent = createComponentFactory({
+    component: ProjectPageComponent,
+    imports: [ProjectPageModule],
+    declareComponent: false,
+    providers: [
+      provideMockStore({ initialState }),
+    ],
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ProjectPageComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    spectator = createComponent({
+      detectChanges: false
+    });
+
+    store = spectator.inject(MockStore);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should pass data to child', () => {
+
+    const project = {
+      id: 1,
+      slug: 'test',
+      milestones: []
+    };
+
+    // mock selector
+    store.overrideSelector(selectProject, project);
+
+    // trigger emission from all selectors
+    store.refreshState();
+    spectator.detectChanges();
+
+    // This test checks that the input attribute name becomes a class in the component structure
+    const childComponentEl = spectator.debugElement.query(By.directive(ProjectNavigationComponent));
+    const projectNavigation: ProjectNavigationComponent = childComponentEl.componentInstance;
+    expect(projectNavigation.project).toBe(project);
   });
+
 });

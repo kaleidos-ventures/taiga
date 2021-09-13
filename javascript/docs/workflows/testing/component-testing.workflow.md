@@ -139,7 +139,7 @@ describe('ButtonComponent', () => {
       detectChanges: false
     });
 
-    store = TestBed.inject(MockStore);
+    store = spectator.inject(MockStore);
   });
 
   it('should have a success class by default', () => {

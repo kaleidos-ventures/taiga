@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
-import {TuiAccordionModule} from '@taiga-ui/kit';
 import { ProjectNavigationComponent } from './project-navigation.component';
 
 @NgModule({
@@ -19,7 +18,6 @@ import { ProjectNavigationComponent } from './project-navigation.component';
     TuiButtonModule,
     TuiSvgModule,
     TranslocoModule,
-    TuiAccordionModule,
   ],
   declarations: [
     ProjectNavigationComponent,

@@ -5,15 +5,12 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-
 <label
-  class="input-label"
-  *ngIf="label"
-  [attr.for]="id">{{label}}</label>
-<div
-  class="input-container"
-  [class.has-icon]="icon">
+  *ngIf="showError(error)"
+  [attr.for]="input.id"
+  class="label-error">
+  <svg class="warning">
+    <use href="assets/icons/sprite.svg#warning" />
+  </svg>
   <ng-content></ng-content>
-  <tui-svg *ngIf="icon" class="icon" [src]="icon"></tui-svg>
-</div>
-<ng-content select="[inputError]"></ng-content>
+</label>

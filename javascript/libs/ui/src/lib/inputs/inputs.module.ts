@@ -10,8 +10,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { InputComponent } from './input/input.component';
-import { InputRefDirective } from './inputRef.directive';
+import { InputRefDirective } from './input-ref.directive';
 import { SelectComponent } from './select/select.component';
+import { ErrorComponent } from './error/error.component';
 
 @NgModule({
   imports: [
@@ -19,15 +20,17 @@ import { SelectComponent } from './select/select.component';
     CommonModule,
   ],
   declarations: [
-    InputComponent,
     InputRefDirective,
+    InputComponent,
     SelectComponent,
+    ErrorComponent,
   ],
   providers: [],
   exports: [
-    InputComponent,
     InputRefDirective,
+    InputComponent,
     SelectComponent,
+    ErrorComponent,
   ]
 })
 export class InputsModule {}

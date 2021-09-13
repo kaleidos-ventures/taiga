@@ -1,0 +1,23 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+.label-error {
+  @mixin font-small;
+
+  align-items: center;
+  color: var(--color-red80);
+  display: flex;
+  font-weight: var(--font-weight-regular);
+  padding-inline-start: var(--spacing-4);
+
+  & .warning {
+    margin-inline-end: var(--spacing-4);
+  }
+}

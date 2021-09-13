@@ -6,31 +6,75 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, ContentChild, Input } from '@angular/core';
-import { InputRefDirective } from './../inputRef.directive';
+import { AfterContentInit, Component, ContentChild, HostBinding, Input } from '@angular/core';
+import { ControlContainer, FormGroupDirective } from '@angular/forms';
+import { InputRefDirective } from '../input-ref.directive';
+
+let nextId = 0;
 
 @Component({
   selector: 'tg-ui-input',
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.css'],
+  exportAs: 'tgInput',
 })
-export class InputComponent {
+export class InputComponent implements AfterContentInit {
   @Input()
   public icon = '';
 
   @Input()
   public label = '';
 
+  @Input()
+  public id = `input-${nextId++}`;
+
+  @ContentChild(InputRefDirective, { static: false })
   public ref!: InputRefDirective;
 
-  @ContentChild(InputRefDirective)
-  public set inputRef(ref: InputRefDirective) {
-    this.ref = ref;
-  };
+  @HostBinding('class.invalid') public get error() {
+    return this.ref.control?.invalid;
+  }
 
-  public clear() {
-    if (this.ref && this.ref.control) {
-      this.ref.control.patchValue('');
+  @HostBinding('class.untouched') public get untouched() {
+    return this.ref.control?.untouched;
+  }
+
+  @HostBinding('class.touched') public get touched() {
+    return this.ref.control?.touched;
+  }
+
+  @HostBinding('class.dirty') public get dirty() {
+    return this.ref.control?.dirty;
+  }
+
+  @HostBinding('class.submitted') public get submitted() {
+    return this.form.submitted;
+  }
+
+  @HostBinding('class') public get updateOn() {
+    if (this.control?.updateOn) {
+      return `update-on-${this.control?.updateOn}`;
+    }
+
+    return '';
+  }
+
+  constructor(public controlContainer: ControlContainer) {}
+
+  public get control() {
+    return this.ref.control;
+  }
+
+  public get form() {
+    return this.controlContainer.formDirective as FormGroupDirective;
+  }
+
+  public ngAfterContentInit() {
+    if (this.ref) {
+      const input = this.ref.nativeElement;
+      input.setAttribute('id', this.id);
+    } else {
+      console.error('InputRefDirective is mandatory');
     }
   }
 }

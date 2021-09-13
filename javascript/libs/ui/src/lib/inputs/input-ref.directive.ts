@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Directive, Optional } from '@angular/core';
+import { Directive, ElementRef, Optional } from '@angular/core';
 import { NgControl } from '@angular/forms';
 
 @Directive({
@@ -14,10 +14,16 @@ import { NgControl } from '@angular/forms';
   selector: '[inputRef]'
 })
 export class InputRefDirective {
-  constructor(@Optional() private ngControl: NgControl) {
-  }
+  constructor(
+    @Optional() private ngControl: NgControl,
+    public el: ElementRef
+  ) {}
 
   public get control() {
     return this.ngControl?.control;
+  }
+
+  public get nativeElement() {
+    return this.el.nativeElement as HTMLElement;
   }
 }

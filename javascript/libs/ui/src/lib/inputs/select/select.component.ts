@@ -7,7 +7,7 @@
  */
 
 import { Component, ContentChild, Input } from '@angular/core';
-import { InputRefDirective } from './../inputRef.directive';
+import { InputRefDirective } from '../input-ref.directive';
 
 @Component({
   selector: 'tg-ui-select',

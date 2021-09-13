@@ -63,15 +63,11 @@ label {
     }
   }
 
-  & .error {
-    & .label-error {
-      @mixin font-small;
-
-      color: var(--color-red80);
-      font-weight: var(--font-weight-regular);
-      margin-inline-start: var(--spacing-4);
-    }
-
+  & .invalid.update-on-submit.submitted,
+  & .invalid.update-on-blur.dirty,
+  & .invalid.update-on-change.dirty,
+  & .invalid.update-on-blur.touched,
+  & .invalid.update-on-change.touched {
     & input {
       border-color: var(--color-error);
 

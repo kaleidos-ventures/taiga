@@ -52,3 +52,13 @@ repos:
         files: 'python/apps/taiga/'
         exclude: 'python/taiga6/'
         args: [--settings-path=python/.isort.cfg]
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.1.10
+    hooks:
+      - id: insert-license
+        files: '(python/apps/taiga/).*\.py$'
+        exclude: 'python/taiga6/'
+        args:
+          - --license-filepath
+          - python/.license_header_template_python.txt          # defaults to: LICENSE.txt

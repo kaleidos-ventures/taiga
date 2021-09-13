@@ -84,7 +84,7 @@ describe('ButtonComponent', () => {
       detectChanges: false
     });
 
-    store = TestBed.inject(MockStore);
+    store = spectator.inject(MockStore);
   });
 
   it('should have a success class by default', () => {
@@ -118,8 +118,11 @@ describe('ButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: ExampleComponent,
     // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
-    imports [ExampleModule],
-    declareComponent: false
+    imports: [ExampleModule],
+    declareComponent: false,
+    providers: [
+      provideMockStore({ initialState }),
+    ],
   });
 
   // fake state
@@ -132,9 +135,6 @@ describe('ButtonComponent', () => {
         name: 'example'
       },
       // Override the component's providers
-      providers: [
-        provideMockStore({ initialState }),
-      ],
       // Whether to run change detection (defaults to true)
       detectChanges: false
     });

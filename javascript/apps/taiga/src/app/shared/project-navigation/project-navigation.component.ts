@@ -8,7 +8,6 @@
 
 import { animate, query, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, OnInit } from '@angular/core';
-import { TranslocoService } from '@ngneat/transloco';
 import { RxState } from '@rx-angular/state';
 import { Project, Milestone } from '@taiga/data';
 import { LocalStorageService } from '../local-storage/local-storage.service';
@@ -85,11 +84,9 @@ export class ProjectNavigationComponent implements OnInit {
   constructor(
     private localStorage: LocalStorageService,
     private readonly cd: ChangeDetectorRef,
-    private translocoService: TranslocoService
   ) {}
 
   public ngOnInit() {
-    console.log({project: this.project});
     this.collapsed = (this.localStorage.get('projectnav-collapsed') === 'true');
   }
 

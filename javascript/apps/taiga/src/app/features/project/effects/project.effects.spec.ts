@@ -11,7 +11,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { AuthApiService, ProjectApiService } from '@taiga/api';
 import { Observable } from 'rxjs';
-import { cold, hot } from 'jasmine-marbles';
+import { cold, hot } from 'jest-marbles';
 import * as faker from 'faker';
 
 import { ProjectEffects } from './project.effects';

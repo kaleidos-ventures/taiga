@@ -4,6 +4,9 @@
   "overrides": [
     {
       "files": ["*.ts"],
+      "parserOptions": {
+        "project": ["apps/taiga/tsconfig.*?.json"]
+      },
       "extends": [
         "plugin:@nrwl/nx/angular",
         "plugin:@angular-eslint/template/process-inline-templates"

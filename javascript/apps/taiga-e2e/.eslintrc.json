@@ -5,6 +5,9 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "parserOptions": {
+        "project": ["apps/taiga-e2e/tsconfig.*?.json"]
+      },
       "rules": {}
     },
     {

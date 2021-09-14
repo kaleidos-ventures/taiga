@@ -6,13 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-// import { createSelector } from '@ngrx/store';
 import { projectFeature } from '../reducers/project.reducer';
 
 export const {
   selectProject
 } = projectFeature;
-
-// export const getProject = () => {
-//   return createSelector(selectProject, (project) => !!project);
-// };

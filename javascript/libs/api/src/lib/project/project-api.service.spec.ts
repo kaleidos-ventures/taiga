@@ -25,10 +25,11 @@ describe('ProjectApiService', () => {
 
   it('getProject', () => {
     const id = 1;
+    const url = `${ConfigServiceMock.apiUrl}/projects/${id}`;
 
     spectator.service.getProject(id).subscribe();
 
-    const req = spectator.expectOne(`${ConfigServiceMock.apiUrl}/projects/${id}`, HttpMethod.GET);
-    expect(req).toBeCalled();
+    const req = spectator.expectOne(url, HttpMethod.GET);
+    expect(req.request.url).toEqual(url);
   });
 });

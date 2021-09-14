@@ -87,7 +87,7 @@ export class ProjectNavigationComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
-    this.collapsed = (this.localStorage.get('projectnav-collapsed') === 'true');
+    this.collapsed = !!this.localStorage.get('projectnav-collapsed');
   }
 
   public get milestones(): Milestone[] {
@@ -96,7 +96,7 @@ export class ProjectNavigationComponent implements OnInit {
 
   public toggleCollapse() {
     this.collapsed = !this.collapsed;
-    this.localStorage.set('projectnav-collapsed', String(this.collapsed));
+    this.localStorage.set('projectnav-collapsed', this.collapsed);
 
     if (this.collapsed) {
       this.scrumChildMenuVisible = false;

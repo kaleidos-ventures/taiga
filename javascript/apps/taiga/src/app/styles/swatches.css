@@ -6,28 +6,40 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 :root {
+  /* Primary colors */
   --color-primary: rgb(131, 238, 222);
   --color-primary40: rgb(114, 216, 200);
+
+  /* Secondary colors */
   --color-secondary: rgb(0, 125, 166);
-  --color-secondary90: rgb(0, 77, 104);
   --color-secondary80: rgb(0, 99, 133);
+  --color-secondary90: rgb(0, 77, 104);
+
+  /* B/W colors */
   --color-white: rgb(255, 255, 255);
+  --color-black: rgb(23, 28, 36);
+
+  /* Gray colors */
   --color-gray10: rgb(249, 249, 251);
   --color-gray20: rgb(239, 240, 245);
   --color-gray30: rgb(218, 223, 233);
   --color-gray40: rgb(190, 199, 216);
   --color-gray50: rgb(155, 168, 193);
   --color-gray60: rgb(122, 137, 167);
-  --color-gray70: rgb(102, 117, 145);
-  --color-gray80: rgb(83, 95, 119);
-  --color-gray90: rgb(67, 77, 96);
-  --color-gray100: rgb(45, 52, 66);
-  --color-red20: rgb(255, 236, 239);
-  --color-red70: rgb(212, 54, 99);
-  --color-red80: rgb(170, 40, 80);
-  --color-black: rgb(23, 28, 36);
-  --color-correct: rgb(100, 125, 48);
+  --color-gray70: rgb(99, 115, 143);
+  --color-gray80: rgb(80, 92, 116);
+  --color-gray90: rgb(56, 64, 81);
+  --color-gray100: rgb(38, 44, 57);
+
+  /* Warning colors */
   --color-warning: rgb(179, 92, 48);
+  --color-warning20: rgb(255, 236, 239);
+  --color-warning70: rgb(212, 54, 99);
+  --color-warning80: rgb(170, 40, 80);
+
+  /* Info colors */
+  --color-info: rgb(37, 117, 205);
+  --color-correct: rgb(100, 125, 48);
   --color-error: rgb(212, 54, 99);
-  --color-info: rgb(178, 67, 199);
+  --color-notice: rgb(178, 67, 199);
 }

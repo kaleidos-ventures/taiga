@@ -222,8 +222,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               (pointerleave)="out()">
               <a (focus)="popup($event, 'team')"
                 (focusout)="out()"
-                [attr.data-text]="('commons.team')"
-                [attr.aria-label]="collapsed ? ('commons.team') : null"
+                [attr.data-text]="t('commons.team')"
+                [attr.aria-label]="collapsed ? t('commons.team') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'team'"
                 href="dialog.link">
@@ -233,7 +233,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <span *ngIf="!collapsed"
                   class="menu-option-text"
                   data-animation="text">
-                  {{ ('commons.team') }}
+                  {{ t('commons.team') }}
                 </span>
               </a>
             </li>

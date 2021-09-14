@@ -35,6 +35,7 @@ module.exports = {
     'selector-no-vendor-prefix': true,
     'value-no-vendor-prefix': true,
     // Specificity
+    'no-descending-specificity': null,
     'max-nesting-depth': 3,
     'selector-max-compound-selectors': 3,
     'selector-max-specificity': "1,2,1",

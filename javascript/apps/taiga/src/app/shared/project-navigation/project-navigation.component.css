@@ -45,14 +45,16 @@ ul {
 }
 
 .project-logo {
+  aspect-ratio: 1/1;
+  block-size: var(--spacing-32);
   flex-shrink: 0;
+  inline-size: var(--spacing-32);
   margin-inline-end: var(--spacing-12);
 
   & .project-logo-image {
-    aspect-ratio: 1/1;
-    block-size: var(--spacing-32);
+    block-size: 100%;
     border-radius: 2px;
-    inline-size: var(--spacing-32);
+    inline-size: 100%;
   }
 }
 
@@ -65,6 +67,7 @@ ul {
 .workspace-data-project {
   @mixin text-overflow;
 
+  margin-block-end: var(--spacing-4);
   max-inline-size: 140px;
 }
 
@@ -76,8 +79,8 @@ ul {
 
 .main-project-nav {
   block-size: 100%;
-  overflow-block: auto;
-  overflow-inline: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .main-project-nav-inner {
@@ -92,8 +95,8 @@ ul {
   block-size: 100%;
   display: flex;
   flex-direction: column;
-  overflow-block: auto;
-  overflow-inline: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
   padding: var(--spacing-8);
 }
 
@@ -107,7 +110,8 @@ ul {
 
   color: var(--color-gray60);
   font-weight: var(--font-weight-medium);
-  margin-block-end: var(--spacing-8);
+  margin-block: var(--spacing-8);
+  margin-inline-start: var(--spacing-12);
   text-transform: uppercase;
 }
 
@@ -176,7 +180,7 @@ ul {
     inline-size: 100%;
 
     &:focus-visible {
-      outline: solid 1px var(--color-secondary);
+      outline: solid 2px var(--color-secondary);
     }
 
     &:hover,
@@ -191,20 +195,26 @@ ul {
 
     & .chevron {
       block-size: var(--spacing-16);
+      fill: var(--color-primary);
       inline-size: var(--spacing-16);
       margin-inline-start: auto;
       transform: rotate(180deg);
+      transition: all .2s linear;
 
       &.active {
         transform: rotate(0);
+        transition: all .2s linear;
       }
     }
   }
 
   &.scrum-active {
     & .scrum-button {
-      background: var(--color-gray90);
-      color: var(--color-primary);
+      color: var(--color-white);
+
+      &:hover {
+        color: var(--color-primary);
+      }
     }
   }
 }
@@ -234,7 +244,7 @@ ul {
 .bottom-menu {
   margin-block-start: auto;
 
-  & .bottom-menu-option-item {
+  & .menu-option-item {
     @mixin menu-option-item;
 
     background: var(--color-black);
@@ -253,6 +263,7 @@ ul {
   background: none;
   block-size: var(--spacing-32);
   border: 0;
+  color: var(--color-gray30);
   cursor: pointer;
   display: flex;
   inline-size: 100%;
@@ -275,7 +286,7 @@ ul {
   }
 
   &:focus-visible {
-    outline: solid 1px var(--color-secondary);
+    outline: solid 2px var(--color-secondary);
   }
 }
 
@@ -289,6 +300,7 @@ ul {
   inline-size: var(--inline-btn-size);
 
   & .main-project-nav-inner {
+    inline-size: var(--inline-btn-size);
     transition: all var(--transition);
     transition-delay: 300ms;
   }

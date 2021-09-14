@@ -93,7 +93,7 @@ ul {
   display: flex;
   flex-direction: column;
   overflow-block: hidden;
-  overflow-y: auto;
+  overflow-inline: auto;
   padding: var(--spacing-8);
 }
 
@@ -141,7 +141,6 @@ ul {
   &.active-dialog {
     background: var(--color-gray90);
     color: var(--color-primary);
-    inline-size: 48px;
   }
 }
 
@@ -184,7 +183,6 @@ ul {
     &.active-dialog {
       background: var(--color-gray90);
       color: var(--color-primary);
-      inline-size: 48px;
     }
 
     & .scrum-button-icon {
@@ -286,11 +284,11 @@ ul {
 :host(.collapsed) {
   --transition: 200ms;
   --transition-delay: 150ms;
+  --inline-btn-size: 48px;
 
-  inline-size: 48px;
+  inline-size: var(--inline-btn-size);
 
   & .main-project-nav-inner {
-    inline-size: 48px;
     transition: all var(--transition);
     transition-delay: 300ms;
   }
@@ -307,6 +305,11 @@ ul {
     padding-inline-start: var(--spacing-4);
     transition: padding var(--transition);
     transition-delay: var(--transition-delay);
+
+    &:hover,
+    &.active-dialog {
+      inline-size: var(--inline-btn-size);
+    }
   }
 
   & .menu-option-icon,

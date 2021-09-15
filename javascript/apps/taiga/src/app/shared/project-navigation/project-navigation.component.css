@@ -116,7 +116,7 @@ ul {
 }
 
 @define-mixin menu-option-item {
-  @mixin font-inline;
+  @mixin font-body;
 
   align-items: center;
   block-size: var(--spacing-32);

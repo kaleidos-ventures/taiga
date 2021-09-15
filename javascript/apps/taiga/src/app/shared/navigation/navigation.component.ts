@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { selectUser } from '@/app/features/auth/selectors/auth.selectors';
+import { selectUser } from '~/app/features/auth/selectors/auth.selectors';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 @Component({

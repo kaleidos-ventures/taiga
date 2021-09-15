@@ -15,7 +15,7 @@ import * as AuthActions from '../actions/auth.actions';
 import { AuthApiService } from '@taiga/api';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { Auth, User } from '@taiga/data';
-import { LocalStorageService } from '@/app/shared/local-storage/local-storage.service';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 @Injectable()
 export class AuthEffects {

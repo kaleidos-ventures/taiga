@@ -15,7 +15,7 @@ import { Store } from '@ngrx/store';
 import { getGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
 import { camelCase, snakeCase } from 'change-case';
-import { UtilsService } from '@/app/shared/utils/utils-service.service';
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 @Injectable()
 export class ApiRestInterceptorService implements HttpInterceptor {

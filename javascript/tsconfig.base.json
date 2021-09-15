@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["apps/taiga/src/*"],
+      "~/*": ["apps/taiga/src/*"],
       "@storybook-helper": ["libs/ui/stories-helper.ts"],
       "@taiga/api": ["libs/api/src/index.ts"],
       "@taiga/core": ["libs/core/src/index.ts"],

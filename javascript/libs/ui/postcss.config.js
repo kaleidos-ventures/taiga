@@ -5,6 +5,6 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-const config = require('../../apps/taiga/postcss.config');
+const { getConfig } = require('../../postcss.config.base');
 
-module.exports = config;
+module.exports = getConfig();

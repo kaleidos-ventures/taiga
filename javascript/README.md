@@ -5,8 +5,22 @@
 npm i
 
 # Add configuration
-cp apps/taiga/src/assets/config.example.json apps/taiga/src/assets/config.json
+npm run default-config
+# or cp config.example.json apps/taiga/src/assets/config.json 
+```
 
-# Star app
+# Dev
+
+```sh
 npm start
+```
+
+# Build
+
+```sh
+npm run build
+
+# fake server
+cd dist/taiga/browser
+npx http-server --proxy http://localhost:8080\? --cors
 ```

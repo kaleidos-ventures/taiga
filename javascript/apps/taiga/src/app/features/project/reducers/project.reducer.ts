@@ -7,7 +7,7 @@
  */
 
 import { createReducer, on, createFeature } from '@ngrx/store';
-import { immerReducer } from '@/app/shared/utils/store';
+import { immerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/project.actions';
 import { Project } from '@taiga/data';
 

@@ -10,9 +10,10 @@ import { Environment } from './environment.model';
 
 export const environment: Environment = {
   production: true,
-  configLocal: {
-    api: '',
-    ws: '',
-    defaultLanguage: 'en'
-  },
+  configRemote: '/assets/config.json',
+  // configLocal: {
+  //   api: '',
+  //   ws: '',
+  //   defaultLanguage: 'en'
+  // },
 };

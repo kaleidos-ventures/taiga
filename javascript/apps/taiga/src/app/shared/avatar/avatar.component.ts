@@ -7,7 +7,7 @@
  */
 
 
-import { selectUser } from '@/app/features/auth/selectors/auth.selectors';
+import { selectUser } from '~/app/features/auth/selectors/auth.selectors';
 import { Component, ChangeDetectionStrategy, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';

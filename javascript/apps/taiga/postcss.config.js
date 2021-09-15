@@ -6,22 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-const path = require('path');
+const { getConfig } = require('../../postcss.config.base');
 
-module.exports = {
-  'plugins': [
-    require('postcss-import')({
-      from: "/src/styles.css",
-      path: [
-        path.resolve(__dirname, './src/app/styles'),
-      ]
-    }),
-    require('postcss-mixins'),
-    require('postcss-preset-env')({
-      stage: 0,
-      features: {
-        'logical-properties-and-values': false
-      }
-    })
-  ]
-}
+module.exports = getConfig();

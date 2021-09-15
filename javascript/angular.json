@@ -38,18 +38,6 @@
       "sourceRoot": "libs/api/src",
       "prefix": "tg",
       "architect": {
-        "build": {
-          "builder": "@nrwl/angular:package",
-          "options": {
-            "tsConfig": "libs/api/tsconfig.lib.json",
-            "project": "libs/api/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "libs/api/tsconfig.lib.prod.json"
-            }
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
@@ -57,8 +45,7 @@
               "libs/api/src/**/*.ts",
               "libs/api/src/**/*.html"
             ]
-          },
-          "outputs": ["{options.outputFile}"]
+          }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
@@ -76,22 +63,6 @@
       "sourceRoot": "libs/core/src",
       "prefix": "tg",
       "architect": {
-        "build": {
-          "builder": "@nrwl/angular:ng-packagr-lite",
-          "outputs": ["dist/libs/core"],
-          "options": {
-            "project": "libs/core/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "libs/core/tsconfig.lib.prod.json"
-            },
-            "development": {
-              "tsConfig": "libs/core/tsconfig.lib.json"
-            }
-          },
-          "defaultConfiguration": "production"
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/core"],
@@ -107,8 +78,7 @@
               "libs/core/src/**/*.ts",
               "libs/core/src/**/*.html"
             ]
-          },
-          "outputs": ["{options.outputFile}"]
+          }
         }
       }
     },
@@ -117,24 +87,11 @@
       "sourceRoot": "libs/data/src",
       "projectType": "library",
       "architect": {
-        "build": {
-          "builder": "@nrwl/angular:package",
-          "options": {
-            "tsConfig": "libs/data/tsconfig.lib.json",
-            "project": "libs/data/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "libs/data/tsconfig.lib.prod.json"
-            }
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["libs/data/**/*.ts"]
-          },
-          "outputs": ["{options.outputFile}"]
+          }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
@@ -212,7 +169,8 @@
                 },
                 "fonts": true
               },
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "sourceMap": true
             },
             "development": {
               "buildOptimizer": false,
@@ -340,8 +298,7 @@
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["apps/taiga-e2e/**/*.{js,ts}"]
-          },
-          "outputs": ["{options.outputFile}"]
+          }
         }
       }
     },
@@ -351,24 +308,11 @@
       "sourceRoot": "libs/ui/src",
       "prefix": "tg-ui",
       "architect": {
-        "build": {
-          "builder": "@nrwl/angular:package",
-          "options": {
-            "tsConfig": "libs/ui/tsconfig.lib.json",
-            "project": "libs/ui/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "libs/ui/tsconfig.lib.prod.json"
-            }
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["libs/ui/src/**/*.ts", "libs/ui/src/**/*.html"]
-          },
-          "outputs": ["{options.outputFile}"]
+          }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
@@ -417,28 +361,11 @@
       "sourceRoot": "libs/ws/src",
       "prefix": "tg",
       "architect": {
-        "build": {
-          "builder": "@nrwl/angular:ng-packagr-lite",
-          "outputs": ["dist/libs/ws"],
-          "options": {
-            "project": "libs/ws/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "libs/ws/tsconfig.lib.prod.json"
-            },
-            "development": {
-              "tsConfig": "libs/core/tsconfig.lib.json"
-            }
-          },
-          "defaultConfiguration": "production"
-        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["libs/ws/src/**/*.ts", "libs/ws/src/**/*.html"]
-          },
-          "outputs": ["{options.outputFile}"]
+          }
         },
         "test": {
           "builder": "@nrwl/jest:jest",

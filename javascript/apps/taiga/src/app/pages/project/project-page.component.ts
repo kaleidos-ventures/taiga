@@ -6,8 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { getProject } from '@/app/features/project/actions/project.actions';
-import { selectProject } from '@/app/features/project/selectors/project.selectors';
+import { getProject } from '~/app/features/project/actions/project.actions';
+import { selectProject } from '~/app/features/project/selectors/project.selectors';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 

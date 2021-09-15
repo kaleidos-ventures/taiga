@@ -1,5 +1,5 @@
 import { createReducer, on, createFeature } from '@ngrx/store';
-import { immerReducer } from '@/app/shared/utils/store';
+import { immerReducer } from '~/app/shared/utils/store';
 import * as <%= classify(name) %>Actions from '../actions/<%= dasherize(name) %>.actions';
 
 export const <%= camelize(name) %>FeatureKey = '<%= camelize(name) %>';

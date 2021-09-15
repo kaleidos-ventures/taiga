@@ -17,7 +17,7 @@ import {
 } from '@ngneat/transloco';
 import { Injectable, NgModule } from '@angular/core';
 import { TranslocoMessageFormatModule } from '@ngneat/transloco-messageformat';
-import { environment } from '@/environments/environment';
+import { environment } from '~/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TranslocoHttpLoader implements TranslocoLoader {

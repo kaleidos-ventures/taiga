@@ -22,7 +22,7 @@ export class ProjectEffects {
 
 
   public loadProject$ = createEffect(() => {
-    return this.actions$.pipe( 
+    return this.actions$.pipe(
       ofType(ProjectActions.getProject),
       fetch({
         run: (action) => {
@@ -31,7 +31,10 @@ export class ProjectEffects {
               return ProjectActions.setProject({ project });
             })
           );
-        }
+        },
+        onError: () => {
+          return null;
+        },
       })
     );
   });

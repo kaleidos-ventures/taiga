@@ -36,13 +36,17 @@ export class WsService {
   }
 
   public listen() {
-    this.ws = new WebSocket(this.config.wsUrl);
+    if (!this.config.wsUrl) {
+      throw new Error('Invalid ws url');
+    } else {
+      this.ws = new WebSocket(this.config.wsUrl);
 
-    this.ws.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data) as { [key in PropertyKey]: unknown };
+      this.ws.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data) as { [key in PropertyKey]: unknown };
 
-      this.store.dispatch(wsMessage({data}));
-    });
+        this.store.dispatch(wsMessage({data}));
+      });
+    }
   }
 
   /*

@@ -20,7 +20,7 @@ import { setUser } from './features/auth/actions/auth.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  public title = 'taiga2';
+  public title = 'taiga next';
 
   constructor(
     private wsService: WsService,

@@ -22,7 +22,7 @@ describe('ButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: ExampleComponent,
     // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
-    imports [ExampleModule],
+    imports: [ExampleModule],
     declareComponent: false
   });
 
@@ -64,7 +64,7 @@ describe('ButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: ExampleComponent,
     // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
-    imports [ExampleModule],
+    imports: [ExampleModule],
     declareComponent: false
   });
   // fake state

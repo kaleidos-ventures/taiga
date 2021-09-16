@@ -85,11 +85,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               [attr.data-text]="t('commons.scrum')"
               [class.scrum-active]="scrumChildMenuVisible">
               <button (focus)="popupScrum($event)"
-                (focusout)="out()"
                 type="button"
                 class="scrum-button"
+                #backlogButton
                 [class.active-dialog]="dialog.type === 'scrum'"
                 [attr.aria-label]="collapsed ? t('commons.scrum') : null"
+                [attr.data-text]="t('commons.backlog')"
                 (click)="toggleScrumChildMenu()">
                 <svg class="scrum-button-icon">
                   <use href="assets/icons/sprite.svg#scrum" />
@@ -107,14 +108,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </button>
               <ul *ngIf="!collapsed && scrumChildMenuVisible"
                 class="menu-child-scrum">
-                <li class="menu-child-option">
-                  <a class="menu-child-option-item"
-                    href="">
-                    <span class="menu-child-option-text">
-                      {{ t('commons.backlog') }}
-                    </span>
-                  </a>
-                </li>
+                <!-- This should be replaced by an ngFor with the sprints -->
                 <li class="menu-child-option">
                   <a class="menu-child-option-item"
                     href="">
@@ -280,6 +274,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   </div>
   <div class="project-menu-dialog"
     (pointerenter)="enterDialog()"
+    (focus)="enterDialog()"
+    (keyup.ESC)="outDialog('backlog')"
     (pointerleave)="outDialog()"
     [class.open]="dialog.open"
     [style.top.px]="dialog.top"
@@ -294,9 +290,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </a>
     <div *ngIf="dialog.type === 'scrum'"
       [attr.href]=""
+      cdkTrapFocus
       [style.min-height.px]="dialog.mainLinkHeight"
       class="dialog-scrum">
       <ul class="child-menu">
+        <li class="child-menu-option">
+          <span class="child-menu-option-item">
+            {{ t( 'commons.scrum' ) }}
+          </span>
+        </li>
+        <li class="child-menu-option">
+          <a class="child-menu-option-item"
+            #backlogSubmenu
+            href="">
+            {{ t( 'commons.backlog' ) }}
+          </a>
+        </li>
         <li class="child-menu-option">
           <a class="child-menu-option-item"
             href="">

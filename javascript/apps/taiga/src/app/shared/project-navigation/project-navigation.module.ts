@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -18,6 +19,7 @@ import { ProjectNavigationComponent } from './project-navigation.component';
     TuiButtonModule,
     TuiSvgModule,
     TranslocoModule,
+    A11yModule,
   ],
   declarations: [
     ProjectNavigationComponent,

@@ -7,7 +7,7 @@
  */
 
 import { animate, query, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, Input, OnInit, ViewChild } from '@angular/core';
 import { RxState } from '@rx-angular/state';
 import { Project, Milestone } from '@taiga/data';
 import { LocalStorageService } from '../local-storage/local-storage.service';
@@ -66,6 +66,12 @@ export class ProjectNavigationComponent implements OnInit {
     return this.collapsed ? 'collapsed' : 'open';
   }
 
+  @ViewChild('backlogSubmenu', { static: false }) public backlogSubmenuEl!: ElementRef;
+
+  @ViewChild('backlogButton', { static: false }) public backlogButtonElement!: ElementRef;
+
+  public backlogHTMLElement!: HTMLElement;
+
   public dialog: ProjectMenuDialog = {
     open: false,
     hover: false,
@@ -110,7 +116,11 @@ export class ProjectNavigationComponent implements OnInit {
   }
 
   public toggleScrumChildMenu() {
-    this.scrumChildMenuVisible = !this.scrumChildMenuVisible;
+    if(this.collapsed) {
+      (this.backlogSubmenuEl.nativeElement as HTMLElement).focus();
+    } else {
+      this.scrumChildMenuVisible = !this.scrumChildMenuVisible;
+    }
   }
 
   public popup(event: MouseEvent | FocusEvent, type: string) {
@@ -188,8 +198,11 @@ export class ProjectNavigationComponent implements OnInit {
     this.dialog.hover = true;
   }
 
-  public outDialog() {
+  public outDialog(focus?: string) {
     this.dialog.hover = false;
+    if (focus === 'backlog') {
+      (this.backlogButtonElement.nativeElement as HTMLElement).focus();
+    }
     this.out();
   }
 }

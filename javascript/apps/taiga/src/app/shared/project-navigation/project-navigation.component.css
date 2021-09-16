@@ -123,7 +123,6 @@ ul {
   border-radius: 3px;
   display: flex;
   padding: var(--spacing-4);
-  padding-inline-start: var(--spacing-12);
   transition: padding var(--transition);
 }
 
@@ -354,7 +353,17 @@ ul {
 /* FLOATING DIALOG */
 
 .dialog-scrum {
+  /* & .child-menu-option {
+    &:first-child {
+      & .child-menu-option-item {
+        padding-inline: 0;
+      }
+    }
+  } */
+
   & .child-menu-option-item {
+    @mixin font-body;
+
     border-radius: 3px;
     display: block;
     padding: var(--spacing-8);

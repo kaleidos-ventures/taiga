@@ -38,6 +38,9 @@ export function createComponent(options: TaigaComponentSchema): Rule {
     const host = createHost(tree);
     const { workspace } = await workspaces.readWorkspace('/', host);
 
+    const globalState = options.globalState === 'true';
+    const localState = options.localState === 'true';
+
     if (!options.project) {
       options.project = workspace.extensions.defaultProject as string;
     }
@@ -62,15 +65,23 @@ export function createComponent(options: TaigaComponentSchema): Rule {
         classify: strings.classify,
         dasherize: strings.dasherize,
         name: options.name,
+        globalState,
+        localState,
       }),
       move(normalize(componentPath))
     ]);
+
+    const {
+      globalState: _globalState,
+      localState: _localState,
+      ...componentOptions
+    } = options;
 
     return chain([
       externalSchematic('@schematics/angular', 'component', {
         skipImport: !options.module,
         export: true,
-        ...options
+        ...componentOptions
       }),
       mergeWith(templateSource, MergeStrategy.Overwrite)
     ]);

@@ -30,6 +30,18 @@
       "type": "string",
       "description": "The declaring NgModule.",
       "alias": "m"
+    },
+    "globalState": {
+      "type": "string",
+      "description": "Add ngrx",
+      "alias": "g",
+      "default": "true"
+    },
+    "localState": {
+      "type": "string",
+      "description": "Add rx-angular state",
+      "alias": "s",
+      "default": "true"
     }
   },
   "required": [

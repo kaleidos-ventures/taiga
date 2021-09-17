@@ -15,6 +15,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createComponent = void 0;
 const core_1 = require("@angular-devkit/core");
@@ -52,6 +63,8 @@ function createComponent(options) {
     return (tree) => __awaiter(this, void 0, void 0, function* () {
         const host = createHost(tree);
         const { workspace } = yield core_1.workspaces.readWorkspace('/', host);
+        const globalState = options.globalState === 'true';
+        const localState = options.localState === 'true';
         if (!options.project) {
             options.project = workspace.extensions.defaultProject;
         }
@@ -70,11 +83,14 @@ function createComponent(options) {
                 classify: core_1.strings.classify,
                 dasherize: core_1.strings.dasherize,
                 name: options.name,
+                globalState,
+                localState,
             }),
             schematics_1.move(core_1.normalize(componentPath))
         ]);
+        const { globalState: _globalState, localState: _localState } = options, componentOptions = __rest(options, ["globalState", "localState"]);
         return schematics_1.chain([
-            schematics_1.externalSchematic('@schematics/angular', 'component', Object.assign({ skipImport: !options.module, export: true }, options)),
+            schematics_1.externalSchematic('@schematics/angular', 'component', Object.assign({ skipImport: !options.module, export: true }, componentOptions)),
             schematics_1.mergeWith(templateSource, schematics_1.MergeStrategy.Overwrite)
         ]);
     });

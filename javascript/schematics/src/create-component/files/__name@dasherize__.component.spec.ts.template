@@ -1,18 +1,32 @@
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { <%= classify(name) %>Component } from './<%= dasherize(name) %>.component';
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * Copyright (c) 2021-present Kaleidos Ventures SL
+ */
 
-// The selector to mock
-import { selectUser } from './state/user.selectors';
+import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+<% if (globalState) { %>import { provideMockStore, MockStore } from '@ngrx/store/testing';<% } %>
+import { <%= classify(name) %>Component } from './<%= dasherize(name) %>.component';
+import { <%= classify(name) %>Module } from './<%= dasherize(name) %>.module';
+
+<% if (globalState) { %>// The selector to mock
+import { selectUser } from './state/user.selectors';<% } %>
 
 describe('<%= classify(name) %>Component', () => {
   let spectator: Spectator<<%= classify(name) %>Component>;
-  let store: MockStore;
-  const createComponent = createComponentFactory(<%= classify(name) %>Component);
+  <% if (globalState) { %>let store: MockStore;<% } %>
 
-  // fake state
+  const createComponent = createComponentFactory({
+    component: <%= classify(name) %>Component,
+    imports: [<%= classify(name) %>Module],
+    declareComponent: false,
+    mocks: [],
+  });
+  <% if (globalState) { %>
   const initialState = { loggedIn: false };
-
+  <% } %>
   beforeEach(() => {
     spectator = createComponent({
       // The component inputs
@@ -21,17 +35,17 @@ describe('<%= classify(name) %>Component', () => {
       },
       // Override the component's providers
       providers: [
-        provideMockStore({ initialState }),
+        <% if (globalState) { %>provideMockStore({ initialState }),<% } %>
       ],
       // Whether to run change detection (defaults to true)
       detectChanges: false
     });
-
-    store = spectator.inject(MockStore);
+    <% if (globalState) { %>
+    store = spectator.inject(MockStore);<% } %>
   });
 
   it('example', () => {
-    // change ngrx state
+    <% if (globalState) { %>// change ngrx state
     store.setState({ loggedIn: true });
 
     // mock selector
@@ -42,6 +56,7 @@ describe('<%= classify(name) %>Component', () => {
 
     // trigger emission from all selectors
     store.refreshState();
+    <% } %>
     spectator.detectChanges();
 
     // This test checks that the input attribute name becomes a class in the component structure

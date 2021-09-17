@@ -10,4 +10,6 @@ export interface Schema {
     path?: string;
     project?: string;
     module?: string;
+    globalState: string;
+    localState: string;
 }

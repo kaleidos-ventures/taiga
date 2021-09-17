@@ -56,4 +56,7 @@ export class WorkspaceComponent {
     this.showCreate = show;
   }
 
+  public trackByWorkspace(index: number, workspace: Workspace) {
+    return workspace.id;
+  }
 }

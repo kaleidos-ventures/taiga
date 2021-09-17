@@ -6,7 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-
 import * as faker from 'faker';
 import { Milestone } from './milestone.model';
 

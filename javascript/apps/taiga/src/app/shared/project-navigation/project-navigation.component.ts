@@ -41,12 +41,12 @@ interface ProjectMenuDialog {
         query(':self', style({ width: '200px' })),
 
         query('[data-animation="text"]', animate(100, style({ opacity: 0 }))),
-        query(':self', animate("200ms ease-out", style({ width: '48px' }))),
+        query(':self', animate('200ms ease-out', style({ width: '48px' }))),
       ]),
       transition('collapsed => open', [
         query(':self', style({ width: '48px' })),
 
-        query(':self', animate("200ms ease-in", style({ width: '200px' }))),
+        query(':self', animate('200ms ease-in', style({ width: '200px' }))),
       ]),
     ]),
   ],
@@ -137,7 +137,6 @@ export class ProjectNavigationComponent implements OnInit {
       return;
     }
 
-
     // TODO WHEN REAL DATA
     // const children: ProjectMenuDialog['children'] = this.milestones.map((milestone) => {
     //   return {
@@ -159,7 +158,6 @@ export class ProjectNavigationComponent implements OnInit {
     if (this.dialogCloseTimeout) {
       clearTimeout(this.dialogCloseTimeout);
     }
-
 
     const text = el.getAttribute('data-text');
 

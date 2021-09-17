@@ -13,8 +13,6 @@ import { CommonModule } from '@angular/common';
 import { WorkspacePageRoutingModule } from './workspace-page-routing.module';
 import { WorkspacePageComponent } from './workspace-page.component';
 
-
-
 @NgModule({
   declarations: [
     WorkspacePageComponent,

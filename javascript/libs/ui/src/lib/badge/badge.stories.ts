@@ -14,11 +14,9 @@ export default ConfigureStory({
   component: BadgeComponent,
 });
 
-
 const baseArgs = {
   label: 'label',
 };
-
 
 export const Badge = ConfigureTemplate({
   template: `

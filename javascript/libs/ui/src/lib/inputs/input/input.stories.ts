@@ -16,7 +16,6 @@ export default ConfigureStory({
   extraModules: [ TuiSvgModule ],
 });
 
-
 const baseArgs = {
   label: 'label',
   error: '',

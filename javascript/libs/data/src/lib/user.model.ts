@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Role } from "./roles.model";
+import { Role } from './roles.model';
 
 export interface User {
   acceptedTerms: boolean;

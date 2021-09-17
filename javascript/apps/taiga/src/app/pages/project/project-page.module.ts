@@ -14,7 +14,6 @@ import { ProjectPageRoutingModule } from './project-page-routing.module';
 import { ProjectNavigationModule } from '~/app/shared/project-navigation/project-navigation.module';
 import { ProjectModule } from '~/app/features/project/project.module';
 
-
 @NgModule({
   declarations: [
     ProjectPageComponent

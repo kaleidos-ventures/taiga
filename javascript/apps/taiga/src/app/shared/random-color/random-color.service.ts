@@ -14,6 +14,6 @@ export class RandomColorService {
   }
 
   public static getColorClass(colorId: number): string {
-    return "color-" + colorId.toString();
+    return 'color-' + colorId.toString();
   }
 }

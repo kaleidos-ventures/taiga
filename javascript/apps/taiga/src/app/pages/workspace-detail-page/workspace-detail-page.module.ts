@@ -13,7 +13,6 @@ import { CommonModule } from '@angular/common';
 import { WorkspaceDetailPageRoutingModule } from './workspace-detail-page-routing.module';
 import { WorkspaceDetailPageComponent } from './workspace-detail-page.component';
 
-
 @NgModule({
   declarations: [
     WorkspaceDetailPageComponent

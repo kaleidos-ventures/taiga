@@ -39,7 +39,7 @@ export function iconsPath(name: string): string {
 }
 
 export function prefersReducedMotion(): boolean {
-  const mediaQueryList = window.matchMedia("(prefers-reduced-motion)");
+  const mediaQueryList = window.matchMedia('(prefers-reduced-motion)');
 
   return mediaQueryList.matches;
 }

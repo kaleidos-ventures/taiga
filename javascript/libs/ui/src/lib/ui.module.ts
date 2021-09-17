@@ -13,7 +13,6 @@ import { InputsModule } from './inputs/inputs.module';
 import { SkeletonsModule } from './skeletons/skeletons.module';
 import { BadgeModule } from './badge/badge.module';
 
-
 @NgModule({
   imports: [
     CommonModule,

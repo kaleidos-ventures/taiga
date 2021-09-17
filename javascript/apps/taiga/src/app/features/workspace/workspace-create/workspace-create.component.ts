@@ -32,7 +32,6 @@ export class WorkspaceCreateComponent implements OnInit {
     private fb: FormBuilder,
   ) {}
 
-  
   // #TODO: Add user ID when we have real users on the app
   public userId = 5;
   public color = 0;

@@ -5,8 +5,6 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-
-
 import { User } from './user.model';
 
 export interface Auth extends User {

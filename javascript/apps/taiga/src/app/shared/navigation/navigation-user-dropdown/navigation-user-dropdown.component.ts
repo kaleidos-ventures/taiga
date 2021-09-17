@@ -5,8 +5,6 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-
-
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { User } from '@taiga/data';
 

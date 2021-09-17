@@ -12,7 +12,6 @@ import { MilestoneMockFactory } from './milestone.model.mock';
 
 import { Project } from './project.model';
 
-
 const getMilestones = () => {
   const milestones: Milestone[] = [];
   for(let i=0; i<faker.datatype.number(); i++) {

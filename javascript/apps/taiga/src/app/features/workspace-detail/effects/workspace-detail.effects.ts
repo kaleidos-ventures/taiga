@@ -18,8 +18,7 @@ import { WorkspaceApiService } from '@taiga/api';
 
 @Injectable()
 export class WorkspaceDetailEffects {
-  
-  
+
   public loadWorkspace$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(WorkspaceActions.getWorkspace),
@@ -37,7 +36,6 @@ export class WorkspaceDetailEffects {
       })
     );
   });
-
 
   constructor(
     private actions$: Actions,

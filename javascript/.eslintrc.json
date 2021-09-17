@@ -24,6 +24,17 @@
       }
     },
     {
+      "files": ["*.html"],
+      "parser": "@angular-eslint/template-parser",
+      "plugins": ["@angular-eslint/template"],
+      "rules": {
+        "@angular-eslint/template/accessibility-alt-text": ["error"],
+        "@angular-eslint/template/use-track-by-function": ["error"],
+        "@angular-eslint/template/accessibility-label-for": ["error"],
+        "@angular-eslint/template/mouse-events-have-key-events": ["error"]
+      }
+    },
+    {
       "files": ["*.ts", "*.tsx"],
       "extends": [
         "plugin:@typescript-eslint/recommended",
@@ -32,11 +43,14 @@
         "plugin:ngrx/recommended"
       ],
       "rules": {
-        "semi": "off",
+        "@typescript-eslint/no-unused-vars": ["error"],
         "@typescript-eslint/semi": ["error"],
         "@typescript-eslint/unbound-method": "off",
+        "@typescript-eslint/indent": ["error", 2],
+        "semi": "off",
         "indent": "off",
-        "@typescript-eslint/indent": ["error", 2]
+        "no-multiple-empty-lines":  [2, {"max": 1}],
+        "quotes": ["error", "single", { "avoidEscape": true }]
       }
     },
     {

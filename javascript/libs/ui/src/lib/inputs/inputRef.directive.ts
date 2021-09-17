@@ -6,12 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Directive, Optional } from "@angular/core";
-import { NgControl } from "@angular/forms";
+import { Directive, Optional } from '@angular/core';
+import { NgControl } from '@angular/forms';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: "[inputRef]"
+  selector: '[inputRef]'
 })
 export class InputRefDirective {
   constructor(@Optional() private ngControl: NgControl) {

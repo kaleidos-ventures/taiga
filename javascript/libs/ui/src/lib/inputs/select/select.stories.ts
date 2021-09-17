@@ -16,7 +16,6 @@ export default ConfigureStory({
   extraModules: [ TuiSvgModule ],
 });
 
-
 const baseArgs = {
   label: 'label',
   error: '',
@@ -38,7 +37,6 @@ const baseArgTypes = {
     control: { type: 'radio'}
   },
 };
-
 
 export const Select = ConfigureTemplate({
   template: `

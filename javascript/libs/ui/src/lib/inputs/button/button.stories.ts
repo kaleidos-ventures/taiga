@@ -15,7 +15,6 @@ export default ConfigureStory({
   extraModules: [ TuiButtonModule, TuiSvgModule, TuiLinkModule ],
 });
 
-
 const baseArgs = {
   label: 'Text',
 };

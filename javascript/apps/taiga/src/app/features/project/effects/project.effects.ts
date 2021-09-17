@@ -16,10 +16,8 @@ import { ProjectApiService } from '@taiga/api';
 import { fetch } from '@nrwl/angular';
 import { Project } from '@taiga/data';
 
-
 @Injectable()
 export class ProjectEffects {
-
 
   public loadProject$ = createEffect(() => {
     return this.actions$.pipe(
@@ -38,7 +36,6 @@ export class ProjectEffects {
       })
     );
   });
-
 
   constructor(
     private actions$: Actions,

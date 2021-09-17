@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Workspace } from "./workspace.model";
+import { Workspace } from './workspace.model';
 import * as faker from 'faker';
 
 export const WorkspaceMockFactory = (): Workspace => {

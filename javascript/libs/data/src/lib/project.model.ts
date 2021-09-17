@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Milestone } from "./milestone.model";
+import { Milestone } from './milestone.model';
 
 export interface Project {
   id: number;

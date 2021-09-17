@@ -7,15 +7,19 @@
  */
 
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { ProjectNavigationComponent } from './project-navigation.component';
 import { ProjectNavigationModule } from './project-navigation.module';
 
-describe('<%= classify(name) %>Component', () => {
+describe('ProjectNavigationComponent', () => {
   let spectator: Spectator<ProjectNavigationComponent>;
   const createComponent = createComponentFactory({
     component: ProjectNavigationComponent,
-    imports: [ProjectNavigationModule],
+    imports: [
+      getTranslocoModule(),
+      ProjectNavigationModule
+    ],
     declareComponent: false,
     mocks: [
       LocalStorageService,

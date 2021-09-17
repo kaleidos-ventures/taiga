@@ -7,6 +7,7 @@
  */
 
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 <% if (globalState) { %>import { provideMockStore, MockStore } from '@ngrx/store/testing';<% } %>
 import { <%= classify(name) %>Component } from './<%= dasherize(name) %>.component';
 import { <%= classify(name) %>Module } from './<%= dasherize(name) %>.module';
@@ -20,7 +21,10 @@ describe('<%= classify(name) %>Component', () => {
 
   const createComponent = createComponentFactory({
     component: <%= classify(name) %>Component,
-    imports: [<%= classify(name) %>Module],
+    imports: [
+      getTranslocoModule(),
+      <%= classify(name) %>Module,
+    ],
     declareComponent: false,
     mocks: [],
   });

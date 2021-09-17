@@ -111,7 +111,7 @@ ul {
   color: var(--color-gray60);
   font-weight: var(--font-weight-medium);
   margin-block: var(--spacing-8);
-  margin-inline-start: var(--spacing-12);
+  margin-inline-start: var(--spacing-8);
   text-transform: uppercase;
 }
 
@@ -222,8 +222,16 @@ ul {
   background: var(--color-gray90);
   padding: var(--spacing-8);
 
+  & .menu-child-option {
+    &:last-child {
+      margin-block-end: 0;
+    }
+  }
+
   & .menu-child-option-item {
     @mixin menu-option-item;
+
+    padding-inline-start: var(--spacing-16);
 
     &:hover,
     &.active {
@@ -237,6 +245,24 @@ ul {
     &.active {
       background: var(--color-secondary80);
     }
+  }
+}
+
+.secondary-menu {
+  & .menu-option-item {
+    &:hover {
+      color: var(--color-white);
+
+      & .arrow {
+        opacity: 1;
+      }
+    }
+  }
+
+  & .arrow {
+    margin-inline-start: auto;
+    opacity: 0;
+    transform: rotate(180deg);
   }
 }
 
@@ -353,19 +379,27 @@ ul {
 /* FLOATING DIALOG */
 
 .dialog-scrum {
-  /* & .child-menu-option {
-    &:first-child {
-      & .child-menu-option-item {
-        padding-inline: 0;
+  & .child-menu-option-scrum {
+    color: var(--color-white);
+    display: block;
+    font-weight: var(--font-weight-bold);
+    margin-block-end: var(--spacing-12);
+    padding: 0;
+
+    & .child-menu-option-item {
+      padding: 0 var(--spacing-8);
+
+      &:hover {
+        background: none;
+        color: inherit;
       }
     }
-  } */
+  }
 
   & .child-menu-option-item {
-    @mixin font-body;
-
     border-radius: 3px;
     display: block;
+    font-weight: var(--font-weight-bold);
     padding: var(--spacing-8);
 
     &:hover {
@@ -394,7 +428,7 @@ ul {
     color: var(--color-white);
     display: flex;
     padding: 0 var(--spacing-2);
-    padding-inline-start: var(--spacing-24);
+    padding-inline-start: var(--spacing-12);
 
     & .dialog-text {
       font-size: var(--font-size-medium);

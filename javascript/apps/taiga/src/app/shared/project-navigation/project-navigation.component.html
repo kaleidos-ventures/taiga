@@ -108,6 +108,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </button>
               <ul *ngIf="!collapsed && scrumChildMenuVisible"
                 class="menu-child-scrum">
+                <li class="menu-child-option">
+                  <a class="menu-child-option-item"
+                    href="">
+                    <span class="menu-child-option-text">
+                      {{t('commons.backlog')}}
+                    </span>
+                  </a>
+                </li>
                 <!-- This should be replaced by an ngFor with the sprints -->
                 <li class="menu-child-option">
                   <a class="menu-child-option-item"
@@ -187,6 +195,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   data-animation="text">
                   {{ t('commons.wiki') }}
                 </span>
+                <svg *ngIf="!collapsed"
+                  class="arrow">
+                  <use href="assets/icons/sprite.svg#arrow" />
+                </svg>
               </a>
             </li>
             <li class="menu-option"
@@ -208,6 +220,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   data-animation="text">
                   {{ t('commons.meetup') }}
                 </span>
+                <svg *ngIf="!collapsed"
+                  class="arrow">
+                  <use href="assets/icons/sprite.svg#arrow" />
+                </svg>
               </a>
             </li>
             <li class="menu-option"
@@ -229,6 +245,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   data-animation="text">
                   {{ t('commons.team') }}
                 </span>
+                <svg *ngIf="!collapsed"
+                  class="arrow">
+                  <use href="assets/icons/sprite.svg#arrow" />
+                </svg>
               </a>
             </li>
           </ul>
@@ -295,7 +315,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="dialog-scrum">
       <ul class="child-menu">
         <li class="child-menu-option">
-          <span class="child-menu-option-item">
+          <span class="child-menu-option-item child-menu-option-scrum">
             {{ t( 'commons.scrum' ) }}
           </span>
         </li>

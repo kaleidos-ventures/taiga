@@ -8,5 +8,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: min-content 1fr;
 }

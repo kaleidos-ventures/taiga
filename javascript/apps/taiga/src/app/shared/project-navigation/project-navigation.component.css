@@ -250,6 +250,7 @@ ul {
 
 .secondary-menu {
   & .menu-option-item {
+    &:focus,
     &:hover {
       color: var(--color-white);
 

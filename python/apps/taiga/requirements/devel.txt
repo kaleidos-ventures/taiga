@@ -56,6 +56,8 @@ chardet==3.0.4
     #   taiga6
 click==8.0.1
     # via uvicorn
+coverage==5.5
+    # via pytest-cov
 cryptography==3.4.7
     # via
     #   oauthlib
@@ -200,8 +202,11 @@ pyparsing==2.4.7
 pytest==6.2.4
     # via
     #   -r requirements/devel.in
+    #   pytest-cov
     #   pytest-django
     #   pytest-pythonpath
+pytest-cov==2.12.1
+    # via -r requirements/devel.in
 pytest-django==4.4.0
     # via -r requirements/devel.in
 pytest-pythonpath==0.7.3
@@ -266,7 +271,9 @@ tinycss2==1.1.0
     #   cssselect2
     #   taiga6
 toml==0.10.2
-    # via pytest
+    # via
+    #   pytest
+    #   pytest-cov
 typing-extensions==3.10.0.0
     # via
     #   pydantic

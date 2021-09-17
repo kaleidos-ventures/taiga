@@ -2,6 +2,7 @@
 
 pytest
 pytest-pythonpath
+pytest-cov
 pytest-django
 
 # library required by taiga.base.mocks

@@ -399,7 +399,6 @@ ul {
   & .child-menu-option-item {
     border-radius: 3px;
     display: block;
-    font-weight: var(--font-weight-bold);
     padding: var(--spacing-8);
 
     &:hover {
@@ -432,7 +431,6 @@ ul {
 
     & .dialog-text {
       font-size: var(--font-size-medium);
-      font-weight: var(--font-weight-bold);
       overflow: hidden;
       text-decoration: none;
       text-overflow: ellipsis;

@@ -16,6 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <a class="project-logo"
           (focus)="popup($event, 'project')"
           (focusout)="out()"
+          [attr.data-text]="'project'"
           [class.active-dialog]="dialog.type === 'project'"
           [attr.href]="dialog.link">
           <img class="project-logo-image"
@@ -28,7 +29,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             href="">
             The Princess Bride
           </a>
-          <a class="workspace-data-workspace"
+          <a *ngIf="!collapsed"
+            class="workspace-data-workspace"
             href="">
             {{ t('main-project-navigation.personal-workspace') }}
           </a>

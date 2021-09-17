@@ -128,14 +128,15 @@ export class ProjectNavigationComponent implements OnInit {
       return;
     }
 
-    this.initDialog(event.target as HTMLElement, type);
     this.dialog.type = type;
+    this.initDialog(event.target as HTMLElement, type);
   }
 
   public popupScrum(event: MouseEvent | FocusEvent) {
     if (!this.collapsed) {
       return;
     }
+
 
     // TODO WHEN REAL DATA
     // const children: ProjectMenuDialog['children'] = this.milestones.map((milestone) => {
@@ -159,6 +160,7 @@ export class ProjectNavigationComponent implements OnInit {
       clearTimeout(this.dialogCloseTimeout);
     }
 
+
     const text = el.getAttribute('data-text');
 
     if (text) {
@@ -173,13 +175,15 @@ export class ProjectNavigationComponent implements OnInit {
       const navigationBarWidth = 48;
 
       this.dialog.hover = false;
-      this.dialog.mainLinkHeight = el.offsetHeight;
-      this.dialog.top = el.offsetTop;
+      this.dialog.mainLinkHeight = type === 'project' ? (el.closest('.workspace') as HTMLElement).offsetHeight : el.offsetHeight;
+      this.dialog.top = type === 'project' ? (el.closest('.workspace') as HTMLElement).offsetTop : el.offsetTop;
       this.dialog.open = true;
       this.dialog.text = text;
       this.dialog.children = children;
       this.dialog.type = type;
       this.dialog.left = navigationBarWidth;
+
+      console.log({dialog: this.dialog});
     }
   }
 

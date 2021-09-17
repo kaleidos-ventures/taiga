@@ -1,4 +1,4 @@
-# For developers
+# Get started (for developers)
 
 ## Tooling
 
@@ -49,12 +49,4 @@ You can execute all pre-commit hooks with:
 4. Start the backend
    ```
    (taiga)$ DJANGO_SETTINGS_MODULE=settings.config uvicorn taiga.wsgi:app --reload
-   ```
-
-## Tests
-
-Go to `taiga` and execute pytest
-   ```shell
-   $ cd python/apps/taiga/
-   (taiga)$ pytest
    ```

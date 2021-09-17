@@ -48,7 +48,7 @@ jobs:
       id: cache
       with:
         path: ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-python${{ matrix.python-version }}-${{ env.pythonLocation }}-${{ hashFiles('**/python/apps/taiga/requirements/devel.txt') }}
+        key: ${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('**/python/apps/taiga/requirements/devel.txt') }}
 
     - name: Install requirements
       if: steps.cache.outputs.cache-hit != 'true'

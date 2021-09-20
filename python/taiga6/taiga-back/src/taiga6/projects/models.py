@@ -40,6 +40,7 @@ from taiga6.projects.notifications.services import (
     create_notify_policy_if_not_exists)
 
 from taiga6.timeline.service import build_project_namespace
+from taiga6.workspaces.models import Workspace
 
 from . import choices
 
@@ -182,6 +183,16 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
         blank=True,
         related_name="owned_projects",
         verbose_name=_("owner"),
+        on_delete=models.SET_NULL,
+    )
+
+    workspace = models.ForeignKey(
+        Workspace,
+        # TODO: after the migrations all projects should belongs to a workspace
+        null=True,
+        blank=True,
+        related_name="projects",
+        verbose_name=_("workspace"),
         on_delete=models.SET_NULL,
     )
 

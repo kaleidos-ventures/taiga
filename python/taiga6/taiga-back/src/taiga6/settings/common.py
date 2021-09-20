@@ -351,6 +351,7 @@ INSTALLED_APPS = [
     "taiga6.hooks.gogs",
     "taiga6.webhooks",
     "taiga6.importers",
+    "taiga6.workspaces",
 
     "djmail",
     "django_jinja",

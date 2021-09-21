@@ -7,13 +7,24 @@
  */
 
 import * as faker from 'faker';
+import { Milestone } from './milestone.model';
+import { MilestoneMockFactory } from './milestone.model.mock';
 
 import { Project } from './project.model';
 
-export const ProjectMockFactory = (): Project => {
+
+const getMilestones = () => {
+  const milestones: Milestone[] = [];
+  for(let i=0; i<faker.datatype.number(); i++) {
+    milestones.push(MilestoneMockFactory());
+  }
+  return milestones;
+};
+
+export const ProjectMockFactory = (milestones = false): Project => {
   return {
     id: faker.datatype.number(),
     slug: faker.datatype.string(),
-    milestones: [],
+    milestones: milestones ? getMilestones() : [],
   };
 };

@@ -182,9 +182,12 @@ export class ProjectNavigationComponent implements OnInit {
       this.dialog.children = children;
       this.dialog.type = type;
       this.dialog.left = navigationBarWidth;
-
-      console.log({dialog: this.dialog});
     }
+  }
+
+  public enterDialog() {
+    this.dialog.open = true;
+    this.dialog.hover = true;
   }
 
   public out() {
@@ -195,11 +198,6 @@ export class ProjectNavigationComponent implements OnInit {
         this.cd.detectChanges();
       }
     }, 100);
-  }
-
-  public enterDialog() {
-    this.dialog.open = true;
-    this.dialog.hover = true;
   }
 
   public outDialog(focus?: string) {

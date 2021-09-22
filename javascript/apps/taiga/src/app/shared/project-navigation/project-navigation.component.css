@@ -380,24 +380,14 @@ ul {
 /* FLOATING DIALOG */
 
 .dialog-scrum {
-  & .child-menu-option-scrum {
-    color: var(--color-white);
-    display: block;
-    font-weight: var(--font-weight-bold);
-    margin-block-end: var(--spacing-12);
-    padding: 0;
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, .3);
 
-    & .child-menu-option-item {
-      padding: 0 var(--spacing-8);
-
-      &:hover {
-        background: none;
-        color: inherit;
-      }
-    }
+  & .child-menu-option {
+    margin-block-end: 0;
   }
 
   & .child-menu-option-item {
+    block-size: var(--spacing-32);
     border-radius: 3px;
     display: block;
     padding: var(--spacing-8);
@@ -409,6 +399,19 @@ ul {
 
     &.active {
       background: var(--color-secondary80);
+    }
+  }
+
+  & .child-menu-option-scrum {
+    block-size: auto;
+    color: var(--color-white);
+    display: block;
+    margin-block-end: var(--spacing-8);
+    padding: 0;
+
+    &:hover {
+      background: none;
+      color: var(--color-white);
     }
   }
 }

@@ -58,7 +58,7 @@ label {
     }
 
     & select {
-      border-color: var(--color-red80);
+      border-color: var(--color-error);
 
       &:focus {
         border-color: var(--color-secondary);
@@ -68,7 +68,7 @@ label {
     }
 
     & label {
-      color: var(--color-red80);
+      color: var(--color-error);
     }
   }
 }

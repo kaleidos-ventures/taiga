@@ -1,0 +1,56 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t; read: 'workspace'">
+  <div class="workspace-wrapper">
+    <div class="workspace-title-container">
+      <h2 class="workspace-title">{{ t('project') }}</h2>
+      <div class="workspace-title-actions">
+        <button
+          appearance="secondary"
+          tuiButton
+          icon="plus"
+          title="{{ t('add_workspace') }}"
+          type="button">
+          {{ t('add_workspace') }}
+        </button>
+        <a
+          tuiLink
+          class="workspace-title-link"
+          icon="'collapse-left'"
+          iconAlign="left"
+          title="{{ t('show_activity') }}">
+          {{ t('show_activity') }}
+        </a>
+      </div>
+    </div>
+    <!-- #TODO: When back is connected, paint this when no workspace item are available -->
+    <!-- <div class="worskpace-placeholder">
+      <div class="workspace-call-action">
+        <h4 class="workspace-call-action-title">{{ t('placeholder_title') }}</h4>
+        <p class="workspace-call-action-text">{{ t('placeholder_text') }}</p>
+        <a
+          class="workspace-call-action-link"
+          tuiLink
+          icon="'plus'"
+          title="{{ t('placeholder_link') }}">
+          {{ t('placeholder_link') }}
+        </a>
+        <button
+          appearance="primary"
+          tuiButton
+          title="{{ t('placeholder_button') }}"
+          type="button">
+          {{ t('placeholder_button') }}
+        </button>
+      </div>
+    </div> -->
+    <tg-workspace-create></tg-workspace-create>
+    <tg-workspace-item></tg-workspace-item>
+  </div>
+</ng-container>

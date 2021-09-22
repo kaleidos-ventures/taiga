@@ -1,0 +1,38 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t; read: 'workspace'">
+  <tg-workspace-avatar
+    [color]="2"
+    [name]="'Workspace Name'">
+  </tg-workspace-avatar>
+  <tg-ui-input
+    [class.error]="true"
+    [label]="'Workspace Name'">
+    <input [placeholder]="'Workspace Name'">
+    <label
+      inputError
+      class="label-error">
+      {{ t('error_name_empty') }}
+    </label>
+  </tg-ui-input>
+  <button
+    appearance="primary"
+    tuiButton
+    title="{{ t('create_workspace') }}"
+    type="button">
+    {{ t('create_workspace') }}
+  </button>
+  <button
+    appearance="secondary"
+    tuiButton
+    title="{{ t('commons.cancel') }}"
+    type="button">
+    {{ 'commons.cancel' | transloco }}
+  </button>
+</ng-container>

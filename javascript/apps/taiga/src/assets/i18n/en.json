@@ -10,7 +10,11 @@
     "issues": "Issues",
     "wiki": "Wiki",
     "meetup": "Meetup",
-    "team": "Team"
+    "team": "Team",
+    "cancel": "Cancel",
+    "members": "Members",
+    "upgrade": "Upgrade",
+    "owner": "Owner"
   },
   "navigation": {
     "go_home": "Go to home",
@@ -37,5 +41,18 @@
     "goto": "Go to",
     "project-settings": "Project settings",
     "collapse-menu": "Collapse menu"
+  },
+  "workspace": {
+    "placeholder_title": "You are not member of any Workspace yet",
+    "placeholder_text": "Group your projects into workspaces. You decide if they match something as big as an organization or as personal as your pet projects.",
+    "placeholder_link": "Learn More",
+    "placeholder_button": "Create workspace",
+    "create_new_project": "Create new project",
+    "add_workspace": "Add workspace",
+    "show_activity": "Show activity",
+    "project": "Project",
+    "create_workspace": "Create workspace",
+    "error_name_empty": "Workspace name can’t be empty",
+    "error_characters": "Workspace name can’t contain any of this characters: | ! ? * / ."
   }
 }

@@ -42,4 +42,25 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   --color-correct: rgb(100, 125, 48);
   --color-error: rgb(212, 54, 99);
   --color-notice: rgb(178, 67, 199);
+
+  /* Workspace colors */
+  --color-info50: rgb(124, 169, 245);
+  --color-info100: rgb(19, 44, 79);
+  --color-green50: rgb(130, 185, 126);
+  --color-green100: rgb(31, 48, 30);
+  --color-ok10: rgb(240, 254, 226);
+  --color-ok50: rgb(143, 181, 72);
+  --color-ok80: rgb(78, 99, 36);
+  --color-ok100: rgb(36, 48, 13);
+  --color-yellow50: rgb(203, 163, 41);
+  --color-yellow100: rgb(53, 43, 13);
+  --color-warning50: rgb(251, 139, 76);
+  --color-warning100: rgb(71, 34, 14);
+  --color-red50: rgb(255, 129, 157);
+  --color-red80: rgb(170, 40, 80);
+  --color-red100: rgb(87, 16, 38);
+  --color-notice50: rgb(216, 140, 234);
+  --color-notice100: rgb(66, 28, 74);
+  --color-secondary50: rgb(0, 181, 238);
+  --color-secondary100: rgb(0, 48, 66));
 }

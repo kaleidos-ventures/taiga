@@ -1,6 +1,6 @@
 # Create feature
 
-A feature is one or more group of componentes and service that can have a state (ngrx). 
+A feature is one or more group of componentes and service that can have a state (ngrx).
 If you are looking for the worflow on how to create a simple component, follow the `feature/component.workflow.md` file.
 
 ## Create feature

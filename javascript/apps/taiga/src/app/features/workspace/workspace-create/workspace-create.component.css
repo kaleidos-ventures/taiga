@@ -1,0 +1,30 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+:host {
+  background: var(--color-white);
+  border: solid 1px var(--color-gray30);
+  border-radius: 3px;
+  box-shadow: 3px 4px 14px rgba(0, 138, 168, .15);
+  display: flex;
+  margin-block-end: var(--spacing-32);
+  padding: var(--spacing-16);
+
+  & tg-workspace-avatar {
+    margin-block-start: var(--spacing-20);
+  }
+
+  & button {
+    margin-block-start: var(--spacing-20);
+    margin-inline-start: var(--spacing-8);
+  }
+
+  & tg-ui-input {
+    margin-inline-end: var(--spacing-8);
+  }
+}

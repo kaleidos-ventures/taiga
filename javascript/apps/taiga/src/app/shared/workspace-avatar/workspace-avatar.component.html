@@ -6,11 +6,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<tui-root>
-  <div class="app-content">
-    <tg-navigation></tg-navigation>
-    <main>
-      <router-outlet></router-outlet>
-    </main>
-  </div>
-</tui-root>
+<tui-avatar
+  [class]="setColorClass(color)"
+  [size]="size"
+  [avatarUrl]="url"
+  [text]="name"></tui-avatar>

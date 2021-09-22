@@ -5,7 +5,7 @@ This document goal is to create a simple component. If you are willing to create
 ## Component organization
 Depending on the type of component there could be three different locations where you could save the component:
 
-* **Specific components**: Are only used in one page. Save it in under `/apps/taiga/src/app/pages/${pageName}/${componentName}`
+* **Specific components**: Are only used in one page. Save it in under `/apps/taiga/src/app/features/${featureName}/${componentName}`
 * **Common components**: Are used in multiple pages but are not part of the Design System. Save it in under `/apps/taiga/src/app/shared/${componentName}`
 * **Design System**: Will be used in multiple components and pages. Save it in under the ui library `/libs/ui/src/lib/${componentName}`
 
@@ -19,7 +19,6 @@ npx schematics ./schematics:create-component --name example --dryRun=false
 
 // feature component
 npx schematics ./schematics:create-component --name list --module todo-list.module --path apps/taiga/src/app/features/todo-list/components --dryRun=false
-
 
 // disable localState or globalState
 npx schematics ./schematics:create-component --name example --dryRun=false --localState false --globalState false

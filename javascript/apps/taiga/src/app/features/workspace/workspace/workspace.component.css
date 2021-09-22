@@ -1,0 +1,63 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+:host {
+  display: block;
+  flex: 1 1 auto;
+  padding: var(--spacing-16);
+}
+
+.workspace-wrapper {
+  margin: 0 auto;
+  max-inline-size: 1240px;
+}
+
+.workspace-title-container {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding-block-end: var(--spacing-16);
+
+  & .workspace-title {
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+  }
+
+  & .workspace-title-actions {
+    align-items: center;
+    display: flex;
+
+    & .workspace-title-link {
+      margin-inline-start: var(--spacing-16);
+    }
+  }
+}
+
+.workspace-call-action {
+  background: var(--color-white);
+  margin: 0 auto;
+  max-inline-size: 400px;
+  padding: var(--spacing-24);
+
+  & .workspace-call-action-title {
+    font-weight: var(--font-weight-bold);
+    margin-block-end: var(--spacing-16);
+    margin-block-start: 0;
+  }
+
+  & .workspace-call-action-text {
+    margin-block-end: var(--spacing-16);
+  }
+
+  & .workspace-call-action-link {
+    display: block;
+    margin-block-end: var(--spacing-16);
+  }
+}

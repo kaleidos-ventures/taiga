@@ -63,12 +63,12 @@ label {
 
   & .error {
     & .label-error {
-      color: var(--color-red70);
+      color: var(--color-red80);
       margin-inline-start: var(--spacing-4);
     }
 
     & input {
-      border-color: var(--color-red80);
+      border-color: var(--color-error);
 
       &:read-only {
         border-color: var(--color-white);
@@ -82,7 +82,7 @@ label {
     }
 
     & label {
-      color: var(--color-red80);
+      color: var(--color-error);
     }
   }
 }

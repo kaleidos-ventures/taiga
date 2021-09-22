@@ -1,0 +1,61 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t;">
+  <div class="workspace-item-top">
+    <div class="workspace-item-title-container">
+      <tg-workspace-avatar
+        [color]="5"
+        [size]="'m'"
+        [name]="'Workspace Name'"
+      ></tg-workspace-avatar>
+      <div class="workspace-item-title-wrapper">
+        <h3 class="workspace-item-title">Name will have a limit of 40 characters</h3>
+      </div>
+      <div class="owner">{{ t('commons.owner') }}</div>
+    </div>
+    <div class="workspace-item-action">
+      <button
+        appearance="tertiary"
+        tuiButton
+        icon="user"
+        title="{{ t('members') }}"
+        type="button">
+        {{ t('commons.members') }} (1)
+      </button>
+      <button
+        appearance="secondary"
+        tuiButton
+        title="{{ t('upgrade') }}"
+        type="button">
+        {{ t('commons.upgrade') }}
+      </button>
+      <button
+        appearance="primary"
+        tuiButton
+        icon="plus"
+        title="{{ t('project') }}"
+        type="button">
+        {{ t('commons.projects') }}
+      </button>
+    </div>
+  </div>
+  <div class="workspace-item-card-grid">
+    <div class="workspace-item-card">
+      <tg-workspace-avatar
+        [color]="1"
+        [name]="'Workspace Name'"
+      ></tg-workspace-avatar>
+      <a
+        tuiLink
+        title="{{ t('create_new_project') }}">
+        {{ t('workspace.create_new_project') }}
+      </a>
+    </div>
+  </div>
+</ng-container>

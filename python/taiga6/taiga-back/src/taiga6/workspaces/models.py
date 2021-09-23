@@ -5,21 +5,26 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import random
+import re
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
+from django.core import validators
 
-import random
 
 MAX_COLORS = 8
 
 
 class Workspace(models.Model):
-    name = models.CharField(max_length=250, null=False, blank=False, verbose_name=_("name"))
+    name = models.CharField(max_length=40, null=False, blank=False, verbose_name=_("name"),
+                            validators=[validators.RegexValidator(re.compile(r"^[a-zA-Z0-9\-]+$"),
+                                                                  _("Enter a valid username."),"invalid")]
+                            )
     slug = models.SlugField(max_length=250, unique=True, null=True, blank=True,
                             verbose_name=_("slug"))
-    description = models.TextField(null=False, blank=False, verbose_name=_("description"))
     color = models.IntegerField(default=random.choice(range(1, MAX_COLORS+1)), null=False,
                                 blank=False, verbose_name=_("color"))
 

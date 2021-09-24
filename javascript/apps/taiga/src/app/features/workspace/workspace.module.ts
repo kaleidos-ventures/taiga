@@ -16,12 +16,15 @@ import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { WorkspaceCreateComponent } from './workspace-create/workspace-create.component';
 import { WorkspaceItemComponent } from './workspace-item/workspace-item.component';
 import { TuiAvatarModule } from '@taiga-ui/kit';
+import { SkeletonsModule } from '@taiga/ui';
+import { WorkspaceSkeletonComponent } from './workspace-skeleton/workspace-skeleton.component';
 
 @NgModule({
   declarations: [
     WorkspaceComponent,
     WorkspaceCreateComponent,
-    WorkspaceItemComponent
+    WorkspaceItemComponent,
+    WorkspaceSkeletonComponent
   ],
   imports: [
     CommonModule,
@@ -31,7 +34,8 @@ import { TuiAvatarModule } from '@taiga-ui/kit';
     TuiLinkModule,
     InputsModule,
     TuiAvatarModule,
-    WorkspaceAvatarModule
+    WorkspaceAvatarModule,
+    SkeletonsModule
   ],
   exports: [
     WorkspaceComponent,

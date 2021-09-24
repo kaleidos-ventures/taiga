@@ -1,0 +1,82 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/animations.css";
+
+:host {
+  --white: 255, 255, 255;
+
+  display: block;
+}
+
+.card-skeleton {
+  background-color: rgba(var(--white), .25);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  max-inline-size: 230px;
+  padding: var(--spacing-12);
+}
+
+.row {
+  block-size: 1rem;
+  display: flex;
+  gap: var(--spacing-12);
+
+  &.space-between {
+    justify-content: space-between;
+  }
+}
+
+:is(.avatar, .line) {
+  @mixin pulseAnimation;
+}
+
+.avatar {
+  aspect-ratio: 1/1;
+  background: var(--color-gray20);
+  inline-size: 1rem;
+}
+
+.line {
+  background: var(--color-gray20);
+  border-radius: 4px;
+  display: block;
+  inline-size: 100%;
+}
+
+/* mixin line - auto generates utility classes */
+
+@define-mixin line $size {
+  .line-$(size) {
+    inline-size: $size%;
+    @mixin-content;
+  }
+}
+
+@mixin line 10;
+@mixin line 20;
+@mixin line 50;
+
+/* mixin opacity - auto generates utility classes */
+
+@define-mixin opacity $opacity {
+  .opacity-$(opacity) {
+    opacity: 0.$opacity;
+    @mixin-content;
+  }
+}
+
+@mixin opacity 75;
+@mixin opacity 50;
+
+@media (prefers-reduced-motion) {
+  :is(.avatar, .line) {
+    @mixin pulseAnimation 3;
+  }
+}

@@ -8,24 +8,20 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModalModule } from './modal/modal.module';
-import { InputsModule } from './inputs/inputs.module';
-import { SkeletonsModule } from './skeletons/skeletons.module';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { CardSkeletonComponent } from './card-skeleton/card-skeleton.component';
 
+// import { ModalComponent } from './components/modal.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    ModalModule,
-    InputsModule,
-    SkeletonsModule,
+  imports: [CommonModule, OverlayModule],
+  declarations: [
+    CardSkeletonComponent
   ],
-  declarations: [],
-  providers: [],
   exports: [
-    ModalModule,
-    InputsModule,
-    SkeletonsModule,
+    CardSkeletonComponent
   ]
 })
-export class UiModule {}
+export class SkeletonsModule {
+
+}

@@ -51,6 +51,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
     </div> -->
     <tg-workspace-create></tg-workspace-create>
+    <ng-container>
+      <!-- *ngIf="!workspace.length" -->
+      <tg-workspace-skeleton></tg-workspace-skeleton>
+    </ng-container>
     <tg-workspace-item></tg-workspace-item>
   </div>
 </ng-container>

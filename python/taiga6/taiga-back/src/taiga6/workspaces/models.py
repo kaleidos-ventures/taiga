@@ -20,8 +20,8 @@ MAX_COLORS = 8
 
 class Workspace(models.Model):
     name = models.CharField(max_length=40, null=False, blank=False, verbose_name=_("name"),
-                            validators=[validators.RegexValidator(re.compile(r"^[a-zA-Z0-9\-]+$"),
-                                                                  _("Enter a valid username."),"invalid")]
+                            validators=[validators.RegexValidator(re.compile(r"^[a-zA-Z0-9 \-]+$"),
+                                                                  _("Enter a valid name."),"invalid")]
                             )
     slug = models.SlugField(max_length=250, unique=True, null=True, blank=True,
                             verbose_name=_("slug"))

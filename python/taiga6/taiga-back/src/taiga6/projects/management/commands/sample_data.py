@@ -39,7 +39,7 @@ from taiga6.projects.likes.services import add_like
 from taiga6.projects.votes.services import add_vote
 from taiga6.events.apps import disconnect_events_signals
 from taiga6.projects.services.stats import get_stats_for_project
-
+from taiga6.workspaces.models import MAX_COLORS
 
 ATTACHMENT_SAMPLE_DATA = [
     path.join(settings.BASE_DIR, "taiga6/projects/management/commands/sample_data"),
@@ -121,6 +121,7 @@ NUM_APPLICATIONS = getattr(settings, "SAMPLE_DATA_NUM_APPLICATIONS", (1, 3))
 NUM_APPLICATIONS_TOKENS = getattr(settings, "SAMPLE_DATA_NUM_APPLICATIONS_TOKENS", (1, 3))
 FEATURED_PROJECTS_POSITIONS = [0, 1, 2]
 LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS = [0, 1, 2]
+NUM_WORKSPACES_PER_USER = 2
 
 
 class Command(BaseCommand):
@@ -293,6 +294,18 @@ class Command(BaseCommand):
             project.save()
 
             self.create_likes(project)
+
+        for user in User.objects.all():
+            user_projects = Project.objects.all().filter(owner=user)
+            user_projects_groups = self._split_evenly(user_projects, NUM_WORKSPACES_PER_USER)
+
+            for counter, user_project_group in enumerate(user_projects_groups):
+                if len(user_project_group) >= 1:
+                    user_workspace: Workspace = self.create_workspace(counter, user)
+
+                    for project in user_project_group:
+                        project.workspace = user_workspace
+                        project.save()
 
 
     def create_attachment(self, obj, order):
@@ -646,3 +659,11 @@ class Command(BaseCommand):
     def generate_color(self, tag):
         color = sha1(tag.encode("utf-8")).hexdigest()[0:6]
         return "#{}".format(color)
+
+    def create_workspace(self, counter: int, owner: User):
+        return Workspace.objects.create(name=f'Workspace Example {counter}', owner=owner,
+                                        color=random.choice(range(1, MAX_COLORS+1)))
+
+    def _split_evenly(self, a, n):
+        k, m = divmod(len(a), n)
+        return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))

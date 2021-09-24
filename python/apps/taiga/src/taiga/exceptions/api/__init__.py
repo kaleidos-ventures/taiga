@@ -38,3 +38,16 @@ class AuthenticationError(HTTPException):
             detail=detail,
             headers={"WWW-Authenticate": 'Bearer realm="api"'},
         )
+
+
+##########################
+# HTTP 404: NOT FOUND
+##########################
+
+class NotFoundError(HTTPException):
+    def __init__(self, detail: Any = "Not found"):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            code=codes.EX_NOT_FOUND,
+            detail=detail,
+        )

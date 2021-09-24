@@ -5,9 +5,17 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Final
 
-EX_UNKNOWN: Final = "unknown"
-EX_AUTHENTICATION: Final = "authentication-error"
-EX_VALIDATION_ERROR: Final = "validation-error"
-EX_NOT_FOUND: Final = "not-found"
+import pytest
+from fastapi.testclient import TestClient
+from taiga.main import api
+
+
+pytestmark = pytest.mark.django_db
+
+client = TestClient(api)
+
+
+def test_workspace_not_found():
+    response = client.get("/workspaces/33")
+    assert response.status_code == 404

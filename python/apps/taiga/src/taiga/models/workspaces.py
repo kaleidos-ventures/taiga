@@ -5,9 +5,5 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Final
 
-EX_UNKNOWN: Final = "unknown"
-EX_AUTHENTICATION: Final = "authentication-error"
-EX_VALIDATION_ERROR: Final = "validation-error"
-EX_NOT_FOUND: Final = "not-found"
+from taiga6.workspaces.models import Workspace  # noqa

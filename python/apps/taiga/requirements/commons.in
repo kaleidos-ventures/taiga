@@ -10,6 +10,9 @@ pyhumps
 # For auth
 PyJWT
 
+# JSON logs
+python-json-logger
+
 # Taiga 6
 #   we use -e for dev and prod because relative path in pip-compile only works with -e
 #   https://github.com/jazzband/pip-tools/issues/204#issuecomment-564597799)

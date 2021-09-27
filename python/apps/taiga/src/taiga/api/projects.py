@@ -5,11 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import logging
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Query
 from taiga.serializers.projects import ProjectSerializer
 from taiga.services import projects as projects_services
+
+logger = logging.getLogger(__name__)
 
 metadata = {
     "name": "projects",
@@ -39,6 +42,7 @@ def get_project(project_slug: str = Query(None, description="the project slug (s
     project = projects_services.get_project(project_slug)
 
     if project is None:
+        logger.exception(f"Project {project_slug} does not exist")
         raise HTTPException(status_code=404, detail="API_NOT_FOUND")
 
     return ProjectSerializer.from_orm(project)

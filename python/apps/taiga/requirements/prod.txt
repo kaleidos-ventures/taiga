@@ -203,6 +203,8 @@ python-dateutil==2.7.5
     #   taiga6
 python-dotenv==0.19.0
     # via pydantic
+python-json-logger==2.0.2
+    # via -r requirements/commons.in
 python-magic==0.4.15
     # via taiga6
 python-multipart==0.0.5

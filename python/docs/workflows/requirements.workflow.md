@@ -1,5 +1,13 @@
 # Manage requirements(*).[in|txt] files
 
+## Different requirements
+
+There are several "requierements" directories with different files:
+- `python/requirements` with requirements for linters and other dev dependencies which affect all the Python code
+- `python/apps/taiga/requirements` with requirements for Taiga application
+
+When adding a new dependency, be aware of the different locations to place it, and choose accordingly.
+
 ## How to add a new dependency (requirements/ directory)
 
 `requirements/` directories contains requirements files:
@@ -9,32 +17,22 @@
  - `***.in` a set of dependencies, useful for composing.
 
 1. Edit `requirements/<requirements_filename>.in` file.
+
 2. Regenerate `requirements/devel.txt` and/or `requirements/prod.txt` files with
-   ```bash
-   pip-compile requirements/devel.txt
-   pip-compile requirements/prod.txt
-   ```
+```bash
+pip-compile requirements/devel.in
+pip-compile requirements/prod.in
+```
+
 3. Check changes with git diff
-   ```bash
-   git diff requirements/
-   ```
-   
+```bash
+git diff requirements/
+```
+
 4. Remember to install either `requirements/devel.txt` or `requirements/prod.txt`
-    ```
-    pip install -r requirements/devel.txt
-    ```
-
-## How to add a new dependency (legacy, requirements(.*).in files)
-
-1. Edit `<requirements_filename>.in` file.
-2. Generate `<requirements_filename>.txt` file with
-   ```bash
-   pip-compile <requirements_filename>.in
-   ```
-4. Check changes with git diff
-   ```bash
-   git diff <requirements_filename>.txt
-   ```
+```
+pip install -r requirements/devel.txt
+```
 
 ## How to create a requirements file by composition
 
@@ -46,6 +44,7 @@ file: requirements/comons.in
 pkg1
 pkg2
 ```
+
 ```
 file: requirements/prod.in
 
@@ -53,8 +52,8 @@ file: requirements/prod.in
 
 taiga-lib-pkg1
 taiga-lib-pkg2
-
 ```
+
 ```
 file: requirements/devel.in
 
@@ -69,8 +68,8 @@ pytest
 So you can install `requirements/prod.txt` in production environments and `requiremsnts/devel.in` in development environments.
 
 ```
-    pip install -r requirements/prod.txt
-    pip install -r requirements/devel.txt
+pip install -r requirements/prod.txt
+pip install -r requirements/devel.txt
 ```
 
 ## How to add local package to .in files

@@ -52,6 +52,7 @@
     "show_activity": "Show activity",
     "project": "Project",
     "create_workspace": "Create workspace",
+    "back_to_project": "Back to project",
     "error_name_empty": "Workspace name can’t be empty",
     "error_characters": "Workspace name can’t contain any of this characters: | ! ? * / ."
   }

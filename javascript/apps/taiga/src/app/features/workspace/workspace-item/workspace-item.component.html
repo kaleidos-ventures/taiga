@@ -15,9 +15,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [name]="'Workspace Name'"
       ></tg-workspace-avatar>
       <div class="workspace-item-title-wrapper">
-        <h3 class="workspace-item-title">Name will have a limit of 40 characters</h3>
+        <a
+          [routerLink]="['/workspace/id']" class="workspace-item-title">
+          Name will have a limit of 40 characters
+        </a>
       </div>
-      <div class="owner">{{ t('commons.owner') }}</div>
+      <tg-ui-badge
+        [label]="t('commons.owner')"
+      ></tg-ui-badge>
     </div>
     <div class="workspace-item-action">
       <button

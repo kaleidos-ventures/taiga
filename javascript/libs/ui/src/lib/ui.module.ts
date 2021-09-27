@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { ModalModule } from './modal/modal.module';
 import { InputsModule } from './inputs/inputs.module';
 import { SkeletonsModule } from './skeletons/skeletons.module';
+import { BadgeModule } from './badge/badge.module';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { SkeletonsModule } from './skeletons/skeletons.module';
     ModalModule,
     InputsModule,
     SkeletonsModule,
+    BadgeModule
   ],
   declarations: [],
   providers: [],
@@ -26,6 +28,7 @@ import { SkeletonsModule } from './skeletons/skeletons.module';
     ModalModule,
     InputsModule,
     SkeletonsModule,
+    BadgeModule
   ]
 })
 export class UiModule {}

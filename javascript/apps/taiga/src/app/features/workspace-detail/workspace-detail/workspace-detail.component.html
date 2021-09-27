@@ -1,0 +1,41 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t;">
+  <div class="workspace-detail-top">
+    <div class="workspace-detail-avatar">
+      <tg-workspace-avatar
+        [color]="5"
+        [size]="'xl'"
+        [name]="'Workspace Name'"
+      ></tg-workspace-avatar>
+    </div>
+    <div class="workspace-detail-title-wrapper">
+      <div class="workspace-detail-title-route">Workspace/</div>
+      <div class="workspace-detail-title-container">
+        <h3 class="workspace-detail-title">Name will have a limit of 40 characters</h3>
+        <tg-ui-badge
+          [label]="t('commons.owner')"
+        ></tg-ui-badge>
+      </div>
+    </div>
+    <div class="workspace-detail-actions">
+      <button
+        appearance="tertiary"
+        tuiButton
+        iconRight="arrow-right"
+        title="{{ t('add_workspace') }}"
+        type="button">
+        {{ t('workspace.back_to_project') }}
+      </button>
+    </div>
+  </div>
+  <div class="workspace-detail-content tui-skeleton">
+
+  </div>
+</ng-container>

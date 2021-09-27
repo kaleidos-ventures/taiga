@@ -57,6 +57,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .workspace-item-title {
     @mixin text-overflow;
+    @mixin font-heading-3;
 
     font-weight: var(--font-weight-bold);
     margin: 0;

@@ -1,3 +1,4 @@
+import { RouterModule } from '@angular/router';
 /**
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,8 +17,9 @@ import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { WorkspaceCreateComponent } from './workspace-create/workspace-create.component';
 import { WorkspaceItemComponent } from './workspace-item/workspace-item.component';
 import { TuiAvatarModule } from '@taiga-ui/kit';
-import { SkeletonsModule } from '@taiga/ui';
 import { WorkspaceSkeletonComponent } from './workspace-skeleton/workspace-skeleton.component';
+import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
+import { SkeletonsModule } from 'libs/ui/src/lib/skeletons/skeletons.module';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { WorkspaceSkeletonComponent } from './workspace-skeleton/workspace-skele
     InputsModule,
     TuiAvatarModule,
     WorkspaceAvatarModule,
-    SkeletonsModule
+    SkeletonsModule,
+    BadgeModule,
+    RouterModule
   ],
   exports: [
     WorkspaceComponent,

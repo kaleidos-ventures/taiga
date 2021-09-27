@@ -83,8 +83,12 @@
       <path fill-rule="evenodd" d="M13.23 10.94a.9.9 0 01-1.28 0L7.99 6.98l-3.96 3.96a.9.9 0 01-1.28-1.28l4.6-4.6a.9.9 0 011.28 0l4.6 4.6a.9.9 0 010 1.28z" clip-rule="evenodd"/>
     </symbol>
 
-    <symbol id="arrow" viewBox="0 0 16 16">
+    <symbol id="arrow-left" viewBox="0 0 16 16">
       <path fill-rule="evenodd" d="M9 2.71a.72.72 0 00-1 0L3.2 7.5a.72.72 0 000 1.01L8 13.3a.72.72 0 001-1.02L5.46 8.72h7.83a.72.72 0 100-1.43H5.45L9 3.73a.72.72 0 000-1.02z" clip-rule="evenodd"/>
+    </symbol>
+
+    <symbol id="arrow-right" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="m7.544 2.71a0.72 0.72 0 0 1 1 0l4.8 4.79a0.72 0.72 0 0 1 0 1.01l-4.8 4.79a0.72 0.72 0 0 1-1-1.02l3.54-3.56h-7.83a0.72 0.72 0 1 1 0-1.43h7.84l-3.55-3.56a0.72 0.72 0 0 1 0-1.02z" clip-rule="evenodd"/>
     </symbol>
 
     <symbol id="user" viewBox="0 0 16 16">

@@ -65,7 +65,7 @@ class MembershipInline(admin.TabularInline):
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "slug", "is_private","owner_url",
+    list_display = ["id", "name", "slug", "is_private","owner_url", "workspace_url",
                     "blocked_code", "is_featured", "created_date"]
     list_display_links = ["id", "name", "slug"]
     list_filter = ("is_private", "blocked_code", "is_featured", "created_date")
@@ -84,6 +84,7 @@ class ProjectAdmin(admin.ModelAdmin):
                        "description",
                        "tags",
                        "logo",
+                       "workspace",
                        ("created_date", "modified_date"))
         }),
         (_("Privacy"), {
@@ -123,6 +124,17 @@ class ProjectAdmin(admin.ModelAdmin):
                         "total_fans_last_month", "total_fans_last_year"),),
         }),
     )
+
+
+    def workspace_url(self, obj):
+        if obj.workspace:
+            url = reverse('admin:{0}_{1}_change'.format(obj.workspace._meta.app_label,
+                                                        obj.workspace._meta.model_name),
+                          args=(obj.workspace.pk,))
+
+        return format_html(f"<a href='{url}' title='{obj.workspace}'>{obj.workspace.slug}</a>")
+        return ""
+    workspace_url.short_description = _('workspace')
 
     def owner_url(self, obj):
         if obj.owner:

@@ -52,7 +52,7 @@ class Workspace(models.Model):
         ]
 
     def __str__(self):
-        return self.name
+        return self.slug
 
     def __repr__(self):
         return "<Workspace {0}>".format(self.id)

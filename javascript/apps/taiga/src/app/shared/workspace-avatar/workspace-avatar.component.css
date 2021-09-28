@@ -10,23 +10,23 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host {
   align-items: center;
-  block-size: var(--spacing-32);
+  block-size: var(--spacing-12);
   border-radius: 3px;
   display: flex;
-  inline-size: var(--spacing-32);
+  inline-size: var(--spacing-12);
   justify-content: center;
   line-height: 1;
   margin-inline-end: var(--spacing-16);
+}
 
-  &[ng-reflect-size="m"] {
-    block-size: var(--spacing-24);
-    inline-size: var(--spacing-24);
-  }
+:host(.avatar-l) {
+  block-size: var(--spacing-24);
+  inline-size: var(--spacing-24);
+}
 
-  &[ng-reflect-size="xl"] {
-    block-size: var(--spacing-48);
-    inline-size: var(--spacing-48);
-  }
+:host(.avatar-xl) {
+  block-size: var(--spacing-48);
+  inline-size: var(--spacing-48);
 }
 
 tui-avatar {

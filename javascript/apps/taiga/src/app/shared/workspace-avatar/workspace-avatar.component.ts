@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
 
 @Component({
@@ -19,6 +19,8 @@ export class WorkspaceAvatarComponent  {
 
   @Input()
   public size: TuiSizeXS | TuiSizeXXL = 'l';
+
+  @HostBinding('class') public sizeClass = `avatar-${this.size}`;
 
   @Input()
   public name = '';

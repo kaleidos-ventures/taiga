@@ -6,7 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 
@@ -19,10 +20,34 @@ interface ComponentViewModel {
   templateUrl: './workspace.component.html',
   styleUrls: ['./workspace.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState]
+  providers: [RxState],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({
+          height: '0',
+          opacity: '0'
+        }),
+        animate('200ms ease-in', style({
+          height: '*',
+          opacity: '1'
+        }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({
+          height: '0',
+          opacity: '0'
+        }))
+      ])
+    ])
+  ]
 })
 export class WorkspaceComponent {
 
+  @Output()
+  public hideActivity = new EventEmitter<boolean>();
+
+  public showCreate = false;
   constructor(
     private store: Store,
     private state: RxState<ComponentViewModel>,
@@ -32,6 +57,14 @@ export class WorkspaceComponent {
 
     // connect the ngrx state with the local state
     // this.state.connect('todo', this.store.select(selectTodo));
+  }
+
+  public toggleActivity(show: boolean) {
+    this.hideActivity.next(show);
+  }
+
+  public toggleCreate(show: boolean) {
+    this.showCreate = show;
   }
 
 }

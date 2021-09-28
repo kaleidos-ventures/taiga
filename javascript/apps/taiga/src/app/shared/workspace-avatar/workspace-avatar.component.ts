@@ -6,7 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
+import { OnInit } from '@angular/core';
+import {  ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
 
 @Component({
@@ -15,7 +16,7 @@ import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
   styleUrls: ['./workspace-avatar.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WorkspaceAvatarComponent  {
+export class WorkspaceAvatarComponent implements OnInit  {
 
   @Input()
   public size: TuiSizeXS | TuiSizeXXL = 'l';
@@ -30,6 +31,10 @@ export class WorkspaceAvatarComponent  {
 
   @Input()
   public color = 1;
+
+  public ngOnInit() {
+    this.sizeClass = `avatar-${this.size}`;
+  }
 
   public setColorClass(color: number) {
     return "color-" + color.toString();

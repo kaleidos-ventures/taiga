@@ -6,33 +6,58 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<ng-container *transloco="let t; read: 'workspace'">
-  <tg-workspace-avatar
-    [color]="2"
-    [name]="'Workspace Name'">
-  </tg-workspace-avatar>
-  <tg-ui-input
-    [class.error]="true"
-    [label]="'Workspace Name'">
-    <input [placeholder]="'Workspace Name'">
-    <label
-      inputError
-      class="label-error">
-      {{ t('error_name_empty') }}
-    </label>
-  </tg-ui-input>
-  <button
-    appearance="primary"
-    tuiButton
-    title="{{ t('create_workspace') }}"
-    type="button">
-    {{ t('create_workspace') }}
-  </button>
-  <button
-    appearance="secondary"
-    tuiButton
-    title="{{ t('commons.cancel') }}"
-    type="button">
-    {{ 'commons.cancel' | transloco }}
-  </button>
+<ng-container *transloco="let t">
+  <form
+    [formGroup]="createProjectForm"
+    (keydown.esc)="close()"
+    (ngSubmit)="onSubmit()"
+    [attr.aria-invalid]="createProjectFormInvalid"
+    class="workspace-create-padding">
+    <tg-workspace-avatar
+      [color]="2"
+      [name]="createProjectForm.value.projectName">
+    </tg-workspace-avatar>
+    <tg-ui-input
+      class="workspace-input-project-name"
+      [class.error]="createProjectErrorList.length > 0"
+      [label]="t('workspace.workspace_name')">
+      <input
+        formControlName="projectName"
+        [attr.aria-invalid]="createProjectForm.invalid"
+        #firstInput
+        tuiAutoFocus
+        aria-required="true"
+        maxlength="40"
+        [placeholder]="t('workspace.workspace_name')">
+        <label
+          *ngIf="createProjectErrorList.length > 0"
+          class="label-error"
+          aria-live="assertive"
+          inputError>
+          <ng-container
+            *ngIf="createProjectErrorList.includes('required')">
+            {{ t('workspace.error_name_empty') }}
+          </ng-container>
+          <ng-container
+            *ngIf="createProjectErrorList.includes('pattern')">
+          {{ t('workspace.error_characters') }}
+          </ng-container>
+        </label>
+    </tg-ui-input>
+    <button
+      appearance="primary"
+      tuiButton
+      title="{{ t('workspace.create_workspace') }}"
+      type="submit">
+      {{ t('workspace.create_workspace') }}
+    </button>
+    <button
+      (click)="close()"
+      appearance="secondary"
+      tuiButton
+      title="{{ t('commons.cancel') }}"
+      type="button">
+      {{ 'commons.cancel' | transloco }}
+    </button>
+  </form>
 </ng-container>

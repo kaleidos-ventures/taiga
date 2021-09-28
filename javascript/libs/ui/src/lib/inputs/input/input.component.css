@@ -80,10 +80,6 @@ label {
         outline: 0;
       }
     }
-
-    & label {
-      color: var(--color-error);
-    }
   }
 }
 

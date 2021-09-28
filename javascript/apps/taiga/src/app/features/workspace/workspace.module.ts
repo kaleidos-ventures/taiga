@@ -11,7 +11,7 @@ import { WorkspaceAvatarModule } from './../../shared/workspace-avatar/workspace
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkspaceComponent } from './workspace/workspace.component';
-import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiHintModule, TuiLinkModule, TuiSvgModule, TuiTooltipModule } from '@taiga-ui/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { WorkspaceCreateComponent } from './workspace-create/workspace-create.component';
@@ -24,6 +24,9 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { workspaceFeature } from './reducers/workspace.reducer';
 import { WorkspaceEffects } from './effects/workspace.effects';
+import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { A11yModule } from '@angular/cdk/a11y';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -33,6 +36,7 @@ import { WorkspaceEffects } from './effects/workspace.effects';
     WorkspaceSkeletonComponent
   ],
   imports: [
+    ReactiveFormsModule,
     CommonModule,
     TuiButtonModule,
     TuiSvgModule,
@@ -46,6 +50,10 @@ import { WorkspaceEffects } from './effects/workspace.effects';
     RouterModule,
     StoreModule.forFeature(workspaceFeature),
     EffectsModule.forFeature([WorkspaceEffects]),
+    TuiAutoFocusModule,
+    A11yModule,
+    TuiTooltipModule,
+    TuiHintModule
   ],
   exports: [
     WorkspaceComponent,

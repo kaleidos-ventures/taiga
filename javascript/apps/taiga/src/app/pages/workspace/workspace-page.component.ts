@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -18,10 +19,22 @@ interface ComponentViewModel {
   selector: 'tg-workspace-page',
   templateUrl: './workspace-page.component.html',
   styleUrls: ['./workspace-page.component.css'],
-  providers: [RxState]
+  providers: [RxState],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({flex: '0 0 0'}),
+        animate('200ms ease-in', style({flex: '0 0 383px'}))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({flex: '0 0 0'}))
+      ])
+    ])
+  ]
 
 })
 export class WorkspacePageComponent {
+  public showActivity = false;
   constructor(
     private store: Store,
     private state: RxState<ComponentViewModel>,
@@ -31,5 +44,9 @@ export class WorkspacePageComponent {
 
     // connect the ngrx state with the local state
     // this.state.connect('todo', this.store.select(selectTodo));
+  }
+
+  public toggleActivity(show: boolean) {
+    this.showActivity = show;
   }
 }

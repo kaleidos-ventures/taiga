@@ -19,9 +19,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   margin-inline-end: var(--spacing-16);
 }
 
-:host(.avatar-l) {
+:host(.avatar-m) {
   block-size: var(--spacing-24);
   inline-size: var(--spacing-24);
+}
+
+:host(.avatar-l) {
+  block-size: var(--spacing-32);
+  inline-size: var(--spacing-32);
 }
 
 :host(.avatar-xl) {

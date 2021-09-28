@@ -10,6 +10,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 * TAIGA UI CUSTOM PROPERTIES
 */
 
+@import "tools/typography.css";
+
 /* DOM */
 :root {
   --tui-autofill: #fff; /* color for native browser autofill */
@@ -87,4 +89,11 @@ tui-dropdown-box {
   --tui-base-01: transparent;
 
   border: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+tui-hint-box {
+  @mixin font-body;
+
+  background: var(--color-gray100) !important; /* stylelint-disable-line declaration-no-important */
+  border-radius: 4px !important; /* stylelint-disable-line declaration-no-important */
 }

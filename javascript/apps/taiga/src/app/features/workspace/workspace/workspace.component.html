@@ -7,11 +7,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t; read: 'workspace'">
-  <div class="workspace-wrapper">
+  <div
+    class="workspace-wrapper">
     <div class="workspace-title-container">
       <h2 class="workspace-title">{{ t('project') }}</h2>
       <div class="workspace-title-actions">
         <button
+          (click)="toggleCreate(true)"
+          [disabled]="showCreate"
+          [tuiHint]="tooltip"
+          tuiHintDirection="bottom-right"
           appearance="secondary"
           tuiButton
           icon="plus"
@@ -20,6 +25,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ t('add_workspace') }}
         </button>
         <a
+          (click)="toggleActivity(true)"
           tuiLink
           class="workspace-title-link"
           icon="'collapse-left'"
@@ -50,11 +56,21 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </button>
       </div>
     </div> -->
-    <tg-workspace-create></tg-workspace-create>
+    <tg-workspace-create
+      [@slideInOut]
+      (requestClose)="toggleCreate(false)"
+      cdkTrapFocus
+      *ngIf="showCreate">
+    </tg-workspace-create>
     <ng-container>
       <!-- *ngIf="!workspace.length" -->
       <tg-workspace-skeleton></tg-workspace-skeleton>
     </ng-container>
     <tg-workspace-item></tg-workspace-item>
   </div>
+  <ng-template #tooltip>
+      <p>{{ t('tooltip_add_workspace') }}</p>
+  </ng-template>
 </ng-container>
+
+

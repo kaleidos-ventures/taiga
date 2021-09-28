@@ -53,6 +53,8 @@
     "project": "Project",
     "create_workspace": "Create workspace",
     "back_to_project": "Back to project",
+    "workspace_name": "Workspace Name",
+    "tooltip_add_workspace": "Group your projects into workspaces. You decide if they match something as big as an organization or as personal as your pet projects.",
     "error_name_empty": "Workspace name can’t be empty",
     "error_characters": "Workspace name can’t contain any of this characters: | ! ? * / ."
   }

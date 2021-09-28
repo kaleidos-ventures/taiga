@@ -6,3 +6,4 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from .users import UserFactory  # noqa
+from .workspaces import WorkspaceFactory  # noqa

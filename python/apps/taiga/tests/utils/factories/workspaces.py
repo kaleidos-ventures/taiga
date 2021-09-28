@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import random
+from datetime import date
 from .base import Factory, factory
 
 
@@ -14,6 +16,7 @@ class WorkspaceFactory(Factory):
     color = factory.LazyAttribute(random.randrange(1, 9))
     created_date = factory.LazyAttribute(lambda o: date.today())
     modified_date = factory.LazyAttribute(lambda o: date.today())
+    owner = factory.SubFactory("tests.utils.factories.UserFactory")
 
     class Meta:
         model = "workspaces.Workspace"

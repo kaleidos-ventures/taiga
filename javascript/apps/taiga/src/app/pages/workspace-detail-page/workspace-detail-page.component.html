@@ -6,4 +6,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<tg-workspace-detail></tg-workspace-detail>
+<ng-container *ngIf="workspace$ | async as workspace">
+  <tg-workspace-detail [workspace]="workspace"></tg-workspace-detail>
+</ng-container>

@@ -6,10 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export * from './lib/api.module';
+import { workspaceFeature } from '../reducers/workspace.reducer';
 
-export * from './lib/shared/api-utils.service';
-export * from './lib/auth/auth-api.service';
-export * from './lib/project/project-api.service';
-export * from './lib/workspace/workspace-api.service';
-
+export const {
+  selectWorkspace
+} = workspaceFeature;

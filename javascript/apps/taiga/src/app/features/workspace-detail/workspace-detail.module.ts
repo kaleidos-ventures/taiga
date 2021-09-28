@@ -17,6 +17,10 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule } from '@taiga-ui/core';
 import { WorkspaceAvatarModule } from './../../shared/workspace-avatar/workspace-avatar.module';
 import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { workspaceFeature } from '../workspace/reducers/workspace.reducer';
+import { WorkspaceEffects } from '../workspace/effects/workspace.effects';
 
 @NgModule({
   declarations: [
@@ -27,9 +31,9 @@ import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
     TuiButtonModule,
     WorkspaceAvatarModule,
     TranslocoModule,
-    BadgeModule
-    // StoreModule.forFeature(workspaceDetailFeature),
-    // EffectsModule.forFeature([WorkspaceDetailEffects])
+    BadgeModule,
+    StoreModule.forFeature(workspaceFeature),
+    EffectsModule.forFeature([WorkspaceEffects]),
   ],
   exports: [
     WorkspaceDetailComponent

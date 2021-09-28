@@ -6,9 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-// import { createSelector } from '@ngrx/store';
-// import { workspaceDetailFeature } from '../reducer/workspace-detail.reducer';
-
-// export const {
-
-// } = workspaceDetailFeature;
+export interface Workspace {
+  id: number;
+  name: string;
+  slug: string;
+  color: number;
+  // TODO: Update when API provide roles
+  // owner: boolean;
+}

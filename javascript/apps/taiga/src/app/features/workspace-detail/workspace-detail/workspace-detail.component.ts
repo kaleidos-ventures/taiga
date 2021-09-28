@@ -6,35 +6,18 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { RxState } from '@rx-angular/state';
-
-interface ComponentViewModel {
-  todo: string;
-}
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Workspace } from '@taiga/data';
 
 @Component({
   selector: 'tg-workspace-detail',
   templateUrl: './workspace-detail.component.html',
   styleUrls: ['./workspace-detail.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState]
 })
 export class WorkspaceDetailComponent {
 
-  public readonly todo$ = this.state.select('todo');
-  public readonly model$ = this.state.select();
-
-  constructor(
-    private store: Store,
-    private state: RxState<ComponentViewModel>,
-  ) {
-    // initial state
-    // this.state.set({});
-
-    // connect the ngrx state with the local state
-    // this.state.connect('todo', this.store.select(selectTodo));
-  }
+  @Input()
+  public workspace!: Workspace;
 
 }

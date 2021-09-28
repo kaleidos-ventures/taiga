@@ -20,6 +20,10 @@ import { TuiAvatarModule } from '@taiga-ui/kit';
 import { WorkspaceSkeletonComponent } from './workspace-skeleton/workspace-skeleton.component';
 import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
 import { SkeletonsModule } from 'libs/ui/src/lib/skeletons/skeletons.module';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { workspaceFeature } from './reducers/workspace.reducer';
+import { WorkspaceEffects } from './effects/workspace.effects';
 
 @NgModule({
   declarations: [
@@ -39,7 +43,9 @@ import { SkeletonsModule } from 'libs/ui/src/lib/skeletons/skeletons.module';
     WorkspaceAvatarModule,
     SkeletonsModule,
     BadgeModule,
-    RouterModule
+    RouterModule,
+    StoreModule.forFeature(workspaceFeature),
+    EffectsModule.forFeature([WorkspaceEffects]),
   ],
   exports: [
     WorkspaceComponent,

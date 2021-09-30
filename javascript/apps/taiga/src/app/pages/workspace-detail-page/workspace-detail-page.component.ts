@@ -9,8 +9,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { getWorkspace } from '~/app/features/workspace/actions/workspace.actions';
-import { selectWorkspace } from '~/app/features/workspace/selectors/workspace.selectors';
+import { getWorkspace } from '~/app/features/workspace-detail/actions/workspace-detail.actions';
+import { selectWorkspace } from '~/app/features/workspace-detail/selectors/workspace-detail.selectors';
 
 @Component({
   selector: 'tg-workspace-detail-page',

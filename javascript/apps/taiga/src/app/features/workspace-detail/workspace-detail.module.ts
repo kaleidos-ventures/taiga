@@ -8,10 +8,6 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// import { StoreModule } from '@ngrx/store';
-// import { workspaceDetailFeature } from './reducers/workspace-detail.reducer';
-// import { EffectsModule } from '@ngrx/effects';
-// import { WorkspaceDetailEffects } from './effects/workspace-detail.effects';
 import { WorkspaceDetailComponent } from './workspace-detail/workspace-detail.component';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule } from '@taiga-ui/core';
@@ -19,8 +15,8 @@ import { WorkspaceAvatarModule } from './../../shared/workspace-avatar/workspace
 import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { workspaceFeature } from '../workspace/reducers/workspace.reducer';
-import { WorkspaceEffects } from '../workspace/effects/workspace.effects';
+import { workspaceDetailFeature } from './reducers/workspace-detail.reducer';
+import { WorkspaceDetailEffects } from './effects/workspace-detail.effects';
 
 @NgModule({
   declarations: [
@@ -32,8 +28,8 @@ import { WorkspaceEffects } from '../workspace/effects/workspace.effects';
     WorkspaceAvatarModule,
     TranslocoModule,
     BadgeModule,
-    StoreModule.forFeature(workspaceFeature),
-    EffectsModule.forFeature([WorkspaceEffects]),
+    StoreModule.forFeature(workspaceDetailFeature),
+    EffectsModule.forFeature([WorkspaceDetailEffects]),
   ],
   exports: [
     WorkspaceDetailComponent

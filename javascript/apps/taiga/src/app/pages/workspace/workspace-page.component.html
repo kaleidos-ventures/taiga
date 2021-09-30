@@ -6,12 +6,15 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<tg-workspace
-  (hideActivity)="toggleActivity($event)">
-</tg-workspace>
-<div class="sliding-panel"
-  *ngIf="showActivity"
-  [@slideInOut]>
-  <button
-    (click)="toggleActivity(false)">Hide activity</button>
-</div>
+<ng-container *ngIf="workspaceList$ | async as workspaceList">
+  <tg-workspace
+    [workspaceList]="workspaceList"
+    (hideActivity)="toggleActivity($event)">
+  </tg-workspace>
+  <div
+    class="sliding-panel"
+    *ngIf="showActivity"
+    [@slideInOut]>
+    <button (click)="toggleActivity(false)">Hide activity</button>
+  </div>
+</ng-container>

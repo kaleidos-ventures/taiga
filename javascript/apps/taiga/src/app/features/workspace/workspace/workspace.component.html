@@ -35,27 +35,26 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </a>
       </div>
     </div>
-    <!-- #TODO: When back is connected, paint this when no workspace item are available -->
-    <!-- <div class="worskpace-placeholder">
+    <div *ngIf="!workspaceList.length"
+      class="worskpace-placeholder">
       <div class="workspace-call-action">
-        <h4 class="workspace-call-action-title">{{ t('placeholder_title') }}</h4>
+        <h4 class="workspace-call-action-title">{{ t('placeholder_title') }}
+        </h4>
         <p class="workspace-call-action-text">{{ t('placeholder_text') }}</p>
-        <a
-          class="workspace-call-action-link"
+        <a class="workspace-call-action-link"
           tuiLink
           icon="'plus'"
           title="{{ t('placeholder_link') }}">
           {{ t('placeholder_link') }}
         </a>
-        <button
-          appearance="primary"
+        <button appearance="primary"
           tuiButton
           title="{{ t('placeholder_button') }}"
           type="button">
           {{ t('placeholder_button') }}
         </button>
       </div>
-    </div> -->
+    </div>
     <tg-workspace-create
       [@slideInOut]
       (requestClose)="toggleCreate(false)"
@@ -63,10 +62,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       *ngIf="showCreate">
     </tg-workspace-create>
     <ng-container>
-      <!-- *ngIf="!workspace.length" -->
-      <tg-workspace-skeleton></tg-workspace-skeleton>
+      <tg-workspace-skeleton *ngIf="!workspaceList.length">
+      </tg-workspace-skeleton>
     </ng-container>
-    <tg-workspace-item></tg-workspace-item>
+    <tg-workspace-item *ngFor="let workspace of workspaceList"
+      [workspace]="workspace">
+    </tg-workspace-item>
   </div>
   <ng-template #tooltip>
       <p>{{ t('tooltip_add_workspace') }}</p>

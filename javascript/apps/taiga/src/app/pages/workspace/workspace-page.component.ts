@@ -7,13 +7,11 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-
-interface ComponentViewModel {
-  todo: string;
-}
+import { getWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
+import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 
 @Component({
   selector: 'tg-workspace-page',
@@ -33,17 +31,17 @@ interface ComponentViewModel {
   ]
 
 })
-export class WorkspacePageComponent {
-  public showActivity = false;
+export class WorkspacePageComponent implements OnInit {
   constructor(
     private store: Store,
-    private state: RxState<ComponentViewModel>,
-  ) {
-    // initial state
-    // this.state.set({});
+  ) {}
+      
+  public showActivity = false;
+  public workspaceList$ = this.store.select(selectWorkspaces);
 
-    // connect the ngrx state with the local state
-    // this.state.connect('todo', this.store.select(selectTodo));
+  public ngOnInit() {
+    const id = 5;
+    this.store.dispatch(getWorkspaceList({id}));
   }
 
   public toggleActivity(show: boolean) {

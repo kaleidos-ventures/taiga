@@ -14,16 +14,16 @@ import * as faker from 'faker';
 
 import { WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
-import { WorkspaceEffects } from './workspace.effects';
 import { WorkspaceApiService } from '@taiga/api';
-import { getWorkspaceList, setWorkspaceList } from '../actions/workspace.actions';
+import { getWorkspace, setWorkspace } from '../actions/workspace-detail.actions';
+import { WorkspaceDetailEffects } from './workspace-detail.effects';
 
 describe('WorkspaceEffects', () => {
   let actions$: Observable<Action>;
-  let spectator: SpectatorService<WorkspaceEffects>;
+  let spectator: SpectatorService<WorkspaceDetailEffects>;
 
   const createService = createServiceFactory({
-    service: WorkspaceEffects,
+    service: WorkspaceDetailEffects,
     providers: [
       provideMockActions(() => actions$)
     ],
@@ -38,20 +38,20 @@ describe('WorkspaceEffects', () => {
     const id = faker.datatype.number();
     const workspace = WorkspaceMockFactory();
     const workspaceApiService = spectator.inject(WorkspaceApiService);
-    const effects = spectator.inject(WorkspaceEffects);
+    const effects = spectator.inject(WorkspaceDetailEffects);
 
-    workspaceApiService.fetchWorkspaceList.mockReturnValue(
-      cold('-b|', { b: [workspace] })
+    workspaceApiService.fetchWorkspace.mockReturnValue(
+      cold('-b|', { b: workspace })
     );
 
-    actions$ = hot('-a', { a:  getWorkspaceList({ id })});
+    actions$ = hot('-a', { a:  getWorkspace({ id })});
 
     const expected = cold('--a', {
-      a: setWorkspaceList({ workspaces: [workspace] }),
+      a: setWorkspace({ workspace }),
     });
 
     expect(
-      effects.listWorkspaces$
+      effects.loadWorkspace$
     ).toBeObservable(expected);
   });
 

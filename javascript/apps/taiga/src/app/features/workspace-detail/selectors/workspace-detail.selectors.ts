@@ -6,8 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { workspaceFeature } from '../reducers/workspace.reducer';
+import { workspaceDetailFeature } from '../reducers/workspace-detail.reducer';
 
 export const {
-  selectWorkspaces
-} = workspaceFeature;
+  selectWorkspace
+} = workspaceDetailFeature;

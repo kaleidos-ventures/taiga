@@ -9,26 +9,31 @@
 import { createReducer, on, createFeature } from '@ngrx/store';
 import { Workspace } from '@taiga/data';
 import { immerReducer } from '~/app/shared/utils/store';
-import * as WorkspaceActions from '../actions/workspace.actions';
+import * as WorkspaceActions from '../actions/workspace-detail.actions';
 
-export interface WorkspaceState {
-  workspaces: Workspace[],
+export interface WorkspaceDetailState {
+  workspace: Workspace
 }
 
-export const initialState: WorkspaceState = {
-  workspaces: [],
+export const initialState: WorkspaceDetailState = {
+  workspace: {
+    id: 0,
+    name: '',
+    slug: '',
+    color: 0
+  }
 };
 
 export const reducer = createReducer(
   initialState,
-  on(WorkspaceActions.setWorkspaceList, (state, { workspaces }): WorkspaceState => {
-    state.workspaces = workspaces;
+  on(WorkspaceActions.setWorkspace, (state, { workspace }): WorkspaceDetailState => {
+    state.workspace = workspace;
 
     return state;
   }),
 );
 
-export const workspaceFeature = createFeature({
-  name: 'workspaceList',
+export const workspaceDetailFeature = createFeature({
+  name: 'workspace',
   reducer: immerReducer(reducer),
 });

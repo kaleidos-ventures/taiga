@@ -6,11 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
 
-import { Workspace } from '@taiga/data';
+import { User, Workspace } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +21,9 @@ export class WorkspaceApiService {
     private config: ConfigService
   ) { }
 
-  public listWokspaces() {
-    return this.http.get<Workspace[]>(`${this.config.apiUrl}/workspaces`);
+  public fetchWorkspaceList(id: User['id']) {
+    const params = new HttpParams().set('owner_id', id);
+    return this.http.get<Workspace[]>(`${this.config.apiUrl}/workspaces`, {params});
   }
 
   public fetchWorkspace(id: Workspace['id']) {

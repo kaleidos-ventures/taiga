@@ -11,6 +11,8 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { WorkspaceApiService } from './workspace-api.service';
 
+import * as faker from 'faker';
+
 describe('WorkspaceApiService', () => {
   let spectator: SpectatorHttp<WorkspaceApiService>;
   const createHttp = createHttpFactory({
@@ -24,16 +26,19 @@ describe('WorkspaceApiService', () => {
   beforeEach(() => spectator = createHttp());
 
   it('list Workspaces', () => {
-    const url = `${ConfigServiceMock.apiUrl}/workspaces`;
+    const base = `${ConfigServiceMock.apiUrl}/workspaces`;
+    const id = faker.datatype.number();
+    const url = `${base}?owner_id=${id}`;
 
-    spectator.service.listWokspaces().subscribe();
+    spectator.service.fetchWorkspaceList(id).subscribe();
 
     const req = spectator.expectOne(url, HttpMethod.GET);
-    expect(req.request.url).toEqual(url);
+    expect(req.request.url).toEqual(base);
+    expect(req.request.params.get('owner_id')).toEqual(id.toString());
   });
   
   it('get Workspace', () => {
-    const id = 1;
+    const id = faker.datatype.number();
     const url = `${ConfigServiceMock.apiUrl}/workspaces/${id}`;
 
     spectator.service.fetchWorkspace(id).subscribe();

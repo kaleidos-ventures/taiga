@@ -7,13 +7,10 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, Input } from '@angular/core';
 import { RxState } from '@rx-angular/state';
 
-interface ComponentViewModel {
-  todo: string;
-}
+import { Workspace } from '@taiga/data';
 
 @Component({
   selector: 'tg-workspace',
@@ -44,20 +41,13 @@ interface ComponentViewModel {
 })
 export class WorkspaceComponent {
 
+  @Input()
+  public workspaceList!: Workspace[];
+
   @Output()
   public hideActivity = new EventEmitter<boolean>();
 
   public showCreate = false;
-  constructor(
-    private store: Store,
-    private state: RxState<ComponentViewModel>,
-  ) {
-    // initial state
-    // this.state.set({});
-
-    // connect the ngrx state with the local state
-    // this.state.connect('todo', this.store.select(selectTodo));
-  }
 
   public toggleActivity(show: boolean) {
     this.hideActivity.next(show);

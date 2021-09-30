@@ -7,14 +7,14 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { User, Workspace } from '@taiga/data';
+import { Workspace } from '@taiga/data';
 
-export const setWorkspaceList = createAction(
-  '[WorkspaceList] set',
-  props<{workspaces: Workspace[]}>()
+export const setWorkspace = createAction(
+  '[Workspace] Set',
+  props<{workspace: Workspace}>()
 );
 
-export const getWorkspaceList = createAction(
-  '[WorkspaceList] Get',
-  props<{id: User['id']}>()
+export const getWorkspace = createAction(
+  '[Workspace] Get',
+  props<{id: Workspace['id']}>()
 );

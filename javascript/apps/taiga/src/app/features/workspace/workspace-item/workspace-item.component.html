@@ -9,39 +9,32 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t;">
   <div class="workspace-item-top">
     <div class="workspace-item-title-container">
-      <tg-workspace-avatar
-        [color]="5"
+      <tg-workspace-avatar [color]="workspace.color"
         [size]="'m'"
-        [name]="'Workspace Name'"
-      ></tg-workspace-avatar>
+        [name]="workspace.name"></tg-workspace-avatar>
       <div class="workspace-item-title-wrapper">
-        <a
-          [routerLink]="['/workspace/id']" class="workspace-item-title">
-          Name will have a limit of 40 characters
+        <a [routerLink]="['/workspace/id']"
+          class="workspace-item-title">
+          {{workspace.name}}
         </a>
       </div>
-      <tg-ui-badge
-        [label]="t('commons.owner')"
-      ></tg-ui-badge>
+      <tg-ui-badge [label]="t('commons.owner')"></tg-ui-badge>
     </div>
     <div class="workspace-item-action">
-      <button
-        appearance="tertiary"
+      <button appearance="tertiary"
         tuiButton
         icon="user"
         title="{{ t('commons.members') }}"
         type="button">
         {{ t('commons.members') }} (1)
       </button>
-      <button
-        appearance="secondary"
+      <button appearance="secondary"
         tuiButton
         title="{{ t('commons.upgrade') }}"
         type="button">
         {{ t('commons.upgrade') }}
       </button>
-      <button
-        appearance="primary"
+      <button appearance="primary"
         tuiButton
         icon="plus"
         title="{{ t('commons.projects') }}"
@@ -52,12 +45,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   </div>
   <div class="workspace-item-card-grid">
     <div class="workspace-item-card">
-      <tg-workspace-avatar
-        [color]="1"
-        [name]="'Workspace Name'"
-      ></tg-workspace-avatar>
-      <a
-        tuiLink
+      <tg-workspace-avatar [color]="1"
+        [name]="'Workspace Name'"></tg-workspace-avatar>
+      <a tuiLink
         title="{{ t('workspace.create_new_project') }}">
         {{ t('workspace.create_new_project') }}
       </a>

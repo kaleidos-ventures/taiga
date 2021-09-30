@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='workspace',
             name='name',
-            field=models.CharField(max_length=40, validators=[django.core.validators.RegexValidator(re.compile('^[a-zA-Z0-9 \\-]+$'), 'Enter a valid username.', 'invalid')], verbose_name='name'),
+            field=models.CharField(max_length=40, validators=[django.core.validators.RegexValidator(re.compile('^[a-zA-Z0-9 \\-]+$'), 'Enter a valid name.', 'invalid')], verbose_name='name'),
         ),
     ]

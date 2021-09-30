@@ -25,7 +25,7 @@ class Workspace(models.Model):
                             )
     slug = models.SlugField(max_length=250, unique=True, null=True, blank=True,
                             verbose_name=_("slug"))
-    color = models.IntegerField(default=random.choice(range(1, MAX_COLORS+1)), null=False,
+    color = models.IntegerField(default=1, null=False,
                                 blank=False, verbose_name=_("color"))
 
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,

@@ -91,6 +91,12 @@ def testing_nested_cycling_properties():
     _validate_simple_model(mocked_object.bar)
 
 
+def testing_list_of_base_model():
+    mocked_object_list = mock_serializer(List[SimpleModel])
+
+    _validate_list(mocked_object_list, SimpleModel)
+
+
 def _validate_simple_model(mocked_object):
     _validate_text(mocked_object.text)
     _validate_num(mocked_object.num)

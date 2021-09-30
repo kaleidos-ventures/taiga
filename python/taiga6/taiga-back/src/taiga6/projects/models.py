@@ -161,11 +161,13 @@ class ProjectDefaults(models.Model):
 
 
 class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
+    # Name is limited to 80 characters in API, not here because we have old data exceding these new limits
     name = models.CharField(max_length=250, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
                             verbose_name=_("slug"))
-    description = models.TextField(null=False, blank=False,
+    # Description is limited to 200 characters in API, not here because we have old data exceding these new limits
+    description = models.TextField(null=True, blank=True,
                                    verbose_name=_("description"))
 
     logo = models.FileField(upload_to=get_project_logo_file_path,

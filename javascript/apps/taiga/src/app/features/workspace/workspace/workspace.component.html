@@ -35,6 +35,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </a>
       </div>
     </div>
+    <tg-workspace-create
+      [@slideInOut]
+      (requestClose)="toggleCreate(false)"
+      cdkTrapFocus
+      *ngIf="showCreate">
+    </tg-workspace-create>
     <div *ngIf="!workspaceList.length"
       class="worskpace-placeholder">
       <div class="workspace-call-action">
@@ -48,6 +54,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ t('placeholder_link') }}
         </a>
         <button appearance="primary"
+          (click)="toggleCreate(true)"
+          [tuiHint]="tooltip"
+          tuiHintDirection="bottom-right"
           tuiButton
           title="{{ t('placeholder_button') }}"
           type="button">
@@ -55,12 +64,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </button>
       </div>
     </div>
-    <tg-workspace-create
-      [@slideInOut]
-      (requestClose)="toggleCreate(false)"
-      cdkTrapFocus
-      *ngIf="showCreate">
-    </tg-workspace-create>
     <ng-container>
       <tg-workspace-skeleton *ngIf="!workspaceList.length">
       </tg-workspace-skeleton>

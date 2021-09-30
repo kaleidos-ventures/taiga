@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ApiUtilsService } from './api-utils.service';
+import { ApiUtilsService } from '../api-utils/api-utils.service';
 
 describe('ApiUtilsService', () => {
   it('transform object to HttpParams with param3 key transformation', () => {

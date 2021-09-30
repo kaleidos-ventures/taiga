@@ -10,6 +10,8 @@ import { ChangeDetectionStrategy, Component, Output, EventEmitter, OnInit, ViewC
 import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
+import { addWorkspace } from '../actions/workspace.actions';
+import { RandomColorService } from '@taiga/api';
 
 interface ComponentViewModel {
   todo: string;
@@ -29,24 +31,20 @@ export class WorkspaceCreateComponent implements OnInit {
 
   @ViewChild('firstInput', { static: false }) public firstInput!: ElementRef;
 
-  public createProjectForm!: FormGroup;
-  public createProjectFormInvalid = false;
-  public createProjectErrorList: unknown[] = [];
-
-  public readonly todo$ = this.state.select('todo');
-  public readonly model$ = this.state.select();
-
   constructor(
     private store: Store,
     private state: RxState<ComponentViewModel>,
-    private fb: FormBuilder
-  ) {
-    // initial state
-    // this.state.set({});
+    private fb: FormBuilder,
+    private randomColorService: RandomColorService
+  ) {}
 
-    // connect the ngrx state with the local state
-    // this.state.connect('todo', this.store.select(selectTodo));
-  }
+  public color: number = this.randomColorService.randomColorPicker();
+
+  // #TODO: Add user ID when we have real users on the app
+  public userId = 5;
+  public createProjectForm!: FormGroup;
+  public createProjectFormInvalid = false;
+  public createProjectErrorList: unknown[] = [];
 
   public close() {
     this.requestClose.next();
@@ -85,7 +83,11 @@ export class WorkspaceCreateComponent implements OnInit {
     } else {
       this.createProjectFormInvalid = false;
       if (this.createProjectForm.valid ) {
-        // #TODO: Submit to back here if ok next line
+        this.store.dispatch(addWorkspace({
+          name: (this.createProjectForm.controls['projectName'].value as string),
+          color: this.color,
+          userId: this.userId
+        }));
         this.requestClose.next();
       }
     }

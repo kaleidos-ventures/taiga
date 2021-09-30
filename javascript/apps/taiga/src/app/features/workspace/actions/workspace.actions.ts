@@ -18,3 +18,8 @@ export const getWorkspaceList = createAction(
   '[WorkspaceList] Get',
   props<{id: User['id']}>()
 );
+
+export const addWorkspace = createAction(
+  '[Workspace] Add workspace',
+  props<{name: Workspace['name'], color: Workspace['color'], userId: User['id']}>()
+);

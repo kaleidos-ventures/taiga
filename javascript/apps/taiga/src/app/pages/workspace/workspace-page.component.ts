@@ -35,7 +35,7 @@ export class WorkspacePageComponent implements OnInit {
   constructor(
     private store: Store,
   ) {}
-      
+
   public showActivity = false;
   public workspaceList$ = this.store.select(selectWorkspaces);
 

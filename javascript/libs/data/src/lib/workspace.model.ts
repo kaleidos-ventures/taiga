@@ -14,3 +14,8 @@ export interface Workspace {
   // TODO: Update when API provide roles
   // owner: boolean;
 }
+
+export interface WorkspaceCreation {
+  name: string;
+  color: number;
+}

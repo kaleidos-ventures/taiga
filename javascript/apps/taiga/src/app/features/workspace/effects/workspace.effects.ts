@@ -12,7 +12,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map } from 'rxjs/operators';
 
 import * as WorkspaceActions from '../actions/workspace.actions';
-import { fetch } from '@nrwl/angular';
+import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { Workspace } from '@taiga/data';
 import { WorkspaceApiService } from '@taiga/api';
 
@@ -33,6 +33,29 @@ export class WorkspaceEffects {
         onError: () => {
           return null;
         },
+      })
+    );
+  });
+
+  public addWorkspace$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceActions.addWorkspace),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.workspaceApiService.addWorkspace({
+            name: action.name,
+            color: action.color,
+          }).pipe(
+            map(() => {
+              return WorkspaceActions.getWorkspaceList({
+                id: action.userId,
+              });
+            })
+          );
+        },
+        onError: () => {
+          return null;
+        }
       })
     );
   });

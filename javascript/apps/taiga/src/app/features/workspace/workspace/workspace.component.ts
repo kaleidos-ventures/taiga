@@ -9,7 +9,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, EventEmitter, Output, Input } from '@angular/core';
 import { RxState } from '@rx-angular/state';
-
 import { Workspace } from '@taiga/data';
 
 @Component({

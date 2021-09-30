@@ -8,7 +8,8 @@
 
 export * from './lib/api.module';
 
-export * from './lib/shared/api-utils.service';
+export * from './lib/shared/api-utils/api-utils.service';
+export * from './lib/shared/random-color/random-color.service';
 export * from './lib/auth/auth-api.service';
 export * from './lib/project/project-api.service';
 export * from './lib/workspace/workspace-api.service';

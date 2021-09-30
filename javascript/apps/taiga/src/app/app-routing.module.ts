@@ -14,8 +14,7 @@ const routes: Routes = [
   { path: 'login', loadChildren: () => import('./pages/auth/auth-page.module').then(m => m.AuthPageModule) },
   // #TODO: Project Url must be project-name+Id. See if we can add the workspace+worskpaceId on the url.
   { path: 'project', loadChildren: () => import('./pages/project/project-page.module').then(m => m.ProjectPageModule) },
-  // #TODO: Workspace Url must be workspace-name+workspaceId. See if we can add the workspace on the url.
-  { path: 'workspace', loadChildren: () => import('./pages/workspace/workspace-page.module').then(m => m.WorkspacePageModule) },
+  { path: '', loadChildren: () => import('./pages/workspace/workspace-page.module').then(m => m.WorkspacePageModule) },
   { path: 'workspace/:id', loadChildren: () => import('./pages/workspace-detail-page/workspace-detail-page.module').then(m => m.WorkspaceDetailPageModule) },
 ];
 

@@ -9,8 +9,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
-
-import { User, Workspace } from '@taiga/data';
+import { User, Workspace, WorkspaceCreation } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root'
@@ -28,5 +27,9 @@ export class WorkspaceApiService {
 
   public fetchWorkspace(id: Workspace['id']) {
     return this.http.get<Workspace>(`${this.config.apiUrl}/workspaces/${id}`);
+  }
+
+  public addWorkspace(workspaceCreation: WorkspaceCreation) {
+    return this.http.post<Workspace>(`${this.config.apiUrl}/workspaces`, workspaceCreation);
   }
 }

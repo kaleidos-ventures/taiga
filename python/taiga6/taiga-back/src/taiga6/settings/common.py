@@ -317,7 +317,7 @@ INSTALLED_APPS = [
     "taiga6.base",
     "taiga6.base.api",
     "taiga6.locale",
-    "taiga6.events",
+    #"taiga6.events", disable events to avoid signals
     "taiga6.front",
     "taiga6.users",
     "taiga6.userstorage",

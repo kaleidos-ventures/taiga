@@ -16,6 +16,7 @@ router.include_router(auth_api.router)
 router.include_router(projects_api.router)
 router.include_router(users_api.router)
 router.include_router(workspaces_api.router)
+router.include_router(projects_api.router2)
 
 tags_metadata = [
     auth_api.metadata,

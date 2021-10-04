@@ -169,7 +169,8 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
     # Description is limited to 200 characters in API, not here because we have old data exceding these new limits
     description = models.TextField(null=True, blank=True,
                                    verbose_name=_("description"))
-
+    color = models.IntegerField(default=1, null=False,
+                                blank=False, verbose_name=_("color"))
     logo = models.FileField(upload_to=get_project_logo_file_path,
                             max_length=500, null=True, blank=True,
                             verbose_name=_("logo"))

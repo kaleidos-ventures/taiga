@@ -8,9 +8,13 @@
 import logging
 from typing import List
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
+from taiga.dependencies.users import get_current_user
+from taiga.exceptions import api as ex
+from taiga.models.users import User
 from taiga.serializers.projects import ProjectSerializer
 from taiga.services import projects as projects_services
+from taiga.validators.projects import ProjectValidator
 
 logger = logging.getLogger(__name__)
 
@@ -20,22 +24,41 @@ metadata = {
 }
 
 router = APIRouter(prefix="/projects", tags=["projects"])
+router2 = APIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"])
 
 
-@router.get("", name="projects.list", summary="List projects", response_model=List[ProjectSerializer])
-def list_projects(
-    offset: int = Query(0, description="number of projects to skip"),
-    limit: int = Query(100, description="number of projects to show"),
-) -> List[ProjectSerializer]:
+@router2.get("", name="projects.list", summary="List projects", response_model=List[ProjectSerializer])
+def list_projects(workspace_slug: str = Query(None, description="the workspace slug (str)")) -> List[ProjectSerializer]:
     """
-    Get a paginated list of visible projects.
+    List projects of a workspace.
     """
-    qs = projects_services.get_projects(offset=offset, limit=limit)
-    return ProjectSerializer.from_queryset(qs)
+    projects = projects_services.get_projects(workspace_slug=workspace_slug)
+    return ProjectSerializer.from_queryset(projects)
 
 
-@router.get("/{project_slug}", name="projects.get", summary="Get project details", response_model=ProjectSerializer)
-def get_project(project_slug: str = Query(None, description="the project slug (string)")) -> ProjectSerializer:
+@router.post(
+    "",
+    name="projects.create",
+    summary="Create project",
+    response_model=ProjectSerializer,
+)
+def create_project(form: ProjectValidator, user: User = Depends(get_current_user)) -> ProjectSerializer:
+    """
+    Create project for the logged user.
+    """
+    project = projects_services.create_project(
+        workspace_slug=form.workspace_slug, name=form.name, description=form.description, color=form.color, owner=user
+    )
+    return ProjectSerializer.from_orm(project)
+
+
+@router.get(
+    "/{project_slug}",
+    name="projects.get",
+    summary="Get project",
+    response_model=ProjectSerializer,
+)
+def get_project(project_slug: str = Query(None, description="the project slug (str)")) -> ProjectSerializer:
     """
     Get project detail by slug.
     """
@@ -43,6 +66,6 @@ def get_project(project_slug: str = Query(None, description="the project slug (s
 
     if project is None:
         logger.exception(f"Project {project_slug} does not exist")
-        raise HTTPException(status_code=404, detail="API_NOT_FOUND")
+        raise ex.NotFoundError()
 
     return ProjectSerializer.from_orm(project)

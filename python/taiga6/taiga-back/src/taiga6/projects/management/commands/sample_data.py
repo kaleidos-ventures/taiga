@@ -598,6 +598,7 @@ class Command(BaseCommand):
         project = Project.objects.create(slug='project-%s'%(counter),
                                          name='Project Example {0}'.format(counter),
                                          description='Project example {0} description'.format(counter),
+                                         color=self.sd.int(1,8),
                                          owner=self.sd.choice(self.users),
                                          is_private=is_private,
                                          anon_permissions=anon_permissions,

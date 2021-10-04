@@ -8,6 +8,22 @@
 from typing import Iterable, Optional
 
 from taiga.models.projects import Project
+from taiga.models.users import User
+from taiga.models.workspaces import Workspace
+
+
+def get_projects(workspace_slug: str) -> Iterable[Project]:
+    data: Iterable[Project] = Project.objects.filter(workspace__slug=workspace_slug).order_by("-created_date")
+    return data
+
+
+def create_project(
+    workspace_slug: str, name: str, description: Optional[str], color: Optional[int], owner: User
+) -> Project:
+    workspace: Workspace = Workspace.objects.get(slug=workspace_slug)
+    return Project.objects.create(
+        name=name, description=description, workspace_id=workspace.id, color=color, owner=owner
+    )
 
 
 def get_project(slug: str) -> Optional[Project]:
@@ -15,8 +31,3 @@ def get_project(slug: str) -> Optional[Project]:
         return Project.objects.get(slug=slug)
     except Project.DoesNotExist:
         return None
-
-
-def get_projects(offset: int, limit: int) -> Iterable[Project]:
-    data: Iterable[Project] = Project.objects.all()[offset : offset + limit]
-    return data

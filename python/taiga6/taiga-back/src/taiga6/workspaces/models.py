@@ -16,8 +16,6 @@ from django.core import validators
 from django_pglocks import advisory_lock
 from taiga6.base.utils.slug import slugify_uniquely
 
-MAX_COLORS = 8
-
 
 class Workspace(models.Model):
     name = models.CharField(max_length=40, null=False, blank=False, verbose_name=_("name"))

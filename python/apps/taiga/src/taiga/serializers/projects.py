@@ -5,17 +5,20 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from pydantic.schema import datetime
+from typing import Optional
+
 from taiga.base.serializer import BaseModel
+from taiga.serializers.workspaces import WorkspaceSerializer
 
 
 class ProjectSerializer(BaseModel):
     id: int
     name: str
     slug: str
-    modified_date: datetime
-    total_milestones: int
-    is_contact_activated: bool
+    description: Optional[str] = None
+    color: Optional[int] = None
+    # TODO: after the migrations all projects should belongs to a workspace
+    workspace: Optional[WorkspaceSerializer] = None
 
     class Config:
         orm_mode = True

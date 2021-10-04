@@ -16,7 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       ></tg-workspace-avatar>
     </div>
     <div class="workspace-detail-title-wrapper">
-      <div class="workspace-detail-title-route">Workspace/</div>
+      <div class="workspace-detail-title-route">Workspace/{{workspace.slug}}</div>
       <div class="workspace-detail-title-container">
         <h3 class="workspace-detail-title">{{workspace.name}}</h3>
         <!-- TODO: *ngIf owner when API provides roles -->
@@ -26,14 +26,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
     </div>
     <div class="workspace-detail-actions">
-      <button
-        appearance="tertiary"
+      <a
         tuiButton
-        iconRight="arrow-right"
-        title="{{ t('add_workspace') }}"
-        type="button">
+        type="button"
+        appearance="tertiary"
+        [routerLink]="['/']"
+        iconRight="arrow-right">
         {{ t('workspace.back_to_project') }}
-      </button>
+      </a>
     </div>
   </div>
   <div class="workspace-detail-content tui-skeleton">

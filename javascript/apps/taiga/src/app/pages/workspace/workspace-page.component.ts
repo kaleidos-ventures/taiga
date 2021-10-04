@@ -9,7 +9,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { RxState } from '@rx-angular/state';
 import { getWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 
@@ -17,7 +16,6 @@ import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.s
   selector: 'tg-workspace-page',
   templateUrl: './workspace-page.component.html',
   styleUrls: ['./workspace-page.component.css'],
-  providers: [RxState],
   animations: [
     trigger('slideInOut', [
       transition(':enter', [
@@ -40,6 +38,7 @@ export class WorkspacePageComponent implements OnInit {
   public workspaceList$ = this.store.select(selectWorkspaces);
 
   public ngOnInit() {
+    // TODO: this should be updated with user ID
     const id = 5;
     this.store.dispatch(getWorkspaceList({id}));
   }

@@ -24,15 +24,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           type="button">
           {{ t('add_workspace') }}
         </button>
-        <a
+        <button
           (click)="toggleActivity(true)"
-          tuiLink
+          tuiButton
+          appearance="flat"
           class="workspace-title-link"
           icon="'collapse-left'"
           iconAlign="left"
           title="{{ t('show_activity') }}">
           {{ t('show_activity') }}
-        </a>
+        </button>
       </div>
     </div>
     <tg-workspace-create

@@ -19,7 +19,6 @@ import { WorkspaceAvatarComponent } from './workspace-avatar.component';
   declarations: [
     WorkspaceAvatarComponent,
   ],
-  providers: [],
   exports: [
     WorkspaceAvatarComponent,
   ]

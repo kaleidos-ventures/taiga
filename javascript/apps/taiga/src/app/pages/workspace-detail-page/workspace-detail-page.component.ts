@@ -27,7 +27,14 @@ export class WorkspaceDetailPageComponent implements OnInit {
   public workspace$ = this.store.select(selectWorkspace);
 
   public ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.store.dispatch(getWorkspace({id}));
+    let slug = '';
+    this.route.paramMap.subscribe(params => { 
+      slug = params.get('slug')!;
+    });
+    if (slug) {
+      const parseId = slug.split('-').pop();
+      const id = Number(parseId);
+      this.store.dispatch(getWorkspace({id}));
+    }
   }
 }

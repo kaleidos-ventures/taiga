@@ -10,12 +10,8 @@ import { ChangeDetectionStrategy, Component, Output, EventEmitter, OnInit, ViewC
 import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
+import { RandomColorService } from '~/app/shared/random-color/random-color.service';
 import { addWorkspace } from '../actions/workspace.actions';
-import { RandomColorService } from '@taiga/api';
-
-interface ComponentViewModel {
-  todo: string;
-}
 
 @Component({
   selector: 'tg-workspace-create',
@@ -33,15 +29,13 @@ export class WorkspaceCreateComponent implements OnInit {
 
   constructor(
     private store: Store,
-    private state: RxState<ComponentViewModel>,
     private fb: FormBuilder,
-    private randomColorService: RandomColorService
   ) {}
 
-  public color: number = this.randomColorService.randomColorPicker();
-
+  
   // #TODO: Add user ID when we have real users on the app
   public userId = 5;
+  public color = 0;
   public createProjectForm!: FormGroup;
   public createProjectFormInvalid = false;
   public createProjectErrorList: unknown[] = [];
@@ -51,6 +45,7 @@ export class WorkspaceCreateComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.color = RandomColorService.randomColorPicker();
     this.createProjectForm = this.fb.group({
       projectName: [
         '',

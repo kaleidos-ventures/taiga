@@ -9,7 +9,7 @@
 import { OnInit } from '@angular/core';
 import {  ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
-import { RandomColorService } from '@taiga/api';
+import { RandomColorService } from '../random-color/random-color.service';
 
 @Component({
   selector: 'tg-workspace-avatar',
@@ -18,11 +18,6 @@ import { RandomColorService } from '@taiga/api';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkspaceAvatarComponent implements OnInit  {
-
-  constructor(
-    private randomColorService: RandomColorService
-  ) {}
-
 
   @Input()
   public size: TuiSizeXS | TuiSizeXXL = 'l';
@@ -43,6 +38,6 @@ export class WorkspaceAvatarComponent implements OnInit  {
   }
 
   public setColorClass(color: number) {
-    return this.randomColorService.getColorClass(color);
+    return RandomColorService.getColorClass(color);
   }
 }

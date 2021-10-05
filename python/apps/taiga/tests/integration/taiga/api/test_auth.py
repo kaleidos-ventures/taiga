@@ -8,18 +8,14 @@
 
 import pytest
 from fastapi import status
-from fastapi.testclient import TestClient
 from taiga.exceptions.api import codes
-from taiga.main import api
 from taiga.tokens.auth import RefreshToken
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)
 
-client = TestClient(api)
 
-
-def test_login_successfuly():
+def test_login_successfuly(client):
     username = "test_user"
     password = "test_password"
     f.UserFactory(username=username, password=password)
@@ -29,7 +25,7 @@ def test_login_successfuly():
     assert response.json().keys() == {"token", "refresh"}
 
 
-def test_login_error_invalid_credentials():
+def test_login_error_invalid_credentials(client):
     username = "test_user"
     password = "test_password"
 
@@ -39,7 +35,7 @@ def test_login_error_invalid_credentials():
     assert response.headers["www-authenticate"] == 'Bearer realm="api"'
 
 
-def test_refresh_successfuly():
+def test_refresh_successfuly(client):
     user = f.UserFactory(username="test_user", password="test_password", is_active=True)
     token = RefreshToken.for_user(user)
 
@@ -48,7 +44,7 @@ def test_refresh_successfuly():
     assert response.json().keys() == {"token", "refresh"}
 
 
-def test_refresh_error_invalid_token():
+def test_refresh_error_invalid_token(client):
     response = client.post("/auth/token/refresh", json={"refresh": "invalid_token"})
     assert response.status_code == status.HTTP_401_UNAUTHORIZED, response.text
     assert response.json()["error"]["code"] == codes.EX_AUTHENTICATION

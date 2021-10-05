@@ -100,7 +100,6 @@ def base_model_mock_serializer(
             properties_dict[prop] = _get_simple_random(prop_type)
 
         if typing.get_origin(prop_type) is list:
-            print(f"property {prop} is a list")
             list_range = range(SAMPLE_DATA.int(MIN_LIST_LENGTH, MAX_LIST_LENGTH))
             properties_dict[prop] = []
             for count in list_range:

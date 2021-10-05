@@ -9,6 +9,8 @@
 import django
 from _pytest.config import Config
 
+from .fixtures import *  # noqa
+
 
 def pytest_configure(config: Config) -> None:
     django.setup()

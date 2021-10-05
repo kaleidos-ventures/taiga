@@ -8,17 +8,13 @@
 
 import pytest
 from fastapi import status
-from fastapi.testclient import TestClient
 from taiga.exceptions.api import codes
-from taiga.main import api
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)
 
-client = TestClient(api)
 
-
-def test_create_workspace_with_empty_name():
+def test_create_workspace_with_empty_name(client):
     name = ""
     color = 1
 
@@ -28,7 +24,7 @@ def test_create_workspace_with_empty_name():
     assert response.json()["error"]["detail"][0]["msg"] == "Empty name is not allowed."
 
 
-def test_create_workspace_with_long_name():
+def test_create_workspace_with_long_name(client):
     name = "WS ab c de f gh i jk l mn pw r st u vw x yz"
     color = 1
 
@@ -38,7 +34,7 @@ def test_create_workspace_with_long_name():
     assert response.json()["error"]["detail"][0]["msg"] == "Name too long"
 
 
-def test_create_workspace_with_invalid_color():
+def test_create_workspace_with_invalid_color(client):
     name = "WS test"
     color = 9
 
@@ -48,7 +44,7 @@ def test_create_workspace_with_invalid_color():
     assert response.json()["error"]["detail"][0]["msg"] == "Color not allowed."
 
 
-def test_create_workspace_with_color_string():
+def test_create_workspace_with_color_string(client):
     name = "WS test"
     color = "0F0F0F"
 
@@ -58,7 +54,7 @@ def test_create_workspace_with_color_string():
     assert response.json()["error"]["detail"][0]["msg"] == "value is not a valid integer"
 
 
-def test_create_workspace_with_valid_data():
+def test_create_workspace_with_valid_data(client):
     username = "admin"
     f.UserFactory(username=username)
 
@@ -71,7 +67,7 @@ def test_create_workspace_with_valid_data():
     assert response.json()["color"] == 1
 
 
-def test_create_workspace_with_valid_non_ASCII_blank_chars():
+def test_create_workspace_with_valid_non_ASCII_blank_chars(client):
     username = "admin"
     f.UserFactory(username=username)
     name = "       My w0r#%&乕شspace         "
@@ -84,12 +80,12 @@ def test_create_workspace_with_valid_non_ASCII_blank_chars():
     assert response.json()["color"] == 1
 
 
-def test_workspaces_by_nonexistent_owner_id():
+def test_workspaces_by_nonexistent_owner_id(client):
     response = client.get("/workspaces?owner_id=99")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-def test_workspaces_by_owner_id():
+def test_workspaces_by_owner_id(client):
     name = "WS test"
     color = 3
     workspace = f.WorkspaceFactory(name=name, color=color)
@@ -102,12 +98,12 @@ def test_workspaces_by_owner_id():
     assert response.json()[0]["color"] == 3
 
 
-def test_nonexistent_workspace():
+def test_nonexistent_workspace(client):
     response = client.get("/workspaces/99")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-def test_existent_workspace():
+def test_existent_workspace(client):
     name = "WS test"
     color = 1
     workspace = f.WorkspaceFactory(name=name, color=color)

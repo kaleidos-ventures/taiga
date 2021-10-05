@@ -5,13 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
 import pytest
+from taiga.main import api
+from tests.utils.testclient import TestClient
 
-pytestmark = pytest.mark.django_db
 
-
-def test_get_projects(client):
-    response = client.get("/projects")
-    assert response.status_code == 200
-    assert len(response.json()) == 0
+@pytest.fixture
+def client() -> TestClient:
+    return TestClient(api)

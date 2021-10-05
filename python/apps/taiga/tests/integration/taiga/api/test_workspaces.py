@@ -13,7 +13,6 @@ from taiga.exceptions.api import codes
 from taiga.main import api
 from tests.utils import factories as f
 
-
 pytestmark = pytest.mark.django_db(transaction=True)
 
 client = TestClient(api)
@@ -27,16 +26,6 @@ def test_create_workspace_with_empty_name():
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
     assert response.json()["error"]["code"] == codes.EX_VALIDATION_ERROR
     assert response.json()["error"]["detail"][0]["msg"] == "Empty name is not allowed."
-
-
-def test_create_workspace_with_invalid_characters():
-    name = "WS ?"
-    color = 1
-
-    response = client.post("/workspaces", json={"name": name, "color": color})
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-    assert response.json()["error"]["code"] == codes.EX_VALIDATION_ERROR
-    assert response.json()["error"]["detail"][0]["msg"] == "Character not allowed."
 
 
 def test_create_workspace_with_long_name():
@@ -71,7 +60,7 @@ def test_create_workspace_with_color_string():
 
 def test_create_workspace_with_valid_data():
     username = "admin"
-    user = f.UserFactory(username=username)
+    f.UserFactory(username=username)
 
     name = "WS test"
     color = 1
@@ -79,6 +68,19 @@ def test_create_workspace_with_valid_data():
     response = client.post("/workspaces", json={"name": name, "color": color})
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json()["name"] == "WS test"
+    assert response.json()["color"] == 1
+
+
+def test_create_workspace_with_valid_non_ASCII_blank_chars():
+    username = "admin"
+    f.UserFactory(username=username)
+    name = "       My w0r#%&乕شspace         "
+    color = 1
+
+    response = client.post("/workspaces", json={"name": name, "color": color})
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["name"] == "My w0r#%&乕شspace"
+    assert response.json()["slug"] == "my-w0rhu-shspace"
     assert response.json()["color"] == 1
 
 

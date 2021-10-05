@@ -13,16 +13,14 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.core import validators
-
+from django_pglocks import advisory_lock
+from taiga6.base.utils.slug import slugify_uniquely
 
 MAX_COLORS = 8
 
 
 class Workspace(models.Model):
-    name = models.CharField(max_length=40, null=False, blank=False, verbose_name=_("name"),
-                            validators=[validators.RegexValidator(re.compile(r"^[a-zA-Z0-9 \-]+$"),
-                                                                  _("Enter a valid name."),"invalid")]
-                            )
+    name = models.CharField(max_length=40, null=False, blank=False, verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=True, blank=True,
                             verbose_name=_("slug"))
     color = models.IntegerField(default=1, null=False,
@@ -58,7 +56,9 @@ class Workspace(models.Model):
         return "<Workspace {0}>".format(self.id)
 
     def save(self, *args, **kwargs):
-        super(Workspace, self).save(*args, **kwargs)
         if not self.slug:
-            self.slug = slugify(self.name) + "-" + str(self.id)
-            self.save()
+            with advisory_lock("workspace-creation"):
+                self.slug = f"{slugify_uniquely(self.name, self.__class__)}"
+                super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)

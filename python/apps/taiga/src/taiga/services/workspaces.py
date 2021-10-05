@@ -16,7 +16,7 @@ def get_workspaces(owner_id: int) -> Iterable[Workspace]:
 
 
 def create_workspace(name: str, color: int) -> Optional[Workspace]:
-    return workspaces_repo.create_workspace(name, color)
+    return workspaces_repo.create_workspace(name.strip(), color)
 
 
 def get_workspace(id: int) -> Optional[Workspace]:

@@ -5,8 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-import re
-from pydantic import Field, validator
+from pydantic import validator
 from taiga.base.serializer import BaseModel
 
 
@@ -14,22 +13,17 @@ class WorkspaceValidator(BaseModel):
     name: str
     color: int
 
-    @validator('name')
+    @validator("name")
     def check_name_not_empty(cls, v):
-        assert v != '', 'Empty name is not allowed.'
+        assert v != "", "Empty name is not allowed."
         return v
 
-    @validator('name')
-    def check_allowed_characters(cls, v):
-        assert re.fullmatch("^[a-zA-Z0-9 \-]+$", v), 'Character not allowed.'
-        return v
-
-    @validator('name')
+    @validator("name")
     def check_name_length(cls, v):
-        assert len(v) <= 40, 'Name too long'
+        assert len(v) <= 40, "Name too long"
         return v
 
-    @validator('color')
+    @validator("color")
     def check_allowed_color(cls, v):
-        assert v >= 1 and v <= 8, 'Color not allowed.'
+        assert v >= 1 and v <= 8, "Color not allowed."
         return v

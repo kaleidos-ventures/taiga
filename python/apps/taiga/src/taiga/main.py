@@ -15,11 +15,7 @@ from taiga.exceptions.handlers import http_exception_handler, request_validation
 from taiga.routers import router, tags_metadata
 
 api = FastAPI(
-    title=__title__,
-    description=__description__,
-    version=__version__,
-    openapi_tags=tags_metadata,
-    debug=settings.DEBUG
+    title=__title__, description=__description__, version=__version__, openapi_tags=tags_metadata, debug=settings.DEBUG
 )
 
 # Setup CORS

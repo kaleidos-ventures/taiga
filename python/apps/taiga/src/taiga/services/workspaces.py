@@ -7,17 +7,18 @@
 
 from typing import Iterable, Optional
 
+from taiga.models.users import User
 from taiga.models.workspaces import Workspace
 from taiga.repositories import workspaces as workspaces_repo
 
 
-def get_workspaces(owner_id: int) -> Iterable[Workspace]:
-    return workspaces_repo.get_workspaces(owner_id)
+def get_workspaces(owner: User) -> Iterable[Workspace]:
+    return workspaces_repo.get_workspaces(owner)
 
 
-def create_workspace(name: str, color: int) -> Optional[Workspace]:
-    return workspaces_repo.create_workspace(name.strip(), color)
+def create_workspace(name: str, color: int, owner: User) -> Workspace:
+    return workspaces_repo.create_workspace(name, color, owner)
 
 
-def get_workspace(id: int) -> Optional[Workspace]:
-    return workspaces_repo.get_workspace(id)
+def get_workspace(slug: str) -> Optional[Workspace]:
+    return workspaces_repo.get_workspace(slug)

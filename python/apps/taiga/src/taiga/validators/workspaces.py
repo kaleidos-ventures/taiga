@@ -14,16 +14,22 @@ class WorkspaceValidator(BaseModel):
     color: int
 
     @validator("name")
-    def check_name_not_empty(cls, v):
+    def check_name_not_empty(cls, v: str) -> str:
         assert v != "", "Empty name is not allowed."
         return v
 
     @validator("name")
-    def check_name_length(cls, v):
+    def check_name_length(cls, v: str) -> str:
         assert len(v) <= 40, "Name too long"
         return v
 
     @validator("color")
-    def check_allowed_color(cls, v):
+    def check_allowed_color(cls, v: int) -> int:
         assert v >= 1 and v <= 8, "Color not allowed."
         return v
+
+    # Sanitizers
+
+    @validator("name")
+    def strip_name(cls, v: str) -> str:
+        return v.strip()

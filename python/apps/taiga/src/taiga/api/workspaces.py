@@ -7,11 +7,13 @@
 
 from typing import List
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
+from taiga.dependencies.users import get_current_user
 from taiga.exceptions import api as ex
+from taiga.models.users import User
 from taiga.serializers.workspaces import WorkspaceSerializer
 from taiga.services import workspaces as workspaces_services
-from taiga.validators.wokspaces import WorkspaceValidator
+from taiga.validators.workspaces import WorkspaceValidator
 
 metadata = {
     "name": "workspaces",
@@ -24,15 +26,11 @@ router = APIRouter(prefix="/workspaces", tags=["workspaces"])
 @router.get(
     "",
     name="workspaces.list",
-    summary="Get workspaces by owner",
-    response_model=List[WorkspaceSerializer]
+    summary="Get the workspaces of the logged user",
+    response_model=List[WorkspaceSerializer],
 )
-def get_workspaces_by_owner(owner_id: int = Query(None, description="the owner id (int)")) -> List[WorkspaceSerializer]:
-    workspaces = workspaces_services.get_workspaces(owner_id=owner_id)
-
-    if not workspaces:
-        raise ex.NotFoundError()
-
+def get_workspaces_by_owner(user: User = Depends(get_current_user)) -> List[WorkspaceSerializer]:
+    workspaces = workspaces_services.get_workspaces(owner=user)
     return WorkspaceSerializer.from_queryset(workspaces)
 
 
@@ -42,25 +40,22 @@ def get_workspaces_by_owner(owner_id: int = Query(None, description="the owner i
     summary="Post workspace",
     response_model=WorkspaceSerializer,
 )
-def create_workspace(form: WorkspaceValidator) -> WorkspaceSerializer:
-    workspace = workspaces_services.create_workspace(form.name, form.color)
-    if not workspace:
-        raise ex.HTTPException(status_code=400, detail="error")
-
+def create_workspace(form: WorkspaceValidator, user: User = Depends(get_current_user)) -> WorkspaceSerializer:
+    workspace = workspaces_services.create_workspace(name=form.name, color=form.color, owner=user)
     return WorkspaceSerializer.from_orm(workspace)
 
 
 @router.get(
-    "/{workspace_id}",
+    "/{workspace_slug}",
     name="workspaces.get",
     summary="Get workspace details",
     response_model=WorkspaceSerializer,
 )
-def get_workspace(workspace_id: int = Query(None, description="the workspace id (int)")) -> WorkspaceSerializer:
+def get_workspace(workspace_slug: str = Query(None, description="the workspace slug(str)")) -> WorkspaceSerializer:
     """
-    Get workspace detail by id.
+    Get workspace detail by slug
     """
-    workspace = workspaces_services.get_workspace(workspace_id)
+    workspace = workspaces_services.get_workspace(workspace_slug)
 
     if workspace is None:
         raise ex.NotFoundError()

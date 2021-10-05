@@ -44,6 +44,7 @@ class AuthenticationError(HTTPException):
 # HTTP 404: NOT FOUND
 ##########################
 
+
 class NotFoundError(HTTPException):
     def __init__(self, detail: Any = "Not found"):
         super().__init__(

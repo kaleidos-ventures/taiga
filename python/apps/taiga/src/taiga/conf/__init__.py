@@ -5,9 +5,9 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from functools import lru_cache
 import logging.config
 import secrets
+from functools import lru_cache
 
 from pydantic import BaseSettings  # , AnyHttpUrl, EmailStr, HttpUrl, PostgresDsn, validator
 
@@ -30,6 +30,7 @@ class Settings(BaseSettings):
 @lru_cache()
 def get_settings() -> Settings:
     return Settings()
+
 
 logging.config.dictConfig(LOGGING_CONFIG)
 settings: Settings = get_settings()

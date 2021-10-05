@@ -5,16 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from pydantic.schema import datetime
 from taiga.base.serializer import BaseModel
 
 
 class WorkspaceSerializer(BaseModel):
-    id: int
     name: str
     slug: str
     color: int
-    #TODO: is_owner/is_guest/is_editor when we have user authenticate
 
     class Config:
         orm_mode = True

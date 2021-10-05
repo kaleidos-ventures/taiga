@@ -55,12 +55,12 @@ def test_create_workspace_with_color_string(client):
 
 
 def test_create_workspace_with_valid_data(client):
-    username = "admin"
-    f.UserFactory(username=username)
-
+    username = "user1"
+    user = f.UserFactory(username=username)
     name = "WS test"
     color = 1
 
+    client.login(user)
     response = client.post("/workspaces", json={"name": name, "color": color})
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json()["name"] == "WS test"
@@ -68,11 +68,12 @@ def test_create_workspace_with_valid_data(client):
 
 
 def test_create_workspace_with_valid_non_ASCII_blank_chars(client):
-    username = "admin"
-    f.UserFactory(username=username)
+    username = "user1"
+    user = f.UserFactory(username=username)
     name = "       My w0r#%&乕شspace         "
     color = 1
 
+    client.login(user)
     response = client.post("/workspaces", json={"name": name, "color": color})
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json()["name"] == "My w0r#%&乕شspace"
@@ -80,18 +81,15 @@ def test_create_workspace_with_valid_non_ASCII_blank_chars(client):
     assert response.json()["color"] == 1
 
 
-def test_workspaces_by_nonexistent_owner_id(client):
-    response = client.get("/workspaces?owner_id=99")
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-def test_workspaces_by_owner_id(client):
+def test_workspaces_by_owner(client):
+    username = "user1"
+    user = f.UserFactory(username=username)
     name = "WS test"
     color = 3
-    workspace = f.WorkspaceFactory(name=name, color=color)
+    f.WorkspaceFactory(name=name, color=color, owner=user)
 
-    url = "/workspaces?owner_id=" + str(workspace.owner_id)
-    response = client.get(url)
+    client.login(user)
+    response = client.get("/workspaces")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
     assert response.json()[0]["name"] == "WS test"
@@ -99,17 +97,23 @@ def test_workspaces_by_owner_id(client):
 
 
 def test_nonexistent_workspace(client):
-    response = client.get("/workspaces/99")
+    username = "user1"
+    user = f.UserFactory(username=username)
+
+    client.login(user)
+    response = client.get("/workspaces/non-existent")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
 def test_existent_workspace(client):
+    username = "user1"
+    user = f.UserFactory(username=username)
     name = "WS test"
     color = 1
-    workspace = f.WorkspaceFactory(name=name, color=color)
+    f.WorkspaceFactory(name=name, color=color, owner=user)
 
-    url = "/workspaces/" + str(workspace.id)
-    response = client.get(url)
+    client.login(user)
+    response = client.get("/workspaces/ws-test")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json()["name"] == "WS test"
     assert response.json()["color"] == 1

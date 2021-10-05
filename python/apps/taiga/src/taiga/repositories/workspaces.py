@@ -7,28 +7,21 @@
 
 from typing import Iterable, Optional
 
+from taiga.models.users import User
 from taiga.models.workspaces import Workspace
-from taiga.repositories import users as users_repo
 
 
-def get_workspaces(owner_id: int) -> Iterable[Workspace]:
-    data: Iterable[Workspace] = Workspace.objects.filter(owner_id=owner_id)
+def get_workspaces(owner: User) -> Iterable[Workspace]:
+    data: Iterable[Workspace] = Workspace.objects.filter(owner=owner)
     return data
 
 
-def create_workspace(name: str, color: int) -> Optional[Workspace]:
-    #TODO: owner when we have authenticated user
-    user = users_repo.get_user_by_username_or_email("admin")
-
-    return Workspace.objects.create(
-        name=name,
-        color=color,
-        owner=user,
-    )
+def create_workspace(name: str, color: int, owner: User) -> Workspace:
+    return Workspace.objects.create(name=name, color=color, owner=owner)
 
 
-def get_workspace(id: int) -> Optional[Workspace]:
+def get_workspace(slug: str) -> Optional[Workspace]:
     try:
-        return Workspace.objects.get(id=id)
+        return Workspace.objects.get(slug=slug)
     except Workspace.DoesNotExist:
         return None

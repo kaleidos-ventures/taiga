@@ -31,7 +31,7 @@ Cypress.Commands.add('login', loginCommand);
 
 declare namespace Cypress {
   interface Chainable {
-    login: typeof loginCommand 
+    login: typeof loginCommand
   }
 }
 ```
@@ -108,6 +108,21 @@ describe('taiga', () => {
     cy.login(exampleFixture.email , exampleFixture.name);
     getGreeting().contains('Welcome to taiga!');
   });
+});
+```
+
+
+## Log of a count.
+
+If you want to log a count of an amount of items you should do it like this
+
+```ts
+// First you create a variable with Cypress
+cy.get('[data-e2e=workspace-item]').its('length').as('workspaceItemCount');
+
+// Then you call it returning an string
+cy.get<string>('@workspaceItemCount').then(previousCount => {
+  cy.log(previousCount);
 });
 ```
 

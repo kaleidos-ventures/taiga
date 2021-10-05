@@ -50,7 +50,6 @@ export class WorkspaceCreateComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern(`^[a-zA-Z0-9 \-]+$`) //eslint-disable-line
         ]
       ]
     });

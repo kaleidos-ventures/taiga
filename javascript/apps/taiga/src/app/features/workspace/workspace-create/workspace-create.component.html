@@ -22,6 +22,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [class.error]="createProjectErrorList.length > 0"
       [label]="t('workspace.workspace_name')">
       <input
+        data-e2e="project-name-input"
         formControlName="projectName"
         [attr.aria-invalid]="createProjectForm.invalid"
         #firstInput
@@ -40,13 +41,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             *ngIf="createProjectErrorList.includes('required')">
             {{ t('workspace.error_name_empty') }}
           </ng-container>
-          <ng-container
-            *ngIf="createProjectErrorList.includes('pattern')">
-          {{ t('workspace.error_characters') }}
-          </ng-container>
         </label>
     </tg-ui-input>
     <button
+      data-e2e="create-project-form-submit"
       appearance="primary"
       tuiButton
       title="{{ t('workspace.create_workspace') }}"

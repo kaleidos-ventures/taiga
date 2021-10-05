@@ -22,10 +22,13 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post(
     "/token",
     name="auth.token",
-    summary="Get an access and refresh token using a username and a password",
+    summary="Get token",
     response_model=AccessTokenWithRefreshSerializer,
 )
 def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
+    """
+    Get an access and refresh token using a username and a password.
+    """
     data = auth_services.login(form.username, form.password)
     if not data:
         raise AuthenticationError()
@@ -35,10 +38,13 @@ def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
 @router.post(
     "/token/refresh",
     name="auth.token.refresh",
-    summary="Get an access and refresh token using a refresh token",
+    summary="Refresh token",
     response_model=AccessTokenWithRefreshSerializer,
 )
 def refresh(form: RefreshTokenValidator) -> AccessTokenWithRefreshSerializer:
+    """
+    Get an access and refresh token using a refresh token.
+    """
     data = auth_services.refresh(form.refresh)
     if not data:
         raise AuthenticationError()

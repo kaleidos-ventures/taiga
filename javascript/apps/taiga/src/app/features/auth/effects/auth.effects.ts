@@ -9,10 +9,10 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 import * as AuthActions from '../actions/auth.actions';
-import { AuthApiService } from '@taiga/api';
+import { AuthApiService, UsersApiService } from '@taiga/api';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { Auth, User } from '@taiga/data';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
@@ -24,11 +24,10 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.login),
       pessimisticUpdate({
-        run: (action) => {
+        run: ({ username, password }) => {
           return this.authApiService.login({
-            type: 'normal',
-            username: action.username,
-            password: action.password,
+            username,
+            password,
           }).pipe(
             map((auth: Auth) => {
               return AuthActions.loginSuccess({ auth });
@@ -45,22 +44,31 @@ export class AuthEffects {
   public loginSuccess$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.loginSuccess),
-      map((action) => {
-        const auth = action.auth;
-        const authEntries = Object.entries(auth).filter(([key]) => !['authToken', 'refresh'].includes(key));
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-        const user = Object.fromEntries(authEntries) as User;
+      switchMap(({ auth }) => {
+        this.localStorageService.set('auth', auth);
 
-        this.localStorageService.set('user', user);
-
-        return AuthActions.setUser({ user });
+        return this.usersApiService.me().pipe(
+          map((user: User) => {
+            return AuthActions.setUser({ user });
+          })
+        );
       })
     );
   });
 
+  public setUser$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.setUser),
+      tap(({ user }) => {
+        this.localStorageService.set('user', user);
+      })
+    );
+  }, { dispatch: false });
+
   constructor(
     private actions$: Actions,
     private authApiService: AuthApiService,
+    private usersApiService: UsersApiService,
     private localStorageService: LocalStorageService) {}
 
 }

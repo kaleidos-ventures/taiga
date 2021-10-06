@@ -9,16 +9,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
-
-import { Auth, LoginInput } from '@taiga/data';
+import { User } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthApiService {
+export class UsersApiService {
   constructor(private http: HttpClient, private config: ConfigService) { }
 
-  public login(data: LoginInput) {
-    return this.http.post<Auth>(`${this.config.apiUrl}/auth/token`, data);
+  public me() {
+    return this.http.get<User>(`${this.config.apiUrl}/users/me`);
   }
 }

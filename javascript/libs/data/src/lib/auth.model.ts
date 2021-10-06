@@ -7,14 +7,12 @@
  */
 import { User } from './user.model';
 
-export interface Auth extends User {
-  authToken: string;
+export interface Auth {
+  token: string;
   refresh: string;
 }
 
 export interface LoginInput {
   password: string;
-  type: 'normal' | 'github';
   username: User['username'];
-  code: string;
 }

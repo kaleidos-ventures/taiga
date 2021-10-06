@@ -27,9 +27,9 @@ describe('AuthApiService', () => {
     const username = 'username1';
     const password = '1234';
 
-    spectator.service.login({username, password, type: 'normal'}).subscribe();
+    spectator.service.login({username, password}).subscribe();
 
-    const req = spectator.expectOne(`${ConfigServiceMock.apiUrl}/auth`, HttpMethod.POST);
+    const req = spectator.expectOne(`${ConfigServiceMock.apiUrl}/auth/token`, HttpMethod.POST);
     expect(req.request.body['username']).toEqual(username);
     expect(req.request.body['password']).toEqual(password);
   });

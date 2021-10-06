@@ -9,7 +9,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Observable } from 'rxjs';
-import { AuthApiService } from '@taiga/api';
+import { AuthApiService, UsersApiService } from '@taiga/api';
 
 import { AuthEffects } from './auth.effects';
 import { Action } from '@ngrx/store';
@@ -17,6 +17,7 @@ import { login, loginSuccess, setUser } from '../actions/auth.actions';
 import { AuthMockFactory, UserMockFactory } from '@taiga/data';
 import * as faker from 'faker';
 import { cold, hot } from 'jest-marbles';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 describe('AuthEffects', () => {
   let actions$: Observable<Action>;
@@ -24,9 +25,13 @@ describe('AuthEffects', () => {
   const createService = createServiceFactory({
     service: AuthEffects,
     providers: [
-      provideMockActions(() => actions$)
+      provideMockActions(() => actions$),
     ],
-    mocks: [ AuthApiService ],
+    mocks: [
+      AuthApiService,
+      UsersApiService,
+      LocalStorageService,
+    ],
   });
 
   beforeEach(() => {
@@ -59,20 +64,40 @@ describe('AuthEffects', () => {
 
   it('login success', () => {
     const user = UserMockFactory();
-    const auth = {
-      ...AuthMockFactory(),
-      ...user,
-    };
+    const auth = AuthMockFactory();
+
     const effects = spectator.inject(AuthEffects);
+    const localStorageService = spectator.inject(LocalStorageService);
+    const usersApiService = spectator.inject(UsersApiService);
+    usersApiService.me.mockReturnValue(
+      cold('-b|', { b: user })
+    );
 
     actions$ = hot('-a', { a:  loginSuccess({ auth })});
 
-    const expected = cold('-a', {
+    const expected = cold('--a', {
       a: setUser({ user }),
     });
 
     expect(
       effects.loginSuccess$
     ).toBeObservable(expected);
+
+    expect(effects.loginSuccess$).toSatisfyOnFlush(() => {
+      expect(localStorageService.set).toHaveBeenCalledWith('auth', auth);
+    });
+  });
+
+  it('set user', () => {
+    const user = UserMockFactory();
+
+    const effects = spectator.inject(AuthEffects);
+    const localStorageService = spectator.inject(LocalStorageService);
+
+    actions$ = hot('-a', { a:  setUser({ user })});
+
+    expect(effects.setUser$).toSatisfyOnFlush(() => {
+      expect(localStorageService.set).toHaveBeenCalledWith('user', user);
+    });
   });
 });

@@ -9,14 +9,10 @@
 import * as faker from 'faker';
 
 import { Auth } from './auth.model';
-import { UserMockFactory } from './user.model.mock';
 
 export const AuthMockFactory = (): Auth => {
-  const user = UserMockFactory();
-
   return {
-    ...user,
     refresh: faker.datatype.uuid(),
-    authToken: faker.datatype.uuid(),
+    token: faker.datatype.uuid(),
   };
 };

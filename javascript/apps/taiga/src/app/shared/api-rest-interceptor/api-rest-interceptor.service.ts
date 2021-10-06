@@ -16,6 +16,8 @@ import { getGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
 import { camelCase, snakeCase } from 'change-case';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { Auth } from '@taiga/data';
 
 @Injectable()
 export class ApiRestInterceptorService implements HttpInterceptor {
@@ -23,7 +25,8 @@ export class ApiRestInterceptorService implements HttpInterceptor {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly store: Store) {
+    private readonly store: Store,
+    private readonly localStorageService: LocalStorageService) {
     this.requests.pipe(
       concatLatestFrom(() => this.store.select(getGlobalLoading))
     // eslint-disable-next-line ngrx/no-store-subscription
@@ -47,6 +50,8 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     if (!request.url.startsWith(apiUrl)) {
       return next.handle(request);
     }
+
+    request = this.authInterceptor(request);
 
     if (request instanceof HttpRequest) {
       request = this.snakeCaseRequestInterceptor(request);
@@ -118,18 +123,17 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     return newRequest;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // private authInterceptor(request: HttpRequest<any>): HttpRequest<any> {
-  //   const token = this.localStorageService.get<string>('token');
+  private authInterceptor(request: HttpRequest<unknown>): HttpRequest<unknown> {
+    const auth = this.localStorageService.get<Auth>('auth');
 
-  //   if (token) {
-  //     return request.clone({
-  //       setHeaders: {
-  //         Authorization: `Bearer ${ token }`,
-  //       },
-  //     });
-  //   }
+    if (auth?.token) {
+      return request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${ auth.token }`,
+        },
+      });
+    }
 
-  //   return request;
-  // }
+    return request;
+  }
 }

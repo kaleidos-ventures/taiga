@@ -19,6 +19,6 @@ export const fetchWorkspaceList = createAction(
 );
 
 export const addWorkspace = createAction(
-  '[Workspace] Add workspace',
+  '[Workspace] Add new workspace',
   props<{name: Workspace['name'], color: Workspace['color'], userId: User['id']}>()
 );

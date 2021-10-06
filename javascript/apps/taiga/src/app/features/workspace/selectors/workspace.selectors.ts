@@ -9,5 +9,6 @@
 import { workspaceFeature } from '../reducers/workspace.reducer';
 
 export const {
-  selectWorkspaces
+  selectWorkspaces,
+  selectSkeleton: selectWorkspaceSkeleton
 } = workspaceFeature;

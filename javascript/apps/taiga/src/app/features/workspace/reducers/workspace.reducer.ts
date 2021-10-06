@@ -13,16 +13,24 @@ import * as WorkspaceActions from '../actions/workspace.actions';
 
 export interface WorkspaceState {
   workspaces: Workspace[],
+  skeleton: boolean,
 }
 
 export const initialState: WorkspaceState = {
   workspaces: [],
+  skeleton: false,
 };
 
 export const reducer = createReducer(
   initialState,
   on(WorkspaceActions.setWorkspaceList, (state, { workspaces }): WorkspaceState => {
     state.workspaces = workspaces;
+    state.skeleton = false;
+
+    return state;
+  }),
+  on(WorkspaceActions.fetchWorkspaceList, (state): WorkspaceState => {
+    state.skeleton = true;
 
     return state;
   }),

@@ -47,11 +47,12 @@ li {
   }
 
   & .user-name {
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-medium);
   }
 
   & .user-mail {
     color: var(--color-gray70);
+    font-weight: var(--font-weight-regular);
   }
 
   &:hover,
@@ -69,7 +70,7 @@ li {
 .user-link {
   color: var(--color-gray80);
   display: flex;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   padding: var(--spacing-8);
 
   &:hover {
@@ -85,6 +86,10 @@ li {
 .sign-out {
   border-block-start: solid 1px var(--color-gray30);
   color: var(--color-secondary);
-  margin-block-start: var(--spacing-16);
-  padding-block-start: var(--spacing-16);
+  margin-block-start: var(--spacing-8);
+  padding-block-start: var(--spacing-8);
+
+  & a {
+    color: var(--color-secondary);
+  }
 }

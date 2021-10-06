@@ -6,11 +6,14 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
+@import "tools/typography.css";
+
 [data-appearance="tertiary"] {
   & tui-wrapper {
     background: var(--color-gray10);
     border-radius: 4px;
     color: var(--color-secondary);
+    font-weight: var(--font-weight-medium);
     padding: 0 var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
 
     &[data-state="hovered"] {
@@ -71,6 +74,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     background: var(--color-warning70);
     border-radius: 4px;
     color: var(--color-white);
+    font-weight: var(--font-weight-medium);
     padding: 0 var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
 
     &[data-state="hovered"] {
@@ -116,6 +120,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     background-color: var(--color-gray30);
     border-radius: 4px;
     color: var(--color-gray80);
+    font-weight: var(--font-weight-medium);
     padding: 0 var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
 
     &[data-state="hovered"] {
@@ -156,6 +161,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & tui-wrapper {
     background: none;
     color: var(--color-gray100);
+    font-weight: var(--font-weight-medium);
     padding: 0 var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
 
     &[data-state="hovered"] {
@@ -181,6 +187,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & tui-wrapper {
     background: none;
     color: var(--color-secondary);
+    font-weight: var(--font-weight-medium);
     padding: var(--spacing-8) !important; /* stylelint-disable-line declaration-no-important */
 
     &[data-state="hovered"] {
@@ -200,6 +207,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & tui-wrapper {
     background: none;
     color: var(--color-gray60);
+    font-weight: var(--font-weight-medium);
     padding: var(--spacing-8) !important; /* stylelint-disable-line declaration-no-important */
 
     &[data-state="hovered"] {
@@ -207,11 +215,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-secondary90);
     }
 
-    &._focused {
+    &[data-state="focused"] {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
       }
+    }
+
+    &[data-state="pressed"] {
+      background: var(--color-gray20);
     }
   }
 }
@@ -220,6 +232,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & tui-wrapper {
     background: none;
     color: var(--color-gray60);
+    font-weight: var(--font-weight-medium);
     padding: var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
 
     &[data-state="hovered"] {
@@ -227,11 +240,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-secondary90);
     }
 
-    &._focused {
+    &[data-state="focused"] {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
       }
+    }
+
+    &[data-state="pressed"] {
+      background: var(--color-gray20);
     }
   }
 }
@@ -240,6 +257,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & tui-wrapper {
     background: none;
     color: var(--color-secondary);
+    font-weight: var(--font-weight-medium);
     padding: var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
 
     &[data-state="hovered"] {
@@ -247,11 +265,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-secondary90);
     }
 
-    &._focused {
+    &[data-state="focused"] {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
       }
+    }
+
+    &[data-state="pressed"] {
+      background: var(--color-gray20);
     }
   }
 
@@ -265,17 +287,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & tui-wrapper {
     border-radius: 4px;
     color: var(--color-gray80);
+    font-weight: var(--font-weight-medium);
     padding: 0 var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
 
     &[data-state="hovered"] {
       background-color: var(--color-primary40);
     }
 
-    &._focused {
+    &[data-state="focused"] {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
       }
+    }
+
+    &[data-state="pressed"] {
+      background-color: var(--color-primary40);
     }
   }
 
@@ -318,6 +345,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 [tuiLink] {
   & .content {
+    @mixin font-body;
+
     color: var(--color-secondary);
     transition: color .3s ease-in-out;
   }

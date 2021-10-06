@@ -12,6 +12,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: block;
   flex: 1 1 auto;
   padding: var(--spacing-16);
+  position: relative;
 }
 
 .workspace-wrapper {
@@ -23,10 +24,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding-block-end: var(--spacing-16);
+  margin-block-end: var(--spacing-16);
 
   & .workspace-title {
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-medium);
     margin: 0;
   }
 
@@ -40,24 +41,44 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
+.worskpace-placeholder {
+  block-size: 2rem;
+  position: relative;
+}
+
 .workspace-call-action {
   background: var(--color-white);
+  inset-block-start: 50px;
+  inset-inline-start: calc(50% - 200px);
   margin: 0 auto;
   max-inline-size: 400px;
   padding: var(--spacing-24);
+  position: absolute;
+  z-index: var(--$first-layer);
 
   & .workspace-call-action-title {
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-medium);
     margin-block-end: var(--spacing-16);
     margin-block-start: 0;
   }
 
   & .workspace-call-action-text {
+    @mixin font-body-paragraph;
+
+    color: var(--color-gray70);
+    font-weight: var(--font-weight-regular);
     margin-block-end: var(--spacing-16);
   }
 
   & .workspace-call-action-link {
-    display: block;
+    align-items: center;
+    display: flex;
     margin-block-end: var(--spacing-16);
   }
+}
+
+.workspace-item-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-28);
 }

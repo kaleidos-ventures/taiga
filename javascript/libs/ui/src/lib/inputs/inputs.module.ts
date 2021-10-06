@@ -8,7 +8,6 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { InputComponent } from './input/input.component';
 import { InputRefDirective } from './inputRef.directive';
@@ -18,7 +17,6 @@ import { SelectComponent } from './select/select.component';
   imports: [
     TuiSvgModule,
     CommonModule,
-    BrowserModule,
   ],
   declarations: [
     InputComponent,

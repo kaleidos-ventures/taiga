@@ -6,10 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { animate, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, EventEmitter, Output, Input } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Workspace } from '@taiga/data';
+import { fadeIntOutAnimation, slideInOut } from '~/app/shared/utils/animations';
+import { selectWorkspaceSkeleton } from '../selectors/workspace.selectors';
 
 @Component({
   selector: 'tg-workspace',
@@ -18,28 +20,11 @@ import { Workspace } from '@taiga/data';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
   animations: [
-    trigger('slideInOut', [
-      transition(':enter', [
-        style({
-          height: '0',
-          opacity: '0'
-        }),
-        animate('200ms ease-in', style({
-          height: '*',
-          opacity: '1'
-        }))
-      ]),
-      transition(':leave', [
-        animate('200ms ease-in', style({
-          height: '0',
-          opacity: '0'
-        }))
-      ])
-    ])
+    slideInOut,
+    fadeIntOutAnimation
   ]
 })
 export class WorkspaceComponent {
-
   @Input()
   public workspaceList!: Workspace[];
 
@@ -47,6 +32,11 @@ export class WorkspaceComponent {
   public hideActivity = new EventEmitter<boolean>();
 
   public showCreate = false;
+  public showSkeleton$ = this.store.select(selectWorkspaceSkeleton);
+
+  constructor(
+    private store: Store,
+  ) {}
 
   public toggleActivity(show: boolean) {
     this.hideActivity.next(show);

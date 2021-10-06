@@ -22,7 +22,7 @@ const baseArgs = {
 const baseArgTypes = {
   icon: {
     defaultValue: 'folder',
-    options: ['folder', 'help', 'discover', 'bell', 'taiga-logo'],
+    options: ['folder', 'help', 'discover', 'bell', 'taiga-logo', 'collapse-left', 'collapse-right', 'arrow-up-right'],
     control: { type: 'select' }
   },
   disabled: {

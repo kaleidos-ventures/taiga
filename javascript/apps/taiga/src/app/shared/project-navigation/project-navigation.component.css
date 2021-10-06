@@ -122,6 +122,7 @@ ul {
   block-size: var(--spacing-32);
   border-radius: 3px;
   display: flex;
+  font-weight: var(--font-weight-regular);
   padding: var(--spacing-4);
   transition: padding var(--transition);
 }
@@ -144,6 +145,7 @@ ul {
   &.active-dialog {
     background: var(--color-gray90);
     color: var(--color-primary);
+    font-weight: var(--font-weight-regular);
   }
 }
 
@@ -389,6 +391,7 @@ ul {
     block-size: var(--spacing-32);
     border-radius: 3px;
     display: block;
+    font-weight: var(--font-weight-regular);
     padding: var(--spacing-8);
 
     &:hover {
@@ -434,6 +437,7 @@ ul {
 
     & .dialog-text {
       font-size: var(--font-size-medium);
+      font-weight: var(--font-weight-regular);
       overflow: hidden;
       text-decoration: none;
       text-overflow: ellipsis;

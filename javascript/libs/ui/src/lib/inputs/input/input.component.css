@@ -6,6 +6,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
+@import "tools/typography.css";
+
 .input-container {
   display: flex;
   max-inline-size: 100%;
@@ -63,7 +65,10 @@ label {
 
   & .error {
     & .label-error {
+      @mixin font-small;
+
       color: var(--color-red80);
+      font-weight: var(--font-weight-regular);
       margin-inline-start: var(--spacing-4);
     }
 

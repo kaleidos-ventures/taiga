@@ -28,7 +28,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <button
           (click)="toggleActivity(true)"
           tuiButton
-          appearance="flat"
+          appearance="tertiary"
           class="workspace-title-link"
           icon="'collapse-left'"
           iconAlign="left"
@@ -44,15 +44,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       cdkTrapFocus
       *ngIf="showCreate">
     </tg-workspace-create>
-    <div *ngIf="!workspaceList.length"
+    <div
+      *ngIf="!workspaceList.length && !showCreate"
       class="worskpace-placeholder">
-      <div class="workspace-call-action">
+      <tg-workspace-skeleton
+        [@fadeInOut]
+        [static]="true">
+      </tg-workspace-skeleton>
+      <div class="workspace-call-action" [@fadeInOut]>
         <h4 class="workspace-call-action-title">{{ t('placeholder_title') }}
         </h4>
         <p class="workspace-call-action-text">{{ t('placeholder_text') }}</p>
         <a class="workspace-call-action-link"
           tuiLink
-          icon="'plus'"
+          icon="'arrow-up-right'"
           title="{{ t('placeholder_link') }}">
           {{ t('placeholder_link') }}
         </a>
@@ -68,14 +73,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
     </div>
     <ng-container>
-      <tg-workspace-skeleton *ngIf="!workspaceList.length">
+      <tg-workspace-skeleton
+        [@fadeInOut]
+        *ngIf="(showSkeleton$ | async) && workspaceList.length > 0">
       </tg-workspace-skeleton>
     </ng-container>
-    <tg-workspace-item
+    <div class="workspace-item-container">
+      <tg-workspace-item
       data-e2e="workspace-item"
       *ngFor="let workspace of workspaceList; trackBy: trackByWorkspace"
       [workspace]="workspace">
     </tg-workspace-item>
+    </div>
   </div>
   <ng-template #tooltip>
       <p>{{ t('tooltip_add_workspace') }}</p>

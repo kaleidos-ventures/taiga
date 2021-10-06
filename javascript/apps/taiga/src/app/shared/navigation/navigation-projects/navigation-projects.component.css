@@ -50,7 +50,7 @@ li {
 .project-data {
   display: flex;
   flex-direction: column;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   justify-content: space-between;
   max-inline-size: calc(100% - var(--spacing-8));
   padding-inline: var(--spacing-12) var(--spacing-16);
@@ -62,12 +62,14 @@ li {
   & .project-name {
     @mixin text-overflow;
 
+    font-weight: var(--font-weight-medium);
     line-height: 1.4;
   }
 
   & .project-workspace {
     @mixin text-overflow;
 
+    font-weight: var(--font-weight-regular);
     line-height: 1.2;
   }
 }

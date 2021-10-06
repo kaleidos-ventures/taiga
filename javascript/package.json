@@ -41,7 +41,7 @@
     "prerender": "ng run taiga:prerender",
     "translations:split": "ng g @ngneat/transloco:split --translation-path 'apps/taiga/src/assets/i18n/'",
     "translations:join": "ng g @ngneat/transloco:join --translation-path 'apps/taiga/src/assets/i18n/'",
-    "prepare": "cd .. && husky install javascript/.husky"
+    "install:hooks": "cd .. && husky install javascript/.husky"
   },
   "private": true,
   "dependencies": {

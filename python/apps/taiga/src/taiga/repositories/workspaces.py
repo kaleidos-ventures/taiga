@@ -12,7 +12,7 @@ from taiga.models.workspaces import Workspace
 
 
 def get_workspaces(owner: User) -> Iterable[Workspace]:
-    data: Iterable[Workspace] = Workspace.objects.filter(owner=owner)
+    data: Iterable[Workspace] = Workspace.objects.filter(owner=owner).order_by("-created_date")
     return data
 
 

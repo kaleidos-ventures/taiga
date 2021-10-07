@@ -19,6 +19,8 @@ const routes: Routes = [
   { path: '', loadChildren: () => import('./pages/workspace/workspace-page.module').then(m => m.WorkspacePageModule) },
 
   { path: 'workspace/:slug', loadChildren: () => import('./pages/workspace-detail-page/workspace-detail-page.module').then(m => m.WorkspaceDetailPageModule) },
+
+  { path: 'new-project', loadChildren: () => import('./pages/new-project-page/new-project-page.module').then(m => m.NewProjectPageModule) },
 ];
 
 @NgModule({

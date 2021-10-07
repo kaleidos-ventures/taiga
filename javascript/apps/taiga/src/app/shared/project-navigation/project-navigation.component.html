@@ -32,7 +32,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <a *ngIf="!collapsed"
             class="workspace-data-workspace"
             href="">
-            {{ t('main-project-navigation.personal-workspace') }}
+            {{ t('main_project_navigation.personal_workspace') }}
           </a>
         </div>
       </div>
@@ -105,7 +105,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <svg *ngIf="!collapsed"
                   class="chevron"
                   [class.active]="scrumChildMenuVisible">
-                  <use href="assets/icons/sprite.svg#chevron" />
+                  <use href="assets/icons/sprite.svg#chevron-down" />
                 </svg>
               </button>
               <ul *ngIf="!collapsed && scrumChildMenuVisible"
@@ -175,7 +175,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </nav>
         <hr class="menu-separator">
         <div *ngIf="!collapsed"
-          class="goto">{{ t('main-project-navigation.goto') }}</div>
+          class="goto">{{ t('main_project_navigation.goto') }}</div>
         <nav class="secondary-menu">
           <ul>
             <li class="menu-option"
@@ -257,13 +257,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </nav>
         <div class="bottom-menu">
           <div class="bottom-menu-option"
-            [attr.data-text]="t('main-project-navigation.project-settings')"
+            [attr.data-text]="t('main_project_navigation.project_settings')"
             (pointerenter)="popup($event, 'project-settings')"
             (pointerleave)="out()">
             <a (focus)="popup($event, 'project-settings')"
               (focusout)="out()"
-              [attr.data-text]="t('main-project-navigation.project-settings')"
-              [attr.aria-label]="collapsed ? t('main-project-navigation.project-settings') : null"
+              [attr.data-text]="t('main_project_navigation.project-settings')"
+              [attr.aria-label]="collapsed ? t('main_project_navigation.project-settings') : null"
               class="menu-option-item"
               [class.active-dialog]="dialog.type === 'project-settings'"
               href="dialog.link">
@@ -273,7 +273,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <span *ngIf="!collapsed"
                 class="bottom-menu-option-text"
                 data-animation="text">
-                {{ t('main-project-navigation.project-settings') }}
+                {{ t('main_project_navigation.project-settings') }}
               </span>
             </a>
           </div>
@@ -284,7 +284,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             <span *ngIf="!collapsed"
               class="button-collapse-text"
               data-animation="text">
-              {{ t('main-project-navigation.collapse-menu') }}
+              {{ t('main_project_navigation.collapse_menu') }}
             </span>
             <svg class="collapse-icon">
               <use [attr.href]="getCollapseIcon()" />
@@ -354,7 +354,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </a>
       <a class="workspace-data-workspace"
         href="">
-        {{ t('main-project-navigation.personal-workspace') }}
+        {{ t('main_project_navigation.personal-workspace') }}
       </a>
     </div>
   </div>

@@ -86,9 +86,16 @@ tui-avatar {
 }
 
 tui-dropdown-box {
-  --tui-base-01: transparent;
-
   border: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+tui-svg {
+  display: grid !important; /* stylelint-disable-line declaration-no-important */
+  place-content: center;
+
+  & svg { /* stylelint-disable-line selector-max-type */
+    fill: var(--color-secondary);
+  }
 }
 
 tui-hint-box {

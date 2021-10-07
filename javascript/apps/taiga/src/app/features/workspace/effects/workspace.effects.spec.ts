@@ -10,13 +10,12 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import * as faker from 'faker';
 
 import { WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { WorkspaceEffects } from './workspace.effects';
 import { WorkspaceApiService } from '@taiga/api';
-import { getWorkspaceList, setWorkspaceList } from '../actions/workspace.actions';
+import { fetchWorkspaceList, setWorkspaceList } from '../actions/workspace.actions';
 
 describe('WorkspaceEffects', () => {
   let actions$: Observable<Action>;
@@ -35,7 +34,6 @@ describe('WorkspaceEffects', () => {
   });
 
   it('load workspace', () => {
-    const id = faker.datatype.number();
     const workspace = WorkspaceMockFactory();
     const workspaceApiService = spectator.inject(WorkspaceApiService);
     const effects = spectator.inject(WorkspaceEffects);
@@ -44,7 +42,7 @@ describe('WorkspaceEffects', () => {
       cold('-b|', { b: [workspace] })
     );
 
-    actions$ = hot('-a', { a:  getWorkspaceList({ id })});
+    actions$ = hot('-a', { a:  fetchWorkspaceList()});
 
     const expected = cold('--a', {
       a: setWorkspaceList({ workspaces: [workspace] }),

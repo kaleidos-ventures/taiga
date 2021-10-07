@@ -21,10 +21,10 @@ export class WorkspaceEffects {
 
   public listWorkspaces$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceActions.getWorkspaceList),
+      ofType(WorkspaceActions.fetchWorkspaceList),
       fetch({
-        run: (action) => {
-          return this.workspaceApiService.fetchWorkspaceList(action.id).pipe(
+        run: () => {
+          return this.workspaceApiService.fetchWorkspaceList().pipe(
             map((workspaces: Workspace[]) => {
               return WorkspaceActions.setWorkspaceList({ workspaces });
             }),
@@ -47,9 +47,7 @@ export class WorkspaceEffects {
             color: action.color,
           }).pipe(
             map(() => {
-              return WorkspaceActions.getWorkspaceList({
-                id: action.userId,
-              });
+              return WorkspaceActions.fetchWorkspaceList();
             })
           );
         },

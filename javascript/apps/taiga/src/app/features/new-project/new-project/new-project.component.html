@@ -1,0 +1,45 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<ng-container *transloco="let t;">
+
+  <div class="new-project-wrapper">
+    <h1>{{ t('new_project.new_project') }}</h1>
+    <form [formGroup]="createProjectForm">
+      <label for="workspace-type-selector">
+        {{ t('workspace') }}
+      </label>
+  
+      <tui-select
+        [nativeId]="'workspace-type-selector'"
+        class="b-form"
+        formControlName="workspace"
+        [tuiTextfieldLabelOutside]="true"
+        [valueContent]="content">
+        {{ t('new_project.choose_workspace') }}
+        <tui-data-list-wrapper
+          *tuiDataList
+          size="l"
+          [items]="workspaceList$ | async"
+          [itemContent]="content">
+        </tui-data-list-wrapper>
+      </tui-select>
+      
+      <ng-template #content let-data>
+        <div class="workspace-option">
+          <!-- Update with workspace list -->
+          <tg-workspace-avatar
+            size="m"
+            [color]="data.color"
+            [name]="data.name">
+        </tg-workspace-avatar>
+          <div class="name">{{data.name}}</div>
+        </div>
+      </ng-template>
+    </form> 
+  </div>
+</ng-container>

@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
 
-import { Project } from '@taiga/data';
+import { Project, ProjectCreation } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root'
@@ -27,5 +27,9 @@ export class ProjectApiService {
 
   public getProject(id: Project['id']) {
     return this.http.get<Project>(`${this.config.apiUrl}/projects/${id}`);
+  }
+
+  public createProject(project: ProjectCreation) {
+    return this.http.post<Project>(`${this.config.apiUrl}/${project.workspace}/project`, project);
   }
 }

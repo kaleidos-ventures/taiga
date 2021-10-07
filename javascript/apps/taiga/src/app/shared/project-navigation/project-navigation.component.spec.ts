@@ -11,7 +11,6 @@ import { Project, ProjectMockFactory } from '@taiga/data';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { ProjectNavigationComponent } from './project-navigation.component';
-import { ProjectNavigationModule } from './project-navigation.module';
 
 import * as faker from 'faker';
 
@@ -21,7 +20,6 @@ describe('ProjectNavigationComponent', () => {
     component: ProjectNavigationComponent,
     imports: [
       getTranslocoModule(),
-      ProjectNavigationModule
     ],
     declareComponent: false,
     mocks: [

@@ -14,9 +14,8 @@ export const setWorkspaceList = createAction(
   props<{workspaces: Workspace[]}>()
 );
 
-export const getWorkspaceList = createAction(
-  '[WorkspaceList] Get',
-  props<{id: User['id']}>()
+export const fetchWorkspaceList = createAction(
+  '[WorkspaceList] Fetch'
 );
 
 export const addWorkspace = createAction(

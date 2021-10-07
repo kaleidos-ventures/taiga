@@ -27,14 +27,11 @@ describe('WorkspaceApiService', () => {
 
   it('list Workspaces', () => {
     const base = `${ConfigServiceMock.apiUrl}/workspaces`;
-    const id = faker.datatype.number();
-    const url = `${base}?owner_id=${id}`;
 
-    spectator.service.fetchWorkspaceList(id).subscribe();
+    spectator.service.fetchWorkspaceList().subscribe();
 
-    const req = spectator.expectOne(url, HttpMethod.GET);
+    const req = spectator.expectOne(base, HttpMethod.GET);
     expect(req.request.url).toEqual(base);
-    expect(req.request.params.get('owner_id')).toEqual(id.toString());
   });
   
   it('get Workspace', () => {

@@ -7,9 +7,18 @@
  */
 
 import { Milestone } from './milestone.model';
+import { Workspace } from './workspace.model';
 
 export interface Project {
   id: number;
   slug: string;
   milestones: Milestone[];
+}
+
+export interface ProjectCreation {
+  workspace: Workspace['slug'];
+  title: string;
+  description: string;
+  icon?: File;
+  module: 'Kanban' | 'Scrum' | 'Issues'
 }

@@ -34,7 +34,12 @@ import { TranslocoService } from '@ngneat/transloco';
 import { paramCase } from 'change-case';
 import { NavigationModule } from './shared/navigation/navigation.module';
 
+const altIconName: Record<string, string> = {
+  'tuiIconChevronDownLarge': 'chevron-down'
+};
+
 export function iconsPath(name: string): string {
+  name = altIconName[name] ?? name;
   return `assets/icons/sprite.svg#${paramCase(name)}`;
 }
 

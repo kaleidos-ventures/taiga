@@ -11,8 +11,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     <div class="workspace-item-top">
       <div class="workspace-item-title-container">
-        <tg-workspace-avatar [color]="workspace.color"
-          [size]="'m'"
+        <tg-workspace-avatar class="workspace-avatar"
+          [color]="workspace.color"
+          size="m"
           [name]="workspace.name"></tg-workspace-avatar>
         <div class="workspace-item-title-wrapper">
           <a [routerLink]="['/workspace/', workspace.slug]"

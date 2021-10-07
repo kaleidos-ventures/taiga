@@ -7,6 +7,7 @@
  */
 
 import * as faker from 'faker';
+import { ProjectCreation } from '..';
 import { Milestone } from './milestone.model';
 import { MilestoneMockFactory } from './milestone.model.mock';
 
@@ -25,5 +26,14 @@ export const ProjectMockFactory = (milestones = false): Project => {
     id: faker.datatype.number(),
     slug: faker.datatype.string(),
     milestones: milestones ? getMilestones() : [],
+  };
+};
+
+export const ProjectCreationMockFactory = (): ProjectCreation => {
+  return {
+    workspace: faker.lorem.slug(),
+    title: faker.commerce.productName(),
+    description: faker.lorem.paragraph(),
+    module: 'Kanban',
   };
 };

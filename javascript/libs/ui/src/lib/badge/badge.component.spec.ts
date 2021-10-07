@@ -8,13 +8,13 @@
 
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { BadgeComponent } from './badge.component';
-import { UiModule } from '../ui.module';
+import { BadgeModule } from './badge.module';
 
 describe('BadgeComponent', () => {
   let spectator: Spectator<BadgeComponent>;
   const createComponent = createComponentFactory({
     component: BadgeComponent,
-    imports: [ UiModule ],
+    imports: [ BadgeModule ],
     declareComponent: false,
   });
 

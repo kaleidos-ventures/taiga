@@ -5,11 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
+from typing import List, Optional, Tuple
 
+from taiga.exceptions.services.auth import BadAuthTokenError, UnauthorizedUserError
 from taiga.models.auth import AccessWithRefreshToken
+from taiga.models.users import User
 from taiga.repositories import users as users_repo
-from taiga.tokens import RefreshToken, TokenError
+from taiga.tokens import TokenError
+from taiga.tokens.auth import AccessToken, RefreshToken
 
 
 def login(username: str, password: str) -> Optional[AccessWithRefreshToken]:
@@ -36,3 +39,18 @@ def refresh(token: str) -> Optional[AccessWithRefreshToken]:
     refresh_token.set_exp()
 
     return AccessWithRefreshToken(token=str(refresh_token.access_token), refresh=str(refresh_token))
+
+
+def authenticate(token: str) -> Tuple[List[str], User]:
+    # Getnerate Access token
+    try:
+        access_token = AccessToken(token)
+    except TokenError:
+        raise BadAuthTokenError()
+
+    # Check user authorization permissions
+    user_data = access_token.user_data
+    if user_data and (user := users_repo.get_first_user(**user_data, is_active=True, is_system=False)):
+        return ["auth"], user
+
+    raise UnauthorizedUserError()

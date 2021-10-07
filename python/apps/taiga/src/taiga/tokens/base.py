@@ -194,9 +194,6 @@ class Token:
         after authenticating the user's credentials.
         """
         user_id = getattr(user, USER_ID_FIELD)
-        if not isinstance(user_id, int):
-            user_id = str(user_id)
-
         token = cls()
         token[USER_ID_CLAIM] = user_id
 

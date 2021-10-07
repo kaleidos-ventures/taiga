@@ -5,14 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Dict, Optional, Tuple
+from typing import Optional, Tuple
 
-from fastapi import Security
+from fastapi import Request
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi.security import HTTPBearer as HTTPBearerBase
-from starlette.requests import Request
 from taiga.exceptions.api import AuthenticationError
-from taiga.tokens import AccessToken, TokenError
 
 
 class HTTPBearer(HTTPBearerBase):
@@ -30,25 +28,8 @@ class HTTPBearer(HTTPBearerBase):
         elif scheme != "bearer":
             if self.auto_error:
                 raise AuthenticationError(
-                    detail="Invalid authentication credentials",
+                    message="Invalid authentication credentials scheme",
                 )
+            else:
+                return None
         return HTTPAuthorizationCredentials(scheme=scheme, credentials=credentials)
-
-
-security = HTTPBearer()
-
-
-async def get_user_data_from_request(
-    authorization: Optional[HTTPAuthorizationCredentials] = Security(security),
-) -> Optional[Dict[str, str]]:
-    """
-    Read auth token from headers, generate and AccessToken and return user data from the token payload.
-    """
-    if not authorization:
-        return None
-    else:
-        try:
-            access_token = AccessToken(authorization.credentials)
-        except TokenError:
-            raise AuthenticationError()
-        return access_token.user_data

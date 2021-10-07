@@ -223,10 +223,13 @@ pyparsing==2.4.7
 pytest==6.2.5
     # via
     #   -r requirements/devel.in
+    #   pytest-asyncio
     #   pytest-cov
     #   pytest-django
     #   pytest-factoryboy
     #   pytest-pythonpath
+pytest-asyncio==0.15.1
+    # via -r requirements/devel.in
 pytest-cov==2.12.1
     # via -r requirements/devel.in
 pytest-django==4.4.0

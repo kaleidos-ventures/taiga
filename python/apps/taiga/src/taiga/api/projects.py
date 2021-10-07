@@ -8,11 +8,10 @@
 import logging
 from typing import List
 
-from fastapi import APIRouter, Depends, Query
-from taiga.dependencies.users import get_current_user
+from fastapi import APIRouter, Query
+from taiga.base.api import Request
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
-from taiga.models.users import User
 from taiga.serializers.projects import ProjectSerializer
 from taiga.services import projects as projects_services
 from taiga.validators.projects import ProjectValidator
@@ -46,12 +45,16 @@ def list_projects(workspace_slug: str = Query(None, description="the workspace s
     response_model=ProjectSerializer,
     responses=ERROR_422,
 )
-def create_project(form: ProjectValidator, user: User = Depends(get_current_user)) -> ProjectSerializer:
+def create_project(form: ProjectValidator, request: Request) -> ProjectSerializer:
     """
     Create project for the logged user.
     """
     project = projects_services.create_project(
-        workspace_slug=form.workspace_slug, name=form.name, description=form.description, color=form.color, owner=user
+        workspace_slug=form.workspace_slug,
+        name=form.name,
+        description=form.description,
+        color=form.color,
+        owner=request.user,
     )
     return ProjectSerializer.from_orm(project)
 

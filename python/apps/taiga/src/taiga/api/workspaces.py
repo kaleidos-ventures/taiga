@@ -7,11 +7,10 @@
 
 from typing import List
 
-from fastapi import APIRouter, Depends, Query
-from taiga.dependencies.users import get_current_user
+from fastapi import APIRouter, Query
+from taiga.base.api import Request
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
-from taiga.models.users import User
 from taiga.serializers.workspaces import WorkspaceSerializer
 from taiga.services import workspaces as workspaces_services
 from taiga.validators.workspaces import WorkspaceValidator
@@ -27,32 +26,42 @@ router = APIRouter(prefix="/workspaces", tags=["workspaces"], responses=ERROR_40
 @router.get(
     "",
     name="workspaces.list",
-    summary="Get the workspaces of the logged user",
+    summary="List workspaces",
     response_model=List[WorkspaceSerializer],
 )
-def get_workspaces_by_owner(user: User = Depends(get_current_user)) -> List[WorkspaceSerializer]:
-    workspaces = workspaces_services.get_workspaces(owner=user)
+def list_workspaces(request: Request) -> List[WorkspaceSerializer]:
+    """
+    Get the workspaces of the logged user.
+    """
+    workspaces = workspaces_services.get_workspaces(owner=request.user)
     return WorkspaceSerializer.from_queryset(workspaces)
 
 
 @router.post(
-    "", name="workspace.post", summary="Post workspace", response_model=WorkspaceSerializer, responses=ERROR_422
+    "",
+    name="workspaces.post",
+    summary="Create workspace",
+    response_model=WorkspaceSerializer,
+    responses=ERROR_422
 )
-def create_workspace(form: WorkspaceValidator, user: User = Depends(get_current_user)) -> WorkspaceSerializer:
-    workspace = workspaces_services.create_workspace(name=form.name, color=form.color, owner=user)
+def create_workspace(form: WorkspaceValidator, request: Request) -> WorkspaceSerializer:
+    """
+    Create a new workspace for the logged user.
+    """
+    workspace = workspaces_services.create_workspace(name=form.name, color=form.color, owner=request.user)
     return WorkspaceSerializer.from_orm(workspace)
 
 
 @router.get(
     "/{workspace_slug}",
     name="workspaces.get",
-    summary="Get workspace details",
+    summary="Get workspace",
     response_model=WorkspaceSerializer,
     responses=ERROR_404 | ERROR_422,
 )
 def get_workspace(workspace_slug: str = Query(None, description="the workspace slug(str)")) -> WorkspaceSerializer:
     """
-    Get workspace detail by slug
+    Get workspace detail by slug.
     """
     workspace = workspaces_services.get_workspace(workspace_slug)
 

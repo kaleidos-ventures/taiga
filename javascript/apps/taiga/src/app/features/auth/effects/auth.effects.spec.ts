@@ -13,11 +13,13 @@ import { AuthApiService, UsersApiService } from '@taiga/api';
 
 import { AuthEffects } from './auth.effects';
 import { Action } from '@ngrx/store';
-import { login, loginSuccess, setUser } from '../actions/auth.actions';
+import { login, loginSuccess, logout, setUser } from '../actions/auth.actions';
 import { AuthMockFactory, UserMockFactory } from '@taiga/data';
 import * as faker from 'faker';
 import { cold, hot } from 'jest-marbles';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Router } from '@angular/router';
 
 describe('AuthEffects', () => {
   let actions$: Observable<Action>;
@@ -27,10 +29,14 @@ describe('AuthEffects', () => {
     providers: [
       provideMockActions(() => actions$),
     ],
+    imports: [
+      RouterTestingModule,
+    ],
     mocks: [
       AuthApiService,
       UsersApiService,
       LocalStorageService,
+      Router,
     ],
   });
 
@@ -85,6 +91,20 @@ describe('AuthEffects', () => {
 
     expect(effects.loginSuccess$).toSatisfyOnFlush(() => {
       expect(localStorageService.set).toHaveBeenCalledWith('auth', auth);
+    });
+  });
+
+  it('logout', () => {
+    const effects = spectator.inject(AuthEffects);
+    const localStorageService = spectator.inject(LocalStorageService);
+    const routerService = spectator.inject(Router);
+
+    actions$ = hot('-a', { a:  logout()});
+
+    expect(effects.logout$).toSatisfyOnFlush(() => {
+      expect(localStorageService.remove).toHaveBeenCalledWith('user');
+      expect(localStorageService.remove).toHaveBeenCalledWith('auth');
+      expect(routerService.navigate).toHaveBeenCalledWith(['/login']);
     });
   });
 

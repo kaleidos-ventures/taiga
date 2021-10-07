@@ -9,24 +9,29 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpInterceptor, HttpResponse, HttpParams} from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { ConfigService } from '@taiga/core';
 import { Store } from '@ngrx/store';
 import { getGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
 import { camelCase, snakeCase } from 'change-case';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { Auth } from '@taiga/data';
+import { loginSuccess, logout } from '~/app/features/auth/actions/auth.actions';
+import { AuthApiService } from '@taiga/api';
+import { AuthService } from '~/app/features/auth/services/auth.service';
 
 @Injectable()
 export class ApiRestInterceptorService implements HttpInterceptor {
   public requests = new BehaviorSubject([] as HttpRequest<unknown>[]);
+  private refreshTokenInProgress = false;
+  private refreshTokenSubject = new BehaviorSubject<null|Auth['token']>(null);
 
   constructor(
+    private readonly authApiService: AuthApiService,
     private readonly configService: ConfigService,
     private readonly store: Store,
-    private readonly localStorageService: LocalStorageService) {
+    private readonly authService: AuthService) {
     this.requests.pipe(
       concatLatestFrom(() => this.store.select(getGlobalLoading))
     // eslint-disable-next-line ngrx/no-store-subscription
@@ -73,6 +78,14 @@ export class ApiRestInterceptorService implements HttpInterceptor {
         }
       }),
       catchError((err: HttpErrorResponse) => {
+        if (err.status === 401) {
+          const auth = this.authService.getAuth();
+
+          if (auth && !request.url.includes('/auth/token')) {
+            return this.handle401Error(request, next);
+          }
+        }
+
         return throwError(err);
       })
     );
@@ -124,7 +137,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
   }
 
   private authInterceptor(request: HttpRequest<unknown>): HttpRequest<unknown> {
-    const auth = this.localStorageService.get<Auth>('auth');
+    const auth = this.authService.getAuth();
 
     if (auth?.token) {
       return request.clone({
@@ -135,5 +148,41 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     }
 
     return request;
+  }
+
+  private handle401Error(request: HttpRequest<unknown>, next: HttpHandler) {
+    if (!this.refreshTokenInProgress) {
+      this.refreshTokenInProgress = true;
+      this.refreshTokenSubject.next(null);
+
+      const refreshToken = this.authService.getAuth()?.refresh;
+
+      if (refreshToken) {
+        return this.authApiService.refreshToken(refreshToken).pipe(
+          switchMap((auth) => {
+            this.refreshTokenInProgress = false;
+
+            this.refreshTokenSubject.next(auth.token);
+
+            this.store.dispatch(loginSuccess({ auth }));
+
+            return next.handle(this.authInterceptor(request));
+          }),
+          catchError((err) => {
+            this.refreshTokenInProgress = false;
+
+            this.store.dispatch(logout());
+
+            return throwError(err);
+          })
+        );
+      }
+    }
+
+    return this.refreshTokenSubject.pipe(
+      filter(token => token !== null),
+      take(1),
+      switchMap(() => next.handle(this.authInterceptor(request)))
+    );
   }
 }

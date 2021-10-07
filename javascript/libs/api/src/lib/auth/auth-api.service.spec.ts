@@ -9,6 +9,7 @@
 import { createHttpFactory, HttpMethod, SpectatorHttp } from '@ngneat/spectator';
 import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
+import faker from 'faker';
 import { AuthApiService } from './auth-api.service';
 
 describe('AuthApiService', () => {
@@ -32,5 +33,14 @@ describe('AuthApiService', () => {
     const req = spectator.expectOne(`${ConfigServiceMock.apiUrl}/auth/token`, HttpMethod.POST);
     expect(req.request.body['username']).toEqual(username);
     expect(req.request.body['password']).toEqual(password);
+  });
+
+  it('refresh token', () => {
+    const refresh = faker.datatype.uuid();
+
+    spectator.service.refreshToken(refresh).subscribe();
+
+    const req = spectator.expectOne(`${ConfigServiceMock.apiUrl}/auth/token/refresh`, HttpMethod.POST);
+    expect(req.request.body['refresh']).toEqual(refresh);
   });
 });

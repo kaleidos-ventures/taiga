@@ -12,6 +12,7 @@ import { User } from '@taiga/data';
 import { WsService } from '@taiga/ws';
 import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { setUser } from './features/auth/actions/auth.actions';
+import { AuthService } from './features/auth/services/auth.service';
 
 @Component({
   selector: 'tg-root',
@@ -23,10 +24,12 @@ export class AppComponent {
   public title = 'taiga next';
 
   constructor(
+    private authService: AuthService,
     private wsService: WsService,
     private localStorageService: LocalStorageService,
     private store: Store) {
     this.wsService.listen();
+    this.authService.autoRefresh();
 
     const user = this.localStorageService.get<User>('user');
 

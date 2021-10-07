@@ -21,4 +21,8 @@ export class AuthApiService {
   public login(data: LoginInput) {
     return this.http.post<Auth>(`${this.config.apiUrl}/auth/token`, data);
   }
+
+  public refreshToken(refresh: Auth['refresh']) {
+    return this.http.post<Auth>(`${this.config.apiUrl}/auth/token/refresh`, {refresh});
+  }
 }

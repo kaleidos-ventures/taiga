@@ -15,7 +15,8 @@ import * as AuthActions from '../actions/auth.actions';
 import { AuthApiService, UsersApiService } from '@taiga/api';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { Auth, User } from '@taiga/data';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { Router } from '@angular/router';
+import { AuthService } from '~/app/features/auth/services/auth.service';
 
 @Injectable()
 export class AuthEffects {
@@ -41,11 +42,21 @@ export class AuthEffects {
     );
   });
 
+  public logout$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.logout),
+      tap(() => {
+        this.authService.logout();
+        void this.router.navigate(['/login']);
+      })
+    );
+  }, { dispatch: false });
+
   public loginSuccess$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.loginSuccess),
       switchMap(({ auth }) => {
-        this.localStorageService.set('auth', auth);
+        this.authService.setAuth(auth);
 
         return this.usersApiService.me().pipe(
           map((user: User) => {
@@ -60,15 +71,16 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.setUser),
       tap(({ user }) => {
-        this.localStorageService.set('user', user);
+        this.authService.setUser(user);
       })
     );
   }, { dispatch: false });
 
   constructor(
+    private router: Router,
     private actions$: Actions,
     private authApiService: AuthApiService,
-    private usersApiService: UsersApiService,
-    private localStorageService: LocalStorageService) {}
+    private authService: AuthService,
+    private usersApiService: UsersApiService) {}
 
 }

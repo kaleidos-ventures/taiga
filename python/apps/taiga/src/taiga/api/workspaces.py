@@ -10,6 +10,7 @@ from typing import List
 from fastapi import APIRouter, Depends, Query
 from taiga.dependencies.users import get_current_user
 from taiga.exceptions import api as ex
+from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
 from taiga.models.users import User
 from taiga.serializers.workspaces import WorkspaceSerializer
 from taiga.services import workspaces as workspaces_services
@@ -20,7 +21,7 @@ metadata = {
     "description": "Endpoint for workspaces resources.",
 }
 
-router = APIRouter(prefix="/workspaces", tags=["workspaces"])
+router = APIRouter(prefix="/workspaces", tags=["workspaces"], responses=ERROR_401)
 
 
 @router.get(
@@ -35,10 +36,7 @@ def get_workspaces_by_owner(user: User = Depends(get_current_user)) -> List[Work
 
 
 @router.post(
-    "",
-    name="workspace.post",
-    summary="Post workspace",
-    response_model=WorkspaceSerializer,
+    "", name="workspace.post", summary="Post workspace", response_model=WorkspaceSerializer, responses=ERROR_422
 )
 def create_workspace(form: WorkspaceValidator, user: User = Depends(get_current_user)) -> WorkspaceSerializer:
     workspace = workspaces_services.create_workspace(name=form.name, color=form.color, owner=user)
@@ -50,6 +48,7 @@ def create_workspace(form: WorkspaceValidator, user: User = Depends(get_current_
     name="workspaces.get",
     summary="Get workspace details",
     response_model=WorkspaceSerializer,
+    responses=ERROR_404 | ERROR_422,
 )
 def get_workspace(workspace_slug: str = Query(None, description="the workspace slug(str)")) -> WorkspaceSerializer:
     """

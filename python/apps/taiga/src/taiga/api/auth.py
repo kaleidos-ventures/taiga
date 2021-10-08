@@ -7,6 +7,7 @@
 
 from fastapi import APIRouter
 from taiga.exceptions.api import AuthenticationError
+from taiga.exceptions.api.errors import ERROR_401, ERROR_422
 from taiga.serializers.auth import AccessTokenWithRefreshSerializer
 from taiga.services import auth as auth_services
 from taiga.validators.auth import AccessTokenValidator, RefreshTokenValidator
@@ -16,7 +17,7 @@ metadata = {
     "description": "Enpoints for API authentication.",
 }
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["auth"], responses=ERROR_401)
 
 
 @router.post(
@@ -24,6 +25,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
     name="auth.token",
     summary="Get token",
     response_model=AccessTokenWithRefreshSerializer,
+    responses=ERROR_422,
 )
 def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
     """
@@ -40,6 +42,7 @@ def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
     name="auth.token.refresh",
     summary="Refresh token",
     response_model=AccessTokenWithRefreshSerializer,
+    responses=ERROR_422,
 )
 def refresh(form: RefreshTokenValidator) -> AccessTokenWithRefreshSerializer:
     """

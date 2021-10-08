@@ -8,6 +8,7 @@
 from fastapi import APIRouter, Depends
 from taiga.dependencies.users import get_current_user
 from taiga.exceptions import api as ex
+from taiga.exceptions.api.errors import ERROR_401
 from taiga.models.users import User
 from taiga.serializers.users import UserMeSerializer
 
@@ -16,7 +17,7 @@ metadata = {
     "description": "Endpoint for users resources.",
 }
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/users", tags=["users"], responses=ERROR_401)
 
 
 @router.get("/me", name="users.me", summary="Get authenticared user profile", response_model=UserMeSerializer)

@@ -20,7 +20,7 @@ def test_create_workspace_with_empty_name(client):
 
     response = client.post("/workspaces", json={"name": name, "color": color})
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-    assert response.json()["error"]["code"] == codes.EX_VALIDATION_ERROR
+    assert response.json()["error"]["code"] == codes.EX_VALIDATION_ERROR["code"]
     assert response.json()["error"]["detail"][0]["msg"] == "Empty name is not allowed."
 
 
@@ -30,7 +30,7 @@ def test_create_workspace_with_long_name(client):
 
     response = client.post("/workspaces", json={"name": name, "color": color})
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-    assert response.json()["error"]["code"] == codes.EX_VALIDATION_ERROR
+    assert response.json()["error"]["code"] == codes.EX_VALIDATION_ERROR["code"]
     assert response.json()["error"]["detail"][0]["msg"] == "Name too long"
 
 
@@ -40,7 +40,7 @@ def test_create_workspace_with_invalid_color(client):
 
     response = client.post("/workspaces", json={"name": name, "color": color})
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-    assert response.json()["error"]["code"] == codes.EX_VALIDATION_ERROR
+    assert response.json()["error"]["code"] == codes.EX_VALIDATION_ERROR["code"]
     assert response.json()["error"]["detail"][0]["msg"] == "Color not allowed."
 
 
@@ -50,7 +50,7 @@ def test_create_workspace_with_color_string(client):
 
     response = client.post("/workspaces", json={"name": name, "color": color})
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-    assert response.json()["error"]["code"] == codes.EX_VALIDATION_ERROR
+    assert response.json()["error"]["code"] == codes.EX_VALIDATION_ERROR["code"]
     assert response.json()["error"]["detail"][0]["msg"] == "value is not a valid integer"
 
 

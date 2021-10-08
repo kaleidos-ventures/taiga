@@ -7,7 +7,16 @@
 
 from typing import Final
 
-EX_UNKNOWN: Final = "unknown"
-EX_AUTHENTICATION: Final = "authentication-error"
-EX_VALIDATION_ERROR: Final = "validation-error"
-EX_NOT_FOUND: Final = "not-found"
+EX_VALIDATION_ERROR: Final = {
+    "code": "validation-error",
+    "message": "Unable to fulfill the request due to semantic errors",
+}
+
+EX_UNKNOWN: Final = {"code": "unknown", "message": "Unknown error"}
+
+EX_NOT_FOUND: Final = {"code": "not-found", "message": "The requested resource could not be found"}
+
+EX_AUTHENTICATION: Final = {
+    "code": "authentication-error",
+    "message": "Invalid token or no active account found with the given credentials",
+}

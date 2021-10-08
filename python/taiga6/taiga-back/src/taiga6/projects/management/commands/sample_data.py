@@ -39,7 +39,6 @@ from taiga6.projects.likes.services import add_like
 from taiga6.projects.votes.services import add_vote
 from taiga6.events.apps import disconnect_events_signals
 from taiga6.projects.services.stats import get_stats_for_project
-from taiga6.workspaces.models import MAX_COLORS
 
 ATTACHMENT_SAMPLE_DATA = [
     path.join(settings.BASE_DIR, "taiga6/projects/management/commands/sample_data"),
@@ -122,6 +121,7 @@ NUM_APPLICATIONS_TOKENS = getattr(settings, "SAMPLE_DATA_NUM_APPLICATIONS_TOKENS
 FEATURED_PROJECTS_POSITIONS = [0, 1, 2]
 LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS = [0, 1, 2]
 NUM_WORKSPACES_PER_USER = 2
+MAX_COLORS = 8
 
 
 class Command(BaseCommand):

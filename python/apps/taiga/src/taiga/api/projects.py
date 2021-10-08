@@ -11,6 +11,7 @@ from typing import List
 from fastapi import APIRouter, Depends, Query
 from taiga.dependencies.users import get_current_user
 from taiga.exceptions import api as ex
+from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
 from taiga.models.users import User
 from taiga.serializers.projects import ProjectSerializer
 from taiga.services import projects as projects_services
@@ -23,11 +24,13 @@ metadata = {
     "description": "Endpoint for projects resources.",
 }
 
-router = APIRouter(prefix="/projects", tags=["projects"])
-router2 = APIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"])
+router = APIRouter(prefix="/projects", tags=["projects"], responses=ERROR_401)
+router2 = APIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"], responses=ERROR_401)
 
 
-@router2.get("", name="projects.list", summary="List projects", response_model=List[ProjectSerializer])
+@router2.get(
+    "", name="projects.list", summary="List projects", response_model=List[ProjectSerializer], responses=ERROR_422
+)
 def list_projects(workspace_slug: str = Query(None, description="the workspace slug (str)")) -> List[ProjectSerializer]:
     """
     List projects of a workspace.
@@ -41,6 +44,7 @@ def list_projects(workspace_slug: str = Query(None, description="the workspace s
     name="projects.create",
     summary="Create project",
     response_model=ProjectSerializer,
+    responses=ERROR_422,
 )
 def create_project(form: ProjectValidator, user: User = Depends(get_current_user)) -> ProjectSerializer:
     """
@@ -57,6 +61,7 @@ def create_project(form: ProjectValidator, user: User = Depends(get_current_user
     name="projects.get",
     summary="Get project",
     response_model=ProjectSerializer,
+    responses=ERROR_404 | ERROR_422,
 )
 def get_project(project_slug: str = Query(None, description="the project slug (str)")) -> ProjectSerializer:
     """

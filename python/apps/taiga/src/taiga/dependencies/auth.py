@@ -50,7 +50,5 @@ async def get_user_data_from_request(
         try:
             access_token = AccessToken(authorization.credentials)
         except TokenError:
-            raise AuthenticationError(
-                detail="Invalid authentication token",
-            )
+            raise AuthenticationError()
         return access_token.user_data

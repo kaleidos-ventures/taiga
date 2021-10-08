@@ -17,7 +17,13 @@ from .api import codes
 
 async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
     headers = getattr(exc, "headers", None)
-    content = {"error": {"detail": exc.detail, "code": getattr(exc, "code", codes.EX_UNKNOWN)}}
+    content = {
+        "error": {
+            "code": getattr(exc, "code", codes.EX_UNKNOWN["code"]),
+            "detail": exc.detail,
+            "message": getattr(exc, "message", codes.EX_UNKNOWN["message"]),
+        }
+    }
 
     if headers:
         return JSONResponse(status_code=exc.status_code, content=content, headers=headers)
@@ -28,5 +34,11 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
 async def request_validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
     return JSONResponse(
         status_code=HTTP_422_UNPROCESSABLE_ENTITY,
-        content={"error": {"code": codes.EX_VALIDATION_ERROR, "detail": jsonable_encoder(exc.errors())}},
+        content={
+            "error": {
+                "code": codes.EX_VALIDATION_ERROR["code"],
+                "detail": jsonable_encoder(exc.errors()),
+                "message": codes.EX_VALIDATION_ERROR["message"],
+            }
+        },
     )

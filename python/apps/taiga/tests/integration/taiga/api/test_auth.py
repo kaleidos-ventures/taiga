@@ -31,7 +31,7 @@ def test_login_error_invalid_credentials(client):
 
     response = client.post("/auth/token", json={"username": username, "password": password})
     assert response.status_code == status.HTTP_401_UNAUTHORIZED, response.text
-    assert response.json()["error"]["code"] == codes.EX_AUTHENTICATION
+    assert response.json()["error"]["code"] == codes.EX_AUTHENTICATION["code"]
     assert response.headers["www-authenticate"] == 'Bearer realm="api"'
 
 
@@ -47,4 +47,4 @@ def test_refresh_successfuly(client):
 def test_refresh_error_invalid_token(client):
     response = client.post("/auth/token/refresh", json={"refresh": "invalid_token"})
     assert response.status_code == status.HTTP_401_UNAUTHORIZED, response.text
-    assert response.json()["error"]["code"] == codes.EX_AUTHENTICATION
+    assert response.json()["error"]["code"] == codes.EX_AUTHENTICATION["code"]

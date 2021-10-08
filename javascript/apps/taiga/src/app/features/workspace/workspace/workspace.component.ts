@@ -10,7 +10,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output, Input } from 
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Workspace } from '@taiga/data';
-import { fadeIntOutAnimation, slideInOut } from '~/app/shared/utils/animations';
+import { fadeIntOutAnimation, slideIn, slideInOut } from '~/app/shared/utils/animations';
 import { selectWorkspaceSkeleton } from '../selectors/workspace.selectors';
 
 @Component({
@@ -21,7 +21,8 @@ import { selectWorkspaceSkeleton } from '../selectors/workspace.selectors';
   providers: [RxState],
   animations: [
     slideInOut,
-    fadeIntOutAnimation
+    fadeIntOutAnimation,
+    slideIn
   ]
 })
 export class WorkspaceComponent {

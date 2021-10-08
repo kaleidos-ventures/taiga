@@ -1,6 +1,7 @@
 {
   "version": 1,
   "cli": {
+    "analytics": false,
     "defaultCollection": "@nrwl/angular"
   },
   "defaultProject": "taiga",

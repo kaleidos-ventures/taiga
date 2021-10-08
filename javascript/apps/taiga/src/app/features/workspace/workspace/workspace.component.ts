@@ -47,6 +47,6 @@ export class WorkspaceComponent {
   }
 
   public trackByWorkspace(index: number, workspace: Workspace) {
-    return workspace.id;
+    return workspace.slug;
   }
 }

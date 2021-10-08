@@ -74,16 +74,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
     <ng-container>
       <tg-workspace-skeleton
-        [@fadeInOut]
+        [@slideIn]
         *ngIf="(showSkeleton$ | async) && workspaceList.length > 0">
       </tg-workspace-skeleton>
     </ng-container>
     <div class="workspace-item-container">
       <tg-workspace-item
-      data-e2e="workspace-item"
-      *ngFor="let workspace of workspaceList; trackBy: trackByWorkspace"
-      [workspace]="workspace">
-    </tg-workspace-item>
+        [@fadeInOut]
+        data-e2e="workspace-item"
+        *ngFor="let workspace of workspaceList; trackBy: trackByWorkspace"
+        [workspace]="workspace">
+      </tg-workspace-item>
     </div>
   </div>
   <ng-template #tooltip>

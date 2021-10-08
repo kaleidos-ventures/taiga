@@ -42,3 +42,16 @@ export const slideInOut = trigger('slideInOut', [
     }))
   ])
 ]);
+
+export const slideIn = trigger('slideIn', [
+  transition(':enter', [
+    style({
+      blockSize: '0',
+      opacity: '0'
+    }),
+    animate('200ms ease-in', style({
+      blockSize: '*',
+      opacity: '1'
+    }))
+  ]),
+]);

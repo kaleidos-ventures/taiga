@@ -13,14 +13,17 @@ import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
 const routes: Routes = [
   { path: 'login', loadChildren: () => import('./pages/auth/auth-page.module').then(m => m.AuthPageModule) },
 
-  // #TODO: Project Url must be project-name+Id. See if we can add the workspace+worskpaceId on the url.
-  { path: 'project', loadChildren: () => import('./pages/project/project-page.module').then(m => m.ProjectPageModule) },
-
   { path: '', loadChildren: () => import('./pages/workspace/workspace-page.module').then(m => m.WorkspacePageModule) },
 
+  // WORKSPACE
   { path: 'workspace/:slug', loadChildren: () => import('./pages/workspace-detail-page/workspace-detail-page.module').then(m => m.WorkspaceDetailPageModule) },
 
-  { path: 'new-project', loadChildren: () => import('./pages/new-project-page/new-project-page.module').then(m => m.NewProjectPageModule) },
+  // PROJECT
+  { path: 'new-project', loadChildren: () => import('./pages/project/new-project/new-project-page.module').then(m => m.NewProjectPageModule) },
+
+  // #TODO: Project Url must be project-name+Id. See if we can add the workspace+worskpaceId on the url.
+  { path: 'project', loadChildren: () => import('./pages/project/project/project-page.module').then(m => m.ProjectPageModule) },
+
 ];
 
 @NgModule({

@@ -6,12 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, EventEmitter, Output, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Workspace } from '@taiga/data';
+import { map } from 'rxjs/operators';
 import { fadeIntOutAnimation, slideIn, slideInOut } from '~/app/shared/utils/animations';
-import { selectWorkspaceSkeleton } from '../selectors/workspace.selectors';
+import { selectCreatingWorkspace, selectLoadingWorkpace } from '../selectors/workspace.selectors';
 
 @Component({
   selector: 'tg-workspace',
@@ -22,29 +24,63 @@ import { selectWorkspaceSkeleton } from '../selectors/workspace.selectors';
   animations: [
     slideInOut,
     fadeIntOutAnimation,
-    slideIn
+    slideIn,
+    trigger('skeletonAnimation', [
+      state('nothing', style({ blockSize: '0' })),
+      state('create', style({ blockSize: '123px' })),
+      state('skeleton', style({ blockSize: '202px' })),
+      transition('nothing <=> create, skeleton <=> create', animate(200)),
+      transition('nothing <=> skeleton', animate(0))
+    ])
   ]
 })
 export class WorkspaceComponent {
+  public readonly model$ = this.state.select().pipe(
+    map((model) => {
+      let skeletonAnimation = 'nothing';
+
+      if (model.workspaceList.length) {
+        if (model.creatingWorkspace) {
+          skeletonAnimation = 'skeleton';
+        } else if (model.showCreate) {
+          skeletonAnimation = 'create';
+        }
+      }
+
+      return {
+        ...model,
+        skeletonAnimation,
+      };
+    }),
+  );
+
   @Input()
-  public workspaceList!: Workspace[];
+  public set workspaceList(workspaceList: Workspace[]) {
+    this.state.set({ workspaceList });
+  };
 
   @Output()
   public hideActivity = new EventEmitter<boolean>();
 
-  public showCreate = false;
-  public showSkeleton$ = this.store.select(selectWorkspaceSkeleton);
-
   constructor(
     private store: Store,
-  ) {}
+    private state: RxState<{
+      creatingWorkspace: boolean,
+      showCreate: boolean,
+      loading: boolean,
+      workspaceList: Workspace[],
+    }>,
+  ) {
+    this.state.connect('creatingWorkspace', this.store.select(selectCreatingWorkspace));
+    this.state.connect('loading', this.store.select(selectLoadingWorkpace));
+  }
 
   public toggleActivity(show: boolean) {
     this.hideActivity.next(show);
   }
 
-  public toggleCreate(show: boolean) {
-    this.showCreate = show;
+  public setCreate(showCreate: boolean) {
+    this.state.set({ showCreate });
   }
 
   public trackByWorkspace(index: number, workspace: Workspace) {

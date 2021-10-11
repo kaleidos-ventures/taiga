@@ -16,10 +16,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @keyframes pulse {
   from {
-    opacity: 1;
+    opacity: .5;
   }
 
   to {
-    opacity: .5;
+    opacity: 1;
   }
 }

@@ -15,7 +15,7 @@ import { WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { WorkspaceEffects } from './workspace.effects';
 import { WorkspaceApiService } from '@taiga/api';
-import { fetchWorkspaceList, setWorkspaceList } from '../actions/workspace.actions';
+import { fetchWorkspaceList, fetchWorkspaceListSuccess } from '../actions/workspace.actions';
 
 describe('WorkspaceEffects', () => {
   let actions$: Observable<Action>;
@@ -45,7 +45,7 @@ describe('WorkspaceEffects', () => {
     actions$ = hot('-a', { a:  fetchWorkspaceList()});
 
     const expected = cold('--a', {
-      a: setWorkspaceList({ workspaces: [workspace] }),
+      a: fetchWorkspaceListSuccess({ workspaces: [workspace] }),
     });
 
     expect(

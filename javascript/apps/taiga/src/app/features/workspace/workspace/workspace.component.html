@@ -5,7 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-
+<ng-container *ngIf="model$ | async as vm">
 <ng-container *transloco="let t; read: 'workspace'">
   <div
     class="workspace-wrapper">
@@ -14,14 +14,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div class="workspace-title-actions">
         <button
           data-e2e="add-workspace-button"
-          (click)="toggleCreate(true)"
-          [disabled]="showCreate"
+          (click)="setCreate(true)"
+          [disabled]="vm.showCreate || vm.loading"
           [tuiHint]="tooltip"
           tuiHintDirection="bottom-right"
           appearance="secondary"
           tuiButton
           icon="plus"
-          title="{{ t('add_workspace') }}"
           type="button">
           {{ t('add_workspace') }}
         </button>
@@ -37,21 +36,35 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </button>
       </div>
     </div>
-    <tg-workspace-create
-      data-e2e="workspace-create"
-      [@slideInOut]
-      (requestClose)="toggleCreate(false)"
-      cdkTrapFocus
-      *ngIf="showCreate">
-    </tg-workspace-create>
     <div
-      *ngIf="!workspaceList.length && !showCreate"
+      *ngIf="vm.showCreate || vm.creatingWorkspace"
+      [@skeletonAnimation]="vm.skeletonAnimation"
+      class="create-wrapper">
+      <tg-workspace-create
+        class="workspace-create"
+        data-e2e="workspace-create"
+        @slideInOut
+        (requestClose)="setCreate(false)"
+        cdkTrapFocus
+        *ngIf="vm.showCreate">
+      </tg-workspace-create>
+      <div
+        *ngIf="vm.creatingWorkspace"
+        class="skeleton-container">
+        <tg-workspace-skeleton></tg-workspace-skeleton>
+      </div>
+    </div>
+    <div
+      *ngIf="!vm.workspaceList.length && !vm.showCreate"
       class="worskpace-placeholder">
       <tg-workspace-skeleton
-        [@fadeInOut]
+        *ngIf="vm.loading"
         [static]="true">
       </tg-workspace-skeleton>
-      <div class="workspace-call-action" [@fadeInOut]>
+      <div
+        *ngIf="!vm.loading && !vm.workspaceList.length"
+        class="workspace-call-action"
+        @fadeInOut>
         <h4 class="workspace-call-action-title">{{ t('placeholder_title') }}
         </h4>
         <p class="workspace-call-action-text">{{ t('placeholder_text') }}</p>
@@ -62,9 +75,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ t('placeholder_link') }}
         </a>
         <button appearance="primary"
-          (click)="toggleCreate(true)"
-          [tuiHint]="tooltip"
-          tuiHintDirection="bottom-right"
+          (click)="setCreate(true)"
           tuiButton
           title="{{ t('placeholder_button') }}"
           type="button">
@@ -72,17 +83,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </button>
       </div>
     </div>
-    <ng-container>
-      <tg-workspace-skeleton
-        [@slideIn]
-        *ngIf="(showSkeleton$ | async) && workspaceList.length > 0">
-      </tg-workspace-skeleton>
-    </ng-container>
     <div class="workspace-item-container">
       <tg-workspace-item
-        [@fadeInOut]
+        @fadeInOut
         data-e2e="workspace-item"
-        *ngFor="let workspace of workspaceList; trackBy: trackByWorkspace"
+        *ngFor="let workspace of vm.workspaceList; trackBy: trackByWorkspace"
         [workspace]="workspace">
       </tg-workspace-item>
     </div>
@@ -91,5 +96,4 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <p>{{ t('tooltip_add_workspace') }}</p>
   </ng-template>
 </ng-container>
-
-
+</ng-container>

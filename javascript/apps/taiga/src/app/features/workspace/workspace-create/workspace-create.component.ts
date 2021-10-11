@@ -11,7 +11,7 @@ import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/f
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { RandomColorService } from '~/app/shared/random-color/random-color.service';
-import { addWorkspace } from '../actions/workspace.actions';
+import { createWorkspace } from '../actions/workspace.actions';
 
 @Component({
   selector: 'tg-workspace-create',
@@ -76,7 +76,7 @@ export class WorkspaceCreateComponent implements OnInit {
     } else {
       this.createProjectFormInvalid = false;
       if (this.createProjectForm.valid ) {
-        this.store.dispatch(addWorkspace({
+        this.store.dispatch(createWorkspace({
           name: (this.createProjectForm.controls['projectName'].value as string),
           color: this.color,
           userId: this.userId

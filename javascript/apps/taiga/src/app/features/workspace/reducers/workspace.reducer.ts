@@ -13,24 +13,37 @@ import * as WorkspaceActions from '../actions/workspace.actions';
 
 export interface WorkspaceState {
   workspaces: Workspace[],
-  skeleton: boolean,
+  creatingWorkspace: boolean,
+  loading: boolean,
 }
 
 export const initialState: WorkspaceState = {
   workspaces: [],
-  skeleton: false,
+  creatingWorkspace: false,
+  loading: false,
 };
 
 export const reducer = createReducer(
   initialState,
-  on(WorkspaceActions.setWorkspaceList, (state, { workspaces }): WorkspaceState => {
-    state.workspaces = workspaces;
-    state.skeleton = false;
+  on(WorkspaceActions.fetchWorkspaceList, (state): WorkspaceState => {
+    state.loading = true;
 
     return state;
   }),
-  on(WorkspaceActions.fetchWorkspaceList, (state): WorkspaceState => {
-    state.skeleton = true;
+  on(WorkspaceActions.fetchWorkspaceListSuccess, (state, { workspaces }): WorkspaceState => {
+    state.workspaces = workspaces;
+    state.loading = false;
+
+    return state;
+  }),
+  on(WorkspaceActions.createWorkspace, (state): WorkspaceState => {
+    state.creatingWorkspace = true;
+
+    return state;
+  }),
+  on(WorkspaceActions.createWorkspaceSuccess, (state, { workspace }): WorkspaceState => {
+    state.workspaces = [workspace, ...state.workspaces];
+    state.creatingWorkspace = false;
 
     return state;
   }),

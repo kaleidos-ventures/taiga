@@ -21,8 +21,8 @@ const baseArgs = {
 
 const baseArgTypes = {
   icon: {
-    defaultValue: 'folder',
-    options: ['folder', 'help', 'discover', 'bell', 'taiga-logo', 'collapse-left', 'collapse-right', 'arrow-up-right'],
+    defaultValue: 'taiga-logo',
+    options: ['taiga-logo', 'discover', 'folder', 'bell', 'search', 'help', 'search3', 'plus', 'overview', 'epics', 'scrum', 'kanban', 'issues', 'wiki', 'meetup', 'team', 'settings', 'collapse-right', 'collapse-left', 'chevron-right', 'chevron-left', 'chevron-down', 'chevron-up', 'arrow-left', 'arrow-right', 'user', 'arrow-up-right'],
     control: { type: 'select' }
   },
   disabled: {

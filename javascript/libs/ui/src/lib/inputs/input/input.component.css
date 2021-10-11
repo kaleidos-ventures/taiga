@@ -16,6 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 label {
   color: var(--color-secondary);
+  line-height: 1rem;
   margin-block-end: var(--spacing-4);
   margin-inline-start: var(--spacing-4);
   min-inline-size: 0;

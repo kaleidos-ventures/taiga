@@ -40,4 +40,8 @@ export class WorkspaceAvatarComponent implements OnInit  {
   public setColorClass(color: number) {
     return RandomColorService.getColorClass(color);
   }
+
+  public setAvatarName(name: string) {
+    return name.substring(0, 2).split('').join(' ');
+  }
 }

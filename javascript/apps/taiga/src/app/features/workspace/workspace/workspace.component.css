@@ -16,6 +16,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   position: relative;
 }
 
+.create-wrapper {
+  position: relative;
+}
+
+.skeleton-container {
+  background: var(--color-gray10);
+  inline-size: 100%;
+  position: absolute;
+}
+
+.workspace-create {
+  inline-size: 100%;
+  position: absolute;
+  z-index: var(--$first-layer);
+}
+
 .workspace-wrapper {
   margin: 0 auto;
   max-inline-size: 1240px;

@@ -10,5 +10,6 @@ import { workspaceFeature } from '../reducers/workspace.reducer';
 
 export const {
   selectWorkspaces,
-  selectSkeleton: selectWorkspaceSkeleton
+  selectLoading: selectLoadingWorkpace,
+  selectCreatingWorkspace,
 } = workspaceFeature;

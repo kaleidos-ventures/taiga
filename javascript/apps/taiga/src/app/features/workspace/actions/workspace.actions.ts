@@ -18,7 +18,17 @@ export const fetchWorkspaceList = createAction(
   '[WorkspaceList] Fetch'
 );
 
-export const addWorkspace = createAction(
-  '[Workspace] Add new workspace',
+export const fetchWorkspaceListSuccess = createAction(
+  '[WorkspaceList] Fetch success',
+  props<{workspaces: Workspace[]}>()
+);
+
+export const createWorkspace = createAction(
+  '[Workspace] Create new workspace',
   props<{name: Workspace['name'], color: Workspace['color'], userId: User['id']}>()
+);
+
+export const createWorkspaceSuccess = createAction(
+  '[Workspace] Create new workspace success',
+  props<{workspace: Workspace}>()
 );

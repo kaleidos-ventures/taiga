@@ -8,17 +8,66 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
+[data-appearance="tertiary"],
+[data-appearance="destructive"],
+[data-appearance="secondary"],
+[data-appearance="primary"] {
+  transition-duration: 100ms !important; /* stylelint-disable-line declaration-no-important */
+
+  & tui-wrapper {
+    border-radius: 4px;
+    font-weight: var(--font-weight-medium);
+    padding: 0 var(--spacing-12) !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  &.large tui-wrapper {
+    padding: 0 var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  & tui-svg {
+    block-size: 1rem;
+    inline-size: 1rem;
+  }
+
+  & svg {
+    block-size: 1rem;
+    inline-size: 1rem;
+  }
+
+  & .left {
+    inline-size: var(--spacing-16);
+    margin: 0 var(--spacing-4) 0 0 !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  & .right {
+    inline-size: var(--spacing-16);
+    margin: 0 0 0 var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  &[tuiiconbutton] {
+    & .left {
+      margin: 0 !important; /* stylelint-disable-line declaration-no-important */
+    }
+
+    & .right {
+      margin: 0 !important; /* stylelint-disable-line declaration-no-important */
+    }
+  }
+
+  &[tuiIconButton] tui-wrapper {
+    padding: 0 !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
 [data-appearance="tertiary"] {
   & tui-wrapper {
     background: var(--color-gray10);
-    border-radius: 4px;
     color: var(--color-secondary);
-    font-weight: var(--font-weight-medium);
-    padding: 0 var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
 
-    &[data-state="hovered"] {
+    &[data-state="hovered"],
+    &[data-state="pressed"] {
       background: var(--color-gray30);
-      color: var(--color-secondary90);
+      color: var(--color-secondary);
     }
 
     &[disabled] {
@@ -33,9 +82,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  & .icon {
-    block-size: 1rem;
-    inline-size: 1rem;
+  & svg {
+    fill: var(--color-secondary);
   }
 
   & .notification-counter {
@@ -52,36 +100,23 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     pointer-events: none;
   }
 
-  & .left {
-    margin-inline-start: 0;
-  }
-
-  & .right {
-    margin-inline-end: 0;
-  }
-
   &[disabled] {
     opacity: 50%;
-  }
-
-  &[tuiIconButton] tui-wrapper[data-appearance="tertiary"] {
-    padding: var(--spacing-8) !important; /* stylelint-disable-line declaration-no-important */
   }
 }
 
 [data-appearance="destructive"] {
   & tui-wrapper {
     background: var(--color-warning70);
-    border-radius: 4px;
     color: var(--color-white);
-    font-weight: var(--font-weight-medium);
-    padding: 0 var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
 
-    &[data-state="hovered"] {
+    &[data-state="hovered"],
+    &[data-state="pressed"] {
       background: var(--color-warning80);
+      color: var(--color-white);
     }
 
-    &._focused {
+    &[data-state="focused"] {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -90,44 +125,26 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & svg {
-    color: var(--color-white);
-  }
-
-  & .icon {
-    block-size: 1rem;
-    inline-size: 1rem;
-  }
-
-  & .left {
-    margin-inline-start: 0;
-  }
-
-  & .right {
-    margin-inline-end: 0;
+    fill: var(--color-white);
   }
 
   &[disabled] {
     opacity: 50%;
-  }
-
-  &[tuiIconButton] tui-wrapper[data-appearance="destructive"] {
-    padding: var(--spacing-8) !important; /* stylelint-disable-line declaration-no-important */
   }
 }
 
 [data-appearance="secondary"] {
   & tui-wrapper {
     background-color: var(--color-gray30);
-    border-radius: 4px;
     color: var(--color-gray80);
-    font-weight: var(--font-weight-medium);
-    padding: 0 var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
 
-    &[data-state="hovered"] {
+    &[data-state="hovered"],
+    &[data-state="pressed"] {
       background-color: var(--color-gray40);
+      color: var(--color-gray80);
     }
 
-    &._focused {
+    &[data-state="focused"] {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -135,41 +152,76 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  & .icon {
-    block-size: 1rem;
-    inline-size: 1rem;
+  & svg {
+    fill: var(--color-gray80);
   }
 
-  & .left {
-    margin-inline-start: 0;
+  &[disabled] {
+    opacity: 50%;
+  }
+}
+
+[data-appearance="primary"] {
+  & tui-wrapper {
+    color: var(--color-gray80);
+
+    &[data-state="hovered"],
+    &[data-state="pressed"] {
+      background-color: var(--color-primary40);
+      color: var(--color-gray80);
+    }
+
+    &[data-state="focused"] {
+      &::after {
+        border-color: var(--color-secondary);
+        border-width: 1px;
+      }
+    }
+
+    &[data-state="pressed"] {
+      background-color: var(--color-primary40);
+    }
   }
 
-  & .right {
-    margin-inline-end: 0;
+  & svg {
+    fill: var(--color-gray80);
   }
 
   &[disabled] {
     opacity: 50%;
   }
 
-  &[tuiIconButton] tui-wrapper[data-appearance="secondary"] {
-    padding: var(--spacing-8) !important; /* stylelint-disable-line declaration-no-important */
+  &.large[data-tui-host-size="l"] {
+    block-size: 44px;
+
+    & tui-wrapper {
+      line-height: 1rem;
+      padding: var(--spacing-12) var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
+    }
+  }
+}
+
+[data-appearance="us-header-button"][blocked] {
+  & tui-wrapper[data-state="hovered"] {
+    background: var(--color-warning20);
+    color: var(--color-warning80);
   }
 }
 
 [data-appearance="home-button"] {
+  transition-duration: 100ms !important; /* stylelint-disable-line declaration-no-important */
+
   & tui-wrapper {
     background: none;
     color: var(--color-gray100);
-    font-weight: var(--font-weight-medium);
-    padding: 0 var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
 
-    &[data-state="hovered"] {
+    &[data-state="hovered"],
+    &[data-state="pressed"] {
       background: none;
       color: var(--color-secondary);
     }
 
-    &._focused {
+    &[data-state="focused"] {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -184,13 +236,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 [data-appearance="button-form"] {
+  transition-duration: 100ms !important; /* stylelint-disable-line declaration-no-important */
+
   & tui-wrapper {
     background: none;
     color: var(--color-secondary);
     font-weight: var(--font-weight-medium);
     padding: var(--spacing-8) !important; /* stylelint-disable-line declaration-no-important */
 
-    &[data-state="hovered"] {
+    &[data-state="hovered"],
+    &[data-state="pressed"] {
       background: var(--color-gray20);
     }
 
@@ -204,13 +259,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 [data-appearance="action-button"] {
+  transition-duration: 100ms !important; /* stylelint-disable-line declaration-no-important */
+
   & tui-wrapper {
     background: none;
     color: var(--color-gray60);
     font-weight: var(--font-weight-medium);
     padding: var(--spacing-8) !important; /* stylelint-disable-line declaration-no-important */
 
-    &[data-state="hovered"] {
+    &[data-state="hovered"],
+    &[data-state="pressed"] {
       background: var(--color-gray20);
       color: var(--color-secondary90);
     }
@@ -229,13 +287,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 [data-appearance="us-header-button"] {
+  transition-duration: 100ms !important; /* stylelint-disable-line declaration-no-important */
+
   & tui-wrapper {
     background: none;
     color: var(--color-gray60);
     font-weight: var(--font-weight-medium);
     padding: var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
 
-    &[data-state="hovered"] {
+    &[data-state="hovered"],
+    &[data-state="pressed"] {
       background: var(--color-gray20);
       color: var(--color-secondary90);
     }
@@ -254,13 +315,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 [data-appearance="nav-icon-button"] {
+  transition-duration: 100ms !important; /* stylelint-disable-line declaration-no-important */
+
   & tui-wrapper {
     background: none;
     color: var(--color-secondary);
     font-weight: var(--font-weight-medium);
     padding: var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
 
-    &[data-state="hovered"] {
+    &[data-state="hovered"],
+    &[data-state="pressed"] {
       background: var(--color-gray20);
       color: var(--color-secondary90);
     }
@@ -283,93 +347,39 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
-[data-appearance="primary"] {
-  & tui-wrapper {
-    border-radius: 4px;
-    color: var(--color-gray80);
-    font-weight: var(--font-weight-medium);
-    padding: 0 var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
-
-    &[data-state="hovered"] {
-      background-color: var(--color-primary40);
-    }
-
-    &[data-state="focused"] {
-      &::after {
-        border-color: var(--color-secondary);
-        border-width: 1px;
-      }
-    }
-
-    &[data-state="pressed"] {
-      background-color: var(--color-primary40);
-    }
-  }
-
-  & .icon {
-    block-size: 1rem;
-  }
-
-  & .left {
-    margin-inline-start: 0;
-  }
-
-  & .right {
-    margin-inline-end: 0;
-  }
-
-  &[disabled] {
-    opacity: 50%;
-  }
-
-  &.large[data-tui-host-size="l"] {
-    block-size: 44px;
-
-    & tui-wrapper {
-      line-height: 1rem;
-      padding: var(--spacing-12) var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
-    }
-  }
-
-  &[tuiIconButton] tui-wrapper[data-appearance="primary"] {
-    padding: var(--spacing-8) !important; /* stylelint-disable-line declaration-no-important */
-  }
-}
-
-[data-appearance="us-header-button"][blocked] {
-  & tui-wrapper[data-state="hovered"] {
-    background: var(--color-warning20);
-    color: var(--color-warning80);
-  }
-}
-
 [tuiLink] {
+  align-items: center;
+  display: flex;
+  transition-duration: 100ms !important; /* stylelint-disable-line declaration-no-important */
+
   & .content {
     @mixin font-body;
 
+    block-size: var(--spacing-16);
     color: var(--color-secondary);
-    transition: color .3s ease-in-out;
+    transition: color .1s ease-in-out;
   }
 
   & .icon {
     block-size: 1rem;
     fill: var(--color-secondary);
     inline-size: 1rem;
+    margin-block-start: 0 !important; /* stylelint-disable-line declaration-no-important */
   }
 
   & svg {
-    transition: fill .3s ease-in-out;
+    transition: fill .1s ease-in-out;
   }
 
   &:hover {
     & .content {
       color: var(--color-secondary90);
-      transition: color .3s ease-in-out;
+      transition: color .1s ease-in-out;
     }
 
-    & .icon {
+    & svg {
       fill: var(--color-secondary90);
-      transition: fill .3s ease-in-out;
+      transition: fill .1s ease-in-out;
     }
   }
 }

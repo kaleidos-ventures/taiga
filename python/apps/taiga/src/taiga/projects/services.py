@@ -10,6 +10,7 @@ from typing import Iterable, Optional
 from taiga.projects import repositories as projects_repo
 from taiga.projects.models import Project
 from taiga.users.models import User
+from taiga.workspaces.models import Workspace
 
 
 def get_projects(workspace_slug: str) -> Iterable[Project]:
@@ -17,9 +18,9 @@ def get_projects(workspace_slug: str) -> Iterable[Project]:
 
 
 def create_project(
-    workspace_slug: str, name: str, description: Optional[str], color: Optional[int], owner: User
+    workspace: Workspace, name: str, description: Optional[str], color: Optional[int], owner: User
 ) -> Project:
-    return projects_repo.create_project(workspace_slug, name, description, color, owner)
+    return projects_repo.create_project(workspace, name, description, color, owner)
 
 
 def get_project(slug: str) -> Optional[Project]:

@@ -56,7 +56,7 @@ class Workspace(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             with advisory_lock("workspace-creation"):
-                self.slug = f"{slugify_uniquely(self.name, self.__class__)}"
+                self.slug = slugify_uniquely(self.name, self.__class__)
                 super().save(*args, **kwargs)
         else:
             super().save(*args, **kwargs)

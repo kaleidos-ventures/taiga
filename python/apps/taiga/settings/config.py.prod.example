@@ -36,10 +36,6 @@ SITES = {
         "front": { "name": "front", "scheme": TAIGA_SITES_SCHEME, "domain": f"{ TAIGA_SITES_DOMAIN }{ FORCE_SCRIPT_NAME }" }
 }
 
-# Setting DEFAULT_PROJECT_SLUG_PREFIX to false
-# removes the username from project slug
-DEFAULT_PROJECT_SLUG_PREFIX = False
-
 #########################################
 ## MEDIA AND STATIC
 #########################################

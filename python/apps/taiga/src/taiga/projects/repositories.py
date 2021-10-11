@@ -18,12 +18,9 @@ def get_projects(workspace_slug: str) -> Iterable[Project]:
 
 
 def create_project(
-    workspace_slug: str, name: str, description: Optional[str], color: Optional[int], owner: User
+    workspace: Workspace, name: str, description: Optional[str], color: Optional[int], owner: User
 ) -> Project:
-    workspace: Workspace = Workspace.objects.get(slug=workspace_slug)
-    return Project.objects.create(
-        name=name, description=description, workspace_id=workspace.id, color=color, owner=owner
-    )
+    return Project.objects.create(name=name, description=description, workspace=workspace, color=color, owner=owner)
 
 
 def get_project(slug: str) -> Optional[Project]:

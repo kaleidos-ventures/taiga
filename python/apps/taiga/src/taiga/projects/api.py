@@ -15,6 +15,7 @@ from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
 from taiga.projects import services as projects_services
 from taiga.projects.serializers import ProjectSerializer
 from taiga.projects.validators import ProjectValidator
+from taiga.workspaces import services as workspaces_services
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,7 @@ def list_projects(workspace_slug: str = Query(None, description="the workspace s
     """
     List projects of a workspace.
     """
-    # TODO - error 404 si el workspace no existe (o no me pertenece)
+    # TODO - error 404 si el workspace no existe
     projects = projects_services.get_projects(workspace_slug=workspace_slug)
     return ProjectSerializer.from_queryset(projects)
 
@@ -50,8 +51,9 @@ def create_project(form: ProjectValidator, request: Request) -> ProjectSerialize
     """
     Create project for the logged user.
     """
+    workspace = workspaces_services.get_workspace(form.workspace_slug)
     project = projects_services.create_project(
-        workspace_slug=form.workspace_slug,
+        workspace=workspace,
         name=form.name,
         description=form.description,
         color=form.color,

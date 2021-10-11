@@ -15,7 +15,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   block-size: var(--spacing-20);
   color: var(--color-ok80);
   display: flex;
-  margin-inline-start: var(--spacing-16);
   padding: 0 var(--spacing-8);
   text-transform: lowercase;
 }

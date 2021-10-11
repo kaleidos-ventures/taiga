@@ -13,63 +13,49 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .workspace-item-top {
+  align-items: center;
   background: var(--color-white);
   display: flex;
-  justify-content: space-between;
+  gap: var(--spacing-16);
+  justify-content: flex-start;
   margin-block-end: var(--spacing-16);
   padding: var(--spacing-16);
+}
 
-  & .workspace-item-title-container {
-    align-items: center;
-    display: flex;
+.workspace-item-action {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1rem;
+  margin-inline-start: auto;
+}
+
+.owner {
+  background: var(--color-ok10);
+  block-size: var(--spacing-20);
+  color: var(--color-ok80);
+  margin-inline-start: var(--spacing-16);
+  padding: var(--spacing-8);
+}
+
+.workspace-item-title-wrapper {
+  min-inline-size: 0;
+}
+
+.workspace-item-title {
+  @mixin text-overflow;
+  @mixin font-heading-3;
+
+  color: var(--color-gray100);
+  display: block;
+  margin: 0;
+
+  &:hover {
+    color: var(--color-secondary);
   }
 
-  & .workspace-item-title-wrapper {
-    @mixin text-overflow;
-
-    flex: 1;
-  }
-
-  & .workspace-avatar {
-    margin-inline-end: var(--spacing-16);
-  }
-
-  & .workspace-item-action {
-    display: flex;
-    white-space: nowrap;
-
-    & button {
-      margin-inline-start: var(--spacing-16);
-    }
-  }
-
-  & .owner {
-    @mixin font-small;
-
-    align-items: center;
-    background: var(--color-ok10);
-    block-size: var(--spacing-20);
-    color: var(--color-ok80);
-    display: flex;
-    margin-inline-start: var(--spacing-16);
-    padding: 0 var(--spacing-8);
-  }
-
-  & .workspace-item-title {
-    @mixin text-overflow;
-    @mixin font-heading-3;
-
-    color: var(--gray100);
-    margin: 0;
-
-    &:hover {
-      color: var(--color-secondary);
-    }
-
-    &:focus {
-      outline: solid 1px var(--color-secondary);
-      text-underline: none;
-    }
+  &:focus {
+    outline: solid 1px var(--color-secondary);
+    text-underline: none;
   }
 }
 

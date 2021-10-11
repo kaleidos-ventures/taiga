@@ -11,7 +11,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 
 import { map } from 'rxjs/operators';
 
-import * as NewProjectActions from '~/app/features/new-project/actions/new-project.actions';
+import * as NewProjectActions from '~/app/features/project/new-project/actions/new-project.actions';
 import * as WorkspaceActions from '~/app/features/workspace/actions/workspace.actions';
 import { ProjectApiService } from '@taiga/api';
 import { fetch } from '@nrwl/angular';

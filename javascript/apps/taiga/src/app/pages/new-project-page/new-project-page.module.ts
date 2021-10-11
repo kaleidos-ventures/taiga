@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 import { NewProjectPageRoutingModule } from './new-project-page-routing.module';
 import { NewProjectPageComponent } from './new-project-page.component';
 import { RouterModule } from '@angular/router';
-import { NewProjectModule } from '~/app/features/new-project/new-project.module';
+import { NewProjectModule } from '~/app/features/project/new-project/new-project.module';
 
 @NgModule({
   declarations: [

@@ -16,7 +16,7 @@ import { ProjectCreationMockFactory, ProjectMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { NewProjectEffects } from './new-project.effects';
 import { createProject } from '../actions/new-project.actions';
-import { fetchWorkspaceList } from '../../workspace/actions/workspace.actions';
+import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
 
 describe('NewProjectEffects', () => {
   let actions$: Observable<Action>;

@@ -9,7 +9,7 @@ from fastapi import APIRouter
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_401
-from taiga.serializers.users import UserMeSerializer
+from taiga.users.serializers import UserMeSerializer
 
 metadata = {
     "name": "users",

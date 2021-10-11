@@ -11,9 +11,9 @@ from fastapi import APIRouter, Query
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
-from taiga.serializers.workspaces import WorkspaceSerializer
-from taiga.services import workspaces as workspaces_services
-from taiga.validators.workspaces import WorkspaceValidator
+from taiga.workspaces import services as workspaces_services
+from taiga.workspaces.serializers import WorkspaceSerializer
+from taiga.workspaces.validators import WorkspaceValidator
 
 metadata = {
     "name": "workspaces",
@@ -31,18 +31,14 @@ router = APIRouter(prefix="/workspaces", tags=["workspaces"], responses=ERROR_40
 )
 def list_workspaces(request: Request) -> List[WorkspaceSerializer]:
     """
-    Get the workspaces of the logged user.
+    List the workspaces of the logged user.
     """
     workspaces = workspaces_services.get_workspaces(owner=request.user)
     return WorkspaceSerializer.from_queryset(workspaces)
 
 
 @router.post(
-    "",
-    name="workspaces.post",
-    summary="Create workspace",
-    response_model=WorkspaceSerializer,
-    responses=ERROR_422
+    "", name="workspaces.post", summary="Create workspace", response_model=WorkspaceSerializer, responses=ERROR_422
 )
 def create_workspace(form: WorkspaceValidator, request: Request) -> WorkspaceSerializer:
     """

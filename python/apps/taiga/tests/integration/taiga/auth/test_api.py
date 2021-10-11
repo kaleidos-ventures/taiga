@@ -8,8 +8,8 @@
 
 import pytest
 from fastapi import status
+from taiga.auth.tokens import RefreshToken
 from taiga.exceptions.api import codes
-from taiga.tokens.auth import RefreshToken
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)

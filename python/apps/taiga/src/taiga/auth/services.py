@@ -7,12 +7,13 @@
 
 from typing import List, Optional, Tuple
 
-from taiga.exceptions.services.auth import BadAuthTokenError, UnauthorizedUserError
-from taiga.models.auth import AccessWithRefreshToken
-from taiga.models.users import User
-from taiga.repositories import users as users_repo
+from taiga.auth.exceptions import BadAuthTokenError, UnauthorizedUserError
 from taiga.tokens import TokenError
-from taiga.tokens.auth import AccessToken, RefreshToken
+from taiga.users import repositories as users_repo
+from taiga.users.models import User
+
+from .models import AccessWithRefreshToken
+from .tokens import AccessToken, RefreshToken
 
 
 def login(username: str, password: str) -> Optional[AccessWithRefreshToken]:

@@ -9,7 +9,7 @@ from typing import Any, Dict, Optional
 
 from django.contrib.auth.models import update_last_login as django_update_last_login
 from django.db.models import Q
-from taiga.models.users import User
+from taiga.users.models import User
 
 
 def get_first_user(**kwargs: Dict[str, Any]) -> Optional[User]:

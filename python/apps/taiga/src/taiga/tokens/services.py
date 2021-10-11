@@ -8,9 +8,10 @@
 from datetime import datetime
 from typing import Tuple
 
-from taiga.models.tokens import DenylistedToken, OutstandingToken
-from taiga.models.users import User
-from taiga.repositories import tokens
+from taiga.users.models import User
+
+from . import repositories as tokens_repo
+from .models import DenylistedToken, OutstandingToken
 
 # -----------------
 # Outstanding Token
@@ -20,11 +21,11 @@ from taiga.repositories import tokens
 def create_outstanding_token(
     user: User, jti: str, token: str, created_at: datetime, expires_at: datetime
 ) -> OutstandingToken:
-    return tokens.create_outstanding_token(user, jti, token, created_at, expires_at)
+    return tokens_repo.create_outstanding_token(user, jti, token, created_at, expires_at)
 
 
 def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> Tuple[OutstandingToken, bool]:
-    return tokens.get_or_create_outstanding_token(jti, token, expires_at)
+    return tokens_repo.get_or_create_outstanding_token(jti, token, expires_at)
 
 
 # ----------------
@@ -33,8 +34,8 @@ def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) 
 
 
 def deny_token(token: OutstandingToken) -> Tuple[DenylistedToken, bool]:
-    return tokens.get_or_create_denylisted_token(token)
+    return tokens_repo.get_or_create_denylisted_token(token)
 
 
 def token_is_denied(jti: str) -> bool:
-    return tokens.denylisted_token_exist(jti)
+    return tokens_repo.denylisted_token_exist(jti)

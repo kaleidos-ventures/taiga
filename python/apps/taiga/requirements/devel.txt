@@ -86,7 +86,6 @@ django==2.2.24
     #   django-sampledatahelper
     #   django-sites
     #   django-sr
-    #   django-stubs
     #   easy-thumbnails
     #   taiga6
 django-ipware==1.1.6
@@ -103,8 +102,6 @@ django-sites==0.10
     # via taiga6
 django-sr==0.0.4
     # via taiga6
-django-stubs==1.7.0
-    # via -r requirements/devel.in
 djmail==1.0.1
     # via taiga6
 dnspython==2.1.0
@@ -166,10 +163,6 @@ monotonic==1.6
     # via
     #   rudder-sdk-python
     #   taiga6
-mypy==0.910
-    # via django-stubs
-mypy-extensions==0.4.3
-    # via mypy
 netaddr==0.7.19
     # via taiga6
 oauthlib[signedtoken]==3.1.1
@@ -309,13 +302,10 @@ tinycss2==1.1.0
     #   taiga6
 toml==0.10.2
     # via
-    #   mypy
     #   pytest
     #   pytest-cov
 typing-extensions==3.10.0.0
     # via
-    #   django-stubs
-    #   mypy
     #   pydantic
     #   taiga6
 unidecode==0.4.20

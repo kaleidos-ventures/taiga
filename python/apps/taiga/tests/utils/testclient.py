@@ -6,8 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from fastapi.testclient import TestClient as TestClientBase
-from taiga.models.users import User
-from taiga.tokens import AccessToken
+from taiga.auth.tokens import AccessToken
+from taiga.users.models import User
 
 
 class TestClient(TestClientBase):

@@ -12,9 +12,9 @@ from fastapi import APIRouter, Query
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
-from taiga.serializers.projects import ProjectSerializer
-from taiga.services import projects as projects_services
-from taiga.validators.projects import ProjectValidator
+from taiga.projects import services as projects_services
+from taiga.projects.serializers import ProjectSerializer
+from taiga.projects.validators import ProjectValidator
 
 logger = logging.getLogger(__name__)
 
@@ -24,16 +24,17 @@ metadata = {
 }
 
 router = APIRouter(prefix="/projects", tags=["projects"], responses=ERROR_401)
-router2 = APIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"], responses=ERROR_401)
+router_workspaces = APIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"], responses=ERROR_401)
 
 
-@router2.get(
+@router_workspaces.get(
     "", name="projects.list", summary="List projects", response_model=List[ProjectSerializer], responses=ERROR_422
 )
 def list_projects(workspace_slug: str = Query(None, description="the workspace slug (str)")) -> List[ProjectSerializer]:
     """
     List projects of a workspace.
     """
+    # TODO - error 404 si el workspace no existe (o no me pertenece)
     projects = projects_services.get_projects(workspace_slug=workspace_slug)
     return ProjectSerializer.from_queryset(projects)
 

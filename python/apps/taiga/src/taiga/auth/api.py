@@ -8,9 +8,10 @@
 from fastapi import APIRouter
 from taiga.exceptions.api import AuthenticationError
 from taiga.exceptions.api.errors import ERROR_401, ERROR_422
-from taiga.serializers.auth import AccessTokenWithRefreshSerializer
-from taiga.services import auth as auth_services
-from taiga.validators.auth import AccessTokenValidator, RefreshTokenValidator
+
+from . import services as auth_services
+from .serializers import AccessTokenWithRefreshSerializer
+from .validators import AccessTokenValidator, RefreshTokenValidator
 
 metadata = {
     "name": "auth",

@@ -9,7 +9,7 @@ from typing import Optional
 
 from pydantic import validator
 from taiga.base.serializer import BaseModel
-from taiga.services import workspaces as workspaces_services
+from taiga.workspaces import services as workspaces_services
 
 
 class ProjectValidator(BaseModel):

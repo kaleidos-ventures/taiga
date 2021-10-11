@@ -35,8 +35,7 @@ from functools import cached_property
 from typing import ClassVar, Tuple
 
 from taiga.conf import settings
-
-from .base import DenylistMixin, Token
+from taiga.tokens import DenylistMixin, Token
 
 
 class AccessToken(Token):

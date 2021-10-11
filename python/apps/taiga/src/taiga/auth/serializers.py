@@ -5,11 +5,9 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from .base import DenylistMixin, Token
-from .exceptions import TokenError
+from taiga.base.serializer import BaseModel
 
-__all__ = [
-    "TokenError",
-    "Token",
-    "DenylistMixin",
-]
+
+class AccessTokenWithRefreshSerializer(BaseModel):
+    token: str
+    refresh: str

@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
-from taiga.repositories import users as users_repo
+from taiga.users import repositories as users_repo
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db

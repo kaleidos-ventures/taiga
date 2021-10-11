@@ -7,9 +7,9 @@
 
 import pytest
 from taiga.auth import backend
+from taiga.auth.tokens import AccessToken
 from taiga.base.api import Request
 from taiga.exceptions.api import AuthenticationError
-from taiga.tokens.auth import AccessToken
 from tests.utils import factories as f
 
 pytestmark = [pytest.mark.django_db, pytest.mark.asyncio]

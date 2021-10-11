@@ -34,11 +34,11 @@ from unittest.mock import patch
 
 import pytest
 from django.core.management import call_command
+from taiga.auth.tokens import AccessToken, RefreshToken
 from taiga.base.utils.datetime import epoch_to_datetime
 from taiga.conf import settings
-from taiga.models.tokens import DenylistedToken, OutstandingToken
-from taiga.tokens.auth import AccessToken, RefreshToken
 from taiga.tokens.exceptions import TokenError
+from taiga.tokens.models import DenylistedToken, OutstandingToken
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db

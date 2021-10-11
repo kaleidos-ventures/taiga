@@ -33,8 +33,9 @@
 from datetime import datetime
 from typing import Tuple
 
-from taiga.models.tokens import DenylistedToken, OutstandingToken
-from taiga.models.users import User
+from taiga.users.models import User
+
+from .models import DenylistedToken, OutstandingToken
 
 # -----------------
 # Outstanding Token

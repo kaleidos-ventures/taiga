@@ -8,7 +8,7 @@
 from typing import Optional
 
 from taiga.base.serializer import BaseModel
-from taiga.serializers.workspaces import WorkspaceSerializer
+from taiga.workspaces.serializers import WorkspaceSerializer
 
 
 class ProjectSerializer(BaseModel):

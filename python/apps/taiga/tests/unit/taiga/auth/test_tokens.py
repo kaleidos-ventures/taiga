@@ -29,8 +29,8 @@
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
 
+from taiga.auth.tokens import AccessToken, RefreshToken
 from taiga.conf import settings
-from taiga.tokens.auth import AccessToken, RefreshToken
 
 ##########################################################
 # RefreshToken

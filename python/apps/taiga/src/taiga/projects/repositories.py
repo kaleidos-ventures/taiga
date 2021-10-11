@@ -7,9 +7,9 @@
 
 from typing import Iterable, Optional
 
-from taiga.models.projects import Project
-from taiga.models.users import User
-from taiga.models.workspaces import Workspace
+from taiga.projects.models import Project
+from taiga.users.models import User
+from taiga.workspaces.models import Workspace
 
 
 def get_projects(workspace_slug: str) -> Iterable[Project]:

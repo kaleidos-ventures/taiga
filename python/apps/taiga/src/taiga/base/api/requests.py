@@ -8,7 +8,7 @@
 from typing import Union
 
 from fastapi.requests import Request as RequestBase
-from taiga.models.users import AnonymousUser, User
+from taiga.users.models import AnonymousUser, User
 
 
 class Request(RequestBase):

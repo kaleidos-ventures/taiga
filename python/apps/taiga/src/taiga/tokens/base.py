@@ -36,8 +36,8 @@ from uuid import uuid4
 
 from taiga.base.utils.datetime import aware_utcnow, datetime_to_epoch, epoch_to_datetime
 from taiga.conf import settings
-from taiga.services import tokens as tokens_services
 
+from . import services as tokens_services
 from .backends import TokenBackend, token_backend
 from .exceptions import TokenBackendError, TokenError
 

@@ -9,11 +9,11 @@ from typing import Tuple, Union
 
 from fastapi import Request
 from starlette.authentication import AuthCredentials
+from taiga.auth.exceptions import BadAuthTokenError, UnauthorizedUserError
 from taiga.exceptions.api import AuthenticationError
-from taiga.exceptions.services.auth import BadAuthTokenError, UnauthorizedUserError
-from taiga.models.users import AnonymousUser, User
-from taiga.services import auth as auth_serv
+from taiga.users.models import AnonymousUser, User
 
+from . import services as auth_serv
 from .security import HTTPBearer
 
 security = HTTPBearer()

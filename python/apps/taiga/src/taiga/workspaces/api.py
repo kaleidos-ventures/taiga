@@ -12,7 +12,7 @@ from taiga.base.api import Request
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
 from taiga.workspaces import services as workspaces_services
-from taiga.workspaces.serializers import WorkspaceSerializer
+from taiga.workspaces.serializers import WorkspaceSerializer, WorkspaceSummarySerializer
 from taiga.workspaces.validators import WorkspaceValidator
 
 metadata = {
@@ -27,9 +27,9 @@ router = APIRouter(prefix="/workspaces", tags=["workspaces"], responses=ERROR_40
     "",
     name="workspaces.list",
     summary="List workspaces",
-    response_model=List[WorkspaceSerializer],
+    response_model=List[WorkspaceSummarySerializer],
 )
-def list_workspaces(request: Request) -> List[WorkspaceSerializer]:
+def list_workspaces(request: Request) -> List[WorkspaceSummarySerializer]:
     """
     List the workspaces of the logged user.
     """

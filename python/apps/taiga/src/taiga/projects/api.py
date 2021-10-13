@@ -13,7 +13,7 @@ from taiga.base.api import Request
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
 from taiga.projects import services as projects_services
-from taiga.projects.serializers import ProjectSerializer
+from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.projects.validators import ProjectValidator
 from taiga.workspaces import services as workspaces_services
 
@@ -29,9 +29,15 @@ router_workspaces = APIRouter(prefix="/workspaces/{workspace_slug}/projects", ta
 
 
 @router_workspaces.get(
-    "", name="projects.list", summary="List projects", response_model=List[ProjectSerializer], responses=ERROR_422
+    "",
+    name="projects.list",
+    summary="List projects",
+    response_model=List[ProjectSummarySerializer],
+    responses=ERROR_422,
 )
-def list_projects(workspace_slug: str = Query(None, description="the workspace slug (str)")) -> List[ProjectSerializer]:
+def list_projects(
+    workspace_slug: str = Query(None, description="the workspace slug (str)")
+) -> List[ProjectSummarySerializer]:
     """
     List projects of a workspace.
     """

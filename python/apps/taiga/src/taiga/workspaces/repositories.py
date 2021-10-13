@@ -11,8 +11,9 @@ from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 
-def get_workspaces(owner: User) -> Iterable[Workspace]:
+def get_workspaces_with_latest_projects(owner: User) -> Iterable[Workspace]:
     data: Iterable[Workspace] = Workspace.objects.filter(owner=owner).order_by("-created_date")
+    # TODO: add annotation for latest_projects and total_projects
     return data
 
 

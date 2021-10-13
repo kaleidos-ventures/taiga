@@ -13,7 +13,7 @@ from taiga.workspaces.models import Workspace
 
 
 def get_workspaces(owner: User) -> Iterable[Workspace]:
-    return workspaces_repo.get_workspaces(owner)
+    return workspaces_repo.get_workspaces_with_latest_projects(owner)
 
 
 def create_workspace(name: str, color: int, owner: User) -> Workspace:

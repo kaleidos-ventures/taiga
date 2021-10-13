@@ -5,20 +5,28 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
+# from typing import List
 
 from taiga.base.serializer import BaseModel
-from taiga.workspaces.serializers import WorkspaceSerializer
+
+# from taiga.projects.serializers.related import ProjectSummarySerializer
 
 
-class ProjectSerializer(BaseModel):
-    id: int
+class WorkspaceSummarySerializer(BaseModel):
     name: str
     slug: str
-    description: Optional[str] = None
-    color: Optional[int] = None
-    # TODO: after the migrations all projects should belongs to a workspace
-    workspace: Optional[WorkspaceSerializer] = None
+    color: int
+    # latest_projects: List[ProjectSummarySerializer]
+    # total_projects: int
+
+    class Config:
+        orm_mode = True
+
+
+class WorkspaceSerializer(BaseModel):
+    name: str
+    slug: str
+    color: int
 
     class Config:
         orm_mode = True

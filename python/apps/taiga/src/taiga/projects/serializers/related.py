@@ -5,13 +5,16 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import Optional
+
 from taiga.base.serializer import BaseModel
 
 
-class WorkspaceSerializer(BaseModel):
+class ProjectSummarySerializer(BaseModel):
     name: str
     slug: str
-    color: int
+    description: Optional[str] = None
+    color: Optional[int] = None
 
     class Config:
         orm_mode = True

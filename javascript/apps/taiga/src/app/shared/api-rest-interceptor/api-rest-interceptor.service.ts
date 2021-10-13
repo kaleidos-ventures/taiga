@@ -20,6 +20,7 @@ import { Auth } from '@taiga/data';
 import { loginSuccess, logout } from '~/app/features/auth/actions/auth.actions';
 import { AuthApiService } from '@taiga/api';
 import { AuthService } from '~/app/features/auth/services/auth.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class ApiRestInterceptorService implements HttpInterceptor {
@@ -31,7 +32,8 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     private readonly authApiService: AuthApiService,
     private readonly configService: ConfigService,
     private readonly store: Store,
-    private readonly authService: AuthService) {
+    private readonly authService: AuthService,
+    private readonly router: Router) {
     this.requests.pipe(
       concatLatestFrom(() => this.store.select(getGlobalLoading))
     // eslint-disable-next-line ngrx/no-store-subscription
@@ -81,8 +83,10 @@ export class ApiRestInterceptorService implements HttpInterceptor {
         if (err.status === 401) {
           const auth = this.authService.getAuth();
 
-          if (auth && !request.url.includes('/auth/token')) {
+          if (auth?.token && auth.refresh && !request.url.includes('/auth/token')) {
             return this.handle401Error(request, next);
+          } else if (!auth?.token || !auth?.refresh) {
+            void this.router.navigate(['login']);
           }
         }
 
@@ -172,6 +176,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
             this.refreshTokenInProgress = false;
 
             this.store.dispatch(logout());
+            void this.router.navigate(['login']);
 
             return throwError(err);
           })

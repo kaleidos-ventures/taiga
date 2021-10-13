@@ -17,6 +17,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AuthApiService } from '@taiga/api';
 import { loginSuccess, logout } from '~/app/features/auth/actions/auth.actions';
 import { AuthService } from '~/app/features/auth/services/auth.service';
+import { Router } from '@angular/router';
 
 describe('ApiRestInterceptor', () => {
   let spectator: SpectatorHttp<ApiRestInterceptorService>;
@@ -31,6 +32,7 @@ describe('ApiRestInterceptor', () => {
     mocks: [
       AuthService,
       AuthApiService,
+      Router,
     ],
     providers: [
       { provide: ConfigService, useValue: ConfigServiceMock },
@@ -78,7 +80,6 @@ describe('ApiRestInterceptor', () => {
     jest.spyOn(store, 'dispatch');
 
     const authApiService = spectator.inject(AuthApiService);
-
     const authService = spectator.inject(AuthService);
     authService.getAuth.mockReturnValue({token, refresh});
 
@@ -117,6 +118,7 @@ describe('ApiRestInterceptor', () => {
     jest.spyOn(store, 'dispatch');
 
     const authApiService = spectator.inject(AuthApiService);
+    const routerService = spectator.inject(Router);
 
     const authService = spectator.inject(AuthService);
     authService.getAuth.mockReturnValue({token, refresh});
@@ -137,6 +139,7 @@ describe('ApiRestInterceptor', () => {
       error: () => {
         expect(authApiService.refreshToken).toHaveBeenCalledWith(refresh);
         expect(store.dispatch).toHaveBeenCalledWith(logout());
+        expect(routerService.navigate).toHaveBeenCalledWith(['login']);
 
         done();
       }

@@ -27,7 +27,7 @@ interface State {
 export class AvatarComponent implements OnInit {
   @Input()
   public set user(user: User) {
-    this.state.set({user});
+    this.state.set({ user });
   };
 
   @Input()

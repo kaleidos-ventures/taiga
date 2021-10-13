@@ -18,7 +18,7 @@ import { selectWorkspace } from '~/app/features/workspace-detail/selectors/works
   styleUrls: ['./workspace-detail-page.component.css']
 })
 export class WorkspaceDetailPageComponent implements OnInit {
-  
+
   constructor(
     private store: Store,
     private route: ActivatedRoute,
@@ -28,13 +28,13 @@ export class WorkspaceDetailPageComponent implements OnInit {
 
   public ngOnInit() {
     let slug = '';
-    this.route.paramMap.subscribe(params => { 
+    this.route.paramMap.subscribe(params => {
       slug = params.get('slug')!;
     });
     if (slug) {
       const parseId = slug.split('-').pop();
       const id = Number(parseId);
-      this.store.dispatch(getWorkspace({id}));
+      this.store.dispatch(getWorkspace({ id }));
     }
   }
 }

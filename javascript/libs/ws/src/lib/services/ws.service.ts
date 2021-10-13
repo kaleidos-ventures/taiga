@@ -44,7 +44,7 @@ export class WsService {
       this.ws.addEventListener('message', (event) => {
         const data = JSON.parse(event.data) as { [key in PropertyKey]: unknown };
 
-        this.store.dispatch(wsMessage({data}));
+        this.store.dispatch(wsMessage({ data }));
       });
     }
   }

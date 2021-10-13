@@ -23,7 +23,7 @@ export class ProjectPageComponent implements OnInit {
   public project$ = this.store.select(selectProject);
 
   public ngOnInit() {
-    this.store.dispatch(getProject({id: 1}));
+    this.store.dispatch(getProject({ id: 1 }));
   }
 
 }

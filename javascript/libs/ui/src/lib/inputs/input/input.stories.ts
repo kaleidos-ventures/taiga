@@ -124,19 +124,19 @@ const baseArgTypes = {
     control: { type: 'select' }
   },
   disabled: {
-    defaultValue: false,
-    options: [false, true],
-    control: { type: 'radio'}
+    defaultValue: null,
+    options: [null, true],
+    control: { type: 'radio' }
   },
   readOnly: {
     defaultValue: null,
     options: [null, true],
-    control: { type: 'radio'}
+    control: { type: 'radio' }
   },
   updateOn: {
     defaultValue: 'submit',
     options: ['blur', 'change', 'submit'],
-    control: { type: 'radio'}
+    control: { type: 'radio' }
   },
 };
 

@@ -19,11 +19,11 @@ import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.s
   animations: [
     trigger('slideInOut', [
       transition(':enter', [
-        style({flex: '0 0 0'}),
-        animate('200ms ease-in', style({flex: '0 0 383px'}))
+        style({ flex: '0 0 0' }),
+        animate('200ms ease-in', style({ flex: '0 0 383px' }))
       ]),
       transition(':leave', [
-        animate('200ms ease-in', style({flex: '0 0 0'}))
+        animate('200ms ease-in', style({ flex: '0 0 0' }))
       ])
     ])
   ]

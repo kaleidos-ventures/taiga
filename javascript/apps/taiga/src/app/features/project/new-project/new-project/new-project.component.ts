@@ -6,8 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@ngneat/reactive-forms';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';

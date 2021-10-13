@@ -29,12 +29,12 @@ const baseArgTypes = {
   disabled: {
     defaultValue: null,
     options: [null, true],
-    control: { type: 'radio'}
+    control: { type: 'radio' }
   },
   readOnly: {
     defaultValue: null,
     options: [null, true],
-    control: { type: 'radio'}
+    control: { type: 'radio' }
   },
 };
 

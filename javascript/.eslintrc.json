@@ -50,7 +50,10 @@
         "semi": "off",
         "indent": "off",
         "no-multiple-empty-lines":  [2, {"max": 1}],
-        "quotes": ["error", "single", { "avoidEscape": true }]
+        "quotes": ["error", "single", { "avoidEscape": true }],
+        "object-curly-spacing": ["error", "always", {
+          "objectsInObjects": false
+        }]
       }
     },
     {

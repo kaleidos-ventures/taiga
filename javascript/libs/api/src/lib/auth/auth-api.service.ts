@@ -23,6 +23,6 @@ export class AuthApiService {
   }
 
   public refreshToken(refresh: Auth['refresh']) {
-    return this.http.post<Auth>(`${this.config.apiUrl}/auth/token/refresh`, {refresh});
+    return this.http.post<Auth>(`${this.config.apiUrl}/auth/token/refresh`, { refresh });
   }
 }

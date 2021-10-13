@@ -25,7 +25,7 @@ export class ShortcutsService {
         scope: shortcut.scope,
         ...options
       }, (event, handler) => {
-        subject.next({event, handler});
+        subject.next({ event, handler });
       });
 
       return subject.pipe(

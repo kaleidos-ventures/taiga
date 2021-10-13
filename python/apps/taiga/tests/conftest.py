@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
 import django
 from _pytest.config import Config
 

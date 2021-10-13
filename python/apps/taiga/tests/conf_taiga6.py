@@ -8,7 +8,7 @@
 
 import os
 
-from taiga6.settings.common import *  # noqa, pylint: disable=unused-wildcard-import
+from taiga.conf.taiga6 import *  # noqa, pylint: disable=unused-wildcard-import
 
 DEBUG = True
 
@@ -17,17 +17,6 @@ CELERY_ENABLED = False
 MEDIA_ROOT = "/tmp"
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "taiga",
-        "USER": "taiga",
-        "PASSWORD": "taiga",
-        "HOST": "localhost",
-        "PORT": "5432",
-    }
-}
 
 # This is only for GitHubActions
 if os.getenv("GITHUB_WORKFLOW"):

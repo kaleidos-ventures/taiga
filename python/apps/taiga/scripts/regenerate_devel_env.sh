@@ -6,6 +6,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+export DJANGO_SETTINGS_MODULE=taiga.conf.taiga6
+
 show_answer=true
 while [ $# -gt 0 ]; do
   	case "$1" in

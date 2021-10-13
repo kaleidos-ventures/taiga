@@ -22,7 +22,7 @@ the current db and recreate a new one.
 
 ## Coverage
 
-To run tests and het the coverage info run:
+To run tests and get the coverage info run:
 
 ```shell
 (taiga)$ pytest --cov
@@ -40,4 +40,3 @@ Valid reporting types are:
 ```shell
 (taiga)$ pytest --cov-report term --cov-report html --cov
 ```
-

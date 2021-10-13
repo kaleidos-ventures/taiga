@@ -5,10 +5,16 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import os
+
 from fastapi import FastAPI
 from starlette.middleware.wsgi import WSGIMiddleware
-from taiga6.wsgi import application as taiga6_app
-from taiga.main import api
+
+# initialize taiga6
+os.environ["DJANGO_SETTINGS_MODULE"] = "taiga.conf.taiga6"
+
+from taiga6.wsgi import application as taiga6_app  # noqa: E402
+from taiga.main import api  # noqa: E402
 
 app = FastAPI()
 

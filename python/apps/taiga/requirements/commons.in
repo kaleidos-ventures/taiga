@@ -4,6 +4,9 @@ pydantic[email,dotenv]
 python-multipart
 uvicorn
 
+# For manage CLI
+typer
+
 # camelCase/snake_case
 pyhumps
 

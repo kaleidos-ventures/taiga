@@ -18,34 +18,34 @@ To enable pre-commit git hooks run:
 (taiga)$ pre-commit install --install-hooks
 ```
 
-You can execute all pre-commit hooks with:
-
-```bash
-(taiga)$ pre-commit run -a
-```
+> NOTE: You can execute all pre-commit hooks when this setup process is complete with:
+>
+> ```bash
+> $ cd python/
+> (taiga)$ pre-commit run -a
+> ```
 
 ## Setup projects/taiga
 
 1. Go to `taiga` package and install dev dependencies
-```bash
-$ cd python/apps/taiga/
-(taiga)$ pip install -r requirements/devel.txt
-(taiga)$ pip install -e .
-```
+   ```bash
+   $ cd python/apps/taiga/
+   (taiga)$ pip install -r requirements/devel.txt
+   (taiga)$ pip install -e .
+   ```
 
-2. Create your local taiga6 settings
-```bash
-(taiga)$ cp settings/config.py.dev.example settings/config.py
-```
-Now you can edit the file to put credentials for postgresql and rabbitmq if they are needed
+2. Create your local settings
+   ```bash
+   (taiga)$ cp .env.example.dev .env
+   ```
+   Now you can edit the file to put credentials for postgresql if they are needed, by default the db name, user and password is `taiga`, and postgres is running in `localhost`, port `5432`.
 
 3. Generate the database, load the initial fixtures and create the sample data:
-```bash
-(taiga)$ DJANGO_SETTINGS_MODULE=settings.config ./scripts/regenerate_devel_env.sh
-```
-This script assume you have postgresql running in local. If you use docker images, createdb and dropdb won't work, but otherwise the script is valid.
+   ```bash
+   (taiga)$ ./scripts/regenerate_devel_env.sh
+   ```
 
-4. Start the backend
-```
-(taiga)$ DJANGO_SETTINGS_MODULE=settings.config uvicorn taiga.wsgi:app --reload
-```
+4. Start the backend in dev mode
+   ```
+   (taiga)$ python -m taiga devserve
+   ```

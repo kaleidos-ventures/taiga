@@ -55,7 +55,9 @@ chardet==3.0.4
     #   requests
     #   taiga6
 click==8.0.1
-    # via uvicorn
+    # via
+    #   typer
+    #   uvicorn
 coverage==5.5
     # via pytest-cov
 cryptography==3.4.7
@@ -304,6 +306,8 @@ toml==0.10.2
     # via
     #   pytest
     #   pytest-cov
+typer==0.4.0
+    # via -r requirements/commons.in
 typing-extensions==3.10.0.0
     # via
     #   pydantic

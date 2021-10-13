@@ -9,20 +9,39 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
+import { AuthGuard } from './features/auth/auth.guard';
 
 const routes: Routes = [
-  { path: 'login', loadChildren: () => import('./pages/auth/auth-page.module').then(m => m.AuthPageModule) },
+  {
+    path: 'login',
+    loadChildren: () => import('./pages/auth/auth-page.module').then(m => m.AuthPageModule)
+  },
 
-  { path: '', loadChildren: () => import('./pages/workspace/workspace-page.module').then(m => m.WorkspacePageModule) },
+  {
+    path: '',
+    loadChildren: () => import('./pages/workspace/workspace-page.module').then(m => m.WorkspacePageModule),
+    canActivate: [ AuthGuard ]
+  },
 
   // WORKSPACE
-  { path: 'workspace/:slug', loadChildren: () => import('./pages/workspace-detail-page/workspace-detail-page.module').then(m => m.WorkspaceDetailPageModule) },
+  {
+    path: 'workspace/:slug',
+    loadChildren: () => import('./pages/workspace-detail-page/workspace-detail-page.module').then(m => m.WorkspaceDetailPageModule),
+    canActivate: [ AuthGuard ]
+  },
 
   // PROJECT
-  { path: 'new-project', loadChildren: () => import('./pages/project/new-project/new-project-page.module').then(m => m.NewProjectPageModule) },
+  {
+    path: 'new-project',
+    loadChildren: () => import('./pages/project/new-project/new-project-page.module').then(m => m.NewProjectPageModule),
+    canActivate: [ AuthGuard ]
+  },
 
   // #TODO: Project Url must be project-name+Id. See if we can add the workspace+worskpaceId on the url.
-  { path: 'project', loadChildren: () => import('./pages/project/project/project-page.module').then(m => m.ProjectPageModule) },
+  {
+    path: 'project',
+    loadChildren: () => import('./pages/project/project/project-page.module').then(m => m.ProjectPageModule)
+  },
 
 ];
 

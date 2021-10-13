@@ -19,6 +19,13 @@ export class AuthService {
     private localStorageService: LocalStorageService,
     private authApiService: AuthApiService) {}
 
+  public isLogged() {
+    const user = this.getUser();
+    const auth = this.getAuth();
+
+    return user && auth?.refresh && auth.token;
+  }
+
   public getAuth(): Auth | undefined {
     return this.localStorageService.get<Auth>('auth');
   }

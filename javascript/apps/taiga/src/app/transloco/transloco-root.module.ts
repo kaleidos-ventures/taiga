@@ -30,7 +30,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 
 @NgModule({
   imports: [
-    TranslocoMessageFormatModule.init()
+    TranslocoMessageFormatModule.forRoot()
   ],
   exports: [ TranslocoModule ],
   providers: [

@@ -34,7 +34,7 @@ def list_workspaces(request: Request) -> List[WorkspaceSummarySerializer]:
     List the workspaces of the logged user.
     """
     workspaces = workspaces_services.get_workspaces(owner=request.user)
-    return WorkspaceSerializer.from_queryset(workspaces)
+    return WorkspaceSummarySerializer.from_queryset(workspaces)
 
 
 @router.post(

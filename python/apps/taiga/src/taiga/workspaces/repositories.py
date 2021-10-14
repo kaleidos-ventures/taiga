@@ -7,14 +7,25 @@
 
 from typing import Iterable, Optional
 
+from django.db.models import Count, OuterRef, Prefetch, Subquery
+from taiga.projects.models import Project
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 
 def get_workspaces_with_latest_projects(owner: User) -> Iterable[Workspace]:
-    data: Iterable[Workspace] = Workspace.objects.filter(owner=owner).order_by("-created_date")
-    # TODO: add annotation for latest_projects and total_projects
-    return data
+    last_projects_ids = Subquery(
+        Project.objects.filter(workspace_id=OuterRef("workspace_id"))
+        .values_list("id", flat=True)
+        .order_by("-created_date")[:4]
+    )
+    latest_projects = Project.objects.filter(id__in=last_projects_ids).order_by("-created_date")
+    return (
+        Workspace.objects.filter(owner=owner)
+        .prefetch_related(Prefetch("projects", queryset=latest_projects, to_attr="latest_projects"))
+        .annotate(total_projects=Count("projects"))
+        .order_by("-created_date")
+    )
 
 
 def create_workspace(name: str, color: int, owner: User) -> Workspace:

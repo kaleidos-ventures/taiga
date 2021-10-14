@@ -5,19 +5,18 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-# from typing import List
+from typing import List
 
 from taiga.base.serializer import BaseModel
-
-# from taiga.projects.serializers.related import ProjectSummarySerializer
+from taiga.projects.serializers.related import ProjectSummarySerializer
 
 
 class WorkspaceSummarySerializer(BaseModel):
     name: str
     slug: str
     color: int
-    # latest_projects: List[ProjectSummarySerializer]
-    # total_projects: int
+    latest_projects: List[ProjectSummarySerializer]
+    total_projects: int
 
     class Config:
         orm_mode = True

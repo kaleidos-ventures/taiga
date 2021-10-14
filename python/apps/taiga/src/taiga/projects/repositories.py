@@ -4,9 +4,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
 from typing import Iterable, Optional
 
+from django.core.files import File
 from taiga.projects.models import Project
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
@@ -18,9 +18,22 @@ def get_projects(workspace_slug: str) -> Iterable[Project]:
 
 
 def create_project(
-    workspace: Workspace, name: str, description: Optional[str], color: Optional[int], owner: User
+    workspace: Workspace,
+    name: str,
+    description: Optional[str],
+    color: Optional[int],
+    owner: User,
+    logo: Optional[File] = File(None),
 ) -> Project:
-    return Project.objects.create(name=name, description=description, workspace=workspace, color=color, owner=owner)
+
+    return Project.objects.create(
+        name=name,
+        description=description,
+        workspace=workspace,
+        color=color,
+        owner=owner,
+        logo=logo,
+    )
 
 
 def get_project(slug: str) -> Optional[Project]:

@@ -5,10 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
 import pytest
 from pydantic import ValidationError
 from taiga.projects.validators import ProjectValidator
+from tests.unit.utils import check_validation_errors
+from tests.utils.images import invalid_image_upload_file, text_upload_file, valid_image_upload_file
 
 
 def test_validate_project_with_empty_name(client):
@@ -48,9 +49,44 @@ def test_validate_project_with_invalid_color(client):
         ProjectValidator(name=name, color=color)
 
 
-def test_validate_project_with_color_string(client):
+def test_validate_correct_logo(client):
     name = "Project test"
-    color = "0F0F0F"
+    color = 1
+    logo = valid_image_upload_file
 
-    with pytest.raises(ValidationError, match=r"value is not a valid integer"):
-        ProjectValidator(name=name, color=color)
+    with pytest.raises(ValidationError) as validations_errors:
+        ProjectValidator(name=name, color=color, logo=logo)
+
+        # `WorkspaceSlug` validation error is expected
+        expected_error_fields = ["workspaceSlug"]
+        expected_error_messages = ["field required"]
+        check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)
+
+
+def test_validate_logo_content_type(client):
+    name = "Project test"
+    color = 1
+    logo = text_upload_file
+
+    with pytest.raises(ValidationError) as validations_errors:
+        ProjectValidator(name=name, color=color, logo=logo)
+
+        expected_error_fields = [
+            "logo",
+            "workspaceSlug",
+        ]
+        expected_error_messages = ["Invalid image format", "field required"]
+        check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)
+
+
+def test_validate_logo_content(client):
+    name = "Project test"
+    color = 1
+    logo = invalid_image_upload_file
+
+    with pytest.raises(ValidationError) as validations_errors:
+        ProjectValidator(name=name, color=color, logo=logo)
+
+        expected_error_fields = ["logo", "workspaceSlug"]
+        expected_error_messages = ["Invalid image content", "field required"]
+        check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)

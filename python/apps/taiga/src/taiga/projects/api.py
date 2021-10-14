@@ -9,6 +9,7 @@ import logging
 from typing import List
 
 from fastapi import Query
+from fastapi.params import Depends
 from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
@@ -52,18 +53,23 @@ def list_projects(workspace_slug: str = Query(None, description="the workspace s
     response_model=ProjectSerializer,
     responses=ERROR_422,
 )
-def create_project(form: ProjectValidator, request: Request) -> ProjectSerializer:
+def create_project(
+    request: Request,
+    form: ProjectValidator = Depends(ProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
+) -> ProjectSerializer:
     """
     Create project for the logged user.
     """
-    workspace = workspaces_services.get_workspace(slug=form.workspace_slug)
+    workspace = workspaces_services.get_workspace(form.workspace_slug)
     project = projects_services.create_project(
         workspace=workspace,
         name=form.name,
         description=form.description,
         color=form.color,
         owner=request.user,
+        logo=form.logo,
     )
+
     return ProjectSerializer.from_orm(project)
 
 
@@ -84,4 +90,4 @@ def get_project(slug: str = Query(None, description="the project slug (str)")) -
         logger.exception(f"Project {slug} does not exist")
         raise ex.NotFoundError()
 
-    return ProjectSerializer.from_orm(project)
+    return project

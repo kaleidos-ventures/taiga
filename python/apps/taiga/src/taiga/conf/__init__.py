@@ -11,6 +11,7 @@ import secrets
 from functools import lru_cache
 
 from pydantic import AnyHttpUrl, BaseSettings
+from taiga.conf.images import ImageSettings
 
 from .logs import LOGGING_CONFIG
 from .tokens import TokensSettings
@@ -38,6 +39,7 @@ class Settings(BaseSettings):
 
     # Sub settings modules
     TOKENS: TokensSettings = TokensSettings()
+    IMAGES: ImageSettings = ImageSettings()
 
     class Config:
         env_prefix = "TAIGA_"

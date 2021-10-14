@@ -16,6 +16,10 @@ PyJWT
 # JSON logs
 python-json-logger
 
+# Images and thumbnails
+easy-thumbnails
+
+# Do NOT add any dependencies below this line
 # Taiga 6
 #   we use -e for dev and prod because relative path in pip-compile only works with -e
 #   https://github.com/jazzband/pip-tools/issues/204#issuecomment-564597799)

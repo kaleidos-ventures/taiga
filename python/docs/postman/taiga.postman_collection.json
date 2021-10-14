@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "938728e8-55b4-407c-98f8-d611f87151f9",
+		"_postman_id": "c5ea0a5d-fd72-4dfd-8efb-c8ec13513161",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -34,7 +34,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"user2\",\n    \"password\": \"123123\"\n}"
+					"raw": "{\n    \"username\": \"user8\",\n    \"password\": \"123123\"\n}"
 				},
 				"url": {
 					"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -287,6 +287,9 @@
 					}
 				}
 			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -301,8 +304,34 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"name\": \"My project\",\n  \"description\": \"My description\",\n  \"workspaceSlug\": \"{{ws-slug}}\",\n  \"color\": 1\n}",
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "description",
+							"value": "My description",
+							"type": "text"
+						},
+						{
+							"key": "workspaceSlug",
+							"value": "{{ws-slug}}",
+							"type": "text"
+						},
+						{
+							"key": "logo",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "color",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "My project",
+							"type": "text"
+						}
+					],
 					"options": {
 						"raw": {
 							"language": "json"

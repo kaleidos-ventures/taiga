@@ -7,16 +7,21 @@
 
 from typing import Optional
 
+from fastapi import UploadFile
 from pydantic import validator
 from taiga.base.serializer import BaseModel
+from taiga.base.utils.images import valid_content_type, valid_image_format
+from taiga.base.validator import as_form
 from taiga.workspaces import services as workspaces_services
 
 
+@as_form
 class ProjectValidator(BaseModel):
     name: str
-    description: Optional[str]
     workspace_slug: str
+    description: Optional[str]
     color: Optional[int]
+    logo: Optional[UploadFile]
 
     @validator("name")
     def check_name_not_empty(cls, v: str) -> str:
@@ -30,7 +35,8 @@ class ProjectValidator(BaseModel):
 
     @validator("description")
     def check_description_length(cls, v: str) -> str:
-        assert len(v) <= 200, "Description too long"
+        if v:
+            assert len(v) <= 200, "Description too long"
         return v
 
     @validator("workspace_slug")
@@ -41,6 +47,18 @@ class ProjectValidator(BaseModel):
     @validator("color")
     def check_allowed_color(cls, v: int) -> int:
         assert v >= 1 and v <= 8, "Color not allowed"
+        return v
+
+    @validator("logo")
+    def check_content_type(cls, v: UploadFile) -> UploadFile:
+        if v:
+            assert valid_content_type(v), "Invalid image format"
+        return v
+
+    @validator("logo")
+    def check_image_format(cls, v: UploadFile) -> UploadFile:
+        if v:
+            assert valid_image_format(v), "Invalid image content"
         return v
 
     # Sanitizers

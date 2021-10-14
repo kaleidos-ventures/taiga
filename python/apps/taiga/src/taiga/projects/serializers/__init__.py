@@ -8,10 +8,11 @@
 from typing import Optional
 
 from taiga.base.serializer import BaseModel
+from taiga.projects.serializers.mixins import ProjectLogoMixin
 from taiga.workspaces.serializers.related import WorkspaceSummarySerializer
 
 
-class ProjectSummarySerializer(BaseModel):
+class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
     name: str
     slug: str
     description: Optional[str] = None
@@ -21,7 +22,7 @@ class ProjectSummarySerializer(BaseModel):
         orm_mode = True
 
 
-class ProjectSerializer(BaseModel):
+class ProjectSerializer(BaseModel, ProjectLogoMixin):
     name: str
     slug: str
     description: Optional[str] = None

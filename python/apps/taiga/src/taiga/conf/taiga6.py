@@ -42,3 +42,5 @@ SITES = {
 
 MEDIA_URL = f"{ settings.BACKEND_URL }/media/"
 STATIC_URL = f"{ settings.BACKEND_URL }/static/"
+
+THUMBNAIL_ALIASES = {"": settings.IMAGES.THUMBNAIL_ALIASES}

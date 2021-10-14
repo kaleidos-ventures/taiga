@@ -5,10 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
 import pytest
+from django.core.files import File
 from taiga.projects import repositories
 from tests.utils import factories as f
+from tests.utils.images import valid_image_f
 
 pytestmark = pytest.mark.django_db
 
@@ -25,6 +26,24 @@ def test_create_project_with_non_ASCI_chars():
         name="My proj#%&乕شect", description="", color=3, owner=user, workspace=workspace
     )
     assert project.slug.startswith("my-projhu-shect")
+
+
+def test_create_project_with_logo():
+    user = f.UserFactory()
+    workspace = f.WorkspaceFactory(owner=user)
+    project = repositories.create_project(
+        name="My proj#%&乕شect", description="", color=3, owner=user, workspace=workspace, logo=valid_image_f
+    )
+    assert valid_image_f.name in project.logo.name
+
+
+def test_create_project_with_no_logo():
+    user = f.UserFactory()
+    workspace = f.WorkspaceFactory(owner=user)
+    project = repositories.create_project(
+        name="My proj#%&乕شect", description="", color=3, owner=user, workspace=workspace, logo=None
+    )
+    assert project.logo == File(None)
 
 
 ##########################################################

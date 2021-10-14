@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from tests.utils.images import valid_image_f
+
 from .base import Factory, factory
 
 
@@ -41,6 +43,7 @@ class ProjectFactory(Factory):
     owner = factory.SubFactory("tests.utils.factories.UserFactory")
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
     creation_template = factory.SubFactory("tests.utils.factories.ProjectTemplateFactory")
+    logo = valid_image_f
 
     class Meta:
         model = "projects.Project"

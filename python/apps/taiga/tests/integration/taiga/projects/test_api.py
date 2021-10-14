@@ -5,10 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
 import pytest
+import validators
 from fastapi import status
 from tests.utils import factories as f
+from tests.utils.images import create_valid_testing_image
 
 pytestmark = pytest.mark.django_db(transaction=True)
 
@@ -16,12 +17,15 @@ pytestmark = pytest.mark.django_db(transaction=True)
 def test_create_project_success(client):
     user = f.UserFactory()
     workspace = f.WorkspaceFactory(owner=user)
-    data = {"name": "Project test", "color": 1, "workspace_slug": workspace.slug}
+    data = {"name": "Project test", "color": 1, "workspaceSlug": workspace.slug}
+    files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
     f.ProjectTemplateFactory()
 
     client.login(user)
-    response = client.post("/projects", json=data)
+    response = client.post("/projects", data=data, files=files)
     assert response.status_code == status.HTTP_200_OK, response.text
+    assert validators.url(response.json()["logoSmall"]) is True
+    assert validators.url(response.json()["logoBig"]) is True
 
 
 def test_create_project_validation_error(client):

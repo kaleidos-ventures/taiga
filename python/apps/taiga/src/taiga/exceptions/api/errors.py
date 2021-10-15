@@ -37,18 +37,18 @@ class ErrorResponse(GenericModel, Generic[T]):
 
 
 class NotFoundErrorModel(GenericSingleError):
-    code: str = codes.EX_NOT_FOUND["code"]
-    message: str = codes.EX_NOT_FOUND["message"]
+    code: str = codes.EX_NOT_FOUND.code
+    message: str = codes.EX_NOT_FOUND.message
 
 
 class UnprocessableEntityModel(GenericListError):
-    code: str = codes.EX_VALIDATION_ERROR["code"]
-    message: str = codes.EX_VALIDATION_ERROR["message"]
+    code: str = codes.EX_VALIDATION_ERROR.code
+    message: str = codes.EX_VALIDATION_ERROR.message
 
 
 class UnauthorizedErrorModel(GenericSingleError):
-    code: str = codes.EX_AUTHENTICATION["code"]
-    message: str = codes.EX_AUTHENTICATION["message"]
+    code: str = codes.EX_AUTHENTICATION.code
+    message: str = codes.EX_AUTHENTICATION.message
 
 
 ERROR_RESPONSE_401: Any = ErrorResponse[UnauthorizedErrorModel]

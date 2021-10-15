@@ -5,18 +5,24 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from dataclasses import dataclass
 from typing import Final
 
-EX_VALIDATION_ERROR: Final = {
-    "code": "validation-error",
-    "message": "Unable to fulfill the request due to semantic errors",
-}
 
-EX_UNKNOWN: Final = {"code": "unknown", "message": "Unknown error"}
+@dataclass
+class Error:
+    code: str
+    message: str
 
-EX_NOT_FOUND: Final = {"code": "not-found", "message": "The requested resource could not be found"}
 
-EX_AUTHENTICATION: Final = {
-    "code": "authentication-error",
-    "message": "Invalid token or no active account found with the given credentials",
-}
+EX_VALIDATION_ERROR: Final = Error(
+    code="validation-error", message="Unable to fulfill the request due to semantic errors"
+)
+
+EX_UNKNOWN: Final = Error(code="unknown", message="Unknown error")
+
+EX_NOT_FOUND: Final = Error(code="not-found", message="The requested resource could not be found")
+
+EX_AUTHENTICATION: Final = Error(
+    code="authentication-error", message="Invalid token or no active account found with the given credentials"
+)

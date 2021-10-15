@@ -19,9 +19,9 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
     headers = getattr(exc, "headers", None)
     content = {
         "error": {
-            "code": getattr(exc, "code", codes.EX_UNKNOWN["code"]),
+            "code": getattr(exc, "code", codes.EX_UNKNOWN.code),
             "detail": exc.detail,
-            "message": getattr(exc, "message", codes.EX_UNKNOWN["message"]),
+            "message": getattr(exc, "message", codes.EX_UNKNOWN.message),
         }
     }
 
@@ -36,9 +36,9 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
         status_code=HTTP_422_UNPROCESSABLE_ENTITY,
         content={
             "error": {
-                "code": codes.EX_VALIDATION_ERROR["code"],
+                "code": codes.EX_VALIDATION_ERROR.code,
                 "detail": jsonable_encoder(exc.errors()),
-                "message": codes.EX_VALIDATION_ERROR["message"],
+                "message": codes.EX_VALIDATION_ERROR.message,
             }
         },
     )

@@ -7,10 +7,11 @@
 
 from typing import Tuple, Union
 
-from fastapi import Request
-from starlette.authentication import AuthCredentials
+from fastapi import Request, Response, status
+from starlette.authentication import AuthCredentials, AuthenticationError
+from starlette.responses import JSONResponse
 from taiga.auth.exceptions import BadAuthTokenError, UnauthorizedUserError
-from taiga.exceptions.api import AuthenticationError
+from taiga.exceptions.api import codes
 from taiga.users.models import AnonymousUser, User
 
 from . import services as auth_serv
@@ -30,3 +31,16 @@ async def authenticate(request: Request) -> Tuple[AuthCredentials, Union[Anonymo
             raise AuthenticationError()
     else:
         return AuthCredentials([]), AnonymousUser()
+
+
+def on_auth_error(request: Request, exc: Exception) -> Response:
+    return JSONResponse(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        content={
+            "error": {
+                "code": codes.EX_AUTHENTICATION.code,
+                "message": codes.EX_AUTHENTICATION.message,
+            }
+        },
+        headers={"WWW-Authenticate": 'Bearer realm="api"'},
+    )

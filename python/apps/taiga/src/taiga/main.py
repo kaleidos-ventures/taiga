@@ -30,7 +30,7 @@ api.add_middleware(
 )
 
 # Setup Authentication middleware
-api.add_middleware(AuthenticationMiddleware, backend=auth_backend)
+api.add_middleware(AuthenticationMiddleware, backend=auth_backend, on_error=auth_backend.on_auth_error)
 
 # Override exception handlers
 api.exception_handler(HTTPException)(http_exception_handler)

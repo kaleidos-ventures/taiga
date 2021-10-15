@@ -17,7 +17,7 @@ class HTTPException(FastAPIHTTPException):
     def __init__(
         self,
         status_code: int,
-        code: str = codes.EX_UNKNOWN["code"],
+        code: str = codes.EX_UNKNOWN.code,
         detail: Any = None,
         message: str = "",
         headers: Optional[Dict[str, Any]] = None,
@@ -33,10 +33,10 @@ class HTTPException(FastAPIHTTPException):
 
 
 class AuthenticationError(HTTPException):
-    def __init__(self, message: Any = codes.EX_AUTHENTICATION["message"]):
+    def __init__(self, message: Any = codes.EX_AUTHENTICATION.message):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            code=codes.EX_AUTHENTICATION["code"],
+            code=codes.EX_AUTHENTICATION.code,
             message=message,
             headers={"WWW-Authenticate": 'Bearer realm="api"'},
         )
@@ -48,5 +48,5 @@ class AuthenticationError(HTTPException):
 
 
 class NotFoundError(HTTPException):
-    def __init__(self, message: Any = codes.EX_NOT_FOUND["message"]):
-        super().__init__(status_code=status.HTTP_404_NOT_FOUND, code=codes.EX_NOT_FOUND["code"], message=message)
+    def __init__(self, message: Any = codes.EX_NOT_FOUND.message):
+        super().__init__(status_code=status.HTTP_404_NOT_FOUND, code=codes.EX_NOT_FOUND.code, message=message)

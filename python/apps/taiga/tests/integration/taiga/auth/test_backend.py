@@ -6,10 +6,10 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
+from starlette.authentication import AuthenticationError
 from taiga.auth import backend
 from taiga.auth.tokens import AccessToken
 from taiga.base.api import Request
-from taiga.exceptions.api import AuthenticationError
 from tests.utils import factories as f
 
 pytestmark = [pytest.mark.django_db, pytest.mark.asyncio]

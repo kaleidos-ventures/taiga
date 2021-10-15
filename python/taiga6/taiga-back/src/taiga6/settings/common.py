@@ -365,7 +365,7 @@ WSGI_APPLICATION = "taiga6.wsgi.application"
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": True,
+    "disable_existing_loggers": False,
     "filters": {
         "require_debug_false": {
             "()": "django.utils.log.RequireDebugFalse"
@@ -433,7 +433,7 @@ LOGGING = {
             "level": "ERROR",
             "propagate": False,
         },
-        "taiga": {
+        "taiga6": {
             "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,

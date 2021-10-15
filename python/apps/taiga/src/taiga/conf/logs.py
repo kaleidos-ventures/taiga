@@ -7,6 +7,7 @@
 
 LOGGING_CONFIG = {
     "version": 1,
+    "disable_existing_loggers": False,
     "formatters": {
         "default": {
             "format": "%(levelname)s \t %(name)s \t %(asctime)s \t pid:%(process)d \t %(message)s",

@@ -12,7 +12,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { TuiButtonModule, TuiHintModule, TuiLinkModule, TuiSvgModule, TuiTooltipModule } from '@taiga-ui/core';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { WorkspaceCreateComponent } from './workspace-create/workspace-create.component';
 import { WorkspaceItemComponent } from './workspace-item/workspace-item.component';
@@ -59,6 +59,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     WorkspaceComponent,
     WorkspaceCreateComponent,
     WorkspaceItemComponent
+  ],
+  providers: [
+    { provide: TRANSLOCO_SCOPE, useValue: 'workspace' }
   ]
 })
 export class WorkspaceModule { }

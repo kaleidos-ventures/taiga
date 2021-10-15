@@ -20,7 +20,7 @@ import {
   TuiTextfieldControllerModule,
 } from '@taiga-ui/core';
 import { TuiSelectModule, TuiDataListWrapperModule } from '@taiga-ui/kit';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 import { NewProjectComponent } from './components/new-project/new-project.component';
 import { TemplateStepComponent } from './components/template-step/template-step.component';
@@ -47,5 +47,14 @@ import { TemplateStepComponent } from './components/template-step/template-step.
     TuiTextfieldControllerModule,
   ],
   exports: [NewProjectComponent, TemplateStepComponent],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'new_project',
+        alias: 'new_project'
+      }
+    }
+  ]
 })
 export class NewProjectModule {}

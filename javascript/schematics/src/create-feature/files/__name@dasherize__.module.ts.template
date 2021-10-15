@@ -20,6 +20,9 @@ import { <%= classify(name) %>Effects } from './effects/<%= dasherize(name) %>.e
     StoreModule.forFeature(<%= camelize(name) %>Feature),
     EffectsModule.forFeature([<%= classify(name) %>Effects])
   ],
-  exports: []
+  exports: [],
+  providers: [
+    { provide: TRANSLOCO_SCOPE, useValue: '<%= name %>' }
+  ]
 })
 export class <%= classify(name) %>Module { }

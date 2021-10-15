@@ -9,6 +9,10 @@ If you are looking for the worflow on how to create a simple component, follow t
 npx schematics ./schematics:create-feature --name todoList --no-interactive  --dryRun=false
 ```
 
+## Configure lazy load translation
+
+[Follow this guide](https://ngneat.github.io/transloco/docs/scope-configuration) to split the tranlation into multiples files to help the initial load.
+
 ## Page
 
 If the component is the page root we have to add it to pages.module.

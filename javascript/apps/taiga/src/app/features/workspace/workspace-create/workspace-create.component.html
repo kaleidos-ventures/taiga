@@ -19,29 +19,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </tg-workspace-avatar>
     <tg-ui-input
       class="workspace-input-project-name"
-      [class.error]="createProjectErrorList.length > 0"
       [label]="t('workspace.workspace_name')">
       <input
+        inputRef
         data-e2e="project-name-input"
         formControlName="projectName"
-        [attr.aria-invalid]="createProjectForm.invalid"
         #firstInput
         tuiAutoFocus
-        aria-required="true"
         maxlength="40"
         [placeholder]="t('workspace.workspace_name')">
-        <!-- TODO -->
-        <!-- eslint-disable-next-line @angular-eslint/template/accessibility-label-for -->
-        <label
-          *ngIf="createProjectErrorList.length > 0"
-          class="label-error"
-          aria-live="assertive"
-          inputError>
-          <ng-container
-            *ngIf="createProjectErrorList.includes('required')">
-            {{ t('workspace.error_name_empty') }}
-          </ng-container>
-        </label>
+        <tg-ui-error
+          inputError
+          error="required">
+          {{ t('workspace.error_name_empty') }}
+        </tg-ui-error>
     </tg-ui-input>
     <button
       data-e2e="create-project-form-submit"

@@ -14,14 +14,14 @@ Taiga forms by default are typed reactive forms.
           formControlName="email"
           inputRef
           [placeholder]="placeholder">
-        <div inputError>
+        <ng-container inputError>
           <tg-ui-error error="required">
             Field mandatory
           </tg-ui-error>
           <tg-ui-error error="email">
             Invalid email
           </tg-ui-error>
-        </div>
+        </ng-container>
       </tg-ui-input>
       <button type="submit">Submit</button>
     </form>

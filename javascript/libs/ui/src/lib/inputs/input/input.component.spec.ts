@@ -9,7 +9,7 @@
 import { createHostFactory } from '@ngneat/spectator/jest';
 import { InputComponent } from './input.component';
 import { InputsModule } from './../inputs.module';
-import { ControlContainer, FormGroupDirective } from '@angular/forms';
+import { ControlContainer, FormControl, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SpectatorHost } from '@ngneat/spectator';
 
 describe('InputComponent', () => {
@@ -18,7 +18,10 @@ describe('InputComponent', () => {
 
   const createHost = createHostFactory({
     component: InputComponent,
-    imports: [ InputsModule ],
+    imports: [
+      InputsModule,
+      ReactiveFormsModule,
+    ],
     providers: [
       { provide: ControlContainer, useValue: fgd },
     ]
@@ -30,11 +33,12 @@ describe('InputComponent', () => {
       [icon]="icon"
       [label]="label">
       <input
-        formControlName="example"
+        [formControl]="control"
         inputRef>
     </tg-ui-input>
     `,{
       hostProps: {
+        control: new FormControl('', [ Validators.required ]),
         icon: 'example',
         label: 'example',
       },
@@ -57,4 +61,11 @@ describe('InputComponent', () => {
     spectator.detectChanges();
     expect(spectator.query('label.input-label')).toHaveExactText(spectator.component.label);
   });
+
+  it('aria required & invalid', () => {
+    spectator.detectChanges();
+    expect(spectator.query('input')).toHaveAttribute('aria-required', 'true');
+    expect(spectator.query('input')).toHaveAttribute('aria-invalid', 'true');
+  });
+
 });

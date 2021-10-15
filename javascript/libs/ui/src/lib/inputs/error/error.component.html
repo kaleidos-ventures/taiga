@@ -8,6 +8,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <label
   *ngIf="showError(error)"
   [attr.for]="input.id"
+  aria-live="assertive"
   class="label-error">
   <svg class="warning">
     <use href="assets/icons/sprite.svg#warning" />

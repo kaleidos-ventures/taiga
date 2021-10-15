@@ -27,11 +27,11 @@ import { InputComponent } from './input.component';
           inputRef
           [attr.readOnly]="readOnly"
           [placeholder]="placeholder">
-        <div inputError>
-          <tg-ui-error error="required">
-            Field mandatory
-          </tg-ui-error>
-        </div>
+        <tg-ui-error
+          inputError
+          error="required">
+          Field mandatory
+        </tg-ui-error>
       </tg-ui-input>
       <tg-ui-input
         #emailInput="tgInput"
@@ -42,14 +42,14 @@ import { InputComponent } from './input.component';
           inputRef
           [attr.readOnly]="readOnly"
           [placeholder]="placeholder">
-        <div inputError>
+        <ng-container inputError>
           <tg-ui-error error="required">
             Field mandatory
           </tg-ui-error>
           <tg-ui-error error="email">
             Invalid email
           </tg-ui-error>
-        </div>
+        </ng-container>
       </tg-ui-input>
       <button type="submit">Submit</button>
     </form>

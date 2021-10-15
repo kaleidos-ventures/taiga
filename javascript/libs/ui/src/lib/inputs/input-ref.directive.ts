@@ -6,8 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Directive, ElementRef, Optional } from '@angular/core';
-import { NgControl } from '@angular/forms';
+import { Directive, ElementRef, HostBinding, Optional } from '@angular/core';
+import { AbstractControl, NgControl } from '@angular/forms';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
@@ -18,6 +18,24 @@ export class InputRefDirective {
     @Optional() private ngControl: NgControl,
     public el: ElementRef
   ) {}
+
+  @HostBinding('attr.aria-invalid') public get invalid() {
+    return this.control?.invalid;
+  }
+
+  @HostBinding('attr.aria-required') public get required() {
+    const control = this.control;
+
+    if (control?.validator) {
+      const validator = control.validator({} as AbstractControl);
+
+      if (validator?.required) {
+        return true;
+      }
+    }
+
+    return undefined;
+  }
 
   public get control() {
     return this.ngControl?.control;

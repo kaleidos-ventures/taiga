@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { WorkspaceAvatarModule } from './../../shared/workspace-avatar/workspace-avatar.module';
+import { WorkspaceAvatarModule } from '~/app/shared/workspace-avatar/workspace-avatar.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkspaceComponent } from './workspace/workspace.component';

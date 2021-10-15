@@ -5,8 +5,8 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
+import { WorkspaceDetailModule } from '~/app/features/workspace-detail/workspace-detail.module';
 
-import { WorkspaceDetailModule } from './../../features/workspace-detail/workspace-detail.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 

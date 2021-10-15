@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx", "ngrx"],
+  "plugins": ["@nrwl/nx", "ngrx", "taiga"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -43,6 +43,7 @@
         "plugin:ngrx/recommended"
       ],
       "rules": {
+        "taiga/relative-imports": "error",
         "@typescript-eslint/no-unused-vars": ["error"],
         "@typescript-eslint/semi": ["error"],
         "@typescript-eslint/unbound-method": "off",

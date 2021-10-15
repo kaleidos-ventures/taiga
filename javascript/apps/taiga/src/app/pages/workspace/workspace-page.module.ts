@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { WorkspaceModule } from './../../features/workspace/workspace.module';
+import { WorkspaceModule } from '~/app/features/workspace/workspace.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 

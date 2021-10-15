@@ -13,10 +13,9 @@ import { ProjectApiService } from '@taiga/api';
 import { Observable } from 'rxjs';
 
 import { ProjectCreationMockFactory, ProjectMockFactory } from '@taiga/data';
-import { cold, hot } from 'jest-marbles';
 import { NewProjectEffects } from './new-project.effects';
-import { createProject } from '../actions/new-project.actions';
-import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
+import { createProject, createProjectSuccess } from '../actions/new-project.actions';
+import { cold, hot } from 'jest-marbles';
 
 describe('NewProjectEffects', () => {
   let actions$: Observable<Action>;
@@ -44,10 +43,12 @@ describe('NewProjectEffects', () => {
       cold('-b|', { b: project })
     );
 
-    actions$ = hot('-a', { a: createProject({project: projectCreation})});
+    effects.createProject$.subscribe();
+
+    actions$ = hot('-a', { a:  createProject({project: projectCreation})});
 
     const expected = cold('--a', {
-      a: fetchWorkspaceList(),
+      a: createProjectSuccess({ project }),
     });
 
     expect(

@@ -14,20 +14,27 @@ import { EffectsModule } from '@ngrx/effects';
 import { NewProjectEffects } from './effects/new-project.effects';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkspaceAvatarModule } from '~/app/shared/workspace-avatar/workspace-avatar.module';
-import { NewProjectComponent } from './new-project/new-project.component';
 import {
   TuiSvgModule,
   TuiDataListModule,
   TuiTextfieldControllerModule,
 } from '@taiga-ui/core';
 import { TuiSelectModule, TuiDataListWrapperModule } from '@taiga-ui/kit';
+import { TranslocoModule } from '@ngneat/transloco';
+
+import { NewProjectComponent } from './components/new-project/new-project.component';
+import { TemplateStepComponent } from './components/template-step/template-step.component';
 
 @NgModule({
-  declarations: [NewProjectComponent],
+  declarations: [
+    NewProjectComponent,
+    TemplateStepComponent
+  ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    TranslocoModule,
     StoreModule.forFeature(newProjectFeature),
     EffectsModule.forFeature([NewProjectEffects]),
     TuiSvgModule,
@@ -39,6 +46,6 @@ import { TuiSelectModule, TuiDataListWrapperModule } from '@taiga-ui/kit';
     WorkspaceAvatarModule,
     TuiTextfieldControllerModule,
   ],
-  exports: [NewProjectComponent],
+  exports: [NewProjectComponent, TemplateStepComponent],
 })
 export class NewProjectModule {}

@@ -12,9 +12,9 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map } from 'rxjs/operators';
 
 import * as NewProjectActions from '~/app/features/project/new-project/actions/new-project.actions';
-import * as WorkspaceActions from '~/app/features/workspace/actions/workspace.actions';
 import { ProjectApiService } from '@taiga/api';
 import { fetch } from '@nrwl/angular';
+import { Project } from '@taiga/data';
 
 @Injectable()
 export class NewProjectEffects {
@@ -27,13 +27,13 @@ export class NewProjectEffects {
           return this.projectApiService.createProject(
             action.project
           ).pipe(
-            map(() => {
-              return WorkspaceActions.fetchWorkspaceList();
+            map((project: Project) => {
+              return NewProjectActions.createProjectSuccess({ project });
             })
           );
         },
         onError: () => {
-          return null;
+          return NewProjectActions.createProjectError;
         },
       })
     );

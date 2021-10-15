@@ -7,8 +7,8 @@
  */
 
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
+import { ProjectCreation } from '@taiga/data';
 import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 
@@ -19,26 +19,20 @@ import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.s
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewProjectComponent implements OnInit {
-
   public workspaceList$ = this.store.select(selectWorkspaces);
 
-  public createProjectForm!: FormGroup;
+  public formData: ProjectCreation = {
+    workspaceSlug: '',
+    title: '',
+    description: 'string',
+    color: 0
+  };
 
   constructor(
     private store: Store,
-    private fb: FormBuilder
-  ) {
-    this.initForm();
-  }
+  ) {}
 
   public ngOnInit() {
     this.store.dispatch(fetchWorkspaceList());
   }
-
-  public initForm() {
-    this.createProjectForm = this.fb.group({
-      workspace: ['']
-    });
-  }
-
 }

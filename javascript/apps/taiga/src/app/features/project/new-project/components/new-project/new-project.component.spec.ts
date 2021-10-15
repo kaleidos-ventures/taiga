@@ -6,7 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
@@ -22,7 +21,6 @@ describe('NewProjectComponent', () => {
     component: NewProjectComponent,
     providers: [
       provideMockStore({ initialState }),
-      FormBuilder
     ],
     declareComponent: false,
     mocks: [],
@@ -40,14 +38,5 @@ describe('NewProjectComponent', () => {
     const action = fetchWorkspaceList();
     spectator.component.ngOnInit();
     expect(store.dispatch).toBeCalledWith(action);
-  });
-
-  it('test form', () => {
-    const form: FormGroup = spectator.component.createProjectForm;
-    const values = {
-      workspace: ''
-    };
-    spectator.component.initForm();
-    expect(form.value).toEqual(values);
   });
 });

@@ -16,9 +16,9 @@ export interface Project {
 }
 
 export interface ProjectCreation {
-  workspace: Workspace['slug'];
+  workspaceSlug: Workspace['slug'];
   title: string;
   description: string;
+  color: number;
   icon?: File;
-  module: 'Kanban' | 'Scrum' | 'Issues'
 }

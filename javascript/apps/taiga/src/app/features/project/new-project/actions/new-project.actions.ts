@@ -7,7 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { ProjectCreation } from '@taiga/data';
+import { Project, ProjectCreation } from '@taiga/data';
 
 export const setReference = createAction(
   '[NewProject] set reference',
@@ -17,4 +17,14 @@ export const setReference = createAction(
 export const createProject = createAction(
   '[NewProject] create project',
   props<{project: ProjectCreation}>()
+);
+
+export const createProjectSuccess = createAction(
+  '[NewProject] create project success',
+  props<{project: Project}>()
+);
+
+export const createProjectError = createAction(
+  '[NewProject] create project error',
+  props<{error: unknown}>()
 );

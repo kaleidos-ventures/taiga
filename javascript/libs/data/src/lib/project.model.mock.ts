@@ -31,9 +31,9 @@ export const ProjectMockFactory = (milestones = false): Project => {
 
 export const ProjectCreationMockFactory = (): ProjectCreation => {
   return {
-    workspace: faker.lorem.slug(),
+    workspaceSlug: faker.lorem.slug(),
     title: faker.commerce.productName(),
     description: faker.lorem.paragraph(),
-    module: 'Kanban',
+    color: faker.datatype.number(),
   };
 };

@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { OnInit } from '@angular/core';
+import { AfterViewInit, OnInit } from '@angular/core';
 import {  ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
 import { RandomColorService } from '../random-color/random-color.service';
@@ -17,12 +17,13 @@ import { RandomColorService } from '../random-color/random-color.service';
   styleUrls: ['./workspace-avatar.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WorkspaceAvatarComponent implements OnInit  {
+export class WorkspaceAvatarComponent implements OnInit, AfterViewInit  {
 
   @Input()
   public size: TuiSizeXS | TuiSizeXXL = 'l';
 
   @HostBinding('class') public sizeClass = `avatar-${this.size}`;
+  @HostBinding('class') public colorClass = '';
 
   @Input()
   public name = '';
@@ -36,9 +37,9 @@ export class WorkspaceAvatarComponent implements OnInit  {
   public ngOnInit() {
     this.sizeClass = `avatar-${this.size}`;
   }
-
-  public setColorClass(color: number) {
-    return RandomColorService.getColorClass(color);
+  
+  public ngAfterViewInit() {
+    this.colorClass = RandomColorService.getColorClass(this.color);
   }
 
   public setAvatarName(name: string) {

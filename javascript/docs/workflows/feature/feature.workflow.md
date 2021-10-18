@@ -75,7 +75,7 @@ StoreModule.forFeature(todosFeature);
 
 ### Creating models
 
-Add your models in `apps/taiga/src/app/pages/todo-list/models/`.
+Add your models in `apps/taiga/src/app/features/todo-list/models/`.
 
 Example:
 

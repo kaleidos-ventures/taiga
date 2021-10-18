@@ -17,7 +17,23 @@ from taiga.exceptions.handlers import http_exception_handler, request_validation
 from taiga.routers import router, tags_metadata
 
 api = FastAPI(
-    title=__title__, description=__description__, version=__version__, openapi_tags=tags_metadata, debug=settings.DEBUG
+    title=__title__,
+    description=__description__,
+    version=__version__,
+    openapi_tags=tags_metadata,
+    debug=settings.DEBUG,
+)
+
+
+##############################################
+# MIDDLEWARES
+##############################################
+
+# Setup Authentication middleware
+api.add_middleware(
+    AuthenticationMiddleware,
+    backend=auth_backend,
+    on_error=auth_backend.on_auth_error,
 )
 
 # Setup CORS middleware
@@ -29,12 +45,19 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
-# Setup Authentication middleware
-api.add_middleware(AuthenticationMiddleware, backend=auth_backend, on_error=auth_backend.on_auth_error)
+
+##############################################
+# EXCEPTIONS
+##############################################
 
 # Override exception handlers
 api.exception_handler(HTTPException)(http_exception_handler)
 api.exception_handler(RequestValidationError)(request_validation_exception_handler)
+
+
+##############################################
+# ROUTERS
+##############################################
 
 # Add routers
 api.include_router(router)

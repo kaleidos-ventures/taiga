@@ -9,13 +9,14 @@ from .base import Factory, factory
 
 
 class UserFactory(Factory):
-    username = factory.Sequence(lambda n: "user{}".format(n))
-    email = factory.LazyAttribute(lambda obj: "%s@email.com" % obj.username)
+    username = factory.Sequence(lambda n: f"user{n}")
+    email = factory.LazyAttribute(lambda obj: f"{obj.username}@email.com")
     password = "123123"
     is_active = True
 
     class Meta:
         model = "users.User"
+        strategy = factory.CREATE_STRATEGY
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):

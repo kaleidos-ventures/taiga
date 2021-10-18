@@ -13,68 +13,28 @@ from tests.utils import factories as f
 pytestmark = pytest.mark.django_db(transaction=True)
 
 
-def test_create_workspace_with_empty_name(client):
-    name = ""
-    color = 1
-
-    response = client.post("/workspaces", json={"name": name, "color": color})
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-
-
-def test_create_workspace_with_long_name(client):
-    name = "WS ab c de f gh i jk l mn pw r st u vw x yz"
-    color = 1
-
-    response = client.post("/workspaces", json={"name": name, "color": color})
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-
-
-def test_create_workspace_with_invalid_color(client):
-    name = "WS test"
-    color = 9
-
-    response = client.post("/workspaces", json={"name": name, "color": color})
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-
-
-def test_create_workspace_with_color_string(client):
-    name = "WS test"
-    color = "0F0F0F"
-
-    response = client.post("/workspaces", json={"name": name, "color": color})
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-
-
-def test_create_workspace_with_valid_data(client):
-    username = "user1"
-    user = f.UserFactory(username=username)
+def test_create_workspace_success(client):
+    user = f.UserFactory()
     name = "WS test"
     color = 1
 
     client.login(user)
     response = client.post("/workspaces", json={"name": name, "color": color})
     assert response.status_code == status.HTTP_200_OK, response.text
-    assert response.json()["name"] == "WS test"
-    assert response.json()["color"] == 1
 
 
-def test_create_workspace_with_valid_non_ASCII_blank_chars(client):
-    username = "user1"
-    user = f.UserFactory(username=username)
-    name = "       My w0r#%&乕شspace         "
-    color = 1
+def test_create_workspace_validation_error(client):
+    user = f.UserFactory()
+    name = "My w0r#%&乕شspace"
+    color = 0
 
     client.login(user)
     response = client.post("/workspaces", json={"name": name, "color": color})
-    assert response.status_code == status.HTTP_200_OK, response.text
-    assert response.json()["name"] == "My w0r#%&乕شspace"
-    assert response.json()["slug"] == "my-w0rhu-shspace"
-    assert response.json()["color"] == 1
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
-def test_workspaces_by_owner(client):
-    username = "user1"
-    user = f.UserFactory(username=username)
+def test_list_workspaces_success(client):
+    user = f.UserFactory()
     name = "WS test"
     color = 3
     f.WorkspaceFactory(name=name, color=color, owner=user)
@@ -83,28 +43,23 @@ def test_workspaces_by_owner(client):
     response = client.get("/workspaces")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
-    assert response.json()[0]["name"] == "WS test"
-    assert response.json()[0]["color"] == 3
 
 
-def test_nonexistent_workspace(client):
-    username = "user1"
-    user = f.UserFactory(username=username)
-
-    client.login(user)
-    response = client.get("/workspaces/non-existent")
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-def test_existent_workspace(client):
-    username = "user1"
-    user = f.UserFactory(username=username)
+def test_get_workspace_success(client):
+    user = f.UserFactory()
     name = "WS test"
+    slug = "ws-test"
     color = 1
-    f.WorkspaceFactory(name=name, color=color, owner=user)
+    f.WorkspaceFactory(name=name, slug=slug, color=color, owner=user)
 
     client.login(user)
     response = client.get("/workspaces/ws-test")
     assert response.status_code == status.HTTP_200_OK, response.text
-    assert response.json()["name"] == "WS test"
-    assert response.json()["color"] == 1
+
+
+def test_get_workspace_not_found_error(client):
+    user = f.UserFactory()
+
+    client.login(user)
+    response = client.get("/workspaces/non-existent")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

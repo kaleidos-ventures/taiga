@@ -11,9 +11,11 @@ from .base import Factory, factory
 
 
 class WorkspaceFactory(Factory):
-    name = factory.Sequence(lambda n: "workspace{}".format(n))
+    name = factory.Sequence(lambda n: f"workspace {n}")
+    slug = factory.Sequence(lambda n: f"workspace-{n}")
     color = factory.LazyAttribute(random.randrange(1, 9))
     owner = factory.SubFactory("tests.utils.factories.UserFactory")
 
     class Meta:
         model = "workspaces.Workspace"
+        strategy = factory.CREATE_STRATEGY

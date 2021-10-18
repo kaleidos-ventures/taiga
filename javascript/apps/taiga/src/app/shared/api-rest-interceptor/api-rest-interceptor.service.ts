@@ -21,6 +21,7 @@ import { loginSuccess, logout } from '~/app/features/auth/actions/auth.actions';
 import { AuthApiService } from '@taiga/api';
 import { AuthService } from '~/app/features/auth/services/auth.service';
 import { Router } from '@angular/router';
+import { AppService } from '~/app/services/app.service';
 
 @Injectable()
 export class ApiRestInterceptorService implements HttpInterceptor {
@@ -29,6 +30,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
   private refreshTokenSubject = new BehaviorSubject<null|Auth['token']>(null);
 
   constructor(
+    private readonly appService: AppService,
     private readonly authApiService: AuthApiService,
     private readonly configService: ConfigService,
     private readonly store: Store,
@@ -88,6 +90,10 @@ export class ApiRestInterceptorService implements HttpInterceptor {
           } else if (!auth?.token || !auth?.refresh) {
             void this.router.navigate(['login']);
           }
+        } else if (err.status !== 403) {
+          this.store.dispatch(
+            this.appService.unexpectedHttpErrorResponseAction(err)
+          );
         }
 
         return throwError(err);

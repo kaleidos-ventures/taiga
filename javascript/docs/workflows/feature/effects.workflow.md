@@ -23,12 +23,7 @@ class TodoEffects {
             map((tasks) => TodoListActions.loadTodosSucess({ tasks }))
           );
         },
-        onError: (action, error: HttpErrorResponse) => {
-          return of(
-            // unexpected error
-            this.appService.unexpectedHttpErrorResponseAction(error)
-          );
-        },
+        onError: (action, error: HttpErrorResponse) => null,
       })
     );
   });

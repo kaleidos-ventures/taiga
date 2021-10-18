@@ -7,7 +7,7 @@
  */
 
 import { ChangeDetectionStrategy, Component, Output, EventEmitter, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { RandomColorService } from '~/app/shared/random-color/random-color.service';
@@ -36,8 +36,6 @@ export class WorkspaceCreateComponent implements OnInit {
   public userId = 5;
   public color = 0;
   public createProjectForm!: FormGroup;
-  public createProjectFormInvalid = false;
-  public createProjectErrorList: unknown[] = [];
 
   public close() {
     this.requestClose.next();
@@ -52,37 +50,19 @@ export class WorkspaceCreateComponent implements OnInit {
           Validators.required,
         ]
       ]
-    });
-  }
-
-  public getFormValidationErrors(form: FormGroup) {
-    const result: unknown[] = [];
-    Object.keys(form.controls).forEach(key => {
-      const controlErrors: ValidationErrors | null = form.get(key)!.errors;
-      if (controlErrors) {
-        Object.keys(controlErrors).forEach(keyError => {
-          result.push(keyError);
-        });
-      }
-    });
-    return result;
+    }, { updateOn: 'submit' });
   }
 
   public onSubmit() {
     if (this.createProjectForm.invalid) {
-      this.createProjectFormInvalid = true;
-      this.createProjectErrorList = this.getFormValidationErrors(this.createProjectForm);
       (this.firstInput.nativeElement as HTMLElement).focus();
     } else {
-      this.createProjectFormInvalid = false;
-      if (this.createProjectForm.valid ) {
-        this.store.dispatch(createWorkspace({
-          name: (this.createProjectForm.controls['projectName'].value as string),
-          color: this.color,
-          userId: this.userId
-        }));
-        this.requestClose.next();
-      }
+      this.store.dispatch(createWorkspace({
+        name: this.createProjectForm.get('projectName')!.value as string,
+        color: this.color,
+        userId: this.userId
+      }));
+      this.requestClose.next();
     }
   }
 }

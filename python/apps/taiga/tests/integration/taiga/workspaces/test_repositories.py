@@ -31,7 +31,7 @@ def test_get_workspaces_with_latest_projects_order_by_created_date():
 def test_create_workspace_with_non_ASCI_chars():
     user = f.UserFactory()
     workspace = repositories.create_workspace(name="My w0r#%&乕شspace", color=3, owner=user)
-    assert workspace.slug == "my-w0rhu-shspace"
+    assert workspace.slug.startswith("my-w0rhu-shspace")
 
 
 def test_get_workspace_return_workspace():

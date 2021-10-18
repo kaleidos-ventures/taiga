@@ -5,11 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from django.template.defaultfilters import slugify as django_slugify
-
-import time
 
 from unidecode import unidecode
+import secrets
+import string
+import time
+
+from django.template.defaultfilters import slugify as django_slugify
 
 
 def slugify(value):
@@ -18,13 +20,15 @@ def slugify(value):
     """
     return django_slugify(unidecode(value or ""))
 
+def _generate_suffix():
+    alphabet = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(alphabet) for i in range(6))
 
 def slugify_uniquely(value, model, slugfield="slug"):
     """
     Returns a slug on a name which is unique within a model's table
     """
-
-    suffix = 0
+    suffix = _generate_suffix()
     potential = base = django_slugify(unidecode(value))
     if len(potential) == 0:
         potential = 'null'
@@ -33,7 +37,7 @@ def slugify_uniquely(value, model, slugfield="slug"):
             potential = "-".join([base, str(suffix)])
         if not model.objects.filter(**{slugfield: potential}).exists():
             return potential
-        suffix += 1
+        suffix = _generate_suffix()
 
 
 def slugify_uniquely_for_queryset(value, queryset, slugfield="slug"):

@@ -24,8 +24,8 @@ export class WorkspaceApiService {
     return this.http.get<Workspace[]>(`${this.config.apiUrl}/workspaces`);
   }
 
-  public fetchWorkspace(id: Workspace['id']) {
-    return this.http.get<Workspace>(`${this.config.apiUrl}/workspaces/${id}`);
+  public fetchWorkspace(slug: Workspace['slug']) {
+    return this.http.get<Workspace>(`${this.config.apiUrl}/workspaces/${slug}`);
   }
 
   public createWorkspace(workspaceCreation: WorkspaceCreation) {

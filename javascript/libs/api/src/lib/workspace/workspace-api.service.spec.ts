@@ -33,12 +33,12 @@ describe('WorkspaceApiService', () => {
     const req = spectator.expectOne(base, HttpMethod.GET);
     expect(req.request.url).toEqual(base);
   });
-  
-  it('get Workspace', () => {
-    const id = faker.datatype.number();
-    const url = `${ConfigServiceMock.apiUrl}/workspaces/${id}`;
 
-    spectator.service.fetchWorkspace(id).subscribe();
+  it('get Workspace', () => {
+    const slug = faker.datatype.string();
+    const url = `${ConfigServiceMock.apiUrl}/workspaces/${slug}`;
+
+    spectator.service.fetchWorkspace(slug).subscribe();
 
     const req = spectator.expectOne(url, HttpMethod.GET);
     expect(req.request.url).toEqual(url);

@@ -68,7 +68,7 @@ export class WorkspaceComponent {
       creatingWorkspace: boolean,
       showCreate: boolean,
       loading: boolean,
-      workspaceList: Workspace[],
+      workspaceList: Workspace[]
     }>,
   ) {
     this.state.connect('creatingWorkspace', this.store.select(selectCreatingWorkspace));

@@ -35,7 +35,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   font-size: var(--font-size-medium);
   font-weight: var(--font-weight-medium);
   letter-spacing: normal;
-  line-height: 21px;
+  line-height: 1.25rem;
 }
 
 @define-mixin font-heading-4 {
@@ -43,6 +43,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   font-size: var(--font-size-heading-4);
   font-weight: var(--font-weight-medium);
   letter-spacing: normal;
+  line-height: 1.25rem;
 }
 
 @define-mixin font-heading-3 {

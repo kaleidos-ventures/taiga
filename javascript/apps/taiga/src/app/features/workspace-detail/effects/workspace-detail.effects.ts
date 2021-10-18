@@ -24,7 +24,7 @@ export class WorkspaceDetailEffects {
       ofType(WorkspaceActions.getWorkspace),
       fetch({
         run: (action) => {
-          return this.workspaceApiService.fetchWorkspace(action.id).pipe(
+          return this.workspaceApiService.fetchWorkspace(action.slug).pipe(
             map((workspace: Workspace) => {
               return WorkspaceActions.setWorkspace({ workspace });
             }),

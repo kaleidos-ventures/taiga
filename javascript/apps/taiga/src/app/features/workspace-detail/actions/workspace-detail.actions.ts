@@ -16,5 +16,5 @@ export const setWorkspace = createAction(
 
 export const getWorkspace = createAction(
   '[Workspace] Get',
-  props<{id: Workspace['id']}>()
+  props<{slug: Workspace['slug']}>()
 );

@@ -9,7 +9,6 @@
 import { zoneConfig } from '@rx-angular/cdk';
 
 zoneConfig.global.disable.requestAnimationFrame();
-zoneConfig.global.disable.timers();
 zoneConfig.global.disable.XHR();
 zoneConfig.global.disable.blocking();
 zoneConfig.global.disable.on_property();

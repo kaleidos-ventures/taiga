@@ -9,7 +9,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkspaceDetailComponent } from './workspace-detail/workspace-detail.component';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { WorkspaceAvatarModule } from '~/app/shared/workspace-avatar/workspace-avatar.module';
 import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
@@ -36,6 +36,9 @@ import { RouterModule } from '@angular/router';
   ],
   exports: [
     WorkspaceDetailComponent
+  ],
+  providers: [
+    { provide: TRANSLOCO_SCOPE, useValue: 'workspace' }
   ]
 })
 export class WorkspaceDetailModule { }

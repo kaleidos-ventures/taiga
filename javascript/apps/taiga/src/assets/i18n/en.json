@@ -1,6 +1,7 @@
 {
   "commons": {
     "organizations": "Organizations",
+    "project": "Project",
     "projects": "Projects",
     "overview": "Overview",
     "epics": "Epics",

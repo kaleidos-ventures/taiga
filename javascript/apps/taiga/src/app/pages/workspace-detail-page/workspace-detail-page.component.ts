@@ -32,9 +32,7 @@ export class WorkspaceDetailPageComponent implements OnInit {
       slug = params.get('slug')!;
     });
     if (slug) {
-      const parseId = slug.split('-').pop();
-      const id = Number(parseId);
-      this.store.dispatch(getWorkspace({ id }));
+      this.store.dispatch(getWorkspace({ slug }));
     }
   }
 }

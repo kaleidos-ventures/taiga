@@ -116,7 +116,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-white);
     }
 
-    &[data-state="focused"] {
+    &._focused {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -144,7 +144,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-gray80);
     }
 
-    &[data-state="focused"] {
+    &._focused {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -171,7 +171,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-gray80);
     }
 
-    &[data-state="focused"] {
+    &._focused {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -221,7 +221,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-secondary);
     }
 
-    &[data-state="focused"] {
+    &._focused {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -273,7 +273,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-secondary90);
     }
 
-    &[data-state="focused"] {
+    &._focused {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -301,7 +301,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-secondary90);
     }
 
-    &[data-state="focused"] {
+    &._focused {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -329,7 +329,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-secondary90);
     }
 
-    &[data-state="focused"] {
+    &._focused {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;

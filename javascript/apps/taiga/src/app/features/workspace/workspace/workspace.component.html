@@ -6,11 +6,11 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *ngIf="model$ | async as vm">
-<ng-container *transloco="let t; read: 'workspace'">
+<ng-container *transloco="let t">
   <div
     class="workspace-wrapper">
     <div class="workspace-title-container">
-      <h2 class="workspace-title">{{ t('project') }}</h2>
+      <h2 class="workspace-title">{{ t('commons.projects') }}</h2>
       <div class="workspace-title-actions">
         <button
           data-e2e="add-workspace-button"
@@ -22,7 +22,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           tuiButton
           icon="plus"
           type="button">
-          {{ t('add_workspace') }}
+          {{ t('workspace.add_workspace') }}
         </button>
         <button
           (click)="toggleActivity(true)"
@@ -31,8 +31,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           class="workspace-title-link"
           icon="'collapse-left'"
           iconAlign="left"
-          title="{{ t('show_activity') }}">
-          {{ t('show_activity') }}
+          title="{{ t('workspace.show_activity') }}">
+          {{ t('workspace.show_activity') }}
         </button>
       </div>
     </div>
@@ -55,7 +55,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
     </div>
     <div
-      *ngIf="!vm.workspaceList.length && !vm.showCreate"
+      *ngIf="!vm.workspaceList.length && !vm.showCreate && !vm.creatingWorkspace"
       class="worskpace-placeholder">
       <tg-workspace-skeleton
         *ngIf="vm.loading"
@@ -65,21 +65,21 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         *ngIf="!vm.loading && !vm.workspaceList.length"
         class="workspace-call-action"
         @fadeInOut>
-        <h4 class="workspace-call-action-title">{{ t('placeholder_title') }}
+        <h4 class="workspace-call-action-title">{{ t('workspace.placeholder_title') }}
         </h4>
-        <p class="workspace-call-action-text">{{ t('placeholder_text') }}</p>
+        <p class="workspace-call-action-text">{{ t('workspace.placeholder_text') }}</p>
         <a class="workspace-call-action-link"
           tuiLink
           icon="'arrow-up-right'"
-          title="{{ t('placeholder_link') }}">
-          {{ t('placeholder_link') }}
+          title="{{ t('workspace.placeholder_link') }}">
+          {{ t('workspace.placeholder_link') }}
         </a>
         <button appearance="primary"
           (click)="setCreate(true)"
           tuiButton
-          title="{{ t('placeholder_button') }}"
+          title="{{ t('workspace.placeholder_button') }}"
           type="button">
-          {{ t('placeholder_button') }}
+          {{ t('workspace.placeholder_button') }}
         </button>
       </div>
     </div>
@@ -93,7 +93,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
   </div>
   <ng-template #tooltip>
-      <p>{{ t('tooltip_add_workspace') }}</p>
+      <p>{{ t('workspace.tooltip_add_workspace') }}</p>
   </ng-template>
 </ng-container>
 </ng-container>

@@ -35,7 +35,7 @@ describe('WorkspaceEffects', () => {
   });
 
   it('load workspace', () => {
-    const id = faker.datatype.number();
+    const slug = faker.datatype.string();
     const workspace = WorkspaceMockFactory();
     const workspaceApiService = spectator.inject(WorkspaceApiService);
     const effects = spectator.inject(WorkspaceDetailEffects);
@@ -44,7 +44,7 @@ describe('WorkspaceEffects', () => {
       cold('-b|', { b: workspace })
     );
 
-    actions$ = hot('-a', { a:  getWorkspace({ id })});
+    actions$ = hot('-a', { a:  getWorkspace({ slug })});
 
     const expected = cold('--a', {
       a: setWorkspace({ workspace }),

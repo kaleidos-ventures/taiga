@@ -29,9 +29,6 @@ LOGGING_CONFIG = {
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },
-    "handlers": {"console": {"formatter": "json", "level": "DEBUG", "class": "logging.StreamHandler"}},
-    "loggers": {
-        "taiga": {"level": "INFO", "propagate": False, "handlers": ["console"]},
-        "root": {"level": "WARNING", "handlers": ["console"]},
-    },
+    "handlers": {"console": {"formatter": "default", "level": "DEBUG", "class": "logging.StreamHandler"}},
+    "loggers": {"taiga": {"level": "INFO", "propagate": False, "handlers": ["console"]}},
 }

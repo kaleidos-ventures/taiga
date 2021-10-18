@@ -7,16 +7,21 @@
  */
 
 import { AfterContentInit, Component, ContentChild, HostBinding, Input } from '@angular/core';
-import { ControlContainer, FormGroupDirective } from '@angular/forms';
+import { ControlContainer, FormControl, FormGroupDirective } from '@angular/forms';
 import { InputRefDirective } from '../input-ref.directive';
+import { FieldService } from '../services/field.service';
 
 let nextId = 0;
 
 @Component({
   selector: 'tg-ui-input',
   templateUrl: './input.component.html',
-  styleUrls: ['./input.component.css'],
+  styleUrls: [
+    '../inputs.css',
+    './input.component.css'
+  ],
   exportAs: 'tgInput',
+  providers: [FieldService]
 })
 export class InputComponent implements AfterContentInit {
   @Input()
@@ -32,19 +37,19 @@ export class InputComponent implements AfterContentInit {
   public ref!: InputRefDirective;
 
   @HostBinding('class.invalid') public get error() {
-    return this.ref.control?.invalid;
+    return this.control?.invalid;
   }
 
   @HostBinding('class.untouched') public get untouched() {
-    return this.ref.control?.untouched;
+    return this.control?.untouched;
   }
 
   @HostBinding('class.touched') public get touched() {
-    return this.ref.control?.touched;
+    return this.control?.touched;
   }
 
   @HostBinding('class.dirty') public get dirty() {
-    return this.ref.control?.dirty;
+    return this.control?.dirty;
   }
 
   @HostBinding('class.submitted') public get submitted() {
@@ -59,10 +64,13 @@ export class InputComponent implements AfterContentInit {
     return '';
   }
 
-  constructor(public controlContainer: ControlContainer) {}
+  constructor(
+    private controlContainer: ControlContainer,
+    private fieldService: FieldService
+  ) {}
 
   public get control() {
-    return this.ref.control;
+    return this.ref.control as FormControl;
   }
 
   public get form() {
@@ -71,6 +79,10 @@ export class InputComponent implements AfterContentInit {
 
   public ngAfterContentInit() {
     if (this.ref) {
+      this.fieldService.control = this.control;
+      this.fieldService.form = this.form;
+      this.fieldService.id = this.id;
+
       const input = this.ref.nativeElement;
       input.setAttribute('id', this.id);
     } else {

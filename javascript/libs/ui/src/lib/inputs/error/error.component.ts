@@ -6,8 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, Host, Input } from '@angular/core';
-import { InputComponent } from '../input/input.component';
+import { Component, Input } from '@angular/core';
+import { FieldService } from '../services/field.service';
 
 @Component({
   selector: 'tg-ui-error',
@@ -18,21 +18,18 @@ export class ErrorComponent {
   @Input()
   public error!: string;
 
-  constructor(
-    @Host() public input: InputComponent
-  ) {}
+  constructor(public fieldService: FieldService) {}
 
-  public showError(key: string) {
-    const errors = this.input.control?.errors;
-    const inputControl = this.input.control;
+  public get showError() {
+    const errors = this.fieldService.control?.errors;
+    const fieldControl = this.fieldService.control;
 
-    if (errors && errors[key] && inputControl) {
-      const isOnSubmit = inputControl.updateOn === 'submit';
-
+    if (errors && errors[this.error] && fieldControl) {
+      const isOnSubmit = fieldControl.updateOn === 'submit';
       if (isOnSubmit) {
-        return this.input.form.submitted;
+        return this.fieldService.form?.submitted;
       } else {
-        return inputControl.dirty || inputControl.touched;
+        return fieldControl.dirty || fieldControl.touched;
       }
     }
 

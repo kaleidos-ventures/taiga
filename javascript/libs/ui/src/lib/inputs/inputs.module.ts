@@ -8,16 +8,24 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TuiSvgModule } from '@taiga-ui/core';
+import { TuiSvgModule, TuiTextfieldControllerModule } from '@taiga-ui/core';
 import { InputComponent } from './input/input.component';
 import { InputRefDirective } from './input-ref.directive';
 import { SelectComponent } from './select/select.component';
 import { ErrorComponent } from './error/error.component';
+import { TuiDataListModule } from '@taiga-ui/core';
+import { TuiDataListWrapperModule, TuiSelectModule } from '@taiga-ui/kit';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
     TuiSvgModule,
     CommonModule,
+    ReactiveFormsModule,
+    TuiSelectModule,
+    TuiDataListModule,
+    TuiDataListWrapperModule,
+    TuiTextfieldControllerModule,
   ],
   declarations: [
     InputRefDirective,
@@ -31,6 +39,11 @@ import { ErrorComponent } from './error/error.component';
     InputComponent,
     SelectComponent,
     ErrorComponent,
+    ReactiveFormsModule,
+    TuiSelectModule,
+    TuiDataListModule,
+    TuiDataListWrapperModule,
+    TuiTextfieldControllerModule,
   ]
 })
 export class InputsModule {}

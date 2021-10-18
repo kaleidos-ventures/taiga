@@ -6,10 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import '@ng-web-apis/universal/mocks';
 import { createHostFactory } from '@ngneat/spectator/jest';
 import { InputComponent } from './input.component';
-import { InputsModule } from './../inputs.module';
-import { ControlContainer, FormControl, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
+import { InputsModule } from '../inputs.module';
+import { ControlContainer, FormControl, FormGroupDirective, Validators } from '@angular/forms';
 import { SpectatorHost } from '@ngneat/spectator';
 
 describe('InputComponent', () => {
@@ -20,7 +21,6 @@ describe('InputComponent', () => {
     component: InputComponent,
     imports: [
       InputsModule,
-      ReactiveFormsModule,
     ],
     providers: [
       { provide: ControlContainer, useValue: fgd },

@@ -6,28 +6,94 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, ContentChild, Input } from '@angular/core';
-import { InputRefDirective } from '../input-ref.directive';
+import { AfterContentInit, Component, ContentChild, HostBinding, Input } from '@angular/core';
+import { ControlContainer, FormControl, FormGroupDirective } from '@angular/forms';
+import { TUI_TEXTFIELD_LABEL_OUTSIDE } from '@taiga-ui/core';
+import { TuiSelectComponent } from '@taiga-ui/kit';
+import { FieldService } from '../services/field.service';
+
+let nextId = 0;
 
 @Component({
   selector: 'tg-ui-select',
   templateUrl: './select.component.html',
-  styleUrls: ['./select.component.css'],
+  styleUrls: [
+    '../inputs.css',
+    './select.component.css',
+  ],
+  providers: [
+    FieldService,
+    {
+      provide: TUI_TEXTFIELD_LABEL_OUTSIDE,
+      useValue: {
+        labelOutside: true,
+      }
+    },
+  ]
 })
-export class SelectComponent {
+export class SelectComponent implements AfterContentInit {
+  @Input()
+  public icon = '';
+
   @Input()
   public label = '';
 
-  public ref!: InputRefDirective;
+  @Input()
+  public id = `select-${nextId++}`;
 
-  @ContentChild(InputRefDirective)
-  public set inputRef(ref: InputRefDirective) {
-    this.ref = ref;
-  };
+  @ContentChild(TuiSelectComponent)
+  public select!: TuiSelectComponent<unknown>;
 
-  public clear() {
-    if (this.ref && this.ref.control) {
-      this.ref.control.patchValue('');
+  @HostBinding('class.invalid') public get error() {
+    return this.control?.invalid;
+  }
+
+  @HostBinding('class.untouched') public get untouched() {
+    return this.control?.untouched;
+  }
+
+  @HostBinding('class.touched') public get touched() {
+    return this.control?.touched;
+  }
+
+  @HostBinding('class.dirty') public get dirty() {
+    return this.control?.dirty;
+  }
+
+  @HostBinding('class.submitted') public get submitted() {
+    return this.form.submitted;
+  }
+
+  @HostBinding('class') public get updateOn() {
+    if (this.control?.updateOn) {
+      return `update-on-${this.control?.updateOn}`;
+    }
+
+    return '';
+  }
+
+  constructor(
+    private controlContainer: ControlContainer,
+    private fieldService: FieldService
+  ) {}
+
+  public get control() {
+    return this.select.control as FormControl;
+  }
+
+  public get form() {
+    return this.controlContainer.formDirective as FormGroupDirective;
+  }
+
+  public ngAfterContentInit() {
+    if (this.select) {
+      this.fieldService.control = this.control;
+      this.fieldService.form = this.form;
+      this.fieldService.id = this.id;
+
+      this.select.nativeId = this.id;
+    } else {
+      console.error('TuiSelectComponent is mandatory');
     }
   }
 }

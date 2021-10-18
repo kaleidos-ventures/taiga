@@ -23,6 +23,21 @@ Taiga forms by default are typed reactive forms.
           </tg-ui-error>
         </ng-container>
       </tg-ui-input>
+      <tg-ui-select [label]="label">
+        <tui-select
+          tuiTextfieldSize="l"
+          formControlName="example">
+          <tui-data-list-wrapper
+            *tuiDataList
+            [items]="items"
+          ></tui-data-list-wrapper>
+        </tui-select>
+        <tg-ui-error
+          inputError
+          error="required">
+          Field mandatory
+        </tg-ui-error>
+      </tg-ui-select>      
       <button type="submit">Submit</button>
     </form>
 ```
@@ -33,6 +48,7 @@ With `{ updateOn: 'submit' }` the validation only happens on submit.
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
+      example: ['', [Validators.required]],
     }, { updateOn: 'submit' });
   }
 ```

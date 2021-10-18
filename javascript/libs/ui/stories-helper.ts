@@ -14,10 +14,14 @@ import { TUI_ICONS_PATH } from '@taiga-ui/core';
 import { paramCase } from 'change-case';
 import { Component } from '@angular/core';
 
+const altIconName: Record<string, string> = {
+  'tuiIconChevronDownLarge': 'chevron-down'
+};
+
 export function iconsPath(name: string): string {
+  name = altIconName[name] ?? name;
   return `assets/icons/sprite.svg#${paramCase(name)}`;
 }
-
 export const ConfigureStory = (config: {
   title: string,
   component: unknown,
@@ -61,7 +65,6 @@ export const ConfigureStory = (config: {
     decorators: config.decorators,
   } as Meta;
 };
-
 
 export const ConfigureTemplate = (config: {
   template?: string;

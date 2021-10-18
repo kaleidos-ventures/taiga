@@ -1,17 +1,15 @@
-<!--
+/*
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
--->
-<label
-  *ngIf="showError"
-  [attr.for]="fieldService.id"
-  aria-live="assertive"
-  class="label-error">
-  <svg class="warning">
-    <use href="assets/icons/sprite.svg#warning" />
-  </svg>
-  <ng-content></ng-content>
-</label>
+*/
+
+label {
+  color: var(--color-secondary);
+  line-height: var(--spacing-16);
+  margin-block-end: var(--spacing-4);
+  margin-inline-start: var(--spacing-4);
+  min-inline-size: 0;
+}

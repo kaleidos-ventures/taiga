@@ -19,7 +19,6 @@ import { InputComponent } from './input.component';
   <div class="story-small-container">
     <form [formGroup]="form" (submit)="submit()" #exampleForm="ngForm">
       <tg-ui-input
-        #exampleInput="tgInput"
         [icon]="iconSvg"
         [label]="label">
         <input
@@ -34,7 +33,6 @@ import { InputComponent } from './input.component';
         </tg-ui-error>
       </tg-ui-input>
       <tg-ui-input
-        #emailInput="tgInput"
         [icon]="iconSvg"
         [label]="label">
         <input

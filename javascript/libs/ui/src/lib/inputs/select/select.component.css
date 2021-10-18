@@ -6,65 +6,18 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
-.input-container {
-  display: flex;
-  max-inline-size: 100%;
-  position: relative;
-}
-
-label {
-  color: var(--color-secondary);
-  margin-inline-start: var(--spacing-4);
-  min-inline-size: 0;
-}
-
-.dropdown {
-  block-size: 1rem;
-  fill: var(--color-secondary);
-  inline-size: 1rem;
-  inset-block-start: var(--spacing-12);
-  inset-inline-end: var(--spacing-8);
-  position: absolute;
-}
-
 ::ng-deep {
-  & select {
-    align-items: center;
-    appearance: none;
-    background: none;
-    border: solid 2px var(--color-gray60);
-    border-radius: 3px;
-    color: var(--color-gray80);
-    display: flex;
-    flex-basis: 100%;
+  & tui-select {
     margin-block-end: var(--spacing-4);
-    min-block-size: 2rem;
-    min-inline-size: 0;
-    padding: 0 var(--spacing-28) 0 var(--spacing-12);
-    text-overflow: ellipsis;
-    word-break: break-all;
-
-    &:focus {
-      border-color: var(--color-secondary);
-      border-radius: 3px;
-      outline: 0;
-    }
   }
 
-  & .error {
-    & .label-error {
-      color: var(--color-red70);
-      margin-inline-start: var(--spacing-4);
-    }
-
-    & select {
-      border-color: var(--color-error);
-
-      &:focus {
-        border-color: var(--color-secondary);
-        border-radius: 3px;
-        outline: 0;
-      }
+  & .invalid.update-on-submit.submitted,
+  & .invalid.update-on-blur.dirty,
+  & .invalid.update-on-change.dirty,
+  & .invalid.update-on-blur.touched,
+  & .invalid.update-on-change.touched {
+    & tui-wrapper {
+      --tui-base-03: var(--color-error);
     }
   }
 }

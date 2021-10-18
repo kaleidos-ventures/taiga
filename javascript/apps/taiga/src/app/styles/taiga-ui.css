@@ -104,3 +104,16 @@ tui-hint-box {
   background: var(--color-gray100) !important; /* stylelint-disable-line declaration-no-important */
   border-radius: 4px !important; /* stylelint-disable-line declaration-no-important */
 }
+
+tui-wrapper[data-appearance="textfield"] {
+  --tui-base-03: var(--color-gray40);
+  --tui-primary: var(--color-secondary);
+
+  box-shadow: none !important; /* stylelint-disable-line declaration-no-important */
+
+  &::after {
+    border-radius: 3px;
+    border-width: 2px !important; /* stylelint-disable-line declaration-no-important */
+    transition: none !important; /* stylelint-disable-line declaration-no-important */
+  }
+}

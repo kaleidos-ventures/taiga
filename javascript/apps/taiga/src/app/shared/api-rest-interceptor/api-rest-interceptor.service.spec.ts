@@ -118,7 +118,6 @@ describe('ApiRestInterceptor', () => {
     jest.spyOn(store, 'dispatch');
 
     const authApiService = spectator.inject(AuthApiService);
-    const routerService = spectator.inject(Router);
 
     const authService = spectator.inject(AuthService);
     authService.getAuth.mockReturnValue({token, refresh});

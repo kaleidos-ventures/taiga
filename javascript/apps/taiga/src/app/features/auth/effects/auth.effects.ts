@@ -45,12 +45,13 @@ export class AuthEffects {
   public logout$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.logout),
-      tap(() => {
+      map(() => {
         this.authService.logout();
         void this.router.navigate(['/login']);
+        return AuthActions.setUser({ user: null });
       })
     );
-  }, { dispatch: false });
+  });
 
   public loginSuccess$ = createEffect(() => {
     return this.actions$.pipe(
@@ -71,7 +72,9 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.setUser),
       tap(({ user }) => {
-        this.authService.setUser(user);
+        if (user) {
+          this.authService.setUser(user);
+        }
       })
     );
   }, { dispatch: false });

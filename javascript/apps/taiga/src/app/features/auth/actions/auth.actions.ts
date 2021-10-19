@@ -8,10 +8,11 @@
 
 import { createAction, props } from '@ngrx/store';
 import { Auth, User } from '@taiga/data';
+import { AuthState } from '../reducers/auth.reducer';
 
 export const setUser = createAction(
   '[Auth] Set user',
-  props<{user: User}>()
+  props<{user: AuthState['user']}>()
 );
 
 export const login = createAction(

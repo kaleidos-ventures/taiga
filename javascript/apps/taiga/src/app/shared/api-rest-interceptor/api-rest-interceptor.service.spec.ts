@@ -139,7 +139,6 @@ describe('ApiRestInterceptor', () => {
       error: () => {
         expect(authApiService.refreshToken).toHaveBeenCalledWith(refresh);
         expect(store.dispatch).toHaveBeenCalledWith(logout());
-        expect(routerService.navigate).toHaveBeenCalledWith(['login']);
 
         done();
       }

@@ -58,7 +58,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       *ngIf="!vm.workspaceList.length && !vm.showCreate && !vm.creatingWorkspace"
       class="worskpace-placeholder">
       <tg-workspace-skeleton
-        *ngIf="vm.loading"
         [static]="true">
       </tg-workspace-skeleton>
       <div

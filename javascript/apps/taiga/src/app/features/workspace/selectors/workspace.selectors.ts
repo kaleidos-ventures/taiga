@@ -10,6 +10,7 @@ import { workspaceFeature } from '../reducers/workspace.reducer';
 
 export const {
   selectWorkspaces,
+  selectCreateFormHasError,
   selectLoading: selectLoadingWorkpace,
   selectCreatingWorkspace,
 } = workspaceFeature;

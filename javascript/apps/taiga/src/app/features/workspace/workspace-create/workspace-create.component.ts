@@ -11,7 +11,7 @@ import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { RandomColorService } from '~/app/shared/random-color/random-color.service';
-import { createWorkspace } from '../actions/workspace.actions';
+import { createFormHasError, createWorkspace } from '../actions/workspace.actions';
 
 @Component({
   selector: 'tg-workspace-create',
@@ -38,6 +38,7 @@ export class WorkspaceCreateComponent implements OnInit {
   public createProjectForm!: FormGroup;
 
   public close() {
+    this.store.dispatch(createFormHasError({ hasError: false }));
     this.requestClose.next();
   }
 
@@ -56,6 +57,8 @@ export class WorkspaceCreateComponent implements OnInit {
   public onSubmit() {
     if (this.createProjectForm.invalid) {
       (this.firstInput.nativeElement as HTMLElement).focus();
+      this.store.dispatch(createFormHasError({ hasError: true }));
+
     } else {
       this.store.dispatch(createWorkspace({
         name: this.createProjectForm.get('projectName')!.value as string,

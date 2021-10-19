@@ -15,12 +15,14 @@ export interface WorkspaceState {
   workspaces: Workspace[],
   creatingWorkspace: boolean,
   loading: boolean,
+  createFormHasError: boolean
 }
 
 export const initialState: WorkspaceState = {
   workspaces: [],
   creatingWorkspace: false,
   loading: false,
+  createFormHasError: false
 };
 
 export const reducer = createReducer(
@@ -38,12 +40,18 @@ export const reducer = createReducer(
   }),
   on(WorkspaceActions.createWorkspace, (state): WorkspaceState => {
     state.creatingWorkspace = true;
+    state.createFormHasError = false;
 
     return state;
   }),
   on(WorkspaceActions.createWorkspaceSuccess, (state, { workspace }): WorkspaceState => {
     state.workspaces = [workspace, ...state.workspaces];
     state.creatingWorkspace = false;
+
+    return state;
+  }),
+  on(WorkspaceActions.createFormHasError, (state, { hasError }): WorkspaceState => {
+    state.createFormHasError = hasError;
 
     return state;
   }),

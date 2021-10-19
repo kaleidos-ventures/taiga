@@ -82,7 +82,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </button>
       </div>
     </div>
-    <div class="workspace-item-container">
+    <div
+      [class.form-error]="vm.createFormHasError"
+      class="workspace-item-container">
       <tg-workspace-item
         @fadeInOut
         data-e2e="workspace-item"

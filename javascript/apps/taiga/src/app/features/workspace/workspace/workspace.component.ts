@@ -13,7 +13,7 @@ import { RxState } from '@rx-angular/state';
 import { Workspace } from '@taiga/data';
 import { map } from 'rxjs/operators';
 import { fadeIntOutAnimation, slideIn, slideInOut } from '~/app/shared/utils/animations';
-import { selectCreatingWorkspace, selectLoadingWorkpace } from '../selectors/workspace.selectors';
+import { selectCreateFormHasError, selectCreatingWorkspace, selectLoadingWorkpace } from '../selectors/workspace.selectors';
 
 @Component({
   selector: 'tg-workspace',
@@ -69,10 +69,12 @@ export class WorkspaceComponent {
       showCreate: boolean,
       loading: boolean,
       workspaceList: Workspace[]
+      createFormHasError: boolean
     }>,
   ) {
     this.state.connect('creatingWorkspace', this.store.select(selectCreatingWorkspace));
     this.state.connect('loading', this.store.select(selectLoadingWorkpace));
+    this.state.connect('createFormHasError', this.store.select(selectCreateFormHasError));
   }
 
   public toggleActivity(show: boolean) {

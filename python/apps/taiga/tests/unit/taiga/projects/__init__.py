@@ -4,7 +4,3 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
-from .projects import ProjectFactory, ProjectTemplateFactory  # noqa
-from .users import UserFactory  # noqa
-from .workspaces import WorkspaceFactory  # noqa

@@ -20,7 +20,7 @@ class ProjectValidator(BaseModel):
 
     @validator("name")
     def check_name_not_empty(cls, v: str) -> str:
-        assert v != "", "Empty name is not allowed."
+        assert v != "", "Empty name is not allowed"
         return v
 
     @validator("name")
@@ -40,7 +40,7 @@ class ProjectValidator(BaseModel):
 
     @validator("color")
     def check_allowed_color(cls, v: int) -> int:
-        assert v >= 1 and v <= 8, "Color not allowed."
+        assert v >= 1 and v <= 8, "Color not allowed"
         return v
 
     # Sanitizers

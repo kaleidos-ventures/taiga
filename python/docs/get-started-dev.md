@@ -49,3 +49,21 @@ To enable pre-commit git hooks run:
    ```
    (taiga)$ python -m taiga devserve
    ```
+
+## Some tips:
+
+### Working with changes in database (regenerate vs migrate):
+
+When we make changes to the structure of the database, there are two strategies that can be followed to apply them:
+
+- If there is a **minor change** (e.g. some field has been changed) you can only apply the migrations to change to the new estructure.
+  ```bash
+  $ cd python/apps/taiga
+  (taiga)$ python -m taiga6.manage migrate
+  ```
+
+- If there is a **big change** (e.g. some new model has been created) you should regenerate the database __(**data will be lose**)__.
+  ```bash
+  $ cd python/apps/taiga
+  (taiga)$ python scripts/regenerate_devel_env.sh
+  ```

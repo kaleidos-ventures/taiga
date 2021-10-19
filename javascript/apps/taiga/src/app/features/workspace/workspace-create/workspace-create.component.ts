@@ -36,6 +36,7 @@ export class WorkspaceCreateComponent implements OnInit {
   public userId = 5;
   public color = 0;
   public createProjectForm!: FormGroup;
+  public name = '';
 
   public close() {
     this.store.dispatch(createFormHasError({ hasError: false }));
@@ -52,6 +53,10 @@ export class WorkspaceCreateComponent implements OnInit {
         ]
       ]
     }, { updateOn: 'submit' });
+  }
+
+  public setName(event: Event) {
+    this.name = (<HTMLInputElement>event.target).value;
   }
 
   public onSubmit() {

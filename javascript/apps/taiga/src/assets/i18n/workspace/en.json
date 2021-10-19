@@ -8,7 +8,7 @@
   "show_activity": "Show activity",
   "project": "Project",
   "create_workspace": "Create workspace",
-  "back_to_project": "Back to project",
+  "back_to_projects": "Back to projects",
   "workspace_name": "Workspace Name",
   "tooltip_add_workspace": "Group your projects into workspaces. You decide if they match something as big as an organization or as personal as your pet projects.",
   "error_name_empty": "Workspace name can’t be empty",

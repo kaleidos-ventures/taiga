@@ -10,7 +10,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { AuthApiService } from '@taiga/api';
-import { login } from '../actions/auth.actions';
+import { login } from '~/app/features/auth/actions/auth.actions';
 
 interface Login {
   username: string;

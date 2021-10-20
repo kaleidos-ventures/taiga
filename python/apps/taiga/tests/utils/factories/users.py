@@ -16,7 +16,6 @@ class UserFactory(Factory):
 
     class Meta:
         model = "users.User"
-        strategy = factory.CREATE_STRATEGY
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):

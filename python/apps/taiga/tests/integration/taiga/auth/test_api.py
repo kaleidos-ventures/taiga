@@ -19,29 +19,41 @@ def test_login_successfuly(client):
     password = "test_password"
     f.UserFactory(username=username, password=password)
 
-    response = client.post("/auth/token", json={"username": username, "password": password})
+    data = {
+        "username": username,
+        "password": password,
+    }
+
+    response = client.post("/auth/token", json=data)
     assert response.status_code == 200, response.text
     assert response.json().keys() == {"token", "refresh"}
 
 
 def test_login_error_invalid_credentials(client):
-    username = "test_user"
-    password = "test_password"
+    data = {
+        "username": "test_user",
+        "password": "test_password",
+    }
 
-    response = client.post("/auth/token", json={"username": username, "password": password})
+    response = client.post("/auth/token", json=data)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED, response.text
     assert response.headers["www-authenticate"] == 'Bearer realm="api"'
 
 
 def test_refresh_successfuly(client):
-    user = f.UserFactory(username="test_user", password="test_password", is_active=True)
+    user = f.UserFactory(is_active=True)
     token = RefreshToken.for_user(user)
+    data = {
+        "refresh": str(token),
+    }
 
-    response = client.post("/auth/token/refresh", json={"refresh": str(token)})
+    response = client.post("/auth/token/refresh", json=data)
     assert response.status_code == 200, response.text
     assert response.json().keys() == {"token", "refresh"}
 
 
 def test_refresh_error_invalid_token(client):
-    response = client.post("/auth/token/refresh", json={"refresh": "invalid_token"})
+    data = {"refresh": "invalid_token"}
+
+    response = client.post("/auth/token/refresh", json=data)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED, response.text

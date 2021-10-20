@@ -37,7 +37,7 @@ Taiga forms by default are typed reactive forms.
           error="required">
           Field mandatory
         </tg-ui-error>
-      </tg-ui-select>      
+      </tg-ui-select>
       <button type="submit">Submit</button>
     </form>
 ```

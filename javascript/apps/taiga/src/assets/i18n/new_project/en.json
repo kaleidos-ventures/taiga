@@ -1,4 +1,16 @@
 {
   "new_project": "New Project",
-  "choose_workspace": "Choose workspace"
+  "choose_workspace": "Choose workspace",
+  "choose_workspace_error": "Please choose a workspace",
+  "first_step": {
+    "blank_project": "Blank project",
+    "blank_project_description": "Start a project from scratch",
+    "template_project": "From a template",
+    "template_project_description": "Use one of our community templates",
+    "import_project": "Import a project",
+    "import_project_description": "Import the scaffoding of another project",
+    "duplicate_project": "Duplicate",
+    "duplicate_project_description": "Duplicate a project",
+    "duplicate_project_tip": "This is just a placeholder"
+  }
 }

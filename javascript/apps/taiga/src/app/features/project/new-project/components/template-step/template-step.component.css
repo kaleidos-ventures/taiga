@@ -6,13 +6,77 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
-.new-project-wrapper {
+@import "tools/typography.css";
+
+.template-step-wrapper {
   inline-size: 480px;
   margin: 0 auto;
+}
+
+.template-step-title {
+  @mixin font-heading-3;
+
+  margin-block: 0 var(--spacing-32);
 }
 
 .workspace-option {
   align-items: center;
   display: flex;
   gap: var(--spacing-8);
+}
+
+.templates-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  margin-block-start: var(--spacing-32);
+}
+
+.template-item {
+  appearance: none;
+  background-color: var(--color-gray10);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  gap: var(--spacing-12);
+  inline-size: 100%;
+  padding: var(--spacing-16);
+
+  &:hover {
+    background-color: var(--color-white);
+
+    & .template-title {
+      color: var(--color-secondary);
+      font-weight: 500;
+    }
+  }
+
+  &:focus {
+    outline: 2px solid var(--color-secondary);
+  }
+}
+
+.template-icon {
+  block-size: var(--spacing-24);
+  color: var(--color-secondary);
+  flex: 0 0 auto;
+  inline-size: var(--spacing-24);
+}
+
+.template-data {
+  flex: 1;
+  line-height: 1.5;
+  text-align: start;
+}
+
+.template-tip {
+  block-size: var(--spacing-16);
+  color: var(--color-gray40);
+  display: inline-block;
+  inline-size: var(--spacing-16);
+  margin-inline-start: var(--spacing-8);
+}
+
+.template-description {
+  color: var(--color-gray70);
 }

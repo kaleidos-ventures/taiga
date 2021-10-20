@@ -8,8 +8,29 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t;">
   <ng-container *ngIf="workspaceList$ | async as workspaceList">
+    <div class="page-actions">
+      <a
+        tuiButton
+        type="button"
+        appearance="tertiary"
+        routerLink=".."
+        icon="arrow-left">
+        {{ t('commons.back') }}
+      </a>
+    </div>
     <div class="new-project-wrapper">
-      <tg-template-step [workspaces]="workspaceList"></tg-template-step>
+      <tg-template-step *ngIf="currentStep === 'template'"
+        (templateSelected)="onSelectTemplate($event)"
+        [workspaces]="workspaceList">
+      </tg-template-step>
+      <div *ngIf="currentStep === 'detail'">
+        <!-- TODO: PLACEHOLDER Detail step here -->
+        Detail
+      </div>
+      <div *ngIf="currentStep === 'invite'">
+        <!-- TODO: PLACEHOLDER Invite step here -->
+        Invite
+      </div>
     </div>
   </ng-container>
 </ng-container>

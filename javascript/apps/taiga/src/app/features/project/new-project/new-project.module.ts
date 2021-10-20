@@ -18,12 +18,15 @@ import {
   TuiSvgModule,
   TuiDataListModule,
   TuiTextfieldControllerModule,
+  TuiButtonModule,
 } from '@taiga-ui/core';
 import { TuiSelectModule, TuiDataListWrapperModule } from '@taiga-ui/kit';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 import { NewProjectComponent } from './components/new-project/new-project.component';
 import { TemplateStepComponent } from './components/template-step/template-step.component';
+import { RouterModule } from '@angular/router';
+import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 
 @NgModule({
   declarations: [
@@ -45,6 +48,9 @@ import { TemplateStepComponent } from './components/template-step/template-step.
     TuiDataListWrapperModule,
     WorkspaceAvatarModule,
     TuiTextfieldControllerModule,
+    RouterModule,
+    TuiButtonModule,
+    InputsModule,
   ],
   exports: [NewProjectComponent, TemplateStepComponent],
   providers: [

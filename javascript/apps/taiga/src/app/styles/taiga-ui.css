@@ -89,15 +89,6 @@ tui-dropdown-box {
   border: none !important; /* stylelint-disable-line declaration-no-important */
 }
 
-tui-svg {
-  display: grid !important; /* stylelint-disable-line declaration-no-important */
-  place-content: center;
-
-  & svg { /* stylelint-disable-line selector-max-type */
-    fill: var(--color-secondary);
-  }
-}
-
 tui-hint-box {
   @mixin font-body;
 

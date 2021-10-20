@@ -13,6 +13,7 @@ import { TemplateStepComponent } from './template-step.component';
 
 import * as faker from 'faker';
 import { FormBuilder } from '@angular/forms';
+import { WorkspaceMockFactory } from '@taiga/data';
 
 describe('TemplateStepComponent', () => {
   let spectator: Spectator<TemplateStepComponent>;
@@ -51,7 +52,23 @@ describe('TemplateStepComponent', () => {
   });
 
   it('test that form gets initializated', () => {
+    const workspace = WorkspaceMockFactory();
+    spectator.component.workspaces = [workspace];
     spectator.component.initForm();
-    expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(spectator.component.workspaces[0]);
+    expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(null);
   });
+
+  it('test that form creates blank project', () => {
+    const workspace = WorkspaceMockFactory();
+    spectator.component.initForm();
+    spectator.component.createProjectForm.get('workspace')?.setValue(workspace);
+    spectator.component.createBlankProject();
+    spectator.component.templateSelected.subscribe((emit) => {
+      expect(emit).toHaveBeenCalledWith({
+        step: 'detail',
+        workspace
+      });
+    });
+  });
+
 });

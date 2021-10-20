@@ -29,10 +29,6 @@ class TokensSettings(BaseSettings):
     TOKEN_TYPE_CLAIM: str = "token_type"
     JTI_CLAIM: str = "jti"
 
-    # Tokens lifetimes (in minutes)
-    ACCESS_TOKEN_LIFETIME: int = 30
-    REFRESH_TOKEN_LIFETIME: int = 8 * 24 * 60
-
     # Validators
     @validator("ALGORITHM", pre=True)
     def validate_algorithm(cls, v: str) -> str:

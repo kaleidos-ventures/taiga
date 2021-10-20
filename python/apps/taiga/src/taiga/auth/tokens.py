@@ -40,12 +40,12 @@ from taiga.tokens import DenylistMixin, Token
 
 class AccessToken(Token):
     token_type = "access"
-    lifetime = timedelta(minutes=settings.TOKENS.ACCESS_TOKEN_LIFETIME)
+    lifetime = timedelta(minutes=settings.ACCESS_TOKEN_LIFETIME)
 
 
 class RefreshToken(DenylistMixin, Token):
     token_type = "refresh"
-    lifetime = timedelta(minutes=settings.TOKENS.REFRESH_TOKEN_LIFETIME)
+    lifetime = timedelta(minutes=settings.REFRESH_TOKEN_LIFETIME)
     no_copy_claims: ClassVar[Tuple[str, ...]] = (
         settings.TOKENS.TOKEN_TYPE_CLAIM,
         "exp",

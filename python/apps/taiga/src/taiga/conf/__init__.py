@@ -17,19 +17,26 @@ from .tokens import TokensSettings
 
 
 class Settings(BaseSettings):
+    # Commons
     SECRET_KEY: str = secrets.token_urlsafe(32)
+    DEBUG: bool = False
 
+    # Taiga URLS
     BACKEND_URL: AnyHttpUrl = AnyHttpUrl.build(scheme="http", host="localhost", port="8000")
     FRONTEND_URL: AnyHttpUrl = AnyHttpUrl.build(scheme="http", host="localhost", port="4200")
 
-    DEBUG: bool = False
-
+    # Database
     DB_NAME: str = "taiga"
     DB_USER: str = "taiga"
     DB_PASSWORD: str = "taiga"
     DB_HOST: str = ""
     DB_PORT: str = ""
 
+    # Auth
+    ACCESS_TOKEN_LIFETIME: int = 30  # 30 minutes
+    REFRESH_TOKEN_LIFETIME: int = 8 * 24 * 60  # 8 * 24 * 60 minutes = 8 days
+
+    # Sub settings modules
     TOKENS: TokensSettings = TokensSettings()
 
     class Config:

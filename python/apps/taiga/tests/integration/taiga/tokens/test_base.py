@@ -166,7 +166,7 @@ def test_flush_expired_tokens_should_delete_any_expired_tokens():
     not_expired_3.denylist()
 
     # Make tokens with fake exp time that will expire soon
-    now = datetime.now(timezone.utc) - timedelta(minutes=settings.TOKENS.REFRESH_TOKEN_LIFETIME)
+    now = datetime.now(timezone.utc) - timedelta(minutes=settings.REFRESH_TOKEN_LIFETIME)
 
     with patch("taiga.tokens.base.aware_utcnow") as fake_aware_utcnow:
         fake_aware_utcnow.return_value = now

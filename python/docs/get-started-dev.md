@@ -67,3 +67,17 @@ When we make changes to the structure of the database, there are two strategies 
   $ cd python/apps/taiga
   (taiga)$ python scripts/regenerate_devel_env.sh
   ```
+
+### Working with infinite life authentication tokens
+
+To work in development mode with authentication tokens that "never" expire, you just have to define in the `.env` file a SECRET_KEY and set the ACCESS_TOKEN_LIFETIME (in minutes) to a high value.
+
+For example:
+
+```
+# (...)
+TAIGA_SECRET_KEY=secret
+# (...)
+TAIGA_ACCESS_TOKEN_LIFETIME=1000000
+# (...)
+```

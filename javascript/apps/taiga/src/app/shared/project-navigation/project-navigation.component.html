@@ -50,9 +50,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'overview'"
                 [attr.href]="dialog.link">
-                <svg class="menu-option-icon">
-                  <use href="assets/icons/sprite.svg#overview" />
-                </svg>
+                <tui-svg class="menu-option-icon"
+                  src="overview"></tui-svg>
                 <span *ngIf="!collapsed"
                   class="menu-option-text"
                   data-animation="text">
@@ -71,9 +70,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'epics'"
                 href="dialog.link">
-                <svg class="menu-option-icon">
-                  <use href="assets/icons/sprite.svg#epics" />
-                </svg>
+                <tui-svg class="menu-option-icon"
+                  src="epics"></tui-svg>
                 <span *ngIf="!collapsed"
                   class="menu-option-text"
                   data-animation="text">
@@ -94,19 +92,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="collapsed ? t('commons.scrum') : null"
                 [attr.data-text]="t('commons.backlog')"
                 (click)="toggleScrumChildMenu()">
-                <svg class="scrum-button-icon">
-                  <use href="assets/icons/sprite.svg#scrum" />
-                </svg>
+                <tui-svg class="menu-option-icon"
+                  src="scrum"></tui-svg>
                 <span *ngIf="!collapsed"
                   class="scrum-button-text"
                   data-animation="text">
                   {{ t('commons.scrum') }}
                 </span>
-                <svg *ngIf="!collapsed"
+                <tui-svg *ngIf="!collapsed"
                   class="chevron"
-                  [class.active]="scrumChildMenuVisible">
-                  <use href="assets/icons/sprite.svg#chevron-down" />
-                </svg>
+                  [class.active]="scrumChildMenuVisible"
+                  src="chevron-down"></tui-svg>
               </button>
               <ul *ngIf="!collapsed && scrumChildMenuVisible"
                 class="menu-child-scrum">
@@ -140,9 +136,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'kanban'"
                 href="dialog.link">
-                <svg class="menu-option-icon">
-                  <use href="assets/icons/sprite.svg#kanban" />
-                </svg>
+                <tui-svg class="menu-option-icon"
+                  src="kanban"></tui-svg>
                 <span *ngIf="!collapsed"
                   class="menu-option-text"
                   data-animation="text">
@@ -161,9 +156,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'issues'"
                 href="dialog.link">
-                <svg class="menu-option-icon">
-                  <use href="assets/icons/sprite.svg#issues" />
-                </svg>
+                <tui-svg class="menu-option-icon"
+                  src="issues"></tui-svg>
                 <span *ngIf="!collapsed"
                   class="menu-option-text"
                   data-animation="text">
@@ -189,18 +183,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'wiki'"
                 href="dialog.link">
-                <svg class="menu-option-icon">
-                  <use href="assets/icons/sprite.svg#wiki" />
-                </svg>
+                <tui-svg class="menu-option-icon"
+                  src="wiki"></tui-svg>
                 <span *ngIf="!collapsed"
                   class="menu-option-text"
                   data-animation="text">
                   {{ t('commons.wiki') }}
                 </span>
-                <svg *ngIf="!collapsed"
-                  class="arrow">
-                  <use href="assets/icons/sprite.svg#arrow-right" />
-                </svg>
+                <tui-svg *ngIf="!collapsed"
+                  class="arrow"
+                  src="arrow-right"></tui-svg>
               </a>
             </li>
             <li class="menu-option"
@@ -214,18 +206,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'meetup'"
                 href="dialog.link">
-                <svg class="menu-option-icon">
-                  <use href="assets/icons/sprite.svg#meetup" />
-                </svg>
+                <tui-svg class="menu-option-icon"
+                  src="meetup"></tui-svg>
                 <span *ngIf="!collapsed"
                   class="menu-option-text"
                   data-animation="text">
                   {{ t('commons.meetup') }}
                 </span>
-                <svg *ngIf="!collapsed"
-                  class="arrow">
-                  <use href="assets/icons/sprite.svg#arrow-right" />
-                </svg>
+                <tui-svg *ngIf="!collapsed"
+                  class="arrow"
+                  src="arrow-right"></tui-svg>
               </a>
             </li>
             <li class="menu-option"
@@ -239,18 +229,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'team'"
                 href="dialog.link">
-                <svg class="menu-option-icon">
-                  <use href="assets/icons/sprite.svg#team" />
-                </svg>
+                <tui-svg class="menu-option-icon"
+                  src="team"></tui-svg>
                 <span *ngIf="!collapsed"
                   class="menu-option-text"
                   data-animation="text">
                   {{ t('commons.team') }}
                 </span>
-                <svg *ngIf="!collapsed"
-                  class="arrow">
-                  <use href="assets/icons/sprite.svg#arrow-right" />
-                </svg>
+                <tui-svg *ngIf="!collapsed"
+                  class="arrow"
+                  src="arrow-right"></tui-svg>
               </a>
             </li>
           </ul>
@@ -262,18 +250,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             (pointerleave)="out()">
             <a (focus)="popup($event, 'project-settings')"
               (focusout)="out()"
-              [attr.data-text]="t('main_project_navigation.project-settings')"
-              [attr.aria-label]="collapsed ? t('main_project_navigation.project-settings') : null"
+              [attr.data-text]="t('main_project_navigation.project_settings')"
+              [attr.aria-label]="collapsed ? t('main_project_navigation.project_settings') : null"
               class="menu-option-item"
               [class.active-dialog]="dialog.type === 'project-settings'"
               href="dialog.link">
-              <svg class="menu-option-icon">
-                <use href="assets/icons/sprite.svg#settings" />
-              </svg>
+              <tui-svg class="menu-option-icon"
+                src="settings"></tui-svg>
               <span *ngIf="!collapsed"
                 class="bottom-menu-option-text"
                 data-animation="text">
-                {{ t('main_project_navigation.project-settings') }}
+                {{ t('main_project_navigation.project_settings') }}
               </span>
             </a>
           </div>
@@ -286,9 +273,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               data-animation="text">
               {{ t('main_project_navigation.collapse_menu') }}
             </span>
-            <svg class="collapse-icon">
-              <use [attr.href]="getCollapseIcon()" />
-            </svg>
+            <tui-svg class="collapse-icon"
+              [src]="getCollapseIcon()"></tui-svg>
           </button>
         </div>
       </div>

@@ -42,6 +42,19 @@ And use it as follows:
 cy.login('my-email@something.com', 'myPassword');
 ```
 
+## Selectors
+
+Use `getBySel` instead of get:
+
+```ts
+cy.get('[data-e2e=add-workspace-button]').click();
+
+// Use this
+cy.getBySel('add-workspace-button').click();
+```
+
+## Login
+
 ## Helpers
 
 Helpers are functions containing one or multiple commands that avoid repetition. Think of it as functions.
@@ -95,23 +108,6 @@ it('is a11y', () => {
 
 And import it to your integration test to fill the data.
 
-## Full example of e2e test
-
-```ts
-import { exampleFixture } from '../fixtures/example.fixture';
-import { getGreeting } from '../support/helpers/app.po';
-
-describe('taiga', () => {
-  beforeEach(() => cy.visit('/'));
-
-  xit('should display welcome message', () => {
-    cy.login(exampleFixture.email , exampleFixture.name);
-    getGreeting().contains('Welcome to taiga!');
-  });
-});
-```
-
-
 ## Log of a count.
 
 If you want to log a count of an amount of items you should do it like this
@@ -126,9 +122,61 @@ cy.get<string>('@workspaceItemCount').then(previousCount => {
 });
 ```
 
+## Logs
+
+UI log `cy.log('test');`
+Console log `cy.task('log', 'test');`
+
+## Intercept api request
+
+Log api responses
+
+```ts
+cy.intercept('http://localhost:8000/api/v2/auth/token').as('loginRequest');
+
+cy.login();
+
+cy.wait('@loginRequest').should((xhr) => {
+  cy.task('log', xhr.response?.body);
+});
+```
+
+## Full example of e2e test
+
+```ts
+import { exampleFixture } from '../fixtures/example.fixture';
+import { getGreeting } from '../support/helpers/app.po';
+
+describe('taiga', () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit('/');
+    cy.initAxe();
+  });
+
+  it('is a11y', () => {
+    cy.tgCheckA11y();
+  });
+
+  it('should display welcome message', () => {
+    getGreeting().contains('Welcome to taiga!');
+
+    cy.getBySel('open').click();
+  });
+});
+```
+
 ## Run
 
 ```sh
 npm run e2e
 npm run e2e -- --watch
 ```
+
+## Database fixtures backup
+
+Add this variable to your python .env
+
+`TAIGA_SECRET_KEY="secret"`
+
+Then regenerate the database (follow python guide) and make the dump `pg_dump -Fc -Z 9 --file=sql-fixtures/fixtures.sql taiga`.

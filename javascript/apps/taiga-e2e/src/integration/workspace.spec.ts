@@ -9,18 +9,28 @@ import * as faker from 'faker';
 
 describe('Workspace Create', () => {
   beforeEach(() => {
+    cy.login();
     cy.visit('/');
+    cy.initAxe();
+  });
+
+  it('is a11y', () => {
+    cy.tgCheckA11y();
   });
 
   it('Should create a workspace and add it', () => {
-    cy.get('[data-e2e=workspace-item]').its('length').as('workspaceItemCount');
-    cy.get('[data-e2e=add-workspace-button]').click();
-    cy.get('[data-e2e=workspace-create]').should('be.visible');
-    cy.get('[data-e2e=project-name-input]').type(faker.company.companyName() + ' ' + faker.commerce.department());
-    cy.get('[data-e2e=create-project-form-submit]').click();
-    cy.get<number>('@workspaceItemCount').then(previousCount => {
-      cy.get('[data-e2e=workspace-item]').should('have.length', (previousCount + 1));
-    });
-    cy.get('[data-e2e=workspace-create]').should('not.exist');
+    const worspaceName = `${faker.company.companyName()} ${faker.commerce.department()}`;
+
+    cy.getBySel('add-workspace-button').click();
+    cy.getBySel('workspace-create').should('be.visible');
+    cy.getBySel('workspace-name-input').type(worspaceName);
+    cy.getBySel('workspace-project-form-submit').click();
+    cy.get('tg-workspace-skeleton').should('be.visible');
+    cy.get('tg-workspace-skeleton').should('not.exist');
+
+    cy
+      .get('tg-workspace-item')
+      .first()
+      .should('contain.text', worspaceName);
   });
 });

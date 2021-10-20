@@ -8,10 +8,21 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <label for="username">Username: </label>
-  <input id="username" type="text" formControlName="username" />
+  <input
+    data-test="username"
+    id="username"
+    type="text"
+    formControlName="username" />
 
   <label for="password">Password: </label>
-  <input id="password" type="text" formControlName="password" />
+  <input
+    data-test="password"
+    id="password"
+    type="text"
+    formControlName="password" />
 
-  <button type="submit" [disabled]="!form.valid">Submit</button>
+  <button
+    data-test="submit"
+    type="submit"
+    [disabled]="!form.valid">Submit</button>
 </form>

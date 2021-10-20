@@ -13,7 +13,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <h2 class="workspace-title">{{ t('commons.projects') }}</h2>
       <div class="workspace-title-actions">
         <button
-          data-e2e="add-workspace-button"
+          data-test="add-workspace-button"
           (click)="setCreate(true)"
           [disabled]="vm.showCreate || vm.loading"
           [tuiHint]="tooltip"
@@ -42,7 +42,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="create-wrapper">
       <tg-workspace-create
         class="workspace-create"
-        data-e2e="workspace-create"
+        data-test="workspace-create"
         @slideInOut
         (requestClose)="setCreate(false)"
         cdkTrapFocus
@@ -87,7 +87,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="workspace-item-container">
       <tg-workspace-item
         @fadeInOut
-        data-e2e="workspace-item"
         *ngFor="let workspace of vm.workspaceList; trackBy: trackByWorkspace"
         [workspace]="workspace">
       </tg-workspace-item>

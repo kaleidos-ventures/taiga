@@ -1,5 +1,5 @@
 {
-  "api": "http://localhost:8000/api/v1",
+  "api": "http://localhost:8000/api/v2",
   "ws": "ws://localhost:8080",
   "defaultLanguage": "en"
 }

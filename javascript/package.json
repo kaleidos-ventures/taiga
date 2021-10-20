@@ -16,6 +16,7 @@
     "lint:html": "npx htmlhint 'apps/**/*.html' 'libs/**/*.html'",
     "lint:css": "npx stylelint 'apps/**/*.css' 'libs/**/*.css'",
     "e2e": "ng e2e",
+    "e2e:admin": "nx e2e --watch",
     "affected:lint:angular": "nx run-many --all --target=affected:lint",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",

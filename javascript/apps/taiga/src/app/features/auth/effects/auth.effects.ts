@@ -60,6 +60,10 @@ export class AuthEffects {
         this.authService.setAuth(auth);
 
         return this.usersApiService.me().pipe(
+          tap(() => {
+            console.log('navigate');
+            void this.router.navigate(['/']);
+          }),
           map((user: User) => {
             return AuthActions.setUser({ user });
           })

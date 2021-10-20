@@ -23,6 +23,20 @@ function initAxeCommand(): void {
       window.eval(source);
     });
   });
+
+  // https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md
+  cy.configureAxe({
+    rules: [
+      {
+        id: 'landmark-one-main',
+        enabled : false
+      },
+      {
+        id: 'page-has-heading-one',
+        enabled : false
+      }
+    ],
+  });
 }
 
 Cypress.Commands.add('initAxe', initAxeCommand);
@@ -66,10 +80,40 @@ function checkA11y(params: CheckA11yParams = {}): void {
 
 Cypress.Commands.add('tgCheckA11y', checkA11y);
 
+type CyGetOptions = Parameters<typeof cy.get>;
+
+function getBySel(selector: string, options?: CyGetOptions[1]) {
+  return cy.get(`[data-test=${selector}]`, options);
+}
+
+Cypress.Commands.add('getBySel', getBySel);
+
+function getBySelLike(selector: string, options?: CyGetOptions[1]) {
+  return cy.get(`[data-test*=${selector}]`, options);
+}
+
+Cypress.Commands.add('getBySelLike', getBySelLike);
+
+function login(username = 'admin', password = '123123') {
+  cy.session([username, password], () => {
+    cy.visit('/login');
+    cy.getBySel('username').type(username);
+    cy.getBySel('password').type(password);
+    cy.getBySel('submit').click();
+
+    const baseUrl = Cypress.config().baseUrl ?? 'http://localhost:4400';
+    cy.url().should('eq', baseUrl);
+  });
+}
+
+Cypress.Commands.add('login', login);
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Cypress {
   interface Chainable {
     initAxe: typeof initAxeCommand
     tgCheckA11y: typeof checkA11y
+    login: typeof login;
+    getBySel: typeof getBySel;
+    getBySelLike: typeof getBySelLike;
   }
 }

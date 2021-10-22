@@ -8,9 +8,10 @@
 from typing import List
 
 from fastapi import APIRouter, Query
+from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
+from taiga.exceptions.api.errors import ERROR_404, ERROR_422
 from taiga.workspaces import services as workspaces_services
 from taiga.workspaces.serializers import WorkspaceSerializer, WorkspaceSummarySerializer
 from taiga.workspaces.validators import WorkspaceValidator
@@ -20,7 +21,7 @@ metadata = {
     "description": "Endpoint for workspaces resources.",
 }
 
-router = APIRouter(prefix="/workspaces", tags=["workspaces"], responses=ERROR_401)
+router: APIRouter = AuthAPIRouter(prefix="/workspaces", tags=["workspaces"])
 
 
 @router.get(

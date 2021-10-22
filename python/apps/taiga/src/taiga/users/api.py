@@ -6,9 +6,9 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from fastapi import APIRouter
+from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_401
 from taiga.users.serializers import UserMeSerializer
 
 metadata = {
@@ -16,7 +16,7 @@ metadata = {
     "description": "Endpoint for users resources.",
 }
 
-router = APIRouter(prefix="/users", tags=["users"], responses=ERROR_401)
+router: APIRouter = AuthAPIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/me", name="users.me", summary="Get authenticared user profile", response_model=UserMeSerializer)

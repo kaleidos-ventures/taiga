@@ -9,9 +9,7 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException
-from starlette.middleware.authentication import AuthenticationMiddleware
 from taiga import __description__, __title__, __version__
-from taiga.auth import backend as auth_backend
 from taiga.conf import settings
 from taiga.exceptions.handlers import http_exception_handler, request_validation_exception_handler
 from taiga.routers import router, tags_metadata
@@ -26,15 +24,8 @@ api = FastAPI(
 
 
 ##############################################
-# MIDDLEWARES
+# COMMON MIDDLEWARES
 ##############################################
-
-# Setup Authentication middleware
-api.add_middleware(
-    AuthenticationMiddleware,
-    backend=auth_backend,
-    on_error=auth_backend.on_auth_error,
-)
 
 # Setup CORS middleware
 api.add_middleware(

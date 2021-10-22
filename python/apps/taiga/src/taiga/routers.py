@@ -5,14 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from fastapi import APIRouter, Security
+from fastapi import APIRouter
 from taiga.auth import api as auth_api
-from taiga.auth.security import HTTPBearer
 from taiga.projects import api as projects_api
 from taiga.users import api as users_api
 from taiga.workspaces import api as workspaces_api
 
-router = APIRouter(dependencies=[Security(HTTPBearer())])  # This is just to get auth running in OpenAPI documentation
+router = APIRouter()
 
 router.include_router(auth_api.router)
 router.include_router(projects_api.router)

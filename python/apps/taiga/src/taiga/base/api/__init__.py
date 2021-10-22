@@ -5,4 +5,5 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from .middlewares import MiddlewareAPIRouteWrapper  # noqa
 from .requests import Request  # noqa

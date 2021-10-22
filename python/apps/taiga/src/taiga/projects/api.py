@@ -9,9 +9,10 @@ import logging
 from typing import List
 
 from fastapi import APIRouter, Query
+from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_401, ERROR_404, ERROR_422
+from taiga.exceptions.api.errors import ERROR_404, ERROR_422
 from taiga.projects import services as projects_services
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.projects.validators import ProjectValidator
@@ -24,8 +25,8 @@ metadata = {
     "description": "Endpoint for projects resources.",
 }
 
-router = APIRouter(prefix="/projects", tags=["projects"], responses=ERROR_401)
-router_workspaces = APIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"], responses=ERROR_401)
+router: APIRouter = AuthAPIRouter(prefix="/projects", tags=["projects"])
+router_workspaces: APIRouter = AuthAPIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"])
 
 
 @router_workspaces.get(

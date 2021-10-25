@@ -44,7 +44,7 @@ describe('TemplateStepComponent', () => {
     declareComponent: false,
     mocks: [],
   });
-  
+
   beforeEach(() => {
     spectator = createComponent({
       props: {
@@ -53,12 +53,14 @@ describe('TemplateStepComponent', () => {
           name: faker.company.companyName(),
           slug: faker.lorem.slug(),
           color: faker.datatype.number(),
+          latestProjects: [],
+          totalProjects: 0
         }
         ]
       },
       detectChanges: false
     });
-    
+
   });
 
   it('test that form gets initializated', () => {

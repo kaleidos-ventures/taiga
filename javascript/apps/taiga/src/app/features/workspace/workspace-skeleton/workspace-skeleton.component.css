@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host {
   display: block;
-  padding-block: var(--spacing-16);
+  padding-block-start: var(--spacing-16);
 }
 
 .workspace-skeleton-menu {

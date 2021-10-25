@@ -26,6 +26,9 @@ export const ProjectMockFactory = (milestones = false): Project => {
     id: faker.datatype.number(),
     slug: faker.datatype.string(),
     milestones: milestones ? getMilestones() : [],
+    name: faker.datatype.string(),
+    description: faker.datatype.string(),
+    color: faker.datatype.number(8)
   };
 };
 

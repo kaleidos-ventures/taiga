@@ -13,6 +13,9 @@ export interface Project {
   id: number;
   slug: string;
   milestones: Milestone[];
+  name: string;
+  description: string;
+  color: number
 }
 
 export interface ProjectCreation {

@@ -15,5 +15,7 @@ export const WorkspaceMockFactory = (): Workspace => {
     slug: faker.datatype.string(),
     name: faker.datatype.string(),
     color: faker.datatype.number(),
+    latestProjects: [],
+    totalProjects: 0
   };
 };

@@ -62,6 +62,24 @@ export class WorkspaceEffects {
     );
   });
 
+  public fetchWorkspaceProjects$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceActions.fetchWorkspaceProjects),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.workspaceApiService.fetchWorkspaceProjects(action.slug).pipe(
+            map((projects) => {
+              return WorkspaceActions.fetchWorkspaceProjectsSuccess({ slug: action.slug, projects });
+            })
+          );
+        },
+        onError: () => {
+          return null;
+        }
+      })
+    );
+  });
+
   constructor(
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService

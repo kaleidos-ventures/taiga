@@ -21,7 +21,10 @@ export const initialState: ProjectState = {
   project: {
     id: 0,
     slug: '',
-    milestones: []
+    milestones: [],
+    name: '',
+    description: '',
+    color: 1
   }
 };
 

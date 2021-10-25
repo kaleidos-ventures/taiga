@@ -7,7 +7,7 @@
  */
 
 import { createReducer, on, createFeature } from '@ngrx/store';
-import { Workspace } from '@taiga/data';
+import { WorkspaceProject, Workspace } from '@taiga/data';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace.actions';
 
@@ -15,14 +15,16 @@ export interface WorkspaceState {
   workspaces: Workspace[],
   creatingWorkspace: boolean,
   loading: boolean,
-  createFormHasError: boolean
+  createFormHasError: boolean,
+  workspaceProjects: Record<Workspace['slug'], WorkspaceProject[]>;
 }
 
 export const initialState: WorkspaceState = {
   workspaces: [],
   creatingWorkspace: false,
   loading: false,
-  createFormHasError: false
+  createFormHasError: false,
+  workspaceProjects: {},
 };
 
 export const reducer = createReducer(
@@ -35,6 +37,10 @@ export const reducer = createReducer(
   on(WorkspaceActions.fetchWorkspaceListSuccess, (state, { workspaces }): WorkspaceState => {
     state.workspaces = workspaces;
     state.loading = false;
+
+    state.workspaces.forEach((workspace) => {
+      state.workspaceProjects[workspace.slug] = workspace.latestProjects;
+    });
 
     return state;
   }),
@@ -55,6 +61,18 @@ export const reducer = createReducer(
 
     return state;
   }),
+  on(WorkspaceActions.fetchWorkspaceProjectsSuccess, (state, { slug, projects }): WorkspaceState => {
+    state.workspaceProjects[slug] = projects.map((project) => {
+      return {
+        name: project.name,
+        slug: project.slug,
+        description: project.description,
+        color: project.color,
+      } as WorkspaceProject;
+    });
+
+    return state;
+  })
 );
 
 export const workspaceFeature = createFeature({

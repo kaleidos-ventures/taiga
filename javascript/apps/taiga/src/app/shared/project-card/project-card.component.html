@@ -1,0 +1,46 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t;">
+  <div *ngIf="placeholder"
+    class="project-item-card placeholder">
+    <tg-workspace-avatar [color]="0"
+      [name]="''"></tg-workspace-avatar>
+    <a *ngIf="!firstProject"
+      tuiLink
+      [routerLink]="['/new-project']"
+      [queryParams]="{ workspace: slug }"
+      class="project-item-link"
+      title="{{ t('project.create_new_project') }}">
+      {{ t('project.create_new_project') }}
+    </a>
+    <a *ngIf="firstProject"
+      tuiLink
+      [routerLink]="['/new-project']"
+      [queryParams]="{ workspace: slug }"
+      class="project-item-link"
+      title="{{ t('project.create_first_project') }}">
+      {{ t('project.create_first_project') }}
+    </a>
+  </div>
+  <div *ngIf="!placeholder"
+  class="project-item-card">
+    <div class="project-card-title">
+      <tg-workspace-avatar [color]="project.color"
+      [name]="project.name"></tg-workspace-avatar>
+      <a
+        [title]="project.name"
+        [routerLink]="['/workspace/', slug]"
+        class="project-card-link">
+        {{ project.name }}
+      </a>
+    </div>
+    <p class="project-card-description">{{ project.description }}</p>
+  </div>
+
+</ng-container>

@@ -6,11 +6,18 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Project } from './project.model';
+
+export type WorkspaceProject = Pick<Project, 'name'|'slug'|'description'|'color'>;
+
 export interface Workspace {
   id: number;
   name: string;
   slug: string;
   color: number;
+  latestProjects: WorkspaceProject[];
+  totalProjects: number;
+
   // TODO: Update when API provide roles
   // owner: boolean;
 }
@@ -18,4 +25,9 @@ export interface Workspace {
 export interface WorkspaceCreation {
   name: string;
   color: number;
+}
+
+export interface WorkspaceDetail {
+  workspace: Workspace;
+  workspaceProject: Project[];
 }

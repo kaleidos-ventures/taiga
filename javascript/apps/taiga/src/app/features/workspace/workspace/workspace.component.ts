@@ -11,6 +11,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output, Input } from 
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Workspace } from '@taiga/data';
+import { ResizedEvent } from 'angular-resize-event';
 import { map } from 'rxjs/operators';
 import { fadeIntOutAnimation, slideIn, slideInOut } from '~/app/shared/utils/animations';
 import { selectCreateFormHasError, selectCreatingWorkspace, selectLoadingWorkpace } from '../selectors/workspace.selectors';
@@ -28,7 +29,7 @@ import { selectCreateFormHasError, selectCreatingWorkspace, selectLoadingWorkpac
     trigger('skeletonAnimation', [
       state('nothing', style({ blockSize: '0' })),
       state('create', style({ blockSize: '123px' })),
-      state('skeleton', style({ blockSize: '202px' })),
+      state('skeleton', style({ blockSize: '188px' })),
       transition('nothing <=> create, skeleton <=> create', animate(200)),
       transition('nothing <=> skeleton', animate(0))
     ])
@@ -62,6 +63,8 @@ export class WorkspaceComponent {
   @Output()
   public hideActivity = new EventEmitter<boolean>();
 
+  public amountOfProjectToShow = 4;
+
   constructor(
     private store: Store,
     private state: RxState<{
@@ -87,5 +90,14 @@ export class WorkspaceComponent {
 
   public trackByWorkspace(index: number, workspace: Workspace) {
     return workspace.slug;
+  }
+
+  public onResized(event: ResizedEvent) {
+    this.setCardAmounts(event.newRect.width);
+  }
+
+  public setCardAmounts(width: number) {
+    const amount = Math.ceil(width / 250);
+    this.amountOfProjectToShow = (amount >= 6) ? 6 : amount;
   }
 }

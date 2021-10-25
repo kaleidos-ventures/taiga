@@ -1,0 +1,67 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+.project-item-card {
+  background: var(--color-white);
+  block-size: 100%;
+  border-radius: 3px;
+  box-shadow: 4px 4px 8px rgba(216, 222, 233, .5);
+  inline-size: 100%;
+  max-inline-size: 233px;
+  min-block-size: 122px;
+  padding: var(--spacing-16);
+
+  &.placeholder {
+    & tg-project-avatar {
+      margin-block-end: var(--spacing-16);
+    }
+  }
+
+  & .project-card-title {
+    @mixin font-body;
+
+    align-items: center;
+    display: flex;
+
+    /* stylelint-disable */
+    & .project-card-link {
+      color: var(--color-gray100);
+      display: -webkit-box;
+      line-height: 1rem;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+    /* stylelint-enable */
+  }
+
+  /* stylelint-disable */
+  & .project-card-description {
+    @mixin font-small;
+
+    color: var(--color-gray80);
+    display: -webkit-box;
+    line-height: 150%;
+    margin-block-start: var(--spacing-16);
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  /* stylelint-enable */
+
+  & tg-workspace-avatar {
+    margin-inline-end: var(--spacing-16);
+  }
+}
+
+.project-item-link {
+  margin-block-start: var(--spacing-8);
+  text-decoration: underline;
+}

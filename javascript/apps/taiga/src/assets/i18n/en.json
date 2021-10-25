@@ -44,5 +44,9 @@
     "goto": "Go to",
     "project_settings": "Project settings",
     "collapse_menu": "Collapse menu"
+  },
+  "project": {
+    "create_first_project": "Create your first project",
+    "create_new_project": "Add a project"
   }
 }

@@ -7,12 +7,13 @@
  */
 
 import { createReducer, on, createFeature } from '@ngrx/store';
-import { Workspace } from '@taiga/data';
+import { Project, Workspace } from '@taiga/data';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
 
 export interface WorkspaceDetailState {
-  workspace: Workspace
+  workspace: Workspace,
+  workspaceProjects: Project[]
 }
 
 export const initialState: WorkspaceDetailState = {
@@ -20,14 +21,22 @@ export const initialState: WorkspaceDetailState = {
     id: 0,
     name: '',
     slug: '',
-    color: 0
-  }
+    color: 0,
+    latestProjects: [],
+    totalProjects: 0
+  },
+  workspaceProjects: []
 };
 
 export const reducer = createReducer(
   initialState,
-  on(WorkspaceActions.setWorkspace, (state, { workspace }): WorkspaceDetailState => {
+  on(WorkspaceActions.fetchWorkspaceSuccess, (state, { workspace }): WorkspaceDetailState => {
     state.workspace = workspace;
+
+    return state;
+  }),
+  on(WorkspaceActions.fetchWorkspaceProjectsSuccess, (state, { projects }): WorkspaceDetailState => {
+    state.workspaceProjects = projects;
 
     return state;
   }),

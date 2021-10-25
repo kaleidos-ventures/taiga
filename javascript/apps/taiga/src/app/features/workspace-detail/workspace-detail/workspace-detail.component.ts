@@ -6,18 +6,53 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Workspace } from '@taiga/data';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
+import { Project, Workspace } from '@taiga/data';
+import { ResizedEvent } from 'angular-resize-event';
+import { selectWorkspace, selectWorkspaceProjects } from '../selectors/workspace-detail.selectors';
 
 @Component({
   selector: 'tg-workspace-detail',
   templateUrl: './workspace-detail.component.html',
   styleUrls: ['./workspace-detail.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [RxState]
 })
-export class WorkspaceDetailComponent {
+export class WorkspaceDetailComponent implements OnInit {
+  public readonly model$ = this.state.select();
+  public amountOfProjectToShow = 6;
 
-  @Input()
-  public workspace!: Workspace;
+  public get gridClass() {
+    return `grid-items-${this.amountOfProjectToShow}`;
+  };
+
+  constructor(
+    private store: Store,
+    private state: RxState<{
+      projectToShow: boolean
+      workspace: Workspace,
+      project: Project[],
+    }>,
+  ) {}
+
+  public ngOnInit(): void {
+    this.state.connect('workspace', this.store.select(selectWorkspace));
+    this.state.connect('project', this.store.select(selectWorkspaceProjects));
+  }
+
+  public trackByLatestProject(index: number, project: Project ) {
+    return project.slug;
+  }
+
+  public setCardAmounts(width: number) {
+    const amount = Math.ceil(width / 250);
+    this.amountOfProjectToShow = (amount >= 6) ? 6 : amount;
+  }
+
+  public onResized(event: ResizedEvent) {
+    this.setCardAmounts(event.newRect.width);
+  }
 
 }

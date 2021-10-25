@@ -7,6 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 @import "tools/typography.css";
+@import "../../../shared/workspace/workspace.shared";
 
 :host {
   display: block;
@@ -59,24 +60,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
-.workspace-item-card-grid {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-16);
-  padding: 0 var(--spacing-16);
-
-  & .workspace-item-card {
-    background: var(--color-white);
-    block-size: 100%;
-    border-radius: 3px;
-    box-shadow: 4px 4px 8px rgba(216, 222, 233, .5);
-    max-inline-size: 232px;
-    min-block-size: 110px;
-    min-inline-size: 184px;
-    padding: var(--spacing-16);
-
-    & tg-workspace-avatar {
-      margin-block-end: var(--spacing-16);
-    }
-  }
+.workspace-show-all {
+  margin-block-start: var(--spacing-16);
 }

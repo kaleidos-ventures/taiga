@@ -6,6 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { createSelector } from '@ngrx/store';
+import { Workspace } from '@taiga/data';
 import { workspaceFeature } from '../reducers/workspace.reducer';
 
 export const {
@@ -13,4 +15,14 @@ export const {
   selectCreateFormHasError,
   selectLoading: selectLoadingWorkpace,
   selectCreatingWorkspace,
+  selectWorkspaceProjects
 } = workspaceFeature;
+
+export const selectWorkspaceProject = (workspaceSlug: Workspace['slug']) => {
+  return createSelector(
+    selectWorkspaceProjects,
+    (workspaces) => {
+      return workspaces[workspaceSlug] ?? [];
+    },
+  );
+};

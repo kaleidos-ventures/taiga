@@ -18,6 +18,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { workspaceDetailFeature } from './reducers/workspace-detail.reducer';
 import { WorkspaceDetailEffects } from './effects/workspace-detail.effects';
 import { RouterModule } from '@angular/router';
+import { ProjectCardModule } from '~/app/shared/project-card/project-card.module';
+import { AngularResizeEventModule } from 'angular-resize-event';
 
 @NgModule({
   declarations: [
@@ -33,12 +35,14 @@ import { RouterModule } from '@angular/router';
     BadgeModule,
     StoreModule.forFeature(workspaceDetailFeature),
     EffectsModule.forFeature([WorkspaceDetailEffects]),
+    ProjectCardModule,
+    AngularResizeEventModule
   ],
   exports: [
     WorkspaceDetailComponent
   ],
   providers: [
-    { provide: TRANSLOCO_SCOPE, useValue: 'workspace' }
+    { provide: TRANSLOCO_SCOPE, useValue: 'workspace' },
   ]
 })
 export class WorkspaceDetailModule { }

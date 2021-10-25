@@ -15,7 +15,7 @@ import * as faker from 'faker';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { WorkspaceApiService } from '@taiga/api';
-import { getWorkspace, setWorkspace } from '../actions/workspace-detail.actions';
+import { fetchWorkspace, fetchWorkspaceSuccess } from '../actions/workspace-detail.actions';
 import { WorkspaceDetailEffects } from './workspace-detail.effects';
 
 describe('WorkspaceEffects', () => {
@@ -44,10 +44,10 @@ describe('WorkspaceEffects', () => {
       cold('-b|', { b: workspace })
     );
 
-    actions$ = hot('-a', { a:  getWorkspace({ slug })});
+    actions$ = hot('-a', { a:  fetchWorkspace({ slug })});
 
     const expected = cold('--a', {
-      a: setWorkspace({ workspace }),
+      a: fetchWorkspaceSuccess({ workspace }),
     });
 
     expect(

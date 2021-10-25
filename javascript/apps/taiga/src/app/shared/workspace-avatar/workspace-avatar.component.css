@@ -58,6 +58,15 @@ tui-avatar {
     inline-size: var(--spacing-48);
   }
 
+  &.color-0 {
+    border-color: var(--color-gray30);
+    color: var(--color-gray30);
+
+    & .text {
+      color: var(--color-gray50);
+    }
+  }
+
   &.color-1 {
     border-color: var(--color-red50);
     color: var(--color-red50);

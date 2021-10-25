@@ -13,7 +13,6 @@ import { map } from 'rxjs/operators';
 
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
 import { fetch } from '@nrwl/angular';
-import { Workspace } from '@taiga/data';
 import { WorkspaceApiService } from '@taiga/api';
 
 @Injectable()
@@ -21,12 +20,30 @@ export class WorkspaceDetailEffects {
 
   public loadWorkspace$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceActions.getWorkspace),
+      ofType(WorkspaceActions.fetchWorkspace),
       fetch({
         run: (action) => {
           return this.workspaceApiService.fetchWorkspace(action.slug).pipe(
-            map((workspace: Workspace) => {
-              return WorkspaceActions.setWorkspace({ workspace });
+            map((workspace) => {
+              return WorkspaceActions.fetchWorkspaceSuccess({ workspace });
+            }),
+          );
+        },
+        onError: () => {
+          return null;
+        },
+      })
+    );
+  });
+
+  public loadWorkspaceProject$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceActions.fetchWorkspace),
+      fetch({
+        run: (action) => {
+          return this.workspaceApiService.fetchWorkspaceProjects(action.slug).pipe(
+            map((projects) => {
+              return WorkspaceActions.fetchWorkspaceProjectsSuccess({ projects });
             }),
           );
         },

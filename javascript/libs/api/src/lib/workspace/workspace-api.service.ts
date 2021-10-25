@@ -9,7 +9,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
-import { Workspace, WorkspaceCreation } from '@taiga/data';
+import { Project, Workspace, WorkspaceCreation } from '@taiga/data';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,19 @@ export class WorkspaceApiService {
   }
 
   public createWorkspace(workspaceCreation: WorkspaceCreation) {
-    return this.http.post<Workspace>(`${this.config.apiUrl}/workspaces`, workspaceCreation);
+    return this.http.post<Workspace>(`${this.config.apiUrl}/workspaces`, workspaceCreation).pipe(
+      map((workspace: Workspace) => {
+        return {
+          ...workspace,
+          latestProjects: [],
+          totalProjects: 0
+        };
+      })
+    );
   }
+
+  public fetchWorkspaceProjects(slug: Workspace['slug']) {
+    return this.http.get<Project[]>(`${this.config.apiUrl}/workspaces/${slug}/projects`);
+  }
+
 }

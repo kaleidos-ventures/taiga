@@ -7,7 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { User, Workspace } from '@taiga/data';
+import { Project, User, Workspace } from '@taiga/data';
 
 export const setWorkspaceList = createAction(
   '[WorkspaceList] set',
@@ -36,4 +36,14 @@ export const createWorkspaceSuccess = createAction(
 export const createFormHasError = createAction(
   '[Workspace] Create Form has error',
   props<{hasError: boolean}>()
+);
+
+export const fetchWorkspaceProjects = createAction(
+  '[WorkspaceList] Fetch workspace projects',
+  props<{slug: Workspace['slug']}>()
+);
+
+export const fetchWorkspaceProjectsSuccess = createAction(
+  '[WorkspaceList] Fetch workspace projects success',
+  props<{slug: Workspace['slug'], projects: Project[]}>()
 );

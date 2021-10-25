@@ -9,9 +9,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { getWorkspace } from '~/app/features/workspace-detail/actions/workspace-detail.actions';
-import { selectWorkspace } from '~/app/features/workspace-detail/selectors/workspace-detail.selectors';
-
+import { fetchWorkspace } from '~/app/features/workspace-detail/actions/workspace-detail.actions';
 @Component({
   selector: 'tg-workspace-detail-page',
   templateUrl: './workspace-detail-page.component.html',
@@ -24,15 +22,13 @@ export class WorkspaceDetailPageComponent implements OnInit {
     private route: ActivatedRoute,
   ) {}
 
-  public workspace$ = this.store.select(selectWorkspace);
-
   public ngOnInit() {
     let slug = '';
     this.route.paramMap.subscribe(params => {
       slug = params.get('slug')!;
     });
     if (slug) {
-      this.store.dispatch(getWorkspace({ slug }));
+      this.store.dispatch(fetchWorkspace({ slug }));
     }
   }
 }

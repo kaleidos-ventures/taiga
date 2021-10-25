@@ -84,10 +84,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
     <div
       [class.form-error]="vm.createFormHasError"
+      (resized)="onResized($event)"
       class="workspace-item-container">
       <tg-workspace-item
         @fadeInOut
-        *ngFor="let workspace of vm.workspaceList; trackBy: trackByWorkspace"
+        data-e2e="workspace-item"
+        *ngFor="let workspace of vm.workspaceList; trackBy: trackByWorkspace "
+        [projectToShow]="amountOfProjectToShow"
         [workspace]="workspace">
       </tg-workspace-item>
     </div>

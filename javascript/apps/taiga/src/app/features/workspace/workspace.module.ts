@@ -27,6 +27,8 @@ import { WorkspaceEffects } from './effects/workspace.effects';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AngularResizeEventModule } from 'angular-resize-event';
+import { ProjectCardModule } from '~/app/shared/project-card/project-card.module';
 
 @NgModule({
   declarations: [
@@ -53,7 +55,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     TuiAutoFocusModule,
     A11yModule,
     TuiTooltipModule,
-    TuiHintModule
+    TuiHintModule,
+    AngularResizeEventModule,
+    ProjectCardModule
   ],
   exports: [
     WorkspaceComponent,
@@ -61,7 +65,10 @@ import { ReactiveFormsModule } from '@angular/forms';
     WorkspaceItemComponent
   ],
   providers: [
-    { provide: TRANSLOCO_SCOPE, useValue: 'workspace' }
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'workspace'
+    },
   ]
 })
 export class WorkspaceModule { }

@@ -5,10 +5,10 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-import collections
+import collections.abc
 
 
-class OrderedSet(collections.MutableSet):
+class OrderedSet(collections.abc.MutableSet):
     # Extract from:
     #     - https://docs.python.org/3/library/collections.abc.html?highlight=orderedset
     #     - https://code.activestate.com/recipes/576694/

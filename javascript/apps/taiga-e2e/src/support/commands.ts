@@ -18,7 +18,7 @@
 
 function initAxeCommand(): void {
   // https://github.com/component-driven/cypress-axe/issues/84
-  cy.readFile('../../../../node_modules/axe-core/axe.js').then(source => {
+  cy.readFile('../../node_modules/axe-core/axe.js').then(source => {
     return cy.window({ log: false }).then(window => {
       window.eval(source);
     });

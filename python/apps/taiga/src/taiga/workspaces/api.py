@@ -7,7 +7,7 @@
 
 from typing import List
 
-from fastapi import APIRouter, Query
+from fastapi import Query
 from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
@@ -21,7 +21,7 @@ metadata = {
     "description": "Endpoint for workspaces resources.",
 }
 
-router: APIRouter = AuthAPIRouter(prefix="/workspaces", tags=["workspaces"])
+router = AuthAPIRouter(prefix="/workspaces", tags=["workspaces"])
 
 
 @router.get(

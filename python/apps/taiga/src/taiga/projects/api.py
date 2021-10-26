@@ -8,7 +8,7 @@
 import logging
 from typing import List
 
-from fastapi import APIRouter, Query
+from fastapi import Query
 from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
@@ -25,8 +25,8 @@ metadata = {
     "description": "Endpoint for projects resources.",
 }
 
-router: APIRouter = AuthAPIRouter(prefix="/projects", tags=["projects"])
-router_workspaces: APIRouter = AuthAPIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"])
+router = AuthAPIRouter(prefix="/projects", tags=["projects"])
+router_workspaces = AuthAPIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"])
 
 
 @router_workspaces.get(
@@ -36,9 +36,7 @@ router_workspaces: APIRouter = AuthAPIRouter(prefix="/workspaces/{workspace_slug
     response_model=List[ProjectSummarySerializer],
     responses=ERROR_422,
 )
-def list_projects(
-    workspace_slug: str = Query(None, description="the workspace slug (str)")
-) -> List[ProjectSummarySerializer]:
+def list_projects(workspace_slug: str = Query(None, description="the workspace slug (str)")) -> List[ProjectSerializer]:
     """
     List projects of a workspace.
     """

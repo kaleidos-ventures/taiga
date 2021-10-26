@@ -5,5 +5,6 @@ mypy
 # requirements tooling
 pip-tools
 
-# TODO Typing stubs (needed for mypy plugin)
-# django-stubs<1.8.0      # For Django 2.2
+# Typing stubs for django (needed for mypy plugin)
+Django>=2.2,<3          # like in taiga6
+django-stubs<1.8.0      # For Django 2.2

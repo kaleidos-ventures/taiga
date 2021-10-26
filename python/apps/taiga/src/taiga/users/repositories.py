@@ -5,14 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from django.contrib.auth.models import update_last_login as django_update_last_login
 from django.db.models import Q
 from taiga.users.models import User
 
 
-def get_first_user(**kwargs: Dict[str, Any]) -> Optional[User]:
+def get_first_user(**kwargs: Any) -> Optional[User]:
     return User.objects.filter(**kwargs).first()
 
 

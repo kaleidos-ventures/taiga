@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, Dict, Generic, List, Optional, TypeVar, Union
+from typing import Any, Dict, Generic, List, Type, TypeVar, Union
 
 from fastapi import status
 from pydantic import BaseModel
@@ -51,12 +51,12 @@ class UnauthorizedErrorModel(GenericSingleError):
     message: str = codes.EX_AUTHENTICATION.message
 
 
-ERROR_RESPONSE_401: Any = ErrorResponse[UnauthorizedErrorModel]
-ERROR_RESPONSE_422: Any = ErrorResponse[UnprocessableEntityModel]
-ERROR_RESPONSE_404: Any = ErrorResponse[NotFoundErrorModel]
+ErrorsDict = Dict[Union[int, str], Dict[str, Type[ErrorResponse[Any]]]]
 
-ERROR_401: Optional[Dict[Union[int, str], Dict[str, Any]]] = {
-    status.HTTP_401_UNAUTHORIZED: {"model": ERROR_RESPONSE_401}
-}
-ERROR_422: Optional[Dict[Union[int, str], Dict[str, Any]]] = {422: {"model": ERROR_RESPONSE_422}}
-ERROR_404: Optional[Dict[Union[int, str], Dict[str, Any]]] = {404: {"model": ERROR_RESPONSE_404}}
+ERROR_RESPONSE_401 = ErrorResponse[UnauthorizedErrorModel]
+ERROR_RESPONSE_422 = ErrorResponse[UnprocessableEntityModel]
+ERROR_RESPONSE_404 = ErrorResponse[NotFoundErrorModel]
+
+ERROR_401: ErrorsDict = {status.HTTP_401_UNAUTHORIZED: {"model": ERROR_RESPONSE_401}}
+ERROR_422: ErrorsDict = {status.HTTP_422_UNPROCESSABLE_ENTITY: {"model": ERROR_RESPONSE_422}}
+ERROR_404: ErrorsDict = {status.HTTP_404_NOT_FOUND: {"model": ERROR_RESPONSE_404}}

@@ -31,7 +31,7 @@
 #   SOFTWARE.
 
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, Final, Optional
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Final, Optional, Type, TypeVar
 from uuid import uuid4
 
 from taiga.base.utils.datetime import aware_utcnow, datetime_to_epoch, epoch_to_datetime
@@ -43,6 +43,9 @@ from .exceptions import TokenBackendError, TokenError
 
 USER_ID_FIELD: Final = "id"
 USER_ID_CLAIM: Final = "user_id"
+
+if TYPE_CHECKING:
+    TokenModel = TypeVar("TokenModel", bound="Token")
 
 
 class Token:
@@ -188,7 +191,7 @@ class Token:
             raise TokenError(f"Token '{claim}' claim has expired")
 
     @classmethod
-    def for_user(cls, user: object) -> "Token":
+    def for_user(cls: Type["TokenModel"], user: object) -> "TokenModel":
         """
         Returns an authorization token for the given user that will be provided
         after authenticating the user's credentials.
@@ -200,7 +203,7 @@ class Token:
         return token
 
     @property
-    def user_data(self) -> Dict[str, str]:
+    def user_data(self) -> Dict[str, Any]:
         """
         Get the saved user data from the payload. By default return a dict with
         the user id (ex. {"id": 2})
@@ -249,11 +252,11 @@ class DenylistMixin(_BaseMixin):
         tokens_services.deny_token(token)
 
     @classmethod
-    def for_user(cls, user: object) -> _BaseMixin:
+    def for_user(cls: Type["TokenModel"], user: object) -> "TokenModel":
         """
         Adds this token to the outstanding token list.
         """
-        token = super().for_user(user)
+        token = super().for_user(user)  # type: ignore[misc]  # https://github.com/python/mypy/issues/9282
 
         jti = token[settings.TOKENS.JTI_CLAIM]
         created_at = token.current_time

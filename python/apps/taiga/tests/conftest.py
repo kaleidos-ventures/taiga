@@ -16,7 +16,7 @@ from .fixtures import *  # noqa
 @pytest.fixture(scope="session")
 def django_db_setup(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
-        call_command("loaddata", "initial_project_templates.json")
+        call_command("loaddata", "initial_project_templates.json", verbosity=0)
 
 
 def pytest_configure(config: Config) -> None:

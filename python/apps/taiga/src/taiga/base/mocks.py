@@ -30,7 +30,7 @@ SAMPLEDATA_DEFAULT_METHODS = {
 }
 
 
-def mock_serializer(serialized_type: Type[Any]) -> Union[Type[BaseModel], List[BaseModel]]:
+def mock_serializer(serialized_type: Any) -> Union[BaseModel, List[BaseModel]]:
     """
     Construct mocked objects for any of the allowed types
 
@@ -48,7 +48,7 @@ def base_model_mock_serializer(
     serialized_type: Type[BaseModel],
     current_nested_index: dict[str, int] = dict(),
     parent_props: dict[str, Set[Any]] = dict(),
-) -> Type[BaseModel]:
+) -> BaseModel:
     """
     Construct mocked objects for the provided BaseModel type
 
@@ -113,9 +113,7 @@ def base_model_mock_serializer(
                     )
                     current_nested_index[prop] -= 1
 
-    mocked_object: Type[BaseModel] = serialized_type(**properties_dict)
-
-    return mocked_object
+    return serialized_type(**properties_dict)  # type: ignore[call-arg]
 
 
 def _is_nested_property(parent_props: dict[str, Any], property: str, type: Type[Any]) -> bool:

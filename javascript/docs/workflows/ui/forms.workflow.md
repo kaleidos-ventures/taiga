@@ -32,12 +32,22 @@ Taiga forms by default are typed reactive forms.
             [items]="items"
           ></tui-data-list-wrapper>
         </tui-select>
+      </tg-ui-select>
+      <tg-ui-textarea
+        [label]="label"
+        [optional]="true">
+        <tui-text-area
+          formControlName="description"
+          [expandable]="true"
+          [tuiTextfieldMaxLength]="140">
+          Type it
+        </tui-text-area>
         <tg-ui-error
           inputError
-          error="required">
-          Field mandatory
+          error="maxlength">
+          Maximun length 140
         </tg-ui-error>
-      </tg-ui-select>
+      </tg-ui-textarea>
       <button type="submit">Submit</button>
     </form>
 ```
@@ -49,6 +59,7 @@ With `{ updateOn: 'submit' }` the validation only happens on submit.
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       example: ['', [Validators.required]],
+      description: ['', [Validators.maxLength(140)]],
     }, { updateOn: 'submit' });
   }
 ```

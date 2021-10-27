@@ -14,7 +14,7 @@ import { InputRefDirective } from './input-ref.directive';
 import { SelectComponent } from './select/select.component';
 import { ErrorComponent } from './error/error.component';
 import { TuiDataListModule } from '@taiga-ui/core';
-import { TuiDataListWrapperModule, TuiSelectModule } from '@taiga-ui/kit';
+import { TuiDataListWrapperModule, TuiSelectModule, TuiTextAreaModule } from '@taiga-ui/kit';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
@@ -26,6 +26,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     TuiDataListModule,
     TuiDataListWrapperModule,
     TuiTextfieldControllerModule,
+    TuiTextAreaModule,
   ],
   declarations: [
     InputRefDirective,
@@ -44,6 +45,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     TuiDataListModule,
     TuiDataListWrapperModule,
     TuiTextfieldControllerModule,
+    TuiTextAreaModule,
   ]
 })
 export class InputsModule {}

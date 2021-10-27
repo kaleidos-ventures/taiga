@@ -108,3 +108,14 @@ tui-wrapper[data-appearance="textfield"] {
     transition: none !important; /* stylelint-disable-line declaration-no-important */
   }
 }
+
+tui-text-area {
+  --tui-error-bg-night: var(--color-red40);
+
+  ::ng-deep {
+    & .placeholder {
+      --tui-text-01: var(--color-gray60);
+      --tui-text-02: var(--color-gray60);
+    }
+  }
+}

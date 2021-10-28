@@ -15,8 +15,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [name]="workspace.name">
       </tg-workspace-avatar>
       <div class="workspace-item-title-wrapper">
-        <a
-          [title]="workspace.name"
+        <a [title]="workspace.name"
           [routerLink]="['/workspace/', workspace.slug]"
           class="workspace-item-title">
           {{workspace.name}}
@@ -37,13 +36,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           type="button">
           {{ t('commons.upgrade') }}
         </button>
-        <button appearance="primary"
+        <a appearance="primary"
+          [routerLink]="['/new-project']"
+          [queryParams]="{ workspace: workspace.slug }"
           tuiButton
           icon="plus"
           title="{{ t('commons.project') }}"
           type="button">
           {{ t('commons.project') }}
-        </button>
+        </a>
       </div>
     </div>
     <div class="workspace-item-card-grid">
@@ -51,6 +52,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tg-workspace-avatar [color]="1"
           [name]="''"></tg-workspace-avatar>
         <a tuiLink
+          [routerLink]="['/new-project']"
+          [queryParams]="{ workspace: workspace.slug }"
           title="{{ t('workspace.create_new_project') }}">
           {{ t('workspace.create_new_project') }}
         </a>

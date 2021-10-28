@@ -6,8 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Workspace } from '@taiga/data';
-
 export interface Template {
   nextStep: string;
   icon: string;
@@ -18,8 +16,3 @@ export interface Template {
 }
 
 export type Step = 'template' | 'detail' | 'invite';
-
-export interface stepData {
-  step: Step;
-  workspace: Workspace;
-}

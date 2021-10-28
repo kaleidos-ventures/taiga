@@ -6,9 +6,35 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
+.avatar {
+  & ::ng-deep {
+    & .input_template {
+      padding-inline-start: var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
+    }
+  }
+}
+
 ::ng-deep {
+  --tui-text-03: var(--color-gray70);
+
+  & [data-size="l"] {
+    min-block-size: 4rem !important; /* stylelint-disable-line declaration-no-important */
+  }
+
   & tui-select {
     margin-block-end: var(--spacing-4);
+  }
+
+  & tui-data-list {
+    padding: 0 !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  & .icon {
+    color: var(--color-secondary);
+  }
+
+  & .placeholder {
+    margin-block-end: var(--spacing-2);
   }
 
   & .invalid.update-on-submit.submitted,

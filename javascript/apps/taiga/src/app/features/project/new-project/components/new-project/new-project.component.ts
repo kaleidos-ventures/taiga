@@ -11,7 +11,7 @@ import { Store } from '@ngrx/store';
 import { ProjectCreation } from '@taiga/data';
 import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
-import { Step, stepData } from '~/app/features/project/new-project/data/new-project.model';
+import { Step } from '~/app/features/project/new-project/data/new-project.model';
 
 @Component({
   selector: 'tg-new-project',
@@ -38,8 +38,8 @@ export class NewProjectComponent implements OnInit {
     this.store.dispatch(fetchWorkspaceList());
   }
   
-  public onSelectTemplate(data: stepData) {
-    this.formData.workspaceSlug = data.workspace.slug;
-    this.currentStep = data.step;
+  public onSelectTemplate(workspaceSlug: ProjectCreation['workspaceSlug']) {
+    this.formData.workspaceSlug = workspaceSlug;
+    this.currentStep = 'detail';
   }
 }

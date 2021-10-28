@@ -8,6 +8,7 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { TuiButtonModule, TuiHostedDropdownModule, TuiSvgModule } from '@taiga-ui/core';
@@ -26,7 +27,8 @@ import { NavigationComponent } from './navigation.component';
     TranslocoModule,
     TuiHostedDropdownModule,
     AvatarModule,
-    TuiAutoFocusModule
+    TuiAutoFocusModule,
+    RouterModule
   ],
   declarations: [
     NavigationComponent,

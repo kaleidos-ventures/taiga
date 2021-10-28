@@ -41,6 +41,9 @@ export class SelectComponent implements AfterContentInit {
   @Input()
   public id = `select-${nextId++}`;
 
+  @Input()
+  public type: 'text' | 'avatar' = 'text';
+
   @ContentChild(TuiSelectComponent)
   public select!: TuiSelectComponent<unknown>;
 

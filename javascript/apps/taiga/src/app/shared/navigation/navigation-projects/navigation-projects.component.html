@@ -7,58 +7,53 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t; read: 'navigation-projects'">
-<ul
-  class="pinned-projects"
-  tabindex="0"
-  tuiAutoFocus
-  [attr.aria-label]="t('pinned')">
-  <li>
-    <a
-      title="Project example 1"
-      class="project"
-      href="">
-      <div class="project-image">
-        <img
-          alt=""
-          src="https://i.picsum.photos/id/778/200/200.jpg?hmac=fgFK_HI_g_N4MzYuYbssOB8ymhT_m0JK61tNJHfdPYU" />
-      </div>
-      <div class="project-data">
-        <span class="project-name">Project example 1</span>
-        <span class="project-workspace">Personal workspace</span>
-      </div>
-    </a>
-  </li>
-  <li>
-    <a
-      title="Project example 2"
-      class="project"
-      href="">
-      <div class="project-image">
-        <img
-          alt=""
-          src="https://i.picsum.photos/id/778/200/200.jpg?hmac=fgFK_HI_g_N4MzYuYbssOB8ymhT_m0JK61tNJHfdPYU" />
-      </div>
-      <div class="project-data">
-        <span class="project-name">Project example 2</span>
-        <span class="project-workspace">Personal workspace</span>
-      </div>
-    </a>
-  </li>
-</ul>
+  <ul class="pinned-projects"
+    tabindex="0"
+    tuiAutoFocus
+    [attr.aria-label]="t('pinned')">
+    <li>
+      <a title="Project example 1"
+        class="project"
+        href="">
+        <div class="project-image">
+          <img alt=""
+            src="https://i.picsum.photos/id/778/200/200.jpg?hmac=fgFK_HI_g_N4MzYuYbssOB8ymhT_m0JK61tNJHfdPYU" />
+        </div>
+        <div class="project-data">
+          <span class="project-name">Project example 1</span>
+          <span class="project-workspace">Personal workspace</span>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a title="Project example 2"
+        class="project"
+        href="">
+        <div class="project-image">
+          <img alt=""
+            src="https://i.picsum.photos/id/778/200/200.jpg?hmac=fgFK_HI_g_N4MzYuYbssOB8ymhT_m0JK61tNJHfdPYU" />
+        </div>
+        <div class="project-data">
+          <span class="project-name">Project example 2</span>
+          <span class="project-workspace">Personal workspace</span>
+        </div>
+      </a>
+    </li>
+  </ul>
 
-<a
-  class="view-projects"
-  href="">
-  {{ t('view_projects') }}
-</a>
+  <a class="view-projects"
+    href="">
+    {{ t('view_projects') }}
+  </a>
 
-<button
-  class="new-project"
-  tuiButton
-  icon="plus"
-  type="button"> {{ t('new_project') }}</button>
-  <ul
-    class="organizations"
+  <a class="new-project"
+    tuiButton
+    [routerLink]="['/new-project']"
+    type="button"
+    icon="plus">
+    {{ t('new_project') }}
+  </a>
+  <ul class="organizations"
     [attr.aria-label]="'commons.organizations' | transloco">
     <li>
       <a href="">Kaleidos Ventures</a>

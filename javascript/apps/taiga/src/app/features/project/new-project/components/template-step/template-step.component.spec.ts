@@ -14,6 +14,9 @@ import { TemplateStepComponent } from './template-step.component';
 import * as faker from 'faker';
 import { FormBuilder } from '@angular/forms';
 import { WorkspaceMockFactory } from '@taiga/data';
+import { ActivatedRoute } from '@angular/router';
+
+const workspaceSlug = faker.lorem.slug();
 
 describe('TemplateStepComponent', () => {
   let spectator: Spectator<TemplateStepComponent>;
@@ -24,7 +27,19 @@ describe('TemplateStepComponent', () => {
       getTranslocoModule(),
     ],
     providers: [
-      FormBuilder
+      FormBuilder,
+      {
+        provide: ActivatedRoute,
+        useValue: {
+          snapshot: {
+            queryParamMap: {
+              get: () => {
+                return workspaceSlug;
+              }
+            }
+          }
+        }
+      }
     ],
     declareComponent: false,
     mocks: [],
@@ -49,6 +64,23 @@ describe('TemplateStepComponent', () => {
   it('test that form gets initializated', () => {
     spectator.component.ngOnInit();
     expect(spectator.component.initForm).toHaveBeenCalled;
+    expect(spectator.component.getParams).toHaveBeenCalled;
+  });
+
+  it('test that no workspace is activated', () => {
+    spectator.component.workspaces = [];
+    spectator.component.initForm();
+    spectator.component.getParams();
+    expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(null);
+  });
+
+  it('test that a workspace is activated', () => {
+    const workspace = WorkspaceMockFactory();
+    workspace.slug = workspaceSlug;
+    spectator.component.workspaces = [workspace];
+    spectator.component.initForm();
+    spectator.component.getParams();
+    expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(workspace);
   });
 
   it('test that form gets initializated', () => {

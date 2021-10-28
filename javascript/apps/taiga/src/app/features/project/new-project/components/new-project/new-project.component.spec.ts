@@ -10,8 +10,8 @@ import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
 import { NewProjectComponent } from './new-project.component';
-import { WorkspaceMockFactory } from '@taiga/data';
-import { stepData } from '~/app/features/project/new-project/data/new-project.model';
+
+import * as faker from 'faker';
 
 describe('NewProjectComponent', () => {
   let spectator: Spectator<NewProjectComponent>;
@@ -43,13 +43,9 @@ describe('NewProjectComponent', () => {
   });
 
   it('on select template', () => {
-    const workspace = WorkspaceMockFactory();
-    const data: stepData = {
-      workspace,
-      step: 'detail'
-    };
-    spectator.component.onSelectTemplate(data);
-    expect(spectator.component.formData.workspaceSlug).toEqual(data.workspace.slug);
-    expect(spectator.component.currentStep).toEqual(data.step);
+    const workspaceSlug = faker.lorem.slug();
+    spectator.component.onSelectTemplate(workspaceSlug);
+    expect(spectator.component.formData.workspaceSlug).toEqual(workspaceSlug);
+    expect(spectator.component.currentStep).toEqual('detail');
   });
 });

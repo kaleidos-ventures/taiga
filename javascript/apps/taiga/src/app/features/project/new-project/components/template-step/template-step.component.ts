@@ -8,10 +8,11 @@
 
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
 import { TranslocoService } from '@ngneat/transloco';
-import { Workspace } from '@taiga/data';
-import { stepData, Template } from '~/app/features/project/new-project/data/new-project.model';
+import { ProjectCreation, Workspace } from '@taiga/data';
+import { Template } from '~/app/features/project/new-project/data/new-project.model';
 
 @Component({
   selector: 'tg-template-step',
@@ -25,7 +26,7 @@ export class TemplateStepComponent implements OnInit {
   public workspaces!: Workspace[];
 
   @Output()
-  public templateSelected = new EventEmitter<stepData>();
+  public templateSelected = new EventEmitter<ProjectCreation['workspaceSlug']>();
   
   public createProjectForm!: FormGroup;
 
@@ -63,11 +64,13 @@ export class TemplateStepComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private route: ActivatedRoute,
   ) {}
   
   public ngOnInit() {
     this.initForm();
+    this.getParams();
   }
 
   public initForm() {
@@ -76,16 +79,22 @@ export class TemplateStepComponent implements OnInit {
     });
   }
 
+  public getParams() {
+    const slug = this.route.snapshot.queryParamMap.get('workspace');
+    const refWorkspace = this.workspaces.filter((workspace) => workspace.slug === slug);
+    if (refWorkspace.length) {
+      this.createProjectForm.get('workspace')?.setValue(refWorkspace[0]);
+    }
+  }
+
   public trackByIndex(index: number) {
     return index;
   }
 
   public createBlankProject() {
+    const workspace: Workspace = this.currentWorkspace.value as Workspace;
     if(this.createProjectForm.valid) {
-      this.templateSelected.next({
-        step: 'detail',
-        workspace: this.currentWorkspace.value as Workspace
-      });
+      this.templateSelected.next(workspace.slug);
     } else {
       this.createProjectForm.markAllAsTouched();
     }

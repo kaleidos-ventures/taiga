@@ -87,6 +87,7 @@ tui-avatar {
 
 tui-dropdown-box {
   border: none !important; /* stylelint-disable-line declaration-no-important */
+  border-radius: 3px;
 }
 
 tui-hint-box {

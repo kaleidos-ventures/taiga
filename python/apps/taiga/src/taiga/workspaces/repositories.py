@@ -17,7 +17,7 @@ def get_workspaces_with_latest_projects(owner: User) -> Iterable[Workspace]:
     last_projects_ids = Subquery(
         Project.objects.filter(workspace_id=OuterRef("workspace_id"))
         .values_list("id", flat=True)
-        .order_by("-created_date")[:4]
+        .order_by("-created_date")[:6]
     )
     latest_projects = Project.objects.filter(id__in=last_projects_ids).order_by("-created_date")
     return (

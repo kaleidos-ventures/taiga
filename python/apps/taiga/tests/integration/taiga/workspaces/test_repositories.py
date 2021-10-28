@@ -51,9 +51,9 @@ def test_create_workspace_with_non_ASCI_chars():
 
 def test_get_workspace_return_workspace():
     workspace = f.WorkspaceFactory(name="ws 1")
-    assert repositories.get_workspace(workspace.slug) == workspace
+    assert repositories.get_workspace(slug=workspace.slug) == workspace
 
 
 def test_get_workspace_return_none():
     f.WorkspaceFactory(name="ws 1")
-    assert repositories.get_workspace("ws-not-exist") is None
+    assert repositories.get_workspace(slug="ws-not-exist") is None

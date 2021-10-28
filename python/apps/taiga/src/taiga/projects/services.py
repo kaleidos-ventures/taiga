@@ -14,14 +14,16 @@ from taiga.workspaces.models import Workspace
 
 
 def get_projects(workspace_slug: str) -> Iterable[Project]:
-    return projects_repo.get_projects(workspace_slug)
+    return projects_repo.get_projects(workspace_slug=workspace_slug)
 
 
 def create_project(
     workspace: Workspace, name: str, description: Optional[str], color: Optional[int], owner: User
 ) -> Project:
-    return projects_repo.create_project(workspace, name, description, color, owner)
+    return projects_repo.create_project(
+        workspace=workspace, name=name, description=description, color=color, owner=owner
+    )
 
 
 def get_project(slug: str) -> Optional[Project]:
-    return projects_repo.get_project(slug)
+    return projects_repo.get_project(slug=slug)

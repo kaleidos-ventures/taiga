@@ -17,12 +17,12 @@ from .tokens import AccessToken, RefreshToken
 
 
 def login(username: str, password: str) -> Optional[AccessWithRefreshToken]:
-    user = users_repo.get_user_by_username_or_email(username)
+    user = users_repo.get_user_by_username_or_email(username_or_email=username)
 
     if not user or not user.check_password(password) or not user.is_active or user.is_system:
         return None
 
-    users_repo.update_last_login(user)
+    users_repo.update_last_login(user=user)
 
     refresh_token = RefreshToken.for_user(user)
 

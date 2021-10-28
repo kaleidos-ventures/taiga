@@ -50,17 +50,17 @@ def create_workspace(form: WorkspaceValidator, request: Request) -> WorkspaceSer
 
 
 @router.get(
-    "/{workspace_slug}",
+    "/{slug}",
     name="workspaces.get",
     summary="Get workspace",
     response_model=WorkspaceSerializer,
     responses=ERROR_404 | ERROR_422,
 )
-def get_workspace(workspace_slug: str = Query(None, description="the workspace slug(str)")) -> WorkspaceSerializer:
+def get_workspace(slug: str = Query(None, description="the workspace slug(str)")) -> WorkspaceSerializer:
     """
     Get workspace detail by slug.
     """
-    workspace = workspaces_services.get_workspace(workspace_slug)
+    workspace = workspaces_services.get_workspace(slug=slug)
 
     if workspace is None:
         raise ex.NotFoundError()

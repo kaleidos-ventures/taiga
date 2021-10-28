@@ -32,7 +32,7 @@ def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
     """
     Get an access and refresh token using a username and a password.
     """
-    data = auth_services.login(form.username, form.password)
+    data = auth_services.login(username=form.username, password=form.password)
     if not data:
         raise AuthenticationError()
     return AccessTokenWithRefreshSerializer(token=data.token, refresh=data.refresh)
@@ -49,7 +49,7 @@ def refresh(form: RefreshTokenValidator) -> AccessTokenWithRefreshSerializer:
     """
     Get an access and refresh token using a refresh token.
     """
-    data = auth_services.refresh(form.refresh)
+    data = auth_services.refresh(token=form.refresh)
     if not data:
         raise AuthenticationError()
     return AccessTokenWithRefreshSerializer(token=data.token, refresh=data.refresh)

@@ -25,7 +25,7 @@ def test_login_success():
     password = "test_password"
     user = f.UserFactory(username=username, password=password, is_active=True, is_system=False)
 
-    data = auth_serv.login(username, password)
+    data = auth_serv.login(username=username, password=password)
 
     assert data.token
     assert data.refresh
@@ -40,7 +40,7 @@ def test_login_error_invalid_username():
     password = "test_password"
     f.UserFactory(username=username, password=password, is_active=True, is_system=False)
 
-    data = auth_serv.login("bad_username", password)
+    data = auth_serv.login(username="bad_username", password=password)
 
     assert not data
 
@@ -50,7 +50,7 @@ def test_login_error_invalid_password():
     password = "test_password"
     f.UserFactory(username=username, password=password, is_active=True, is_system=False)
 
-    data = auth_serv.login(username, "bad_password")
+    data = auth_serv.login(username=username, password="bad_password")
 
     assert not data
 
@@ -60,7 +60,7 @@ def test_login_error_inactive_user():
     password = "test_password"
     f.UserFactory(username=username, password=password, is_active=False, is_system=False)
 
-    data = auth_serv.login(username, password)
+    data = auth_serv.login(username=username, password=password)
 
     assert not data
 
@@ -70,7 +70,7 @@ def test_login_error_is_system_user():
     password = "test_password"
     f.UserFactory(username=username, password=password, is_active=True, is_system=True)
 
-    data = auth_serv.login(username, password)
+    data = auth_serv.login(username=username, password=password)
 
     assert not data
 
@@ -87,7 +87,7 @@ def test_refresh_success():
     assert OutstandingToken.objects.count() == 1
     assert DenylistedToken.objects.count() == 0
 
-    data = auth_serv.refresh(str(refresh_token))
+    data = auth_serv.refresh(token=str(refresh_token))
 
     assert data.token and data.token != str(refresh_token.access_token)
     assert data.refresh and data.refresh != str(refresh_token)
@@ -97,7 +97,7 @@ def test_refresh_success():
 
 
 def test_refresh_error_invalid_token():
-    data = auth_serv.refresh("invalid_token")
+    data = auth_serv.refresh(token="invalid_token")
     assert not data
 
 
@@ -110,7 +110,7 @@ def test_authenticate_success():
     user = f.UserFactory(is_active=True, is_system=False)
     token = AccessToken.for_user(user)
 
-    data = auth_serv.authenticate(str(token))
+    data = auth_serv.authenticate(token=str(token))
 
     assert data[0] == ["auth"]
     assert data[1] == user
@@ -118,7 +118,7 @@ def test_authenticate_success():
 
 def test_authenticate_error_bad_auth_token():
     with pytest.raises(ex.BadAuthTokenError):
-        auth_serv.authenticate("bad_token")
+        auth_serv.authenticate(token="bad_token")
 
 
 def test_authenticate_error_inactive_user():
@@ -126,7 +126,7 @@ def test_authenticate_error_inactive_user():
     token = AccessToken.for_user(user)
 
     with pytest.raises(ex.UnauthorizedUserError):
-        auth_serv.authenticate(str(token))
+        auth_serv.authenticate(token=str(token))
 
 
 def test_authenticate_system_user():
@@ -134,4 +134,4 @@ def test_authenticate_system_user():
     token = AccessToken.for_user(user)
 
     with pytest.raises(ex.UnauthorizedUserError):
-        auth_serv.authenticate(str(token))
+        auth_serv.authenticate(token=str(token))

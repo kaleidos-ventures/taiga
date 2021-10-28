@@ -56,7 +56,7 @@ def create_project(form: ProjectValidator, request: Request) -> ProjectSerialize
     """
     Create project for the logged user.
     """
-    workspace = workspaces_services.get_workspace(form.workspace_slug)
+    workspace = workspaces_services.get_workspace(slug=form.workspace_slug)
     project = projects_services.create_project(
         workspace=workspace,
         name=form.name,
@@ -68,20 +68,20 @@ def create_project(form: ProjectValidator, request: Request) -> ProjectSerialize
 
 
 @router.get(
-    "/{project_slug}",
+    "/{slug}",
     name="projects.get",
     summary="Get project",
     response_model=ProjectSerializer,
     responses=ERROR_404 | ERROR_422,
 )
-def get_project(project_slug: str = Query(None, description="the project slug (str)")) -> ProjectSerializer:
+def get_project(slug: str = Query(None, description="the project slug (str)")) -> ProjectSerializer:
     """
     Get project detail by slug.
     """
-    project = projects_services.get_project(project_slug)
+    project = projects_services.get_project(slug=slug)
 
     if project is None:
-        logger.exception(f"Project {project_slug} does not exist")
+        logger.exception(f"Project {slug} does not exist")
         raise ex.NotFoundError()
 
     return ProjectSerializer.from_orm(project)

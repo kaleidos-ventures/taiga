@@ -21,11 +21,13 @@ from .models import DenylistedToken, OutstandingToken
 def create_outstanding_token(
     user: User, jti: str, token: str, created_at: datetime, expires_at: datetime
 ) -> OutstandingToken:
-    return tokens_repo.create_outstanding_token(user, jti, token, created_at, expires_at)
+    return tokens_repo.create_outstanding_token(
+        user=user, jti=jti, token=token, created_at=created_at, expires_at=expires_at
+    )
 
 
 def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> Tuple[OutstandingToken, bool]:
-    return tokens_repo.get_or_create_outstanding_token(jti, token, expires_at)
+    return tokens_repo.get_or_create_outstanding_token(jti=jti, token=token, expires_at=expires_at)
 
 
 # ----------------
@@ -34,8 +36,8 @@ def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) 
 
 
 def deny_token(token: OutstandingToken) -> Tuple[DenylistedToken, bool]:
-    return tokens_repo.get_or_create_denylisted_token(token)
+    return tokens_repo.get_or_create_denylisted_token(token=token)
 
 
 def token_is_denied(jti: str) -> bool:
-    return tokens_repo.denylisted_token_exist(jti)
+    return tokens_repo.denylisted_token_exist(jti=jti)

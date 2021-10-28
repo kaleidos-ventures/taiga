@@ -234,7 +234,7 @@ class DenylistMixin(_BaseMixin):
         """
         jti = self.payload[settings.TOKENS.JTI_CLAIM]
 
-        if tokens_services.token_is_denied(jti):
+        if tokens_services.token_is_denied(jti=jti):
             raise TokenError("Token is denylisted")
 
     def denylist(self) -> None:
@@ -247,9 +247,9 @@ class DenylistMixin(_BaseMixin):
         expires_at = epoch_to_datetime(self.payload["exp"])
 
         # Ensure outstanding token exists with given jti
-        token, _ = tokens_services.get_or_create_outstanding_token(jti, token, expires_at)
+        token, _ = tokens_services.get_or_create_outstanding_token(jti=jti, token=token, expires_at=expires_at)
 
-        tokens_services.deny_token(token)
+        tokens_services.deny_token(token=token)
 
     @classmethod
     def for_user(cls: Type["TokenModel"], user: object) -> "TokenModel":
@@ -262,6 +262,8 @@ class DenylistMixin(_BaseMixin):
         created_at = token.current_time
         expires_at = epoch_to_datetime(token["exp"])
 
-        tokens_services.create_outstanding_token(user, jti, str(token), created_at, expires_at)
+        tokens_services.create_outstanding_token(
+            user=user, jti=jti, token=str(token), created_at=created_at, expires_at=expires_at
+        )
 
         return token

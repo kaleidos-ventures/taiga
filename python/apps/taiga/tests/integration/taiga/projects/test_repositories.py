@@ -34,9 +34,9 @@ def test_create_project_with_non_ASCI_chars():
 
 def test_get_project_return_project():
     project = f.ProjectFactory(name="Project 1")
-    assert repositories.get_project(project.slug) == project
+    assert repositories.get_project(slug=project.slug) == project
 
 
 def test_get_project_return_none():
     f.ProjectFactory(name="Project 1")
-    assert repositories.get_project("project-not-exist") is None
+    assert repositories.get_project(slug="project-not-exist") is None

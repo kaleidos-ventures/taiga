@@ -323,7 +323,7 @@ def test_decode_rsa_with_invalid_sig() -> None:
 
     token_payload = token.rsplit(".", 1)[0]
     token_sig = token.rsplit(".", 1)[-1]
-    invalid_token = token_payload + "." + token_sig.replace("a", "A")
+    invalid_token = f"{token_payload}.{token_sig}a"
 
     with pytest.raises(TokenBackendError):
         rsa_token_backend.decode(invalid_token)
@@ -336,7 +336,7 @@ def test_decode_rsa_with_invalid_sig_no_verify() -> None:
 
     token_payload = token.rsplit(".", 1)[0]
     token_sig = token.rsplit(".", 1)[-1]
-    invalid_token = token_payload + "." + token_sig.replace("a", "A")
+    invalid_token = f"{token_payload}.{token_sig}a"
 
     # Payload copied
     payload["exp"] = datetime_to_epoch(payload["exp"])

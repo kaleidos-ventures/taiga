@@ -14,19 +14,18 @@ import { map } from 'rxjs/operators';
 import * as ProjectActions from '../actions/project.actions';
 import { ProjectApiService } from '@taiga/api';
 import { fetch } from '@nrwl/angular';
-import { Project } from '@taiga/data';
 
 @Injectable()
 export class ProjectEffects {
 
   public loadProject$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(ProjectActions.getProject),
+      ofType(ProjectActions.fetchProject),
       fetch({
         run: (action) => {
-          return this.projectApiService.getProject(action.id).pipe(
-            map((project: Project) => {
-              return ProjectActions.setProject({ project });
+          return this.projectApiService.getProject(action.slug).pipe(
+            map((project) => {
+              return ProjectActions.fetchProjectSuccess({ project });
             })
           );
         },

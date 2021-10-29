@@ -12,6 +12,7 @@ import { Milestone } from './milestone.model';
 import { MilestoneMockFactory } from './milestone.model.mock';
 
 import { Project } from './project.model';
+import { WorkspaceMockFactory } from './workspace.model.mock';
 
 const getMilestones = () => {
   const milestones: Milestone[] = [];
@@ -23,12 +24,12 @@ const getMilestones = () => {
 
 export const ProjectMockFactory = (milestones = false): Project => {
   return {
-    id: faker.datatype.number(),
+    name: faker.name.title(),
     slug: faker.datatype.string(),
     milestones: milestones ? getMilestones() : [],
-    name: faker.datatype.string(),
-    description: faker.datatype.string(),
-    color: faker.datatype.number(8)
+    color: faker.datatype.number(8),
+    description: faker.lorem.paragraphs(),
+    workspace: WorkspaceMockFactory(),
   };
 };
 

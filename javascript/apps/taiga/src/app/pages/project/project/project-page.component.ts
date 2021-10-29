@@ -6,11 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { getProject } from '~/app/features/project/project/actions/project.actions';
+import { fetchProject } from '~/app/features/project/project/actions/project.actions';
 import { selectProject } from '~/app/features/project/project/selectors/project.selectors';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-project',
   templateUrl: './project-page.component.html',
@@ -18,12 +21,19 @@ import { Store } from '@ngrx/store';
 })
 export class ProjectPageComponent implements OnInit {
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private route: ActivatedRoute,
+  ) {}
 
   public project$ = this.store.select(selectProject);
 
   public ngOnInit() {
-    this.store.dispatch(getProject({ id: 1 }));
+    this.route.paramMap
+      .pipe(untilDestroyed(this))
+      .subscribe((params) => {
+        this.store.dispatch(fetchProject({ slug: params.get('slug')! }));
+      });
   }
 
 }

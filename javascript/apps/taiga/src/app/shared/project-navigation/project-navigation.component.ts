@@ -162,16 +162,11 @@ export class ProjectNavigationComponent implements OnInit {
     const text = el.getAttribute('data-text');
 
     if (text) {
-      const link = 'http://taiga.io';
-
-      if (link) {
-        this.dialog.link = link;
-      } else {
-        this.dialog.link = '';
-      }
-
       const navigationBarWidth = 48;
 
+      if (type !== 'scrum' && el.querySelector('a')) {
+        this.dialog.link = el.querySelector('a')!.getAttribute('href') ?? '';
+      }
       this.dialog.hover = false;
       this.dialog.mainLinkHeight = type === 'project' ? (el.closest('.workspace') as HTMLElement).offsetHeight : el.offsetHeight;
       this.dialog.top = type === 'project' ? (el.closest('.workspace') as HTMLElement).offsetTop : el.offsetTop;

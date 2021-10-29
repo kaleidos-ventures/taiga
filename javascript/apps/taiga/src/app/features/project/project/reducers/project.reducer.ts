@@ -14,23 +14,16 @@ import { Project } from '@taiga/data';
 export const projectFeatureKey = 'project';
 
 export interface ProjectState {
-  project: Project
+  project: Project | null;
 }
 
 export const initialState: ProjectState = {
-  project: {
-    id: 0,
-    slug: '',
-    milestones: [],
-    name: '',
-    description: '',
-    color: 1
-  }
+  project: null,
 };
 
 export const reducer = createReducer(
   initialState,
-  on(ProjectActions.setProject, (state, { project }): ProjectState => {
+  on(ProjectActions.fetchProjectSuccess, (state, { project }): ProjectState => {
     state.project = project;
 
     return state;

@@ -38,7 +38,6 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     private readonly router: Router) {
     this.requests.pipe(
       concatLatestFrom(() => this.store.select(getGlobalLoading))
-    // eslint-disable-next-line ngrx/no-store-subscription
     ).subscribe(([requests, loading]) => {
       if (requests.length && !loading) {
         this.store.dispatch(globalLoading({ loading: true }));

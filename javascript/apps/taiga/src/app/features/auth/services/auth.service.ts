@@ -52,7 +52,6 @@ export class AuthService {
       const refreshToken = this.getAuth()?.refresh;
 
       if (refreshToken) {
-        // eslint-disable-next-line ngrx/no-store-subscription
         this.authApiService.refreshToken(refreshToken).subscribe((auth) => {
           this.setAuth(auth);
         });

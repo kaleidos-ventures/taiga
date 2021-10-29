@@ -21,17 +21,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [attr.href]="dialog.link">
           <img class="project-logo-image"
             src="https://placeimg.com/640/480/nature"
-            alt="Project logo">
+            alt=""
+            [attr.alt]="project.name">
         </a>
         <div *ngIf="!collapsed"
           class="workspace-data">
-          <a class="workspace-data-project"
-            href="">
-            The Princess Bride
+          <a
+            class="workspace-data-project"
+            [routerLink]="['/project', project.slug]">
+            {{ project.name }}
           </a>
           <a *ngIf="!collapsed"
             class="workspace-data-workspace"
-            href="">
+            [routerLink]="['/workspace', project.workspace.slug]">
             {{ t('main_project_navigation.personal_workspace') }}
           </a>
         </div>
@@ -40,6 +42,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <nav class="primary-menu">
           <ul>
             <li class="menu-option"
+              [class.active]="overviewActive.isActive"
               [attr.data-text]="t('commons.overview')"
               (pointerenter)="popup($event, 'overview')"
               (pointerleave)="out()">
@@ -49,7 +52,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="collapsed ? t('commons.overview') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'overview'"
-                [attr.href]="dialog.link">
+                [routerLink]="['/project', project.slug]"
+                routerLinkActive
+                #overviewActive="routerLinkActive">
                 <tui-svg class="menu-option-icon"
                   src="overview"></tui-svg>
                 <span *ngIf="!collapsed"
@@ -135,7 +140,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="collapsed ? t('commons.kanban') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'kanban'"
-                href="dialog.link">
+                [href]="dialog.link">
                 <tui-svg class="menu-option-icon"
                   src="kanban"></tui-svg>
                 <span *ngIf="!collapsed"
@@ -155,7 +160,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="collapsed ? t('commons.issues') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'issues'"
-                href="dialog.link">
+                [href]="dialog.link">
                 <tui-svg class="menu-option-icon"
                   src="issues"></tui-svg>
                 <span *ngIf="!collapsed"
@@ -182,7 +187,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="collapsed ? t('commons.wiki') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'wiki'"
-                href="dialog.link">
+                [href]="dialog.link">
                 <tui-svg class="menu-option-icon"
                   src="wiki"></tui-svg>
                 <span *ngIf="!collapsed"
@@ -205,7 +210,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="collapsed ? t('commons.meetup') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'meetup'"
-                href="dialog.link">
+                [href]="dialog.link">
                 <tui-svg class="menu-option-icon"
                   src="meetup"></tui-svg>
                 <span *ngIf="!collapsed"
@@ -228,7 +233,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="collapsed ? t('commons.team') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'team'"
-                href="dialog.link">
+                [href]="dialog.link">
                 <tui-svg class="menu-option-icon"
                   src="team"></tui-svg>
                 <span *ngIf="!collapsed"
@@ -254,7 +259,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               [attr.aria-label]="collapsed ? t('main_project_navigation.project_settings') : null"
               class="menu-option-item"
               [class.active-dialog]="dialog.type === 'project-settings'"
-              href="dialog.link">
+              [href]="dialog.link">
               <tui-svg class="menu-option-icon"
                 src="settings"></tui-svg>
               <span *ngIf="!collapsed"
@@ -289,7 +294,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [style.top.px]="dialog.top"
     [style.left.px]="dialog.left">
     <a *ngIf="dialog.type !== 'scrum' && dialog.type !== 'project'"
-      [attr.href]=""
+      [attr.href]="dialog.link"
       [style.height.px]="dialog.mainLinkHeight"
       class="main-link">
       <span class="dialog-text">
@@ -297,7 +302,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </span>
     </a>
     <div *ngIf="dialog.type === 'scrum'"
-      [attr.href]=""
+    [attr.href]="dialog.link"
       cdkTrapFocus
       [style.min-height.px]="dialog.mainLinkHeight"
       class="dialog-scrum">
@@ -335,12 +340,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="dialog-project"
       [style.height.px]="dialog.mainLinkHeight">
       <a class="workspace-data-project"
-        href="">
-        The Princess Bride
+        [routerLink]="['/project', project.slug]">
+        {{ project.name }}
       </a>
       <a class="workspace-data-workspace"
-        href="">
-        {{ t('main_project_navigation.personal-workspace') }}
+        [routerLink]="['/workspace', project.workspace.slug]">
+        {{ t('main_project_navigation.personal_workspace') }}
       </a>
     </div>
   </div>

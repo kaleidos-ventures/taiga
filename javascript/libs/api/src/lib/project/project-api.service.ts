@@ -25,8 +25,8 @@ export class ProjectApiService {
     return this.http.get<Project[]>(`${this.config.apiUrl}/projects`);
   }
 
-  public getProject(id: Project['id']) {
-    return this.http.get<Project>(`${this.config.apiUrl}/projects/${id}`);
+  public getProject(slug: Project['slug']) {
+    return this.http.get<Project>(`${this.config.apiUrl}/projects/${slug}`);
   }
 
   public createProject(project: ProjectCreation) {

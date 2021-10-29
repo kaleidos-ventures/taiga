@@ -9,6 +9,7 @@
 import { createHttpFactory, HttpMethod, SpectatorHttp } from '@ngneat/spectator';
 import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
+import * as faker from 'faker';
 import { ProjectApiService } from './project-api.service';
 
 describe('ProjectApiService', () => {
@@ -24,10 +25,10 @@ describe('ProjectApiService', () => {
   beforeEach(() => spectator = createHttp());
 
   it('getProject', () => {
-    const id = 1;
-    const url = `${ConfigServiceMock.apiUrl}/projects/${id}`;
+    const slug = faker.lorem.slug();
+    const url = `${ConfigServiceMock.apiUrl}/projects/${slug}`;
 
-    spectator.service.getProject(id).subscribe();
+    spectator.service.getProject(slug).subscribe();
 
     const req = spectator.expectOne(url, HttpMethod.GET);
     expect(req.request.url).toEqual(url);

@@ -9,6 +9,7 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { ProjectNavigationComponent } from './project-navigation.component';
@@ -20,6 +21,7 @@ import { ProjectNavigationComponent } from './project-navigation.component';
     TuiSvgModule,
     TranslocoModule,
     A11yModule,
+    RouterModule
   ],
   declarations: [
     ProjectNavigationComponent,

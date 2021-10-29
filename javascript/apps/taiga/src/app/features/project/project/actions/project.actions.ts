@@ -9,13 +9,13 @@
 import { createAction, props } from '@ngrx/store';
 import { Project } from '@taiga/data';
 
-export const setProject = createAction(
-  '[Project] Set',
+export const fetchProjectSuccess = createAction(
+  '[Project] fetch success',
   props<{project: Project}>()
 );
 
-export const getProject = createAction(
-  '[Project] Get',
-  props<{id: Project['id']}>()
+export const fetchProject = createAction(
+  '[Project] fetch',
+  props<{slug: Project['slug']}>()
 );
- 
+

@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 import * as faker from 'faker';
 
 import { ProjectEffects } from './project.effects';
-import { getProject, setProject } from '../actions/project.actions';
+import { fetchProject, fetchProjectSuccess } from '../actions/project.actions';
 import { ProjectMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 
@@ -35,7 +35,7 @@ describe('ProjectEffects', () => {
   });
 
   it('load project', () => {
-    const id = faker.datatype.number();
+    const slug = faker.datatype.string();
     const project = ProjectMockFactory();
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectEffects);
@@ -44,10 +44,10 @@ describe('ProjectEffects', () => {
       cold('-b|', { b: project })
     );
 
-    actions$ = hot('-a', { a:  getProject({ id })});
+    actions$ = hot('-a', { a:  fetchProject({ slug })});
 
     const expected = cold('--a', {
-      a: setProject({ project }),
+      a: fetchProjectSuccess({ project }),
     });
 
     expect(

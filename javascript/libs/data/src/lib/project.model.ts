@@ -10,12 +10,12 @@ import { Milestone } from './milestone.model';
 import { Workspace } from './workspace.model';
 
 export interface Project {
-  id: number;
-  slug: string;
-  milestones: Milestone[];
   name: string;
+  slug: string;
   description: string;
-  color: number
+  color: number;
+  workspace: Pick<Workspace, 'name' | 'slug' | 'color'>;
+  milestones: Milestone[];
 }
 
 export interface ProjectCreation {

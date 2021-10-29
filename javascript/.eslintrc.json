@@ -54,7 +54,8 @@
         "quotes": ["error", "single", { "avoidEscape": true }],
         "object-curly-spacing": ["error", "always", {
           "objectsInObjects": false
-        }]
+        }],
+        "ngrx/no-store-subscription": "off"
       }
     },
     {

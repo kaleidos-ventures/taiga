@@ -73,6 +73,8 @@ ul {
 
 .workspace-data-workspace {
   @mixin font-small;
+
+  display: block;
 }
 
 /* MENU */
@@ -338,6 +340,13 @@ ul {
     transition-delay: var(--transition-delay);
   }
 
+  & .active {
+    & a:hover,
+    & .active-dialog {
+      background-color: var(--color-gray90);
+    }
+  }
+
   & .menu-option-item,
   & .bottom-menu-option-item,
   & .scrum-button {
@@ -347,6 +356,7 @@ ul {
 
     &:hover,
     &.active-dialog {
+      color: var(--color-white);
       inline-size: var(--inline-btn-size);
     }
   }

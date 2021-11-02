@@ -16,6 +16,7 @@ import { ErrorComponent } from './error/error.component';
 import { TuiDataListModule } from '@taiga-ui/core';
 import { TuiDataListWrapperModule, TuiSelectModule, TuiTextAreaModule } from '@taiga-ui/kit';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TextareaComponent } from './textarea/textarea.component';
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     InputRefDirective,
     InputComponent,
     SelectComponent,
+    TextareaComponent,
     ErrorComponent,
   ],
   providers: [],
@@ -39,6 +41,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     InputRefDirective,
     InputComponent,
     SelectComponent,
+    TextareaComponent,
     ErrorComponent,
     ReactiveFormsModule,
     TuiSelectModule,

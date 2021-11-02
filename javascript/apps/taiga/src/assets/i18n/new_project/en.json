@@ -12,5 +12,10 @@
     "duplicate_project": "Duplicate",
     "duplicate_project_description": "Duplicate a project",
     "duplicate_project_tip": "This is just a placeholder"
+  },
+  "invite_step": {
+    "title": "Invite people to this project",
+    "send_invites": "Send invites",
+    "later": "I'll do it later"
   }
 }

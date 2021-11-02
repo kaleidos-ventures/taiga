@@ -27,11 +27,13 @@ import { NewProjectComponent } from './components/new-project/new-project.compon
 import { TemplateStepComponent } from './components/template-step/template-step.component';
 import { RouterModule } from '@angular/router';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
+import { InviteStepComponent } from './components/invite-step/invite-step.component';
 
 @NgModule({
   declarations: [
     NewProjectComponent,
-    TemplateStepComponent
+    TemplateStepComponent,
+    InviteStepComponent
   ],
   imports: [
     FormsModule,
@@ -50,9 +52,9 @@ import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
     TuiTextfieldControllerModule,
     RouterModule,
     TuiButtonModule,
-    InputsModule,
+    InputsModule
   ],
-  exports: [NewProjectComponent, TemplateStepComponent],
+  exports: [NewProjectComponent, TemplateStepComponent, InviteStepComponent],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

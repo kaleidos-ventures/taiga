@@ -8,10 +8,11 @@
 
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ProjectCreation } from '@taiga/data';
+import { ProjectCreation, User } from '@taiga/data';
 import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 import { Step } from '~/app/features/project/new-project/data/new-project.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'tg-new-project',
@@ -32,14 +33,23 @@ export class NewProjectComponent implements OnInit {
 
   constructor(
     private store: Store,
+    private router: Router
   ) {}
 
   public ngOnInit() {
     this.store.dispatch(fetchWorkspaceList());
   }
-  
+
   public onSelectTemplate(workspaceSlug: ProjectCreation['workspaceSlug']) {
     this.formData.workspaceSlug = workspaceSlug;
     this.currentStep = 'detail';
+  }
+
+  public onInvite(users: Partial<User>[]) {
+    const slug = 'realSlugHere'; // Replace this with real slug in the future;
+    if (users.length) {
+      console.log('This user will be added', users);
+    }
+    void this.router.navigate(['/project/', slug, 'kanban' ]);
   }
 }

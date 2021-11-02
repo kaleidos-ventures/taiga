@@ -8,22 +8,12 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProjectPageComponent } from './project-page.component';
+import { KanbanPageComponent } from './kanban-page.component';
 
-const routes: Routes = [
-  {
-    path: '', component: ProjectPageComponent,
-  },
-  // KANBAN
-
-  {
-    path: ':slug:/kanban',
-    loadChildren: () => import('~/app/pages/kanban/kanban-page.module').then(m => m.KanbanPageModule)
-  }
-];
+const routes: Routes = [{ path: '', component: KanbanPageComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ProjectPageRoutingModule { }
+export class KanbanPageRoutingModule { }

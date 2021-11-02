@@ -9,6 +9,7 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
+import { RouterTestingModule } from '@angular/router/testing';
 import { NewProjectComponent } from './new-project.component';
 
 import * as faker from 'faker';
@@ -23,6 +24,9 @@ describe('NewProjectComponent', () => {
     component: NewProjectComponent,
     providers: [
       provideMockStore({ initialState }),
+    ],
+    imports: [
+      RouterTestingModule,
     ],
     declareComponent: false,
     mocks: [],

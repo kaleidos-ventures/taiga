@@ -1,0 +1,43 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t;">
+  <div class="new-step-wrapper">
+    <h1 class="new-step-title">{{ t('new_project.invite_step.title') }}</h1>
+    <form [formGroup]="inviteProjectForm">
+      <ng-template #content
+        let-data>
+        <div class="workspace-option">
+          <tg-workspace-avatar size="m"
+            [color]="data.color"
+            [name]="data.name">
+          </tg-workspace-avatar>
+          <div class="name">{{data.name}}</div>
+        </div>
+      </ng-template>
+      <div class="invite-placeholder tui-skeleton"></div>
+      <div class="project-new-step-actions">
+        <button
+          tuiButton
+          (click)="sendForm([])"
+          appearance="tertiary"
+          [title]="t('new_project.invite_step.later')">
+          {{ t('new_project.invite_step.later') }}
+        </button>
+        <button
+          appearance="primary"
+          tuiButton
+          (click)="sendForm(userExample)"
+          [title]="t('new_project.invite_step.send_invites')"
+          type="button">
+          {{ t('new_project.invite_step.send_invites') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-container>

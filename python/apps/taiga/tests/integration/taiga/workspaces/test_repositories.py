@@ -18,19 +18,44 @@ pytestmark = pytest.mark.django_db
 ##########################################################
 
 
-@pytest.mark.skip(reason="TODO: ProjectFactory")  # delete this when test works
 def test_get_workspaces_with_latest_projects_for_owner():
-    pass
+    user = f.UserFactory()
+    f.WorkspaceFactory(owner=user)
+    f.WorkspaceFactory(owner=user)
+
+    workspaces = repositories.get_workspaces_with_latest_projects(owner=user)
+    assert len(workspaces) == 2
 
 
-@pytest.mark.skip(reason="TODO: ProjectFactory")  # delete this when test works
-def test_get_workspaces_with_latest_projects_return_last_4_projects_and_total_projects():
-    pass
+def test_get_workspaces_with_latest_projects_return_last_6_projects_and_total_projects():
+    user = f.UserFactory()
+    workspace1 = f.WorkspaceFactory(owner=user)
+    workspace2 = f.WorkspaceFactory(owner=user)
+    for x in range(7):
+        f.ProjectFactory(owner=user, workspace=workspace1)
+    for y in range(3):
+        f.ProjectFactory(owner=user, workspace=workspace2)
+
+    workspaces = repositories.get_workspaces_with_latest_projects(owner=user)
+    assert len(workspaces[0].latest_projects) == 3
+    assert workspaces[0].total_projects == 3
+    assert len(workspaces[1].latest_projects) == 6
+    assert workspaces[1].total_projects == 7
 
 
-@pytest.mark.skip(reason="TODO: ProjectFactory")  # delete this when test works
 def test_get_workspaces_with_latest_projects_order_by_created_date():
-    pass
+    user = f.UserFactory()
+    workspace1 = f.WorkspaceFactory(owner=user)
+    workspace2 = f.WorkspaceFactory(owner=user)
+    for x in range(2):
+        f.ProjectFactory(owner=user, workspace=workspace1)
+    for y in range(3):
+        f.ProjectFactory(owner=user, workspace=workspace2)
+
+    workspaces = repositories.get_workspaces_with_latest_projects(owner=user)
+    assert workspaces[0].created_date > workspaces[1].created_date
+    assert workspaces[0].latest_projects[0].created_date > workspaces[0].latest_projects[1].created_date
+    assert workspaces[1].latest_projects[0].created_date > workspaces[1].latest_projects[1].created_date
 
 
 ##########################################################

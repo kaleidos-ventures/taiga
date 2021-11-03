@@ -27,12 +27,12 @@
     "notification": "Notification",
     "user_avatar": "User Avatar"
   },
-  "navigation-projects": {
+  "navigation_projects": {
     "pinned": "Pinned projects",
     "view_projects": "View your projects",
     "new_project": "New project"
   },
-  "navigation-user": {
+  "navigation_user": {
     "user_profile": "User Profile",
     "edit_setting": "Edit setting",
     "account_setting": "Account settings",

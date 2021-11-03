@@ -132,7 +132,7 @@ class ProjectAdmin(admin.ModelAdmin):
                                                         obj.workspace._meta.model_name),
                           args=(obj.workspace.pk,))
 
-        return format_html(f"<a href='{url}' title='{obj.workspace}'>{obj.workspace.slug}</a>")
+            return format_html(f"<a href='{url}' title='{obj.workspace}'>{obj.workspace.slug}</a>")
         return ""
     workspace_url.short_description = _('workspace')
 

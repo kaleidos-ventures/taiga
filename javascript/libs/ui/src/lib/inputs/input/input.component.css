@@ -62,7 +62,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & .invalid.update-on-blur.touched,
   & .invalid.update-on-change.touched {
     & input {
-      border-color: var(--color-error);
+      border-color: var(--color-red);
 
       &:read-only {
         border-color: var(--color-white);

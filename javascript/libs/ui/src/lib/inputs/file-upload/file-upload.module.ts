@@ -8,20 +8,24 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TuiAvatarModule } from '@taiga-ui/kit';
-import { AvatarComponent } from './avatar.component';
+import { FileUploadComponent } from './file-upload.component';
+import { TranslocoModule } from '@ngneat/transloco';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { AvatarModule } from '@taiga/ui';
 
 @NgModule({
   imports: [
     CommonModule,
-    TuiAvatarModule,
+    TranslocoModule,
+    AvatarModule,
+    TuiButtonModule
   ],
   declarations: [
-    AvatarComponent,
+    FileUploadComponent
   ],
   providers: [],
   exports: [
-    AvatarComponent,
+    FileUploadComponent
   ]
 })
-export class AvatarModule {}
+export class FileUploadModule {}

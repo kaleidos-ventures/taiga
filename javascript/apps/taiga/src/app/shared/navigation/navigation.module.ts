@@ -13,7 +13,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { TuiButtonModule, TuiHostedDropdownModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiAvatarModule } from '@taiga-ui/kit';
-import { AvatarModule } from '../avatar/avatar.component.module';
+import { UserAvatarModule } from '../user-avatar/user-avatar.component.module';
 import { NavigationProjectsComponent } from './navigation-projects/navigation-projects.component';
 import { NavigationUserDropdownComponent } from './navigation-user-dropdown/navigation-user-dropdown.component';
 import { NavigationComponent } from './navigation.component';
@@ -26,7 +26,7 @@ import { NavigationComponent } from './navigation.component';
     TuiSvgModule,
     TranslocoModule,
     TuiHostedDropdownModule,
-    AvatarModule,
+    UserAvatarModule,
     TuiAutoFocusModule,
     RouterModule
   ],

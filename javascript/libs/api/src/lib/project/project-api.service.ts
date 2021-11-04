@@ -30,6 +30,6 @@ export class ProjectApiService {
   }
 
   public createProject(project: ProjectCreation) {
-    return this.http.post<Project>(`${this.config.apiUrl}/${project.workspaceSlug}/project`, project);
+    return this.http.post<Project>(`${this.config.apiUrl}/projects`, project);
   }
 }

@@ -10,7 +10,7 @@ import { ChangeDetectionStrategy, Component, Output, EventEmitter, OnInit, ViewC
 import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { RandomColorService } from '~/app/shared/random-color/random-color.service';
+import { RandomColorService } from '@taiga/ui';
 import { createFormHasError, createWorkspace } from '../actions/workspace.actions';
 
 @Component({

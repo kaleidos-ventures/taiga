@@ -17,7 +17,8 @@
     "upgrade": "Upgrade",
     "owner": "Owner",
     "workspace": "Workspace",
-    "back": "Back"
+    "back": "Back",
+    "optional": "Optional"
   },
   "navigation": {
     "go_home": "Go to home",

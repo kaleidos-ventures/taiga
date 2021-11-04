@@ -1,0 +1,52 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+@import "tools/typography.css";
+
+:host {
+  display: block;
+}
+
+.input-upload {
+  display: none;
+}
+
+.project-icon-uploader-inner {
+  display: flex;
+  gap: var(--spacing-20);
+  margin-block-start: var(--spacing-8);
+}
+
+.project-icon-wrapper {
+  position: relative;
+
+  &:hover {
+    & .project-icon-button {
+      visibility: visible;
+    }
+  }
+}
+
+.project-icon-button {
+  --btn-size: 32px;
+
+  inset-block-start: calc(50% - var(--btn-size) / 2);
+  inset-inline-start: calc(50% - var(--btn-size) / 2);
+  position: absolute;
+  visibility: hidden;
+}
+
+.project-icon-uploader-explanation {
+  @mixin font-small;
+
+  color: var(--color-gray70);
+  line-height: 1.5;
+}
+
+.project-icon-uploader-button {
+  margin-block-start: var(--spacing-8);
+}

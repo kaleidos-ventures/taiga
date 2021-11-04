@@ -17,5 +17,16 @@
     "title": "Invite people to this project",
     "send_invites": "Send invites",
     "later": "I'll do it later"
+  },
+  "second_step": {
+    "project_details": "Project details",
+    "project_title": "Project title",
+    "project_title_error": "Project name can’t be empty",
+    "project_description": "Project description",
+    "project_description_placeholder": "Add a short description to help others better understand your project",
+    "project_icon": "Project icon",
+    "choose_image_explanation": "Only .jpg and .png files. 500kb max file size",
+    "choose_image": "Choose image",
+    "create_project": "Create project"
   }
 }

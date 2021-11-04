@@ -11,7 +11,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
-import { WorkspaceAvatarModule } from '../workspace-avatar/workspace-avatar.module';
+import { AvatarModule } from '@taiga/ui';
 import { ProjectCardComponent } from './project-card.component';
 
 @NgModule({
@@ -21,7 +21,7 @@ import { ProjectCardComponent } from './project-card.component';
     TuiButtonModule,
     TuiSvgModule,
     TranslocoModule,
-    WorkspaceAvatarModule
+    AvatarModule
   ],
   declarations: [
     ProjectCardComponent,

@@ -1,0 +1,32 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+.detail-step-wrapper {
+  inline-size: 480px;
+  margin: 0 auto;
+}
+
+.detail-step-title {
+  @mixin font-heading-3;
+
+  margin-block: 0 var(--spacing-32);
+}
+
+.workspace-option {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-8);
+}
+
+.detail-project-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}

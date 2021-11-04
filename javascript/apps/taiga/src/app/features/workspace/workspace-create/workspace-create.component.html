@@ -13,10 +13,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     (ngSubmit)="onSubmit()"
     [attr.aria-invalid]="createProjectForm.invalid"
     class="workspace-create-padding">
-    <tg-workspace-avatar
+    <tg-ui-avatar
       [color]="color"
       [name]="name">
-    </tg-workspace-avatar>
+    </tg-ui-avatar>
     <p> {{ createProjectForm.value.projectName }}</p>
     <tg-ui-input
       class="workspace-input-project-name"

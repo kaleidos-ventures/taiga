@@ -1,0 +1,54 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+
+
+<ng-container *transloco="let t;">
+
+  <div class="project-icon-uploader">
+    <label class="input-label"
+      for="icon-upload">
+      {{ label }}
+    </label>
+    <div class="project-icon-uploader-inner">
+      <div class="project-icon-wrapper">
+        <tg-ui-avatar size="xxl"
+          type="light"
+          [url]="filePath"
+          [color]="color"
+          [name]="title">
+        </tg-ui-avatar>
+        <button class="project-icon-button" (click)="filePath ? removeImage() : displayImageUploader()"
+          tuiIconButton
+          [icon]="filePath ? 'close' : 'plus'"
+          [attr.title]="t('new_project.second_step.choose_image')"
+          type="button"
+          appearance="tertiary">
+        </button>
+      </div>
+      <div class="project-icon-uploader-actions">
+        <div class="project-icon-uploader-explanation">
+          {{ tip }}
+        </div>
+        <button class="project-icon-uploader-button" (click)="displayImageUploader()"
+          tuiButton
+          type="button"
+          appearance="tertiary">
+          {{ t('new_project.second_step.choose_image') }}
+        </button>
+        <input class="input-upload"
+          #iconUpload
+          (change)="onFileSelected($event)"
+          type="file"
+          name="icon-upload"
+          id="icon-upload">
+      </div>
+      </div>
+  </div>
+
+</ng-container>

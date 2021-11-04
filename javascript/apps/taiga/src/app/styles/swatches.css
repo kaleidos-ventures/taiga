@@ -12,8 +12,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   /* Secondary colors */
   --color-secondary: rgb(0, 125, 166);
+  --color-secondary30: rgb(190, 228, 255);
+  --color-secondary50: rgb(0, 181, 238);
   --color-secondary80: rgb(0, 99, 133);
   --color-secondary90: rgb(0, 77, 104);
+  --color-secondary100: rgb(0, 48, 66);
 
   /* B/W colors */
   --color-white: rgb(255, 255, 255);
@@ -34,34 +37,51 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   /* Warning colors */
   --color-warning: rgb(179, 92, 48);
   --color-warning20: rgb(255, 236, 239);
+  --color-warning30: rgb(251, 215, 205);
+  --color-warning50: rgb(251, 139, 76);
   --color-warning70: rgb(212, 54, 99);
   --color-warning80: rgb(170, 40, 80);
+  --color-warning100: rgb(71, 34, 14);
 
   /* Info colors */
   --color-info: rgb(37, 117, 205);
-  --color-correct: rgb(100, 125, 48);
-  --color-error: rgb(212, 54, 99);
-  --color-notice: rgb(178, 67, 199);
-
-  /* Workspace colors */
+  --color-info30: rgb(213, 223, 251);
   --color-info50: rgb(124, 169, 245);
+  --color-info80: rgb(28, 93, 162);
   --color-info100: rgb(19, 44, 79);
-  --color-green50: rgb(130, 185, 126);
-  --color-green100: rgb(31, 48, 30);
+
+  /* correct colors */
+  --color-ok: rgb(100, 125, 48);
   --color-ok10: rgb(240, 254, 226);
+  --color-ok30: rgb(194, 237, 122);
   --color-ok50: rgb(143, 181, 72);
   --color-ok80: rgb(78, 99, 36);
   --color-ok100: rgb(36, 48, 13);
-  --color-yellow50: rgb(203, 163, 41);
-  --color-yellow100: rgb(53, 43, 13);
-  --color-warning50: rgb(251, 139, 76);
-  --color-warning100: rgb(71, 34, 14);
+
+  /* error colors */
+  --color-red: rgb(212, 54, 99);
+  --color-red30: rgb(247, 215, 220);
   --color-red40: rgb(253, 178, 192);
   --color-red50: rgb(255, 129, 157);
   --color-red80: rgb(170, 40, 80);
   --color-red100: rgb(87, 16, 38);
+
+  /* notice colors */
+  --color-notice: rgb(178, 67, 199);
+  --color-notice30: rgb(246, 214, 240);
   --color-notice50: rgb(216, 140, 234);
+  --color-notice80: rgb(146, 44, 164);
   --color-notice100: rgb(66, 28, 74);
-  --color-secondary50: rgb(0, 181, 238);
-  --color-secondary100: rgb(0, 48, 66));
+
+  /* green colors */
+  --color-green30: rgb(185, 241, 181);
+  --color-green50: rgb(130, 185, 126);
+  --color-green80: rgb(68, 100, 66);
+  --color-green100: rgb(31, 48, 30);
+
+  /* yellow colors */
+  --color-yellow30: rgb(249, 220, 161);
+  --color-yellow50: rgb(203, 163, 41);
+  --color-yellow80: rgb(109, 90, 36);
+  --color-yellow100: rgb(53, 43, 13);
 }

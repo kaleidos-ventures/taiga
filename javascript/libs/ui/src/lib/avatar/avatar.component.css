@@ -1,0 +1,175 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+:host {
+  border-radius: 3px;
+  display: flex;
+
+  &.color-0 {
+    --tui-text-01: var(--color-gray50);
+
+    border-color: currentColor;
+    color: var(--color-gray30);
+  }
+}
+
+tui-avatar {
+  &[data-type="light"] {
+    &.color-1 {
+      --tui-text-01: var(--color-warning80);
+
+      border-color: currentColor;
+      color: var(--color-warning30);
+    }
+
+    &.color-2 {
+      --tui-text-01: var(--color-red80);
+
+      border-color: currentColor;
+      color: var(--color-red30);
+    }
+
+    &.color-3 {
+      --tui-text-01: var(--color-notice80);
+
+      border-color: currentColor;
+      color: var(--color-notice30);
+    }
+
+    &.color-4 {
+      --tui-text-01: var(--color-ok80);
+
+      border-color: currentColor;
+      color: var(--color-ok30);
+    }
+
+    &.color-5 {
+      --tui-text-01: var(--color-secondary80);
+
+      border-color: currentColor;
+      color: var(--color-secondary30);
+    }
+
+    &.color-6 {
+      --tui-text-01: var(--color-info80);
+
+      border-color: currentColor;
+      color: var(--color-info30);
+    }
+
+    &.color-7 {
+      --tui-text-01: var(--color-green80);
+
+      border-color: currentColor;
+      color: var(--color-green30);
+    }
+
+    &.color-8 {
+      --tui-text-01: var(--color-yellow80);
+
+      border-color: currentColor;
+      color: var(--color-yellow30);
+    }
+  }
+
+  &[data-type="dark"] {
+    &.color-1 {
+      --tui-text-01: var(--color-red100);
+
+      border-color: currentColor;
+      color: var(--color-red50);
+    }
+
+    &.color-2 {
+      --tui-text-01: var(--color-info100);
+
+      border-color: currentColor;
+      color: var(--color-info50);
+    }
+
+    &.color-3 {
+      --tui-text-01: var(--color-green100);
+
+      border-color: currentColor;
+      color: var(--color-green50);
+    }
+
+    &.color-4 {
+      --tui-text-01: var(--color-ok100);
+
+      border-color: currentColor;
+      color: var(--color-ok50);
+    }
+
+    &.color-5 {
+      --tui-text-01: var(--color-yellow100);
+
+      border-color: currentColor;
+      color: var(--color-yellow50);
+    }
+
+    &.color-6 {
+      --tui-text-01: var(--color-warning100);
+
+      border-color: currentColor;
+      color: var(--color-warning50);
+    }
+
+    &.color-7 {
+      --tui-text-01: var(--color-notice100);
+
+      border-color: currentColor;
+      color: var(--color-notice50);
+    }
+
+    &.color-8 {
+      --tui-text-01: var(--color-secondary100);
+
+      border-color: currentColor;
+      color: var(--color-secondary50);
+    }
+  }
+
+  &[data-tui-host-size="m"] {
+    @mixin font-small;
+
+    block-size: var(--spacing-24);
+    border-radius: 3px;
+    font-weight: var(--font-weight-regular);
+    inline-size: var(--spacing-24);
+  }
+
+  &[data-tui-host-size="l"] {
+    @mixin font-body;
+
+    block-size: var(--spacing-32);
+    border-radius: 3px;
+    font-weight: var(--font-weight-regular);
+    inline-size: var(--spacing-32);
+  }
+
+  &[data-tui-host-size="xl"] {
+    @mixin font-heading-4;
+
+    block-size: var(--spacing-48);
+    border-radius: 3px;
+    font-weight: var(--font-weight-regular);
+    inline-size: var(--spacing-48);
+  }
+
+  &[data-tui-host-size="xxl"] {
+    @mixin font-heading-4;
+
+    block-size: var(--spacing-64);
+    border-radius: 2px;
+    font-weight: var(--font-weight-regular);
+    inline-size: var(--spacing-64);
+  }
+}

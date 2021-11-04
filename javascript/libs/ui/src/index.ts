@@ -6,7 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export * from './lib/ui.module';
 export * from './lib/modal/components/modal.component';
 export * from './lib/modal/modal.module';
 export * from './lib/skeletons/skeletons.module';
+export * from './lib/avatar/avatar.module';
+export * from './lib/services/random-color/random-color.service';

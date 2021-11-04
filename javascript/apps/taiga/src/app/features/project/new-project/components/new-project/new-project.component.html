@@ -9,8 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t;">
   <ng-container *ngIf="workspaceList$ | async as workspaceList">
     <div class="page-actions">
-      <a
-        tuiButton
+      <a tuiButton
         type="button"
         appearance="tertiary"
         routerLink=".."
@@ -19,17 +18,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </a>
     </div>
     <div class="new-project-wrapper">
-      <tg-template-step *ngIf="currentStep === 'template'"
-        (templateSelected)="onSelectTemplate($event)"
-        [workspaces]="workspaceList">
-      </tg-template-step>
-      <div *ngIf="currentStep === 'detail'">
-        <!-- TODO: PLACEHOLDER Detail step here -->
-        Detail
-      </div>
-      <tg-invite-step *ngIf="currentStep === 'invite'"
-        (finishNewProject)="onInvite($event)">
-      </tg-invite-step>
+      <ng-container *ngIf="currentStep === 'template'">
+        <tg-template-step (templateSelected)="onSelectTemplate($event)"
+          [workspaces]="workspaceList">
+        </tg-template-step>
+      </ng-container>
+      <ng-container *ngIf="currentStep === 'detail'">
+        <tg-detail-step (projectData)="createProject($event)"
+          [selectedWorkspaceSlug]="formData.workspaceSlug"
+          [workspaces]="workspaceList">
+        </tg-detail-step>
+      </ng-container>
+      <ng-container *ngIf="currentStep === 'invite'">
+        <tg-invite-step *ngIf="currentStep === 'invite'"
+          (finishNewProject)="onInvite($event)">
+        </tg-invite-step>
+      </ng-container>
     </div>
   </ng-container>
 </ng-container>

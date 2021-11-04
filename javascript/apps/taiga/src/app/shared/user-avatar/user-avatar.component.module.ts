@@ -9,18 +9,19 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TuiAvatarModule } from '@taiga-ui/kit';
-import { WorkspaceAvatarComponent } from './workspace-avatar.component';
+import { UserAvatarComponent } from './user-avatar.component';
 
 @NgModule({
   imports: [
     CommonModule,
-    TuiAvatarModule
+    TuiAvatarModule,
   ],
   declarations: [
-    WorkspaceAvatarComponent,
+    UserAvatarComponent,
   ],
+  providers: [],
   exports: [
-    WorkspaceAvatarComponent,
+    UserAvatarComponent,
   ]
 })
-export class WorkspaceAvatarModule {}
+export class UserAvatarModule {}

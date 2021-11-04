@@ -9,15 +9,15 @@
 import { OnInit } from '@angular/core';
 import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
-import { RandomColorService } from '../random-color/random-color.service';
+import { RandomColorService } from '../services/random-color/random-color.service';
 
 @Component({
-  selector: 'tg-workspace-avatar',
-  templateUrl: './workspace-avatar.component.html',
-  styleUrls: ['./workspace-avatar.component.css'],
+  selector: 'tg-ui-avatar',
+  templateUrl: './avatar.component.html',
+  styleUrls: ['./avatar.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WorkspaceAvatarComponent implements OnInit  {
+export class AvatarComponent implements OnInit  {
 
   @Input()
   public size: TuiSizeXS | TuiSizeXXL = 'l';
@@ -32,6 +32,9 @@ export class WorkspaceAvatarComponent implements OnInit  {
 
   @Input()
   public color = 1;
+
+  @Input()
+  public type: 'dark' | 'light' = 'dark';
 
   public ngOnInit() {
     this.sizeClass = `avatar-${this.size}`;

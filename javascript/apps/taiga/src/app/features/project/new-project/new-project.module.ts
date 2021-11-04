@@ -13,11 +13,8 @@ import { newProjectFeature } from './reducers/new-project.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { NewProjectEffects } from './effects/new-project.effects';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { WorkspaceAvatarModule } from '~/app/shared/workspace-avatar/workspace-avatar.module';
 import {
   TuiSvgModule,
-  TuiDataListModule,
-  TuiTextfieldControllerModule,
   TuiButtonModule,
 } from '@taiga-ui/core';
 import { TuiSelectModule, TuiDataListWrapperModule } from '@taiga-ui/kit';
@@ -28,12 +25,16 @@ import { TemplateStepComponent } from './components/template-step/template-step.
 import { RouterModule } from '@angular/router';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { InviteStepComponent } from './components/invite-step/invite-step.component';
+import { FileUploadModule } from 'libs/ui/src/lib/inputs/file-upload/file-upload.module';
+import { DetailStepComponent } from './components/detail-step/detail-step.component';
+import { AvatarModule } from '@taiga/ui';
 
 @NgModule({
   declarations: [
     NewProjectComponent,
     TemplateStepComponent,
-    InviteStepComponent
+    InviteStepComponent,
+    DetailStepComponent
   ],
   imports: [
     FormsModule,
@@ -46,23 +47,27 @@ import { InviteStepComponent } from './components/invite-step/invite-step.compon
     FormsModule,
     ReactiveFormsModule,
     TuiSelectModule,
-    TuiDataListModule,
     TuiDataListWrapperModule,
-    WorkspaceAvatarModule,
-    TuiTextfieldControllerModule,
+    AvatarModule,
     RouterModule,
     TuiButtonModule,
-    InputsModule
+    InputsModule,
+    FileUploadModule
   ],
-  exports: [NewProjectComponent, TemplateStepComponent, InviteStepComponent],
+  exports: [
+    NewProjectComponent,
+    TemplateStepComponent,
+    DetailStepComponent,
+    InviteStepComponent
+  ],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
       useValue: {
         scope: 'new_project',
-        alias: 'new_project'
-      }
-    }
-  ]
+        alias: 'new_project',
+      },
+    },
+  ],
 })
 export class NewProjectModule {}

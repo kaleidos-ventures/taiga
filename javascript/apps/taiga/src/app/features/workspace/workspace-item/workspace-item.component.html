@@ -9,11 +9,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t;">
   <ng-container *ngIf="workspace">
     <div class="workspace-item-top">
-      <tg-workspace-avatar class="workspace-avatar"
+      <tg-ui-avatar class="workspace-avatar"
         [color]="workspace.color"
         size="m"
         [name]="workspace.name">
-      </tg-workspace-avatar>
+      </tg-ui-avatar>
       <div class="workspace-item-title-wrapper">
         <a [title]="workspace.name"
           [routerLink]="['/workspace/', workspace.slug]"

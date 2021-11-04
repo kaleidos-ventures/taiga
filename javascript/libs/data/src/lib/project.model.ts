@@ -20,7 +20,7 @@ export interface Project {
 
 export interface ProjectCreation {
   workspaceSlug: Workspace['slug'];
-  title: string;
+  name: string;
   description: string;
   color: number;
   icon?: File;

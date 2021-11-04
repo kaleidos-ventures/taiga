@@ -9,8 +9,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t;">
   <div *ngIf="placeholder"
     class="project-item-card placeholder">
-    <tg-workspace-avatar [color]="0"
-      [name]="''"></tg-workspace-avatar>
+    <tg-ui-avatar [color]="0"
+      [name]="''">
+    </tg-ui-avatar>
     <a *ngIf="!firstProject"
       tuiLink
       [routerLink]="['/new-project']"
@@ -29,12 +30,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </a>
   </div>
   <div *ngIf="!placeholder"
-  class="project-item-card">
+    class="project-item-card">
     <div class="project-card-title">
-      <tg-workspace-avatar [color]="project.color"
-      [name]="project.name"></tg-workspace-avatar>
-      <a
-        [title]="project.name"
+      <tg-ui-avatar class="project-card-image" [color]="project.color"
+        [name]="project.name"
+        type="light">
+      </tg-ui-avatar>
+      <a [title]="project.name"
         [routerLink]="['/workspace/', slug]"
         class="project-card-link">
         {{ project.name }}

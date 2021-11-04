@@ -10,6 +10,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ProjectCreation, User } from '@taiga/data';
 import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
+import { createProject } from '~/app/features/project/new-project/actions/new-project.actions';
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 import { Step } from '~/app/features/project/new-project/data/new-project.model';
 import { Router } from '@angular/router';
@@ -26,7 +27,7 @@ export class NewProjectComponent implements OnInit {
 
   public formData: ProjectCreation = {
     workspaceSlug: '',
-    title: '',
+    name: '',
     description: 'string',
     color: 0,
   };
@@ -42,7 +43,16 @@ export class NewProjectComponent implements OnInit {
 
   public onSelectTemplate(workspaceSlug: ProjectCreation['workspaceSlug']) {
     this.formData.workspaceSlug = workspaceSlug;
-    this.currentStep = 'detail';
+    this.setStep('detail');
+  }
+
+  public createProject(project: ProjectCreation) {
+    this.store.dispatch(createProject({ project }));
+    this.setStep('invite');
+  }
+
+  public setStep(step: Step) {
+    this.currentStep = step;
   }
 
   public onInvite(users: Partial<User>[]) {

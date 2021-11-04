@@ -18,13 +18,13 @@ interface State {
 }
 
 @Component({
-  selector: 'tg-avatar',
-  templateUrl: './avatar.component.html',
-  styleUrls: ['./avatar.component.css'],
+  selector: 'tg-user-avatar',
+  templateUrl: './user-avatar.component.html',
+  styleUrls: ['./user-avatar.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
 })
-export class AvatarComponent implements OnInit {
+export class UserAvatarComponent implements OnInit {
   @Input()
   public set user(user: User) {
     this.state.set({ user });

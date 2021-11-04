@@ -40,8 +40,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   /* Status */
   --tui-error-fill: #e44057; /* Icons or other elements with error status */
-  --tui-error-bg: var(--color-error);
-  --tui-error-bg-hover: var(--color-error);
+  --tui-error-bg: var(--color-red);
+  --tui-error-bg-hover: var(--color-red);
   --tui-success-fill: #93c45d; /* Icons or other elements with success status */
   --tui-success-bg: #93c45d;
   --tui-success-bg-hover: #93c45d;

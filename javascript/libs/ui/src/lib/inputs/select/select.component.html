@@ -9,8 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <label class="input-label"
   *ngIf="label"
   [attr.for]="id">{{label}}</label>
-<div class="input-container"
-  ngClass]="type">
+<div class="input-container" [ngClass]="type">
   <ng-content></ng-content>
 </div>
 <ng-content select="[inputError]"></ng-content>

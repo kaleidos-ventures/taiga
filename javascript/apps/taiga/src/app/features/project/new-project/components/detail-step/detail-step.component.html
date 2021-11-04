@@ -1,0 +1,92 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t;">
+
+  <div class="detail-step-wrapper">
+    <h1 class="detail-step-title">
+      {{ t('new_project.second_step.project_details') }}</h1>
+    <form class="detail-project-form"
+      [formGroup]="detailProjectForm"
+      (ngSubmit)="createProject()">
+      <tg-ui-select [label]="t('commons.workspace')">
+        <tui-select tuiTextfieldSize="l"
+          formControlName="workspace"
+          [valueContent]="content"
+          [readOnly]="true">
+          {{ t('new_project.choose_workspace') }}
+          <tui-data-list-wrapper *tuiDataList
+            size="l"
+            [items]="workspaces"
+            [itemContent]="content">
+          </tui-data-list-wrapper>
+        </tui-select>
+      </tg-ui-select>
+      <ng-template #content
+        let-data>
+        <div class="workspace-option">
+          <tg-ui-avatar size="m"
+            [color]="workspace.color"
+            [name]="workspace.name">
+          </tg-ui-avatar>
+          <div class="name">{{workspace.name}}</div>
+        </div>
+      </ng-template>
+
+      <!-- Project title -->
+      <tg-ui-input [label]="t('new_project.second_step.project_title') ">
+        <input formControlName="title"
+          inputRef>
+        <ng-container inputError>
+          <tg-ui-error error="required">
+            {{ t('new_project.second_step.project_title_error') }}
+          </tg-ui-error>
+        </ng-container>
+      </tg-ui-input>
+
+      <!-- Project description -->
+      <tg-ui-textarea [label]="t('new_project.second_step.project_title')"
+        [optional]="true">
+        <tui-text-area formControlName="description"
+          [expandable]="true"
+          [tuiTextfieldMaxLength]="140">
+          {{ t('new_project.second_step.project_description_placeholder') }}
+        </tui-text-area>
+        <tg-ui-error inputError
+          error="maxlength">
+          Maximun length 140
+        </tg-ui-error>
+      </tg-ui-textarea>
+
+      <!-- Image upload  -->
+      <tg-ui-file-upload [color]="detailProjectForm.get('color')?.value"
+        [title]="detailProjectForm.get('title')?.value"
+        [label]="t('new_project.second_step.project_icon')"
+        [tip]="t('new_project.second_step.choose_image_explanation')"
+        (projectImage)="onAddProjectImage($event)">
+      </tg-ui-file-upload>
+
+      <div class="form-actions">
+        <button 
+          (click)="cancelForm()"
+          tuiButton
+          type="button"
+          appearance="tertiary">
+          {{ t('commons.cancel') }}
+        </button>
+        <button
+          iconRight="chevron-right"
+          tuiButton
+          type="submit"
+          appearance="primary">
+          {{ t('new_project.second_step.create_project') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-container>

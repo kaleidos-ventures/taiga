@@ -26,13 +26,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <button appearance="tertiary"
           tuiButton
           icon="user"
-          title="{{ t('commons.members') }}"
+          [attr.title]="t('commons.members')"
           type="button">
           {{ t('commons.members') }} (1)
         </button>
         <button appearance="secondary"
           tuiButton
-          title="{{ t('commons.upgrade') }}"
+          [attr.title]="t('commons.upgrade')"
           type="button">
           {{ t('commons.upgrade') }}
         </button>
@@ -41,7 +41,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [queryParams]="{ workspace: workspace.slug }"
           tuiButton
           icon="plus"
-          title="{{ t('commons.project') }}"
+          [attr.title]="t('commons.project')"
           type="button">
           {{ t('commons.project') }}
         </a>
@@ -70,7 +70,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       appearance="tertiary"
       class="workspace-show-all"
       iconRight="chevron-down"
-      title="{{ t('workspace.more_projects', { amount: workspace.totalProjects - vm.projectToShow }) }}">
+      [attr.title]="t('workspace.more_projects', { amount: workspace.totalProjects - vm.projectToShow })">
       {{ t('workspace.more_projects', { projects: workspace.totalProjects - vm.projectToShow }) }}
 
     </button>
@@ -81,7 +81,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       appearance="tertiary"
       class="workspace-show-all"
       iconRight="chevron-up"
-      title="{{ t('workspace.less_projects') }}">
+      [attr.title]="t('workspace.less_projects')">
       {{ t('workspace.less_projects') }}
     </button>
 

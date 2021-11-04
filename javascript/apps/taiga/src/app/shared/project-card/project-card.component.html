@@ -16,7 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [routerLink]="['/new-project']"
       [queryParams]="{ workspace: slug }"
       class="project-item-link"
-      title="{{ t('project.create_new_project') }}">
+      [attr.title]="t('project.create_new_project')">
       {{ t('project.create_new_project') }}
     </a>
     <a *ngIf="firstProject"
@@ -24,7 +24,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [routerLink]="['/new-project']"
       [queryParams]="{ workspace: slug }"
       class="project-item-link"
-      title="{{ t('project.create_first_project') }}">
+      [attr.title]="t('project.create_first_project')">
       {{ t('project.create_first_project') }}
     </a>
   </div>

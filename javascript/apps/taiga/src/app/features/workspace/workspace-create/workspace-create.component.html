@@ -40,7 +40,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       data-test="workspace-project-form-submit"
       appearance="primary"
       tuiButton
-      title="{{ t('workspace.create_workspace') }}"
+       [attr.title]="t('workspace.create_workspace')"
       type="submit">
       {{ t('workspace.create_workspace') }}
     </button>
@@ -48,7 +48,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       (click)="close()"
       appearance="secondary"
       tuiButton
-      title="{{ t('commons.cancel') }}"
+      [attr.title]="t('commons.cancel')"
       type="button">
       {{ 'commons.cancel' | transloco }}
     </button>

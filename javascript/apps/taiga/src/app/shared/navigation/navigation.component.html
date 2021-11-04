@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <div class="left">
       <a
         appearance="home-button"
-        title="{{ t('go_home') }}"
+        [attr.title]="t('go_home')"
         href="#"
         class="home-button"
         tuiIconButton
@@ -35,7 +35,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <button
           appearance="nav-icon-button"
           tuiIconButton
-          title="{{ t('search') }}"
+          [attr.title]="t('search')"
           icon="search"
           type="button">
           <span class="visually-hidden">{{ t('search') }}</span>
@@ -44,7 +44,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           appearance="nav-icon-button"
           tuiIconButton
           icon="discover"
-          title="{{ t('discover') }}"
+          [attr.title]="t('discover')"
           type="button">
           <span class="visually-hidden">{{ t('discover') }}</span>
         </button>
@@ -52,7 +52,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           appearance="nav-icon-button"
           tuiIconButton
           icon="help"
-          title="{{ t('help') }}"
+          [attr.title]="t('help')"
           type="button">
           <span class="visually-hidden">{{ t('help') }}</span>
         </button>
@@ -62,7 +62,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             appearance="nav-icon-button"
             tuiIconButton
             icon="bell"
-            title="{{ t('notification') }}"
+            [attr.title]="t('notification')"
             type="button">
             <span class="visually-hidden">{{ t('notification') }}</span>
             <div class="counter">13</div>
@@ -78,7 +78,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             class="avatar-dropdown-button"
             type="button">
             <span class="visually-hidden">{{ t('user_avatar') }}</span>
-            <tg-avatar title="{{ t('user_avatar') }}"></tg-avatar>
+            <tg-avatar [attr.title]="t('user_avatar')"></tg-avatar>
           </button>
         </tui-hosted-dropdown>
       </div>

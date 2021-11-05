@@ -19,7 +19,7 @@ import { WorkspaceDetailEffects } from './effects/workspace-detail.effects';
 import { RouterModule } from '@angular/router';
 import { ProjectCardModule } from '~/app/shared/project-card/project-card.module';
 import { AngularResizeEventModule } from 'angular-resize-event';
-import { AvatarModule } from '@taiga/ui';
+import { AvatarModule } from '@taiga/ui/avatar';
 
 @NgModule({
   declarations: [

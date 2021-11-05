@@ -295,17 +295,57 @@ class Command(BaseCommand):
 
             self.create_likes(project)
 
+        # create workspaces
         for user in User.objects.all():
-            user_projects = Project.objects.all().filter(owner=user)
+            user_projects = Project.objects.filter(owner=user)
             user_projects_groups = self._split_evenly(user_projects, NUM_WORKSPACES_PER_USER)
 
-            for counter, user_project_group in enumerate(user_projects_groups):
-                if len(user_project_group) >= 1:
-                    user_workspace: Workspace = self.create_workspace(counter, user)
+            # create specific WS for user1
+            if user.username == "user1":
+                # create WS with 10 projects
+                user_workspace: Workspace = self.create_workspace(counter=1, owner=user)
+                num_projects = len(Project.objects.all())
+                for project in user_projects: # asigned created project to WS
+                    project.workspace = user_workspace
+                    project.save()
+                for x in range(10): # create projects
+                    self.create_project(
+                        counter=x + 1 + num_projects,  # this way the Project will have the same name as the id: Project 1 with id: 1
+                        owner=user,
+                        workspace=user_workspace
+                    )
 
-                    for project in user_project_group:
-                        project.workspace = user_workspace
-                        project.save()
+                # create WS with 3 projects
+                user_workspace: Workspace = self.create_workspace(counter=2, owner=user)
+                num_projects = len(Project.objects.all())
+                for x in range(3):
+                    self.create_project(
+                        counter=x + 1 + num_projects,  # this way the Project will have the same name as the id: Project 1 with id: 1
+                        owner=user,
+                        workspace=user_workspace
+                    )
+
+                # create WS with 1 projects
+                user_workspace: Workspace = self.create_workspace(counter=3, owner=user)
+                num_projects = len(Project.objects.all())
+                self.create_project(
+                    counter=1 + num_projects,  # this way the Project will have the same name as the id: Project 1 with id: 1
+                    owner=user,
+                    workspace=user_workspace
+                )
+
+                # create empty WS
+                user_workspace: Workspace = self.create_workspace(counter=4, owner=user)
+
+            # create WS for other users
+            else:
+                for counter, user_project_group in enumerate(user_projects_groups):
+                    if len(user_project_group) >= 1:
+                        user_workspace: Workspace = self.create_workspace(counter, user)
+
+                        for project in user_project_group:
+                            project.workspace = user_workspace
+                            project.save()
 
 
     def create_attachment(self, obj, order):
@@ -589,9 +629,12 @@ class Command(BaseCommand):
 
         return epic
 
-    def create_project(self, counter, is_private=None, blocked_code=None):
+    def create_project(self, counter, owner=None, workspace=None, is_private=None, blocked_code=None):
         if is_private is None:
             is_private=self.sd.boolean()
+        
+        if owner is None:
+            owner=self.sd.choice(self.users)
 
         anon_permissions = not is_private and list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
         public_permissions = not is_private and list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
@@ -599,14 +642,15 @@ class Command(BaseCommand):
                                          name='Project Example {0}'.format(counter),
                                          description='Project example {0} description'.format(counter),
                                          color=self.sd.int(1,8),
-                                         owner=self.sd.choice(self.users),
+                                         owner=owner,
                                          is_private=is_private,
                                          anon_permissions=anon_permissions,
                                          public_permissions=public_permissions,
                                          total_story_points=self.sd.int(600, 3000),
                                          total_milestones=self.sd.int(5,10),
                                          tags=self.sd.words(1, 10).split(" "),
-                                         blocked_code=blocked_code)
+                                         blocked_code=blocked_code,
+                                         workspace=workspace)
 
         project.is_looking_for_people = counter in LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS
         if project.is_looking_for_people:
@@ -662,7 +706,7 @@ class Command(BaseCommand):
         return "#{}".format(color)
 
     def create_workspace(self, counter: int, owner: User):
-        return Workspace.objects.create(name=f'Workspace Example {counter}', owner=owner,
+        return Workspace.objects.create(name=f'Workspace Example {counter+1}', owner=owner,
                                         color=random.choice(range(1, MAX_COLORS+1)))
 
     def _split_evenly(self, a, n):

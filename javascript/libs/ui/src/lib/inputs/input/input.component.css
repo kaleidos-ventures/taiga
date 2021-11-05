@@ -20,27 +20,26 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   inline-size: 1rem;
 }
 
-::ng-deep {
-  & input {
-    block-size: 2rem;
-    border: solid 2px var(--color-gray60);
-    border-radius: 3px;
-    flex-basis: 100%;
-    margin-block-end: var(--spacing-4);
-    min-inline-size: 0;
-    padding: var(--spacing-8) var(--spacing-12);
+:host {
+  display: block;
 
-    &:focus {
-      border-color: var(--color-secondary);
-      border-radius: 3px;
-      outline: 0;
-    }
+  &.invalid.update-on-submit.submitted,
+  &.invalid.update-on-blur.dirty,
+  &.invalid.update-on-change.dirty,
+  &.invalid.update-on-blur.touched,
+  &.invalid.update-on-change.touched {
+    & ::ng-deep input {
+      border-color: var(--color-red);
 
-    &:read-only {
-      background: var(--color-gray20);
-      border-color: var(--color-white);
-      color: var(--color-gray80);
-      pointer-events: none;
+      &:read-only {
+        border-color: var(--color-white);
+      }
+
+      &:focus {
+        border-color: var(--color-secondary);
+        border-radius: 3px;
+        outline: 0;
+      }
     }
   }
 
@@ -56,27 +55,28 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  & .invalid.update-on-submit.submitted,
-  & .invalid.update-on-blur.dirty,
-  & .invalid.update-on-change.dirty,
-  & .invalid.update-on-blur.touched,
-  & .invalid.update-on-change.touched {
+  &::ng-deep {
     & input {
-      border-color: var(--color-red);
-
-      &:read-only {
-        border-color: var(--color-white);
-      }
+      block-size: 2rem;
+      border: solid 2px var(--color-gray60);
+      border-radius: 3px;
+      flex-basis: 100%;
+      margin-block-end: var(--spacing-4);
+      min-inline-size: 0;
+      padding: var(--spacing-8) var(--spacing-12);
 
       &:focus {
         border-color: var(--color-secondary);
         border-radius: 3px;
         outline: 0;
       }
+
+      &:read-only {
+        background: var(--color-gray20);
+        border-color: var(--color-white);
+        color: var(--color-gray80);
+        pointer-events: none;
+      }
     }
   }
-}
-
-:host {
-  display: block;
 }

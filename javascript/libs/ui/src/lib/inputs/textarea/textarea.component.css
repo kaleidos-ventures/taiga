@@ -7,20 +7,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 @import "tools/typography.css";
 
-::ng-deep {
-  & .invalid.update-on-submit.submitted,
-  & .invalid.update-on-blur.dirty,
-  & .invalid.update-on-change.dirty,
-  & .invalid.update-on-blur.touched,
-  & .invalid.update-on-change.touched {
-    & tui-wrapper {
+:host {
+  display: block;
+
+  &.invalid.update-on-submit.submitted,
+  &.invalid.update-on-blur.dirty,
+  &.invalid.update-on-change.dirty,
+  &.invalid.update-on-blur.touched,
+  &.invalid.update-on-change.touched {
+    & ::ng-deep tui-wrapper {
       --tui-base-03: var(--color-red);
     }
   }
-}
-
-:host {
-  display: block;
 }
 
 .optional {

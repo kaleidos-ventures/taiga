@@ -6,6 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Store } from '@ngrx/store';
+import { take } from 'rxjs/operators';
+
 export class UtilsService {
   public static objKeysTransformer(
     input: Record<string, unknown> | ArrayLike<unknown>,
@@ -31,5 +34,18 @@ export class UtilsService {
         })
       ) as { [k: string]: unknown; };
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public static getState<K>(store: Store, selector: (state: Record<string, any>) => K): K {
+    let state: K;
+
+    store.select(selector).pipe(
+      take(1)
+    ).subscribe((data) => {
+      state = data;
+    });
+
+    return state!;
   }
 }

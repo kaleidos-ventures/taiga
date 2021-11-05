@@ -119,6 +119,24 @@ export class TodoPageComponent implements OnInit {
 </ng-container>
 ```
 
+## Syncronous state without rx-angular
+
+```ts
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
+
+// component body
+  constructor(
+    private store: Store,
+  ) {}
+
+  public ngOnInit() {
+    const users = UtilsService.getState(this.store, selectUsers);
+    console.log(users);
+  }
+```
+
+Remember that this will not change if the global state changes.
+
 ### Translation
 
 Maybe the component could benefict from lazy load translations, check "Lazy load translation files" in translation.workflow.

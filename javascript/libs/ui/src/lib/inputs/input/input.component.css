@@ -8,39 +8,21 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
-.input-container {
-  display: flex;
-  max-inline-size: 100%;
-  position: relative;
-}
-
-.icon {
-  block-size: 1rem;
-  fill: var(--color-secondary);
-  inline-size: 1rem;
-}
-
 :host {
   display: block;
+}
 
-  &.invalid.update-on-submit.submitted,
-  &.invalid.update-on-blur.dirty,
-  &.invalid.update-on-change.dirty,
-  &.invalid.update-on-blur.touched,
-  &.invalid.update-on-change.touched {
-    & ::ng-deep input {
-      border-color: var(--color-red);
+:host::ng-deep {
+  & .input-container {
+    display: flex;
+    max-inline-size: 100%;
+    position: relative;
+  }
 
-      &:read-only {
-        border-color: var(--color-white);
-      }
-
-      &:focus {
-        border-color: var(--color-secondary);
-        border-radius: 3px;
-        outline: 0;
-      }
-    }
+  & .icon {
+    block-size: 1rem;
+    fill: var(--color-secondary);
+    inline-size: 1rem;
   }
 
   & .has-icon {
@@ -55,27 +37,45 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  &::ng-deep {
-    & input {
-      block-size: 2rem;
-      border: solid 2px var(--color-gray60);
+  & input {
+    block-size: 2rem;
+    border: solid 2px var(--color-gray40);
+    border-radius: 3px;
+    flex-basis: 100%;
+    margin-block-end: var(--spacing-4);
+    min-inline-size: 0;
+    padding: var(--spacing-8) var(--spacing-12);
+
+    &:focus {
+      border-color: var(--color-secondary);
       border-radius: 3px;
-      flex-basis: 100%;
-      margin-block-end: var(--spacing-4);
-      min-inline-size: 0;
-      padding: var(--spacing-8) var(--spacing-12);
+      outline: 0;
+    }
+
+    &:read-only {
+      background: var(--color-gray20);
+      border-color: var(--color-white);
+      color: var(--color-gray80);
+      pointer-events: none;
+    }
+  }
+
+  &.invalid.update-on-submit.submitted,
+  &.invalid.update-on-blur.dirty,
+  &.invalid.update-on-change.dirty,
+  &.invalid.update-on-blur.touched,
+  &.invalid.update-on-change.touched {
+    & input {
+      border-color: var(--color-red);
+
+      &:read-only {
+        border-color: var(--color-white);
+      }
 
       &:focus {
         border-color: var(--color-secondary);
         border-radius: 3px;
         outline: 0;
-      }
-
-      &:read-only {
-        background: var(--color-gray20);
-        border-color: var(--color-white);
-        color: var(--color-gray80);
-        pointer-events: none;
       }
     }
   }

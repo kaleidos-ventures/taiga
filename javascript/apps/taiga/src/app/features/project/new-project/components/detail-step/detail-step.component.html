@@ -14,7 +14,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <form class="detail-project-form"
       [formGroup]="detailProjectForm"
       (ngSubmit)="createProject()">
-      <tg-ui-select [label]="t('commons.workspace')">
+      <tg-ui-select [label]="t('commons.workspace')" type="avatar">
         <tui-select tuiTextfieldSize="l"
           formControlName="workspace"
           [valueContent]="content"
@@ -50,7 +50,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tg-ui-input>
 
       <!-- Project description -->
-      <tg-ui-textarea [label]="t('new_project.second_step.project_title')"
+      <tg-ui-textarea [label]="t('new_project.second_step.project_description')"
         [optional]="true">
         <tui-text-area formControlName="description"
           [expandable]="true"
@@ -70,8 +70,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [tip]="t('new_project.second_step.choose_image_explanation')"
         (projectImage)="onAddProjectImage($event)">
       </tg-ui-file-upload>
-
-      <div class="form-actions">
+      <div class="project-new-step-actions">
         <button
           (click)="cancelForm()"
           tuiButton

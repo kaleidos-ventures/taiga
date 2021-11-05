@@ -120,3 +120,17 @@ tui-text-area {
     }
   }
 }
+
+/* stylelint-disable */
+tui-data-list {
+  padding: 0 !important;
+
+  & button {
+    border-block-end: 0 !important;
+    border-block-start: 0 !important;
+    margin: 0 !important;
+    min-block-size: var(--spacing-24) !important;
+    padding: var(--spacing-8) !important;
+  }
+}
+/* stylelint-enable */

@@ -27,7 +27,7 @@ import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { InviteStepComponent } from './components/invite-step/invite-step.component';
 import { FileUploadModule } from 'libs/ui/src/lib/inputs/file-upload/file-upload.module';
 import { DetailStepComponent } from './components/detail-step/detail-step.component';
-import { AvatarModule } from '@taiga/ui';
+import { AvatarModule } from '@taiga/ui/avatar';
 
 @NgModule({
   declarations: [

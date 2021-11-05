@@ -11,7 +11,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
-import { AvatarModule } from '@taiga/ui';
+import { AvatarModule } from '@taiga/ui/avatar';
 import { ProjectCardComponent } from './project-card.component';
 
 @NgModule({

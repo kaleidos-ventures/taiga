@@ -5,9 +5,6 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-
-import '@ng-web-apis/universal/mocks';
-
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 
@@ -30,7 +27,7 @@ describe('TemplateStepComponent', () => {
     ],
     declareComponent: false,
   });
-  
+
   beforeEach(() => {
     spectator = createComponent({
       props: {

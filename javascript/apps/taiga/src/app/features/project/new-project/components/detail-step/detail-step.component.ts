@@ -9,7 +9,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectCreation, Workspace } from '@taiga/data';
-import { RandomColorService } from '@taiga/ui';
+import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
 
 @Component({
   selector: 'tg-detail-step',
@@ -20,11 +20,11 @@ import { RandomColorService } from '@taiga/ui';
 export class DetailStepComponent implements OnInit {
 
   public detailProjectForm!: FormGroup;
-  
-  @Input() 
+
+  @Input()
   public selectedWorkspaceSlug!: ProjectCreation['workspaceSlug'];
-  
-  @Input() 
+
+  @Input()
   public workspaces!: Workspace[];
 
   @Output()
@@ -33,7 +33,7 @@ export class DetailStepComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
   ) {}
-  
+
   public ngOnInit() {
     this.initForm();
   }

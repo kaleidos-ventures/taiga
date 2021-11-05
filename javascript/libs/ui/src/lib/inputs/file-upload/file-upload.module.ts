@@ -11,7 +11,7 @@ import { NgModule } from '@angular/core';
 import { FileUploadComponent } from './file-upload.component';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule } from '@taiga-ui/core';
-import { AvatarModule } from '@taiga/ui';
+import { AvatarModule } from '@taiga/ui/avatar';
 
 @NgModule({
   imports: [

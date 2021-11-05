@@ -28,7 +28,7 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AngularResizeEventModule } from 'angular-resize-event';
 import { ProjectCardModule } from '~/app/shared/project-card/project-card.module';
-import { AvatarModule } from '@taiga/ui';
+import { AvatarModule } from '@taiga/ui/avatar';
 
 @NgModule({
   declarations: [

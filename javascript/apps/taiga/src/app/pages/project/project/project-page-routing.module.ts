@@ -13,12 +13,12 @@ import { ProjectPageComponent } from './project-page.component';
 const routes: Routes = [
   {
     path: '', component: ProjectPageComponent,
-  },
-  // KANBAN
-
-  {
-    path: ':slug:/kanban',
-    loadChildren: () => import('~/app/pages/kanban/kanban-page.module').then(m => m.KanbanPageModule)
+    children: [
+      {
+        path: 'kanban',
+        loadChildren: () => import('~/app/pages/kanban/kanban-page.module').then(m => m.KanbanPageModule)
+      }
+    ]
   }
 ];
 

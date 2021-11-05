@@ -54,7 +54,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [class.active-dialog]="dialog.type === 'overview'"
                 [routerLink]="['/project', project.slug]"
                 routerLinkActive
-                #overviewActive="routerLinkActive">
+                #overviewActive="routerLinkActive"
+                [routerLinkActiveOptions]="{exact: true}">
                 <tui-svg class="menu-option-icon"
                   src="overview"></tui-svg>
                 <span *ngIf="!collapsed"
@@ -131,6 +132,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </ul>
             </li>
             <li class="menu-option"
+            [class.active]="kanbanActive.isActive"
               [attr.data-text]="t('commons.kanban')"
               (pointerenter)="popup($event, 'kanban')"
               (pointerleave)="out()">
@@ -140,7 +142,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="collapsed ? t('commons.kanban') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'kanban'"
-                [href]="dialog.link">
+                [routerLink]="['/project', project.slug, 'kanban']"
+                routerLinkActive
+                #kanbanActive="routerLinkActive">
                 <tui-svg class="menu-option-icon"
                   src="kanban"></tui-svg>
                 <span *ngIf="!collapsed"

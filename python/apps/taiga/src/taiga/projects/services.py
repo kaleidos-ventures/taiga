@@ -44,7 +44,7 @@ def get_project(slug: str) -> Optional[Project]:
 
 def get_logo_thumbnail_url(thumbnailer_size: str, logo_relative_path: str) -> Union[str, None]:
     if logo_relative_path:
-        return get_thumbnail_url(logo_relative_path, settings.IMAGES.THUMBNAIL_PROJECT_LOGO_SMALL)
+        return get_thumbnail_url(logo_relative_path, thumbnailer_size)
     return None
 
 

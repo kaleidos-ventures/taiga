@@ -8,9 +8,10 @@
 from typing import Optional
 
 from taiga.base.serializer import BaseModel
+from taiga.projects.serializers import ProjectLogoMixin
 
 
-class ProjectSummarySerializer(BaseModel):
+class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
     name: str
     slug: str
     description: Optional[str] = None

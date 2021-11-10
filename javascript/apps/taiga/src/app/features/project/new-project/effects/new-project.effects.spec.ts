@@ -14,8 +14,10 @@ import { Observable } from 'rxjs';
 
 import { ProjectCreationMockFactory, ProjectMockFactory } from '@taiga/data';
 import { NewProjectEffects } from './new-project.effects';
-import { createProject, createProjectSuccess } from '../actions/new-project.actions';
+import { createProject, createProjectSuccess, inviteUsersNewProject } from '../actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Router } from '@angular/router';
 
 describe('NewProjectEffects', () => {
   let actions$: Observable<Action>;
@@ -26,7 +28,13 @@ describe('NewProjectEffects', () => {
     providers: [
       provideMockActions(() => actions$),
     ],
-    mocks: [ ProjectApiService ],
+    imports: [
+      RouterTestingModule,
+    ],
+    mocks: [
+      ProjectApiService,
+      Router
+    ],
   });
 
   beforeEach(() => {
@@ -56,4 +64,41 @@ describe('NewProjectEffects', () => {
     ).toBeObservable(expected);
   });
 
+  it('create project success', () => {
+    const project = ProjectMockFactory();
+    const effects = spectator.inject(NewProjectEffects);
+
+    effects.createProjectSuccess$.subscribe();
+
+    const router = spectator.inject(Router);
+
+    actions$ = hot('-a--b', {
+      a: createProjectSuccess({project}),
+      b: inviteUsersNewProject(),
+    });
+
+    expect(effects.createProjectSuccess$).toSatisfyOnFlush(() => {
+      expect(router.navigate).toHaveBeenCalledWith(['/project/', project.slug, 'kanban']);
+    });
+  });
+
+  it('resume create project success', () => {
+    const project = ProjectMockFactory();
+    const project2 = ProjectMockFactory();
+    const effects = spectator.inject(NewProjectEffects);
+
+    effects.createProjectSuccess$.subscribe();
+
+    const router = spectator.inject(Router);
+
+    actions$ = hot('-a-c-b', {
+      a: createProjectSuccess({project}),
+      b: inviteUsersNewProject(),
+      c: createProjectSuccess({project: project2}),
+    });
+
+    expect(effects.createProjectSuccess$).toSatisfyOnFlush(() => {
+      expect(router.navigate).toHaveBeenCalledWith(['/project/', project2.slug, 'kanban']);
+    });
+  });
 });

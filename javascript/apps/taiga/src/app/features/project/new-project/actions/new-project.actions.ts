@@ -23,3 +23,7 @@ export const createProjectError = createAction(
   '[NewProject] create project error',
   props<{error: unknown}>()
 );
+
+export const inviteUsersNewProject = createAction(
+  '[NewProject] invite'
+);

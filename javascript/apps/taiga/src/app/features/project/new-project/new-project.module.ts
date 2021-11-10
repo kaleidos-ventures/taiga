@@ -8,8 +8,6 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StoreModule } from '@ngrx/store';
-import { newProjectFeature } from './reducers/new-project.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { NewProjectEffects } from './effects/new-project.effects';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -41,7 +39,6 @@ import { AvatarModule } from '@taiga/ui/avatar';
     ReactiveFormsModule,
     CommonModule,
     TranslocoModule,
-    StoreModule.forFeature(newProjectFeature),
     EffectsModule.forFeature([NewProjectEffects]),
     TuiSvgModule,
     FormsModule,

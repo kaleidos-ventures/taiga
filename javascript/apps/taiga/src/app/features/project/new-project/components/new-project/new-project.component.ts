@@ -10,12 +10,10 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ProjectCreation, User } from '@taiga/data';
 import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
-import { createProject } from '~/app/features/project/new-project/actions/new-project.actions';
+import { createProject, inviteUsersNewProject } from '~/app/features/project/new-project/actions/new-project.actions';
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 import { Step } from '~/app/features/project/new-project/data/new-project.model';
 import { Router } from '@angular/router';
-import { selectProject } from '~/app/features/project/new-project/selectors/new-project.selectors';
-import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 @Component({
   selector: 'tg-new-project',
@@ -59,9 +57,7 @@ export class NewProjectComponent implements OnInit {
     if (users.length) {
       console.log('This user will be added', users);
     }
-    const project = UtilsService.getState(this.store, selectProject);
-    if (project) {
-      void this.router.navigate(['/project/', project.slug, 'kanban']);
-    }
+
+    this.store.dispatch(inviteUsersNewProject());
   }
 }

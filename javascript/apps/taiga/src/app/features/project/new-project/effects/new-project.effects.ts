@@ -9,12 +9,13 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 import * as NewProjectActions from '~/app/features/project/new-project/actions/new-project.actions';
 import { ProjectApiService } from '@taiga/api';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { Project } from '@taiga/data';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class NewProjectEffects {
@@ -39,9 +40,23 @@ export class NewProjectEffects {
     );
   });
 
+  public createProjectSuccess$ = createEffect(() => {
+    return this.actions$.pipe(ofType(NewProjectActions.createProjectSuccess)).pipe(
+      switchMap((action) =>  {
+        return this.actions$.pipe(ofType(NewProjectActions.inviteUsersNewProject))
+          .pipe(
+            tap(() => {
+              void this.router.navigate(['/project/', action.project.slug, 'kanban']);
+            }),
+          );
+      })
+    );
+  }, { dispatch: false });
+
   constructor(
     private actions$: Actions,
-    private projectApiService: ProjectApiService
+    private projectApiService: ProjectApiService,
+    private router: Router
   ) {}
 
 }

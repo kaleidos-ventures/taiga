@@ -7,6 +7,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t;">
+  <div class="new-step-top-actions">
+    <button tuiButton
+      type="button"
+      (click)="cancelForm()"
+      appearance="tertiary"
+      icon="arrow-left">
+      {{ t('commons.back') }}
+    </button>
+  </div>
 
   <div class="new-step-wrapper">
     <h1 class="new-step-title">

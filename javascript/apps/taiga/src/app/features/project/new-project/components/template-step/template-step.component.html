@@ -7,6 +7,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t;">
+  <div class="new-step-top-actions">
+    <a tuiButton
+      type="button"
+      appearance="tertiary"
+      routerLink=".."
+      icon="arrow-left">
+      {{ t('commons.back') }}
+    </a>
+  </div>
   <div class="new-step-wrapper">
     <h1 class="new-step-title">{{ t('new_project.new_project') }}</h1>
     <form [formGroup]="createProjectForm">

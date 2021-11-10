@@ -18,7 +18,6 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'tg-new-project',
   templateUrl: './new-project.component.html',
-  styleUrls: ['./new-project.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewProjectComponent implements OnInit {

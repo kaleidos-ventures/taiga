@@ -6,7 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectCreation, Workspace } from '@taiga/data';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
@@ -14,14 +22,10 @@ import { RandomColorService } from '@taiga/ui/services/random-color/random-color
 @Component({
   selector: 'tg-detail-step',
   templateUrl: './detail-step.component.html',
-  styleUrls: [
-    '../../styles/project.shared.css',
-    './detail-step.component.css'
-  ],
+  styleUrls: ['../../styles/project.shared.css', './detail-step.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailStepComponent implements OnInit {
-
   public detailProjectForm!: FormGroup;
 
   @Input()
@@ -36,9 +40,11 @@ export class DetailStepComponent implements OnInit {
   @Output()
   public cancel = new EventEmitter<void>();
 
-  constructor(
-    private fb: FormBuilder,
-  ) {}
+  @HostListener('window:beforeunload')
+  public unloadHandler(event: Event) {
+    event.preventDefault();
+  }
+  constructor(private fb: FormBuilder) {}
 
   public ngOnInit() {
     this.initForm();
@@ -55,7 +61,9 @@ export class DetailStepComponent implements OnInit {
   }
 
   public getCurrentWorkspace() {
-    return this.workspaces.find((workspace) => workspace.slug === this.selectedWorkspaceSlug);
+    return this.workspaces.find(
+      (workspace) => workspace.slug === this.selectedWorkspaceSlug
+    );
   }
 
   public get workspace() {
@@ -77,7 +85,8 @@ export class DetailStepComponent implements OnInit {
   public createProject() {
     this.detailProjectForm.markAllAsTouched();
     if (this.detailProjectForm.valid) {
-      const workspace = this.detailProjectForm.get('workspace')?.value as Workspace;
+      const workspace = this.detailProjectForm.get('workspace')
+        ?.value as Workspace;
       const projectFormValue: ProjectCreation = {
         workspaceSlug: workspace.slug,
         name: this.detailProjectForm.get('title')?.value as string,
@@ -88,5 +97,4 @@ export class DetailStepComponent implements OnInit {
       this.projectData.next(projectFormValue);
     }
   }
-
 }

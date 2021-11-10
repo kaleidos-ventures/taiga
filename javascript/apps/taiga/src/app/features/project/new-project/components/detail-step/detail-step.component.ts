@@ -10,10 +10,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  HostListener,
   Input,
   OnInit,
   Output,
+  HostListener,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectCreation, Workspace } from '@taiga/data';

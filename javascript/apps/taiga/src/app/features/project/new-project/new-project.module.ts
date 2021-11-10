@@ -26,6 +26,7 @@ import { InviteStepComponent } from './components/invite-step/invite-step.compon
 import { FileUploadModule } from 'libs/ui/src/lib/inputs/file-upload/file-upload.module';
 import { DetailStepComponent } from './components/detail-step/detail-step.component';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { AvatarModule } from '@taiga/ui/avatar';
     ReactiveFormsModule,
     TuiSelectModule,
     TuiDataListWrapperModule,
+    TuiAutoFocusModule,
     AvatarModule,
     RouterModule,
     TuiButtonModule,

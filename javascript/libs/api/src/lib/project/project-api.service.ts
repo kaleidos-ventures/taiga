@@ -8,6 +8,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ApiUtilsService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 
 import { Project, ProjectCreation } from '@taiga/data';
@@ -30,6 +31,14 @@ export class ProjectApiService {
   }
 
   public createProject(project: ProjectCreation) {
-    return this.http.post<Project>(`${this.config.apiUrl}/projects`, project);
+    const form = {
+      workspaceSlug:  project.workspaceSlug,
+      name: project.name,
+      color: project.color,
+      logo: project.logo,
+      description: project.description,
+    };
+    const formData = ApiUtilsService.buildFormData(form);
+    return this.http.post<Project>(`${this.config.apiUrl}/projects`, formData);
   }
 }

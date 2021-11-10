@@ -55,6 +55,6 @@ describe('TemplateStepComponent', () => {
     spectator.component.initForm();
     spectator.component.onAddProjectImage(file);
 
-    expect(spectator.component.detailProjectForm.get('icon')?.value).toEqual(file);
+    expect(spectator.component.detailProjectForm.get('logo')?.value).toEqual(file);
   });
 });

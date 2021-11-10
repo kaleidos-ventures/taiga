@@ -13,7 +13,7 @@ import { map } from 'rxjs/operators';
 
 import * as NewProjectActions from '~/app/features/project/new-project/actions/new-project.actions';
 import { ProjectApiService } from '@taiga/api';
-import { fetch } from '@nrwl/angular';
+import { pessimisticUpdate } from '@nrwl/angular';
 import { Project } from '@taiga/data';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class NewProjectEffects {
   public createProject$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(NewProjectActions.createProject),
-      fetch({
+      pessimisticUpdate({
         run: (action) => {
           return this.projectApiService.createProject(
             action.project
@@ -32,8 +32,8 @@ export class NewProjectEffects {
             })
           );
         },
-        onError: () => {
-          return NewProjectActions.createProjectError;
+        onError: (error) => {
+          return NewProjectActions.createProjectError({ error });
         },
       })
     );

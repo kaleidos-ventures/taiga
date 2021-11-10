@@ -7,6 +7,7 @@
  */
 
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 @Component({
   selector: 'tg-ui-file-upload',
@@ -15,6 +16,13 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, 
     '../inputs.css',
     './file-upload.component.css'
   ],
+  providers: [{
+    provide: TRANSLOCO_SCOPE,
+    useValue: {
+      scope: 'file_upload',
+      alias: 'file_upload',
+    },
+  },]
 })
 export class FileUploadComponent {
 
@@ -25,11 +33,11 @@ export class FileUploadComponent {
   @Input() public title = '';
   @Input() public color = 0;
 
-  @ViewChild('iconUpload') 
+  @ViewChild('iconUpload')
   public iconUpload!: ElementRef<HTMLInputElement>;
 
   @Output()
-  public projectImage = new EventEmitter<File>();
+  public projectImage = new EventEmitter<File | undefined>();
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -51,7 +59,7 @@ export class FileUploadComponent {
       reader.onload = () => {
         this.filePath = reader.result as string;
       };
-      
+
       this.cd.markForCheck();
     }
   }

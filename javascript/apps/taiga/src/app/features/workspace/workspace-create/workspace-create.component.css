@@ -20,7 +20,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     padding: var(--spacing-16);
   }
 
-  & tg-workspace-avatar {
+  & .workspace-image {
     margin-block-start: var(--spacing-20);
     margin-inline-end: var(--spacing-16);
   }

@@ -7,23 +7,23 @@
  */
 
 import { createReducer, on, createFeature } from '@ngrx/store';
+import { Project } from '@taiga/data';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as NewProjectActions from '../actions/new-project.actions';
 
-export const newProjectFeatureKey = 'newProject';
-
 export interface NewProjectState {
-  reference: string
+  project: Project | null;
 }
 
 export const initialState: NewProjectState = {
-  reference: ''
+  project: null
 };
 
 const reducer = createReducer(
   initialState,
-  on(NewProjectActions.setReference, (state): NewProjectState => {
-
+  on(NewProjectActions.createProjectSuccess, (state, { project }):
+  NewProjectState => {
+    state.project = project;
     return state;
   }),
 );

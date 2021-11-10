@@ -7,6 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t;">
+
   <ng-container *ngIf="workspaceList$ | async as workspaceList">
     <div class="page-actions">
       <a tuiButton
@@ -24,7 +25,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </tg-template-step>
       </ng-container>
       <ng-container *ngIf="currentStep === 'detail'">
-        <tg-detail-step (projectData)="createProject($event)"
+        <tg-detail-step
+          (projectData)="createProject($event)"
+          (cancel)="currentStep = 'template'"
           [selectedWorkspaceSlug]="formData.workspaceSlug"
           [workspaces]="workspaceList">
         </tg-detail-step>

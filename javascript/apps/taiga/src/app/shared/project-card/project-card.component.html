@@ -32,7 +32,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <div *ngIf="!placeholder"
     class="project-item-card">
     <div class="project-card-title">
-      <tg-ui-avatar class="project-card-image" [color]="project.color"
+      <tg-ui-avatar class="project-card-image"
+        [color]="project.color"
+        [url]="project.logoSmall"
         [name]="project.name"
         type="light">
       </tg-ui-avatar>

@@ -5,18 +5,18 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-
-import { setReference } from '../actions/new-project.actions';
 import { newProjectFeature, initialState } from './new-project.reducer';
 
-import * as faker from 'faker';
+import { createProjectSuccess } from '../actions/new-project.actions';
+import { ProjectMockFactory } from '@taiga/data';
 
 describe('NewProject Reducer', () => {
-  it('set Reference', () => {
-    const action = setReference({reference: faker.lorem.word()});
+  it('set Project success', () => {
+    const project = ProjectMockFactory();
+    const action = createProjectSuccess({ project });
 
     const result = newProjectFeature.reducer(initialState, action);
 
-    expect(result).toBe(initialState);
+    expect(result).toEqual({project});
   });
 });

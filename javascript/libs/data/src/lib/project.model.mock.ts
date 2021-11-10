@@ -30,6 +30,9 @@ export const ProjectMockFactory = (milestones = false): Project => {
     color: faker.datatype.number(8),
     description: faker.lorem.paragraphs(),
     workspace: WorkspaceMockFactory(),
+    logo: faker.image.imageUrl(),
+    logoSmall: faker.image.imageUrl(),
+    logoBig: faker.image.imageUrl(),
   };
 };
 

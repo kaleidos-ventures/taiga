@@ -7,7 +7,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 @import "tools/typography.css";
-@import "../../../../../shared/project/project.shared";
 
 .invite-placeholder {
   block-size: 60vh;

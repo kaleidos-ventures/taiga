@@ -14,7 +14,10 @@ import { User } from '@taiga/data';
 @Component({
   selector: 'tg-invite-step',
   templateUrl: './invite-step.component.html',
-  styleUrls: ['./invite-step.component.css'],
+  styleUrls: [
+    '../../styles/project.shared.css',
+    './invite-step.component.css'
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InviteStepComponent implements OnInit {

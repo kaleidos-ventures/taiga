@@ -7,14 +7,14 @@
  */
 
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpInterceptor, HttpResponse, HttpParams } from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpInterceptor, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { ConfigService } from '@taiga/core';
 import { Store } from '@ngrx/store';
 import { getGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
-import { camelCase, snakeCase } from 'change-case';
+import { camelCase } from 'change-case';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
 import { Auth } from '@taiga/data';
 import { loginSuccess, logout } from '~/app/features/auth/actions/auth.actions';
@@ -60,10 +60,6 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     }
 
     request = this.authInterceptor(request);
-
-    if (request instanceof HttpRequest) {
-      request = this.snakeCaseRequestInterceptor(request);
-    }
 
     this.addRequest(request);
 
@@ -117,32 +113,6 @@ export class ApiRestInterceptorService implements HttpInterceptor {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public remvoveRequest(request: HttpRequest<any>) {
     this.requests.next(this.requests.value.filter((it) => it !== request));
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private snakeCaseRequestInterceptor(request: HttpRequest<any>): HttpRequest<unknown> {
-    let newRequest = request;
-
-    if (newRequest.body) {
-      const body = UtilsService.objKeysTransformer(newRequest.body, snakeCase);
-      newRequest = newRequest.clone({ body });
-    }
-
-    if (newRequest.params) {
-      let params: HttpParams = new HttpParams();
-
-      newRequest.params.keys().forEach((key) => {
-        const param = newRequest.params.get(key);
-
-        if (param) {
-          params = params.append(snakeCase(key), param);
-        }
-      });
-
-      newRequest = newRequest.clone({ params });
-    }
-
-    return newRequest;
   }
 
   private authInterceptor(request: HttpRequest<unknown>): HttpRequest<unknown> {

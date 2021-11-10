@@ -25,8 +25,8 @@
     "project_description": "Project description",
     "project_description_placeholder": "Add a short description to help others better understand your project",
     "project_icon": "Project icon",
-    "choose_image_explanation": "Only .jpg and .png files. 500kb max file size",
-    "choose_image": "Choose image",
-    "create_project": "Create project"
+    "create_project": "Create project",
+    "max_length_error": "Maximun length 140",
+    "choose_image_tip": "Formats allowed: gif, png, jpg, svg and webp"
   }
 }

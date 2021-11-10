@@ -8,8 +8,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t;">
 
-  <div class="detail-step-wrapper">
-    <h1 class="detail-step-title">
+  <div class="new-step-wrapper">
+    <h1 class="new-step-title">
       {{ t('new_project.second_step.project_details') }}</h1>
     <form class="detail-project-form"
       [formGroup]="detailProjectForm"
@@ -41,7 +41,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <!-- Project title -->
       <tg-ui-input [label]="t('new_project.second_step.project_title')">
         <input formControlName="title"
-          inputRef>
+          inputRef maxlength="80">
         <ng-container inputError>
           <tg-ui-error error="required">
             {{ t('new_project.second_step.project_title_error') }}
@@ -59,7 +59,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </tui-text-area>
         <tg-ui-error inputError
           error="maxlength">
-          Maximun length 140
+          {{ t('new_project.second_step.max_length_error') }}
         </tg-ui-error>
       </tg-ui-textarea>
 
@@ -67,10 +67,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <tg-ui-file-upload [color]="detailProjectForm.get('color')?.value"
         [title]="detailProjectForm.get('title')?.value"
         [label]="t('new_project.second_step.project_icon')"
-        [tip]="t('new_project.second_step.choose_image_explanation')"
+        [tip]="t('new_project.second_step.choose_image_tip')"
         (projectImage)="onAddProjectImage($event)">
       </tg-ui-file-upload>
-      <div class="project-new-step-actions">
+
+      <div class="new-step-actions">
         <button
           (click)="cancelForm()"
           tuiButton

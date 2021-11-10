@@ -9,5 +9,5 @@
 import { newProjectFeature } from '../reducers/new-project.reducer';
 
 export const {
-  selectReference
+  selectProject
 } = newProjectFeature;

@@ -10,7 +10,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ApiRestInterceptorService } from './api-rest-interceptor.service';
 import { createHttpFactory, SpectatorHttp } from '@ngneat/spectator/jest';
 import * as faker from 'faker';
-import { HTTP_INTERCEPTORS, HttpRequest, HttpResponse, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { forkJoin, of, throwError } from 'rxjs';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -190,43 +190,6 @@ describe('ApiRestInterceptor', () => {
 
       done();
     });
-  });
-
-  it('snake case request', () => {
-    const userId = faker.datatype.number();
-
-    const authInterceptorService = spectator.inject(ApiRestInterceptorService);
-    const apiRequest = new HttpRequest(
-      'POST',
-      ConfigServiceMock.apiUrl, {
-        theUser: {
-          userId,
-        },
-      },
-      {
-        params: new HttpParams({
-          fromObject: {
-            snakeCaseKey: 'test',
-          },
-        }),
-      }
-    );
-
-    const next = {
-      handle(request: HttpRequest<any>) {
-        expect(request.body).toEqual({
-          the_user: {
-            user_id: userId,
-          },
-        });
-
-        expect(request.params.get('snake_case_key')).toBeTruthy();
-
-        return of(new HttpResponse({ status: 200 }));
-      },
-    };
-
-    authInterceptorService.intercept(apiRequest, next).subscribe();
   });
 
   it('camel case response', () => {

@@ -8,7 +8,7 @@
 
 import { Project } from './project.model';
 
-export type WorkspaceProject = Pick<Project, 'name'|'slug'|'description'|'color'>;
+export type WorkspaceProject = Pick<Project, 'name'|'slug'|'description'|'color'|'logoSmall'>;
 
 export interface Workspace {
   id: number;

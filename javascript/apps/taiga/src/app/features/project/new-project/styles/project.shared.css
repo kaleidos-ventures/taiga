@@ -6,10 +6,11 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
-.project-new-step-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
+@import "tools/typography.css";
+
+.new-step-wrapper {
+  inline-size: 480px;
+  margin: 0 auto;
 }
 
 .new-step-title {
@@ -18,7 +19,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   margin-block: 0 var(--spacing-32);
 }
 
-.new-step-wrapper {
-  inline-size: 480px;
-  margin: 0 auto;
+.new-step-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
 }

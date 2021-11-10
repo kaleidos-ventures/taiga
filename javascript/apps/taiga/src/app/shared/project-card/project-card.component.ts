@@ -29,5 +29,5 @@ export class ProjectCardComponent {
   public firstProject = false;
 
   @Input()
-  public project!: Pick<Project, 'name'|'slug'|'description'|'color'>;
+  public project!: Pick<Project, 'name'|'slug'|'description'|'color'|'logoSmall'>;
 }

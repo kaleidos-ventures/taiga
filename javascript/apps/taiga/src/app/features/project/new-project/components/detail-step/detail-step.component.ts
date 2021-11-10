@@ -14,7 +14,10 @@ import { RandomColorService } from '@taiga/ui/services/random-color/random-color
 @Component({
   selector: 'tg-detail-step',
   templateUrl: './detail-step.component.html',
-  styleUrls: ['./detail-step.component.css'],
+  styleUrls: [
+    '../../styles/project.shared.css',
+    './detail-step.component.css'
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailStepComponent implements OnInit {
@@ -30,6 +33,9 @@ export class DetailStepComponent implements OnInit {
   @Output()
   public projectData = new EventEmitter<ProjectCreation>();
 
+  @Output()
+  public cancel = new EventEmitter<void>();
+
   constructor(
     private fb: FormBuilder,
   ) {}
@@ -44,7 +50,7 @@ export class DetailStepComponent implements OnInit {
       title: ['', Validators.required],
       description: ['', Validators.maxLength(140)],
       color: [RandomColorService.randomColorPicker(), Validators.required],
-      icon: '',
+      logo: '',
     });
   }
 
@@ -56,24 +62,32 @@ export class DetailStepComponent implements OnInit {
     return this.detailProjectForm.get('workspace')?.value as Workspace;
   }
 
-  public onAddProjectImage(image: File) {
-    this.detailProjectForm.get('icon')?.setValue(image);
+  public onAddProjectImage(image?: File) {
+    const allowedFormats = ['image/webp', 'image/gif', 'image/jpg', 'image/jpeg', 'image/svg+xml', 'image/png'];
+    if(image && allowedFormats.includes(image.type)) {
+      this.detailProjectForm.get('logo')?.setValue(image);
+    } else {
+      this.detailProjectForm.setErrors({
+        wrongFormat: true
+      });
+    }
   }
 
   public cancelForm() {
-    console.log('cancel');
+    this.cancel.next();
   }
 
   public createProject() {
-    const workspace = this.detailProjectForm.get('workspace')?.value as Workspace;
-    const projectFormValue: ProjectCreation = {
-      workspaceSlug: workspace.slug,
-      name: this.detailProjectForm.get('title')?.value as string,
-      description: this.detailProjectForm.get('description')?.value as string,
-      color: this.detailProjectForm.get('color')?.value as number,
-      icon: this.detailProjectForm.get('icon')?.value as File,
-    };
+    this.detailProjectForm.markAllAsTouched();
     if (this.detailProjectForm.valid) {
+      const workspace = this.detailProjectForm.get('workspace')?.value as Workspace;
+      const projectFormValue: ProjectCreation = {
+        workspaceSlug: workspace.slug,
+        name: this.detailProjectForm.get('title')?.value as string,
+        description: this.detailProjectForm.get('description')?.value as string,
+        color: this.detailProjectForm.get('color')?.value as number,
+        logo: this.detailProjectForm.get('logo')?.value as File,
+      };
       this.projectData.next(projectFormValue);
     }
   }

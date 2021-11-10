@@ -17,17 +17,20 @@ import { Template } from '~/app/features/project/new-project/data/new-project.mo
 @Component({
   selector: 'tg-template-step',
   templateUrl: './template-step.component.html',
-  styleUrls: ['./template-step.component.css'],
+  styleUrls: [
+    '../../styles/project.shared.css',
+    './template-step.component.css'
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TemplateStepComponent implements OnInit {
 
-  @Input() 
+  @Input()
   public workspaces!: Workspace[];
 
   @Output()
   public templateSelected = new EventEmitter<ProjectCreation['workspaceSlug']>();
-  
+
   public createProjectForm!: FormGroup;
 
   public templates: Template[] = [
@@ -67,7 +70,7 @@ export class TemplateStepComponent implements OnInit {
     private translocoService: TranslocoService,
     private route: ActivatedRoute,
   ) {}
-  
+
   public ngOnInit() {
     this.initForm();
     this.getParams();
@@ -99,7 +102,7 @@ export class TemplateStepComponent implements OnInit {
       this.createProjectForm.markAllAsTouched();
     }
   }
-  
+
   public get currentWorkspace(): FormControl {
     return this.createProjectForm.get('workspace') as FormControl;
   }

@@ -23,7 +23,6 @@ import { AvatarModule } from '@taiga/ui/avatar';
   declarations: [
     FileUploadComponent
   ],
-  providers: [],
   exports: [
     FileUploadComponent
   ]

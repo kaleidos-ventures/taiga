@@ -10,6 +10,9 @@ import { Milestone } from './milestone.model';
 import { Workspace } from './workspace.model';
 
 export interface Project {
+  logoSmall: string,
+  logoBig: string,
+  logo: string
   name: string;
   slug: string;
   description: string;
@@ -21,7 +24,7 @@ export interface Project {
 export interface ProjectCreation {
   workspaceSlug: Workspace['slug'];
   name: string;
-  description: string;
+  description?: string;
   color: number;
-  icon?: File;
+  logo?: File;
 }

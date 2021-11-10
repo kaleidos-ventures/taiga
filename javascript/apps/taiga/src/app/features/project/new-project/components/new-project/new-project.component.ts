@@ -14,6 +14,8 @@ import { createProject } from '~/app/features/project/new-project/actions/new-pr
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 import { Step } from '~/app/features/project/new-project/data/new-project.model';
 import { Router } from '@angular/router';
+import { selectProject } from '~/app/features/project/new-project/selectors/new-project.selectors';
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 @Component({
   selector: 'tg-new-project',
@@ -22,6 +24,8 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewProjectComponent implements OnInit {
+  constructor(private store: Store, private router: Router) {}
+
   public workspaceList$ = this.store.select(selectWorkspaces);
   public currentStep: Step = 'template';
 
@@ -31,11 +35,6 @@ export class NewProjectComponent implements OnInit {
     description: 'string',
     color: 0,
   };
-
-  constructor(
-    private store: Store,
-    private router: Router
-  ) {}
 
   public ngOnInit() {
     this.store.dispatch(fetchWorkspaceList());
@@ -47,7 +46,8 @@ export class NewProjectComponent implements OnInit {
   }
 
   public createProject(project: ProjectCreation) {
-    this.store.dispatch(createProject({ project }));
+    this.formData = project;
+    this.store.dispatch(createProject({ project: this.formData }));
     this.setStep('invite');
   }
 
@@ -56,10 +56,12 @@ export class NewProjectComponent implements OnInit {
   }
 
   public onInvite(users: Partial<User>[]) {
-    const slug = 'realSlugHere'; // Replace this with real slug in the future;
     if (users.length) {
       console.log('This user will be added', users);
     }
-    void this.router.navigate(['/project/', slug, 'kanban' ]);
+    const project = UtilsService.getState(this.store, selectProject);
+    if (project) {
+      void this.router.navigate(['/project/', project.slug, 'kanban']);
+    }
   }
 }

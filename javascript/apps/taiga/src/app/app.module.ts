@@ -73,7 +73,7 @@ export function prefersReducedMotion(): boolean {
           strictStateImmutability: true,
           strictActionImmutability: true,
           strictStateSerializability: true,
-          strictActionSerializability: true,
+          strictActionSerializability: false,
           strictActionTypeUniqueness: true,
         },
       }

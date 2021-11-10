@@ -68,7 +68,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [title]="detailProjectForm.get('title')?.value"
         [label]="t('new_project.second_step.project_icon')"
         [tip]="t('new_project.second_step.choose_image_tip')"
-        (projectImage)="onAddProjectImage($event)">
+        (projectImage)="onAddProjectImage($event)"
+        accept="image/webp, image/gif, image/jpg, image/jpeg, image/svg+xml, image/png">
       </tg-ui-file-upload>
 
       <div class="new-step-actions">

@@ -32,6 +32,7 @@ export class FileUploadComponent {
   @Input() public tip = '';
   @Input() public title = '';
   @Input() public color = 0;
+  @Input() public accept?: string;
 
   @ViewChild('iconUpload')
   public iconUpload!: ElementRef<HTMLInputElement>;

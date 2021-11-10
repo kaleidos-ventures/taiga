@@ -23,7 +23,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [color]="color"
           [name]="title">
         </tg-ui-avatar>
-        <button class="project-icon-button" (click)="filePath ? removeImage() : displayImageUploader()"
+        <button class="project-icon-button"
+          (click)="filePath ? removeImage() : displayImageUploader()"
           tuiIconButton
           [icon]="filePath ? 'close' : 'plus'"
           [attr.title]="t('file_upload.choose_image')"
@@ -35,7 +36,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <div class="project-icon-uploader-explanation">
           {{ tip }}
         </div>
-        <button class="project-icon-uploader-button" (click)="displayImageUploader()"
+        <button class="project-icon-uploader-button"
+          (click)="displayImageUploader()"
           tuiButton
           type="button"
           appearance="tertiary">
@@ -48,13 +50,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </button>
         <input class="input-upload"
           #iconUpload
-          accept="image/*"
+          [attr.accept]="accept"
           (change)="onFileSelected($event)"
           type="file"
           name="icon-upload"
           id="icon-upload">
       </div>
-      </div>
+    </div>
   </div>
 
 </ng-container>

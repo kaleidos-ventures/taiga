@@ -63,13 +63,10 @@ export class DetailStepComponent implements OnInit {
   }
 
   public onAddProjectImage(image?: File) {
-    const allowedFormats = ['image/webp', 'image/gif', 'image/jpg', 'image/jpeg', 'image/svg+xml', 'image/png'];
-    if(image && allowedFormats.includes(image.type)) {
+    if (image) {
       this.detailProjectForm.get('logo')?.setValue(image);
     } else {
-      this.detailProjectForm.setErrors({
-        wrongFormat: true
-      });
+      this.detailProjectForm.get('logo')?.setValue('');
     }
   }
 

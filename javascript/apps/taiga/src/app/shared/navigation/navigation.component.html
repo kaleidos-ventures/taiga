@@ -19,6 +19,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <span class="visually-hidden">{{ t('go_home') }}</span>
       </a>
       <tui-hosted-dropdown
+      [tuiDropdownMaxHeight]="800"
       [content]="projectsDropdown"
       [(open)]="openProjectsDropdown">
         <button

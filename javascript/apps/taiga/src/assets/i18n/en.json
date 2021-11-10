@@ -34,6 +34,8 @@
   },
   "navigation_projects": {
     "pinned": "Pinned projects",
+    "recent_projects": "Recent projects",
+    "empty_recent_projects": "You don't have any projects yet",
     "view_projects": "View your projects",
     "new_project": "New project"
   },

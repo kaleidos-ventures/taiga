@@ -7,6 +7,8 @@
  */
 
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Project } from '@taiga/data';
+import { NavigationService } from '~/app/shared/navigation/navigation.service';
 
 @Component({
   selector: 'tg-navigation-projects',
@@ -15,5 +17,11 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavigationProjectsComponent {
+  constructor(public navigationService: NavigationService) {}
 
+  public latestProjects$ = this.navigationService.latestProjects;
+
+  public trackByProject(_index: number, project: Project) {
+    return project.slug;
+  }
 }

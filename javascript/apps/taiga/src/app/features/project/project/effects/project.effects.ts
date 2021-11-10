@@ -9,11 +9,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import * as ProjectActions from '../actions/project.actions';
 import { ProjectApiService } from '@taiga/api';
 import { fetch } from '@nrwl/angular';
+import { NavigationService } from '~/app/shared/navigation/navigation.service';
 
 @Injectable()
 export class ProjectEffects {
@@ -36,9 +37,19 @@ export class ProjectEffects {
     );
   });
 
+  public projectSuccess$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.fetchProjectSuccess),
+      tap(({ project }) => {
+        this.navigationService.add(project);
+      })
+    );
+  }, { dispatch: false });
+
   constructor(
     private actions$: Actions,
-    private projectApiService: ProjectApiService
+    private projectApiService: ProjectApiService,
+    private navigationService: NavigationService,
   ) {}
 
 }

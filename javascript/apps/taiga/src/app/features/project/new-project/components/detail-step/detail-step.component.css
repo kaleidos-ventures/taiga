@@ -20,3 +20,34 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   flex-direction: column;
   gap: var(--spacing-24);
 }
+
+.confirmation-modal {
+  & h1 {
+    @mixin font-heading-3;
+
+    color: var(--color-gray100);
+    margin: 0 0 var(--spacing-16) 0;
+  }
+
+  & p {
+    @mixin font-body ;
+
+    color: var(--color-gray80);
+    font-weight: var(--font-weight-regular);
+    line-height: 21px;
+  }
+
+  & .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-block-start: var(--spacing-16);
+
+    & button {
+      margin-inline-end: var(--spacing-8);
+
+      &:last-child {
+        margin-inline-end: 0;
+      }
+    }
+  }
+}

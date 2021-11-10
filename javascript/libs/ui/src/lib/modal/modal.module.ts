@@ -11,10 +11,13 @@ import { CommonModule } from '@angular/common';
 import { OverlayModule } from '@angular/cdk/overlay';
 
 import { ModalComponent } from './components/modal.component';
+import { ModalService } from './services/modal.service';
+import { TuiButtonModule } from '@taiga-ui/core';
 
 @NgModule({
-  imports: [CommonModule, OverlayModule],
+  imports: [CommonModule, OverlayModule, TuiButtonModule],
   declarations: [ModalComponent],
+  providers: [ ModalService ],
   exports: [
     ModalComponent
   ]

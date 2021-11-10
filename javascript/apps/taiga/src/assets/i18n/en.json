@@ -18,7 +18,11 @@
     "owner": "Owner",
     "workspace": "Workspace",
     "back": "Back",
-    "optional": "Optional"
+    "optional": "Optional",
+    "confirmation_modal": {
+      "yes": "Yes, quit",
+      "no": "No, keep editing"
+    }
   },
   "navigation": {
     "go_home": "Go to home",

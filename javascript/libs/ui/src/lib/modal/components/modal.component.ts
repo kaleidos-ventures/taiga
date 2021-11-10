@@ -21,7 +21,7 @@ import {
   Inject,
   OnInit
 } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { FocusMonitor, ConfigurableFocusTrapFactory, ConfigurableFocusTrap } from '@angular/cdk/a11y';
 import { DOCUMENT } from '@angular/common';
 import { ModalService } from '../services/modal.service';
@@ -67,6 +67,8 @@ export class ModalComponent implements OnDestroy, AfterViewInit, OnInit {
 
   public domPortal!: DomPortal<HTMLElement>;
 
+  public afterClosed = new Subject<void>();
+
   private elementFocusedBeforeDialogWasOpened?: HTMLElement;
 
   constructor(
@@ -100,7 +102,10 @@ export class ModalComponent implements OnDestroy, AfterViewInit, OnInit {
         requestAnimationFrame(() => this.trapFocus());
       } else {
         this.modalService.close();
-        requestAnimationFrame(() => this.restoreFocus());
+        requestAnimationFrame(() => {
+          this.restoreFocus();
+          this.afterClosed.next();
+        });
       }
     });
   }
@@ -110,6 +115,10 @@ export class ModalComponent implements OnDestroy, AfterViewInit, OnInit {
   }
 
   public ngOnDestroy() {
+    if (this.open) {
+      this.open = false;
+    }
+
     this.subscription.unsubscribe();
   }
 
@@ -158,4 +167,5 @@ export class ModalComponent implements OnDestroy, AfterViewInit, OnInit {
       this.focusTrap.destroy();
     }
   }
+
 }

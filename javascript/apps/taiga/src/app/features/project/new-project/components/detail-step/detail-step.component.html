@@ -100,4 +100,29 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
     </form>
   </div>
+
+  <tg-ui-modal
+    [open]="showWarningModal"
+    (requestClose)="showWarningModal = !showWarningModal">
+      <ng-container>
+        <div class="confirmation-modal">
+          <div aria-describedby="aria-description" aria-labeledby="arial-label">
+            <h1 id="aria-label">{{ t('new_project.first_step.discard_project') }}</h1>
+            <div id="aria-description">
+              <p tabindex="0">{{ t('new_project.first_step.discard_warning') }}</p>
+            </div>
+            <div class="actions">
+              <button
+                tuiButton
+                appearance="tertiary"
+                (click)="showWarningModal = !showWarningModal">{{ t('commons.confirmation_modal.no') }}</button>
+              <button
+                tuiButton
+                appearance="primary"
+                (click)="acceptWarningClose()">{{ t('commons.confirmation_modal.yes') }}</button>
+            </div>
+          </div>
+      </div>
+      </ng-container>
+  </tg-ui-modal>
 </ng-container>

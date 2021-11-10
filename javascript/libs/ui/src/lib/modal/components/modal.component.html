@@ -11,6 +11,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <div class="modal-content">
       <ng-content></ng-content>
     </div>
-    <button (click)="close()">Close</button>
+    <button
+      class="close"
+      tuiIconButton
+      appearance="us-header-button"
+      icon="close"
+      (click)="close()"></button>
   </div>
 </div>

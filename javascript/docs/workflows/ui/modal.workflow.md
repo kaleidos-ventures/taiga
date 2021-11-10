@@ -64,6 +64,26 @@ When we make a basic confirmation modal that usually has an "OK" button and a te
 
 ```
 
+# Wait until modal is closed
+
+
+```ts
+})
+export class TestComponent {
+  @ViewChild(ModalComponent)
+  public modal!: ModalComponent;
+
+  public closeModal() {
+    this.showModal = false;
+
+    this.modal.afterClosed.pipe(take(1)).subscribe(() => {
+      // do something after the modal is closed
+    });
+  }
+}
+```
+
+
 # Accesibility
 
 ## Focus: The basics

@@ -6,19 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  HostListener,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectCreation, Workspace } from '@taiga/data';
+import { ModalComponent } from '@taiga/ui/modal/components/modal.component';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
-
 @Component({
   selector: 'tg-detail-step',
   templateUrl: './detail-step.component.html',
@@ -27,12 +19,16 @@ import { RandomColorService } from '@taiga/ui/services/random-color/random-color
 })
 export class DetailStepComponent implements OnInit {
   public detailProjectForm!: FormGroup;
+  public showWarningModal = false;
 
   @Input()
   public selectedWorkspaceSlug!: ProjectCreation['workspaceSlug'];
 
   @Input()
   public workspaces!: Workspace[];
+
+  @ViewChild(ModalComponent)
+  public modal!: ModalComponent;
 
   @Output()
   public projectData = new EventEmitter<ProjectCreation>();
@@ -79,7 +75,21 @@ export class DetailStepComponent implements OnInit {
   }
 
   public cancelForm() {
-    this.cancel.next();
+    if (this.formHasContent()) {
+      this.showWarningModal = true;
+    } else {
+      this.cancel.next();
+    }
+  }
+
+  public formHasContent() {
+    const data = [
+      this.detailProjectForm.get('title')?.value,
+      this.detailProjectForm.get('description')?.value,
+      this.detailProjectForm.get('logo')?.value,
+    ];
+
+    return data.some(value => value);
   }
 
   public createProject() {
@@ -96,5 +106,11 @@ export class DetailStepComponent implements OnInit {
       };
       this.projectData.next(projectFormValue);
     }
+  }
+
+  public acceptWarningClose() {
+    this.showWarningModal = false;
+
+    this.cancel.next();
   }
 }

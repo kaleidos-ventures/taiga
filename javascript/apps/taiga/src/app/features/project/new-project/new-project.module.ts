@@ -27,6 +27,7 @@ import { FileUploadModule } from 'libs/ui/src/lib/inputs/file-upload/file-upload
 import { DetailStepComponent } from './components/detail-step/detail-step.component';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { ModalModule } from '@taiga/ui/modal';
 
 @NgModule({
   declarations: [
@@ -51,13 +52,15 @@ import { TuiAutoFocusModule } from '@taiga-ui/cdk';
     RouterModule,
     TuiButtonModule,
     InputsModule,
-    FileUploadModule
+    FileUploadModule,
+    ModalModule
   ],
   exports: [
     NewProjectComponent,
     TemplateStepComponent,
     DetailStepComponent,
-    InviteStepComponent
+    InviteStepComponent,
+    ModalModule
   ],
   providers: [
     {

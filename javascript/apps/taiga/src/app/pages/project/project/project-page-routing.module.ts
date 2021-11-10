@@ -17,9 +17,13 @@ const routes: Routes = [
       {
         path: 'kanban',
         loadChildren: () => import('~/app/pages/kanban/kanban-page.module').then(m => m.KanbanPageModule)
+      },
+      {
+        path: '',
+        loadChildren: () => import('~/app/features/project-overview/project-overview.module').then(m => m.ProjectOverviewModule)
       }
     ]
-  }
+  },
 ];
 
 @NgModule({

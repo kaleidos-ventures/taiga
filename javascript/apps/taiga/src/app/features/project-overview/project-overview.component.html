@@ -1,0 +1,49 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<ng-container *transloco="let t;">
+<ng-container *ngIf="project$ | async as project">
+  <div class="project-content">
+    <div class="col left-col">
+      <div class="project-container"></div>
+    </div>
+    <div class="col right-col">
+      <div class="project-container project-description">
+        <h2>{{ t('project_overview.about') }}</h2>
+        <div
+          [class.hide]="hideOverflow"
+          class="description ">
+          <p #descriptionOverflow>{{ project.description }}</p>
+        </div>
+        <div class="actions">
+          <a
+            *ngIf="showDescription && !hideOverflow"
+            class="link"
+            tuiLink
+            (click)="toggleShowDescription()"
+            icon="chevron-down"
+            iconAlign="right"
+            [title]="t('project_overview.show_full_description')">
+            {{ t('project_overview.show_full_description') }}
+          </a>
+          <a
+            *ngIf="showDescription && hideOverflow"
+            class="link"
+            tuiLink
+            (click)="toggleShowDescription()"
+            icon="chevron-up"
+            iconAlign="right"
+            [title]="t('project_overview.hide_full_description')">
+            {{ t('project_overview.hide_full_description') }}
+          </a>
+        </div>
+      </div>
+      <div class="project-container"></div>
+    </div>
+  </div>
+</ng-container>
+</ng-container>

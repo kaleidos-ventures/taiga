@@ -13,6 +13,8 @@ import { ProjectPageComponent } from './project-page.component';
 import { ProjectPageRoutingModule } from './project-page-routing.module';
 import { ProjectNavigationModule } from '~/app/shared/project-navigation/project-navigation.module';
 import { ProjectModule } from '~/app/features/project/project/project.module';
+import { TranslocoModule } from '@ngneat/transloco';
+import { AvatarModule } from '@taiga/ui/avatar';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { ProjectModule } from '~/app/features/project/project/project.module';
     CommonModule,
     ProjectPageRoutingModule,
     ProjectNavigationModule,
-    ProjectModule
+    ProjectModule,
+    TranslocoModule,
+    AvatarModule
   ]
 })
 export class ProjectPageModule { }

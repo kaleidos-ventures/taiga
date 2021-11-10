@@ -8,21 +8,31 @@
 
 import { fetchProject } from '~/app/features/project/project/actions/project.actions';
 import { selectProject } from '~/app/features/project/project/selectors/project.selectors';
-import { Component, OnInit, } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 @UntilDestroy()
 @Component({
-  selector: 'tg-project',
-  templateUrl: './project-page.component.html',
-  styleUrls: ['./project-page.component.css']
+  selector: 'tg-project-overview',
+  templateUrl: './project-overview.component.html',
+  styleUrls: ['./project-overview.component.css'],
 })
-export class ProjectPageComponent implements OnInit {
+export class ProjectOverviewComponent implements OnInit {
+  @ViewChild('descriptionOverflow') public set descriptionOverflow(element: ElementRef | undefined) {
+    if (element?.nativeElement) {
+      this.showDescription = this.hasClamping(element.nativeElement);
+      this.cd.detectChanges();
+    }
+  }
+
+  public showDescription = false;
+  public hideOverflow = false;
+
   constructor(
     private store: Store,
     private route: ActivatedRoute,
+    private cd: ChangeDetectorRef,
   ) {}
 
   public project$ = this.store.select(selectProject);
@@ -33,5 +43,14 @@ export class ProjectPageComponent implements OnInit {
       .subscribe((params) => {
         this.store.dispatch(fetchProject({ slug: params.get('slug')! }));
       });
+  }
+
+  public hasClamping(el: HTMLElement) {
+    const { clientHeight, scrollHeight } = el;
+    return clientHeight !== scrollHeight;
+  };
+
+  public toggleShowDescription() {
+    this.hideOverflow = !this.hideOverflow;
   }
 }

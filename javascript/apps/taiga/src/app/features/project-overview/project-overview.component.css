@@ -1,0 +1,78 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+:host {
+  flex-grow: 1;
+}
+
+.project-content {
+  block-size: 100%;
+  display: grid;
+  gap: var(--spacing-16);
+  grid-template-columns: 1fr 392px;
+
+  & .col {
+    display: grid;
+    gap: var(--spacing-16);
+  }
+
+  & .right-col {
+    gap: var(--spacing-16);
+    grid-template-rows: min-content;
+  }
+}
+
+.project-description {
+  overflow: hidden;
+}
+
+/* stylelint-disable */
+.description {
+  color: var(--color-gray80);
+  display: -webkit-box;
+  font-weight: var(--font-weight-regular);
+  max-block-size: 87px;
+  line-height: 21px;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+
+  &.hide {
+    max-block-size: none;
+    overflow: auto;
+    -webkit-line-clamp: unset;
+  }
+}
+/* stylelint-enable */
+
+.project-container {
+  background: var(--color-white);
+  flex-grow: 1;
+  padding: var(--spacing-16);
+
+  & h2 {
+    @mixin font-body;
+
+    line-height: 21px;
+    margin: 0;
+    margin-block-end: var(--spacing-8);
+  }
+}
+
+.actions {
+  display: flex;
+  margin-block-start: var(--spacing-8);
+
+  & .link {
+    display: block;
+    inline-size: 100%;
+    text-align: end;
+  }
+}

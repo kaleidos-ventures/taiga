@@ -41,7 +41,12 @@ export class AvatarComponent implements OnInit  {
   }
 
   public setColorClass() {
-    return RandomColorService.getColorClass(this.color);
+    if (!this.url) {
+      return RandomColorService.getColorClass(this.color);
+    }
+
+    // todo: border-color
+    return '';
   }
 
   public setAvatarName(name: string) {

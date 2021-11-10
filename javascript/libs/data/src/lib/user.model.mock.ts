@@ -19,7 +19,6 @@ export const UserMockFactory = (): User => {
     dateJoined: faker.date.past().toDateString(),
     email: faker.internet.email(),
     fullName: faker.name.firstName(),
-    fullNameDisplay: `${faker.name.firstName()} ${faker.name.lastName()}`,
     gravatarId: faker.datatype.uuid(),
     id: faker.datatype.number(),
     isActive: faker.datatype.boolean(),

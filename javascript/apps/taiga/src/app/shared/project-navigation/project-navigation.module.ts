@@ -12,6 +12,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { AvatarModule } from '@taiga/ui/avatar';
 import { ProjectNavigationComponent } from './project-navigation.component';
 
 @NgModule({
@@ -21,7 +22,8 @@ import { ProjectNavigationComponent } from './project-navigation.component';
     TuiSvgModule,
     TranslocoModule,
     A11yModule,
-    RouterModule
+    RouterModule,
+    AvatarModule
   ],
   declarations: [
     ProjectNavigationComponent,

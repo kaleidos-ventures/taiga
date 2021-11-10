@@ -9,8 +9,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *ngIf="user$ | async as user">
   <tui-avatar
     [size]="size"
-    [avatarUrl]="user.photo"
+    [avatarUrl]="user.photo ?? ''"
     [autoColor]="true"
     [rounded]="rounded"
-    [text]="user.fullNameDisplay"></tui-avatar>
+    [text]="user.fullName ?? ''"></tui-avatar>
 </ng-container>

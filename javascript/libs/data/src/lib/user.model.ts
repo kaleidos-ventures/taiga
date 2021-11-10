@@ -16,7 +16,6 @@ export interface User {
   dateJoined: string;
   email: string;
   fullName: string;
-  fullNameDisplay: string;
   gravatarId: string;
   id: number;
   isActive: boolean;

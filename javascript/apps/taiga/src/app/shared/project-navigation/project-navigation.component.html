@@ -19,10 +19,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [attr.data-text]="'project'"
           [class.active-dialog]="dialog.type === 'project'"
           [attr.href]="dialog.link">
-          <img class="project-logo-image"
-            src="https://placeimg.com/640/480/nature"
-            alt=""
-            [attr.alt]="project.name">
+          <tg-ui-avatar
+            class="project-logo-image"
+            [color]="project.color"
+            [url]="project.logoSmall"
+            [name]="project.name">
+          </tg-ui-avatar>
         </a>
         <div *ngIf="!collapsed"
           class="workspace-data">

@@ -10,6 +10,26 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host {
   display: block;
+
+  &.invalid.update-on-submit.submitted::ng-deep,
+  &.invalid.update-on-blur.dirty::ng-deep,
+  &.invalid.update-on-change.dirty::ng-deep,
+  &.invalid.update-on-blur.touched::ng-deep,
+  &.invalid.update-on-change.touched::ng-deep {
+    & input {
+      border-color: var(--color-red);
+
+      &:read-only {
+        border-color: var(--color-white);
+      }
+
+      &:focus {
+        border-color: var(--color-secondary);
+        border-radius: 3px;
+        outline: 0;
+      }
+    }
+  }
 }
 
 :host::ng-deep {
@@ -57,26 +77,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       border-color: var(--color-white);
       color: var(--color-gray80);
       pointer-events: none;
-    }
-  }
-
-  &.invalid.update-on-submit.submitted,
-  &.invalid.update-on-blur.dirty,
-  &.invalid.update-on-change.dirty,
-  &.invalid.update-on-blur.touched,
-  &.invalid.update-on-change.touched {
-    & input {
-      border-color: var(--color-red);
-
-      &:read-only {
-        border-color: var(--color-white);
-      }
-
-      &:focus {
-        border-color: var(--color-secondary);
-        border-radius: 3px;
-        outline: 0;
-      }
     }
   }
 }

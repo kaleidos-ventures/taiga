@@ -48,13 +48,4 @@ describe('TemplateStepComponent', () => {
 
     expect(spectator.component.getCurrentWorkspace()).toEqual(workspace);
   });
-
-  it('onAddProjectImage', () => {
-    spectator.component.getCurrentWorkspace = jest.fn();
-    const file = new File([""], "filename", {type: "image/jpeg"});
-    spectator.component.initForm();
-    spectator.component.onAddProjectImage(file);
-
-    expect(spectator.component.detailProjectForm.get('logo')?.value).toEqual(file);
-  });
 });

@@ -14,6 +14,7 @@ import { createProject, inviteUsersNewProject } from '~/app/features/project/new
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 import { Step } from '~/app/features/project/new-project/data/new-project.model';
 import { Router } from '@angular/router';
+import { DetailProjectForm } from '../detail-step/detail-step.component';
 
 @Component({
   selector: 'tg-new-project',
@@ -25,6 +26,7 @@ export class NewProjectComponent implements OnInit {
 
   public workspaceList$ = this.store.select(selectWorkspaces);
   public currentStep: Step = 'template';
+  public savedForm?: DetailProjectForm;
 
   public formData: ProjectCreation = {
     workspaceSlug: '',
@@ -58,5 +60,10 @@ export class NewProjectComponent implements OnInit {
     }
 
     this.store.dispatch(inviteUsersNewProject());
+  }
+
+  public cancelDetailStep(savedForm?: DetailProjectForm) {
+    this.currentStep = 'template';
+    this.savedForm = savedForm;
   }
 }

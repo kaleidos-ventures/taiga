@@ -8,9 +8,18 @@
 
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormControl } from '@ngneat/reactive-forms';
 import { ProjectCreation, Workspace } from '@taiga/data';
 import { ModalComponent } from '@taiga/ui/modal/components/modal.component';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
+
+export interface DetailProjectForm {
+  workspace: string;
+  title: string;
+  description: string;
+  color: string;
+}
+
 @Component({
   selector: 'tg-detail-step',
   templateUrl: './detail-step.component.html',
@@ -27,6 +36,9 @@ export class DetailStepComponent implements OnInit {
   @Input()
   public workspaces!: Workspace[];
 
+  @Input()
+  public initialForm?: DetailProjectForm;
+
   @ViewChild(ModalComponent)
   public modal!: ModalComponent;
 
@@ -34,7 +46,7 @@ export class DetailStepComponent implements OnInit {
   public projectData = new EventEmitter<ProjectCreation>();
 
   @Output()
-  public cancel = new EventEmitter<void>();
+  public cancel = new EventEmitter<undefined | DetailProjectForm>();
 
   @HostListener('window:beforeunload')
   public unloadHandler(event: Event) {
@@ -54,6 +66,10 @@ export class DetailStepComponent implements OnInit {
       color: [RandomColorService.randomColorPicker(), Validators.required],
       logo: '',
     }, { updateOn: 'submit' });
+
+    if (this.initialForm) {
+      this.detailProjectForm.setValue(this.initialForm);
+    }
   }
 
   public getCurrentWorkspace() {
@@ -62,16 +78,16 @@ export class DetailStepComponent implements OnInit {
     );
   }
 
+  public get logo() {
+    return this.detailProjectForm.get('logo') as FormControl;
+  }
+
   public get workspace() {
     return this.detailProjectForm.get('workspace')?.value as Workspace;
   }
 
-  public onAddProjectImage(image?: File) {
-    if (image) {
-      this.detailProjectForm.get('logo')?.setValue(image);
-    } else {
-      this.detailProjectForm.get('logo')?.setValue('');
-    }
+  public previousStep() {
+    this.cancel.next(this.detailProjectForm.value);
   }
 
   public cancelForm() {

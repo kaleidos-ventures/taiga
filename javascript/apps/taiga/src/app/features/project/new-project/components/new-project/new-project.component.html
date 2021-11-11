@@ -18,7 +18,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <ng-container *ngIf="currentStep === 'detail'">
         <tg-detail-step
           (projectData)="createProject($event)"
-          (cancel)="currentStep = 'template'"
+          (cancel)="cancelDetailStep($event)"
+          [initialForm]="savedForm"
           [selectedWorkspaceSlug]="formData.workspaceSlug"
           [workspaces]="workspaceList">
         </tg-detail-step>

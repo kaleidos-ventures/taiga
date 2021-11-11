@@ -7,6 +7,7 @@
  */
 
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { FormControl } from '@ngneat/reactive-forms';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 @Component({
@@ -25,14 +26,12 @@ import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
   },]
 })
 export class FileUploadComponent {
-
-  public filePath = '';
-
   @Input() public label = '';
   @Input() public tip = '';
   @Input() public title = '';
   @Input() public color = 0;
   @Input() public accept?: string;
+  @Input() public control!: FormControl;
 
   @ViewChild('iconUpload')
   public iconUpload!: ElementRef<HTMLInputElement>;
@@ -58,16 +57,20 @@ export class FileUploadComponent {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        this.filePath = reader.result as string;
+        this.control.setValue(reader.result as string);
       };
 
       this.cd.markForCheck();
     }
   }
 
+  public get filePath() {
+    return this.control.value as string;
+  }
+
   public removeImage() {
     this.projectImage.next();
-    this.filePath = '';
+    this.control.setValue('');
   }
 
 }

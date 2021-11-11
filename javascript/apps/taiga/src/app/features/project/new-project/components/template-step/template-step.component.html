@@ -20,8 +20,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <div class="new-step-wrapper">
     <h1 class="new-step-title">
       {{ t('new_project.second_step.project_details') }}</h1>
-    <form class="detail-project-form"
-      [formGroup]="detailProjectForm"
+    <form class="template-project-form"
+      [formGroup]="templateProjectForm"
       (ngSubmit)="createProject()">
       <tg-ui-select [label]="t('commons.workspace')"
         type="avatar">
@@ -76,12 +76,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tg-ui-textarea>
 
       <!-- Image upload  -->
-      <tg-ui-file-upload [color]="detailProjectForm.get('color')?.value"
+      <tg-ui-file-upload [color]="templateProjectForm.get('color')?.value"
         [control]="logo"
-        [title]="detailProjectForm.get('title')?.value"
+        [title]="templateProjectForm.get('title')?.value"
         [label]="t('new_project.second_step.project_icon')"
         [tip]="t('new_project.second_step.choose_image_tip')"
-        (projectImage)="onAddProjectImage($event)"
         accept="image/webp, image/gif, image/jpg, image/jpeg, image/png">
       </tg-ui-file-upload>
 

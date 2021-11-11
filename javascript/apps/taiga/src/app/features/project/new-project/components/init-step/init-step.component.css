@@ -8,17 +8,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
-.template-step-wrapper {
-  inline-size: 480px;
-  margin: 0 auto;
-}
-
-.template-step-title {
-  @mixin font-heading-3;
-
-  margin-block: 0 var(--spacing-32);
-}
-
 .workspace-option {
   align-items: center;
   display: flex;

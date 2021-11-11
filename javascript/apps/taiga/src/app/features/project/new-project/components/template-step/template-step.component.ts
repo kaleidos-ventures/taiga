@@ -8,6 +8,7 @@
 
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormControl } from '@ngneat/reactive-forms';
 import { ProjectCreation, Workspace } from '@taiga/data';
 import { ModalComponent } from '@taiga/ui/modal/components/modal.component';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
@@ -25,7 +26,7 @@ export interface TemplateProjectForm {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TemplateStepComponent implements OnInit {
-  public detailProjectForm!: FormGroup;
+  public templateProjectForm!: FormGroup;
   public showWarningModal = false;
 
   @Input()
@@ -57,7 +58,7 @@ export class TemplateStepComponent implements OnInit {
   }
 
   public initForm() {
-    this.detailProjectForm = this.fb.group({
+    this.templateProjectForm = this.fb.group({
       workspace: [this.getCurrentWorkspace(), Validators.required],
       title: ['', Validators.required],
       description: ['', Validators.maxLength(140)],
@@ -66,7 +67,7 @@ export class TemplateStepComponent implements OnInit {
     }, { updateOn: 'submit' });
 
     if (this.initialForm) {
-      this.detailProjectForm.setValue(this.initialForm);
+      this.templateProjectForm.setValue(this.initialForm);
     }
   }
 
@@ -77,15 +78,15 @@ export class TemplateStepComponent implements OnInit {
   }
 
   public get logo() {
-    return this.detailProjectForm.get('logo') as FormControl;
+    return this.templateProjectForm.get('logo') as FormControl;
   }
 
   public get workspace() {
-    return this.detailProjectForm.get('workspace')?.value as Workspace;
+    return this.templateProjectForm.get('workspace')?.value as Workspace;
   }
 
   public previousStep() {
-    this.cancel.next(this.detailProjectForm.value);
+    this.cancel.next(this.templateProjectForm.value);
   }
 
   public cancelForm() {
@@ -98,25 +99,25 @@ export class TemplateStepComponent implements OnInit {
 
   public formHasContent() {
     const data = [
-      this.detailProjectForm.get('title')?.value,
-      this.detailProjectForm.get('description')?.value,
-      this.detailProjectForm.get('logo')?.value,
+      this.templateProjectForm.get('title')?.value,
+      this.templateProjectForm.get('description')?.value,
+      this.templateProjectForm.get('logo')?.value,
     ];
 
     return data.some(value => value);
   }
 
   public createProject() {
-    this.detailProjectForm.markAllAsTouched();
-    if (this.detailProjectForm.valid) {
-      const workspace = this.detailProjectForm.get('workspace')
+    this.templateProjectForm.markAllAsTouched();
+    if (this.templateProjectForm.valid) {
+      const workspace = this.templateProjectForm.get('workspace')
         ?.value as Workspace;
       const projectFormValue: ProjectCreation = {
         workspaceSlug: workspace.slug,
-        name: this.detailProjectForm.get('title')?.value as string,
-        description: this.detailProjectForm.get('description')?.value as string,
-        color: this.detailProjectForm.get('color')?.value as number,
-        logo: this.detailProjectForm.get('logo')?.value as File,
+        name: this.templateProjectForm.get('title')?.value as string,
+        description: this.templateProjectForm.get('description')?.value as string,
+        color: this.templateProjectForm.get('color')?.value as number,
+        logo: this.templateProjectForm.get('logo')?.value as File,
       };
       this.projectData.next(projectFormValue);
     }

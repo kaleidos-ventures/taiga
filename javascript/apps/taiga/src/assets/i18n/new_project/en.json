@@ -12,7 +12,7 @@
     "duplicate_project": "Duplicate",
     "duplicate_project_description": "Duplicate a project",
     "duplicate_project_tip": "This is just a placeholder",
-    "discard_project": "Discard this project",
+    "discard_project": "Discard this project?",
     "discard_warning": "Closing this window without clicking “create project” will delete the content you’ve added."
   },
   "invite_step": {

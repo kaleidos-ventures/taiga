@@ -47,9 +47,12 @@ describe('NewProjectComponent', () => {
   });
 
   it('on select template', () => {
+    spectator.component.setStep = jest.fn();
+
     const workspaceSlug = faker.lorem.slug();
-    spectator.component.onSelectTemplate(workspaceSlug);
+    const step = 'template';
+    spectator.component.onSelectTemplate(step, workspaceSlug);
     expect(spectator.component.formData.workspaceSlug).toEqual(workspaceSlug);
-    expect(spectator.component.currentStep).toEqual('detail');
+    expect(spectator.component.setStep).toBeCalledWith(step);
   });
 });

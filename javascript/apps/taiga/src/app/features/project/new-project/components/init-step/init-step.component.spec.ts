@@ -96,10 +96,10 @@ describe('TemplateStepComponent', () => {
     const workspace = WorkspaceMockFactory();
     spectator.component.initForm();
     spectator.component.createProjectForm.get('workspace')?.setValue(workspace);
-    spectator.component.createBlankProject();
+    spectator.component.initProject('blank');
     spectator.component.templateSelected.subscribe((emit) => {
       expect(emit).toHaveBeenCalledWith({
-        step: 'detail',
+        step: 'blank',
         workspace
       });
     });

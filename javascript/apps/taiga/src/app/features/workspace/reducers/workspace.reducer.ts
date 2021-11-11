@@ -68,6 +68,7 @@ export const reducer = createReducer(
         slug: project.slug,
         description: project.description,
         color: project.color,
+        logoSmall: project.logoSmall
       } as WorkspaceProject;
     });
 

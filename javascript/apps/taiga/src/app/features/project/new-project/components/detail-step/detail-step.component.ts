@@ -53,7 +53,7 @@ export class DetailStepComponent implements OnInit {
       description: ['', Validators.maxLength(140)],
       color: [RandomColorService.randomColorPicker(), Validators.required],
       logo: '',
-    });
+    }, { updateOn: 'submit' });
   }
 
   public getCurrentWorkspace() {

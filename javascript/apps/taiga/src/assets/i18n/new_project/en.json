@@ -25,10 +25,10 @@
     "project_title": "Project title",
     "project_title_error": "Project name can’t be empty",
     "project_description": "Project description",
-    "project_description_placeholder": "Add a short description to help others better understand your project",
+    "project_description_placeholder": "Add a short description to help others better understand your project.",
     "project_icon": "Project icon",
     "create_project": "Create project",
-    "max_length_error": "Maximun length 140",
-    "choose_image_tip": "Formats allowed: gif, png, jpg and webp"
+    "max_length_error": "Maximun length 200",
+    "choose_image_tip": "Allowed formats: gif, png, jpg and webp"
   }
 }

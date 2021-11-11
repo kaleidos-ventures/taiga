@@ -14,19 +14,22 @@ import { createProject, inviteUsersNewProject } from '~/app/features/project/new
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 import { Step } from '~/app/features/project/new-project/data/new-project.model';
 import { Router } from '@angular/router';
-import { DetailProjectForm } from '../detail-step/detail-step.component';
+import { TemplateProjectForm } from '../template-step/template-step.component';
 
 @Component({
   selector: 'tg-new-project',
   templateUrl: './new-project.component.html',
+  styleUrls: [
+    '../../styles/project.shared.css'
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewProjectComponent implements OnInit {
   constructor(private store: Store, private router: Router) {}
 
   public workspaceList$ = this.store.select(selectWorkspaces);
-  public currentStep: Step = 'template';
-  public savedForm?: DetailProjectForm;
+  public currentStep: Step = 'init';
+  public savedForm?: TemplateProjectForm;
 
   public formData: ProjectCreation = {
     workspaceSlug: '',
@@ -39,9 +42,9 @@ export class NewProjectComponent implements OnInit {
     this.store.dispatch(fetchWorkspaceList());
   }
 
-  public onSelectTemplate(workspaceSlug: ProjectCreation['workspaceSlug']) {
+  public onSelectTemplate(step: Step, workspaceSlug: ProjectCreation['workspaceSlug']) {
     this.formData.workspaceSlug = workspaceSlug;
-    this.setStep('detail');
+    this.setStep(step);
   }
 
   public createProject(project: ProjectCreation) {
@@ -62,8 +65,8 @@ export class NewProjectComponent implements OnInit {
     this.store.dispatch(inviteUsersNewProject());
   }
 
-  public cancelDetailStep(savedForm?: DetailProjectForm) {
-    this.currentStep = 'template';
+  public cancelTemplateStep(savedForm?: TemplateProjectForm) {
+    this.currentStep = 'init';
     this.savedForm = savedForm;
   }
 }

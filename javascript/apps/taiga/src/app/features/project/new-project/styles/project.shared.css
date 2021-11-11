@@ -28,3 +28,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   gap: 1rem;
   justify-content: flex-end;
 }
+
+.wip-step {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  inline-size: 480px;
+  margin: 25% auto;
+}

@@ -6,104 +6,125 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { FormControl } from '@ngneat/reactive-forms';
-import { TranslocoService } from '@ngneat/transloco';
 import { ProjectCreation, Workspace } from '@taiga/data';
-import { Template } from '~/app/features/project/new-project/data/new-project.model';
+import { ModalComponent } from '@taiga/ui/modal/components/modal.component';
+import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
 
+export interface TemplateProjectForm {
+  workspace: string;
+  title: string;
+  description: string;
+  color: string;
+}
 @Component({
   selector: 'tg-template-step',
   templateUrl: './template-step.component.html',
-  styleUrls: [
-    '../../styles/project.shared.css',
-    './template-step.component.css'
-  ],
+  styleUrls: ['../../styles/project.shared.css', './template-step.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TemplateStepComponent implements OnInit {
+  public detailProjectForm!: FormGroup;
+  public showWarningModal = false;
+
+  @Input()
+  public initialForm?: TemplateProjectForm;
+
+  @Input()
+  public selectedWorkspaceSlug!: ProjectCreation['workspaceSlug'];
 
   @Input()
   public workspaces!: Workspace[];
 
+  @ViewChild(ModalComponent)
+  public modal!: ModalComponent;
+
   @Output()
-  public templateSelected = new EventEmitter<ProjectCreation['workspaceSlug']>();
+  public projectData = new EventEmitter<ProjectCreation>();
 
-  public createProjectForm!: FormGroup;
+  @Output()
+  public cancel = new EventEmitter<undefined | TemplateProjectForm>();
 
-  public templates: Template[] = [
-    {
-      nextStep: 'detail',
-      icon: 'empty',
-      title: this.translocoService.translate('new_project.first_step.blank_project'),
-      description: this.translocoService.translate('new_project.first_step.blank_project_description'),
-      action: () => this.createBlankProject(),
-    },
-    {
-      nextStep: 'template',
-      icon: 'template',
-      title: this.translocoService.translate('new_project.first_step.template_project'),
-      description: this.translocoService.translate('new_project.first_step.template_project_description'),
-      action: () => null,
-    },
-    {
-      nextStep: 'import',
-      icon: 'import',
-      title: this.translocoService.translate('new_project.first_step.import_project'),
-      description: this.translocoService.translate('new_project.first_step.import_project_description'),
-      action: () => null,
-    },
-    {
-      nextStep: 'duplicate',
-      icon: 'copy',
-      title: this.translocoService.translate('new_project.first_step.duplicate_project'),
-      description: this.translocoService.translate('new_project.first_step.duplicate_project_description'),
-      tip: this.translocoService.translate('new_project.first_step.duplicate_project_tip'),
-      action: () => null,
-    }
-  ];
-
-  constructor(
-    private fb: FormBuilder,
-    private translocoService: TranslocoService,
-    private route: ActivatedRoute,
-  ) {}
+  @HostListener('window:beforeunload')
+  public unloadHandler(event: Event) {
+    event.preventDefault();
+  }
+  constructor(private fb: FormBuilder) {}
 
   public ngOnInit() {
     this.initForm();
-    this.getParams();
   }
 
   public initForm() {
-    this.createProjectForm = this.fb.group({
-      workspace: [null, Validators.required],
-    });
-  }
+    this.detailProjectForm = this.fb.group({
+      workspace: [this.getCurrentWorkspace(), Validators.required],
+      title: ['', Validators.required],
+      description: ['', Validators.maxLength(140)],
+      color: [RandomColorService.randomColorPicker(), Validators.required],
+      logo: '',
+    }, { updateOn: 'submit' });
 
-  public getParams() {
-    const slug = this.route.snapshot.queryParamMap.get('workspace');
-    const refWorkspace = this.workspaces.filter((workspace) => workspace.slug === slug);
-    if (refWorkspace.length) {
-      this.createProjectForm.get('workspace')?.setValue(refWorkspace[0]);
+    if (this.initialForm) {
+      this.detailProjectForm.setValue(this.initialForm);
     }
   }
 
-  public trackByIndex(index: number) {
-    return index;
+  public getCurrentWorkspace() {
+    return this.workspaces.find(
+      (workspace) => workspace.slug === this.selectedWorkspaceSlug
+    );
   }
 
-  public createBlankProject() {
-    const workspace: Workspace = this.currentWorkspace.value as Workspace;
-    if(this.createProjectForm.valid) {
-      this.templateSelected.next(workspace.slug);
+  public get logo() {
+    return this.detailProjectForm.get('logo') as FormControl;
+  }
+
+  public get workspace() {
+    return this.detailProjectForm.get('workspace')?.value as Workspace;
+  }
+
+  public previousStep() {
+    this.cancel.next(this.detailProjectForm.value);
+  }
+
+  public cancelForm() {
+    if (this.formHasContent()) {
+      this.showWarningModal = true;
     } else {
-      this.createProjectForm.markAllAsTouched();
+      this.cancel.next();
     }
   }
 
-  public get currentWorkspace(): FormControl {
-    return this.createProjectForm.get('workspace') as FormControl;
+  public formHasContent() {
+    const data = [
+      this.detailProjectForm.get('title')?.value,
+      this.detailProjectForm.get('description')?.value,
+      this.detailProjectForm.get('logo')?.value,
+    ];
+
+    return data.some(value => value);
+  }
+
+  public createProject() {
+    this.detailProjectForm.markAllAsTouched();
+    if (this.detailProjectForm.valid) {
+      const workspace = this.detailProjectForm.get('workspace')
+        ?.value as Workspace;
+      const projectFormValue: ProjectCreation = {
+        workspaceSlug: workspace.slug,
+        name: this.detailProjectForm.get('title')?.value as string,
+        description: this.detailProjectForm.get('description')?.value as string,
+        color: this.detailProjectForm.get('color')?.value as number,
+        logo: this.detailProjectForm.get('logo')?.value as File,
+      };
+      this.projectData.next(projectFormValue);
+    }
+  }
+
+  public acceptWarningClose() {
+    this.showWarningModal = false;
+
+    this.cancel.next();
   }
 }

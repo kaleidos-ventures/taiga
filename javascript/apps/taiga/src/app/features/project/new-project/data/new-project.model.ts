@@ -15,4 +15,4 @@ export interface Template {
   action: () => unknown;
 }
 
-export type Step = 'template' | 'detail' | 'invite';
+export type Step = 'init' | 'blank' | 'invite' | 'template' | 'import' | 'duplicate';

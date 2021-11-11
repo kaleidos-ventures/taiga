@@ -19,22 +19,22 @@ import { TuiSelectModule, TuiDataListWrapperModule } from '@taiga-ui/kit';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 import { NewProjectComponent } from './components/new-project/new-project.component';
-import { TemplateStepComponent } from './components/template-step/template-step.component';
+import { InitStepComponent } from './components/init-step/init-step.component';
 import { RouterModule } from '@angular/router';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { InviteStepComponent } from './components/invite-step/invite-step.component';
 import { FileUploadModule } from 'libs/ui/src/lib/inputs/file-upload/file-upload.module';
-import { DetailStepComponent } from './components/detail-step/detail-step.component';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { ModalModule } from '@taiga/ui/modal';
+import { TemplateStepComponent } from './components/template-step/template-step.component';
 
 @NgModule({
   declarations: [
     NewProjectComponent,
+    InitStepComponent,
     TemplateStepComponent,
     InviteStepComponent,
-    DetailStepComponent
   ],
   imports: [
     FormsModule,
@@ -57,8 +57,8 @@ import { ModalModule } from '@taiga/ui/modal';
   ],
   exports: [
     NewProjectComponent,
+    InitStepComponent,
     TemplateStepComponent,
-    DetailStepComponent,
     InviteStepComponent,
     ModalModule
   ],

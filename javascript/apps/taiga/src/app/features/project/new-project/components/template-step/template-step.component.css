@@ -7,17 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 @import "tools/typography.css";
-
-.template-step-wrapper {
-  inline-size: 480px;
-  margin: 0 auto;
-}
-
-.template-step-title {
-  @mixin font-heading-3;
-
-  margin-block: 0 var(--spacing-32);
-}
+@import "../../styles/project.shared.css";
 
 .workspace-option {
   align-items: center;
@@ -25,58 +15,39 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   gap: var(--spacing-8);
 }
 
-.templates-wrapper {
+.detail-project-form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
-  margin-block-start: var(--spacing-32);
+  gap: var(--spacing-24);
 }
 
-.template-item {
-  appearance: none;
-  background-color: var(--color-gray10);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  gap: var(--spacing-12);
-  inline-size: 100%;
-  padding: var(--spacing-16);
+.confirmation-modal {
+  & h1 {
+    @mixin font-heading-3;
 
-  &:hover {
-    background-color: var(--color-white);
+    color: var(--color-gray100);
+    margin: 0 0 var(--spacing-16) 0;
+  }
 
-    & .template-title {
-      color: var(--color-secondary);
-      font-weight: 500;
+  & p {
+    @mixin font-body ;
+
+    color: var(--color-gray80);
+    font-weight: var(--font-weight-regular);
+    line-height: 21px;
+  }
+
+  & .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-block-start: var(--spacing-16);
+
+    & button {
+      margin-inline-end: var(--spacing-8);
+
+      &:last-child {
+        margin-inline-end: 0;
+      }
     }
   }
-
-  &:focus {
-    outline: 2px solid var(--color-secondary);
-  }
-}
-
-.template-icon {
-  block-size: var(--spacing-24);
-  color: var(--color-secondary);
-  flex: 0 0 auto;
-  inline-size: var(--spacing-24);
-}
-
-.template-data {
-  flex: 1;
-  line-height: 1.5;
-  text-align: start;
-}
-
-.template-tip {
-  block-size: var(--spacing-16);
-  color: var(--color-gray40);
-  display: inline-block;
-  inline-size: var(--spacing-16);
-  margin-inline-start: var(--spacing-8);
-}
-
-.template-description {
-  color: var(--color-gray70);
 }

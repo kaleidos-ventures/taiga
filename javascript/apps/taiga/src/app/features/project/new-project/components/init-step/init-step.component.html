@@ -1,0 +1,74 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t;">
+  <div class="new-step-top-actions">
+    <a tuiButton
+      type="button"
+      appearance="tertiary"
+      routerLink=".."
+      icon="arrow-left">
+      {{ t('commons.back') }}
+    </a>
+  </div>
+  <div class="new-step-wrapper">
+    <h1 class="new-step-title">{{ t('new_project.new_project') }}</h1>
+    <form [formGroup]="createProjectForm">
+      <tg-ui-select [label]="t('commons.workspace')"
+        type="avatar">
+        <tui-select tuiTextfieldSize="l"
+          formControlName="workspace"
+          [valueContent]="content">
+          {{ t('new_project.choose_workspace') }}
+          <tui-data-list-wrapper *tuiDataList
+            size="s"
+            [items]="workspaces"
+            [itemContent]="content">
+          </tui-data-list-wrapper>
+        </tui-select>
+        <tg-ui-error inputError
+          error="required">
+          {{ t('new_project.choose_workspace_error')}}
+        </tg-ui-error>
+      </tg-ui-select>
+
+
+      <div class="templates-wrapper">
+        <ng-container *ngFor="let template of templates; trackBy: trackByIndex">
+          <button type="button"
+            (click)="template.action()"
+            class="template-item">
+            <tui-svg class="template-icon"
+              [src]="template.icon"></tui-svg>
+            <div class="template-data">
+              <div class="template-title">
+                {{template.title}}
+                <tui-svg *ngIf="template.tip"
+                  class="template-tip"
+                  src="help">
+                </tui-svg>
+              </div>
+              <div class="template-description">{{template.description}}</div>
+            </div>
+          </button>
+        </ng-container>
+      </div>
+
+      <ng-template #content
+        let-data>
+        <div class="workspace-option">
+          <tg-ui-avatar size="m"
+            [color]="data.color"
+            [name]="data.name">
+          </tg-ui-avatar>
+          <div class="name">{{data.name}}</div>
+        </div>
+      </ng-template>
+    </form>
+  </div>
+</ng-container>

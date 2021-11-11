@@ -2,6 +2,9 @@
   "new_project": "New Project",
   "choose_workspace": "Choose workspace",
   "choose_workspace_error": "Please choose a workspace",
+  "wip_step": {
+    "back": "Back to  create project"
+  },
   "first_step": {
     "blank_project": "Blank project",
     "blank_project_description": "Start a project from scratch",

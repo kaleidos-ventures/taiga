@@ -10,25 +10,57 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   <ng-container *ngIf="workspaceList$ | async as workspaceList">
     <div class="new-project-wrapper">
-      <ng-container *ngIf="currentStep === 'template'">
-        <tg-template-step (templateSelected)="onSelectTemplate($event)"
+      <!-- Init Template -->
+      <ng-container *ngIf="currentStep === 'init'">
+        <tg-init-step
+          (templateSelected)="onSelectTemplate($event.step, $event.slug)"
           [workspaces]="workspaceList">
+        </tg-init-step>
+      </ng-container>
+
+      <!-- Blank step -->
+      <ng-container *ngIf="currentStep === 'blank'">
+        <tg-template-step
+          (projectData)="createProject($event)"
+          (cancel)="cancelTemplateStep($event)"
+          [initialForm]="savedForm">
         </tg-template-step>
       </ng-container>
-      <ng-container *ngIf="currentStep === 'detail'">
-        <tg-detail-step
-          (projectData)="createProject($event)"
-          (cancel)="cancelDetailStep($event)"
-          [initialForm]="savedForm"
-          [selectedWorkspaceSlug]="formData.workspaceSlug"
-          [workspaces]="workspaceList">
-        </tg-detail-step>
-      </ng-container>
+
+      <!-- Invite step -->
       <ng-container *ngIf="currentStep === 'invite'">
-        <tg-invite-step *ngIf="currentStep === 'invite'"
-          (finishNewProject)="onInvite($event)">
+        <tg-invite-step (finishNewProject)="onInvite($event)">
         </tg-invite-step>
+      </ng-container>
+
+      <!-- Template step -->
+      <ng-container *ngIf="currentStep === 'template'">
+        <ng-template [ngTemplateOutlet]="wip"></ng-template>
+      </ng-container>
+
+      <!-- Import step -->
+      <ng-container *ngIf="currentStep === 'import'">
+        <ng-template [ngTemplateOutlet]="wip"></ng-template>
+      </ng-container>
+
+      <!-- Duplicate step -->
+      <ng-container *ngIf="currentStep === 'duplicate'">
+        <ng-template [ngTemplateOutlet]="wip"></ng-template>
       </ng-container>
     </div>
   </ng-container>
+
+  <ng-template #wip >
+    <div class="wip-step">
+      <p>WIP</p>
+      <button tuiButton
+        type="button"
+        (click)="currentStep = 'init'"
+        appearance="primary"
+        icon="arrow-left">
+        {{ t('new_project.wip_step.back') }}
+      </button>
+    </div>
+  </ng-template>
+
 </ng-container>

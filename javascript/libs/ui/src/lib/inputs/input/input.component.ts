@@ -8,6 +8,7 @@
 
 import { AfterContentInit, Component, ContentChild, HostBinding, Input } from '@angular/core';
 import { ControlContainer, FormControl, FormGroupDirective } from '@angular/forms';
+import { FormDirective } from '../form/form.directive';
 import { InputRefDirective } from '../input-ref.directive';
 import { FieldService } from '../services/field.service';
 
@@ -56,6 +57,10 @@ export class InputComponent implements AfterContentInit {
     return this.form.submitted;
   }
 
+  @HostBinding('class.show-errors') public get showErrors() {
+    return this.formDirective.showFormErrors;
+  }
+
   @HostBinding('class') public get updateOn() {
     if (this.control?.updateOn) {
       return `update-on-${this.control?.updateOn}`;
@@ -66,7 +71,8 @@ export class InputComponent implements AfterContentInit {
 
   constructor(
     private controlContainer: ControlContainer,
-    private fieldService: FieldService
+    private fieldService: FieldService,
+    private formDirective: FormDirective,
   ) {}
 
   public get control() {

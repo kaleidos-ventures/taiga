@@ -64,7 +64,7 @@ export class TemplateStepComponent implements OnInit {
       description: ['', Validators.maxLength(140)],
       color: [RandomColorService.randomColorPicker(), Validators.required],
       logo: '',
-    }, { updateOn: 'submit' });
+    });
 
     if (this.initialForm) {
       this.templateProjectForm.setValue(this.initialForm);

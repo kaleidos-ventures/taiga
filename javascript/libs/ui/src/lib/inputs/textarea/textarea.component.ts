@@ -10,6 +10,7 @@ import { AfterContentInit, Component, ContentChild, HostBinding, Input } from '@
 import { ControlContainer, FormControl, FormGroupDirective } from '@angular/forms';
 import { TUI_TEXTFIELD_LABEL_OUTSIDE } from '@taiga-ui/core';
 import { TuiTextAreaComponent } from '@taiga-ui/kit';
+import { FormDirective } from '../form/form.directive';
 import { FieldService } from '../services/field.service';
 
 let nextId = 0;
@@ -64,6 +65,10 @@ export class TextareaComponent implements AfterContentInit {
     return this.form.submitted;
   }
 
+  @HostBinding('class.show-errors') public get showErrors() {
+    return this.formDirective.showFormErrors;
+  }
+
   @HostBinding('class') public get updateOn() {
     if (this.control?.updateOn) {
       return `update-on-${this.control?.updateOn}`;
@@ -74,7 +79,8 @@ export class TextareaComponent implements AfterContentInit {
 
   constructor(
     private controlContainer: ControlContainer,
-    private fieldService: FieldService
+    private fieldService: FieldService,
+    private formDirective: FormDirective,
   ) {}
 
   public get control() {

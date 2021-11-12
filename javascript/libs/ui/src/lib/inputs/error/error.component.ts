@@ -8,6 +8,7 @@
 
 import { Component, Input } from '@angular/core';
 import { FieldService } from '../services/field.service';
+import { FormDirective } from '../form/form.directive';
 
 @Component({
   selector: 'tg-ui-error',
@@ -18,9 +19,16 @@ export class ErrorComponent {
   @Input()
   public error!: string;
 
-  constructor(public fieldService: FieldService) {}
+  @Input()
+  public enabled = true;
+
+  constructor(public fieldService: FieldService, public formDirective: FormDirective) {}
 
   public get showError() {
+    if (!this.formDirective.showFormErrors || !this.enabled) {
+      return false;
+    }
+
     const errors = this.fieldService.control?.errors;
     const fieldControl = this.fieldService.control;
 

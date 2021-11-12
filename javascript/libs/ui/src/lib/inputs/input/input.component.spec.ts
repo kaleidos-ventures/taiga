@@ -12,6 +12,7 @@ import { InputComponent } from './input.component';
 import { InputsModule } from '../inputs.module';
 import { ControlContainer, FormControl, FormGroupDirective, Validators } from '@angular/forms';
 import { SpectatorHost } from '@ngneat/spectator';
+import { FormDirective } from '../form/form.directive';
 
 describe('InputComponent', () => {
   let spectator: SpectatorHost<InputComponent>;
@@ -24,6 +25,9 @@ describe('InputComponent', () => {
     ],
     providers: [
       { provide: ControlContainer, useValue: fgd },
+    ],
+    mocks: [
+      FormDirective
     ]
   });
 

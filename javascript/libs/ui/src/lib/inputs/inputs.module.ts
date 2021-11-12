@@ -17,6 +17,7 @@ import { TuiDataListModule } from '@taiga-ui/core';
 import { TuiDataListWrapperModule, TuiSelectModule, TuiTextAreaModule } from '@taiga-ui/kit';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TextareaComponent } from './textarea/textarea.component';
+import { FormDirective } from './form/form.directive';
 @NgModule({
   imports: [
     TuiSvgModule,
@@ -29,6 +30,7 @@ import { TextareaComponent } from './textarea/textarea.component';
     TuiTextAreaModule
   ],
   declarations: [
+    FormDirective,
     InputRefDirective,
     InputComponent,
     SelectComponent,
@@ -37,6 +39,7 @@ import { TextareaComponent } from './textarea/textarea.component';
   ],
   providers: [],
   exports: [
+    FormDirective,
     InputRefDirective,
     InputComponent,
     SelectComponent,

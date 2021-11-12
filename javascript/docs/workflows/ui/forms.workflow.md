@@ -64,6 +64,26 @@ With `{ updateOn: 'submit' }` the validation only happens on submit.
   }
 ```
 
+## Disable form errors
+
+Globally
+
+```html
+  <form [showFormErrors]="false">
+
+  </form>
+```
+
+Individually
+
+```html
+  <tg-ui-error
+    error="email"
+    [enabled]="false">
+    Invalid email
+  </tg-ui-error>
+```
+
 ## Reactive forms
 
 Reactive forms are Angular model driven forms. It handles in the component model changes on the form template.

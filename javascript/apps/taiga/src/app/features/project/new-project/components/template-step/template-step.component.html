@@ -21,6 +21,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <h1 class="new-step-title">
       {{ t('new_project.second_step.project_details') }}</h1>
     <form class="template-project-form"
+      #form="ngForm"
+      [showFormErrors]="form.submitted"
       [formGroup]="templateProjectForm"
       (ngSubmit)="createProject()">
       <tg-ui-select [label]="t('commons.workspace')"

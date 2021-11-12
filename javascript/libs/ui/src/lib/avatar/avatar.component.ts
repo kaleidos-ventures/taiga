@@ -38,6 +38,6 @@ export class AvatarComponent  {
   }
 
   public setAvatarName(name: string) {
-    return name.substring(0, 2).split('').join(' ');
+    return name.replace(/\s/g, '').split('').slice(0, 2).join(' ');
   }
 }

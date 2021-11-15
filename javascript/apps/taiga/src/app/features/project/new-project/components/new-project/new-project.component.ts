@@ -67,6 +67,11 @@ export class NewProjectComponent implements OnInit {
 
   public cancelTemplateStep(savedForm?: TemplateProjectForm) {
     this.currentStep = 'init';
-    this.savedForm = savedForm;
+
+    if (savedForm) {
+      this.savedForm = savedForm;
+    } else {
+      window.history.back();
+    }
   }
 }

@@ -8,6 +8,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
+:host {
+  display: block;
+  padding-block-start: var(--spacing-60);
+}
+
 .invite-placeholder {
   block-size: 60vh;
   inline-size: 100%;

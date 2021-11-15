@@ -9,21 +9,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 
 <ng-container *transloco="let t;">
-
-  <div class="project-icon-uploader">
+  <div class="icon-uploader">
     <label class="input-label"
       for="icon-upload">
       {{ label }}
     </label>
-    <div class="project-icon-uploader-inner">
-      <div class="project-icon-wrapper">
+    <div class="icon-uploader-inner">
+      <div class="icon-wrapper">
         <tg-ui-avatar size="xxl"
           type="light"
           [url]="filePath"
           [color]="color"
           [name]="title">
         </tg-ui-avatar>
-        <button class="project-icon-button"
+        <button class="icon-button"
           (click)="filePath ? removeImage() : displayImageUploader()"
           tuiIconButton
           [icon]="filePath ? 'close' : 'plus'"
@@ -32,11 +31,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           appearance="tertiary">
         </button>
       </div>
-      <div class="project-icon-uploader-actions">
-        <div class="project-icon-uploader-explanation">
+      <div class="icon-uploader-actions">
+        <div class="icon-uploader-explanation">
           {{ tip }}
         </div>
-        <button class="project-icon-uploader-button"
+        <button class="icon-uploader-button"
           (click)="displayImageUploader()"
           tuiButton
           type="button"

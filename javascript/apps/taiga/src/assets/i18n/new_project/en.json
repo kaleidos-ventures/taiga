@@ -32,6 +32,6 @@
     "project_icon": "Project icon",
     "create_project": "Create project",
     "max_length_error": "Maximun length 200",
-    "choose_image_tip": "Allowed formats: gif, png, jpg and webp"
+    "choose_image_tip": "Allowed formats: gif, png, jpg, gif, svg and webp"
   }
 }

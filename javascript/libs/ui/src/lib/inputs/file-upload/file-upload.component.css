@@ -15,13 +15,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: none;
 }
 
-.project-icon-uploader-inner {
+.icon-uploader-inner {
   display: flex;
   gap: var(--spacing-20);
   margin-block-start: var(--spacing-8);
 }
 
-.project-icon-wrapper {
+.icon-wrapper {
   position: relative;
 
   &:hover {
@@ -31,7 +31,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
-.project-icon-button {
+.icon-button {
   --btn-size: 32px;
 
   inset-block-start: calc(50% - var(--btn-size) / 2);
@@ -40,13 +40,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   visibility: hidden;
 }
 
-.project-icon-uploader-explanation {
+.icon-uploader-explanation {
   @mixin font-small;
 
   color: var(--color-gray70);
   line-height: 1.5;
 }
 
-.project-icon-uploader-button {
+.icon-uploader-button {
   margin-block-start: var(--spacing-8);
 }

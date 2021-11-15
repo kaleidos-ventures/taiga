@@ -75,7 +75,6 @@ describe('InitStepComponent', () => {
   it('test that form gets initializated', () => {
     spectator.component.ngOnInit();
     expect(spectator.component.initForm).toHaveBeenCalled;
-    expect(spectator.component.getParams).toHaveBeenCalled;
     expect(spectator.component.getLastRoute).toHaveBeenCalled;
   });
 
@@ -87,7 +86,6 @@ describe('InitStepComponent', () => {
   it('test that no workspace is activated', () => {
     spectator.component.workspaces = [];
     spectator.component.initForm();
-    spectator.component.getParams();
     expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(null);
   });
 
@@ -95,8 +93,8 @@ describe('InitStepComponent', () => {
     const workspace = WorkspaceMockFactory();
     workspace.slug = workspaceSlug;
     spectator.component.workspaces = [workspace];
+    spectator.component.selectedWorkspaceSlug = workspace.slug;
     spectator.component.initForm();
-    spectator.component.getParams();
     expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(workspace);
   });
 

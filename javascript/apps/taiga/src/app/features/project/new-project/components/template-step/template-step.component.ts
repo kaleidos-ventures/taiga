@@ -13,12 +13,8 @@ import { ProjectCreation, Workspace } from '@taiga/data';
 import { ModalComponent } from '@taiga/ui/modal/components/modal.component';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
 
-export interface TemplateProjectForm {
-  workspace: string;
-  title: string;
-  description: string;
-  color: string;
-}
+export type TemplateProjectForm = Pick<ProjectCreation, 'name' | 'color' | 'description' | 'logo'>;
+
 @Component({
   selector: 'tg-template-step',
   templateUrl: './template-step.component.html',
@@ -51,6 +47,7 @@ export class TemplateStepComponent implements OnInit {
   public unloadHandler(event: Event) {
     event.preventDefault();
   }
+
   constructor(private fb: FormBuilder) {}
 
   public ngOnInit() {
@@ -59,16 +56,18 @@ export class TemplateStepComponent implements OnInit {
 
   public initForm() {
     this.templateProjectForm = this.fb.group({
-      workspace: [this.getCurrentWorkspace(), Validators.required],
-      title: ['', Validators.required],
+      workspace: ['', Validators.required],
+      name: ['', Validators.required],
       description: ['', Validators.maxLength(140)],
       color: [RandomColorService.randomColorPicker(), Validators.required],
       logo: '',
     });
 
     if (this.initialForm) {
-      this.templateProjectForm.setValue(this.initialForm);
+      this.templateProjectForm.patchValue(this.initialForm);
     }
+
+    this.templateProjectForm.get('workspace')?.setValue(this.getCurrentWorkspace());
   }
 
   public getCurrentWorkspace() {
@@ -86,7 +85,22 @@ export class TemplateStepComponent implements OnInit {
   }
 
   public previousStep() {
-    this.cancel.next(this.templateProjectForm.value);
+    this.cancel.next({
+      name: this.formValue.name,
+      description: this.formValue.description,
+      color: this.formValue.color,
+      logo: this.formValue.logo,
+    });
+  }
+
+  public get formValue() {
+    return this.templateProjectForm.value as {
+      workspace: Workspace;
+      name: string;
+      description: string;
+      color: number;
+      logo: File;
+    };
   }
 
   public cancelForm() {
@@ -99,7 +113,7 @@ export class TemplateStepComponent implements OnInit {
 
   public formHasContent() {
     const data = [
-      this.templateProjectForm.get('title')?.value,
+      this.templateProjectForm.get('name')?.value,
       this.templateProjectForm.get('description')?.value,
       this.templateProjectForm.get('logo')?.value,
     ];
@@ -110,14 +124,14 @@ export class TemplateStepComponent implements OnInit {
   public createProject() {
     this.templateProjectForm.markAllAsTouched();
     if (this.templateProjectForm.valid) {
-      const workspace = this.templateProjectForm.get('workspace')
-        ?.value as Workspace;
+      const workspace = this.formValue.workspace;
+
       const projectFormValue: ProjectCreation = {
         workspaceSlug: workspace.slug,
-        name: this.templateProjectForm.get('title')?.value as string,
-        description: this.templateProjectForm.get('description')?.value as string,
-        color: this.templateProjectForm.get('color')?.value as number,
-        logo: this.templateProjectForm.get('logo')?.value as File,
+        name: this.formValue.name,
+        description: this.formValue.description,
+        color: this.formValue.color,
+        logo: this.formValue.logo,
       };
       this.projectData.next(projectFormValue);
     }

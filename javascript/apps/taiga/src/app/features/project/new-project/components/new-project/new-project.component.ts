@@ -13,7 +13,7 @@ import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.a
 import { createProject, inviteUsersNewProject } from '~/app/features/project/new-project/actions/new-project.actions';
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 import { Step } from '~/app/features/project/new-project/data/new-project.model';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { TemplateProjectForm } from '../template-step/template-step.component';
 
 @Component({
@@ -25,7 +25,7 @@ import { TemplateProjectForm } from '../template-step/template-step.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewProjectComponent implements OnInit {
-  constructor(private store: Store, private router: Router) {}
+  constructor(private store: Store, private route: ActivatedRoute,) {}
 
   public workspaceList$ = this.store.select(selectWorkspaces);
   public currentStep: Step = 'init';
@@ -40,6 +40,14 @@ export class NewProjectComponent implements OnInit {
 
   public ngOnInit() {
     this.store.dispatch(fetchWorkspaceList());
+    this.setQueryParamSlug();
+  }
+
+  public setQueryParamSlug() {
+    const slug = this.route.snapshot.queryParamMap.get('workspace');
+    if (slug) {
+      this.formData.workspaceSlug = slug;
+    }
   }
 
   public onSelectTemplate(step: Step, workspaceSlug: ProjectCreation['workspaceSlug']) {

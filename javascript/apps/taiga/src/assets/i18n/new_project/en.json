@@ -25,8 +25,8 @@
   },
   "second_step": {
     "project_details": "Project details",
-    "project_title": "Project title",
-    "project_title_error": "Project name can’t be empty",
+    "project_name": "Project name",
+    "project_name_error": "Project name can’t be empty",
     "project_description": "Project description",
     "project_description_placeholder": "Add a short description to help others better understand your project.",
     "project_icon": "Project icon",

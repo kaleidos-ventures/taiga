@@ -8,7 +8,6 @@
 
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { ProjectCreation, Workspace } from '@taiga/data';
@@ -26,6 +25,8 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitStepComponent implements OnInit {
+  @Input()
+  public selectedWorkspaceSlug!: ProjectCreation['workspaceSlug'];
 
   @Input()
   public workspaces!: Workspace[];
@@ -72,13 +73,11 @@ export class InitStepComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private translocoService: TranslocoService,
-    private route: ActivatedRoute,
     private routeHistoryService: RouteHistoryService
   ) {}
 
   public ngOnInit() {
     this.initForm();
-    this.getParams();
     this.getLastRoute();
   }
 
@@ -91,16 +90,14 @@ export class InitStepComponent implements OnInit {
 
   public initForm() {
     this.createProjectForm = this.fb.group({
-      workspace: [null, Validators.required],
+      workspace: [this.getCurrentWorkspace(), Validators.required],
     });
   }
 
-  public getParams() {
-    const slug = this.route.snapshot.queryParamMap.get('workspace');
-    const refWorkspace = this.workspaces.filter((workspace) => workspace.slug === slug);
-    if (refWorkspace.length) {
-      this.createProjectForm.get('workspace')?.setValue(refWorkspace[0]);
-    }
+  public getCurrentWorkspace() {
+    return this.workspaces.find(
+      (workspace) => workspace.slug === this.selectedWorkspaceSlug
+    );
   }
 
   public trackByIndex(index: number) {

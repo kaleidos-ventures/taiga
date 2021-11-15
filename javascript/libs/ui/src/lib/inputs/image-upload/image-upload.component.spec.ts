@@ -7,15 +7,15 @@
  */
 
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { FileUploadComponent } from './file-upload.component';
+import { ImageUploadComponent } from './image-upload.component';
 import { FormControl } from '@ngneat/reactive-forms';
 import * as faker from 'faker';
 
 
 describe('FileUploadComponent', () => {
-  let spectator: Spectator<FileUploadComponent>;
+  let spectator: Spectator<ImageUploadComponent>;
   const createComponent = createComponentFactory({
-    component: FileUploadComponent,
+    component: ImageUploadComponent,
     declareComponent: false,
   });
 
@@ -35,6 +35,6 @@ describe('FileUploadComponent', () => {
   it('remove FilePath', () => {
     spectator.component.control = new FormControl(faker.datatype.string());
     spectator.component.removeImage();
-    expect(spectator.component.filePath).toBe('');
+    expect(spectator.component.imagePath).toBe('');
   });
 });

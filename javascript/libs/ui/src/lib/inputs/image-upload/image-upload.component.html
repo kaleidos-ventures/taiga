@@ -9,51 +9,51 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 
 <ng-container *transloco="let t;">
-  <div class="icon-uploader">
+  <div class="uploader">
     <label class="input-label"
-      for="icon-upload">
+      for="upload">
       {{ label }}
     </label>
-    <div class="icon-uploader-inner">
-      <div class="icon-wrapper">
+    <div class="uploader-inner">
+      <div class="preview-wrapper">
         <tg-ui-avatar size="xxl"
           type="light"
-          [url]="filePath"
+          [url]="safeImageUrl"
           [color]="color"
           [name]="title">
         </tg-ui-avatar>
-        <button class="icon-button"
-          (click)="filePath ? removeImage() : displayImageUploader()"
+        <button class="remove-image-button"
+          (click)="control.value ? removeImage() : displayImageUploader()"
           tuiIconButton
-          [icon]="filePath ? 'close' : 'plus'"
-          [attr.title]="t('file_upload.choose_image')"
+          [icon]="control.value ? 'close' : 'plus'"
+          [attr.title]="t('image_upload.choose_image')"
           type="button"
           appearance="tertiary">
         </button>
       </div>
-      <div class="icon-uploader-actions">
-        <div class="icon-uploader-explanation">
+      <div class="uploader-actions">
+        <div class="uploader-explanation">
           {{ tip }}
         </div>
-        <button class="icon-uploader-button"
+        <button class="uploader-button"
           (click)="displayImageUploader()"
           tuiButton
           type="button"
           appearance="tertiary">
-          <ng-container *ngIf="!filePath">
-            {{ t('file_upload.choose_image') }}
+          <ng-container *ngIf="!control.value">
+            {{ t('image_upload.choose_image') }}
           </ng-container>
-          <ng-container *ngIf="filePath">
-            {{ t('file_upload.change_image') }}
+          <ng-container *ngIf="control.value">
+            {{ t('image_upload.change_image') }}
           </ng-container>
         </button>
         <input class="input-upload"
-          #iconUpload
+          #imageUpload
           [attr.accept]="accept"
-          (change)="onFileSelected($event)"
+          (change)="onImageSelected($event)"
           type="file"
-          name="icon-upload"
-          id="icon-upload">
+          name="upload"
+          id="upload">
       </div>
     </div>
   </div>

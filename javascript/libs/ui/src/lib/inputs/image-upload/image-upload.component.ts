@@ -14,21 +14,21 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
-  selector: 'tg-ui-file-upload',
-  templateUrl: './file-upload.component.html',
+  selector: 'tg-ui-image-upload',
+  templateUrl: './image-upload.component.html',
   styleUrls: [
     '../inputs.css',
-    './file-upload.component.css'
+    './image-upload.component.css'
   ],
   providers: [{
     provide: TRANSLOCO_SCOPE,
     useValue: {
-      scope: 'file_upload',
-      alias: 'file_upload',
+      scope: 'image_upload',
+      alias: 'image_upload',
     },
   },]
 })
-export class FileUploadComponent implements OnChanges {
+export class ImageUploadComponent implements OnChanges {
   @Input() public label = '';
   @Input() public tip = '';
   @Input() public title = '';
@@ -36,13 +36,13 @@ export class FileUploadComponent implements OnChanges {
   @Input() public accept?: string;
   @Input() public control!: FormControl;
 
-  @ViewChild('iconUpload')
-  public iconUpload!: ElementRef<HTMLInputElement>;
+  @ViewChild('imageUpload')
+  public imageUpload!: ElementRef<HTMLInputElement>;
 
   @Output()
-  public fileSelected = new EventEmitter<File | undefined>();
+  public imageSelected = new EventEmitter<File | undefined>();
 
-  public filePath = '';
+  public safeImageUrl = '';
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -54,28 +54,28 @@ export class FileUploadComponent implements OnChanges {
       this.control.valueChanges
         .pipe(untilDestroyed(this))
         .subscribe((value: string) => {
-          this.filePath = this.domSanitizer.bypassSecurityTrustUrl(value) as string;
+          this.safeImageUrl = this.domSanitizer.bypassSecurityTrustUrl(value) as string;
         });
     }
   }
 
   public displayImageUploader() {
-    this.iconUpload.nativeElement.click();
+    this.imageUpload.nativeElement.click();
   }
 
-  public onFileSelected(event: Event): void  {
+  public onImageSelected(event: Event): void  {
     const target = (event.target as HTMLInputElement);
     if (target && target.files?.length) {
-      const file: File = target.files[0];
-      this.fileSelected.next(file);
+      const img: File = target.files[0];
+      this.imageSelected.next(img);
 
       // Read the contents of the file;
       const reader = new FileReader();
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(img);
       reader.onload = () => {
         const url = reader.result as string;
 
-        if (file.type === 'image/gif') {
+        if (img.type === 'image/gif') {
           void this.getGifFrame(url).then((staticUrl) => {
             this.control.setValue(staticUrl);
           });
@@ -90,7 +90,8 @@ export class FileUploadComponent implements OnChanges {
   }
 
   public removeImage() {
-    this.fileSelected.next();
+    this.imageSelected.next();
+    this.imageUpload.nativeElement.value = '';
     this.control.setValue('');
   }
 

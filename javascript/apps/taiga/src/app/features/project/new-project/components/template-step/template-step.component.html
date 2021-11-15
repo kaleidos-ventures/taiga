@@ -78,13 +78,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tg-ui-textarea>
 
       <!-- Image upload  -->
-      <tg-ui-file-upload [color]="templateProjectForm.get('color')?.value"
+      <tg-ui-image-upload [color]="templateProjectForm.get('color')?.value"
         [control]="logo"
         [title]="templateProjectForm.get('name')?.value"
         [label]="t('new_project.second_step.project_icon')"
         [tip]="t('new_project.second_step.choose_image_tip')"
         accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg">
-      </tg-ui-file-upload>
+      </tg-ui-image-upload>
 
       <div class="new-step-actions">
         <button (click)="cancelForm()"

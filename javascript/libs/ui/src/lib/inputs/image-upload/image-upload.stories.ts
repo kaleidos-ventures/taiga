@@ -7,11 +7,11 @@
  */
 
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
-import { FileUploadComponent } from './file-upload.component';
+import { ImageUploadComponent } from './image-upload.component';
 
 export default ConfigureStory({
-  title: 'File Upload',
-  component: FileUploadComponent,
+  title: 'Image Upload',
+  component: ImageUploadComponent,
 });
 
 // const baseArgs = {
@@ -21,7 +21,7 @@ export default ConfigureStory({
 export const Badge = ConfigureTemplate({
   template: `
   <div class="story-small-container">
-    <tg-file-upload></tg-ui-badge>
+    <tg-image-upload></tg-image-upload>
   </div>
   `,
   // args: baseArgs,

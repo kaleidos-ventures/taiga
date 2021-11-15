@@ -7,13 +7,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 :root {
-  $negative-layer: -1;
-  $first-layer: 2;
-  $second-layer: 3;
-  $third-layer: 4;
-  $fourth-layer: 5;
-
-  $lightbox-layer: 98;
-
-  $overall-layer: 99;
+  --negative-layer: -1;
+  --first-layer: 2;
+  --second-layer: 3;
+  --third-layer: 4;
+  --fourth-layer: 5;
+  --lightbox-layer: 98;
+  --overall-layer: 99;
 }

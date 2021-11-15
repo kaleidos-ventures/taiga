@@ -18,9 +18,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           (focusout)="out()"
           [attr.data-text]="'project'"
           [class.active-dialog]="dialog.type === 'project'"
-          [attr.href]="dialog.link">
-          <tg-ui-avatar
-            class="project-logo-image"
+          [routerLink]="['/project', project.slug]">
+          <tg-ui-avatar class="project-logo-image"
             [color]="project.color"
             [url]="project.logoSmall"
             [name]="project.name">
@@ -28,15 +27,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </a>
         <div *ngIf="!collapsed"
           class="workspace-data">
-          <a
-            class="workspace-data-project"
+          <a class="workspace-data-project"
             [routerLink]="['/project', project.slug]">
             {{ project.name }}
           </a>
           <a *ngIf="!collapsed"
             class="workspace-data-workspace"
             [routerLink]="['/workspace', project.workspace.slug]">
-            {{ t('main_project_navigation.personal_workspace') }}
+            {{ project.workspace.name }}
           </a>
         </div>
       </div>
@@ -134,7 +132,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </ul>
             </li>
             <li class="menu-option"
-            [class.active]="kanbanActive.isActive"
+              [class.active]="kanbanActive.isActive"
               [attr.data-text]="t('commons.kanban')"
               (pointerenter)="popup($event, 'kanban')"
               (pointerleave)="out()">
@@ -308,7 +306,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </span>
     </a>
     <div *ngIf="dialog.type === 'scrum'"
-    [attr.href]="dialog.link"
+      [attr.href]="dialog.link"
       cdkTrapFocus
       [style.min-height.px]="dialog.mainLinkHeight"
       class="dialog-scrum">
@@ -351,7 +349,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </a>
       <a class="workspace-data-workspace"
         [routerLink]="['/workspace', project.workspace.slug]">
-        {{ t('main_project_navigation.personal_workspace') }}
+        {{ project.workspace.name }}
       </a>
     </div>
   </div>

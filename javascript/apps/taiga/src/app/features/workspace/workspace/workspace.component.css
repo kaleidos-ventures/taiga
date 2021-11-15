@@ -29,7 +29,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .workspace-create {
   inline-size: 100%;
   position: absolute;
-  z-index: var(--$first-layer);
+  z-index: var(--first-layer);
 }
 
 .workspace-wrapper {
@@ -71,7 +71,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   max-inline-size: 400px;
   padding: var(--spacing-24);
   position: absolute;
-  z-index: var(--$first-layer);
+  z-index: var(--first-layer);
 
   & .workspace-call-action-title {
     font-weight: var(--font-weight-medium);

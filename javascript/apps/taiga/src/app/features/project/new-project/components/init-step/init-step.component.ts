@@ -14,6 +14,7 @@ import { TranslocoService } from '@ngneat/transloco';
 import { ProjectCreation, Workspace } from '@taiga/data';
 import { Template } from '~/app/features/project/new-project/data/new-project.model';
 import { Step } from '~/app/features/project/new-project/data/new-project.model';
+import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
 @Component({
   selector: 'tg-init-step',
@@ -66,15 +67,26 @@ export class InitStepComponent implements OnInit {
     }
   ];
 
+  public readonlyWorkspace = false;
+
   constructor(
     private fb: FormBuilder,
     private translocoService: TranslocoService,
     private route: ActivatedRoute,
+    private routeHistoryService: RouteHistoryService
   ) {}
 
   public ngOnInit() {
     this.initForm();
     this.getParams();
+    this.getLastRoute();
+  }
+
+  public getLastRoute() {
+    const previousUrl: string = this.routeHistoryService.getPreviousUrl();
+    if (previousUrl?.startsWith('/workspace')) {
+      this.readonlyWorkspace = true;
+    }
   }
 
   public initForm() {

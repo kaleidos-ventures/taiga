@@ -15,10 +15,11 @@ import * as faker from 'faker';
 import { FormBuilder } from '@angular/forms';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { ActivatedRoute } from '@angular/router';
+import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
 const workspaceSlug = faker.lorem.slug();
 
-describe('TemplateStepComponent', () => {
+describe('InitStepComponent', () => {
   let spectator: Spectator<InitStepComponent>;
 
   const createComponent = createComponentFactory({
@@ -27,6 +28,14 @@ describe('TemplateStepComponent', () => {
       getTranslocoModule(),
     ],
     providers: [
+      {
+        provide: RouteHistoryService,
+        useValue: {
+          getPreviousUrl: () => {
+            return '/workspace';
+          }
+        }
+      },
       FormBuilder,
       {
         provide: ActivatedRoute,
@@ -67,6 +76,12 @@ describe('TemplateStepComponent', () => {
     spectator.component.ngOnInit();
     expect(spectator.component.initForm).toHaveBeenCalled;
     expect(spectator.component.getParams).toHaveBeenCalled;
+    expect(spectator.component.getLastRoute).toHaveBeenCalled;
+  });
+
+  it('test that workspace gets readonly', () => {
+    spectator.component.getLastRoute();
+    expect(spectator.component.readonlyWorkspace).toBeTruthy();
   });
 
   it('test that no workspace is activated', () => {

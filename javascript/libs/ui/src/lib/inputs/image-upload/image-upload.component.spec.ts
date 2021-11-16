@@ -5,17 +5,22 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-
+import '@ng-web-apis/universal/mocks';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { ImageUploadComponent } from './image-upload.component';
+import { ImageUploadModule } from './image-upload.module';
 import { FormControl } from '@ngneat/reactive-forms';
 import * as faker from 'faker';
-
+import { getTranslocoModule } from '@taiga/ui/transloco/transloco-testing.module';
 
 describe('FileUploadComponent', () => {
   let spectator: Spectator<ImageUploadComponent>;
   const createComponent = createComponentFactory({
     component: ImageUploadComponent,
+    imports: [
+      ImageUploadModule,
+      getTranslocoModule(),
+    ],
     declareComponent: false,
   });
 
@@ -34,7 +39,9 @@ describe('FileUploadComponent', () => {
 
   it('remove FilePath', () => {
     spectator.component.control = new FormControl(faker.datatype.string());
+    spectator.detectChanges();
     spectator.component.removeImage();
-    expect(spectator.component.imagePath).toBe('');
+    expect(spectator.component.control.value).toBe('');
+    expect(spectator.component.safeImageUrl).toBe('');
   });
 });

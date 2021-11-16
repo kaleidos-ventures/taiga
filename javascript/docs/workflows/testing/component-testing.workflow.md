@@ -162,6 +162,19 @@ describe('ButtonComponent', () => {
 });
 ```
 
+## Mock translations
+
+Use `getTranslocoModule` in your test imports.
+
+```ts
+const createComponent = createComponentFactory({
+  component: TestComponent,
+  imports: [
+    getTranslocoModule(),
+  ],
+  providers: [],
+});
+```
 ## RxState
 
 // Todo

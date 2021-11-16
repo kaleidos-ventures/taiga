@@ -6,23 +6,33 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { FormControl } from '@angular/forms';
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { ImageUploadComponent } from './image-upload.component';
+import { ImageUploadModule } from './image-upload.module';
 
 export default ConfigureStory({
   title: 'Image Upload',
   component: ImageUploadComponent,
+  extraModules: [ ImageUploadModule ],
 });
 
-// const baseArgs = {
-//   label: 'label',
-// };
-
-export const Badge = ConfigureTemplate({
+export const ImageUpload = ConfigureTemplate({
   template: `
-  <div class="story-small-container">
-    <tg-image-upload></tg-image-upload>
+  <div class="story-flex">
+    <tg-ui-image-upload
+      [control]="control"
+      title="title"
+      label="label"
+      tip="Allowed formats: gif, png, jpg, gif, svg and webp"
+      accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg">
+    </tg-ui-image-upload>
   </div>
   `,
-  // args: baseArgs,
+  props: {
+    control: new FormControl(),
+  },
+  args: {
+    title: 'title'
+  }
 });

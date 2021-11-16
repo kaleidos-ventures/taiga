@@ -13,10 +13,30 @@ import { Meta } from '@storybook/angular/types-6-0';
 import { TUI_ICONS_PATH } from '@taiga-ui/core';
 import { paramCase } from 'change-case';
 import { Component } from '@angular/core';
+import { TranslocoTestingModule, TranslocoTestingOptions } from '@ngneat/transloco';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import imageUpload from 'apps/taiga/src/assets/i18n/image_upload/en.json';
 
 const altIconName: Record<string, string> = {
   'tuiIconChevronDownLarge': 'chevron-down'
 };
+
+function getTranslocoModule(options: TranslocoTestingOptions = {}) {
+  return TranslocoTestingModule.forRoot({
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    langs: {
+      en: {
+        'image_upload': imageUpload,
+      }
+    },
+    translocoConfig: {
+      availableLangs: ['en'],
+      defaultLang: 'en',
+    },
+    preloadLangs: true,
+    ...options
+  });
+}
 
 export function iconsPath(name: string): string {
   name = altIconName[name] ?? name;
@@ -27,6 +47,7 @@ export const ConfigureStory = (config: {
   component: unknown,
   declarations?: unknown[],
   extraModules?: unknown[],
+  extraProviders?: unknown[],
   routing?: boolean,
   translations?: boolean,
   decorators?: Meta['decorators'],
@@ -35,14 +56,21 @@ export const ConfigureStory = (config: {
     routing: true,
     translations: true,
     decorators: [],
+    extraModules: [],
+    extraProviders: [],
     ...config,
   };
+
+  if (config.translations) {
+    config.extraModules?.push(getTranslocoModule());
+  }
 
   const module: Partial<NgModuleMetadata> = {
     declarations: [
       ...config.declarations || [],
     ],
     providers: [
+      ...config.extraProviders || [],
       { provide: APP_BASE_HREF, useValue: '/' },
       {
         provide: TUI_ICONS_PATH,
@@ -52,7 +80,6 @@ export const ConfigureStory = (config: {
     imports: [
       // Prevent Storybook error "Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'iframe.html'"
       // RouterModule.forRoot([], { useHash: true }),
-      // TranslateModule.forRoot(),
       ...config.extraModules || [],
     ],
   };

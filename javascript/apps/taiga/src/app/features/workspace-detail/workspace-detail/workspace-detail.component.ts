@@ -22,16 +22,16 @@ import { selectWorkspace, selectWorkspaceProjects } from '../selectors/workspace
 })
 export class WorkspaceDetailComponent implements OnInit {
   public readonly model$ = this.state.select();
-  public amountOfProjectToShow = 6;
+  public amountOfProjectsToShow = 6;
 
   public get gridClass() {
-    return `grid-items-${this.amountOfProjectToShow}`;
+    return `grid-items-${this.amountOfProjectsToShow}`;
   };
 
   constructor(
     private store: Store,
     private state: RxState<{
-      projectToShow: boolean
+      projectsToShow: boolean
       workspace: Workspace,
       project: Project[],
     }>,
@@ -48,7 +48,7 @@ export class WorkspaceDetailComponent implements OnInit {
 
   public setCardAmounts(width: number) {
     const amount = Math.ceil(width / 250);
-    this.amountOfProjectToShow = (amount >= 6) ? 6 : amount;
+    this.amountOfProjectsToShow = (amount >= 6) ? 6 : amount;
   }
 
   public onResized(event: ResizedEvent) {

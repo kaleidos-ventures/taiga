@@ -8,14 +8,31 @@
 
 import { Workspace } from './workspace.model';
 import * as faker from 'faker';
+import { ProjectMockFactory } from '../lib/project.model.mock';
 
 export const WorkspaceMockFactory = (): Workspace => {
-  return {
+  const workspace = {
     id: faker.datatype.number(),
-    slug: faker.datatype.string(),
+    slug: faker.lorem.slug(),
     name: faker.datatype.string(),
     color: faker.datatype.number(),
-    latestProjects: [],
-    totalProjects: 0
+  };
+
+  const latestProjects = [];
+  const numProjects = 6;
+
+  for (let i = 0; i < numProjects; i++) {
+    latestProjects.push(
+      ProjectMockFactory(false, {
+        color: workspace.color,
+        slug: workspace.slug,
+        name: workspace.name,
+      }));
+  }
+
+  return {
+    ...workspace,
+    latestProjects: latestProjects,
+    totalProjects: numProjects * 2,
   };
 };

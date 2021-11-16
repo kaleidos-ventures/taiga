@@ -63,7 +63,7 @@ export class WorkspaceComponent {
   @Output()
   public hideActivity = new EventEmitter<boolean>();
 
-  public amountOfProjectToShow = 4;
+  public amountOfProjectsToShow = 4;
 
   constructor(
     private store: Store,
@@ -98,6 +98,6 @@ export class WorkspaceComponent {
 
   public setCardAmounts(width: number) {
     const amount = Math.ceil(width / 250);
-    this.amountOfProjectToShow = (amount >= 6) ? 6 : amount;
+    this.amountOfProjectsToShow = (amount >= 6) ? 6 : amount;
   }
 }

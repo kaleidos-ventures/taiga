@@ -16,7 +16,7 @@ import { fetchWorkspaceProjects } from '../actions/workspace.actions';
 import { selectWorkspaceProject } from '../selectors/workspace.selectors';
 
 interface ViewModel {
-  projectToShow: number,
+  projectsToShow: number,
   showAllProjects: boolean,
   projects: WorkspaceProject[]
 }
@@ -34,19 +34,19 @@ export class WorkspaceItemComponent implements OnInit {
   public workspace!: Workspace;
 
   @Input()
-  public set projectToShow(projectToShow: number) {
-    this.state.set({ projectToShow });
+  public set projectsToShow(projectsToShow: number) {
+    this.state.set({ projectsToShow });
   }
 
   public get gridClass() {
-    return `grid-items-${this.state.get('projectToShow')}`;
+    return `grid-items-${this.state.get('projectsToShow')}`;
   };
 
   public model$!: Observable<ViewModel>;
 
   constructor(private store: Store, private state: RxState<ViewModel>) {
     this.state.set({
-      projectToShow: 6,
+      projectsToShow: 6,
     });
   }
 
@@ -59,7 +59,7 @@ export class WorkspaceItemComponent implements OnInit {
     ]).pipe(
       map(([state, projects]) => {
         if (!state.showAllProjects) {
-          projects = projects.slice(0, (state.projectToShow <= 3) ? 3 : state.projectToShow);
+          projects = projects.slice(0, (state.projectsToShow <= 3) ? 3 : state.projectsToShow);
         }
 
         return {

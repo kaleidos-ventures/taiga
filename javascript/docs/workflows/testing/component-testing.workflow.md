@@ -65,6 +65,9 @@ describe('ButtonComponent', () => {
     component: ExampleComponent,
     // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
     imports: [ExampleModule],
+    providers: [
+      provideMockStore({ initialState }),
+    ]
     declareComponent: false
   });
   // fake state
@@ -77,9 +80,7 @@ describe('ButtonComponent', () => {
         name: 'example'
       },
       // Override the component's providers
-      providers: [
-        provideMockStore({ initialState }),
-      ],
+      providers: [],
       // Whether to run change detection (defaults to true)
       detectChanges: false
     });
@@ -175,9 +176,28 @@ const createComponent = createComponentFactory({
   providers: [],
 });
 ```
+## Spy dispatch action
+
+```ts
+const dispatchSpy = jest.spyOn(store, 'dispatch');
+
+expect(dispatchSpy).toBeCalledWith(action);
+```
+
 ## RxState
 
-// Todo
+Testing model view.
+
+```ts
+it('test', (done) => {
+  spectator.detectChanges();
+
+  spectator.component.model$.subscribe(({ projects }) => {
+    expect(projects.length).toEqual(6);
+    done();
+  });
+});
+```
 
 ## Mock Components, Directives, Pipes, Modules, Services and Tokens
 

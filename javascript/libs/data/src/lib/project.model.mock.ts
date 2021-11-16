@@ -7,7 +7,7 @@
  */
 
 import * as faker from 'faker';
-import { ProjectCreation } from '..';
+import { ProjectCreation, Workspace } from '..';
 import { Milestone } from './milestone.model';
 import { MilestoneMockFactory } from './milestone.model.mock';
 
@@ -22,18 +22,20 @@ const getMilestones = () => {
   return milestones;
 };
 
-export const ProjectMockFactory = (milestones = false): Project => {
-  return {
+export const ProjectMockFactory = (milestones = false, workspace?: Pick<Workspace, 'color' | 'name' | 'slug'>): Project => {
+  const project = {
     name: faker.name.title(),
     slug: faker.datatype.string(),
     milestones: milestones ? getMilestones() : [],
     color: faker.datatype.number(8),
     description: faker.lorem.paragraphs(),
-    workspace: WorkspaceMockFactory(),
+    workspace: workspace ?? WorkspaceMockFactory(),
     logo: faker.image.imageUrl(),
     logoSmall: faker.image.imageUrl(),
     logoBig: faker.image.imageUrl(),
   };
+
+  return project;
 };
 
 export const ProjectCreationMockFactory = (): ProjectCreation => {

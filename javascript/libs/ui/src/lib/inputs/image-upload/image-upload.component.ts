@@ -52,15 +52,33 @@ export class ImageUploadComponent implements OnChanges {
   public ngOnChanges(changes: SimpleChanges) {
     if (changes.control) {
       if (this.control.value) {
-        this.safeImageUrl = this.domSanitizer.bypassSecurityTrustUrl(this.control.value) as string;
+        const path = URL.createObjectURL(this.controlValue);
+        this.safeImageUrl = this.getSafeUrl(path);
       }
 
       this.control.valueChanges
         .pipe(untilDestroyed(this))
-        .subscribe((value: string) => {
-          this.safeImageUrl = this.domSanitizer.bypassSecurityTrustUrl(value) as string;
+        .subscribe(() => {
+          if (this.controlValue.type === 'image/gif') {
+            const path = URL.createObjectURL(this.controlValue);
+
+            void this.getGifFrame(path).then((staticUrl) => {
+              this.safeImageUrl = this.getSafeUrl(staticUrl);
+            });
+          } else {
+            const path = URL.createObjectURL(this.controlValue);
+            this.safeImageUrl = this.getSafeUrl(path);
+          }
         });
     }
+  }
+
+  public get controlValue() {
+    return this.control.value as File;
+  }
+
+  public getSafeUrl(path: string) {
+    return this.domSanitizer.bypassSecurityTrustUrl(path) as string;
   }
 
   public displayImageUploader() {
@@ -77,16 +95,7 @@ export class ImageUploadComponent implements OnChanges {
       const reader = new FileReader();
       reader.readAsDataURL(img);
       reader.onload = () => {
-        const url = reader.result as string;
-
-        if (img.type === 'image/gif') {
-          void this.getGifFrame(url).then((staticUrl) => {
-            this.control.setValue(staticUrl);
-          });
-        } else {
-          this.control.setValue(url);
-        }
-
+        this.control.setValue(img);
       };
 
       this.cd.markForCheck();

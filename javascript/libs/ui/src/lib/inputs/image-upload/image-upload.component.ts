@@ -51,6 +51,10 @@ export class ImageUploadComponent implements OnChanges {
 
   public ngOnChanges(changes: SimpleChanges) {
     if (changes.control) {
+      if (this.control.value) {
+        this.safeImageUrl = this.domSanitizer.bypassSecurityTrustUrl(this.control.value) as string;
+      }
+
       this.control.valueChanges
         .pipe(untilDestroyed(this))
         .subscribe((value: string) => {

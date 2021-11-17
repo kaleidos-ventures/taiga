@@ -22,7 +22,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       {{ t('new_project.second_step.project_details') }}</h1>
     <form class="template-project-form"
       #form="ngForm"
-      [showFormErrors]="form.submitted"
       [formGroup]="templateProjectForm"
       (ngSubmit)="createProject()">
       <tg-ui-select [label]="t('commons.workspace')"
@@ -57,7 +56,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           tuiAutoFocus
           maxlength="80">
         <ng-container inputError>
-          <tg-ui-error error="required">
+          <tg-ui-error
+            [enabled]="form.submitted"
+            error="required">
             {{ t('new_project.second_step.project_name_error') }}
           </tg-ui-error>
         </ng-container>
@@ -72,6 +73,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ t('new_project.second_step.project_description_placeholder') }}
         </tui-text-area>
         <tg-ui-error inputError
+          [enabled]="form.submitted"
           error="maxlength">
           {{ t('new_project.second_step.max_length_error') }}
         </tg-ui-error>
@@ -82,8 +84,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [control]="logo"
         [title]="templateProjectForm.get('name')?.value"
         [label]="t('new_project.second_step.project_icon')"
+        [formatError]="t('new_project.second_step.format_error')"
         [tip]="t('new_project.second_step.choose_image_tip')"
-        accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg">
+        accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg, image/svg+xml">
       </tg-ui-image-upload>
 
       <div class="new-step-actions">

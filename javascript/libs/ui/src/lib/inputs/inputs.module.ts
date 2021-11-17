@@ -12,12 +12,12 @@ import { TuiSvgModule, TuiTextfieldControllerModule } from '@taiga-ui/core';
 import { InputComponent } from './input/input.component';
 import { InputRefDirective } from './input-ref.directive';
 import { SelectComponent } from './select/select.component';
-import { ErrorComponent } from './error/error.component';
 import { TuiDataListModule } from '@taiga-ui/core';
 import { TuiDataListWrapperModule, TuiSelectModule, TuiTextAreaModule } from '@taiga-ui/kit';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TextareaComponent } from './textarea/textarea.component';
 import { FormDirective } from './form/form.directive';
+import { UiErrorModule } from './error/error.module';
 @NgModule({
   imports: [
     TuiSvgModule,
@@ -27,7 +27,8 @@ import { FormDirective } from './form/form.directive';
     TuiDataListModule,
     TuiDataListWrapperModule,
     TuiTextfieldControllerModule,
-    TuiTextAreaModule
+    TuiTextAreaModule,
+    UiErrorModule,
   ],
   declarations: [
     FormDirective,
@@ -35,7 +36,6 @@ import { FormDirective } from './form/form.directive';
     InputComponent,
     SelectComponent,
     TextareaComponent,
-    ErrorComponent,
   ],
   providers: [],
   exports: [
@@ -44,13 +44,13 @@ import { FormDirective } from './form/form.directive';
     InputComponent,
     SelectComponent,
     TextareaComponent,
-    ErrorComponent,
     ReactiveFormsModule,
     TuiSelectModule,
     TuiDataListModule,
     TuiDataListWrapperModule,
     TuiTextfieldControllerModule,
     TuiTextAreaModule,
+    UiErrorModule
   ]
 })
 export class InputsModule {}

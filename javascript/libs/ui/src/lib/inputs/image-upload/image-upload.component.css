@@ -16,6 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .uploader-inner {
+  align-items: flex-start;
   display: flex;
   gap: var(--spacing-20);
   margin-block-start: var(--spacing-8);
@@ -48,5 +49,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .uploader-button {
+  margin-block-start: var(--spacing-8);
+}
+
+tg-ui-error {
+  display: block;
   margin-block-start: var(--spacing-8);
 }

@@ -14,4 +14,5 @@ export class FieldService {
   public control?: FormControl;
   public form?: FormGroupDirective;
   public id = '';
+  public enabledErrors = true;
 }

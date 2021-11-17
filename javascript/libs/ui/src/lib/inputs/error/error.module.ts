@@ -8,25 +8,19 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ImageUploadComponent } from './image-upload.component';
-import { TranslocoModule } from '@ngneat/transloco';
-import { TuiButtonModule } from '@taiga-ui/core';
-import { AvatarModule } from '@taiga/ui/avatar';
-import { UiErrorModule } from '../error/error.module';
+import { TuiSvgModule } from '@taiga-ui/core';
+import { ErrorComponent } from './error.component';
 
 @NgModule({
   imports: [
     CommonModule,
-    TranslocoModule,
-    AvatarModule,
-    TuiButtonModule,
-    UiErrorModule,
+    TuiSvgModule,
   ],
   declarations: [
-    ImageUploadComponent
+    ErrorComponent
   ],
   exports: [
-    ImageUploadComponent
+    ErrorComponent
   ]
 })
-export class ImageUploadModule {}
+export class UiErrorModule {}

@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FieldService } from '../services/field.service';
 import { FormDirective } from '../form/form.directive';
 
@@ -15,7 +15,7 @@ import { FormDirective } from '../form/form.directive';
   templateUrl: './error.component.html',
   styleUrls: ['./error.component.css']
 })
-export class ErrorComponent {
+export class ErrorComponent implements OnChanges {
   @Input()
   public error!: string;
 
@@ -23,6 +23,12 @@ export class ErrorComponent {
   public enabled = true;
 
   constructor(public fieldService: FieldService, public formDirective: FormDirective) {}
+
+  public ngOnChanges(changes: SimpleChanges) {
+    if (changes.enabled) {
+      this.fieldService.enabledErrors = this.enabled;
+    }
+  }
 
   public get showError() {
     if (!this.formDirective.showFormErrors || !this.enabled) {
@@ -34,6 +40,7 @@ export class ErrorComponent {
 
     if (errors && errors[this.error] && fieldControl) {
       const isOnSubmit = fieldControl.updateOn === 'submit';
+
       if (isOnSubmit) {
         return this.fieldService.form?.submitted;
       } else {

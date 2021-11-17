@@ -60,7 +60,7 @@ export class TemplateStepComponent implements OnInit {
       name: ['', Validators.required],
       description: ['', Validators.maxLength(140)],
       color: [RandomColorService.randomColorPicker(), Validators.required],
-      logo: '',
+      logo: [''],
     });
 
     if (this.initialForm) {
@@ -122,6 +122,8 @@ export class TemplateStepComponent implements OnInit {
   }
 
   public createProject() {
+    (this.templateProjectForm.get('logo') as FormControl).setErrors(null);
+
     this.templateProjectForm.markAllAsTouched();
     if (this.templateProjectForm.valid) {
       const workspace = this.formValue.workspace;

@@ -163,6 +163,30 @@ describe('ButtonComponent', () => {
 });
 ```
 
+## Mock components
+
+If the test doesn't need test inputs or outputs just use `NO_ERRORS_SCHEMA`
+
+```ts
+  const createComponent = createComponentFactory({
+    component: ExampleComponent,
+    schemas: [NO_ERRORS_SCHEMA],
+  });
+```
+
+or mock the components
+
+```ts
+  import { MockComponent } from 'ng-mocks';
+
+  const createComponent = createComponentFactory({
+    component: ExampleComponent,
+    declarations: [
+      MockComponent(FooComponent)
+    ]
+  });
+```
+
 ## Mock translations
 
 Use `getTranslocoModule` in your test imports.

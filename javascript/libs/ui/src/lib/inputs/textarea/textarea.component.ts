@@ -66,7 +66,7 @@ export class TextareaComponent implements AfterContentInit {
   }
 
   @HostBinding('class.show-errors') public get showErrors() {
-    return this.formDirective.showFormErrors;
+    return this.formDirective.showFormErrors && this.fieldService.enabledErrors;
   }
 
   @HostBinding('class') public get updateOn() {

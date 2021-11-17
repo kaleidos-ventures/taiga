@@ -8,7 +8,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t;">
   <div class="uploader">
     <label class="input-label"
-      for="upload">
+      [attr.for]="id">
       {{ label }}
     </label>
     <div class="uploader-inner">
@@ -50,7 +50,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           (change)="onImageSelected($event)"
           type="file"
           name="upload"
-          id="upload">
+          [attr.id]="id">
+
+        <tg-ui-error error="type">
+          {{ formatError }}
+        </tg-ui-error>
       </div>
     </div>
   </div>

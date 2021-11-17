@@ -108,7 +108,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   <tg-ui-modal
     [open]="showWarningModal"
-    (requestClose)="showWarningModal = !showWarningModal">
+    (requestClose)="cancelRedirect()">
       <ng-container>
         <div class="confirmation-modal">
           <div aria-describedby="aria-description" aria-labeledby="arial-label">
@@ -120,7 +120,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <button
                 tuiButton
                 appearance="tertiary"
-                (click)="showWarningModal = !showWarningModal">{{ t('commons.confirmation_modal.no') }}</button>
+                (click)="cancelRedirect()">{{ t('commons.confirmation_modal.no') }}</button>
               <button
                 tuiButton
                 appearance="primary"

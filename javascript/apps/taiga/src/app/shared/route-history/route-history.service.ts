@@ -7,7 +7,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Router, RoutesRecognized } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { filter, pairwise } from 'rxjs/operators';
 
 @Injectable({
@@ -18,18 +18,26 @@ export class RouteHistoryService {
   private previousUrl!: string;
 
   constructor(
-    private router: Router,
-  ) {
+    private router: Router
+  ) {}
+
+  public listen() {
     this.router.events
       .pipe(
-        filter((evt: unknown) => evt instanceof RoutesRecognized),
+        filter((evt: unknown): evt is NavigationEnd  => evt instanceof NavigationEnd),
         pairwise()
       ).subscribe((events) => {
-        this.previousUrl = (events[0] as RoutesRecognized).urlAfterRedirects;
+        if (this.previousUrl !== events[0].urlAfterRedirects) {
+          this.previousUrl = events[0].urlAfterRedirects;
+        }
       });
   }
 
   public getPreviousUrl(): string {
     return this.previousUrl;
+  }
+
+  public back() {
+    void this.router.navigateByUrl(this.previousUrl ?? '/');
   }
 }

@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ProjectCreation, User } from '@taiga/data';
 import { fetchWorkspaceList } from '~/app/features/workspace/actions/workspace.actions';
@@ -14,7 +14,8 @@ import { createProject, inviteUsersNewProject } from '~/app/features/project/new
 import { selectWorkspaces } from '~/app/features/workspace/selectors/workspace.selectors';
 import { Step } from '~/app/features/project/new-project/data/new-project.model';
 import { ActivatedRoute } from '@angular/router';
-import { TemplateProjectForm } from '../template-step/template-step.component';
+import { TemplateProjectForm, TemplateStepComponent } from '../template-step/template-step.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'tg-new-project',
@@ -25,6 +26,9 @@ import { TemplateProjectForm } from '../template-step/template-step.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewProjectComponent implements OnInit {
+  @ViewChild(TemplateStepComponent)
+  public templateStepComponent?: TemplateStepComponent;
+
   constructor(private store: Store, private route: ActivatedRoute,) {}
 
   public workspaceList$ = this.store.select(selectWorkspaces);
@@ -41,6 +45,14 @@ export class NewProjectComponent implements OnInit {
   public ngOnInit() {
     this.store.dispatch(fetchWorkspaceList());
     this.setQueryParamSlug();
+  }
+
+  public canDeactivate(): boolean | Observable<boolean> {
+    if (this.currentStep === 'blank' && this.templateStepComponent) {
+      return this.templateStepComponent.canDeactivate();
+    }
+
+    return true;
   }
 
   public setQueryParamSlug() {

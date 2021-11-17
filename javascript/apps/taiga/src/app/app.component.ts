@@ -13,6 +13,7 @@ import { WsService } from '@taiga/ws';
 import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { setUser } from './features/auth/actions/auth.actions';
 import { AuthService } from './features/auth/services/auth.service';
+import { RouteHistoryService } from './shared/route-history/route-history.service';
 
 @Component({
   selector: 'tg-root',
@@ -27,7 +28,9 @@ export class AppComponent {
     private authService: AuthService,
     private wsService: WsService,
     private localStorageService: LocalStorageService,
-    private store: Store) {
+    private store: Store,
+    private routeHistoryService: RouteHistoryService) {
+    this.routeHistoryService.listen();
     this.wsService.listen();
     this.authService.autoRefresh();
 

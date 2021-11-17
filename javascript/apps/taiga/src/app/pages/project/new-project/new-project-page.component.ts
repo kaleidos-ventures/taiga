@@ -6,13 +6,22 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs';
+import { NewProjectComponent } from '~/app/features/project/new-project/components/new-project/new-project.component';
+import { NewProjectCanDeactivate } from '~/app/features/project/new-project/new-project-pending-changes.guard';
 
 @Component({
   selector: 'tg-new-project-page',
   templateUrl: './new-project-page.component.html',
   styleUrls: ['./new-project-page.component.css']
 })
-export class NewProjectPageComponent {
+export class NewProjectPageComponent implements NewProjectCanDeactivate {
 
+  @ViewChild(NewProjectComponent)
+  public newProjectComponent!: NewProjectComponent;
+
+  public canDeactivate(): boolean | Observable<boolean> {
+    return this.newProjectComponent.canDeactivate();
+  }
 }

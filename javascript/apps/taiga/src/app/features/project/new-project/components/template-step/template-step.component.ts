@@ -6,12 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild, HostListener, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormControl } from '@ngneat/reactive-forms';
 import { ProjectCreation, Workspace } from '@taiga/data';
 import { ModalComponent } from '@taiga/ui/modal/components/modal.component';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
+import { Subject } from 'rxjs';
+import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
 export type TemplateProjectForm = Pick<ProjectCreation, 'name' | 'color' | 'description' | 'logo'>;
 
@@ -24,6 +26,7 @@ export type TemplateProjectForm = Pick<ProjectCreation, 'name' | 'color' | 'desc
 export class TemplateStepComponent implements OnInit {
   public templateProjectForm!: FormGroup;
   public showWarningModal = false;
+  public confirmationModal$?: Subject<boolean>;
 
   @Input()
   public initialForm?: TemplateProjectForm;
@@ -44,11 +47,27 @@ export class TemplateStepComponent implements OnInit {
   public cancel = new EventEmitter<undefined | TemplateProjectForm>();
 
   @HostListener('window:beforeunload')
-  public unloadHandler(event: Event) {
-    event.preventDefault();
+  public unloadHandler() {
+    return !this.formHasContent();
   }
 
-  constructor(private fb: FormBuilder) {}
+  public canDeactivate() {
+    if (this.formHasContent()) {
+      this.confirmationModal$ = new Subject();
+      this.showWarningModal = true;
+      this.cd.detectChanges();
+
+      return this.confirmationModal$.asObservable();
+    } else {
+      return true;
+    }
+  }
+
+  constructor(
+    private fb: FormBuilder,
+    private cd: ChangeDetectorRef,
+    private routeHistoryService: RouteHistoryService,
+  ) {}
 
   public ngOnInit() {
     this.initForm();
@@ -104,11 +123,7 @@ export class TemplateStepComponent implements OnInit {
   }
 
   public cancelForm() {
-    if (this.formHasContent()) {
-      this.showWarningModal = true;
-    } else {
-      this.cancel.next();
-    }
+    this.routeHistoryService.back();
   }
 
   public formHasContent() {
@@ -139,9 +154,18 @@ export class TemplateStepComponent implements OnInit {
     }
   }
 
-  public acceptWarningClose() {
+  public cancelRedirect() {
     this.showWarningModal = false;
+    if (this.confirmationModal$) {
+      this.confirmationModal$.next(false);
+      this.confirmationModal$.complete();
+    }
+  }
 
-    this.cancel.next();
+  public acceptWarningClose() {
+    if (this.confirmationModal$) {
+      this.confirmationModal$.next(true);
+      this.confirmationModal$.complete();
+    }
   }
 }

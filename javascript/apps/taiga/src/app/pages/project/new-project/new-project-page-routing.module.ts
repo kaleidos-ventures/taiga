@@ -8,9 +8,16 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { NewProjectPendingChangesGuard } from '~/app/features/project/new-project/new-project-pending-changes.guard';
 import { NewProjectPageComponent } from './new-project-page.component';
 
-const routes: Routes = [{ path: '', component: NewProjectPageComponent }];
+const routes: Routes = [
+  {
+    path: '',
+    component: NewProjectPageComponent,
+    canDeactivate: [ NewProjectPendingChangesGuard ]
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

@@ -13,6 +13,7 @@ import { TemplateStepComponent } from './template-step.component';
 
 import * as faker from 'faker';
 import { WorkspaceMockFactory } from '@taiga/data';
+import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
 describe('TemplateStepComponent', () => {
   let spectator: Spectator<TemplateStepComponent>;
@@ -24,6 +25,9 @@ describe('TemplateStepComponent', () => {
     ],
     providers: [
       FormBuilder,
+    ],
+    mocks: [
+      RouteHistoryService,
     ],
     declareComponent: false,
   });

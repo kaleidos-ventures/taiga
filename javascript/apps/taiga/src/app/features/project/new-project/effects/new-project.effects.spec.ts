@@ -65,6 +65,7 @@ describe('NewProjectEffects', () => {
   });
 
   it('create project success', () => {
+    const projectCreation = ProjectCreationMockFactory();
     const project = ProjectMockFactory();
     const effects = spectator.inject(NewProjectEffects);
 
@@ -72,33 +73,14 @@ describe('NewProjectEffects', () => {
 
     const router = spectator.inject(Router);
 
-    actions$ = hot('-a--b', {
-      a: createProjectSuccess({project}),
-      b: inviteUsersNewProject(),
+    actions$ = hot('-a--b--c', {
+      a: createProject({project: projectCreation}),
+      b: createProjectSuccess({project}),
+      c: inviteUsersNewProject(),
     });
 
     expect(effects.createProjectSuccess$).toSatisfyOnFlush(() => {
       expect(router.navigate).toHaveBeenCalledWith(['/project/', project.slug, 'kanban']);
-    });
-  });
-
-  it('resume create project success', () => {
-    const project = ProjectMockFactory();
-    const project2 = ProjectMockFactory();
-    const effects = spectator.inject(NewProjectEffects);
-
-    effects.createProjectSuccess$.subscribe();
-
-    const router = spectator.inject(Router);
-
-    actions$ = hot('-a-c-b', {
-      a: createProjectSuccess({project}),
-      b: inviteUsersNewProject(),
-      c: createProjectSuccess({project: project2}),
-    });
-
-    expect(effects.createProjectSuccess$).toSatisfyOnFlush(() => {
-      expect(router.navigate).toHaveBeenCalledWith(['/project/', project2.slug, 'kanban']);
     });
   });
 });

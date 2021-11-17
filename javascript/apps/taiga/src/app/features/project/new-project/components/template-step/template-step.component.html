@@ -53,12 +53,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <!-- Project name -->
       <tg-ui-input [label]="t('new_project.second_step.project_name')">
         <input formControlName="name"
+          data-test="input-name"
           inputRef
           tuiAutoFocus
           maxlength="80">
         <ng-container inputError>
           <tg-ui-error
             [enabled]="form.submitted"
+            data-test="name-required-error"
             error="required">
             {{ t('new_project.second_step.project_name_error') }}
           </tg-ui-error>
@@ -69,12 +71,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <tg-ui-textarea [label]="t('new_project.second_step.project_description')"
         [optional]="true">
         <tui-text-area formControlName="description"
+          data-test="input-description"
           [expandable]="true"
           [tuiTextfieldMaxLength]="200">
           {{ t('new_project.second_step.project_description_placeholder') }}
         </tui-text-area>
         <tg-ui-error inputError
           [enabled]="form.submitted"
+          data-test="description-maxlength-error"
           error="maxlength">
           {{ t('new_project.second_step.max_length_error') }}
         </tg-ui-error>
@@ -92,12 +96,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
       <div class="new-step-actions">
         <button (click)="cancelForm()"
+          data-test="cancel-create-project"
           tuiButton
           type="button"
           appearance="tertiary">
           {{ t('commons.cancel') }}
         </button>
         <button iconRight="chevron-right"
+          data-test="submit-create-project"
           tuiButton
           type="submit"
           appearance="primary">
@@ -111,8 +117,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [open]="showWarningModal"
     (requestClose)="cancelRedirect()">
       <ng-container>
-        <div class="confirmation-modal">
-          <div aria-describedby="aria-description" aria-labeledby="arial-label">
+        <div class="confirmation-modal" data-test="discard-project-modal">
+          <div aria-describedby="aria-description" aria-labelledby="arial-label">
             <h1 id="aria-label">{{ t('new_project.first_step.discard_project') }}</h1>
             <div id="aria-description">
               <p tabindex="0">{{ t('new_project.first_step.discard_warning') }}</p>
@@ -128,7 +134,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 (click)="acceptWarningClose()">{{ t('commons.confirmation_modal.yes') }}</button>
             </div>
           </div>
-      </div>
+        </div>
       </ng-container>
   </tg-ui-modal>
 </ng-container>

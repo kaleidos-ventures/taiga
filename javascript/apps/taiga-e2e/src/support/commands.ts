@@ -72,6 +72,15 @@ const terminalLog = (violations: any[]) => {
 function checkA11y(params: CheckA11yParams = {}): void {
   params = {
     ...params,
+    axe: {
+      runOnly: {
+        type: 'tag',
+        values: ['wcag21aa']
+      },
+      rules: {
+        'color-contrast': { enabled: false },
+      }
+    },
     violationFeedback: terminalLog,
   };
 

@@ -14,21 +14,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [color]="0"
       [name]="''">
     </tg-ui-avatar>
-    <a *ngIf="!firstProject"
-      tuiLink
+    <a tuiLink
       [routerLink]="['/new-project']"
       [queryParams]="{ workspace: slug }"
-      class="project-item-link"
-      [attr.title]="t('project.create_new_project')">
-      {{ t('project.create_new_project') }}
-    </a>
-    <a *ngIf="firstProject"
-      tuiLink
-      [routerLink]="['/new-project']"
-      [queryParams]="{ workspace: slug }"
-      class="project-item-link"
-      [attr.title]="t('project.create_first_project')">
-      {{ t('project.create_first_project') }}
+      data-test="create-project-card"
+      class="project-item-link">
+      <ng-container *ngIf="firstProject">
+        {{ t('project.create_first_project') }}
+      </ng-container>
+      <ng-container *ngIf="!firstProject">
+        {{ t('project.create_new_project') }}
+      </ng-container>
     </a>
   </div>
   <div *ngIf="!placeholder"

@@ -25,7 +25,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tui-select tuiTextfieldSize="l"
           formControlName="workspace"
           [valueContent]="content"
-          [readOnly]="readonlyWorkspace">
+          [readOnly]="readonlyWorkspace"
+          data-test="create-project-select">
           {{ t('new_project.choose_workspace') }}
           <tui-data-list-wrapper *tuiDataList
             size="s"
@@ -43,6 +44,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div class="templates-wrapper">
         <ng-container *ngFor="let template of templates; trackBy: trackByIndex">
           <button type="button"
+            data-test="template-item"
             (click)="template.action()"
             class="template-item">
             <tui-svg class="template-icon"

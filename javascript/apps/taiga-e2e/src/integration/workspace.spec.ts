@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 import * as faker from 'faker';
+import { createWorkspace } from '../support/helpers/workspace.helpers';
 
 describe('Workspace Create', () => {
   beforeEach(() => {
@@ -19,18 +20,14 @@ describe('Workspace Create', () => {
   });
 
   it('Should create a workspace and add it', () => {
-    const worspaceName = `${faker.company.companyName()} ${faker.commerce.department()}`;
+    const workspaceName = faker.company.companyName();
 
-    cy.getBySel('add-workspace-button').click();
-    cy.getBySel('workspace-create').should('be.visible');
-    cy.getBySel('workspace-name-input').type(worspaceName);
-    cy.getBySel('workspace-project-form-submit').click();
-    cy.get('tg-workspace-skeleton').should('be.visible');
-    cy.get('tg-workspace-skeleton').should('not.exist');
+    createWorkspace(workspaceName);
 
-    cy
-      .get('tg-workspace-item')
-      .first()
-      .should('contain.text', worspaceName);
+    cy.getBySel('workspace-item').first().within(() => {
+      cy.getBySel('workspace-item-title').invoke('text').then((text) => {
+        expect(text.trim()).to.eq(workspaceName);
+      });
+    });
   });
 });

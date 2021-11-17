@@ -20,7 +20,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        loadChildren: () => import('~/app/features/project-overview/project-overview.module').then(m => m.ProjectOverviewModule)
+        loadChildren: () => import('~/app/features/project/project-overview/project-overview.module').then(m => m.ProjectOverviewModule)
       }
     ]
   },

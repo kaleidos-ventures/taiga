@@ -9,13 +9,11 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpInterceptor, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 import { ConfigService } from '@taiga/core';
 import { Store } from '@ngrx/store';
 import { getGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
-import { camelCase } from 'change-case';
-import { UtilsService } from '~/app/shared/utils/utils-service.service';
 import { Auth } from '@taiga/data';
 import { loginSuccess, logout } from '~/app/features/auth/actions/auth.actions';
 import { AuthApiService } from '@taiga/api';
@@ -64,13 +62,6 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     this.addRequest(request);
 
     return next.handle(request).pipe(
-      map((event) => {
-        if (event instanceof HttpResponse) {
-          return this.camelCaseResponseInterceptor(event);
-        }
-
-        return event;
-      }),
       tap((response) => {
         if (response instanceof HttpErrorResponse || response instanceof HttpResponse) {
           this.remvoveRequest(request);
@@ -94,12 +85,6 @@ export class ApiRestInterceptorService implements HttpInterceptor {
         return throwError(err);
       })
     );
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private camelCaseResponseInterceptor(event: HttpResponse<any>): HttpResponse<any> {
-    const body = UtilsService.objKeysTransformer(event.body, camelCase);
-    return event.clone({ body });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

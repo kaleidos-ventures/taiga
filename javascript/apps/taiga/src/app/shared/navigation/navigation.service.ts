@@ -24,13 +24,14 @@ export class NavigationService {
   }
 
   public add(project: Project) {
-    const projects = this._latestProjects.getValue();
-    if (!projects.find((it) => it.slug === project.slug)) {
-      projects.unshift(project);
-      const newProjects = projects.slice(0, 6);
+    const projects = this._latestProjects.getValue().filter((it) => {
+      return it.slug !== project.slug;
+    });
 
-      this._latestProjects.next(newProjects);
-      this.localStorageService.set('recent_projects', newProjects);
-    }
+    projects.unshift(project);
+    const newProjects = projects.slice(0, 6);
+
+    this._latestProjects.next(newProjects);
+    this.localStorageService.set('recent_projects', newProjects);
   }
 }

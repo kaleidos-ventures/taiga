@@ -31,7 +31,7 @@ export class AvatarComponent  {
   public color = 1;
 
   @Input()
-  public type: 'dark' | 'light' = 'dark';
+  public type: 'dark' | 'light' = 'light';
 
   public setColorClass() {
     return RandomColorService.getColorClass(this.color);

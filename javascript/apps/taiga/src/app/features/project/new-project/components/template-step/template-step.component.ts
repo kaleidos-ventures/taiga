@@ -58,7 +58,7 @@ export class TemplateStepComponent implements OnInit {
     this.templateProjectForm = this.fb.group({
       workspace: ['', Validators.required],
       name: ['', Validators.required],
-      description: ['', Validators.maxLength(140)],
+      description: ['', Validators.maxLength(200)],
       color: [RandomColorService.randomColorPicker(), Validators.required],
       logo: [''],
     });

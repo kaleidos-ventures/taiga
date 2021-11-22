@@ -85,6 +85,8 @@ export class ProjectNavigationComponent implements OnInit {
     children: [],
   };
 
+  public showProjectSettings = false;
+
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
 
   constructor(
@@ -199,5 +201,9 @@ export class ProjectNavigationComponent implements OnInit {
       (this.backlogButtonElement.nativeElement as HTMLElement).focus();
     }
     this.out();
+  }
+
+  public openSettings() {
+    this.showProjectSettings = true;
   }
 }

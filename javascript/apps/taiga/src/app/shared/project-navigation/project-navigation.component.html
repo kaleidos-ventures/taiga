@@ -7,7 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t;">
-  <div class="main-project-nav">
+  <div *ngIf="!showProjectSettings" class="main-project-nav">
     <div class="main-project-nav-inner">
       <div (pointerenter)="popup($event, 'project')"
         (pointerleave)="out()"
@@ -257,13 +257,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [attr.data-text]="t('main_project_navigation.project_settings')"
             (pointerenter)="popup($event, 'project-settings')"
             (pointerleave)="out()">
-            <a (focus)="popup($event, 'project-settings')"
+            <button
+              type="button"
+              (click)="openSettings()"
+              (focus)="popup($event, 'project-settings')"
               (focusout)="out()"
               [attr.data-text]="t('main_project_navigation.project_settings')"
               [attr.aria-label]="collapsed ? t('main_project_navigation.project_settings') : null"
-              class="menu-option-item"
-              [class.active-dialog]="dialog.type === 'project-settings'"
-              [href]="dialog.link">
+              class="project-settings menu-option-item"
+              [class.active-dialog]="dialog.type === 'project-settings'">
               <tui-svg class="menu-option-icon"
                 src="settings"></tui-svg>
               <span *ngIf="!collapsed"
@@ -271,7 +273,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 data-animation="text">
                 {{ t('main_project_navigation.project_settings') }}
               </span>
-            </a>
+            </button>
           </div>
           <button type="button"
             [class.collapsed]="collapseText"
@@ -353,4 +355,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </a>
     </div>
   </div>
+</ng-container>
+<ng-container *ngIf="showProjectSettings">
+  <tg-project-settings
+    (closeMenu)="showProjectSettings = false">
+  </tg-project-settings>
 </ng-container>

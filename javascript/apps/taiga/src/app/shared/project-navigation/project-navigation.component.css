@@ -281,6 +281,13 @@ ul {
 .bottom-menu {
   margin-block-start: auto;
 
+  & .project-settings {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    inline-size: 100%;
+  }
+
   & .menu-option-item {
     @mixin menu-option-item;
 

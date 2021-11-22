@@ -13,7 +13,6 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import { ProjectNavigationComponent } from './project-navigation.component';
 
 import * as faker from 'faker';
-
 describe('ProjectNavigationComponent', () => {
   let spectator: Spectator<ProjectNavigationComponent>;
   const createComponent = createComponentFactory({

@@ -9,7 +9,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t;">
   <div *ngIf="placeholder"
     class="project-item-card placeholder">
-    <tg-ui-avatar [color]="0"
+    <tg-ui-avatar
+      type="light"
+      [color]="0"
       [name]="''">
     </tg-ui-avatar>
     <a *ngIf="!firstProject"
@@ -32,7 +34,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <div *ngIf="!placeholder"
     class="project-item-card">
     <div class="project-card-title">
-      <tg-ui-avatar class="project-card-image"
+      <tg-ui-avatar
+        class="project-card-image"
+        type="light"
         [color]="project.color"
         [url]="project.logoSmall"
         [name]="project.name">

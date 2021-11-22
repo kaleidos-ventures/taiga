@@ -47,6 +47,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           #imageUpload
           [attr.accept]="accept"
           (change)="onImageSelected($event)"
+          (cancel)="$event.stopPropagation()"
           type="file"
           name="upload"
           [attr.id]="id">

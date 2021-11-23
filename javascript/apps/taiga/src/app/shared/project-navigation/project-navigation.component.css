@@ -205,9 +205,9 @@ ul {
     }
 
     & .chevron {
-      block-size: var(--spacing-16);
+      block-size: var(--spacing-20);
       fill: var(--color-primary);
-      inline-size: var(--spacing-16);
+      inline-size: var(--spacing-20);
       margin-inline-start: auto;
       transform: rotate(180deg);
       transition: all .2s linear;
@@ -262,9 +262,16 @@ ul {
 
 .secondary-menu {
   & .menu-option-item {
-    &:focus,
     &:hover {
       color: var(--color-white);
+
+      & .arrow {
+        opacity: 1;
+      }
+    }
+
+    &:focus {
+      color: var(--color-gray40);
 
       & .arrow {
         opacity: 1;
@@ -273,6 +280,9 @@ ul {
   }
 
   & .arrow {
+    block-size: 1rem;
+    fill: var(--color-gray60);
+    inline-size: 1rem;
     margin-inline-start: auto;
     opacity: 0;
   }

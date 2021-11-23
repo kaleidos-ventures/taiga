@@ -6,11 +6,18 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { animate, query, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, Input, OnInit, ViewChild } from '@angular/core';
+import { animate, query, state, style, transition, trigger, group, AnimationEvent } from '@angular/animations';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { RxState } from '@rx-angular/state';
 import { Project, Milestone } from '@taiga/data';
 import { LocalStorageService } from '../local-storage/local-storage.service';
+
+const collapseMenuAnimation = '200ms ease-out';
+const openMenuAnimation = '200ms ease-in';
+const menuWidth = '200px';
+const collapseMenuWidth = '48px';
+const settingsMenuAnimation = '300ms ease-in-out';
+const translateMenuSelector = '.main-nav-container-inner';
 
 interface ProjectMenuDialog {
   hover: boolean;
@@ -36,19 +43,68 @@ interface ProjectMenuDialog {
   providers: [RxState],
   animations: [
     trigger('openCollapse', [
+      state('collapsed', style({
+        inlineSize: collapseMenuWidth,
+      })),
+      state('open, open-settings', style({
+        inlineSize: menuWidth,
+      })),
       transition('open => collapsed', [
         query('[data-animation="text"]', style({ opacity: 1 })),
-        query(':self', style({ width: '200px' })),
-
         query('[data-animation="text"]', animate(100, style({ opacity: 0 }))),
-        query(':self', animate('200ms ease-out', style({ width: '48px' }))),
+        animate(collapseMenuAnimation),
       ]),
       transition('collapsed => open', [
-        query(':self', style({ width: '48px' })),
-
-        query(':self', animate('200ms ease-in', style({ width: '200px' }))),
+        query(':self', animate(openMenuAnimation)),
+      ]),
+      transition('open <=> open-settings', [
+        query(translateMenuSelector, [
+          animate(settingsMenuAnimation, style({
+            transform: 'translateX({{ horizontalTranslate }})',
+          })),
+        ]),
+      ]),
+      transition('collapsed => open-settings', [
+        group([
+          animate(settingsMenuAnimation, style({ inlineSize: menuWidth })),
+          query(translateMenuSelector, [
+            animate(settingsMenuAnimation, style({
+              transform: 'translateX({{ horizontalTranslate }})',
+            })),
+          ]),
+        ])
+      ]),
+      transition('open-settings => collapsed', [
+        group([
+          query(translateMenuSelector, [
+            style({
+              transform: `translateX(-${collapseMenuWidth})`,
+            }),
+          ]),
+          animate(settingsMenuAnimation, style({ inlineSize: collapseMenuWidth })),
+          query(translateMenuSelector, [
+            animate(settingsMenuAnimation, style({
+              transform: 'translateX({{ horizontalTranslate }})',
+            })),
+          ]),
+        ])
       ]),
     ]),
+    trigger('mainNavContainer', [
+      state('open', style({
+        transform: 'translateX(0)',
+      })),
+      state('closed', style({
+        transform: 'translateX(0)',
+      })),
+      state('open-settings', style({
+        transform: 'translateX({{ horizontalTranslate }})',
+      }), {
+        params: {
+          horizontalTranslate: '0%',
+        }
+      }),
+    ])
   ],
 })
 export class ProjectNavigationComponent implements OnInit {
@@ -62,8 +118,23 @@ export class ProjectNavigationComponent implements OnInit {
   @HostBinding('class.collapsed')
   public collapsed = false;
 
-  @HostBinding('@openCollapse') public get openCollapseAnimation() {
-    return this.collapsed ? 'collapsed' : 'open';
+  @HostBinding('@openCollapse') public get menuState() {
+    let value: string;
+    let horizontalTranslate = '0%';
+
+    if (this.showProjectSettings) {
+      value = 'open-settings';
+      horizontalTranslate = this.collapsed ? `-${collapseMenuWidth}` : '-50%';
+    } else {
+      value = this.collapsed ? 'collapsed' : 'open';
+    }
+
+    return {
+      value,
+      params: {
+        horizontalTranslate
+      }
+    };
   }
 
   @ViewChild('backlogSubmenu', { static: false }) public backlogSubmenuEl!: ElementRef;
@@ -86,8 +157,23 @@ export class ProjectNavigationComponent implements OnInit {
   };
 
   public showProjectSettings = false;
+  public settingsAnimationInProgress = false;
 
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
+
+  @HostListener('@openCollapse.start', ['$event'])
+  public captureStartEvent($event: AnimationEvent) {
+    if ($event.fromState === 'open-settings') {
+      this.settingsAnimationInProgress = true;
+    }
+  }
+
+  @HostListener('@openCollapse.done', [ '$event' ])
+  public captureDoneEvent($event: AnimationEvent) {
+    if ($event.fromState === 'open-settings') {
+      this.settingsAnimationInProgress = false;
+    }
+  }
 
   constructor(
     private localStorage: LocalStorageService,
@@ -205,5 +291,6 @@ export class ProjectNavigationComponent implements OnInit {
 
   public openSettings() {
     this.showProjectSettings = true;
+    this.out();
   }
 }

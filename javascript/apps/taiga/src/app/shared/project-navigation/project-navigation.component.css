@@ -11,14 +11,24 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 /* UNCOLLAPSED MENU */
 
 :host {
-  block-size: 100%;
+  --menu-size: 200px;
+
   block-size: calc(100vh - 48px); /* Remove when grid set */
-  display: block;
-  inline-size: 200px; /* Remove when grid set */
-  inset-block-start: 0;
-  inset-inline-start: 0;
+  inline-size: var(--menu-size);
   position: relative;
   z-index: var(--first-layer);
+}
+
+.main-nav-container {
+  block-size: 100%;
+  inline-size: 100%;
+  overflow: hidden;
+}
+
+.main-nav-container-inner {
+  block-size: 100%;
+  display: flex;
+  inline-size: calc(100% + var(--menu-size));
 }
 
 a {
@@ -28,14 +38,6 @@ a {
 ul {
   margin: 0;
   padding: 0;
-}
-
-.main-project-nav {
-  background: var(--color-gray100);
-  block-size: 100%;
-  color: var(--color-gray40);
-  overflow-x: hidden;
-  overflow-y: hidden;
 }
 
 /* WORKSPACE */
@@ -93,12 +95,25 @@ ul {
 
 /* MENU */
 
+.main-project-nav {
+  background: var(--color-gray100);
+  block-size: 100%;
+  color: var(--color-gray40);
+  display: block;
+  flex-shrink: 0;
+  inline-size: var(--menu-size); /* Remove when grid set */
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
 .main-project-nav-inner {
   block-size: 100%;
   display: flex;
   flex: 1;
   flex-direction: column;
-  inline-size: 200px;
+  inline-size: var(--menu-size);
 }
 
 .menu-wrapper {
@@ -351,9 +366,11 @@ ul {
   --transition-delay: 150ms;
   --inline-btn-size: 48px;
 
-  inline-size: var(--inline-btn-size);
+  & .menu-wrapper {
+    inline-size: var(--inline-btn-size);
+  }
 
-  & .main-project-nav-inner {
+  & .main-project-nav {
     inline-size: var(--inline-btn-size);
     transition: all var(--transition);
     transition-delay: 300ms;
@@ -490,4 +507,9 @@ ul {
     color: var(--color-gray-40);
     padding: var(--spacing-8);
   }
+}
+
+tg-project-settings {
+  flex-shrink: 0;
+  inline-size: var(--menu-size);
 }

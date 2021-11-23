@@ -7,7 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t;">
-  <div *ngIf="!showProjectSettings" class="main-project-nav">
+  <nav *ngIf="!showProjectSettings" class="main-project-nav">
     <div class="main-project-nav-inner">
       <div (pointerenter)="popup($event, 'project')"
         (pointerleave)="out()"
@@ -291,7 +291,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </div>
       </div>
     </div>
-  </div>
+  </nav>
   <div class="project-menu-dialog"
     (pointerenter)="enterDialog()"
     (focus)="enterDialog()"
@@ -359,6 +359,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 </ng-container>
 <ng-container *ngIf="showProjectSettings">
   <tg-project-settings
+    [project]="project"
     (closeMenu)="showProjectSettings = false">
   </tg-project-settings>
 </ng-container>

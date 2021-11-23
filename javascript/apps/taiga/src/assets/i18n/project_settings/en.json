@@ -1,0 +1,9 @@
+  {
+    "project_settings": "Project Settings",
+    "roles_and_permissions": "Roles and permissions",
+    "member_permissions": "Member permissions",
+    "public_permissions": "Public permissions",
+    "workspace_permissions": "Workspace permissions",
+    "integrations": "Integrations",
+    "plugins": "Plugins"
+  }

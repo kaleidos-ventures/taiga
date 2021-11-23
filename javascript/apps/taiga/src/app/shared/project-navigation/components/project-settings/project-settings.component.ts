@@ -7,7 +7,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Project } from '@taiga/data';
 
 @Component({
   selector: 'tg-project-settings',
@@ -16,6 +17,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angul
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectSettingsComponent {
+  @Input()
+  public project!: Project;
+
   @Output()
   public closeMenu = new EventEmitter<void>();
 }

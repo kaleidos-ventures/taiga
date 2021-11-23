@@ -6,8 +6,106 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
+@import "tools/typography.css";
+
 :host {
-  background: var(--color-gray80);
+  background: var(--color-gray10);
   block-size: 100%;
   display: block;
+}
+
+.back-to-nav {
+  align-items: center;
+  appearance: none;
+  background: var(--color-gray20);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  gap: var(--spacing-8);
+  inline-size: 100%;
+  padding: var(--spacing-8);
+}
+
+.back-icon {
+  block-size: 1rem;
+  color: var(--color-secondary);
+  inline-size: 1rem;
+}
+
+.project-data {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-8);
+}
+
+.project-data-name {
+  @mixin font-body;
+
+  color: var(--color-gray90);
+  font-weight: var(--font-weight-medium);
+  text-align: start;
+}
+
+.project-settings-title {
+  @mixin font-small;
+
+  color: var(--color-gray90);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+  padding-block: var(--spacing-16) var(--spacing-12);
+  padding-inline: var(--spacing-8) var(--spacing-16);
+  text-transform: uppercase;
+}
+
+.project-settings-menu,
+.project-settings-submenu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.project-settings-menu-item {
+  @mixin font-body;
+
+  color: var(--color-gray70);
+  font-weight: var(--font-weight-regular);
+  margin-block-end: 0;
+  padding-block: var(--spacing-12);
+  padding-inline: var(--spacing-16);
+
+  &.active {
+    background: var(--color-gray20);
+    color: var(--color-secondary80);
+    font-weight: var(--font-weight-medium);
+  }
+
+  &.menu-item-unfolded {
+    padding-block-end: var(--spacing-8);
+    padding-block-start: var(--spacing-12);
+    padding-inline: var(--spacing-16);
+  }
+
+  & a {
+    color: currentColor;
+  }
+}
+
+.project-settings-submenu {
+  margin-block-start: var(--spacing-8);
+}
+
+.project-settings-submenu-item {
+  @mixin font-small;
+
+  border-inline-start: 3px solid var(--color-gray30);
+  color: var(--color-gray80);
+  font-weight: var(--font-weight-medium);
+  margin-block-end: 0;
+  padding-block: var(--spacing-8);
+  padding-inline: var(--spacing-12);
+
+  &.active {
+    border-inline-start-color: var(--color-secondary80);
+    color: var(--color-secondary80);
+  }
 }

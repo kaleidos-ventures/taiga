@@ -7,5 +7,58 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t;">
-  <button (click)="closeMenu.next()">Close</button>
+  <nav class="project-settings-nav">
+    <button (click)="closeMenu.next()"
+      class="back-to-nav">
+      <tui-svg class="back-icon"
+        src="chevron-left"></tui-svg>
+      <span class="project-data">
+        <tg-ui-avatar class="project-data-image"
+          type="light"
+          [color]="project.color"
+          [url]="project.logoSmall"
+          [name]="project.name">
+        </tg-ui-avatar>
+        <span class="project-data-name"
+          (click)="closeMenu.next()">{{ project.name }}</span>
+      </span>
+    </button>
+    <div>
+      <h2 class="project-settings-title">{{ t('project_settings.project_settings') }}</h2>
+      <ul class="project-settings-menu">
+        <li class="project-settings-menu-item">
+          <a href="">{{ t('commons.project') }}</a>
+        </li>
+        <li class="project-settings-menu-item">
+          <a href="">{{ t('commons.members') }}</a>
+        </li>
+        <li class="project-settings-menu-item menu-item-unfolded active">
+          <a href="">{{ t('project_settings.roles_and_permissions') }}</a>
+          <ul class="project-settings-submenu ">
+            <li class="project-settings-submenu-item">
+              <a href="">
+                {{ t('project_settings.member_permissions') }}
+              </a>
+            </li>
+            <li class="project-settings-submenu-item active">
+              <a href="">
+                {{ t('project_settings.public_permissions') }}
+              </a>
+            </li>
+            <li class="project-settings-submenu-item">
+              <a href="">
+                {{ t('project_settings.workspace_permissions') }}
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="project-settings-menu-item">
+          <a href="">{{ t('project_settings.integrations') }}</a>
+        </li>
+        <li class="project-settings-menu-item">
+          <a href="">{{ t('project_settings.plugins') }}</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
 </ng-container>

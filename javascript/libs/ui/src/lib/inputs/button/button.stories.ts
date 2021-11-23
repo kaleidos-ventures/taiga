@@ -327,6 +327,84 @@ export const Tertiary = ConfigureTemplate({
   argTypes: baseArgTypes
 });
 
+export const MainNav = ConfigureTemplate({
+  template: `
+  <div class="story-flex">
+  <label class="story-label">Text</label>
+    <button
+      appearance="main-nav"
+      [disabled]="disabled"
+      tuiButton
+      title="ADD TITLE"
+      type="button">
+      {{label}}
+    </button>
+  </div>
+  <br >
+  <div class="story-flex">
+    <label class="story-label">Icon + text</label>
+    <button
+      appearance="main-nav"
+      [disabled]="disabled"
+      tuiButton
+      icon="{{icon}}"
+      title="ADD TITLE"
+      type="button">
+      {{label}}
+    </button>
+  </div>
+  <br >
+  <div class="story-flex">
+    <label class="story-label">Text + icon</label>
+    <button
+      appearance="main-nav"
+      [disabled]="disabled"
+      tuiButton
+      iconRight="{{icon}}"
+      title="ADD TITLE"
+      type="button">
+      {{label}}
+    </button>
+  </div>
+  <br >
+  <div class="story-flex">
+  <label class="story-label">Icon</label>
+    <button
+      appearance="main-nav"
+      [disabled]="disabled"
+      tuiIconButton
+      icon="{{icon}}"
+      title="ADD TITLE"
+      type="button"
+    >
+      <span class="visually-hidden">ADD ACCESIBILITY TEXT</span>
+    </button>
+  </div>
+  `,
+  args: baseArgs,
+  argTypes: baseArgTypes
+});
+
+export const HomeButton = ConfigureTemplate({
+  template: `
+  <div class="story-flex">
+    <label class="story-label">Icon</label>
+    <button
+      appearance="home-button"
+      [disabled]="disabled"
+      tuiIconButton
+      icon="{{icon}}"
+      title="ADD TITLE"
+      type="button"
+    >
+      <span class="visually-hidden">ADD ACCESIBILITY TEXT</span>
+    </button>
+  </div>
+  `,
+  args: baseArgs,
+  argTypes: baseArgTypes
+});
+
 export const IconLinks = ConfigureTemplate({
   template: `
   <div class="story-flex">

@@ -11,7 +11,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 [data-appearance="tertiary"],
 [data-appearance="destructive"],
 [data-appearance="secondary"],
-[data-appearance="primary"] {
+[data-appearance="primary"],
+[data-appearance="main-nav"] {
   transition-duration: 100ms !important; /* stylelint-disable-line declaration-no-important */
 
   & tui-wrapper {
@@ -75,6 +76,61 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
 
     &._focused {
+      &::after {
+        border-color: var(--color-secondary);
+        border-width: 1px;
+      }
+    }
+  }
+
+  & svg {
+    fill: var(--color-secondary);
+  }
+
+  & .notification-counter {
+    align-items: center;
+    background: var(--color-red);
+    block-size: 1rem;
+    border-radius: 100%;
+    color: var(--color-white);
+    display: flex;
+    font-size: .6875rem;
+    inline-size: 1rem;
+    justify-content: center;
+    margin-inline-start: var(--spacing-4);
+    pointer-events: none;
+  }
+
+  &[disabled] {
+    opacity: 50%;
+  }
+}
+
+[data-appearance="main-nav"] {
+  & tui-wrapper {
+    background: var(--color-gray10);
+    color: var(--color-secondary);
+
+    &[data-state="hovered"],
+    &[data-state="pressed"] {
+      background: var(--color-white);
+      color: var(--color-secondary90);
+    }
+
+    &[disabled] {
+      opacity: 50%;
+    }
+
+    &._focused {
+      background: var(--color-white);
+      color: var(--color-secondary90);
+
+      /* stylelint-disable */
+      & svg {
+        fill: var(--color-secondary90);
+      }
+      /* stylelint-enable */
+
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -195,8 +251,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     block-size: 44px;
 
     & tui-wrapper {
+      /* stylelint-disable */
       line-height: 1rem;
-      padding: var(--spacing-12) var(--spacing-16) !important; /* stylelint-disable-line declaration-no-important */
+      padding: var(--spacing-12) var(--spacing-16) !important;
+      /* stylelint-enable */
     }
   }
 }
@@ -230,8 +288,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & svg {
-    block-size: 1.5rem;
-    inline-size: 1.5rem;
+    block-size: 1.875rem;
+    inline-size: 1.875rem;
   }
 }
 

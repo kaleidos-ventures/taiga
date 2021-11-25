@@ -30,13 +30,17 @@ fi
 
 read -p 'Specify a Postgres user [default: postgres]: ' dbuser
 read -p 'Specify database name [default: taiga]: ' dbname
+read -p 'Specify host [default: localhost]: ' dbhost
+read -p 'Specify port [default: 5432]: ' dbport
 dbuser=${dbuser:-postgres}
 dbname=${dbname:-taiga}
+dbhost=${dbhost:-localhost}
+dbport=${dbport:-5432}
 
 echo "-> Remove '${dbname}' DB"
-dropdb -U $dbuser $dbname
+dropdb -U $dbuser -h $dbhost -p $dbport $dbname
 echo "-> Create '${dbname}' DB"
-createdb -U $dbuser $dbname
+createdb -U $dbuser -h $dbhost -p $dbport $dbname
 
 if [ "$?" -ne "0" ]; then
   echo && echo "Error accessing the database, aborting."

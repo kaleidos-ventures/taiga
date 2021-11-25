@@ -65,7 +65,7 @@ When we make changes to the structure of the database, there are two strategies 
 - If there is a **big change** (e.g. some new model has been created) you should regenerate the database __(**data will be lose**)__.
   ```bash
   $ cd python/apps/taiga
-  (taiga)$ python scripts/regenerate_devel_env.sh
+  (taiga)$ ./scripts/regenerate_devel_env.sh
   ```
 
 ### Working with infinite life authentication tokens

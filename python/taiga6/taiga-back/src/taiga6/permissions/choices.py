@@ -8,14 +8,14 @@
 from django.utils.translation import ugettext_lazy as _
 
 ANON_PERMISSIONS = [
-    ('view_project', _('View project')),
-    ('view_milestones', _('View milestones')),
     ('view_epics', _('View epic')),
-    ('view_us', _('View user stories')),
-    ('view_tasks', _('View tasks')),
     ('view_issues', _('View issues')),
-    ('view_wiki_pages', _('View wiki pages')),
+    ('view_milestones', _('View milestones')),
+    ('view_project', _('View project')),
+    ('view_tasks', _('View tasks')),
+    ('view_us', _('View user stories')),
     ('view_wiki_links', _('View wiki links')),
+    ('view_wiki_pages', _('View wiki pages')),
 ]
 
 MEMBERS_PERMISSIONS = [
@@ -63,10 +63,10 @@ MEMBERS_PERMISSIONS = [
 ]
 
 ADMINS_PERMISSIONS = [
-    ('modify_project', _('Modify project')),
-    ('delete_project', _('Delete project')),
     ('add_member', _('Add member')),
-    ('remove_member', _('Remove member')),
     ('admin_project_values', _('Admin project values')),
     ('admin_roles', _('Admin roles')),
+    ('delete_project', _('Delete project')),
+    ('modify_project', _('Modify project')),
+    ('remove_member', _('Remove member')),
 ]

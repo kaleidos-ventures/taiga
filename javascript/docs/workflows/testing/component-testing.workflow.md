@@ -14,6 +14,7 @@ For testing we're using [spectator](https://github.com/ngneat/spectator). This i
 
 ```ts
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { ExampleComponent } from './example.component';
 import { ExampleModule } from './example.module';
 
@@ -21,9 +22,11 @@ describe('ButtonComponent', () => {
   let spectator: Spectator<ExampleComponent>;
   const createComponent = createComponentFactory({
     component: ExampleComponent,
-    // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
-    imports: [ExampleModule],
-    declareComponent: false
+    imports: [
+      getTranslocoModule(),
+    ],
+    schemas: [NO_ERRORS_SCHEMA],
+    mocks: [],
   });
 
   beforeEach(() => {
@@ -239,5 +242,36 @@ const createHost = createHostFactory({
   declarations: [
     MockComponent(FooComponent)
   ]
+});
+```
+
+## Using component module
+
+```ts
+import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { ExampleComponent } from './example.component';
+import { ExampleModule } from './example.module';
+
+describe('ButtonComponent', () => {
+  let spectator: Spectator<ExampleComponent>;
+  const createComponent = createComponentFactory({
+    component: ExampleComponent,
+    // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
+    imports: [ExampleModule],
+    declareComponent: false
+  });
+
+  beforeEach(() => {
+    spectator = createComponent({
+      // The component inputs
+      props: {
+        name: 'example'
+      },
+      // Override the component's providers
+      providers: [],
+      // Whether to run change detection (defaults to true)
+      detectChanges: false
+    });
+  });
 });
 ```

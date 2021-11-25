@@ -80,6 +80,9 @@ class Membership(models.Model):
         on_delete=models.CASCADE,
     )
 
+    # TODO: migration-review. This field (is_admin) is to be deprecated.
+    # In taiga-next, admin will be an attribute of a role, instead of a user.
+    # This field should be deleted when Roles are migrated as well.
     is_admin = models.BooleanField(default=False, null=False, blank=False)
 
     # Invitation metadata

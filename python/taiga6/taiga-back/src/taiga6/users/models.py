@@ -304,6 +304,7 @@ class Role(models.Model):
                              null=True, blank=True, default=list, verbose_name=_("permissions"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
+    _is_admin = models.BooleanField(default=False)
     # null=True is for make work django 1.7 migrations. project
     # field causes some circular dependencies, and due to this
     # it can not be serialized in one transactional migration.
@@ -315,6 +316,9 @@ class Role(models.Model):
         verbose_name=_("project"),
         on_delete=models.CASCADE,
     )
+    # TODO: migration-review. This field (computable) is to be deprecated.
+    # In taiga-next, roles will no have relation to estimations.
+    # This field should be deleted when RolePoints are migrated as well.
     computable = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):

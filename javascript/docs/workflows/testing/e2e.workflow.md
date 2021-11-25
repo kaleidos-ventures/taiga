@@ -74,18 +74,17 @@ getGreeting().contains('Welcome to taiga!');
 
 Fixtures are fake data that can be used to fill our tests. To generate this data we will use [faker](https://github.com/marak/Faker.js/).
 
-Create a new file under `src/taiga-e2e/src/fixtures` named `${dataName}.fixture.ts`
+Create a new file under `src/taiga-e2e/src/fixtures` named `${dataName}.fixture.ts`. You can use the mock models when it's possible.
 
 ```ts
 import * as faker from 'faker';
 
-faker.seed(6443);
-
-export const exampleFixture = {
-  name: faker.name.firstName(),
-  email: faker.internet.email(),
-  password: faker.internet.password();
-  userStorySubject: faker.lorem.sentence()
+export const exampleFixture = () => {
+  return {
+    name: faker.name.firstName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+  };
 };
 ```
 

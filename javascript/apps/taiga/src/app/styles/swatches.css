@@ -7,81 +7,125 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :root {
   /* Primary colors */
-  --color-primary: rgb(131, 238, 222);
-  --color-primary40: rgb(114, 216, 200);
+  --color-primary10: rgba(235, 253, 250, 1);
+  --color-primary20: rgba(211, 251, 244, 1);
+  --color-primary: rgba(131, 238, 222, 1);
+  --color-primary40: rgba(114, 216, 200, 1);
+  --color-primary50: rgba(96, 182, 170, 1);
+  --color-primary60: rgba(77, 149, 139, 1);
+  --color-primary70: rgba(65, 127, 118, 1);
+  --color-primary80: rgba(51, 100, 93, 1);
+  --color-primary90: rgba(37, 77, 72, 1);
+  --color-primary100: rgba(22, 51, 47, 1);
 
   /* Secondary colors */
-  --color-secondary: rgb(0, 125, 166);
-  --color-secondary30: rgb(190, 228, 255);
-  --color-secondary50: rgb(0, 181, 238);
-  --color-secondary80: rgb(0, 99, 133);
-  --color-secondary90: rgb(0, 77, 104);
-  --color-secondary100: rgb(0, 48, 66);
+  --color-secondary10: rgba(244, 250, 255, 1);
+  --color-secondary20: rgba(232, 245, 255, 1);
+  --color-secondary30: rgba(190, 228, 255, 1);
+  --color-secondary40: rgba(115, 206, 255, 1);
+  --color-secondary50: rgba(0, 181, 238, 1);
+  --color-secondary60: rgba(0, 148, 195, 1);
+  --color-secondary: rgba(0, 125, 166, 1);
+  --color-secondary80: rgba(0, 99, 133, 1);
+  --color-secondary90: rgba(0, 77, 104, 1);
+  --color-secondary100: rgba(0, 48, 66, 1);
 
   /* B/W colors */
-  --color-white: rgb(255, 255, 255);
-  --color-black: rgb(23, 28, 36);
+  --color-white: rgba(255, 255, 255, 1);
+  --color-black: rgba(23, 28, 36, 1);
 
   /* Gray colors */
-  --color-gray10: rgb(249, 249, 251);
-  --color-gray20: rgb(239, 240, 245);
-  --color-gray30: rgb(218, 223, 233);
-  --color-gray40: rgb(190, 199, 216);
-  --color-gray50: rgb(155, 168, 193);
-  --color-gray60: rgb(122, 137, 167);
-  --color-gray70: rgb(99, 115, 143);
-  --color-gray80: rgb(80, 92, 116);
-  --color-gray90: rgb(56, 64, 81);
-  --color-gray100: rgb(38, 44, 57);
-
-  /* Warning colors */
-  --color-warning: rgb(179, 92, 48);
-  --color-warning20: rgb(255, 236, 239);
-  --color-warning30: rgb(251, 215, 205);
-  --color-warning50: rgb(251, 139, 76);
-  --color-warning70: rgb(212, 54, 99);
-  --color-warning80: rgb(170, 40, 80);
-  --color-warning100: rgb(71, 34, 14);
+  --color-gray10: rgba(249, 249, 251, 1);
+  --color-gray20: rgba(239, 240, 245, 1);
+  --color-gray30: rgba(218, 223, 233, 1);
+  --color-gray40: rgba(190, 199, 216, 1);
+  --color-gray50: rgba(155, 168, 193, 1);
+  --color-gray60: rgba(122, 137, 167, 1);
+  --color-gray70: rgba(99, 115, 143, 1);
+  --color-gray80: rgba(80, 92, 116, 1);
+  --color-gray90: rgba(56, 64, 81, 1);
+  --color-gray100: rgba(38, 44, 57, 1);
 
   /* Info colors */
-  --color-info: rgb(37, 117, 205);
-  --color-info30: rgb(213, 223, 251);
-  --color-info50: rgb(124, 169, 245);
-  --color-info80: rgb(28, 93, 162);
-  --color-info100: rgb(19, 44, 79);
+  --color-info10: rgba(248, 249, 254, 1);
+  --color-info20: rgba(240, 243, 253, 1);
+  --color-info30: rgba(213, 223, 251, 1);
+  --color-info40: rgba(175, 198, 248, 1);
+  --color-info50: rgba(124, 169, 245, 1);
+  --color-info60: rgba(64, 137, 232, 1);
+  --color-info: rgba(37, 117, 205, 1);
+  --color-info80: rgba(28, 93, 162, 1);
+  --color-info90: rgba(35, 71, 121, 1);
+  --color-info100: rgba(19, 44, 79, 1);
 
-  /* correct colors */
-  --color-ok: rgb(100, 125, 48);
-  --color-ok10: rgb(240, 254, 226);
-  --color-ok30: rgb(194, 237, 122);
-  --color-ok50: rgb(143, 181, 72);
-  --color-ok80: rgb(78, 99, 36);
-  --color-ok100: rgb(36, 48, 13);
+  /* Green colors */
+  --color-green10: rgba(243, 252, 242, 1);
+  --color-green20: rgba(229, 248, 228, 1);
+  --color-green30: rgba(185, 241, 181, 1);
+  --color-green40: rgba(151, 214, 146, 1);
+  --color-green50: rgba(130, 185, 126, 1);
+  --color-green60: rgba(103, 148, 100, 1);
+  --color-green: rgba(87, 126, 85, 1);
+  --color-green80: rgba(68, 100, 66, 1);
+  --color-green90: rgba(51, 77, 50, 1);
+  --color-green100: rgba(31, 48, 30, 1);
 
-  /* error colors */
-  --color-red: rgb(212, 54, 99);
-  --color-red30: rgb(247, 215, 220);
-  --color-red40: rgb(253, 178, 192);
-  --color-red50: rgb(255, 129, 157);
-  --color-red80: rgb(170, 40, 80);
-  --color-red100: rgb(87, 16, 38);
+  /* Ok colors */
+  --color-ok10: rgba(240, 254, 226, 1);
+  --color-ok20: rgba(224, 252, 189, 1);
+  --color-ok30: rgba(194, 237, 122, 1);
+  --color-ok40: rgba(169, 213, 86, 1);
+  --color-ok50: rgba(143, 181, 72, 1);
+  --color-ok60: rgba(117, 147, 57, 1);
+  --color-ok: rgba(100, 125, 48, 1);
+  --color-ok80: rgba(78, 99, 36, 1);
+  --color-ok90: rgba(59, 76, 26, 1);
+  --color-ok100: rgba(36, 48, 13, 1);
+
+  /* Yellow colors */
+  --color-yellow10: rgba(255, 249, 239, 1);
+  --color-yellow20: rgba(255, 242, 218, 1);
+  --color-yellow30: rgba(249, 220, 161, 1);
+  --color-yellow40: rgba(235, 193, 89, 1);
+  --color-yellow50: rgba(203, 163, 41, 1);
+  --color-yellow60: rgba(166, 133, 37, 1);
+  --color-yellow70: rgba(138, 114, 47, 1);
+  --color-yellow80: rgba(109, 90, 36, 1);
+  --color-yellow90: rgba(85, 69, 27, 1);
+  --color-yellow100: rgba(53, 43, 13, 1);
+
+  /* Warning colors */
+  --color-warning10: rgba(255, 248, 245, 1);
+  --color-warning20: rgba(255, 240, 235, 1);
+  --color-warning30: rgba(251, 215, 205, 1);
+  --color-warning40: rgba(255, 180, 155, 1);
+  --color-warning50: rgba(251, 139, 76, 1);
+  --color-warning60: rgba(212, 108, 40, 1);
+  --color-warning: rgba(179, 92, 48, 1);
+  --color-warning80: rgba(144, 72, 28, 1);
+  --color-warning90: rgba(109, 57, 28, 1);
+  --color-warning100: rgba(71, 34, 14, 1);
+
+  /* Red colors */
+  --color-red10: rgba(255, 248, 249, 1);
+  --color-red20: rgba(255, 236, 239, 1);
+  --color-red30: rgba(247, 215, 220, 1);
+  --color-red40: rgba(253, 178, 192, 1);
+  --color-red50: rgba(255, 129, 157, 1);
+  --color-red60: rgba(243, 70, 121, 1);
+  --color-red: rgba(212, 54, 99, 1);
+  --color-red80: rgba(170, 40, 80, 1);
+  --color-red90: rgba(133, 29, 62, 1);
+  --color-red100: rgba(87, 16, 38, 1);
 
   /* notice colors */
-  --color-notice: rgb(178, 67, 199);
-  --color-notice30: rgb(246, 214, 240);
-  --color-notice50: rgb(216, 140, 234);
-  --color-notice80: rgb(146, 44, 164);
-  --color-notice100: rgb(66, 28, 74);
-
-  /* green colors */
-  --color-green30: rgb(185, 241, 181);
-  --color-green50: rgb(130, 185, 126);
-  --color-green80: rgb(68, 100, 66);
-  --color-green100: rgb(31, 48, 30);
-
-  /* yellow colors */
-  --color-yellow30: rgb(249, 220, 161);
-  --color-yellow50: rgb(203, 163, 41);
-  --color-yellow80: rgb(109, 90, 36);
-  --color-yellow100: rgb(53, 43, 13);
+  --color-notice20: rgba(248, 241, 247, 1);
+  --color-notice30: rgba(246, 214, 240, 1);
+  --color-notice40: rgba(230, 184, 221, 1);
+  --color-notice50: rgba(216, 140, 234, 1);
+  --color-notice60: rgba(211, 76, 233, 1);
+  --color-notice: rgba(178, 67, 199, 1);
+  --color-notice80: rgba(146, 44, 164, 1);
+  --color-notice90: rgba(103, 48, 113, 1);
+  --color-notice100: rgba(66, 28, 74, 1);
 }

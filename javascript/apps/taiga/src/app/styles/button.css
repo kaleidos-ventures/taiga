@@ -163,7 +163,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 [data-appearance="destructive"] {
   & tui-wrapper {
-    background: var(--color-warning70);
+    background: var(--color-warning);
     color: var(--color-white);
 
     &[data-state="hovered"],

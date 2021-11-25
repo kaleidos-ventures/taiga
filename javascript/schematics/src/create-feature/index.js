@@ -69,6 +69,7 @@ function createFeature(options) {
                 classify: core_1.strings.classify,
                 dasherize: core_1.strings.dasherize,
                 camelize: core_1.strings.camelize,
+                underscore: core_1.strings.underscore,
                 name: options.name,
             }),
             schematics_1.move(core_1.normalize(featurePath))

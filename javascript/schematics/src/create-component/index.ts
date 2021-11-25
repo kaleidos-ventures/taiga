@@ -64,6 +64,7 @@ export function createComponent(options: TaigaComponentSchema): Rule {
       applyTemplates({
         classify: strings.classify,
         dasherize: strings.dasherize,
+        underscore: strings.underscore,
         name: options.name,
         globalState,
         localState,

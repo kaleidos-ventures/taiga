@@ -82,6 +82,7 @@ function createComponent(options) {
             schematics_1.applyTemplates({
                 classify: core_1.strings.classify,
                 dasherize: core_1.strings.dasherize,
+                underscore: core_1.strings.underscore,
                 name: options.name,
                 globalState,
                 localState,

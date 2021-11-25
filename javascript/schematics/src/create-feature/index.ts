@@ -61,6 +61,7 @@ export function createFeature(options: TaigaComponentSchema): Rule {
         classify: strings.classify,
         dasherize: strings.dasherize,
         camelize: strings.camelize,
+        underscore: strings.underscore,
         name: options.name,
       }),
       move(normalize(featurePath))

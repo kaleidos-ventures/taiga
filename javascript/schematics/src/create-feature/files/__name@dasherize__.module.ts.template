@@ -12,6 +12,7 @@ import { StoreModule } from '@ngrx/store';
 import { <%= camelize(name) %>Feature } from './reducers/<%= dasherize(name) %>.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { <%= classify(name) %>Effects } from './effects/<%= dasherize(name) %>.effects';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 @NgModule({
   declarations: [],
@@ -22,7 +23,7 @@ import { <%= classify(name) %>Effects } from './effects/<%= dasherize(name) %>.e
   ],
   exports: [],
   providers: [
-    { provide: TRANSLOCO_SCOPE, useValue: '<%= name %>' }
+    { provide: TRANSLOCO_SCOPE, useValue: '<%= underscore(name) %>' }
   ]
 })
 export class <%= classify(name) %>Module { }

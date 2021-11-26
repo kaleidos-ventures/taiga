@@ -18,6 +18,16 @@ ANON_PERMISSIONS = [
     ('view_wiki_pages', _('View wiki pages')),
 ]
 
+WORKSPACE_MEMBERS_PERMISSIONS = [
+    ('view_workspace', _('View workspace')),
+]
+
+WORKSPACE_ADMINS_PERMISSIONS = [
+    ('view_workspace', _('View workspace')),
+    ('modify_workspace', _('Modify workspace')),
+    ('delete_workspace', _('Delete workspace')),
+]
+
 MEMBERS_PERMISSIONS = [
     ('view_project', _('View project')),
     # Milestone permissions

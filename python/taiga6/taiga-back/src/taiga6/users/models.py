@@ -32,7 +32,7 @@ from taiga6.base.utils.colors import generate_random_hex_color
 from taiga6.base.utils.slug import slugify_uniquely
 from taiga6.base.utils.files import get_file_path
 from taiga6.base.utils.time import timestamp_ms
-from taiga6.permissions.choices import MEMBERS_PERMISSIONS
+from taiga6.permissions.choices import MEMBERS_PERMISSIONS, WORKSPACE_MEMBERS_PERMISSIONS
 from taiga6.projects.choices import BLOCKED_BY_OWNER_LEAVING
 from taiga6.projects.notifications.choices import NotifyLevel
 
@@ -332,6 +332,41 @@ class Role(models.Model):
         verbose_name_plural = "roles"
         ordering = ["order", "slug"]
         unique_together = (("slug", "project"),)
+
+    def __str__(self):
+        return self.name
+
+
+class WorkspaceRole(models.Model):
+    name = models.CharField(max_length=200, null=False, blank=False,
+                            verbose_name=_("name"))
+    slug = models.SlugField(max_length=250, null=False, blank=True,
+                            verbose_name=_("slug"))
+    permissions = ArrayField(models.TextField(null=False, blank=False, choices=WORKSPACE_MEMBERS_PERMISSIONS),
+                             null=True, blank=True, default=list, verbose_name=_("permissions"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
+    workspace = models.ForeignKey(
+        "workspaces.Workspace",
+        null=False,
+        blank=False,
+        related_name="workspace_roles",
+        verbose_name=_("workspace"),
+        on_delete=models.CASCADE,
+    )
+    _is_admin = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify_uniquely(self.name, self.__class__)
+
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "workspace role"
+        verbose_name_plural = "workspace roles"
+        ordering = ["order", "slug"]
+        unique_together = (("slug", "workspace"),)
 
     def __str__(self):
         return self.name

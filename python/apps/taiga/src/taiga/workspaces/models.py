@@ -6,4 +6,4 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-from taiga6.workspaces.models import Workspace  # noqa
+from taiga6.workspaces.models import Workspace, WorkspaceMembership  # noqa

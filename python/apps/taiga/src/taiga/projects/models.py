@@ -6,4 +6,4 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-from taiga6.projects.models import Project  # noqa
+from taiga6.projects.models import Membership, Project  # noqa

@@ -11,14 +11,14 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
-import { <%= classify(name) %>Effects } from './<%= dasherize(name) %>.effects';
+import { <%= classify(stateFilesName) %>Effects } from './<%= dasherize(stateFilesName) %>.effects';
 
 describe('<%= classify(name) %>Effects', () => {
   let actions$: Observable<Action>;
-  let spectator: SpectatorService<<%= classify(name) %>Effects>;
+  let spectator: SpectatorService<<%= classify(stateFilesName) %>Effects>;
 
   const createService = createServiceFactory({
-    service: <%= classify(name) %>Effects,
+    service: <%= classify(stateFilesName) %>Effects,
     providers: [
       provideMockActions(() => actions$)
     ],
@@ -30,6 +30,6 @@ describe('<%= classify(name) %>Effects', () => {
   });
 
   it('should be created', () => {
-    expect(spectator.effects).toBeTruthy();
+    expect(spectator.service).toBeTruthy();
   });
 });

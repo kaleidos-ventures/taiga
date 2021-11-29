@@ -10,6 +10,11 @@
       "description": "Create feature",
       "factory": "./create-feature/index#createFeature",
       "schema": "./create-feature/schema.json"
+    },
+    "create-module": {
+      "description": "Create module",
+      "factory": "./create-module/index",
+      "schema": "./create-module/schema.json"
     }
   }
 }

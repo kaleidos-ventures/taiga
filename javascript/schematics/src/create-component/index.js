@@ -89,10 +89,23 @@ function createComponent(options) {
             }),
             schematics_1.move(core_1.normalize(componentPath))
         ]);
+        const componentTemplateSource = schematics_1.apply(schematics_1.url('../files/component'), [
+            schematics_1.applyTemplates({
+                classify: core_1.strings.classify,
+                dasherize: core_1.strings.dasherize,
+                camelize: core_1.strings.camelize,
+                underscore: core_1.strings.underscore,
+                name: options.name,
+                localState,
+                globalState,
+            }),
+            schematics_1.move(core_1.normalize(options.path))
+        ]);
         const { globalState: _globalState, localState: _localState } = options, componentOptions = __rest(options, ["globalState", "localState"]);
         return schematics_1.chain([
             schematics_1.externalSchematic('@schematics/angular', 'component', Object.assign({ skipImport: !options.module, export: true }, componentOptions)),
-            schematics_1.mergeWith(templateSource, schematics_1.MergeStrategy.Overwrite)
+            schematics_1.mergeWith(templateSource, schematics_1.MergeStrategy.Overwrite),
+            schematics_1.mergeWith(componentTemplateSource, schematics_1.MergeStrategy.Overwrite),
         ]);
     });
 }

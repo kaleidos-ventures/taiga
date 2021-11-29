@@ -72,6 +72,19 @@ export function createComponent(options: TaigaComponentSchema): Rule {
       move(normalize(componentPath))
     ]);
 
+    const componentTemplateSource = apply(url('../files/component'), [
+      applyTemplates({
+        classify: strings.classify,
+        dasherize: strings.dasherize,
+        camelize: strings.camelize,
+        underscore: strings.underscore,
+        name: options.name,
+        localState,
+        globalState,
+      }),
+      move(normalize(options.path!))
+    ]);
+
     const {
       globalState: _globalState,
       localState: _localState,
@@ -84,7 +97,8 @@ export function createComponent(options: TaigaComponentSchema): Rule {
         export: true,
         ...componentOptions
       }),
-      mergeWith(templateSource, MergeStrategy.Overwrite)
+      mergeWith(templateSource, MergeStrategy.Overwrite),
+      mergeWith(componentTemplateSource, MergeStrategy.Overwrite),
     ]);
   };
 }

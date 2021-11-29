@@ -12,8 +12,8 @@ import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 <% if (globalState) { %>import { provideMockStore, MockStore } from '@ngrx/store/testing';<% } %>
 import { <%= classify(name) %>Component } from './<%= dasherize(name) %>.component';
 
-<% if (globalState) { %>// The selector to mock
-import { selectUser } from './state/user.selectors';<% } %>
+<% if (globalState) { %>
+import { selectorExample } from './+state/selectors/<%= dasherize(stateFilesName) %>.selectors';<% } %>
 
 describe('<%= classify(name) %>Component', () => {
   let spectator: Spectator<<%= classify(name) %>Component>;
@@ -52,7 +52,7 @@ describe('<%= classify(name) %>Component', () => {
     store.setState({ loggedIn: true });
 
     // mock selector
-    store.overrideSelector(selectUser, {
+    store.overrideSelector(selectorExample, {
       id: 1,
       name: 'test',
     });

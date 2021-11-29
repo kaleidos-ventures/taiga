@@ -1,25 +1,35 @@
-# Create feature
+# Create Module
 
-A feature is one or more group of componentes and service that can have a state (ngrx).
+A module is one or more group of componentes and service that can have a state (ngrx).
 If you are looking for the worflow on how to create a simple component, follow the `feature/component.workflow.md` file.
 
-## Create feature
+## Create module
 
-```bash
-npx schematics ./schematics:create-feature --name todoList --no-interactive  --dryRun=false
+We have two main types of modules, data-access & features.
+
+`data-access` has an ngrx state are used from feature to get data.
+
+`features` are taiga pages or big feature rich components. A feature usually contains most of the ui components and interact with the ngrx.
+
+Check `folder-structure.md` to see how these folders look.
+
+
+Using cli to create a feature without state:
+
+```
+npx schematics ./schematics:create-module --name ProjectsFeatureList --module app-routing.module --path apps/taiga/src/app/modules/projects/feature-list --routing --route projects/list --dry-run false --no-interactive
+```
+
+
+Using cli to create a data-access with state:
+
+```
+npx schematics ./schematics:create-module --name ProjectsDataAccess --path apps/taiga/src/app/modules/projects/data-access --stateFilesName list --globalState --dry-run false --no-interactive
 ```
 
 ## Configure lazy load translation
 
 [Follow this guide](https://ngneat.github.io/transloco/docs/scope-configuration) to split the tranlation into multiples files to help the initial load.
-
-## Page
-
-If the component is the page root we have to add it to pages.module.
-
-```bash
-npx ng g @schematics/angular:module --name=Login --module=app-routing.module --path=apps/taiga/src/app/pages --route=login
-```
 
 ### State
 

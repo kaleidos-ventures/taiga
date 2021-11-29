@@ -8,9 +8,9 @@
 
 import { createReducer, on, createFeature } from '@ngrx/store';
 import { immerReducer } from '~/app/shared/utils/store';
-import * as <%= classify(name) %>Actions from '../actions/<%= dasherize(name) %>.actions';
+import * as <%= classify(stateFilesName) %>Actions from '../actions/<%= dasherize(stateFilesName) %>.actions';
 
-export const <%= camelize(name) %>FeatureKey = '<%= camelize(name) %>';
+export const <%= camelize(name) %>Key = '<%= camelize(name) %>';
 
 export interface <%= classify(name) %>State {
 
@@ -22,13 +22,13 @@ export const initialState: <%= classify(name) %>State = {
 
 const reducer = createReducer(
   initialState,
-  on(TodoListActions.action, (state): <%= classify(name) %>State => {
+  on(<%= classify(stateFilesName) %>Actions.example, (state): <%= classify(name) %>State => {
 
     return state;
   }),
 );
 
-export const <%= camelize(name) %>Feature = createFeature({
+export const <%= camelize(name) %> = createFeature({
   name: '<%= name %>',
   reducer: immerReducer(reducer),
 });

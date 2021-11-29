@@ -6,5 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 import { Rule } from '@angular-devkit/schematics';
-import { Schema as TaigaComponentSchema } from './schema';
-export declare function createFeature(options: TaigaComponentSchema): Rule;
+import { Schema } from '@schematics/angular/module/schema';
+interface ModuleOptions extends Schema {
+    localState: string;
+    globalState: string;
+    stateFilesName: string;
+    component: boolean;
+}
+export default function (options: ModuleOptions): Rule;
+export {};

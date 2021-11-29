@@ -1,0 +1,44 @@
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * Copyright (c) 2021-present Kaleidos Ventures SL
+ */
+
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TranslocoModule } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+<% if (routing) { %>import { <%= classify(name) %>RoutingModule } from './<%= dasherize(name) %>-routing.module';<% } %>
+import { <%= classify(name) %>Component } from './<%= dasherize(name) %>.component';
+<% if (globalState) { %>
+import { StoreModule } from '@ngrx/store';
+import { <%= camelize(name) %> } from './+state/reducers/<%= dasherize(stateFilesName) %>.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { <%= classify(stateFilesName) %>Effects } from './+state/effects/<%= dasherize(stateFilesName) %>.effects';<% } %>
+
+@NgModule({
+  declarations: [
+    <%= classify(name) %>Component
+  ],
+  imports: [
+    TranslocoModule,
+    CommonModule,<% if (globalState) { %>
+    StoreModule.forFeature(<%= camelize(name) %>),
+    EffectsModule.forFeature([<%= classify(stateFilesName) %>Effects]),
+    <% } %><% if (routing) { %>
+    <%= classify(name) %>RoutingModule,<% } %>
+  ],
+  exports: [],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: '<%= underscore(name) %>',
+        alias: '<%= underscore(name) %>',
+      },
+    }
+  ]
+})
+export class <%= classify(name) %>Module { }

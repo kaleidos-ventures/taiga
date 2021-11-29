@@ -114,7 +114,7 @@ import { ExampleComponent } from './example.component';
 import { ExampleModule } from './example.module';
 
 // The selector to mock
-import { selectUser } from './state/user.selectors';
+import { selectUser } from './+state/user.selectors';
 
 describe('ButtonComponent', () => {
   let spectator: Spectator<ExampleComponent>;

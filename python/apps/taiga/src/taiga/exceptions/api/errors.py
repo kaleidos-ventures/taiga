@@ -47,8 +47,8 @@ class UnprocessableEntityModel(GenericListError):
 
 
 class UnauthorizedErrorModel(GenericSingleError):
-    code: str = codes.EX_AUTHENTICATION.code
-    message: str = codes.EX_AUTHENTICATION.message
+    code: str = codes.EX_AUTHORIZATION.code
+    message: str = codes.EX_AUTHORIZATION.message
 
 
 ErrorsDict = Dict[Union[int, str], Dict[str, Type[ErrorResponse[Any]]]]

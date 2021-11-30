@@ -24,6 +24,6 @@ def me(request: Request) -> UserMeSerializer:
     Get the profile of the current authenticated user (according to the auth token in the request heades).
     """
     if request.user.is_anonymous:
-        raise ex.AuthenticationError()
+        raise ex.AuthorizationError()
 
     return UserMeSerializer.from_orm(request.user)

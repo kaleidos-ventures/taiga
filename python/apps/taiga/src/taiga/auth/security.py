@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 from fastapi import Request
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi.security import HTTPBearer as HTTPBearerBase
-from taiga.exceptions.api import AuthenticationError
+from taiga.exceptions.api import AuthorizationError
 
 
 class HTTPBearer(HTTPBearerBase):
@@ -27,7 +27,7 @@ class HTTPBearer(HTTPBearerBase):
             return None
         elif scheme != "bearer":
             if self.auto_error:
-                raise AuthenticationError(
+                raise AuthorizationError(
                     message="Invalid authentication credentials scheme",
                 )
             else:

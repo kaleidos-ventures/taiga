@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
-from starlette.authentication import AuthenticationError
+from starlette.authentication import AuthorizationError
 from taiga.auth import backend
 from taiga.auth.tokens import AccessToken
 from taiga.base.api import Request
@@ -44,5 +44,5 @@ async def test_authenticate_error_invalid_token():
     request = Request(default_scope)
     request._headers = {"Authorization": "Bearer invalid-token"}
 
-    with pytest.raises(AuthenticationError):
+    with pytest.raises(AuthorizationError):
         await backend.authenticate(request)

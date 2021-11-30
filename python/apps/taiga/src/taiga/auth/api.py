@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from fastapi import APIRouter
-from taiga.exceptions.api import AuthenticationError
+from taiga.exceptions.api import AuthorizationError
 from taiga.exceptions.api.errors import ERROR_401, ERROR_422
 
 from . import services as auth_services
@@ -34,7 +34,7 @@ def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
     """
     data = auth_services.login(username=form.username, password=form.password)
     if not data:
-        raise AuthenticationError()
+        raise AuthorizationError()
     return AccessTokenWithRefreshSerializer(token=data.token, refresh=data.refresh)
 
 
@@ -51,5 +51,5 @@ def refresh(form: RefreshTokenValidator) -> AccessTokenWithRefreshSerializer:
     """
     data = auth_services.refresh(token=form.refresh)
     if not data:
-        raise AuthenticationError()
+        raise AuthorizationError()
     return AccessTokenWithRefreshSerializer(token=data.token, refresh=data.refresh)

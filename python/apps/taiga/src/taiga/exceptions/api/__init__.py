@@ -32,14 +32,24 @@ class HTTPException(FastAPIHTTPException):
 ##########################
 
 
-class AuthenticationError(HTTPException):
-    def __init__(self, message: Any = codes.EX_AUTHENTICATION.message):
+class AuthorizationError(HTTPException):
+    def __init__(self, message: Any = codes.EX_AUTHORIZATION.message):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            code=codes.EX_AUTHENTICATION.code,
+            code=codes.EX_AUTHORIZATION.code,
             message=message,
             headers={"WWW-Authenticate": 'Bearer realm="api"'},
         )
+
+
+##########################
+# HTTP 403: FORBIDDEN
+##########################
+
+
+class ForbiddenError(HTTPException):
+    def __init__(self, message: Any = codes.EX_FORBIDDEN.message):
+        super().__init__(status_code=status.HTTP_403_FORBIDDEN, code=codes.EX_FORBIDDEN.code, message=message)
 
 
 ##########################

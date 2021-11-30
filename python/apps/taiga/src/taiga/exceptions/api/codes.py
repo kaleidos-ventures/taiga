@@ -23,6 +23,8 @@ EX_UNKNOWN: Final = Error(code="unknown", message="Unknown error")
 
 EX_NOT_FOUND: Final = Error(code="not-found", message="The requested resource could not be found")
 
-EX_AUTHENTICATION: Final = Error(
-    code="authentication-error", message="Invalid token or no active account found with the given credentials"
+EX_AUTHORIZATION: Final = Error(
+    code="authorization-error", message="Invalid token or no active account found with the given credentials"
 )
+
+EX_FORBIDDEN: Final = Error(code="forbidden-error", message="The user doesn't have permissions to perform this action")

@@ -24,6 +24,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from django.utils.functional import cached_property
 
 from taiga6.base.db.models.fields import JSONField
 from django_pglocks import advisory_lock
@@ -213,6 +214,14 @@ class User(AbstractBaseUser, PermissionsMixin):
             self._fill_cached_memberships()
 
         return self._cached_memberships.get(project.id, None)
+
+    @cached_property
+    def cached_workspace_memberships(self):
+        return {wm.workspace.id: wm for wm in self.workspace_memberships
+                                                      .select_related("user", "workspace", "workspace_role")}
+
+    def cached_memberships_for_workspace(self, workspace):
+        return self.cached_workspace_memberships.get(workspace.id, None)
 
     def is_fan(self, obj):
         if self._cached_liked_ids is None:

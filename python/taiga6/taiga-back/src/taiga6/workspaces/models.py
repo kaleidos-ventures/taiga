@@ -13,6 +13,7 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.template.defaultfilters import slugify
 from django.core import validators
 from django_pglocks import advisory_lock
@@ -123,3 +124,11 @@ class Workspace(models.Model):
                 super().save(*args, **kwargs)
         else:
             super().save(*args, **kwargs)
+
+    @cached_property
+    def cached_workspace_memberships(self):
+        return {wm.user.id: wm for wm in self.workspace_memberships.exclude(user__isnull=True)
+                                                      .select_related("user", "workspace", "workspace_role")}
+
+    def cached_workspace_memberships_for_user(self, user):
+        return self.cached_workspace_memberships.get(user.id, None)

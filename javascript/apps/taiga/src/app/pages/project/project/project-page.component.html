@@ -6,20 +6,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *ngIf="project$ | async as project">
-<ng-container *transloco="let t">
   <tg-project-navigation [project]="project"></tg-project-navigation>
-  <!-- move to feature -->
   <main class="project-main">
-    <div class="project-title">
-      <tg-ui-avatar size="xxl"
-        type="light"
-        [color]="project.color"
-        [url]="project.logoBig"
-        [name]="project.name">
-      </tg-ui-avatar>
-      <h1 data-test="project-name">{{ project.name }}</h1>
-    </div>
     <router-outlet></router-outlet>
   </main>
-</ng-container>
 </ng-container>

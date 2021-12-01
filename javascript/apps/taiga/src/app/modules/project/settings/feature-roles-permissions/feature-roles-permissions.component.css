@@ -6,10 +6,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
-@import "tools/typography.css";
-
-:host {
-  background-color: var(--color-gray10);
-  display: grid;
-  grid-template-columns: min-content 1fr;
+.member-permissions-settings,
+.public-permissions-settings,
+.workspace-permissions-settings {
+  min-block-size: 63vh;
 }

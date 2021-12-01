@@ -8,6 +8,7 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
@@ -19,7 +20,8 @@ import { ProjectSettingsComponent } from './project-settings.component';
     TuiButtonModule,
     TuiSvgModule,
     TranslocoModule,
-    AvatarModule
+    AvatarModule,
+    RouterModule
   ],
   declarations: [
     ProjectSettingsComponent,

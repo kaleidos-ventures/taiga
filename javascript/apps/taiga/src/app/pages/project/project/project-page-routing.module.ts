@@ -15,13 +15,17 @@ const routes: Routes = [
     path: '', component: ProjectPageComponent,
     children: [
       {
+        path: '',
+        loadChildren: () => import('~/app/features/project/project-overview/project-overview.module').then(m => m.ProjectOverviewModule)
+      },
+      {
         path: 'kanban',
         loadChildren: () => import('~/app/pages/kanban/kanban-page.module').then(m => m.KanbanPageModule)
       },
       {
-        path: '',
-        loadChildren: () => import('~/app/features/project/project-overview/project-overview.module').then(m => m.ProjectOverviewModule)
-      }
+        path: 'settings',
+        loadChildren: () => import('~/app/modules/project/settings/feature-settings/feature-settings.module').then(m => m.ProjectsSettingsFeatureSettingsModule)
+      },
     ]
   },
 ];

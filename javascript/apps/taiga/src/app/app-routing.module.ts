@@ -39,10 +39,14 @@ const routes: Routes = [
 
   // #TODO: Project Url must be project-name+Id. See if we can add the workspace+worskpaceId on the url.
   {
-    path: 'project/:slug',
-    loadChildren: () => import('./pages/project/project/project-page.module').then(m => m.ProjectPageModule)
+    path: 'project',
+    children: [
+      {
+        path: ':slug',
+        loadChildren: () => import('./pages/project/project/project-page.module').then(m => m.ProjectPageModule),
+      }
+    ]
   },
-
 ];
 
 @NgModule({

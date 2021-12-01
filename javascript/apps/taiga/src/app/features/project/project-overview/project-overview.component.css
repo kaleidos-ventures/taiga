@@ -8,29 +8,66 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
-:host {
-  flex-grow: 1;
+.project-title {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-16);
+}
+
+.project-name {
+  @mixin font-heading-4;
+
+  margin: 0;
 }
 
 .project-content {
-  block-size: 100%;
-  display: grid;
-  gap: var(--spacing-16);
-  grid-template-columns: 1fr 392px;
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100%;
+  padding: var(--spacing-16);
+}
 
-  & .col {
-    display: grid;
-    gap: var(--spacing-16);
+.project-content-inner {
+  display: grid;
+  flex-grow: 1;
+  gap: var(--spacing-16);
+  grid-template-areas:
+    "main main description"
+    "main main empty"
+    "main main empty"
+    "main main .";
+  grid-template-columns: 1fr 1fr 353px;
+  grid-template-rows: 169px 1fr 1fr;
+  padding-block-start: var(--spacing-16);
+
+  & :is(.project-main, .project-description, .project-empty) {
+    background: var(--color-white);
+    padding: var(--spacing-16);
   }
 
-  & .right-col {
-    gap: var(--spacing-16);
-    grid-template-rows: min-content;
+  & > .project-main {
+    grid-area: main;
+  }
+
+  & > .project-description {
+    grid-area: description;
+  }
+
+  & > .project-empty {
+    grid-area: empty;
   }
 }
 
 .project-description {
   overflow: hidden;
+}
+
+.project-about {
+  @mixin font-body;
+
+  line-height: 21px;
+  margin: 0;
+  margin-block-end: var(--spacing-8);
 }
 
 /* stylelint-disable */
@@ -51,20 +88,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 /* stylelint-enable */
-
-.project-container {
-  background: var(--color-white);
-  flex-grow: 1;
-  padding: var(--spacing-16);
-
-  & h2 {
-    @mixin font-body;
-
-    line-height: 21px;
-    margin: 0;
-    margin-block-end: var(--spacing-8);
-  }
-}
 
 .actions {
   display: flex;

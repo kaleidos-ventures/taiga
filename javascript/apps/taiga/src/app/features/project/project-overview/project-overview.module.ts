@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { AvatarModule } from '@taiga/ui/avatar';
 import { ProjectOverviewRoutingModule } from './project-overview-routing.module';
 import { ProjectOverviewComponent } from './project-overview.component';
 
@@ -18,6 +19,7 @@ import { ProjectOverviewComponent } from './project-overview.component';
     CommonModule,
     TuiButtonModule,
     TuiSvgModule,
+    AvatarModule,
     TranslocoModule,
     ProjectOverviewRoutingModule,
     TuiLinkModule

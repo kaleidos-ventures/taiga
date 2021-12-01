@@ -8,8 +8,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
-:host {
-  background-color: var(--color-gray10);
-  display: grid;
-  grid-template-columns: min-content 1fr;
+.settings-title {
+  @mixin font-heading-3;
+
+  margin: 0;
+}
+
+.settings-subtitle {
+  @mixin font-heading-4;
 }

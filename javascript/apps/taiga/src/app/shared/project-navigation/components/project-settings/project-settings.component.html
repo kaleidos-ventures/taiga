@@ -24,39 +24,62 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </span>
     </button>
     <div>
-      <h2 class="project-settings-title">{{ t('project_settings.project_settings') }}</h2>
+      <h2 class="project-settings-title">{{
+        t('project_settings.project_settings') }}</h2>
       <ul class="project-settings-menu">
         <li class="project-settings-menu-item">
-          <a href="">{{ t('commons.project') }}</a>
+          <a class="project-settings-menu-anchor"
+            routerLink="./settings/project"
+            routerLinkActive="active">{{ t('commons.project') }}</a>
         </li>
         <li class="project-settings-menu-item">
-          <a href="">{{ t('commons.members') }}</a>
+          <a class="project-settings-menu-anchor"
+            routerLink="./settings/members"
+            routerLinkActive="active">{{ t('commons.members') }}</a>
         </li>
-        <li class="project-settings-menu-item menu-item-unfolded active">
-          <a href="">{{ t('project_settings.roles_and_permissions') }}</a>
-          <ul class="project-settings-submenu ">
+        <li class="project-settings-menu-item menu-item-unfolded">
+          <a class="project-settings-menu-anchor"
+            routerLink="./settings/permissions"
+            routerLinkActive="active">
+            {{ t('project_settings.roles_and_permissions') }}
+          </a>
+          <ul class="project-settings-submenu">
             <li class="project-settings-submenu-item">
-              <a href="">
+              <a class="project-settings-submenu-anchor"
+                routerLink="./settings/permissions"
+                routerLinkActive="active"
+                fragment="member-permissions-settings">
                 {{ t('project_settings.member_permissions') }}
               </a>
             </li>
-            <li class="project-settings-submenu-item active">
-              <a href="">
+            <li class="project-settings-submenu-item">
+              <a class="project-settings-submenu-anchor"
+                routerLink="./settings/permissions"
+                routerLinkActive="active"
+                fragment="public-permissions-settings">
                 {{ t('project_settings.public_permissions') }}
               </a>
             </li>
             <li class="project-settings-submenu-item">
-              <a href="">
+              <a class="project-settings-submenu-anchor"
+                routerLink="./settings/permissions"
+                routerLinkActive="active"
+                fragment="workspace-permissions-settings">
                 {{ t('project_settings.workspace_permissions') }}
               </a>
             </li>
           </ul>
         </li>
         <li class="project-settings-menu-item">
-          <a href="">{{ t('project_settings.integrations') }}</a>
+          <a class="project-settings-menu-anchor"
+            routerLink="./settings/integrations"
+            routerLinkActive="active">{{ t('project_settings.integrations')
+            }}</a>
         </li>
         <li class="project-settings-menu-item">
-          <a href="">{{ t('project_settings.plugins') }}</a>
+          <a class="project-settings-menu-anchor"
+            routerLink="./settings/plugins"
+            routerLinkActive="active">{{ t('project_settings.plugins') }}</a>
         </li>
       </ul>
     </div>

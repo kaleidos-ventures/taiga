@@ -75,10 +75,12 @@ class Workspace(models.Model):
     color = models.IntegerField(default=1, null=False,
                                 blank=False, verbose_name=_("color"))
 
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
-                                         verbose_name=_("modified date"))
+    created_date = models.DateTimeField(null=False, blank=False,
+                                        verbose_name=_("created date"),
+                                        default=timezone.now)
+    modified_date = models.DateTimeField(null=False, blank=False,
+                                         verbose_name=_("modified date"),
+                                        default=timezone.now)
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,

@@ -10,17 +10,40 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html
 
-from taiga6.projects.attachments.admin import AttachmentInline
-from taiga6.projects.notifications.admin import WatchedInline
-from taiga6.projects.votes.admin import VoteInline
+from taiga6.users.admin import WorkspaceRoleInline
 
 from . import models
 
 
+class WorkspaceMembershipInline(admin.TabularInline):
+    model = models.WorkspaceMembership
+    extra = 0
+
+    def get_formset(self, request, obj=None, **kwargs):
+        # Hack! Hook parent obj just in time to use in formfield_for_foreignkey
+        self.parent_obj = obj
+        return super(WorkspaceMembershipInline, self).get_formset(request, obj, **kwargs)
+
+
 class WorkspaceAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "slug", "color", "owner_url" ]
-    list_display_links = ["id"]
+    list_display = ["id", "name", "slug", "color", "owner_url", "created_date"]
+    list_display_links = ["id", "name", "slug"]
     search_fields = ["id", "name", "slug", "owner__username", "owner__email", "owner__full_name"]
+    inlines = [WorkspaceRoleInline,
+               WorkspaceMembershipInline]
+
+    fieldsets = (
+        (None, {
+            "fields": ("name",
+                       "slug",
+                       "color",
+                       ("created_date", "modified_date"))
+        }),
+        (_("Privacy"), {
+            "fields": (("owner"),
+                       ("anon_permissions", "public_permissions"))
+        })
+    )
 
     def owner_url(self, obj):
         if obj.owner:

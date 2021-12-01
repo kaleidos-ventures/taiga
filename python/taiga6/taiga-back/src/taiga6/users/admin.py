@@ -13,7 +13,7 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Role, User
+from .models import Role, WorkspaceRole, User
 from .forms import UserChangeForm, UserCreationForm
 
 
@@ -64,6 +64,35 @@ class MembershipsInline(admin.TabularInline):
         return False
 
 
+class WorkspaceMembershipsInline(admin.TabularInline):
+    model = apps.get_model("workspaces", "WorkspaceMembership")
+    fk_name = "user"
+    verbose_name = _("Workspace Member")
+    verbose_name_plural = _("Workspace Members")
+    fields = ("workspace_id", "workspace_name", "workspace_slug", "workspace_owner")
+    readonly_fields = ("workspace_id", "workspace_name", "workspace_slug", "workspace_owner")
+    show_change_link = True
+    extra = 0
+
+    def workspace_id(self, obj):
+        return obj.workspace.id if obj.workspace else None
+    workspace_id.short_description = _("id")
+
+    def workspace_name(self, obj):
+        return obj.workspace.name if obj.workspace else None
+    workspace_name.short_description = _("name")
+
+    def workspace_slug(self, obj):
+        return obj.workspace.slug if obj.workspace else None
+    workspace_slug.short_description = _("slug")
+
+    def workspace_owner(self, obj):
+        if obj.workspace and obj.workspace.owner:
+            return "{} (@{})".format(obj.workspace.owner.get_full_name(), obj.workspace.owner.username)
+        return None
+    workspace_owner.short_description = _("owner")
+
+
 class OwnedProjectsInline(admin.TabularInline):
     model = apps.get_model("projects", "Project")
     fk_name = "owner"
@@ -81,8 +110,24 @@ class OwnedProjectsInline(admin.TabularInline):
         return False
 
 
+class OwnedWorkspacesInline(admin.TabularInline):
+    model = apps.get_model("workspaces", "Workspace")
+    fk_name = "owner"
+    verbose_name = _("Workspace Ownership")
+    verbose_name_plural = _("Workspace Ownerships")
+    fields = ("id", "name", "slug")
+    readonly_fields = ("id", "name", "slug")
+    show_change_link = True
+    extra = 0
+
+
 class RoleInline(admin.TabularInline):
     model = Role
+    extra = 0
+
+
+class WorkspaceRoleInline(admin.TabularInline):
+    model = WorkspaceRole
     extra = 0
 
 
@@ -130,7 +175,9 @@ class UserAdmin(DjangoUserAdmin):
     filter_horizontal = ()
     inlines = [
         OwnedProjectsInline,
-        MembershipsInline
+        MembershipsInline,
+        OwnedWorkspacesInline,
+        WorkspaceMembershipsInline
     ]
 
 

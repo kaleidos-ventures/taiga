@@ -55,7 +55,8 @@ const routes: Routes = [
     QuicklinkModule,
     RouterModule.forRoot(routes, {
       initialNavigation: 'enabled',
-      preloadingStrategy: QuicklinkStrategy
+      preloadingStrategy: QuicklinkStrategy,
+      anchorScrolling: 'enabled'
     }),
   ],
   providers: [],

@@ -10,6 +10,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectsSettingsFeatureProjectComponent } from './feature-project.component';
 import { RouterModule } from '@angular/router';
+import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { RouterModule } from '@angular/router';
   ],
   imports: [
     CommonModule,
+    TuiAutoFocusModule,
     RouterModule.forChild([
       {
         path: '',

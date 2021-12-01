@@ -264,6 +264,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               (pointerleave)="out()">
               <button
                 type="button"
+                #projectSettingButton
                 (click)="openSettings()"
                 (focus)="popup($event, 'project-settings')"
                 (focusout)="out()"
@@ -372,7 +373,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <tg-project-settings
       *ngIf="showProjectSettings || settingsAnimationInProgress"
       [project]="project"
-      (closeMenu)="showProjectSettings = false">
+      (closeMenu)="closeMenu()">
     </tg-project-settings>
   </div>
 </div>

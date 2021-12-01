@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProjectsSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
 import { inViewportDirective } from '~/app/shared/directives/intersection-observer.directive';
+import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { inViewportDirective } from '~/app/shared/directives/intersection-observ
   ],
   imports: [
     CommonModule,
+    TuiAutoFocusModule,
     RouterModule.forChild([
       {
         path: '',

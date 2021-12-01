@@ -142,6 +142,8 @@ export class ProjectNavigationComponent implements OnInit {
 
   @ViewChild('backlogButton', { static: false }) public backlogButtonElement!: ElementRef;
 
+  @ViewChild('projectSettingButton', { static: false }) public  projectSettingButton!: ElementRef;
+
   public backlogHTMLElement!: HTMLElement;
 
   public dialog: ProjectMenuDialog = {
@@ -159,6 +161,7 @@ export class ProjectNavigationComponent implements OnInit {
 
   public showProjectSettings = false;
   public settingsAnimationInProgress = false;
+  public closingSetting = false;
 
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
 
@@ -173,6 +176,11 @@ export class ProjectNavigationComponent implements OnInit {
   public captureDoneEvent($event: AnimationEvent) {
     if ($event.fromState === 'open-settings') {
       this.settingsAnimationInProgress = false;
+    }
+
+    if (this.closingSetting === true) {
+      (this.projectSettingButton.nativeElement as HTMLElement).focus();
+      this.closingSetting = false;
     }
   }
 
@@ -304,5 +312,10 @@ export class ProjectNavigationComponent implements OnInit {
     this.showProjectSettings = true;
     this.dialog.open = false;
     this.dialog.type = '';
+  }
+
+  public closeMenu() {
+    this.showProjectSettings = false;
+    this.closingSetting = true;
   }
 }

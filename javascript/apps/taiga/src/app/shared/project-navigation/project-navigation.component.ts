@@ -291,6 +291,7 @@ export class ProjectNavigationComponent implements OnInit {
 
   public openSettings() {
     this.showProjectSettings = true;
-    this.out();
+    this.dialog.open = false;
+    this.dialog.type = '';
   }
 }

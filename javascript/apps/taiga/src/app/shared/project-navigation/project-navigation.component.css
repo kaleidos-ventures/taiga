@@ -318,7 +318,8 @@ ul {
 
     background: var(--color-black);
 
-    &:hover {
+    &:hover,
+    &.active-dialog {
       background: var(--color-gray90);
       color: var(--color-primary);
     }
@@ -478,6 +479,17 @@ ul {
 
   &.open {
     display: block;
+  }
+
+  & .popover-open-settings-action {
+    align-items: center;
+    background-color: var(--color-gray90);
+    border: 0;
+    color: var(--color-white);
+    cursor: pointer;
+    display: flex;
+    padding: 0 var(--spacing-2);
+    padding-inline-start: var(--spacing-12);
   }
 
   & .main-link {

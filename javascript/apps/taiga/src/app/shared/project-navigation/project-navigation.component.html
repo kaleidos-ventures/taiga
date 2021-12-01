@@ -304,7 +304,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [class.open]="dialog.open"
       [style.top.px]="dialog.top"
       [style.left.px]="dialog.left">
-      <a *ngIf="dialog.type !== 'scrum' && dialog.type !== 'project'"
+      <a *ngIf="dialog.type !== 'scrum' && dialog.type !== 'project' && dialog.type !== 'project-settings' "
         [attr.href]="dialog.link"
         [style.height.px]="dialog.mainLinkHeight"
         class="main-link">
@@ -312,6 +312,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ dialog.text }}
         </span>
       </a>
+      <button
+        *ngIf="dialog.type === 'project-settings'"
+        (click)="openSettings()"
+        type="button"
+        class="popover-open-settings-action"
+        [attr.aria-label]="dialog.text "
+        [style.height.px]="dialog.mainLinkHeight">
+          {{ dialog.text }}
+      </button>
       <div *ngIf="dialog.type === 'scrum'"
         [attr.href]="dialog.link"
         cdkTrapFocus

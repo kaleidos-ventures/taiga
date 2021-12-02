@@ -9,14 +9,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <h3 class="settings-title">Roles and persmissions</h3>
 </div>
 <section class="member-permissions-settings"
-  id="member-permissions-settings">
+  id="member-permissions-settings"
+  inViewport
+  (visible)="isInViewport($event)">
   <h3 class="settings-subtitle">Member permissions</h3>
 </section>
 <section id="public-permissions-settings"
-  class="public-permissions-settings">
+  class="public-permissions-settings"
+  inViewport
+  (visible)="isInViewport($event)">
   <h3 class="settings-subtitle">Public permissions</h3>
 </section>
 <section id="workspace-permissions-settings"
-  class="workspace-permissions-settings">
+  class="workspace-permissions-settings"
+  inViewport
+  (visible)="isInViewport($event)">
   <h3 class="settings-subtitle">Workspace permissions</h3>
 </section>

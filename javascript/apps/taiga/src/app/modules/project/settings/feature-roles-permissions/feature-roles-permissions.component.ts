@@ -6,8 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'tg-projects-settings-feature-roles-permissions',
   templateUrl: './feature-roles-permissions.component.html',
@@ -17,9 +17,20 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectsSettingsFeatureRolesPermissionsComponent implements OnInit
-{
-  public ngOnInit(): void {
-    console.log('project roles permissions feature');
+export class ProjectsSettingsFeatureRolesPermissionsComponent {
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
+
+  public isInViewport(element: HTMLElement) {
+    this.changeFragment(element.id);
+  }
+
+  public changeFragment(fragment: string) {
+    void this.router.navigate([], {
+      fragment: fragment,
+      relativeTo: this.route
+    });
   }
 }

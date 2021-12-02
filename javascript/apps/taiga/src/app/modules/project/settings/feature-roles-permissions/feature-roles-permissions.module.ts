@@ -10,10 +10,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProjectsSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
+import { inViewportDirective } from '~/app/shared/directives/intersection-observer.directive';
 
 @NgModule({
   declarations: [
-    ProjectsSettingsFeatureRolesPermissionsComponent
+    ProjectsSettingsFeatureRolesPermissionsComponent,
+    inViewportDirective
   ],
   imports: [
     CommonModule,
@@ -25,7 +27,8 @@ import { ProjectsSettingsFeatureRolesPermissionsComponent } from './feature-role
     ])
   ],
   exports: [
-    ProjectsSettingsFeatureRolesPermissionsComponent
+    ProjectsSettingsFeatureRolesPermissionsComponent,
+    inViewportDirective
   ],
 })
 export class ProjectsSettingsFeatureRolesPermissionsModule { }

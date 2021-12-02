@@ -19,7 +19,7 @@ from django.contrib.contenttypes.models import ContentType
 from sampledatahelper.helper import SampleDataHelper
 
 from taiga6.users.models import *
-from taiga6.permissions.choices import ANON_PERMISSIONS
+from taiga6.permissions.choices import ANON_PERMISSIONS, WORKSPACE_ADMINS_PERMISSIONS
 from taiga6.projects.choices import BLOCKED_BY_STAFF
 from taiga6.external_apps.models import Application, ApplicationToken
 from taiga6.projects.models import *
@@ -39,6 +39,7 @@ from taiga6.projects.likes.services import add_like
 from taiga6.projects.votes.services import add_vote
 from taiga6.events.apps import disconnect_events_signals
 from taiga6.projects.services.stats import get_stats_for_project
+from taiga6.workspaces.models import *
 
 ATTACHMENT_SAMPLE_DATA = [
     path.join(settings.BASE_DIR, "taiga6/projects/management/commands/sample_data"),
@@ -314,6 +315,12 @@ class Command(BaseCommand):
                         owner=user,
                         workspace=user_workspace
                     )
+                # create workspace admin role (delete when we have a postsave signal for this)
+                workspace_admin_role = self.create_workspace_admin_role(workspace=user_workspace)
+                # create owner as admin workspace membership (delete when we have a postsave signal for this)
+                WorkspaceMembership.objects.create(user=user,
+                                                workspace=user_workspace,
+                                                workspace_role=workspace_admin_role)
 
                 # create WS with 3 projects
                 user_workspace: Workspace = self.create_workspace(counter=2, owner=user)
@@ -324,6 +331,12 @@ class Command(BaseCommand):
                         owner=user,
                         workspace=user_workspace
                     )
+                # create workspace admin role (delete when we have a postsave signal for this)
+                workspace_admin_role = self.create_workspace_admin_role(workspace=user_workspace)
+                # create owner as admin workspace membership (delete when we have a postsave signal for this)
+                WorkspaceMembership.objects.create(user=user,
+                                                workspace=user_workspace,
+                                                workspace_role=workspace_admin_role)
 
                 # create WS with 1 projects
                 user_workspace: Workspace = self.create_workspace(counter=3, owner=user)
@@ -333,19 +346,38 @@ class Command(BaseCommand):
                     owner=user,
                     workspace=user_workspace
                 )
+                # create workspace admin role (delete when we have a postsave signal for this)
+                workspace_admin_role = self.create_workspace_admin_role(workspace=user_workspace)
+                # create owner as admin workspace membership (delete when we have a postsave signal for this)
+                WorkspaceMembership.objects.create(user=user,
+                                                workspace=user_workspace,
+                                                workspace_role=workspace_admin_role)
 
                 # create empty WS
                 user_workspace: Workspace = self.create_workspace(counter=4, owner=user)
+                # create workspace admin role (delete when we have a postsave signal for this)
+                workspace_admin_role = self.create_workspace_admin_role(workspace=user_workspace)
+                # create owner as admin workspace membership (delete when we have a postsave signal for this)
+                WorkspaceMembership.objects.create(user=user,
+                                                workspace=user_workspace,
+                                                workspace_role=workspace_admin_role)
 
             # create WS for other users
             else:
                 for counter, user_project_group in enumerate(user_projects_groups):
                     if len(user_project_group) >= 1:
-                        user_workspace: Workspace = self.create_workspace(counter, user)
+                        user_workspace: Workspace = self.create_workspace(counter+1, user)
 
                         for project in user_project_group:
                             project.workspace = user_workspace
                             project.save()
+
+                        # create workspace admin role (delete when we have a postsave signal for this)
+                        workspace_admin_role = self.create_workspace_admin_role(workspace=user_workspace)
+                        # create owner as admin workspace membership (delete when we have a postsave signal for this)
+                        WorkspaceMembership.objects.create(user=user,
+                                                workspace=user_workspace,
+                                                workspace_role=workspace_admin_role)
 
 
     def create_attachment(self, obj, order):
@@ -706,8 +738,21 @@ class Command(BaseCommand):
         return "#{}".format(color)
 
     def create_workspace(self, counter: int, owner: User):
-        return Workspace.objects.create(name=f'Workspace Example {counter+1}', owner=owner,
-                                        color=random.choice(range(1, MAX_COLORS+1)))
+        anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
+        public_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
+        return Workspace.objects.create(name=f'Workspace {owner.username} {counter}',
+                                        owner=owner,
+                                        color=random.choice(range(1, MAX_COLORS+1)),
+                                        anon_permissions=anon_permissions,
+                                        public_permissions=public_permissions)
+
+    def create_workspace_admin_role(self, workspace=None):
+        return WorkspaceRole.objects.create(name="Administrators",
+                                            slug="admin",
+                                            order=1,
+                                            _is_admin=True,
+                                            workspace=workspace,
+                                            permissions=list(map(lambda perm: perm[0], WORKSPACE_ADMINS_PERMISSIONS)) or [])
 
     def _split_evenly(self, a, n):
         k, m = divmod(len(a), n)

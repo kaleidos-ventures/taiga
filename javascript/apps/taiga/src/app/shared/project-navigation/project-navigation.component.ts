@@ -11,6 +11,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Host
 import { Router } from '@angular/router';
 import { RxState } from '@rx-angular/state';
 import { Project, Milestone } from '@taiga/data';
+import { Subject } from 'rxjs';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 
 const collapseMenuAnimation = '200ms ease-out';
@@ -162,11 +163,14 @@ export class ProjectNavigationComponent implements OnInit {
   public showProjectSettings = false;
   public settingsAnimationInProgress = false;
   public closingSetting = false;
+  public animationEvents$ = new Subject<AnimationEvent>();
 
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
 
   @HostListener('@openCollapse.start', ['$event'])
   public captureStartEvent($event: AnimationEvent) {
+    this.animationEvents$.next($event);
+
     if ($event.fromState === 'open-settings') {
       this.settingsAnimationInProgress = true;
     }
@@ -174,6 +178,8 @@ export class ProjectNavigationComponent implements OnInit {
 
   @HostListener('@openCollapse.done', [ '$event' ])
   public captureDoneEvent($event: AnimationEvent) {
+    this.animationEvents$.next($event);
+
     if ($event.fromState === 'open-settings') {
       this.settingsAnimationInProgress = false;
     }

@@ -8,6 +8,7 @@
 
 import { animate, query, state, style, transition, trigger, group, AnimationEvent } from '@angular/animations';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { RxState } from '@rx-angular/state';
 import { Project, Milestone } from '@taiga/data';
 import { LocalStorageService } from '../local-storage/local-storage.service';
@@ -178,10 +179,20 @@ export class ProjectNavigationComponent implements OnInit {
   constructor(
     private localStorage: LocalStorageService,
     private readonly cd: ChangeDetectorRef,
+    private router: Router,
   ) {}
 
   public ngOnInit() {
     this.collapsed = !!this.localStorage.get('projectnav-collapsed');
+    this.showProjectSettings = this.router.isActive(
+      this.router.createUrlTree(['project', this.project.slug, 'settings']),
+      {
+        paths: 'subset',
+        queryParams: 'ignored',
+        fragment: 'ignored',
+        matrixParams: 'ignored'
+      }
+    );
   }
 
   public get milestones(): Milestone[] {

@@ -6,13 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Router } from '@angular/router';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { Project, ProjectMockFactory } from '@taiga/data';
+import { ProjectMockFactory } from '@taiga/data';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { ProjectNavigationComponent } from './project-navigation.component';
 
 import * as faker from 'faker';
+
 describe('ProjectNavigationComponent', () => {
   let spectator: Spectator<ProjectNavigationComponent>;
   const createComponent = createComponentFactory({
@@ -23,6 +25,7 @@ describe('ProjectNavigationComponent', () => {
     declareComponent: false,
     mocks: [
       LocalStorageService,
+      Router,
     ]
   });
 
@@ -31,6 +34,7 @@ describe('ProjectNavigationComponent', () => {
       detectChanges: false
     });
 
+    spectator.component.project = ProjectMockFactory(true);
   });
 
   it('example', () => {
@@ -61,12 +65,7 @@ describe('ProjectNavigationComponent', () => {
   });
 
   it('return milestones that are not closed', () => {
-    const includeMilestones = true;
-    const project: Project = ProjectMockFactory(includeMilestones);
-
-    spectator.component.project = project;
-
-    const openMilestones = project.milestones.filter((milestone) => !milestone.closed).reverse().slice(0, 7);
+    const openMilestones = spectator.component.project.milestones.filter((milestone) => !milestone.closed).reverse().slice(0, 7);
 
     expect(spectator.component.milestones).toEqual(openMilestones);
     expect(spectator.component.milestones.length).toBeLessThanOrEqual(7);

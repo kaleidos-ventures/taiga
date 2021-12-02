@@ -6,14 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { AfterViewInit, Directive, ElementRef, EventEmitter, OnInit, Optional, Output } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Optional, Output } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-
+@UntilDestroy()
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[inViewport]',
 })
-export class inViewportDirective implements OnInit, AfterViewInit {
+export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
 
   @Optional() public threshold = 1;
   @Output() public visible = new EventEmitter<HTMLElement>();
@@ -36,7 +37,6 @@ export class inViewportDirective implements OnInit, AfterViewInit {
 
   private createObserver() {
     const options = {
-      root: document.querySelector('#scrollArea'),
       rootMargin: '0px',
       threshold: this.threshold
     };
@@ -61,9 +61,14 @@ export class inViewportDirective implements OnInit, AfterViewInit {
     this.observer.observe(this.element.nativeElement);
 
     this.subject$
+      .pipe(untilDestroyed(this))
       .subscribe(({ entry }) => {
         const target = entry.target as HTMLElement;
         this.visible.emit(target);
       });
+  }
+
+  public ngOnDestroy() {
+    this.observer?.unobserve(this.element.nativeElement);
   }
 }

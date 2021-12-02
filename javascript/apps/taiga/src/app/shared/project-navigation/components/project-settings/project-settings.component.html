@@ -50,6 +50,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <ul class="project-settings-submenu">
             <li class="project-settings-submenu-item">
               <a class="project-settings-submenu-anchor"
+                [class.active]="currentFragment === 'member-permissions-settings'"
                 routerLink="./settings/permissions"
                 fragment="member-permissions-settings">
                 {{ t('project_settings.member_permissions') }}
@@ -57,6 +58,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </li>
             <li class="project-settings-submenu-item">
               <a class="project-settings-submenu-anchor"
+                [class.active]="currentFragment === 'public-permissions-settings'"
                 routerLink="./settings/permissions"
                 fragment="public-permissions-settings">
                 {{ t('project_settings.public_permissions') }}
@@ -64,6 +66,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </li>
             <li class="project-settings-submenu-item">
               <a class="project-settings-submenu-anchor"
+                [class.active]="currentFragment === 'workspace-permissions-settings'"
                 routerLink="./settings/permissions"
                 fragment="workspace-permissions-settings">
                 {{ t('project_settings.workspace_permissions') }}

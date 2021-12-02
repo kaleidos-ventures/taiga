@@ -162,7 +162,6 @@ export class ProjectNavigationComponent implements OnInit {
 
   public showProjectSettings = false;
   public settingsAnimationInProgress = false;
-  public closingSetting = false;
   public animationEvents$ = new Subject<AnimationEvent>();
 
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
@@ -170,23 +169,17 @@ export class ProjectNavigationComponent implements OnInit {
   @HostListener('@openCollapse.start', ['$event'])
   public captureStartEvent($event: AnimationEvent) {
     this.animationEvents$.next($event);
-
-    if ($event.fromState === 'open-settings') {
-      this.settingsAnimationInProgress = true;
-    }
+    this.settingsAnimationInProgress = true;
   }
 
   @HostListener('@openCollapse.done', [ '$event' ])
   public captureDoneEvent($event: AnimationEvent) {
     this.animationEvents$.next($event);
 
-    if ($event.fromState === 'open-settings') {
-      this.settingsAnimationInProgress = false;
-    }
+    this.settingsAnimationInProgress = false;
 
-    if (this.closingSetting === true) {
+    if ($event.fromState === 'open-settings') {
       (this.projectSettingButton.nativeElement as HTMLElement).focus();
-      this.closingSetting = false;
     }
   }
 
@@ -322,6 +315,5 @@ export class ProjectNavigationComponent implements OnInit {
 
   public closeMenu() {
     this.showProjectSettings = false;
-    this.closingSetting = true;
   }
 }

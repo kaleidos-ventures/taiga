@@ -21,7 +21,8 @@ const getConfig = () => {
       require('postcss-preset-env')({
         stage: 0,
         features: {
-          'logical-properties-and-values': false
+          'logical-properties-and-values': false,
+          'focus-visible-pseudo-class': false,
         }
       })
     ]

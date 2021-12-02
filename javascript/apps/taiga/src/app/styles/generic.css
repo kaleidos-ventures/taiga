@@ -18,9 +18,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   color: var(--color-white);
 }
 
-*:focus-visible,
-*:focus {
+*:focus-visible {
   outline: solid 2px var(--color-secondary);
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
 }
 
 body {

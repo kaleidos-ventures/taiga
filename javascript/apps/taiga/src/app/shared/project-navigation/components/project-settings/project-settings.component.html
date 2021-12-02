@@ -7,7 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t;">
-  <nav class="project-settings-nav" cdkTrapFocus>
+  <nav class="project-settings-nav">
     <button (click)="closeMenu.next()"
       class="back-to-nav">
       <tui-svg class="back-icon"
@@ -29,7 +29,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <ul class="project-settings-menu">
         <li class="project-settings-menu-item">
           <a class="project-settings-menu-anchor"
-            cdkFocusInitial
+            #firstChild
             routerLink="./settings/project"
             routerLinkActive="active">
             {{ t('commons.project') }}

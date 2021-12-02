@@ -6,12 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { ProjectSettingsComponent } from './project-settings.component';
@@ -23,9 +21,7 @@ import { ProjectSettingsComponent } from './project-settings.component';
     TuiSvgModule,
     TranslocoModule,
     AvatarModule,
-    RouterModule,
-    TuiAutoFocusModule,
-    A11yModule
+    RouterModule
   ],
   declarations: [
     ProjectSettingsComponent,

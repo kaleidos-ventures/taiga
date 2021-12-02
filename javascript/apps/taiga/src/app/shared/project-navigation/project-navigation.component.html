@@ -11,7 +11,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <div
     [@mainNavContainer]="menuState"
     class="main-nav-container-inner">
-    <nav class="main-project-nav">
+    <!-- visibility: hidden prevent focus in the project menu when the setting menu is visible -->
+    <nav
+      class="main-project-nav"
+      [style.visibility]="showProjectSettings && !settingsAnimationInProgress ? 'hidden' : null">
       <div class="main-project-nav-inner">
         <div (pointerenter)="popup($event, 'project')"
           (pointerleave)="out()"

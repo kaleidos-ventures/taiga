@@ -33,8 +33,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  &:focus {
-    outline: solid 2px var(--color-secondary);
+  &:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--color-secondary);
+    outline: 0;
+  }
+
+  &:focus:not(:focus-visible) {
+    box-shadow: none;
+    outline: none;
   }
 }
 
@@ -87,7 +93,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   color: var(--color-gray70);
   margin-block-end: 0;
-  padding-inline: 2px 3px; /* make visible :focus-visible border */
 }
 
 .project-settings-menu-anchor {
@@ -110,6 +115,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     & + .project-settings-submenu {
       background: var(--color-gray20);
     }
+  }
+
+  &:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--color-secondary);
+    outline: 0;
+  }
+
+  &:focus:not(:focus-visible) {
+    box-shadow: none;
+    outline: none;
   }
 }
 

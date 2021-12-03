@@ -41,18 +41,10 @@ export class ProjectSettingsComponent implements OnInit {
 
   public ngOnInit() {
     this.getFragment();
+    this.initialFocus();
   }
 
   public getFragment() {
-    this.projectNavigationComponent.animationEvents$
-      .pipe(
-        filter((event) => event.toState === 'open-settings' && event.phaseName == 'done'),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        (this.firstChild.nativeElement as HTMLElement).focus();
-      });
-
     this.route.fragment
       .pipe(untilDestroyed(this))
       .subscribe((fragment) => {
@@ -60,6 +52,17 @@ export class ProjectSettingsComponent implements OnInit {
           this.currentFragment = fragment;
           this.cd.markForCheck();
         }
+      });
+  }
+
+  private initialFocus() {
+    this.projectNavigationComponent.animationEvents$
+      .pipe(
+        filter((event) => event.toState === 'open-settings' && event.phaseName == 'done'),
+        untilDestroyed(this)
+      )
+      .subscribe(() => {
+        (this.firstChild.nativeElement as HTMLElement).focus();
       });
   }
 }

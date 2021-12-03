@@ -186,7 +186,7 @@ export class ProjectNavigationComponent implements OnInit {
   constructor(
     private localStorage: LocalStorageService,
     private readonly cd: ChangeDetectorRef,
-    private router: Router,
+    private router: Router
   ) {}
 
   public ngOnInit() {
@@ -311,6 +311,7 @@ export class ProjectNavigationComponent implements OnInit {
     this.showProjectSettings = true;
     this.dialog.open = false;
     this.dialog.type = '';
+    void this.router.navigate(['project', this.project.slug, 'settings', 'project']);
   }
 
   public closeMenu() {

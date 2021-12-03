@@ -81,6 +81,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   color: var(--color-gray70);
   margin-block-end: 0;
+  padding-inline: 2px 3px; /* make visible :focus-visible border */
 }
 
 .project-settings-menu-anchor {

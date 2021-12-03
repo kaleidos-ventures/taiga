@@ -25,15 +25,15 @@ export class ProjectsSettingsFeatureRolesPermissionsComponent implements AfterVi
     private route: ActivatedRoute
   ) {}
 
-  private readonly defaulFragment =  'member-permissions-settings';
+  private readonly defaultFragment =  'member-permissions-settings';
 
   public ngAfterViewInit() {
     this.route.fragment.pipe(take(1)).subscribe((fragment) => {
       if (!fragment) {
-        fragment = this.defaulFragment;
+        fragment = this.defaultFragment;
       }
 
-      if (fragment !== this.defaulFragment) {
+      if (fragment !== this.defaultFragment) {
         this.focusFragment(fragment);
         void this.router.navigate([], {
           fragment: fragment

@@ -311,7 +311,14 @@ export class ProjectNavigationComponent implements OnInit {
     this.showProjectSettings = true;
     this.dialog.open = false;
     this.dialog.type = '';
-    void this.router.navigate(['project', this.project.slug, 'settings', 'project']);
+    void this.router.navigate(
+      ['project', this.project.slug, 'settings', 'project'],
+      {
+        state: {
+          ignoreNextMainFocus: true
+        }
+      }
+    );
   }
 
   public closeMenu() {

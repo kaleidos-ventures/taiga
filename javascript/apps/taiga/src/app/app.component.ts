@@ -45,10 +45,19 @@ export class AppComponent {
 
     this.router.events.pipe(
       filter((evt): evt is NavigationEnd => evt instanceof NavigationEnd),
-      skip(1),
-      filter((event) => !event.url.includes('#')), // ignore fragments
+      filter((event) => !event.url.includes('#')),
       map(() => location.pathname),
       distinctUntilChanged(),
+      skip(1),
+      filter(() => {
+        const navigationState = this.router.getCurrentNavigation()?.extras.state;
+
+        if (navigationState?.ignoreNextMainFocus) {
+          return false;
+        }
+
+        return true;
+      }),
     ).subscribe(() => {
       requestAnimationFrame(() => {
         const mainFocus = document.querySelector('[mainFocus]');

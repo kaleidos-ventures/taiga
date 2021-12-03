@@ -69,7 +69,9 @@ export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
       )
       .subscribe(({ entry }) => {
         const target = entry.target as HTMLElement;
-        this.visible.emit(target);
+        if (entry.isIntersecting) {
+          this.visible.emit(target);
+        }
       });
   }
 

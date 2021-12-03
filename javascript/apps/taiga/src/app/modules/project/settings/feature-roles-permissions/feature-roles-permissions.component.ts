@@ -6,9 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, map, skip } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 @Component({
   selector: 'tg-projects-settings-feature-roles-permissions',
   templateUrl: './feature-roles-permissions.component.html',
@@ -18,32 +18,48 @@ import { filter, map, skip } from 'rxjs/operators';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectsSettingsFeatureRolesPermissionsComponent {
+export class ProjectsSettingsFeatureRolesPermissionsComponent implements AfterViewInit {
   constructor(
     private el: ElementRef,
     private router: Router,
     private route: ActivatedRoute
-  ) {
-    void this.router.navigate([], {
-      fragment: 'member-permissions-settings'
+  ) {}
+
+  private readonly defaulFragment =  'member-permissions-settings';
+
+  public ngAfterViewInit() {
+    this.route.fragment.pipe(take(1)).subscribe((fragment) => {
+      if (!fragment) {
+        fragment = this.defaulFragment;
+      }
+
+      if (fragment !== this.defaulFragment) {
+        this.focusFragment(fragment);
+        void this.router.navigate([], {
+          fragment: fragment
+        });
+      }
     });
 
     this.router.events.pipe(
       filter((evt): evt is NavigationEnd => evt instanceof NavigationEnd),
-      skip(1),
       map((evt) => evt.url.split('#')[1])
     ).subscribe((fragment) => {
       const isInternal = this.router.getCurrentNavigation()?.extras.state?.internal as boolean;
 
       if (!isInternal) {
-        const el = this.nativeElment.querySelector(`[data-fragment="${fragment}"]`);
-
-        if (el) {
-          (el as HTMLElement).focus();
-          el.scrollIntoView();
-        }
+        this.focusFragment(fragment);
       }
     });
+  }
+
+  public focusFragment(fragment: string) {
+    const el = this.nativeElment.querySelector(`[data-fragment="${fragment}"]`);
+
+    if (el) {
+      (el as HTMLElement).focus();
+      el.scrollIntoView();
+    }
   }
 
   public get nativeElment() {

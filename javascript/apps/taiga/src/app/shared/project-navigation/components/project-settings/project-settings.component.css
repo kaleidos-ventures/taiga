@@ -53,9 +53,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .project-data-name {
   @mixin font-body;
 
+  /* stylelint-disable */
   color: var(--color-gray90);
+  display: -webkit-box;
   font-weight: var(--font-weight-medium);
+  overflow: hidden;
   text-align: start;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  /* stylelint-enable */
 }
 
 .project-settings-title {

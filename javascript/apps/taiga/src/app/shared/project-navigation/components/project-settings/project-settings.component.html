@@ -8,7 +8,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t;">
   <nav class="project-settings-nav">
-    <button (click)="closeMenu.next()"
+    <button (click)="navigateBack()"
       class="back-to-nav">
       <tui-svg class="back-icon"
         src="chevron-left"></tui-svg>
@@ -19,8 +19,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [url]="project.logoSmall"
           [name]="project.name">
         </tg-ui-avatar>
-        <span class="project-data-name"
-          (click)="closeMenu.next()">{{ project.name }}</span>
+        <span class="project-data-name">
+          {{ project.name }}
+        </span>
       </span>
     </button>
     <div>

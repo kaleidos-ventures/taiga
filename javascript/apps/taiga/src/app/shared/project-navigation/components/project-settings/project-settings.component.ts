@@ -8,11 +8,12 @@
  */
 
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Project } from '@taiga/data';
 import { filter } from 'rxjs/operators';
 import { ProjectNavigationComponent } from '~/app/shared/project-navigation/project-navigation.component';
+import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
 @UntilDestroy()
 @Component({
@@ -32,16 +33,33 @@ export class ProjectSettingsComponent implements OnInit {
   public closeMenu = new EventEmitter<void>();
 
   public currentFragment: string | null = null;
+  public previousUrl?: string;
 
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private projectNavigationComponent: ProjectNavigationComponent,
+    private routeHistory: RouteHistoryService
   ){}
 
   public ngOnInit() {
     this.getFragment();
     this.initialFocus();
+    this.getHistoryNav();
+  }
+
+  public getHistoryNav() {
+    this.previousUrl = this.routeHistory.getPreviousUrl() || this.router.url;
+    if (this.previousUrl.includes('/settings')) {
+      const params:string = this.route.snapshot.params.slug;
+      this.previousUrl = `/project/${params}/`;
+    }
+  }
+
+  public navigateBack() {
+    this.closeMenu.next();
+    void this.router.navigate([this.previousUrl]);
   }
 
   public getFragment() {

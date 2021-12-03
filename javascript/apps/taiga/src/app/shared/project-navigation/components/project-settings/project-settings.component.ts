@@ -31,7 +31,7 @@ export class ProjectSettingsComponent implements OnInit {
   @Output()
   public closeMenu = new EventEmitter<void>();
 
-  public currentFragment!: string;
+  public currentFragment: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -48,10 +48,8 @@ export class ProjectSettingsComponent implements OnInit {
     this.route.fragment
       .pipe(untilDestroyed(this))
       .subscribe((fragment) => {
-        if (fragment) {
-          this.currentFragment = fragment;
-          this.cd.markForCheck();
-        }
+        this.currentFragment = fragment;
+        this.cd.markForCheck();
       });
   }
 

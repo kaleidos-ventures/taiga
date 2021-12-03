@@ -6,9 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { AfterViewInit, Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Optional, Output } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
+import { skip } from 'rxjs/operators';
 @UntilDestroy()
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
@@ -16,8 +17,9 @@ import { Subject } from 'rxjs';
 })
 export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
 
-  @Optional() public threshold = 1;
+  @Input() public threshold = 1;
   @Output() public visible = new EventEmitter<HTMLElement>();
+  @Input() public skip = 0;
 
   private observer: IntersectionObserver | undefined;
   private subject$: Subject<{
@@ -61,7 +63,10 @@ export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
     this.observer.observe(this.element.nativeElement);
 
     this.subject$
-      .pipe(untilDestroyed(this))
+      .pipe(
+        untilDestroyed(this),
+        skip(this.skip)
+      )
       .subscribe(({ entry }) => {
         const target = entry.target as HTMLElement;
         this.visible.emit(target);

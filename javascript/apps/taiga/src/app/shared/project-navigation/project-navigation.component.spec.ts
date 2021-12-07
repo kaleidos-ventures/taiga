@@ -37,7 +37,7 @@ describe('ProjectNavigationComponent', () => {
     spectator.component.project = ProjectMockFactory(true);
   });
 
-  it('example', () => {
+  it('default', () => {
     const localStorageService = spectator.inject<LocalStorageService>(LocalStorageService);
     localStorageService.get.mockReturnValue(true);
 

@@ -71,7 +71,7 @@ export class ProjectSettingsComponent implements OnInit {
       });
   }
 
-  private initialFocus() {
+  public initialFocus() {
     this.projectNavigationComponent.animationEvents$
       .pipe(
         filter((event) => event.toState === 'open-settings' && event.phaseName == 'done'),

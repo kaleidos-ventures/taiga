@@ -140,7 +140,7 @@ class Command(BaseCommand):
             for username, full_name, email in BASE_USERS:
                 self.users.append(self.create_user(username=username, full_name=full_name, email=email))
         else:
-            for x in range(NUM_USERS):
+            for x in range(1, NUM_USERS+1):
                 self.users.append(self.create_user(counter=x))
 
         # create project
@@ -664,7 +664,7 @@ class Command(BaseCommand):
     def create_project(self, counter, owner=None, workspace=None, is_private=None, blocked_code=None):
         if is_private is None:
             is_private=self.sd.boolean()
-        
+
         if owner is None:
             owner=self.sd.choice(self.users)
 

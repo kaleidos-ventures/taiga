@@ -37,12 +37,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .left {
     inline-size: var(--spacing-16);
-    margin: 0 var(--spacing-4) 0 0 !important; /* stylelint-disable-line declaration-no-important */
+    margin: 0 !important; /* stylelint-disable-line declaration-no-important */
+    margin-inline-end: var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
   }
 
   & .right {
     inline-size: var(--spacing-16);
-    margin: 0 0 0 var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
+    margin: 0 !important; /* stylelint-disable-line declaration-no-important */
+    margin-inline-start: var(--spacing-4) !important; /* stylelint-disable-line declaration-no-important */
   }
 
   &[tuiiconbutton] {

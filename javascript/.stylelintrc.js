@@ -11,9 +11,11 @@ module.exports = {
   extends: ['stylelint-config-standard'],
   plugins: [
     'stylelint-order',
-    'stylelint-use-logical-spec'
+    'stylelint-use-logical-spec',
+    './linters/no-margin-padding-shorthand.js'
   ],
   rules: {
+    'taiga-plugin/no-margin-padding-shorthand': true,
     'at-rule-no-unknown': [
       true,
       {

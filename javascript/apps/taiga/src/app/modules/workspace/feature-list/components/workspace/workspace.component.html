@@ -1,0 +1,102 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<ng-container *ngIf="model$ | async as vm">
+  <ng-container *transloco="let t">
+    <div class="workspace-wrapper">
+      <div class="workspace-title-container">
+        <h2 class="workspace-title">{{ t('commons.projects') }}</h2>
+        <div class="workspace-title-actions">
+          <button data-test="add-workspace-button"
+            (click)="setCreate(true)"
+            [disabled]="vm.showCreate || vm.loading"
+            [tuiHint]="tooltip"
+            tuiHintDirection="bottom-right"
+            appearance="secondary"
+            tuiButton
+            icon="plus"
+            type="button">
+            {{ t('workspace.add_workspace') }}
+          </button>
+          <button (click)="toggleActivity(true)"
+            tuiButton
+            appearance="tertiary"
+            class="workspace-title-link"
+            icon="'collapse-left'"
+            iconAlign="left"
+            [attr.title]="t('workspace.show_activity')">
+            {{ t('workspace.show_activity') }}
+          </button>
+        </div>
+      </div>
+      <div *ngIf="vm.showCreate || vm.creatingWorkspace"
+        [@skeletonAnimation]="vm.skeletonAnimation"
+        class="create-wrapper">
+        <tg-workspace-create class="workspace-create"
+          data-test="workspace-create"
+          @slideInOut
+          (requestClose)="setCreate(false)"
+          cdkTrapFocus
+          *ngIf="vm.showCreate">
+        </tg-workspace-create>
+        <div *ngIf="vm.creatingWorkspace"
+          class="skeleton-container">
+          <tg-workspace-skeleton data-test="workspace-skeleton">
+          </tg-workspace-skeleton>
+        </div>
+      </div>
+      <div
+        *ngIf="!vm.workspaceList.length && !vm.showCreate && !vm.creatingWorkspace"
+        class="worskpace-placeholder">
+        <tg-workspace-skeleton [static]="true">
+        </tg-workspace-skeleton>
+        <div *ngIf="!vm.loading && !vm.workspaceList.length"
+          class="workspace-call-action"
+          @fadeInOut>
+          <h4 class="workspace-call-action-title">{{
+            t('workspace.placeholder_title') }}
+          </h4>
+          <p class="workspace-call-action-text">{{
+            t('workspace.placeholder_text') }}</p>
+          <a class="workspace-call-action-link"
+            tuiLink
+            icon="'arrow-up-right'"
+            [attr.title]="t('workspace.placeholder_link')">
+            {{ t('workspace.placeholder_link') }}
+          </a>
+          <button appearance="primary"
+            (click)="setCreate(true)"
+            tuiButton
+            [attr.title]="t('workspace.placeholder_button')"
+            type="button">
+            {{ t('workspace.placeholder_button') }}
+          </button>
+        </div>
+      </div>
+      <div [class.form-error]="vm.createFormHasError"
+        (resized)="onResized($event)"
+        class="workspace-item-container">
+        <tg-workspace-item @fadeInOut
+          data-test="workspace-item"
+          *ngFor="let workspace of vm.workspaceList; trackBy: trackByWorkspace "
+          [projectsToShow]="amountOfProjectsToShow"
+          [workspace]="workspace">
+        </tg-workspace-item>
+      </div>
+    </div>
+    <ng-template #tooltip>
+      <p>{{ t('workspace.tooltip_add_workspace') }}</p>
+    </ng-template>
+
+    <div
+      class="sliding-panel"
+      *ngIf="vm.showActivity"
+      [@slidePanelInOut]>
+      <button (click)="toggleActivity(false)">Hide activity</button>
+    </div>
+  </ng-container>
+</ng-container>

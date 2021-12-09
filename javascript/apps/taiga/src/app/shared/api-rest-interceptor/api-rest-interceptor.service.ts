@@ -15,9 +15,9 @@ import { Store } from '@ngrx/store';
 import { getGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Auth } from '@taiga/data';
-import { loginSuccess, logout } from '~/app/features/auth/actions/auth.actions';
+import { loginSuccess, logout } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { AuthApiService } from '@taiga/api';
-import { AuthService } from '~/app/features/auth/services/auth.service';
+import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { Router } from '@angular/router';
 import { AppService } from '~/app/services/app.service';
 

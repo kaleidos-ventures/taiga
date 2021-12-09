@@ -1,0 +1,382 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<div
+  *transloco="let t;"
+  class="main-nav-container">
+  <div
+    [@mainNavContainer]="menuState"
+    class="main-nav-container-inner">
+    <!-- visibility: hidden prevent focus in the project menu when the setting menu is visible -->
+    <nav
+      class="main-project-nav"
+      [style.visibility]="showProjectSettings && !settingsAnimationInProgress ? 'hidden' : null">
+      <div class="main-project-nav-inner">
+        <div (pointerenter)="popup($event, 'project')"
+          (pointerleave)="out()"
+          [attr.data-text]="'project'"
+          class="workspace">
+          <a class="project-logo"
+            (focus)="popup($event, 'project')"
+            (focusout)="out()"
+            [attr.data-text]="'project'"
+            [class.active-dialog]="dialog.type === 'project'"
+            [routerLink]="['/project', project.slug]">
+            <tg-ui-avatar class="project-logo-image"
+              type="light"
+              [color]="project.color"
+              [url]="project.logoSmall"
+              [name]="project.name">
+            </tg-ui-avatar>
+          </a>
+          <div *ngIf="!collapsed"
+            class="workspace-data">
+            <a class="workspace-data-project"
+              [routerLink]="['/project', project.slug]">
+              {{ project.name }}
+            </a>
+            <a *ngIf="!collapsed"
+              class="workspace-data-workspace"
+              [routerLink]="['/workspace', project.workspace.slug]">
+              {{ project.workspace.name }}
+            </a>
+          </div>
+        </div>
+        <div class="menu-wrapper">
+          <nav class="primary-menu">
+            <ul>
+              <li class="menu-option"
+                [class.active]="overviewActive.isActive"
+                [attr.data-text]="t('commons.overview')"
+                (pointerenter)="popup($event, 'overview')"
+                (pointerleave)="out()">
+                <a (focus)="popup($event, 'overview')"
+                  (focusout)="out()"
+                  [attr.data-text]="t('commons.overview')"
+                  [attr.aria-label]="collapsed ? t('commons.overview') : null"
+                  class="menu-option-item"
+                  [class.active-dialog]="dialog.type === 'overview'"
+                  [routerLink]="['/project', project.slug]"
+                  routerLinkActive
+                  #overviewActive="routerLinkActive"
+                  [routerLinkActiveOptions]="{exact: true}">
+                  <tui-svg class="menu-option-icon"
+                    src="overview"></tui-svg>
+                  <span *ngIf="!collapsed"
+                    class="menu-option-text"
+                    data-animation="text">
+                    {{ t('commons.overview') }}
+                  </span>
+                </a>
+              </li>
+              <li class="menu-option"
+                [attr.data-text]="t('commons.epics')"
+                (pointerenter)="popup($event, 'epics')"
+                (pointerleave)="out()">
+                <a (focus)="popup($event, 'epics')"
+                  (focusout)="out()"
+                  [attr.data-text]="t('commons.epics')"
+                  [attr.aria-label]="collapsed ? t('commons.epics') : null"
+                  class="menu-option-item"
+                  [class.active-dialog]="dialog.type === 'epics'"
+                  href="dialog.link">
+                  <tui-svg class="menu-option-icon"
+                    src="epics"></tui-svg>
+                  <span *ngIf="!collapsed"
+                    class="menu-option-text"
+                    data-animation="text">
+                    {{ t('commons.epics') }}
+                  </span>
+                </a>
+              </li>
+              <li class="menu-option-scrum"
+                (mouseenter)="popupScrum($event)"
+                (mouseleave)="out()"
+                [attr.data-text]="t('commons.scrum')"
+                [class.scrum-active]="scrumChildMenuVisible">
+                <button (focus)="popupScrum($event)"
+                  type="button"
+                  class="scrum-button"
+                  #backlogButton
+                  [class.active-dialog]="dialog.type === 'scrum'"
+                  [attr.aria-label]="collapsed ? t('commons.scrum') : null"
+                  [attr.data-text]="t('commons.backlog')"
+                  (click)="toggleScrumChildMenu()">
+                  <tui-svg class="menu-option-icon"
+                    src="scrum"></tui-svg>
+                  <span *ngIf="!collapsed"
+                    class="scrum-button-text"
+                    data-animation="text">
+                    {{ t('commons.scrum') }}
+                  </span>
+                  <tui-svg *ngIf="!collapsed"
+                    class="chevron"
+                    [class.active]="scrumChildMenuVisible"
+                    src="chevron-down"></tui-svg>
+                </button>
+                <ul *ngIf="!collapsed && scrumChildMenuVisible"
+                  class="menu-child-scrum">
+                  <li class="menu-child-option">
+                    <a class="menu-child-option-item"
+                      href="">
+                      <span class="menu-child-option-text">
+                        {{t('commons.backlog')}}
+                      </span>
+                    </a>
+                  </li>
+                  <!-- This should be replaced by an ngFor with the sprints -->
+                  <li class="menu-child-option">
+                    <a class="menu-child-option-item"
+                      href="">
+                      <span class="menu-child-option-text">
+                        Sprint name
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="menu-option"
+                [class.active]="kanbanActive.isActive"
+                [attr.data-text]="t('commons.kanban')"
+                (pointerenter)="popup($event, 'kanban')"
+                (pointerleave)="out()">
+                <a (focus)="popup($event, 'kanban')"
+                  (focusout)="out()"
+                  [attr.data-text]="t('commons.kanban')"
+                  [attr.aria-label]="collapsed ? t('commons.kanban') : null"
+                  class="menu-option-item"
+                  [class.active-dialog]="dialog.type === 'kanban'"
+                  [routerLink]="['/project', project.slug, 'kanban']"
+                  routerLinkActive
+                  #kanbanActive="routerLinkActive">
+                  <tui-svg class="menu-option-icon"
+                    src="kanban"></tui-svg>
+                  <span *ngIf="!collapsed"
+                    class="menu-option-text"
+                    data-animation="text">
+                    {{ t('commons.kanban') }}
+                  </span>
+                </a>
+              </li>
+              <li class="menu-option"
+                [attr.data-text]="t('commons.issues')"
+                (pointerenter)="popup($event, 'issues')"
+                (pointerleave)="out()">
+                <a (focus)="popup($event, 'issues')"
+                  (focusout)="out()"
+                  [attr.data-text]="t('commons.issues')"
+                  [attr.aria-label]="collapsed ? t('commons.issues') : null"
+                  class="menu-option-item"
+                  [class.active-dialog]="dialog.type === 'issues'"
+                  [href]="dialog.link">
+                  <tui-svg class="menu-option-icon"
+                    src="issues"></tui-svg>
+                  <span *ngIf="!collapsed"
+                    class="menu-option-text"
+                    data-animation="text">
+                    {{ t('commons.issues') }}
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <hr class="menu-separator">
+          <div *ngIf="!collapsed"
+            class="goto">{{ t('main_project_navigation.goto') }}</div>
+          <nav class="secondary-menu">
+            <ul>
+              <li class="menu-option"
+                [attr.data-text]="t('commons.wiki')"
+                (pointerenter)="popup($event, 'wiki')"
+                (pointerleave)="out()">
+                <a (focus)="popup($event, 'wiki')"
+                  (focusout)="out()"
+                  [attr.data-text]="t('commons.wiki')"
+                  [attr.aria-label]="collapsed ? t('commons.wiki') : null"
+                  class="menu-option-item"
+                  [class.active-dialog]="dialog.type === 'wiki'"
+                  [href]="dialog.link">
+                  <tui-svg class="menu-option-icon"
+                    src="wiki"></tui-svg>
+                  <span *ngIf="!collapsed"
+                    class="menu-option-text"
+                    data-animation="text">
+                    {{ t('commons.wiki') }}
+                  </span>
+                  <tui-svg *ngIf="!collapsed"
+                    class="arrow"
+                    src="arrow-right"></tui-svg>
+                </a>
+              </li>
+              <li class="menu-option"
+                [attr.data-text]="t('commons.meetup')"
+                (pointerenter)="popup($event, 'meetup')"
+                (pointerleave)="out()">
+                <a (focus)="popup($event, 'meetup')"
+                  (focusout)="out()"
+                  [attr.data-text]="t('commons.meetup')"
+                  [attr.aria-label]="collapsed ? t('commons.meetup') : null"
+                  class="menu-option-item"
+                  [class.active-dialog]="dialog.type === 'meetup'"
+                  [href]="dialog.link">
+                  <tui-svg class="menu-option-icon"
+                    src="meetup"></tui-svg>
+                  <span *ngIf="!collapsed"
+                    class="menu-option-text"
+                    data-animation="text">
+                    {{ t('commons.meetup') }}
+                  </span>
+                  <tui-svg *ngIf="!collapsed"
+                    class="arrow"
+                    src="arrow-right"></tui-svg>
+                </a>
+              </li>
+              <li class="menu-option"
+                [attr.data-text]="t('commons.team')"
+                (pointerenter)="popup($event, 'team')"
+                (pointerleave)="out()">
+                <a (focus)="popup($event, 'team')"
+                  (focusout)="out()"
+                  [attr.data-text]="t('commons.team')"
+                  [attr.aria-label]="collapsed ? t('commons.team') : null"
+                  class="menu-option-item"
+                  [class.active-dialog]="dialog.type === 'team'"
+                  [href]="dialog.link">
+                  <tui-svg class="menu-option-icon"
+                    src="team"></tui-svg>
+                  <span *ngIf="!collapsed"
+                    class="menu-option-text"
+                    data-animation="text">
+                    {{ t('commons.team') }}
+                  </span>
+                  <tui-svg *ngIf="!collapsed"
+                    class="arrow"
+                    src="arrow-right"></tui-svg>
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <div class="bottom-menu">
+            <div class="bottom-menu-option"
+              [attr.data-text]="t('main_project_navigation.project_settings')"
+              (pointerenter)="popup($event, 'project-settings')"
+              (pointerleave)="out()">
+              <button
+                type="button"
+                #projectSettingButton
+                (click)="openSettings()"
+                (focus)="popup($event, 'project-settings')"
+                (focusout)="out()"
+                [attr.data-text]="t('main_project_navigation.project_settings')"
+                [attr.aria-label]="collapsed ? t('main_project_navigation.project_settings') : null"
+                class="project-settings menu-option-item"
+                [class.active-dialog]="dialog.type === 'project-settings'">
+                <tui-svg class="menu-option-icon"
+                  src="settings"></tui-svg>
+                <span *ngIf="!collapsed"
+                  class="bottom-menu-option-text"
+                  data-animation="text">
+                  {{ t('main_project_navigation.project_settings') }}
+                </span>
+              </button>
+            </div>
+            <button type="button"
+              [class.collapsed]="collapseText"
+              (click)="toggleCollapse()"
+              class="button-collapse">
+              <span *ngIf="!collapsed"
+                class="button-collapse-text"
+                data-animation="text">
+                {{ t('main_project_navigation.collapse_menu') }}
+              </span>
+              <tui-svg class="collapse-icon"
+                [src]="getCollapseIcon()"></tui-svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="project-menu-dialog"
+      (pointerenter)="enterDialog()"
+      (focus)="enterDialog()"
+      (keyup.ESC)="outDialog('backlog')"
+      (pointerleave)="outDialog()"
+      [class.open]="dialog.open"
+      [style.top.px]="dialog.top"
+      [style.left.px]="dialog.left">
+      <a *ngIf="dialog.type !== 'scrum' && dialog.type !== 'project' && dialog.type !== 'project-settings' "
+        [attr.href]="dialog.link"
+        [style.height.px]="dialog.mainLinkHeight"
+        class="main-link">
+        <span class="dialog-text">
+          {{ dialog.text }}
+        </span>
+      </a>
+      <button
+        *ngIf="dialog.type === 'project-settings'"
+        (click)="openSettings()"
+        type="button"
+        class="popover-open-settings-action"
+        [attr.aria-label]="dialog.text "
+        [style.height.px]="dialog.mainLinkHeight">
+          {{ dialog.text }}
+      </button>
+      <div *ngIf="dialog.type === 'scrum'"
+        [attr.href]="dialog.link"
+        cdkTrapFocus
+        [style.min-height.px]="dialog.mainLinkHeight"
+        class="dialog-scrum">
+        <ul class="child-menu">
+          <li class="child-menu-option">
+            <span class="child-menu-option-item child-menu-option-scrum">
+              {{ t( 'commons.scrum' ) }}
+            </span>
+          </li>
+          <li class="child-menu-option">
+            <a class="child-menu-option-item"
+              #backlogSubmenu
+              href="">
+              {{ t( 'commons.backlog' ) }}
+            </a>
+          </li>
+          <li class="child-menu-option">
+            <a class="child-menu-option-item"
+              href="">
+              Milestone 1
+            </a>
+          </li>
+          <li class="menu-option">
+            <a class="child-menu-option-item"
+              href="">
+              <span class="menu-option-text">
+                Milestone 1
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="dialog.type === 'project'"
+        class="dialog-project"
+        [style.height.px]="dialog.mainLinkHeight">
+        <a class="workspace-data-project"
+          [routerLink]="['/project', project.slug]">
+          {{ project.name }}
+        </a>
+        <a class="workspace-data-workspace"
+          [routerLink]="['/workspace', project.workspace.slug]">
+          {{ project.workspace.name }}
+        </a>
+      </div>
+    </div>
+    <tg-project-navigation-settings
+      *ngIf="showProjectSettings || settingsAnimationInProgress"
+      [project]="project"
+      (closeMenu)="closeMenu()">
+    </tg-project-navigation-settings>
+  </div>
+</div>

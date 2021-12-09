@@ -32,7 +32,7 @@ import { TranslocoRootModule } from './transloco/transloco-root.module';
 import { TranslocoService } from '@ngneat/transloco';
 import { paramCase } from 'change-case';
 import { NavigationModule } from './shared/navigation/navigation.module';
-import { AuthModule } from '~/app/features/auth/auth.module';
+import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
 
 const altIconName: Record<string, string> = {
   'tuiIconChevronDownLarge': 'chevron-down'
@@ -52,7 +52,7 @@ export function prefersReducedMotion(): boolean {
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    AuthModule,
+    DataAccessAuthModule,
     ApiModule,
     WsModule,
     CoreModule,

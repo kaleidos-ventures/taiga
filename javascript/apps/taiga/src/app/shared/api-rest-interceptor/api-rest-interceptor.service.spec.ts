@@ -15,8 +15,8 @@ import { forkJoin, of, throwError } from 'rxjs';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AuthApiService } from '@taiga/api';
-import { loginSuccess, logout } from '~/app/features/auth/actions/auth.actions';
-import { AuthService } from '~/app/features/auth/services/auth.service';
+import { loginSuccess, logout } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { Router } from '@angular/router';
 
 describe('ApiRestInterceptor', () => {

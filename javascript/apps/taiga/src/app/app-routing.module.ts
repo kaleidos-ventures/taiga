@@ -9,31 +9,31 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
-import { AuthGuard } from './features/auth/auth.guard';
+import { AuthGuard } from './modules/auth/data-access/auth.guard';
 
 const routes: Routes = [
   {
     path: 'login',
-    loadChildren: () => import('./pages/auth/auth-page.module').then(m => m.AuthPageModule)
+    loadChildren: () => import('./modules/auth/feature-login/auth-feature-login.module').then(m => m.AuthFeatureLoginModule)
   },
 
   {
     path: '',
-    loadChildren: () => import('./pages/workspace/workspace-page.module').then(m => m.WorkspacePageModule),
+    loadChildren: () => import('./modules/workspace/feature-list/workspace-feature-list.module').then(m => m.WorkspaceFeatureListModule),
     canActivate: [ AuthGuard ]
   },
 
   // WORKSPACE
   {
     path: 'workspace/:slug',
-    loadChildren: () => import('./pages/workspace-detail-page/workspace-detail-page.module').then(m => m.WorkspaceDetailPageModule),
+    loadChildren: () => import('./modules/workspace/feature-detail/workspace-feature-detail.module').then(m => m.WorkspaceFeatureDetailModule),
     canActivate: [ AuthGuard ]
   },
 
   // PROJECT
   {
     path: 'new-project',
-    loadChildren: () => import('./pages/project/new-project/new-project-page.module').then(m => m.NewProjectPageModule),
+    loadChildren: () => import('./modules/feature-new-project/feature-new-project.module').then(m => m.FeatureNewProjectModule),
     canActivate: [ AuthGuard ]
   },
 
@@ -43,7 +43,7 @@ const routes: Routes = [
     children: [
       {
         path: ':slug',
-        loadChildren: () => import('./pages/project/project/project-page.module').then(m => m.ProjectPageModule),
+        loadChildren: () => import('./modules/project/feature-detail/project-feature-detail.module').then(m => m.ProjectFeatureDetailModule),
       }
     ]
   },

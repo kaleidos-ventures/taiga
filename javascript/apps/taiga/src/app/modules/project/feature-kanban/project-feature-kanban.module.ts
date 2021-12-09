@@ -8,16 +8,17 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProjectSettingsFeatureSettingsRoutingModule } from './feature-settings-routing.module';
-import { ProjectsSettingsFeatureSettingsComponent } from './feature-settings.component';
+
+import { ProjectFeatureKanbanRoutingModule } from './project-feature-kanban-routing.module';
+import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
 
 @NgModule({
   declarations: [
-    ProjectsSettingsFeatureSettingsComponent
+    ProjectFeatureKanbanComponent
   ],
   imports: [
     CommonModule,
-    ProjectSettingsFeatureSettingsRoutingModule,
-  ],
+    ProjectFeatureKanbanRoutingModule
+  ]
 })
-export class ProjectSettingsFeatureSettingsModule { }
+export class ProjectFeatureKanbanModule { }

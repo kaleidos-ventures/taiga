@@ -8,16 +8,18 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProjectSettingsFeatureSettingsRoutingModule } from './feature-settings-routing.module';
-import { ProjectsSettingsFeatureSettingsComponent } from './feature-settings.component';
-
+import { StoreModule } from '@ngrx/store';
+import { projectFeature } from './+state/reducers/project.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { ProjectEffects } from './+state/effects/project.effects';
 @NgModule({
   declarations: [
-    ProjectsSettingsFeatureSettingsComponent
   ],
   imports: [
     CommonModule,
-    ProjectSettingsFeatureSettingsRoutingModule,
+    StoreModule.forFeature(projectFeature),
+    EffectsModule.forFeature([ProjectEffects]),
   ],
+  exports: []
 })
-export class ProjectSettingsFeatureSettingsModule { }
+export class ProjectDataAccessModule { }

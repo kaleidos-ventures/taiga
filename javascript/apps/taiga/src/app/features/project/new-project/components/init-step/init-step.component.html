@@ -11,7 +11,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <a tuiButton
       type="button"
       appearance="tertiary"
-      routerLink=".."
+      [routerLink]="getPreviousUrl"
       icon="arrow-left">
       {{ t('commons.back') }}
     </a>

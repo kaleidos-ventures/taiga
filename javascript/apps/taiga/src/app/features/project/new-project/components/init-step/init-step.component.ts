@@ -35,6 +35,7 @@ export class InitStepComponent implements OnInit {
   public templateSelected = new EventEmitter<{step: Step, slug: ProjectCreation['workspaceSlug']}>();
 
   public createProjectForm!: FormGroup;
+  public previousUrl: string = this.routeHistoryService.getPreviousUrl();
 
   public templates: Template[] = [
     {
@@ -82,8 +83,7 @@ export class InitStepComponent implements OnInit {
   }
 
   public getLastRoute() {
-    const previousUrl: string = this.routeHistoryService.getPreviousUrl();
-    if (previousUrl?.startsWith('/workspace')) {
+    if (this.previousUrl?.startsWith('/workspace')) {
       this.readonlyWorkspace = true;
     }
   }
@@ -118,5 +118,9 @@ export class InitStepComponent implements OnInit {
 
   public get currentWorkspace(): FormControl {
     return this.createProjectForm.get('workspace') as FormControl;
+  }
+
+  public get getPreviousUrl() {
+    return this.previousUrl ? [this.previousUrl] : ['/'];
   }
 }

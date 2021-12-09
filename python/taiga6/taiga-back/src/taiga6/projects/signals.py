@@ -39,6 +39,10 @@ def membership_post_save(sender, instance, using, **kwargs):
 
 ## project attributes
 def project_post_save(sender, instance, created, **kwargs):
+    _project_post_save(instance, created)
+
+
+def _project_post_save(instance, created, **kwargs):
     """
     Populate new project dependen default data
     """
@@ -72,7 +76,7 @@ def project_post_save(sender, instance, created, **kwargs):
     if owner_role:
         Membership = apps.get_model("projects", "Membership")
         Membership.objects.create(user=instance.owner, project=instance, role=owner_role,
-                                  is_admin=True, email=instance.owner.email)
+                                  email=instance.owner.email)
 
 
 ## swimlanes

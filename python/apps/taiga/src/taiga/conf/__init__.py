@@ -41,6 +41,8 @@ class Settings(BaseSettings):
     TOKENS: TokensSettings = TokensSettings()
     IMAGES: ImageSettings = ImageSettings()
 
+    DEFAULT_PROJECT_TEMPLATE: str = "kanban"
+
     class Config:
         env_prefix = "TAIGA_"
         case_sensitive = True

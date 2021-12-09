@@ -317,7 +317,7 @@ INSTALLED_APPS = [
     "taiga6.base",
     "taiga6.base.api",
     "taiga6.locale",
-    #"taiga6.events", disable events to avoid signals
+    #"taiga6.events",
     "taiga6.front",
     "taiga6.users",
     "taiga6.userstorage",
@@ -512,7 +512,7 @@ APP_EXTRA_EXPOSE_HEADERS = [
     "taiga-info-order-updated"
 ]
 
-DEFAULT_PROJECT_TEMPLATE = "scrum"
+DEFAULT_PROJECT_TEMPLATE = "kanban"
 PUBLIC_REGISTER_ENABLED = False
 # None or [] values in USER_EMAIL_ALLOWED_DOMAINS means allow any domain
 USER_EMAIL_ALLOWED_DOMAINS = None

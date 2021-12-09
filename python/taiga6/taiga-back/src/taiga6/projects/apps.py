@@ -118,7 +118,6 @@ class ProjectsAppConfig(AppConfig):
     ]
 
     def ready(self):
-        connect_projects_signals()
         connect_memberships_signals()
         connect_us_status_signals()
         connect_swimlane_signals()

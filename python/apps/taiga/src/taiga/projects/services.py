@@ -12,7 +12,7 @@ from fastapi import UploadFile
 from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
 from taiga.projects import repositories as projects_repo
-from taiga.projects.models import Project
+from taiga.projects.models import Membership, Project, ProjectTemplate
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
@@ -33,9 +33,24 @@ def create_project(
     if logo:
         logo_file = File(file=logo.file, name=logo.filename)
 
-    return projects_repo.create_project(
+    project = projects_repo.create_project(
         workspace=workspace, name=name, description=description, color=color, owner=owner, logo=logo_file
     )
+
+    # populate new project with default data
+    template = ProjectTemplate.objects.get(slug=settings.DEFAULT_PROJECT_TEMPLATE)
+    template.apply_to_project(project)
+
+    # assign the owner to the project as the default owner role (should be 'admin')
+    owner_role = project.roles.get(slug=template.default_owner_role)
+    if not owner_role:
+        owner_role = project.roles.first()
+    Membership.objects.create(user=project.owner, project=project, role=owner_role, email=project.owner.email)
+
+    # tags normalization
+    project.tags = list(map(str.lower, project.tags))
+
+    return project
 
 
 def get_project(slug: str) -> Optional[Project]:

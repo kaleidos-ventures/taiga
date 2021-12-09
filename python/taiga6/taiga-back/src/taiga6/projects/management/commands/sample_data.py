@@ -18,28 +18,29 @@ from django.contrib.contenttypes.models import ContentType
 
 from sampledatahelper.helper import SampleDataHelper
 
-from taiga6.users.models import *
-from taiga6.permissions.choices import ANON_PERMISSIONS, WORKSPACE_ADMINS_PERMISSIONS
-from taiga6.projects.choices import BLOCKED_BY_STAFF
+from taiga6.events.apps import disconnect_events_signals
 from taiga6.external_apps.models import Application, ApplicationToken
-from taiga6.projects.models import *
+from taiga6.permissions.choices import ANON_PERMISSIONS, WORKSPACE_ADMINS_PERMISSIONS
+from taiga6.projects.attachments.models import *
+from taiga6.projects.choices import BLOCKED_BY_STAFF
+from taiga6.projects.custom_attributes.choices import TYPES_CHOICES, TEXT_TYPE, MULTILINE_TYPE, DATE_TYPE, URL_TYPE
+from taiga6.projects.custom_attributes.models import *
 from taiga6.projects.epics.models import *
+from taiga6.projects.history.services import take_snapshot
+from taiga6.projects.issues.models import *
+from taiga6.projects.likes.services import add_like
 from taiga6.projects.milestones.models import *
+from taiga6.projects.models import *
 from taiga6.projects.notifications.choices import NotifyLevel
 from taiga6.projects.services.stats import get_stats_for_project
-from taiga6.projects.userstories.models import *
+from taiga6.projects.signals import _project_post_save
 from taiga6.projects.tasks.models import *
-from taiga6.projects.issues.models import *
-from taiga6.projects.wiki.models import *
-from taiga6.projects.attachments.models import *
-from taiga6.projects.custom_attributes.models import *
-from taiga6.projects.custom_attributes.choices import TYPES_CHOICES, TEXT_TYPE, MULTILINE_TYPE, DATE_TYPE, URL_TYPE
-from taiga6.projects.history.services import take_snapshot
-from taiga6.projects.likes.services import add_like
+from taiga6.projects.userstories.models import *
 from taiga6.projects.votes.services import add_vote
-from taiga6.events.apps import disconnect_events_signals
-from taiga6.projects.services.stats import get_stats_for_project
+from taiga6.projects.wiki.models import *
+from taiga6.users.models import *
 from taiga6.workspaces.models import *
+
 
 ATTACHMENT_SAMPLE_DATA = [
     path.join(settings.BASE_DIR, "taiga6/projects/management/commands/sample_data"),
@@ -691,6 +692,7 @@ class Command(BaseCommand):
         project.is_kanban_activated = True
         project.is_epics_activated = True
         project.save()
+        _project_post_save(project, True)
         take_snapshot(project, user=project.owner)
 
         self.create_likes(project)

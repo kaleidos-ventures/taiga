@@ -51,12 +51,19 @@ class UnauthorizedErrorModel(GenericSingleError):
     message: str = codes.EX_AUTHORIZATION.message
 
 
+class ForbiddenErrorModel(GenericSingleError):
+    code: str = codes.EX_FORBIDDEN.code
+    message: str = codes.EX_FORBIDDEN.message
+
+
 ErrorsDict = Dict[Union[int, str], Dict[str, Type[ErrorResponse[Any]]]]
 
 ERROR_RESPONSE_401 = ErrorResponse[UnauthorizedErrorModel]
-ERROR_RESPONSE_422 = ErrorResponse[UnprocessableEntityModel]
+ERROR_RESPONSE_403 = ErrorResponse[ForbiddenErrorModel]
 ERROR_RESPONSE_404 = ErrorResponse[NotFoundErrorModel]
+ERROR_RESPONSE_422 = ErrorResponse[UnprocessableEntityModel]
 
 ERROR_401: ErrorsDict = {status.HTTP_401_UNAUTHORIZED: {"model": ERROR_RESPONSE_401}}
-ERROR_422: ErrorsDict = {status.HTTP_422_UNPROCESSABLE_ENTITY: {"model": ERROR_RESPONSE_422}}
+ERROR_403: ErrorsDict = {status.HTTP_403_FORBIDDEN: {"model": ERROR_RESPONSE_403}}
 ERROR_404: ErrorsDict = {status.HTTP_404_NOT_FOUND: {"model": ERROR_RESPONSE_404}}
+ERROR_422: ErrorsDict = {status.HTTP_422_UNPROCESSABLE_ENTITY: {"model": ERROR_RESPONSE_422}}

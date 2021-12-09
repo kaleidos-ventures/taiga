@@ -7,9 +7,10 @@
 
 from typing import Iterable, Optional
 
-from taiga.users.models import User
+from taiga.permissions import choices
+from taiga.users.models import User, WorkspaceRole
 from taiga.workspaces import repositories as workspaces_repo
-from taiga.workspaces.models import Workspace
+from taiga.workspaces.models import Workspace, WorkspaceMembership
 
 
 def get_workspaces(owner: User) -> Iterable[Workspace]:
@@ -17,7 +18,16 @@ def get_workspaces(owner: User) -> Iterable[Workspace]:
 
 
 def create_workspace(name: str, color: int, owner: User) -> Workspace:
-    return workspaces_repo.create_workspace(name=name, color=color, owner=owner)
+    workspace = workspaces_repo.create_workspace(name=name, color=color, owner=owner)
+    workspace_role = WorkspaceRole.objects.create(
+        name="Administrators",
+        slug="admin",
+        permissions=choices.WORKSPACE_ADMINS_PERMISSIONS_LIST,
+        workspace=workspace,
+        _is_admin=True,
+    )
+    WorkspaceMembership.objects.create(user=owner, workspace=workspace, workspace_role=workspace_role)
+    return workspace
 
 
 def get_workspace(slug: str) -> Optional[Workspace]:

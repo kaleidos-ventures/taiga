@@ -5,16 +5,21 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import logging
 from typing import List
 
 from fastapi import Query
 from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
+from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_404, ERROR_422
+from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
+from taiga.permissions import HasPerm
 from taiga.workspaces import services as workspaces_services
 from taiga.workspaces.serializers import WorkspaceSerializer, WorkspaceSummarySerializer
 from taiga.workspaces.validators import WorkspaceValidator
+
+logger = logging.getLogger(__name__)
 
 metadata = {
     "name": "workspaces",
@@ -22,6 +27,9 @@ metadata = {
 }
 
 router = AuthAPIRouter(prefix="/workspaces", tags=["workspaces"])
+
+# PERMISSIONS
+GET_WORKSPACE = HasPerm("view_workspace")
 
 
 @router.get(
@@ -39,7 +47,11 @@ def list_workspaces(request: Request) -> List[WorkspaceSummarySerializer]:
 
 
 @router.post(
-    "", name="workspaces.post", summary="Create workspace", response_model=WorkspaceSerializer, responses=ERROR_422
+    "",
+    name="workspaces.post",
+    summary="Create workspace",
+    response_model=WorkspaceSerializer,
+    responses=ERROR_422 | ERROR_403,
 )
 def create_workspace(form: WorkspaceValidator, request: Request) -> WorkspaceSerializer:
     """
@@ -54,15 +66,20 @@ def create_workspace(form: WorkspaceValidator, request: Request) -> WorkspaceSer
     name="workspaces.get",
     summary="Get workspace",
     response_model=WorkspaceSerializer,
-    responses=ERROR_404 | ERROR_422,
+    responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-def get_workspace(slug: str = Query(None, description="the workspace slug(str)")) -> WorkspaceSerializer:
+def get_workspace(
+    request: Request, slug: str = Query("", description="the workspace slug(str)")
+) -> WorkspaceSerializer:
     """
     Get workspace detail by slug.
     """
     workspace = workspaces_services.get_workspace(slug=slug)
 
     if workspace is None:
+        logger.exception(f"Workspace {slug} does not exist")
         raise ex.NotFoundError()
+
+    check_permissions(permissions=GET_WORKSPACE, user=request.user, obj=workspace)
 
     return WorkspaceSerializer.from_orm(workspace)

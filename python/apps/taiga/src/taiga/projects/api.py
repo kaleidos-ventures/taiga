@@ -12,8 +12,10 @@ from fastapi import Query
 from fastapi.params import Depends
 from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
+from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_404, ERROR_422
+from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
+from taiga.permissions import HasPerm
 from taiga.projects import services as projects_services
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.projects.validators import ProjectValidator
@@ -29,19 +31,33 @@ metadata = {
 router = AuthAPIRouter(prefix="/projects", tags=["projects"])
 router_workspaces = AuthAPIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"])
 
+# PERMISSIONS
+LIST_PROJECTS = HasPerm("view_workspace")
+CREATE_PROJECT = HasPerm("view_workspace")
+GET_PROJECT = HasPerm("view_project")
+
 
 @router_workspaces.get(
     "",
     name="projects.list",
     summary="List projects",
     response_model=List[ProjectSummarySerializer],
-    responses=ERROR_422,
+    responses=ERROR_422 | ERROR_403,
 )
-def list_projects(workspace_slug: str = Query(None, description="the workspace slug (str)")) -> List[ProjectSerializer]:
+def list_projects(
+    request: Request, workspace_slug: str = Query("", description="the workspace slug (str)")
+) -> List[ProjectSerializer]:
     """
-    List projects of a workspace.
+    List projects of a workspace visible by the user.
     """
-    # TODO - error 404 si el workspace no existe
+    workspace = workspaces_services.get_workspace(slug=workspace_slug)
+    if workspace is None:
+        logger.exception(f"Workspace {workspace_slug} does not exist")
+        raise ex.NotFoundError()
+
+    check_permissions(permissions=LIST_PROJECTS, user=request.user, obj=workspace)
+
+    # TODO - sólo debería mostrar los proyectos visibles por el usuario dentro del workspace
     projects = projects_services.get_projects(workspace_slug=workspace_slug)
     return ProjectSerializer.from_queryset(projects)
 
@@ -51,16 +67,19 @@ def list_projects(workspace_slug: str = Query(None, description="the workspace s
     name="projects.create",
     summary="Create project",
     response_model=ProjectSerializer,
-    responses=ERROR_422,
+    responses=ERROR_422 | ERROR_403,
 )
 def create_project(
     request: Request,
     form: ProjectValidator = Depends(ProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
 ) -> ProjectSerializer:
     """
-    Create project for the logged user.
+    Create project for the logged user in a given workspace.
     """
-    workspace = workspaces_services.get_workspace(form.workspace_slug)
+    workspace = workspaces_services.get_workspace(slug=form.workspace_slug)
+
+    check_permissions(permissions=CREATE_PROJECT, user=request.user, obj=workspace)
+
     project = projects_services.create_project(
         workspace=workspace,
         name=form.name,
@@ -78,9 +97,9 @@ def create_project(
     name="projects.get",
     summary="Get project",
     response_model=ProjectSerializer,
-    responses=ERROR_404 | ERROR_422,
+    responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-def get_project(slug: str = Query(None, description="the project slug (str)")) -> ProjectSerializer:
+def get_project(request: Request, slug: str = Query("", description="the project slug (str)")) -> ProjectSerializer:
     """
     Get project detail by slug.
     """
@@ -89,5 +108,7 @@ def get_project(slug: str = Query(None, description="the project slug (str)")) -
     if project is None:
         logger.exception(f"Project {slug} does not exist")
         raise ex.NotFoundError()
+
+    check_permissions(permissions=GET_PROJECT, user=request.user, obj=project)
 
     return project

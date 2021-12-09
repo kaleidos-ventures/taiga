@@ -56,7 +56,8 @@ def user_has_perm(user: User, perm: str, obj: Optional[AuthorizableObj] = None, 
     if not project and not workspace:
         return False
 
-    return perm in _get_user_permissions(user, project, workspace, cache=cache)
+    user_permissions = _get_user_permissions(user, project, workspace, cache=cache)
+    return perm in user_permissions
 
 
 def _get_user_project_membership(user: User, project: Project, cache: str = "user") -> Membership:

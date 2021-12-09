@@ -5,10 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import logging
+
 from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
 from taiga.users.serializers import UserMeSerializer
+
+logger = logging.getLogger(__name__)
 
 metadata = {
     "name": "users",
@@ -24,6 +28,7 @@ def me(request: Request) -> UserMeSerializer:
     Get the profile of the current authenticated user (according to the auth token in the request heades).
     """
     if request.user.is_anonymous:
+        logger.exception("User is anonymous")
         raise ex.AuthorizationError()
 
     return UserMeSerializer.from_orm(request.user)

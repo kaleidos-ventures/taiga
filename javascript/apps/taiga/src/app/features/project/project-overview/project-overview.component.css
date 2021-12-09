@@ -8,6 +8,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
+:host {
+  background-color: var(--color-gray10);
+  block-size: 100%;
+  display: block;
+}
+
 .project-title {
   align-items: center;
   display: flex;

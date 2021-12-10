@@ -54,15 +54,15 @@ export class ProjectsSettingsFeatureRolesPermissionsComponent implements AfterVi
   }
 
   public focusFragment(fragment: string) {
-    const el = this.nativeElment.querySelector(`[data-fragment="${fragment}"] h3`);
+    const el = this.nativeElement.querySelector(`[data-fragment="${fragment}"] h3`);
 
     if (el) {
-      (el as HTMLElement).focus();
-      el.scrollIntoView();
+      el.scrollIntoView({ behavior: 'smooth' });
+      (el as HTMLElement).focus({ preventScroll:true });
     }
   }
 
-  public get nativeElment() {
+  public get nativeElement() {
     return this.el.nativeElement as HTMLElement;
   }
 

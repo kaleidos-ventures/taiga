@@ -11,7 +11,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Even
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Project } from '@taiga/data';
-import { filter } from 'rxjs/operators';
+import { interval } from 'rxjs';
+import { delay, filter, throttle } from 'rxjs/operators';
 import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
@@ -64,7 +65,11 @@ export class ProjectNavigationSettingsComponent implements OnInit {
 
   public getFragment() {
     this.route.fragment
-      .pipe(untilDestroyed(this))
+      .pipe(
+        delay(300),
+        throttle(() => interval(200)),
+        untilDestroyed(this)
+      )
       .subscribe((fragment) => {
         this.currentFragment = fragment;
         this.cd.markForCheck();

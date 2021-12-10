@@ -5,12 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Iterable, Optional
+from typing import Iterable, List, Optional
 
 from django.db.models import Count, OuterRef, Prefetch, Subquery
 from taiga.projects.models import Project
-from taiga.users.models import User
-from taiga.workspaces.models import Workspace
+from taiga.users.models import User, WorkspaceRole
+from taiga.workspaces.models import Workspace, WorkspaceMembership
 
 
 def get_workspaces_with_latest_projects(owner: User) -> Iterable[Workspace]:
@@ -37,3 +37,19 @@ def get_workspace(slug: str) -> Optional[Workspace]:
         return Workspace.objects.get(slug=slug)
     except Workspace.DoesNotExist:
         return None
+
+
+def create_workspace_role(
+    name: str, slug: str, permissions: List[str], workspace: Workspace, _is_admin: bool = False
+) -> Workspace:
+    return WorkspaceRole.objects.create(
+        name="Administrators",
+        slug="admin",
+        permissions=permissions,
+        workspace=workspace,
+        _is_admin=True,
+    )
+
+
+def create_workspace_membership(user: User, workspace: Workspace, workspace_role: WorkspaceRole) -> WorkspaceMembership:
+    return WorkspaceMembership.objects.create(user=user, workspace=workspace, workspace_role=workspace_role)

@@ -7,8 +7,8 @@
 from typing import Iterable, Optional
 
 from django.core.files import File
-from taiga.projects.models import Project
-from taiga.users.models import User
+from taiga.projects.models import Membership, Project, ProjectTemplate
+from taiga.users.models import Role, User
 from taiga.workspaces.models import Workspace
 
 
@@ -41,3 +41,19 @@ def get_project(slug: str) -> Optional[Project]:
         return Project.objects.get(slug=slug)
     except Project.DoesNotExist:
         return None
+
+
+def get_template(slug: str) -> ProjectTemplate:
+    return ProjectTemplate.objects.get(slug=slug)
+
+
+def create_membership(user: User, project: Project, role: Role, email: str) -> Membership:
+    return Membership.objects.create(user=user, project=project, role=role, email=email)
+
+
+def get_project_role(project: Project, slug: str) -> Role:
+    return project.roles.get(slug=slug)
+
+
+def get_first_role(project: Project) -> Role:
+    return project.roles.first()

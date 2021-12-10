@@ -40,14 +40,14 @@ def get_workspace(slug: str) -> Optional[Workspace]:
 
 
 def create_workspace_role(
-    name: str, slug: str, permissions: List[str], workspace: Workspace, _is_admin: bool = False
+    name: str, slug: str, permissions: List[str], workspace: Workspace, is_admin: bool = False
 ) -> Workspace:
     return WorkspaceRole.objects.create(
         name="Administrators",
         slug="admin",
         permissions=permissions,
         workspace=workspace,
-        _is_admin=True,
+        is_admin=True,
     )
 
 

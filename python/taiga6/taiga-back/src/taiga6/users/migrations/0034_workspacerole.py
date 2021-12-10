@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField(blank=True, max_length=250, verbose_name='slug')),
                 ('permissions', django.contrib.postgres.fields.ArrayField(base_field=models.TextField(choices=[('view_workspace', 'View workspace')]), blank=True, default=list, null=True, size=None, verbose_name='permissions')),
                 ('order', models.IntegerField(default=10, verbose_name='order')),
-                ('_is_admin', models.BooleanField(default=False)),
+                ('is_admin', models.BooleanField(default=False)),
                 ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_roles', to='workspaces.Workspace', verbose_name='workspace')),
             ],
             options={

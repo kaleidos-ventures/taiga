@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-from typing import Iterable, Optional
+from typing import Iterable, List, Optional
 
 from django.core.files import File
 from taiga.projects.models import Membership, Project, ProjectTemplate
@@ -55,5 +55,16 @@ def get_project_role(project: Project, slug: str) -> Role:
     return project.roles.get(slug=slug)
 
 
+def get_project_roles(project: Project) -> List[Role]:
+    return project.roles.all()
+
+
 def get_first_role(project: Project) -> Role:
     return project.roles.first()
+
+
+def get_num_members_by_role_id(role_id: int) -> int:
+    if role_id:
+        return Membership.objects.filter(role_id=role_id).count()
+
+    return 0

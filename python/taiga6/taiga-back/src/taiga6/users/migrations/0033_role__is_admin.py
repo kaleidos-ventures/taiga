@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='role',
-            name='_is_admin',
+            name='is_admin',
             field=models.BooleanField(default=False),
         ),
     ]

@@ -24,7 +24,7 @@ def create_workspace(name: str, color: int, owner: User) -> Workspace:
         slug="admin",
         permissions=choices.WORKSPACE_ADMINS_PERMISSIONS_LIST,
         workspace=workspace,
-        _is_admin=True,
+        is_admin=True,
     )
     workspaces_repo.create_workspace_membership(user=owner, workspace=workspace, workspace_role=workspace_role)
     return workspace

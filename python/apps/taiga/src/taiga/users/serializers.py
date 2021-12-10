@@ -4,9 +4,11 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+from typing import Any, List
 
-from pydantic import EmailStr
+from pydantic import EmailStr, validator
 from taiga.base.serializer import BaseModel
+from taiga.projects.services import get_num_members_by_role_id
 
 
 class UserBaseSerializer(BaseModel):
@@ -25,3 +27,23 @@ class UserMeSerializer(UserBaseSerializer):
 
     class Config:
         orm_mode = True
+
+
+class RoleSerializer(BaseModel):
+    id: str
+    name: str
+    slug: str
+    order: int
+    num_members: int = 0
+    is_admin: bool
+    permissions: List[str]
+
+    class Config:
+        orm_mode = True
+
+    @validator("num_members")
+    def get_num_members(cls, value: Any, values: Any) -> int:
+        if values["id"]:
+            return get_num_members_by_role_id(values["id"])
+
+        return 0

@@ -301,7 +301,7 @@ class Role(models.Model):
                              null=True, blank=True, default=list, verbose_name=_("permissions"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
-    _is_admin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
     # null=True is for make work django 1.7 migrations. project
     # field causes some circular dependencies, and due to this
     # it can not be serialized in one transactional migration.
@@ -351,7 +351,7 @@ class WorkspaceRole(models.Model):
         verbose_name=_("workspace"),
         on_delete=models.CASCADE,
     )
-    _is_admin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.slug:

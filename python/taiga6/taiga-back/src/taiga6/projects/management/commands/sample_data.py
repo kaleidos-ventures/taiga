@@ -752,7 +752,7 @@ class Command(BaseCommand):
         return WorkspaceRole.objects.create(name="Administrators",
                                             slug="admin",
                                             order=1,
-                                            _is_admin=True,
+                                            is_admin=True,
                                             workspace=workspace,
                                             permissions=list(map(lambda perm: perm[0], WORKSPACE_ADMINS_PERMISSIONS)) or [])
 

@@ -406,7 +406,7 @@
                 "computable": true,
                 "name": "Administrators",
                 "order": 1,
-                "_is_admin": true,
+                "is_admin": true,
                 "permissions": [
                   "view_project",
                   "view_us",
@@ -418,7 +418,7 @@
                 "computable": true,
                 "name": "General Members",
                 "order": 2,
-                "_is_admin": false,
+                "is_admin": false,
                 "permissions": [
                   "view_project",
                   "view_us",
@@ -839,7 +839,7 @@
                 "computable": true,
                 "name": "Administrators",
                 "order": 1,
-                "_is_admin": true,
+                "is_admin": true,
                 "permissions": [
                   "view_project",
                   "view_us",
@@ -851,7 +851,7 @@
                 "computable": true,
                 "name": "General Members",
                 "order": 2,
-                "_is_admin": false,
+                "is_admin": false,
                 "permissions": [
                   "view_project",
                   "view_us",

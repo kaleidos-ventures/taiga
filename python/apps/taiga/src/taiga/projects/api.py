@@ -15,10 +15,12 @@ from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
-from taiga.permissions import HasPerm
+from taiga.permissions import HasPerm, IsProjectAdmin
 from taiga.projects import services as projects_services
+from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.projects.validators import ProjectValidator
+from taiga.users.serializers import RoleSerializer
 from taiga.workspaces import services as workspaces_services
 
 logger = logging.getLogger(__name__)
@@ -35,6 +37,7 @@ router_workspaces = AuthAPIRouter(prefix="/workspaces/{workspace_slug}/projects"
 LIST_PROJECTS = HasPerm("view_workspace")
 CREATE_PROJECT = HasPerm("view_workspace")
 GET_PROJECT = HasPerm("view_project")
+GET_PROJECT_ROLES = IsProjectAdmin()
 
 
 @router_workspaces.get(
@@ -103,12 +106,41 @@ def get_project(request: Request, slug: str = Query("", description="the project
     """
     Get project detail by slug.
     """
+
+    project = _get_project_or_404(slug)
+
+    check_permissions(permissions=GET_PROJECT, user=request.user, obj=project)
+
+    return ProjectSerializer.from_orm(project)
+
+
+@router.get(
+    "/{slug}/roles",
+    name="project.permissions.get",
+    summary="Get project roles permissions",
+    response_model=List[RoleSerializer],
+    responses=ERROR_404 | ERROR_422 | ERROR_403,
+)
+def get_project_roles(
+    request: Request, slug: str = Query(None, description="the project slug (str)")
+) -> List[RoleSerializer]:
+    """
+    Get project detail by slug.
+    """
+
+    check_permissions(permissions=GET_PROJECT_ROLES, user=request.user)
+
+    project = _get_project_or_404(slug)
+    roles_permissions = projects_services.get_roles_permissions(project=project)
+
+    return RoleSerializer.from_queryset(roles_permissions)
+
+
+def _get_project_or_404(slug: str) -> Project:
     project = projects_services.get_project(slug=slug)
 
     if project is None:
         logger.exception(f"Project {slug} does not exist")
         raise ex.NotFoundError()
-
-    check_permissions(permissions=GET_PROJECT, user=request.user, obj=project)
 
     return project

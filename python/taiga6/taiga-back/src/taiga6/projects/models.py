@@ -1378,7 +1378,7 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 computable=role["computable"],
                 project=project,
                 permissions=role['permissions'],
-                _is_admin=role['_is_admin'],
+                is_admin=role['is_admin'],
             )
 
         if self.epic_statuses:

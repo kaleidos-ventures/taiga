@@ -23,7 +23,7 @@ def is_project_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
         return False
 
     membership = _get_user_project_membership(user, project)
-    if membership and membership.role._is_admin:
+    if membership and membership.role.is_admin:
         return True
 
     return False
@@ -38,7 +38,7 @@ def is_workspace_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
         return False
 
     workspace_membership = _get_user_workspace_membership(user, workspace)
-    if workspace_membership and workspace_membership.workspace_role._is_admin:
+    if workspace_membership and workspace_membership.workspace_role.is_admin:
         return True
 
     return False
@@ -117,7 +117,7 @@ def _get_user_permissions(user: User, project: Project, workspace: Workspace, ca
     is_authenticated = user.is_authenticated
     project_membership: Membership = _get_user_project_membership(user, project, cache=cache) if project else []
     is_project_member = project_membership is not None
-    is_project_admin = project is not None and is_project_member and project_membership.role._is_admin
+    is_project_admin = project is not None and is_project_member and project_membership.role.is_admin
     project_role_permissions = _get_project_membership_permissions(project_membership)
 
     workspace_membership: WorkspaceMembership = (
@@ -126,7 +126,7 @@ def _get_user_permissions(user: User, project: Project, workspace: Workspace, ca
     workspace_role_permissions = _get_workspace_membership_permissions(workspace_membership)
     is_workspace_member = workspace_membership is not None
     is_workspace_admin = (
-        workspace is not None and workspace_membership is not None and workspace_membership.workspace_role._is_admin
+        workspace is not None and workspace_membership is not None and workspace_membership.workspace_role.is_admin
     )
 
     # pj (user is)     ws (user is)	   	Applied permission role (referred to a project)

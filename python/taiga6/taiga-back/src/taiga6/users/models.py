@@ -178,7 +178,6 @@ class User(AbstractBaseUser, PermissionsMixin):
                                                           verbose_name=_("max number of memberships for "
                                                                          "each owned public project"))
 
-    _cached_memberships = None
     _cached_liked_ids = None
     _cached_watched_ids = None
     _cached_notify_levels = None
@@ -196,24 +195,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.get_full_name()
 
-    def _fill_cached_memberships(self):
-        self._cached_memberships = {}
-        qs = self.memberships.select_related("user", "project", "role")
-        for membership in qs.all():
-            self._cached_memberships[membership.project.id] = membership
-
-    @property
+    @cached_property
     def cached_memberships(self):
-        if self._cached_memberships is None:
-            self._fill_cached_memberships()
-
-        return self._cached_memberships.values()
+        return {pm.project.id: pm for pm in self.memberships
+                                                .select_related("user", "project", "role")}
 
     def cached_membership_for_project(self, project):
-        if self._cached_memberships is None:
-            self._fill_cached_memberships()
-
-        return self._cached_memberships.get(project.id, None)
+        return self.cached_memberships.get(project.id, None)
 
     @cached_property
     def cached_workspace_memberships(self):

@@ -9,22 +9,29 @@
 import { createReducer, on, createFeature } from '@ngrx/store';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/project.actions';
-import { Project } from '@taiga/data';
+import { Project, Role } from '@taiga/data';
 
 export const projectFeatureKey = 'project';
 
 export interface ProjectState {
   project: Project | null;
+  roles: Role[];
 }
 
 export const initialState: ProjectState = {
   project: null,
+  roles: []
 };
 
 export const reducer = createReducer(
   initialState,
   on(ProjectActions.fetchProjectSuccess, (state, { project }): ProjectState => {
     state.project = project;
+
+    return state;
+  }),
+  on(ProjectActions.fetchRolesSuccess, (state, { roles }): ProjectState => {
+    state.roles = roles;
 
     return state;
   }),

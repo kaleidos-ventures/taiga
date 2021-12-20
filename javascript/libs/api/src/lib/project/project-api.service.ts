@@ -11,7 +11,7 @@ import { Injectable } from '@angular/core';
 import { ApiUtilsService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 
-import { Project, ProjectCreation } from '@taiga/data';
+import { Project, ProjectCreation, Role } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root'
@@ -40,5 +40,9 @@ export class ProjectApiService {
     };
     const formData = ApiUtilsService.buildFormData(form);
     return this.http.post<Project>(`${this.config.apiUrl}/projects`, formData);
+  }
+
+  public getRoles(slug: Project['slug']) {
+    return this.http.get<Role[]>(`${this.config.apiUrl}/projects/${slug}/roles`);
   }
 }

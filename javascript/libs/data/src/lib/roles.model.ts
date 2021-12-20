@@ -58,12 +58,11 @@ export enum Permissions {
 }
 
 export interface Role {
-  readonly id: number;
+  // readonly id: number;
   name: string;
   slug: string;
-  project: number;
   order: number;
-  computable: boolean;
+  isAdmin: boolean;
   permissions: Permissions[];
-  readonly membersCount?: number;
+  readonly numMembers?: number;
 }

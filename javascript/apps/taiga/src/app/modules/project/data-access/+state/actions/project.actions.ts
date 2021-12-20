@@ -7,7 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { Project } from '@taiga/data';
+import { Project, Role } from '@taiga/data';
 
 export const fetchProjectSuccess = createAction(
   '[Project] fetch success',
@@ -17,5 +17,15 @@ export const fetchProjectSuccess = createAction(
 export const fetchProject = createAction(
   '[Project] fetch',
   props<{slug: Project['slug']}>()
+);
+
+export const fetchRoles = createAction(
+  '[Roles] fetch',
+  props<{slug: Project['slug']}>()
+);
+
+export const fetchRolesSuccess = createAction(
+  '[Roles] fetch success',
+  props<{roles: Role[]}>()
 );
 

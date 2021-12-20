@@ -46,6 +46,24 @@ export class ProjectEffects {
     );
   }, { dispatch: false });
 
+  public loadRoles$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.fetchRoles),
+      fetch({
+        run: (action) => {
+          return this.projectApiService.getRoles(action.slug).pipe(
+            map((roles) => {
+              return ProjectActions.fetchRolesSuccess({ roles });
+            })
+          );
+        },
+        onError: () => {
+          return null;
+        },
+      })
+    );
+  });
+
   constructor(
     private actions$: Actions,
     private projectApiService: ProjectApiService,

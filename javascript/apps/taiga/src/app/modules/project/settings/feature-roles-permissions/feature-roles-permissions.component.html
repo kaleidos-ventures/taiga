@@ -5,6 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
+<ng-container *ngIf="model$ | async as vm">
 <ng-container *transloco="let t;">
   <div class="settings-permissions-wrapper">
     <h3
@@ -23,161 +24,75 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div class="project-admin-title">
         <span class="project-admin-text">{{ t('project_settings.roles_permissions.project_administrators') }}</span>
         <button
+          *ngFor="let adminRole of adminList; trackBy: trackByIndex"
           class="small project-admin-button"
+          [class.empty]="adminRole.numMembers === 0"
           tuiLink
-          [title]="t('project_settings.roles_permissions.number_admins', { admins: '7' })">
-          {{ t('project_settings.roles_permissions.number_admins', { admins: '7' }) }}
+          [title]="t('project_settings.roles_permissions.number_admins', { admins: adminRole.numMembers })">
+          {{ t('project_settings.roles_permissions.number_admins', { admins: adminRole.numMembers }) }}
         </button>
       </div>
       <p class="project-admin-paragraph">{{ t('project_settings.roles_permissions.project_administrators_explanation') }}</p>
     </div>
-
     <form
+      *ngIf="form"
       [formGroup]="form">
-      <div class="permission-row">
-        <div
-          class="main"
-          formGroupName="generalMember">
-          <div class="permission-row-title">
-            <span class="permission-row-name">General Members</span>
-            <button
-              class="small permission-row-member"
-              tuiLink
-              [title]="t('project_settings.roles_permissions.number_members', { members: '7' })">
-              {{ t('project_settings.roles_permissions.number_members', { members: '7' }) }}
-            </button>
+      <ng-container formArrayName="roles">
+        <ng-container *ngFor="let roleForm of roles.controls; trackBy: trackByIndex; let i = index">
+          <div
+          class="permission-row"
+          [formGroupName]="i">
+          <div
+            class="main">
+            <div class="permission-row-title">
+              <span class="permission-row-name">{{ roleForm.value.name }}</span>
+              <button
+                *ngIf="roleForm.value.numMembers > 0"
+                [class.empty]="roleForm.value.numMembers === 0"
+                class="small permission-row-member"
+                tuiLink
+                [title]="t('project_settings.roles_permissions.number_members', { members: roleForm.value.numMembers })">
+                {{ t('project_settings.roles_permissions.number_members', { members: roleForm.value.numMembers }) }}
+              </button>
+            </div>
+            <div class="permission-row-select">
+              <tg-ui-select>
+                <tui-select
+                  tuiTextfieldSize="l"
+                  formControlName="permissions">
+                  <tui-data-list-wrapper
+                    [items]="basicPermissionList"
+                    *tuiDataList>
+                  </tui-data-list-wrapper>
+                </tui-select>
+              </tg-ui-select>
+            </div>
+            <div class="permission-row-action">
+              <button
+                appearance="tertiary"
+                class="permission-row-button"
+                tuiButton
+                iconRight="'chevron-down'"
+                [title]="t('project_settings.roles_permissions.advanced_settings')"
+                type="button">
+                {{ t('project_settings.roles_permissions.advanced_settings') }}
+              </button>
+              <button
+                appearance="tertiary"
+                class="permission-row-button"
+                tuiIconButton
+                icon="'more-vertical'"
+                [title]="t('project_settings.roles_permissions.show_more')"
+                type="button">
+                <span class="visually-hidden">{{ t('project_settings.roles_permissions.show_more') }}</span>
+              </button>
+            </div>
           </div>
-          <div class="permission-row-select">
-            <tg-ui-select>
-              <tui-select
-                tuiTextfieldSize="l"
-                formControlName="permission">
-                <tui-data-list-wrapper
-                  [items]="basicPermissionList"
-                  *tuiDataList>
-                </tui-data-list-wrapper>
-              </tui-select>
-            </tg-ui-select>
-          </div>
-          <div class="permission-row-action">
-            <button
-              appearance="tertiary"
-              class="permission-row-button"
-              tuiButton
-              iconRight="'chevron-down'"
-              [title]="t('project_settings.roles_permissions.advanced_settings')"
-              type="button">
-              {{ t('project_settings.roles_permissions.advanced_settings') }}
-            </button>
-            <button
-              appearance="tertiary"
-              class="permission-row-button"
-              tuiIconButton
-              icon="'more-vertical'"
-              [title]="t('project_settings.roles_permissions.show_more')"
-              type="button">
-              <span class="visually-hidden">{{ t('project_settings.roles_permissions.show_more') }}</span>
-            </button>
-          </div>
-        </div>
         <div class="sub"></div>
       </div>
-      <div class="permission-row">
-        <div
-          class="main"
-          formGroupName="generalMember">
-          <div class="permission-row-title">
-            <span class="permission-row-name" title="Product Owner">Product Owner</span>
-            <button
-              class="small permission-row-member"
-              tuiLink
-              [title]="t('project_settings.roles_permissions.number_members', { members: '7' })">
-              {{ t('project_settings.roles_permissions.number_members', { members: '7' }) }}
-            </button>
-          </div>
-          <div class="permission-row-select">
-            <tg-ui-select>
-              <tui-select
-                tuiTextfieldSize="l"
-                formControlName="permission">
-                <tui-data-list-wrapper
-                  [items]="basicPermissionList"
-                  *tuiDataList>
-                </tui-data-list-wrapper>
-              </tui-select>
-            </tg-ui-select>
-          </div>
-          <div class="permission-row-action">
-            <button
-              appearance="tertiary"
-              class="permission-row-button"
-              tuiButton
-              iconRight="'chevron-down'"
-              [title]="t('project_settings.roles_permissions.advanced_settings')"
-              type="button">
-              {{ t('project_settings.roles_permissions.advanced_settings') }}
-            </button>
-            <button
-              appearance="tertiary"
-              class="permission-row-button"
-              tuiIconButton
-              icon="'more-vertical'"
-              [title]="t('project_settings.roles_permissions.show_more')"
-              type="button">
-              <span class="visually-hidden">{{ t('project_settings.roles_permissions.show_more') }}</span>
-            </button>
-          </div>
-        </div>
-        <div class="sub"></div>
-      </div>
-      <div class="permission-row">
-        <div
-          class="main"
-          formGroupName="generalMember">
-          <div class="permission-row-title">
-            <span class="permission-row-name">123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 </span>
-            <button
-              class="small permission-row-member"
-              tuiLink
-              [title]="t('project_settings.roles_permissions.number_members', { members: '7' })">
-              {{ t('project_settings.roles_permissions.number_members', { members: '7' }) }}
-            </button>
-          </div>
-          <div class="permission-row-select">
-            <tg-ui-select>
-              <tui-select
-                tuiTextfieldSize="l"
-                formControlName="permission">
-                <tui-data-list-wrapper
-                  [items]="basicPermissionList"
-                  *tuiDataList>
-                </tui-data-list-wrapper>
-              </tui-select>
-            </tg-ui-select>
-          </div>
-          <div class="permission-row-action">
-            <button
-              appearance="tertiary"
-              class="permission-row-button"
-              tuiButton
-              iconRight="'chevron-down'"
-              [title]="t('project_settings.roles_permissions.advanced_settings')"
-              type="button">
-              {{ t('project_settings.roles_permissions.advanced_settings') }}
-            </button>
-            <button
-              appearance="tertiary"
-              class="permission-row-button"
-              tuiIconButton
-              icon="'more-vertical'"
-              [title]="t('project_settings.roles_permissions.show_more')"
-              type="button">
-              <span class="visually-hidden">{{ t('project_settings.roles_permissions.show_more') }}</span>
-            </button>
-          </div>
-        </div>
-        <div class="sub"></div>
-      </div>
+        </ng-container>
+      </ng-container>
+
       <button
         appearance="tertiary"
         class="add-role"
@@ -206,4 +121,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       tabindex="-1"
       class="settings-subtitle">{{ t('project_settings.workspace_permissions') }}</h3>
   </section>
+</ng-container>
 </ng-container>

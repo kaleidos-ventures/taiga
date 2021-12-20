@@ -64,5 +64,5 @@ export interface Role {
   order: number;
   isAdmin: boolean;
   permissions: Permissions[];
-  readonly numMembers?: number;
+  numMembers: number;
 }

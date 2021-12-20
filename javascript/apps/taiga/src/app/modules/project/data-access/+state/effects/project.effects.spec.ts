@@ -14,9 +14,9 @@ import { Observable } from 'rxjs';
 import * as faker from 'faker';
 
 import { ProjectEffects } from './project.effects';
-import { fetchProject, fetchProjectSuccess } from '../actions/project.actions';
-import { ProjectMockFactory } from '@taiga/data';
+import { fetchProject, fetchProjectSuccess, fetchRoles, fetchRolesSuccess } from '../actions/project.actions';
 import { cold, hot } from 'jest-marbles';
+import { ProjectMockFactory, RoleMockFactory } from '@taiga/data';
 
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
@@ -52,6 +52,31 @@ describe('ProjectEffects', () => {
 
     expect(
       effects.loadProject$
+    ).toBeObservable(expected);
+  });
+
+  it('load roles', () => {
+    const slug = faker.datatype.string();
+    const roles = [];
+    for(let i = 0; i++; i < faker.datatype.number()) {
+      const role = RoleMockFactory();
+      roles.push(role);
+    }
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(ProjectEffects);
+
+    projectApiService.getRoles.mockReturnValue(
+      cold('-b|', { b: roles })
+    );
+
+    actions$ = hot('-a', { a:  fetchRoles({ slug })});
+
+    const expected = cold('--a', {
+      a: fetchRolesSuccess({ roles }),
+    });
+
+    expect(
+      effects.loadRoles$
     ).toBeObservable(expected);
   });
 

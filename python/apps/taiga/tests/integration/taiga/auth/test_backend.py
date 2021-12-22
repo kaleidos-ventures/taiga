@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
-from starlette.authentication import AuthorizationError
+from starlette.authentication import AuthenticationError as AuthorizationError
 from taiga.auth import backend
 from taiga.auth.tokens import AccessToken
 from taiga.base.api import Request

@@ -72,8 +72,6 @@ docopt==0.6.2
     # via psd-tools
 easy-thumbnails==2.7.0
     # via -r requirements.in
-fn==0.4.3
-    # via -r requirements.in
 gunicorn==19.9.0
     # via -r requirements.in
 html5lib==1.1

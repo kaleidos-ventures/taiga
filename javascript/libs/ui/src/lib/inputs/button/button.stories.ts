@@ -405,7 +405,7 @@ export const HomeButton = ConfigureTemplate({
   argTypes: baseArgTypes
 });
 
-export const IconLinks = ConfigureTemplate({
+export const LinkButton = ConfigureTemplate({
   template: `
   <div class="story-flex">
     <label class="story-label">Text + icon</label>
@@ -426,6 +426,25 @@ export const IconLinks = ConfigureTemplate({
       title="ADD TITLE">
       {{label}}
     </a>
+  </div>
+  <br >
+  <div class="story-flex">
+    <label class="story-label">Text</label>
+    <button
+      tuiLink
+      title="ADD TITLE">
+      {{label}}
+    </button>
+  </div>
+  <br >
+  <div class="story-flex">
+    <label class="story-label">Text (small)</label>
+    <button
+      class="small"
+      tuiLink
+      title="ADD TITLE">
+      {{label}}
+    </button>
   </div>
   `,
   args: baseArgs,

@@ -6,7 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map, take } from 'rxjs/operators';
 @Component({
@@ -18,14 +19,34 @@ import { filter, map, take } from 'rxjs/operators';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectsSettingsFeatureRolesPermissionsComponent implements AfterViewInit {
+export class ProjectsSettingsFeatureRolesPermissionsComponent implements AfterViewInit, OnInit {
   constructor(
     private el: ElementRef,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private fb: FormBuilder
   ) {}
 
   private readonly defaultFragment =  'member-permissions-settings';
+  public form!: FormGroup;
+
+  public basicPermissionList = [
+    'Can edit',
+    'Custom',
+    'No Access'
+  ];
+
+  public ngOnInit() {
+    this.form = this.fb.group({
+      generalMember: this.fb.group({
+        permission: new FormControl(this.basicPermissionList[0]),
+        userStories: this.fb.group({
+          permission: new FormControl(this.basicPermissionList[0]),
+          canComment: new FormControl(false),
+        }),
+      }),
+    });
+  }
 
   public ngAfterViewInit() {
     this.route.fragment.pipe(take(1)).subscribe((fragment) => {

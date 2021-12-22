@@ -5,5 +5,14 @@
     "public_permissions": "Public permissions",
     "workspace_permissions": "Workspace permissions",
     "integrations": "Integrations",
-    "plugins": "Plugins"
+    "plugins": "Plugins",
+    "roles_permissions": {
+      "project_administrators": "Project Administrators",
+      "number_admins": "{{ admins }} admins",
+      "number_members": "{{ members }} members",
+      "project_administrators_explanation": "Project admins can access to the project settings and move things around, activate modules, invite people and mostly everything else.",
+      "advanced_settings": "Advanced settings",
+      "show_more": "Show more",
+      "add_role": "Add role"
+    }
   }

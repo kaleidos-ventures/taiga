@@ -11,6 +11,9 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProjectsSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
 import { inViewportDirective } from '~/app/shared/directives/intersection-observer.directive';
+import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 @NgModule({
   declarations: [
@@ -19,12 +22,25 @@ import { inViewportDirective } from '~/app/shared/directives/intersection-observ
   ],
   imports: [
     CommonModule,
+    TuiButtonModule,
+    TuiLinkModule,
+    TranslocoModule,
     RouterModule.forChild([
       {
         path: '',
         component: ProjectsSettingsFeatureRolesPermissionsComponent
       }
-    ])
+    ]),
+    InputsModule
+  ],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'project_settings',
+        alias: 'project_settings',
+      },
+    },
   ],
   exports: [
     ProjectsSettingsFeatureRolesPermissionsComponent,

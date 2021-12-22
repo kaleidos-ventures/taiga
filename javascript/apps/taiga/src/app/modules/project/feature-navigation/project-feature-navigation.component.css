@@ -221,9 +221,9 @@ ul {
     }
 
     & .chevron {
-      block-size: var(--spacing-20);
+      block-size: var(--spacing-16);
       fill: var(--color-primary);
-      inline-size: var(--spacing-20);
+      inline-size: var(--spacing-16);
       margin-inline-start: auto;
       transform: rotate(180deg);
       transition: all .2s linear;

@@ -5,6 +5,9 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from taiga.conf import settings
+from taiga.permissions import choices
+from tests.utils import factories as f
 from tests.utils.images import valid_image_f
 
 from .base import Factory, factory
@@ -12,7 +15,7 @@ from .base import Factory, factory
 
 class ProjectTemplateFactory(Factory):
     name = "Template name"
-    slug = "scrum"
+    slug = settings.DEFAULT_PROJECT_TEMPLATE
     description = factory.Sequence(lambda n: f"Description {n}")
 
     epic_statuses = []
@@ -47,3 +50,29 @@ class ProjectFactory(Factory):
 
     class Meta:
         model = "projects.Project"
+
+
+class MembershipFactory(Factory):
+    user = factory.SubFactory("tests.utils.factories.UserFactory")
+    project = factory.SubFactory("tests.utils.factories.ProjectFactory")
+    role = factory.SubFactory("tests.utils.factories.RoleFactory")
+
+    class Meta:
+        model = "projects.Membership"
+
+
+def create_project(**kwargs):
+    """Create project and its dependencies"""
+    defaults = {}
+    defaults.update(kwargs)
+
+    ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
+
+    project = ProjectFactory.create(**defaults)
+    admin_role = f.RoleFactory.create(
+        name="Administrators", slug="admin", permissions=choices.ADMINS_PERMISSIONS_LIST, is_admin=True, project=project
+    )
+    user = kwargs.pop("user", f.UserFactory())
+    MembershipFactory.create(user=user, project=project, role=admin_role)
+
+    return project

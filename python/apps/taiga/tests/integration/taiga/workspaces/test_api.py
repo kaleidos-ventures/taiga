@@ -39,7 +39,7 @@ def test_create_workspace_validation_error(client):
 
 def test_list_workspaces_success(client):
     user = f.UserFactory()
-    f.WorkspaceFactory(owner=user)
+    f.create_workspace(owner=user)
 
     client.login(user)
     response = client.get("/workspaces")
@@ -47,11 +47,10 @@ def test_list_workspaces_success(client):
     assert len(response.json()) == 1
 
 
-@pytest.mark.xfail(reason="The recently added permissions functionality makes some tests to fail")
 def test_get_workspace_success(client):
     user = f.UserFactory()
     slug = "ws-test"
-    f.WorkspaceFactory(slug=slug, owner=user)
+    f.create_workspace(slug=slug, owner=user)
 
     client.login(user)
     response = client.get(f"/workspaces/{slug}")

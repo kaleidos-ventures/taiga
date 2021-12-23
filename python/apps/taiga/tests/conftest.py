@@ -14,7 +14,7 @@ from .fixtures import *  # noqa
 #
 # Load initial taiga fixtures
 #
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def django_db_setup(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
         call_command("loaddata", "initial_project_templates.json", verbosity=0)

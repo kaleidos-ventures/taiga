@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from taiga.permissions import choices
+
 from .base import Factory, factory
 
 
@@ -24,3 +26,25 @@ class UserFactory(Factory):
 
         # The default would use ``manager.create(*args, **kwargs)``
         return manager.create_user(*args, **kwargs)
+
+
+class RoleFactory(Factory):
+    name = factory.Sequence(lambda n: f"Role {n}")
+    slug = factory.Sequence(lambda n: f"test-role-{n}")
+    permissions = choices.MEMBERS_PERMISSIONS_LIST
+    is_admin = False
+    project = factory.SubFactory("tests.utils.factories.ProjectFactory")
+
+    class Meta:
+        model = "users.Role"
+
+
+class WorkspaceRoleFactory(Factory):
+    name = factory.Sequence(lambda n: f"WS Role {n}")
+    slug = factory.Sequence(lambda n: f"test-ws-role-{n}")
+    permissions = choices.WORKSPACE_MEMBERS_PERMISSIONS_LIST
+    is_admin = False
+    workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
+
+    class Meta:
+        model = "users.WorkspaceRole"

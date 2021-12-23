@@ -8,20 +8,17 @@
 import pytest
 import validators
 from fastapi import status
-from taiga.conf import settings
 from tests.utils import factories as f
 from tests.utils.images import create_valid_testing_image
 
 pytestmark = pytest.mark.django_db(transaction=True)
 
 
-@pytest.mark.xfail(reason="The 'initial_project_templates.json' it's not being loaded")
 def test_create_project_success(client):
     user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.create_workspace(owner=user)
     data = {"name": "Project test", "color": 1, "workspaceSlug": workspace.slug}
     files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
-    f.ProjectTemplateFactory(slug=settings.DEFAULT_PROJECT_TEMPLATE)
 
     client.login(user)
     response = client.post("/projects", data=data, files=files)
@@ -32,7 +29,7 @@ def test_create_project_success(client):
 
 def test_create_project_validation_error(client):
     user = f.UserFactory()
-    f.WorkspaceFactory(owner=user)
+    f.create_workspace(owner=user)
     data = {"name": "My pro#%&乕شject", "color": 1, "workspace_slug": "ws-invalid"}
 
     client.login(user)
@@ -40,11 +37,10 @@ def test_create_project_validation_error(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
-@pytest.mark.xfail(reason="The recently added permissions functionality makes some tests to fail")
 def test_list_projects_success(client):
     user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
-    f.ProjectFactory(owner=user, workspace=workspace)
+    workspace = f.create_workspace(owner=user)
+    f.create_project(owner=user, workspace=workspace)
 
     client.login(user)
     response = client.get(f"/workspaces/{workspace.slug}/projects")
@@ -52,12 +48,11 @@ def test_list_projects_success(client):
     assert len(response.json()) == 1
 
 
-@pytest.mark.xfail(reason="The recently added permissions functionality makes some tests to fail")
 def test_get_project_success(client):
     user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.create_workspace(owner=user)
     slug = "project-test"
-    f.ProjectFactory(slug=slug, owner=user, workspace=workspace)
+    f.create_project(slug=slug, owner=user, workspace=workspace)
 
     client.login(user)
     response = client.get(f"/projects/{slug}")

@@ -52,7 +52,10 @@ def create_membership(user: User, project: Project, role: Role, email: str) -> M
 
 
 def get_project_role(project: Project, slug: str) -> Role:
-    return project.roles.get(slug=slug)
+    try:
+        return project.roles.get(slug=slug)
+    except Role.DoesNotExist:
+        return None
 
 
 def get_project_roles(project: Project) -> List[Role]:

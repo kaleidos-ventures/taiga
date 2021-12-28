@@ -125,12 +125,13 @@ def get_project_roles(
     request: Request, slug: str = Query(None, description="the project slug (str)")
 ) -> List[RoleSerializer]:
     """
-    Get project detail by slug.
+    Get project roles by slug.
     """
 
-    check_permissions(permissions=GET_PROJECT_ROLES, user=request.user)
-
     project = _get_project_or_404(slug)
+
+    check_permissions(permissions=GET_PROJECT_ROLES, user=request.user, obj=project)
+
     roles_permissions = projects_services.get_roles_permissions(project=project)
 
     return RoleSerializer.from_queryset(roles_permissions)

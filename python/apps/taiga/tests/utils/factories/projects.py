@@ -72,7 +72,14 @@ def create_project(**kwargs):
     admin_role = f.RoleFactory.create(
         name="Administrators", slug="admin", permissions=choices.ADMINS_PERMISSIONS_LIST, is_admin=True, project=project
     )
-    user = kwargs.pop("user", f.UserFactory())
+    f.RoleFactory.create(
+        name="General Members",
+        slug="general-members",
+        permissions=choices.MEMBERS_PERMISSIONS_LIST,
+        is_admin=False,
+        project=project,
+    )
+    user = kwargs.pop("owner", f.UserFactory())
     MembershipFactory.create(user=user, project=project, role=admin_role)
 
     return project

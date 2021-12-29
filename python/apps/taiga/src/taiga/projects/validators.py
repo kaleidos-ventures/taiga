@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import UploadFile
 from pydantic import validator
@@ -66,3 +66,7 @@ class ProjectValidator(BaseModel):
     @validator("name")
     def strip_name(cls, v: str) -> str:
         return v.strip()
+
+
+class PermissionsValidator(BaseModel):
+    permissions: List[str]

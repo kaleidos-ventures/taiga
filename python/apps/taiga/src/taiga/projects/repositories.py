@@ -71,3 +71,9 @@ def get_num_members_by_role_id(role_id: int) -> int:
         return Membership.objects.filter(role_id=role_id).count()
 
     return 0
+
+
+def update_role_permissions(role: Role, permissions: List[str]) -> Role:
+    role.permissions = permissions
+    role.save()
+    return role

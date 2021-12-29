@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c5ea0a5d-fd72-4dfd-8efb-c8ec13513161",
+		"_postman_id": "707c3586-2eea-46d7-8a73-4e463a20256d",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -434,7 +434,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/settings/roles",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -442,7 +442,50 @@
 							"path": [
 								"projects",
 								"{{pj-slug}}",
+								"settings",
 								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update role permissions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"permissions\": [\n        \"view_project\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/settings/roles/{{role-slug}}/permissions",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"settings",
+								"roles",
+								"{{role-slug}}",
+								"permissions"
 							]
 						}
 					},

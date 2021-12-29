@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 import pytest
 from fastapi import UploadFile
-from taiga.projects.services import create_project
+from taiga.projects import services
 from tests.utils import factories as f
 from tests.utils.images import valid_image_upload_file
 
@@ -24,7 +24,7 @@ def test_create_project_with_logo():
     with patch("taiga.projects.services.projects_repo") as fake_project_repository:
         fake_project_repository.create_project.return_value = f.ProjectFactory()
 
-        create_project(workspace=workspace, name="n", description="d", color=2, owner=user, logo=logo)
+        services.create_project(workspace=workspace, name="n", description="d", color=2, owner=user, logo=logo)
 
         service_file_param = fake_project_repository.create_project.call_args_list[0][1]
         assert service_file_param["logo"].name == logo.filename
@@ -37,8 +37,22 @@ def test_create_project_with_no_logo():
 
     with patch("taiga.projects.services.projects_repo") as fake_project_repository:
         fake_project_repository.create_project.return_value = f.ProjectFactory()
-        create_project(workspace=workspace, name="n", description="d", color=2, owner=user)
+        services.create_project(workspace=workspace, name="n", description="d", color=2, owner=user)
 
         fake_project_repository.create_project.assert_called_once_with(
             workspace=workspace, name="n", description="d", color=2, owner=user, logo=None
         )
+
+
+def test_get_project_role():
+    with patch("taiga.projects.services.projects_repo") as fake_project_repository:
+        fake_project_repository.get_project_role.return_value = f.RoleFactory()
+        services.get_project_role(project=f.ProjectFactory(), slug="general-members")
+        fake_project_repository.get_project_role.assert_called_once()
+
+
+def test_update_role_permissions():
+    with patch("taiga.projects.services.projects_repo") as fake_project_repository:
+        fake_project_repository.get_project_role.return_value = f.RoleFactory()
+        services.update_role_permissions(role=f.RoleFactory(), permissions=["view_project"])
+        fake_project_repository.update_role_permissions.assert_called_once()

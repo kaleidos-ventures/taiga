@@ -73,7 +73,7 @@ def test_get_project_roles_not_found_error(client):
     slug = "non-existent"
 
     client.login(user)
-    response = client.get(f"/projects/{slug}/roles")
+    response = client.get(f"/projects/{slug}/settings/roles")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -84,7 +84,7 @@ def test_get_project_roles_being_project_admin(client):
     f.create_project(slug=slug, owner=user, workspace=workspace)
 
     client.login(user)
-    response = client.get(f"/projects/{slug}/roles")
+    response = client.get(f"/projects/{slug}/settings/roles")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
@@ -105,7 +105,7 @@ def test_get_project_roles_being_general_member(client):
     f.MembershipFactory(user=user2, project=project, role=general_member_role)
 
     client.login(user2)
-    response = client.get(f"/projects/{slug}/roles")
+    response = client.get(f"/projects/{slug}/settings/roles")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
@@ -118,7 +118,7 @@ def test_get_project_roles_being_no_member(client):
     user2 = f.UserFactory()
 
     client.login(user2)
-    response = client.get(f"/projects/{slug}/roles")
+    response = client.get(f"/projects/{slug}/settings/roles")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
@@ -128,5 +128,69 @@ def test_get_project_roles_being_anonymous(client):
     slug = "project-test"
     f.ProjectFactory(slug=slug, owner=user, workspace=workspace)
 
-    response = client.get(f"/projects/{slug}/roles")
+    response = client.get(f"/projects/{slug}/settings/roles")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+def test_update_project_role_permissions_anonymous_user(client):
+    user = f.UserFactory()
+    workspace = f.create_workspace(owner=user)
+    project = f.create_project(owner=user, workspace=workspace)
+    role_slug = "general-members"
+    data = {"permissions": ["view_project"]}
+    response = client.put(f"/projects/{project.slug}/settings/roles/{role_slug}/permissions", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+def test_update_project_role_permissions_project_not_found(client):
+    user = f.UserFactory()
+    client.login(user)
+    data = {"permissions": ["view_project"]}
+    response = client.put("/projects/non-existent/settings/roles/role-slug/permissions", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+def test_update_project_role_permissions_role_not_found(client):
+    user = f.UserFactory()
+    workspace = f.create_workspace(owner=user)
+    project = f.create_project(owner=user, workspace=workspace)
+    client.login(user)
+    data = {"permissions": ["view_project"]}
+    response = client.put(f"/projects/{project.slug}/settings/roles/role-slug/permissions", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+def test_update_project_role_permissions_user_without_permission(client):
+    user1 = f.UserFactory()
+    workspace = f.create_workspace(owner=user1)
+    project = f.create_project(owner=user1, workspace=workspace)
+    user2 = f.UserFactory()
+    client.login(user2)
+    data = {"permissions": ["view_project"]}
+    response = client.put(f"/projects/{project.slug}/settings/roles/role-slug/permissions", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+def test_update_project_role_permissions_role_admin(client):
+    user = f.UserFactory()
+    workspace = f.create_workspace(owner=user)
+    project = f.create_project(owner=user, workspace=workspace)
+    role_slug = "admin"
+    client.login(user)
+    data = {"permissions": ["view_project"]}
+    response = client.put(f"/projects/{project.slug}/settings/roles/{role_slug}/permissions", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+def test_update_project_role_permissions_ok(client):
+    user = f.UserFactory()
+    workspace = f.create_workspace(owner=user)
+    project = f.create_project(owner=user, workspace=workspace)
+    role_slug = "general-members"
+    # default permissions given by template should be the same as MEMBERS_PERMISSIONS_LIST
+    assert [x in project.roles.get(slug=role_slug).permissions for x in choices.MEMBERS_PERMISSIONS_LIST]
+    client.login(user)
+    data = {"permissions": ["view_project"]}
+    response = client.put(f"/projects/{project.slug}/settings/roles/{role_slug}/permissions", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert data["permissions"] == response.json()["permissions"]

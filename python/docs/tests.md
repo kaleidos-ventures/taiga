@@ -21,7 +21,7 @@ Tests in which we use the `client` fixture to make API calls must be marked as `
   ```shell
   (taiga)$ pytest --slow_only
   ```
-- For fast test obnly
+- For fast test only
   ```shell
   (taiga)$ pytest --fast_only
   ```

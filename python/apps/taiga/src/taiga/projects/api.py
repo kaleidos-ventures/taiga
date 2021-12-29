@@ -19,7 +19,8 @@ from taiga.permissions import HasPerm, IsProjectAdmin
 from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
-from taiga.projects.validators import ProjectValidator
+from taiga.projects.validators import PermissionsValidator, ProjectValidator
+from taiga.users.models import Role
 from taiga.users.serializers import RoleSerializer
 from taiga.workspaces import services as workspaces_services
 
@@ -38,6 +39,7 @@ LIST_PROJECTS = HasPerm("view_workspace")
 CREATE_PROJECT = HasPerm("view_workspace")
 GET_PROJECT = HasPerm("view_project")
 GET_PROJECT_ROLES = IsProjectAdmin()
+UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
 
 
 @router_workspaces.get(
@@ -108,14 +110,12 @@ def get_project(request: Request, slug: str = Query("", description="the project
     """
 
     project = _get_project_or_404(slug)
-
     check_permissions(permissions=GET_PROJECT, user=request.user, obj=project)
-
     return ProjectSerializer.from_orm(project)
 
 
 @router.get(
-    "/{slug}/roles",
+    "/{slug}/settings/roles",
     name="project.permissions.get",
     summary="Get project roles permissions",
     response_model=List[RoleSerializer],
@@ -125,23 +125,58 @@ def get_project_roles(
     request: Request, slug: str = Query(None, description="the project slug (str)")
 ) -> List[RoleSerializer]:
     """
-    Get project roles by slug.
+    Get project roles and permissions
     """
 
     project = _get_project_or_404(slug)
-
     check_permissions(permissions=GET_PROJECT_ROLES, user=request.user, obj=project)
-
     roles_permissions = projects_services.get_roles_permissions(project=project)
-
     return RoleSerializer.from_queryset(roles_permissions)
 
 
+@router.put(
+    "/{slug}/settings/roles/{role_slug}/permissions",
+    name="project.permissions.put",
+    summary="Edit project roles permissions",
+    response_model=RoleSerializer,
+    responses=ERROR_404 | ERROR_422 | ERROR_403,
+)
+def update_project_role_permissions(
+    request: Request,
+    form: PermissionsValidator,
+    slug: str = Query(None, description="the project slug (str)"),
+    role_slug: str = Query(None, description="the role slug (str)"),
+) -> RoleSerializer:
+    """
+    Edit project roles permissions
+    """
+
+    project = _get_project_or_404(slug)
+    check_permissions(permissions=UPDATE_PROJECT_ROLE_PERMISSIONS, user=request.user, obj=project)
+    role = _get_project_role_or_404(project=project, slug=role_slug)
+
+    # TODO: this should go in services, but the exception belongs to API
+    if role.is_admin:
+        raise ex.ForbiddenError()
+
+    role = projects_services.update_role_permissions(role, form.permissions)
+    return RoleSerializer.from_orm(role)
+
+
+# TODO: this should go in services
 def _get_project_or_404(slug: str) -> Project:
     project = projects_services.get_project(slug=slug)
-
     if project is None:
         logger.exception(f"Project {slug} does not exist")
         raise ex.NotFoundError()
 
     return project
+
+
+def _get_project_role_or_404(project: Project, slug: str) -> Role:
+    role = projects_services.get_project_role(project=project, slug=slug)
+    if role is None:
+        logger.exception(f"Role {slug} does not exist")
+        raise ex.NotFoundError()
+
+    return role

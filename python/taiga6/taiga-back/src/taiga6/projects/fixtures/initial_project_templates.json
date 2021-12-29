@@ -421,7 +421,15 @@
                 "is_admin": false,
                 "permissions": [
                   "view_project",
+                  "add_us",
+                  "comment_us",
+                  "delete_us",
+                  "modify_us",
                   "view_us",
+                  "add_task",
+                  "comment_task",
+                  "delete_task",
+                  "modify_task",
                   "view_tasks"
                 ]
             }
@@ -854,7 +862,15 @@
                 "is_admin": false,
                 "permissions": [
                   "view_project",
+                  "add_us",
+                  "comment_us",
+                  "delete_us",
+                  "modify_us",
                   "view_us",
+                  "add_task",
+                  "comment_task",
+                  "delete_task",
+                  "modify_task",
                   "view_tasks"
                 ]
             }

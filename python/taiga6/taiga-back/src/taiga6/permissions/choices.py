@@ -43,8 +43,16 @@ MEMBERS_PERMISSIONS = [
     # Project permissions
     ('view_project', _('View project')),
     # US permissions
-    ('view_us', _('View user story')),
+    ('add_us', _('Add US')),
+    ('comment_us', _('Comment US')),
+    ('delete_us', _('Delete US')),
+    ('modify_us', _('Modify US')),
+    ('view_us', _('View US')),
     # Task permissions
+    ('add_task', _('Add task')),
+    ('comment_task', _('Comment task')),
+    ('delete_task', _('Delete task')),
+    ('modify_task', _('Modify task')),
     ('view_tasks', _('View tasks')),
 ]
 

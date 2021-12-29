@@ -58,7 +58,6 @@ def test_get_project_return_project():
 
 
 def test_get_project_return_none():
-    f.ProjectFactory(name="Project 1")
     assert repositories.get_project(slug="project-not-exist") is None
 
 
@@ -180,3 +179,14 @@ def test_get_num_members_by_role_id_no_members():
     )
 
     assert repositories.get_num_members_by_role_id(role_id=role.id) == 0
+
+
+##########################################################
+# update roles permissions
+##########################################################
+
+
+def test_update_role_permissions():
+    role = f.RoleFactory()
+    role = repositories.update_role_permissions(role, ["new_permission"])
+    assert "new_permission" in role.permissions

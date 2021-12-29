@@ -42,7 +42,7 @@ def create_project(
     template.apply_to_project(project)
 
     # assign the owner to the project as the default owner role (should be 'admin')
-    owner_role = projects_repo.get_project_role(project=project, slug=template.default_owner_role)
+    owner_role = get_project_role(project=project, slug=template.default_owner_role)
     if not owner_role:
         owner_role = projects_repo.get_first_role(project=project)
 
@@ -74,3 +74,11 @@ def get_roles_permissions(project: Project) -> List[Role]:
 
 def get_num_members_by_role_id(role_id: int) -> int:
     return projects_repo.get_num_members_by_role_id(role_id)
+
+
+def get_project_role(project: Project, slug: str) -> Optional[Role]:
+    return projects_repo.get_project_role(project=project, slug=slug)
+
+
+def update_role_permissions(role: Role, permissions: List[str]) -> Role:
+    return projects_repo.update_role_permissions(role=role, permissions=permissions)

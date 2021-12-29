@@ -8,6 +8,7 @@
 
 import pytest
 from fastapi import status
+from taiga.permissions import choices
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -47,7 +48,7 @@ def test_list_workspaces_success(client):
     assert len(response.json()) == 1
 
 
-def test_get_workspace_success(client):
+def test_get_workspace_being_workspace_admin(client):
     user = f.UserFactory()
     slug = "ws-test"
     f.create_workspace(slug=slug, owner=user)
@@ -55,6 +56,45 @@ def test_get_workspace_success(client):
     client.login(user)
     response = client.get(f"/workspaces/{slug}")
     assert response.status_code == status.HTTP_200_OK, response.text
+
+
+def test_get_workspace_being_workspace_member(client):
+    user = f.UserFactory()
+    slug = "ws-test"
+    workspace = f.WorkspaceFactory(slug=slug, owner=user)
+    general_member_role = f.WorkspaceRoleFactory(
+        name="General Members",
+        slug="general-members",
+        permissions=choices.WORKSPACE_MEMBERS_PERMISSIONS_LIST,
+        is_admin=False,
+        workspace=workspace,
+    )
+    user2 = f.UserFactory()
+    f.WorkspaceMembershipFactory(user=user2, workspace=workspace, workspace_role=general_member_role)
+
+    client.login(user2)
+    response = client.get(f"/workspaces/{slug}")
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+def test_get_workspace_being_no_workspace_member(client):
+    user = f.UserFactory()
+    slug = "ws-test"
+    f.create_workspace(slug=slug, owner=user)
+
+    user2 = f.UserFactory()
+    client.login(user2)
+    response = client.get(f"/workspaces/{slug}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+def test_get_workspace_being_anonymous(client):
+    user = f.UserFactory()
+    slug = "ws-test"
+    f.create_workspace(slug=slug, owner=user)
+
+    response = client.get(f"/workspaces/{slug}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 def test_get_workspace_not_found_error(client):

@@ -16,6 +16,19 @@ from tests.utils.images import valid_image_upload_file
 pytestmark = pytest.mark.django_db
 
 
+def test_create_project():
+    user = f.UserFactory()
+    workspace = f.WorkspaceFactory(owner=user)
+
+    with patch("taiga.projects.services.projects_repo") as fake_project_repository:
+        fake_project_repository.create_project.return_value = f.ProjectFactory()
+        services.create_project(workspace=workspace, name="n", description="d", color=2, owner=user)
+        fake_project_repository.create_project.assert_called_once()
+        fake_project_repository.get_template.assert_called_once()
+        fake_project_repository.get_project_role.assert_called_once()
+        fake_project_repository.create_membership.assert_called_once()
+
+
 def test_create_project_with_logo():
     user = f.UserFactory()
     workspace = f.WorkspaceFactory(owner=user)

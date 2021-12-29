@@ -41,6 +41,13 @@ def create_workspace(**kwargs):
         is_admin=True,
         workspace=workspace,
     )
+    f.WorkspaceRoleFactory.create(
+        name="General Members",
+        slug="general-members",
+        permissions=choices.WORKSPACE_MEMBERS_PERMISSIONS_LIST,
+        is_admin=False,
+        workspace=workspace,
+    )
     user = kwargs.pop("owner", f.UserFactory())
     WorkspaceMembershipFactory.create(user=user, workspace=workspace, workspace_role=admin_role)
 

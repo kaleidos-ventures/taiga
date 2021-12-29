@@ -123,11 +123,9 @@ def _get_user_permissions(user: User, project: Project, workspace: Workspace, ca
     workspace_membership: WorkspaceMembership = (
         _get_user_workspace_membership(user, workspace, cache=cache) if workspace else []
     )
-    workspace_role_permissions = _get_workspace_membership_permissions(workspace_membership)
     is_workspace_member = workspace_membership is not None
-    is_workspace_admin = (
-        workspace is not None and workspace_membership is not None and workspace_membership.workspace_role.is_admin
-    )
+    is_workspace_admin = workspace is not None and is_workspace_member and workspace_membership.workspace_role.is_admin
+    workspace_role_permissions = _get_workspace_membership_permissions(workspace_membership)
 
     # pj (user is)     ws (user is)	   	Applied permission role (referred to a project)
     # =================================================================================
@@ -142,18 +140,22 @@ def _get_user_permissions(user: User, project: Project, workspace: Workspace, ca
     # no-rol            no-rol      	rol-public-permissions
     # no-logged         no-logged      	rol-anon-permissions
 
-    if is_project_admin:
-        user_permissions = project_role_permissions
-    elif is_workspace_admin:
+    if project:
+        if is_project_admin:
+            user_permissions = project_role_permissions
+        elif is_workspace_admin:
+            user_permissions = workspace_role_permissions
+        elif is_project_member:
+            user_permissions = project_role_permissions
+        elif is_workspace_member:
+            user_permissions = workspace_role_permissions
+        elif is_authenticated:
+            user_permissions = project.public_permissions
+        else:
+            user_permissions = project.anon_permissions
+    elif workspace:
+        # TODO revisar esta parte cuando tengamos permisos de WS
         user_permissions = workspace_role_permissions
-    elif is_project_member:
-        user_permissions = project_role_permissions
-    elif is_workspace_member:
-        user_permissions = workspace_role_permissions
-    elif is_authenticated:
-        user_permissions = project.public_permissions
-    else:
-        user_permissions = project.anon_permissions
 
     return user_permissions
 

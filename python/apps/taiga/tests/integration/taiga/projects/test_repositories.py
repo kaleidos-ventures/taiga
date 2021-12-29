@@ -62,6 +62,30 @@ def test_get_project_return_none():
 
 
 ##########################################################
+# get_template
+##########################################################
+
+
+def test_get_template_return_template():
+    template = f.ProjectTemplateFactory()
+    assert repositories.get_template(slug=template.slug) == template
+
+
+##########################################################
+# create_membership
+##########################################################
+
+
+def test_create_membership():
+    user = f.UserFactory()
+    workspace = f.WorkspaceFactory(owner=user)
+    project = f.ProjectFactory(owner=user, workspace=workspace)
+    role = f.RoleFactory(project=project)
+    membership = repositories.create_membership(user=user, project=project, role=role, email=user.email)
+    assert membership in project.memberships.all()
+
+
+##########################################################
 # get_project_role
 ##########################################################
 

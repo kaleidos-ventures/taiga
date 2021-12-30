@@ -60,6 +60,9 @@ def list_projects(
         logger.exception(f"Workspace {workspace_slug} does not exist")
         raise ex.NotFoundError()
 
+    # TODO - revisar esto porque no está bien.
+    # también tendría que devolver proyectos en los que eres miembro
+    # pero no eres miembro del WS y ahí no vas a tener permiso de view_workspace
     check_permissions(permissions=LIST_PROJECTS, user=request.user, obj=workspace)
 
     # TODO - sólo debería mostrar los proyectos visibles por el usuario dentro del workspace

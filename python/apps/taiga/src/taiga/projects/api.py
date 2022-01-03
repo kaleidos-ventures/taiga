@@ -14,6 +14,7 @@ from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
+from taiga.exceptions import services as services_ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm, IsProjectAdmin
 from taiga.projects import services as projects_services
@@ -158,15 +159,17 @@ def update_project_role_permissions(
     check_permissions(permissions=UPDATE_PROJECT_ROLE_PERMISSIONS, user=request.user, obj=project)
     role = _get_project_role_or_404(project=project, slug=role_slug)
 
-    # TODO: this should go in services, but the exception belongs to API
-    if role.is_admin:
-        raise ex.ForbiddenError()
+    try:
+        role = projects_services.update_role_permissions(role, form.permissions)
+        return RoleSerializer.from_orm(role)
+    except services_ex.NonEditableRoleError:
+        logger.exception("Cannot edit permissions in an admin role")
+        raise ex.ForbiddenError("Cannot edit permissions in an admin role")
+    except services_ex.BadPermissionsSetError:
+        logger.exception("Given permissions are incompatible")
+        raise ex.BadRequest("Given permissions are incompatible")
 
-    role = projects_services.update_role_permissions(role, form.permissions)
-    return RoleSerializer.from_orm(role)
 
-
-# TODO: this should go in services
 def _get_project_or_404(slug: str) -> Project:
     project = projects_services.get_project(slug=slug)
     if project is None:

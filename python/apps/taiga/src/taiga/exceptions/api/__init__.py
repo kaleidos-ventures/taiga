@@ -28,6 +28,16 @@ class HTTPException(FastAPIHTTPException):
 
 
 ##########################
+# HTTP 400: BAD REQUEST
+##########################
+
+
+class BadRequest(HTTPException):
+    def __init__(self, message: Any = codes.EX_BAD_REQUEST.message):
+        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, code=codes.EX_BAD_REQUEST.code, message=message)
+
+
+##########################
 # HTTP 401: UNAUTHORIZED
 ##########################
 

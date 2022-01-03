@@ -18,13 +18,10 @@ class Error:
 EX_VALIDATION_ERROR: Final = Error(
     code="validation-error", message="Unable to fulfill the request due to semantic errors"
 )
-
 EX_UNKNOWN: Final = Error(code="unknown", message="Unknown error")
-
 EX_NOT_FOUND: Final = Error(code="not-found", message="The requested resource could not be found")
-
 EX_AUTHORIZATION: Final = Error(
     code="authorization-error", message="Invalid token or no active account found with the given credentials"
 )
-
 EX_FORBIDDEN: Final = Error(code="forbidden-error", message="The user doesn't have permissions to perform this action")
+EX_BAD_REQUEST: Final = Error(code="bad-request-error", message="The request is incorrect")

@@ -15,7 +15,7 @@ from . import codes
 
 #
 # Error types to model additional responses in OpenAPI (Swagger)
-#
+# Check statuses in https://github.com/encode/starlette/blob/master/starlette/status.py
 
 T = TypeVar("T")
 
@@ -56,13 +56,20 @@ class ForbiddenErrorModel(GenericSingleError):
     message: str = codes.EX_FORBIDDEN.message
 
 
+class BadRequestErrorModel(GenericSingleError):
+    code: str = codes.EX_BAD_REQUEST.code
+    message: str = codes.EX_BAD_REQUEST.message
+
+
 ErrorsDict = Dict[Union[int, str], Dict[str, Type[ErrorResponse[Any]]]]
 
+ERROR_RESPONSE_400 = ErrorResponse[BadRequestErrorModel]
 ERROR_RESPONSE_401 = ErrorResponse[UnauthorizedErrorModel]
 ERROR_RESPONSE_403 = ErrorResponse[ForbiddenErrorModel]
 ERROR_RESPONSE_404 = ErrorResponse[NotFoundErrorModel]
 ERROR_RESPONSE_422 = ErrorResponse[UnprocessableEntityModel]
 
+ERROR_400: ErrorsDict = {status.HTTP_400_BAD_REQUEST: {"model": ERROR_RESPONSE_400}}
 ERROR_401: ErrorsDict = {status.HTTP_401_UNAUTHORIZED: {"model": ERROR_RESPONSE_401}}
 ERROR_403: ErrorsDict = {status.HTTP_403_FORBIDDEN: {"model": ERROR_RESPONSE_403}}
 ERROR_404: ErrorsDict = {status.HTTP_404_NOT_FOUND: {"model": ERROR_RESPONSE_404}}

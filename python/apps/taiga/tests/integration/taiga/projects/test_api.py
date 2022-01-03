@@ -266,6 +266,17 @@ def test_update_project_role_permissions_role_admin(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
+def test_update_project_role_permissions_incompatible_permissions(client):
+    user = f.UserFactory()
+    workspace = f.create_workspace(owner=user)
+    project = f.create_project(owner=user, workspace=workspace)
+    role_slug = "general-members"
+    client.login(user)
+    data = {"permissions": ["view_project", "view_tasks"]}
+    response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
 def test_update_project_role_permissions_ok(client):
     user = f.UserFactory()
     workspace = f.create_workspace(owner=user)

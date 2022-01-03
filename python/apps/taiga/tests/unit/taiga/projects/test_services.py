@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 import pytest
 from fastapi import UploadFile
+from taiga.exceptions import services as ex
 from taiga.projects import services
 from tests.utils import factories as f
 from tests.utils.images import valid_image_upload_file
@@ -64,8 +65,20 @@ def test_get_project_role():
         fake_project_repository.get_project_role.assert_called_once()
 
 
-def test_update_role_permissions():
+def test_update_role_permissions_is_admin():
+    with pytest.raises(ex.NonEditableRoleError):
+        services.update_role_permissions(role=f.RoleFactory(is_admin=True), permissions=[])
+
+
+def test_update_role_permissions_incompatible_permissions():
+    with pytest.raises(ex.BadPermissionsSetError):
+        services.update_role_permissions(
+            role=f.RoleFactory(is_admin=False), permissions=["view_tasks", "view_milestones"]
+        )
+
+
+def test_update_role_permissions_ok():
     with patch("taiga.projects.services.projects_repo") as fake_project_repository:
-        fake_project_repository.get_project_role.return_value = f.RoleFactory()
-        services.update_role_permissions(role=f.RoleFactory(), permissions=["view_project"])
+        fake_project_repository.update_role_permissions.return_value = f.RoleFactory()
+        services.update_role_permissions(role=f.RoleFactory(), permissions=["view_project", "view_us"])
         fake_project_repository.update_role_permissions.assert_called_once()

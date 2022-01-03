@@ -118,7 +118,7 @@ def get_project(request: Request, slug: str = Query("", description="the project
 
 
 @router.get(
-    "/{slug}/settings/roles",
+    "/{slug}/roles",
     name="project.permissions.get",
     summary="Get project roles permissions",
     response_model=List[RoleSerializer],
@@ -138,7 +138,7 @@ def get_project_roles(
 
 
 @router.put(
-    "/{slug}/settings/roles/{role_slug}/permissions",
+    "/{slug}/roles/{role_slug}/permissions",
     name="project.permissions.put",
     summary="Edit project roles permissions",
     response_model=RoleSerializer,

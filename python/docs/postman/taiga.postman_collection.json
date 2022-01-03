@@ -434,7 +434,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/settings/roles",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -442,7 +442,6 @@
 							"path": [
 								"projects",
 								"{{pj-slug}}",
-								"settings",
 								"roles"
 							]
 						}
@@ -474,7 +473,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/settings/roles/{{role-slug}}/permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles/{{role-slug}}/permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -482,7 +481,6 @@
 							"path": [
 								"projects",
 								"{{pj-slug}}",
-								"settings",
 								"roles",
 								"{{role-slug}}",
 								"permissions"

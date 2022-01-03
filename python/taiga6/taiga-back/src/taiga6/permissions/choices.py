@@ -14,6 +14,8 @@ ADMINS_PERMISSIONS = [
     ('view_workspace', _('View workspace')),
     # Project permissions
     ('view_project', _('View project')),
+    ('modify_project', _('Modify project')),
+    ('delete_project', _('Delete project')),
     # US permissions
     ('view_us', _('View user story')),
     # Task permissions

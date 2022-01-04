@@ -90,3 +90,10 @@ def update_role_permissions(role: Role, permissions: List[str]) -> Role:
         raise ex.BadPermissionsSetError()
 
     return projects_repo.update_role_permissions(role=role, permissions=permissions)
+
+
+def update_project_public_permissions(project: Project, permissions: List[str]) -> List[str]:
+    if not permissions_services.permissions_are_correct(permissions):
+        raise ex.BadPermissionsSetError()
+
+    return projects_repo.update_project_public_permissions(project=project, permissions=permissions)

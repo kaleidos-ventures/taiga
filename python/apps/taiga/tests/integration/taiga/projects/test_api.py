@@ -216,6 +216,110 @@ def test_get_project_roles_being_anonymous(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
+def test_get_project_public_permissions_ok(client):
+    user = f.UserFactory()
+    workspace = f.create_workspace(owner=user)
+    project = f.create_project(owner=user, workspace=workspace)
+    client.login(user)
+    response = client.get(f"/projects/{project.slug}/public-permissions")
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+def test_get_project_public_permissions_no_admin(client):
+    user1 = f.UserFactory()
+    project = f.create_project(owner=user1)
+    user2 = f.UserFactory()
+    client.login(user2)
+    response = client.get(f"/projects/{project.slug}/public-permissions")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+def test_get_project_public_permissions_no_member(client):
+    project = f.ProjectFactory()
+    user = f.UserFactory()
+    client.login(user)
+    response = client.get(f"/projects/{project.slug}/public-permissions")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+def test_get_project_public_permissions_anonymous_user(client):
+    project = f.ProjectFactory()
+    response = client.get(f"/projects/{project.slug}/public-permissions")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+@pytest.mark.parametrize(
+    "permissions",
+    [
+        (["view_us", "view_tasks"]),
+        (["view_us", "view_milestones"]),
+        (["view_us", "view_tasks", "comment_task"]),
+        (["view_us", "comment_us"]),
+    ],
+)
+def test_update_project_public_permissions_ok(client, permissions):
+    user = f.UserFactory()
+    workspace = f.create_workspace(owner=user)
+    project = f.create_project(owner=user, workspace=workspace)
+    client.login(user)
+    data = {"permissions": permissions}
+    response = client.put(f"/projects/{project.slug}/public-permissions", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+def test_update_project_public_permissions_project_not_found(client):
+    user = f.UserFactory()
+    client.login(user)
+    data = {"permissions": ["view_project"]}
+    response = client.put("/projects/non-existent/public-permissions", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+@pytest.mark.parametrize(
+    "permissions",
+    [
+        (["view_tasks"]),
+        (["view_milestones"]),
+        (["comment_task"]),
+        (["comment_us"]),
+    ],
+)
+def test_update_project_public_permissions_incompatible(client, permissions):
+    user = f.UserFactory()
+    workspace = f.create_workspace(owner=user)
+    project = f.create_project(owner=user, workspace=workspace)
+    client.login(user)
+    data = {"permissions": permissions}
+    response = client.put(f"/projects/{project.slug}/public-permissions", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+def test_update_project_public_permissions_no_admin(client):
+    user1 = f.UserFactory()
+    project = f.create_project(owner=user1)
+    user2 = f.UserFactory()
+    client.login(user2)
+    data = {"permissions": []}
+    response = client.put(f"/projects/{project.slug}/public-permissions", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+def test_update_project_public_permissions_no_member(client):
+    project = f.ProjectFactory()
+    user = f.UserFactory()
+    client.login(user)
+    data = {"permissions": []}
+    response = client.put(f"/projects/{project.slug}/public-permissions", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+def test_update_project_public_permissions_anonymous_user(client):
+    project = f.ProjectFactory()
+    data = {"permissions": []}
+    response = client.put(f"/projects/{project.slug}/public-permissions", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
 def test_update_project_role_permissions_anonymous_user(client):
     user = f.UserFactory()
     workspace = f.create_workspace(owner=user)

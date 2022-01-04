@@ -77,3 +77,9 @@ def update_role_permissions(role: Role, permissions: List[str]) -> Role:
     role.permissions = permissions
     role.save()
     return role
+
+
+def update_project_public_permissions(project: Project, permissions: List[str]) -> List[str]:
+    project.public_permissions = permissions
+    project.save()
+    return project.public_permissions

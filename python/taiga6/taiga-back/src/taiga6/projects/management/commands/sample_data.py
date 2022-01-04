@@ -20,7 +20,7 @@ from sampledatahelper.helper import SampleDataHelper
 
 from taiga6.events.apps import disconnect_events_signals
 from taiga6.external_apps.models import Application, ApplicationToken
-from taiga6.permissions.choices import ANON_PERMISSIONS, WORKSPACE_ADMINS_PERMISSIONS
+from taiga6.permissions.choices import ANON_PERMISSIONS, WORKSPACE_ADMIN_PERMISSIONS
 from taiga6.projects.attachments.models import *
 from taiga6.projects.choices import BLOCKED_BY_STAFF
 from taiga6.projects.custom_attributes.choices import TYPES_CHOICES, TEXT_TYPE, MULTILINE_TYPE, DATE_TYPE, URL_TYPE
@@ -754,7 +754,7 @@ class Command(BaseCommand):
                                             order=1,
                                             is_admin=True,
                                             workspace=workspace,
-                                            permissions=list(map(lambda perm: perm[0], WORKSPACE_ADMINS_PERMISSIONS)) or [])
+                                            permissions=list(map(lambda perm: perm[0], WORKSPACE_ADMIN_PERMISSIONS)) or [])
 
     def _split_evenly(self, a, n):
         k, m = divmod(len(a), n)

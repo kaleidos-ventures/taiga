@@ -22,7 +22,7 @@ def create_workspace(name: str, color: int, owner: User) -> Workspace:
     workspace_role = workspaces_repo.create_workspace_role(
         name="Administrators",
         slug="admin",
-        permissions=choices.WORKSPACE_ADMINS_PERMISSIONS_LIST,
+        permissions=choices.WORKSPACE_PERMISSIONS + choices.WORKSPACE_ADMIN_PERMISSIONS,
         workspace=workspace,
         is_admin=True,
     )

@@ -31,7 +31,7 @@ from taiga6.base.utils.files import get_file_path
 from taiga6.base.utils.slug import slugify_uniquely
 from taiga6.base.utils.slug import slugify_uniquely_for_queryset
 
-from taiga6.permissions.choices import ANON_PERMISSIONS, MEMBERS_PERMISSIONS
+from taiga6.permissions.choices import ANON_PERMISSIONS, PROJECT_PERMISSIONS
 
 from taiga6.projects.notifications.choices import NotifyLevel
 from taiga6.projects.notifications.services import (
@@ -239,7 +239,7 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
                                      verbose_name=_("is private"))
     anon_permissions = ArrayField(models.TextField(null=False, blank=False, choices=ANON_PERMISSIONS),
                                   null=True, blank=True, default=list, verbose_name=_("anonymous permissions"))
-    public_permissions = ArrayField(models.TextField(null=False, blank=False, choices=MEMBERS_PERMISSIONS),
+    public_permissions = ArrayField(models.TextField(null=False, blank=False, choices=PROJECT_PERMISSIONS),
                                     null=True, blank=True, default=list, verbose_name=_("user permissions"))
 
     is_featured = models.BooleanField(default=False, null=False, blank=True,

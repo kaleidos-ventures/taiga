@@ -65,7 +65,7 @@ def test_get_workspace_being_workspace_member(client):
     general_member_role = f.WorkspaceRoleFactory(
         name="General Members",
         slug="general-members",
-        permissions=choices.WORKSPACE_MEMBERS_PERMISSIONS_LIST,
+        permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=False,
         workspace=workspace,
     )

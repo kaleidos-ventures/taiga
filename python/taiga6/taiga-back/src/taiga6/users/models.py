@@ -33,7 +33,7 @@ from taiga6.base.utils.colors import generate_random_hex_color
 from taiga6.base.utils.slug import slugify_uniquely
 from taiga6.base.utils.files import get_file_path
 from taiga6.base.utils.time import timestamp_ms
-from taiga6.permissions.choices import MEMBERS_PERMISSIONS, WORKSPACE_MEMBERS_PERMISSIONS
+from taiga6.permissions.choices import PROJECT_PERMISSIONS, WORKSPACE_PERMISSIONS
 from taiga6.projects.choices import BLOCKED_BY_OWNER_LEAVING
 from taiga6.projects.notifications.choices import NotifyLevel
 
@@ -297,7 +297,7 @@ class Role(models.Model):
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, null=False, blank=True,
                             verbose_name=_("slug"))
-    permissions = ArrayField(models.TextField(null=False, blank=False, choices=MEMBERS_PERMISSIONS),
+    permissions = ArrayField(models.TextField(null=False, blank=False, choices=PROJECT_PERMISSIONS),
                              null=True, blank=True, default=list, verbose_name=_("permissions"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
@@ -339,7 +339,7 @@ class WorkspaceRole(models.Model):
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, null=False, blank=True,
                             verbose_name=_("slug"))
-    permissions = ArrayField(models.TextField(null=False, blank=False, choices=WORKSPACE_MEMBERS_PERMISSIONS),
+    permissions = ArrayField(models.TextField(null=False, blank=False, choices=WORKSPACE_PERMISSIONS),
                              null=True, blank=True, default=list, verbose_name=_("permissions"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))

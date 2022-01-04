@@ -31,7 +31,7 @@ def test_create_project_being_workspace_member(client):
     general_member_role = f.WorkspaceRoleFactory(
         name="General Members",
         slug="general-members",
-        permissions=choices.WORKSPACE_MEMBERS_PERMISSIONS_LIST,
+        permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=False,
         workspace=workspace,
     )
@@ -109,7 +109,7 @@ def test_get_project_being_project_member(client):
     general_member_role = f.RoleFactory(
         name="General Members",
         slug="general-members",
-        permissions=choices.MEMBERS_PERMISSIONS_LIST,
+        permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,
     )
@@ -180,7 +180,7 @@ def test_get_project_roles_being_general_member(client):
     general_member_role = f.RoleFactory(
         name="General Members",
         slug="general-members",
-        permissions=choices.MEMBERS_PERMISSIONS_LIST,
+        permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,
     )
@@ -282,8 +282,8 @@ def test_update_project_role_permissions_ok(client):
     workspace = f.create_workspace(owner=user)
     project = f.create_project(owner=user, workspace=workspace)
     role_slug = "general-members"
-    # default permissions given by template should be the same as MEMBERS_PERMISSIONS_LIST
-    assert [x in project.roles.get(slug=role_slug).permissions for x in choices.MEMBERS_PERMISSIONS_LIST]
+    # default permissions given by template should be the same as PROJECT_PERMISSIONS
+    assert [x in project.roles.get(slug=role_slug).permissions for x in choices.PROJECT_PERMISSIONS]
     client.login(user)
     data = {"permissions": ["view_project"]}
     response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)

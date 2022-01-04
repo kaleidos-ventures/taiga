@@ -70,12 +70,16 @@ def create_project(**kwargs):
 
     project = ProjectFactory.create(**defaults)
     admin_role = f.RoleFactory.create(
-        name="Administrators", slug="admin", permissions=choices.ADMINS_PERMISSIONS_LIST, is_admin=True, project=project
+        name="Administrators",
+        slug="admin",
+        permissions=choices.PROJECT_PERMISSIONS + choices.PROJECT_ADMIN_PERMISSIONS,
+        is_admin=True,
+        project=project,
     )
     f.RoleFactory.create(
         name="General Members",
         slug="general-members",
-        permissions=choices.MEMBERS_PERMISSIONS_LIST,
+        permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,
     )

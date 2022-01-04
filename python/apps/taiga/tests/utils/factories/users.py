@@ -31,7 +31,7 @@ class UserFactory(Factory):
 class RoleFactory(Factory):
     name = factory.Sequence(lambda n: f"Role {n}")
     slug = factory.Sequence(lambda n: f"test-role-{n}")
-    permissions = choices.MEMBERS_PERMISSIONS_LIST
+    permissions = choices.PROJECT_PERMISSIONS
     is_admin = False
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
 
@@ -42,7 +42,7 @@ class RoleFactory(Factory):
 class WorkspaceRoleFactory(Factory):
     name = factory.Sequence(lambda n: f"WS Role {n}")
     slug = factory.Sequence(lambda n: f"test-ws-role-{n}")
-    permissions = choices.WORKSPACE_MEMBERS_PERMISSIONS_LIST
+    permissions = choices.WORKSPACE_PERMISSIONS
     is_admin = False
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
 

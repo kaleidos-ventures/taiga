@@ -31,7 +31,7 @@ def test_is_project_admin_being_project_member():
     general_member_role = f.RoleFactory(
         name="General Members",
         slug="general-members",
-        permissions=choices.MEMBERS_PERMISSIONS_LIST,
+        permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,
     )
@@ -62,7 +62,7 @@ def test_is_workspace_admin_being_workspace_member():
     general_member_role = f.WorkspaceRoleFactory(
         name="General Members",
         slug="general-members",
-        permissions=choices.WORKSPACE_MEMBERS_PERMISSIONS_LIST,
+        permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=False,
         workspace=workspace,
     )
@@ -94,7 +94,7 @@ def test_user_has_perm_being_project_member():
     general_member_role = f.RoleFactory(
         name="General Members",
         slug="general-members",
-        permissions=choices.MEMBERS_PERMISSIONS_LIST,
+        permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,
     )

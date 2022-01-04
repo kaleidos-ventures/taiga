@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from .choices import ADMINS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIONS
+from .choices import PROJECT_ADMIN_PERMISSIONS, PROJECT_PERMISSIONS, ANON_PERMISSIONS
 
 from django.apps import apps
 
@@ -82,14 +82,14 @@ def calculate_permissions(is_authenticated=False, is_superuser=False, is_member=
                           is_admin=False, role_permissions=[], anon_permissions=[],
                           public_permissions=[]):
     if is_superuser:
-        admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))
-        members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
+        admins_permissions = list(map(lambda perm: perm[0], PROJECT_ADMIN_PERMISSIONS))
+        members_permissions = list(map(lambda perm: perm[0], PROJECT_PERMISSIONS))
         public_permissions = []
         anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
     elif is_member:
         if is_admin:
-            admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))
-            members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
+            admins_permissions = list(map(lambda perm: perm[0], PROJECT_ADMIN_PERMISSIONS))
+            members_permissions = list(map(lambda perm: perm[0], PROJECT_PERMISSIONS))
         else:
             admins_permissions = []
             members_permissions = []

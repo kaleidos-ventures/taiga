@@ -7,41 +7,26 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-# default permissions for project administrators
+# possible permissions for project administrators
 # these permissions cannot be changed with the API
-ADMINS_PERMISSIONS = [
-    # Workspace  permissions
-    ('view_workspace', _('View workspace')),
-    # Project permissions
-    ('view_project', _('View project')),
+PROJECT_ADMIN_PERMISSIONS = [
+    # Project admin permissions
+    ('add_member', _('Add member')),
     ('modify_project', _('Modify project')),
     ('delete_project', _('Delete project')),
-    # US permissions
-    ('view_us', _('View user story')),
-    # Task permissions
-    ('view_tasks', _('View tasks')),
 ]
 
-# default permissions for workspace administrators
+# possible permissions for workspace administrators
 # these permissions cannot be changed with the API
-WORKSPACE_ADMINS_PERMISSIONS = [
-    # Workspace permissions
-    ('view_workspace', _('View workspace')),
-    ('modify_workspace', _('Modify workspace')),
-    ('delete_workspace', _('Delete workspace')),
-    ('view_project', _('View project')),
-    ##################################
-    # Edit project objects permissions
-    ##################################
-    # US permissions
-    ('view_us', _('View user story')),
-    # Task permissions
-    ('view_tasks', _('View tasks')),
+WORKSPACE_ADMIN_PERMISSIONS = [
+    # Workspace admin permissions
+    ('add_member', _('Add member')),
 ]
 
-# default permissions for project members, applied to default "general members" project role
+# possible permissions for members or public members
+# directly applied to default "general-members" project role
 # these may be changed by a project admin
-MEMBERS_PERMISSIONS = [
+PROJECT_PERMISSIONS = [
     # Project permissions
     ('view_project', _('View project')),
     # US permissions
@@ -58,14 +43,21 @@ MEMBERS_PERMISSIONS = [
     ('view_tasks', _('View tasks')),
 ]
 
-# default permissions for workspace members
-# permissions which apply to a project may be changed by a project admin
-# permissions which apply to a workspace may be changed by a workspace admin
-WORKSPACE_MEMBERS_PERMISSIONS = [
+# possible permissions for workspace members
+# these may be changed by a workspace admin
+WORKSPACE_PERMISSIONS = [
     # Workspace permissions
     ('view_workspace', _('View workspace')),
 ]
 
-# anonymous users
-# permissions which apply to a project may be changed by a project admin
-ANON_PERMISSIONS = []
+# possible permissions for anonymous users
+# only "view" permissions at most
+# these may be changed by a project admin
+ANON_PERMISSIONS = [
+    # Project permissions
+    ('view_project', _('View project')),
+    # US permissions
+    ('view_us', _('View US')),
+    # Task permissions
+    ('view_tasks', _('View tasks')),
+]

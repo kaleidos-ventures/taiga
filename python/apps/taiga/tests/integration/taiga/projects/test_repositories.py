@@ -95,7 +95,11 @@ def test_get_project_role_return_role():
     workspace = f.create_workspace(owner=user)
     project = f.ProjectFactory(owner=user, workspace=workspace)
     role = f.RoleFactory(
-        name="Role test", slug="role-test", permissions=choices.ADMINS_PERMISSIONS_LIST, is_admin=True, project=project
+        name="Role test",
+        slug="role-test",
+        permissions=choices.PROJECT_ADMIN_PERMISSIONS,
+        is_admin=True,
+        project=project,
     )
     assert repositories.get_project_role(project=project, slug="role-test") == role
 
@@ -119,14 +123,14 @@ def test_get_project_roles_return_roles():
     role1 = f.RoleFactory(
         name="Role test1",
         slug="role-test1",
-        permissions=choices.ADMINS_PERMISSIONS_LIST,
+        permissions=choices.PROJECT_ADMIN_PERMISSIONS,
         is_admin=True,
         project=project,
     )
     role2 = f.RoleFactory(
         name="Role test2",
         slug="role-test2",
-        permissions=choices.MEMBERS_PERMISSIONS_LIST,
+        permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,
     )
@@ -154,14 +158,14 @@ def test_get_first_role_return_role():
     role1 = f.RoleFactory(
         name="Role test1",
         slug="role-test1",
-        permissions=choices.ADMINS_PERMISSIONS_LIST,
+        permissions=choices.PROJECT_ADMIN_PERMISSIONS,
         is_admin=True,
         project=project,
     )
     f.RoleFactory(
         name="Role test2",
         slug="role-test2",
-        permissions=choices.MEMBERS_PERMISSIONS_LIST,
+        permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,
     )
@@ -186,7 +190,11 @@ def test_get_num_members_by_role_id():
     workspace = f.create_workspace(owner=user)
     project = f.ProjectFactory(owner=user, workspace=workspace)
     role = f.RoleFactory(
-        name="Role test", slug="role-test", permissions=choices.ADMINS_PERMISSIONS_LIST, is_admin=True, project=project
+        name="Role test",
+        slug="role-test",
+        permissions=choices.PROJECT_PERMISSIONS,
+        is_admin=True,
+        project=project,
     )
     f.MembershipFactory(user=user, project=project, role=role)
     f.MembershipFactory(user=user2, project=project, role=role)
@@ -199,7 +207,11 @@ def test_get_num_members_by_role_id_no_members():
     workspace = f.create_workspace(owner=user)
     project = f.ProjectFactory(owner=user, workspace=workspace)
     role = f.RoleFactory(
-        name="Role test", slug="role-test", permissions=choices.ADMINS_PERMISSIONS_LIST, is_admin=True, project=project
+        name="Role test",
+        slug="role-test",
+        permissions=choices.PROJECT_ADMIN_PERMISSIONS,
+        is_admin=True,
+        project=project,
     )
 
     assert repositories.get_num_members_by_role_id(role_id=role.id) == 0

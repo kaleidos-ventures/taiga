@@ -20,7 +20,7 @@ from django_pglocks import advisory_lock
 
 from taiga6.base.utils.time import timestamp_ms
 from taiga6.base.utils.slug import slugify_uniquely
-from taiga6.permissions.choices import ANON_PERMISSIONS, WORKSPACE_MEMBERS_PERMISSIONS
+from taiga6.permissions.choices import ANON_PERMISSIONS, WORKSPACE_PERMISSIONS
 
 
 class WorkspaceMembership(models.Model):
@@ -95,7 +95,7 @@ class Workspace(models.Model):
                                      through_fields=("workspace", "user"))
     anon_permissions = ArrayField(models.TextField(null=False, blank=False, choices=ANON_PERMISSIONS),
                                   null=True, blank=True, default=list, verbose_name=_("anonymous permissions"))
-    public_permissions = ArrayField(models.TextField(null=False, blank=False, choices=WORKSPACE_MEMBERS_PERMISSIONS),
+    public_permissions = ArrayField(models.TextField(null=False, blank=False, choices=WORKSPACE_PERMISSIONS),
                                     null=True, blank=True, default=list, verbose_name=_("user permissions"))
 
 

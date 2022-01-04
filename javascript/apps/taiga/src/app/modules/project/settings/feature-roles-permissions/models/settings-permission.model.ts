@@ -6,9 +6,4 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { projectFeature } from '../reducers/project.reducer';
-
-export const {
-  selectProject,
-  selectRoles,
-} = projectFeature;
+export type SettingsPermission = 'edit' | 'view' | 'no_access' | 'restricted' | 'custom';

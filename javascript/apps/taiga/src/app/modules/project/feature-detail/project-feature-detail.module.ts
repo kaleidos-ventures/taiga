@@ -10,7 +10,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ProjectFeatureDetailComponent } from './project-feature-detail.component';
-import { ProjectPageRoutingModule } from './project-feature-detail-routing.module';
+import { ProjectFeatureDetailRoutingModule } from './project-feature-detail-routing.module';
 import { ProjectFeatureNavigationModule } from '~/app/modules/project/feature-navigation/project-feature-navigation.module';
 import { ProjectDataAccessModule } from '~/app/modules/project/data-access/project.module';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -22,7 +22,7 @@ import { AvatarModule } from '@taiga/ui/avatar';
   ],
   imports: [
     CommonModule,
-    ProjectPageRoutingModule,
+    ProjectFeatureDetailRoutingModule,
     ProjectFeatureNavigationModule,
     ProjectDataAccessModule,
     TranslocoModule,

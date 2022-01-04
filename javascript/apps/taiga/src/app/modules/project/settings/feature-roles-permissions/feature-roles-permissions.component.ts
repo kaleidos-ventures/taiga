@@ -7,18 +7,20 @@
  */
 
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Role } from '@taiga/data';
-import { filter, map, take } from 'rxjs/operators';
-import { fetchRoles } from '~/app/modules/project/data-access/+state/actions/project.actions';
-import { selectRoles } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { Project, Role } from '@taiga/data';
+import { auditTime, filter, map, skip, take } from 'rxjs/operators';
+import { fetchRoles, updateRolePermissions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { selectProject, selectRoles } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
+
 @UntilDestroy()
 @Component({
-  selector: 'tg-projects-settings-feature-roles-permissions',
+  selector: 'tg-project-settings-feature-roles-permissions',
   templateUrl: './feature-roles-permissions.component.html',
   styleUrls: [
     './feature-roles-permissions.component.css',
@@ -27,36 +29,27 @@ import { selectRoles } from '~/app/modules/project/data-access/+state/selectors/
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState]
 })
-export class ProjectsSettingsFeatureRolesPermissionsComponent implements AfterViewInit {
-  public adminList: Role[] = [];
+export class ProjectSettingsFeatureRolesPermissionsComponent implements AfterViewInit {
+  private readonly defaultFragment =  'member-permissions-settings';
 
+  public readonly form = this.fb.group({});
   public readonly model$ = this.state.select().pipe(
     map((model) => {
-      this.form = this.fb.group({
-        roles: this.fb.array([])
-      });
-      this.adminList = [];
-      model.roles.forEach(role => {
-        const roleForm = this.fb.group({
-          name: new FormControl(role.name),
-          numMembers: new FormControl(role.numMembers),
-          order: new FormControl(role.order),
-          slug: new FormControl(role.slug),
-          permissions:  new FormControl(role.permissions)
-        });
-        if (this.roles && !role.isAdmin) {
-          this.roles.push(roleForm);
-        } else if (this.roles && role.isAdmin) {
-          this.adminList.push(role);
-        }
-      });
+      const admin = model.roles.find((it) => it.isAdmin);
+
       return {
         ...model,
+        admin,
       };
-    }),
+    })
   );
 
+  public getRoleForm(role: Role) {
+    return this.form.get(role.slug) as FormGroup;
+  }
+
   constructor(
+    private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService,
     private el: ElementRef,
     private router: Router,
     private route: ActivatedRoute,
@@ -64,36 +57,86 @@ export class ProjectsSettingsFeatureRolesPermissionsComponent implements AfterVi
     private store: Store,
     private state: RxState<{
       roles: Role[]
+      project: Project,
     }>,
   ) {
-    this.route.pathFromRoot[2].params
-      .pipe(untilDestroyed(this))
-      .subscribe(params => {
-        if (params) {
-          const slug = params.slug as string;
-          if (slug) {
-            this.store.dispatch(fetchRoles({ slug }));
-          }
-        }
-      });
+    this.state.connect('project', this.store.select(selectProject).pipe(
+      filter((project): project is Project => !!project))
+    );
     this.state.connect('roles', this.store.select(selectRoles));
 
+    this.state.hold(this.state.select('project'), (project) => {
+      this.store.dispatch(fetchRoles({ slug: project.slug }));
+    });
   }
-
-  public get roles() {
-    return this.form.controls['roles'] as FormArray;
-  }
-
-  private readonly defaultFragment =  'member-permissions-settings';
-  public form!: FormGroup;
-
-  public basicPermissionList = [
-    'Can edit',
-    'Custom',
-    'No Access'
-  ];
 
   public ngAfterViewInit() {
+    this.watchFragment();
+    this.initForm();
+  }
+
+  public initForm() {
+    this.state.hold(this.state.select('roles'), (roles) => {
+      roles
+        .filter((role) => !role.isAdmin)
+        .forEach((role) => {
+          this.createRoleFormControl(role);
+        });
+    });
+
+    this.form.valueChanges.pipe(
+      skip(1),
+      untilDestroyed(this),
+      auditTime(100),
+    ).subscribe(() => {
+      this.save();
+    });
+  }
+
+  public createRoleFormControl(role: Role) {
+    const roleGroup = this.fb.group({});
+    const currentPermissions = this.projectsSettingsFeatureRolesPermissionsService.formatRawPermissions(role.permissions);
+
+    for (const [ module ] of this.projectsSettingsFeatureRolesPermissionsService.getModules()) {
+      const fb = this.fb.group({
+        create: [false],
+        modify: [false],
+        delete: [false],
+      });
+
+      if (this.projectsSettingsFeatureRolesPermissionsService.hasComments(module)) {
+        fb.addControl('comment', new FormControl);
+      }
+
+      roleGroup.addControl(module, fb);
+
+      if (!currentPermissions[module]) {
+        fb.disable();
+      }
+    }
+
+    roleGroup.patchValue(currentPermissions);
+
+    this.form.addControl(role.slug, roleGroup);
+  }
+
+  public save() {
+    this.state.get('roles')
+      .filter((role) => !role.isAdmin)
+      .forEach((role) => {
+        const permissions = this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(this.getRoleForm(role));
+
+        this.store.dispatch(
+          updateRolePermissions({
+            project: this.state.get('project').slug,
+            roleSlug: role.slug,
+            permissions,
+          })
+        );
+      });
+  }
+
+  public watchFragment() {
     this.route.fragment.pipe(take(1)).subscribe((fragment) => {
       if (!fragment) {
         fragment = this.defaultFragment;
@@ -148,7 +191,7 @@ export class ProjectsSettingsFeatureRolesPermissionsComponent implements AfterVi
     });
   }
 
-  public trackByIndex(index: number) {
-    return index;
+  public trackBySlug(_index: number, role: Role) {
+    return role.slug;
   }
 }

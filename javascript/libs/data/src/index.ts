@@ -20,3 +20,4 @@ export * from './lib/milestone.model';
 export * from './lib/milestone.model.mock';
 export * from './lib/workspace.model';
 export * from './lib/workspace.model.mock';
+export * from './lib/modules.model';

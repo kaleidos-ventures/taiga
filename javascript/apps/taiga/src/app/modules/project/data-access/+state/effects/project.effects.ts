@@ -13,8 +13,9 @@ import { map, tap } from 'rxjs/operators';
 
 import * as ProjectActions from '../actions/project.actions';
 import { ProjectApiService } from '@taiga/api';
-import { fetch } from '@nrwl/angular';
+import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class ProjectEffects {
@@ -59,6 +60,28 @@ export class ProjectEffects {
         },
         onError: () => {
           return null;
+        },
+      })
+    );
+  });
+
+  public updateRolePermissions$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.updateRolePermissions),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.projectApiService.putRoles(
+            action.project,
+            action.roleSlug,
+            action.permissions
+          ).pipe(
+            map(() => {
+              return ProjectActions.updateRolePermissionsSuccess();
+            })
+          );
+        },
+        onError: () => {
+          return ProjectActions.updateRolePermissionsError();
         },
       })
     );

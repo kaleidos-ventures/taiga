@@ -5,6 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
+
 <ng-container *ngIf="model$ | async as vm">
 <ng-container *transloco="let t;">
   <div class="settings-permissions-wrapper">
@@ -20,77 +21,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <h3
       tabindex="-1"
       class="settings-subtitle">{{ t('project_settings.member_permissions') }}</h3>
-    <div class="project-admin">
+    <div
+      *ngIf="vm.admin"
+      class="project-admin">
       <div class="project-admin-title">
         <span class="project-admin-text">{{ t('project_settings.roles_permissions.project_administrators') }}</span>
         <button
-          *ngFor="let adminRole of adminList; trackBy: trackByIndex"
           class="small project-admin-button"
-          [class.empty]="adminRole.numMembers === 0"
-          tuiLink
-          [title]="t('project_settings.roles_permissions.number_admins', { admins: adminRole.numMembers })">
-          {{ t('project_settings.roles_permissions.number_admins', { admins: adminRole.numMembers }) }}
+          [class.empty]="!vm.admin.numMembers"
+          tuiLink>
+          {{ t('project_settings.roles_permissions.number_admins', { admins: vm.admin.numMembers }) }}
         </button>
       </div>
       <p class="project-admin-paragraph">{{ t('project_settings.roles_permissions.project_administrators_explanation') }}</p>
     </div>
-    <form
-      *ngIf="form"
-      [formGroup]="form">
-      <ng-container formArrayName="roles">
-        <ng-container *ngFor="let roleForm of roles.controls; trackBy: trackByIndex; let i = index">
-          <div
-          class="permission-row"
-          [formGroupName]="i">
-          <div
-            class="main">
-            <div class="permission-row-title">
-              <span class="permission-row-name">{{ roleForm.value.name }}</span>
-              <button
-                *ngIf="roleForm.value.numMembers > 0"
-                [class.empty]="roleForm.value.numMembers === 0"
-                class="small permission-row-member"
-                tuiLink
-                [title]="t('project_settings.roles_permissions.number_members', { members: roleForm.value.numMembers })">
-                {{ t('project_settings.roles_permissions.number_members', { members: roleForm.value.numMembers }) }}
-              </button>
-            </div>
-            <div class="permission-row-select">
-              <tg-ui-select>
-                <tui-select
-                  tuiTextfieldSize="l"
-                  formControlName="permissions">
-                  <tui-data-list-wrapper
-                    [items]="basicPermissionList"
-                    *tuiDataList>
-                  </tui-data-list-wrapper>
-                </tui-select>
-              </tg-ui-select>
-            </div>
-            <div class="permission-row-action">
-              <button
-                appearance="tertiary"
-                class="permission-row-button"
-                tuiButton
-                iconRight="'chevron-down'"
-                [title]="t('project_settings.roles_permissions.advanced_settings')"
-                type="button">
-                {{ t('project_settings.roles_permissions.advanced_settings') }}
-              </button>
-              <button
-                appearance="tertiary"
-                class="permission-row-button"
-                tuiIconButton
-                icon="'more-vertical'"
-                [title]="t('project_settings.roles_permissions.show_more')"
-                type="button">
-                <span class="visually-hidden">{{ t('project_settings.roles_permissions.show_more') }}</span>
-              </button>
-            </div>
-          </div>
-        <div class="sub"></div>
-      </div>
-        </ng-container>
+    <form [formGroup]="form">
+      <ng-container *ngFor="let role of vm.roles; trackBy: trackBySlug;">
+        <tg-role-permission-row
+          *ngIf="getRoleForm(role)"
+          [formGroup]="getRoleForm(role)"
+          [role]="role">
+        </tg-role-permission-row>
       </ng-container>
 
       <button

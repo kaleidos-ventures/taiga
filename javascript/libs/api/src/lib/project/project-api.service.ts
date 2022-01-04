@@ -45,4 +45,18 @@ export class ProjectApiService {
   public getRoles(slug: Project['slug']) {
     return this.http.get<Role[]>(`${this.config.apiUrl}/projects/${slug}/roles`);
   }
+
+  public putRoles(slug: Project['slug'], roleSlug: Role['slug'], permissions: string[]) {
+    // only permission currently supported by back
+    // python/apps/taiga/src/taiga/permissions/choices.py
+    permissions = permissions.filter((permission) => {
+      const validPermission = ['add_member', 'delete_us', 'delete_task', 'modify_task', 'view_tasks', 'modify_us', 'comment_us', 'view_us', 'add_task', 'add_us', 'comment_task', 'view_milestones', 'delete_project', 'modify_project', 'view_project'];
+
+      return validPermission.includes(permission);
+    });
+
+    return this.http.put<Role>(`${this.config.apiUrl}/projects/${slug}/roles/${roleSlug}/permissions` , {
+      permissions,
+    });
+  }
 }

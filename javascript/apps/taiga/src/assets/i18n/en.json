@@ -22,7 +22,10 @@
     "confirmation_modal": {
       "yes": "Yes, quit",
       "no": "No, keep editing"
-    }
+    },
+    "userstories": "Userstories",
+    "tasks": "Tasks",
+    "sprints": "Sprints"
   },
   "navigation": {
     "go_home": "Go to home",

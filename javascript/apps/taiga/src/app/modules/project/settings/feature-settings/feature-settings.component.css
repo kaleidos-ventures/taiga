@@ -7,5 +7,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 .settings-container {
-  padding: var(--spacing-32) var(--spacing-40);
+  padding: var(--spacing-32);
 }

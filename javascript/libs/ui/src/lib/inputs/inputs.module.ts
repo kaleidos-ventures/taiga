@@ -8,7 +8,7 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TuiSvgModule, TuiTextfieldControllerModule } from '@taiga-ui/core';
+import { TuiSvgModule, TuiTextfieldControllerModule, TUI_ANIMATIONS_DURATION } from '@taiga-ui/core';
 import { InputComponent } from './input/input.component';
 import { InputRefDirective } from './input-ref.directive';
 import { SelectComponent } from './select/select.component';

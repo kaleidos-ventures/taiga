@@ -6,17 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, OnInit } from '@angular/core';
-
+import { Component } from '@angular/core';
 @Component({
   selector: 'tg-feature-settings',
   templateUrl: './feature-settings.component.html',
   styleUrls: ['./feature-settings.component.css']
 })
-export class ProjectsSettingsFeatureSettingsComponent implements OnInit {
-
-  public ngOnInit() {
-    console.log('settings work');
-  }
+export class ProjectsSettingsFeatureSettingsComponent {
 
 }

@@ -7,10 +7,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 @import "tools/typography.css";
 
+:host {
+  --setting-size: 1024px;
+}
+
 .member-permissions-settings,
 .public-permissions-settings,
 .workspace-permissions-settings {
+  margin-block-start: var(--spacing-32);
   min-block-size: 63vh;
+}
+
+.settings-subtitle {
+  margin: 0;
+  margin-block-end: var(--spacing-24);
 }
 
 .project-admin {
@@ -35,70 +45,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     @mixin font-body-paragraph ;
 
     color: var(--color-gray70);
-  }
-}
-
-.permission-row {
-  border-block-end: solid 1px var(--color-gray20);
-  max-inline-size: 1024px;
-  padding: var(--spacing-4) 0;
-
-  & .main {
-    align-items: center;
-    display: flex;
-    inline-size: 100%;
-    padding: var(--spacing-8) 0;
-  }
-
-  & .permission-row-title {
-    block-size: var(--spacing-16);
-    display: flex;
-    flex-basis: 32%;
-    margin-inline-end: var(--spacing-16);
-
-    & .permission-row-member {
-      display: inline-block;
-      flex-shrink: 0;
-    }
-
-    & .permission-row-name {
-      /* stylelint-disable */
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      color: var(--color-gray90);
-      display: -webkit-box;
-      /* stylelint-enable */
-      font-weight: var(--font-weight-medium);
-      margin-inline-end: var(--spacing-8);
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
-  & .permission-row-select {
-    flex-grow: 1;
-    min-inline-size: 14rem;
-
-    & tg-ui-select {
-      max-inline-size: 17rem;
-      min-inline-size: 14rem;
-    }
-  }
-
-  & .permission-row-action {
-    display: flex;
-    justify-content: flex-end;
-    margin-inline-start: var(--spacing-16);
-    max-inline-size: 32%;
-    min-inline-size: 14rem;
-
-    & .permission-row-button {
-      margin-inline-end: var(--spacing-8);
-
-      &:last-child {
-        margin-inline-end: 0;
-      }
-    }
   }
 }
 

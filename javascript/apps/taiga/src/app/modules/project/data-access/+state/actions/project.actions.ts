@@ -29,3 +29,15 @@ export const fetchRolesSuccess = createAction(
   props<{roles: Role[]}>()
 );
 
+export const updateRolePermissions = createAction(
+  '[Roles] update role permissions',
+  props<{project: Project['slug'], roleSlug: Role['slug'], permissions: string[]}>()
+);
+
+export const updateRolePermissionsSuccess = createAction(
+  '[Roles] update role permissions success',
+);
+
+export const updateRolePermissionsError = createAction(
+  '[Roles] update role permissions error',
+);

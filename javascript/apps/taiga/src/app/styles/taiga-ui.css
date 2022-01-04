@@ -134,3 +134,27 @@ tui-data-list {
   }
 }
 /* stylelint-enable */
+/* stylelint-disable selector-max-type */
+
+tui-toggle {
+  & tui-wrapper[data-appearance="primary"] {
+    background: var(--color-secondary);
+    color: var(--color-secondary);
+
+    &[data-state="pressed"],
+    &[data-state="hovered"] {
+      background: var(--color-secondary);
+    }
+  }
+
+  & tui-wrapper[data-appearance="secondary"] {
+    background: var(--color-gray40);
+    color: var(--color-gray40);
+
+    &[data-state="pressed"],
+    &[data-state="hovered"] {
+      background: var(--color-gray40);
+    }
+  }
+}
+/* stylelint-enable */

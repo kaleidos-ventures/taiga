@@ -170,3 +170,20 @@ def _get_workspace_membership_permissions(workspace_membership: WorkspaceMembers
     if workspace_membership and workspace_membership.workspace_role and workspace_membership.workspace_role.permissions:
         return workspace_membership.workspace_role.permissions
     return []
+
+
+def permissions_are_correct(permissions: List[str]) -> bool:
+    # a user cannot see tasks or sprints if she has no access to user stories
+    incompatible_permissions = set(["view_tasks", "view_milestones"])
+    if "view_us" not in permissions and set.intersection(set(permissions), incompatible_permissions):
+        return False
+
+    # a user cannot comment a user story if she has no access to it
+    if "view_us" not in permissions and "comment_us" in permissions:
+        return False
+
+    # a user cannot comment a task if she has no access to it
+    if "view_tasks" not in permissions and "comment_task" in permissions:
+        return False
+
+    return True

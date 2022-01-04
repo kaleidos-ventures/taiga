@@ -12,6 +12,7 @@ from fastapi import UploadFile
 from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
 from taiga.exceptions import services as ex
+from taiga.permissions import services as permissions_services
 from taiga.projects import repositories as projects_repo
 from taiga.projects.models import Project
 from taiga.users.models import Role, User
@@ -85,8 +86,7 @@ def update_role_permissions(role: Role, permissions: List[str]) -> Role:
     if role.is_admin:
         raise ex.NonEditableRoleError()
 
-    incompatible_permissions = set(["view_tasks", "view_milestones"])
-    if "view_us" not in permissions and set.intersection(set(permissions), incompatible_permissions):
+    if not permissions_services.permissions_are_correct(permissions):
         raise ex.BadPermissionsSetError()
 
     return projects_repo.update_role_permissions(role=role, permissions=permissions)

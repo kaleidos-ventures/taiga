@@ -158,3 +158,19 @@ def test_check_permissions_forbidden():
 
     assert error.value.status_code == 403
     assert error.value.detail == "Forbidden"
+
+
+@pytest.mark.parametrize(
+    "permissions, expected",
+    [
+        (["view_tasks", "view_milestones"], False),
+        (["comment_us", "view_project"], False),
+        (["comment_task", "view_project"], False),
+        (["view_us", "view_tasks", "view_milestones"], True),
+        (["comment_us", "view_us"], True),
+        (["view_us", "comment_task", "view_tasks"], True),
+    ],
+)
+def test_permissions_are_correct(permissions, expected):
+    result = services.permissions_are_correct(permissions)
+    assert result == expected

@@ -7,10 +7,10 @@
  */
 
 import { animate, query, state, style, transition, trigger, group, AnimationEvent } from '@angular/animations';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RxState } from '@rx-angular/state';
-import { Project, Milestone } from '@taiga/data';
+import { Project } from '@taiga/data';
 import { Subject } from 'rxjs';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
@@ -20,22 +20,6 @@ const menuWidth = '200px';
 const collapseMenuWidth = '48px';
 const settingsMenuAnimation = '300ms ease-in-out';
 const translateMenuSelector = '.main-nav-container-inner';
-
-interface ProjectMenuDialog {
-  hover: boolean;
-  open: boolean;
-  link: string;
-  type: string;
-  top: number;
-  left: number;
-  text: string;
-  height: number;
-  mainLinkHeight: number;
-  children: {
-    text: string;
-    link: string[];
-  }[];
-}
 
 @Component({
   selector: 'tg-project-navigation',
@@ -111,9 +95,6 @@ interface ProjectMenuDialog {
 })
 export class ProjectNavigationComponent implements OnInit {
 
-  public collapseText = true;
-  public scrumChildMenuVisible = false;
-
   @Input()
   public project!: Project;
 
@@ -139,32 +120,9 @@ export class ProjectNavigationComponent implements OnInit {
     };
   }
 
-  @ViewChild('backlogSubmenu', { static: false }) public backlogSubmenuEl!: ElementRef;
-
-  @ViewChild('backlogButton', { static: false }) public backlogButtonElement!: ElementRef;
-
-  @ViewChild('projectSettingButton', { static: false }) public  projectSettingButton!: ElementRef;
-
-  public backlogHTMLElement!: HTMLElement;
-
-  public dialog: ProjectMenuDialog = {
-    open: false,
-    hover: false,
-    mainLinkHeight: 0,
-    type: '',
-    link: '',
-    top: 0,
-    left: 0,
-    text: '',
-    height: 0,
-    children: [],
-  };
-
   public showProjectSettings = false;
   public settingsAnimationInProgress = false;
   public animationEvents$ = new Subject<AnimationEvent>();
-
-  private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
 
   @HostListener('@openCollapse.start', ['$event'])
   public captureStartEvent($event: AnimationEvent) {
@@ -177,10 +135,6 @@ export class ProjectNavigationComponent implements OnInit {
     this.animationEvents$.next($event);
 
     this.settingsAnimationInProgress = false;
-
-    if ($event.fromState === 'open-settings') {
-      (this.projectSettingButton.nativeElement as HTMLElement).focus();
-    }
   }
 
   constructor(
@@ -202,115 +156,13 @@ export class ProjectNavigationComponent implements OnInit {
     );
   }
 
-  public get milestones(): Milestone[] {
-    return this.project.milestones.filter((milestone) => !milestone.closed).reverse().slice(0, 7);
-  }
-
   public toggleCollapse() {
     this.collapsed = !this.collapsed;
     this.localStorage.set('projectnav-collapsed', this.collapsed);
-
-    if (this.collapsed) {
-      this.scrumChildMenuVisible = false;
-    }
-  }
-
-  public getCollapseIcon() {
-    const url = 'assets/icons/sprite.svg';
-    const icon = this.collapsed ? 'collapse-right' : 'collapse-left';
-    return `${url}#${icon}`;
-  }
-
-  public toggleScrumChildMenu() {
-    if(this.collapsed) {
-      (this.backlogSubmenuEl.nativeElement as HTMLElement).focus();
-    } else {
-      this.scrumChildMenuVisible = !this.scrumChildMenuVisible;
-    }
-  }
-
-  public popup(event: MouseEvent | FocusEvent, type: string) {
-    if (!this.collapsed) {
-      return;
-    }
-
-    this.dialog.type = type;
-    this.initDialog(event.target as HTMLElement, type);
-  }
-
-  public popupScrum(event: MouseEvent | FocusEvent) {
-    if (!this.collapsed) {
-      return;
-    }
-
-    // TODO WHEN REAL DATA
-    // const children: ProjectMenuDialog['children'] = this.milestones.map((milestone) => {
-    //   return {
-    //     text: milestone.name,
-    //     link: ['http://taiga.io']
-    //   };
-    // });
-
-    // children.unshift({
-    //   text: this.translocoService.translate('common.backlog'),
-    //   link: ['http://taiga.io']
-    // });
-
-    this.initDialog(event.target as HTMLElement, 'scrum', /* children */);
-  }
-
-  public initDialog(el: HTMLElement, type: string, children: ProjectMenuDialog['children'] = []) {
-
-    if (this.dialogCloseTimeout) {
-      clearTimeout(this.dialogCloseTimeout);
-    }
-
-    const text = el.getAttribute('data-text');
-
-    if (text) {
-      const navigationBarWidth = 48;
-
-      if (type !== 'scrum' && el.querySelector('a')) {
-        this.dialog.link = el.querySelector('a')!.getAttribute('href') ?? '';
-      }
-      this.dialog.hover = false;
-      this.dialog.mainLinkHeight = type === 'project' ? (el.closest('.workspace') as HTMLElement).offsetHeight : el.offsetHeight;
-      this.dialog.top = type === 'project' ? (el.closest('.workspace') as HTMLElement).offsetTop : el.offsetTop;
-      this.dialog.open = true;
-      this.dialog.text = text;
-      this.dialog.children = children;
-      this.dialog.type = type;
-      this.dialog.left = navigationBarWidth;
-    }
-  }
-
-  public enterDialog() {
-    this.dialog.open = true;
-    this.dialog.hover = true;
-  }
-
-  public out() {
-    this.dialogCloseTimeout = setTimeout(() => {
-      if (!this.dialog.hover) {
-        this.dialog.open = false;
-        this.dialog.type = '';
-        this.cd.detectChanges();
-      }
-    }, 100);
-  }
-
-  public outDialog(focus?: string) {
-    this.dialog.hover = false;
-    if (focus === 'backlog') {
-      (this.backlogButtonElement.nativeElement as HTMLElement).focus();
-    }
-    this.out();
   }
 
   public openSettings() {
     this.showProjectSettings = true;
-    this.dialog.open = false;
-    this.dialog.type = '';
     void this.router.navigate(
       ['project', this.project.slug, 'settings', 'project'],
       {

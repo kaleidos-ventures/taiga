@@ -6,16 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
-import { ProjectNavigationSettingsModule } from './components/project-navigation-settings/project-navigation-settings.module';
-import { ProjectNavigationMenuModule } from './components/project-navigation-menu/project-navigation-menu.module';
-import { ProjectNavigationComponent } from './project-feature-navigation.component';
+import { ProjectNavigationMenuComponent } from './project-navigation-menu.component';
 
 @NgModule({
   imports: [
@@ -23,18 +20,15 @@ import { ProjectNavigationComponent } from './project-feature-navigation.compone
     TuiButtonModule,
     TuiSvgModule,
     TranslocoModule,
-    A11yModule,
-    RouterModule,
     AvatarModule,
-    ProjectNavigationSettingsModule,
-    ProjectNavigationMenuModule
+    RouterModule
   ],
-  providers: [],
   declarations: [
-    ProjectNavigationComponent
+    ProjectNavigationMenuComponent,
   ],
   exports: [
-    ProjectNavigationComponent
+    ProjectNavigationMenuComponent,
   ]
+
 })
-export class ProjectFeatureNavigationModule {}
+export class ProjectNavigationMenuModule {}

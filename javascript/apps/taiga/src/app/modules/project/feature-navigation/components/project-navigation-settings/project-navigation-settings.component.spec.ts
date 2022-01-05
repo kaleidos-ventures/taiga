@@ -74,6 +74,7 @@ describe('ProjectSettingsComponent', () => {
     expect(spectator.component.previousUrl).toEqual('/route-history');
   });
 
+
   it('get history nav - has no history defaults to current route', () => {
     spectator.component.ngOnInit = jest.fn();
     spectator.component.initialFocus = jest.fn();

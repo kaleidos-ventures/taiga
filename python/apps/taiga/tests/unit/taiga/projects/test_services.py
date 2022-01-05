@@ -71,10 +71,15 @@ def test_update_role_permissions_is_admin():
 
 
 def test_update_role_permissions_incompatible_permissions():
-    with pytest.raises(ex.BadPermissionsSetError):
+    with pytest.raises(ex.IncompatiblePermissionsSetError):
         services.update_role_permissions(
             role=f.RoleFactory(is_admin=False), permissions=["view_tasks", "view_milestones"]
         )
+
+
+def test_update_role_permissions_not_valid_permissions():
+    with pytest.raises(ex.NotValidPermissionsSetError):
+        services.update_role_permissions(role=f.RoleFactory(is_admin=False), permissions=["not_valid", "foo", "bar"])
 
 
 def test_update_role_permissions_ok():

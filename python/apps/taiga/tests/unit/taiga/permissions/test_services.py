@@ -171,6 +171,23 @@ def test_check_permissions_forbidden():
         (["view_us", "comment_task", "view_tasks"], True),
     ],
 )
-def test_permissions_are_correct(permissions, expected):
-    result = services.permissions_are_correct(permissions)
+def test_permissions_are_compatible(permissions, expected):
+    result = services.permissions_are_compatible(permissions)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "permissions, expected",
+    [
+        (["view_tasks", "foo"], False),
+        (["comment_us", "not_valid"], False),
+        (["non_existent"], False),
+        (["view_us", "view_tasks", "view_milestones"], True),
+        (["comment_us", "view_us"], True),
+        (["view_us", "comment_task", "view_tasks"], True),
+        (["comment_task", "view_tasks"], True),
+    ],
+)
+def test_permissions_are_valid(permissions, expected):
+    result = services.permissions_are_valid(permissions)
     assert result == expected

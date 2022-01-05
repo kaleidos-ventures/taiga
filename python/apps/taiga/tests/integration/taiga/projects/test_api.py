@@ -294,6 +294,16 @@ def test_update_project_public_permissions_incompatible(client, permissions):
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
+def test_update_project_public_permissions_not_valid(client):
+    user = f.UserFactory()
+    workspace = f.create_workspace(owner=user)
+    project = f.create_project(owner=user, workspace=workspace)
+    client.login(user)
+    data = {"permissions": ["not_valid"]}
+    response = client.put(f"/projects/{project.slug}/public-permissions", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
 def test_update_project_public_permissions_no_admin(client):
     user1 = f.UserFactory()
     project = f.create_project(owner=user1)
@@ -377,6 +387,17 @@ def test_update_project_role_permissions_incompatible_permissions(client):
     role_slug = "general-members"
     client.login(user)
     data = {"permissions": ["view_project", "view_tasks"]}
+    response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+def test_update_project_role_permissions_not_valid_permissions(client):
+    user = f.UserFactory()
+    workspace = f.create_workspace(owner=user)
+    project = f.create_project(owner=user, workspace=workspace)
+    role_slug = "general-members"
+    client.login(user)
+    data = {"permissions": ["not_valid", "foo"]}
     response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 

@@ -7,6 +7,7 @@
 
 from typing import Any, List, Optional, Union
 
+from taiga.permissions import choices
 from taiga.projects.models import Membership, Project
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace, WorkspaceMembership
@@ -172,7 +173,11 @@ def _get_workspace_membership_permissions(workspace_membership: WorkspaceMembers
     return []
 
 
-def permissions_are_correct(permissions: List[str]) -> bool:
+def permissions_are_valid(permissions: List[str]) -> bool:
+    return set.issubset(set(permissions), choices.VALID_PROJECT_CHOICES)
+
+
+def permissions_are_compatible(permissions: List[str]) -> bool:
     # a user cannot see tasks or sprints if she has no access to user stories
     incompatible_permissions = set(["view_tasks", "view_milestones"])
     if "view_us" not in permissions and set.intersection(set(permissions), incompatible_permissions):

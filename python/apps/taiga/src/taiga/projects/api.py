@@ -180,7 +180,10 @@ def update_project_public_permissions(
     try:
         public_permissions = projects_services.update_project_public_permissions(project, form.permissions)
         return public_permissions
-    except services_ex.BadPermissionsSetError:
+    except services_ex.NotValidPermissionsSetError:
+        logger.exception("One or more permissions are not valid. Maybe, there is a typo.")
+        raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
+    except services_ex.IncompatiblePermissionsSetError:
         logger.exception("Given permissions are incompatible")
         raise ex.BadRequest("Given permissions are incompatible")
 
@@ -212,7 +215,10 @@ def update_project_role_permissions(
     except services_ex.NonEditableRoleError:
         logger.exception("Cannot edit permissions in an admin role")
         raise ex.ForbiddenError("Cannot edit permissions in an admin role")
-    except services_ex.BadPermissionsSetError:
+    except services_ex.NotValidPermissionsSetError:
+        logger.exception("One or more permissions are not valid. Maybe, there is a typo.")
+        raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
+    except services_ex.IncompatiblePermissionsSetError:
         logger.exception("Given permissions are incompatible")
         raise ex.BadRequest("Given permissions are incompatible")
 

@@ -86,14 +86,20 @@ def update_role_permissions(role: Role, permissions: List[str]) -> Role:
     if role.is_admin:
         raise ex.NonEditableRoleError()
 
-    if not permissions_services.permissions_are_correct(permissions):
-        raise ex.BadPermissionsSetError()
+    if not permissions_services.permissions_are_valid(permissions):
+        raise ex.NotValidPermissionsSetError()
+
+    if not permissions_services.permissions_are_compatible(permissions):
+        raise ex.IncompatiblePermissionsSetError()
 
     return projects_repo.update_role_permissions(role=role, permissions=permissions)
 
 
 def update_project_public_permissions(project: Project, permissions: List[str]) -> List[str]:
-    if not permissions_services.permissions_are_correct(permissions):
-        raise ex.BadPermissionsSetError()
+    if not permissions_services.permissions_are_valid(permissions):
+        raise ex.NotValidPermissionsSetError()
+
+    if not permissions_services.permissions_are_compatible(permissions):
+        raise ex.IncompatiblePermissionsSetError()
 
     return projects_repo.update_project_public_permissions(project=project, permissions=permissions)

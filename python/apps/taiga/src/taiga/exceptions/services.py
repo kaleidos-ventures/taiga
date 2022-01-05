@@ -10,5 +10,9 @@ class NonEditableRoleError(Exception):
     pass
 
 
-class BadPermissionsSetError(Exception):
+class NotValidPermissionsSetError(Exception):
+    pass
+
+
+class IncompatiblePermissionsSetError(Exception):
     pass

@@ -21,8 +21,6 @@ from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.projects.validators import PermissionsValidator, ProjectValidator
-from taiga.users.models import Role
-from taiga.users.serializers import RoleSerializer
 from taiga.workspaces import services as workspaces_services
 
 logger = logging.getLogger(__name__)
@@ -39,8 +37,6 @@ router_workspaces = AuthAPIRouter(prefix="/workspaces/{workspace_slug}/projects"
 LIST_PROJECTS = HasPerm("view_workspace")
 CREATE_PROJECT = HasPerm("view_workspace")
 GET_PROJECT = HasPerm("view_project")
-GET_PROJECT_ROLES = IsProjectAdmin()
-UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
 GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 
@@ -115,29 +111,9 @@ def get_project(request: Request, slug: str = Query("", description="the project
     Get project detail by slug.
     """
 
-    project = _get_project_or_404(slug)
+    project = get_project_or_404(slug)
     check_permissions(permissions=GET_PROJECT, user=request.user, obj=project)
     return ProjectSerializer.from_orm(project)
-
-
-@router.get(
-    "/{slug}/roles",
-    name="project.permissions.get",
-    summary="Get project roles permissions",
-    response_model=List[RoleSerializer],
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
-)
-def get_project_roles(
-    request: Request, slug: str = Query(None, description="the project slug (str)")
-) -> List[RoleSerializer]:
-    """
-    Get project roles and permissions
-    """
-
-    project = _get_project_or_404(slug)
-    check_permissions(permissions=GET_PROJECT_ROLES, user=request.user, obj=project)
-    roles_permissions = projects_services.get_roles_permissions(project=project)
-    return RoleSerializer.from_queryset(roles_permissions)
 
 
 @router.get(
@@ -154,7 +130,7 @@ def get_project_public_permissions(
     Get project public permissions
     """
 
-    project = _get_project_or_404(slug)
+    project = get_project_or_404(slug)
     check_permissions(permissions=GET_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
     public_permissions = project.public_permissions
     return public_permissions
@@ -174,7 +150,7 @@ def update_project_public_permissions(
     Edit project public permissions
     """
 
-    project = _get_project_or_404(slug)
+    project = get_project_or_404(slug)
     check_permissions(permissions=UPDATE_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
 
     try:
@@ -188,54 +164,10 @@ def update_project_public_permissions(
         raise ex.BadRequest("Given permissions are incompatible")
 
 
-@router.put(
-    "/{slug}/roles/{role_slug}/permissions",
-    name="project.permissions.put",
-    summary="Edit project roles permissions",
-    response_model=RoleSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
-)
-def update_project_role_permissions(
-    request: Request,
-    form: PermissionsValidator,
-    slug: str = Query(None, description="the project slug (str)"),
-    role_slug: str = Query(None, description="the role slug (str)"),
-) -> RoleSerializer:
-    """
-    Edit project roles permissions
-    """
-
-    project = _get_project_or_404(slug)
-    check_permissions(permissions=UPDATE_PROJECT_ROLE_PERMISSIONS, user=request.user, obj=project)
-    role = _get_project_role_or_404(project=project, slug=role_slug)
-
-    try:
-        role = projects_services.update_role_permissions(role, form.permissions)
-        return RoleSerializer.from_orm(role)
-    except services_ex.NonEditableRoleError:
-        logger.exception("Cannot edit permissions in an admin role")
-        raise ex.ForbiddenError("Cannot edit permissions in an admin role")
-    except services_ex.NotValidPermissionsSetError:
-        logger.exception("One or more permissions are not valid. Maybe, there is a typo.")
-        raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
-    except services_ex.IncompatiblePermissionsSetError:
-        logger.exception("Given permissions are incompatible")
-        raise ex.BadRequest("Given permissions are incompatible")
-
-
-def _get_project_or_404(slug: str) -> Project:
+def get_project_or_404(slug: str) -> Project:
     project = projects_services.get_project(slug=slug)
     if project is None:
         logger.exception(f"Project {slug} does not exist")
         raise ex.NotFoundError()
 
     return project
-
-
-def _get_project_role_or_404(project: Project, slug: str) -> Role:
-    role = projects_services.get_project_role(project=project, slug=slug)
-    if role is None:
-        logger.exception(f"Role {slug} does not exist")
-        raise ex.NotFoundError()
-
-    return role

@@ -15,7 +15,9 @@ from taiga.exceptions import services as ex
 from taiga.permissions import services as permissions_services
 from taiga.projects import repositories as projects_repo
 from taiga.projects.models import Project
-from taiga.users.models import Role, User
+from taiga.roles import repositories as roles_repo
+from taiga.roles import services as roles_services
+from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 
@@ -44,11 +46,11 @@ def create_project(
     template.apply_to_project(project)
 
     # assign the owner to the project as the default owner role (should be 'admin')
-    owner_role = get_project_role(project=project, slug=template.default_owner_role)
+    owner_role = roles_services.get_project_role(project=project, slug=template.default_owner_role)
     if not owner_role:
-        owner_role = projects_repo.get_first_role(project=project)
+        owner_role = roles_repo.get_first_role(project=project)
 
-    projects_repo.create_membership(user=project.owner, project=project, role=owner_role, email=project.owner.email)
+    roles_repo.create_membership(user=project.owner, project=project, role=owner_role, email=project.owner.email)
 
     # tags normalization
     project.tags = list(map(str.lower, project.tags))
@@ -68,31 +70,6 @@ def get_logo_thumbnail_url(thumbnailer_size: str, logo_relative_path: str) -> Un
 
 get_logo_small_thumbnail_url = partial(get_logo_thumbnail_url, settings.IMAGES.THUMBNAIL_PROJECT_LOGO_SMALL)
 get_logo_large_thumbnail_url = partial(get_logo_thumbnail_url, settings.IMAGES.THUMBNAIL_PROJECT_LOGO_LARGE)
-
-
-def get_roles_permissions(project: Project) -> List[Role]:
-    return projects_repo.get_project_roles(project)
-
-
-def get_num_members_by_role_id(role_id: int) -> int:
-    return projects_repo.get_num_members_by_role_id(role_id)
-
-
-def get_project_role(project: Project, slug: str) -> Optional[Role]:
-    return projects_repo.get_project_role(project=project, slug=slug)
-
-
-def update_role_permissions(role: Role, permissions: List[str]) -> Role:
-    if role.is_admin:
-        raise ex.NonEditableRoleError()
-
-    if not permissions_services.permissions_are_valid(permissions):
-        raise ex.NotValidPermissionsSetError()
-
-    if not permissions_services.permissions_are_compatible(permissions):
-        raise ex.IncompatiblePermissionsSetError()
-
-    return projects_repo.update_role_permissions(role=role, permissions=permissions)
 
 
 def update_project_public_permissions(project: Project, permissions: List[str]) -> List[str]:

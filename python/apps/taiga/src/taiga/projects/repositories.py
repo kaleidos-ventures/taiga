@@ -7,8 +7,8 @@
 from typing import Iterable, List, Optional
 
 from django.core.files import File
-from taiga.projects.models import Membership, Project, ProjectTemplate
-from taiga.users.models import Role, User
+from taiga.projects.models import Project, ProjectTemplate
+from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 
@@ -45,38 +45,6 @@ def get_project(slug: str) -> Optional[Project]:
 
 def get_template(slug: str) -> ProjectTemplate:
     return ProjectTemplate.objects.get(slug=slug)
-
-
-def create_membership(user: User, project: Project, role: Role, email: str) -> Membership:
-    return Membership.objects.create(user=user, project=project, role=role, email=email)
-
-
-def get_project_role(project: Project, slug: str) -> Role:
-    try:
-        return project.roles.get(slug=slug)
-    except Role.DoesNotExist:
-        return None
-
-
-def get_project_roles(project: Project) -> List[Role]:
-    return project.roles.all()
-
-
-def get_first_role(project: Project) -> Role:
-    return project.roles.first()
-
-
-def get_num_members_by_role_id(role_id: int) -> int:
-    if role_id:
-        return Membership.objects.filter(role_id=role_id).count()
-
-    return 0
-
-
-def update_role_permissions(role: Role, permissions: List[str]) -> Role:
-    role.permissions = permissions
-    role.save()
-    return role
 
 
 def update_project_public_permissions(project: Project, permissions: List[str]) -> List[str]:

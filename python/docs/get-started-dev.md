@@ -18,7 +18,7 @@ To enable pre-commit git hooks run:
 (taiga)$ pre-commit install --install-hooks
 ```
 
-> NOTE: You can execute all pre-commit hooks when this setup process is complete with:
+> NOTE: You can execute all pre-commit hooks **when this setup process is complete** with:
 >
 > ```bash
 > $ cd python/
@@ -29,7 +29,7 @@ To enable pre-commit git hooks run:
 
 1. Go to `taiga` package and install dev dependencies
    ```bash
-   $ cd python/apps/taiga/
+   $ cd apps/taiga/
    (taiga)$ pip install -r requirements/devel.txt
    (taiga)$ pip install -e .
    ```

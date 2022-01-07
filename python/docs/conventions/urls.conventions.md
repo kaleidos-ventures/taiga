@@ -6,19 +6,23 @@ The API v2 is configured to be served **without trailing slash**.
 
 ## Nesting urls
 
-List endpoints may be nested up to the first ancestor. Examples:
+List endpoints may be nested up to the first ancestor whenever the slug is unique. Examples:
 
 GET /workspaces
 GET /workspaces/<ws_slug>/projects
 GET /projects/<pr_slug>/userstories
 
-Detail endpoints always hang from a first level endpoint. Examples:
+Detail endpoints always hang from a first level endpoint whenever the slug is unique. Examples:
 
 GET   /workspaces/<ws_slug>
 PATCH /workspaces/<ws_slug>
 GET   /projects/<pr_slug>
 GET   /userstories/<us_slug>
 PUT   /userstories/<us_slug>
+
+When the entity slug is not unique (for example: roles), the url may have more nesting. Examples:
+GET   /projects/<pr_slug>/roles/<role_slug>              # role detail
+PUT   /projects/<pr_slug>/roles/<role_slug>/permissions  # update role permissions
 
 Create endpoints are expected in the first level resource. Examples:
 

@@ -16,7 +16,7 @@ django-sites
 django-sr==0.0.4
 django<4.0,>=2.2
 djmail==2.0.0
-easy-thumbnails==2.8.0
+easy-thumbnails==2.8.1
 gunicorn==20.1.0
 html5lib
 netaddr==0.7.19

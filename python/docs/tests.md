@@ -1,51 +1,54 @@
 # Tests
 
-## Run all tests
+
+## Unit / Integration tests
+
+### Run all tests
 
 Go to `taiga` and execute pytest
 
 ```shell
 $ cd python/apps/taiga/
-(taiga)$ pytest
+(taiga)$ python -m pytest
 ```
 
-## Slow vs Fast tests
+### Slow vs Fast tests
 
 Tests in which we use the `client` fixture to make API calls must be marked as `django_db(transactional=True)` (more info here [fastapi:issue#2075](https://github.com/tiangolo/fastapi/issues/2075)), for this reason, they are considered slow tests. So we have slow and fast tests and they can run as follow:
 
 - For all the tests:
   ```shell
-  (taiga)$ pytest
+  (taiga)$ python -m pytest
   ```
 - For slow tests only:
   ```shell
-  (taiga)$ pytest --slow_only
+  (taiga)$ python -m pytest --slow_only
   ```
 - For fast test only
   ```shell
-  (taiga)$ pytest --fast_only
+  (taiga)$ python -m pytest --fast_only
   ```
 
 
-## Databese
+### Databese
 
 Currently we are reusing the test database (`--reuse-db`) by default to improve the speed.
 
 If you **create some new migration**, remeber to run the test with `--create-db` to drop the current db and recreate a new one.
 
 ```shell
-(taiga)$ pytest --create-db
+(taiga)$ python -m pytest --create-db
 ```
 
-## Coverage
+### Coverage
 
 To run tests and get the coverage info run:
 
 ```shell
-(taiga)$ pytest --cov
+(taiga)$ python -m pytest --cov
 ```
 
-### Reporting types
+#### Reporting types
 
 Valid reporting types are:
 
@@ -55,8 +58,9 @@ Valid reporting types are:
 - json: `--cov-report term` Genrate in `coverage.json`
 
 ```shell
-(taiga)$ pytest --cov-report term --cov-report html --cov
+(taiga)$ python -m pytest --cov-report term --cov-report html --cov
 ```
+
 
 ## E2E tests
 
@@ -78,7 +82,7 @@ Tests are executed using newman by GitHub-ci (as described in the `python-apps-t
 (taiga)$ newman run --verbose docs/postman/taiga.postman_collection_e2e.json -e docs/postman/taiga.postman_environment.json
  ```
 
-Apart from the default console output (cli), it can also generate a json report file using this command: 
+Apart from the default console output (cli), it can also generate a json report file using this command:
 ```shell
-(taiga)$ newman run --verbose --reporters cli,json --reporter-json-export outputfile.json docs/postman/taiga.postman_collection_e2e.json -e docs/postman/taiga.postman_environment.json 
+(taiga)$ newman run --verbose --reporters cli,json --reporter-json-export outputfile.json docs/postman/taiga.postman_collection_e2e.json -e docs/postman/taiga.postman_environment.json
  ```

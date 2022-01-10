@@ -15,19 +15,17 @@ pytestmark = pytest.mark.django_db(transaction=True)
 
 
 def test_create_project_being_workspace_admin(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
+    workspace = f.create_workspace()
     data = {"name": "Project test", "color": 1, "workspaceSlug": workspace.slug}
     files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
 
-    client.login(user)
+    client.login(workspace.owner)
     response = client.post("/projects", data=data, files=files)
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
 def test_create_project_being_workspace_member(client):
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.WorkspaceFactory()
     general_member_role = f.WorkspaceRoleFactory(
         name="General Members",
         slug="general-members",
@@ -47,8 +45,7 @@ def test_create_project_being_workspace_member(client):
 
 
 def test_create_project_being_no_workspace_member(client):
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.WorkspaceFactory()
     user2 = f.UserFactory()
 
     data = {"name": "Project test", "color": 1, "workspaceSlug": workspace.slug}
@@ -59,8 +56,7 @@ def test_create_project_being_no_workspace_member(client):
 
 
 def test_create_project_being_anonymous(client):
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.WorkspaceFactory()
 
     data = {"name": "Project test", "color": 1, "workspaceSlug": workspace.slug}
     files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
@@ -70,42 +66,33 @@ def test_create_project_being_anonymous(client):
 
 
 def test_create_project_validation_error(client):
-    user = f.UserFactory()
-    f.create_workspace(owner=user)
+    workspace = f.create_workspace()
     data = {"name": "My pro#%&乕شject", "color": 1, "workspace_slug": "ws-invalid"}
 
-    client.login(user)
+    client.login(workspace.owner)
     response = client.post("/projects", json=data)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 def test_list_projects_success(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    f.create_project(owner=user, workspace=workspace)
+    project = f.create_project()
 
-    client.login(user)
-    response = client.get(f"/workspaces/{workspace.slug}/projects")
+    client.login(project.owner)
+    response = client.get(f"/workspaces/{project.workspace.slug}/projects")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
 
 
 def test_get_project_being_project_admin(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    slug = "project-test"
-    f.create_project(slug=slug, owner=user, workspace=workspace)
+    project = f.create_project()
 
-    client.login(user)
-    response = client.get(f"/projects/{slug}")
+    client.login(project.owner)
+    response = client.get(f"/projects/{project.slug}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
 def test_get_project_being_project_member(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    slug = "project-test"
-    project = f.ProjectFactory(slug=slug, owner=user, workspace=workspace)
+    project = f.ProjectFactory()
     general_member_role = f.RoleFactory(
         name="General Members",
         slug="general-members",
@@ -118,29 +105,23 @@ def test_get_project_being_project_member(client):
     f.MembershipFactory(user=user2, project=project, role=general_member_role)
 
     client.login(user2)
-    response = client.get(f"/projects/{slug}")
+    response = client.get(f"/projects/{project.slug}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
 def test_get_project_being_no_project_member(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    slug = "project-test"
-    f.ProjectFactory(slug=slug, owner=user, workspace=workspace)
+    project = f.ProjectFactory()
 
     user2 = f.UserFactory()
     client.login(user2)
-    response = client.get(f"/projects/{slug}")
+    response = client.get(f"/projects/{project.slug}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 def test_get_project_being_anonymous(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    slug = "project-test"
-    f.ProjectFactory(slug=slug, owner=user, workspace=workspace)
+    project = f.ProjectFactory()
 
-    response = client.get(f"/projects/{slug}")
+    response = client.get(f"/projects/{project.slug}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
@@ -154,29 +135,22 @@ def test_get_project_not_found_error(client):
 
 def test_get_project_roles_not_found_error(client):
     user = f.UserFactory()
-    slug = "non-existent"
 
     client.login(user)
-    response = client.get(f"/projects/{slug}/roles")
+    response = client.get("/projects/non-existent/roles")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
 def test_get_project_roles_being_project_admin(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    slug = "project-test"
-    f.create_project(slug=slug, owner=user, workspace=workspace)
+    project = f.create_project()
 
-    client.login(user)
-    response = client.get(f"/projects/{slug}/roles")
+    client.login(project.owner)
+    response = client.get(f"/projects/{project.slug}/roles")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
 def test_get_project_roles_being_general_member(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    slug = "project-test"
-    project = f.ProjectFactory(slug=slug, owner=user, workspace=workspace)
+    project = f.ProjectFactory()
     general_member_role = f.RoleFactory(
         name="General Members",
         slug="general-members",
@@ -189,45 +163,36 @@ def test_get_project_roles_being_general_member(client):
     f.MembershipFactory(user=user2, project=project, role=general_member_role)
 
     client.login(user2)
-    response = client.get(f"/projects/{slug}/roles")
+    response = client.get(f"/projects/{project.slug}/roles")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 def test_get_project_roles_being_no_member(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    slug = "project-test"
-    f.ProjectFactory(slug=slug, owner=user, workspace=workspace)
+    project = f.ProjectFactory()
 
     user2 = f.UserFactory()
 
     client.login(user2)
-    response = client.get(f"/projects/{slug}/roles")
+    response = client.get(f"/projects/{project.slug}/roles")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 def test_get_project_roles_being_anonymous(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    slug = "project-test"
-    f.ProjectFactory(slug=slug, owner=user, workspace=workspace)
+    project = f.ProjectFactory()
 
-    response = client.get(f"/projects/{slug}/roles")
+    response = client.get(f"/projects/{project.slug}/roles")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 def test_get_project_public_permissions_ok(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
-    client.login(user)
+    project = f.create_project()
+    client.login(project.owner)
     response = client.get(f"/projects/{project.slug}/public-permissions")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
 def test_get_project_public_permissions_no_admin(client):
-    user1 = f.UserFactory()
-    project = f.create_project(owner=user1)
+    project = f.create_project()
     user2 = f.UserFactory()
     client.login(user2)
     response = client.get(f"/projects/{project.slug}/public-permissions")
@@ -258,10 +223,8 @@ def test_get_project_public_permissions_anonymous_user(client):
     ],
 )
 def test_update_project_public_permissions_ok(client, permissions):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
-    client.login(user)
+    project = f.create_project()
+    client.login(project.owner)
     data = {"permissions": permissions}
     response = client.put(f"/projects/{project.slug}/public-permissions", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
@@ -285,28 +248,23 @@ def test_update_project_public_permissions_project_not_found(client):
     ],
 )
 def test_update_project_public_permissions_incompatible(client, permissions):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
-    client.login(user)
+    project = f.create_project()
+    client.login(project.owner)
     data = {"permissions": permissions}
     response = client.put(f"/projects/{project.slug}/public-permissions", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
 def test_update_project_public_permissions_not_valid(client):
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
-    client.login(user)
+    project = f.create_project()
+    client.login(project.owner)
     data = {"permissions": ["not_valid"]}
     response = client.put(f"/projects/{project.slug}/public-permissions", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
 def test_update_project_public_permissions_no_admin(client):
-    user1 = f.UserFactory()
-    project = f.create_project(owner=user1)
+    project = f.create_project()
     user2 = f.UserFactory()
     client.login(user2)
     data = {"permissions": []}

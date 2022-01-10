@@ -39,7 +39,7 @@ def create_workspace(**kwargs):
         is_admin=False,
         workspace=workspace,
     )
-    user = kwargs.pop("owner", f.UserFactory())
-    f.WorkspaceMembershipFactory.create(user=user, workspace=workspace, workspace_role=admin_role)
+
+    f.WorkspaceMembershipFactory.create(user=workspace.owner, workspace=workspace, workspace_role=admin_role)
 
     return workspace

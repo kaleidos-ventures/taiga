@@ -17,15 +17,14 @@ pytestmark = pytest.mark.django_db
 
 
 def test_create_project():
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.WorkspaceFactory()
 
     with patch("taiga.projects.services.projects_repo") as fake_project_repository, patch(
         "taiga.projects.services.roles_repo"
     ) as fake_role_repository, patch("taiga.projects.services.roles_services") as fake_role_services:
         fake_project_repository.create_project.return_value = f.ProjectFactory()
 
-        services.create_project(workspace=workspace, name="n", description="d", color=2, owner=user)
+        services.create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
 
         fake_project_repository.create_project.assert_called_once()
         fake_project_repository.get_template.assert_called_once()
@@ -34,8 +33,7 @@ def test_create_project():
 
 
 def test_create_project_with_logo():
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.WorkspaceFactory()
     logo: UploadFile = valid_image_upload_file
 
     with patch("taiga.projects.services.projects_repo") as fake_project_repository, patch(
@@ -43,7 +41,9 @@ def test_create_project_with_logo():
     ):
         fake_project_repository.create_project.return_value = f.ProjectFactory()
 
-        services.create_project(workspace=workspace, name="n", description="d", color=2, owner=user, logo=logo)
+        services.create_project(
+            workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=logo
+        )
 
         service_file_param = fake_project_repository.create_project.call_args_list[0][1]
         assert service_file_param["logo"].name == logo.filename
@@ -51,15 +51,14 @@ def test_create_project_with_logo():
 
 
 def test_create_project_with_no_logo():
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.WorkspaceFactory()
 
     with patch("taiga.projects.services.projects_repo") as fake_project_repository, patch(
         "taiga.projects.services.roles_repo"
     ):
         fake_project_repository.create_project.return_value = f.ProjectFactory()
-        services.create_project(workspace=workspace, name="n", description="d", color=2, owner=user)
+        services.create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
 
         fake_project_repository.create_project.assert_called_once_with(
-            workspace=workspace, name="n", description="d", color=2, owner=user, logo=None
+            workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=None
         )

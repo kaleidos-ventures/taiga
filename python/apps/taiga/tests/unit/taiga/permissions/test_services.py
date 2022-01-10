@@ -15,17 +15,12 @@ pytestmark = pytest.mark.django_db
 
 
 def test_is_project_admin_being_project_admin():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
-
-    assert services.is_project_admin(user=user, obj=project) is True
+    project = f.create_project()
+    assert services.is_project_admin(user=project.owner, obj=project) is True
 
 
 def test_is_project_admin_being_project_member():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.ProjectFactory(owner=user, workspace=workspace)
+    project = f.ProjectFactory()
 
     user2 = f.UserFactory()
     general_member_role = f.RoleFactory(
@@ -42,21 +37,16 @@ def test_is_project_admin_being_project_member():
 
 def test_is_project_admin_without_project():
     user = f.UserFactory()
-    f.create_workspace(owner=user)
-
     assert services.is_project_admin(user=user, obj=None) is False
 
 
 def test_is_workspace_admin_being_workspace_admin():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-
-    assert services.is_workspace_admin(user=user, obj=workspace) is True
+    workspace = f.create_workspace()
+    assert services.is_workspace_admin(user=workspace.owner, obj=workspace) is True
 
 
 def test_is_workspace_admin_being_workspace_member():
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.WorkspaceFactory()
 
     user2 = f.UserFactory()
     general_member_role = f.WorkspaceRoleFactory(
@@ -73,24 +63,18 @@ def test_is_workspace_admin_being_workspace_member():
 
 def test_is_workspace_admin_without_workspace():
     user = f.UserFactory()
-    f.create_workspace(owner=user)
-
     assert services.is_workspace_admin(user=user, obj=None) is False
 
 
 def test_user_has_perm_being_project_admin():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
+    project = f.create_project()
     perm = "modify_project"
 
-    assert services.user_has_perm(user=user, perm=perm, obj=project) is True
+    assert services.user_has_perm(user=project.owner, perm=perm, obj=project) is True
 
 
 def test_user_has_perm_being_project_member():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.ProjectFactory(owner=user, workspace=workspace)
+    project = f.ProjectFactory()
     general_member_role = f.RoleFactory(
         name="General Members",
         slug="general-members",
@@ -110,9 +94,7 @@ def test_user_has_perm_being_project_member():
 
 
 def test_user_has_perm_not_being_project_member():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
+    project = f.create_project()
 
     user2 = f.UserFactory()
     perm = "modify_project"
@@ -128,27 +110,19 @@ def test_user_has_perm_without_workspace_and_project():
 
 
 def test_user_has_perm_without_perm():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
-
-    assert services.user_has_perm(user=user, perm=None, obj=project) is False
+    project = f.create_project()
+    assert services.user_has_perm(user=project.owner, perm=None, obj=project) is False
 
 
 def test_check_permissions_success():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
-
+    project = f.create_project()
     permissions = HasPerm("modify_project")
 
-    assert check_permissions(permissions=permissions, user=user, obj=project) is None
+    assert check_permissions(permissions=permissions, user=project.owner, obj=project) is None
 
 
 def test_check_permissions_forbidden():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
+    project = f.create_project()
 
     user2 = f.UserFactory()
     permissions = HasPerm("modify_project")

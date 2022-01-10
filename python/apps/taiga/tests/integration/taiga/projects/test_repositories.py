@@ -20,28 +20,25 @@ pytestmark = pytest.mark.django_db
 
 
 def test_create_project_with_non_ASCI_chars():
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.WorkspaceFactory()
     project = repositories.create_project(
-        name="My proj#%&乕شect", description="", color=3, owner=user, workspace=workspace
+        name="My proj#%&乕شect", description="", color=3, owner=workspace.owner, workspace=workspace
     )
     assert project.slug.startswith("my-projhu-shect")
 
 
 def test_create_project_with_logo():
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.WorkspaceFactory()
     project = repositories.create_project(
-        name="My proj#%&乕شect", description="", color=3, owner=user, workspace=workspace, logo=valid_image_f
+        name="My proj#%&乕شect", description="", color=3, owner=workspace.owner, workspace=workspace, logo=valid_image_f
     )
     assert valid_image_f.name in project.logo.name
 
 
 def test_create_project_with_no_logo():
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
+    workspace = f.WorkspaceFactory()
     project = repositories.create_project(
-        name="My proj#%&乕شect", description="", color=3, owner=user, workspace=workspace, logo=None
+        name="My proj#%&乕شect", description="", color=3, owner=workspace.owner, workspace=workspace, logo=None
     )
     assert project.logo == File(None)
 

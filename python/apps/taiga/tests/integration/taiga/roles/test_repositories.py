@@ -19,9 +19,7 @@ pytestmark = pytest.mark.django_db
 
 
 def test_get_project_role_return_role():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.ProjectFactory(owner=user, workspace=workspace)
+    project = f.ProjectFactory()
     role = f.RoleFactory(
         name="Role test",
         slug="role-test",
@@ -33,9 +31,7 @@ def test_get_project_role_return_role():
 
 
 def test_get_project_role_return_none():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.create_project(owner=user, workspace=workspace)
+    project = f.create_project()
     assert repositories.get_project_role(project=project, slug="role-not-exist") is None
 
 
@@ -45,9 +41,7 @@ def test_get_project_role_return_none():
 
 
 def test_get_project_roles_return_roles():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.ProjectFactory(owner=user, workspace=workspace)
+    project = f.ProjectFactory()
     role1 = f.RoleFactory(
         name="Role test1",
         slug="role-test1",
@@ -68,9 +62,7 @@ def test_get_project_roles_return_roles():
 
 
 def test_get_project_roles_no_roles():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.ProjectFactory(owner=user, workspace=workspace)
+    project = f.ProjectFactory()
     assert len(repositories.get_project_roles(project=project)) == 0
 
 
@@ -80,9 +72,7 @@ def test_get_project_roles_no_roles():
 
 
 def test_get_first_role_return_role():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.ProjectFactory(owner=user, workspace=workspace)
+    project = f.ProjectFactory()
     role1 = f.RoleFactory(
         name="Role test1",
         slug="role-test1",
@@ -101,9 +91,7 @@ def test_get_first_role_return_role():
 
 
 def test_get_first_role_no_roles():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.ProjectFactory(owner=user, workspace=workspace)
+    project = f.ProjectFactory()
     assert repositories.get_first_role(project=project) is None
 
 
@@ -113,10 +101,10 @@ def test_get_first_role_no_roles():
 
 
 def test_get_num_members_by_role_id():
+    project = f.ProjectFactory()
     user = f.UserFactory()
     user2 = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.ProjectFactory(owner=user, workspace=workspace)
+
     role = f.RoleFactory(
         name="Role test",
         slug="role-test",
@@ -131,9 +119,7 @@ def test_get_num_members_by_role_id():
 
 
 def test_get_num_members_by_role_id_no_members():
-    user = f.UserFactory()
-    workspace = f.create_workspace(owner=user)
-    project = f.ProjectFactory(owner=user, workspace=workspace)
+    project = f.ProjectFactory()
     role = f.RoleFactory(
         name="Role test",
         slug="role-test",
@@ -162,9 +148,9 @@ def test_update_role_permissions():
 
 
 def test_create_membership():
-    user = f.UserFactory()
-    workspace = f.WorkspaceFactory(owner=user)
-    project = f.ProjectFactory(owner=user, workspace=workspace)
+    project = f.ProjectFactory()
     role = f.RoleFactory(project=project)
-    membership = repositories.create_membership(user=user, project=project, role=role, email=user.email)
+    membership = repositories.create_membership(
+        user=project.owner, project=project, role=role, email=project.owner.email
+    )
     assert membership in project.memberships.all()

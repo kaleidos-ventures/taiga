@@ -39,29 +39,24 @@ def test_create_workspace_validation_error(client):
 
 
 def test_list_workspaces_success(client):
-    user = f.UserFactory()
-    f.create_workspace(owner=user)
+    workspace = f.create_workspace()
 
-    client.login(user)
+    client.login(workspace.owner)
     response = client.get("/workspaces")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
 
 
 def test_get_workspace_being_workspace_admin(client):
-    user = f.UserFactory()
-    slug = "ws-test"
-    f.create_workspace(slug=slug, owner=user)
+    workspace = f.create_workspace()
 
-    client.login(user)
-    response = client.get(f"/workspaces/{slug}")
+    client.login(workspace.owner)
+    response = client.get(f"/workspaces/{workspace.slug}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
 def test_get_workspace_being_workspace_member(client):
-    user = f.UserFactory()
-    slug = "ws-test"
-    workspace = f.WorkspaceFactory(slug=slug, owner=user)
+    workspace = f.WorkspaceFactory()
     general_member_role = f.WorkspaceRoleFactory(
         name="General Members",
         slug="general-members",
@@ -73,27 +68,23 @@ def test_get_workspace_being_workspace_member(client):
     f.WorkspaceMembershipFactory(user=user2, workspace=workspace, workspace_role=general_member_role)
 
     client.login(user2)
-    response = client.get(f"/workspaces/{slug}")
+    response = client.get(f"/workspaces/{workspace.slug}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
 def test_get_workspace_being_no_workspace_member(client):
-    user = f.UserFactory()
-    slug = "ws-test"
-    f.create_workspace(slug=slug, owner=user)
+    workspace = f.create_workspace()
 
     user2 = f.UserFactory()
     client.login(user2)
-    response = client.get(f"/workspaces/{slug}")
+    response = client.get(f"/workspaces/{workspace.slug}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 def test_get_workspace_being_anonymous(client):
-    user = f.UserFactory()
-    slug = "ws-test"
-    f.create_workspace(slug=slug, owner=user)
+    workspace = f.create_workspace()
 
-    response = client.get(f"/workspaces/{slug}")
+    response = client.get(f"/workspaces/{workspace.slug}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 

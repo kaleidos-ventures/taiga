@@ -57,6 +57,10 @@ def create_project(**kwargs):
     defaults = {}
     defaults.update(kwargs)
 
+    workspace = defaults.pop("workspace", f.create_workspace())
+    defaults["workspace"] = workspace
+    defaults["owner"] = workspace.owner
+
     ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
 
     project = ProjectFactory.create(**defaults)
@@ -74,7 +78,7 @@ def create_project(**kwargs):
         is_admin=False,
         project=project,
     )
-    user = kwargs.pop("owner", f.UserFactory())
-    f.MembershipFactory.create(user=user, project=project, role=admin_role)
+
+    f.MembershipFactory.create(user=project.owner, project=project, role=admin_role)
 
     return project

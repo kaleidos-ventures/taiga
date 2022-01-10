@@ -6,9 +6,10 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from typing import List
 
-from taiga.projects.models import Membership, Project
-from taiga.users.models import Role, User, WorkspaceRole
-from taiga.workspaces.models import Workspace, WorkspaceMembership
+from taiga.projects.models import Project
+from taiga.roles.models import Membership, Role, WorkspaceMembership, WorkspaceRole
+from taiga.users.models import User
+from taiga.workspaces.models import Workspace
 
 
 def get_project_role(project: Project, slug: str) -> Role:

@@ -10,7 +10,7 @@ from taiga.exceptions import services as ex
 from taiga.permissions import services as permissions_services
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repo
-from taiga.users.models import Role
+from taiga.roles.models import Role
 
 
 def get_roles_permissions(project: Project) -> List[Role]:

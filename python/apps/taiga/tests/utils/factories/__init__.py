@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from .projects import MembershipFactory, ProjectFactory, ProjectTemplateFactory, create_project  # noqa
-from .users import RoleFactory, UserFactory, WorkspaceRoleFactory  # noqa
-from .workspaces import WorkspaceFactory, WorkspaceMembershipFactory, create_workspace  # noqa
+from .projects import ProjectFactory, ProjectTemplateFactory, create_project  # noqa
+from .roles import MembershipFactory, RoleFactory, WorkspaceMembershipFactory, WorkspaceRoleFactory  # noqa
+from .users import UserFactory  # noqa
+from .workspaces import WorkspaceFactory, create_workspace  # noqa

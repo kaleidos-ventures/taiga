@@ -20,8 +20,8 @@ from taiga.projects.api import get_project_or_404
 from taiga.projects.models import Project
 from taiga.projects.validators import PermissionsValidator
 from taiga.roles import services as roles_services
+from taiga.roles.models import Role
 from taiga.roles.serializers import RoleSerializer
-from taiga.users.models import Role
 
 logger = logging.getLogger(__name__)
 

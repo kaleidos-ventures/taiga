@@ -8,9 +8,10 @@
 from typing import Any, List, Optional, Union
 
 from taiga.permissions import choices
-from taiga.projects.models import Membership, Project
+from taiga.projects.models import Project
+from taiga.roles.models import Membership, WorkspaceMembership
 from taiga.users.models import User
-from taiga.workspaces.models import Workspace, WorkspaceMembership
+from taiga.workspaces.models import Workspace
 
 AuthorizableObj = Union[Project, Workspace]
 

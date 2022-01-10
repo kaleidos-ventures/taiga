@@ -52,15 +52,6 @@ class ProjectFactory(Factory):
         model = "projects.Project"
 
 
-class MembershipFactory(Factory):
-    user = factory.SubFactory("tests.utils.factories.UserFactory")
-    project = factory.SubFactory("tests.utils.factories.ProjectFactory")
-    role = factory.SubFactory("tests.utils.factories.RoleFactory")
-
-    class Meta:
-        model = "projects.Membership"
-
-
 def create_project(**kwargs):
     """Create project and its dependencies"""
     defaults = {}
@@ -84,6 +75,6 @@ def create_project(**kwargs):
         project=project,
     )
     user = kwargs.pop("owner", f.UserFactory())
-    MembershipFactory.create(user=user, project=project, role=admin_role)
+    f.MembershipFactory.create(user=user, project=project, role=admin_role)
 
     return project

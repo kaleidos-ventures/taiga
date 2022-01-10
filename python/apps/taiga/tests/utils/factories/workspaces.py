@@ -19,15 +19,6 @@ class WorkspaceFactory(Factory):
         model = "workspaces.Workspace"
 
 
-class WorkspaceMembershipFactory(Factory):
-    user = factory.SubFactory("tests.utils.factories.UserFactory")
-    workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
-    workspace_role = factory.SubFactory("tests.utils.factories.WorkspaceRoleFactory")
-
-    class Meta:
-        model = "workspaces.WorkspaceMembership"
-
-
 def create_workspace(**kwargs):
     """Create workspace and its dependencies"""
     defaults = {}
@@ -49,6 +40,6 @@ def create_workspace(**kwargs):
         workspace=workspace,
     )
     user = kwargs.pop("owner", f.UserFactory())
-    WorkspaceMembershipFactory.create(user=user, workspace=workspace, workspace_role=admin_role)
+    f.WorkspaceMembershipFactory.create(user=user, workspace=workspace, workspace_role=admin_role)
 
     return workspace

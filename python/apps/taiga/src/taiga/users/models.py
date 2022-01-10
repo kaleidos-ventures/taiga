@@ -7,6 +7,4 @@
 
 
 from django.contrib.auth.models import AnonymousUser  # noqa
-from taiga6.users.models import Role  # noqa
 from taiga6.users.models import User  # noqa
-from taiga6.users.models import WorkspaceRole  # noqa

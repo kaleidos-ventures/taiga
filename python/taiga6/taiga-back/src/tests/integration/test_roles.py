@@ -9,9 +9,9 @@ import pytest
 
 from django.urls import reverse
 
-from taiga.users.models import Role
 from taiga.projects.models import Membership
 from taiga.projects.models import Project
+from taiga.roles.models import Role
 
 from .. import factories as f
 

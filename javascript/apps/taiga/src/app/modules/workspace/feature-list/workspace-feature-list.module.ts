@@ -61,11 +61,6 @@ import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-rout
     ProjectCardModule,
     WorkspaceFeatureListRoutingModule
   ],
-  exports: [
-    WorkspaceComponent,
-    WorkspaceCreateComponent,
-    WorkspaceItemComponent
-  ],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

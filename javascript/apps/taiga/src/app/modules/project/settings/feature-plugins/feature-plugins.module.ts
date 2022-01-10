@@ -24,8 +24,5 @@ import { ProjectsSettingsFeaturePluginsComponent } from './feature-plugins.compo
       }
     ])
   ],
-  exports: [
-    ProjectsSettingsFeaturePluginsComponent
-  ],
 })
 export class ProjectsSettingsFeaturePluginsModule { }

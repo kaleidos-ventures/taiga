@@ -24,8 +24,5 @@ import { ProjectsSettingsFeatureIntegrationsComponent } from './feature-integrat
       }
     ])
   ],
-  exports: [
-    ProjectsSettingsFeatureIntegrationsComponent
-  ],
 })
 export class ProjectsSettingsFeatureIntegrationsModule { }

@@ -40,9 +40,6 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     AngularResizeEventModule,
     WorkspacePageRoutingModule
   ],
-  exports: [
-    WorkspaceDetailComponent
-  ],
   providers: [
     { provide: TRANSLOCO_SCOPE, useValue: 'workspace' },
   ]

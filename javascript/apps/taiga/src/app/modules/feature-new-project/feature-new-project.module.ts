@@ -57,13 +57,6 @@ import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.mo
     ModalModule,
     FeatureNewProjectRoutingModule
   ],
-  exports: [
-    NewProjectComponent,
-    InitStepComponent,
-    TemplateStepComponent,
-    InviteStepComponent,
-    ModalModule
-  ],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

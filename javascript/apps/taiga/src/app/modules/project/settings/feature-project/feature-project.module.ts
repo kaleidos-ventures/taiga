@@ -24,8 +24,5 @@ import { RouterModule } from '@angular/router';
       }
     ])
   ],
-  exports: [
-    ProjectsSettingsFeatureProjectComponent
-  ],
 })
 export class ProjectsSettingsFeatureProjectModule { }

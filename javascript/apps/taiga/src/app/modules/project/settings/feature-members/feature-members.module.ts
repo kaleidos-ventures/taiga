@@ -24,8 +24,5 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
       }
     ])
   ],
-  exports: [
-    ProjectsSettingsFeatureMembersComponent
-  ],
 })
 export class ProjectsSettingsFeatureMembersModule { }

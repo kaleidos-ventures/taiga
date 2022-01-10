@@ -42,9 +42,5 @@ import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
       },
     },
   ],
-  exports: [
-    ProjectsSettingsFeatureRolesPermissionsComponent,
-    inViewportDirective
-  ],
 })
 export class ProjectsSettingsFeatureRolesPermissionsModule { }

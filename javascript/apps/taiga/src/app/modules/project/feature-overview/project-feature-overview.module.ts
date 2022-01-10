@@ -36,8 +36,5 @@ import { ProjectFeatureOverviewComponent } from './project-feature-overview.comp
       },
     },
   ],
-  exports: [
-    ProjectFeatureOverviewComponent,
-  ]
 })
 export class ProjectFeatureOverviewModule {}

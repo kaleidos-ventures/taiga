@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-import logging
 from typing import List
 
 from fastapi import Query
@@ -22,8 +21,6 @@ from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.projects.validators import PermissionsValidator, ProjectValidator
 from taiga.workspaces import services as workspaces_services
-
-logger = logging.getLogger(__name__)
 
 metadata = {
     "name": "projects",
@@ -56,8 +53,7 @@ def list_projects(
     """
     workspace = workspaces_services.get_workspace(slug=workspace_slug)
     if workspace is None:
-        logger.exception(f"Workspace {workspace_slug} does not exist")
-        raise ex.NotFoundError()
+        raise ex.NotFoundError(f"Workspace {workspace_slug} does not exist")
 
     # TODO - revisar esto porque no está bien.
     # también tendría que devolver proyectos en los que eres miembro
@@ -157,17 +153,14 @@ def update_project_public_permissions(
         public_permissions = projects_services.update_project_public_permissions(project, form.permissions)
         return public_permissions
     except services_ex.NotValidPermissionsSetError:
-        logger.exception("One or more permissions are not valid. Maybe, there is a typo.")
         raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
     except services_ex.IncompatiblePermissionsSetError:
-        logger.exception("Given permissions are incompatible")
         raise ex.BadRequest("Given permissions are incompatible")
 
 
 def get_project_or_404(slug: str) -> Project:
     project = projects_services.get_project(slug=slug)
     if project is None:
-        logger.exception(f"Project {slug} does not exist")
-        raise ex.NotFoundError()
+        raise ex.NotFoundError(f"Project {slug} does not exist")
 
     return project

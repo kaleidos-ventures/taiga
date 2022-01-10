@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-import logging
 from typing import List
 
 from fastapi import Query
@@ -22,8 +21,6 @@ from taiga.projects.validators import PermissionsValidator
 from taiga.roles import services as roles_services
 from taiga.roles.models import Role
 from taiga.roles.serializers import RoleSerializer
-
-logger = logging.getLogger(__name__)
 
 metadata = {
     "name": "roles",
@@ -82,20 +79,16 @@ def update_project_role_permissions(
         role = roles_services.update_role_permissions(role, form.permissions)
         return RoleSerializer.from_orm(role)
     except services_ex.NonEditableRoleError:
-        logger.exception("Cannot edit permissions in an admin role")
         raise ex.ForbiddenError("Cannot edit permissions in an admin role")
     except services_ex.NotValidPermissionsSetError:
-        logger.exception("One or more permissions are not valid. Maybe, there is a typo.")
         raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
     except services_ex.IncompatiblePermissionsSetError:
-        logger.exception("Given permissions are incompatible")
         raise ex.BadRequest("Given permissions are incompatible")
 
 
 def get_project_role_or_404(project: Project, slug: str) -> Role:
     role = roles_services.get_project_role(project=project, slug=slug)
     if role is None:
-        logger.exception(f"Role {slug} does not exist")
-        raise ex.NotFoundError()
+        raise ex.NotFoundError(f"Role {slug} does not exist")
 
     return role

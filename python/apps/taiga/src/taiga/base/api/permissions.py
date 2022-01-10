@@ -6,14 +6,10 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import abc
-import logging
 from typing import Any, Optional
 
 from taiga.exceptions import api as ex
 from taiga.users.models import User
-
-logger = logging.getLogger(__name__)
-
 
 ######################################################################
 # Permission components - basic class
@@ -59,8 +55,7 @@ def check_permissions(
         _required_permissions = enough_perms | _required_permissions
 
     if not _required_permissions.is_authorized(user=user, obj=obj):
-        logger.exception("User doesn't have permissions to perform this action")
-        raise ex.ForbiddenError()
+        raise ex.ForbiddenError("User doesn't have permissions to perform this action")
 
 
 ######################################################################

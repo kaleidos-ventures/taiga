@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-import logging
 from typing import List
 
 from fastapi import Query
@@ -18,8 +17,6 @@ from taiga.permissions import HasPerm
 from taiga.workspaces import services as workspaces_services
 from taiga.workspaces.serializers import WorkspaceSerializer, WorkspaceSummarySerializer
 from taiga.workspaces.validators import WorkspaceValidator
-
-logger = logging.getLogger(__name__)
 
 metadata = {
     "name": "workspaces",
@@ -80,8 +77,7 @@ def get_workspace(
     workspace = workspaces_services.get_workspace(slug=slug)
 
     if workspace is None:
-        logger.exception(f"Workspace {slug} does not exist")
-        raise ex.NotFoundError()
+        raise ex.NotFoundError(f"Workspace {slug} does not exist")
 
     check_permissions(permissions=GET_WORKSPACE, user=request.user, obj=workspace)
 

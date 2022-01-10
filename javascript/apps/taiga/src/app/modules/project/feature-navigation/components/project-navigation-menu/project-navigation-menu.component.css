@@ -354,7 +354,7 @@ ul {
 
   & .main-project-nav {
     inline-size: var(--inline-btn-size);
-    transition: all var(--transition);
+    transition: inline-size var(--transition);
     transition-delay: 300ms;
   }
 
@@ -388,7 +388,7 @@ ul {
   & .menu-option-icon,
   & .scrum-button-icon {
     margin-inline-end: 0;
-    transition: all var(--transition);
+    transition: margin var(--transition);
     transition-delay: var(--transition-delay);
   }
 

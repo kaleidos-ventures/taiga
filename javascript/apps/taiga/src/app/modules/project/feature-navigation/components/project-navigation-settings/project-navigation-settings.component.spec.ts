@@ -61,7 +61,6 @@ describe('ProjectSettingsComponent', () => {
   it('get history nav - has history', () => {
 
     spectator.component.ngOnInit = jest.fn();
-    spectator.component.initialFocus = jest.fn();
     spectator.component.getFragment = jest.fn();
 
     const routeHistory = spectator.inject<RouteHistoryService>(RouteHistoryService);
@@ -77,7 +76,6 @@ describe('ProjectSettingsComponent', () => {
 
   it('get history nav - has no history defaults to current route', () => {
     spectator.component.ngOnInit = jest.fn();
-    spectator.component.initialFocus = jest.fn();
     spectator.component.getFragment = jest.fn();
 
     const routeHistory = spectator.inject<RouteHistoryService>(RouteHistoryService);
@@ -92,7 +90,6 @@ describe('ProjectSettingsComponent', () => {
 
   it('get history nav - first route is on settings', () => {
     spectator.component.ngOnInit = jest.fn();
-    spectator.component.initialFocus = jest.fn();
     spectator.component.getFragment = jest.fn();
 
     const routeHistory = spectator.inject<RouteHistoryService>(RouteHistoryService);

@@ -171,7 +171,10 @@ export class ProjectNavigationMenuComponent {
 
   public toggleCollapse() {
     this.collapseMenu.next();
-    this.toggleScrumChildMenu();
+
+    if (this.collapsed) {
+      this.scrumChildMenuVisible = false;
+    }
   }
 
   public openSettings() {

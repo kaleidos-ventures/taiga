@@ -12,7 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Project } from '@taiga/data';
 import { interval } from 'rxjs';
-import { delay, filter, throttle } from 'rxjs/operators';
+import { delay, filter, take, throttle } from 'rxjs/operators';
 import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
@@ -25,7 +25,18 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
 })
 export class ProjectNavigationSettingsComponent implements OnInit {
   @ViewChild('firstChild')
-  public firstChild!: ElementRef;
+  public set firstChild(elm: ElementRef | undefined) {
+    if (elm) {
+      this.projectNavigationComponent.animationEvents$
+        .pipe(
+          filter((event) => event.toState === 'open-settings' && event.phaseName == 'done'),
+          take(1),
+        )
+        .subscribe(() => {
+          (elm.nativeElement as HTMLElement).focus();
+        });
+    }
+  }
 
   @Input()
   public project!: Project;
@@ -46,7 +57,6 @@ export class ProjectNavigationSettingsComponent implements OnInit {
 
   public ngOnInit() {
     this.getFragment();
-    this.initialFocus();
     this.getHistoryNav();
   }
 
@@ -73,17 +83,6 @@ export class ProjectNavigationSettingsComponent implements OnInit {
       .subscribe((fragment) => {
         this.currentFragment = fragment;
         this.cd.markForCheck();
-      });
-  }
-
-  public initialFocus() {
-    this.projectNavigationComponent.animationEvents$
-      .pipe(
-        filter((event) => event.toState === 'open-settings' && event.phaseName == 'done'),
-        untilDestroyed(this)
-      )
-      .subscribe(() => {
-        (this.firstChild.nativeElement as HTMLElement).focus();
       });
   }
 }

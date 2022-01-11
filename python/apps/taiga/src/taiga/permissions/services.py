@@ -9,6 +9,7 @@ from typing import Any, List, Optional, Union
 
 from taiga.permissions import choices
 from taiga.projects.models import Project
+from taiga.roles import services as roles_services
 from taiga.roles.models import Membership, WorkspaceMembership
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
@@ -24,7 +25,7 @@ def is_project_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
     if project is None:
         return False
 
-    membership = _get_user_project_membership(user, project)
+    membership = roles_services.get_user_project_membership(user, project)
     if membership and membership.role.is_admin:
         return True
 
@@ -39,7 +40,7 @@ def is_workspace_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
     if workspace is None:
         return False
 
-    workspace_membership = _get_user_workspace_membership(user, workspace)
+    workspace_membership = roles_services.get_user_workspace_membership(user, workspace)
     if workspace_membership and workspace_membership.workspace_role.is_admin:
         return True
 
@@ -60,34 +61,6 @@ def user_has_perm(user: User, perm: str, obj: Optional[AuthorizableObj] = None, 
 
     user_permissions = _get_user_permissions(user, project, workspace, cache=cache)
     return perm in user_permissions
-
-
-def _get_user_project_membership(user: User, project: Project, cache: str = "user") -> Membership:
-    """
-    cache param determines how memberships are calculated
-    trying to reuse the existing data in cache
-    """
-    if user.is_anonymous:
-        return None
-
-    if cache == "user":
-        return user.cached_membership_for_project(project)
-
-    return project.cached_memberships_for_user(user)
-
-
-def _get_user_workspace_membership(user: User, workspace: Workspace, cache: str = "user") -> WorkspaceMembership:
-    """
-    cache param determines how memberships are calculated
-    trying to reuse the existing data in cache
-    """
-    if user.is_anonymous:
-        return None
-
-    if cache == "user":
-        return user.cached_memberships_for_workspace(workspace)
-
-    return workspace.cached_workspace_memberships_for_user(user)
 
 
 def _get_object_workspace(obj: Any) -> Optional[Workspace]:
@@ -117,13 +90,15 @@ def _get_user_permissions(user: User, project: Project, workspace: Workspace, ca
     """
 
     is_authenticated = user.is_authenticated
-    project_membership: Membership = _get_user_project_membership(user, project, cache=cache) if project else []
+    project_membership: Membership = (
+        roles_services.get_user_project_membership(user, project, cache=cache) if project else []
+    )
     is_project_member = project_membership is not None
     is_project_admin = project is not None and is_project_member and project_membership.role.is_admin
     project_role_permissions = _get_project_membership_permissions(project_membership)
 
     workspace_membership: WorkspaceMembership = (
-        _get_user_workspace_membership(user, workspace, cache=cache) if workspace else []
+        roles_services.get_user_workspace_membership(user, workspace, cache=cache) if workspace else []
     )
     is_workspace_member = workspace_membership is not None
     is_workspace_admin = workspace is not None and is_workspace_member and workspace_membership.workspace_role.is_admin

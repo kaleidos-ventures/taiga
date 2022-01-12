@@ -104,7 +104,7 @@ describe('Workspace Create from Overview', () => {
       cy.getBySel('submit-invite-users').should('not.exist');
       cy.getBySel('project-name').should('be.visible');
       cy.url({timeout: 60000}).should('include', '/kanban');
-      cy.getBySel('project-name').invoke('text').should('eq', project.name);
+      cy.getBySel('project-name').invoke('text').should('to.have.string', project.name);
     });
 
   });

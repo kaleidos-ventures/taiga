@@ -29,6 +29,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <div *ngIf="!collapsed"
           class="workspace-data">
           <a class="workspace-data-project"
+            data-test="project-name"
             [routerLink]="['/project', project.slug]">
             {{ project.name }}
           </a>

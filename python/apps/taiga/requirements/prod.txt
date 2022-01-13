@@ -115,6 +115,10 @@ easy-thumbnails==2.7.0
     #   taiga6
 email-validator==1.1.3
     # via pydantic
+faker==11.3.0
+    # via
+    #   -r requirements/prod.in
+    #   factory-boy
 fastapi==0.68.1
     # via -r requirements/commons.in
 gunicorn==19.9.0

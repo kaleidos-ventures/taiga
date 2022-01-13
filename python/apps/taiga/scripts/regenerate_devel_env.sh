@@ -53,7 +53,5 @@ else
   echo "-> Load initial project_templates (scrum/kanban)"
   python -m taiga6.manage loaddata initial_project_templates --traceback
   echo "-> Generate sample data"
-  python -m taiga6.manage sample_data --traceback
-  echo "-> Rebuilding timeline"
-  python -m taiga6.manage rebuild_timeline --purge
+  python -m taiga sampledata
 fi

@@ -16,6 +16,7 @@
 import os
 from typing import Any
 
+import django
 import typer
 import uvicorn
 from taiga import __version__
@@ -33,6 +34,13 @@ def _version_callback(value: bool) -> None:
         raise typer.Exit()
 
 
+def _initialize_django() -> None:
+    # initialize django settings and django app
+    # so we can use the ORM across taiga-next
+    os.environ["DJANGO_SETTINGS_MODULE"] = "taiga.conf.taiga6"
+    django.setup()
+
+
 @app.callback()
 def main(
     version: bool = typer.Option(
@@ -43,12 +51,11 @@ def main(
         help="Show version information.",
     )
 ) -> None:
-    ...
+    _initialize_django()
 
 
 def _run(**kwargs: Any) -> None:
     wsgi_app = os.getenv("TAIGA_WSGI_APP", "taiga.wsgi:app")
-
     uvicorn.run(wsgi_app, **kwargs)
 
 
@@ -60,6 +67,13 @@ def devserve(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000)
 @app.command(help="Run a Taiga server.")
 def serve(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000)) -> None:
     _run(host=host, port=port, reload=False, debug=False)
+
+
+@app.command(help="Load sample data.")
+def sampledata() -> None:
+    from taiga.base.utils import load_sample_data
+
+    load_sample_data()
 
 
 if __name__ == "__main__":

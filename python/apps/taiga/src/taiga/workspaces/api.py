@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import List
-
 from fastapi import Query
 from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
@@ -33,9 +31,9 @@ GET_WORKSPACE = HasPerm("view_workspace")
     "",
     name="workspaces.list",
     summary="List workspaces",
-    response_model=List[WorkspaceSummarySerializer],
+    response_model=list[WorkspaceSummarySerializer],
 )
-def list_workspaces(request: Request) -> List[WorkspaceSummarySerializer]:
+def list_workspaces(request: Request) -> list[WorkspaceSummarySerializer]:
     """
     List the workspaces of the logged user.
     """

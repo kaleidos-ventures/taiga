@@ -4,7 +4,8 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-from typing import Iterable, List, Optional
+from collections.abc import Iterable
+from typing import Optional
 
 from django.core.files import File
 from taiga.projects.models import Project, ProjectTemplate
@@ -47,7 +48,7 @@ def get_template(slug: str) -> ProjectTemplate:
     return ProjectTemplate.objects.get(slug=slug)
 
 
-def update_project_public_permissions(project: Project, permissions: List[str]) -> List[str]:
+def update_project_public_permissions(project: Project, permissions: list[str]) -> list[str]:
     project.public_permissions = permissions
     project.save()
     return project.public_permissions

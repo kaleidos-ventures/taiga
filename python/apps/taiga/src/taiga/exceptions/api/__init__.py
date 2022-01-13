@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from fastapi import status
 from fastapi.exceptions import HTTPException as FastAPIHTTPException
@@ -20,7 +20,7 @@ class HTTPException(FastAPIHTTPException):
         code: str = codes.EX_UNKNOWN.code,
         detail: Any = None,
         message: str = "",
-        headers: Optional[Dict[str, Any]] = None,
+        headers: Optional[dict[str, Any]] = None,
     ) -> None:
         self.code: str = code
         self.message: str = message

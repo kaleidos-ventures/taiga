@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import List, Optional, Tuple
+from typing import Optional
 
 from taiga.auth.exceptions import BadAuthTokenError, UnauthorizedUserError
 from taiga.tokens import TokenError
@@ -42,7 +42,7 @@ def refresh(token: str) -> Optional[AccessWithRefreshToken]:
     return AccessWithRefreshToken(token=str(refresh_token.access_token), refresh=str(refresh_token))
 
 
-def authenticate(token: str) -> Tuple[List[str], User]:
+def authenticate(token: str) -> tuple[list[str], User]:
     # Getnerate Access token
     try:
         access_token = AccessToken(token)

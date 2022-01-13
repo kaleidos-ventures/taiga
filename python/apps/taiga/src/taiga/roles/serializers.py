@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-from typing import Any, List
+from typing import Any
 
 from pydantic import validator
 from taiga.base.serializer import BaseModel
@@ -18,7 +18,7 @@ class RoleSerializer(BaseModel):
     order: int
     num_members: int = 0
     is_admin: bool
-    permissions: List[str]
+    permissions: list[str]
 
     class Config:
         orm_mode = True

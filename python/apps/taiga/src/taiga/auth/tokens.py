@@ -32,7 +32,7 @@
 
 from datetime import timedelta
 from functools import cached_property
-from typing import ClassVar, Tuple
+from typing import ClassVar
 
 from taiga.conf import settings
 from taiga.tokens import DenylistMixin, Token
@@ -46,7 +46,7 @@ class AccessToken(Token):
 class RefreshToken(DenylistMixin, Token):
     token_type = "refresh"
     lifetime = timedelta(minutes=settings.REFRESH_TOKEN_LIFETIME)
-    no_copy_claims: ClassVar[Tuple[str, ...]] = (
+    no_copy_claims: ClassVar[tuple[str, ...]] = (
         settings.TOKENS.TOKEN_TYPE_CLAIM,
         "exp",
         # Both of these claims are included even though they may be the same.

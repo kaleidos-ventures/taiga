@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, Dict, List, Type, Union
+from typing import Any, Union
 
 from fastapi import Security
 from fastapi.params import Depends
@@ -18,7 +18,7 @@ from taiga.exceptions.api.errors import ERROR_401
 from . import backend as auth_backend
 from .security import HTTPBearer
 
-AuthAPIRoute: Type[APIRoute] = MiddlewareAPIRouteWrapper(
+AuthAPIRoute: type[APIRoute] = MiddlewareAPIRouteWrapper(
     middleware=[
         Middleware(
             AuthenticationMiddleware,
@@ -33,9 +33,9 @@ class AuthAPIRouter(APIRouter):
     def __init__(
         self,
         *,
-        dependencies: List[Depends] = [],
-        route_class: Type[APIRoute] = AuthAPIRoute,
-        responses: Dict[Union[int, str], Dict[str, Any]] = {},
+        dependencies: list[Depends] = [],
+        route_class: type[APIRoute] = AuthAPIRoute,
+        responses: dict[Union[int, str], dict[str, Any]] = {},
         **kwargs: Any,
     ) -> None:
         super().__init__(

@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional, Tuple
+from typing import Optional
 
 from fastapi import Request
 from fastapi.security import HTTPAuthorizationCredentials
@@ -14,7 +14,7 @@ from taiga.exceptions.api import AuthorizationError
 
 
 class HTTPBearer(HTTPBearerBase):
-    def _get_authorization_scheme_token(self, authorization_header_value: str) -> Tuple[str, str]:
+    def _get_authorization_scheme_token(self, authorization_header_value: str) -> tuple[str, str]:
         if not authorization_header_value:
             return "", ""
         scheme, _, token = authorization_header_value.partition(" ")

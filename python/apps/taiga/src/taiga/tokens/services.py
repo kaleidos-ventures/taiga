@@ -6,7 +6,6 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from datetime import datetime
-from typing import Tuple
 
 from taiga.users.models import User
 
@@ -26,7 +25,7 @@ def create_outstanding_token(
     )
 
 
-def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> Tuple[OutstandingToken, bool]:
+def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> tuple[OutstandingToken, bool]:
     return tokens_repo.get_or_create_outstanding_token(jti=jti, token=token, expires_at=expires_at)
 
 
@@ -35,7 +34,7 @@ def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) 
 # ----------------
 
 
-def deny_token(token: OutstandingToken) -> Tuple[DenylistedToken, bool]:
+def deny_token(token: OutstandingToken) -> tuple[DenylistedToken, bool]:
     return tokens_repo.get_or_create_denylisted_token(token=token)
 
 

@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import List
-
 from fastapi import Query
 from fastapi.params import Depends
 from taiga.auth.routing import AuthAPIRouter
@@ -42,12 +40,12 @@ UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
     "",
     name="projects.list",
     summary="List projects",
-    response_model=List[ProjectSummarySerializer],
+    response_model=list[ProjectSummarySerializer],
     responses=ERROR_422 | ERROR_403,
 )
 def list_projects(
     request: Request, workspace_slug: str = Query("", description="the workspace slug (str)")
-) -> List[ProjectSerializer]:
+) -> list[ProjectSerializer]:
     """
     List projects of a workspace visible by the user.
     """
@@ -116,12 +114,12 @@ def get_project(request: Request, slug: str = Query("", description="the project
     "/{slug}/public-permissions",
     name="project.public-permissions.get",
     summary="Get project public permissions",
-    response_model=List[str],
+    response_model=list[str],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 def get_project_public_permissions(
     request: Request, slug: str = Query(None, description="the project slug (str)")
-) -> List[str]:
+) -> list[str]:
     """
     Get project public permissions
     """
@@ -136,12 +134,12 @@ def get_project_public_permissions(
     "/{slug}/public-permissions",
     name="project.public-permissions.put",
     summary="Edit project public permissions",
-    response_model=List[str],
+    response_model=list[str],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 def update_project_public_permissions(
     request: Request, form: PermissionsValidator, slug: str = Query(None, description="the project slug (str)")
-) -> List[str]:
+) -> list[str]:
     """
     Edit project public permissions
     """

@@ -5,13 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, List, Optional, Type
+from typing import Any, Optional
 
 from fastapi.routing import APIRoute
 from starlette.middleware import Middleware
 
 
-def MiddlewareAPIRouteWrapper(middleware: Optional[List[Middleware]] = None) -> Type[APIRoute]:
+def MiddlewareAPIRouteWrapper(middleware: Optional[list[Middleware]] = None) -> type[APIRoute]:
     """
     Just bind the middleware to an APIRoute subclass.
 

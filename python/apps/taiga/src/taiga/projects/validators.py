@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import UploadFile
 from pydantic import validator
@@ -69,4 +69,4 @@ class ProjectValidator(BaseModel):
 
 
 class PermissionsValidator(BaseModel):
-    permissions: List[str]
+    permissions: list[str]

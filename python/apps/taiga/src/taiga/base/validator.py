@@ -6,13 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import inspect
-from typing import Type
 
 from fastapi import Form
 from taiga.base.serializer import BaseModel
 
 
-def as_form(cls: Type[BaseModel]):  # type: ignore[no-untyped-def, call-arg]
+def as_form(cls: type[BaseModel]):  # type: ignore[no-untyped-def, call-arg]
     """
     Adds an as_form class method to decorated models. The as_form class method
     can be used with FastAPI endpoints (https://github.com/tiangolo/fastapi/issues/2387)

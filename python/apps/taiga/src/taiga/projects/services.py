@@ -4,8 +4,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+from collections.abc import Iterable
 from functools import partial
-from typing import Iterable, List, Optional, Union
+from typing import Optional, Union
 
 from django.core.files import File
 from fastapi import UploadFile
@@ -72,7 +73,7 @@ get_logo_small_thumbnail_url = partial(get_logo_thumbnail_url, settings.IMAGES.T
 get_logo_large_thumbnail_url = partial(get_logo_thumbnail_url, settings.IMAGES.THUMBNAIL_PROJECT_LOGO_LARGE)
 
 
-def update_project_public_permissions(project: Project, permissions: List[str]) -> List[str]:
+def update_project_public_permissions(project: Project, permissions: list[str]) -> list[str]:
     if not permissions_services.permissions_are_valid(permissions):
         raise ex.NotValidPermissionsSetError()
 

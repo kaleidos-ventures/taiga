@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, List, Optional, Union
+from typing import Any, Optional, Union
 
 from taiga.permissions import choices
 from taiga.projects.models import Project
@@ -83,7 +83,7 @@ def _get_object_project(obj: Any) -> Optional[AuthorizableObj]:
     return project
 
 
-def _get_user_permissions(user: User, project: Project, workspace: Workspace, cache: str = "user") -> List[str]:
+def _get_user_permissions(user: User, project: Project, workspace: Workspace, cache: str = "user") -> list[str]:
     """
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
@@ -137,23 +137,23 @@ def _get_user_permissions(user: User, project: Project, workspace: Workspace, ca
     return user_permissions
 
 
-def _get_project_membership_permissions(membership: Membership) -> List[str]:
+def _get_project_membership_permissions(membership: Membership) -> list[str]:
     if membership and membership.role and membership.role.permissions:
         return membership.role.permissions
     return []
 
 
-def _get_workspace_membership_permissions(workspace_membership: WorkspaceMembership) -> List[str]:
+def _get_workspace_membership_permissions(workspace_membership: WorkspaceMembership) -> list[str]:
     if workspace_membership and workspace_membership.workspace_role and workspace_membership.workspace_role.permissions:
         return workspace_membership.workspace_role.permissions
     return []
 
 
-def permissions_are_valid(permissions: List[str]) -> bool:
+def permissions_are_valid(permissions: list[str]) -> bool:
     return set.issubset(set(permissions), choices.VALID_PROJECT_CHOICES)
 
 
-def permissions_are_compatible(permissions: List[str]) -> bool:
+def permissions_are_compatible(permissions: list[str]) -> bool:
     # a user cannot see tasks or sprints if she has no access to user stories
     incompatible_permissions = set(["view_tasks", "view_milestones"])
     if "view_us" not in permissions and set.intersection(set(permissions), incompatible_permissions):

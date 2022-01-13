@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, Dict, Generic, List, Type, TypeVar, Union
+from typing import Any, Generic, TypeVar, Union
 
 from fastapi import status
 from pydantic import BaseModel
@@ -22,7 +22,7 @@ T = TypeVar("T")
 
 class GenericListError(BaseModel):
     code: str
-    detail: List[Dict[str, Any]] = [{"loc": ["string"], "msg": "string", "type": "string"}]
+    detail: list[dict[str, Any]] = [{"loc": ["string"], "msg": "string", "type": "string"}]
     message: str
 
 
@@ -61,7 +61,7 @@ class BadRequestErrorModel(GenericSingleError):
     message: str = codes.EX_BAD_REQUEST.message
 
 
-ErrorsDict = Dict[Union[int, str], Dict[str, Type[ErrorResponse[Any]]]]
+ErrorsDict = dict[Union[int, str], dict[str, type[ErrorResponse[Any]]]]
 
 ERROR_RESPONSE_400 = ErrorResponse[BadRequestErrorModel]
 ERROR_RESPONSE_401 = ErrorResponse[UnauthorizedErrorModel]

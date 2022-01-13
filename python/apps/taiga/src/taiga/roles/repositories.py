@@ -4,7 +4,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-from typing import List
 
 from taiga.projects.models import Project
 from taiga.roles.models import Membership, Role, WorkspaceMembership, WorkspaceRole
@@ -19,7 +18,7 @@ def get_project_role(project: Project, slug: str) -> Role:
         return None
 
 
-def get_project_roles(project: Project) -> List[Role]:
+def get_project_roles(project: Project) -> list[Role]:
     return project.roles.all()
 
 
@@ -34,7 +33,7 @@ def get_num_members_by_role_id(role_id: int) -> int:
     return 0
 
 
-def update_role_permissions(role: Role, permissions: List[str]) -> Role:
+def update_role_permissions(role: Role, permissions: list[str]) -> Role:
     role.permissions = permissions
     role.save()
     return role
@@ -45,7 +44,7 @@ def create_membership(user: User, project: Project, role: Role, email: str) -> M
 
 
 def create_workspace_role(
-    name: str, slug: str, permissions: List[str], workspace: Workspace, is_admin: bool = False
+    name: str, slug: str, permissions: list[str], workspace: Workspace, is_admin: bool = False
 ) -> Workspace:
     return WorkspaceRole.objects.create(
         name="Administrators",

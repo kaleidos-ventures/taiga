@@ -6,12 +6,11 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import json
-from typing import List
 
 from pydantic import ValidationError
 
 
-def check_validation_errors(validation_errors: ValidationError, error_fields: List[str], error_msgs: List[str]):
+def check_validation_errors(validation_errors: ValidationError, error_fields: list[str], error_msgs: list[str]):
     validation_errors_json = json.loads(validation_errors.value.json())
     assert len(validation_errors_json) == len(error_fields), "Wrong number of validation errors"
 

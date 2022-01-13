@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import List
-
 from fastapi import Query
 from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
@@ -38,12 +36,12 @@ UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
     "/{slug}/roles",
     name="project.permissions.get",
     summary="Get project roles permissions",
-    response_model=List[RoleSerializer],
+    response_model=list[RoleSerializer],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 def get_project_roles(
     request: Request, slug: str = Query(None, description="the project slug (str)")
-) -> List[RoleSerializer]:
+) -> list[RoleSerializer]:
     """
     Get project roles and permissions
     """

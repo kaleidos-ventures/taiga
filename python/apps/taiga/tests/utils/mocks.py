@@ -6,7 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import contextlib
-from typing import Any, Dict, Generator
+from collections.abc import Generator
+from typing import Any
 from unittest.mock import patch
 
 import taiga.conf
@@ -14,7 +15,7 @@ from taiga.conf import Settings
 
 
 @contextlib.contextmanager
-def override_settings(settings_values: Dict[str, Any]) -> Generator[None, None, None]:
+def override_settings(settings_values: dict[str, Any]) -> Generator[None, None, None]:
     """
     Useful to overrided some settings values:
 

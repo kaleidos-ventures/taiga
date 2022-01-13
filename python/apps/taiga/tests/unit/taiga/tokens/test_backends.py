@@ -30,7 +30,7 @@
 #   SOFTWARE.
 
 from datetime import datetime, timedelta
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import patch
 
 import jwt
@@ -92,7 +92,7 @@ ISSUER = "https://www.myoidcprovider.com"
 hmac_token_backend = TokenBackend("HS256", SECRET)
 rsa_token_backend = TokenBackend("RS256", PRIVATE_KEY, PUBLIC_KEY)
 aud_iss_token_backend = TokenBackend("RS256", PRIVATE_KEY, PUBLIC_KEY, AUDIENCE, ISSUER)
-payload: Dict[str, Any] = {"foo": "bar"}
+payload: dict[str, Any] = {"foo": "bar"}
 
 
 def test_init() -> None:

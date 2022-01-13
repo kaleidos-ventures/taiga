@@ -5,7 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Iterable, Optional
+from collections.abc import Iterable
+from typing import Optional
 
 from django.db.models import Count, OuterRef, Prefetch, Subquery
 from taiga.projects.models import Project

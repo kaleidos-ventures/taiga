@@ -31,7 +31,6 @@
 #   SOFTWARE.
 
 from datetime import datetime
-from typing import Tuple
 
 from taiga.users.models import User
 
@@ -50,7 +49,7 @@ def create_outstanding_token(
     )
 
 
-def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> Tuple[OutstandingToken, bool]:
+def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> tuple[OutstandingToken, bool]:
     return OutstandingToken.objects.get_or_create(
         jti=jti,
         defaults={
@@ -65,7 +64,7 @@ def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) 
 # ----------------
 
 
-def get_or_create_denylisted_token(token: OutstandingToken) -> Tuple[DenylistedToken, bool]:
+def get_or_create_denylisted_token(token: OutstandingToken) -> tuple[DenylistedToken, bool]:
     return DenylistedToken.objects.get_or_create(token=token)
 
 

@@ -8,7 +8,7 @@
 import inspect
 import typing
 from datetime import datetime
-from typing import Any, List, Set, Type, Union, get_type_hints
+from typing import Any, Union, get_type_hints
 
 from sampledata.helper import SampleData
 from taiga.base.serializer import BaseModel
@@ -30,11 +30,11 @@ SAMPLEDATA_DEFAULT_METHODS = {
 }
 
 
-def mock_serializer(serialized_type: Any) -> Union[BaseModel, List[BaseModel]]:
+def mock_serializer(serialized_type: Any) -> Union[BaseModel, list[BaseModel]]:
     """
     Construct mocked objects for any of the allowed types
 
-    :serialized_type: The 'BaseModel' or 'List[BaseModel]' type to mock
+    :serialized_type: The 'BaseModel' or 'list[BaseModel]' type to mock
     """
     if typing.get_origin(serialized_type) is list:
         ret_list = list()
@@ -45,9 +45,9 @@ def mock_serializer(serialized_type: Any) -> Union[BaseModel, List[BaseModel]]:
 
 
 def base_model_mock_serializer(
-    serialized_type: Type[BaseModel],
+    serialized_type: type[BaseModel],
     current_nested_index: dict[str, int] = dict(),
-    parent_props: dict[str, Set[Any]] = dict(),
+    parent_props: dict[str, set[Any]] = dict(),
 ) -> BaseModel:
     """
     Construct mocked objects for the provided BaseModel type
@@ -116,23 +116,23 @@ def base_model_mock_serializer(
     return serialized_type(**properties_dict)  # type: ignore[call-arg]
 
 
-def _is_nested_property(parent_props: dict[str, Any], property: str, type: Type[Any]) -> bool:
+def _is_nested_property(parent_props: dict[str, Any], property: str, type: type[Any]) -> bool:
     return property in parent_props.keys() and type in parent_props[property]
 
 
-def _is_optional(type: Type[Any]) -> bool:
+def _is_optional(type: type[Any]) -> bool:
     return typing.get_origin(type) is Union and len(type.__args__) == 2
 
 
-def _is_base_model_type(type: Type[Any]) -> bool:
+def _is_base_model_type(type: type[Any]) -> bool:
     return inspect.isclass(type) and issubclass(type, BaseModel)
 
 
-def _is_simple(type: Type[Any]) -> bool:
+def _is_simple(type: type[Any]) -> bool:
     return type is str or type is int or type is bool or type is datetime or type is dict
 
 
-def _get_simple_random(type: Type[Any]) -> Any:
+def _get_simple_random(type: type[Any]) -> Any:
     # TODO: type is in [str, int]
     if type is str or type is int or type is bool or type is datetime:
         return eval("SAMPLE_DATA." + SAMPLEDATA_DEFAULT_METHODS[type.__name__])

@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-from typing import List, Optional
+from typing import Optional
 
 from taiga.exceptions import services as ex
 from taiga.permissions import services as permissions_services
@@ -15,7 +15,7 @@ from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 
-def get_roles_permissions(project: Project) -> List[Role]:
+def get_roles_permissions(project: Project) -> list[Role]:
     return roles_repo.get_project_roles(project)
 
 
@@ -27,7 +27,7 @@ def get_project_role(project: Project, slug: str) -> Optional[Role]:
     return roles_repo.get_project_role(project=project, slug=slug)
 
 
-def update_role_permissions(role: Role, permissions: List[str]) -> Role:
+def update_role_permissions(role: Role, permissions: list[str]) -> Role:
     if role.is_admin:
         raise ex.NonEditableRoleError()
 

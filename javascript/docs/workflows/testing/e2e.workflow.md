@@ -173,9 +173,4 @@ npm run e2e -- --watch
 ```
 
 ## Database fixtures backup
-
-Add this variable to your python .env
-
-`TAIGA_SECRET_KEY="secret"`
-
-Then regenerate the database (follow python guide) and make the dump `pg_dump -Fc -Z 9 --file=sql-fixtures/fixtures.sql taiga`.
+Please, follow the step described in `.github/sql-fixtures/README.md`

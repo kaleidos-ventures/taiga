@@ -8,7 +8,6 @@
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import ValidationError
 from starlette.exceptions import HTTPException
 from taiga import __description__, __title__, __version__
 from taiga.conf import settings
@@ -45,7 +44,8 @@ api.add_middleware(
 # Override exception handlers
 api.exception_handler(HTTPException)(http_exception_handler)
 api.exception_handler(RequestValidationError)(request_validation_exception_handler)
-api.exception_handler(ValidationError)(request_validation_exception_handler)
+# TODO: The next handler is obfuscating a Serializer error, being dealt like a Validation error (which is incorrect)
+# api.exception_handler(ValidationError)(request_validation_exception_handler)
 
 
 ##############################################

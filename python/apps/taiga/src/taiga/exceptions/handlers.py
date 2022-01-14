@@ -5,26 +5,37 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import http
+
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
-
-from .api import codes
+from taiga.exceptions.api import HTTPException as TaigaHTTPException
+from taiga.exceptions.api import codes
 
 
 async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
-    headers = getattr(exc, "headers", None)
+    if isinstance(exc, TaigaHTTPException):
+        http_exc_code = getattr(exc, "code", codes.EX_UNKNOWN.code)
+        http_exc_message = getattr(exc, "message", codes.EX_UNKNOWN.message)
+    else:  # Starlette's HTTPException
+        http_exc_code = http.HTTPStatus(exc.status_code).phrase.replace(" ", "-").lower()
+        http_exc_message = http.HTTPStatus(exc.status_code).description
+
+    http_exc_detail = exc.detail
+
     content = {
         "error": {
-            "code": getattr(exc, "code", codes.EX_UNKNOWN.code),
-            "detail": exc.detail,
-            "message": getattr(exc, "message", codes.EX_UNKNOWN.message),
+            "code": http_exc_code,
+            "detail": http_exc_detail,
+            "message": http_exc_message,
         }
     }
 
+    headers = getattr(exc, "headers", None)
     if headers:
         return JSONResponse(status_code=exc.status_code, content=content, headers=headers)
     else:

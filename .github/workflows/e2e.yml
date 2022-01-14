@@ -59,7 +59,7 @@ jobs:
 
     - name: Postgres restore fixture
       run: |
-        pg_restore --no-privileges --no-owner --dbname="postgres://postgres:postgres@localhost:5432/taiga" "./javascript/sql-fixtures/fixtures.sql"
+        pg_restore --no-privileges --no-owner --dbname="postgres://postgres:postgres@localhost:5432/taiga" "./.github/sql-fixtures/fixtures.sql"
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2

@@ -150,7 +150,5 @@ def test_update_role_permissions():
 def test_create_membership():
     project = f.ProjectFactory()
     role = f.RoleFactory(project=project)
-    membership = repositories.create_membership(
-        user=project.owner, project=project, role=role, email=project.owner.email
-    )
+    membership = repositories.create_membership(user=project.owner, project=project, role=role, email=None)
     assert membership in project.memberships.all()

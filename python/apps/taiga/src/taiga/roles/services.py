@@ -45,13 +45,7 @@ def get_user_project_membership(user: User, project: Project, cache: str = "user
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
     """
-    if user.is_anonymous:
-        return None
-
-    if cache == "user":
-        return user.cached_membership_for_project(project)
-
-    return project.cached_memberships_for_user(user)
+    return roles_repo.get_user_project_membership(user=user, project=project, cache=cache)
 
 
 def get_user_workspace_membership(user: User, workspace: Workspace, cache: str = "user") -> WorkspaceMembership:
@@ -59,10 +53,4 @@ def get_user_workspace_membership(user: User, workspace: Workspace, cache: str =
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
     """
-    if user.is_anonymous:
-        return None
-
-    if cache == "user":
-        return user.cached_memberships_for_workspace(workspace)
-
-    return workspace.cached_workspace_memberships_for_user(user)
+    return roles_repo.get_user_workspace_membership(user=user, workspace=workspace, cache=cache)

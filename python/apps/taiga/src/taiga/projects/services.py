@@ -51,7 +51,8 @@ def create_project(
     if not owner_role:
         owner_role = roles_repo.get_first_role(project=project)
 
-    roles_repo.create_membership(user=project.owner, project=project, role=owner_role, email=project.owner.email)
+    owner = projects_repo.get_project_owner(project)
+    roles_repo.create_membership(user=owner, project=project, role=owner_role, email=None)
 
     # tags normalization
     project.tags = list(map(str.lower, project.tags))

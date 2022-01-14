@@ -8,6 +8,7 @@
 from typing import Any, Optional, Union
 
 from taiga.permissions import choices
+from taiga.permissions import repositories as permissions_repo
 from taiga.projects.models import Project
 from taiga.roles import services as roles_services
 from taiga.roles.models import Membership, WorkspaceMembership
@@ -18,33 +19,25 @@ AuthorizableObj = Union[Project, Workspace]
 
 
 def is_project_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
-    if user.is_superuser:
-        return True
-
     project = _get_object_project(obj)
     if project is None:
         return False
 
-    membership = roles_services.get_user_project_membership(user, project)
-    if membership and membership.role.is_admin:
-        return True
-
-    return False
-
-
-def is_workspace_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
     if user.is_superuser:
         return True
 
+    return permissions_repo.is_project_admin(user=user, project=project)
+
+
+def is_workspace_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
     workspace = _get_object_workspace(obj)
     if workspace is None:
         return False
 
-    workspace_membership = roles_services.get_user_workspace_membership(user, workspace)
-    if workspace_membership and workspace_membership.workspace_role.is_admin:
+    if user.is_superuser:
         return True
 
-    return False
+    return permissions_repo.is_workspace_admin(user=user, workspace=workspace)
 
 
 def user_has_perm(user: User, perm: str, obj: Optional[AuthorizableObj] = None, cache: str = "user") -> bool:
@@ -94,15 +87,23 @@ def _get_user_permissions(user: User, project: Project, workspace: Workspace, ca
         roles_services.get_user_project_membership(user, project, cache=cache) if project else []
     )
     is_project_member = project_membership is not None
-    is_project_admin = project is not None and is_project_member and project_membership.role.is_admin
-    project_role_permissions = _get_project_membership_permissions(project_membership)
+    is_project_admin = (
+        project is not None
+        and is_project_member
+        and permissions_repo.is_project_membership_admin(project_membership=project_membership)
+    )
+    project_role_permissions = permissions_repo.get_project_membership_permissions(project_membership)
 
     workspace_membership: WorkspaceMembership = (
         roles_services.get_user_workspace_membership(user, workspace, cache=cache) if workspace else []
     )
     is_workspace_member = workspace_membership is not None
-    is_workspace_admin = workspace is not None and is_workspace_member and workspace_membership.workspace_role.is_admin
-    workspace_role_permissions = _get_workspace_membership_permissions(workspace_membership)
+    is_workspace_admin = (
+        workspace is not None
+        and is_workspace_member
+        and permissions_repo.is_workspace_membership_admin(workspace_membership=workspace_membership)
+    )
+    workspace_role_permissions = permissions_repo.get_workspace_membership_permissions(workspace_membership)
 
     # pj (user is)     ws (user is)	   	Applied permission role (referred to a project)
     # =================================================================================
@@ -135,18 +136,6 @@ def _get_user_permissions(user: User, project: Project, workspace: Workspace, ca
         user_permissions = workspace_role_permissions
 
     return user_permissions
-
-
-def _get_project_membership_permissions(membership: Membership) -> list[str]:
-    if membership and membership.role and membership.role.permissions:
-        return membership.role.permissions
-    return []
-
-
-def _get_workspace_membership_permissions(workspace_membership: WorkspaceMembership) -> list[str]:
-    if workspace_membership and workspace_membership.workspace_role and workspace_membership.workspace_role.permissions:
-        return workspace_membership.workspace_role.permissions
-    return []
 
 
 def permissions_are_valid(permissions: list[str]) -> bool:

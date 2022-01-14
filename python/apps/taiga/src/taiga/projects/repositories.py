@@ -44,6 +44,10 @@ def get_project(slug: str) -> Optional[Project]:
         return None
 
 
+def get_project_owner(project: Project) -> User:
+    return project.owner
+
+
 def get_template(slug: str) -> ProjectTemplate:
     return ProjectTemplate.objects.get(slug=slug)
 

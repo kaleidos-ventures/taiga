@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import Optional
+
 from taiga.projects.models import Project
 from taiga.roles.models import Membership, Role, WorkspaceMembership, WorkspaceRole
 from taiga.users.models import User
@@ -39,7 +41,7 @@ def update_role_permissions(role: Role, permissions: list[str]) -> Role:
     return role
 
 
-def create_membership(user: User, project: Project, role: Role, email: str) -> Membership:
+def create_membership(user: User, project: Project, role: Role, email: Optional[str]) -> Membership:
     return Membership.objects.create(user=user, project=project, role=role, email=email)
 
 
@@ -57,3 +59,31 @@ def create_workspace_role(
 
 def create_workspace_membership(user: User, workspace: Workspace, workspace_role: WorkspaceRole) -> WorkspaceMembership:
     return WorkspaceMembership.objects.create(user=user, workspace=workspace, workspace_role=workspace_role)
+
+
+def get_user_project_membership(user: User, project: Project, cache: str = "user") -> Membership:
+    """
+    cache param determines how memberships are calculated
+    trying to reuse the existing data in cache
+    """
+    if user.is_anonymous:
+        return None
+
+    if cache == "user":
+        return user.cached_membership_for_project(project)
+
+    return project.cached_memberships_for_user(user)
+
+
+def get_user_workspace_membership(user: User, workspace: Workspace, cache: str = "user") -> WorkspaceMembership:
+    """
+    cache param determines how memberships are calculated
+    trying to reuse the existing data in cache
+    """
+    if user.is_anonymous:
+        return None
+
+    if cache == "user":
+        return user.cached_memberships_for_workspace(workspace)
+
+    return workspace.cached_workspace_memberships_for_user(user)

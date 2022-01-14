@@ -8,7 +8,7 @@
 
 import { AfterContentInit, Component, ContentChild, HostBinding, Input } from '@angular/core';
 import { ControlContainer, FormControl, FormGroupDirective } from '@angular/forms';
-import { TUI_TEXTFIELD_LABEL_OUTSIDE } from '@taiga-ui/core';
+import { TUI_ANIMATION_OPTIONS, TUI_TEXTFIELD_LABEL_OUTSIDE } from '@taiga-ui/core';
 import { TuiSelectComponent } from '@taiga-ui/kit';
 import { FormDirective } from '../form/form.directive';
 import { FieldService } from '../services/field.service';
@@ -24,6 +24,16 @@ let nextId = 0;
   ],
   providers: [
     FieldService,
+    {
+      provide: TUI_ANIMATION_OPTIONS,
+      useFactory: () => {
+        return {
+          params: {
+            duration: 0,
+          }
+        };
+      }
+    },
     {
       provide: TUI_TEXTFIELD_LABEL_OUTSIDE,
       useValue: {

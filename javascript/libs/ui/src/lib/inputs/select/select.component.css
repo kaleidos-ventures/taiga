@@ -35,6 +35,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 :host::ng-deep {
+  --tui-duration: 0;
   --tui-text-03: var(--color-gray70);
 
   & .icon {

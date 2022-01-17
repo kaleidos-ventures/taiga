@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, inject, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -24,7 +24,7 @@ import { ApiModule } from '@taiga/api';
 import { WsModule } from '@taiga/ws';
 import { CoreModule } from '@taiga/core';
 import { EnvironmentService } from './services/environment.service';
-import { TuiRootModule, TUI_ICONS_PATH } from '@taiga-ui/core';
+import { TuiRootModule, TUI_ICONS_PATH, TUI_ANIMATIONS_DURATION } from '@taiga-ui/core';
 import { TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE } from '@taiga-ui/i18n';
 import { of } from 'rxjs';
 import { TranslocoRootModule } from './transloco/transloco-root.module';
@@ -32,6 +32,7 @@ import { TranslocoService } from '@ngneat/transloco';
 import { paramCase } from 'change-case';
 import { NavigationModule } from './shared/navigation/navigation.module';
 import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
+import { TUI_IS_CYPRESS } from '@taiga-ui/cdk';
 
 const altIconName: Record<string, string> = {
   'tuiIconChevronDownLarge': 'chevron-down'
@@ -111,6 +112,10 @@ export function prefersReducedMotion(): boolean {
         return of(TUI_ENGLISH_LANGUAGE);
       }
     },
+    {
+      provide: TUI_ANIMATIONS_DURATION,
+      useFactory: () => (inject(TUI_IS_CYPRESS) ? 0 : 300),
+    }
   ],
 })
 export class AppModule {}

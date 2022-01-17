@@ -119,4 +119,7 @@ export class RolePermissionRowComponent implements OnInit {
     }
   }
 
+  public insertionOrder() {
+    return 1;
+  }
 }

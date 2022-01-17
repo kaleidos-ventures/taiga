@@ -79,7 +79,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
     <div class="sub" *ngIf="showAdvancedSetting">
       <tg-role-advance-row
-        *ngFor="let module of modules| keyvalue; trackBy: trackByValue; let j = index"
+        *ngFor="let module of modules | keyvalue: insertionOrder; trackBy: trackByValue; let j = index"
         [module]="module"
         [formGroup]="getModuleFormGroup(module.key)">
       </tg-role-advance-row>

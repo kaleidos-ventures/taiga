@@ -12,6 +12,7 @@ import { FormGroup } from '@angular/forms';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Module } from '@taiga/data';
 
 @UntilDestroy()
 @Component({
@@ -27,12 +28,13 @@ export class RoleAdvanceRowComponent implements OnInit {
   public formGroup!: FormGroup;
 
   @Input()
-  public module!: KeyValue<string, string>;
+  public module!: KeyValue<Module, string>;
 
   public customizer = false;
 
   public permissionRowModel!: KeyValue<SettingsPermission, string>;
   public previousPermission?: KeyValue<SettingsPermission, string>;
+  public isChildModule = false;
 
   constructor(
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService,
@@ -40,6 +42,10 @@ export class RoleAdvanceRowComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
+    const childModules: Module[] = ['tasks', 'sprints'];
+
+    this.isChildModule = childModules.includes(this.module.key);
+
     this.refreshPermission();
     this.previousPermission = this.permissionRowModel;
 

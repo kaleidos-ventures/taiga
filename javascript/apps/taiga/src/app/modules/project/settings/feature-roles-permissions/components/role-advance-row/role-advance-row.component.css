@@ -63,6 +63,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
 
     & tg-ui-select {
+      inline-size: 100%;
       max-inline-size: 17rem;
       min-inline-size: 14rem;
     }

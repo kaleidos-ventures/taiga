@@ -32,6 +32,7 @@ export class RoleAdvanceRowComponent implements OnInit {
   public customizer = false;
 
   public permissionRowModel!: KeyValue<SettingsPermission, string>;
+  public previousPermission?: KeyValue<SettingsPermission, string>;
 
   constructor(
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService,
@@ -40,6 +41,7 @@ export class RoleAdvanceRowComponent implements OnInit {
 
   public ngOnInit() {
     this.refreshPermission();
+    this.previousPermission = this.permissionRowModel;
 
     this.formGroup.valueChanges.pipe(untilDestroyed(this))
       .subscribe(() => {
@@ -57,6 +59,10 @@ export class RoleAdvanceRowComponent implements OnInit {
       key: currentPermission,
       value: permissionName,
     };
+
+    if (!this.previousPermission) {
+      this.previousPermission = this.permissionRowModel;
+    }
   }
 
   public trackByValue(_index: number, permission: KeyValue<string, string>) {
@@ -76,5 +82,11 @@ export class RoleAdvanceRowComponent implements OnInit {
       permission.key,
       this.formGroup
     );
+
+    if (this.previousPermission?.key === 'no_access') {
+      this.formGroup.get('comment')?.setValue(true);
+    }
+
+    this.previousPermission = permission;
   }
 }

@@ -11,7 +11,7 @@ import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { FormBuilder } from '@angular/forms';
 import { TemplateStepComponent } from './template-step.component';
 
-import * as faker from 'faker';
+import { randDomainSuffix } from '@ngneat/falso';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
@@ -35,14 +35,14 @@ describe('TemplateStepComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        selectedWorkspaceSlug: faker.lorem.slug()
+        selectedWorkspaceSlug: randDomainSuffix({ length: 3 }).join('-')
       },
       detectChanges: false
     });
   });
 
   it('getCurrentWorkspace', () => {
-    const slug = faker.lorem.slug();
+    const slug = randDomainSuffix({ length: 3 }).join('-');
 
     const workspace = WorkspaceMockFactory();
     workspace.slug = slug;

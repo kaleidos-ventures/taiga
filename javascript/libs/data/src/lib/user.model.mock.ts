@@ -6,37 +6,37 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import * as faker from 'faker';
+import { randNumber, randUuid, randEmail, randFirstName, randAvatar, randHex, randParagraph, randBoolean, randUserName, randLocale, randJobArea, randPastDate } from '@ngneat/falso';
 
 import { User } from './user.model';
 
 export const UserMockFactory = (): User => {
   return {
-    acceptedTerms: faker.datatype.boolean(),
-    bigPhoto: faker.image.avatar(),
-    bio: faker.lorem.paragraphs(),
-    color: faker.internet.color(),
-    dateJoined: faker.date.past().toDateString(),
-    email: faker.internet.email(),
-    fullName: faker.name.firstName(),
-    gravatarId: faker.datatype.uuid(),
-    id: faker.datatype.number(),
-    isActive: faker.datatype.boolean(),
-    lang: faker.random.locale(),
-    maxMembershipsPrivateProjects: faker.datatype.number(),
-    maxMembershipsPublicProjects: faker.datatype.number(),
-    maxPrivateProjects: faker.datatype.number(),
-    maxPublicProjects: faker.datatype.number(),
-    photo: faker.image.avatar(),
-    readNewTerms: faker.datatype.boolean(),
+    acceptedTerms: randBoolean(),
+    bigPhoto: randAvatar(),
+    bio: randParagraph({ length: 3 }).join('\n'),
+    color: randHex(),
+    dateJoined: randPastDate().toDateString(),
+    email: randEmail(),
+    fullName: randFirstName(),
+    gravatarId: randUuid(),
+    id: randNumber(),
+    isActive: randBoolean(),
+    lang: randLocale(),
+    maxMembershipsPrivateProjects: randNumber(),
+    maxMembershipsPublicProjects: randNumber(),
+    maxPrivateProjects: randNumber(),
+    maxPublicProjects: randNumber(),
+    photo: randAvatar(),
+    readNewTerms: randBoolean(),
     roles: [
-      faker.name.jobArea(),
+      randJobArea(),
     ],
     theme: 'taiga',
     timezone: '',
-    totalPrivateProjects: faker.datatype.number(),
-    totalPublicProjects: faker.datatype.number(),
-    username: faker.internet.userName(),
-    uuid: faker.datatype.uuid(),
+    totalPrivateProjects: randNumber(),
+    totalPublicProjects: randNumber(),
+    username: randUserName(),
+    uuid: randUuid(),
   };
 };

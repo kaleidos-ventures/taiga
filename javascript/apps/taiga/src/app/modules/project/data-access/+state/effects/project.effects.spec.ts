@@ -11,7 +11,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
 import { Observable } from 'rxjs';
-import * as faker from 'faker';
+import { randDomainSuffix, randNumber } from '@ngneat/falso';
 
 import { ProjectEffects } from './project.effects';
 import { fetchProject, fetchProjectSuccess, fetchRoles, fetchRolesSuccess } from '../actions/project.actions';
@@ -35,7 +35,7 @@ describe('ProjectEffects', () => {
   });
 
   it('load project', () => {
-    const slug = faker.datatype.string();
+    const slug = randDomainSuffix({ length: 3 }).join('-');
     const project = ProjectMockFactory();
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectEffects);
@@ -56,9 +56,9 @@ describe('ProjectEffects', () => {
   });
 
   it('load roles', () => {
-    const slug = faker.datatype.string();
+    const slug = randDomainSuffix({ length: 3 }).join('-');
     const roles = [];
-    for(let i = 0; i++; i < faker.datatype.number()) {
+    for(let i = 0; i++; i < randNumber()) {
       const role = RoleMockFactory();
       roles.push(role);
     }

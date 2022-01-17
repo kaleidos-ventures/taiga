@@ -5,7 +5,8 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-import * as faker from 'faker';
+
+import { randCompanyName } from '@ngneat/falso';
 import { createWorkspace } from '../support/helpers/workspace.helpers';
 
 describe('Workspace Create', () => {
@@ -20,7 +21,7 @@ describe('Workspace Create', () => {
   });
 
   it('Should create a workspace and add it', () => {
-    const workspaceName = faker.company.companyName();
+    const workspaceName = randCompanyName();
 
     createWorkspace(workspaceName);
 

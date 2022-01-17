@@ -6,13 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import * as faker from 'faker';
+import { randUuid } from '@ngneat/falso';
 
 import { Auth } from './auth.model';
 
 export const AuthMockFactory = (): Auth => {
   return {
-    refresh: faker.datatype.uuid(),
-    token: faker.datatype.uuid(),
+    refresh: randUuid(),
+    token: randUuid(),
   };
 };

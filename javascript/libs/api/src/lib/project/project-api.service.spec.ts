@@ -9,7 +9,7 @@
 import { createHttpFactory, HttpMethod, SpectatorHttp } from '@ngneat/spectator';
 import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
-import * as faker from 'faker';
+import { randDomainSuffix } from '@ngneat/falso';
 import { ProjectApiService } from './project-api.service';
 
 describe('ProjectApiService', () => {
@@ -25,7 +25,7 @@ describe('ProjectApiService', () => {
   beforeEach(() => spectator = createHttp());
 
   it('getProject', () => {
-    const slug = faker.lorem.slug();
+    const slug = randDomainSuffix({ length: 3 }).join('-');
     const url = `${ConfigServiceMock.apiUrl}/projects/${slug}`;
 
     spectator.service.getProject(slug).subscribe();

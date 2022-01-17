@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import * as faker from 'faker';
+import { randDomainSuffix, randNumber, randWord, randParagraph, randImg, randProductName } from '@ngneat/falso';
 import { ProjectCreation, Workspace } from '..';
 import { Milestone } from './milestone.model';
 import { MilestoneMockFactory } from './milestone.model.mock';
@@ -16,7 +16,7 @@ import { WorkspaceMockFactory } from './workspace.model.mock';
 
 const getMilestones = () => {
   const milestones: Milestone[] = [];
-  for(let i=0; i<faker.datatype.number(); i++) {
+  for(let i=0; i<randNumber(); i++) {
     milestones.push(MilestoneMockFactory());
   }
   return milestones;
@@ -24,15 +24,15 @@ const getMilestones = () => {
 
 export const ProjectMockFactory = (milestones = false, workspace?: Pick<Workspace, 'color' | 'name' | 'slug'>): Project => {
   const project = {
-    name: faker.name.title(),
-    slug: faker.datatype.string(),
+    name: randWord({ length: 3, capitalize: true }).join(' '),
+    slug: randDomainSuffix({ length: 3 }).join('-'),
     milestones: milestones ? getMilestones() : [],
-    color: faker.datatype.number(8),
-    description: faker.lorem.paragraphs(),
+    color: randNumber(),
+    description: randParagraph({ length: 3 }).join('\n'),
     workspace: workspace ?? WorkspaceMockFactory(),
-    logo: faker.image.imageUrl(),
-    logoSmall: faker.image.imageUrl(),
-    logoBig: faker.image.imageUrl(),
+    logo: randImg(),
+    logoSmall: randImg(),
+    logoBig: randImg(),
   };
 
   return project;
@@ -40,9 +40,9 @@ export const ProjectMockFactory = (milestones = false, workspace?: Pick<Workspac
 
 export const ProjectCreationMockFactory = (): ProjectCreation => {
   return {
-    workspaceSlug: faker.lorem.slug(),
-    name: faker.commerce.productName(),
-    description: faker.lorem.paragraph(),
-    color: faker.datatype.number(),
+    workspaceSlug: randDomainSuffix({ length: 3 }).join('-'),
+    name: randProductName(),
+    description: randParagraph({ length: 3 }).join('\n'),
+    color: randNumber(),
   };
 };

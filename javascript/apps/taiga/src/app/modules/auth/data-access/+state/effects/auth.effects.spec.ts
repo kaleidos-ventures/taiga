@@ -15,7 +15,7 @@ import { AuthEffects } from './auth.effects';
 import { Action } from '@ngrx/store';
 import { login, loginSuccess, logout, setUser } from '../actions/auth.actions';
 import { AuthMockFactory, UserMockFactory } from '@taiga/data';
-import * as faker from 'faker';
+import { randUserName, randPassword } from '@ngneat/falso';
 import { cold, hot } from 'jest-marbles';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -46,8 +46,8 @@ describe('AuthEffects', () => {
 
   it('login', () => {
     const loginData = {
-      username: faker.internet.userName(),
-      password: faker.internet.password(),
+      username: randUserName(),
+      password: randPassword(),
     };
     const response = AuthMockFactory();
     const authApiService = spectator.inject(AuthApiService);

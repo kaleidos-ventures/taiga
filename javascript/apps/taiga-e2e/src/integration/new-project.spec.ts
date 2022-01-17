@@ -6,21 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import * as faker from 'faker';
+import { randText } from '@ngneat/falso';
 import { cancelProject, createProjectFromWS, selectBlankProject, submitProject, typeProjectDescription, typeProjectName } from '../support/helpers/project.helpers';
 import { createWorkspace } from "../support/helpers/workspace.helpers";
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 
 const workspace = WorkspaceMockFactory();
 const project = ProjectMockFactory();
-
-// FN To get a N char sentence without special characters
-const getSentenceChars = (chars: number) => {
-  const words = Array.from({
-    length: (chars / 10)
-  }, () => faker.lorem.word(10));
-  return words.join(' ');
-};
 
 describe('Workspace Create from Overview', () => {
 
@@ -53,7 +45,7 @@ describe('Workspace Create from Overview', () => {
   });
 
   it('Should not be able to add more than 80 chars', () => {
-    const projectName = getSentenceChars(100);
+    const projectName = randText({ charCount: 100 });
 
     createWorkspace(workspace.name);
     createProjectFromWS(0);
@@ -77,7 +69,7 @@ describe('Workspace Create from Overview', () => {
   });
 
   it('Should not create project with long description', () => {
-    const projectDescription = getSentenceChars(300);
+    const projectDescription = randText({ charCount: 300 });
 
     createWorkspace(workspace.name);
     createProjectFromWS(0);

@@ -6,23 +6,23 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import * as faker from 'faker';
+import { randBoolean, randNumber, randDomainSuffix, randSequence, randWord } from '@ngneat/falso';
 import { Milestone } from './milestone.model';
 
 export const MilestoneMockFactory = (): Milestone => {
   return {
-    closed: faker.datatype.boolean(),
-    closedPoints: faker.datatype.number(),
-    createdDate: faker.datatype.string(),
-    disponibility: faker.datatype.number(),
-    estimatedFinish: faker.datatype.string(),
-    estimatedStart: faker.datatype.string(),
-    id: faker.datatype.number(),
-    modifiedDate: faker.datatype.string(),
-    name: faker.datatype.string(),
-    order: faker.datatype.number(),
+    closed: randBoolean(),
+    closedPoints: randNumber(),
+    createdDate: randSequence(),
+    disponibility: randNumber(),
+    estimatedFinish: randSequence(),
+    estimatedStart: randSequence(),
+    id: randNumber(),
+    modifiedDate: randSequence(),
+    name: randWord(),
+    order: randNumber(),
     projectExtraInfo: [],
-    slug: faker.datatype.string(),
-    totalPoints: faker.datatype.number()
+    slug: randDomainSuffix({ length: 3 }).join('-'),
+    totalPoints: randNumber()
   };
 };

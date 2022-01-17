@@ -5,14 +5,13 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
+import { randFirstName, randEmail, randPassword, randSentence, random } from '@ngneat/falso';
 
-import * as faker from 'faker';
-
-faker.seed(6443);
+random('6443');
 
 export const exampleFixture = {
-  name: faker.name.firstName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  userStorySubject: faker.lorem.sentence()
+  name: randFirstName(),
+  email: randEmail(),
+  password: randPassword(),
+  userStorySubject: randSentence()
 };

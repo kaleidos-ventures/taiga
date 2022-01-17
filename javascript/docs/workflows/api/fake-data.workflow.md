@@ -1,22 +1,22 @@
 # Fake data workflow
 
-For this Taiga uses (faker)[https://www.npmjs.com/package/faker].
+For this Taiga uses (falso)[https://www.https://www.npmjs.com/package/@ngneat/falso].
 
 First you must create a mock file next to the model file like `user.model.mock.ts` then export a mock factory.
 
 ## Example
 
 ```ts
-import * as faker from 'faker';
+import { randAvatar, randParagraph, randEmail, randFirstName } from '@ngneat/falso';
 
 import { User } from './users.model';
 
 export const UserMockFactory = (): User => {
   return {
-    bigPhoto: faker.image.avatar(),
-    bio: faker.lorem.paragraphs(),
-    email: faker.internet.email(),
-    fullName: faker.name.firstName(),
+    bigPhoto: randAvatar(),
+    bio: randParagraph({ length: 3 }).join('\n'),
+    email: randEmail(),
+    fullName: randFirstName(),
   };
 };
 ```
@@ -34,5 +34,5 @@ const newUser = UserMockFactory();
 If you want consistent results, you can set your own seed:
 
 ```ts
-faker.seed(123);
+random('123');
 ```

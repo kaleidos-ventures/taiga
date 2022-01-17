@@ -12,7 +12,7 @@ import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/
 import { RouterTestingModule } from '@angular/router/testing';
 import { NewProjectComponent } from './new-project.component';
 
-import * as faker from 'faker';
+import { randDomainSuffix } from '@ngneat/falso';
 
 describe('NewProjectComponent', () => {
   let spectator: Spectator<NewProjectComponent>;
@@ -49,7 +49,7 @@ describe('NewProjectComponent', () => {
   it('on select template', () => {
     spectator.component.setStep = jest.fn();
 
-    const workspaceSlug = faker.lorem.slug();
+    const workspaceSlug = randDomainSuffix({ length: 3 }).join('-');
     const step = 'template';
     spectator.component.onSelectTemplate(step, workspaceSlug);
     expect(spectator.component.formData.workspaceSlug).toEqual(workspaceSlug);

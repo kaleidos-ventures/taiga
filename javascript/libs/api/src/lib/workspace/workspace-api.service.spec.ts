@@ -11,7 +11,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { WorkspaceApiService } from './workspace-api.service';
 
-import * as faker from 'faker';
+import { randDomainSuffix } from '@ngneat/falso';
 
 describe('WorkspaceApiService', () => {
   let spectator: SpectatorHttp<WorkspaceApiService>;
@@ -35,7 +35,7 @@ describe('WorkspaceApiService', () => {
   });
 
   it('get Workspace', () => {
-    const slug = faker.datatype.string();
+    const slug = randDomainSuffix({ length: 3 }).join('-');
     const url = `${ConfigServiceMock.apiUrl}/workspaces/${slug}`;
 
     spectator.service.fetchWorkspace(slug).subscribe();

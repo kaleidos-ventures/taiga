@@ -9,7 +9,7 @@
 import { createHttpFactory, HttpMethod, SpectatorHttp } from '@ngneat/spectator';
 import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
-import faker from 'faker';
+import { randUuid } from '@ngneat/falso';
 import { AuthApiService } from './auth-api.service';
 
 describe('AuthApiService', () => {
@@ -36,7 +36,7 @@ describe('AuthApiService', () => {
   });
 
   it('refresh token', () => {
-    const refresh = faker.datatype.uuid();
+    const refresh = randUuid();
 
     spectator.service.refreshToken(refresh).subscribe();
 

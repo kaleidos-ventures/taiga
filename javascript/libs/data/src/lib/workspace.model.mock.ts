@@ -7,15 +7,15 @@
  */
 
 import { Workspace } from './workspace.model';
-import * as faker from 'faker';
+import { randDepartment, randNumber, randDomainSuffix } from '@ngneat/falso';
 import { ProjectMockFactory } from '../lib/project.model.mock';
 
 export const WorkspaceMockFactory = (): Workspace => {
   const workspace = {
-    id: faker.datatype.number(),
-    slug: faker.lorem.slug(),
-    name: faker.datatype.string(),
-    color: faker.datatype.number(),
+    id: randNumber(),
+    slug: randDomainSuffix({ length: 3 }).join('-'),
+    name: randDepartment(),
+    color: randNumber(),
   };
 
   const latestProjects = [];

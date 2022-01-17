@@ -11,13 +11,13 @@ import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 
 import { InitStepComponent } from './init-step.component';
 
-import * as faker from 'faker';
+import { randDomainSuffix, randNumber, randCompanyName } from '@ngneat/falso';
 import { FormBuilder } from '@angular/forms';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { ActivatedRoute } from '@angular/router';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
-const workspaceSlug = faker.lorem.slug();
+const workspaceSlug = randDomainSuffix({ length: 3 }).join('-');
 
 describe('InitStepComponent', () => {
   let spectator: Spectator<InitStepComponent>;
@@ -58,10 +58,10 @@ describe('InitStepComponent', () => {
     spectator = createComponent({
       props: {
         workspaces: [{
-          id: faker.datatype.number(),
-          name: faker.company.companyName(),
-          slug: faker.lorem.slug(),
-          color: faker.datatype.number(),
+          id: randNumber(),
+          name: randCompanyName(),
+          slug: randDomainSuffix({ length: 3 }).join('-'),
+          color: randNumber(),
           latestProjects: [],
           totalProjects: 0
         }

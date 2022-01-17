@@ -11,8 +11,10 @@ import { ProjectMockFactory } from '@taiga/data';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 
 
-import * as faker from 'faker';
+import { randWord } from '@ngneat/falso';
 import { ProjectNavigationMenuComponent } from './project-navigation-menu.component';
+import { CommonModule } from '@angular/common';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('ProjectNavigationComponent', () => {
   let spectator: Spectator<ProjectNavigationMenuComponent>;
@@ -20,8 +22,9 @@ describe('ProjectNavigationComponent', () => {
     component: ProjectNavigationMenuComponent,
     imports: [
       getTranslocoModule(),
+      CommonModule
     ],
-    declareComponent: false,
+    schemas: [NO_ERRORS_SCHEMA]
   });
 
   beforeEach(() => {
@@ -60,7 +63,7 @@ describe('ProjectNavigationComponent', () => {
     spectator.component.collapsed = true;
     spectator.component.initDialog = jest.fn();
 
-    const type = faker.datatype.string();
+    const type = randWord();
     const eventObj: any = { target: { value: 42 }};
 
     spectator.component.popup(eventObj, type);

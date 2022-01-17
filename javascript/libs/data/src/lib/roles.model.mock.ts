@@ -7,16 +7,16 @@
  */
 
 import { Role, Permissions } from './roles.model';
-import * as faker from 'faker';
+import { randDomainSuffix, randNumber, randBoolean, randWord } from '@ngneat/falso';
 
 export const RoleMockFactory = (): Role => {
   const role: Role = {
-    name: faker.name.title(),
-    slug: faker.datatype.string(),
-    order: faker.datatype.number(),
-    isAdmin: faker.datatype.boolean(),
+    name: randWord({ length: 3 }).join(' '),
+    slug: randDomainSuffix({ length: 3 }).join('-'),
+    order: randNumber(),
+    isAdmin: randBoolean(),
     permissions: getPermissions(),
-    numMembers: faker.datatype.number()
+    numMembers: randNumber()
   };
 
   return role;
@@ -72,5 +72,5 @@ const getPermissions = () => {
     Permissions.removeMember,
     Permissions.adminRoles,
   ];
-  return permissions.filter((permission, index) => index % faker.datatype.number() === 0);
+  return permissions.filter((permission, index) => index % randNumber() === 0);
 };

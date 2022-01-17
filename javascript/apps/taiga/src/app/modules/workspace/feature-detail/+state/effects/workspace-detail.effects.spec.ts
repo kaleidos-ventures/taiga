@@ -10,7 +10,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import * as faker from 'faker';
+import { randDomainSuffix } from '@ngneat/falso';
 
 import { WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
@@ -35,7 +35,7 @@ describe('WorkspaceEffects', () => {
   });
 
   it('load workspace', () => {
-    const slug = faker.datatype.string();
+    const slug = randDomainSuffix({ length: 3 }).join('-');
     const workspace = WorkspaceMockFactory();
     const workspaceApiService = spectator.inject(WorkspaceApiService);
     const effects = spectator.inject(WorkspaceDetailEffects);

@@ -14,10 +14,10 @@ import { ProjectNavigationSettingsComponent } from './project-navigation-setting
 
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';
-import * as faker from 'faker';
+import { randProductName, randWord } from '@ngneat/falso';
 
-const projectName = faker.commerce.productName();
-const fragment = faker.lorem.word();
+const projectName = randProductName();
+const fragment = randWord();
 
 describe('ProjectSettingsComponent', () => {
   let spectator: Spectator<ProjectNavigationSettingsComponent>;

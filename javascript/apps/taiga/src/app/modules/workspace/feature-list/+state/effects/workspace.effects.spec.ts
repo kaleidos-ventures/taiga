@@ -16,7 +16,7 @@ import { cold, hot } from 'jest-marbles';
 import { WorkspaceEffects } from './workspace.effects';
 import { WorkspaceApiService } from '@taiga/api';
 import { fetchWorkspaceList, fetchWorkspaceListSuccess, fetchWorkspaceProjects, fetchWorkspaceProjectsSuccess } from '../actions/workspace.actions';
-import faker from 'faker';
+import { randDomainSuffix } from '@ngneat/falso';
 
 describe('WorkspaceEffects', () => {
   let actions$: Observable<Action>;
@@ -55,7 +55,7 @@ describe('WorkspaceEffects', () => {
   });
 
   it('fetch workspace projects', () => {
-    const slug = faker.datatype.string();
+    const slug = randDomainSuffix({ length: 3 }).join('-');
     const project = ProjectMockFactory();
     const workspaceApiService = spectator.inject(WorkspaceApiService);
     const effects = spectator.inject(WorkspaceEffects);

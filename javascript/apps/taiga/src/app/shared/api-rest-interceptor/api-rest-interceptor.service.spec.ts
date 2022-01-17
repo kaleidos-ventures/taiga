@@ -9,7 +9,7 @@
 import { RouterTestingModule } from '@angular/router/testing';
 import { ApiRestInterceptorService } from './api-rest-interceptor.service';
 import { createHttpFactory, SpectatorHttp } from '@ngneat/spectator/jest';
-import * as faker from 'faker';
+import { randUuid, randNumber } from '@ngneat/falso';
 import { HTTP_INTERCEPTORS, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { forkJoin, of, throwError } from 'rxjs';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
@@ -52,8 +52,8 @@ describe('ApiRestInterceptor', () => {
   });
 
   it('add authorization', () => {
-    const token = faker.datatype.uuid();
-    const refresh = faker.datatype.uuid();
+    const token = randUuid();
+    const refresh = randUuid();
 
     const authService = spectator.inject(AuthService);
     authService.getAuth.mockReturnValue({token, refresh});
@@ -74,8 +74,8 @@ describe('ApiRestInterceptor', () => {
 
   // request -> 401 -> refresh token (success) -> refresh auth information, continue initial request
   it('401 with valid refresh token', (done) => {
-    const token = faker.datatype.uuid();
-    const refresh = faker.datatype.uuid();
+    const token = randUuid();
+    const refresh = randUuid();
 
     jest.spyOn(store, 'dispatch');
 
@@ -112,8 +112,8 @@ describe('ApiRestInterceptor', () => {
 
   // request -> 401 -> refresh token (error) -> logout, initial request error
   it('401 with invalid refresh token', (done) => {
-    const token = faker.datatype.uuid();
-    const refresh = faker.datatype.uuid();
+    const token = randUuid();
+    const refresh = randUuid();
 
     jest.spyOn(store, 'dispatch');
 
@@ -145,8 +145,8 @@ describe('ApiRestInterceptor', () => {
   });
 
   it('multiples request, 401 with valid refresh token', (done) => {
-    const token = faker.datatype.uuid();
-    const refresh = faker.datatype.uuid();
+    const token = randUuid();
+    const refresh = randUuid();
 
     jest.spyOn(store, 'dispatch');
 
@@ -193,7 +193,7 @@ describe('ApiRestInterceptor', () => {
   });
 
   it('camel case response', () => {
-    const userId = faker.datatype.number();
+    const userId = randNumber();
 
     const authInterceptorService = spectator.inject(ApiRestInterceptorService);
     const apiResponse = new HttpResponse({

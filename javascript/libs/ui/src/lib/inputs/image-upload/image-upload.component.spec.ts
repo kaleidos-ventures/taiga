@@ -9,7 +9,7 @@ import '@ng-web-apis/universal/mocks';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { ImageUploadComponent } from './image-upload.component';
 import { FormControl } from '@ngneat/reactive-forms';
-import * as faker from 'faker';
+import { randSentence, randNumber, randWord } from '@ngneat/falso';
 import { getTranslocoModule } from '@taiga/ui/transloco/transloco-testing.module';
 import { ControlContainer, FormGroupDirective } from '@angular/forms';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -31,10 +31,10 @@ describe('ImageUploadComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        label: faker.lorem.words(5),
-        tip: faker.lorem.sentence(),
-        title: faker.lorem.sentence(),
-        color: faker.datatype.number(),
+        label: randWord({ length: 5 }).join(' '),
+        tip: randSentence(),
+        title: randSentence(),
+        color: randNumber(),
       },
       providers: [],
       detectChanges: false
@@ -42,7 +42,7 @@ describe('ImageUploadComponent', () => {
   });
 
   it('remove FilePath', () => {
-    spectator.component.control = new FormControl(faker.datatype.string());
+    spectator.component.control = new FormControl(randWord());
     spectator.detectChanges();
     spectator.component.removeImage();
     expect(spectator.component.control.value).toBe('');

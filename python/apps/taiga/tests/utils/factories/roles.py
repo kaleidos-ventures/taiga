@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from asgiref.sync import sync_to_async
 from taiga.permissions import choices
 
 from .base import Factory, factory
@@ -21,6 +22,11 @@ class RoleFactory(Factory):
         model = "users.Role"
 
 
+@sync_to_async
+def create_role(**kwargs):
+    return RoleFactory.create(**kwargs)
+
+
 class WorkspaceRoleFactory(Factory):
     name = factory.Sequence(lambda n: f"WS Role {n}")
     slug = factory.Sequence(lambda n: f"test-ws-role-{n}")
@@ -32,6 +38,11 @@ class WorkspaceRoleFactory(Factory):
         model = "users.WorkspaceRole"
 
 
+@sync_to_async
+def create_workspace_role(**kwargs):
+    return WorkspaceRoleFactory.create(**kwargs)
+
+
 class MembershipFactory(Factory):
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
@@ -41,6 +52,11 @@ class MembershipFactory(Factory):
         model = "projects.Membership"
 
 
+@sync_to_async
+def create_membership(**kwargs):
+    return MembershipFactory.create(**kwargs)
+
+
 class WorkspaceMembershipFactory(Factory):
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
@@ -48,3 +64,8 @@ class WorkspaceMembershipFactory(Factory):
 
     class Meta:
         model = "workspaces.WorkspaceMembership"
+
+
+@sync_to_async
+def create_workspace_membership(**kwargs):
+    return WorkspaceMembershipFactory.create(**kwargs)

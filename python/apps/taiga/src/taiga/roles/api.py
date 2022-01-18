@@ -39,17 +39,17 @@ UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
     response_model=list[RoleSerializer],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-def get_project_roles(
+async def get_project_roles(
     request: Request, slug: str = Query(None, description="the project slug (str)")
 ) -> list[RoleSerializer]:
     """
     Get project roles and permissions
     """
 
-    project = get_project_or_404(slug)
-    check_permissions(permissions=GET_PROJECT_ROLES, user=request.user, obj=project)
-    roles_permissions = roles_services.get_roles_permissions(project=project)
-    return RoleSerializer.from_queryset(roles_permissions)
+    project = await get_project_or_404(slug)
+    await check_permissions(permissions=GET_PROJECT_ROLES, user=request.user, obj=project)
+    roles = await roles_services.get_project_roles(project=project)
+    return RoleSerializer.from_queryset(roles)
 
 
 @router.put(
@@ -59,7 +59,7 @@ def get_project_roles(
     response_model=RoleSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-def update_project_role_permissions(
+async def update_project_role_permissions(
     request: Request,
     form: PermissionsValidator,
     slug: str = Query(None, description="the project slug (str)"),
@@ -69,13 +69,12 @@ def update_project_role_permissions(
     Edit project roles permissions
     """
 
-    project = get_project_or_404(slug)
-    check_permissions(permissions=UPDATE_PROJECT_ROLE_PERMISSIONS, user=request.user, obj=project)
-    role = get_project_role_or_404(project=project, slug=role_slug)
+    project = await get_project_or_404(slug)
+    await check_permissions(permissions=UPDATE_PROJECT_ROLE_PERMISSIONS, user=request.user, obj=project)
+    role = await get_project_role_or_404(project=project, slug=role_slug)
 
     try:
-        role = roles_services.update_role_permissions(role, form.permissions)
-        return RoleSerializer.from_orm(role)
+        await roles_services.update_role_permissions(role, form.permissions)
     except services_ex.NonEditableRoleError:
         raise ex.ForbiddenError("Cannot edit permissions in an admin role")
     except services_ex.NotValidPermissionsSetError:
@@ -83,9 +82,11 @@ def update_project_role_permissions(
     except services_ex.IncompatiblePermissionsSetError:
         raise ex.BadRequest("Given permissions are incompatible")
 
+    return await get_project_role_or_404(project=project, slug=role_slug)
 
-def get_project_role_or_404(project: Project, slug: str) -> Role:
-    role = roles_services.get_project_role(project=project, slug=slug)
+
+async def get_project_role_or_404(project: Project, slug: str) -> Role:
+    role = await roles_services.get_project_role(project=project, slug=slug)
     if role is None:
         raise ex.NotFoundError(f"Role {slug} does not exist")
 

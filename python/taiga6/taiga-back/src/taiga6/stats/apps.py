@@ -6,16 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from django.apps import AppConfig
-from django.apps import apps
-from django.conf.urls import include, url
-
-from .routers import router
 
 
 class StatsAppConfig(AppConfig):
     name = "taiga6.stats"
     verbose_name = "Stats"
-
-    def ready(self):
-        from taiga6.urls import urlpatterns
-        urlpatterns.append(url(r'^api/v1/', include(router.urls)))

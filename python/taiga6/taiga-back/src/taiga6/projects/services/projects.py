@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from django.apps import apps
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from taiga6.celery import app
 from taiga6.base.api.utils import get_object_or_404
 from taiga6.permissions import services as permissions_services

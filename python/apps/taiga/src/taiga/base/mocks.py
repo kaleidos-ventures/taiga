@@ -113,7 +113,7 @@ def base_model_mock_serializer(
                     )
                     current_nested_index[prop] -= 1
 
-    return serialized_type(**properties_dict)  # type: ignore[call-arg]
+    return serialized_type(**properties_dict)
 
 
 def _is_nested_property(parent_props: dict[str, Any], property: str, type: type[Any]) -> bool:

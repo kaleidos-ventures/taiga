@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from asgiref.sync import sync_to_async
 from taiga.conf import settings
 from taiga.permissions import choices
 from tests.utils import factories as f
@@ -41,6 +42,11 @@ class ProjectTemplateFactory(Factory):
         django_get_or_create = ("slug",)
 
 
+@sync_to_async
+def create_project_template(**kwargs):
+    return ProjectTemplateFactory.create(**kwargs)
+
+
 class ProjectFactory(Factory):
     name = factory.Sequence(lambda n: f"project {n}")
     owner = factory.SubFactory("tests.utils.factories.UserFactory")
@@ -52,15 +58,14 @@ class ProjectFactory(Factory):
         model = "projects.Project"
 
 
+@sync_to_async
 def create_project(**kwargs):
     """Create project and its dependencies"""
     defaults = {}
     defaults.update(kwargs)
-
-    workspace = defaults.pop("workspace", None) or f.create_workspace()
+    workspace = defaults.pop("workspace", None) or f.WorkspaceFactory.create(**defaults)
     defaults["workspace"] = workspace
-    defaults["owner"] = defaults.pop("owner", workspace.owner)
-
+    defaults["owner"] = defaults.pop("owner", None) or workspace.owner
     ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
 
     project = ProjectFactory.create(**defaults)

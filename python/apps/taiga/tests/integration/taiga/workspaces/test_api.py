@@ -11,11 +11,11 @@ from fastapi import status
 from taiga.permissions import choices
 from tests.utils import factories as f
 
-pytestmark = pytest.mark.django_db(transaction=True)
+pytestmark = pytest.mark.django_db
 
 
-def test_create_workspace_success(client):
-    user = f.UserFactory()
+async def test_create_workspace_success(client):
+    user = await f.create_user()
     data = {
         "name": "WS test",
         "color": 1,
@@ -26,8 +26,8 @@ def test_create_workspace_success(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-def test_create_workspace_validation_error(client):
-    user = f.UserFactory()
+async def test_create_workspace_validation_error(client):
+    user = await f.create_user()
     data = {
         "name": "My w0r#%&乕شspace",
         "color": 0,  # error
@@ -38,58 +38,58 @@ def test_create_workspace_validation_error(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
-def test_my_workspaces_success(client):
-    workspace = f.create_workspace()
+async def test_my_workspaces_success(client):
+    user = await f.create_user()
+    await f.create_workspace(owner=user)
 
-    client.login(workspace.owner)
+    client.login(user)
     response = client.get("/my/workspaces")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
 
 
-def test_get_workspace_being_workspace_admin(client):
-    workspace = f.create_workspace()
+async def test_get_workspace_being_workspace_admin(client):
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
 
-    client.login(workspace.owner)
+    client.login(user)
     response = client.get(f"/workspaces/{workspace.slug}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-def test_get_workspace_being_workspace_member(client):
-    workspace = f.WorkspaceFactory()
-    general_member_role = f.WorkspaceRoleFactory(
-        name="General",
-        slug="general",
+async def test_get_workspace_being_workspace_member(client):
+    workspace = await f.create_workspace()
+    general_member_role = await f.create_workspace_role(
         permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=False,
         workspace=workspace,
     )
-    user2 = f.UserFactory()
-    f.WorkspaceMembershipFactory(user=user2, workspace=workspace, workspace_role=general_member_role)
+    user2 = await f.create_user()
+    await f.create_workspace_membership(user=user2, workspace=workspace, workspace_role=general_member_role)
 
     client.login(user2)
     response = client.get(f"/workspaces/{workspace.slug}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-def test_get_workspace_being_no_workspace_member(client):
-    workspace = f.create_workspace()
+async def test_get_workspace_being_no_workspace_member(client):
+    workspace = await f.create_workspace()
 
-    user2 = f.UserFactory()
+    user2 = await f.create_user()
     client.login(user2)
     response = client.get(f"/workspaces/{workspace.slug}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-def test_get_workspace_being_anonymous(client):
-    workspace = f.create_workspace()
+async def test_get_workspace_being_anonymous(client):
+    workspace = await f.create_workspace()
 
     response = client.get(f"/workspaces/{workspace.slug}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-def test_get_workspace_not_found_error(client):
-    user = f.UserFactory()
+async def test_get_workspace_not_found_error(client):
+    user = await f.create_user()
 
     client.login(user)
     response = client.get("/workspaces/non-existent")

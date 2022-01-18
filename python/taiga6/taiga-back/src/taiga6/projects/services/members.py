@@ -11,7 +11,7 @@ from taiga6.users.models import User
 
 from django.conf import settings
 from django.core.validators import validate_email
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from .. import models
 

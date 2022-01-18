@@ -7,61 +7,22 @@
 
 from typing import Optional
 
+from asgiref.sync import sync_to_async
+from django.db.models import Count
 from taiga.projects.models import Project
 from taiga.roles.models import Membership, Role, WorkspaceMembership, WorkspaceRole
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
+####################################
+# Project
+####################################
 
-def get_project_role(project: Project, slug: str) -> Role:
-    try:
-        return project.roles.get(slug=slug)
-    except Role.DoesNotExist:
-        return None
-
-
-def get_project_roles(project: Project) -> list[Role]:
-    return project.roles.all()
+# Memberships
 
 
-def get_first_role(project: Project) -> Role:
-    return project.roles.first()
-
-
-def get_num_members_by_role_id(role_id: int) -> int:
-    if role_id:
-        return Membership.objects.filter(role_id=role_id).count()
-
-    return 0
-
-
-def update_role_permissions(role: Role, permissions: list[str]) -> Role:
-    role.permissions = permissions
-    role.save()
-    return role
-
-
-def create_membership(user: User, project: Project, role: Role, email: Optional[str] = None) -> Membership:
-    return Membership.objects.create(user=user, project=project, role=role, email=email)
-
-
-def create_workspace_role(
-    name: str, slug: str, permissions: list[str], workspace: Workspace, is_admin: bool = False
-) -> Workspace:
-    return WorkspaceRole.objects.create(
-        name="Administrators",
-        slug="admin",
-        permissions=permissions,
-        workspace=workspace,
-        is_admin=True,
-    )
-
-
-def create_workspace_membership(user: User, workspace: Workspace, workspace_role: WorkspaceRole) -> WorkspaceMembership:
-    return WorkspaceMembership.objects.create(user=user, workspace=workspace, workspace_role=workspace_role)
-
-
-def get_user_project_membership(user: User, project: Project, cache: str = "user") -> Membership:
+@sync_to_async
+def get_user_project_membership(user: User, project: Project, cache: str = "user") -> Optional[Membership]:
     """
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
@@ -75,7 +36,70 @@ def get_user_project_membership(user: User, project: Project, cache: str = "user
     return project.cached_memberships_for_user(user)
 
 
-def get_user_workspace_membership(user: User, workspace: Workspace, cache: str = "user") -> WorkspaceMembership:
+@sync_to_async
+def create_membership(user: User, project: Project, role: Role, email: Optional[str] = None) -> Membership:
+    return Membership.objects.create(user=user, project=project, role=role, email=email)
+
+
+@sync_to_async
+def is_project_membership_admin(project_membership: Membership) -> bool:
+    return project_membership.role.is_admin
+
+
+@sync_to_async
+def get_project_membership_permissions(membership: Membership) -> list[str]:
+    return membership.role.permissions
+
+
+# Roles
+
+
+@sync_to_async
+def get_project_roles(project: Project) -> list[Role]:
+    return list(project.roles.annotate(num_members=Count("memberships")).all())
+
+
+@sync_to_async
+def get_project_role(project: Project, slug: str) -> Optional[Role]:
+    try:
+        return project.roles.annotate(num_members=Count("memberships")).get(slug=slug)
+    except Role.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def get_first_role(project: Project) -> Optional[Role]:
+    return project.roles.first()
+
+
+@sync_to_async
+def get_num_members_by_role_id(role_id: int) -> int:
+    return Membership.objects.filter(role_id=role_id).count()
+
+
+@sync_to_async
+def is_project_admin(user_id: int, project_id: int) -> bool:
+    return Membership.objects.filter(user_id=user_id, project_id=project_id, role__is_admin=True).exists()
+
+
+@sync_to_async
+def update_role_permissions(role: Role, permissions: list[str]) -> Role:
+    role.permissions = permissions
+    role.save()
+    return role
+
+
+####################################
+# Workspace
+####################################
+
+# Membership
+
+
+@sync_to_async
+def get_user_workspace_membership(
+    user: User, workspace: Workspace, cache: str = "user"
+) -> Optional[WorkspaceMembership]:
     """
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
@@ -89,6 +113,39 @@ def get_user_workspace_membership(user: User, workspace: Workspace, cache: str =
     return workspace.cached_workspace_memberships_for_user(user)
 
 
+@sync_to_async
+def create_workspace_membership(user: User, workspace: Workspace, workspace_role: WorkspaceRole) -> WorkspaceMembership:
+    return WorkspaceMembership.objects.create(user=user, workspace=workspace, workspace_role=workspace_role)
+
+
+@sync_to_async
+def is_workspace_membership_admin(workspace_membership: WorkspaceMembership) -> bool:
+    return workspace_membership.workspace_role.is_admin
+
+
+@sync_to_async
+def get_workspace_membership_permissions(workspace_membership: WorkspaceMembership) -> list[str]:
+    return workspace_membership.workspace_role.permissions
+
+
+# Roles
+
+
+@sync_to_async
 def is_workspace_admin(user_id: int, workspace_id: int) -> bool:
-    membership = WorkspaceMembership.objects.get(user_id=user_id, workspace_id=workspace_id)
-    return membership.workspace_role.is_admin
+    return WorkspaceMembership.objects.filter(
+        user_id=user_id, workspace_id=workspace_id, workspace_role__is_admin=True
+    ).exists()
+
+
+@sync_to_async
+def create_workspace_role(
+    name: str, slug: str, workspace: Workspace, permissions: list[str] = [], is_admin: bool = False
+) -> Workspace:
+    return WorkspaceRole.objects.create(
+        workspace=workspace,
+        name=name,
+        slug=slug,
+        permissions=permissions,
+        is_admin=is_admin,
+    )

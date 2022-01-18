@@ -9,7 +9,7 @@ import ipaddress
 from urllib.parse import urlparse
 
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga6.base.api import validators
 from taiga6.base.exceptions import ValidationError

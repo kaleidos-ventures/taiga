@@ -9,28 +9,14 @@ from collections.abc import Iterable
 from itertools import chain
 from typing import Optional
 
-from django.db.models import BooleanField, CharField, Count, IntegerField, OuterRef, Prefetch, Q, Subquery, Value
+from asgiref.sync import sync_to_async
+from django.db.models import BooleanField, CharField, IntegerField, Prefetch, Q, Value
 from taiga.projects.models import Project
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 
-def get_workspaces_with_latest_projects(owner: User) -> Iterable[Workspace]:
-    last_projects_ids = Subquery(
-        Project.objects.filter(workspace_id=OuterRef("workspace_id"))
-        .values_list("id", flat=True)
-        .order_by("-created_date")[:6]
-    )
-    latest_projects = Project.objects.filter(id__in=last_projects_ids).order_by("-created_date")
-
-    return (
-        Workspace.objects.filter(owner=owner)
-        .prefetch_related(Prefetch("projects", queryset=latest_projects, to_attr="latest_projects"))
-        .annotate(total_projects=Count("projects"))
-        .order_by("-created_date")
-    )
-
-
+@sync_to_async
 def get_user_workspaces_with_latest_projects(user: User) -> Iterable[Workspace]:
     # workspaces where the user is ws-admin with all its projects
     admin_ws_ids = list(
@@ -134,10 +120,12 @@ def get_user_workspaces_with_latest_projects(user: User) -> Iterable[Workspace]:
     return result
 
 
+@sync_to_async
 def create_workspace(name: str, color: int, owner: User) -> Workspace:
     return Workspace.objects.create(name=name, color=color, owner=owner)
 
 
+@sync_to_async
 def get_workspace(slug: str) -> Optional[Workspace]:
     try:
         return Workspace.objects.get(slug=slug)
@@ -146,6 +134,9 @@ def get_workspace(slug: str) -> Optional[Workspace]:
 
 
 # # DRAFT: This is a not-working attempt to solve the problematic using just one query
+#
+# from django.db.models import Count, OuterRef, Subquery
+#
 # def get_user_workspaces_with_latest_projects(user: User) -> Iterable[Workspace]:
 #     # return the user"s workspaces including those projects viewable by the user:
 #     #   (1) all the workspaces the user is a member of (all workspace roles will have at least "view" permission),

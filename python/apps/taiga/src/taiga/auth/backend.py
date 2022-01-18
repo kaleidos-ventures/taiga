@@ -26,7 +26,7 @@ async def authenticate(request: Request) -> tuple[AuthCredentials, Union[Anonymo
 
     if authorization:
         try:
-            scope, user = auth_serv.authenticate(token=authorization.credentials)
+            scope, user = await auth_serv.authenticate(token=authorization.credentials)
             return AuthCredentials(scope), user
         except (BadAuthTokenError, UnauthorizedUserError):
             raise AuthorizationError()

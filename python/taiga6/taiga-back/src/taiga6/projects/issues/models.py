@@ -11,7 +11,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 from django.utils import timezone
 from django.dispatch import receiver
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from taiga6.projects.due_dates.models import DueDateMixin
 from taiga6.projects.occ import OCCModelMixin

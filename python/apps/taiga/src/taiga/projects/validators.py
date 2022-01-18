@@ -12,7 +12,6 @@ from pydantic import validator
 from taiga.base.serializer import BaseModel
 from taiga.base.utils.images import valid_content_type, valid_image_format
 from taiga.base.validator import as_form
-from taiga.workspaces import services as workspaces_services
 
 
 @as_form
@@ -37,11 +36,6 @@ class ProjectValidator(BaseModel):
     def check_description_length(cls, v: str) -> str:
         if v:
             assert len(v) <= 200, "Description too long"
-        return v
-
-    @validator("workspace_slug")
-    def check_workspace_exist(cls, v: str) -> str:
-        assert workspaces_services.get_workspace(v) is not None, "Workspace slug is not valid"
         return v
 
     @validator("color")

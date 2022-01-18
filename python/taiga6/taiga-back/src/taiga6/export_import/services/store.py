@@ -17,7 +17,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import utils
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga6.projects.history.services import make_key_from_model_object, take_snapshot
 from taiga6.projects.models import Membership

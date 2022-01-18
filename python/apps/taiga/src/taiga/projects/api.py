@@ -18,7 +18,6 @@ from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.projects.validators import PermissionsValidator, ProjectValidator
-from taiga.workspaces import services as workspaces_services
 from taiga.workspaces.api import get_workspace_or_404
 
 metadata = {
@@ -46,17 +45,17 @@ UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
     response_model=list[ProjectSummarySerializer],
     responses=ERROR_422 | ERROR_403,
 )
-def list_workspace_projects(
+async def list_workspace_projects(
     request: Request, workspace_slug: str = Query("", description="the workspace slug (str)")
 ) -> list[ProjectSerializer]:
     """
     List projects of a workspace visible by the user.
     """
-    workspace = get_workspace_or_404(slug=workspace_slug)
+    workspace = await get_workspace_or_404(slug=workspace_slug)
 
-    check_permissions(permissions=LIST_WORKSPACE_PROJECTS, user=request.user, obj=workspace)
+    await check_permissions(permissions=LIST_WORKSPACE_PROJECTS, user=request.user, obj=workspace)
 
-    projects = projects_services.get_workspace_projects_for_user(workspace=workspace, user=request.user)
+    projects = await projects_services.get_workspace_projects_for_user(workspace=workspace, user=request.user)
     return ProjectSerializer.from_queryset(projects)
 
 
@@ -67,18 +66,18 @@ def list_workspace_projects(
     response_model=ProjectSerializer,
     responses=ERROR_422 | ERROR_403,
 )
-def create_project(
+async def create_project(
     request: Request,
     form: ProjectValidator = Depends(ProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
 ) -> ProjectSerializer:
     """
     Create project for the logged user in a given workspace.
     """
-    workspace = workspaces_services.get_workspace(slug=form.workspace_slug)
+    workspace = await get_workspace_or_404(slug=form.workspace_slug)
 
-    check_permissions(permissions=CREATE_PROJECT, user=request.user, obj=workspace)
+    await check_permissions(permissions=CREATE_PROJECT, user=request.user, obj=workspace)
 
-    project = projects_services.create_project(
+    project = await projects_services.create_project(
         workspace=workspace,
         name=form.name,
         description=form.description,
@@ -97,13 +96,15 @@ def create_project(
     response_model=ProjectSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-def get_project(request: Request, slug: str = Query("", description="the project slug (str)")) -> ProjectSerializer:
+async def get_project(
+    request: Request, slug: str = Query("", description="the project slug (str)")
+) -> ProjectSerializer:
     """
     Get project detail by slug.
     """
 
-    project = get_project_or_404(slug)
-    check_permissions(permissions=GET_PROJECT, user=request.user, obj=project)
+    project = await get_project_or_404(slug)
+    await check_permissions(permissions=GET_PROJECT, user=request.user, obj=project)
     return ProjectSerializer.from_orm(project)
 
 
@@ -114,17 +115,16 @@ def get_project(request: Request, slug: str = Query("", description="the project
     response_model=list[str],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-def get_project_public_permissions(
+async def get_project_public_permissions(
     request: Request, slug: str = Query(None, description="the project slug (str)")
 ) -> list[str]:
     """
     Get project public permissions
     """
 
-    project = get_project_or_404(slug)
-    check_permissions(permissions=GET_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
-    public_permissions = project.public_permissions
-    return public_permissions
+    project = await get_project_or_404(slug)
+    await check_permissions(permissions=GET_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
+    return project.public_permissions
 
 
 @router.put(
@@ -134,19 +134,18 @@ def get_project_public_permissions(
     response_model=list[str],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-def update_project_public_permissions(
+async def update_project_public_permissions(
     request: Request, form: PermissionsValidator, slug: str = Query(None, description="the project slug (str)")
 ) -> list[str]:
     """
     Edit project public permissions
     """
 
-    project = get_project_or_404(slug)
-    check_permissions(permissions=UPDATE_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
+    project = await get_project_or_404(slug)
+    await check_permissions(permissions=UPDATE_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
 
     try:
-        public_permissions = projects_services.update_project_public_permissions(project, form.permissions)
-        return public_permissions
+        return await projects_services.update_project_public_permissions(project, form.permissions)
     except services_ex.NotValidPermissionsSetError:
         raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
     except services_ex.IncompatiblePermissionsSetError:
@@ -160,17 +159,17 @@ def update_project_public_permissions(
     response_model=list[str],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-def get_project_workspace_member_permissions(
+async def get_project_workspace_member_permissions(
     request: Request, slug: str = Query(None, description="the project slug (str)")
 ) -> list[str]:
     """
     Get project workspace member permissions
     """
 
-    project = get_project_or_404(slug)
-    check_permissions(permissions=GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
+    project = await get_project_or_404(slug)
+    await check_permissions(permissions=GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
     try:
-        return projects_services.get_workspace_member_permissions(project=project)
+        return await projects_services.get_workspace_member_permissions(project=project)
     except services_ex.NotPremiumWorkspaceError:
         raise ex.BadRequest("The workspace is not a premium one, so these perms cannot be seen")
 
@@ -182,21 +181,18 @@ def get_project_workspace_member_permissions(
     response_model=list[str],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-def update_project_workspace_member_permissions(
+async def update_project_workspace_member_permissions(
     request: Request, form: PermissionsValidator, slug: str = Query(None, description="the project slug (str)")
 ) -> list[str]:
     """
     Edit project workspace member permissions
     """
 
-    project = get_project_or_404(slug)
-    check_permissions(permissions=UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
+    project = await get_project_or_404(slug)
+    await check_permissions(permissions=UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
 
     try:
-        workspace_member_permissions = projects_services.update_project_workspace_member_permissions(
-            project, form.permissions
-        )
-        return workspace_member_permissions
+        return await projects_services.update_project_workspace_member_permissions(project, form.permissions)
     except services_ex.NotValidPermissionsSetError:
         raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
     except services_ex.IncompatiblePermissionsSetError:
@@ -205,8 +201,8 @@ def update_project_workspace_member_permissions(
         raise ex.BadRequest("The workspace is not a premium one, so these perms cannot be set")
 
 
-def get_project_or_404(slug: str) -> Project:
-    project = projects_services.get_project(slug=slug)
+async def get_project_or_404(slug: str) -> Project:
+    project = await projects_services.get_project(slug=slug)
     if project is None:
         raise ex.NotFoundError(f"Project {slug} does not exist")
 

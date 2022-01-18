@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from taiga.workspaces import services
@@ -13,14 +13,15 @@ from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
 
+
 ##########################################################
 # get_my_workspaces_projects
 ##########################################################
 
 
-def test_get_my_workspaces_projects():
-    user = f.UserFactory()
+async def test_get_my_workspaces_projects():
+    user = await f.create_user()
 
-    with patch("taiga.workspaces.services.workspaces_repo") as fake_workspaces_repo:
-        services.get_user_workspaces_with_latest_projects(user=user)
-        assert fake_workspaces_repo.get_user_workspaces_with_latest_projects.called_once_with(user)
+    with patch("taiga.workspaces.services.workspaces_repo", new_callable=AsyncMock) as fake_workspaces_repo:
+        await services.get_user_workspaces_with_latest_projects(user=user)
+        fake_workspaces_repo.get_user_workspaces_with_latest_projects.assert_awaited_once_with(user=user)

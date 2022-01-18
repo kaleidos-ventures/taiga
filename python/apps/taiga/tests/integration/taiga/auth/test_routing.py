@@ -57,9 +57,9 @@ def test_auth_router_without_auth_token():
     assert "user" in response.json().keys()
 
 
-def test_auth_router_with_valid_auth_token():
-    user = f.UserFactory()
-    token = AccessToken.for_user(user)
+async def test_auth_router_with_valid_auth_token():
+    user = await f.create_user()
+    token = await AccessToken.create_for_user(user)
     headers = BASE_HEADERS | {
         "Authorization": f"Bearer {token}",
     }
@@ -100,9 +100,9 @@ def test_router_without_auth_token():
     assert "no-auth" in response.json()
 
 
-def test_router_with_valid_auth_token():
-    user = f.UserFactory()
-    token = AccessToken.for_user(user)
+async def test_router_with_valid_auth_token():
+    user = await f.create_user()
+    token = await AccessToken.create_for_user(user)
     headers = BASE_HEADERS | {
         "Authorization": f"Bearer {token}",
     }

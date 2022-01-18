@@ -28,11 +28,11 @@ router = APIRouter(prefix="/auth", tags=["auth"], responses=ERROR_401)
     response_model=AccessTokenWithRefreshSerializer,
     responses=ERROR_422,
 )
-def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
+async def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
     """
     Get an access and refresh token using a username and a password.
     """
-    data = auth_services.login(username=form.username, password=form.password)
+    data = await auth_services.login(username=form.username, password=form.password)
     if not data:
         raise AuthorizationError()
     return AccessTokenWithRefreshSerializer(token=data.token, refresh=data.refresh)
@@ -45,11 +45,11 @@ def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
     response_model=AccessTokenWithRefreshSerializer,
     responses=ERROR_422,
 )
-def refresh(form: RefreshTokenValidator) -> AccessTokenWithRefreshSerializer:
+async def refresh(form: RefreshTokenValidator) -> AccessTokenWithRefreshSerializer:
     """
     Get an access and refresh token using a refresh token.
     """
-    data = auth_services.refresh(token=form.refresh)
+    data = await auth_services.refresh(token=form.refresh)
     if not data:
         raise AuthorizationError()
     return AccessTokenWithRefreshSerializer(token=data.token, refresh=data.refresh)

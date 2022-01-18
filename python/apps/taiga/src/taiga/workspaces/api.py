@@ -35,8 +35,11 @@ GET_WORKSPACE = HasPerm("view_workspace")
     summary="List my workspaces's projects",
     response_model=list[WorkspaceSummarySerializer],
 )
-def list_my_workspaces(request: Request) -> list[WorkspaceSummarySerializer]:
-    workspaces = workspaces_services.get_user_workspaces_with_latest_projects(user=request.user)
+async def list_my_workspaces(request: Request) -> list[WorkspaceSummarySerializer]:
+    """
+    List the workspaces of the logged user.
+    """
+    workspaces = await workspaces_services.get_user_workspaces_with_latest_projects(user=request.user)
     return WorkspaceSummarySerializer.from_queryset(workspaces)
 
 
@@ -47,11 +50,11 @@ def list_my_workspaces(request: Request) -> list[WorkspaceSummarySerializer]:
     response_model=WorkspaceSerializer,
     responses=ERROR_422 | ERROR_403,
 )
-def create_workspace(form: WorkspaceValidator, request: Request) -> WorkspaceSerializer:
+async def create_workspace(form: WorkspaceValidator, request: Request) -> WorkspaceSerializer:
     """
     Create a new workspace for the logged user.
     """
-    workspace = workspaces_services.create_workspace(name=form.name, color=form.color, owner=request.user)
+    workspace = await workspaces_services.create_workspace(name=form.name, color=form.color, owner=request.user)
     return WorkspaceSerializer.from_orm(workspace)
 
 
@@ -62,24 +65,19 @@ def create_workspace(form: WorkspaceValidator, request: Request) -> WorkspaceSer
     response_model=WorkspaceSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-def get_workspace(
+async def get_workspace(
     request: Request, slug: str = Query("", description="the workspace slug(str)")
 ) -> WorkspaceSerializer:
     """
     Get workspace detail by slug.
     """
-    workspace = workspaces_services.get_workspace(slug=slug)
-
-    if workspace is None:
-        raise ex.NotFoundError(f"Workspace {slug} does not exist")
-
-    check_permissions(permissions=GET_WORKSPACE, user=request.user, obj=workspace)
-
+    workspace = await get_workspace_or_404(slug=slug)
+    await check_permissions(permissions=GET_WORKSPACE, user=request.user, obj=workspace)
     return WorkspaceSerializer.from_orm(workspace)
 
 
-def get_workspace_or_404(slug: str) -> Workspace:
-    workspace = workspaces_services.get_workspace(slug=slug)
+async def get_workspace_or_404(slug: str) -> Workspace:
+    workspace = await workspaces_services.get_workspace(slug=slug)
     if workspace is None:
         raise ex.NotFoundError(f"Workspace {slug} does not exist")
 

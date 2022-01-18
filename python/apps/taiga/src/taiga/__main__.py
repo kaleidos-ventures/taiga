@@ -71,9 +71,10 @@ def serve(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000)) -
 
 @app.command(help="Load sample data.")
 def sampledata() -> None:
-    from taiga.base.utils import load_sample_data
+    from taiga.base.utils.asyncio import run_async_as_sync
+    from taiga.base.utils.sample_data import load_sample_data
 
-    load_sample_data()
+    run_async_as_sync(load_sample_data())
 
 
 if __name__ == "__main__":

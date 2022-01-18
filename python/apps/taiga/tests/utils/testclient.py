@@ -7,12 +7,14 @@
 
 from fastapi.testclient import TestClient as TestClientBase
 from taiga.auth.tokens import AccessToken
+from taiga.base.utils.asyncio import run_async_as_sync
 from taiga.users.models import User
 
 
 class TestClient(TestClientBase):
     def login(self, user: User) -> None:
-        self.headers["Authorization"] = f"Bearer {str(AccessToken.for_user(user))}"
+        token = run_async_as_sync(AccessToken.create_for_user(user))
+        self.headers["Authorization"] = f"Bearer {str(token)}"
 
     def logout(self) -> None:
         self.headers.pop("Authorization", None)

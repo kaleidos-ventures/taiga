@@ -5,5 +5,4 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-default_app_config = "taiga6.hooks.gitlab.apps.GitLabHooksAppConfig"
 

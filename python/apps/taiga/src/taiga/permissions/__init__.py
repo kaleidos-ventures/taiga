@@ -8,7 +8,7 @@
 from typing import Optional, Union
 
 from taiga.base.api.permissions import PermissionComponent
-from taiga.permissions.services import is_project_admin, is_workspace_admin, user_has_perm
+from taiga.permissions import services as permissions_services
 from taiga.projects.models import Project
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
@@ -17,22 +17,22 @@ AuthorizableObj = Union[Project, Workspace]
 
 
 class AllowAny(PermissionComponent):
-    def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
+    async def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
         return True
 
 
 class DenyAll(PermissionComponent):
-    def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
+    async def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
         return False
 
 
 class IsAuthenticated(PermissionComponent):
-    def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
+    async def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
         return user and user.is_authenticated
 
 
 class IsSuperUser(PermissionComponent):
-    def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
+    async def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
         return user and user.is_authenticated and user.is_superuser
 
 
@@ -41,22 +41,22 @@ class HasPerm(PermissionComponent):
         self.object_perm = perm
         super().__init__(*components)
 
-    def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
-        return user_has_perm(user=user, perm=self.object_perm, obj=obj)
+    async def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
+        return await permissions_services.user_has_perm(user=user, perm=self.object_perm, obj=obj)
 
 
 class IsProjectAdmin(PermissionComponent):
-    def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
-        return is_project_admin(user=user, obj=obj)
+    async def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
+        return await permissions_services.is_project_admin(user=user, obj=obj)
 
 
 class IsWorkspaceAdmin(PermissionComponent):
-    def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
-        return is_workspace_admin(user, obj)
+    async def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
+        return await permissions_services.is_workspace_admin(user, obj)
 
 
 class IsObjectOwner(PermissionComponent):
-    def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
+    async def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
         if not obj or obj.owner is None:
             return False
 

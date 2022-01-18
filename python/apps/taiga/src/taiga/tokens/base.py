@@ -66,22 +66,16 @@ class Token:
         if not getattr(self, "token_type", None) or not getattr(self, "lifetime", None):
             raise TokenError("Cannot create token with no type or lifetime")
 
-        self.token = token
         self.current_time = aware_utcnow()
+        self.token = token
 
         # Set up token
         if token is not None:
-            # An encoded token was provided
-            token_backend = self.get_token_backend()
-
             # Decode token
             try:
-                self.payload = token_backend.decode(token, verify=verify)
+                self.payload = self.token_backend.decode(token, verify=verify)
             except TokenBackendError:
                 raise TokenError("Token is invalid or expired")
-
-            if verify:
-                self.verify()
         else:
             # New token.  Skip all the verification steps.
             self.payload = {settings.TOKENS.TOKEN_TYPE_CLAIM: self.token_type}
@@ -91,17 +85,6 @@ class Token:
 
             # Set "jti" claim
             self.set_jti()
-
-    def set_jti(self) -> None:
-        """
-        Populates the configured jti claim of a token with a string where there
-        is a negligible probability that the same string will be chosen at a
-        later time.
-
-        See here:
-        https://tools.ietf.org/html/rfc7519#section-4.1.7
-        """
-        self.payload[settings.TOKENS.JTI_CLAIM] = uuid4().hex
 
     def set_exp(
         self, claim: str = "exp", from_time: Optional[datetime] = None, lifetime: Optional[timedelta] = None
@@ -116,6 +99,17 @@ class Token:
             lifetime = self.lifetime
 
         self.payload[claim] = datetime_to_epoch(from_time + lifetime)
+
+    def set_jti(self) -> None:
+        """
+        Populates the configured jti claim of a token with a string where there
+        is a negligible probability that the same string will be chosen at a
+        later time.
+
+        See here:
+        https://tools.ietf.org/html/rfc7519#section-4.1.7
+        """
+        self.payload[settings.TOKENS.JTI_CLAIM] = uuid4().hex
 
     def __repr__(self) -> str:
         return repr(self.payload)
@@ -136,12 +130,12 @@ class Token:
         """
         Signs and returns a token as a base64 encoded string.
         """
-        return self.get_token_backend().encode(self.payload)
+        return self.token_backend.encode(self.payload)
 
     def get(self, key: str, default: Any = None) -> Any:
         return self.payload.get(key, default)
 
-    def verify(self) -> None:
+    async def verify(self) -> None:
         """
         Performs additional validation steps which were not performed when this
         token was decoded.  This method is part of the "public" API to indicate
@@ -151,7 +145,7 @@ class Token:
         # (https://tools.ietf.org/html/rfc7519#section-4.1.4).  As a more
         # correct behavior for authorization tokens, we require an "exp"
         # claim.  We don't want any zombie tokens walking around.
-        self._check_exp()
+        self._verify_exp()
 
         # Ensure token id is present
         if settings.TOKENS.JTI_CLAIM not in self.payload:
@@ -159,19 +153,7 @@ class Token:
 
         self._verify_token_type()
 
-    def _verify_token_type(self) -> None:
-        """
-        Ensures that the token type claim is present and has the correct value.
-        """
-        try:
-            token_type = self.payload[settings.TOKENS.TOKEN_TYPE_CLAIM]
-        except KeyError:
-            raise TokenError("Token has no type")
-
-        if self.token_type != token_type:
-            raise TokenError("Token has wrong type")
-
-    def _check_exp(self, claim: str = "exp", current_time: Optional[datetime] = None) -> None:
+    def _verify_exp(self, claim: str = "exp", current_time: Optional[datetime] = None) -> None:
         """
         Checks whether a timestamp value in the given claim has passed (since
         the given datetime value in `current_time`).  Raises a TokenError with
@@ -190,17 +172,17 @@ class Token:
         if claim_time <= current_time:
             raise TokenError(f"Token '{claim}' claim has expired")
 
-    @classmethod
-    def for_user(cls: type["TokenModel"], user: object) -> "TokenModel":
+    def _verify_token_type(self) -> None:
         """
-        Returns an authorization token for the given user that will be provided
-        after authenticating the user's credentials.
+        Ensures that the token type claim is present and has the correct value.
         """
-        user_id = getattr(user, USER_ID_FIELD)
-        token = cls()
-        token[USER_ID_CLAIM] = user_id
+        try:
+            token_type = self.payload[settings.TOKENS.TOKEN_TYPE_CLAIM]
+        except KeyError:
+            raise TokenError("Token has no type")
 
-        return token
+        if self.token_type != token_type:
+            raise TokenError("Token has wrong type")
 
     @property
     def user_data(self) -> dict[str, Any]:
@@ -212,8 +194,34 @@ class Token:
         value = self.payload.get(USER_ID_CLAIM, None)
         return {key: value}
 
-    def get_token_backend(self) -> TokenBackend:
+    @property
+    def token_backend(self) -> TokenBackend:
         return token_backend
+
+    @classmethod
+    async def create_for_user(cls: type["TokenModel"], user: object) -> "TokenModel":
+        """
+        Returns an authorization token for the given user that will be provided
+        after authenticating the user's credentials.
+        """
+        user_id = getattr(user, USER_ID_FIELD)
+        token = cls()
+        token[USER_ID_CLAIM] = user_id
+        return token
+
+    @classmethod
+    async def create(cls: type["TokenModel"], token: Optional[str] = None, verify: bool = True) -> "TokenModel":
+        """
+        Returns an authorization token or decode and verify the token than will be provided
+        after authenticating the user's credentials.
+        """
+        self = cls(token, verify)
+
+        # Verify token
+        if token is not None and verify:
+            await self.verify()
+
+        return self
 
 
 if TYPE_CHECKING:
@@ -223,21 +231,21 @@ else:
 
 
 class DenylistMixin(_BaseMixin):
-    def verify(self) -> None:
-        self._check_denylist()
-        super().verify()
+    async def verify(self) -> None:
+        await self._check_denylist()
+        await super().verify()
 
-    def _check_denylist(self) -> None:
+    async def _check_denylist(self) -> None:
         """
         Checks if this token is present in the token denylist.  Raises
         `TokenError` if so.
         """
         jti = self.payload[settings.TOKENS.JTI_CLAIM]
 
-        if tokens_services.token_is_denied(jti=jti):
+        if await tokens_services.token_is_denied(jti=jti):
             raise TokenError("Token is denylisted")
 
-    def denylist(self) -> None:
+    async def denylist(self) -> None:
         """
         Ensures this token is included in the outstanding token list and
         adds it to the denylist.
@@ -247,22 +255,22 @@ class DenylistMixin(_BaseMixin):
         expires_at = epoch_to_datetime(self.payload["exp"])
 
         # Ensure outstanding token exists with given jti
-        token, _ = tokens_services.get_or_create_outstanding_token(jti=jti, token=token, expires_at=expires_at)
+        token, _ = await tokens_services.get_or_create_outstanding_token(jti=jti, token=token, expires_at=expires_at)
 
-        tokens_services.deny_token(token=token)
+        await tokens_services.deny_token(token=token)
 
     @classmethod
-    def for_user(cls: type["TokenModel"], user: object) -> "TokenModel":
+    async def create_for_user(cls: type["TokenModel"], user: object) -> "TokenModel":
         """
         Adds this token to the outstanding token list.
         """
-        token = super().for_user(user)  # type: ignore[misc]  # https://github.com/python/mypy/issues/9282
+        token = await super().create_for_user(user)  # type: ignore[misc]  # https://github.com/python/mypy/issues/9282
 
         jti = token[settings.TOKENS.JTI_CLAIM]
         created_at = token.current_time
         expires_at = epoch_to_datetime(token["exp"])
 
-        tokens_services.create_outstanding_token(
+        await tokens_services.create_outstanding_token(
             user=user, jti=jti, token=str(token), created_at=created_at, expires_at=expires_at
         )
 

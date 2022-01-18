@@ -14,124 +14,120 @@ from tests.utils import factories as f
 pytestmark = pytest.mark.django_db
 
 
-def test_is_project_admin_being_project_admin():
-    project = f.create_project()
-    assert services.is_project_admin(user=project.owner, obj=project) is True
+#####################################################
+# services.is_project_admin
+#####################################################
 
 
-def test_is_project_admin_being_project_member():
-    project = f.ProjectFactory()
+async def test_is_project_admin_without_project():
+    user = await f.create_user()
+    is_admin = await services.is_project_admin(user=user, obj=None)
+    assert is_admin is False
 
-    user2 = f.UserFactory()
-    general_member_role = f.RoleFactory(
-        name="General",
-        slug="general",
-        permissions=choices.PROJECT_PERMISSIONS,
-        is_admin=False,
+
+async def test_is_project_admin_being_project_admin():
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+    is_admin = await services.is_project_admin(user=user, obj=project)
+    assert is_admin is True
+
+
+async def test_is_project_admin_being_project_member():
+    project = await f.create_project()
+
+    user2 = await f.create_user()
+    general_member_role = await f.create_role(
         project=project,
-    )
-    f.MembershipFactory(user=user2, project=project, role=general_member_role)
-
-    assert services.is_project_admin(user=user2, obj=project) is False
-
-
-def test_is_project_admin_without_project():
-    user = f.UserFactory()
-    assert services.is_project_admin(user=user, obj=None) is False
-
-
-def test_is_workspace_admin_being_workspace_admin():
-    workspace = f.create_workspace()
-    assert services.is_workspace_admin(user=workspace.owner, obj=workspace) is True
-
-
-def test_is_workspace_admin_being_workspace_member():
-    workspace = f.WorkspaceFactory()
-
-    user2 = f.UserFactory()
-    general_member_role = f.WorkspaceRoleFactory(
-        name="General",
-        slug="general",
-        permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=False,
+    )
+    await f.create_membership(user=user2, project=project, role=general_member_role)
+
+    assert await services.is_project_admin(user=user2, obj=project) is False
+
+
+#####################################################
+# services.is_workspace_admin
+#####################################################
+
+
+async def test_is_workspace_admin_without_workspace():
+    user = await f.create_user()
+    assert await services.is_workspace_admin(user=user, obj=None) is False
+
+
+async def test_is_workspace_admin_being_workspace_admin():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+    assert await services.is_workspace_admin(user=user, obj=workspace) is True
+
+
+async def test_is_workspace_admin_being_workspace_member():
+    workspace = await f.create_workspace()
+
+    user2 = await f.create_user()
+    general_member_role = await f.create_workspace_role(
         workspace=workspace,
+        is_admin=False,
     )
-    f.WorkspaceMembershipFactory(user=user2, workspace=workspace, workspace_role=general_member_role)
+    await f.create_workspace_membership(user=user2, workspace=workspace, workspace_role=general_member_role)
 
-    assert services.is_workspace_admin(user=user2, obj=workspace) is False
-
-
-def test_is_workspace_admin_without_workspace():
-    user = f.UserFactory()
-    assert services.is_workspace_admin(user=user, obj=None) is False
+    assert await services.is_workspace_admin(user=user2, obj=workspace) is False
 
 
-def test_user_has_perm_being_project_admin():
-    project = f.create_project()
+#####################################################
+# services.user_has_perm
+#####################################################
+
+
+async def test_user_has_perm_without_perm():
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+    assert await services.user_has_perm(user=user, perm=None, obj=project) is False
+
+
+async def test_user_has_perm_being_project_admin():
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
     perm = "modify_project"
 
-    assert services.user_has_perm(user=project.owner, perm=perm, obj=project) is True
+    assert await services.user_has_perm(user=user, perm=perm, obj=project) is True
 
 
-def test_user_has_perm_being_project_member():
-    project = f.ProjectFactory()
-    general_member_role = f.RoleFactory(
-        name="General",
-        slug="general",
+async def test_user_has_perm_being_project_member():
+    project = await f.create_project()
+    general_member_role = await f.create_role(
+        project=project,
         permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
-        project=project,
     )
+    user = await f.create_user()
+    await f.create_membership(user=user, project=project, role=general_member_role)
 
-    user2 = f.UserFactory()
-    f.MembershipFactory(user=user2, project=project, role=general_member_role)
+    view_perm = "view_project"
+    modify_perm = "modify_project"
 
-    perm = "modify_project"
-    assert services.user_has_perm(user=user2, perm=perm, obj=project) is False
-
-    perm = "view_project"
-    assert services.user_has_perm(user=user2, perm=perm, obj=project) is True
+    assert await services.user_has_perm(user=user, perm=view_perm, obj=project) is True
+    assert await services.user_has_perm(user=user, perm=modify_perm, obj=project) is False
 
 
-def test_user_has_perm_not_being_project_member():
-    project = f.create_project()
-
-    user2 = f.UserFactory()
+async def test_user_has_perm_not_being_project_member():
+    project = await f.create_project()
+    user = await f.create_user()
     perm = "modify_project"
 
-    assert services.user_has_perm(user=user2, perm=perm, obj=project) is False
+    assert await services.user_has_perm(user=user, perm=perm, obj=project) is False
 
 
-def test_user_has_perm_without_workspace_and_project():
-    user = f.UserFactory()
+async def test_user_has_perm_without_workspace_and_project():
+    user = await f.create_user()
     perm = "modify_project"
 
-    assert services.user_has_perm(user=user, perm=perm, obj=None) is False
+    assert await services.user_has_perm(user=user, perm=perm, obj=None) is False
 
 
-def test_user_has_perm_without_perm():
-    project = f.create_project()
-    assert services.user_has_perm(user=project.owner, perm=None, obj=project) is False
-
-
-def test_check_permissions_success():
-    project = f.create_project()
-    permissions = HasPerm("modify_project")
-
-    assert check_permissions(permissions=permissions, user=project.owner, obj=project) is None
-
-
-def test_check_permissions_forbidden():
-    project = f.create_project()
-
-    user2 = f.UserFactory()
-    permissions = HasPerm("modify_project")
-
-    with pytest.raises(ex.ForbiddenError) as error:
-        check_permissions(permissions=permissions, user=user2, obj=project)
-
-    assert error.value.status_code == 403
-    assert error.value.detail == "Forbidden"
+#####################################################
+# permissions_are_compatible
+#####################################################
 
 
 @pytest.mark.parametrize(
@@ -146,8 +142,12 @@ def test_check_permissions_forbidden():
     ],
 )
 def test_permissions_are_compatible(permissions, expected):
-    result = services.permissions_are_compatible(permissions)
-    assert result == expected
+    assert services.permissions_are_compatible(permissions) == expected
+
+
+#####################################################
+# services.permissions_are_valid
+#####################################################
 
 
 @pytest.mark.parametrize(
@@ -163,5 +163,27 @@ def test_permissions_are_compatible(permissions, expected):
     ],
 )
 def test_permissions_are_valid(permissions, expected):
-    result = services.permissions_are_valid(permissions)
-    assert result == expected
+    assert services.permissions_are_valid(permissions) == expected
+
+
+#####################################################
+# api.check_permissions
+#####################################################
+
+
+async def test_check_permissions_success():
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+    permissions = HasPerm("modify_project")
+
+    assert await check_permissions(permissions=permissions, user=user, obj=project) is None
+
+
+async def test_check_permissions_forbidden():
+    project = await f.create_project()
+
+    user2 = await f.create_user()
+    permissions = HasPerm("modify_project")
+
+    with pytest.raises(ex.ForbiddenError):
+        await check_permissions(permissions=permissions, user=user2, obj=project)

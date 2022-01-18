@@ -16,42 +16,47 @@ from .models import AccessWithRefreshToken
 from .tokens import AccessToken, RefreshToken
 
 
-def login(username: str, password: str) -> Optional[AccessWithRefreshToken]:
-    user = users_repo.get_user_by_username_or_email(username_or_email=username)
+async def login(username: str, password: str) -> Optional[AccessWithRefreshToken]:
+    user = await users_repo.get_user_by_username_or_email(username_or_email=username)
 
-    if not user or not user.check_password(password) or not user.is_active or user.is_system:
+    if (
+        not user
+        or not await users_repo.check_password(user=user, password=password)
+        or not user.is_active
+        or user.is_system
+    ):
         return None
 
-    users_repo.update_last_login(user=user)
+    await users_repo.update_last_login(user=user)
 
-    refresh_token = RefreshToken.for_user(user)
+    refresh_token = await RefreshToken.create_for_user(user)
 
     return AccessWithRefreshToken(token=str(refresh_token.access_token), refresh=str(refresh_token))
 
 
-def refresh(token: str) -> Optional[AccessWithRefreshToken]:
+async def refresh(token: str) -> Optional[AccessWithRefreshToken]:
     try:
-        refresh_token = RefreshToken(token)
+        refresh_token = await RefreshToken.create(token)
     except TokenError:
         return None
 
-    refresh_token.denylist()
+    await refresh_token.denylist()
     refresh_token.set_jti()
     refresh_token.set_exp()
 
     return AccessWithRefreshToken(token=str(refresh_token.access_token), refresh=str(refresh_token))
 
 
-def authenticate(token: str) -> tuple[list[str], User]:
+async def authenticate(token: str) -> tuple[list[str], User]:
     # Getnerate Access token
     try:
-        access_token = AccessToken(token)
+        access_token = await AccessToken.create(token)
     except TokenError:
         raise BadAuthTokenError()
 
     # Check user authorization permissions
-    user_data = access_token.user_data
-    if user_data and (user := users_repo.get_first_user(**user_data, is_active=True, is_system=False)):
-        return ["auth"], user
+    if user_data := access_token.user_data:
+        if user := await users_repo.get_first_user(**user_data, is_active=True, is_system=False):
+            return ["auth"], user
 
     raise UnauthorizedUserError()

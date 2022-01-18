@@ -19,6 +19,9 @@ python-json-logger
 # Images and thumbnails
 easy-thumbnails
 
+# for sample_data
+faker
+
 # Do NOT add any dependencies below this line
 # Taiga 6
 #   we use -e for dev and prod because relative path in pip-compile only works with -e

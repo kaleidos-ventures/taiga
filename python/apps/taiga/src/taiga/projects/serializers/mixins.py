@@ -9,6 +9,7 @@ from typing import Any, Optional, Union
 
 from django.db.models.fields.files import FieldFile
 from pydantic import AnyHttpUrl, BaseModel, validator
+from taiga.base.utils.asyncio import run_async_as_sync
 from taiga.projects.services import get_logo_large_thumbnail_url, get_logo_small_thumbnail_url
 
 
@@ -17,24 +18,24 @@ class ProjectLogoMixin(BaseModel):
     logo_small: Optional[AnyHttpUrl] = None
     logo_big: Optional[AnyHttpUrl] = None
 
-    @validator("logo")
-    def logo_serializer(cls, v: Any) -> Optional[str]:
-        if v and type(v) == FieldFile:
+    @validator("logo", always=True)
+    def logo_serializer(cls, v: Optional[Union[FieldFile, str]]) -> Optional[str]:
+        if v and isinstance(v, FieldFile):
             # Serializing from creation (thumbnails have to be created)
             return v.name
-        if v and type(v) == str:
+        if v and isinstance(v, str):
             # Thumbnails already available
             return v
         return None
 
     @validator("logo_small", always=True)
-    def get_logo_small(cls, value: Any, values: Any) -> Union[str, None]:
-        if values["logo"]:
-            return get_logo_small_thumbnail_url(values["logo"])
+    def get_logo_small(cls, value: Optional[str]) -> Optional[str]:
+        if value:
+            return run_async_as_sync(get_logo_small_thumbnail_url(value))
         return None
 
     @validator("logo_big", always=True)
-    def get_logo_big(cls, value: Any, values: Any) -> Union[str, None]:
-        if values["logo"]:
-            return get_logo_large_thumbnail_url(values["logo"])
+    def get_logo_big(cls, value: Optional[str]) -> Optional[str]:
+        if value:
+            return run_async_as_sync(get_logo_large_thumbnail_url(value))
         return None

@@ -7,55 +7,56 @@
 
 from typing import Any, Optional, Union
 
+from asgiref.sync import sync_to_async
 from taiga.permissions import choices
-from taiga.permissions import repositories as permissions_repo
 from taiga.projects.models import Project
+from taiga.roles import repositories as roles_repositories
 from taiga.roles import services as roles_services
-from taiga.roles.models import Membership, WorkspaceMembership
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 AuthorizableObj = Union[Project, Workspace]
 
 
-def is_project_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
-    project = _get_object_project(obj)
+async def is_project_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
+    project = await _get_object_project(obj)
     if project is None:
         return False
 
     if user.is_superuser:
         return True
 
-    return permissions_repo.is_project_admin(user=user, project=project)
+    return await roles_repositories.is_project_admin(user_id=user.id, project_id=project.id)
 
 
-def is_workspace_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
-    workspace = _get_object_workspace(obj)
+async def is_workspace_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
+    workspace = await _get_object_workspace(obj)
     if workspace is None:
         return False
 
     if user.is_superuser:
         return True
 
-    return permissions_repo.is_workspace_admin(user=user, workspace=workspace)
+    return await roles_repositories.is_workspace_admin(user_id=user.id, workspace_id=workspace.id)
 
 
-def user_has_perm(user: User, perm: str, obj: Optional[AuthorizableObj] = None, cache: str = "user") -> bool:
+async def user_has_perm(user: User, perm: str, obj: AuthorizableObj, cache: str = "user") -> bool:
     """
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
     """
 
-    project = _get_object_project(obj)
-    workspace = _get_object_workspace(obj)
+    project = await _get_object_project(obj)
+    workspace = await _get_object_workspace(obj)
 
     if not project and not workspace:
         return False
 
-    user_permissions = _get_user_permissions(user, project, workspace, cache=cache)
+    user_permissions = await _get_user_permissions(user, workspace, project, cache=cache)
     return perm in user_permissions
 
 
+@sync_to_async
 def _get_object_workspace(obj: Any) -> Optional[Workspace]:
     workspace = None
     if isinstance(obj, Workspace):
@@ -66,7 +67,8 @@ def _get_object_workspace(obj: Any) -> Optional[Workspace]:
     return workspace
 
 
-def _get_object_project(obj: Any) -> Optional[AuthorizableObj]:
+@sync_to_async
+def _get_object_project(obj: Any) -> Optional[Project]:
     project = None
     if isinstance(obj, Project):
         project = obj
@@ -76,34 +78,39 @@ def _get_object_project(obj: Any) -> Optional[AuthorizableObj]:
     return project
 
 
-def _get_user_permissions(user: User, project: Project, workspace: Workspace, cache: str = "user") -> list[str]:
+async def _get_user_permissions(
+    user: User, workspace: Workspace, project: Optional[Project] = None, cache: str = "user"
+) -> list[str]:
     """
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
     """
 
     is_authenticated = user.is_authenticated
-    project_membership: Membership = (
-        roles_services.get_user_project_membership(user, project, cache=cache) if project else []
-    )
-    is_project_member = project_membership is not None
-    is_project_admin = (
-        project is not None
-        and is_project_member
-        and permissions_repo.is_project_membership_admin(project_membership=project_membership)
-    )
-    project_role_permissions = permissions_repo.get_project_membership_permissions(project_membership)
 
-    workspace_membership: WorkspaceMembership = (
-        roles_services.get_user_workspace_membership(user, workspace, cache=cache) if workspace else []
-    )
+    if project:
+        project_membership = await roles_services.get_user_project_membership(user, project, cache=cache)
+
+        is_project_member = project_membership is not None
+        is_project_admin = is_project_member and await roles_repositories.is_project_membership_admin(
+            project_membership=project_membership
+        )
+        project_role_permissions = (
+            await roles_repositories.get_project_membership_permissions(project_membership)
+            if project_membership
+            else []
+        )
+
+    workspace_membership = await roles_services.get_user_workspace_membership(user, workspace, cache=cache)
     is_workspace_member = workspace_membership is not None
-    is_workspace_admin = (
-        workspace is not None
-        and is_workspace_member
-        and permissions_repo.is_workspace_membership_admin(workspace_membership=workspace_membership)
+    is_workspace_admin = is_workspace_member and await roles_repositories.is_workspace_membership_admin(
+        workspace_membership=workspace_membership
     )
-    workspace_role_permissions = permissions_repo.get_workspace_membership_permissions(workspace_membership)
+    workspace_role_permissions = (
+        await roles_repositories.get_workspace_membership_permissions(workspace_membership)
+        if workspace_membership
+        else []
+    )
 
     # pj (user is)     ws (user is)	   	Applied permission role (referred to a project)
     # =================================================================================

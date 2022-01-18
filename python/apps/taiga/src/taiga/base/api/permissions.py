@@ -18,7 +18,7 @@ from taiga.users.models import User
 
 class PermissionComponent(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def is_authorized(self, user: User, obj: Any = None) -> bool:
+    async def is_authorized(self, user: User, obj: Any = None) -> bool:
         pass
 
     def __invert__(self) -> "Not":
@@ -36,7 +36,7 @@ class PermissionComponent(metaclass=abc.ABCMeta):
 ######################################################################
 
 
-def check_permissions(
+async def check_permissions(
     permissions: PermissionComponent,
     user: User,
     obj: object = None,
@@ -54,7 +54,7 @@ def check_permissions(
     if enough_perms:
         _required_permissions = enough_perms | _required_permissions
 
-    if not _required_permissions.is_authorized(user=user, obj=obj):
+    if not await _required_permissions.is_authorized(user=user, obj=obj):
         raise ex.ForbiddenError("User doesn't have permissions to perform this action")
 
 
@@ -82,9 +82,9 @@ class Not(PermissionOperator):
     def __init__(self, component: "PermissionComponent") -> None:
         super().__init__(component)
 
-    def is_authorized(self, *args: Any, **kwargs: Any) -> bool:
+    async def is_authorized(self, *args: Any, **kwargs: Any) -> bool:
         component = self.components[0]
-        return not component.is_authorized(*args, **kwargs)
+        return not await component.is_authorized(*args, **kwargs)
 
 
 class Or(PermissionOperator):
@@ -92,11 +92,11 @@ class Or(PermissionOperator):
     Or logical operator as permission component.
     """
 
-    def is_authorized(self, *args: Any, **kwargs: Any) -> bool:
+    async def is_authorized(self, *args: Any, **kwargs: Any) -> bool:
         valid = False
 
         for component in self.components:
-            if component.is_authorized(*args, **kwargs):
+            if await component.is_authorized(*args, **kwargs):
                 valid = True
                 break
 
@@ -108,11 +108,11 @@ class And(PermissionOperator):
     And logical operator as permission component.
     """
 
-    def is_authorized(self, *args: Any, **kwargs: Any) -> bool:
+    async def is_authorized(self, *args: Any, **kwargs: Any) -> bool:
         valid = True
 
         for component in self.components:
-            if not component.is_authorized(*args, **kwargs):
+            if not await component.is_authorized(*args, **kwargs):
                 valid = False
                 break
 

@@ -29,4 +29,3 @@
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
 
-default_app_config = 'taiga6.auth.token_denylist.apps.TokenDenylistConfig'

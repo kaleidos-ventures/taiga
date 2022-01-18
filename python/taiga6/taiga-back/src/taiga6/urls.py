@@ -10,7 +10,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.urls import path
 
-from .routers import router
 
 
 ##############################################
@@ -18,34 +17,8 @@ from .routers import router
 ##############################################
 
 urlpatterns = [
-    path('api/v1/', include(router.urls)),
     path('admin/', admin.site.urls),
 ]
-
-handler500 = "taiga6.base.api.views.api_server_error"
-
-
-##############################################
-# Front sitemap
-##############################################
-
-if settings.FRONT_SITEMAP_ENABLED:
-    from django.contrib.sitemaps.views import index
-    from django.contrib.sitemaps.views import sitemap
-    from django.views.decorators.cache import cache_page
-
-    from taiga6.front.sitemaps import sitemaps
-
-    urlpatterns += [
-        url(r"^front/sitemap\.xml$",
-            cache_page(settings.FRONT_SITEMAP_CACHE_TIMEOUT)(index),
-            {"sitemaps": sitemaps, 'sitemap_url_name': 'front-sitemap'},
-            name="front-sitemap-index"),
-        url(r"^front/sitemap-(?P<section>.+)\.xml$",
-            cache_page(settings.FRONT_SITEMAP_CACHE_TIMEOUT)(sitemap),
-            {"sitemaps": sitemaps},
-            name="front-sitemap")
-    ]
 
 
 ##############################################

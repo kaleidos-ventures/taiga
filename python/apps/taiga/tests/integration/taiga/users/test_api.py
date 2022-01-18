@@ -11,15 +11,14 @@ from tests.utils import factories as f
 pytestmark = pytest.mark.django_db
 
 
-def test_me_error_no_authenticated_user(client):
+async def test_me_error_no_authenticated_user(client):
     response = client.get("/users/me")
 
     assert response.status_code == 401
 
 
-def test_me_success(client):
-    username = "test_user"
-    user = f.UserFactory(username=username)
+async def test_me_success(client):
+    user = await f.create_user()
 
     client.login(user)
     response = client.get("/users/me")

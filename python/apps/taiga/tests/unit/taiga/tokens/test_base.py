@@ -53,8 +53,8 @@ class MyToken(Token):
 
 
 @pytest.fixture
-def token() -> MyToken:
-    return MyToken()
+async def token() -> MyToken:
+    return await MyToken.create()
 
 
 ##########################################################
@@ -62,34 +62,34 @@ def token() -> MyToken:
 ##########################################################
 
 
-def test_init_no_token_type_or_lifetime() -> None:
+async def test_init_no_token_type_or_lifetime() -> None:
     class MyTestToken(Token):
         pass
 
     with pytest.raises(TokenError):
-        MyTestToken()
+        await MyTestToken.create()
 
     MyTestToken.token_type = "test"
 
     with pytest.raises(TokenError):
-        MyTestToken()
+        await MyTestToken.create()
 
     del MyTestToken.token_type
     MyTestToken.lifetime = timedelta(days=1)
 
     with pytest.raises(TokenError):
-        MyTestToken()
+        await MyTestToken.create()
 
     MyTestToken.token_type = "test"
-    MyTestToken()
+    await MyTestToken.create()
 
 
-def test_init_no_token_given() -> None:
+async def test_init_no_token_given() -> None:
     now = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
 
     with patch("taiga.tokens.base.aware_utcnow") as fake_aware_utcnow:
         fake_aware_utcnow.return_value = now
-        t = MyToken()
+        t = await MyToken.create()
 
     assert t.current_time == now
     assert t.token is None
@@ -100,13 +100,13 @@ def test_init_no_token_given() -> None:
     assert t.payload[settings.TOKENS.TOKEN_TYPE_CLAIM] == MyToken.token_type
 
 
-def test_init_token_given() -> None:
+async def test_init_token_given() -> None:
     # Test successful instantiation
     original_now = datetime.now(timezone.utc)
 
     with patch("taiga.tokens.base.aware_utcnow") as fake_aware_utcnow:
         fake_aware_utcnow.return_value = original_now
-        good_token = MyToken()
+        good_token = await MyToken.create()
 
     good_token["some_value"] = "arst"
     encoded_good_token = str(good_token)
@@ -117,7 +117,7 @@ def test_init_token_given() -> None:
     with patch("taiga.tokens.base.aware_utcnow") as fake_aware_utcnow:
         fake_aware_utcnow.return_value = now
         # Should raise no exception
-        t = MyToken(encoded_good_token)
+        t = await MyToken.create(encoded_good_token)
 
     # Should have expected properties
     assert t.current_time == now
@@ -130,7 +130,7 @@ def test_init_token_given() -> None:
     assert "jti" in t.payload
 
 
-def test_init_bad_sig_token_given() -> None:
+async def test_init_bad_sig_token_given() -> None:
     # Test backend rejects encoded token (expired or bad signature)
     payload = {"foo": "bar"}
     payload["exp"] = datetime_to_epoch(datetime.utcnow() + timedelta(days=1))
@@ -143,10 +143,10 @@ def test_init_bad_sig_token_given() -> None:
     invalid_token = token_2_payload + "." + token_1_sig
 
     with pytest.raises(TokenError):
-        MyToken(invalid_token)
+        await MyToken.create(invalid_token)
 
 
-def test_init_bad_sig_token_given_no_verify() -> None:
+async def test_init_bad_sig_token_given_no_verify() -> None:
     # Test backend rejects encoded token (expired or bad signature)
     payload = {"foo": "bar"}
     payload["exp"] = datetime_to_epoch(datetime.utcnow() + timedelta(days=1))
@@ -158,45 +158,45 @@ def test_init_bad_sig_token_given_no_verify() -> None:
     token_1_sig = token_1.rsplit(".", 1)[-1]
     invalid_token = token_2_payload + "." + token_1_sig
 
-    t = MyToken(invalid_token, verify=False)
+    t = await MyToken.create(invalid_token, verify=False)
 
     assert t.payload == payload
 
 
-def test_init_expired_token_given() -> None:
-    t = MyToken()
+async def test_init_expired_token_given() -> None:
+    t = await MyToken.create()
     t.set_exp(lifetime=-timedelta(seconds=1))
 
     with pytest.raises(TokenError):
-        MyToken(str(t))
+        await MyToken.create(str(t))
 
 
-def test_init_no_type_token_given() -> None:
-    t = MyToken()
+async def test_init_no_type_token_given() -> None:
+    t = await MyToken.create()
     del t[settings.TOKENS.TOKEN_TYPE_CLAIM]
 
     with pytest.raises(TokenError):
-        MyToken(str(t))
+        await MyToken.create(str(t))
 
 
-def test_init_wrong_type_token_given() -> None:
-    t = MyToken()
+async def test_init_wrong_type_token_given() -> None:
+    t = await MyToken.create()
     t[settings.TOKENS.TOKEN_TYPE_CLAIM] = "wrong_type"
 
     with pytest.raises(TokenError):
-        MyToken(str(t))
+        await MyToken.create(str(t))
 
 
-def test_init_no_jti_token_given() -> None:
-    t = MyToken()
+async def test_init_no_jti_token_given() -> None:
+    t = await MyToken.create()
     del t["jti"]
 
     with pytest.raises(TokenError):
-        MyToken(str(t))
+        await MyToken.create(str(t))
 
 
-def test_str() -> None:
-    token = MyToken()
+async def test_str() -> None:
+    token = await MyToken.create()
     token.set_exp(
         from_time=datetime(year=2000, month=1, day=1, tzinfo=timezone.utc),
         lifetime=timedelta(seconds=0),
@@ -215,20 +215,20 @@ def test_str() -> None:
     assert encoded_token.startswith("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjk0NjY4NDgwMH0.")
 
 
-def test_repr(token: MyToken) -> None:
+async def test_repr(token: MyToken) -> None:
     assert repr(token) == repr(token.payload)
 
 
-def test_getitem(token: MyToken) -> None:
+async def test_getitem(token: MyToken) -> None:
     assert token["exp"], token.payload["exp"]
 
 
-def test_setitem(token: MyToken) -> None:
+async def test_setitem(token: MyToken) -> None:
     token["test"] = 1234
     assert token.payload["test"], 1234
 
 
-def test_delitem(token: MyToken) -> None:
+async def test_delitem(token: MyToken) -> None:
     token["test"] = 1234
     assert token.payload["test"], 1234
 
@@ -236,11 +236,11 @@ def test_delitem(token: MyToken) -> None:
     assert "test" not in token
 
 
-def test_contains(token: MyToken) -> None:
+async def test_contains(token: MyToken) -> None:
     assert "exp" in token
 
 
-def test_get(token: MyToken) -> None:
+async def test_get(token: MyToken) -> None:
     token["test"] = 1234
 
     assert 1234 == token.get("test")
@@ -250,8 +250,8 @@ def test_get(token: MyToken) -> None:
     assert 1234 == token.get("does_not_exist", 1234)
 
 
-def test_set_jti() -> None:
-    token = MyToken()
+async def test_set_jti() -> None:
+    token = await MyToken.create()
     old_jti = token["jti"]
 
     token.set_jti()
@@ -260,10 +260,10 @@ def test_set_jti() -> None:
     assert old_jti != token["jti"]
 
 
-def test_set_exp() -> None:
+async def test_set_exp() -> None:
     now = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
 
-    token = MyToken()
+    token = await MyToken.create()
     token.current_time = now
 
     # By default, should add 'exp' claim to token using `self.current_time`
@@ -278,12 +278,12 @@ def test_set_exp() -> None:
     assert token["refresh_exp"] == datetime_to_epoch(now + timedelta(days=1))
 
 
-def test_check_exp() -> None:
-    token = MyToken()
+async def test_check_exp() -> None:
+    token = await MyToken.create()
 
     # Should raise an exception if no claim of given kind
     with pytest.raises(TokenError):
-        token._check_exp("non_existent_claim")
+        token._verify_exp("non_existent_claim")
 
     current_time = token.current_time
     lifetime = timedelta(days=1)
@@ -295,41 +295,41 @@ def test_check_exp() -> None:
     # raise an exception if claim has expired.
     token.current_time = exp
     with pytest.raises(TokenError):
-        token._check_exp()
+        token._verify_exp()
 
     token.current_time = exp + timedelta(seconds=1)
     with pytest.raises(TokenError):
-        token._check_exp()
+        token._verify_exp()
 
     # Otherwise, should raise no exception
     token.current_time = current_time
-    token._check_exp()
+    token._verify_exp()
 
     # Should allow specification of claim to be examined and timestamp to
     # compare against
 
     # Default claim
     with pytest.raises(TokenError):
-        token._check_exp(current_time=exp)
+        token._verify_exp(current_time=exp)
 
     token.set_exp("refresh_exp", lifetime=timedelta(days=1))
 
     # Default timestamp
-    token._check_exp("refresh_exp")
+    token._verify_exp("refresh_exp")
 
     # Given claim and timestamp
     with pytest.raises(TokenError):
-        token._check_exp("refresh_exp", current_time=current_time + timedelta(days=1))
+        token._verify_exp("refresh_exp", current_time=current_time + timedelta(days=1))
     with pytest.raises(TokenError):
-        token._check_exp("refresh_exp", current_time=current_time + timedelta(days=2))
+        token._verify_exp("refresh_exp", current_time=current_time + timedelta(days=2))
 
 
-def test_for_user() -> None:
+async def test_for_user() -> None:
     user_id = 2
     username = "test_user"
     user = User(id=user_id, username=username)
 
-    token = MyToken.for_user(user)
+    token = await MyToken.create_for_user(user)
 
     if not isinstance(user_id, int):
         user_id = str(user_id)
@@ -337,7 +337,7 @@ def test_for_user() -> None:
     assert token[USER_ID_CLAIM] == user_id
 
 
-def test_get_token_backend() -> None:
-    token = MyToken()
+async def test_get_token_backend() -> None:
+    token = await MyToken.create()
 
-    assert token.get_token_backend() == token_backend
+    assert token.token_backend == token_backend

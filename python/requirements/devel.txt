@@ -4,25 +4,28 @@
 #
 #    pip-compile requirements/devel.in
 #
-backports.entry-points-selectable==1.1.0
-    # via virtualenv
-cfgv==3.3.0
+asgiref==3.5.0
+    # via django
+cfgv==3.3.1
     # via pre-commit
-click==8.0.1
+click==8.0.3
     # via pip-tools
-distlib==0.3.2
+distlib==0.3.4
     # via virtualenv
-django==2.2.24
+django==3.2.11
     # via
     #   -r requirements/devel.in
     #   django-stubs
-django-stubs==1.7.0
+    #   django-stubs-ext
+django-stubs==1.9.0
     # via -r requirements/devel.in
-filelock==3.0.12
+django-stubs-ext==0.3.1
+    # via django-stubs
+filelock==3.4.2
     # via virtualenv
-identify==2.2.13
+identify==2.4.6
     # via pre-commit
-mypy==0.910
+mypy==0.931
     # via
     #   -r requirements/devel.in
     #   django-stubs
@@ -30,17 +33,17 @@ mypy-extensions==0.4.3
     # via mypy
 nodeenv==1.6.0
     # via pre-commit
-pep517==0.11.0
+pep517==0.12.0
     # via pip-tools
-pip-tools==6.2.0
+pip-tools==6.4.0
     # via -r requirements/devel.in
-platformdirs==2.2.0
+platformdirs==2.4.1
     # via virtualenv
-pre-commit==2.14.0
+pre-commit==2.17.0
     # via -r requirements/devel.in
 pytz==2021.3
     # via django
-pyyaml==5.4.1
+pyyaml==6.0
     # via pre-commit
 six==1.16.0
     # via virtualenv
@@ -48,17 +51,24 @@ sqlparse==0.4.2
     # via django
 toml==0.10.2
     # via
-    #   mypy
+    #   django-stubs
     #   pre-commit
-tomli==1.2.1
-    # via pep517
-typing-extensions==3.10.0.0
+tomli==2.0.0
+    # via
+    #   mypy
+    #   pep517
+types-pytz==2021.3.4
+    # via django-stubs
+types-pyyaml==6.0.3
+    # via django-stubs
+typing-extensions==4.0.1
     # via
     #   django-stubs
+    #   django-stubs-ext
     #   mypy
-virtualenv==20.7.2
+virtualenv==20.13.0
     # via pre-commit
-wheel==0.37.0
+wheel==0.37.1
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:

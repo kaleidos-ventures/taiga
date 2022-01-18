@@ -31,7 +31,7 @@
 
 from markdown.extensions import Extension
 from markdown.inlinepatterns import Pattern
-from markdown.util import etree
+from xml import etree
 
 from taiga6.projects.references.services import get_instance_by_ref
 from taiga6.front.templatetags.functions import resolve
@@ -78,7 +78,7 @@ class TaigaReferencesPattern(Pattern):
 
         link_text = "&num;{}".format(obj_ref)
 
-        a = etree.Element('a')
+        a = etree.ElementTree('a')
         a.text = link_text
         a.set('href', url)
         a.set('title', "#{} {}".format(obj_ref, subject))

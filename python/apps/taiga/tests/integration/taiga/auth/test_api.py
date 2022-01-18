@@ -11,16 +11,15 @@ from fastapi import status
 from taiga.auth.tokens import RefreshToken
 from tests.utils import factories as f
 
-pytestmark = pytest.mark.django_db(transaction=True)
+pytestmark = pytest.mark.django_db
 
 
-def test_login_successfuly(client):
-    username = "test_user"
+async def test_login_successfuly(client):
     password = "test_password"
-    f.UserFactory(username=username, password=password)
+    user = await f.create_user(password=password)
 
     data = {
-        "username": username,
+        "username": user.username,
         "password": password,
     }
 
@@ -31,7 +30,7 @@ def test_login_successfuly(client):
 
 def test_login_error_invalid_credentials(client):
     data = {
-        "username": "test_user",
+        "username": "test_non_existing_user",
         "password": "test_password",
     }
 
@@ -40,9 +39,9 @@ def test_login_error_invalid_credentials(client):
     assert response.headers["www-authenticate"] == 'Bearer realm="api"'
 
 
-def test_refresh_successfuly(client):
-    user = f.UserFactory(is_active=True)
-    token = RefreshToken.for_user(user)
+async def test_refresh_successfuly(client):
+    user = await f.create_user(is_active=True)
+    token = await RefreshToken.create_for_user(user)
     data = {
         "refresh": str(token),
     }

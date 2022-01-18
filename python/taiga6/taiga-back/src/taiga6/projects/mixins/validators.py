@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga6.base.api import validators, serializers
 from taiga6.base.exceptions import ValidationError

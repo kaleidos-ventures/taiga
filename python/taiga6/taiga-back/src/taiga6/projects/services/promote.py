@@ -9,7 +9,7 @@
 from django.apps import apps
 from django.core.files.base import ContentFile
 from django.db.models import signals
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from taiga6.projects.attachments.models import Attachment
 from taiga6.projects.history.models import HistoryEntry

@@ -32,6 +32,7 @@
 
 from datetime import datetime
 
+from asgiref.sync import sync_to_async
 from taiga.users.models import User
 
 from .models import DenylistedToken, OutstandingToken
@@ -41,6 +42,7 @@ from .models import DenylistedToken, OutstandingToken
 # -----------------
 
 
+@sync_to_async
 def create_outstanding_token(
     user: User, jti: str, token: str, created_at: datetime, expires_at: datetime
 ) -> OutstandingToken:
@@ -49,6 +51,7 @@ def create_outstanding_token(
     )
 
 
+@sync_to_async
 def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> tuple[OutstandingToken, bool]:
     return OutstandingToken.objects.get_or_create(
         jti=jti,
@@ -64,9 +67,11 @@ def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) 
 # ----------------
 
 
+@sync_to_async
 def get_or_create_denylisted_token(token: OutstandingToken) -> tuple[DenylistedToken, bool]:
     return DenylistedToken.objects.get_or_create(token=token)
 
 
+@sync_to_async
 def denylisted_token_exist(jti: str) -> bool:
     return DenylistedToken.objects.filter(token__jti=jti).exists()

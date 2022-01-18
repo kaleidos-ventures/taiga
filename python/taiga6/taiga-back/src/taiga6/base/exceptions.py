@@ -42,7 +42,7 @@ In addition Django's built in 403 and 404 exceptions are handled.
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.http import Http404
 
 from . import response

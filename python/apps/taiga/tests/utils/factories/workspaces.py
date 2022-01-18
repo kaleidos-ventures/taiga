@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from asgiref.sync import sync_to_async
 from taiga.permissions import choices
 from tests.utils import factories as f
 
@@ -20,6 +21,7 @@ class WorkspaceFactory(Factory):
         model = "workspaces.Workspace"
 
 
+@sync_to_async
 def create_workspace(**kwargs):
     """Create workspace and its dependencies"""
     defaults = {}

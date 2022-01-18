@@ -9,7 +9,7 @@ from markdown import Extension
 from markdown.inlinepatterns import Pattern
 from markdown.treeprocessors import Treeprocessor
 
-from markdown.util import etree
+from xml import etree
 
 from taiga6.front.templatetags.functions import resolve
 from taiga6.base.utils.slug import slugify
@@ -56,7 +56,7 @@ class WikiLinksPattern(Pattern):
         else:
             title = label
 
-        a = etree.Element("a")
+        a = etree.ElementTree("a")
         a.text = title
         a.set("href", url)
         a.set("title", title)

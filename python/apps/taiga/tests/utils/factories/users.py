@@ -5,22 +5,21 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from asgiref.sync import sync_to_async
+
 from .base import Factory, factory
 
 
 class UserFactory(Factory):
     username = factory.Sequence(lambda n: f"user{n}")
     email = factory.LazyAttribute(lambda obj: f"{obj.username}@email.com")
-    password = "123123"
+    password = factory.django.Password("123123")
     is_active = True
 
     class Meta:
         model = "users.User"
 
-    @classmethod
-    def _create(cls, model_class, *args, **kwargs):
-        """Override the default ``_create`` with our custom call to set user password."""
-        manager = cls._get_manager(model_class)
 
-        # The default would use ``manager.create(*args, **kwargs)``
-        return manager.create_user(*args, **kwargs)
+@sync_to_async
+def create_user(**kwargs):
+    return UserFactory.create(**kwargs)

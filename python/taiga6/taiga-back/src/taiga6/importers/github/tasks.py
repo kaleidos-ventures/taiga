@@ -8,7 +8,7 @@
 import logging
 import sys
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from taiga6.base.mails import mail_builder
 from taiga6.celery import app

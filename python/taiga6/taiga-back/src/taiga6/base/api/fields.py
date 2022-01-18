@@ -42,7 +42,7 @@ from django.core import validators
 from django.db.models.fields import BLANK_CHOICE_DASH
 from django.forms import widgets
 from django.http import QueryDict
-from django.utils import six
+import six
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from django.utils.dateparse import parse_datetime
@@ -51,8 +51,8 @@ from django.utils.encoding import smart_text
 from django.utils.encoding import force_text
 from django.utils.encoding import is_protected_type
 from django.utils.functional import Promise
-from django.utils.translation import ugettext
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 from taiga6.base.exceptions import ValidationError
 
@@ -514,7 +514,7 @@ class CharField(WritableField):
     def to_native(self, value):
         ret = super(CharField, self).to_native(value)
         if self.i18n:
-            ret = ugettext(ret)
+            ret = gettext(ret)
 
         return ret
 

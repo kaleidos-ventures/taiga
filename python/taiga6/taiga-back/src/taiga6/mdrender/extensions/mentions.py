@@ -32,7 +32,8 @@ from django.contrib.auth import get_user_model
 
 from markdown.extensions import Extension
 from markdown.inlinepatterns import Pattern
-from markdown.util import etree, AtomicString
+from markdown.util import AtomicString
+from xml import etree
 
 
 class MentionsExtension(Extension):
@@ -70,7 +71,7 @@ class MentionsPattern(Pattern):
 
         link_text = "@{}".format(username)
 
-        a = etree.Element('a')
+        a = etree.ElementTree('a')
         a.text = AtomicString(link_text)
 
         a.set('href', url)

@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import random
-from typing import List
+from typing import List, Optional
 
 from django.db import transaction
 from faker import Faker
@@ -15,6 +15,7 @@ from taiga.permissions import choices
 from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repo
+from taiga.roles.models import Role
 from taiga.users.models import User
 from taiga.workspaces import services as workspaces_services
 from taiga.workspaces.models import Workspace
@@ -53,7 +54,7 @@ def load_sample_data() -> None:
         # it applies a template and creates also admin and general-members roles
         project = _create_project(workspace=workspace, owner=workspace.owner)
 
-        # add other users to different roles (admin and general)
+        # add other users to different roles (admin and general-members)
         _create_project_memberships(project=project, users=users, except_for=workspace.owner)
 
         projects.append(project)
@@ -64,6 +65,7 @@ def load_sample_data() -> None:
     _create_empty_project(owner=custom_owner, workspace=workspace)
     _create_long_texts_project(owner=custom_owner, workspace=workspace)
     _create_inconsistent_permissions_project(owner=custom_owner, workspace=workspace)
+    _create_project_with_several_roles(owner=custom_owner, workspace=workspace, users=users)
 
     print("Sample data loaded.")
 
@@ -92,13 +94,24 @@ def _create_user(index: int) -> User:
 
 
 ################################
+# ROLES
+################################
+# admin and general-members are automatically created with `_create_project`
+
+
+def _create_role(project: Project, name: Optional[str] = None) -> Role:
+    name = name or fake.word()
+    return Role.objects.create(project=project, name=name, is_admin=False, permissions=choices.PROJECT_PERMISSIONS)
+
+
+################################
 # WORKSPACES
 ################################
 
 
-def _create_workspace(
-    owner: User, name: str = fake.bs(), color: int = fake.random_int(min=1, max=NUM_WORKSPACE_COLORS)
-) -> Workspace:
+def _create_workspace(owner: User, name: Optional[str] = None, color: Optional[int] = None) -> Workspace:
+    name = name or fake.bs()
+    color = color or fake.random_int(min=1, max=NUM_WORKSPACE_COLORS)
     return workspaces_services.create_workspace(name=name, owner=owner, color=color)
 
 
@@ -107,13 +120,17 @@ def _create_workspace(
 ################################
 
 
-def _create_project(workspace: Workspace, owner: User) -> Project:
+def _create_project(
+    workspace: Workspace, owner: User, name: Optional[str] = None, description: Optional[str] = None
+) -> Project:
+    name = name or fake.catch_phrase()
+    description = description or fake.paragraph(nb_sentences=2)
     with open("src/taiga/base/utils/sample_data/logo.png", "rb") as png_image_file:
         logo_file = UploadFile(file=png_image_file, filename="Logo")
 
         project = projects_services.create_project(
-            name=fake.catch_phrase(),
-            description=fake.paragraph(nb_sentences=2),
+            name=name,
+            description=description,
             color=fake.random_int(min=1, max=NUM_PROJECT_COLORS),
             owner=owner,
             workspace=workspace,
@@ -162,21 +179,18 @@ def _create_empty_project(owner: User, workspace: Workspace) -> None:
 
 
 def _create_long_texts_project(owner: User, workspace: Workspace) -> None:
-    projects_services.create_project(
-        name=f"Long texts project: { fake.sentence(nb_words=10) } ",
-        description=fake.paragraph(nb_sentences=8),
-        color=fake.random_int(min=1, max=NUM_PROJECT_COLORS),
+    _create_project(
         owner=owner,
         workspace=workspace,
+        name=f"Long texts project: { fake.sentence(nb_words=10) } ",
+        description=fake.paragraph(nb_sentences=8),
     )
 
 
 def _create_inconsistent_permissions_project(owner: User, workspace: Workspace) -> None:
     # give general-members role less permissions than public-permissions
-    project = projects_services.create_project(
+    project = _create_project(
         name="Inconsistent Permissions",
-        description=fake.paragraph(nb_sentences=1),
-        color=fake.random_int(min=1, max=NUM_PROJECT_COLORS),
         owner=owner,
         workspace=workspace,
     )
@@ -185,3 +199,11 @@ def _create_inconsistent_permissions_project(owner: User, workspace: Workspace) 
     general_members_role.save()
     project.public_permissions = choices.PROJECT_PERMISSIONS
     project.save()
+
+
+def _create_project_with_several_roles(owner: User, workspace: Workspace, users: list[User]) -> None:
+    project = _create_project(name="Several Roles", owner=owner, workspace=workspace)
+    _create_role(project=project, name="UX/UI")
+    _create_role(project=project, name="Developer")
+    _create_role(project=project, name="Stakeholder")
+    _create_project_memberships(project=project, users=users, except_for=project.owner)

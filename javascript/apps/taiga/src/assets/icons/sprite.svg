@@ -88,7 +88,7 @@
     </symbol>
 
     <symbol id="chevron-up" viewBox="0 0 16 16">
-      <path fill-rule="evenodd" d="M5.8 15.2c.4.4 1 .4 1.4 0l5.3-5.3 5.3 5.3a1 1 0 0 0 1.4-1.4l-6-6a1 1 0 0 0-1.4 0l-6 6a1 1 0 0 0 0 1.4Z" clip-rule="evenodd"/>
+      <path fill-rule="evenodd" d="M13.225 10.936a.902.902 0 01-1.275 0l-3.96-3.96-3.962 3.96A.902.902 0 012.754 9.66l4.599-4.597a.902.902 0 011.275 0l4.598 4.597a.901.901 0 010 1.275z" clip-rule="evenodd"/>
     </symbol>
 
     <symbol id="arrow-left" viewBox="0 0 16 16">

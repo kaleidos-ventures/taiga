@@ -85,9 +85,9 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
 
   public getModulePermissions(): Map<SettingsPermission, string> {
     return new Map([
-      ['edit', this.translocoService.translate('project_settings.roles_permissions.can_edit')],
-      ['view', this.translocoService.translate('project_settings.roles_permissions.can_view')],
       ['no_access', this.translocoService.translate('project_settings.roles_permissions.no_access')],
+      ['view', this.translocoService.translate('project_settings.roles_permissions.can_view')],
+      ['edit', this.translocoService.translate('project_settings.roles_permissions.can_edit')],
     ]);
   }
 

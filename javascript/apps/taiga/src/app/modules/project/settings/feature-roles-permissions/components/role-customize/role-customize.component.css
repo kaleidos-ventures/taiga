@@ -15,14 +15,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     display: flex;
     margin-block-end: var(--spacing-8);
     margin-block-start: var(--spacing-8);
-    max-inline-size: 17rem;
-    min-inline-size: 14rem;
   }
 
   & .permission-row-switch-deco {
     background: var(--color-gray30);
     flex-basis: var(--spacing-4);
-    margin-inline-end: var(--spacing-4);
+    margin-inline-end: var(--spacing-8);
   }
 
   & .permision-row-switches {

@@ -44,6 +44,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     inline-size: 1rem;
   }
 
+  & .icon_rotated {
+    margin-block-start: -3px;
+  }
+
   & tui-wrapper[data-appearance="textfield"] {
     background: var(--color-gray10);
 

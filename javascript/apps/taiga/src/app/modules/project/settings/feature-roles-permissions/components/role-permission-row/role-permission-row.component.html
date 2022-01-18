@@ -33,7 +33,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               tuiTextfieldSize="l">
               <tui-data-list *tuiDataList>
                 <button
-                  *ngFor="let item of basicPermissionList | keyvalue; trackBy: trackByValue;"
+                  *ngFor="let item of basicPermissionList | keyvalue: insertionOrder; trackBy: trackByValue;"
                   tuiOption
                   [value]="item">
                   {{ item.value }}
@@ -61,10 +61,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             class="permission-row-button"
             (click)="toggleAdvanceSetting()"
             tuiButton
-            iconRight="'chevron-down'"
-            [title]="t('project_settings.roles_permissions.advanced_settings')"
+            [iconRight]="showAdvancedSetting ? 'chevron-up' : 'chevron-down'"
             type="button">
-            {{ t('project_settings.roles_permissions.advanced_settings') }}
+            <ng-container *ngIf="showAdvancedSetting">
+              {{ t('project_settings.roles_permissions.hide_advanced_settings') }}
+            </ng-container>
+            <ng-container *ngIf="!showAdvancedSetting">
+              {{ t('project_settings.roles_permissions.advanced_settings') }}
+            </ng-container>
           </button>
           <button
             appearance="tertiary"
@@ -78,11 +82,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </div>
       </div>
     <div class="sub" *ngIf="showAdvancedSetting">
-      <tg-role-advance-row
-        *ngFor="let module of modules | keyvalue: insertionOrder; trackBy: trackByValue; let j = index"
-        [module]="module"
-        [formGroup]="getModuleFormGroup(module.key)">
-      </tg-role-advance-row>
+      <ng-container *ngFor="let module of modules | keyvalue: insertionOrder; trackBy: trackByValue;">
+        <tg-role-advance-row
+          *ngIf="moduleVisible(module.key)"
+          [module]="module"
+          [formGroup]="getModuleFormGroup(module.key)">
+        </tg-role-advance-row>
+      </ng-container>
     </div>
   </div>
 </ng-container>

@@ -13,6 +13,7 @@
       "number_members": "{members, plural, one {1 member} other {# members}}",
       "project_administrators_explanation": "Project admins can access to the project settings and move things around, activate modules, invite people and mostly everything else.",
       "advanced_settings": "Advanced settings",
+      "hide_advanced_settings": "Hide advanced settings",
       "show_more": "Show more",
       "add_role": "Add role",
       "can_edit": "Can edit",
@@ -23,6 +24,7 @@
       "create": "Create",
       "modify": "Modify",
       "delete": "Delete",
-      "restricted": "(restricted)"
+      "restricted": "(restricted)",
+      "userstories_child_help": "By removing access to user stories you are removing access to tasks and sprints as well."
     }
   }

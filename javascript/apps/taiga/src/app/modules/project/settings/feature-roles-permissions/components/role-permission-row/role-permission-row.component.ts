@@ -10,7 +10,7 @@ import { KeyValue } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Role } from '@taiga/data';
+import { Module, Role } from '@taiga/data';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
 
@@ -59,6 +59,18 @@ export class RolePermissionRowComponent implements OnInit {
     };
   }
 
+  public moduleVisible(module: Module) {
+    if (module === 'tasks' || module === 'sprints') {
+      const userstoriesState = this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(this.getModuleFormGroup('userstories'));
+
+      if (userstoriesState === 'no_access') {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   public getGlobalPermission(): SettingsPermission {
     const modulesPermissions = Array.from(
       this.projectsSettingsFeatureRolesPermissionsService.getModules().keys()
@@ -96,7 +108,7 @@ export class RolePermissionRowComponent implements OnInit {
     return 'restricted';
   }
 
-  public getModuleFormGroup(module: string) {
+  public getModuleFormGroup(module: Module) {
     return this.formGroup.get(module) as FormGroup;
   }
 
@@ -120,6 +132,6 @@ export class RolePermissionRowComponent implements OnInit {
   }
 
   public insertionOrder() {
-    return 1;
+    return 0;
   }
 }

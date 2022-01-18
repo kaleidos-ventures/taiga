@@ -102,10 +102,11 @@ export class ProjectSettingsFeatureRolesPermissionsComponent implements AfterVie
         create: [false],
         modify: [false],
         delete: [false],
+        comment: [false],
       });
 
-      if (this.projectsSettingsFeatureRolesPermissionsService.hasComments(module)) {
-        fb.addControl('comment', new FormControl);
+      if (!this.projectsSettingsFeatureRolesPermissionsService.hasComments(module)) {
+        fb.get('comment')?.disable();
       }
 
       roleGroup.addControl(module, fb);

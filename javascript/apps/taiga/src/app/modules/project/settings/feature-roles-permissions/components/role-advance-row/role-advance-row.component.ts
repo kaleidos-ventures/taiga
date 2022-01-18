@@ -95,4 +95,8 @@ export class RoleAdvanceRowComponent implements OnInit {
 
     this.previousPermission = permission;
   }
+
+  public insertionOrder() {
+    return 0;
+  }
 }

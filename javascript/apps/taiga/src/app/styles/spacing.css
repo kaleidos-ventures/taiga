@@ -23,4 +23,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   --spacing-56: calc(var(--spacing-4) * 14);
   --spacing-60: calc(var(--spacing-4) * 15);
   --spacing-64: calc(var(--spacing-4) * 16);
+  --spacing-68: calc(var(--spacing-4) * 17);
+  --spacing-72: calc(var(--spacing-4) * 18);
+  --spacing-76: calc(var(--spacing-4) * 19);
+  --spacing-80: calc(var(--spacing-4) * 20);
 }

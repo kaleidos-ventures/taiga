@@ -14,6 +14,7 @@ import { Module, Role } from '@taiga/data';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
 
+let nextId = 0;
 @UntilDestroy()
 @Component({
   selector: 'tg-role-permission-row',
@@ -31,6 +32,7 @@ export class RolePermissionRowComponent implements OnInit {
   public role!: Role;
 
   public permissionRowModel!: KeyValue<SettingsPermission, string>;
+  public advancedSettingsContainerId = `advanced-settings-container-${nextId++}`;
 
   public showAdvancedSetting = false;
   public modules = this.projectsSettingsFeatureRolesPermissionsService.getModules();

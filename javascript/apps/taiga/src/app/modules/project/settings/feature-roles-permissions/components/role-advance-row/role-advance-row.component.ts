@@ -14,6 +14,7 @@ import { SettingsPermission } from '~/app/modules/project/settings/feature-roles
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Module } from '@taiga/data';
 
+let nextId = 0;
 @UntilDestroy()
 @Component({
   selector: 'tg-role-advance-row',
@@ -35,6 +36,7 @@ export class RoleAdvanceRowComponent implements OnInit {
   public permissionRowModel!: KeyValue<SettingsPermission, string>;
   public previousPermission?: KeyValue<SettingsPermission, string>;
   public isChildModule = false;
+  public rolePermissionContainerId = `role-permission-container-${nextId++}`;
 
   constructor(
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService,

@@ -19,13 +19,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       src="arrow-down-right">
     </tui-svg>
     <span
+      aria-hidden="true"
       [class.customizing]="customizer"
       class="permission-row-name">{{ module.value }}</span>
   </div>
   <div class="permission-row-customization">
     <div class="permission-row-inner">
       <div class="permission-row-select">
-        <tg-ui-select >
+        <tg-ui-select
+          labelVisuallyHidden
+          [label]="module.value">
           <tui-select
             tuiTextfieldSize="l"
             [valueContent]="selectLabel"
@@ -55,22 +58,30 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </ng-container>
         </ng-container>
         </ng-template>
-        <button
-          appearance="tertiary"
-          class="permission-row-button"
-          [class.customizing]="customizer"
-          [class.show-customization-disabled]="!showCustomization()"
-          (click)="toggleCustomizer()"
-          tuiIconButton
-          [icon]="customizer ? 'close' : 'sliders-vertical'"
-          [tuiHint]="tooltip"
-          tuiHintDirection="top-right"
-          type="button">
-          <span class="visually-hidden">{{ t('project_settings.roles_permissions.show_more') }}</span>
-        </button>
+        <div
+          [attr.aria-level]="2"
+          role="heading"
+          class="permission-row-button">
+          <button
+            appearance="tertiary"
+            [class.customizing]="customizer"
+            [class.show-customization-disabled]="!showCustomization()"
+            [attr.aria-expanded]="customizer"
+            [attr.aria-controls]="rolePermissionContainerId"
+            (click)="toggleCustomizer()"
+            tuiIconButton
+            [icon]="customizer ? 'close' : 'sliders-vertical'"
+            [tuiHint]="tooltip"
+            tuiHintDirection="top-right"
+            type="button">
+            <span class="visually-hidden">{{ t('project_settings.roles_permissions.show_more') }}</span>
+          </button>
+        </div>
+
       </div>
       <tg-role-customize
-        *ngIf="showCustomization()"
+        *ngIf="customizer"
+        [attr.id]="rolePermissionContainerId"
         [formGroup]="formGroup"
         [toggleCustomize]="customizer">
       </tg-role-customize>

@@ -65,6 +65,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & tui-wrapper[data-appearance="textfield"] {
     background: var(--color-gray10);
+    padding-inline-end: var(--spacing-12);
 
     &[data-state="readonly"] {
       &::after {
@@ -86,6 +87,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       &[data-state="readonly"] {
         background: var(--color-gray10);
       }
+    }
+
+    & .input.input_template {
+      padding-inline-start: var(--spacing-12);
     }
   }
 

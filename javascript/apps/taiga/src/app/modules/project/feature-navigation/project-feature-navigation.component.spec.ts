@@ -25,7 +25,6 @@ describe('ProjectNavigationComponent', () => {
       getTranslocoModule(),
     ],
     schemas: [NO_ERRORS_SCHEMA],
-    declareComponent: false,
     mocks: [
       LocalStorageService,
       Router,

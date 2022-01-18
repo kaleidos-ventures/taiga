@@ -27,8 +27,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             appearance="tertiary"
             class="workspace-title-link"
             icon="'collapse-left'"
-            iconAlign="left"
-            [attr.title]="t('workspace.show_activity')">
+            iconAlign="left">
             {{ t('workspace.show_activity') }}
           </button>
         </div>
@@ -71,7 +70,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <button appearance="primary"
             (click)="setCreate(true)"
             tuiButton
-            [attr.title]="t('workspace.placeholder_button')"
             type="button">
             {{ t('workspace.placeholder_button') }}
           </button>

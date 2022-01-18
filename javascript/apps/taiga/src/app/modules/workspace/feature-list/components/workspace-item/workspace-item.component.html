@@ -28,13 +28,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <button appearance="tertiary"
           tuiButton
           icon="user"
-          [attr.title]="t('commons.members')"
           type="button">
           {{ t('commons.members') }} (1)
         </button>
         <button appearance="secondary"
           tuiButton
-          [attr.title]="t('commons.upgrade')"
           type="button">
           {{ t('commons.upgrade') }}
         </button>
@@ -71,8 +69,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       tuiButton
       appearance="tertiary"
       class="workspace-show-all"
-      iconRight="chevron-down"
-      [attr.title]="t('workspace.more_projects', { amount: workspace.totalProjects - vm.projectsToShow })">
+      iconRight="chevron-down">
       {{ t('workspace.more_projects', { projects: workspace.totalProjects - vm.projectsToShow }) }}
 
     </button>
@@ -82,8 +79,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       tuiButton
       appearance="tertiary"
       class="workspace-show-all"
-      iconRight="chevron-up"
-      [attr.title]="t('workspace.less_projects')">
+      iconRight="chevron-up">
       {{ t('workspace.less_projects') }}
     </button>
 

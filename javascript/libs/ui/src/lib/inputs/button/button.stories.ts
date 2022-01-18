@@ -43,7 +43,6 @@ export const Primary = ConfigureTemplate({
           appearance="primary"
           [disabled]="disabled"
           tuiButton
-          title="ADD TITLE"
           type="button">
           {{label}}
         </button>
@@ -56,7 +55,6 @@ export const Primary = ConfigureTemplate({
           [disabled]="disabled"
           tuiButton
           icon="{{icon}}"
-          title="ADD TITLE"
           type="button">
           {{label}}
         </button>
@@ -69,7 +67,6 @@ export const Primary = ConfigureTemplate({
           [disabled]="disabled"
           tuiButton
           iconRight="{{icon}}"
-          title="ADD TITLE"
           type="button">
           {{label}}
         </button>
@@ -82,7 +79,6 @@ export const Primary = ConfigureTemplate({
           [disabled]="disabled"
           tuiIconButton
           icon="{{icon}}"
-          title="ADD TITLE"
           type="button"
         >
           <span class="visually-hidden">ADD ACCESIBILITY TEXT</span>
@@ -98,7 +94,6 @@ export const Primary = ConfigureTemplate({
           [disabled]="disabled"
           class="large"
           tuiButton
-          title="ADD TITLE"
           type="button">
           {{label}}
         </button>
@@ -112,7 +107,6 @@ export const Primary = ConfigureTemplate({
           class="large"
           tuiButton
           icon="{{icon}}"
-          title="ADD TITLE"
           type="button">
           {{label}}
         </button>
@@ -126,7 +120,6 @@ export const Primary = ConfigureTemplate({
           class="large"
           tuiButton
           iconRight="{{icon}}"
-          title="ADD TITLE"
           type="button">
           {{label}}
         </button>
@@ -147,7 +140,6 @@ export const Secondary = ConfigureTemplate({
       appearance="secondary"
       [disabled]="disabled"
       tuiButton
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -160,7 +152,6 @@ export const Secondary = ConfigureTemplate({
       [disabled]="disabled"
       tuiButton
       icon="{{icon}}"
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -173,7 +164,6 @@ export const Secondary = ConfigureTemplate({
       [disabled]="disabled"
       tuiButton
       iconRight="{{icon}}"
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -186,7 +176,6 @@ export const Secondary = ConfigureTemplate({
       [disabled]="disabled"
       tuiIconButton
       icon="{{icon}}"
-      title="ADD TITLE"
       type="button"
     >
       <span class="visually-hidden">ADD ACCESIBILITY TEXT</span>
@@ -205,7 +194,6 @@ export const Destructive = ConfigureTemplate({
       appearance="destructive"
       [disabled]="disabled"
       tuiButton
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -218,7 +206,6 @@ export const Destructive = ConfigureTemplate({
       [disabled]="disabled"
       tuiButton
       icon="{{icon}}"
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -231,7 +218,6 @@ export const Destructive = ConfigureTemplate({
       [disabled]="disabled"
       tuiButton
       iconRight="{{icon}}"
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -244,7 +230,6 @@ export const Destructive = ConfigureTemplate({
       [disabled]="disabled"
       tuiIconButton
       icon="{{icon}}"
-      title="ADD TITLE"
       type="button"
     >
       <span class="visually-hidden">ADD ACCESIBILITY TEXT</span>
@@ -263,7 +248,6 @@ export const Tertiary = ConfigureTemplate({
       appearance="tertiary"
       [disabled]="disabled"
       tuiButton
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -276,7 +260,6 @@ export const Tertiary = ConfigureTemplate({
       [disabled]="disabled"
       tuiButton
       icon="{{icon}}"
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -289,7 +272,6 @@ export const Tertiary = ConfigureTemplate({
       [disabled]="disabled"
       tuiButton
       icon="{{icon}}"
-      title="ADD TITLE"
       type="button">
       {{label}}
       <span class="notification-counter">5</span>
@@ -303,7 +285,6 @@ export const Tertiary = ConfigureTemplate({
       [disabled]="disabled"
       tuiButton
       iconRight="{{icon}}"
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -316,7 +297,6 @@ export const Tertiary = ConfigureTemplate({
       [disabled]="disabled"
       tuiIconButton
       icon="{{icon}}"
-      title="ADD TITLE"
       type="button"
     >
       <span class="visually-hidden">ADD ACCESIBILITY TEXT</span>
@@ -335,7 +315,6 @@ export const MainNav = ConfigureTemplate({
       appearance="main-nav"
       [disabled]="disabled"
       tuiButton
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -348,7 +327,6 @@ export const MainNav = ConfigureTemplate({
       [disabled]="disabled"
       tuiButton
       icon="{{icon}}"
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -361,7 +339,6 @@ export const MainNav = ConfigureTemplate({
       [disabled]="disabled"
       tuiButton
       iconRight="{{icon}}"
-      title="ADD TITLE"
       type="button">
       {{label}}
     </button>
@@ -394,7 +371,6 @@ export const HomeButton = ConfigureTemplate({
       [disabled]="disabled"
       tuiIconButton
       icon="{{icon}}"
-      title="ADD TITLE"
       type="button"
     >
       <span class="visually-hidden">ADD ACCESIBILITY TEXT</span>
@@ -431,8 +407,7 @@ export const LinkButton = ConfigureTemplate({
   <div class="story-flex">
     <label class="story-label">Text</label>
     <button
-      tuiLink
-      title="ADD TITLE">
+      tuiLink>
       {{label}}
     </button>
   </div>
@@ -441,8 +416,7 @@ export const LinkButton = ConfigureTemplate({
     <label class="story-label">Text (small)</label>
     <button
       class="small"
-      tuiLink
-      title="ADD TITLE">
+      tuiLink>
       {{label}}
     </button>
   </div>

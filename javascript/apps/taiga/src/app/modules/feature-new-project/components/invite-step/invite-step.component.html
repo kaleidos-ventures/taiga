@@ -15,8 +15,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <button
           tuiButton
           (click)="sendForm([])"
-          appearance="tertiary"
-          [title]="t('new_project.invite_step.later')">
+          appearance="tertiary">
           {{ t('new_project.invite_step.later') }}
         </button>
         <button
@@ -24,7 +23,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           data-test="submit-invite-users"
           tuiButton
           (click)="sendForm(userExample)"
-          [title]="t('new_project.invite_step.send_invites')"
           type="button">
           {{ t('new_project.invite_step.send_invites') }}
         </button>

@@ -11,7 +11,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .permission-row {
   border-block-end: solid 1px var(--color-gray20);
   max-inline-size: var(--setting-size);
-  padding-block-start: var(--spacing-4);
 
   & .restricted {
     color: var(--color-gray80);
@@ -50,6 +49,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
 
     & tg-ui-select {
+      inline-size: 100%;
       max-inline-size: 17rem;
       min-inline-size: 14rem;
     }

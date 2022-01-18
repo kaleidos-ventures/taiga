@@ -125,6 +125,7 @@ export class RolePermissionRowComponent implements OnInit {
       const moduleGroup = this.getModuleFormGroup(module);
 
       this.projectsSettingsFeatureRolesPermissionsService.applyPermission(
+        module,
         permission.key,
         moduleGroup
       );

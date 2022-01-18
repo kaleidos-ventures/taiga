@@ -91,7 +91,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
     ]);
   }
 
-  public applyPermission(type: SettingsPermission, formGroup: FormGroup) {
+  public applyPermission(module: Module, type: SettingsPermission, formGroup: FormGroup) {
     if (formGroup.disabled) {
       formGroup.enable();
     }
@@ -110,6 +110,10 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       });
     } else if (type === 'no_access') {
       formGroup.disable();
+    }
+
+    if (!this.hasComments(module)) {
+      formGroup.get('comment')?.disable();
     }
   }
 

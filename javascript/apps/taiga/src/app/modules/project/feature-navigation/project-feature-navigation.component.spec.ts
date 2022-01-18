@@ -13,14 +13,18 @@ import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 import { ProjectNavigationComponent } from './project-feature-navigation.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 describe('ProjectNavigationComponent', () => {
   let spectator: Spectator<ProjectNavigationComponent>;
   const createComponent = createComponentFactory({
     component: ProjectNavigationComponent,
     imports: [
+      CommonModule,
       getTranslocoModule(),
     ],
+    schemas: [NO_ERRORS_SCHEMA],
     declareComponent: false,
     mocks: [
       LocalStorageService,

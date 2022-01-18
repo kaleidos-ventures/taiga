@@ -78,7 +78,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   </div>
   <div
     class="permision-row-comment"
-    [class.permision-row-comment-disabled]="!showCustomization() || formGroup.get('comment')?.disabled">
+    [class.permision-row-comment-disabled]="!showComment()">
     <span class="permission-row-switch-title">{{ t('project_settings.roles_permissions.can_comment') }}</span>
     <tui-toggle
       formControlName="comment"

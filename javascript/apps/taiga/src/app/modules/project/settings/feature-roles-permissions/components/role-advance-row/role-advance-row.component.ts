@@ -83,6 +83,10 @@ export class RoleAdvanceRowComponent implements OnInit {
     return !this.formGroup.disabled;
   }
 
+  public showComment() {
+    return !this.isChildModule && !this.formGroup.disabled;
+  }
+
   public permissionChange(permission: KeyValue<SettingsPermission, string>) {
     this.projectsSettingsFeatureRolesPermissionsService.applyPermission(
       permission.key,

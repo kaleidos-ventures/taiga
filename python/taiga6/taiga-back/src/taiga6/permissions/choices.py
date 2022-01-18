@@ -24,7 +24,7 @@ WORKSPACE_ADMIN_PERMISSIONS = [
 ]
 
 # possible permissions for members or public members
-# directly applied to default "general-members" project role
+# directly applied to default "general" project role
 # these may be changed by a project admin
 PROJECT_PERMISSIONS = [
     # Project permissions

@@ -27,8 +27,8 @@ def test_create_project_being_workspace_admin(client):
 def test_create_project_being_workspace_member(client):
     workspace = f.WorkspaceFactory()
     general_member_role = f.WorkspaceRoleFactory(
-        name="General Members",
-        slug="general-members",
+        name="General",
+        slug="general",
         permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=False,
         workspace=workspace,
@@ -94,8 +94,8 @@ def test_get_project_being_project_admin(client):
 def test_get_project_being_project_member(client):
     project = f.ProjectFactory()
     general_member_role = f.RoleFactory(
-        name="General Members",
-        slug="general-members",
+        name="General",
+        slug="general",
         permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,
@@ -152,8 +152,8 @@ def test_get_project_roles_being_project_admin(client):
 def test_get_project_roles_being_general_member(client):
     project = f.ProjectFactory()
     general_member_role = f.RoleFactory(
-        name="General Members",
-        slug="general-members",
+        name="General",
+        slug="general",
         permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,

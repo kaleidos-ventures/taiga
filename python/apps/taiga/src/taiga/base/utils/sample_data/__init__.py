@@ -51,10 +51,10 @@ def load_sample_data() -> None:
     projects = []
     for workspace in workspaces:
         # create one project (kanban) in each workspace with the same owner
-        # it applies a template and creates also admin and general-members roles
+        # it applies a template and creates also admin and general roles
         project = _create_project(workspace=workspace, owner=workspace.owner)
 
-        # add other users to different roles (admin and general-members)
+        # add other users to different roles (admin and general)
         _create_project_memberships(project=project, users=users, except_for=workspace.owner)
 
         projects.append(project)
@@ -96,7 +96,7 @@ def _create_user(index: int) -> User:
 ################################
 # ROLES
 ################################
-# admin and general-members are automatically created with `_create_project`
+# admin and general roles are automatically created with `_create_project`
 
 
 def _create_role(project: Project, name: Optional[str] = None) -> Role:
@@ -188,13 +188,13 @@ def _create_long_texts_project(owner: User, workspace: Workspace) -> None:
 
 
 def _create_inconsistent_permissions_project(owner: User, workspace: Workspace) -> None:
-    # give general-members role less permissions than public-permissions
+    # give general role less permissions than public-permissions
     project = _create_project(
         name="Inconsistent Permissions",
         owner=owner,
         workspace=workspace,
     )
-    general_members_role = project.roles.get(slug="general-members")
+    general_members_role = project.roles.get(slug="general")
     general_members_role.permissions = ["view_us", "view_tasks"]
     general_members_role.save()
     project.public_permissions = choices.PROJECT_PERMISSIONS

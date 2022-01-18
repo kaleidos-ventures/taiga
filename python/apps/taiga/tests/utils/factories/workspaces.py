@@ -33,8 +33,8 @@ def create_workspace(**kwargs):
         workspace=workspace,
     )
     f.WorkspaceRoleFactory.create(
-        name="General Members",
-        slug="general-members",
+        name="General",
+        slug="general",
         permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=False,
         workspace=workspace,

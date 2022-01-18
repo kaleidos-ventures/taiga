@@ -414,9 +414,9 @@
                 ]
             },
             {
-                "slug": "general-members",
+                "slug": "general",
                 "computable": true,
-                "name": "General Members",
+                "name": "General",
                 "order": 2,
                 "is_admin": false,
                 "permissions": [
@@ -855,9 +855,9 @@
                 ]
             },
             {
-                "slug": "general-members",
+                "slug": "general",
                 "computable": true,
-                "name": "General Members",
+                "name": "General",
                 "order": 2,
                 "is_admin": false,
                 "permissions": [

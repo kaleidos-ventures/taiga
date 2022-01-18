@@ -18,7 +18,7 @@ pytestmark = pytest.mark.django_db
 def test_get_project_role():
     with patch("taiga.roles.services.roles_repo") as fake_role_repository:
         fake_role_repository.get_project_role.return_value = f.RoleFactory()
-        services.get_project_role(project=f.ProjectFactory(), slug="general-members")
+        services.get_project_role(project=f.ProjectFactory(), slug="general")
         fake_role_repository.get_project_role.assert_called_once()
 
 

@@ -24,8 +24,8 @@ def test_is_project_admin_being_project_member():
 
     user2 = f.UserFactory()
     general_member_role = f.RoleFactory(
-        name="General Members",
-        slug="general-members",
+        name="General",
+        slug="general",
         permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,
@@ -50,8 +50,8 @@ def test_is_workspace_admin_being_workspace_member():
 
     user2 = f.UserFactory()
     general_member_role = f.WorkspaceRoleFactory(
-        name="General Members",
-        slug="general-members",
+        name="General",
+        slug="general",
         permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=False,
         workspace=workspace,
@@ -76,8 +76,8 @@ def test_user_has_perm_being_project_admin():
 def test_user_has_perm_being_project_member():
     project = f.ProjectFactory()
     general_member_role = f.RoleFactory(
-        name="General Members",
-        slug="general-members",
+        name="General",
+        slug="general",
         permissions=choices.PROJECT_PERMISSIONS,
         is_admin=False,
         project=project,

@@ -15,7 +15,7 @@ pytestmark = pytest.mark.django_db(transaction=True)
 
 def test_update_project_role_permissions_anonymous_user(client):
     project = f.create_project()
-    role_slug = "general-members"
+    role_slug = "general"
     data = {"permissions": ["view_project"]}
     response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
@@ -57,7 +57,7 @@ def test_update_project_role_permissions_role_admin(client):
 
 def test_update_project_role_permissions_incompatible_permissions(client):
     project = f.create_project()
-    role_slug = "general-members"
+    role_slug = "general"
     client.login(project.owner)
     data = {"permissions": ["view_project", "view_tasks"]}
     response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
@@ -66,7 +66,7 @@ def test_update_project_role_permissions_incompatible_permissions(client):
 
 def test_update_project_role_permissions_not_valid_permissions(client):
     project = f.create_project()
-    role_slug = "general-members"
+    role_slug = "general"
     client.login(project.owner)
     data = {"permissions": ["not_valid", "foo"]}
     response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
@@ -75,7 +75,7 @@ def test_update_project_role_permissions_not_valid_permissions(client):
 
 def test_update_project_role_permissions_ok(client):
     project = f.create_project()
-    role_slug = "general-members"
+    role_slug = "general"
     # default permissions given by template should be the same as PROJECT_PERMISSIONS
     assert [x in project.roles.get(slug=role_slug).permissions for x in choices.PROJECT_PERMISSIONS]
     client.login(project.owner)

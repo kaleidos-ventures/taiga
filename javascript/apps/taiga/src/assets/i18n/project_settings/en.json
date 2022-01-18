@@ -8,7 +8,7 @@
     "plugins": "Plugins",
     "customize": "Customize options",
     "roles_permissions": {
-      "project_administrators": "Project Administrators",
+      "project_administrators": "Administrators",
       "number_admins": "{admins, plural, one {1 admin} other {# admins}}",
       "number_members": "{members, plural, one {1 member} other {# members}}",
       "project_administrators_explanation": "Project admins can access to the project settings and move things around, activate modules, invite people and mostly everything else.",

@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 import pytest
 from fastapi import UploadFile
+from taiga.exceptions import services as ex
 from taiga.projects import services
 from tests.utils import factories as f
 from tests.utils.images import valid_image_upload_file
@@ -62,3 +63,29 @@ def test_create_project_with_no_logo():
         fake_project_repository.create_project.assert_called_once_with(
             workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=None
         )
+
+
+def test_update_project_public_permissions_ok():
+    project = f.ProjectFactory()
+    permissions = ["view_project", "view_milestones", "add_us", "view_us", "modify_task", "view_tasks"]
+    anon_permissions = ["view_project", "view_milestones", "view_us", "view_tasks"]
+
+    with patch("taiga.projects.services.projects_repo") as fake_project_repository:
+        services.update_project_public_permissions(project=project, permissions=permissions)
+        assert fake_project_repository.called_once_with(project, permissions, anon_permissions)
+
+
+def test_update_project_public_permissions_not_valid():
+    project = f.ProjectFactory()
+    not_valid_permissions = ["invalid_permission", "other_not_valid", "add_us"]
+
+    with pytest.raises(ex.NotValidPermissionsSetError):
+        services.update_project_public_permissions(project=project, permissions=not_valid_permissions)
+
+
+def test_update_project_public_permissions_incompatible():
+    project = f.ProjectFactory()
+    incompatible_permissions = ["view_tasks", "view_milestones"]
+
+    with pytest.raises(ex.IncompatiblePermissionsSetError):
+        services.update_project_public_permissions(project=project, permissions=incompatible_permissions)

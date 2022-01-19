@@ -81,4 +81,8 @@ def update_project_public_permissions(project: Project, permissions: list[str]) 
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError()
 
-    return projects_repo.update_project_public_permissions(project=project, permissions=permissions)
+    # anon_permissions are the "view_" subset of the public_permissions
+    anon_permissions = list(filter(lambda x: x.startswith("view_"), permissions))
+    return projects_repo.update_project_public_permissions(
+        project=project, permissions=permissions, anon_permissions=anon_permissions
+    )

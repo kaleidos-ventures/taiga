@@ -65,3 +65,18 @@ def test_get_project_return_none():
 def test_get_template_return_template():
     template = f.ProjectTemplateFactory()
     assert repositories.get_template(slug=template.slug) == template
+
+
+##########################################################
+# update_project_public_permissions
+##########################################################
+
+
+def test_update_project_public_permissions():
+    project = f.ProjectFactory(name="Project 1")
+    permissions = ["view_project", "add_milestone", "view_milestones", "add_us", "view_us"]
+    anon_permissions = ["view_project", "view_milestones", "view_us"]
+    repositories.update_project_public_permissions(project, permissions, anon_permissions)
+
+    assert len(project.public_permissions) == 5
+    assert len(project.anon_permissions) == 3

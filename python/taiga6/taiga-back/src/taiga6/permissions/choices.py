@@ -54,7 +54,7 @@ WORKSPACE_PERMISSIONS = [
 
 # possible permissions for anonymous users
 # only "view" permissions at most
-# these may be changed by a project admin
+# these may be changed by a project admin when changing public-permissions
 ANON_PERMISSIONS = [
     # Project permissions
     ('view_project', _('View project')),
@@ -62,4 +62,6 @@ ANON_PERMISSIONS = [
     ('view_us', _('View US')),
     # Task permissions
     ('view_tasks', _('View tasks')),
+    # Milestone permissions
+    ('view_milestones', _('View milestones')),
 ]

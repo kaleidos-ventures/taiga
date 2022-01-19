@@ -52,7 +52,10 @@ def get_template(slug: str) -> ProjectTemplate:
     return ProjectTemplate.objects.get(slug=slug)
 
 
-def update_project_public_permissions(project: Project, permissions: list[str]) -> list[str]:
+def update_project_public_permissions(
+    project: Project, permissions: list[str], anon_permissions: list[str]
+) -> list[str]:
     project.public_permissions = permissions
+    project.anon_permissions = anon_permissions
     project.save()
     return project.public_permissions

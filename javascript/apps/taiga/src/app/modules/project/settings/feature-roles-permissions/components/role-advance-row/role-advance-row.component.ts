@@ -100,6 +100,10 @@ export class RoleAdvanceRowComponent implements OnInit {
       this.formGroup.get('comment')?.setValue(true);
     }
 
+    if (!this.showCustomization()) {
+      this.customizer = false;
+    }
+
     this.previousPermission = permission;
   }
 

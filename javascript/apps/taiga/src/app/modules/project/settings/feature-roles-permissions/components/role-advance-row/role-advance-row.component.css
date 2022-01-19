@@ -63,11 +63,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .permission-row-button {
     margin-inline-start: var(--spacing-8);
+  }
 
-    &.customizing::ng-deep tui-wrapper {
-      background: var(--color-gray30);
-      color: var(--color-secondary);
-    }
+  & .customizing::ng-deep tui-wrapper {
+    background: var(--color-gray30);
+    color: var(--color-secondary);
   }
 
   & tg-ui-select {

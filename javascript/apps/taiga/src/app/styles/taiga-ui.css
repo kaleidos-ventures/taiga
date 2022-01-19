@@ -137,6 +137,11 @@ tui-data-list {
     &:hover {
       color: var(--color-secondary80) !important;
     }
+
+    &:focus-visible,
+    &:focus {
+        outline: solid 1px var(--color-secondary80) !important;
+    }
   }
 }
 /* stylelint-enable */
@@ -153,6 +158,10 @@ tui-toggle {
     }
   }
 
+  & ._focused::after {
+    color: var(--color-secondary90) !important; /* stylelint-disable-line declaration-no-important */
+  }
+
   & tui-wrapper[data-appearance="secondary"] {
     background: var(--color-gray40);
     color: var(--color-gray40);
@@ -164,3 +173,11 @@ tui-toggle {
   }
 }
 /* stylelint-enable */
+
+button:is(
+[type="button"],
+[type="reset"],
+[type="submit"]
+):focus-visible {
+  outline: 0;
+}

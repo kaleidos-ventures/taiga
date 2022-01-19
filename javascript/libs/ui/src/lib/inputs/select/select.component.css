@@ -97,4 +97,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & .placeholder {
     margin-block-end: 0;
   }
+
+  & ._with-dropdown:focus {
+    outline: solid 1px var(--color-secondary80);
+  }
 }

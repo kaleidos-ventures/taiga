@@ -15,7 +15,7 @@ from taiga.permissions import choices
 from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repo
-from taiga.roles.models import Role
+from taiga.roles.models import Role, WorkspaceRole
 from taiga.users.models import User
 from taiga.workspaces import services as workspaces_services
 from taiga.workspaces.models import Workspace
@@ -41,11 +41,17 @@ def load_sample_data() -> None:
     users = _create_users()
 
     # WORKSPACES
+    # create one basic workspace and one premium workspace per user
+    # admin role is created by deault
+    # create members roles for premium workspaces
     workspaces = []
     for user in users:
-        # create one workspace per user
-        workspace = _create_workspace(owner=user)
-        workspaces.append(workspace)
+        workspaces.append(_create_workspace(owner=user, is_premium=False))
+        workspaces.append(_create_workspace(owner=user, is_premium=True))
+
+    # create memberships for workspaces
+    for workspace in workspaces:
+        _create_workspace_memberships(workspace=workspace, users=users, except_for=workspace.owner)
 
     # PROJECTS
     projects = []
@@ -99,9 +105,63 @@ def _create_user(index: int) -> User:
 # admin and general roles are automatically created with `_create_project`
 
 
-def _create_role(project: Project, name: Optional[str] = None) -> Role:
+def _create_project_role(project: Project, name: Optional[str] = None) -> Role:
     name = name or fake.word()
     return Role.objects.create(project=project, name=name, is_admin=False, permissions=choices.PROJECT_PERMISSIONS)
+
+
+def _create_project_memberships(project: Project, users: List[User], except_for: User) -> None:
+    # get admin and other roles
+    admin_role = project.roles.get(slug="admin")
+    other_roles = project.roles.exclude(slug="admin")
+
+    # get users except the owner of the project
+    other_users = [user for user in users if user.id != except_for.id]
+    random.shuffle(other_users)
+
+    # add 0, 1 or 2 other admins
+    num_admins = random.randint(0, 2)
+    for _ in range(num_admins):
+        user = other_users.pop(0)
+        roles_repo.create_membership(user=user, project=project, role=admin_role, email=user.email)
+
+    # add other members in the different roles
+    num_members = random.randint(0, len(other_users))
+    for _ in range(num_members):
+        user = other_users.pop(0)
+        role = random.choice(other_roles)
+        roles_repo.create_membership(user=user, project=project, role=role, email=user.email)
+
+
+def _create_workspace_role(workspace: Workspace, name: Optional[str] = None) -> WorkspaceRole:
+    name = name or fake.word()
+    return WorkspaceRole.objects.create(
+        workspace=workspace, name=name, is_admin=False, permissions=choices.WORKSPACE_PERMISSIONS
+    )
+
+
+def _create_workspace_memberships(workspace: Workspace, users: list[User], except_for: User) -> None:
+    # get admin and other roles
+    admin_role = workspace.workspace_roles.get(slug="admin")
+    other_roles = workspace.workspace_roles.exclude(slug="admin")
+
+    # get users except the owner of the project
+    other_users = [user for user in users if user.id != except_for.id]
+    random.shuffle(other_users)
+
+    # add 0, 1 or 2 other admins
+    num_admins = random.randint(0, 2)
+    for _ in range(num_admins):
+        user = other_users.pop(0)
+        roles_repo.create_workspace_membership(user=user, workspace=workspace, workspace_role=admin_role)
+
+    # add other members in the different roles if any
+    if other_roles:
+        num_members = random.randint(0, len(other_users))
+        for _ in range(num_members):
+            user = other_users.pop(0)
+            role = random.choice(other_roles)
+            roles_repo.create_workspace_membership(user=user, workspace=workspace, workspace_role=role)
 
 
 ################################
@@ -109,10 +169,18 @@ def _create_role(project: Project, name: Optional[str] = None) -> Role:
 ################################
 
 
-def _create_workspace(owner: User, name: Optional[str] = None, color: Optional[int] = None) -> Workspace:
+def _create_workspace(
+    owner: User, name: Optional[str] = None, color: Optional[int] = None, is_premium: Optional[bool] = False
+) -> Workspace:
     name = name or fake.bs()
     color = color or fake.random_int(min=1, max=NUM_WORKSPACE_COLORS)
-    return workspaces_services.create_workspace(name=name, owner=owner, color=color)
+    workspace = workspaces_services.create_workspace(name=name, owner=owner, color=color)
+    if is_premium:
+        workspace.is_premium = True
+        # create non-admin role
+        _create_workspace_role(workspace=workspace)
+        workspace.save()
+    return workspace
 
 
 ################################
@@ -138,29 +206,6 @@ def _create_project(
         )
 
     return project
-
-
-def _create_project_memberships(project: Project, users: List[User], except_for: User) -> None:
-    # get admin and other roles
-    admin_role = project.roles.get(slug="admin")
-    other_roles = project.roles.exclude(slug="admin")
-
-    # get users except the owner of the project
-    other_users = [user for user in users if user.id != except_for.id]
-    random.shuffle(other_users)
-
-    # add 0, 1 or two other admins
-    num_admins = random.randint(0, 2)
-    for _ in range(num_admins):
-        user = other_users.pop(0)
-        roles_repo.create_membership(user=user, project=project, role=admin_role, email=user.email)
-
-    # add other members in the different roles
-    num_members = random.randint(0, len(other_users))
-    for _ in range(num_members):
-        user = other_users.pop(0)
-        role = random.choice(other_roles)
-        roles_repo.create_membership(user=user, project=project, role=role, email=user.email)
 
 
 ################################
@@ -203,7 +248,7 @@ def _create_inconsistent_permissions_project(owner: User, workspace: Workspace) 
 
 def _create_project_with_several_roles(owner: User, workspace: Workspace, users: list[User]) -> None:
     project = _create_project(name="Several Roles", owner=owner, workspace=workspace)
-    _create_role(project=project, name="UX/UI")
-    _create_role(project=project, name="Developer")
-    _create_role(project=project, name="Stakeholder")
+    _create_project_role(project=project, name="UX/UI")
+    _create_project_role(project=project, name="Developer")
+    _create_project_role(project=project, name="Stakeholder")
     _create_project_memberships(project=project, users=users, except_for=project.owner)

@@ -1,0 +1,78 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+.modal-wrapper {
+  overflow: auto;
+}
+
+.explanation {
+  display: block;
+  margin-block-end: var(--spacing-16);
+  text-align: start;
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.restriction-list {
+  list-style-type: initial;
+  margin-block: var(--spacing-12);
+
+  & .restriction-element {
+    @mixin font-small;
+
+    color: var(--color-gray80);
+  }
+}
+
+.chevron {
+  block-size: var(--spacing-16);
+  fill: var(--color-secondary);
+  inline-size: var(--spacing-16);
+  margin-inline-start: auto;
+}
+
+.comparisson-table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  display: table;
+  margin-block-end: var(--spacing-16);
+
+  &.last {
+    margin-block-end: var(--spacing-32);
+  }
+
+  & :is(th:not(:first-child), td, .title) {
+    border: 1px solid var(--color-gray20);
+    inline-size: calc(100% / 3);
+    overflow: hidden;
+    padding: var(--spacing-8) var(--spacing-12);
+    vertical-align: top;
+    word-break: break-word;
+  }
+
+  & .title {
+    @mixin table-head;
+
+    background-color: var(--color-gray10);
+  }
+
+  & .text {
+    @mixin font-inline;
+
+    color: var(--color-gray80);
+
+    &.highlight {
+      color: var(--color-gray100);
+    }
+  }
+}

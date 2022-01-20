@@ -100,7 +100,7 @@ export class ProjectEffects {
             .pipe(
               map((permissions) => {
                 return ProjectActions.fetchWorkspacePermissionsSuccess({
-                  workspacePermissions: permissions,
+                  permissions,
                 });
               })
             );
@@ -120,8 +120,8 @@ export class ProjectEffects {
           return this.projectApiService
             .putMemberRoles(action.project, action.roleSlug, action.permissions)
             .pipe(
-              map(() => {
-                return ProjectActions.updateRolePermissionsSuccess();
+              map((role) => {
+                return ProjectActions.updateRolePermissionsSuccess({ role });
               })
             );
         },
@@ -140,8 +140,10 @@ export class ProjectEffects {
           return this.projectApiService
             .putPublicPermissions(action.project, action.permissions)
             .pipe(
-              map(() => {
-                return ProjectActions.updateRolePermissionsSuccess();
+              map((permissions) => {
+                return ProjectActions.updatePublicPermissionsSuccess({
+                  permissions,
+                });
               })
             );
         },
@@ -160,8 +162,10 @@ export class ProjectEffects {
           return this.projectApiService
             .putworkspacePermissions(action.project, action.permissions)
             .pipe(
-              map(() => {
-                return ProjectActions.updateRolePermissionsSuccess();
+              map((permissions) => {
+                return ProjectActions.updateWorkspacePermissionsSuccess({
+                  permissions,
+                });
               })
             );
         },

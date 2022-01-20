@@ -61,6 +61,8 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       };
     })
   );
+  public isModalOpen = false;
+  public publicPermissionHasConflicts = false;
 
   public form = this.fb.group({});
   public publicForm = this.fb.group({});
@@ -128,19 +130,22 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   }
 
   public initForm() {
-    this.state.hold(this.state.select('memberRoles'), (roles = []) => {
-      this.form = this.fb.group({});
+    this.state.hold(
+      this.state.select('memberRoles').pipe(take(1)),
+      (roles = []) => {
+        this.form = this.fb.group({});
 
-      roles
-        .filter((role) => !role.isAdmin)
-        .forEach((role) => {
-          this.createRoleFormControl(role.permissions, role.slug, this.form);
-          this.watchRoleForm(role);
-        });
-    });
+        roles
+          .filter((role) => !role.isAdmin)
+          .forEach((role) => {
+            this.createRoleFormControl(role.permissions, role.slug, this.form);
+            this.watchRoleForm(role);
+          });
+      }
+    );
 
     this.state.hold(
-      this.state.select('publicPermissions'),
+      this.state.select('publicPermissions').pipe(take(1)),
       (permissions = []) => {
         this.publicForm = this.fb.group({});
         this.createRoleFormControl(permissions, 'public', this.publicForm);
@@ -149,7 +154,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     );
 
     this.state.hold(
-      this.state.select('workspacePermissions'),
+      this.state.select('workspacePermissions').pipe(take(1)),
       (permissions = []) => {
         this.workspaceForm = this.fb.group({});
         this.createRoleFormControl(
@@ -334,5 +339,13 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   public ngOnDestroy() {
     this.store.dispatch(resetPermissions());
+  }
+
+  public handleModal() {
+    this.isModalOpen = !this.isModalOpen;
+  }
+
+  public onHasConflicts(hasConflicts: boolean) {
+    this.publicPermissionHasConflicts = hasConflicts;
   }
 }

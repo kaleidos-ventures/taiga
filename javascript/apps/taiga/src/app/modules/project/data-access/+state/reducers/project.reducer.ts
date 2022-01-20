@@ -47,6 +47,7 @@ export const reducer = createReducer(
   ),
   on(
     ProjectActions.fetchPublicPermissionsSuccess,
+    ProjectActions.updatePublicPermissionsSuccess,
     (state, { permissions: publicPermissions }): ProjectState => {
       state.publicPermissions = publicPermissions;
 
@@ -55,8 +56,9 @@ export const reducer = createReducer(
   ),
   on(
     ProjectActions.fetchWorkspacePermissionsSuccess,
-    (state, { workspacePermissions }): ProjectState => {
-      state.workspacePermissions = workspacePermissions;
+    ProjectActions.updateWorkspacePermissionsSuccess,
+    (state, { permissions }): ProjectState => {
+      state.workspacePermissions = permissions;
 
       return state;
     }
@@ -67,7 +69,23 @@ export const reducer = createReducer(
     state.workspacePermissions = null;
 
     return state;
-  })
+  }),
+  on(
+    ProjectActions.updateRolePermissionsSuccess,
+    (state, { role }): ProjectState => {
+      const memberRoles = state.memberRoles ?? [];
+
+      state.memberRoles = memberRoles.map((currentRole) => {
+        if (currentRole.slug === role.slug) {
+          return role;
+        }
+
+        return currentRole;
+      });
+
+      return state;
+    }
+  )
 );
 
 export const projectFeature = createFeature({

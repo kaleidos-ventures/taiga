@@ -15,10 +15,13 @@ import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiToggleModule } from '@taiga-ui/kit';
+import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 import { RolePermissionRowModule } from './components/role-permission-row/role-permission-row.module';
 import { RoleCustomizeModule } from './components/role-customize/role-customize.module';
 import { RoleAdvanceRowModule } from './components/role-advance-row/role-advance-row.module';
 import { NotificatioInlineModule } from 'libs/ui/src/lib/notification-inline/notification-inline.module';
+import { ModalPermissionComparisonModule } from './components/modal-permission-comparison/modal-permission-comparison.module';
+
 @NgModule({
   declarations: [
     ProjectSettingsFeatureRolesPermissionsComponent,
@@ -32,9 +35,11 @@ import { NotificatioInlineModule } from 'libs/ui/src/lib/notification-inline/not
     TranslocoModule,
     TuiToggleModule,
     NotificatioInlineModule,
+    ModalModule,
     RolePermissionRowModule,
     RoleCustomizeModule,
     RoleAdvanceRowModule,
+    ModalPermissionComparisonModule,
     RouterModule.forChild([
       {
         path: '',

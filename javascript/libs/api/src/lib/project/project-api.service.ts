@@ -116,7 +116,7 @@ export class ProjectApiService {
 
       return validPermission.includes(permission);
     });
-    return this.http.put<Permissions>(
+    return this.http.put<string[]>(
       `${this.config.apiUrl}/projects/${slug}/public-permissions`,
       {
         permissions,
@@ -146,7 +146,7 @@ export class ProjectApiService {
 
       return validPermission.includes(permission);
     });
-    return this.http.put<Permissions>(
+    return this.http.put<string[]>(
       `${this.config.apiUrl}/projects/${slug}/workspace-member-permissions`,
       {
         permissions,

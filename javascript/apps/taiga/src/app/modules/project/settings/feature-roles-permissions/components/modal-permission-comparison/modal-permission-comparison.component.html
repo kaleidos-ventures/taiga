@@ -1,0 +1,147 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <div
+    aria-describedby="permission-table"
+    aria-labeledby="permissions-comparison"
+    class="modal-wrapper">
+    <h3 id="permissions-comparison" class="settings-title">
+      {{
+        t('project_settings.modal_permissions.potential_permission_conflicts')
+      }}
+    </h3>
+    <div id="permission-table">
+      <caption
+        class="explanation"
+        [innerHtml]="
+          t(
+            'project_settings.modal_permissions.potential_permission_conflicts_explanation'
+          )
+        "
+        tabindex="0"></caption>
+      <ng-container
+        *ngFor="let module of conflictPermissions; trackBy: trackByIndex">
+        <h4>
+          {{
+            t('project_settings.modal_permissions.role', {
+              name: module.name
+            })
+          }}
+        </h4>
+        <table
+          class="comparisson-table"
+          [ngClass]="{ last: last }"
+          *ngFor="
+            let conflict of module.conflicts;
+            let last = last;
+            index as i;
+            trackBy: trackByIndex
+          ">
+          <thead *ngIf="i === 0">
+            <tr>
+              <th></th>
+              <th class="title">{{ module.name }}</th>
+              <th class="title">
+                {{ t('project_settings.modal_permissions.public') }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let text of conflict.texts.member.text;
+                index as idx;
+                trackBy: trackByIndex
+              ">
+              <th
+                class="title"
+                *ngIf="idx === 0"
+                [attr.rowspan]="conflict.texts.member.text.length">
+                {{ modules.get(conflict.name) }}
+              </th>
+              <td
+                *ngIf="
+                  isRestricted(text) &&
+                    conflict.texts.member.restrictions?.length;
+                  else member
+                ">
+                <span class="text highlight">{{ text }} </span>
+                <tui-svg
+                  class="chevron"
+                  [src]="
+                    dropdown[getParam(module.name, 'member', idx)]
+                      ? 'chevron-up'
+                      : 'chevron-down'
+                  "
+                  (click)="
+                    handleDropdown(getParam(module.name, 'member', idx))
+                  ">
+                </tui-svg>
+                <ul
+                  class="restriction-list"
+                  *ngIf="dropdown[getParam(module.name, 'member', idx)]">
+                  <li
+                    class="restriction-element"
+                    *ngFor="
+                      let restriction of conflict.texts.member.restrictions;
+                      trackBy: trackByIndex
+                    ">
+                    {{ restriction }}
+                  </li>
+                </ul>
+              </td>
+              <ng-template #member>
+                <td class="text">{{ text }}</td>
+              </ng-template>
+
+              <td
+                *ngIf="
+                  isRestricted(conflict.texts.public.text[idx]) &&
+                    conflict.texts.public.restrictions?.length;
+                  else public
+                ">
+                <span class="text highlight"
+                  >{{ conflict.texts.public.text[idx] }}
+                </span>
+                <tui-svg
+                  class="chevron"
+                  [src]="
+                    dropdown[getParam(module.name, 'public', idx)]
+                      ? 'chevron-up'
+                      : 'chevron-down'
+                  "
+                  (click)="
+                    handleDropdown(getParam(module.name, 'public', idx))
+                  ">
+                </tui-svg>
+                <ul *ngIf="dropdown[getParam(module.name, 'public', idx)]">
+                  <li
+                    *ngFor="
+                      let restriction of conflict.texts.public.restrictions;
+                      trackBy: trackByIndex
+                    ">
+                    {{ restriction }}
+                  </li>
+                </ul>
+              </td>
+              <ng-template #public>
+                <td class="text">{{ conflict.texts.public.text[idx] }}</td>
+              </ng-template>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+      <div class="btn-wrapper">
+        <button tuiButton (click)="close()" appearance="primary">
+          {{ t('project_settings.modal_permissions.close') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>

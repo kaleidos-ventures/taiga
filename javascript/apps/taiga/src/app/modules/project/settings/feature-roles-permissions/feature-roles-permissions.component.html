@@ -2,7 +2,6 @@
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
@@ -80,11 +79,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="workspace-permissions-settings"
       inViewport
       (visible)="isInViewport($event)">
-      <h3 tabindex="-1"
-        class="settings-subtitle">{{ t('project_settings.workspace_permissions') }}
+      <h3 tabindex="-1" class="settings-subtitle">
+        {{ t('project_settings.workspace_permissions') }}
       </h3>
       <form [formGroup]="workspaceForm">
-        <tg-role-permission-row *ngIf="getworkspacePermissionsForm()"
+        <tg-role-permission-row
+          *ngIf="getworkspacePermissionsForm()"
           [formGroup]="getworkspacePermissionsForm()"
           [hasMembers]="false"
           [name]="''"
@@ -113,13 +113,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           name=""
           data-test="role-permission-row">
         </tg-role-permission-row>
-        <tg-ui-notification-inline [status]="'info'">
+        <tg-ui-notification-inline
+          *ngIf="publicPermissionHasConflicts"
+          [status]="'info'">
           <span>{{ t('project_settings.external_members') }}</span>
-          <button class="link" tuiLink>
+          <button class="link" tuiLink (click)="handleModal()">
             {{ t('project_settings.see_more') }}
           </button>
         </tg-ui-notification-inline>
       </form>
     </section>
+
+    <tg-ui-modal [open]="isModalOpen" (requestClose)="handleModal()">
+      <ng-container>
+        <tg-modal-permission-comparison
+          *ngIf="vm.publicPermissions && vm.memberRoles"
+          [memberRoles]="vm.memberRoles"
+          [publicPermissions]="vm.publicPermissions"
+          (hasConflicts)="onHasConflicts($event)"
+          (closeModal)="handleModal()">
+        </tg-modal-permission-comparison>
+      </ng-container>
+    </tg-ui-modal>
   </ng-container>
 </ng-container>

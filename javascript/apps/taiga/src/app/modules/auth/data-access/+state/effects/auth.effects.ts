@@ -31,7 +31,7 @@ export class AuthEffects {
             password,
           }).pipe(
             map((auth: Auth) => {
-              return AuthActions.loginSuccess({ auth });
+              return AuthActions.loginSuccess({ auth, redirect: true });
             })
           );
         },
@@ -56,12 +56,14 @@ export class AuthEffects {
   public loginSuccess$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.loginSuccess),
-      switchMap(({ auth }) => {
+      switchMap(({ auth, redirect }) => {
         this.authService.setAuth(auth);
 
         return this.usersApiService.me().pipe(
           tap(() => {
-            void this.router.navigate(['/']);
+            if (redirect) {
+              void this.router.navigate(['/']);
+            }
           }),
           map((user: User) => {
             return AuthActions.setUser({ user });

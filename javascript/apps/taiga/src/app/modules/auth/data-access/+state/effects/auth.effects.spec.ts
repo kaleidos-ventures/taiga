@@ -60,7 +60,7 @@ describe('AuthEffects', () => {
     actions$ = hot('-a', { a:  login(loginData)});
 
     const expected = cold('--a', {
-      a: loginSuccess({ auth: response }),
+      a: loginSuccess({ auth: response, redirect: true }),
     });
 
     expect(
@@ -74,12 +74,13 @@ describe('AuthEffects', () => {
 
     const effects = spectator.inject(AuthEffects);
     const localStorageService = spectator.inject(LocalStorageService);
+    const routerService = spectator.inject(Router);
     const usersApiService = spectator.inject(UsersApiService);
     usersApiService.me.mockReturnValue(
       cold('-b|', { b: user })
     );
 
-    actions$ = hot('-a', { a:  loginSuccess({ auth })});
+    actions$ = hot('-a', { a:  loginSuccess({ auth, redirect: true })});
 
     const expected = cold('--a', {
       a: setUser({ user }),
@@ -90,6 +91,7 @@ describe('AuthEffects', () => {
     ).toBeObservable(expected);
 
     expect(effects.loginSuccess$).toSatisfyOnFlush(() => {
+      expect(routerService.navigate).toHaveBeenCalledWith(['/']);
       expect(localStorageService.set).toHaveBeenCalledWith('auth', auth);
     });
   });

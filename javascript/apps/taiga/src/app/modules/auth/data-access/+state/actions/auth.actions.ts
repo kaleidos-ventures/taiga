@@ -26,5 +26,5 @@ export const logout = createAction(
 
 export const loginSuccess = createAction(
   '[Auth] login success',
-  props<{auth: Auth}>()
+  props<{auth: Auth, redirect?: boolean}>()
 );

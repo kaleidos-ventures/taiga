@@ -15,7 +15,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .public-permissions-settings,
 .workspace-permissions-settings {
   margin-block-start: var(--spacing-32);
-  min-block-size: 63vh;
 }
 
 .settings-subtitle {

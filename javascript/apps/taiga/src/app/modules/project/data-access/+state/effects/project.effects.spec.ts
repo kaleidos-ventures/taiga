@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 import { randDomainSuffix, randNumber } from '@ngneat/falso';
 
 import { ProjectEffects } from './project.effects';
-import { fetchProject, fetchProjectSuccess, fetchRoles, fetchRolesSuccess } from '../actions/project.actions';
+import { fetchProject, fetchProjectSuccess, fetchMemberRoles, fetchMemberRolesSuccess } from '../actions/project.actions';
 import { cold, hot } from 'jest-marbles';
 import { ProjectMockFactory, RoleMockFactory } from '@taiga/data';
 
@@ -65,18 +65,18 @@ describe('ProjectEffects', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectEffects);
 
-    projectApiService.getRoles.mockReturnValue(
+    projectApiService.getMemberRoles.mockReturnValue(
       cold('-b|', { b: roles })
     );
 
-    actions$ = hot('-a', { a:  fetchRoles({ slug })});
+    actions$ = hot('-a', { a:  fetchMemberRoles({ slug })});
 
     const expected = cold('--a', {
-      a: fetchRolesSuccess({ roles }),
+      a: fetchMemberRolesSuccess({ roles }),
     });
 
     expect(
-      effects.loadRoles$
+      effects.loadMemberRoles$
     ).toBeObservable(expected);
   });
 

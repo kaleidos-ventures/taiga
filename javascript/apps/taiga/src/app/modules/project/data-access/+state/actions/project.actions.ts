@@ -19,19 +19,34 @@ export const fetchProject = createAction(
   props<{slug: Project['slug']}>()
 );
 
-export const fetchRoles = createAction(
-  '[Roles] fetch',
+export const fetchMemberRoles = createAction(
+  '[Member Roles] fetch members',
   props<{slug: Project['slug']}>()
 );
 
-export const fetchRolesSuccess = createAction(
-  '[Roles] fetch success',
+export const fetchMemberRolesSuccess = createAction(
+  '[Roles] fetch members success',
   props<{roles: Role[]}>()
+);
+
+export const fetchPublicRoles = createAction(
+  '[Member Roles] fetch public',
+  props<{slug: Project['slug']}>()
+);
+
+export const fetchPublicRolesSuccess = createAction(
+  '[Roles] fetch public success',
+  props<{publicRole: string[]}>()
 );
 
 export const updateRolePermissions = createAction(
   '[Roles] update role permissions',
   props<{project: Project['slug'], roleSlug: Role['slug'], permissions: string[]}>()
+);
+
+export const updatePublicRolePermissions = createAction(
+  '[Roles] update public role permissions',
+  props<{project: Project['slug'], permissions: string[]}>()
 );
 
 export const updateRolePermissionsSuccess = createAction(

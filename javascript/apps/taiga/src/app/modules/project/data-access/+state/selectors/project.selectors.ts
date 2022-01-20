@@ -10,5 +10,6 @@ import { projectFeature } from '../reducers/project.reducer';
 
 export const {
   selectProject,
-  selectRoles,
+  selectMemberRoles,
+  selectPublicRole,
 } = projectFeature;

@@ -14,22 +14,26 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [class.advance-setting]="showAdvancedSetting">
       <div
         class="main">
-        <div class="permission-row-title">
+        <div
+          *ngIf="showMembers"
+          class="permission-row-title">
           <span
             aria-hidden="true"
             class="permission-row-name">
-            {{ role.name }}
+            {{ name }}
           </span>
           <button
-            [class.empty]="!role.numMembers"
+            [class.empty]="!numMembers"
             class="small permission-row-member"
             tuiLink>
-            {{ t('project_settings.roles_permissions.number_members', { members: role.numMembers }) }}
+            {{ t('project_settings.roles_permissions.number_members', { members: numMembers }) }}
           </button>
         </div>
-        <div class="permission-row-select">
+        <div
+          [class.hide-members]="!showMembers"
+          class="permission-row-select">
           <tg-ui-select
-            [label]="role.name"
+            [label]="name"
             labelVisuallyHidden>
             <tui-select
               [ngModel]="permissionRowModel"
@@ -61,7 +65,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
            </ng-container>
           </ng-template>
         </div>
-        <div class="permission-row-action">
+        <div
+          [class.hide-members]="!showMembers"
+          class="permission-row-action">
           <div
             [attr.aria-level]="1"
             role="heading"
@@ -84,6 +90,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </div>
 
           <button
+            *ngIf="showMembers"
             appearance="tertiary"
             class="permission-row-button"
             tuiIconButton
@@ -99,6 +106,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <ng-container *ngFor="let module of modules | keyvalue: insertionOrder; trackBy: trackByValue;">
         <tg-role-advance-row
           *ngIf="moduleVisible(module.key)"
+          hideMembers
           [module]="module"
           [formGroup]="getModuleFormGroup(module.key)">
         </tg-role-advance-row>

@@ -15,12 +15,14 @@ export const projectFeatureKey = 'project';
 
 export interface ProjectState {
   project: Project | null;
-  roles: Role[];
+  memberRoles: Role[];
+  publicRole: string[];
 }
 
 export const initialState: ProjectState = {
   project: null,
-  roles: []
+  memberRoles: [],
+  publicRole: []
 };
 
 export const reducer = createReducer(
@@ -30,8 +32,13 @@ export const reducer = createReducer(
 
     return state;
   }),
-  on(ProjectActions.fetchRolesSuccess, (state, { roles }): ProjectState => {
-    state.roles = roles;
+  on(ProjectActions.fetchMemberRolesSuccess, (state, { roles }): ProjectState => {
+    state.memberRoles = roles;
+
+    return state;
+  }),
+  on(ProjectActions.fetchPublicRolesSuccess, (state, { publicRole }): ProjectState => {
+    state.publicRole = publicRole;
 
     return state;
   }),

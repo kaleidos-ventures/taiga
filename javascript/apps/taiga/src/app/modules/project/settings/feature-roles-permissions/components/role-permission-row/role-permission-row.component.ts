@@ -10,7 +10,7 @@ import { KeyValue } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Module, Role } from '@taiga/data';
+import { Module } from '@taiga/data';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
 
@@ -29,7 +29,13 @@ export class RolePermissionRowComponent implements OnInit {
   public formGroup!: FormGroup;
 
   @Input()
-  public role!: Role;
+  public name!: string;
+
+  @Input()
+  public numMembers!: number;
+
+  @Input()
+  public showMembers = true;
 
   public permissionRowModel!: KeyValue<SettingsPermission, string>;
   public advancedSettingsContainerId = `advanced-settings-container-${nextId++}`;

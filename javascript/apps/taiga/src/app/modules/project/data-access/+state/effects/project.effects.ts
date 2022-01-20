@@ -45,14 +45,32 @@ export class ProjectEffects {
     );
   }, { dispatch: false });
 
-  public loadRoles$ = createEffect(() => {
+  public loadMemberRoles$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(ProjectActions.fetchRoles),
+      ofType(ProjectActions.fetchMemberRoles),
       fetch({
         run: (action) => {
-          return this.projectApiService.getRoles(action.slug).pipe(
+          return this.projectApiService.getMemberRoles(action.slug).pipe(
             map((roles) => {
-              return ProjectActions.fetchRolesSuccess({ roles });
+              return ProjectActions.fetchMemberRolesSuccess({ roles });
+            })
+          );
+        },
+        onError: () => {
+          return null;
+        },
+      })
+    );
+  });
+
+  public loadPublicRole$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.fetchPublicRoles),
+      fetch({
+        run: (action) => {
+          return this.projectApiService.getPublicRoles(action.slug).pipe(
+            map((permissions) => {
+              return ProjectActions.fetchPublicRolesSuccess({ publicRole: permissions });
             })
           );
         },
@@ -68,9 +86,30 @@ export class ProjectEffects {
       ofType(ProjectActions.updateRolePermissions),
       pessimisticUpdate({
         run: (action) => {
-          return this.projectApiService.putRoles(
+          return this.projectApiService.putMemberRoles(
             action.project,
             action.roleSlug,
+            action.permissions
+          ).pipe(
+            map(() => {
+              return ProjectActions.updateRolePermissionsSuccess();
+            })
+          );
+        },
+        onError: () => {
+          return ProjectActions.updateRolePermissionsError();
+        },
+      })
+    );
+  });
+
+  public updatePublicRolePermissions$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.updatePublicRolePermissions),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.projectApiService.putPublicRoles(
+            action.project,
             action.permissions
           ).pipe(
             map(() => {

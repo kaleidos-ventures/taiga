@@ -36,11 +36,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <p class="project-admin-paragraph">{{ t('project_settings.roles_permissions.project_administrators_explanation') }}</p>
     </div>
     <form [formGroup]="form">
-      <ng-container *ngFor="let role of vm.roles; trackBy: trackBySlug;">
+      <ng-container *ngFor="let role of vm.memberRoles; trackBy: trackBySlug;">
         <tg-role-permission-row
           *ngIf="getRoleForm(role)"
           [formGroup]="getRoleForm(role)"
-          [role]="role">
+          [name]="role.name"
+          [numMembers]="role.numMembers">
         </tg-role-permission-row>
       </ng-container>
 
@@ -62,6 +63,23 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <h3
       tabindex="-1"
       class="settings-subtitle">{{ t('project_settings.public_permissions') }}</h3>
+    <form [formGroup]="publicForm">
+      <tg-role-permission-row
+        *ngIf="getPublicRoleForm()"
+        [formGroup]="getPublicRoleForm()"
+        [showMembers]="false"
+        [name]="''"
+        [numMembers]="0">
+      </tg-role-permission-row>
+      <button
+        appearance="tertiary"
+        class="add-role"
+        tuiButton
+        icon="'plus'"
+        type="button">
+        {{ t('project_settings.roles_permissions.add_role') }}
+      </button>
+    </form>
   </section>
   <section data-fragment="workspace-permissions-settings"
     class="workspace-permissions-settings"

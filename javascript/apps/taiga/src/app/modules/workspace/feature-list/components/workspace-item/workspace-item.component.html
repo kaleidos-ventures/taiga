@@ -16,8 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [name]="workspace.name">
       </tg-ui-avatar>
       <div class="workspace-item-title-wrapper">
-        <a [title]="workspace.name"
-          data-test="workspace-item-title"
+        <a data-test="workspace-item-title"
           [routerLink]="['/workspace/', workspace.slug]"
           class="workspace-item-title">
           {{workspace.name}}
@@ -41,7 +40,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [queryParams]="{ workspace: workspace.slug }"
           tuiButton
           icon="plus"
-          [attr.title]="t('commons.project')"
           type="button">
           {{ t('commons.project') }}
         </a>

@@ -32,8 +32,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               tuiLink
               (click)="toggleShowDescription()"
               icon="chevron-down"
-              iconAlign="right"
-              [title]="t('project_overview.show_full_description')">
+              iconAlign="right">
               {{ t('project_overview.show_full_description') }}
             </a>
             <a *ngIf="showDescription && hideOverflow"
@@ -41,8 +40,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               tuiLink
               (click)="toggleShowDescription()"
               icon="chevron-up"
-              iconAlign="right"
-              [title]="t('project_overview.hide_full_description')">
+              iconAlign="right">
               {{ t('project_overview.hide_full_description') }}
             </a>
           </div>

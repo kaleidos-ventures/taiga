@@ -351,7 +351,6 @@ export const MainNav = ConfigureTemplate({
       [disabled]="disabled"
       tuiIconButton
       icon="{{icon}}"
-      title="ADD TITLE"
       type="button"
     >
       <span class="visually-hidden">ADD ACCESIBILITY TEXT</span>
@@ -387,8 +386,7 @@ export const LinkButton = ConfigureTemplate({
     <label class="story-label">Text + icon</label>
     <a
       tuiLink
-      icon="{{icon}}"
-      title="ADD TITLE">
+      icon="{{icon}}">
       {{label}}
     </a>
   </div>
@@ -398,8 +396,7 @@ export const LinkButton = ConfigureTemplate({
     <a
       tuiLink
       icon="{{icon}}"
-      iconAlign="left"
-      title="ADD TITLE">
+      iconAlign="left">
       {{label}}
     </a>
   </div>

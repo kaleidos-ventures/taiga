@@ -93,6 +93,7 @@ class Workspace(models.Model):
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="workspaces",
                                      through="WorkspaceMembership", verbose_name=_("members"),
                                      through_fields=("workspace", "user"))
+    is_premium = models.BooleanField(default=False)
 
 
     class Meta:

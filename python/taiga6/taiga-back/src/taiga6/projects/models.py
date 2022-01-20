@@ -240,7 +240,9 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
     anon_permissions = ArrayField(models.TextField(null=False, blank=False, choices=ANON_PERMISSIONS),
                                   null=True, blank=True, default=list, verbose_name=_("anonymous permissions"))
     public_permissions = ArrayField(models.TextField(null=False, blank=False, choices=PROJECT_PERMISSIONS),
-                                    null=True, blank=True, default=list, verbose_name=_("user permissions"))
+                                    null=True, blank=True, default=list, verbose_name=_("public permissions"))
+    workspace_member_permissions = ArrayField(models.TextField(null=False, blank=False, choices=PROJECT_PERMISSIONS),
+                                    null=True, blank=True, default=list, verbose_name=_("workspace member permissions"))
 
     is_featured = models.BooleanField(default=False, null=False, blank=True,
                                       verbose_name=_("is featured"))

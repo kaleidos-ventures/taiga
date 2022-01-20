@@ -31,4 +31,8 @@ export class RoleCustomizeComponent {
   public trackByValue(_index: number, permission: KeyValue<string, string>) {
     return permission.value;
   }
+
+  public insertionOrder() {
+    return 0;
+  }
 }

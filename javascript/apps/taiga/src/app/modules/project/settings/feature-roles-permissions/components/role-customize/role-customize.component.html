@@ -17,7 +17,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <div
       class="permision-row-switches">
       <div
-        *ngFor="let action of basicPermissionList | keyvalue; trackBy: trackByValue;"
+        *ngFor="let action of basicPermissionList | keyvalue: insertionOrder; trackBy: trackByValue;"
         class="permmission-row-switch" >
         <span class="permission-row-switch-title">{{ action.value }}</span>
           <tui-toggle

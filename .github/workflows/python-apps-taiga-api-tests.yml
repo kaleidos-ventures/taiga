@@ -91,7 +91,7 @@ jobs:
 
       - name: Postman API tests
         run: |
-          newman run ./python/docs/postman/taiga.postman_collection.json \
+          newman run ./python/docs/postman/taiga.postman_collection_e2e.json \
           -e ./python/docs/postman/taiga.postman_environment.json --verbose \
           --reporters cli,json --reporter-json-export .github/workflows/artifacts/python-apps-taiga-api-tests.json
 

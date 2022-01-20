@@ -57,3 +57,28 @@ Valid reporting types are:
 ```shell
 (taiga)$ pytest --cov-report term --cov-report html --cov
 ```
+
+## E2E tests
+
+The requests considered by the e2e tests are the ones reported in the following Postman's collection file:
+
+```
+python/docs/postman/taiga.postman_collection_e2e.json
+```
+
+Tests are executed using newman by GitHub-ci (as described in the `python-apps-taiga-api-tests.yml` workflow), but it can also be executed locally following these steps:
+
+1. Install newman
+```shell
+(taiga)$ sudo npm install -g newman
+```
+2. Run newman providing both the e2e collection, and the environment file with the variables definition.
+
+```shell
+(taiga)$ newman run --verbose docs/postman/taiga.postman_collection_e2e.json -e docs/postman/taiga.postman_environment.json
+ ```
+
+Apart from the default console output (cli), it can also generate a json report file using this command: 
+```shell
+(taiga)$ newman run --verbose --reporters cli,json --reporter-json-export outputfile.json docs/postman/taiga.postman_collection_e2e.json -e docs/postman/taiga.postman_environment.json 
+ ```

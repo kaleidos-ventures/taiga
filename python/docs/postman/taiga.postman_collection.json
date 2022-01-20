@@ -19,16 +19,6 @@
 									"pm.test(\"Environment variable settings\", function () {",
 									"    pm.environment.set(\"auth_token\", pm.response.json().token);",
 									"    pm.environment.set(\"refresh_token\", pm.response.json().refresh);",
-									"});",
-									"// Next request to execute",
-									"postman.setNextRequest(\"refresh token\")",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -73,18 +63,6 @@
 									"pm.test(\"Environment variable settings\", function () {",
 									"    pm.environment.set(\"auth_token\", pm.response.json().token);",
 									"    pm.environment.set(\"refresh_token\", pm.response.json().refresh);",
-									"});",
-									"",
-									"// Next request to execute",
-									"postman.setNextRequest(\"users me\")",
-									"",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -154,24 +132,6 @@
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
 									"    pm.environment.set(\"ws-slug\", pm.response.json().slug);",
-									"});",
-									"",
-									"// Workflow & next request to execute",
-									"var i = 0;",
-									"console.log(\"Creating 3 workspaces\");",
-									"while (i < 3 ) {",
-									"    postman.setNextRequest(\"new workspace\");",
-									"    i++;",
-									"};",
-									"postman.setNextRequest(\"workspaces\");",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -221,18 +181,7 @@
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									"",
-									"// Next request to execute ",
-									"postman.setNextRequest(\"new project\")",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -273,17 +222,7 @@
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									"",
-									"// Next request to execute ",
-									"postman.setNextRequest(\"workspace by slug\")",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -323,18 +262,7 @@
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									"",
-									"// Next request to execute ",
-									"postman.setNextRequest(\"project by slug\")",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -381,20 +309,7 @@
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									"",
-									"// Next request to execute ",
-									"",
-									"",
-									"postman.setNextRequest(\"new workspace\");",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -439,26 +354,9 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"// Workflow & next request to execute",
-									"var i = 0;",
-									"console.log(\"Creating 3 projects\");",
-									"while (i < 3 ) {",
-									"    postman.setNextRequest(\"new project\");    ",
-									"    i++;",
-									"};",
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
 									"    pm.environment.set(\"pj-slug\", pm.response.json().slug);",
-									"});",
-									"postman.setNextRequest(\"workspace's projects\")",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -533,18 +431,7 @@
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									"",
-									"// Next request to execute ",
-									"postman.setNextRequest(\"project permissions by slug\")",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -590,25 +477,67 @@
 					"response": []
 				},
 				{
-					"name": "project permissions by slug",
+					"name": "update project role permissions",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									"",
-									"// Next request to execute ",
-									"postman.setNextRequest(\"update role permissions\")",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"permissions\": [\n        \"view_project\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles/{{role-slug}}/permissions",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"roles",
+								"{{role-slug}}",
+								"permissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "project role permissions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -655,25 +584,14 @@
 					"response": []
 				},
 				{
-					"name": "update role permissions",
+					"name": "update project public permissions",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									"",
-									"// Next request to execute ",
-									"postman.setNextRequest(\"404 not-found uri (starlette)\")",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -694,7 +612,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_project\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_us\",\n        \"modify_us\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -702,7 +620,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles/{{role-slug}}/permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/public-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -710,44 +628,21 @@
 							"path": [
 								"projects",
 								"{{pj-slug}}",
-								"roles",
-								"{{role-slug}}",
-								"permissions"
+								"public-permissions"
 							]
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "HTTPException",
-			"item": [
+				},
 				{
-					"name": "404 not-found uri (starlette)",
+					"name": "project public permissions",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									"",
-									"// Next request to execute ",
-									"postman.setNextRequest(\"404 not-found ws\")",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(404);",
-									"});",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"not-found\");",
-									"    pm.expect(jsonData.error.detail).to.eql(\"Not Found\");",
-									"    pm.expect(jsonData.error.message).to.eql(\"Nothing matches the given URI\");    ",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -757,241 +652,6 @@
 						"disableBodyPruning": true
 					},
 					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/wrong_url",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"wrong_url"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "404 not-found ws",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"",
-									"// Next request to execute ",
-									"postman.setNextRequest(\"401 unauthorized auth\")",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(404);",
-									"});",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"not-found\");",
-									"    pm.expect(jsonData.error.detail).to.eql(\"Not Found\");",
-									"    pm.expect(jsonData.error.message).to.eql(\"Workspace wrong_ws_slug does not exist\");    ",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/wrong_ws_slug",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"workspaces",
-								"wrong_ws_slug"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "401 unauthorized auth",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Next request to execute ",
-									"postman.setNextRequest(\"422 validation error auth\")",
-									"",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(401);",
-									"});",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"authorization-error\");",
-									"    pm.expect(jsonData.error.detail).to.eql(\"Unauthorized\");",
-									"    pm.expect(jsonData.error.message).to.eql(\"Invalid token or no active account found with the given credentials\");    ",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"wrong_password\"\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"auth",
-								"token"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "422 validation error auth",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Next request to execute",
-									"postman.setNextRequest(\"400 bad request perm\");",
-									"",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(422);",
-									"});",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"validation-error\");",
-									"    pm.expect(jsonData.error.message).to.eql(\"Unable to fulfill the request due to semantic errors\");    ",
-									"    pm.expect(jsonData.error.detail[0].loc[1]).to.eql(\"password\");",
-									"    pm.expect(jsonData.error.detail[0].msg).to.eql(\"field required\");",
-									"    pm.expect(jsonData.error.detail[0].type).to.eql(\"value_error.missing\");",
-									"});",
-									"pm.test(\"Response time is less than 200ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"admin\",\n    \"passXXXXXXXXXXXXXXXword\": \"123123\"\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"auth",
-								"token"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "400 bad request perm",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Next request to execute",
-									"postman.setNextRequest(\"N/A log in as another user\");",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(400);",
-									"});",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"bad-request-error\");",
-									"    pm.expect(jsonData.error.detail).to.eql(\"Bad Request\");",
-									"    pm.expect(jsonData.error.message).to.eql(\"One or more permissions are not valid. Maybe, there is a typo.\");",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
@@ -1002,11 +662,11 @@
 								}
 							]
 						},
-						"method": "PUT",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"wrong_permission\"\n    ]\n}",
+							"raw": "{\n    \n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1014,7 +674,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles/{{role-slug}}/permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/public-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -1022,140 +682,7 @@
 							"path": [
 								"projects",
 								"{{pj-slug}}",
-								"roles",
-								"{{role-slug}}",
-								"permissions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "N/A log in as another user",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"auth_token\", pm.response.json().token);",
-									"    pm.environment.set(\"refresh_token\", pm.response.json().refresh);",
-									"});",
-									"",
-									"// Next request to execute",
-									"postman.setNextRequest(\"402 forbidden perm\");",
-									"",
-									"",
-									"// Tests",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"user2\",\n    \"password\": \"123123\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"auth",
-								"token"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "402 forbidden perm",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Next request to execute ",
-									"postman.setNextRequest(null)",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(403);",
-									"});",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"forbidden-error\");",
-									"    pm.expect(jsonData.error.detail).to.eql(\"Forbidden\");",
-									"    pm.expect(jsonData.error.message).to.eql(\"User doesn't have permissions to perform this action\");",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"wrong_permission\"\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles/{{role-slug}}/permissions",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-slug}}",
-								"roles",
-								"{{role-slug}}",
-								"permissions"
+								"public-permissions"
 							]
 						}
 					},

@@ -22,7 +22,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <span class="permission-row-switch-title">{{ action.value }}</span>
           <tui-toggle
             [formControlName]="action.key"
-            [showIcons]="true">
+            [showIcons]="true"
+            data-test="permissions-switch">
         </tui-toggle>
       </div>
     </div>

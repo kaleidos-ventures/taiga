@@ -25,6 +25,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <button
             [class.empty]="!numMembers"
             class="small permission-row-member"
+            data-test="permission-row-member-count"
             tuiLink>
             {{ t('project_settings.roles_permissions.number_members', { members: numMembers }) }}
           </button>
@@ -34,7 +35,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           class="permission-row-select">
           <tg-ui-select
             [label]="name"
-            labelVisuallyHidden>
+            labelVisuallyHidden
+            data-test="permissions-row-select">
             <tui-select
               [ngModel]="permissionRowModel"
               [ngModelOptions]="{standalone: true}"
@@ -45,6 +47,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <button
                   *ngFor="let item of basicPermissionList | keyvalue: insertionOrder; trackBy: trackByValue;"
                   tuiOption
+                  data-test="permissions-row-option"
                   [value]="item">
                   {{ item.value }}
                 </button>
@@ -74,6 +77,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             class="permission-row-button">
             <button
               appearance="tertiary"
+              data-test="permission-row-advanced-settings"
               (click)="toggleAdvanceSetting()"
               tuiButton
               [iconRight]="showAdvancedSetting ? 'chevron-up' : 'chevron-down'"
@@ -88,7 +92,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </ng-container>
             </button>
           </div>
-
           <button
             *ngIf="showMembers"
             appearance="tertiary"
@@ -108,7 +111,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           *ngIf="moduleVisible(module.key)"
           hideMembers
           [module]="module"
-          [formGroup]="getModuleFormGroup(module.key)">
+          [formGroup]="getModuleFormGroup(module.key)"
+          data-test="module-permissions-row">
         </tg-role-advance-row>
       </ng-container>
     </div>

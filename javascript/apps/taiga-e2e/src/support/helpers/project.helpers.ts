@@ -6,14 +6,29 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export const createProject = () => {
-  cy.getBySel('add-workspace-button').click();
-  cy.getBySel('workspace-create').should('be.visible');
-  cy.getBySel('workspace-name-input').type('workspaceHelper.name');
-  cy.getBySel('workspace-project-form-submit').click();
+import { randText } from '@ngneat/falso';
+import { Project } from '@taiga/data';
+
+// NAVIGATION
+
+export const navigateToProjectInWS = (workspaceIndex: number, projectIndex: number) => {
+  cy.getBySel('workspace-item').eq(workspaceIndex).within(() => {
+    cy.getBySel('project-card').eq(projectIndex).click();
+  });
 };
 
-export const createProjectFromWS = (index: number) => {
+// PROJECT CREATION
+
+export const createFullProjectInWS = (workspaceId: number, projectName: Project['name']) => {
+  launchProjectCreationInWS(workspaceId);
+  selectBlankProject();
+  typeProjectName(projectName);
+  typeProjectDescription(randText({ charCount: 100 }));
+  submitProject();
+  cy.getBySel('submit-invite-users').click();
+};
+
+export const launchProjectCreationInWS = (index: number) => {
   cy.getBySel('workspace-item').eq(index).within(() => {
     cy.getBySel('create-project-card').click();
   });

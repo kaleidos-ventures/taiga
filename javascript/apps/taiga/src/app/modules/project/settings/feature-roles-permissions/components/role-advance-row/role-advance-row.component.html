@@ -6,11 +6,10 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-
-
 <ng-container *transloco="let t;">
   <div
     [formGroup]="formGroup"
+    [attr.data-child]="isChildModule"
     class="permission-row-sub">
     <div class="permission-row-title">
     <tui-svg
@@ -31,6 +30,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [label]="module.value">
           <tui-select
             tuiTextfieldSize="l"
+            data-test="module-permission-select"
             [valueContent]="selectLabel"
             [ngModel]="permissionRowModel"
             [ngModelOptions]="{standalone: true}"
@@ -39,6 +39,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <button
                 *ngFor="let item of basicPermissionList | keyvalue: insertionOrder; trackBy: trackByValue;"
                 tuiOption
+                data-test="module-permission-option"
                 [value]="item">
                 {{ item.value }}
               </button>
@@ -64,6 +65,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           class="permission-row-button">
           <button
             appearance="tertiary"
+            data-test="display-custom-permissions"
             [class.customizing]="customizer"
             [class.show-customization-disabled]="!showCustomization()"
             [attr.aria-expanded]="customizer"
@@ -82,6 +84,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <tg-role-customize
         *ngIf="customizer"
         [attr.id]="rolePermissionContainerId"
+        data-test="module-custom-permissions-section"
         [formGroup]="formGroup"
         [toggleCustomize]="customizer">
       </tg-role-customize>
@@ -92,6 +95,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [class.permision-row-comment-disabled]="!showComment()">
     <span class="permission-row-switch-title">{{ t('project_settings.roles_permissions.can_comment') }}</span>
     <tui-toggle
+      data-test="permission-can-comment-switch"
       formControlName="comment"
       [showIcons]="true">
     </tui-toggle>

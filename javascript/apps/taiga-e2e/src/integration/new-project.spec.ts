@@ -7,7 +7,7 @@
  */
 
 import { randText } from '@ngneat/falso';
-import { cancelProject, createProjectFromWS, selectBlankProject, submitProject, typeProjectDescription, typeProjectName } from '../support/helpers/project.helpers';
+import { cancelProject, launchProjectCreationInWS, selectBlankProject, submitProject, typeProjectDescription, typeProjectName } from '../support/helpers/project.helpers';
 import { createWorkspace } from "../support/helpers/workspace.helpers";
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 
@@ -25,7 +25,7 @@ describe('Workspace Create from Overview', () => {
   it('Should create a new project from the workspace list and preselect the workspace', () => {
     createWorkspace(workspace.name);
     cy.tgCheckA11y();
-    createProjectFromWS(0);
+    launchProjectCreationInWS(0);
 
     // expect
     cy.getBySel('create-project-select').within(() => {
@@ -35,7 +35,7 @@ describe('Workspace Create from Overview', () => {
 
   it('Should not be able to create project if empty', () => {
     createWorkspace(workspace.name);
-    createProjectFromWS(0);
+    launchProjectCreationInWS(0);
     selectBlankProject();
     cy.tgCheckA11y();
     submitProject();
@@ -48,7 +48,7 @@ describe('Workspace Create from Overview', () => {
     const projectName = randText({ charCount: 100 });
 
     createWorkspace(workspace.name);
-    createProjectFromWS(0);
+    launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectName(projectName);
 
@@ -58,7 +58,7 @@ describe('Workspace Create from Overview', () => {
 
   it('Should display two letters of the name in file upload preview', () => {
     createWorkspace(workspace.name);
-    createProjectFromWS(0);
+    launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectName(project.name);
 
@@ -72,7 +72,7 @@ describe('Workspace Create from Overview', () => {
     const projectDescription = randText({ charCount: 300 });
 
     createWorkspace(workspace.name);
-    createProjectFromWS(0);
+    launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectDescription(projectDescription);
     cy.tgCheckA11y();
@@ -83,7 +83,7 @@ describe('Workspace Create from Overview', () => {
 
   it('Should create project and go to kanban page', () => {
     createWorkspace(workspace.name);
-    createProjectFromWS(0);
+    launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectName(project.name);
     submitProject();
@@ -103,7 +103,7 @@ describe('Workspace Create from Overview', () => {
 
   it('the cancel and the x button launch the confirmation dialog', () => {
     createWorkspace(workspace.name);
-    createProjectFromWS(0);
+    launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectName(project.name);
     cancelProject();
@@ -114,7 +114,7 @@ describe('Workspace Create from Overview', () => {
 
   it('the close window or f5 launch the browser confirmation dialog.', () => {
     createWorkspace(workspace.name);
-    createProjectFromWS(0);
+    launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectName(project.name);
 

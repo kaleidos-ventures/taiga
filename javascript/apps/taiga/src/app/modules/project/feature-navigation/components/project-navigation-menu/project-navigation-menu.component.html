@@ -261,6 +261,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             (pointerleave)="out()">
             <button type="button"
               #projectSettingButton
+              data-test="settings-button"
               (click)="openSettings()"
               (focus)="popup($event, 'project-settings')"
               (focusout)="out()"

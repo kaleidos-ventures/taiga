@@ -20,6 +20,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [project]="project">
     </tg-project-navigation-menu>
     <tg-project-navigation-settings
+      data-test="project-navigation-settings"
       *ngIf="showProjectSettings || settingsAnimationInProgress"
       [project]="project"
       (closeMenu)="closeMenu()">

@@ -15,16 +15,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='workspace',
-            name='anon_permissions',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.TextField(choices=[('view_epics', 'View epic'), ('view_issues', 'View issues'), ('view_milestones', 'View milestones'), ('view_project', 'View project'), ('view_tasks', 'View tasks'), ('view_us', 'View user stories'), ('view_wiki_links', 'View wiki links'), ('view_wiki_pages', 'View wiki pages')]), blank=True, default=list, null=True, size=None, verbose_name='anonymous permissions'),
-        ),
-        migrations.AddField(
-            model_name='workspace',
-            name='public_permissions',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.TextField(choices=[('view_workspace', 'View workspace')]), blank=True, default=list, null=True, size=None, verbose_name='user permissions'),
-        ),
         migrations.CreateModel(
             name='WorkspaceMembership',
             fields=[

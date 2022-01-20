@@ -93,10 +93,6 @@ class Workspace(models.Model):
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="workspaces",
                                      through="WorkspaceMembership", verbose_name=_("members"),
                                      through_fields=("workspace", "user"))
-    anon_permissions = ArrayField(models.TextField(null=False, blank=False, choices=ANON_PERMISSIONS),
-                                  null=True, blank=True, default=list, verbose_name=_("anonymous permissions"))
-    public_permissions = ArrayField(models.TextField(null=False, blank=False, choices=WORKSPACE_PERMISSIONS),
-                                    null=True, blank=True, default=list, verbose_name=_("user permissions"))
 
 
     class Meta:
@@ -114,12 +110,6 @@ class Workspace(models.Model):
         return "<Workspace {0}>".format(self.id)
 
     def save(self, *args, **kwargs):
-        if self.anon_permissions is None:
-            self.anon_permissions = []
-
-        if self.public_permissions is None:
-            self.public_permissions = []
-
         if not self.slug:
             with advisory_lock("workspace-creation"):
                 self.slug = slugify_uniquely(self.name, self.__class__)

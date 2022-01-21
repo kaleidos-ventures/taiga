@@ -79,10 +79,11 @@ export function createComponent(options: TaigaComponentSchema): Rule {
         camelize: strings.camelize,
         underscore: strings.underscore,
         name: options.name,
+        stateFilesName: options.name,
         localState,
         globalState,
       }),
-      move(normalize(options.path!))
+      move(normalize(componentPath))
     ]);
 
     const {

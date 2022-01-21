@@ -96,10 +96,11 @@ function createComponent(options) {
                 camelize: core_1.strings.camelize,
                 underscore: core_1.strings.underscore,
                 name: options.name,
+                stateFilesName: options.name,
                 localState,
                 globalState,
             }),
-            schematics_1.move(core_1.normalize(options.path))
+            schematics_1.move(core_1.normalize(componentPath))
         ]);
         const { globalState: _globalState, localState: _localState } = options, componentOptions = __rest(options, ["globalState", "localState"]);
         return schematics_1.chain([

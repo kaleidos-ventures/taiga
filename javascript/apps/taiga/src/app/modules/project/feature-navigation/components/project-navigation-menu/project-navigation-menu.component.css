@@ -289,9 +289,13 @@ ul {
 
   & .project-settings {
     background: transparent;
-    border: none;
+    border: 2px solid transparent;
     cursor: pointer;
     inline-size: 100%;
+
+    &:focus-visible {
+      border: 2px solid var(--color-secondary80);
+    }
   }
 
   & .menu-option-item {

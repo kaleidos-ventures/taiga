@@ -18,8 +18,9 @@
 
 function initAxeCommand(): void {
   // https://github.com/component-driven/cypress-axe/issues/84
-  cy.readFile('../../node_modules/axe-core/axe.js').then(source => {
-    return cy.window({ log: false }).then(window => {
+  cy.readFile('../../node_modules/axe-core/axe.js').then((source) => {
+    return cy.window({ log: false }).then((window) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       window.eval(source);
     });
   });
@@ -29,12 +30,12 @@ function initAxeCommand(): void {
     rules: [
       {
         id: 'landmark-one-main',
-        enabled : false
+        enabled: false,
       },
       {
         id: 'page-has-heading-one',
-        enabled : false
-      }
+        enabled: false,
+      },
     ],
   });
 }
@@ -61,7 +62,7 @@ const terminalLog = (violations: any[]) => {
       id,
       impact,
       description,
-      nodes: nodes.length
+      nodes: nodes.length,
     })
   );
 
@@ -75,11 +76,11 @@ function checkA11y(params: CheckA11yParams = {}): void {
     axe: {
       runOnly: {
         type: 'tag',
-        values: ['wcag21aa']
+        values: ['wcag21aa'],
       },
       rules: {
         'color-contrast': { enabled: false },
-      }
+      },
     },
     violationFeedback: terminalLog,
   };
@@ -119,8 +120,8 @@ Cypress.Commands.add('login', login);
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Cypress {
   interface Chainable {
-    initAxe: typeof initAxeCommand
-    tgCheckA11y: typeof checkA11y
+    initAxe: typeof initAxeCommand;
+    tgCheckA11y: typeof checkA11y;
     login: typeof login;
     getBySel: typeof getBySel;
     getBySelLike: typeof getBySelLike;

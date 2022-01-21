@@ -7,8 +7,7 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { ReactiveFormsModule, Validators, AbstractControlOptions } from '@angular/forms';
-import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, Validators, AbstractControlOptions, FormGroup, FormBuilder } from '@angular/forms';
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { InputsModule } from '../inputs.module';
 import { InputComponent } from './input.component';

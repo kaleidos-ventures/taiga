@@ -7,8 +7,7 @@
  */
 
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Validators, AbstractControlOptions } from '@angular/forms';
-import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
+import { Validators, AbstractControlOptions, FormGroup, FormBuilder } from '@angular/forms';
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { TuiRootModule } from '@taiga-ui/core';
 import { InputsModule } from '../inputs.module';

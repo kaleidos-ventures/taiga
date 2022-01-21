@@ -37,13 +37,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: grid;
   flex-grow: 1;
   gap: var(--spacing-16);
+  grid-template: 169px 1fr 1fr, 1fr 1fr 353px;
   grid-template-areas:
     "main main description"
     "main main empty"
     "main main empty"
     "main main .";
-  grid-template-columns: 1fr 1fr 353px;
-  grid-template-rows: 169px 1fr 1fr;
   padding-block-start: var(--spacing-16);
 
   & :is(.project-main, .project-description, .project-empty) {

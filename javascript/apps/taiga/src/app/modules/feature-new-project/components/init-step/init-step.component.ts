@@ -7,8 +7,7 @@
  */
 
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { FormControl } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { ProjectCreation, Workspace } from '@taiga/data';
 import { Template } from '~/app/modules/feature-new-project/data/new-project.model';

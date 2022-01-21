@@ -14,9 +14,7 @@
             "depConstraints": [
               {
                 "sourceTag": "*",
-                "onlyDependOnLibsWithTags": [
-                  "*"
-                ]
+                "onlyDependOnLibsWithTags": ["*"]
               }
             ]
           }
@@ -50,11 +48,15 @@
         "@typescript-eslint/indent": ["error", 2],
         "semi": "off",
         "indent": "off",
-        "no-multiple-empty-lines":  [2, {"max": 1}],
+        "no-multiple-empty-lines": [2, { "max": 1 }],
         "quotes": ["error", "single", { "avoidEscape": true }],
-        "object-curly-spacing": ["error", "always", {
-          "objectsInObjects": false
-        }],
+        "object-curly-spacing": [
+          "error",
+          "always",
+          {
+            "objectsInObjects": false
+          }
+        ],
         "ngrx/no-store-subscription": "off"
       }
     },
@@ -75,7 +77,8 @@
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/no-unsafe-call": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-unsafe-argument": "off"
       }
     },
     {

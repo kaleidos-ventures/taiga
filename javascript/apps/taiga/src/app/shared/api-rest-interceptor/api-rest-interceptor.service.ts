@@ -7,15 +7,25 @@
  */
 
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpInterceptor, HttpResponse } from '@angular/common/http';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpErrorResponse,
+  HttpInterceptor,
+  HttpResponse,
+} from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 import { ConfigService } from '@taiga/core';
 import { Store } from '@ngrx/store';
-import { getGlobalLoading, globalLoading } from '@taiga/core';
+import { selectGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Auth } from '@taiga/data';
-import { loginSuccess, logout } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import {
+  loginSuccess,
+  logout,
+} from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { AuthApiService } from '@taiga/api';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { Router } from '@angular/router';
@@ -25,7 +35,7 @@ import { AppService } from '~/app/services/app.service';
 export class ApiRestInterceptorService implements HttpInterceptor {
   public requests = new BehaviorSubject([] as HttpRequest<unknown>[]);
   private refreshTokenInProgress = false;
-  private refreshTokenSubject = new BehaviorSubject<null|Auth['token']>(null);
+  private refreshTokenSubject = new BehaviorSubject<null | Auth['token']>(null);
 
   constructor(
     private readonly appService: AppService,
@@ -33,23 +43,27 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     private readonly configService: ConfigService,
     private readonly store: Store,
     private readonly authService: AuthService,
-    private readonly router: Router) {
-    this.requests.pipe(
-      concatLatestFrom(() => this.store.select(getGlobalLoading))
-    ).subscribe(([requests, loading]) => {
-      if (requests.length && !loading) {
-        this.store.dispatch(globalLoading({ loading: true }));
-      } else if (!requests.length && loading) {
-        // Is async to run this action after http effect actions
-        requestAnimationFrame(() => {
-          this.store.dispatch(globalLoading({ loading: false }));
-        });
-      }
-    });
+    private readonly router: Router
+  ) {
+    this.requests
+      .pipe(concatLatestFrom(() => this.store.select(selectGlobalLoading)))
+      .subscribe(([requests, loading]) => {
+        if (requests.length && !loading) {
+          this.store.dispatch(globalLoading({ loading: true }));
+        } else if (!requests.length && loading) {
+          // Is async to run this action after http effect actions
+          requestAnimationFrame(() => {
+            this.store.dispatch(globalLoading({ loading: false }));
+          });
+        }
+      });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+  public intercept(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    request: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<unknown>> {
     const apiUrl = this.configService.apiUrl;
 
     // Only add interceptors to request through the api
@@ -63,7 +77,10 @@ export class ApiRestInterceptorService implements HttpInterceptor {
 
     return next.handle(request).pipe(
       tap((response) => {
-        if (response instanceof HttpErrorResponse || response instanceof HttpResponse) {
+        if (
+          response instanceof HttpErrorResponse ||
+          response instanceof HttpResponse
+        ) {
           this.remvoveRequest(request);
         }
       }),
@@ -71,7 +88,11 @@ export class ApiRestInterceptorService implements HttpInterceptor {
         if (err.status === 401) {
           const auth = this.authService.getAuth();
 
-          if (auth?.token && auth.refresh && !request.url.includes('/auth/token')) {
+          if (
+            auth?.token &&
+            auth.refresh &&
+            !request.url.includes('/auth/token')
+          ) {
             return this.handle401Error(request, next);
           } else if (!auth?.token || !auth?.refresh) {
             this.store.dispatch(logout());
@@ -89,10 +110,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public addRequest(request: HttpRequest<any>) {
-    this.requests.next([
-      ...this.requests.value,
-      request
-    ]);
+    this.requests.next([...this.requests.value, request]);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,7 +124,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     if (auth?.token) {
       return request.clone({
         setHeaders: {
-          Authorization: `Bearer ${ auth.token }`,
+          Authorization: `Bearer ${auth.token}`,
         },
       });
     }
@@ -144,7 +162,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     }
 
     return this.refreshTokenSubject.pipe(
-      filter(token => token !== null),
+      filter((token) => token !== null),
       take(1),
       switchMap(() => next.handle(this.authInterceptor(request)))
     );

@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { FormControl, FormGroup } from '@ngneat/reactive-forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslocoService } from '@ngneat/transloco';
 
@@ -96,7 +96,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         formGroup,
       );
 
-      expect(formGroup.get('comment').disabled).toBeFalsy();
+      expect(formGroup.get('comment')!.disabled).toBeFalsy();
 
       // wiki don't have comments
       spectator.service.applyPermission(
@@ -105,7 +105,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         formGroup,
       );
 
-      expect(formGroup.get('comment').disabled).toBeTruthy();
+      expect(formGroup.get('comment')!.disabled).toBeTruthy();
     });
 
     it('view - create, modify, delete change to false', () => {

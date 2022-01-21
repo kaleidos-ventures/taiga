@@ -13,7 +13,7 @@ export const selectCoreState = createFeatureSelector<fromCore.CoreState>(
   fromCore.coreFeatureKey
 );
 
-export const getGlobalLoading = createSelector(
+export const selectGlobalLoading = createSelector(
   selectCoreState,
   (state: fromCore.CoreState) => state.loading
 );

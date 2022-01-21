@@ -35,28 +35,3 @@ git clean -fd # Delete newly added files and directories
 
 [Nx update guide](https://nx.dev/latest/angular/core-concepts/updating-nx)
 [Angular update guide](https://update.angular.io/)
-
-## Angular 11 -> 12
-
-### Issue https://github.com/angular/angular-cli/issues/20760
-
-Workaroud: 
-In `angular.json` replace `"optimization": true` with:
-
-```json
-"optimization": {
-  "scripts": true,
-  "styles": {
-    "minify": true,
-    "inlineCritical": false
-  },
-  "fonts": true
-}
-```
-
-Add `"optimization": false` in `taiga.architect.build.options`
-
-TODO, when the bug is fixed: 
-
-Return to `"optimization": true`.
-Remove `"optimization": false` from `taiga.architect.build.options`.

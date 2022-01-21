@@ -1,0 +1,28 @@
+{
+  "root": "apps/taiga-e2e",
+  "sourceRoot": "apps/taiga-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/taiga-e2e/cypress.json",
+        "tsConfig": "apps/taiga-e2e/tsconfig.e2e.json",
+        "devServerTarget": "taiga:serve:development"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "taiga:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/taiga-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": ["scope:taiga"],
+  "implicitDependencies": ["taiga"]
+}

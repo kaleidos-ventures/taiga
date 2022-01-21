@@ -6,33 +6,39 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
-import { ImageUploadComponent } from './image-upload.component';
+import { InputsModule } from '../inputs.module';
 import { ImageUploadModule } from './image-upload.module';
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'tg-ui-image-upload-story',
+  template: `
+    <div class="story-flex">
+      <form [formGroup]="form">
+        <tg-ui-image-upload
+          [control]="control"
+          title="title"
+          label="label"
+          tip="Allowed formats: gif, png, jpg, gif, svg and webp"
+          accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg">
+        </tg-ui-image-upload>
+      </form>
+    </div>
+  `,
+})
+class ImageUploadStoryComponent {
+  public control = new FormControl();
+  public form = new FormGroup({});
+}
 
 export default ConfigureStory({
   title: 'Image Upload',
-  component: ImageUploadComponent,
-  extraModules: [ ImageUploadModule ],
+  component: ImageUploadStoryComponent,
+  extraModules: [ ImageUploadModule, InputsModule ],
 });
 
 export const ImageUpload = ConfigureTemplate({
-  template: `
-  <div class="story-flex">
-    <tg-ui-image-upload
-      [control]="control"
-      title="title"
-      label="label"
-      tip="Allowed formats: gif, png, jpg, gif, svg and webp"
-      accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg">
-    </tg-ui-image-upload>
-  </div>
-  `,
-  props: {
-    control: new FormControl(),
-  },
-  args: {
-    title: 'title'
-  }
+  args: {}
 });

@@ -20,19 +20,27 @@ import { ConfigService } from '@taiga/core';
 export class WsService {
   private ws!: WebSocket;
 
-  constructor(private config: ConfigService, private store: Store, private actions$: Actions) {}
+  constructor(
+    private config: ConfigService,
+    private store: Store,
+    private actions$: Actions
+  ) {}
 
   public static isEvent<T>(type: string | Array<string>) {
-    return (source$: Observable<ReturnType<typeof wsMessage>>) => source$.pipe(
-      filter((event) => {
-        if (Array.isArray(type)) {
-          return typeof event.data.type === 'string' && type.includes(event.data.type);
-        }
+    return (source$: Observable<ReturnType<typeof wsMessage>>) =>
+      source$.pipe(
+        filter((event) => {
+          if (Array.isArray(type)) {
+            return (
+              typeof event.data.type === 'string' &&
+              type.includes(event.data.type)
+            );
+          }
 
-        return event.data.type === type;
-      }),
-      map(event => event.data as T)
-    );
+          return event.data.type === type;
+        }),
+        map((event) => event.data as T)
+      );
   }
 
   public listen() {
@@ -42,7 +50,9 @@ export class WsService {
       this.ws = new WebSocket(this.config.wsUrl);
 
       this.ws.addEventListener('message', (event) => {
-        const data = JSON.parse(event.data) as { [key in PropertyKey]: unknown };
+        const data = JSON.parse(event.data as string) as {
+          [key in PropertyKey]: unknown;
+        };
 
         this.store.dispatch(wsMessage({ data }));
       });
@@ -61,9 +71,6 @@ export class WsService {
   });
   */
   public events<T>(type: string | Array<string>) {
-    return this.actions$.pipe(
-      ofType(wsMessage),
-      WsService.isEvent<T>(type)
-    );
+    return this.actions$.pipe(ofType(wsMessage), WsService.isEvent<T>(type));
   }
 }

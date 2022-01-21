@@ -1,0 +1,23 @@
+{
+  "projectType": "library",
+  "root": "libs/api",
+  "sourceRoot": "libs/api/src",
+  "prefix": "tg",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/api/src/**/*.ts", "libs/api/src/**/*.html"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api"],
+      "options": {
+        "jestConfig": "libs/api/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["scope:api"]
+}

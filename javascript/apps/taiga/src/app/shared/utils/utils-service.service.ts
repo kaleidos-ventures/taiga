@@ -12,13 +12,16 @@ import { take } from 'rxjs/operators';
 export class UtilsService {
   public static objKeysTransformer(
     input: Record<string, unknown> | ArrayLike<unknown>,
-    transformerFn: (input: string) => string): Record<string, unknown> | ArrayLike<unknown> {
+    transformerFn: (input: string) => string
+  ): Record<string, unknown> | ArrayLike<unknown> {
     if (input === null || typeof input !== 'object') {
       return input;
     } else if (Array.isArray(input)) {
-      return input.map((it) => {
-        return this.objKeysTransformer(it, transformerFn);
-      });
+      return input.map(
+        (it: Parameters<typeof UtilsService.objKeysTransformer>[0]) => {
+          return this.objKeysTransformer(it, transformerFn);
+        }
+      );
     } else {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       return Object.fromEntries(
@@ -26,25 +29,32 @@ export class UtilsService {
           if (typeof value === 'object' && value !== null) {
             return [
               transformerFn(key),
-              this.objKeysTransformer(value as Record<string, unknown>, transformerFn)
+              this.objKeysTransformer(
+                value as Record<string, unknown>,
+                transformerFn
+              ),
             ];
           }
 
           return [transformerFn(key), value];
         })
-      ) as { [k: string]: unknown; };
+      ) as { [k: string]: unknown };
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public static getState<K>(store: Store, selector: (state: Record<string, any>) => K): K {
+  public static getState<K>(
+    store: Store,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    selector: (state: Record<string, any>) => K
+  ): K {
     let state: K;
 
-    store.select(selector).pipe(
-      take(1)
-    ).subscribe((data) => {
-      state = data;
-    });
+    store
+      .select(selector)
+      .pipe(take(1))
+      .subscribe((data) => {
+        state = data;
+      });
 
     return state!;
   }

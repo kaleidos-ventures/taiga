@@ -69,6 +69,10 @@ module.exports = {
         ignore: ['comments'],
       }
     ],
-    'liberty/use-logical-spec': 'always'
+    'liberty/use-logical-spec': 'always',
+    'selector-class-pattern': null,
+    'alpha-value-notation': null,
+    'color-function-notation': null,
+    'value-keyword-case': null,
   },
 };

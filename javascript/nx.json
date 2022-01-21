@@ -24,32 +24,9 @@
           "test",
           "e2e",
           "build-storybook"
-        ]
+        ],
+        "parallel": 1
       }
-    }
-  },
-  "projects": {
-    "api": {
-      "tags": ["scope:api"]
-    },
-    "core": {
-      "tags": ["scope:core"]
-    },
-    "data": {
-      "tags": ["scope:data"]
-    },
-    "taiga": {
-      "tags": ["scope:taiga"]
-    },
-    "taiga-e2e": {
-      "tags": ["scope:taiga"],
-      "implicitDependencies": ["taiga"]
-    },
-    "ui": {
-      "tags": ["scope:ui"]
-    },
-    "ws": {
-      "tags": ["scope:ws"]
     }
   },
   "targetDependencies": {
@@ -59,5 +36,35 @@
         "projects": "dependencies"
       }
     ]
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/angular"
+  },
+  "defaultProject": "taiga",
+  "generators": {
+    "@nrwl/angular": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      },
+      "storybook-configuration": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/angular:application": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "css"
+    }
   }
 }

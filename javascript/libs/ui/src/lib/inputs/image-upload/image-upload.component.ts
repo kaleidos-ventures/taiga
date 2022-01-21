@@ -6,10 +6,23 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { ControlContainer, FormGroupDirective } from '@angular/forms';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import {
+  ControlContainer,
+  FormGroupDirective,
+  FormControl,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { FormControl } from '@ngneat/reactive-forms';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FieldService } from '../services/field.service';
@@ -20,10 +33,7 @@ let nextId = 0;
 @Component({
   selector: 'tg-ui-image-upload',
   templateUrl: './image-upload.component.html',
-  styleUrls: [
-    '../inputs.css',
-    './image-upload.component.css'
-  ],
+  styleUrls: ['../inputs.css', './image-upload.component.css'],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -32,8 +42,8 @@ let nextId = 0;
         alias: 'image_upload',
       },
     },
-    FieldService
-  ]
+    FieldService,
+  ],
 })
 export class ImageUploadComponent implements OnChanges {
   @Input() public label = '';
@@ -57,7 +67,7 @@ export class ImageUploadComponent implements OnChanges {
     private cd: ChangeDetectorRef,
     private domSanitizer: DomSanitizer,
     private fieldService: FieldService,
-    private controlContainer: ControlContainer,
+    private controlContainer: ControlContainer
   ) {}
 
   public ngOnChanges(changes: SimpleChanges) {
@@ -71,24 +81,22 @@ export class ImageUploadComponent implements OnChanges {
         this.safeImageUrl = this.getSafeUrl(path);
       }
 
-      this.control.valueChanges
-        .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          if (this.controlValue && this.control.valid) {
-            if (this.controlValue.type === 'image/gif') {
-              const path = URL.createObjectURL(this.controlValue);
+      this.control.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+        if (this.controlValue && this.control.valid) {
+          if (this.controlValue.type === 'image/gif') {
+            const path = URL.createObjectURL(this.controlValue);
 
-              void this.getGifFrame(path).then((staticUrl) => {
-                this.safeImageUrl = this.getSafeUrl(staticUrl);
-              });
-            } else {
-              const path = URL.createObjectURL(this.controlValue);
-              this.safeImageUrl = this.getSafeUrl(path);
-            }
+            void this.getGifFrame(path).then((staticUrl) => {
+              this.safeImageUrl = this.getSafeUrl(staticUrl);
+            });
           } else {
-            this.safeImageUrl = '';
+            const path = URL.createObjectURL(this.controlValue);
+            this.safeImageUrl = this.getSafeUrl(path);
           }
-        });
+        } else {
+          this.safeImageUrl = '';
+        }
+      });
     }
   }
 
@@ -108,8 +116,8 @@ export class ImageUploadComponent implements OnChanges {
     this.imageUpload.nativeElement.click();
   }
 
-  public onImageSelected(event: Event): void  {
-    const target = (event.target as HTMLInputElement);
+  public onImageSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
     if (target && target.files?.length) {
       const img: File = target.files[0];
       this.imageSelected.next(img);
@@ -153,7 +161,7 @@ export class ImageUploadComponent implements OnChanges {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      const img = new Image;
+      const img = new Image();
       img.onload = () => {
         if (ctx) {
           const { width, height } = img;

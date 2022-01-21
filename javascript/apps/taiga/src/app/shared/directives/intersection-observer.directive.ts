@@ -6,7 +6,16 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { AfterViewInit, Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { skip } from 'rxjs/operators';
@@ -16,7 +25,6 @@ import { skip } from 'rxjs/operators';
   selector: '[inViewport]',
 })
 export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
-
   @Input() public threshold = 1;
   @Output() public visible = new EventEmitter<HTMLElement>();
   @Input() public skip = 0;
@@ -40,14 +48,14 @@ export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
   private createObserver() {
     const options = {
       rootMargin: '0px',
-      threshold: this.threshold
+      threshold: this.threshold,
     };
 
     const isIntersecting = (entry: IntersectionObserverEntry) =>
       entry.isIntersecting || entry.intersectionRatio > 0;
 
     this.observer = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (isIntersecting(entry)) {
           this.subject$.next({ entry, observer });
         }
@@ -60,13 +68,10 @@ export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.observer.observe(this.element.nativeElement);
+    this.observer.observe(this.element.nativeElement as HTMLElement);
 
     this.subject$
-      .pipe(
-        untilDestroyed(this),
-        skip(this.skip)
-      )
+      .pipe(untilDestroyed(this), skip(this.skip))
       .subscribe(({ entry }) => {
         const target = entry.target as HTMLElement;
         if (entry.isIntersecting) {
@@ -76,6 +81,6 @@ export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngOnDestroy() {
-    this.observer?.unobserve(this.element.nativeElement);
+    this.observer?.unobserve(this.element.nativeElement as HTMLElement);
   }
 }

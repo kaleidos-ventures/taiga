@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "projects": {
+    "api": "libs/api",
+    "core": "libs/core",
+    "data": "libs/data",
+    "taiga": "apps/taiga",
+    "taiga-e2e": "apps/taiga-e2e",
+    "ui": "libs/ui",
+    "ws": "libs/ws"
+  }
+}

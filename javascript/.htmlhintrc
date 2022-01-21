@@ -6,7 +6,7 @@
   "attr-value-double-quotes": true,
   "doctype-first": false,
   "doctype-html5": true,
-  "empty-tag-not-self-closed": true,
+  "empty-tag-not-self-closed": false,
   "id-class-ad-disabled": true,
   "id-class-value": "dash",
   "id-unique": true,

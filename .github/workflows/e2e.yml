@@ -10,10 +10,10 @@ jobs:
     - uses: actions/checkout@v2
 
     # Install front
-    - name: Node 14
+    - name: Node 16
       uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '16'
         cache: 'npm'
         cache-dependency-path: javascript/package-lock.json
 
@@ -95,10 +95,10 @@ jobs:
         TAIGA_SECRET_KEY: secret
         TAIGA_ACCESS_TOKEN_LIFETIME: 1000000
 
-    - name: Node 14
+    - name: Node 16
       uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '16'
         cache: 'npm'
         cache-dependency-path: javascript/package-lock.json
 

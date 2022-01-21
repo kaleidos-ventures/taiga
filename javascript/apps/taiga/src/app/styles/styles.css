@@ -21,6 +21,3 @@ This layer holds any **global** settings for your project. This layer should onl
 @import "taiga-ui.css";
 @import "button.css";
 @import "accesibility.css";
-
-/* todo fix https://github.com/storybookjs/storybook/issues/15855 */
-@import "../../../../../libs/ui/.storybook/styles-stories.css";

@@ -1,0 +1,23 @@
+{
+  "projectType": "library",
+  "root": "libs/ws",
+  "sourceRoot": "libs/ws/src",
+  "prefix": "tg",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/ws/src/**/*.ts", "libs/ws/src/**/*.html"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/ws"],
+      "options": {
+        "jestConfig": "libs/ws/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["scope:ws"]
+}

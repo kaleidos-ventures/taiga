@@ -1,7 +1,14 @@
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * Copyright (c) 2021-present Kaleidos Ventures SL
+ */
+
 import { KeyValue } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { FormControl } from '@ngneat/reactive-forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { createComponentFactory, Spectator, SpyObject } from '@ngneat/spectator/jest';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';

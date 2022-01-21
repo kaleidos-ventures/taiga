@@ -7,7 +7,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AuthApiService } from '@taiga/api';
 import { login } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
   constructor(private fb: FormBuilder, private authApiService: AuthApiService, private store: Store) { }
 
   public ngOnInit(): void {
-    this.form = this.fb.group<Login>({
+    this.form = this.fb.group({
       username: [''],
       password: [''],
     });

@@ -8,10 +8,13 @@
 import '@ng-web-apis/universal/mocks';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { ImageUploadComponent } from './image-upload.component';
-import { FormControl } from '@ngneat/reactive-forms';
 import { randSentence, randNumber, randWord } from '@ngneat/falso';
 import { getTranslocoModule } from '@taiga/ui/transloco/transloco-testing.module';
-import { ControlContainer, FormGroupDirective } from '@angular/forms';
+import {
+  ControlContainer,
+  FormControl,
+  FormGroupDirective,
+} from '@angular/forms';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('ImageUploadComponent', () => {
@@ -19,13 +22,9 @@ describe('ImageUploadComponent', () => {
   const fgd = new FormGroupDirective([], []);
   const createComponent = createComponentFactory({
     component: ImageUploadComponent,
-    imports: [
-      getTranslocoModule(),
-    ],
+    imports: [getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
-    providers: [
-      { provide: ControlContainer, useValue: fgd },
-    ]
+    providers: [{ provide: ControlContainer, useValue: fgd }],
   });
 
   beforeEach(() => {
@@ -37,7 +36,7 @@ describe('ImageUploadComponent', () => {
         color: randNumber(),
       },
       providers: [],
-      detectChanges: false
+      detectChanges: false,
     });
   });
 

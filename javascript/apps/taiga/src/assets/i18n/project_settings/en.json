@@ -7,6 +7,8 @@
     "integrations": "Integrations",
     "plugins": "Plugins",
     "customize": "Customize options",
+    "external_members": "The external users have more permissions than project members",
+    "see_more": "See more",
     "roles_permissions": {
       "project_administrators": "Administrators",
       "number_admins": "{admins, plural, one {1 admin} other {# admins}}",

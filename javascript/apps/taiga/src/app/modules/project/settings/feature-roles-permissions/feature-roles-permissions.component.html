@@ -73,18 +73,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <form [formGroup]="publicForm">
         <tg-role-permission-row *ngIf="getPublicRoleForm()"
           [formGroup]="getPublicRoleForm()"
-          [showMembers]="false"
+          [hasMembers]="false"
           [name]="''"
           [numMembers]="0"
           data-test="public-permission-row">
         </tg-role-permission-row>
-        <button appearance="tertiary"
-          class="add-role"
-          tuiButton
-          icon="'plus'"
-          type="button">
-          {{ t('project_settings.roles_permissions.add_role') }}
-        </button>
+        <tg-ui-notification-inline [status]="'info'">
+          <span>{{ t('project_settings.external_members') }}</span>
+          <button
+            class="link"
+            tuiLink>
+            {{ t('project_settings.see_more') }}
+          </button>
+        </tg-ui-notification-inline>
       </form>
     </section>
 
@@ -96,6 +97,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         class="settings-subtitle">{{ t('project_settings.workspace_permissions')
         }}</h3>
     </section>
-
-  </ng-container>
+</ng-container>
 </ng-container>

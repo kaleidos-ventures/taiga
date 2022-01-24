@@ -18,7 +18,7 @@ import { TuiToggleModule } from '@taiga-ui/kit';
 import { RolePermissionRowModule } from './components/role-permission-row/role-permission-row.module';
 import { RoleCustomizeModule } from './components/role-customize/role-customize.module';
 import { RoleAdvanceRowModule } from './components/role-advance-row/role-advance-row.module';
-
+import { NotificatioInlineModule } from 'libs/ui/src/lib/notification-inline/notification-inline.module';
 @NgModule({
   declarations: [
     ProjectSettingsFeatureRolesPermissionsComponent,
@@ -31,6 +31,7 @@ import { RoleAdvanceRowModule } from './components/role-advance-row/role-advance
     TuiSvgModule,
     TranslocoModule,
     TuiToggleModule,
+    NotificatioInlineModule,
     RolePermissionRowModule,
     RoleCustomizeModule,
     RoleAdvanceRowModule,

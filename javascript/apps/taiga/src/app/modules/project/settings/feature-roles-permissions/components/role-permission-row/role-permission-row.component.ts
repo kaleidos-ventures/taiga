@@ -7,7 +7,7 @@
  */
 
 import { KeyValue } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Module } from '@taiga/data';
@@ -35,7 +35,8 @@ export class RolePermissionRowComponent implements OnInit {
   public numMembers!: number;
 
   @Input()
-  public showMembers = true;
+  @HostBinding('attr.has-members')
+  public hasMembers = true;
 
   public permissionRowModel!: KeyValue<SettingsPermission, string>;
   public advancedSettingsContainerId = `advanced-settings-container-${nextId++}`;

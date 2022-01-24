@@ -30,7 +30,7 @@ import { RolePermissionRowComponent } from './role-permission-row.component';
     RoleAdvanceRowModule,
     InputsModule,
     TuiHintModule,
-    TuiDataListModule,
+    TuiDataListModule
   ],
   declarations: [
     RolePermissionRowComponent,
@@ -47,6 +47,5 @@ import { RolePermissionRowComponent } from './role-permission-row.component';
   exports: [
     RolePermissionRowComponent,
   ]
-
 })
 export class RolePermissionRowModule {}

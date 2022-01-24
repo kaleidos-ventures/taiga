@@ -1,0 +1,132 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+:host {
+  --color-border: var(--color-gray20);
+
+  border-radius: 4px;
+  display: inline-block;
+  padding: var(--spacing-8) var(--spacing-16);
+
+  & .content {
+    align-items: center;
+    display: flex;
+  }
+
+  &::ng-deep {
+    & .link {
+      margin-inline-start: var(--spacing-4);
+    }
+  }
+
+  &[status="info"] {
+    background: var(--color-info20);
+    color: var(--color-info80);
+
+    &::after {
+      background: none;
+    }
+
+    & .content {
+      color: var(--color-info80);
+      display: flex;
+    }
+
+    &::ng-deep {
+      & .link .content {
+        color: var(--color-info80) !important; /* stylelint-disable-line declaration-no-important */
+      }
+    }
+  }
+
+  & tui-svg {
+    block-size: var(--spacing-16);
+    inline-size: var(--spacing-16);
+    margin-inline-end: var(--spacing-8);
+  }
+
+  &[status="success"] {
+    background: var(--color-ok20);
+    color: var(--color-ok80);
+
+    &::after {
+      background: none;
+    }
+
+    & .content {
+      color: var(--color-ok80);
+      display: flex;
+    }
+
+    &::ng-deep {
+      & .link .content {
+        color: var(--color-ok80) !important; /* stylelint-disable-line declaration-no-important */
+      }
+    }
+  }
+
+  &[status="error"] {
+    background: var(--color-red20);
+    color: var(--color-red80);
+
+    &::after {
+      background: none;
+    }
+
+    & .content {
+      color: var(--color-red80);
+      display: flex;
+    }
+
+    &::ng-deep {
+      & .link .content {
+        color: var(--color-red80) !important; /* stylelint-disable-line declaration-no-important */
+      }
+    }
+  }
+
+  &[status="warning"] {
+    background: var(--color-warning20);
+    color: var(--color-warning80);
+
+    &::after {
+      background: none;
+    }
+
+    & .content {
+      color: var(--color-warning80);
+      display: flex;
+    }
+
+    &::ng-deep {
+      & .link .content {
+        color: var(--color-warning80) !important; /* stylelint-disable-line declaration-no-important */
+      }
+    }
+  }
+
+  &[status="notice"] {
+    background: var(--color-notice20);
+    color: var(--color-notice80);
+
+    &::after {
+      background: none;
+    }
+
+    & .content {
+      color: var(--color-notice80);
+      display: flex;
+    }
+
+    &::ng-deep {
+      & .link .content {
+        color: var(--color-notice80) !important; /* stylelint-disable-line declaration-no-important */
+      }
+    }
+  }
+}

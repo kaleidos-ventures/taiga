@@ -38,11 +38,11 @@ def test_create_workspace_validation_error(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
-def test_list_workspaces_success(client):
+def test_my_workspaces_success(client):
     workspace = f.create_workspace()
 
     client.login(workspace.owner)
-    response = client.get("/workspaces")
+    response = client.get("/my/workspaces")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
 

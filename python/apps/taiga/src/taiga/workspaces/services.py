@@ -15,10 +15,11 @@ from taiga.workspaces import repositories as workspaces_repo
 from taiga.workspaces.models import Workspace
 
 
-def get_workspaces(owner: User) -> Iterable[Workspace]:
-    return workspaces_repo.get_workspaces_with_latest_projects(owner=owner)
+def get_user_workspaces_with_latest_projects(user: User) -> Iterable[Workspace]:
+    return workspaces_repo.get_user_workspaces_with_latest_projects(user=user)
 
 
+# TODO: missing tests
 def create_workspace(name: str, color: int, owner: User) -> Workspace:
     workspace = workspaces_repo.create_workspace(name=name, color=color, owner=owner)
     workspace_role = roles_repo.create_workspace_role(
@@ -32,5 +33,6 @@ def create_workspace(name: str, color: int, owner: User) -> Workspace:
     return workspace
 
 
+# TODO: missing tests
 def get_workspace(slug: str) -> Optional[Workspace]:
     return workspaces_repo.get_workspace(slug=slug)

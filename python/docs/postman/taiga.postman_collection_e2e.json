@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a1314466-0a2f-40d0-96c7-f3532b96318c",
+		"_postman_id": "aa878b10-ca81-4ed6-ad60-544e48fc2681",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -254,53 +254,6 @@
 					"response": []
 				},
 				{
-					"name": "workspaces",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"workspaces"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "workspace by slug",
 					"event": [
 						{
@@ -344,6 +297,55 @@
 							"path": [
 								"workspaces",
 								"{{ws-slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "my workspaces",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response time is less than the expected ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(600);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"workspaces"
 							]
 						}
 					},
@@ -1214,7 +1216,7 @@
 			]
 		},
 		{
-			"name": "Get workspace projects for user",
+			"name": "my.workspaces",
 			"item": [
 				{
 					"name": "auth as user1000",
@@ -1269,25 +1271,64 @@
 					"response": []
 				},
 				{
-					"name": "workspaces",
+					"name": "200 my workspaces",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Save workspace slugs in environment\", function () {",
-									"    for (var ws of pm.response.json()) {",
-									"        switch(ws.name){",
-									"            case \"u1001 is ws member(P)\": ",
-									"                pm.environment.set(\"ws-slug-1000-1\", ws.slug); break;",
-									"            case \"u1001 is ws member, hasProjects:T(P)\": ",
-									"                pm.environment.set(\"ws-slug-1000-2\", ws.slug); break;",
-									"            case \"u1001 is ws member, hasProjects:F(P)\": ",
-									"                pm.environment.set(\"ws-slug-1000-3\", ws.slug); break;",
-									"            case \"u1001 ws-member, pj-mmbr vs ws-mmbr(P)\": ",
-									"                pm.environment.set(\"ws-slug-1000-4\", ws.slug); break;",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    ",
+									"    var someWsHaveLatestProjects = false;",
+									"    var someWsHaveNoLatestProjects = false;",
+									"    for (const [i, ws] of jsonRes.entries()) {",
+									"        pm.expect(ws.isPremium).to.be.true;",
+									"        ",
+									"        // just entered once (by the first workspace with latestProjects)",
+									"        if (!someWsHaveLatestProjects && ws.latestProjects.length >0) {",
+									"            someWsHaveLatestProjects = true;",
+									"            pm.expect(ws.totalProjects).to.be.above(0);",
+									"            pm.expect(ws.hasProjects).to.be.true;",
+									"            ",
+									"            // check latestProject's properties",
+									"            pm.expect(ws.latestProjects[0]).to.have.property(\"logo\");",
+									"            pm.expect(ws.latestProjects[0]).to.have.property(\"logoSmall\");",
+									"            pm.expect(ws.latestProjects[0]).to.have.property(\"logoBig\");",
+									"            pm.expect(ws.latestProjects[0]).to.have.property(\"name\");",
+									"            pm.expect(ws.latestProjects[0]).to.have.property(\"slug\");",
+									"            pm.expect(ws.latestProjects[0]).to.have.property(\"description\");",
+									"            pm.expect(ws.latestProjects[0]).to.have.property(\"color\");",
 									"        }",
-									"    }",
+									"        // just entered once (by the first workspace with no latestProjects)",
+									"        if (!someWsHaveNoLatestProjects && ws.latestProjects.length ==0) {",
+									"            someWsHaveNoLatestProjects = true;",
+									"            pm.expect(ws.totalProjects).to.be.eql(0);",
+									"        }",
+									"        // check once the workspace's properties",
+									"        if (i == 0) {",
+									"            pm.expect(ws).to.have.property(\"name\");",
+									"            pm.expect(ws).to.have.property(\"slug\");",
+									"            pm.expect(ws).to.have.property(\"color\");",
+									"            pm.expect(ws).to.have.property(\"latestProjects\");",
+									"            pm.expect(ws).to.have.property(\"totalProjects\");",
+									"            pm.expect(ws).to.have.property(\"hasProjects\");",
+									"            pm.expect(ws).to.have.property(\"myRole\");",
+									"            pm.expect(ws).to.have.property(\"isPremium\");",
+									"            pm.expect(ws).to.have.property(\"isOwner\");",
+									"        }",
+									"    };",
+									"    pm.expect(someWsHaveLatestProjects).to.be.true;",
+									"    pm.expect(someWsHaveNoLatestProjects).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Response time is less than the expected ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(600);",
+									"    postman.setNextRequest(null);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1308,12 +1349,132 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
+								"my",
+								"workspaces"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "workspaces.ws.projects",
+			"item": [
+				{
+					"name": "N/A auth as user1000",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    pm.environment.set(\"auth_token\", pm.response.json().token);",
+									"    pm.environment.set(\"refresh_token\", pm.response.json().refresh);",
+									"});",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response time is less than the expected ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(600);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"user1000\",\n    \"password\": \"123123\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "N/A my.workspaces",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Save workspace slugs in environment\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    var maxLatestProjects = 0;",
+									"    for (const [i, ws] of jsonRes.entries()) {",
+									"        // Set the workspace with most latestProjects for the next request",
+									"        console.log(maxLatestProjects + \" - \" + ws.latestProjects.length)",
+									"        if (ws.latestProjects.length > maxLatestProjects) {",
+									"            pm.environment.set(\"ws-slug\", ws.slug);",
+									"            maxLatestProjects = ws.latestProjects.length;",
+									"        }",
+									"    }",
+									"});",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response time is less than the expected ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(600);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
 								"workspaces"
 							]
 						}
@@ -1321,7 +1482,7 @@
 					"response": []
 				},
 				{
-					"name": "workspace projects for user",
+					"name": "200 workspaces.ws.projects",
 					"event": [
 						{
 							"listen": "test",
@@ -1339,7 +1500,7 @@
 									"});",
 									"pm.test(\"Check values\", function () {",
 									"    res = pm.response.json();",
-									"    pm.expect(res).to.have.lengthOf(5);",
+									"    pm.expect(res).to.have.lengthOf(10);",
 									"});",
 									""
 								],
@@ -1381,207 +1542,6 @@
 							"path": [
 								"workspaces",
 								"{{ws-slug-1000-1}}",
-								"projects"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "workspace projects for user",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
-									"pm.test(\"Check values\", function () {",
-									"    res = pm.response.json();",
-									"    pm.expect(res).to.have.lengthOf(1);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-slug-1000-2}}/projects",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"workspaces",
-								"{{ws-slug-1000-2}}",
-								"projects"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "workspace projects for user",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
-									"pm.test(\"Check values\", function () {",
-									"    res = pm.response.json();",
-									"    pm.expect(res).to.have.lengthOf(0);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-slug-1000-3}}/projects",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"workspaces",
-								"{{ws-slug-1000-3}}",
-								"projects"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "workspace projects for user",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
-									"pm.test(\"Check values\", function () {",
-									"    res = pm.response.json();",
-									"    pm.expect(res).to.have.lengthOf(2);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-slug-1000-4}}/projects",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"workspaces",
-								"{{ws-slug-1000-4}}",
 								"projects"
 							]
 						}
@@ -1919,7 +1879,7 @@
 			]
 		},
 		{
-			"name": "project.workspace_member_permissions",
+			"name": "projects.pj.workspace_member_permissions",
 			"item": [
 				{
 					"name": "auth as user1",
@@ -1974,16 +1934,17 @@
 					"response": []
 				},
 				{
-					"name": "workspaces",
+					"name": "my workspaces",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
+									"// Post-request execution tasks",
 									"pm.test(\"Save projects slugs in environment\", function () {",
 									"    res = pm.response.json();",
 									"    for (var ws of res) {",
-									"        if (ws.isPremium == true) {",
+									"        if (ws.latestProjects.length > 0 & ws.isPremium == true) {",
 									"            pj = ws.latestProjects[0]",
 									"            pm.environment.set(\"pj-slug-p\", pj.slug);",
 									"            break;",
@@ -1991,12 +1952,22 @@
 									"    }   ",
 									"",
 									"    for (var ws of res) {",
-									"        if (ws.isPremium == false) {",
+									"        if (ws.latestProjects.length > 0 & ws.isPremium == false) {",
 									"            pj = ws.latestProjects[0]",
 									"            pm.environment.set(\"pj-slug-no-p\", pj.slug);",
 									"            break;",
 									"        }   ",
 									"    }    ",
+									"});",
+									"",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response time is less than the expected ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2017,12 +1988,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
+								"my",
 								"workspaces"
 							]
 						}
@@ -2151,7 +2123,7 @@
 					"response": []
 				},
 				{
-					"name": "project workspace member permissions Copy",
+					"name": "400 project workspace member permissions",
 					"event": [
 						{
 							"listen": "test",
@@ -2212,7 +2184,7 @@
 					"response": []
 				},
 				{
-					"name": "update project workspace member permissions Copy",
+					"name": "400 update project workspace member permissions",
 					"event": [
 						{
 							"listen": "test",

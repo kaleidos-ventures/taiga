@@ -21,27 +21,22 @@ metadata = {
     "name": "workspaces",
     "description": "Endpoint for workspaces resources.",
 }
-
+my_metadata = {"name": "my", "description": "Endpoints for logged-in user's resources."}
 router = AuthAPIRouter(prefix="/workspaces", tags=["workspaces"])
+router_my = AuthAPIRouter(prefix="/my", tags=["my"])
 
 # PERMISSIONS
 GET_WORKSPACE = HasPerm("view_workspace")
 
 
-@router.get(
-    "",
-    name="workspaces.list",
-    summary="List workspaces",
+@router_my.get(
+    "/workspaces",
+    name="my.workspaces.projects.list",
+    summary="List my workspaces's projects",
     response_model=list[WorkspaceSummarySerializer],
 )
-def list_workspaces(request: Request) -> list[WorkspaceSummarySerializer]:
-    """
-    List the workspaces of the logged user.
-    """
-    # TODO - ahora mismo solo devuelve los WS en los que eres owner
-    # a futuro tendrá que devolver también los WS que tengan algún proyecto en el que eres miembro
-    # aunque no puedas ver el detalle de ese WS
-    workspaces = workspaces_services.get_workspaces(owner=request.user)
+def list_my_workspaces(request: Request) -> list[WorkspaceSummarySerializer]:
+    workspaces = workspaces_services.get_user_workspaces_with_latest_projects(user=request.user)
     return WorkspaceSummarySerializer.from_queryset(workspaces)
 
 

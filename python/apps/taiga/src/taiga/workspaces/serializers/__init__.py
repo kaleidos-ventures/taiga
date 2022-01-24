@@ -4,7 +4,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
 from taiga.base.serializer import BaseModel
 from taiga.projects.serializers.related import ProjectSummarySerializer
 
@@ -15,7 +14,10 @@ class WorkspaceSummarySerializer(BaseModel):
     color: int
     latest_projects: list[ProjectSummarySerializer]
     total_projects: int
+    has_projects: bool
+    my_role: str
     is_premium: bool
+    is_owner: bool
 
     class Config:
         orm_mode = True

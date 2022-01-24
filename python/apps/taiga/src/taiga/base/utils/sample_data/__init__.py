@@ -72,7 +72,7 @@ def load_sample_data() -> None:
     _create_long_texts_project(owner=custom_owner, workspace=workspace)
     _create_inconsistent_permissions_project(owner=custom_owner, workspace=workspace)
     _create_project_with_several_roles(owner=custom_owner, workspace=workspace, users=users)
-    _create_workspace_details()
+    _create_membership_scenario()
 
     print("Sample data loaded.")
 
@@ -256,58 +256,172 @@ def _create_project_with_several_roles(owner: User, workspace: Workspace, users:
     _create_project_memberships(project=project, users=users, except_for=project.owner)
 
 
-def _create_workspace_details() -> None:
+def _create_membership_scenario() -> None:
     user1000 = _create_user(1000)
     user1001 = _create_user(1001)
 
-    # workspace premium, user1001 is ws-member
+    # workspace premium: user1000 ws-admin, user1001 ws-member
     workspace = _create_workspace(owner=user1000, is_premium=True, name="u1001 is ws member")
     members_role = workspace.workspace_roles.exclude(is_admin=True).first()
     roles_repo.create_workspace_membership(user=user1001, workspace=workspace, workspace_role=members_role)
-    # user1001 is pj-member
-    project = _create_project(workspace=workspace, owner=user1000, name="user1001 is pj member")
+    # project: user1000 pj-admin, user1001 pj-member with access
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="pj 11",
+        description="user1000 pj-admin, user1001 pj-member with access",
+    )
     members_role = project.roles.get(slug="general")
     roles_repo.create_membership(user=user1001, project=project, role=members_role)
-    # user1001 is not a pj-member but the project allows 'view_us' to ws-members
-    project = _create_project(workspace=workspace, owner=user1000, name="ws members allowed")
-    project.workspace_member_permissions = ["view_us"]
-    project.save()
-    # user1001 is not a pj-member and ws-members are not allowed
-    _create_project(workspace=workspace, owner=user1000, name="ws members not allowed")
-    # user1001 is pj-member but its role has no-access
-    project = _create_project(workspace=workspace, owner=user1000, name="user1001 has role no-access")
+    # project: user1000 pj-admin, user1001 pj-member without access
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="pj 12",
+        description="user1000 pj-admin, user1001 pj-member without access",
+    )
     members_role = project.roles.get(slug="general")
     roles_repo.create_membership(user=user1001, project=project, role=members_role)
     members_role.permissions = []
     members_role.save()
-    # user1001 is a pj-owner
-    _create_project(workspace=workspace, owner=user1001, name="user1001 is pj-owner")
+    # project: user1000 pj-admin, user1001 not pj-member, ws-members not allowed
+    _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="pj 13",
+        description="user1000 pj-admin, user1001 not pj-member, ws-members not allowed",
+    )
+    # project: user1000 pj-admin, user1001 not pj-member, ws-members allowed
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="pj 14",
+        description="user1000 pj-admin, user1001 not pj-member, ws-members allowed",
+    )
+    project.workspace_member_permissions = ["view_us"]
+    project.save()
+    # project: user1000 no pj-member, user1001 pj-admin, ws-members not allowed
+    _create_project(
+        workspace=workspace,
+        owner=user1001,
+        name="pj 15",
+        description="user1000 no pj-member, user1001 pj-admin, ws-members not allowed",
+    )
+    # more projects
+    # project: user1000 pj-admin, user1001 pj-member with access
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="more - pj 16",
+        description="user1000 pj-admin, user1001 pj-member with access",
+    )
+    members_role = project.roles.get(slug="general")
+    roles_repo.create_membership(user=user1001, project=project, role=members_role)
+    # project: user1000 pj-admin, user1001 pj-member with access
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="more - pj 17",
+        description="user1000 pj-admin, user1001 pj-member with access",
+    )
+    members_role = project.roles.get(slug="general")
+    roles_repo.create_membership(user=user1001, project=project, role=members_role)
+    # project: user1000 pj-admin, user1001 pj-member with access
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="more - pj 18",
+        description="user1000 pj-admin, user1001 pj-member with access",
+    )
+    members_role = project.roles.get(slug="general")
+    roles_repo.create_membership(user=user1001, project=project, role=members_role)
+    # project: user1000 pj-admin, user1001 pj-member with access
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="more - pj 19",
+        description="user1000 pj-admin, user1001 pj-member with access",
+    )
+    members_role = project.roles.get(slug="general")
+    roles_repo.create_membership(user=user1001, project=project, role=members_role)
+    # project: user1000 pj-admin, user1001 pj-member with access
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="more - pj 20",
+        description="user1000 pj-admin, user1001 pj-member with access",
+    )
+    members_role = project.roles.get(slug="general")
+    roles_repo.create_membership(user=user1001, project=project, role=members_role)
 
-    # workspace premium, user1001 is ws-member
+    # workspace premium: user1000 ws-admin, user1001 ws-member, has_projects=true
     workspace = _create_workspace(owner=user1000, is_premium=True, name="u1001 is ws member, hasProjects:T")
     members_role = workspace.workspace_roles.exclude(is_admin=True).first()
     roles_repo.create_workspace_membership(user=user1001, workspace=workspace, workspace_role=members_role)
-    # user1001 is not a pj-member and ws-members are not allowed
-    _create_project(workspace=workspace, owner=user1000)
+    # project: user1000 pj-admin, user1001 not pj-member, ws-members not allowed
+    _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="pj 21",
+        description="user1000 pj-admin, user1001 not pj-member, ws-members not allowed",
+    )
+    # project: user1000 pj-admin, user1001 pj-member without access, ws-members allowed
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="pj 22",
+        description="user1000 pj-admin, user1001 pj-member without access, ws-members allowed",
+    )
+    members_role = project.roles.get(slug="general")
+    roles_repo.create_membership(user=user1001, project=project, role=members_role)
+    members_role.permissions = []
+    members_role.save()
+    project.workspace_member_permissions = ["view_us"]
+    project.save()
 
-    # workspace premium, user1001 is ws-member
+    # workspace premium: user1000 ws-admin, user1001 ws-member, has_projects=false
     workspace = _create_workspace(owner=user1000, is_premium=True, name="u1001 is ws member, hasProjects:F")
     members_role = workspace.workspace_roles.exclude(is_admin=True).first()
     roles_repo.create_workspace_membership(user=user1001, workspace=workspace, workspace_role=members_role)
 
-    # workspace premium, user1001 is ws-member
-    workspace = _create_workspace(owner=user1000, is_premium=True, name="u1001 ws-member, pj-mmbr vs ws-mmbr")
-    members_role = workspace.workspace_roles.exclude(is_admin=True).first()
-    roles_repo.create_workspace_membership(user=user1001, workspace=workspace, workspace_role=members_role)
-    # user1001 is pj-member
-    project = _create_project(workspace=workspace, owner=user1000, name="user1001 is pj member")
+    # workspace premium: user1000 ws-admin, user1001 ws-guest
+    workspace = _create_workspace(owner=user1000, is_premium=True, name="u1001 ws guest")
+    # project: user1000 pj-admin, user1001 pj-member with access
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="pj 41",
+        description="user1000 pj-admin, user1001 pj-member with access",
+    )
     members_role = project.roles.get(slug="general")
     roles_repo.create_membership(user=user1001, project=project, role=members_role)
-    # user1001 is pj-member but its role has no-access, ws-members have permissions
-    project = _create_project(workspace=workspace, owner=user1000, name="u1001 no-access, ws-member has perm")
+    # project: user1000 pj-member with access, user1001 pj-admin
+    project = _create_project(
+        workspace=workspace,
+        owner=user1001,
+        name="pj 42",
+        description="user1000 pj-member with access, user1001 pj-admin",
+    )
+    members_role = project.roles.get(slug="general")
+    roles_repo.create_membership(user=user1000, project=project, role=members_role)
+    # project: user1000 pj-admin, user1001 not pj-member, ws-allowed
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="pj 43",
+        description="user1000 pj-admin, user1001 not pj-member, ws-allowed",
+    )
+    project.workspace_member_permissions = ["view_us"]
+    project.save()
+    # project: user1000 pj-admin, user1001 pj-member without access, ws-members allowed
+    project = _create_project(
+        workspace=workspace,
+        owner=user1000,
+        name="pj 44",
+        description="user1000 pj-admin, user1001 pj-member without access, ws-members allowed",
+    )
     members_role = project.roles.get(slug="general")
     roles_repo.create_membership(user=user1001, project=project, role=members_role)
     members_role.permissions = []
-    members_role.save()
     project.workspace_member_permissions = ["view_us"]
     project.save()

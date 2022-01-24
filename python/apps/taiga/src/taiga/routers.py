@@ -18,6 +18,7 @@ router.include_router(auth_api.router)
 router.include_router(projects_api.router)
 router.include_router(users_api.router)
 router.include_router(workspaces_api.router)
+router.include_router(workspaces_api.router_my)
 router.include_router(projects_api.router_workspaces)
 router.include_router(roles_api.router)
 
@@ -26,5 +27,6 @@ tags_metadata = [
     projects_api.metadata,
     users_api.metadata,
     workspaces_api.metadata,
+    workspaces_api.my_metadata,
     roles_api.metadata,
 ]

@@ -100,7 +100,7 @@ def test_update_project_workspace_member_permissions():
 ##########################################################
 
 
-def test_get_workspace_projects_for_user():
+def test_get_workspace_projects_for_user_1():
     user6 = f.UserFactory(username="user6")
     user7 = f.UserFactory(username="user7")
 
@@ -108,24 +108,42 @@ def test_get_workspace_projects_for_user():
     workspace1 = f.create_workspace(owner=user6, is_premium=True)
     ws_member_role = workspace1.workspace_roles.exclude(is_admin=True).first()
     f.WorkspaceMembershipFactory.create(user=user7, workspace=workspace1, workspace_role=ws_member_role)
-    # user7 is pj-member
+    # user7 is a pj-owner
+    f.create_project(workspace=workspace1, owner=user7)
+    # user7 is pj-member with access
     pj11 = f.create_project(workspace=workspace1, owner=user6)
     pj_general_role = pj11.roles.get(slug="general")
     f.MembershipFactory.create(user=user7, project=pj11, role=pj_general_role)
-    # user7 is not a pj-member but the project allows 'view_us' to ws-members
+    # user7 is pj-member but its role has no-access, ws-members have permissions
     pj12 = f.create_project(workspace=workspace1, owner=user6)
-    pj12.workspace_member_permissions = ["view_us"]
-    pj12.save()
-    # user7 is not a pj-member and ws-members are not allowed
-    f.create_project(workspace=workspace1, owner=user6)
-    # user7 is pj-member but its role has no-access
-    pj14 = f.create_project(workspace=workspace1, owner=user6)
-    pj_general_role = pj14.roles.get(slug="general")
-    f.MembershipFactory.create(user=user7, project=pj14, role=pj_general_role)
+    pj_general_role = pj12.roles.get(slug="general")
+    f.MembershipFactory.create(user=user7, project=pj12, role=pj_general_role)
     pj_general_role.permissions = []
     pj_general_role.save()
-    # user7 is a pj-owner
-    f.create_project(workspace=workspace1, owner=user7)
+    pj12.workspace_member_permissions = ["view_us"]
+    pj12.save()
+    # user7 is pj-member but its role has no-access, ws-members dont have permissions
+    pj13 = f.create_project(workspace=workspace1, owner=user6)
+    pj_general_role = pj13.roles.get(slug="general")
+    f.MembershipFactory.create(user=user7, project=pj13, role=pj_general_role)
+    pj_general_role.permissions = []
+    pj_general_role.save()
+    # user7 is not a pj-member but the project allows 'view_us' to ws-members
+    pj14 = f.create_project(workspace=workspace1, owner=user6)
+    pj14.workspace_member_permissions = ["view_us"]
+    pj14.save()
+    # user7 is not a pj-member and ws-members are not allowed
+    f.create_project(workspace=workspace1, owner=user6)
+
+    res = repositories.get_workspace_projects_for_user(workspace1.id, user6.id)
+    assert len(res) == 5
+    res = repositories.get_workspace_projects_for_user(workspace1.id, user7.id)
+    assert len(res) == 3
+
+
+def test_get_workspace_projects_for_user_2():
+    user6 = f.UserFactory(username="user6")
+    user7 = f.UserFactory(username="user7")
 
     # workspace premium, user6(ws-admin), user7(ws-member, has_projects: true)
     workspace2 = f.create_workspace(owner=user6, is_premium=True)
@@ -134,44 +152,22 @@ def test_get_workspace_projects_for_user():
     # user7 is not a pj-member and ws-members are not allowed
     f.create_project(workspace=workspace2, owner=user6)
 
-    # workspace premium, user6(ws-admin), user7(ws-member, has_projects: false)
-    workspace3 = f.create_workspace(owner=user6, is_premium=True)
-    ws_member_role = workspace3.workspace_roles.exclude(is_admin=True).first()
-    f.WorkspaceMembershipFactory.create(user=user7, workspace=workspace3, workspace_role=ws_member_role)
-
-    # workspace premium, user6(ws-admin), user7(ws-member)
-    workspace4 = f.create_workspace(owner=user6, is_premium=True)
-    ws_member_role = workspace4.workspace_roles.exclude(is_admin=True).first()
-    f.WorkspaceMembershipFactory.create(user=user7, workspace=workspace4, workspace_role=ws_member_role)
-    # user7 is pj-member
-    pj41 = f.create_project(workspace=workspace4, owner=user6)
-    pj_general_role = pj41.roles.get(slug="general")
-    f.MembershipFactory.create(user=user7, project=pj41, role=pj_general_role)
-    # user7 is pj-member but its role has no-access, ws-members have permissions
-    pj41 = f.create_project(workspace=workspace4, owner=user6)
-    pj_general_role = pj41.roles.get(slug="general")
-    f.MembershipFactory.create(user=user7, project=pj41, role=pj_general_role)
-    pj_general_role.permissions = []
-    pj_general_role.save()
-    pj41.workspace_member_permissions = ["view_us"]
-    pj41.save()
-
-    res = repositories.get_workspace_projects_for_user(workspace1.id, user6.id)
-    assert len(res) == 4
-    res = repositories.get_workspace_projects_for_user(workspace1.id, user7.id)
-    assert len(res) == 3
-
     res = repositories.get_workspace_projects_for_user(workspace2.id, user6.id)
     assert len(res) == 1
     res = repositories.get_workspace_projects_for_user(workspace2.id, user7.id)
     assert len(res) == 0
 
+
+def test_get_workspace_projects_for_user_3():
+    user6 = f.UserFactory(username="user6")
+    user7 = f.UserFactory(username="user7")
+
+    # workspace premium, user6(ws-admin), user7(ws-member, has_projects: false)
+    workspace3 = f.create_workspace(owner=user6, is_premium=True)
+    ws_member_role = workspace3.workspace_roles.exclude(is_admin=True).first()
+    f.WorkspaceMembershipFactory.create(user=user7, workspace=workspace3, workspace_role=ws_member_role)
+
     res = repositories.get_workspace_projects_for_user(workspace3.id, user6.id)
     assert len(res) == 0
     res = repositories.get_workspace_projects_for_user(workspace3.id, user7.id)
     assert len(res) == 0
-
-    res = repositories.get_workspace_projects_for_user(workspace4.id, user6.id)
-    assert len(res) == 2
-    res = repositories.get_workspace_projects_for_user(workspace4.id, user7.id)
-    assert len(res) == 1

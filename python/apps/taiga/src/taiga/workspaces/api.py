@@ -13,6 +13,7 @@ from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm
 from taiga.workspaces import services as workspaces_services
+from taiga.workspaces.models import Workspace
 from taiga.workspaces.serializers import WorkspaceSerializer, WorkspaceSummarySerializer
 from taiga.workspaces.validators import WorkspaceValidator
 
@@ -80,3 +81,11 @@ def get_workspace(
     check_permissions(permissions=GET_WORKSPACE, user=request.user, obj=workspace)
 
     return WorkspaceSerializer.from_orm(workspace)
+
+
+def get_workspace_or_404(slug: str) -> Workspace:
+    workspace = workspaces_services.get_workspace(slug=slug)
+    if workspace is None:
+        raise ex.NotFoundError(f"Workspace {slug} does not exist")
+
+    return workspace

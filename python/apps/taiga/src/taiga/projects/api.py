@@ -19,6 +19,7 @@ from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.projects.validators import PermissionsValidator, ProjectValidator
 from taiga.workspaces import services as workspaces_services
+from taiga.workspaces.api import get_workspace_or_404
 
 metadata = {
     "name": "projects",
@@ -29,7 +30,7 @@ router = AuthAPIRouter(prefix="/projects", tags=["projects"])
 router_workspaces = AuthAPIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"])
 
 # PERMISSIONS
-LIST_PROJECTS = HasPerm("view_workspace")
+LIST_WORKSPACE_PROJECTS = HasPerm("view_workspace")
 CREATE_PROJECT = HasPerm("view_workspace")
 GET_PROJECT = HasPerm("view_project")
 GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
@@ -38,28 +39,22 @@ UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 
 @router_workspaces.get(
     "",
-    name="projects.list",
-    summary="List projects",
+    name="workspace.projects.list",
+    summary="List workspace projects",
     response_model=list[ProjectSummarySerializer],
     responses=ERROR_422 | ERROR_403,
 )
-def list_projects(
+def list_workspace_projects(
     request: Request, workspace_slug: str = Query("", description="the workspace slug (str)")
 ) -> list[ProjectSerializer]:
     """
     List projects of a workspace visible by the user.
     """
-    workspace = workspaces_services.get_workspace(slug=workspace_slug)
-    if workspace is None:
-        raise ex.NotFoundError(f"Workspace {workspace_slug} does not exist")
+    workspace = get_workspace_or_404(slug=workspace_slug)
 
-    # TODO - revisar esto porque no está bien.
-    # también tendría que devolver proyectos en los que eres miembro
-    # pero no eres miembro del WS y ahí no vas a tener permiso de view_workspace
-    check_permissions(permissions=LIST_PROJECTS, user=request.user, obj=workspace)
+    check_permissions(permissions=LIST_WORKSPACE_PROJECTS, user=request.user, obj=workspace)
 
-    # TODO - sólo debería mostrar los proyectos visibles por el usuario dentro del workspace
-    projects = projects_services.get_projects(workspace_slug=workspace_slug)
+    projects = projects_services.get_workspace_projects_for_user(workspace=workspace, user=request.user)
     return ProjectSerializer.from_queryset(projects)
 
 

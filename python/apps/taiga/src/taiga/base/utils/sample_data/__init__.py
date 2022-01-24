@@ -72,6 +72,7 @@ def load_sample_data() -> None:
     _create_long_texts_project(owner=custom_owner, workspace=workspace)
     _create_inconsistent_permissions_project(owner=custom_owner, workspace=workspace)
     _create_project_with_several_roles(owner=custom_owner, workspace=workspace, users=users)
+    _create_workspace_details()
 
     print("Sample data loaded.")
 
@@ -133,10 +134,9 @@ def _create_project_memberships(project: Project, users: List[User], except_for:
         roles_repo.create_membership(user=user, project=project, role=role, email=user.email)
 
 
-def _create_workspace_role(workspace: Workspace, name: Optional[str] = None) -> WorkspaceRole:
-    name = name or fake.word()
+def _create_workspace_role(workspace: Workspace) -> WorkspaceRole:
     return WorkspaceRole.objects.create(
-        workspace=workspace, name=name, is_admin=False, permissions=choices.WORKSPACE_PERMISSIONS
+        workspace=workspace, name="Members", is_admin=False, permissions=choices.WORKSPACE_PERMISSIONS
     )
 
 
@@ -252,3 +252,28 @@ def _create_project_with_several_roles(owner: User, workspace: Workspace, users:
     _create_project_role(project=project, name="Developer")
     _create_project_role(project=project, name="Stakeholder")
     _create_project_memberships(project=project, users=users, except_for=project.owner)
+
+
+def _create_workspace_details() -> None:
+    user6 = User.objects.get(username="user6")
+    user7 = User.objects.get(username="user7")
+
+    # workspace premium with user6 (admin) and user7 (member)
+    workspace = _create_workspace(owner=user6, is_premium=True, name="user7 is ws member")
+    members_role = workspace.workspace_roles.exclude(is_admin=True).first()
+    roles_repo.create_workspace_membership(user=user7, workspace=workspace, workspace_role=members_role)
+
+    # project in the workspace with user6 (admin) and user7 (member)
+    project = _create_project(workspace=workspace, owner=user6, name="user7 is pj member")
+    members_role = project.roles.get(slug="general")
+    roles_repo.create_membership(user=user7, project=project, role=members_role)
+
+    # project in the workspace with user6 (admin)
+    # user7 is not a project member but the project allows 'view_us' to workspace members
+    project = _create_project(workspace=workspace, owner=user6, name="ws members allowed")
+    project.workspace_member_permissions = ["view_us"]
+    project.save()
+
+    # project in the workspace with user6 (admin)
+    # user7 is not a project member and is not allowed by project permissions
+    project = _create_project(workspace=workspace, owner=user6, name="ws members not allowed")

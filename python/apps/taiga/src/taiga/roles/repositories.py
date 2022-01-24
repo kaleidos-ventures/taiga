@@ -41,7 +41,7 @@ def update_role_permissions(role: Role, permissions: list[str]) -> Role:
     return role
 
 
-def create_membership(user: User, project: Project, role: Role, email: Optional[str]) -> Membership:
+def create_membership(user: User, project: Project, role: Role, email: Optional[str] = None) -> Membership:
     return Membership.objects.create(user=user, project=project, role=role, email=email)
 
 
@@ -87,3 +87,8 @@ def get_user_workspace_membership(user: User, workspace: Workspace, cache: str =
         return user.cached_memberships_for_workspace(workspace)
 
     return workspace.cached_workspace_memberships_for_user(user)
+
+
+def is_workspace_admin(user_id: int, workspace_id: int) -> bool:
+    membership = WorkspaceMembership.objects.get(user_id=user_id, workspace_id=workspace_id)
+    return membership.workspace_role.is_admin

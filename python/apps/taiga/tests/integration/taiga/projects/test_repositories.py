@@ -80,3 +80,44 @@ def test_update_project_public_permissions():
 
     assert len(project.public_permissions) == 5
     assert len(project.anon_permissions) == 3
+
+
+##########################################################
+# get_workspace_projects_for_user
+##########################################################
+
+
+def test_get_workspace_projects_for_user():
+    ws_admin = f.UserFactory(username="ws_admin")
+    ws_member = f.UserFactory(username="ws_member")
+    ws_guest = f.UserFactory(username="ws_guest")
+
+    # workspace premium with ws_admin and ws_member
+    workspace = f.create_workspace(owner=ws_admin, is_premium=True)
+    ws_member_role = workspace.workspace_roles.exclude(is_admin=True).first()
+    f.WorkspaceMembershipFactory.create(user=ws_member, workspace=workspace, workspace_role=ws_member_role)
+
+    # ws_member is pj_member
+    # visible by ws_admin and ws_member
+    pj1 = f.create_project(workspace=workspace)
+    pj_general_role = pj1.roles.get(slug="general")
+    f.MembershipFactory.create(user=ws_member, project=pj1, role=pj_general_role)
+
+    # ws_member is not pj_member but ws_members have perms
+    # visible by ws_admin, ws_member and ws_guest
+    pj2 = f.create_project(workspace=workspace)
+    pj2.workspace_member_permissions = ["view_us"]
+    pj2.save()
+
+    # ws_member is not pj_member and ws_members dont have perms
+    # visible by ws_admin
+    f.create_project(workspace=workspace)
+
+    res = repositories.get_workspace_projects_for_user(workspace.id, ws_admin.id)
+    assert len(res) == 3
+
+    res = repositories.get_workspace_projects_for_user(workspace.id, ws_member.id)
+    assert len(res) == 2
+
+    res = repositories.get_workspace_projects_for_user(workspace.id, ws_guest.id)
+    assert len(res) == 1

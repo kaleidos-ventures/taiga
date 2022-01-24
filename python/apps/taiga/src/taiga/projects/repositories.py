@@ -8,6 +8,7 @@ from collections.abc import Iterable
 from typing import Optional
 
 from django.core.files import File
+from django.db.models import Q
 from taiga.projects.models import Project, ProjectTemplate
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
@@ -16,6 +17,15 @@ from taiga.workspaces.models import Workspace
 def get_projects(workspace_slug: str) -> Iterable[Project]:
     data: Iterable[Project] = Project.objects.filter(workspace__slug=workspace_slug).order_by("-created_date")
     return data
+
+
+def get_workspace_projects_for_user(workspace_id: int, user_id: int) -> Iterable[Project]:
+    # projects of a workspace where:
+    # - the user is member
+    # - the workspace_member_permissions allow to ws members
+    return Project.objects.filter(
+        Q(workspace_id=workspace_id), Q(members__id=user_id) | Q(workspace_member_permissions__len__gt=0)
+    ).distinct()
 
 
 def create_project(

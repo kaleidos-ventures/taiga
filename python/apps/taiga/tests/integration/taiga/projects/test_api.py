@@ -74,13 +74,21 @@ def test_create_project_validation_error(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
-def test_list_projects_success(client):
+def test_list_workspace_projects_success(client):
     project = f.create_project()
 
     client.login(project.owner)
     response = client.get(f"/workspaces/{project.workspace.slug}/projects")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
+
+
+def test_get_workspace_projects_workspace_not_found(client):
+    user = f.UserFactory()
+
+    client.login(user)
+    response = client.get("/workspaces/non-existent/projects")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
 def test_get_project_being_project_admin(client):

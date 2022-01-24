@@ -26,6 +26,13 @@ def get_projects(workspace_slug: str) -> Iterable[Project]:
     return projects_repo.get_projects(workspace_slug=workspace_slug)
 
 
+def get_workspace_projects_for_user(workspace: Workspace, user: User) -> Iterable[Project]:
+    if roles_repo.is_workspace_admin(user.id, workspace.id):
+        return get_projects(workspace_slug=workspace.slug)
+
+    return projects_repo.get_workspace_projects_for_user(workspace_id=workspace.id, user_id=user.id)
+
+
 def create_project(
     workspace: Workspace,
     name: str,

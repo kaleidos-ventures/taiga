@@ -14,6 +14,7 @@ from .base import Factory, factory
 class WorkspaceFactory(Factory):
     name = factory.Sequence(lambda n: f"workspace {n}")
     owner = factory.SubFactory("tests.utils.factories.UserFactory")
+    is_premium = False
 
     class Meta:
         model = "workspaces.Workspace"
@@ -33,8 +34,8 @@ def create_workspace(**kwargs):
         workspace=workspace,
     )
     f.WorkspaceRoleFactory.create(
-        name="General",
-        slug="general",
+        name="Members",
+        slug="member",
         permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=False,
         workspace=workspace,

@@ -89,3 +89,27 @@ def test_update_project_public_permissions_incompatible():
 
     with pytest.raises(ex.IncompatiblePermissionsSetError):
         services.update_project_public_permissions(project=project, permissions=incompatible_permissions)
+
+
+def test_get_workspace_projects_for_user_admin():
+    workspace = f.WorkspaceFactory()
+    user = workspace.owner
+
+    with patch("taiga.projects.services.roles_repo") as fake_roles_repo, patch(
+        "taiga.projects.services.projects_repo"
+    ) as fake_projects_repo:
+        fake_roles_repo.is_workspace_admin.return_value = True
+        services.get_workspace_projects_for_user(workspace=workspace, user=user)
+        assert fake_projects_repo.get_projects.called_once_with(workspace.slug)
+
+
+def test_get_workspace_projects_for_user_member():
+    workspace = f.WorkspaceFactory()
+    user = workspace.owner
+
+    with patch("taiga.projects.services.roles_repo") as fake_roles_repo, patch(
+        "taiga.projects.services.projects_repo"
+    ) as fake_projects_repo:
+        fake_roles_repo.is_workspace_admin.return_value = False
+        services.get_workspace_projects_for_user(workspace=workspace, user=user)
+        assert fake_projects_repo.get_workspace_projects_for_user.called_once_with(workspace.id, user.id)

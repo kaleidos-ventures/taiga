@@ -63,7 +63,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </form>
     </section>
 
-    <section data-fragment="public-permissions-settings"
+    <section
+      data-fragment="public-permissions-settings"
+      data-test="public-permissions-settings"
       class="public-permissions-settings"
       inViewport
       (visible)="isInViewport($event)">
@@ -76,7 +78,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [hasMembers]="false"
           [name]="''"
           [numMembers]="0"
-          data-test="public-permission-row">
+          data-test="role-permission-row">
         </tg-role-permission-row>
         <tg-ui-notification-inline [status]="'info'">
           <span>{{ t('project_settings.external_members') }}</span>

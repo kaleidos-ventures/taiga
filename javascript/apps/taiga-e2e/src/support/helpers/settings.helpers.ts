@@ -30,6 +30,15 @@ export const displayAdvancedSettingsForRole = (index: number) => {
   });
 };
 
+export const displayPublicAdvancedSettingsForRole = (index: number) => {
+  cy.getBySel('public-permissions-settings').within(() => {
+    cy.getBySel('role-permission-row').should('be.visible');
+    cy.getBySel('role-permission-row').eq(index).within(() => {
+      cy.getBySel('permission-row-advanced-settings').click();
+    });
+  });
+};
+
 export const setModulePermissions = (index: number, permission: DropdownOptions) => {
 
   const permissions: DropdownOptions[] = ['no-access', 'can-view', 'can-edit'];

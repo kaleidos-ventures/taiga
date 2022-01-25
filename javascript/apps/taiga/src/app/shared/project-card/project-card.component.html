@@ -6,15 +6,11 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<ng-container *transloco="let t;">
-  <div *ngIf="placeholder"
-    class="project-item-card placeholder">
-    <tg-ui-avatar
-      type="light"
-      [color]="0"
-      [name]="''">
-    </tg-ui-avatar>
-    <a tuiLink
+<ng-container *transloco="let t">
+  <div *ngIf="placeholder" class="project-item-card placeholder">
+    <tg-ui-avatar type="light" [color]="0" [name]="''"> </tg-ui-avatar>
+    <a
+      tuiLink
       [routerLink]="['/new-project']"
       [queryParams]="{ workspace: slug }"
       data-test="create-project-card"
@@ -27,8 +23,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </ng-container>
     </a>
   </div>
-  <div *ngIf="!placeholder"
-    class="project-item-card">
+  <div *ngIf="!placeholder" class="project-item-card">
     <div class="project-card-title">
       <tg-ui-avatar
         class="project-card-image"
@@ -37,7 +32,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [url]="project.logoSmall"
         [name]="project.name">
       </tg-ui-avatar>
-      <a [routerLink]="['/project', project.slug]"
+      <a
+        [routerLink]="['/project', project.slug]"
         class="project-card-link"
         data-test="project-card">
         {{ project.name }}
@@ -45,5 +41,4 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
     <p class="project-card-description">{{ project.description }}</p>
   </div>
-
 </ng-container>

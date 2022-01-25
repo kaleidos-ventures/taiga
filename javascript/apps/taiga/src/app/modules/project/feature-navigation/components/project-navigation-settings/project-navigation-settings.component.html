@@ -6,14 +6,13 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<ng-container *transloco="let t;">
+<ng-container *transloco="let t">
   <nav class="project-settings-nav">
-    <button (click)="navigateBack()"
-      class="back-to-nav">
-      <tui-svg class="back-icon"
-        src="chevron-left"></tui-svg>
+    <button (click)="navigateBack()" class="back-to-nav">
+      <tui-svg class="back-icon" src="chevron-left"></tui-svg>
       <span class="project-data">
-        <tg-ui-avatar class="project-data-image"
+        <tg-ui-avatar
+          class="project-data-image"
           type="light"
           [color]="project.color"
           [url]="project.logoSmall"
@@ -25,11 +24,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </span>
     </button>
     <div>
-      <h2 class="project-settings-title">{{
-        t('project_settings.project_settings') }}</h2>
+      <h2 class="project-settings-title">
+        {{ t('project_settings.project_settings') }}
+      </h2>
       <ul class="project-settings-menu">
         <li class="project-settings-menu-item">
-          <a class="project-settings-menu-anchor"
+          <a
+            class="project-settings-menu-anchor"
             #firstChild
             routerLink="./settings/project"
             routerLinkActive="active"
@@ -38,22 +39,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </a>
         </li>
         <li class="project-settings-menu-item">
-          <a class="project-settings-menu-anchor"
+          <a
+            class="project-settings-menu-anchor"
             routerLink="./settings/members"
             routerLinkActive="active">
             {{ t('commons.members') }}
           </a>
         </li>
         <li class="project-settings-menu-item menu-item-unfolded">
-          <a class="project-settings-menu-anchor"
+          <a
+            class="project-settings-menu-anchor"
             routerLink="./settings/permissions"
             routerLinkActive="active">
             {{ t('project_settings.roles_and_permissions') }}
           </a>
           <ul class="project-settings-submenu">
             <li class="project-settings-submenu-item">
-              <a class="project-settings-submenu-anchor"
-                [class.active]="currentFragment === 'member-permissions-settings'"
+              <a
+                class="project-settings-submenu-anchor"
+                [class.active]="
+                  currentFragment === 'member-permissions-settings'
+                "
                 routerLink="./settings/permissions"
                 fragment="member-permissions-settings"
                 data-test="member-permissions-settings">
@@ -61,16 +67,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </a>
             </li>
             <li class="project-settings-submenu-item">
-              <a class="project-settings-submenu-anchor"
-                [class.active]="currentFragment === 'public-permissions-settings'"
+              <a
+                class="project-settings-submenu-anchor"
+                [class.active]="
+                  currentFragment === 'public-permissions-settings'
+                "
                 routerLink="./settings/permissions"
                 fragment="public-permissions-settings">
                 {{ t('project_settings.public_permissions') }}
               </a>
             </li>
             <li class="project-settings-submenu-item">
-              <a class="project-settings-submenu-anchor"
-                [class.active]="currentFragment === 'workspace-permissions-settings'"
+              <a
+                class="project-settings-submenu-anchor"
+                [class.active]="
+                  currentFragment === 'workspace-permissions-settings'
+                "
                 routerLink="./settings/permissions"
                 fragment="workspace-permissions-settings">
                 {{ t('project_settings.workspace_permissions') }}
@@ -79,15 +91,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </ul>
         </li>
         <li class="project-settings-menu-item">
-          <a class="project-settings-menu-anchor"
+          <a
+            class="project-settings-menu-anchor"
             routerLink="./settings/integrations"
-            routerLinkActive="active">{{ t('project_settings.integrations')
-            }}</a>
+            routerLinkActive="active"
+            >{{ t('project_settings.integrations') }}</a
+          >
         </li>
         <li class="project-settings-menu-item">
-          <a class="project-settings-menu-anchor"
+          <a
+            class="project-settings-menu-anchor"
             routerLink="./settings/plugins"
-            routerLinkActive="active">{{ t('project_settings.plugins') }}</a>
+            routerLinkActive="active"
+            >{{ t('project_settings.plugins') }}</a
+          >
         </li>
       </ul>
     </div>

@@ -25,10 +25,7 @@ export class LocalStorageService {
   }
 
   public set(key: string, newValue?: unknown) {
-    localStorage.setItem(
-      key,
-      JSON.stringify(newValue)
-    );
+    localStorage.setItem(key, JSON.stringify(newValue));
   }
 
   public remove(key: string) {

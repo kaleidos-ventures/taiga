@@ -206,11 +206,11 @@ ul {
       inline-size: var(--spacing-16);
       margin-inline-start: auto;
       transform: rotate(180deg);
-      transition: all .2s linear;
+      transition: all 0.2s linear;
 
       &.active {
         transform: rotate(0);
-        transition: all .2s linear;
+        transition: all 0.2s linear;
       }
     }
   }
@@ -419,7 +419,7 @@ ul {
 /* FLOATING DIALOG */
 
 .dialog-scrum {
-  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, .3);
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.3);
 
   & .child-menu-option {
     margin-block-end: 0;

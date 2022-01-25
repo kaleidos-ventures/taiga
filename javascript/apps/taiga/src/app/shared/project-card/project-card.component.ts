@@ -15,10 +15,9 @@ import { Project } from '@taiga/data';
   templateUrl: './project-card.component.html',
   styleUrls: ['./project-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState]
+  providers: [RxState],
 })
 export class ProjectCardComponent {
-
   @Input()
   public placeholder = false;
 
@@ -29,5 +28,8 @@ export class ProjectCardComponent {
   public firstProject = false;
 
   @Input()
-  public project!: Pick<Project, 'name'|'slug'|'description'|'color'|'logoSmall'>;
+  public project!: Pick<
+    Project,
+    'name' | 'slug' | 'description' | 'color' | 'logoSmall'
+  >;
 }

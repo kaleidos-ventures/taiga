@@ -6,8 +6,25 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { animate, query, state, style, transition, trigger, group, AnimationEvent } from '@angular/animations';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, HostListener, Input, OnInit } from '@angular/core';
+import {
+  animate,
+  query,
+  state,
+  style,
+  transition,
+  trigger,
+  group,
+  AnimationEvent,
+} from '@angular/animations';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  HostBinding,
+  HostListener,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
@@ -29,12 +46,18 @@ const translateMenuSelector = '.main-nav-container-inner';
   providers: [RxState],
   animations: [
     trigger('openCollapse', [
-      state('collapsed', style({
-        inlineSize: collapseMenuWidth,
-      })),
-      state('open, open-settings', style({
-        inlineSize: menuWidth,
-      })),
+      state(
+        'collapsed',
+        style({
+          inlineSize: collapseMenuWidth,
+        })
+      ),
+      state(
+        'open, open-settings',
+        style({
+          inlineSize: menuWidth,
+        })
+      ),
       transition('open => collapsed', [
         query('[data-animation="text"]', style({ opacity: 1 })),
         query('[data-animation="text"]', animate(100, style({ opacity: 0 }))),
@@ -45,20 +68,26 @@ const translateMenuSelector = '.main-nav-container-inner';
       ]),
       transition('open <=> open-settings', [
         query(translateMenuSelector, [
-          animate(settingsMenuAnimation, style({
-            transform: 'translateX({{ horizontalTranslate }})',
-          })),
+          animate(
+            settingsMenuAnimation,
+            style({
+              transform: 'translateX({{ horizontalTranslate }})',
+            })
+          ),
         ]),
       ]),
       transition('collapsed => open-settings', [
         group([
           animate(settingsMenuAnimation, style({ inlineSize: menuWidth })),
           query(translateMenuSelector, [
-            animate(settingsMenuAnimation, style({
-              transform: 'translateX({{ horizontalTranslate }})',
-            })),
+            animate(
+              settingsMenuAnimation,
+              style({
+                transform: 'translateX({{ horizontalTranslate }})',
+              })
+            ),
           ]),
-        ])
+        ]),
       ]),
       transition('open-settings => collapsed', [
         group([
@@ -67,34 +96,49 @@ const translateMenuSelector = '.main-nav-container-inner';
               transform: `translateX(-${collapseMenuWidth})`,
             }),
           ]),
-          animate(settingsMenuAnimation, style({ inlineSize: collapseMenuWidth })),
+          animate(
+            settingsMenuAnimation,
+            style({ inlineSize: collapseMenuWidth })
+          ),
           query(translateMenuSelector, [
-            animate(settingsMenuAnimation, style({
-              transform: 'translateX({{ horizontalTranslate }})',
-            })),
+            animate(
+              settingsMenuAnimation,
+              style({
+                transform: 'translateX({{ horizontalTranslate }})',
+              })
+            ),
           ]),
-        ])
+        ]),
       ]),
     ]),
     trigger('mainNavContainer', [
-      state('open', style({
-        transform: 'translateX(0)',
-      })),
-      state('closed', style({
-        transform: 'translateX(0)',
-      })),
-      state('open-settings', style({
-        transform: 'translateX({{ horizontalTranslate }})',
-      }), {
-        params: {
-          horizontalTranslate: '0%',
+      state(
+        'open',
+        style({
+          transform: 'translateX(0)',
+        })
+      ),
+      state(
+        'closed',
+        style({
+          transform: 'translateX(0)',
+        })
+      ),
+      state(
+        'open-settings',
+        style({
+          transform: 'translateX({{ horizontalTranslate }})',
+        }),
+        {
+          params: {
+            horizontalTranslate: '0%',
+          },
         }
-      }),
-    ])
+      ),
+    ]),
   ],
 })
 export class ProjectNavigationComponent implements OnInit {
-
   @Input()
   public project!: Project;
 
@@ -115,8 +159,8 @@ export class ProjectNavigationComponent implements OnInit {
     return {
       value,
       params: {
-        horizontalTranslate
-      }
+        horizontalTranslate,
+      },
     };
   }
 
@@ -130,7 +174,7 @@ export class ProjectNavigationComponent implements OnInit {
     this.settingsAnimationInProgress = true;
   }
 
-  @HostListener('@openCollapse.done', [ '$event' ])
+  @HostListener('@openCollapse.done', ['$event'])
   public captureDoneEvent($event: AnimationEvent) {
     this.animationEvents$.next($event);
 
@@ -151,7 +195,7 @@ export class ProjectNavigationComponent implements OnInit {
         paths: 'subset',
         queryParams: 'ignored',
         fragment: 'ignored',
-        matrixParams: 'ignored'
+        matrixParams: 'ignored',
       }
     );
   }
@@ -167,8 +211,8 @@ export class ProjectNavigationComponent implements OnInit {
       ['project', this.project.slug, 'settings', 'project'],
       {
         state: {
-          ignoreNextMainFocus: true
-        }
+          ignoreNextMainFocus: true,
+        },
       }
     );
   }

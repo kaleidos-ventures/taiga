@@ -12,8 +12,8 @@ import { immerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
 
 export interface WorkspaceDetailState {
-  workspace: Workspace,
-  workspaceProjects: Project[]
+  workspace: Workspace;
+  workspaceProjects: Project[];
 }
 
 export const initialState: WorkspaceDetailState = {
@@ -23,23 +23,29 @@ export const initialState: WorkspaceDetailState = {
     slug: '',
     color: 0,
     latestProjects: [],
-    totalProjects: 0
+    totalProjects: 0,
   },
-  workspaceProjects: []
+  workspaceProjects: [],
 };
 
 export const reducer = createReducer(
   initialState,
-  on(WorkspaceActions.fetchWorkspaceSuccess, (state, { workspace }): WorkspaceDetailState => {
-    state.workspace = workspace;
+  on(
+    WorkspaceActions.fetchWorkspaceSuccess,
+    (state, { workspace }): WorkspaceDetailState => {
+      state.workspace = workspace;
 
-    return state;
-  }),
-  on(WorkspaceActions.fetchWorkspaceProjectsSuccess, (state, { projects }): WorkspaceDetailState => {
-    state.workspaceProjects = projects;
+      return state;
+    }
+  ),
+  on(
+    WorkspaceActions.fetchWorkspaceProjectsSuccess,
+    (state, { projects }): WorkspaceDetailState => {
+      state.workspaceProjects = projects;
 
-    return state;
-  }),
+      return state;
+    }
+  )
 );
 
 export const workspaceDetailFeature = createFeature({

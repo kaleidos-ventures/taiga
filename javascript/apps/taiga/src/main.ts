@@ -26,7 +26,7 @@ if (environment.production) {
 
 if (environment.configRemote) {
   void fetch(environment.configRemote)
-    .then(response => response.json())
+    .then((response) => response.json())
     .then((config) => {
       environment.configLocal = config as Config;
 
@@ -37,4 +37,3 @@ if (environment.configRemote) {
     init();
   });
 }
-

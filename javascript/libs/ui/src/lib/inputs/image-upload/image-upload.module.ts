@@ -22,11 +22,7 @@ import { UiErrorModule } from '../error/error.module';
     TuiButtonModule,
     UiErrorModule,
   ],
-  declarations: [
-    ImageUploadComponent
-  ],
-  exports: [
-    ImageUploadComponent
-  ]
+  declarations: [ImageUploadComponent],
+  exports: [ImageUploadComponent],
 })
 export class ImageUploadModule {}

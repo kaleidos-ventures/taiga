@@ -13,13 +13,10 @@ import { Project, Workspace, WorkspaceCreation } from '@taiga/data';
 import { map } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WorkspaceApiService {
-  constructor(
-    private http: HttpClient,
-    private config: ConfigService
-  ) { }
+  constructor(private http: HttpClient, private config: ConfigService) {}
 
   public fetchWorkspaceList() {
     return this.http.get<Workspace[]>(`${this.config.apiUrl}/workspaces`);
@@ -30,19 +27,22 @@ export class WorkspaceApiService {
   }
 
   public createWorkspace(workspaceCreation: WorkspaceCreation) {
-    return this.http.post<Workspace>(`${this.config.apiUrl}/workspaces`, workspaceCreation).pipe(
-      map((workspace: Workspace) => {
-        return {
-          ...workspace,
-          latestProjects: [],
-          totalProjects: 0
-        };
-      })
-    );
+    return this.http
+      .post<Workspace>(`${this.config.apiUrl}/workspaces`, workspaceCreation)
+      .pipe(
+        map((workspace: Workspace) => {
+          return {
+            ...workspace,
+            latestProjects: [],
+            totalProjects: 0,
+          };
+        })
+      );
   }
 
   public fetchWorkspaceProjects(slug: Workspace['slug']) {
-    return this.http.get<Project[]>(`${this.config.apiUrl}/workspaces/${slug}/projects`);
+    return this.http.get<Project[]>(
+      `${this.config.apiUrl}/workspaces/${slug}/projects`
+    );
   }
-
 }

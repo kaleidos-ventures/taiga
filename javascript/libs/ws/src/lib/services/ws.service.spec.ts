@@ -7,7 +7,7 @@
  */
 
 import { WsService } from '../services/ws.service';
-import { wsMessage  } from '../ws.actions';
+import { wsMessage } from '../ws.actions';
 import { ConfigService } from '@taiga/core';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { createEffect } from '@ngrx/effects';
@@ -40,22 +40,20 @@ describe('WsService', () => {
     const event = {
       data: {
         type: 'test-action',
-        msg: 'test'
-      }
+        msg: 'test',
+      },
     };
 
-    actions$ = hot('-a', { a:  wsMessage(event)});
+    actions$ = hot('-a', { a: wsMessage(event) });
 
     const wsEvents$ = createEffect(() => {
-      return service.events<{type: string, msg: string}>('test-action');
+      return service.events<{ type: string; msg: string }>('test-action');
     });
 
     const expected = cold('-a', {
       a: event.data,
     });
 
-    expect(
-      wsEvents$
-    ).toBeObservable(expected);
+    expect(wsEvents$).toBeObservable(expected);
   });
 });

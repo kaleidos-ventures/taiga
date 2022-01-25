@@ -2,7 +2,6 @@
 
 Taiga uses [hotkeys](https://www.npmjs.com/package/hotkeys-js) for the shortcuts, check it out for more info.
 
-
 1. Add the shortcut to `/javascript/libs/core/src/lib/services/shortcuts/shortcuts.ts`
 
 ```ts
@@ -25,10 +24,12 @@ Taiga uses [hotkeys](https://www.npmjs.com/package/hotkeys-js) for the shortcuts
 import { ShortcutsService } from '@taiga/core';
 
 class Test {
-  constructor(private shortcutsService: ShortcutsService)  {
-    const subscription = this.shortcutsService.task('task.name').subscribe(() => {
-      // task
-    });
+  constructor(private shortcutsService: ShortcutsService) {
+    const subscription = this.shortcutsService
+      .task('task.name')
+      .subscribe(() => {
+        // task
+      });
   }
 }
 ```
@@ -73,15 +74,17 @@ class Tooltip {
 4. Don't forget unsubscribe when it's needed
 
 Option 1
+
 ```ts
 import { ShortcutsService } from '@taiga/core';
 
 class Test {
-  constructor(private shortcutsService: ShortcutsService)  {
-    const subscription = this.shortcutsService.task('task.name').subscribe(() => {
-      // task
-    });
-
+  constructor(private shortcutsService: ShortcutsService) {
+    const subscription = this.shortcutsService
+      .task('task.name')
+      .subscribe(() => {
+        // task
+      });
 
     subscription.unsubscribe();
   }
@@ -89,18 +92,20 @@ class Test {
 ```
 
 Option 2
+
 ```ts
 import { ShortcutsService } from '@taiga/core';
 
 class Test {
   ngUnsubscribe = new Subject();
 
-  constructor(private shortcutsService: ShortcutsService)  {
-    this.shortcutsService.task('task.name')
-    .pipe(takeUntil(this.ngUnsubscribe))
-    .subscribe(() => {
-      // task
-    });
+  constructor(private shortcutsService: ShortcutsService) {
+    this.shortcutsService
+      .task('task.name')
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        // task
+      });
   }
 
   ngOnDestroy() {

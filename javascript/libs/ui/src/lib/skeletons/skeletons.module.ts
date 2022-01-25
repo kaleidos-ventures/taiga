@@ -15,13 +15,7 @@ import { CardSkeletonComponent } from './card-skeleton/card-skeleton.component';
 
 @NgModule({
   imports: [CommonModule, OverlayModule],
-  declarations: [
-    CardSkeletonComponent
-  ],
-  exports: [
-    CardSkeletonComponent
-  ]
+  declarations: [CardSkeletonComponent],
+  exports: [CardSkeletonComponent],
 })
-export class SkeletonsModule {
-
-}
+export class SkeletonsModule {}

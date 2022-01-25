@@ -15,10 +15,11 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/pr
   selector: 'tg-role-customize',
   templateUrl: './role-customize.component.html',
   styleUrls: ['./role-customize.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoleCustomizeComponent {
-  public basicPermissionList = this.projectsSettingsFeatureRolesPermissionsService.getPermissions();
+  public basicPermissionList =
+    this.projectsSettingsFeatureRolesPermissionsService.getPermissions();
 
   @Input()
   public formGroup!: FormGroup;
@@ -26,7 +27,9 @@ export class RoleCustomizeComponent {
   @Input()
   public toggleCustomize = false;
 
-  constructor(private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService) {}
+  constructor(
+    private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService
+  ) {}
 
   public trackByValue(_index: number, permission: KeyValue<string, string>) {
     return permission.value;

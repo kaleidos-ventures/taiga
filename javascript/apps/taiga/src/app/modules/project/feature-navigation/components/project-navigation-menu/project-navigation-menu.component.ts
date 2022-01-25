@@ -6,7 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Project } from '@taiga/data';
 
 interface ProjectMenuDialog {
@@ -28,10 +36,9 @@ interface ProjectMenuDialog {
 @Component({
   selector: 'tg-project-navigation-menu',
   templateUrl: './project-navigation-menu.component.html',
-  styleUrls: ['./project-navigation-menu.component.css']
+  styleUrls: ['./project-navigation-menu.component.css'],
 })
 export class ProjectNavigationMenuComponent {
-
   public collapseText = true;
   public scrumChildMenuVisible = false;
 
@@ -47,11 +54,14 @@ export class ProjectNavigationMenuComponent {
   @Output()
   public displaySettingsMenu = new EventEmitter<void>();
 
-  @ViewChild('backlogSubmenu', { static: false }) public backlogSubmenuEl!: ElementRef;
+  @ViewChild('backlogSubmenu', { static: false })
+  public backlogSubmenuEl!: ElementRef;
 
-  @ViewChild('backlogButton', { static: false }) public backlogButtonElement!: ElementRef;
+  @ViewChild('backlogButton', { static: false })
+  public backlogButtonElement!: ElementRef;
 
-  @ViewChild('projectSettingButton', { static: false }) public  projectSettingButton!: ElementRef;
+  @ViewChild('projectSettingButton', { static: false })
+  public projectSettingButton!: ElementRef;
 
   public dialog: ProjectMenuDialog = {
     open: false,
@@ -68,12 +78,13 @@ export class ProjectNavigationMenuComponent {
 
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
 
-  constructor(
-    private readonly cd: ChangeDetectorRef,
-  ) {}
+  constructor(private readonly cd: ChangeDetectorRef) {}
 
-  public initDialog(el: HTMLElement, type: string, children: ProjectMenuDialog['children'] = []) {
-
+  public initDialog(
+    el: HTMLElement,
+    type: string,
+    children: ProjectMenuDialog['children'] = []
+  ) {
     if (this.dialogCloseTimeout) {
       clearTimeout(this.dialogCloseTimeout);
     }
@@ -87,8 +98,14 @@ export class ProjectNavigationMenuComponent {
         this.dialog.link = el.querySelector('a')!.getAttribute('href') ?? '';
       }
       this.dialog.hover = false;
-      this.dialog.mainLinkHeight = type === 'project' ? (el.closest('.workspace') as HTMLElement).offsetHeight : el.offsetHeight;
-      this.dialog.top = type === 'project' ? (el.closest('.workspace') as HTMLElement).offsetTop : el.offsetTop;
+      this.dialog.mainLinkHeight =
+        type === 'project'
+          ? (el.closest('.workspace') as HTMLElement).offsetHeight
+          : el.offsetHeight;
+      this.dialog.top =
+        type === 'project'
+          ? (el.closest('.workspace') as HTMLElement).offsetTop
+          : el.offsetTop;
       this.dialog.open = true;
       this.dialog.text = text;
       this.dialog.children = children;
@@ -147,7 +164,7 @@ export class ProjectNavigationMenuComponent {
     //   link: ['http://taiga.io']
     // });
 
-    this.initDialog(event.target as HTMLElement, 'scrum', /* children */);
+    this.initDialog(event.target as HTMLElement, 'scrum' /* children */);
   }
 
   // When milestones available
@@ -156,7 +173,7 @@ export class ProjectNavigationMenuComponent {
   // }
 
   public toggleScrumChildMenu() {
-    if(this.collapsed) {
+    if (this.collapsed) {
       (this.backlogSubmenuEl.nativeElement as HTMLElement).focus();
     } else {
       this.scrumChildMenuVisible = !this.scrumChildMenuVisible;
@@ -182,5 +199,4 @@ export class ProjectNavigationMenuComponent {
     this.dialog.open = false;
     this.dialog.type = '';
   }
-
 }

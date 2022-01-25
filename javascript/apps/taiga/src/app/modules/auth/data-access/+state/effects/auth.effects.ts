@@ -20,24 +20,25 @@ import { AuthService } from '~/app/modules/auth/data-access/services/auth.servic
 
 @Injectable()
 export class AuthEffects {
-
   public login$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.login),
       pessimisticUpdate({
         run: ({ username, password }) => {
-          return this.authApiService.login({
-            username,
-            password,
-          }).pipe(
-            map((auth: Auth) => {
-              return AuthActions.loginSuccess({ auth, redirect: true });
+          return this.authApiService
+            .login({
+              username,
+              password,
             })
-          );
+            .pipe(
+              map((auth: Auth) => {
+                return AuthActions.loginSuccess({ auth, redirect: true });
+              })
+            );
         },
         onError: () => {
           return null;
-        }
+        },
       })
     );
   });
@@ -73,22 +74,25 @@ export class AuthEffects {
     );
   });
 
-  public setUser$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(AuthActions.setUser),
-      tap(({ user }) => {
-        if (user) {
-          this.authService.setUser(user);
-        }
-      })
-    );
-  }, { dispatch: false });
+  public setUser$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(AuthActions.setUser),
+        tap(({ user }) => {
+          if (user) {
+            this.authService.setUser(user);
+          }
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   constructor(
     private router: Router,
     private actions$: Actions,
     private authApiService: AuthApiService,
     private authService: AuthService,
-    private usersApiService: UsersApiService) {}
-
+    private usersApiService: UsersApiService
+  ) {}
 }

@@ -25,7 +25,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   templateUrl: './project-feature-overview.component.html',
   styleUrls: ['./project-feature-overview.component.css'],
 })
-export class ProjectFeatureOverviewComponent implements OnInit, AfterViewChecked
+export class ProjectFeatureOverviewComponent
+  implements OnInit, AfterViewChecked
 {
   @ViewChild('descriptionOverflow')
   public descriptionOverflow?: ElementRef;

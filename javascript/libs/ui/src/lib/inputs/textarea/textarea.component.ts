@@ -6,8 +6,18 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { AfterContentInit, Component, ContentChild, HostBinding, Input } from '@angular/core';
-import { ControlContainer, FormControl, FormGroupDirective } from '@angular/forms';
+import {
+  AfterContentInit,
+  Component,
+  ContentChild,
+  HostBinding,
+  Input,
+} from '@angular/core';
+import {
+  ControlContainer,
+  FormControl,
+  FormGroupDirective,
+} from '@angular/forms';
 import { TUI_TEXTFIELD_LABEL_OUTSIDE } from '@taiga-ui/core';
 import { TuiTextAreaComponent } from '@taiga-ui/kit';
 import { FormDirective } from '../form/form.directive';
@@ -18,19 +28,16 @@ let nextId = 0;
 @Component({
   selector: 'tg-ui-textarea',
   templateUrl: './textarea.component.html',
-  styleUrls: [
-    '../inputs.css',
-    './textarea.component.css',
-  ],
+  styleUrls: ['../inputs.css', './textarea.component.css'],
   providers: [
     FieldService,
     {
       provide: TUI_TEXTFIELD_LABEL_OUTSIDE,
       useValue: {
         labelOutside: true,
-      }
+      },
     },
-  ]
+  ],
 })
 export class TextareaComponent implements AfterContentInit {
   @Input()
@@ -80,7 +87,7 @@ export class TextareaComponent implements AfterContentInit {
   constructor(
     private controlContainer: ControlContainer,
     private fieldService: FieldService,
-    private formDirective: FormDirective,
+    private formDirective: FormDirective
   ) {}
 
   public get control() {

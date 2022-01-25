@@ -6,8 +6,20 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { ProjectCreation, Workspace } from '@taiga/data';
 import { Template } from '~/app/modules/feature-new-project/data/new-project.model';
@@ -17,10 +29,7 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
 @Component({
   selector: 'tg-init-step',
   templateUrl: './init-step.component.html',
-  styleUrls: [
-    '../../styles/project.shared.css',
-    './init-step.component.css'
-  ],
+  styleUrls: ['../../styles/project.shared.css', './init-step.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitStepComponent implements OnInit {
@@ -31,7 +40,10 @@ export class InitStepComponent implements OnInit {
   public workspaces!: Workspace[];
 
   @Output()
-  public templateSelected = new EventEmitter<{step: Step, slug: ProjectCreation['workspaceSlug']}>();
+  public templateSelected = new EventEmitter<{
+    step: Step;
+    slug: ProjectCreation['workspaceSlug'];
+  }>();
 
   public createProjectForm!: FormGroup;
   public previousUrl: string = this.routeHistoryService.getPreviousUrl();
@@ -40,32 +52,50 @@ export class InitStepComponent implements OnInit {
     {
       nextStep: 'blank',
       icon: 'empty',
-      title: this.translocoService.translate('new_project.first_step.blank_project'),
-      description: this.translocoService.translate('new_project.first_step.blank_project_description'),
+      title: this.translocoService.translate(
+        'new_project.first_step.blank_project'
+      ),
+      description: this.translocoService.translate(
+        'new_project.first_step.blank_project_description'
+      ),
       action: () => this.initProject('blank'),
     },
     {
       nextStep: 'template',
       icon: 'template',
-      title: this.translocoService.translate('new_project.first_step.template_project'),
-      description: this.translocoService.translate('new_project.first_step.template_project_description'),
+      title: this.translocoService.translate(
+        'new_project.first_step.template_project'
+      ),
+      description: this.translocoService.translate(
+        'new_project.first_step.template_project_description'
+      ),
       action: () => this.initProject('template'),
     },
     {
       nextStep: 'import',
       icon: 'import',
-      title: this.translocoService.translate('new_project.first_step.import_project'),
-      description: this.translocoService.translate('new_project.first_step.import_project_description'),
+      title: this.translocoService.translate(
+        'new_project.first_step.import_project'
+      ),
+      description: this.translocoService.translate(
+        'new_project.first_step.import_project_description'
+      ),
       action: () => this.initProject('import'),
     },
     {
       nextStep: 'duplicate',
       icon: 'copy',
-      title: this.translocoService.translate('new_project.first_step.duplicate_project'),
-      description: this.translocoService.translate('new_project.first_step.duplicate_project_description'),
-      tip: this.translocoService.translate('new_project.first_step.duplicate_project_tip'),
+      title: this.translocoService.translate(
+        'new_project.first_step.duplicate_project'
+      ),
+      description: this.translocoService.translate(
+        'new_project.first_step.duplicate_project_description'
+      ),
+      tip: this.translocoService.translate(
+        'new_project.first_step.duplicate_project_tip'
+      ),
       action: () => this.initProject('duplicate'),
-    }
+    },
   ];
 
   public readonlyWorkspace = false;
@@ -105,10 +135,10 @@ export class InitStepComponent implements OnInit {
 
   public initProject(step: Step) {
     const workspace: Workspace = this.currentWorkspace.value as Workspace;
-    if(this.createProjectForm.valid) {
+    if (this.createProjectForm.valid) {
       this.templateSelected.next({
         step,
-        slug: workspace.slug
+        slug: workspace.slug,
       });
     } else {
       this.createProjectForm.markAllAsTouched();

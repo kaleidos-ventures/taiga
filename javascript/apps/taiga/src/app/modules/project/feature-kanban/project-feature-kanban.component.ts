@@ -11,8 +11,6 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'tg-project-feature-kanban',
   templateUrl: './project-feature-kanban.component.html',
-  styleUrls: ['./project-feature-kanban.component.css']
+  styleUrls: ['./project-feature-kanban.component.css'],
 })
-export class ProjectFeatureKanbanComponent {
-
-}
+export class ProjectFeatureKanbanComponent {}

@@ -7,7 +7,13 @@
  */
 
 import { KeyValue } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
@@ -20,10 +26,11 @@ let nextId = 0;
   selector: 'tg-role-advance-row',
   templateUrl: './role-advance-row.component.html',
   styleUrls: ['./role-advance-row.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoleAdvanceRowComponent implements OnInit {
-  public basicPermissionList = this.projectsSettingsFeatureRolesPermissionsService.getModulePermissions();
+  public basicPermissionList =
+    this.projectsSettingsFeatureRolesPermissionsService.getModulePermissions();
 
   @Input()
   public formGroup!: FormGroup;
@@ -40,7 +47,7 @@ export class RoleAdvanceRowComponent implements OnInit {
 
   constructor(
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService,
-    private cd: ChangeDetectorRef,
+    private cd: ChangeDetectorRef
   ) {}
 
   public ngOnInit() {
@@ -51,17 +58,20 @@ export class RoleAdvanceRowComponent implements OnInit {
     this.refreshPermission();
     this.previousPermission = this.permissionRowModel;
 
-    this.formGroup.valueChanges.pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.refreshPermission();
-        this.cd.detectChanges();
-      });
+    this.formGroup.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refreshPermission();
+      this.cd.detectChanges();
+    });
   }
 
   public refreshPermission() {
-    const currentPermission = this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(this.formGroup);
+    const currentPermission =
+      this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
+        this.formGroup
+      );
 
-    const permissionName = this.basicPermissionList.get(currentPermission) ?? '';
+    const permissionName =
+      this.basicPermissionList.get(currentPermission) ?? '';
 
     this.permissionRowModel = {
       key: currentPermission,

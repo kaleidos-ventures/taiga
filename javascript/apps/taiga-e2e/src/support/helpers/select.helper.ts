@@ -7,11 +7,7 @@
  */
 
 export class SelectHelper {
-
-  constructor(
-    private el: string,
-    private option?: string,
-  ) {}
+  constructor(private el: string, private option?: string) {}
 
   public getValue() {
     return cy.getBySel(this.el).find('.input_template');

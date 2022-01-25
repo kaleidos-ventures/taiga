@@ -6,28 +6,25 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-
-
-<ng-container *transloco="let t;" >
-<div [formGroup]="formGroup">
-  <div
-    class="permission-row-switch-container"
-    *ngIf="toggleCustomize">
-    <div class="permission-row-switch-deco"></div>
-    <div
-      class="permision-row-switches">
-      <div
-        *ngFor="let action of basicPermissionList | keyvalue: insertionOrder; trackBy: trackByValue;"
-        class="permmission-row-switch" >
-        <span class="permission-row-switch-title">{{ action.value }}</span>
+<ng-container *transloco="let t">
+  <div [formGroup]="formGroup">
+    <div class="permission-row-switch-container" *ngIf="toggleCustomize">
+      <div class="permission-row-switch-deco"></div>
+      <div class="permision-row-switches">
+        <div
+          *ngFor="
+            let action of basicPermissionList | keyvalue: insertionOrder;
+            trackBy: trackByValue
+          "
+          class="permmission-row-switch">
+          <span class="permission-row-switch-title">{{ action.value }}</span>
           <tui-toggle
             [formControlName]="action.key"
             [showIcons]="true"
             data-test="permissions-switch">
-        </tui-toggle>
+          </tui-toggle>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </ng-container>
-

@@ -10,12 +10,10 @@ const path = require('path');
 
 const getConfig = () => {
   return {
-    'plugins': [
+    plugins: [
       require('postcss-import')({
-        from: "/src/styles.css",
-        path: [
-          path.resolve(__dirname, 'apps/taiga/src/app/styles'),
-        ]
+        from: '/src/styles.css',
+        path: [path.resolve(__dirname, 'apps/taiga/src/app/styles')],
       }),
       require('postcss-mixins'),
       require('postcss-preset-env')({
@@ -23,10 +21,10 @@ const getConfig = () => {
         features: {
           'logical-properties-and-values': false,
           'focus-visible-pseudo-class': false,
-        }
-      })
-    ]
+        },
+      }),
+    ],
   };
-}
+};
 
 exports.getConfig = getConfig;

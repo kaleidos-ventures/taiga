@@ -6,9 +6,10 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<ng-container *transloco="let t;">
+<ng-container *transloco="let t">
   <div class="new-step-top-actions">
-    <button tuiButton
+    <button
+      tuiButton
       type="button"
       (click)="previousStep()"
       appearance="tertiary"
@@ -19,44 +20,48 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   <div class="new-step-wrapper">
     <h1 class="new-step-title">
-      {{ t('new_project.second_step.project_details') }}</h1>
-    <form class="template-project-form"
+      {{ t('new_project.second_step.project_details') }}
+    </h1>
+    <form
+      class="template-project-form"
       #form="ngForm"
       [formGroup]="templateProjectForm"
       (ngSubmit)="createProject()">
-      <tg-ui-select [label]="t('commons.workspace')"
-        type="avatar">
-        <tui-select tuiTextfieldSize="l"
+      <tg-ui-select [label]="t('commons.workspace')" type="avatar">
+        <tui-select
+          tuiTextfieldSize="l"
           formControlName="workspace"
           [valueContent]="content"
           [readOnly]="true">
           {{ t('new_project.choose_workspace') }}
-          <tui-data-list-wrapper *tuiDataList
+          <tui-data-list-wrapper
+            *tuiDataList
             size="l"
             [items]="workspaces"
             [itemContent]="content">
           </tui-data-list-wrapper>
         </tui-select>
       </tg-ui-select>
-      <ng-template #content
-        let-data>
+      <ng-template #content let-data>
         <div class="workspace-option">
-          <tg-ui-avatar size="m"
+          <tg-ui-avatar
+            size="m"
             type="dark"
             [color]="workspace.color"
             [name]="workspace.name">
           </tg-ui-avatar>
-          <div class="name">{{workspace.name}}</div>
+          <div class="name">{{ workspace.name }}</div>
         </div>
       </ng-template>
 
       <!-- Project name -->
       <tg-ui-input [label]="t('new_project.second_step.project_name')">
-        <input formControlName="name"
+        <input
+          formControlName="name"
           data-test="input-name"
           inputRef
           tuiAutoFocus
-          maxlength="80">
+          maxlength="80" />
         <ng-container inputError>
           <tg-ui-error
             [enabled]="form.submitted"
@@ -68,15 +73,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tg-ui-input>
 
       <!-- Project description -->
-      <tg-ui-textarea [label]="t('new_project.second_step.project_description')"
+      <tg-ui-textarea
+        [label]="t('new_project.second_step.project_description')"
         [optional]="true">
-        <tui-text-area formControlName="description"
+        <tui-text-area
+          formControlName="description"
           data-test="input-description"
           [expandable]="true"
           [tuiTextfieldMaxLength]="200">
           {{ t('new_project.second_step.project_description_placeholder') }}
         </tui-text-area>
-        <tg-ui-error inputError
+        <tg-ui-error
+          inputError
           [enabled]="form.submitted"
           data-test="description-maxlength-error"
           error="maxlength">
@@ -85,7 +93,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tg-ui-textarea>
 
       <!-- Image upload  -->
-      <tg-ui-image-upload [color]="templateProjectForm.get('color')?.value"
+      <tg-ui-image-upload
+        [color]="templateProjectForm.get('color')?.value"
         [control]="logo"
         [title]="templateProjectForm.get('name')?.value"
         [label]="t('new_project.second_step.project_icon')"
@@ -95,14 +104,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tg-ui-image-upload>
 
       <div class="new-step-actions">
-        <button (click)="cancelForm()"
+        <button
+          (click)="cancelForm()"
           data-test="cancel-create-project"
           tuiButton
           type="button"
           appearance="tertiary">
           {{ t('commons.cancel') }}
         </button>
-        <button iconRight="chevron-right"
+        <button
+          iconRight="chevron-right"
           data-test="submit-create-project"
           tuiButton
           type="submit"
@@ -113,28 +124,31 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </form>
   </div>
 
-  <tg-ui-modal
-    [open]="showWarningModal"
-    (requestClose)="cancelRedirect()">
-      <ng-container>
-        <div class="confirmation-modal" data-test="discard-project-modal">
-          <div aria-describedby="aria-description" aria-labelledby="arial-label">
-            <h1 id="aria-label">{{ t('new_project.first_step.discard_project') }}</h1>
-            <div id="aria-description">
-              <p tabindex="0">{{ t('new_project.first_step.discard_warning') }}</p>
-            </div>
-            <div class="actions">
-              <button
-                tuiButton
-                appearance="tertiary"
-                (click)="cancelRedirect()">{{ t('commons.confirmation_modal.no') }}</button>
-              <button
-                tuiButton
-                appearance="primary"
-                (click)="acceptWarningClose()">{{ t('commons.confirmation_modal.yes') }}</button>
-            </div>
+  <tg-ui-modal [open]="showWarningModal" (requestClose)="cancelRedirect()">
+    <ng-container>
+      <div class="confirmation-modal" data-test="discard-project-modal">
+        <div aria-describedby="aria-description" aria-labelledby="arial-label">
+          <h1 id="aria-label">
+            {{ t('new_project.first_step.discard_project') }}
+          </h1>
+          <div id="aria-description">
+            <p tabindex="0">
+              {{ t('new_project.first_step.discard_warning') }}
+            </p>
+          </div>
+          <div class="actions">
+            <button tuiButton appearance="tertiary" (click)="cancelRedirect()">
+              {{ t('commons.confirmation_modal.no') }}
+            </button>
+            <button
+              tuiButton
+              appearance="primary"
+              (click)="acceptWarningClose()">
+              {{ t('commons.confirmation_modal.yes') }}
+            </button>
           </div>
         </div>
-      </ng-container>
+      </div>
+    </ng-container>
   </tg-ui-modal>
 </ng-container>

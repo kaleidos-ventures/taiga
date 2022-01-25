@@ -7,7 +7,12 @@
  */
 
 import { Role, Permissions } from './roles.model';
-import { randDomainSuffix, randNumber, randBoolean, randWord } from '@ngneat/falso';
+import {
+  randDomainSuffix,
+  randNumber,
+  randBoolean,
+  randWord,
+} from '@ngneat/falso';
 
 export const RoleMockFactory = (): Role => {
   const role: Role = {
@@ -16,7 +21,7 @@ export const RoleMockFactory = (): Role => {
     order: randNumber(),
     isAdmin: randBoolean(),
     permissions: getPermissions(),
-    numMembers: randNumber()
+    numMembers: randNumber(),
   };
 
   return role;

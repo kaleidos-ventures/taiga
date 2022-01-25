@@ -25,10 +25,14 @@ describe('Workspace Create', () => {
 
     createWorkspace(workspaceName);
 
-    cy.getBySel('workspace-item').first().within(() => {
-      cy.getBySel('workspace-item-title').invoke('text').then((text) => {
-        expect(text.trim()).to.eq(workspaceName);
+    cy.getBySel('workspace-item')
+      .first()
+      .within(() => {
+        cy.getBySel('workspace-item-title')
+          .invoke('text')
+          .then((text) => {
+            expect(text.trim()).to.eq(workspaceName);
+          });
       });
-    });
   });
 });

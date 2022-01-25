@@ -7,57 +7,55 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *ngIf="model$ | async as vm">
-<ng-container *transloco="let t">
-  <div class="workspace-detail-top">
-    <div class="workspace-detail-avatar">
-      <tg-ui-avatar
-        class="workspace-avatar"
-        type="dark"
-        [color]="vm.workspace.color"
-        size="xl"
-        [name]="vm.workspace.name">
-      </tg-ui-avatar>
-    </div>
-    <div class="workspace-detail-title-wrapper">
-      <div class="workspace-detail-title-route">Workspace/</div>
-      <div class="workspace-detail-title-container">
-        <h3 class="workspace-detail-title">{{vm.workspace.name}}</h3>
-        <!-- TODO: *ngIf owner when API provides roles -->
-        <tg-ui-badge
-          [label]="t('commons.owner')">
-        </tg-ui-badge>
+  <ng-container *transloco="let t">
+    <div class="workspace-detail-top">
+      <div class="workspace-detail-avatar">
+        <tg-ui-avatar
+          class="workspace-avatar"
+          type="dark"
+          [color]="vm.workspace.color"
+          size="xl"
+          [name]="vm.workspace.name">
+        </tg-ui-avatar>
+      </div>
+      <div class="workspace-detail-title-wrapper">
+        <div class="workspace-detail-title-route">Workspace/</div>
+        <div class="workspace-detail-title-container">
+          <h3 class="workspace-detail-title">{{ vm.workspace.name }}</h3>
+          <!-- TODO: *ngIf owner when API provides roles -->
+          <tg-ui-badge [label]="t('commons.owner')"> </tg-ui-badge>
+        </div>
+      </div>
+      <div class="workspace-detail-actions">
+        <a
+          tuiButton
+          type="button"
+          appearance="tertiary"
+          [routerLink]="['/']"
+          iconRight="arrow-right">
+          {{ t('workspace.back_to_projects') }}
+        </a>
       </div>
     </div>
-    <div class="workspace-detail-actions">
-      <a
-        tuiButton
-        type="button"
-        appearance="tertiary"
-        [routerLink]="['/']"
-        iconRight="arrow-right">
-        {{ t('workspace.back_to_projects') }}
-      </a>
+    <div
+      (resized)="onResized($event)"
+      [class]="gridClass"
+      class="workspace-item-card-grid">
+      <tg-project-card
+        *ngIf="vm.project.length === 0"
+        [slug]="vm.workspace.slug"
+        [placeholder]="true"
+        [firstProject]="true">
+      </tg-project-card>
+      <tg-project-card
+        *ngFor="let project of vm.project; trackBy: trackByLatestProject"
+        [project]="project">
+      </tg-project-card>
+      <tg-project-card
+        *ngIf="vm.project.length > 0"
+        [slug]="vm.workspace.slug"
+        [placeholder]="true">
+      </tg-project-card>
     </div>
-  </div>
-  <div
-    (resized)="onResized($event)"
-    [class]="gridClass"
-    class="workspace-item-card-grid">
-    <tg-project-card
-      *ngIf="vm.project.length === 0"
-      [slug]="vm.workspace.slug"
-      [placeholder]="true"
-      [firstProject]="true">
-    </tg-project-card>
-    <tg-project-card
-      *ngFor="let project of vm.project; trackBy: trackByLatestProject"
-      [project]="project">
-    </tg-project-card>
-    <tg-project-card
-      *ngIf="vm.project.length > 0"
-      [slug]="vm.workspace.slug"
-      [placeholder]="true">
-    </tg-project-card>
-  </div>
-</ng-container>
+  </ng-container>
 </ng-container>

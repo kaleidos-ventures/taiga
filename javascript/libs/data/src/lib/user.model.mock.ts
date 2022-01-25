@@ -6,7 +6,20 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randNumber, randUuid, randEmail, randFirstName, randAvatar, randHex, randParagraph, randBoolean, randUserName, randLocale, randJobArea, randPastDate } from '@ngneat/falso';
+import {
+  randNumber,
+  randUuid,
+  randEmail,
+  randFirstName,
+  randAvatar,
+  randHex,
+  randParagraph,
+  randBoolean,
+  randUserName,
+  randLocale,
+  randJobArea,
+  randPastDate,
+} from '@ngneat/falso';
 
 import { User } from './user.model';
 
@@ -29,9 +42,7 @@ export const UserMockFactory = (): User => {
     maxPublicProjects: randNumber(),
     photo: randAvatar(),
     readNewTerms: randBoolean(),
-    roles: [
-      randJobArea(),
-    ],
+    roles: [randJobArea()],
     theme: 'taiga',
     timezone: '',
     totalPrivateProjects: randNumber(),

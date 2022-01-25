@@ -6,13 +6,17 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ConfigureStory, ConfigureTemplate, EmptyComponent } from '@storybook-helper';
+import {
+  ConfigureStory,
+  ConfigureTemplate,
+  EmptyComponent,
+} from '@storybook-helper';
 import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 
 export default ConfigureStory({
   title: 'Buttons',
   component: EmptyComponent,
-  extraModules: [ TuiButtonModule, TuiSvgModule, TuiLinkModule ],
+  extraModules: [TuiButtonModule, TuiSvgModule, TuiLinkModule],
 });
 
 const baseArgs = {
@@ -22,13 +26,41 @@ const baseArgs = {
 const baseArgTypes = {
   icon: {
     defaultValue: 'taiga-logo',
-    options: ['taiga-logo', 'discover', 'folder', 'bell', 'search', 'help', 'search3', 'plus', 'overview', 'epics', 'scrum', 'kanban', 'issues', 'wiki', 'meetup', 'team', 'settings', 'collapse-right', 'collapse-left', 'chevron-right', 'chevron-left', 'chevron-down', 'chevron-up', 'arrow-left', 'arrow-right', 'user', 'arrow-up-right'],
-    control: { type: 'select' }
+    options: [
+      'taiga-logo',
+      'discover',
+      'folder',
+      'bell',
+      'search',
+      'help',
+      'search3',
+      'plus',
+      'overview',
+      'epics',
+      'scrum',
+      'kanban',
+      'issues',
+      'wiki',
+      'meetup',
+      'team',
+      'settings',
+      'collapse-right',
+      'collapse-left',
+      'chevron-right',
+      'chevron-left',
+      'chevron-down',
+      'chevron-up',
+      'arrow-left',
+      'arrow-right',
+      'user',
+      'arrow-up-right',
+    ],
+    control: { type: 'select' },
   },
   disabled: {
     defaultValue: false,
     options: [false, true],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
 };
 
@@ -183,7 +215,7 @@ export const Secondary = ConfigureTemplate({
   </div>
   `,
   args: baseArgs,
-  argTypes: baseArgTypes
+  argTypes: baseArgTypes,
 });
 
 export const Destructive = ConfigureTemplate({
@@ -237,7 +269,7 @@ export const Destructive = ConfigureTemplate({
   </div>
   `,
   args: baseArgs,
-  argTypes: baseArgTypes
+  argTypes: baseArgTypes,
 });
 
 export const Tertiary = ConfigureTemplate({
@@ -304,7 +336,7 @@ export const Tertiary = ConfigureTemplate({
   </div>
   `,
   args: baseArgs,
-  argTypes: baseArgTypes
+  argTypes: baseArgTypes,
 });
 
 export const MainNav = ConfigureTemplate({
@@ -358,7 +390,7 @@ export const MainNav = ConfigureTemplate({
   </div>
   `,
   args: baseArgs,
-  argTypes: baseArgTypes
+  argTypes: baseArgTypes,
 });
 
 export const HomeButton = ConfigureTemplate({
@@ -377,7 +409,7 @@ export const HomeButton = ConfigureTemplate({
   </div>
   `,
   args: baseArgs,
-  argTypes: baseArgTypes
+  argTypes: baseArgTypes,
 });
 
 export const LinkButton = ConfigureTemplate({
@@ -419,7 +451,7 @@ export const LinkButton = ConfigureTemplate({
   </div>
   `,
   args: baseArgs,
-  argTypes: baseArgTypes
+  argTypes: baseArgTypes,
 });
 
 export const ButtonForm = ConfigureTemplate({
@@ -435,7 +467,7 @@ export const ButtonForm = ConfigureTemplate({
   </div>
   `,
   args: baseArgs,
-  argTypes: baseArgTypes
+  argTypes: baseArgTypes,
 });
 
 export const ActionButton = ConfigureTemplate({
@@ -451,7 +483,7 @@ export const ActionButton = ConfigureTemplate({
   </div>
   `,
   args: baseArgs,
-  argTypes: baseArgTypes
+  argTypes: baseArgTypes,
 });
 
 export const USHeaderButton = ConfigureTemplate({
@@ -480,7 +512,7 @@ export const USHeaderButton = ConfigureTemplate({
   </div>
   `,
   args: baseArgs,
-  argTypes: baseArgTypes
+  argTypes: baseArgTypes,
 });
 
 export const NavIconButton = ConfigureTemplate({
@@ -509,5 +541,5 @@ export const NavIconButton = ConfigureTemplate({
   </div>
   `,
   args: baseArgs,
-  argTypes: baseArgTypes
+  argTypes: baseArgTypes,
 });

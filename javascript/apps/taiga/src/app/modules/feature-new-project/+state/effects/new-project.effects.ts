@@ -20,15 +20,12 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class NewProjectEffects {
-
   public createProject$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(NewProjectActions.createProject),
       pessimisticUpdate({
         run: (action) => {
-          return this.projectApiService.createProject(
-            action.project
-          ).pipe(
+          return this.projectApiService.createProject(action.project).pipe(
             map((project: Project) => {
               return NewProjectActions.createProjectSuccess({ project });
             })
@@ -41,27 +38,31 @@ export class NewProjectEffects {
     );
   });
 
-  public createProjectSuccess$ = createEffect(() => {
-    return this.actions$
-      .pipe(ofType(NewProjectActions.createProject)).pipe(
+  public createProjectSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(ofType(NewProjectActions.createProject)).pipe(
         switchMap(() => {
           return zip(
             this.actions$.pipe(ofType(NewProjectActions.createProjectSuccess)),
-            this.actions$.pipe(ofType(NewProjectActions.inviteUsersNewProject)),
-          )
-            .pipe(
-              tap(([action]) => {
-                void this.router.navigate(['/project/', action.project.slug, 'kanban']);
-              })
-            );
+            this.actions$.pipe(ofType(NewProjectActions.inviteUsersNewProject))
+          ).pipe(
+            tap(([action]) => {
+              void this.router.navigate([
+                '/project/',
+                action.project.slug,
+                'kanban',
+              ]);
+            })
+          );
         })
       );
-  }, { dispatch: false });
+    },
+    { dispatch: false }
+  );
 
   constructor(
     private actions$: Actions,
     private projectApiService: ProjectApiService,
     private router: Router
   ) {}
-
 }

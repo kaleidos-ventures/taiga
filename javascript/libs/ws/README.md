@@ -2,7 +2,7 @@
 
 Listen Taiga websocket events.
 
-## Install 
+## Install
 
 ```bash
 npm i -S @taiga/ws
@@ -18,7 +18,7 @@ import { WsModule } from '@taiga/ws';
 @NgModule({
   imports: [
     WsModule.forRoot({
-      url: 'wss://localhost:8080/events'
+      url: 'wss://localhost:8080/events',
     }),
   ],
 })

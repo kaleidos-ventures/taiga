@@ -11,7 +11,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div class="workspace-title-container">
         <h2 class="workspace-title">{{ t('commons.projects') }}</h2>
         <div class="workspace-title-actions">
-          <button data-test="add-workspace-button"
+          <button
+            data-test="add-workspace-button"
             (click)="setCreate(true)"
             [disabled]="vm.showCreate || vm.loading"
             [tuiHint]="tooltip"
@@ -22,7 +23,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             type="button">
             {{ t('workspace.add_workspace') }}
           </button>
-          <button (click)="toggleActivity(true)"
+          <button
+            (click)="toggleActivity(true)"
             tuiButton
             appearance="tertiary"
             class="workspace-title-link"
@@ -32,41 +34,44 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </button>
         </div>
       </div>
-      <div *ngIf="vm.showCreate || vm.creatingWorkspace"
+      <div
+        *ngIf="vm.showCreate || vm.creatingWorkspace"
         [@skeletonAnimation]="vm.skeletonAnimation"
         class="create-wrapper">
-        <tg-workspace-create class="workspace-create"
+        <tg-workspace-create
+          class="workspace-create"
           data-test="workspace-create"
           @slideInOut
           (requestClose)="setCreate(false)"
           cdkTrapFocus
           *ngIf="vm.showCreate">
         </tg-workspace-create>
-        <div *ngIf="vm.creatingWorkspace"
-          class="skeleton-container">
+        <div *ngIf="vm.creatingWorkspace" class="skeleton-container">
           <tg-workspace-skeleton data-test="workspace-skeleton">
           </tg-workspace-skeleton>
         </div>
       </div>
       <div
-        *ngIf="!vm.workspaceList.length && !vm.showCreate && !vm.creatingWorkspace"
+        *ngIf="
+          !vm.workspaceList.length && !vm.showCreate && !vm.creatingWorkspace
+        "
         class="worskpace-placeholder">
-        <tg-workspace-skeleton [static]="true">
-        </tg-workspace-skeleton>
-        <div *ngIf="!vm.loading && !vm.workspaceList.length"
+        <tg-workspace-skeleton [static]="true"> </tg-workspace-skeleton>
+        <div
+          *ngIf="!vm.loading && !vm.workspaceList.length"
           class="workspace-call-action"
           @fadeInOut>
-          <h4 class="workspace-call-action-title">{{
-            t('workspace.placeholder_title') }}
+          <h4 class="workspace-call-action-title">
+            {{ t('workspace.placeholder_title') }}
           </h4>
-          <p class="workspace-call-action-text">{{
-            t('workspace.placeholder_text') }}</p>
-          <a class="workspace-call-action-link"
-            tuiLink
-            icon="'arrow-up-right'">
+          <p class="workspace-call-action-text">
+            {{ t('workspace.placeholder_text') }}
+          </p>
+          <a class="workspace-call-action-link" tuiLink icon="'arrow-up-right'">
             {{ t('workspace.placeholder_link') }}
           </a>
-          <button appearance="primary"
+          <button
+            appearance="primary"
             (click)="setCreate(true)"
             tuiButton
             type="button">
@@ -74,12 +79,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </button>
         </div>
       </div>
-      <div [class.form-error]="vm.createFormHasError"
+      <div
+        [class.form-error]="vm.createFormHasError"
         (resized)="onResized($event)"
         class="workspace-item-container">
-        <tg-workspace-item @fadeInOut
+        <tg-workspace-item
+          @fadeInOut
           data-test="workspace-item"
-          *ngFor="let workspace of vm.workspaceList; trackBy: trackByWorkspace "
+          *ngFor="let workspace of vm.workspaceList; trackBy: trackByWorkspace"
           [projectsToShow]="amountOfProjectsToShow"
           [workspace]="workspace">
         </tg-workspace-item>
@@ -89,10 +96,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <p>{{ t('workspace.tooltip_add_workspace') }}</p>
     </ng-template>
 
-    <div
-      class="sliding-panel"
-      *ngIf="vm.showActivity"
-      [@slidePanelInOut]>
+    <div class="sliding-panel" *ngIf="vm.showActivity" [@slidePanelInOut]>
       <button (click)="toggleActivity(false)">Hide activity</button>
     </div>
   </ng-container>

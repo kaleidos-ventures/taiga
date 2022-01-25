@@ -14,7 +14,12 @@ import { Observable } from 'rxjs';
 import { randDomainSuffix, randNumber } from '@ngneat/falso';
 
 import { ProjectEffects } from './project.effects';
-import { fetchProject, fetchProjectSuccess, fetchMemberRoles, fetchMemberRolesSuccess } from '../actions/project.actions';
+import {
+  fetchProject,
+  fetchProjectSuccess,
+  fetchMemberRoles,
+  fetchMemberRolesSuccess,
+} from '../actions/project.actions';
 import { cold, hot } from 'jest-marbles';
 import { ProjectMockFactory, RoleMockFactory } from '@taiga/data';
 
@@ -24,10 +29,8 @@ describe('ProjectEffects', () => {
 
   const createService = createServiceFactory({
     service: ProjectEffects,
-    providers: [
-      provideMockActions(() => actions$)
-    ],
-    mocks: [ ProjectApiService ],
+    providers: [provideMockActions(() => actions$)],
+    mocks: [ProjectApiService],
   });
 
   beforeEach(() => {
@@ -40,44 +43,35 @@ describe('ProjectEffects', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectEffects);
 
-    projectApiService.getProject.mockReturnValue(
-      cold('-b|', { b: project })
-    );
+    projectApiService.getProject.mockReturnValue(cold('-b|', { b: project }));
 
-    actions$ = hot('-a', { a:  fetchProject({ slug })});
+    actions$ = hot('-a', { a: fetchProject({ slug }) });
 
     const expected = cold('--a', {
       a: fetchProjectSuccess({ project }),
     });
 
-    expect(
-      effects.loadProject$
-    ).toBeObservable(expected);
+    expect(effects.loadProject$).toBeObservable(expected);
   });
 
   it('load roles', () => {
     const slug = randDomainSuffix({ length: 3 }).join('-');
     const roles = [];
-    for(let i = 0; i++; i < randNumber()) {
+    for (let i = 0; i++; i < randNumber()) {
       const role = RoleMockFactory();
       roles.push(role);
     }
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectEffects);
 
-    projectApiService.getMemberRoles.mockReturnValue(
-      cold('-b|', { b: roles })
-    );
+    projectApiService.getMemberRoles.mockReturnValue(cold('-b|', { b: roles }));
 
-    actions$ = hot('-a', { a:  fetchMemberRoles({ slug })});
+    actions$ = hot('-a', { a: fetchMemberRoles({ slug }) });
 
     const expected = cold('--a', {
       a: fetchMemberRolesSuccess({ roles }),
     });
 
-    expect(
-      effects.loadMemberRoles$
-    ).toBeObservable(expected);
+    expect(effects.loadMemberRoles$).toBeObservable(expected);
   });
-
 });

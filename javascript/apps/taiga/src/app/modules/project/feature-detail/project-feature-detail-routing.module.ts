@@ -12,26 +12,36 @@ import { ProjectFeatureDetailComponent } from './project-feature-detail.componen
 
 const routes: Routes = [
   {
-    path: '', component: ProjectFeatureDetailComponent,
+    path: '',
+    component: ProjectFeatureDetailComponent,
     children: [
       {
         path: '',
-        loadChildren: () => import('~/app/modules/project/feature-overview/project-feature-overview.module').then(m => m.ProjectFeatureOverviewModule)
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-overview/project-feature-overview.module'
+          ).then((m) => m.ProjectFeatureOverviewModule),
       },
       {
         path: 'kanban',
-        loadChildren: () => import('~/app/modules/project/feature-kanban/project-feature-kanban.module').then(m => m.ProjectFeatureKanbanModule)
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-kanban/project-feature-kanban.module'
+          ).then((m) => m.ProjectFeatureKanbanModule),
       },
       {
         path: 'settings',
-        loadChildren: () => import('~/app/modules/project/settings/feature-settings/feature-settings.module').then(m => m.ProjectSettingsFeatureSettingsModule)
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/settings/feature-settings/feature-settings.module'
+          ).then((m) => m.ProjectSettingsFeatureSettingsModule),
       },
-    ]
+    ],
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ProjectFeatureDetailRoutingModule { }
+export class ProjectFeatureDetailRoutingModule {}

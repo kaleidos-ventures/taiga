@@ -6,7 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '@taiga/data';
@@ -14,10 +20,7 @@ import { User } from '@taiga/data';
 @Component({
   selector: 'tg-invite-step',
   templateUrl: './invite-step.component.html',
-  styleUrls: [
-    '../../styles/project.shared.css',
-    './invite-step.component.css'
-  ],
+  styleUrls: ['../../styles/project.shared.css', './invite-step.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InviteStepComponent implements OnInit {
@@ -28,20 +31,17 @@ export class InviteStepComponent implements OnInit {
   public userExample: Partial<User>[] = [
     {
       username: 'test-user',
-      id: 1
+      id: 1,
     },
     {
       username: 'test-user-2',
-      id: 2
+      id: 2,
     },
   ];
 
   public inviteProjectForm!: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-  ) {}
+  constructor(private fb: FormBuilder, private route: ActivatedRoute) {}
 
   public ngOnInit() {
     this.initForm();

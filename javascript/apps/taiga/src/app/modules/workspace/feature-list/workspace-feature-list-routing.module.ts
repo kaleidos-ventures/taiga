@@ -14,6 +14,6 @@ const routes: Routes = [{ path: '', component: WorkspaceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class WorkspaceFeatureListRoutingModule { }
+export class WorkspaceFeatureListRoutingModule {}

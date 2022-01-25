@@ -6,102 +6,113 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<ng-container *transloco="let t;">
+<ng-container *transloco="let t">
   <div
     [formGroup]="formGroup"
     [attr.data-child]="isChildModule"
     class="permission-row-sub">
     <div class="permission-row-title">
-    <tui-svg
-      [tuiHint]="t('project_settings.roles_permissions.userstories_child_help')"
-      *ngIf="isChildModule"
-      src="arrow-down-right">
-    </tui-svg>
-    <span
-      aria-hidden="true"
-      [class.customizing]="customizer"
-      class="permission-row-name">{{ module.value }}</span>
-  </div>
-  <div class="permission-row-customization">
-    <div class="permission-row-inner">
-      <div class="permission-row-select">
-        <tg-ui-select
-          labelVisuallyHidden
-          [label]="module.value">
-          <tui-select
-            tuiTextfieldSize="l"
-            data-test="module-permission-select"
-            [valueContent]="selectLabel"
-            [ngModel]="permissionRowModel"
-            [ngModelOptions]="{standalone: true}"
-            (ngModelChange)="permissionChange($event)">
-            <tui-data-list *tuiDataList>
-              <button
-                *ngFor="let item of basicPermissionList | keyvalue: insertionOrder; trackBy: trackByValue;"
-                tuiOption
-                data-test="module-permission-option"
-                [value]="item">
+      <tui-svg
+        [tuiHint]="
+          t('project_settings.roles_permissions.userstories_child_help')
+        "
+        *ngIf="isChildModule"
+        src="arrow-down-right">
+      </tui-svg>
+      <span
+        aria-hidden="true"
+        [class.customizing]="customizer"
+        class="permission-row-name"
+        >{{ module.value }}</span
+      >
+    </div>
+    <div class="permission-row-customization">
+      <div class="permission-row-inner">
+        <div class="permission-row-select">
+          <tg-ui-select labelVisuallyHidden [label]="module.value">
+            <tui-select
+              tuiTextfieldSize="l"
+              data-test="module-permission-select"
+              [valueContent]="selectLabel"
+              [ngModel]="permissionRowModel"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="permissionChange($event)">
+              <tui-data-list *tuiDataList>
+                <button
+                  *ngFor="
+                    let item of basicPermissionList | keyvalue: insertionOrder;
+                    trackBy: trackByValue
+                  "
+                  tuiOption
+                  data-test="module-permission-option"
+                  [value]="item">
+                  {{ item.value }}
+                </button>
+              </tui-data-list>
+            </tui-select>
+          </tg-ui-select>
+          <ng-template #selectLabel let-item>
+            <ng-container [ngSwitch]="permissionRowModel.key">
+              <ng-container *ngSwitchCase="'custom'">
+                {{ t('project_settings.roles_permissions.custom') }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'restricted'">
+                {{ t('project_settings.roles_permissions.can_edit') }}
+                <i class="restricted">{{
+                  t('project_settings.roles_permissions.restricted')
+                }}</i>
+              </ng-container>
+              <ng-container *ngSwitchDefault>
                 {{ item.value }}
-              </button>
-            </tui-data-list>
-          </tui-select>
-        </tg-ui-select>
-        <ng-template #selectLabel let-item>
-          <ng-container [ngSwitch]="permissionRowModel.key">
-            <ng-container *ngSwitchCase="'custom'">
-              {{ t('project_settings.roles_permissions.custom') }}
+              </ng-container>
             </ng-container>
-            <ng-container *ngSwitchCase="'restricted'">
-              {{ t('project_settings.roles_permissions.can_edit') }} <i class="restricted">{{ t('project_settings.roles_permissions.restricted') }}</i>
-            </ng-container>
-            <ng-container *ngSwitchDefault>
-              {{ item.value }}
-            </ng-container>
-        </ng-container>
-        </ng-template>
-        <div
-          [attr.aria-level]="2"
-          role="heading"
-          class="permission-row-button">
-          <button
-            appearance="tertiary"
-            data-test="display-custom-permissions"
-            [class.customizing]="customizer"
-            [class.show-customization-disabled]="!showCustomization()"
-            [attr.aria-expanded]="customizer"
-            [attr.aria-controls]="rolePermissionContainerId"
-            (click)="toggleCustomizer()"
-            tuiIconButton
-            [icon]="customizer ? 'close' : 'sliders-vertical'"
-            [tuiHint]="tooltip"
-            tuiHintDirection="top-right"
-            type="button">
-            <span class="visually-hidden">{{ t('project_settings.roles_permissions.show_more') }}</span>
-          </button>
+          </ng-template>
+          <div
+            [attr.aria-level]="2"
+            role="heading"
+            class="permission-row-button">
+            <button
+              appearance="tertiary"
+              data-test="display-custom-permissions"
+              [class.customizing]="customizer"
+              [class.show-customization-disabled]="!showCustomization()"
+              [attr.aria-expanded]="customizer"
+              [attr.aria-controls]="rolePermissionContainerId"
+              (click)="toggleCustomizer()"
+              tuiIconButton
+              [icon]="customizer ? 'close' : 'sliders-vertical'"
+              [tuiHint]="tooltip"
+              tuiHintDirection="top-right"
+              type="button">
+              <span class="visually-hidden">{{
+                t('project_settings.roles_permissions.show_more')
+              }}</span>
+            </button>
+          </div>
         </div>
-
+        <tg-role-customize
+          *ngIf="customizer"
+          [attr.id]="rolePermissionContainerId"
+          data-test="module-custom-permissions-section"
+          [formGroup]="formGroup"
+          [toggleCustomize]="customizer">
+        </tg-role-customize>
       </div>
-      <tg-role-customize
-        *ngIf="customizer"
-        [attr.id]="rolePermissionContainerId"
-        data-test="module-custom-permissions-section"
-        [formGroup]="formGroup"
-        [toggleCustomize]="customizer">
-      </tg-role-customize>
+    </div>
+    <div
+      class="permision-row-comment"
+      [class.permision-row-comment-disabled]="!showComment()">
+      <span class="permission-row-switch-title">{{
+        t('project_settings.roles_permissions.can_comment')
+      }}</span>
+      <tui-toggle
+        data-test="permission-can-comment-switch"
+        formControlName="comment"
+        [showIcons]="true">
+      </tui-toggle>
     </div>
   </div>
-  <div
-    class="permision-row-comment"
-    [class.permision-row-comment-disabled]="!showComment()">
-    <span class="permission-row-switch-title">{{ t('project_settings.roles_permissions.can_comment') }}</span>
-    <tui-toggle
-      data-test="permission-can-comment-switch"
-      formControlName="comment"
-      [showIcons]="true">
-    </tui-toggle>
-  </div>
-</div>
-<ng-template #tooltip>
-  <p>{{ t('project_settings.customize') }}</p>
-</ng-template>
+  <ng-template #tooltip>
+    <p>{{ t('project_settings.customize') }}</p>
+  </ng-template>
 </ng-container>

@@ -15,7 +15,10 @@ import { randDomainSuffix } from '@ngneat/falso';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { WorkspaceApiService } from '@taiga/api';
-import { fetchWorkspace, fetchWorkspaceSuccess } from '../actions/workspace-detail.actions';
+import {
+  fetchWorkspace,
+  fetchWorkspaceSuccess,
+} from '../actions/workspace-detail.actions';
 import { WorkspaceDetailEffects } from './workspace-detail.effects';
 
 describe('WorkspaceEffects', () => {
@@ -24,10 +27,8 @@ describe('WorkspaceEffects', () => {
 
   const createService = createServiceFactory({
     service: WorkspaceDetailEffects,
-    providers: [
-      provideMockActions(() => actions$)
-    ],
-    mocks: [ WorkspaceApiService ],
+    providers: [provideMockActions(() => actions$)],
+    mocks: [WorkspaceApiService],
   });
 
   beforeEach(() => {
@@ -44,15 +45,12 @@ describe('WorkspaceEffects', () => {
       cold('-b|', { b: workspace })
     );
 
-    actions$ = hot('-a', { a:  fetchWorkspace({ slug })});
+    actions$ = hot('-a', { a: fetchWorkspace({ slug }) });
 
     const expected = cold('--a', {
       a: fetchWorkspaceSuccess({ workspace }),
     });
 
-    expect(
-      effects.loadWorkspace$
-    ).toBeObservable(expected);
+    expect(effects.loadWorkspace$).toBeObservable(expected);
   });
-
 });

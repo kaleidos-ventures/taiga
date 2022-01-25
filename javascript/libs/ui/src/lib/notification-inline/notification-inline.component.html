@@ -8,10 +8,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <div [class]="status">
   <div role="alert" class="content">
-    <tui-svg
-      *ngIf="hasIcon"
-      class="icon"
-      [src]="icon"></tui-svg>
+    <tui-svg *ngIf="hasIcon" class="icon" [src]="icon"></tui-svg>
     <ng-content></ng-content>
   </div>
 </div>

@@ -19,16 +19,19 @@ class TodoEffects {
       ofType(TodoListActions.loadTodos),
       fetch({
         run: () => {
-          return this.todoListService.getAll().pipe(
-            map((tasks) => TodoListActions.loadTodosSucess({ tasks }))
-          );
+          return this.todoListService
+            .getAll()
+            .pipe(map((tasks) => TodoListActions.loadTodosSucess({ tasks })));
         },
         onError: (action, error: HttpErrorResponse) => null,
       })
     );
   });
 
-  constructor(private actions$: Actions, private todoListService: TodoListService) {}
+  constructor(
+    private actions$: Actions,
+    private todoListService: TodoListService
+  ) {}
 }
 ```
 
@@ -48,9 +51,13 @@ class TodoEffects {
       ofType(TodoListActions.deleteTask),
       optimisticUpdate({
         run: (action: ReturnType<typeof TodoListActions.deleteTask>) => {
-          return this.todoListService.deleteTask(action.task.id).pipe(
-            mapTo(TodoListActions.deleteTaskSuccess({ taskId: action.task.id }))
-          );
+          return this.todoListService
+            .deleteTask(action.task.id)
+            .pipe(
+              mapTo(
+                TodoListActions.deleteTaskSuccess({ taskId: action.task.id })
+              )
+            );
         },
         undoAction: (action, error: HttpErrorResponse) => {
           return TodoListActions.deleteTaskError({
@@ -62,7 +69,10 @@ class TodoEffects {
     );
   });
 
-  constructor(private actions$: Actions, private todoListService: TodoListService) {}
+  constructor(
+    private actions$: Actions,
+    private todoListService: TodoListService
+  ) {}
 }
 ```
 
@@ -82,9 +92,9 @@ class TodoEffects {
       ofType(TodoListActions.createTask),
       pessimisticUpdate({
         run: (action: ReturnType<typeof TodoListActions.createTask>) => {
-          return this.todoListService.create(action.taskName).pipe(
-            map((task) => TodoListActions.createTaskSuccess({ task }))
-          );
+          return this.todoListService
+            .create(action.taskName)
+            .pipe(map((task) => TodoListActions.createTaskSuccess({ task })));
         },
         onError: (action, httpResponse: HttpErrorResponse) => {
           const error = httpResponse.error as { msg?: string };
@@ -93,12 +103,17 @@ class TodoEffects {
             return TodoListActions.createTaskError({ error: error.msg });
           }
 
-          return this.appService.unexpectedHttpErrorResponseAction(httpResponse);
+          return this.appService.unexpectedHttpErrorResponseAction(
+            httpResponse
+          );
         },
       })
     );
   });
 
-  constructor(private actions$: Actions, private todoListService: TodoListService) {}
+  constructor(
+    private actions$: Actions,
+    private todoListService: TodoListService
+  ) {}
 }
 ```

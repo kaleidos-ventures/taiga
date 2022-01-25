@@ -7,15 +7,21 @@
  */
 
 import { randText } from '@ngneat/falso';
-import { cancelProject, launchProjectCreationInWS, selectBlankProject, submitProject, typeProjectDescription, typeProjectName } from '../support/helpers/project.helpers';
-import { createWorkspace } from "../support/helpers/workspace.helpers";
+import {
+  cancelProject,
+  launchProjectCreationInWS,
+  selectBlankProject,
+  submitProject,
+  typeProjectDescription,
+  typeProjectName,
+} from '../support/helpers/project.helpers';
+import { createWorkspace } from '../support/helpers/workspace.helpers';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 
 const workspace = WorkspaceMockFactory();
 const project = ProjectMockFactory();
 
 describe('Workspace Create from Overview', () => {
-
   beforeEach(() => {
     cy.login();
     cy.visit('/');
@@ -92,13 +98,16 @@ describe('Workspace Create from Overview', () => {
     cy.getBySel('submit-create-project').should('not.exist');
     cy.getBySel('submit-invite-users').should('be.visible');
 
-    cy.getBySel('submit-invite-users').click().then(() => {
-      cy.getBySel('submit-invite-users').should('not.exist');
-      cy.getBySel('project-name').should('be.visible');
-      cy.url({timeout: 60000}).should('include', '/kanban');
-      cy.getBySel('project-name').invoke('text').should('to.have.string', project.name);
-    });
-
+    cy.getBySel('submit-invite-users')
+      .click()
+      .then(() => {
+        cy.getBySel('submit-invite-users').should('not.exist');
+        cy.getBySel('project-name').should('be.visible');
+        cy.url({ timeout: 60000 }).should('include', '/kanban');
+        cy.getBySel('project-name')
+          .invoke('text')
+          .should('to.have.string', project.name);
+      });
   });
 
   it('the cancel and the x button launch the confirmation dialog', () => {
@@ -127,7 +136,6 @@ describe('Workspace Create from Overview', () => {
 });
 
 xdescribe('Workspace Create from WS page', () => {
-
   beforeEach(() => {
     cy.login();
     cy.visit('/');

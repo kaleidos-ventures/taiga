@@ -22,7 +22,7 @@ import { NotificatioInlineModule } from 'libs/ui/src/lib/notification-inline/not
 @NgModule({
   declarations: [
     ProjectSettingsFeatureRolesPermissionsComponent,
-    inViewportDirective
+    inViewportDirective,
   ],
   imports: [
     CommonModule,
@@ -38,10 +38,10 @@ import { NotificatioInlineModule } from 'libs/ui/src/lib/notification-inline/not
     RouterModule.forChild([
       {
         path: '',
-        component: ProjectSettingsFeatureRolesPermissionsComponent
-      }
+        component: ProjectSettingsFeatureRolesPermissionsComponent,
+      },
     ]),
-    InputsModule
+    InputsModule,
   ],
   providers: [
     {
@@ -53,4 +53,4 @@ import { NotificatioInlineModule } from 'libs/ui/src/lib/notification-inline/not
     },
   ],
 })
-export class ProjectsSettingsFeatureRolesPermissionsModule { }
+export class ProjectsSettingsFeatureRolesPermissionsModule {}

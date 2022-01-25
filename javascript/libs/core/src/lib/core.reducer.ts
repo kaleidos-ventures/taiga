@@ -28,14 +28,14 @@ export const reducer = createReducer(
   on(unexpectedError, (state, { error }): CoreState => {
     return {
       ...state,
-      unexpectedError: error
+      unexpectedError: error,
     };
   }),
 
   on(globalLoading, (state, { loading }): CoreState => {
     return {
       ...state,
-      loading
+      loading,
     };
-  }),
+  })
 );

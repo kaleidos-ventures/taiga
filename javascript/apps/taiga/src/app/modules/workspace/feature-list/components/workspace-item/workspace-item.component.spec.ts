@@ -13,24 +13,21 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { fetchWorkspaceProjects } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 
 describe('WorkspaceItem', () => {
-
   const workspaceItem = WorkspaceMockFactory();
 
   const initialState = {
     workspaceList: {
       workspaceProjects: {
-        [workspaceItem.slug]: workspaceItem.latestProjects
-      }
-    }
+        [workspaceItem.slug]: workspaceItem.latestProjects,
+      },
+    },
   };
 
   let spectator: Spectator<WorkspaceItemComponent>;
   const createComponent = createComponentFactory({
     component: WorkspaceItemComponent,
     imports: [],
-    providers: [
-      provideMockStore({ initialState }),
-    ]
+    providers: [provideMockStore({ initialState })],
   });
   let store: MockStore;
 
@@ -38,9 +35,9 @@ describe('WorkspaceItem', () => {
     spectator = createComponent({
       props: {
         workspace: workspaceItem,
-        projectsToShow: 3
+        projectsToShow: 3,
       },
-      detectChanges: false
+      detectChanges: false,
     });
     store = spectator.inject(MockStore);
   });
@@ -48,7 +45,9 @@ describe('WorkspaceItem', () => {
   it('Change Show All Projects', () => {
     const dispatchSpy = jest.spyOn(store, 'dispatch');
     spectator.detectChanges();
-    const action = fetchWorkspaceProjects({ slug: spectator.component.workspace.slug });
+    const action = fetchWorkspaceProjects({
+      slug: spectator.component.workspace.slug,
+    });
 
     spectator.component.setShowAllProjects(false);
 
@@ -88,7 +87,6 @@ describe('WorkspaceItem', () => {
       done();
     });
   });
-
 
   it('If show all project is true, it should show all the projects ignoring projectsToShow', (done) => {
     spectator.component.setShowAllProjects(true);

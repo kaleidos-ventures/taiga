@@ -8,11 +8,11 @@
 
 module.exports = {
   root: true,
-  extends: ['stylelint-config-standard'],
+  extends: ['stylelint-config-standard', 'stylelint-config-prettier'],
   plugins: [
     'stylelint-order',
     'stylelint-use-logical-spec',
-    './linters/no-margin-padding-shorthand.js'
+    './linters/no-margin-padding-shorthand.js',
   ],
   rules: {
     'taiga-plugin/no-margin-padding-shorthand': true,
@@ -22,9 +22,12 @@ module.exports = {
         ignoreAtRules: ['define-mixin', 'mixin'],
       },
     ],
-    "selector-pseudo-element-no-unknown" : [true, {
-      "ignorePseudoElements": ["ng-deep"]
-    }],
+    'selector-pseudo-element-no-unknown': [
+      true,
+      {
+        ignorePseudoElements: ['ng-deep'],
+      },
+    ],
     // Using quotes
     'font-family-name-quotes': 'always-unless-keyword',
     'function-url-quotes': 'always',
@@ -40,15 +43,14 @@ module.exports = {
     'no-descending-specificity': null,
     'max-nesting-depth': 3,
     'selector-max-compound-selectors': 3,
-    'selector-max-specificity': "1,2,1",
+    'selector-max-specificity': '1,2,1',
     // Miscellanea
     'color-named': 'never',
     'declaration-no-important': true,
     'declaration-property-unit-allowed-list': {
-      "font-size": ["rem"],
-      "/^animation/": ["s"]
+      'font-size': ['rem'],
+      '/^animation/': ['s'],
     },
-    'number-leading-zero': 'never',
     'order/properties-alphabetical-order': true,
     'selector-max-type': 1,
 
@@ -67,7 +69,7 @@ module.exports = {
       120,
       {
         ignore: ['comments'],
-      }
+      },
     ],
     'liberty/use-logical-spec': 'always',
     'selector-class-pattern': null,

@@ -19,7 +19,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [color]="color"
       [name]="name">
     </tg-ui-avatar>
-    <p> {{ createProjectForm.value.projectName }}</p>
+    <p>{{ createProjectForm.value.projectName }}</p>
     <tg-ui-input
       class="workspace-input-project-name"
       [label]="t('workspace.workspace_name')">
@@ -31,12 +31,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         #firstInput
         tuiAutoFocus
         maxlength="40"
-        [placeholder]="t('workspace.workspace_name')">
-        <tg-ui-error
-          inputError
-          error="required">
-          {{ t('workspace.error_name_empty') }}
-        </tg-ui-error>
+        [placeholder]="t('workspace.workspace_name')" />
+      <tg-ui-error inputError error="required">
+        {{ t('workspace.error_name_empty') }}
+      </tg-ui-error>
     </tg-ui-input>
     <button
       data-test="workspace-project-form-submit"
@@ -45,11 +43,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       type="submit">
       {{ t('workspace.create_workspace') }}
     </button>
-    <button
-      (click)="close()"
-      appearance="secondary"
-      tuiButton
-      type="button">
+    <button (click)="close()" appearance="secondary" tuiButton type="button">
       {{ 'commons.cancel' | transloco }}
     </button>
   </form>

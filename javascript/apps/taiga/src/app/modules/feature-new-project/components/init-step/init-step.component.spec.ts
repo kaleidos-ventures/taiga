@@ -24,17 +24,15 @@ describe('InitStepComponent', () => {
 
   const createComponent = createComponentFactory({
     component: InitStepComponent,
-    imports: [
-      getTranslocoModule(),
-    ],
+    imports: [getTranslocoModule()],
     providers: [
       {
         provide: RouteHistoryService,
         useValue: {
           getPreviousUrl: () => {
             return '/workspace';
-          }
-        }
+          },
+        },
       },
       FormBuilder,
       {
@@ -44,11 +42,11 @@ describe('InitStepComponent', () => {
             queryParamMap: {
               get: () => {
                 return workspaceSlug;
-              }
-            }
-          }
-        }
-      }
+              },
+            },
+          },
+        },
+      },
     ],
     declareComponent: false,
     mocks: [],
@@ -57,19 +55,19 @@ describe('InitStepComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        workspaces: [{
-          id: randNumber(),
-          name: randCompanyName(),
-          slug: randDomainSuffix({ length: 3 }).join('-'),
-          color: randNumber(),
-          latestProjects: [],
-          totalProjects: 0
-        }
-        ]
+        workspaces: [
+          {
+            id: randNumber(),
+            name: randCompanyName(),
+            slug: randDomainSuffix({ length: 3 }).join('-'),
+            color: randNumber(),
+            latestProjects: [],
+            totalProjects: 0,
+          },
+        ],
       },
-      detectChanges: false
+      detectChanges: false,
     });
-
   });
 
   it('test that form gets initializated', () => {
@@ -86,7 +84,9 @@ describe('InitStepComponent', () => {
   it('test that no workspace is activated', () => {
     spectator.component.workspaces = [];
     spectator.component.initForm();
-    expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(null);
+    expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(
+      null
+    );
   });
 
   it('test that a workspace is activated', () => {
@@ -95,14 +95,18 @@ describe('InitStepComponent', () => {
     spectator.component.workspaces = [workspace];
     spectator.component.selectedWorkspaceSlug = workspace.slug;
     spectator.component.initForm();
-    expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(workspace);
+    expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(
+      workspace
+    );
   });
 
   it('test that form gets initializated', () => {
     const workspace = WorkspaceMockFactory();
     spectator.component.workspaces = [workspace];
     spectator.component.initForm();
-    expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(null);
+    expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(
+      null
+    );
   });
 
   it('test that form creates blank project', () => {
@@ -113,9 +117,8 @@ describe('InitStepComponent', () => {
     spectator.component.templateSelected.subscribe((emit) => {
       expect(emit).toHaveBeenCalledWith({
         step: 'blank',
-        workspace
+        workspace,
       });
     });
   });
-
 });

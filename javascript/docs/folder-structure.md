@@ -1,24 +1,23 @@
-
 ## Tree structure
 
 ├── apps
 │   ├── taiga
 │   │   └── src
-│   │       ├── app
-│   │       │   ├── [shared](#shared)
-│   │       │   ├── [modules](#modules)
-│   │       │   ├── [services](#services-module)
-│   │       │   └── [styles](#styles)
-│   │       ├── assets
-│   │       └── environments
+│   │   ├── app
+│   │   │   ├── [shared](#shared)
+│   │   │   ├── [modules](#modules)
+│   │   │   ├── [services](#services-module)
+│   │   │   └── [styles](#styles)
+│   │   ├── assets
+│   │   └── environments
 │   └── taiga-e2e
 ├── docs
 └── libs
-    ├── [api](#api-libs)
-    ├── [core](#core-libs)
-    ├── [data](#data-libs)
-    ├── [ui](#ui-libs)
-    └── [ws](#websocket-libs)
+   ├── [api](#api-libs)
+   ├── [core](#core-libs)
+   ├── [data](#data-libs)
+   ├── [ui](#ui-libs)
+   └── [ws](#websocket-libs)
 
 ## Shared
 
@@ -48,44 +47,43 @@ Example without group scope:
 `/modules/data-access-auth`, DataAccessAuthModule
 `/modules/feature-auth`, FeatureAuthModule
 
-
 └── modules
-    └── projects
-        ├── data-access
-        |   ├── +state
-        |   │   ├── actions
-        |   │   ├── effects
-        |   │   ├── reducers
-        |   │   └── selectors
-        |   └── projects-data-access.module.ts
-        ├── feature-settings
-        └── feature-list
-            ├── +state (only if the feature needs a state for the UI)
-            │   ├── actions
-            │   ├── effects
-            │   ├── reducers
-            │   └── selectors
-            ├── components
-            │   └── example
-            │       ├── example.component.module.ts
-            │       ├── example.component.html
-            │       ├── example.component.css
-            │       ├── example.component.spec.ts
-            │       └── example.service.ts
-            ├── models
-            │   └── example.model.ts
-            ├── styles
-            │   └── project-settings.css
-            ├── services
-            │   └── example
-            │       ├── example.service.ts
-            │       └── example.service.spec.ts
-            ├── projects-feature-list.component.ts
-            ├── projects-feature-list.component.html
-            ├── projects-feature-list-routing.module.ts
-            └── projects-feature-list.module.ts
+└── projects
+├── data-access
+| ├── +state
+| │   ├── actions
+| │   ├── effects
+| │   ├── reducers
+| │   └── selectors
+| └── projects-data-access.module.ts
+├── feature-settings
+└── feature-list
+├── +state (only if the feature needs a state for the UI)
+│   ├── actions
+│   ├── effects
+│   ├── reducers
+│   └── selectors
+├── components
+│   └── example
+│   ├── example.component.module.ts
+│   ├── example.component.html
+│   ├── example.component.css
+│   ├── example.component.spec.ts
+│   └── example.service.ts
+├── models
+│   └── example.model.ts
+├── styles
+│   └── project-settings.css
+├── services
+│   └── example
+│   ├── example.service.ts
+│   └── example.service.spec.ts
+├── projects-feature-list.component.ts
+├── projects-feature-list.component.html
+├── projects-feature-list-routing.module.ts
+└── projects-feature-list.module.ts
 
- ## Services Module
+## Services Module
 
 Global internal services reused across the app
 

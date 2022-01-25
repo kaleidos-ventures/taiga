@@ -13,7 +13,7 @@ import { ModalModule } from '../modal.module';
 export default ConfigureStory({
   title: 'ModalComponent',
   component: ModalComponent,
-  extraModules: [ ModalModule ],
+  extraModules: [ModalModule],
 });
 
 export const Primary = ConfigureTemplate({
@@ -27,5 +27,5 @@ export const Primary = ConfigureTemplate({
   `,
   args: {
     open: false,
-  }
+  },
 });

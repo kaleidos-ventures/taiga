@@ -14,7 +14,7 @@ import { NavigationService } from '~/app/shared/navigation/navigation.service';
   selector: 'tg-navigation-projects',
   templateUrl: './navigation-projects.component.html',
   styleUrls: ['./navigation-projects.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavigationProjectsComponent {
   constructor(public navigationService: NavigationService) {}

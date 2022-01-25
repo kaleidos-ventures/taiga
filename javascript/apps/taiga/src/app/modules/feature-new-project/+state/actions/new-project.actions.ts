@@ -11,19 +11,17 @@ import { Project, ProjectCreation } from '@taiga/data';
 
 export const createProject = createAction(
   '[NewProject] create project',
-  props<{project: ProjectCreation}>()
+  props<{ project: ProjectCreation }>()
 );
 
 export const createProjectSuccess = createAction(
   '[NewProject] create project success',
-  props<{project: Project}>()
+  props<{ project: Project }>()
 );
 
 export const createProjectError = createAction(
   '[NewProject] create project error',
-  props<{error: unknown}>()
+  props<{ error: unknown }>()
 );
 
-export const inviteUsersNewProject = createAction(
-  '[NewProject] invite'
-);
+export const inviteUsersNewProject = createAction('[NewProject] invite');

@@ -5,35 +5,36 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-<ng-container *transloco="let t;">
+<ng-container *transloco="let t">
   <div class="uploader">
-    <label class="input-label"
-      [attr.for]="id">
+    <label class="input-label" [attr.for]="id">
       {{ label }}
     </label>
     <div class="uploader-inner">
       <div class="preview-wrapper">
-        <tg-ui-avatar size="xxl"
+        <tg-ui-avatar
+          size="xxl"
           data-test="upload-image-preview"
           type="light"
           [url]="safeImageUrl"
           [color]="color"
           [name]="title">
         </tg-ui-avatar>
-        <button class="remove-image-button"
+        <button
+          class="remove-image-button"
           (click)="control.value ? removeImage() : displayImageUploader()"
           tuiIconButton
           [icon]="control.value ? 'close' : 'plus'"
           [attr.title]="t('image_upload.choose_image')"
           type="button"
-          appearance="tertiary">
-        </button>
+          appearance="tertiary"></button>
       </div>
       <div class="uploader-actions">
         <div class="uploader-explanation">
           {{ tip }}
         </div>
-        <button class="uploader-button"
+        <button
+          class="uploader-button"
           (click)="displayImageUploader()"
           tuiButton
           type="button"
@@ -45,14 +46,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             {{ t('image_upload.change_image') }}
           </ng-container>
         </button>
-        <input class="input-upload"
+        <input
+          class="input-upload"
           #imageUpload
           [attr.accept]="accept"
           (change)="onImageSelected($event)"
           (cancel)="$event.stopPropagation()"
           type="file"
           name="upload"
-          [attr.id]="id">
+          [attr.id]="id" />
 
         <tg-ui-error error="type">
           {{ formatError }}
@@ -60,5 +62,4 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
     </div>
   </div>
-
 </ng-container>

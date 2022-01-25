@@ -6,16 +6,13 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<ng-container *transloco="let t;">
+<ng-container *transloco="let t">
   <div class="new-step-wrapper">
     <h1 class="new-step-title">{{ t('new_project.invite_step.title') }}</h1>
     <form [formGroup]="inviteProjectForm">
       <div class="invite-placeholder tui-skeleton"></div>
       <div class="new-step-actions">
-        <button
-          tuiButton
-          (click)="sendForm([])"
-          appearance="tertiary">
+        <button tuiButton (click)="sendForm([])" appearance="tertiary">
           {{ t('new_project.invite_step.later') }}
         </button>
         <button

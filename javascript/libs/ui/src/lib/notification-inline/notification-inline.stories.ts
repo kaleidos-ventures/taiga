@@ -13,7 +13,7 @@ import { NotificationInlineComponent } from './notification-inline.component';
 export default ConfigureStory({
   title: 'NotificationInline',
   component: NotificationInlineComponent,
-  extraModules: [ TuiSvgModule ],
+  extraModules: [TuiSvgModule],
 });
 
 const baseArgs = {
@@ -23,8 +23,8 @@ const baseArgs = {
 const baseArgTypes = {
   status: {
     defaultValue: 'info',
-    options: ['info','error','warning','notice','success'],
-    control: { type: 'select' }
+    options: ['info', 'error', 'warning', 'notice', 'success'],
+    control: { type: 'select' },
   },
 };
 

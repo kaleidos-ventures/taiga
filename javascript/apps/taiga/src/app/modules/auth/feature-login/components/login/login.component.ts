@@ -20,12 +20,16 @@ interface Login {
 @Component({
   selector: 'tg-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
   public form!: FormGroup;
 
-  constructor(private fb: FormBuilder, private authApiService: AuthApiService, private store: Store) { }
+  constructor(
+    private fb: FormBuilder,
+    private authApiService: AuthApiService,
+    private store: Store
+  ) {}
 
   public ngOnInit(): void {
     this.form = this.fb.group({

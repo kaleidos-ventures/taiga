@@ -5,29 +5,31 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-<ng-container *transloco="let t;">
+<ng-container *transloco="let t">
   <ng-container *ngIf="project$ | async as project">
     <div class="project-content">
       <div class="project-title">
-        <tg-ui-avatar size="xxl"
+        <tg-ui-avatar
+          size="xxl"
           type="light"
           [color]="project.color"
           [url]="project.logoBig"
           [name]="project.name">
         </tg-ui-avatar>
-        <h1 class="project-name"
-          data-test="project-name">{{ project.name }}</h1>
+        <h1 class="project-name" data-test="project-name">
+          {{ project.name }}
+        </h1>
       </div>
       <div class="project-content-inner">
         <section class="project-main"></section>
         <section class="project-description">
           <h2 class="project-about">{{ t('project_overview.about') }}</h2>
-          <div [class.hide]="hideOverflow"
-            class="description ">
+          <div [class.hide]="hideOverflow" class="description">
             <p #descriptionOverflow>{{ project.description }}</p>
           </div>
           <div class="actions">
-            <a *ngIf="showDescription && !hideOverflow"
+            <a
+              *ngIf="showDescription && !hideOverflow"
               class="link"
               tuiLink
               (click)="toggleShowDescription()"
@@ -35,7 +37,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               iconAlign="right">
               {{ t('project_overview.show_full_description') }}
             </a>
-            <a *ngIf="showDescription && hideOverflow"
+            <a
+              *ngIf="showDescription && hideOverflow"
               class="link"
               tuiLink
               (click)="toggleShowDescription()"

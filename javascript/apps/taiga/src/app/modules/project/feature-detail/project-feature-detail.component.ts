@@ -8,7 +8,7 @@
 
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { Component, OnInit, } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,21 +17,16 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 @Component({
   selector: 'tg-project-feature-detail',
   templateUrl: './project-feature-detail.component.html',
-  styleUrls: ['./project-feature-detail.component.css']
+  styleUrls: ['./project-feature-detail.component.css'],
 })
 export class ProjectFeatureDetailComponent implements OnInit {
-  constructor(
-    private store: Store,
-    private route: ActivatedRoute,
-  ) {}
+  constructor(private store: Store, private route: ActivatedRoute) {}
 
   public project$ = this.store.select(selectProject);
 
   public ngOnInit() {
-    this.route.paramMap
-      .pipe(untilDestroyed(this))
-      .subscribe((params) => {
-        this.store.dispatch(fetchProject({ slug: params.get('slug')! }));
-      });
+    this.route.paramMap.pipe(untilDestroyed(this)).subscribe((params) => {
+      this.store.dispatch(fetchProject({ slug: params.get('slug')! }));
+    });
   }
 }

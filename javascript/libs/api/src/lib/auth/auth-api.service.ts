@@ -13,16 +13,18 @@ import { ConfigService } from '@taiga/core';
 import { Auth, LoginInput } from '@taiga/data';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthApiService {
-  constructor(private http: HttpClient, private config: ConfigService) { }
+  constructor(private http: HttpClient, private config: ConfigService) {}
 
   public login(data: LoginInput) {
     return this.http.post<Auth>(`${this.config.apiUrl}/auth/token`, data);
   }
 
   public refreshToken(refresh: Auth['refresh']) {
-    return this.http.post<Auth>(`${this.config.apiUrl}/auth/token/refresh`, { refresh });
+    return this.http.post<Auth>(`${this.config.apiUrl}/auth/token/refresh`, {
+      refresh,
+    });
   }
 }

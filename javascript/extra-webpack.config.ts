@@ -8,14 +8,12 @@
 
 import { Configuration } from 'webpack';
 
-export default function(config: Configuration) {
+export default function (config: Configuration) {
   if (config?.module?.rules) {
-    config.module.rules.push(
-      {
-        test   : /\.css$/,
-        loader : 'postcss-loader'
-      }
-    );
+    config.module.rules.push({
+      test: /\.css$/,
+      loader: 'postcss-loader',
+    });
   }
 
   return config;

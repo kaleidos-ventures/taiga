@@ -14,14 +14,14 @@ import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 
 @Injectable()
 export class ModalService {
-  private portal$ = new BehaviorSubject<DomPortal|null>(null);
+  private portal$ = new BehaviorSubject<DomPortal | null>(null);
   private overlayRef!: OverlayRef;
 
   constructor(private overlay: Overlay) {
     this.overlayRef = this.overlay.create({
       hasBackdrop: true,
       panelClass: ['modal', 'is-active'],
-      backdropClass: 'modal-bg'
+      backdropClass: 'modal-bg',
     });
   }
 

@@ -6,19 +6,22 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { TranslocoTestingModule, TranslocoTestingOptions } from '@ngneat/transloco';
+import {
+  TranslocoTestingModule,
+  TranslocoTestingOptions,
+} from '@ngneat/transloco';
 
 export function getTranslocoModule(options: TranslocoTestingOptions = {}) {
   return TranslocoTestingModule.forRoot({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     langs: {
-      en: {}
+      en: {},
     },
     translocoConfig: {
       availableLangs: ['en'],
       defaultLang: 'en',
     },
     preloadLangs: true,
-    ...options
+    ...options,
   });
 }

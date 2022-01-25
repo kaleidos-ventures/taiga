@@ -12,9 +12,13 @@ import { ApiRestInterceptorService } from './api-rest-interceptor.service';
 
 @NgModule({
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: ApiRestInterceptorService, multi: true },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ApiRestInterceptorService,
+      multi: true,
+    },
   ],
   declarations: [],
   imports: [],
 })
-export class ApiRestInterceptorModule { }
+export class ApiRestInterceptorModule {}

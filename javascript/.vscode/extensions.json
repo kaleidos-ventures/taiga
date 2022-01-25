@@ -6,6 +6,7 @@
     "dbaeumer.vscode-eslint",
     "editorconfig.editorconfig",
     "msjsdiag.debugger-for-chrome",
-    "eamodio.gitlens"
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode"
   ]
 }

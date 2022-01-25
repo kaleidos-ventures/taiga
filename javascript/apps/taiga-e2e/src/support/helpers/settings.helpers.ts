@@ -24,39 +24,52 @@ export const navigateToMemberPermissionsSettings = () => {
 export const displayAdvancedSettingsForRole = (index: number) => {
   cy.getBySel('member-permissions-settings').within(() => {
     cy.getBySel('role-permission-row').should('be.visible');
-    cy.getBySel('role-permission-row').eq(index).within(() => {
-      cy.getBySel('permission-row-advanced-settings').click();
-    });
+    cy.getBySel('role-permission-row')
+      .eq(index)
+      .within(() => {
+        cy.getBySel('permission-row-advanced-settings').click();
+      });
   });
 };
 
 export const displayPublicAdvancedSettingsForRole = (index: number) => {
   cy.getBySel('public-permissions-settings').within(() => {
     cy.getBySel('role-permission-row').should('be.visible');
-    cy.getBySel('role-permission-row').eq(index).within(() => {
-      cy.getBySel('permission-row-advanced-settings').click();
-    });
+    cy.getBySel('role-permission-row')
+      .eq(index)
+      .within(() => {
+        cy.getBySel('permission-row-advanced-settings').click();
+      });
   });
 };
 
-export const setModulePermissions = (index: number, permission: DropdownOptions) => {
-
+export const setModulePermissions = (
+  index: number,
+  permission: DropdownOptions
+) => {
   const permissions: DropdownOptions[] = ['no-access', 'can-view', 'can-edit'];
   const permissionIndex = permissions.indexOf(permission);
 
-  const modulePermissionSelectHelper = new SelectHelper('module-permission-select', 'module-permission-option');
+  const modulePermissionSelectHelper = new SelectHelper(
+    'module-permission-select',
+    'module-permission-option'
+  );
 
-  cy.getBySel('module-permissions-row').eq(index).within(() => {
-    modulePermissionSelectHelper.toggleDropdown();
-  });
+  cy.getBySel('module-permissions-row')
+    .eq(index)
+    .within(() => {
+      modulePermissionSelectHelper.toggleDropdown();
+    });
   modulePermissionSelectHelper.setValue(permissionIndex);
 };
 
 export const displayCustomizePermissions = (index: number) => {
-  cy.getBySel('module-permissions-row').eq(index).within(() => {
-    cy.getBySel('display-custom-permissions').click();
-    cy.getBySel('module-custom-permissions-section').should('be.visible');
-  });
+  cy.getBySel('module-permissions-row')
+    .eq(index)
+    .within(() => {
+      cy.getBySel('display-custom-permissions').click();
+      cy.getBySel('module-custom-permissions-section').should('be.visible');
+    });
 };
 
 export const toggleCustomPermission = (permission: CustomPermission) => {
@@ -67,7 +80,9 @@ export const toggleCustomPermission = (permission: CustomPermission) => {
 };
 
 export const toggleCanCommentPermission = (index: number) => {
-  cy.getBySel('module-permissions-row').eq(index).within(() => {
-    cy.getBySel('permission-can-comment-switch').click();
-  });
+  cy.getBySel('module-permissions-row')
+    .eq(index)
+    .within(() => {
+      cy.getBySel('permission-can-comment-switch').click();
+    });
 };

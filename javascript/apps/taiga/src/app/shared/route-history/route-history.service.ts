@@ -11,22 +11,22 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, pairwise } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RouteHistoryService {
-
   private previousUrl!: string;
 
-  constructor(
-    private router: Router
-  ) {}
+  constructor(private router: Router) {}
 
   public listen() {
     this.router.events
       .pipe(
-        filter((evt: unknown): evt is NavigationEnd  => evt instanceof NavigationEnd),
+        filter(
+          (evt: unknown): evt is NavigationEnd => evt instanceof NavigationEnd
+        ),
         pairwise()
-      ).subscribe((events) => {
+      )
+      .subscribe((events) => {
         if (this.previousUrl !== events[0].urlAfterRedirects) {
           this.previousUrl = events[0].urlAfterRedirects;
         }

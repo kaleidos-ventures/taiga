@@ -5,7 +5,13 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-import { randFirstName, randEmail, randPassword, randSentence, random } from '@ngneat/falso';
+import {
+  randFirstName,
+  randEmail,
+  randPassword,
+  randSentence,
+  random,
+} from '@ngneat/falso';
 
 random('6443');
 
@@ -13,5 +19,5 @@ export const exampleFixture = {
   name: randFirstName(),
   email: randEmail(),
   password: randPassword(),
-  userStorySubject: randSentence()
+  userStorySubject: randSentence(),
 };

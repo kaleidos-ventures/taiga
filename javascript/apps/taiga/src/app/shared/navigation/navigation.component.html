@@ -18,14 +18,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <span class="visually-hidden">{{ t('go_home') }}</span>
       </a>
       <tui-hosted-dropdown
-      [tuiDropdownMaxHeight]="800"
-      [content]="projectsDropdown"
-      [(open)]="openProjectsDropdown">
-        <button
-          appearance="main-nav"
-          tuiButton
-          icon="folder"
-          type="button">
+        [tuiDropdownMaxHeight]="800"
+        [content]="projectsDropdown"
+        [(open)]="openProjectsDropdown">
+        <button appearance="main-nav" tuiButton icon="folder" type="button">
           {{ 'commons.projects' | transloco }}
         </button>
       </tui-hosted-dropdown>
@@ -70,9 +66,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tui-hosted-dropdown
           [content]="userDropdown"
           [(open)]="openUserDropdown">
-          <button
-            class="avatar-dropdown-button"
-            type="button">
+          <button class="avatar-dropdown-button" type="button">
             <span class="visually-hidden">{{ t('user_avatar') }}</span>
             <tg-user-avatar [attr.title]="t('user_avatar')"></tg-user-avatar>
           </button>
@@ -81,7 +75,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
 
     <ng-template #userDropdown>
-        <tg-navigation-user-dropdown [user]="user"></tg-navigation-user-dropdown>
+      <tg-navigation-user-dropdown [user]="user"></tg-navigation-user-dropdown>
     </ng-template>
 
     <ng-template #projectsDropdown>

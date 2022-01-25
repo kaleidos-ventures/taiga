@@ -14,17 +14,17 @@ describe('BadgeComponent', () => {
   let spectator: Spectator<BadgeComponent>;
   const createComponent = createComponentFactory({
     component: BadgeComponent,
-    imports: [ BadgeModule ],
+    imports: [BadgeModule],
     declareComponent: false,
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        label: 'example'
+        label: 'example',
       },
       providers: [],
-      detectChanges: false
+      detectChanges: false,
     });
   });
 

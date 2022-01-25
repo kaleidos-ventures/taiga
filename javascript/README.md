@@ -6,8 +6,9 @@ npm i
 
 # Add configuration
 npm run default-config
-# or cp config.example.json apps/taiga/src/assets/config.json 
+# or cp config.example.json apps/taiga/src/assets/config.json
 ```
+
 # Dev
 
 Install git hooks

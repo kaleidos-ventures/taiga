@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   background: var(--color-white);
   border: solid 1px var(--color-gray30);
   border-radius: 3px;
-  box-shadow: 3px 4px 14px rgba(0, 138, 168, .15);
+  box-shadow: 3px 4px 14px rgba(0, 138, 168, 0.15);
   display: flex;
   margin-block-end: var(--spacing-32);
   overflow: hidden;

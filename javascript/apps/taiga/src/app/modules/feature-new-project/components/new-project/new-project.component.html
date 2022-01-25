@@ -6,8 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<ng-container *transloco="let t;">
-
+<ng-container *transloco="let t">
   <ng-container *ngIf="workspaceList$ | async as workspaceList">
     <div class="new-project-wrapper">
       <!-- Init Template -->
@@ -32,8 +31,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
       <!-- Invite step -->
       <ng-container *ngIf="currentStep === 'invite'">
-        <tg-invite-step (finishNewProject)="onInvite($event)">
-        </tg-invite-step>
+        <tg-invite-step (finishNewProject)="onInvite($event)"> </tg-invite-step>
       </ng-container>
 
       <!-- Template step -->
@@ -53,10 +51,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
   </ng-container>
 
-  <ng-template #wip >
+  <ng-template #wip>
     <div class="wip-step">
       <p>WIP</p>
-      <button tuiButton
+      <button
+        tuiButton
         type="button"
         (click)="currentStep = 'init'"
         appearance="primary"
@@ -65,5 +64,4 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </button>
     </div>
   </ng-template>
-
 </ng-container>

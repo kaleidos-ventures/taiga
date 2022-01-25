@@ -11,7 +11,7 @@ import { AbstractControl, NgControl } from '@angular/forms';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: '[inputRef]'
+  selector: '[inputRef]',
 })
 export class InputRefDirective {
   constructor(

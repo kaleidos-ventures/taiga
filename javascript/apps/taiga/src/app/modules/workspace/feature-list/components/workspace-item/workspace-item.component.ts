@@ -6,7 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Workspace, WorkspaceProject } from '@taiga/data';
@@ -16,9 +21,9 @@ import { fetchWorkspaceProjects } from '~/app/modules/workspace/feature-list/+st
 import { selectWorkspaceProject } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 
 interface ViewModel {
-  projectsToShow: number,
-  showAllProjects: boolean,
-  projects: WorkspaceProject[]
+  projectsToShow: number;
+  showAllProjects: boolean;
+  projects: WorkspaceProject[];
 }
 
 @Component({
@@ -26,10 +31,9 @@ interface ViewModel {
   templateUrl: './workspace-item.component.html',
   styleUrls: ['./workspace-item.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState]
+  providers: [RxState],
 })
 export class WorkspaceItemComponent implements OnInit {
-
   @Input()
   public workspace!: Workspace;
 
@@ -40,7 +44,7 @@ export class WorkspaceItemComponent implements OnInit {
 
   public get gridClass() {
     return `grid-items-${this.state.get('projectsToShow')}`;
-  };
+  }
 
   public model$!: Observable<ViewModel>;
 
@@ -51,15 +55,17 @@ export class WorkspaceItemComponent implements OnInit {
   }
 
   public ngOnInit() {
-    const workspaceProjects$ = this.store.select(selectWorkspaceProject(this.workspace.slug));
+    const workspaceProjects$ = this.store.select(
+      selectWorkspaceProject(this.workspace.slug)
+    );
 
-    this.model$ = combineLatest([
-      this.state.select(),
-      workspaceProjects$,
-    ]).pipe(
+    this.model$ = combineLatest([this.state.select(), workspaceProjects$]).pipe(
       map(([state, projects]) => {
         if (!state.showAllProjects) {
-          projects = projects.slice(0, (state.projectsToShow <= 3) ? 3 : state.projectsToShow);
+          projects = projects.slice(
+            0,
+            state.projectsToShow <= 3 ? 3 : state.projectsToShow
+          );
         }
 
         return {
@@ -70,7 +76,7 @@ export class WorkspaceItemComponent implements OnInit {
     );
   }
 
-  public trackByLatestProject(index: number, project: WorkspaceProject ) {
+  public trackByLatestProject(index: number, project: WorkspaceProject) {
     return project.slug;
   }
 

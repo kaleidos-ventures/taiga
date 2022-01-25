@@ -23,9 +23,9 @@ describe('ApiUtilsService', () => {
       param3: 'Param3',
     };
 
-    expect(
-      ApiUtilsService.buildQueryParams(params, keyMap).toString()
-    ).toEqual(`param1=1&param2=test&Param3=1,two&param4=false&param5=undefined&param6=null`);
+    expect(ApiUtilsService.buildQueryParams(params, keyMap).toString()).toEqual(
+      `param1=1&param2=test&Param3=1,two&param4=false&param5=undefined&param6=null`
+    );
   });
 
   it('transform object to FormData with param3 key transformation', () => {

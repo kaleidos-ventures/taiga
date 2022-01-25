@@ -7,7 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 :root {
-  --spacing-4: .25rem;
+  --spacing-4: 0.25rem;
   --spacing-8: calc(var(--spacing-4) * 2);
   --spacing-12: calc(var(--spacing-4) * 3);
   --spacing-16: calc(var(--spacing-4) * 4);

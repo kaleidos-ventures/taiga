@@ -6,4 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export type ModulePermission = 'view' | 'create' | 'modify' | 'delete' | 'comment';
+export type ModulePermission =
+  | 'view'
+  | 'create'
+  | 'modify'
+  | 'delete'
+  | 'comment';

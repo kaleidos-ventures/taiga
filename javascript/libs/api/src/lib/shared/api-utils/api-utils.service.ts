@@ -12,12 +12,13 @@ import { HttpParams } from '@angular/common/http';
 type dataTypes = string | number | boolean | Date | File | undefined | null;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiUtilsService {
   public static buildQueryParams(
-    source: Record<string, (dataTypes | dataTypes[])>,
-    keyMap: Record<string, string> = {}) {
+    source: Record<string, dataTypes | dataTypes[]>,
+    keyMap: Record<string, string> = {}
+  ) {
     let target: HttpParams = new HttpParams();
 
     Object.entries(source).forEach(([key, value]) => {
@@ -39,8 +40,9 @@ export class ApiUtilsService {
   }
 
   public static buildFormData(
-    source: Record<string, (dataTypes | dataTypes[])>,
-    keyMap: Record<string, string> = {}) {
+    source: Record<string, dataTypes | dataTypes[]>,
+    keyMap: Record<string, string> = {}
+  ) {
     const formData: FormData = new FormData();
 
     Object.entries(source).forEach(([key, value]) => {

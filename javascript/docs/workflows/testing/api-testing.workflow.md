@@ -3,7 +3,11 @@
 For testing we're using [spectator](https://github.com/ngneat/spectator). This is the test of the previous service example.
 
 ```ts
-import { createHttpFactory, HttpMethod, SpectatorHttp } from '@ngneat/spectator';
+import {
+  createHttpFactory,
+  HttpMethod,
+  SpectatorHttp,
+} from '@ngneat/spectator';
 import { ExampleApiService } from './example-api.service';
 import { ConfigService } from '@taiga/core';
 import { ConfigServiceMock } from '@taiga/core';
@@ -12,12 +16,10 @@ describe('ExampleApiService', () => {
   let spectator: SpectatorHttp<ExampleApiService>;
   const createHttp = createHttpFactory({
     service: ExampleApiService,
-    providers: [
-      { provide: ConfigService, useValue: ConfigServiceMock },
-    ],
+    providers: [{ provide: ConfigService, useValue: ConfigServiceMock }],
   });
 
-  beforeEach(() => spectator = createHttp());
+  beforeEach(() => (spectator = createHttp()));
 
   it('get data', () => {
     spectator.service.getData().subscribe();

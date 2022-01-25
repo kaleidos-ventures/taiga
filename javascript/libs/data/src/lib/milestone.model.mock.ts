@@ -6,7 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randBoolean, randNumber, randDomainSuffix, randSequence, randWord } from '@ngneat/falso';
+import {
+  randBoolean,
+  randNumber,
+  randDomainSuffix,
+  randSequence,
+  randWord,
+} from '@ngneat/falso';
 import { Milestone } from './milestone.model';
 
 export const MilestoneMockFactory = (): Milestone => {
@@ -23,6 +29,6 @@ export const MilestoneMockFactory = (): Milestone => {
     order: randNumber(),
     projectExtraInfo: [],
     slug: randDomainSuffix({ length: 3 }).join('-'),
-    totalPoints: randNumber()
+    totalPoints: randNumber(),
   };
 };

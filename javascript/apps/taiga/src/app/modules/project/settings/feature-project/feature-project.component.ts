@@ -13,12 +13,11 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   templateUrl: './feature-project.component.html',
   styleUrls: [
     './feature-project.component.css',
-    '../styles/settings.styles.css'
+    '../styles/settings.styles.css',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectsSettingsFeatureProjectComponent implements OnInit {
-
   public ngOnInit(): void {
     console.log('project settings feature');
   }

@@ -11,30 +11,21 @@ TaigaUI has predefined custom properties that set common styles for all componen
 If is approved, then import the component in the module:
 
 ```ts
-import {
-    TuiButtonModule,
-} from '@taiga-ui/core';
+import { TuiButtonModule } from '@taiga-ui/core';
 
 @NgModule({
-    imports: [
-        // ... 
-        TuiButtonModule,
-
-    ],
+  imports: [
+    // ...
+    TuiButtonModule,
+  ],
 })
 export class ExampleModule {}
-
 ```
 
 And use it in your component as you can see in the [documentation](https://taiga-ui.dev/components/)
 
 ```html
-<button
-  tuiButton
-  type="button">
-  Button
-</button>
-
+<button tuiButton type="button">Button</button>
 ```
 
 ## Overriding icons in components
@@ -47,17 +38,14 @@ TaigaUI comes with predefined icons for its components. If you want to override 
 ```ts
 const MAPPER: Record<string, string> = {
   // iconName: symbolId<Sprite>
-  tuiIconSearch: 'example'
+  tuiIconSearch: 'example',
 };
 ```
 
 3. Use the icon in the component as expected
 
 ```html
-<button
-  tuiButton
-  type="button"
-  iconRight="tuiIconSearch">
+<button tuiButton type="button" iconRight="tuiIconSearch">
   Disabled button
 </button>
 ```

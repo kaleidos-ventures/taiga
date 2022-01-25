@@ -12,15 +12,8 @@ import { TuiSvgModule } from '@taiga-ui/core';
 import { ErrorComponent } from './error.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    TuiSvgModule,
-  ],
-  declarations: [
-    ErrorComponent
-  ],
-  exports: [
-    ErrorComponent
-  ]
+  imports: [CommonModule, TuiSvgModule],
+  declarations: [ErrorComponent],
+  exports: [ErrorComponent],
 })
 export class UiErrorModule {}

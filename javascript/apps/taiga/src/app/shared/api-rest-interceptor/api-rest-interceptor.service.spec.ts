@@ -10,12 +10,20 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ApiRestInterceptorService } from './api-rest-interceptor.service';
 import { createHttpFactory, SpectatorHttp } from '@ngneat/spectator/jest';
 import { randUuid, randNumber } from '@ngneat/falso';
-import { HTTP_INTERCEPTORS, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  HttpRequest,
+  HttpResponse,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { forkJoin, of, throwError } from 'rxjs';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AuthApiService } from '@taiga/api';
-import { loginSuccess, logout } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import {
+  loginSuccess,
+  logout,
+} from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { Router } from '@angular/router';
 
@@ -26,14 +34,8 @@ describe('ApiRestInterceptor', () => {
 
   const createService = createHttpFactory({
     service: ApiRestInterceptorService,
-    imports: [
-      RouterTestingModule,
-    ],
-    mocks: [
-      AuthService,
-      AuthApiService,
-      Router,
-    ],
+    imports: [RouterTestingModule],
+    mocks: [AuthService, AuthApiService, Router],
     providers: [
       { provide: ConfigService, useValue: ConfigServiceMock },
       {
@@ -41,7 +43,7 @@ describe('ApiRestInterceptor', () => {
         useClass: ApiRestInterceptorService,
         multi: true,
       },
-      provideMockStore({initialState}),
+      provideMockStore({ initialState }),
     ],
   });
 
@@ -56,14 +58,14 @@ describe('ApiRestInterceptor', () => {
     const refresh = randUuid();
 
     const authService = spectator.inject(AuthService);
-    authService.getAuth.mockReturnValue({token, refresh});
+    authService.getAuth.mockReturnValue({ token, refresh });
 
     const authInterceptorService = spectator.inject(ApiRestInterceptorService);
     const apiRequest = new HttpRequest('GET', ConfigServiceMock.apiUrl);
 
     const next = {
       handle(request: HttpRequest<any>) {
-        expect(request.headers.get('Authorization')).toEqual(`Bearer ${ token }`);
+        expect(request.headers.get('Authorization')).toEqual(`Bearer ${token}`);
 
         return of(new HttpResponse({ status: 200 }));
       },
@@ -81,12 +83,12 @@ describe('ApiRestInterceptor', () => {
 
     const authApiService = spectator.inject(AuthApiService);
     const authService = spectator.inject(AuthService);
-    authService.getAuth.mockReturnValue({token, refresh});
+    authService.getAuth.mockReturnValue({ token, refresh });
 
     const authInterceptorService = spectator.inject(ApiRestInterceptorService);
     const apiRequest = new HttpRequest('GET', ConfigServiceMock.apiUrl);
 
-    authApiService.refreshToken.andReturn(of({token, refresh}));
+    authApiService.refreshToken.andReturn(of({ token, refresh }));
     let count = 0;
 
     const next = {
@@ -104,7 +106,9 @@ describe('ApiRestInterceptor', () => {
 
     authInterceptorService.intercept(apiRequest, next).subscribe(() => {
       expect(authApiService.refreshToken).toHaveBeenCalledWith(refresh);
-      expect(store.dispatch).toHaveBeenCalledWith(loginSuccess({ auth: {token, refresh} }));
+      expect(store.dispatch).toHaveBeenCalledWith(
+        loginSuccess({ auth: { token, refresh } })
+      );
 
       done();
     });
@@ -120,12 +124,12 @@ describe('ApiRestInterceptor', () => {
     const authApiService = spectator.inject(AuthApiService);
 
     const authService = spectator.inject(AuthService);
-    authService.getAuth.mockReturnValue({token, refresh});
+    authService.getAuth.mockReturnValue({ token, refresh });
 
     const authInterceptorService = spectator.inject(ApiRestInterceptorService);
     const apiRequest = new HttpRequest('GET', ConfigServiceMock.apiUrl);
 
-    authApiService.refreshToken.andReturn(of({token, refresh}));
+    authApiService.refreshToken.andReturn(of({ token, refresh }));
     const next = {
       handle() {
         const err = new HttpErrorResponse({ status: 401, url: '' });
@@ -140,7 +144,7 @@ describe('ApiRestInterceptor', () => {
         expect(store.dispatch).toHaveBeenCalledWith(logout());
 
         done();
-      }
+      },
     });
   });
 
@@ -153,13 +157,13 @@ describe('ApiRestInterceptor', () => {
     const authApiService = spectator.inject(AuthApiService);
 
     const authService = spectator.inject(AuthService);
-    authService.getAuth.mockReturnValue({token, refresh});
+    authService.getAuth.mockReturnValue({ token, refresh });
 
     const authInterceptorService = spectator.inject(ApiRestInterceptorService);
     const apiRequest = new HttpRequest('GET', ConfigServiceMock.apiUrl);
     const nextApiRequest = new HttpRequest('GET', ConfigServiceMock.apiUrl);
 
-    authApiService.refreshToken.andReturn(of({token, refresh}));
+    authApiService.refreshToken.andReturn(of({ token, refresh }));
     let count = 0;
 
     const initialRequest = {
@@ -183,10 +187,12 @@ describe('ApiRestInterceptor', () => {
 
     forkJoin([
       authInterceptorService.intercept(apiRequest, initialRequest),
-      authInterceptorService.intercept(nextApiRequest, nextRequest)
+      authInterceptorService.intercept(nextApiRequest, nextRequest),
     ]).subscribe(() => {
       expect(authApiService.refreshToken).toHaveBeenCalledWith(refresh);
-      expect(store.dispatch).toHaveBeenCalledWith(loginSuccess({ auth: {token, refresh} }));
+      expect(store.dispatch).toHaveBeenCalledWith(
+        loginSuccess({ auth: { token, refresh } })
+      );
 
       done();
     });
@@ -211,12 +217,14 @@ describe('ApiRestInterceptor', () => {
       },
     };
 
-    authInterceptorService.intercept(apiResponse, next).subscribe((response: HttpResponse<any>) => {
-      expect(response.body).toEqual({
-        theUser: {
-          userId,
-        },
+    authInterceptorService
+      .intercept(apiResponse, next)
+      .subscribe((response: HttpResponse<any>) => {
+        expect(response.body).toEqual({
+          theUser: {
+            userId,
+          },
+        });
       });
-    });
   });
 });

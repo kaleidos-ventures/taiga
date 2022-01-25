@@ -10,9 +10,9 @@ import { Milestone } from './milestone.model';
 import { Workspace } from './workspace.model';
 
 export interface Project {
-  logoSmall: string,
-  logoBig: string,
-  logo: string
+  logoSmall: string;
+  logoBig: string;
+  logo: string;
   name: string;
   slug: string;
   description: string;

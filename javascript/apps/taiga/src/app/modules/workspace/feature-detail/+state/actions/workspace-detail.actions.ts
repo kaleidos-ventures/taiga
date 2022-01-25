@@ -11,15 +11,15 @@ import { Project, Workspace } from '@taiga/data';
 
 export const fetchWorkspace = createAction(
   '[Workspace] Fetch',
-  props<{slug: Workspace['slug']}>()
+  props<{ slug: Workspace['slug'] }>()
 );
 
 export const fetchWorkspaceSuccess = createAction(
   '[Workspace] Fetch Success',
-  props<{workspace: Workspace}>()
+  props<{ workspace: Workspace }>()
 );
 
 export const fetchWorkspaceProjectsSuccess = createAction(
   '[Workspace] Fetch Projects Success',
-  props<{projects: Project[]}>()
+  props<{ projects: Project[] }>()
 );

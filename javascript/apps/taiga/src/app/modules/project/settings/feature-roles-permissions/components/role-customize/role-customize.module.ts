@@ -22,11 +22,9 @@ import { RoleCustomizeComponent } from './role-customize.component';
     TuiSvgModule,
     TranslocoModule,
     TuiToggleModule,
-    InputsModule
+    InputsModule,
   ],
-  declarations: [
-    RoleCustomizeComponent,
-  ],
+  declarations: [RoleCustomizeComponent],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -36,9 +34,6 @@ import { RoleCustomizeComponent } from './role-customize.component';
       },
     },
   ],
-  exports: [
-    RoleCustomizeComponent,
-  ]
-
+  exports: [RoleCustomizeComponent],
 })
 export class RoleCustomizeModule {}

@@ -7,45 +7,53 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *ngIf="model$ | async as vm">
-  <ng-container *transloco="let t;">
+  <ng-container *transloco="let t">
     <div class="settings-permissions-wrapper">
-      <h3 tabindex="-1"
-        mainFocus
-        class="settings-title">{{ t('project_settings.roles_and_permissions') }}
+      <h3 tabindex="-1" mainFocus class="settings-title">
+        {{ t('project_settings.roles_and_permissions') }}
       </h3>
     </div>
-    <section class="member-permissions-settings"
+    <section
+      class="member-permissions-settings"
       data-fragment="member-permissions-settings"
       data-test="member-permissions-settings"
       inViewport
       (visible)="isInViewport($event)">
-      <h3 tabindex="-1"
+      <h3
+        tabindex="-1"
         data-test="member-permissions-settings-title"
         class="settings-subtitle">
         {{ t('project_settings.member_permissions') }}
       </h3>
-      <div *ngIf="vm.admin"
-        class="project-admin">
+      <div *ngIf="vm.admin" class="project-admin">
         <div class="project-admin-title">
           <span class="project-admin-text">{{
             t('project_settings.roles_permissions.project_administrators')
-            }}</span>
-          <button class="small project-admin-button"
+          }}</span>
+          <button
+            class="small project-admin-button"
             data-test="settings-permissions-admin-num-members"
             [class.empty]="!vm.admin.numMembers"
             tuiLink>
-            {{ t('project_settings.roles_permissions.number_admins', { admins:
-            vm.admin.numMembers }) }}
+            {{
+              t('project_settings.roles_permissions.number_admins', {
+                admins: vm.admin.numMembers
+              })
+            }}
           </button>
         </div>
-        <p class="project-admin-paragraph">{{
-          t('project_settings.roles_permissions.project_administrators_explanation')
-          }}</p>
+        <p class="project-admin-paragraph">
+          {{
+            t(
+              'project_settings.roles_permissions.project_administrators_explanation'
+            )
+          }}
+        </p>
       </div>
       <form [formGroup]="form">
-        <ng-container
-          *ngFor="let role of vm.memberRoles; trackBy: trackBySlug;">
-          <tg-role-permission-row *ngIf="getRoleForm(role)"
+        <ng-container *ngFor="let role of vm.memberRoles; trackBy: trackBySlug">
+          <tg-role-permission-row
+            *ngIf="getRoleForm(role)"
             [formGroup]="getRoleForm(role)"
             [name]="role.name"
             [numMembers]="role.numMembers"
@@ -53,7 +61,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </tg-role-permission-row>
         </ng-container>
 
-        <button appearance="tertiary"
+        <button
+          appearance="tertiary"
           class="add-role"
           tuiButton
           icon="'plus'"
@@ -69,11 +78,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="public-permissions-settings"
       inViewport
       (visible)="isInViewport($event)">
-      <h3 tabindex="-1"
-        class="settings-subtitle">{{ t('project_settings.public_permissions') }}
+      <h3 tabindex="-1" class="settings-subtitle">
+        {{ t('project_settings.public_permissions') }}
       </h3>
       <form [formGroup]="publicForm">
-        <tg-role-permission-row *ngIf="getPublicRoleForm()"
+        <tg-role-permission-row
+          *ngIf="getPublicRoleForm()"
           [formGroup]="getPublicRoleForm()"
           [hasMembers]="false"
           [name]="''"
@@ -82,22 +92,21 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </tg-role-permission-row>
         <tg-ui-notification-inline [status]="'info'">
           <span>{{ t('project_settings.external_members') }}</span>
-          <button
-            class="link"
-            tuiLink>
+          <button class="link" tuiLink>
             {{ t('project_settings.see_more') }}
           </button>
         </tg-ui-notification-inline>
       </form>
     </section>
 
-    <section data-fragment="workspace-permissions-settings"
+    <section
+      data-fragment="workspace-permissions-settings"
       class="workspace-permissions-settings"
       inViewport
       (visible)="isInViewport($event)">
-      <h3 tabindex="-1"
-        class="settings-subtitle">{{ t('project_settings.workspace_permissions')
-        }}</h3>
+      <h3 tabindex="-1" class="settings-subtitle">
+        {{ t('project_settings.workspace_permissions') }}
+      </h3>
     </section>
-</ng-container>
+  </ng-container>
 </ng-container>

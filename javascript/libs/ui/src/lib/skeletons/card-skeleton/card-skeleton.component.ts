@@ -13,11 +13,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './card-skeleton.component.html',
   styleUrls: ['./card-skeleton.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-
 })
 
 // NOTES
 // Shared angular animations
-
-export class CardSkeletonComponent {
-}
+export class CardSkeletonComponent {}

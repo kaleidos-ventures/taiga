@@ -11,48 +11,52 @@ import { Project, Role } from '@taiga/data';
 
 export const fetchProjectSuccess = createAction(
   '[Project] fetch success',
-  props<{project: Project}>()
+  props<{ project: Project }>()
 );
 
 export const fetchProject = createAction(
   '[Project] fetch',
-  props<{slug: Project['slug']}>()
+  props<{ slug: Project['slug'] }>()
 );
 
 export const fetchMemberRoles = createAction(
   '[Member Roles] fetch members',
-  props<{slug: Project['slug']}>()
+  props<{ slug: Project['slug'] }>()
 );
 
 export const fetchMemberRolesSuccess = createAction(
   '[Roles] fetch members success',
-  props<{roles: Role[]}>()
+  props<{ roles: Role[] }>()
 );
 
 export const fetchPublicRoles = createAction(
   '[Member Roles] fetch public',
-  props<{slug: Project['slug']}>()
+  props<{ slug: Project['slug'] }>()
 );
 
 export const fetchPublicRolesSuccess = createAction(
   '[Roles] fetch public success',
-  props<{publicRole: string[]}>()
+  props<{ publicRole: string[] }>()
 );
 
 export const updateRolePermissions = createAction(
   '[Roles] update role permissions',
-  props<{project: Project['slug'], roleSlug: Role['slug'], permissions: string[]}>()
+  props<{
+    project: Project['slug'];
+    roleSlug: Role['slug'];
+    permissions: string[];
+  }>()
 );
 
 export const updatePublicRolePermissions = createAction(
   '[Roles] update public role permissions',
-  props<{project: Project['slug'], permissions: string[]}>()
+  props<{ project: Project['slug']; permissions: string[] }>()
 );
 
 export const updateRolePermissionsSuccess = createAction(
-  '[Roles] update role permissions success',
+  '[Roles] update role permissions success'
 );
 
 export const updateRolePermissionsError = createAction(
-  '[Roles] update role permissions error',
+  '[Roles] update role permissions error'
 );

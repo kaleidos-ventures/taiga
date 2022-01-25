@@ -136,7 +136,7 @@ ul {
 }
 
 li {
-  margin-block-end: .4rem;
+  margin-block-end: 0.4rem;
 }
 
 /* CODE */
@@ -153,7 +153,7 @@ pre {
   font-size: 1rem;
   hyphens: none;
   line-height: 1.375;
-  margin: .5rem 0;
+  margin: 0.5rem 0;
   padding: 1rem;
   tab-size: 2;
   text-align: start;
@@ -199,5 +199,5 @@ textarea {
 }
 
 .modal-bg {
-  background-color: rgba(122, 137, 167, .5);
+  background-color: rgba(122, 137, 167, 0.5);
 }

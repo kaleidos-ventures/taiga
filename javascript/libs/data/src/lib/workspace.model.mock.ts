@@ -27,7 +27,8 @@ export const WorkspaceMockFactory = (): Workspace => {
         color: workspace.color,
         slug: workspace.slug,
         name: workspace.name,
-      }));
+      })
+    );
   }
 
   return {

@@ -13,7 +13,7 @@ import { FormDirective } from '../form/form.directive';
 @Component({
   selector: 'tg-ui-error',
   templateUrl: './error.component.html',
-  styleUrls: ['./error.component.css']
+  styleUrls: ['./error.component.css'],
 })
 export class ErrorComponent implements OnChanges {
   @Input()
@@ -22,7 +22,10 @@ export class ErrorComponent implements OnChanges {
   @Input()
   public enabled = true;
 
-  constructor(public fieldService: FieldService, public formDirective: FormDirective) {}
+  constructor(
+    public fieldService: FieldService,
+    public formDirective: FormDirective
+  ) {}
 
   public ngOnChanges(changes: SimpleChanges) {
     if (changes.enabled) {

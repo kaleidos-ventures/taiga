@@ -17,7 +17,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     &.update-on-blur.touched::ng-deep,
     &.update-on-change.touched::ng-deep {
       & tui-wrapper::after {
-        color: var(--color-red) !important; /* stylelint-disable-line declaration-no-important */
+        /* stylelint-disable-next-line declaration-no-important */
+        color: var(--color-red) !important;
       }
     }
   }
@@ -43,17 +44,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & .placeholder {
-    color: var(--color-gray60) !important; /* stylelint-disable-line declaration-no-important */
-    inset-block-start: var(--spacing-8) !important; /* stylelint-disable-line declaration-no-important */
-    line-height: 24px !important; /* stylelint-disable-line declaration-no-important */
+    /* stylelint-disable-next-line declaration-no-important */
+    color: var(--color-gray60) !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    inset-block-start: var(--spacing-8) !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    line-height: 24px !important;
   }
 
   & .wrapper {
-    padding-block-start: var(--spacing-8) !important; /* stylelint-disable-line declaration-no-important */
+    /* stylelint-disable-next-line declaration-no-important */
+    padding-block-start: var(--spacing-8) !important;
   }
 
   & .counter {
-    color: var(--color-gray70) !important; /* stylelint-disable-line declaration-no-important */
+    /* stylelint-disable-next-line declaration-no-important */
+    color: var(--color-gray70) !important;
   }
 }
 

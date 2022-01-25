@@ -16,9 +16,8 @@ describe('KanbanPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProjectFeatureKanbanComponent ]
-    })
-      .compileComponents();
+      declarations: [ProjectFeatureKanbanComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

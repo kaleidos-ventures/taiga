@@ -25,10 +25,7 @@ module.exports = stylelint.createPlugin(
         return;
       }
 
-      const shorthandProperties = [
-        'margin',
-        'padding'
-      ];
+      const shorthandProperties = ['margin', 'padding'];
 
       const longhandLogicalProperties = [
         'margin-block and margin-inline',
@@ -50,16 +47,20 @@ module.exports = stylelint.createPlugin(
           return longhandLogicalProperties[prop];
         };
 
-        const physical = valuesArray.every(value => value !== valuesArray[0]);
+        const physical = valuesArray.every((value) => value !== valuesArray[0]);
         const shorthandValuesLenght = valuesArray.length === 4;
 
         // If using shorthand and values are physical instead of logical
-        if(!physical && shorthandValuesLenght) {
+        if (!physical && shorthandValuesLenght) {
           stylelint.utils.report({
             ruleName: ruleName,
             result: postcssResult,
             node: decl,
-            message: `'${decl.prop}: ${value}' is not a logical valid value, please write this declaration as ${longhand(decl.prop)}`
+            message: `'${
+              decl.prop
+            }: ${value}' is not a logical valid value, please write this declaration as ${longhand(
+              decl.prop
+            )}`,
           });
         }
 
@@ -69,7 +70,9 @@ module.exports = stylelint.createPlugin(
             ruleName: ruleName,
             result: postcssResult,
             node: decl,
-            message: `'${decl.prop}' should be written in shorthand as '${longhand(decl.prop)}'`
+            message: `'${
+              decl.prop
+            }' should be written in shorthand as '${longhand(decl.prop)}'`,
           });
         }
       };

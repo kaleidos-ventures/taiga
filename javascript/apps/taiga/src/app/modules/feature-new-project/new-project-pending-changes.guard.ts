@@ -14,9 +14,13 @@ export interface NewProjectCanDeactivate {
   canDeactivate: () => boolean | Observable<boolean>;
 }
 
-@Injectable( { providedIn: 'root' })
-export class NewProjectPendingChangesGuard implements CanDeactivate<NewProjectCanDeactivate> {
-  public canDeactivate(component: NewProjectCanDeactivate): boolean | Observable<boolean> {
+@Injectable({ providedIn: 'root' })
+export class NewProjectPendingChangesGuard
+  implements CanDeactivate<NewProjectCanDeactivate>
+{
+  public canDeactivate(
+    component: NewProjectCanDeactivate
+  ): boolean | Observable<boolean> {
     return component.canDeactivate();
   }
 }

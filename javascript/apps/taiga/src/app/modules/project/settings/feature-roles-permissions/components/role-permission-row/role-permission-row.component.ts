@@ -7,7 +7,13 @@
  */
 
 import { KeyValue } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Module } from '@taiga/data';
@@ -20,10 +26,11 @@ let nextId = 0;
   selector: 'tg-role-permission-row',
   templateUrl: './role-permission-row.component.html',
   styleUrls: ['./role-permission-row.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RolePermissionRowComponent implements OnInit {
-  public basicPermissionList = this.projectsSettingsFeatureRolesPermissionsService.getModulePermissions();
+  public basicPermissionList =
+    this.projectsSettingsFeatureRolesPermissionsService.getModulePermissions();
 
   @Input()
   public formGroup!: FormGroup;
@@ -42,25 +49,26 @@ export class RolePermissionRowComponent implements OnInit {
   public advancedSettingsContainerId = `advanced-settings-container-${nextId++}`;
 
   public showAdvancedSetting = false;
-  public modules = this.projectsSettingsFeatureRolesPermissionsService.getModules();
+  public modules =
+    this.projectsSettingsFeatureRolesPermissionsService.getModules();
 
   constructor(
-    private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService,
+    private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService
   ) {}
 
   public ngOnInit() {
     this.refreshPermission();
 
-    this.formGroup.valueChanges.pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.refreshPermission();
-      });
+    this.formGroup.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refreshPermission();
+    });
   }
 
   public refreshPermission() {
     const currentPermission = this.getGlobalPermission();
 
-    const permissionName = this.basicPermissionList.get(currentPermission) ?? '';
+    const permissionName =
+      this.basicPermissionList.get(currentPermission) ?? '';
 
     this.permissionRowModel = {
       key: currentPermission,
@@ -70,7 +78,10 @@ export class RolePermissionRowComponent implements OnInit {
 
   public moduleVisible(module: Module) {
     if (module === 'tasks' || module === 'sprints') {
-      const userstoriesState = this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(this.getModuleFormGroup('userstories'));
+      const userstoriesState =
+        this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
+          this.getModuleFormGroup('userstories')
+        );
 
       if (userstoriesState === 'no_access') {
         return false;
@@ -85,22 +96,30 @@ export class RolePermissionRowComponent implements OnInit {
       this.projectsSettingsFeatureRolesPermissionsService.getModules().keys()
     ).map((module) => {
       const form = this.getModuleFormGroup(module);
-      return this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(form);
+      return this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
+        form
+      );
     });
 
-    const isView = modulesPermissions.every((permission) => permission === 'view');
+    const isView = modulesPermissions.every(
+      (permission) => permission === 'view'
+    );
 
     if (isView) {
       return 'view';
     }
 
-    const isEdit = modulesPermissions.every((permission) => permission === 'edit');
+    const isEdit = modulesPermissions.every(
+      (permission) => permission === 'edit'
+    );
 
     if (isEdit) {
       return 'edit';
     }
 
-    const isNoAccess = modulesPermissions.every((permission) => permission === 'no_access');
+    const isNoAccess = modulesPermissions.every(
+      (permission) => permission === 'no_access'
+    );
 
     if (isNoAccess) {
       return 'no_access';
@@ -130,7 +149,9 @@ export class RolePermissionRowComponent implements OnInit {
   }
 
   public permissionChange(permission: KeyValue<SettingsPermission, string>) {
-    for (const [module] of this.projectsSettingsFeatureRolesPermissionsService.getModules()) {
+    for (const [
+      module,
+    ] of this.projectsSettingsFeatureRolesPermissionsService.getModules()) {
       const moduleGroup = this.getModuleFormGroup(module);
 
       this.projectsSettingsFeatureRolesPermissionsService.applyPermission(

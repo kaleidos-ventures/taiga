@@ -14,5 +14,4 @@
   "error_characters": "Workspace name can’t contain any of this characters: | ! ? * / .",
   "less_projects": "Less projects",
   "more_projects": "{{ projects }} more projects"
-
 }

@@ -13,7 +13,10 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Workspace } from '@taiga/data';
 import { ResizedEvent } from 'angular-resize-event';
-import { selectWorkspace, selectWorkspaceProjects } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
+import {
+  selectWorkspace,
+  selectWorkspaceProjects,
+} from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { fetchWorkspace } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 
 @UntilDestroy()
@@ -22,7 +25,7 @@ import { fetchWorkspace } from '~/app/modules/workspace/feature-detail/+state/ac
   templateUrl: './workspace-detail.component.html',
   styleUrls: ['./workspace-detail.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState]
+  providers: [RxState],
 })
 export class WorkspaceDetailComponent implements OnInit {
   public readonly model$ = this.state.select();
@@ -30,44 +33,41 @@ export class WorkspaceDetailComponent implements OnInit {
 
   public get gridClass() {
     return `grid-items-${this.amountOfProjectsToShow}`;
-  };
+  }
 
   constructor(
     private route: ActivatedRoute,
     private store: Store,
     private state: RxState<{
-      projectsToShow: boolean
-      workspace: Workspace,
-      project: Project[],
-    }>,
+      projectsToShow: boolean;
+      workspace: Workspace;
+      project: Project[];
+    }>
   ) {}
 
   public ngOnInit(): void {
-    this.route.paramMap
-      .pipe(untilDestroyed(this))
-      .subscribe(params => {
-        const slug = params.get('slug');
+    this.route.paramMap.pipe(untilDestroyed(this)).subscribe((params) => {
+      const slug = params.get('slug');
 
-        if (slug) {
-          this.store.dispatch(fetchWorkspace({ slug }));
-        }
-      });
+      if (slug) {
+        this.store.dispatch(fetchWorkspace({ slug }));
+      }
+    });
 
     this.state.connect('workspace', this.store.select(selectWorkspace));
     this.state.connect('project', this.store.select(selectWorkspaceProjects));
   }
 
-  public trackByLatestProject(index: number, project: Project ) {
+  public trackByLatestProject(index: number, project: Project) {
     return project.slug;
   }
 
   public setCardAmounts(width: number) {
     const amount = Math.ceil(width / 250);
-    this.amountOfProjectsToShow = (amount >= 6) ? 6 : amount;
+    this.amountOfProjectsToShow = amount >= 6 ? 6 : amount;
   }
 
   public onResized(event: ResizedEvent) {
     this.setCardAmounts(event.newRect.width);
   }
-
 }

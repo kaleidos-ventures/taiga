@@ -7,18 +7,24 @@
  */
 
 import { APP_BASE_HREF } from '@angular/common';
-import { ICollection, NgModuleMetadata } from '@storybook/angular/dist/ts3.9/client/preview/types';
+import {
+  ICollection,
+  NgModuleMetadata,
+} from '@storybook/angular/dist/ts3.9/client/preview/types';
 import { Args, ArgTypes, moduleMetadata, Story } from '@storybook/angular';
 import { Meta } from '@storybook/angular/types-6-0';
 import { TUI_ICONS_PATH } from '@taiga-ui/core';
 import { paramCase } from 'change-case';
 import { Component } from '@angular/core';
-import { TranslocoTestingModule, TranslocoTestingOptions } from '@ngneat/transloco';
+import {
+  TranslocoTestingModule,
+  TranslocoTestingOptions,
+} from '@ngneat/transloco';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import imageUpload from 'apps/taiga/src/assets/i18n/image_upload/en.json';
 
 const altIconName: Record<string, string> = {
-  'tuiIconChevronDownLarge': 'chevron-down'
+  tuiIconChevronDownLarge: 'chevron-down',
 };
 
 function getTranslocoModule(options: TranslocoTestingOptions = {}) {
@@ -26,15 +32,15 @@ function getTranslocoModule(options: TranslocoTestingOptions = {}) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     langs: {
       en: {
-        'image_upload': imageUpload,
-      }
+        image_upload: imageUpload,
+      },
     },
     translocoConfig: {
       availableLangs: ['en'],
       defaultLang: 'en',
     },
     preloadLangs: true,
-    ...options
+    ...options,
   });
 }
 
@@ -43,14 +49,14 @@ export function iconsPath(name: string): string {
   return `assets/icons/sprite.svg#${paramCase(name)}`;
 }
 export const ConfigureStory = (config: {
-  title: string,
-  component: unknown,
-  declarations?: unknown[],
-  extraModules?: unknown[],
-  extraProviders?: unknown[],
-  routing?: boolean,
-  translations?: boolean,
-  decorators?: Meta['decorators'],
+  title: string;
+  component: unknown;
+  declarations?: unknown[];
+  extraModules?: unknown[];
+  extraProviders?: unknown[];
+  routing?: boolean;
+  translations?: boolean;
+  decorators?: Meta['decorators'];
 }) => {
   config = {
     routing: true,
@@ -66,11 +72,9 @@ export const ConfigureStory = (config: {
   }
 
   const module: Partial<NgModuleMetadata> = {
-    declarations: [
-      ...config.declarations || [],
-    ],
+    declarations: [...(config.declarations || [])],
     providers: [
-      ...config.extraProviders || [],
+      ...(config.extraProviders || []),
       { provide: APP_BASE_HREF, useValue: '/' },
       {
         provide: TUI_ICONS_PATH,
@@ -80,7 +84,7 @@ export const ConfigureStory = (config: {
     imports: [
       // Prevent Storybook error "Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'iframe.html'"
       // RouterModule.forRoot([], { useHash: true }),
-      ...config.extraModules || [],
+      ...(config.extraModules || []),
     ],
   };
 
@@ -95,16 +99,18 @@ export const ConfigureStory = (config: {
 
 export const ConfigureTemplate = (config: {
   template?: string;
-  props?: ICollection,
-  args?: Partial<Args>,
-  argTypes?: ArgTypes,
+  props?: ICollection;
+  args?: Partial<Args>;
+  argTypes?: ArgTypes;
 }) => {
-  const Template: Story<typeof config['args']> = (args: typeof config['args']) => {
+  const Template: Story<typeof config['args']> = (
+    args: typeof config['args']
+  ) => {
     return {
       template: config.template ? config.template : undefined,
       props: {
         ...config.props,
-        ...args
+        ...args,
       },
     };
   };
@@ -122,6 +128,4 @@ export const ConfigureTemplate = (config: {
   template: '',
   styleUrls: [],
 })
-export class EmptyComponent {
-
-}
+export class EmptyComponent {}

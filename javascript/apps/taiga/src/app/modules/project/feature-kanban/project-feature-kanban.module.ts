@@ -13,12 +13,7 @@ import { ProjectFeatureKanbanRoutingModule } from './project-feature-kanban-rout
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
 
 @NgModule({
-  declarations: [
-    ProjectFeatureKanbanComponent
-  ],
-  imports: [
-    CommonModule,
-    ProjectFeatureKanbanRoutingModule
-  ]
+  declarations: [ProjectFeatureKanbanComponent],
+  imports: [CommonModule, ProjectFeatureKanbanRoutingModule],
 })
-export class ProjectFeatureKanbanModule { }
+export class ProjectFeatureKanbanModule {}

@@ -23,20 +23,15 @@ describe('ProjectSettingsComponent', () => {
   let spectator: Spectator<ProjectNavigationSettingsComponent>;
   const createComponent = createComponentFactory({
     component: ProjectNavigationSettingsComponent,
-    imports: [
-      getTranslocoModule(),
-    ],
+    imports: [getTranslocoModule()],
     declareComponent: false,
-    mocks: [
-      RouteHistoryService,
-      ProjectNavigationComponent
-    ],
+    mocks: [RouteHistoryService, ProjectNavigationComponent],
     providers: [
       {
         provide: Router,
         useValue: {
           url: '/router',
-        }
+        },
       },
       {
         provide: ActivatedRoute,
@@ -44,26 +39,26 @@ describe('ProjectSettingsComponent', () => {
           fragment,
           snapshot: {
             params: {
-              'slug': projectName
-            }
-          }
-        }
-      }
+              slug: projectName,
+            },
+          },
+        },
+      },
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent({
-      detectChanges: false
+      detectChanges: false,
     });
   });
 
   it('get history nav - has history', () => {
-
     spectator.component.ngOnInit = jest.fn();
     spectator.component.getFragment = jest.fn();
 
-    const routeHistory = spectator.inject<RouteHistoryService>(RouteHistoryService);
+    const routeHistory =
+      spectator.inject<RouteHistoryService>(RouteHistoryService);
     routeHistory.getPreviousUrl.mockReturnValue('/route-history');
 
     spectator.detectChanges();
@@ -73,12 +68,12 @@ describe('ProjectSettingsComponent', () => {
     expect(spectator.component.previousUrl).toEqual('/route-history');
   });
 
-
   it('get history nav - has no history defaults to current route', () => {
     spectator.component.ngOnInit = jest.fn();
     spectator.component.getFragment = jest.fn();
 
-    const routeHistory = spectator.inject<RouteHistoryService>(RouteHistoryService);
+    const routeHistory =
+      spectator.inject<RouteHistoryService>(RouteHistoryService);
     routeHistory.getPreviousUrl.mockReturnValue('');
 
     spectator.detectChanges();
@@ -92,7 +87,8 @@ describe('ProjectSettingsComponent', () => {
     spectator.component.ngOnInit = jest.fn();
     spectator.component.getFragment = jest.fn();
 
-    const routeHistory = spectator.inject<RouteHistoryService>(RouteHistoryService);
+    const routeHistory =
+      spectator.inject<RouteHistoryService>(RouteHistoryService);
     routeHistory.getPreviousUrl.mockReturnValue('');
 
     const router = spectator.inject<Router>(Router);
@@ -107,6 +103,4 @@ describe('ProjectSettingsComponent', () => {
 
     expect(spectator.component.previousUrl).toEqual(`/project/${projectName}/`);
   });
-
 });
-

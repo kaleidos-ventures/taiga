@@ -22,7 +22,7 @@ export interface ProjectState {
 export const initialState: ProjectState = {
   project: null,
   memberRoles: [],
-  publicRole: []
+  publicRole: [],
 };
 
 export const reducer = createReducer(
@@ -32,16 +32,22 @@ export const reducer = createReducer(
 
     return state;
   }),
-  on(ProjectActions.fetchMemberRolesSuccess, (state, { roles }): ProjectState => {
-    state.memberRoles = roles;
+  on(
+    ProjectActions.fetchMemberRolesSuccess,
+    (state, { roles }): ProjectState => {
+      state.memberRoles = roles;
 
-    return state;
-  }),
-  on(ProjectActions.fetchPublicRolesSuccess, (state, { publicRole }): ProjectState => {
-    state.publicRole = publicRole;
+      return state;
+    }
+  ),
+  on(
+    ProjectActions.fetchPublicRolesSuccess,
+    (state, { publicRole }): ProjectState => {
+      state.publicRole = publicRole;
 
-    return state;
-  }),
+      return state;
+    }
+  )
 );
 
 export const projectFeature = createFeature({

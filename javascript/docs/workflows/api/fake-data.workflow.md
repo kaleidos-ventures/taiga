@@ -7,7 +7,12 @@ First you must create a mock file next to the model file like `user.model.mock.t
 ## Example
 
 ```ts
-import { randAvatar, randParagraph, randEmail, randFirstName } from '@ngneat/falso';
+import {
+  randAvatar,
+  randParagraph,
+  randEmail,
+  randFirstName,
+} from '@ngneat/falso';
 
 import { User } from './users.model';
 

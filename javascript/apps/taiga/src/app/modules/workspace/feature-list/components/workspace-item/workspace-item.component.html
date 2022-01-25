@@ -6,81 +6,85 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *ngIf="model$ | async as vm">
-<ng-container *transloco="let t;">
-  <ng-container *ngIf="workspace">
-    <div class="workspace-item-top">
-      <tg-ui-avatar class="workspace-avatar"
-        [color]="workspace.color"
-        type="dark"
-        size="m"
-        [name]="workspace.name">
-      </tg-ui-avatar>
-      <div class="workspace-item-title-wrapper">
-        <a data-test="workspace-item-title"
-          [routerLink]="['/workspace/', workspace.slug]"
-          class="workspace-item-title">
-          {{workspace.name}}
-        </a>
+  <ng-container *transloco="let t">
+    <ng-container *ngIf="workspace">
+      <div class="workspace-item-top">
+        <tg-ui-avatar
+          class="workspace-avatar"
+          [color]="workspace.color"
+          type="dark"
+          size="m"
+          [name]="workspace.name">
+        </tg-ui-avatar>
+        <div class="workspace-item-title-wrapper">
+          <a
+            data-test="workspace-item-title"
+            [routerLink]="['/workspace/', workspace.slug]"
+            class="workspace-item-title">
+            {{ workspace.name }}
+          </a>
+        </div>
+        <tg-ui-badge [label]="t('commons.owner')"></tg-ui-badge>
+        <div class="workspace-item-action">
+          <button appearance="tertiary" tuiButton icon="user" type="button">
+            {{ t('commons.members') }} (1)
+          </button>
+          <button appearance="secondary" tuiButton type="button">
+            {{ t('commons.upgrade') }}
+          </button>
+          <a
+            appearance="primary"
+            [routerLink]="['/new-project']"
+            [queryParams]="{ workspace: workspace.slug }"
+            tuiButton
+            icon="plus"
+            type="button">
+            {{ t('commons.project') }}
+          </a>
+        </div>
       </div>
-      <tg-ui-badge [label]="t('commons.owner')"></tg-ui-badge>
-      <div class="workspace-item-action">
-        <button appearance="tertiary"
-          tuiButton
-          icon="user"
-          type="button">
-          {{ t('commons.members') }} (1)
-        </button>
-        <button appearance="secondary"
-          tuiButton
-          type="button">
-          {{ t('commons.upgrade') }}
-        </button>
-        <a appearance="primary"
-          [routerLink]="['/new-project']"
-          [queryParams]="{ workspace: workspace.slug }"
-          tuiButton
-          icon="plus"
-          type="button">
-          {{ t('commons.project') }}
-        </a>
+      <div
+        [class]="gridClass"
+        [class.show-all]="vm.showAllProjects"
+        class="workspace-item-card-grid">
+        <tg-project-card
+          *ngIf="workspace.latestProjects.length === 0"
+          [slug]="workspace.slug"
+          [placeholder]="true"
+          [firstProject]="true">
+        </tg-project-card>
+        <tg-project-card
+          *ngFor="let project of vm.projects; trackBy: trackByLatestProject"
+          [slug]="workspace.slug"
+          [project]="project">
+        </tg-project-card>
       </div>
-    </div>
-    <div
-      [class]="gridClass"
-      [class.show-all]="vm.showAllProjects"
-      class="workspace-item-card-grid">
-      <tg-project-card
-        *ngIf="workspace.latestProjects.length === 0"
-        [slug]="workspace.slug"
-        [placeholder]="true"
-        [firstProject]="true">
-      </tg-project-card>
-      <tg-project-card
-        *ngFor="let project of vm.projects; trackBy: trackByLatestProject"
-        [slug]="workspace.slug"
-        [project]="project">
-      </tg-project-card>
-    </div>
-    <button
-      *ngIf="!vm.showAllProjects && workspace.totalProjects > vm.projectsToShow"
-      (click)="setShowAllProjects(true)"
-      tuiButton
-      appearance="tertiary"
-      class="workspace-show-all"
-      iconRight="chevron-down">
-      {{ t('workspace.more_projects', { projects: workspace.totalProjects - vm.projectsToShow }) }}
-
-    </button>
-    <button
-      *ngIf="vm.showAllProjects && workspace.totalProjects > vm.projectsToShow"
-      (click)="setShowAllProjects(false)"
-      tuiButton
-      appearance="tertiary"
-      class="workspace-show-all"
-      iconRight="chevron-up">
-      {{ t('workspace.less_projects') }}
-    </button>
-
+      <button
+        *ngIf="
+          !vm.showAllProjects && workspace.totalProjects > vm.projectsToShow
+        "
+        (click)="setShowAllProjects(true)"
+        tuiButton
+        appearance="tertiary"
+        class="workspace-show-all"
+        iconRight="chevron-down">
+        {{
+          t('workspace.more_projects', {
+            projects: workspace.totalProjects - vm.projectsToShow
+          })
+        }}
+      </button>
+      <button
+        *ngIf="
+          vm.showAllProjects && workspace.totalProjects > vm.projectsToShow
+        "
+        (click)="setShowAllProjects(false)"
+        tuiButton
+        appearance="tertiary"
+        class="workspace-show-all"
+        iconRight="chevron-up">
+        {{ t('workspace.less_projects') }}
+      </button>
+    </ng-container>
   </ng-container>
-</ng-container>
 </ng-container>

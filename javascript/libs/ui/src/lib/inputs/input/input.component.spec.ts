@@ -10,7 +10,12 @@ import '@ng-web-apis/universal/mocks';
 import { createHostFactory } from '@ngneat/spectator/jest';
 import { InputComponent } from './input.component';
 import { InputsModule } from '../inputs.module';
-import { ControlContainer, FormControl, FormGroupDirective, Validators } from '@angular/forms';
+import {
+  ControlContainer,
+  FormControl,
+  FormGroupDirective,
+  Validators,
+} from '@angular/forms';
 import { SpectatorHost } from '@ngneat/spectator';
 import { FormDirective } from '../form/form.directive';
 
@@ -20,19 +25,14 @@ describe('InputComponent', () => {
 
   const createHost = createHostFactory({
     component: InputComponent,
-    imports: [
-      InputsModule,
-    ],
-    providers: [
-      { provide: ControlContainer, useValue: fgd },
-    ],
-    mocks: [
-      FormDirective
-    ]
+    imports: [InputsModule],
+    providers: [{ provide: ControlContainer, useValue: fgd }],
+    mocks: [FormDirective],
   });
 
   beforeEach(() => {
-    spectator = createHost(`
+    spectator = createHost(
+      `
     <tg-ui-input
       [icon]="icon"
       [label]="label">
@@ -40,14 +40,16 @@ describe('InputComponent', () => {
         [formControl]="control"
         inputRef>
     </tg-ui-input>
-    `,{
-      hostProps: {
-        control: new FormControl('', [ Validators.required ]),
-        icon: 'example',
-        label: 'example',
-      },
-      detectChanges: false
-    });
+    `,
+      {
+        hostProps: {
+          control: new FormControl('', [Validators.required]),
+          icon: 'example',
+          label: 'example',
+        },
+        detectChanges: false,
+      }
+    );
   });
 
   it('svg should be visible', () => {
@@ -57,13 +59,21 @@ describe('InputComponent', () => {
 
   it('fill id', () => {
     spectator.detectChanges();
-    expect(spectator.query('input')).toHaveAttribute('id', spectator.component.id);
-    expect(spectator.query('label')).toHaveAttribute('for', spectator.component.id);
+    expect(spectator.query('input')).toHaveAttribute(
+      'id',
+      spectator.component.id
+    );
+    expect(spectator.query('label')).toHaveAttribute(
+      'for',
+      spectator.component.id
+    );
   });
 
   it('label should be visible', () => {
     spectator.detectChanges();
-    expect(spectator.query('label.input-label')).toHaveExactText(spectator.component.label);
+    expect(spectator.query('label.input-label')).toHaveExactText(
+      spectator.component.label
+    );
   });
 
   it('aria required & invalid', () => {
@@ -71,5 +81,4 @@ describe('InputComponent', () => {
     expect(spectator.query('input')).toHaveAttribute('aria-required', 'true');
     expect(spectator.query('input')).toHaveAttribute('aria-invalid', 'true');
   });
-
 });

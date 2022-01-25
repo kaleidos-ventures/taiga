@@ -10,10 +10,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ProjectFeatureOverviewComponent } from './project-feature-overview.component';
 
-const routes: Routes = [{ path: '', component: ProjectFeatureOverviewComponent }];
+const routes: Routes = [
+  { path: '', component: ProjectFeatureOverviewComponent },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ProjectOverviewRoutingModule { }
+export class ProjectOverviewRoutingModule {}

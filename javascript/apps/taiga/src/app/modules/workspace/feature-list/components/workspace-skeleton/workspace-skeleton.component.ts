@@ -6,7 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  Input,
+} from '@angular/core';
 
 @Component({
   selector: 'tg-workspace-skeleton',
@@ -15,6 +20,5 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkspaceSkeletonComponent {
-
   @HostBinding('class.static') @Input() public static = false;
 }

@@ -15,7 +15,12 @@ import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { WorkspaceEffects } from './workspace.effects';
 import { WorkspaceApiService } from '@taiga/api';
-import { fetchWorkspaceList, fetchWorkspaceListSuccess, fetchWorkspaceProjects, fetchWorkspaceProjectsSuccess } from '../actions/workspace.actions';
+import {
+  fetchWorkspaceList,
+  fetchWorkspaceListSuccess,
+  fetchWorkspaceProjects,
+  fetchWorkspaceProjectsSuccess,
+} from '../actions/workspace.actions';
 import { randDomainSuffix } from '@ngneat/falso';
 
 describe('WorkspaceEffects', () => {
@@ -24,10 +29,8 @@ describe('WorkspaceEffects', () => {
 
   const createService = createServiceFactory({
     service: WorkspaceEffects,
-    providers: [
-      provideMockActions(() => actions$)
-    ],
-    mocks: [ WorkspaceApiService ],
+    providers: [provideMockActions(() => actions$)],
+    mocks: [WorkspaceApiService],
   });
 
   beforeEach(() => {
@@ -43,15 +46,13 @@ describe('WorkspaceEffects', () => {
       cold('-b|', { b: [workspace] })
     );
 
-    actions$ = hot('-a', { a:  fetchWorkspaceList()});
+    actions$ = hot('-a', { a: fetchWorkspaceList() });
 
     const expected = cold('--a', {
       a: fetchWorkspaceListSuccess({ workspaces: [workspace] }),
     });
 
-    expect(
-      effects.listWorkspaces$
-    ).toBeObservable(expected);
+    expect(effects.listWorkspaces$).toBeObservable(expected);
   });
 
   it('fetch workspace projects', () => {
@@ -64,15 +65,12 @@ describe('WorkspaceEffects', () => {
       cold('-b|', { b: [project] })
     );
 
-    actions$ = hot('-a', { a:  fetchWorkspaceProjects({ slug })});
+    actions$ = hot('-a', { a: fetchWorkspaceProjects({ slug }) });
 
     const expected = cold('--a', {
       a: fetchWorkspaceProjectsSuccess({ slug, projects: [project] }),
     });
 
-    expect(
-      effects.fetchWorkspaceProjects$
-    ).toBeObservable(expected);
+    expect(effects.fetchWorkspaceProjects$).toBeObservable(expected);
   });
-
 });

@@ -21,12 +21,16 @@ export class ShortcutsService {
     const shortcut = shortcuts.find((it) => it.task === taskName);
 
     if (shortcut) {
-      hotkeys(shortcut.defaultKey, {
-        scope: shortcut.scope,
-        ...options
-      }, (event, handler) => {
-        subject.next({ event, handler });
-      });
+      hotkeys(
+        shortcut.defaultKey,
+        {
+          scope: shortcut.scope,
+          ...options,
+        },
+        (event, handler) => {
+          subject.next({ event, handler });
+        }
+      );
 
       return subject.pipe(
         finalize(() => {

@@ -22,19 +22,15 @@ describe('NewProjectComponent', () => {
 
   const createComponent = createComponentFactory({
     component: NewProjectComponent,
-    providers: [
-      provideMockStore({ initialState }),
-    ],
-    imports: [
-      RouterTestingModule,
-    ],
+    providers: [provideMockStore({ initialState })],
+    imports: [RouterTestingModule],
     declareComponent: false,
     mocks: [],
   });
 
   beforeEach(() => {
     spectator = createComponent({
-      detectChanges: false
+      detectChanges: false,
     });
     store = spectator.inject(MockStore);
   });

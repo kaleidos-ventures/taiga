@@ -12,19 +12,17 @@ import { AuthState } from '../reducers/auth.reducer';
 
 export const setUser = createAction(
   '[Auth] Set user',
-  props<{user: AuthState['user']}>()
+  props<{ user: AuthState['user'] }>()
 );
 
 export const login = createAction(
   '[Auth] login',
-  props<{username: User['username'], password: string}>()
+  props<{ username: User['username']; password: string }>()
 );
 
-export const logout = createAction(
-  '[Auth] logout',
-);
+export const logout = createAction('[Auth] logout');
 
 export const loginSuccess = createAction(
   '[Auth] login success',
-  props<{auth: Auth, redirect?: boolean}>()
+  props<{ auth: Auth; redirect?: boolean }>()
 );

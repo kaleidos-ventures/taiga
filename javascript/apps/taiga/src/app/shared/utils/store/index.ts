@@ -9,7 +9,7 @@
 import { produce } from 'immer';
 
 export function immerReducer<State, Next>(
-  reducer: (state: State, next: Next) => State | void,
+  reducer: (state: State, next: Next) => State | void
 ) {
   return (state: State | undefined, next: Next) => {
     return produce(state, (draft: State) => reducer(draft, next)) as State;

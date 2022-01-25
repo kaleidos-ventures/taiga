@@ -13,9 +13,9 @@ import { Store } from '@ngrx/store';
   selector: 'tg-navigation',
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NavigationComponent  {
+export class NavigationComponent {
   public openProjectsDropdown = false;
   public openUserDropdown = false;
 

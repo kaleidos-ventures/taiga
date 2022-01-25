@@ -21,15 +21,10 @@ import { ProjectCardComponent } from './project-card.component';
     TuiButtonModule,
     TuiSvgModule,
     TranslocoModule,
-    AvatarModule
+    AvatarModule,
   ],
-  declarations: [
-    ProjectCardComponent,
-  ],
-  providers: [
-  ],
-  exports: [
-    ProjectCardComponent,
-  ]
+  declarations: [ProjectCardComponent],
+  providers: [],
+  exports: [ProjectCardComponent],
 })
 export class ProjectCardModule {}

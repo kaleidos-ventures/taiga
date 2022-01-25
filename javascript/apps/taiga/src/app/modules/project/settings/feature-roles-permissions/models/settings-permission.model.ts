@@ -6,4 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export type SettingsPermission = 'edit' | 'view' | 'no_access' | 'restricted' | 'custom';
+export type SettingsPermission =
+  | 'edit'
+  | 'view'
+  | 'no_access'
+  | 'restricted'
+  | 'custom';

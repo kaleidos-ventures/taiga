@@ -13,13 +13,12 @@ import { projectFeature } from './+state/reducers/project.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { ProjectEffects } from './+state/effects/project.effects';
 @NgModule({
-  declarations: [
-  ],
+  declarations: [],
   imports: [
     CommonModule,
     StoreModule.forFeature(projectFeature),
     EffectsModule.forFeature([ProjectEffects]),
   ],
-  exports: []
+  exports: [],
 })
-export class ProjectDataAccessModule { }
+export class ProjectDataAccessModule {}

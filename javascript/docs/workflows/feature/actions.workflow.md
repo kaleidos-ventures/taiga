@@ -3,7 +3,7 @@
 ```ts
 export const login = createAction(
   '[Auth] login',
-  props<{username: User['username'], password: string}>()
+  props<{ username: User['username']; password: string }>()
 );
 ```
 

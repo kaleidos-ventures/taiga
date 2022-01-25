@@ -10,5 +10,5 @@ module.exports = {
   rootTranslationsPath: 'apps/taiga/src/assets/i18n/',
   langs: ['en', 'es'],
   keysManager: {},
-  defaultLang: 'en'
+  defaultLang: 'en',
 };

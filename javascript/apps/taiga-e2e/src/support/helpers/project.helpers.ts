@@ -11,15 +11,23 @@ import { Project } from '@taiga/data';
 
 // NAVIGATION
 
-export const navigateToProjectInWS = (workspaceIndex: number, projectIndex: number) => {
-  cy.getBySel('workspace-item').eq(workspaceIndex).within(() => {
-    cy.getBySel('project-card').eq(projectIndex).click();
-  });
+export const navigateToProjectInWS = (
+  workspaceIndex: number,
+  projectIndex: number
+) => {
+  cy.getBySel('workspace-item')
+    .eq(workspaceIndex)
+    .within(() => {
+      cy.getBySel('project-card').eq(projectIndex).click();
+    });
 };
 
 // PROJECT CREATION
 
-export const createFullProjectInWS = (workspaceId: number, projectName: Project['name']) => {
+export const createFullProjectInWS = (
+  workspaceId: number,
+  projectName: Project['name']
+) => {
   launchProjectCreationInWS(workspaceId);
   selectBlankProject();
   typeProjectName(projectName);
@@ -29,15 +37,20 @@ export const createFullProjectInWS = (workspaceId: number, projectName: Project[
 };
 
 export const launchProjectCreationInWS = (index: number) => {
-  cy.getBySel('workspace-item').eq(index).within(() => {
-    cy.getBySel('create-project-card').click();
-  });
+  cy.getBySel('workspace-item')
+    .eq(index)
+    .within(() => {
+      cy.getBySel('create-project-card').click();
+    });
 };
 
-export const selectBlankProject = () => cy.getBySel('template-item').first().click();
+export const selectBlankProject = () =>
+  cy.getBySel('template-item').first().click();
 
-export const typeProjectName = (name: string) => cy.getBySel('input-name').type(name);
-export const typeProjectDescription = (description: string) => cy.getBySel('input-description').type(description);
+export const typeProjectName = (name: string) =>
+  cy.getBySel('input-name').type(name);
+export const typeProjectDescription = (description: string) =>
+  cy.getBySel('input-description').type(description);
 
 export const cancelProject = () => cy.getBySel('cancel-create-project').click();
 export const submitProject = () => cy.getBySel('submit-create-project').click();

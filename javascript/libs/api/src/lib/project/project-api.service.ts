@@ -14,13 +14,10 @@ import { ConfigService } from '@taiga/core';
 import { Project, ProjectCreation, Role } from '@taiga/data';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProjectApiService {
-  constructor(
-    private http: HttpClient,
-    private config: ConfigService
-  ) { }
+  constructor(private http: HttpClient, private config: ConfigService) {}
 
   public listProjects() {
     return this.http.get<Project[]>(`${this.config.apiUrl}/projects`);
@@ -32,7 +29,7 @@ export class ProjectApiService {
 
   public createProject(project: ProjectCreation) {
     const form = {
-      workspaceSlug:  project.workspaceSlug,
+      workspaceSlug: project.workspaceSlug,
       name: project.name,
       color: project.color,
       logo: project.logo,
@@ -43,35 +40,81 @@ export class ProjectApiService {
   }
 
   public getMemberRoles(slug: Project['slug']) {
-    return this.http.get<Role[]>(`${this.config.apiUrl}/projects/${slug}/roles`);
+    return this.http.get<Role[]>(
+      `${this.config.apiUrl}/projects/${slug}/roles`
+    );
   }
 
   public getPublicRoles(slug: Project['slug']) {
-    return this.http.get<string[]>(`${this.config.apiUrl}/projects/${slug}/public-permissions`);
+    return this.http.get<string[]>(
+      `${this.config.apiUrl}/projects/${slug}/public-permissions`
+    );
   }
 
-  public putMemberRoles(slug: Project['slug'], roleSlug: Role['slug'], permissions: string[]) {
+  public putMemberRoles(
+    slug: Project['slug'],
+    roleSlug: Role['slug'],
+    permissions: string[]
+  ) {
     // only permission currently supported by back
     // python/apps/taiga/src/taiga/permissions/choices.py
     permissions = permissions.filter((permission) => {
-      const validPermission = ['add_member', 'delete_us', 'delete_task', 'modify_task', 'view_tasks', 'modify_us', 'comment_us', 'view_us', 'add_task', 'add_us', 'comment_task', 'view_milestones', 'delete_project', 'modify_project', 'view_project'];
+      const validPermission = [
+        'add_member',
+        'delete_us',
+        'delete_task',
+        'modify_task',
+        'view_tasks',
+        'modify_us',
+        'comment_us',
+        'view_us',
+        'add_task',
+        'add_us',
+        'comment_task',
+        'view_milestones',
+        'delete_project',
+        'modify_project',
+        'view_project',
+      ];
 
       return validPermission.includes(permission);
     });
 
-    return this.http.put<Role>(`${this.config.apiUrl}/projects/${slug}/roles/${roleSlug}/permissions` , {
-      permissions,
-    });
+    return this.http.put<Role>(
+      `${this.config.apiUrl}/projects/${slug}/roles/${roleSlug}/permissions`,
+      {
+        permissions,
+      }
+    );
   }
 
   public putPublicRoles(slug: Project['slug'], permissions: string[]) {
     permissions = permissions.filter((permission) => {
-      const validPermission = ['add_member', 'delete_us', 'delete_task', 'modify_task', 'view_tasks', 'modify_us', 'comment_us', 'view_us', 'add_task', 'add_us', 'comment_task', 'view_milestones', 'delete_project', 'modify_project', 'view_project'];
+      const validPermission = [
+        'add_member',
+        'delete_us',
+        'delete_task',
+        'modify_task',
+        'view_tasks',
+        'modify_us',
+        'comment_us',
+        'view_us',
+        'add_task',
+        'add_us',
+        'comment_task',
+        'view_milestones',
+        'delete_project',
+        'modify_project',
+        'view_project',
+      ];
 
       return validPermission.includes(permission);
     });
-    return this.http.put<Permissions>(`${this.config.apiUrl}/projects/${slug}/public-permissions` , {
-      permissions,
-    });
+    return this.http.put<Permissions>(
+      `${this.config.apiUrl}/projects/${slug}/public-permissions`,
+      {
+        permissions,
+      }
+    );
   }
 }

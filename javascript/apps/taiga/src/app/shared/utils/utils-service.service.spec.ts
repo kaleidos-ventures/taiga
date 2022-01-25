@@ -15,35 +15,24 @@ describe('UtilsService', () => {
       body: {
         theUser: {
           user_id: 3,
-          permissions: [
-            'test1',
-            'test2',
-            'test3',
-          ],
-          contacts: [
-            { user_name: 'Contact1'},
-            { user_name: 'Contact2'},
-          ],
+          permissions: ['test1', 'test2', 'test3'],
+          contacts: [{ user_name: 'Contact1' }, { user_name: 'Contact2' }],
         },
       },
     };
 
-    const transformedObj = UtilsService.objKeysTransformer(params, (x: string) => x.toUpperCase());
+    const transformedObj = UtilsService.objKeysTransformer(
+      params,
+      (x: string) => x.toUpperCase()
+    );
 
     expect(transformedObj).toEqual({
       URL: 'test',
       BODY: {
         THEUSER: {
           USER_ID: 3,
-          PERMISSIONS: [
-            'test1',
-            'test2',
-            'test3',
-          ],
-          CONTACTS: [
-            { USER_NAME: 'Contact1'},
-            { USER_NAME: 'Contact2'},
-          ],
+          PERMISSIONS: ['test1', 'test2', 'test3'],
+          CONTACTS: [{ USER_NAME: 'Contact1' }, { USER_NAME: 'Contact2' }],
         },
       },
     });

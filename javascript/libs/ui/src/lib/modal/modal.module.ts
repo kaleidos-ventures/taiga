@@ -17,11 +17,7 @@ import { TuiButtonModule } from '@taiga-ui/core';
 @NgModule({
   imports: [CommonModule, OverlayModule, TuiButtonModule],
   declarations: [ModalComponent],
-  providers: [ ModalService ],
-  exports: [
-    ModalComponent
-  ]
+  providers: [ModalService],
+  exports: [ModalComponent],
 })
-export class ModalModule {
-
-}
+export class ModalModule {}

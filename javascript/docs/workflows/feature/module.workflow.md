@@ -13,13 +13,11 @@ We have two main types of modules, data-access & features.
 
 Check `folder-structure.md` to see how these folders look.
 
-
 Using cli to create a feature without state:
 
 ```
 npx schematics ./schematics:create-module --name ProjectsFeatureList --module app-routing.module --path apps/taiga/src/app/modules/projects/feature-list --routing --route projects/list --dry-run false --no-interactive
 ```
-
 
 Using cli to create a data-access with state:
 
@@ -56,7 +54,7 @@ const reducer = createReducer(
     state.todos = todos;
 
     return state;
-  }),
+  })
 );
 
 export const todosFeature = createFeature({
@@ -67,13 +65,10 @@ export const todosFeature = createFeature({
 // todo-list.selectors.ts
 import { todosFeature } from './todo-list.reducer';
 
-export const {
-  selectTodos,
-  selectFilter,
-} = todosFeature;
+export const { selectTodos, selectFilter } = todosFeature;
 
 export const selectFilteredTodos = createSelector(
-  selectTodos,
+  selectTodos
   // ...
 );
 

@@ -17,7 +17,6 @@ import { WorkspaceApiService } from '@taiga/api';
 
 @Injectable()
 export class WorkspaceDetailEffects {
-
   public loadWorkspace$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(WorkspaceActions.fetchWorkspace),
@@ -26,7 +25,7 @@ export class WorkspaceDetailEffects {
           return this.workspaceApiService.fetchWorkspace(action.slug).pipe(
             map((workspace) => {
               return WorkspaceActions.fetchWorkspaceSuccess({ workspace });
-            }),
+            })
           );
         },
         onError: () => {
@@ -41,11 +40,15 @@ export class WorkspaceDetailEffects {
       ofType(WorkspaceActions.fetchWorkspace),
       fetch({
         run: (action) => {
-          return this.workspaceApiService.fetchWorkspaceProjects(action.slug).pipe(
-            map((projects) => {
-              return WorkspaceActions.fetchWorkspaceProjectsSuccess({ projects });
-            }),
-          );
+          return this.workspaceApiService
+            .fetchWorkspaceProjects(action.slug)
+            .pipe(
+              map((projects) => {
+                return WorkspaceActions.fetchWorkspaceProjectsSuccess({
+                  projects,
+                });
+              })
+            );
         },
         onError: () => {
           return null;
@@ -58,5 +61,4 @@ export class WorkspaceDetailEffects {
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService
   ) {}
-
 }

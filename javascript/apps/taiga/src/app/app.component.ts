@@ -32,7 +32,8 @@ export class AppComponent {
     private wsService: WsService,
     private localStorageService: LocalStorageService,
     private store: Store,
-    private routeHistoryService: RouteHistoryService) {
+    private routeHistoryService: RouteHistoryService
+  ) {
     this.routeHistoryService.listen();
     this.wsService.listen();
     this.authService.autoRefresh();
@@ -43,29 +44,32 @@ export class AppComponent {
       this.store.dispatch(setUser({ user }));
     }
 
-    this.router.events.pipe(
-      filter((evt): evt is NavigationEnd => evt instanceof NavigationEnd),
-      filter((event) => !event.url.includes('#')),
-      map(() => location.pathname),
-      distinctUntilChanged(),
-      skip(1),
-      filter(() => {
-        const navigationState = this.router.getCurrentNavigation()?.extras.state;
+    this.router.events
+      .pipe(
+        filter((evt): evt is NavigationEnd => evt instanceof NavigationEnd),
+        filter((event) => !event.url.includes('#')),
+        map(() => location.pathname),
+        distinctUntilChanged(),
+        skip(1),
+        filter(() => {
+          const navigationState =
+            this.router.getCurrentNavigation()?.extras.state;
 
-        if (navigationState?.ignoreNextMainFocus) {
-          return false;
-        }
+          if (navigationState?.ignoreNextMainFocus) {
+            return false;
+          }
 
-        return true;
-      }),
-    ).subscribe(() => {
-      requestAnimationFrame(() => {
-        const mainFocus = document.querySelector('[mainFocus]');
+          return true;
+        })
+      )
+      .subscribe(() => {
+        requestAnimationFrame(() => {
+          const mainFocus = document.querySelector('[mainFocus]');
 
-        if (mainFocus) {
-          (mainFocus as HTMLElement).focus();
-        }
+          if (mainFocus) {
+            (mainFocus as HTMLElement).focus();
+          }
+        });
       });
-    });
   }
 }

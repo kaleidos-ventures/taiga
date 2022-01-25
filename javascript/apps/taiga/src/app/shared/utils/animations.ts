@@ -11,47 +11,62 @@ import { style, animate, trigger, transition } from '@angular/animations';
 export const fadeIntOutAnimation = trigger('fadeInOut', [
   transition(':enter', [
     style({
-      opacity: '0'
+      opacity: '0',
     }),
-    animate('300ms ease-in', style({
-      opacity: '1'
-    }))
+    animate(
+      '300ms ease-in',
+      style({
+        opacity: '1',
+      })
+    ),
   ]),
   transition(':leave', [
-    animate('300ms ease-in', style({
-      blockSize: '0',
-    }))
-  ])
+    animate(
+      '300ms ease-in',
+      style({
+        blockSize: '0',
+      })
+    ),
+  ]),
 ]);
 
 export const slideInOut = trigger('slideInOut', [
   transition(':enter', [
     style({
       blockSize: '0',
-      opacity: '0'
+      opacity: '0',
     }),
-    animate('200ms ease-in', style({
-      blockSize: '*',
-      opacity: '1'
-    }))
+    animate(
+      '200ms ease-in',
+      style({
+        blockSize: '*',
+        opacity: '1',
+      })
+    ),
   ]),
   transition(':leave', [
-    animate('200ms ease-in', style({
-      blockSize: '0',
-      opacity: '0'
-    }))
-  ])
+    animate(
+      '200ms ease-in',
+      style({
+        blockSize: '0',
+        opacity: '0',
+      })
+    ),
+  ]),
 ]);
 
 export const slideIn = trigger('slideIn', [
   transition(':enter', [
     style({
       blockSize: '0',
-      opacity: '0'
+      opacity: '0',
     }),
-    animate('200ms ease-in', style({
-      blockSize: '*',
-      opacity: '1'
-    }))
+    animate(
+      '200ms ease-in',
+      style({
+        blockSize: '*',
+        opacity: '1',
+      })
+    ),
   ]),
 ]);

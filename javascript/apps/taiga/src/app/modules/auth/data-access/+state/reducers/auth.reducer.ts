@@ -25,7 +25,7 @@ export const reducer = createReducer(
     state.user = user;
 
     return state;
-  }),
+  })
 );
 
 export const authFeature = createFeature({

@@ -22,11 +22,9 @@ import { ProjectFeatureOverviewComponent } from './project-feature-overview.comp
     AvatarModule,
     TranslocoModule,
     ProjectOverviewRoutingModule,
-    TuiLinkModule
+    TuiLinkModule,
   ],
-  declarations: [
-    ProjectFeatureOverviewComponent,
-  ],
+  declarations: [ProjectFeatureOverviewComponent],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

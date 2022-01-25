@@ -12,10 +12,10 @@ import { ConfigService } from '@taiga/core';
 import { User } from '@taiga/data';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UsersApiService {
-  constructor(private http: HttpClient, private config: ConfigService) { }
+  constructor(private http: HttpClient, private config: ConfigService) {}
 
   public me() {
     return this.http.get<User>(`${this.config.apiUrl}/users/me`);

@@ -20,24 +20,18 @@ describe('TemplateStepComponent', () => {
 
   const createComponent = createComponentFactory({
     component: TemplateStepComponent,
-    imports: [
-      getTranslocoModule(),
-    ],
-    providers: [
-      FormBuilder,
-    ],
-    mocks: [
-      RouteHistoryService,
-    ],
+    imports: [getTranslocoModule()],
+    providers: [FormBuilder],
+    mocks: [RouteHistoryService],
     declareComponent: false,
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        selectedWorkspaceSlug: randDomainSuffix({ length: 3 }).join('-')
+        selectedWorkspaceSlug: randDomainSuffix({ length: 3 }).join('-'),
       },
-      detectChanges: false
+      detectChanges: false,
     });
   });
 
@@ -52,5 +46,4 @@ describe('TemplateStepComponent', () => {
 
     expect(spectator.component.getCurrentWorkspace()).toEqual(workspace);
   });
-
 });

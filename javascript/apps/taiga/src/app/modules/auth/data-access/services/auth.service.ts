@@ -12,12 +12,13 @@ import { Auth, User } from '@taiga/data';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   constructor(
     private localStorageService: LocalStorageService,
-    private authApiService: AuthApiService) {}
+    private authApiService: AuthApiService
+  ) {}
 
   public isLogged() {
     const user = this.getUser();
@@ -57,6 +58,5 @@ export class AuthService {
         });
       }
     }, 1000 * 3600 * 3);
-
   }
 }

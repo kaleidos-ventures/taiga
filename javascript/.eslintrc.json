@@ -38,25 +38,18 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "plugin:@nrwl/nx/typescript",
-        "plugin:ngrx/recommended"
+        "plugin:ngrx/recommended",
+        "prettier"
       ],
       "rules": {
         "taiga/relative-imports": "error",
         "@typescript-eslint/no-unused-vars": ["error"],
         "@typescript-eslint/semi": ["error"],
         "@typescript-eslint/unbound-method": "off",
-        "@typescript-eslint/indent": ["error", 2],
         "semi": "off",
         "indent": "off",
         "no-multiple-empty-lines": [2, { "max": 1 }],
         "quotes": ["error", "single", { "avoidEscape": true }],
-        "object-curly-spacing": [
-          "error",
-          "always",
-          {
-            "objectsInObjects": false
-          }
-        ],
         "ngrx/no-store-subscription": "off"
       }
     },

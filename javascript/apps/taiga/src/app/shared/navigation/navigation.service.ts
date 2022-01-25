@@ -12,14 +12,17 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Project } from '@taiga/data';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NavigationService {
   private _latestProjects = new BehaviorSubject<Project[]>([]);
-  public readonly latestProjects: Observable<Project[]> = this._latestProjects.asObservable();
+  public readonly latestProjects: Observable<Project[]> =
+    this._latestProjects.asObservable();
 
   constructor(private localStorageService: LocalStorageService) {
-    const projects = this.localStorageService.get<Project[] | undefined>('recent_projects') ?? [];
+    const projects =
+      this.localStorageService.get<Project[] | undefined>('recent_projects') ??
+      [];
     this._latestProjects.next(projects.slice(0, 6));
   }
 

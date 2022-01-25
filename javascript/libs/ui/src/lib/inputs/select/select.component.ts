@@ -6,9 +6,22 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { AfterContentInit, Component, ContentChild, HostBinding, Input } from '@angular/core';
-import { ControlContainer, FormControl, FormGroupDirective } from '@angular/forms';
-import { TUI_ANIMATION_OPTIONS, TUI_TEXTFIELD_LABEL_OUTSIDE } from '@taiga-ui/core';
+import {
+  AfterContentInit,
+  Component,
+  ContentChild,
+  HostBinding,
+  Input,
+} from '@angular/core';
+import {
+  ControlContainer,
+  FormControl,
+  FormGroupDirective,
+} from '@angular/forms';
+import {
+  TUI_ANIMATION_OPTIONS,
+  TUI_TEXTFIELD_LABEL_OUTSIDE,
+} from '@taiga-ui/core';
 import { TuiSelectComponent } from '@taiga-ui/kit';
 import { FormDirective } from '../form/form.directive';
 import { FieldService } from '../services/field.service';
@@ -18,10 +31,7 @@ let nextId = 0;
 @Component({
   selector: 'tg-ui-select',
   templateUrl: './select.component.html',
-  styleUrls: [
-    '../inputs.css',
-    './select.component.css',
-  ],
+  styleUrls: ['../inputs.css', './select.component.css'],
   providers: [
     FieldService,
     {
@@ -30,17 +40,17 @@ let nextId = 0;
         return {
           params: {
             duration: 0,
-          }
+          },
         };
-      }
+      },
     },
     {
       provide: TUI_TEXTFIELD_LABEL_OUTSIDE,
       useValue: {
         labelOutside: true,
-      }
+      },
     },
-  ]
+  ],
 })
 export class SelectComponent implements AfterContentInit {
   @Input()
@@ -93,7 +103,7 @@ export class SelectComponent implements AfterContentInit {
   constructor(
     private controlContainer: ControlContainer,
     private fieldService: FieldService,
-    private formDirective: FormDirective,
+    private formDirective: FormDirective
   ) {}
 
   public get control() {

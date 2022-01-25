@@ -36,9 +36,9 @@ class ImageUploadStoryComponent {
 export default ConfigureStory({
   title: 'Image Upload',
   component: ImageUploadStoryComponent,
-  extraModules: [ ImageUploadModule, InputsModule ],
+  extraModules: [ImageUploadModule, InputsModule],
 });
 
 export const ImageUpload = ConfigureTemplate({
-  args: {}
+  args: {},
 });

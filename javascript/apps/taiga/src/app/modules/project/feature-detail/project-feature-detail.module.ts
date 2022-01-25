@@ -17,16 +17,14 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { AvatarModule } from '@taiga/ui/avatar';
 
 @NgModule({
-  declarations: [
-    ProjectFeatureDetailComponent
-  ],
+  declarations: [ProjectFeatureDetailComponent],
   imports: [
     CommonModule,
     ProjectFeatureDetailRoutingModule,
     ProjectFeatureNavigationModule,
     ProjectDataAccessModule,
     TranslocoModule,
-    AvatarModule
-  ]
+    AvatarModule,
+  ],
 })
-export class ProjectFeatureDetailModule { }
+export class ProjectFeatureDetailModule {}

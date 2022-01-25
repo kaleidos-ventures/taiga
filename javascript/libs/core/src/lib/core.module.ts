@@ -18,8 +18,6 @@ import { ShortcutsService } from './services/shortcuts/shortcuts.services';
     CommonModule,
     StoreModule.forFeature(fromCore.coreFeatureKey, fromCore.reducer),
   ],
-  providers: [
-    ShortcutsService
-  ]
+  providers: [ShortcutsService],
 })
 export class CoreModule {}

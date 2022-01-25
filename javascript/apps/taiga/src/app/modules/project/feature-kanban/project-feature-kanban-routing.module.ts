@@ -14,6 +14,6 @@ const routes: Routes = [{ path: '', component: ProjectFeatureKanbanComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ProjectFeatureKanbanRoutingModule { }
+export class ProjectFeatureKanbanRoutingModule {}

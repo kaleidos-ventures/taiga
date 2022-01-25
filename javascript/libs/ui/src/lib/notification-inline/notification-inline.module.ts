@@ -12,16 +12,9 @@ import { TuiSvgModule } from '@taiga-ui/core';
 import { NotificationInlineComponent } from './notification-inline.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    TuiSvgModule
-  ],
-  declarations: [
-    NotificationInlineComponent,
-  ],
+  imports: [CommonModule, TuiSvgModule],
+  declarations: [NotificationInlineComponent],
   providers: [],
-  exports: [
-    NotificationInlineComponent,
-  ]
+  exports: [NotificationInlineComponent],
 })
 export class NotificatioInlineModule {}

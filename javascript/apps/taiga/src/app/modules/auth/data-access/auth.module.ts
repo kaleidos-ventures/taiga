@@ -19,6 +19,6 @@ import { RouterModule } from '@angular/router';
     RouterModule,
     StoreModule.forFeature(authFeature),
     EffectsModule.forFeature([AuthEffects]),
-  ]
+  ],
 })
-export class DataAccessAuthModule { }
+export class DataAccessAuthModule {}

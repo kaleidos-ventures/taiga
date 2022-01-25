@@ -26,18 +26,9 @@ describe('AuthEffects', () => {
   let spectator: SpectatorService<AuthEffects>;
   const createService = createServiceFactory({
     service: AuthEffects,
-    providers: [
-      provideMockActions(() => actions$),
-    ],
-    imports: [
-      RouterTestingModule,
-    ],
-    mocks: [
-      AuthApiService,
-      UsersApiService,
-      LocalStorageService,
-      Router,
-    ],
+    providers: [provideMockActions(() => actions$)],
+    imports: [RouterTestingModule],
+    mocks: [AuthApiService, UsersApiService, LocalStorageService, Router],
   });
 
   beforeEach(() => {
@@ -53,19 +44,15 @@ describe('AuthEffects', () => {
     const authApiService = spectator.inject(AuthApiService);
     const effects = spectator.inject(AuthEffects);
 
-    authApiService.login.mockReturnValue(
-      cold('-b|', { b: response })
-    );
+    authApiService.login.mockReturnValue(cold('-b|', { b: response }));
 
-    actions$ = hot('-a', { a:  login(loginData)});
+    actions$ = hot('-a', { a: login(loginData) });
 
     const expected = cold('--a', {
       a: loginSuccess({ auth: response, redirect: true }),
     });
 
-    expect(
-      effects.login$
-    ).toBeObservable(expected);
+    expect(effects.login$).toBeObservable(expected);
   });
 
   it('login success', () => {
@@ -76,19 +63,15 @@ describe('AuthEffects', () => {
     const localStorageService = spectator.inject(LocalStorageService);
     const routerService = spectator.inject(Router);
     const usersApiService = spectator.inject(UsersApiService);
-    usersApiService.me.mockReturnValue(
-      cold('-b|', { b: user })
-    );
+    usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
 
-    actions$ = hot('-a', { a:  loginSuccess({ auth, redirect: true })});
+    actions$ = hot('-a', { a: loginSuccess({ auth, redirect: true }) });
 
     const expected = cold('--a', {
       a: setUser({ user }),
     });
 
-    expect(
-      effects.loginSuccess$
-    ).toBeObservable(expected);
+    expect(effects.loginSuccess$).toBeObservable(expected);
 
     expect(effects.loginSuccess$).toSatisfyOnFlush(() => {
       expect(routerService.navigate).toHaveBeenCalledWith(['/']);
@@ -101,7 +84,7 @@ describe('AuthEffects', () => {
     const localStorageService = spectator.inject(LocalStorageService);
     const routerService = spectator.inject(Router);
 
-    actions$ = hot('-a', { a:  logout()});
+    actions$ = hot('-a', { a: logout() });
 
     expect(effects.logout$).toSatisfyOnFlush(() => {
       expect(localStorageService.remove).toHaveBeenCalledWith('user');
@@ -116,7 +99,7 @@ describe('AuthEffects', () => {
     const effects = spectator.inject(AuthEffects);
     const localStorageService = spectator.inject(LocalStorageService);
 
-    actions$ = hot('-a', { a:  setUser({ user })});
+    actions$ = hot('-a', { a: setUser({ user }) });
 
     expect(effects.setUser$).toSatisfyOnFlush(() => {
       expect(localStorageService.set).toHaveBeenCalledWith('user', user);

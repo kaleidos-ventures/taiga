@@ -7,26 +7,25 @@
  */
 
 module.exports = {
-
   rules: {
-      'relative-imports': {
-          meta: {
-            type: 'suggestion',
-            docs: {},
-            schema: [],
+    'relative-imports': {
+      meta: {
+        type: 'suggestion',
+        docs: {},
+        schema: [],
+      },
+      create: function (context) {
+        return {
+          ImportDeclaration(node) {
+            if (node.source.value.includes('../..')) {
+              context.report({
+                node,
+                message: `Invalid relative import "${node.source.value}"`,
+              });
+            }
           },
-          create: function(context) {
-            return {
-              ImportDeclaration(node) {
-                if (node.source.value.includes('../..')) {
-                  context.report({
-                      node,
-                      message: `Invalid relative import "${node.source.value}"`
-                  })
-                }
-              }
-            };
-          }
-      }
-  }
+        };
+      },
+    },
+  },
 };

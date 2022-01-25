@@ -6,107 +6,113 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-
-<ng-container *transloco="let t;">
+<ng-container *transloco="let t">
   <div
     [formGroup]="formGroup"
     class="permission-row"
     [class.advance-setting]="showAdvancedSetting">
-      <div
-        class="main">
-        <div
-          *ngIf="hasMembers"
-          class="permission-row-title">
-          <span
-            aria-hidden="true"
-            class="permission-row-name">
-            {{ name }}
-          </span>
-          <button
-            [class.empty]="!numMembers"
-            class="small permission-row-member"
-            data-test="permission-row-member-count"
-            tuiLink>
-            {{ t('project_settings.roles_permissions.number_members', { members: numMembers }) }}
-          </button>
-        </div>
-        <div
-          [class.hide-members]="!hasMembers"
-          class="permission-row-select">
-          <tg-ui-select
-            [label]="name"
-            labelVisuallyHidden
-            data-test="permissions-row-select">
-            <tui-select
-              [ngModel]="permissionRowModel"
-              [ngModelOptions]="{standalone: true}"
-              (ngModelChange)="permissionChange($event)"
-              [valueContent]="selectLabel"
-              tuiTextfieldSize="l">
-              <tui-data-list *tuiDataList>
-                <button
-                  *ngFor="let item of basicPermissionList | keyvalue: insertionOrder; trackBy: trackByValue;"
-                  tuiOption
-                  data-test="permissions-row-option"
-                  [value]="item">
-                  {{ item.value }}
-                </button>
-              </tui-data-list>
-            </tui-select>
-          </tg-ui-select>
-          <ng-template #selectLabel let-item>
-            <ng-container [ngSwitch]="permissionRowModel.key">
-              <ng-container *ngSwitchCase="'custom'">
-                {{ t('project_settings.roles_permissions.custom') }}
-              </ng-container>
-              <ng-container *ngSwitchCase="'restricted'">
-                {{ t('project_settings.roles_permissions.can_edit') }} <i class="restricted">{{ t('project_settings.roles_permissions.restricted') }}</i>
-              </ng-container>
-              <ng-container *ngSwitchDefault>
-                {{ item.value }}
-              </ng-container>
-           </ng-container>
-          </ng-template>
-        </div>
-        <div
-          [class.hide-members]="!hasMembers"
-          class="permission-row-action">
-          <div
-            [attr.aria-level]="1"
-            role="heading"
-            class="permission-row-button">
-            <button
-              appearance="tertiary"
-              data-test="permission-row-advanced-settings"
-              (click)="toggleAdvanceSetting()"
-              tuiButton
-              [iconRight]="showAdvancedSetting ? 'chevron-up' : 'chevron-down'"
-              [attr.aria-expanded]="showAdvancedSetting"
-              [attr.aria-controls]="advancedSettingsContainerId"
-              type="button">
-              <ng-container *ngIf="showAdvancedSetting">
-                {{ t('project_settings.roles_permissions.hide_advanced_settings') }}
-              </ng-container>
-              <ng-container *ngIf="!showAdvancedSetting">
-                {{ t('project_settings.roles_permissions.advanced_settings') }}
-              </ng-container>
-            </button>
-          </div>
-          <button
-            *ngIf="hasMembers"
-            appearance="tertiary"
-            class="permission-row-button"
-            tuiIconButton
-            icon="'more-vertical'"
-            type="button">
-            <span class="visually-hidden">{{ t('project_settings.roles_permissions.show_more') }}</span>
-          </button>
-        </div>
+    <div class="main">
+      <div *ngIf="hasMembers" class="permission-row-title">
+        <span aria-hidden="true" class="permission-row-name">
+          {{ name }}
+        </span>
+        <button
+          [class.empty]="!numMembers"
+          class="small permission-row-member"
+          data-test="permission-row-member-count"
+          tuiLink>
+          {{
+            t('project_settings.roles_permissions.number_members', {
+              members: numMembers
+            })
+          }}
+        </button>
       </div>
-    <div class="sub"
+      <div [class.hide-members]="!hasMembers" class="permission-row-select">
+        <tg-ui-select
+          [label]="name"
+          labelVisuallyHidden
+          data-test="permissions-row-select">
+          <tui-select
+            [ngModel]="permissionRowModel"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="permissionChange($event)"
+            [valueContent]="selectLabel"
+            tuiTextfieldSize="l">
+            <tui-data-list *tuiDataList>
+              <button
+                *ngFor="
+                  let item of basicPermissionList | keyvalue: insertionOrder;
+                  trackBy: trackByValue
+                "
+                tuiOption
+                data-test="permissions-row-option"
+                [value]="item">
+                {{ item.value }}
+              </button>
+            </tui-data-list>
+          </tui-select>
+        </tg-ui-select>
+        <ng-template #selectLabel let-item>
+          <ng-container [ngSwitch]="permissionRowModel.key">
+            <ng-container *ngSwitchCase="'custom'">
+              {{ t('project_settings.roles_permissions.custom') }}
+            </ng-container>
+            <ng-container *ngSwitchCase="'restricted'">
+              {{ t('project_settings.roles_permissions.can_edit') }}
+              <i class="restricted">{{
+                t('project_settings.roles_permissions.restricted')
+              }}</i>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              {{ item.value }}
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </div>
+      <div [class.hide-members]="!hasMembers" class="permission-row-action">
+        <div [attr.aria-level]="1" role="heading" class="permission-row-button">
+          <button
+            appearance="tertiary"
+            data-test="permission-row-advanced-settings"
+            (click)="toggleAdvanceSetting()"
+            tuiButton
+            [iconRight]="showAdvancedSetting ? 'chevron-up' : 'chevron-down'"
+            [attr.aria-expanded]="showAdvancedSetting"
+            [attr.aria-controls]="advancedSettingsContainerId"
+            type="button">
+            <ng-container *ngIf="showAdvancedSetting">
+              {{
+                t('project_settings.roles_permissions.hide_advanced_settings')
+              }}
+            </ng-container>
+            <ng-container *ngIf="!showAdvancedSetting">
+              {{ t('project_settings.roles_permissions.advanced_settings') }}
+            </ng-container>
+          </button>
+        </div>
+        <button
+          *ngIf="hasMembers"
+          appearance="tertiary"
+          class="permission-row-button"
+          tuiIconButton
+          icon="'more-vertical'"
+          type="button">
+          <span class="visually-hidden">{{
+            t('project_settings.roles_permissions.show_more')
+          }}</span>
+        </button>
+      </div>
+    </div>
+    <div
+      class="sub"
       [attr.id]="advancedSettingsContainerId"
       *ngIf="showAdvancedSetting">
-      <ng-container *ngFor="let module of modules | keyvalue: insertionOrder; trackBy: trackByValue;">
+      <ng-container
+        *ngFor="
+          let module of modules | keyvalue: insertionOrder;
+          trackBy: trackByValue
+        ">
         <tg-role-advance-row
           *ngIf="moduleVisible(module.key)"
           hideMembers

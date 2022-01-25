@@ -15,12 +15,12 @@ const routes: Routes = [
   {
     path: '',
     component: NewProjectComponent,
-    canDeactivate: [ NewProjectPendingChangesGuard ]
-  }
+    canDeactivate: [NewProjectPendingChangesGuard],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FeatureNewProjectRoutingModule { }
+export class FeatureNewProjectRoutingModule {}

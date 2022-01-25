@@ -6,7 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
 import { RandomColorService } from '../services/random-color/random-color.service';
 
@@ -17,7 +22,6 @@ import { RandomColorService } from '../services/random-color/random-color.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AvatarComponent implements OnInit {
-
   @Input()
   public size: TuiSizeXS | TuiSizeXXL = 'l';
 

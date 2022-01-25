@@ -1,13 +1,14 @@
-
 ## Component or feature?
+
 This document goal is to create a simple component. If you are willing to create a full feature including module, state, tests, etc. you might want to consider switching to `feature/feature.workflow.md` file.
 
 ## Component organization
+
 Depending on the type of component there could be three different locations where you could save the component:
 
-* **Specific components**: Are only used in one page. Save it in under `/apps/taiga/src/app/features/${featureName}/${componentName}`
-* **Common components**: Are used in multiple pages but are not part of the Design System. Save it in under `/apps/taiga/src/app/shared/${componentName}`
-* **Design System**: Will be used in multiple components and pages. Save it in under the ui library `/libs/ui/src/lib/${componentName}`
+- **Specific components**: Are only used in one page. Save it in under `/apps/taiga/src/app/features/${featureName}/${componentName}`
+- **Common components**: Are used in multiple pages but are not part of the Design System. Save it in under `/apps/taiga/src/app/shared/${componentName}`
+- **Design System**: Will be used in multiple components and pages. Save it in under the ui library `/libs/ui/src/lib/${componentName}`
 
 # Creating a new component
 
@@ -36,9 +37,7 @@ Set the component name and selector using the `tg` prefix and remove the unused 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExampleComponent {
-
-  constructor() { }
-
+  constructor() {}
 }
 ```
 
@@ -148,7 +147,11 @@ When responsive affects Behaviour, we will use the [Layout CDK helper](https://m
 
 ```ts
 import { Component, OnInit } from '@angular/core';
-import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
+import {
+  BreakpointObserver,
+  Breakpoints,
+  BreakpointState,
+} from '@angular/cdk/layout';
 
 @Component({
   selector: 'tg-example',
@@ -156,9 +159,7 @@ import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/l
   styleUrls: ['./example.component.css'],
 })
 export class ExampleComponent implements OnInit {
-  constructor(
-    public breakpointObserver: BreakpointObserver,
-    ) {}
+  constructor(public breakpointObserver: BreakpointObserver) {}
 
   ngOnInit() {
     this.breakpointObserver

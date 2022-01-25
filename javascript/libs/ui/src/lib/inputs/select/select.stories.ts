@@ -7,7 +7,12 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { Validators, AbstractControlOptions, FormGroup, FormBuilder } from '@angular/forms';
+import {
+  Validators,
+  AbstractControlOptions,
+  FormGroup,
+  FormBuilder,
+} from '@angular/forms';
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { TuiRootModule } from '@taiga-ui/core';
 import { InputsModule } from '../inputs.module';
@@ -17,30 +22,23 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 @Component({
   selector: 'tg-ui-forms',
   template: `
-  <tui-root>
-    <div style="width: 500px">
-      <form
-        [formGroup]="form"
-        (submit)="submit()">
-        <tg-ui-select [label]="label">
-          <tui-select
-            tuiTextfieldSize="l"
-            formControlName="example">
-            <tui-data-list-wrapper
-              *tuiDataList
-              [items]="items"
-            ></tui-data-list-wrapper>
-          </tui-select>
-          <tg-ui-error
-            inputError
-            error="required">
-            Field mandatory
-          </tg-ui-error>
-        </tg-ui-select>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
-  </tui-root>
+    <tui-root>
+      <div style="width: 500px">
+        <form [formGroup]="form" (submit)="submit()">
+          <tg-ui-select [label]="label">
+            <tui-select tuiTextfieldSize="l" formControlName="example">
+              <tui-data-list-wrapper
+                *tuiDataList
+                [items]="items"></tui-data-list-wrapper>
+            </tui-select>
+            <tg-ui-error inputError error="required">
+              Field mandatory
+            </tg-ui-error>
+          </tg-ui-select>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </tui-root>
   `,
   styleUrls: [],
 })
@@ -58,7 +56,7 @@ class FormsComponent {
     } else {
       this.form.get('example')?.enable();
     }
-  };
+  }
 
   @Input()
   public set updateOn(updateOn: AbstractControlOptions['updateOn']) {
@@ -69,20 +67,17 @@ class FormsComponent {
   public readOnly!: boolean;
 
   public form!: FormGroup;
-  public items = [
-    'Test 1',
-    'Test 2',
-    'Test 3',
-    'Test 4',
-    'Test 5',
-  ];
+  public items = ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'];
 
   constructor(private fb: FormBuilder) {}
 
   public initForm(updateOn: AbstractControlOptions['updateOn'] = 'submit') {
-    this.form = this.fb.group({
-      example: ['', [Validators.required]],
-    }, { updateOn });
+    this.form = this.fb.group(
+      {
+        example: ['', [Validators.required]],
+      },
+      { updateOn }
+    );
   }
 
   public submit() {
@@ -93,13 +88,9 @@ class FormsComponent {
 export default ConfigureStory({
   title: 'Selects',
   component: SelectComponent,
-  extraModules: [
-    TuiRootModule,
-    BrowserAnimationsModule,
-    InputsModule,
-  ],
+  extraModules: [TuiRootModule, BrowserAnimationsModule, InputsModule],
 
-  declarations: [ FormsComponent ],
+  declarations: [FormsComponent],
 });
 
 const baseArgs = {
@@ -111,17 +102,17 @@ const baseArgTypes = {
   disabled: {
     defaultValue: null,
     options: [null, true],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
   readOnly: {
     defaultValue: null,
     options: [null, true],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
   updateOn: {
     defaultValue: 'submit',
     options: ['blur', 'change', 'submit'],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
 };
 

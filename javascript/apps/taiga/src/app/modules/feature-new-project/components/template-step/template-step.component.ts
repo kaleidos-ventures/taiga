@@ -6,20 +6,41 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild, HostListener, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  HostListener,
+  ChangeDetectorRef,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ProjectCreation, Workspace } from '@taiga/data';
 import { ModalComponent } from '@taiga/ui/modal/components/modal.component';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
 import { Subject } from 'rxjs';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
-export type TemplateProjectForm = Pick<ProjectCreation, 'name' | 'color' | 'description' | 'logo'>;
+export type TemplateProjectForm = Pick<
+  ProjectCreation,
+  'name' | 'color' | 'description' | 'logo'
+>;
 
 @Component({
   selector: 'tg-template-step',
   templateUrl: './template-step.component.html',
-  styleUrls: ['../../styles/project.shared.css', './template-step.component.css'],
+  styleUrls: [
+    '../../styles/project.shared.css',
+    './template-step.component.css',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TemplateStepComponent implements OnInit {
@@ -65,7 +86,7 @@ export class TemplateStepComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
-    private routeHistoryService: RouteHistoryService,
+    private routeHistoryService: RouteHistoryService
   ) {}
 
   public ngOnInit() {
@@ -85,7 +106,9 @@ export class TemplateStepComponent implements OnInit {
       this.templateProjectForm.patchValue(this.initialForm);
     }
 
-    this.templateProjectForm.get('workspace')?.setValue(this.getCurrentWorkspace());
+    this.templateProjectForm
+      .get('workspace')
+      ?.setValue(this.getCurrentWorkspace());
   }
 
   public getCurrentWorkspace() {
@@ -132,7 +155,7 @@ export class TemplateStepComponent implements OnInit {
       this.templateProjectForm.get('logo')?.value,
     ];
 
-    return data.some(value => value);
+    return data.some((value) => value);
   }
 
   public createProject() {

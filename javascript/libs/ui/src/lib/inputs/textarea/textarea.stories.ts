@@ -7,7 +7,12 @@
  */
 
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Validators, AbstractControlOptions, FormGroup, FormBuilder } from '@angular/forms';
+import {
+  Validators,
+  AbstractControlOptions,
+  FormGroup,
+  FormBuilder,
+} from '@angular/forms';
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { TuiRootModule } from '@taiga-ui/core';
 import { InputsModule } from '../inputs.module';
@@ -17,34 +22,26 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 @Component({
   selector: 'tg-ui-forms',
   template: `
-  <tui-root>
-    <div style="width: 500px">
-      <form
-        [formGroup]="form"
-        (submit)="submit()">
-        <tg-ui-textarea
-          [label]="label"
-          [optional]="optional">
-          <tui-text-area
-            formControlName="example"
-            [readOnly]="readOnly"
-            [expandable]="true"
-            [tuiTextfieldMaxLength]="140">
-            {{ placeholder }}
-	        </tui-text-area>
-          <tg-ui-error error="required">
-            Field mandatory
-          </tg-ui-error>
-          <tg-ui-error
-            inputError
-            error="maxlength">
-            Maximun length 140
-          </tg-ui-error>
-        </tg-ui-textarea>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
-  </tui-root>
+    <tui-root>
+      <div style="width: 500px">
+        <form [formGroup]="form" (submit)="submit()">
+          <tg-ui-textarea [label]="label" [optional]="optional">
+            <tui-text-area
+              formControlName="example"
+              [readOnly]="readOnly"
+              [expandable]="true"
+              [tuiTextfieldMaxLength]="140">
+              {{ placeholder }}
+            </tui-text-area>
+            <tg-ui-error error="required"> Field mandatory </tg-ui-error>
+            <tg-ui-error inputError error="maxlength">
+              Maximun length 140
+            </tg-ui-error>
+          </tg-ui-textarea>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </tui-root>
   `,
   styleUrls: [],
 })
@@ -68,28 +65,23 @@ class FormsComponent implements OnChanges {
   public readOnly!: boolean;
 
   public form!: FormGroup;
-  public items = [
-    'Test 1',
-    'Test 2',
-    'Test 3',
-    'Test 4',
-    'Test 5',
-  ];
+  public items = ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'];
 
   constructor(private fb: FormBuilder) {}
 
   public initForm() {
-    const validators = [
-      Validators.maxLength(140)
-    ];
+    const validators = [Validators.maxLength(140)];
 
     if (!this.optional) {
       validators.push(Validators.required);
     }
 
-    this.form = this.fb.group({
-      example: ['', validators],
-    }, { updateOn: this.updateOn });
+    this.form = this.fb.group(
+      {
+        example: ['', validators],
+      },
+      { updateOn: this.updateOn }
+    );
 
     if (this.disabled) {
       this.form.get('example')?.disable();
@@ -112,13 +104,9 @@ class FormsComponent implements OnChanges {
 export default ConfigureStory({
   title: 'Textarea',
   component: TextareaComponent,
-  extraModules: [
-    TuiRootModule,
-    BrowserAnimationsModule,
-    InputsModule,
-  ],
+  extraModules: [TuiRootModule, BrowserAnimationsModule, InputsModule],
 
-  declarations: [ FormsComponent ],
+  declarations: [FormsComponent],
 });
 
 const baseArgs = {
@@ -130,22 +118,22 @@ const baseArgTypes = {
   disabled: {
     defaultValue: null,
     options: [null, true],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
   readOnly: {
     defaultValue: null,
     options: [null, true],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
   optional: {
     defaultValue: null,
     options: [null, true],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
   updateOn: {
     defaultValue: 'submit',
     options: ['blur', 'change', 'submit'],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
 };
 

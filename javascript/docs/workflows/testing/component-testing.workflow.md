@@ -22,9 +22,7 @@ describe('ButtonComponent', () => {
   let spectator: Spectator<ExampleComponent>;
   const createComponent = createComponentFactory({
     component: ExampleComponent,
-    imports: [
-      getTranslocoModule(),
-    ],
+    imports: [getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
     mocks: [],
   });
@@ -33,12 +31,12 @@ describe('ButtonComponent', () => {
     spectator = createComponent({
       // The component inputs
       props: {
-        name: 'example'
+        name: 'example',
       },
       // Override the component's providers
       providers: [],
       // Whether to run change detection (defaults to true)
-      detectChanges: false
+      detectChanges: false,
     });
   });
 
@@ -124,9 +122,7 @@ describe('ButtonComponent', () => {
     // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
     imports: [ExampleModule],
     declareComponent: false,
-    providers: [
-      provideMockStore({ initialState }),
-    ],
+    providers: [provideMockStore({ initialState })],
   });
 
   // fake state
@@ -136,11 +132,11 @@ describe('ButtonComponent', () => {
     spectator = createComponent({
       // The component inputs
       props: {
-        name: 'example'
+        name: 'example',
       },
       // Override the component's providers
       // Whether to run change detection (defaults to true)
-      detectChanges: false
+      detectChanges: false,
     });
 
     store = spectator.inject(MockStore);
@@ -171,23 +167,21 @@ describe('ButtonComponent', () => {
 If the test doesn't need test inputs or outputs just use `NO_ERRORS_SCHEMA`
 
 ```ts
-  const createComponent = createComponentFactory({
-    component: ExampleComponent,
-    schemas: [NO_ERRORS_SCHEMA],
-  });
+const createComponent = createComponentFactory({
+  component: ExampleComponent,
+  schemas: [NO_ERRORS_SCHEMA],
+});
 ```
 
 or mock the components
 
 ```ts
-  import { MockComponent } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 
-  const createComponent = createComponentFactory({
-    component: ExampleComponent,
-    declarations: [
-      MockComponent(FooComponent)
-    ]
-  });
+const createComponent = createComponentFactory({
+  component: ExampleComponent,
+  declarations: [MockComponent(FooComponent)],
+});
 ```
 
 ## Mock translations
@@ -197,12 +191,11 @@ Use `getTranslocoModule` in your test imports.
 ```ts
 const createComponent = createComponentFactory({
   component: TestComponent,
-  imports: [
-    getTranslocoModule(),
-  ],
+  imports: [getTranslocoModule()],
   providers: [],
 });
 ```
+
 ## Spy dispatch action
 
 ```ts
@@ -239,9 +232,7 @@ import { FooComponent } from './path/to/foo.component';
 
 const createHost = createHostFactory({
   component: YourComponentToTest,
-  declarations: [
-    MockComponent(FooComponent)
-  ]
+  declarations: [MockComponent(FooComponent)],
 });
 ```
 
@@ -258,19 +249,19 @@ describe('ButtonComponent', () => {
     component: ExampleComponent,
     // It is possible to tell Spectator not to add the component to the declarations of the internal module and, instead, use the explicitly defined module as is. Simply set the declareComponent property of the factory options to false:
     imports: [ExampleModule],
-    declareComponent: false
+    declareComponent: false,
   });
 
   beforeEach(() => {
     spectator = createComponent({
       // The component inputs
       props: {
-        name: 'example'
+        name: 'example',
       },
       // Override the component's providers
       providers: [],
       // Whether to run change detection (defaults to true)
-      detectChanges: false
+      detectChanges: false,
     });
   });
 });

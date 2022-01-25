@@ -27,14 +27,10 @@ import { ProjectNavigationComponent } from './project-feature-navigation.compone
     RouterModule,
     AvatarModule,
     ProjectNavigationSettingsModule,
-    ProjectNavigationMenuModule
+    ProjectNavigationMenuModule,
   ],
   providers: [],
-  declarations: [
-    ProjectNavigationComponent
-  ],
-  exports: [
-    ProjectNavigationComponent
-  ]
+  declarations: [ProjectNavigationComponent],
+  exports: [ProjectNavigationComponent],
 })
 export class ProjectFeatureNavigationModule {}

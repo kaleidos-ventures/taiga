@@ -12,7 +12,7 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [ "off" ],
+        "@nrwl/nx/enforce-module-boundaries": ["off"],
         "@angular-eslint/directive-selector": [
           "error",
           {

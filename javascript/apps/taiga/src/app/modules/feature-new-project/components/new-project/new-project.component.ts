@@ -6,30 +6,39 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ProjectCreation, User } from '@taiga/data';
 import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
-import { createProject, inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
+import {
+  createProject,
+  inviteUsersNewProject,
+} from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { selectWorkspaces } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import { Step } from '~/app/modules/feature-new-project/data/new-project.model';
 import { ActivatedRoute } from '@angular/router';
-import { TemplateProjectForm, TemplateStepComponent } from '../template-step/template-step.component';
+import {
+  TemplateProjectForm,
+  TemplateStepComponent,
+} from '../template-step/template-step.component';
 import { Observable } from 'rxjs';
 
 @Component({
   selector: 'tg-new-project',
   templateUrl: './new-project.component.html',
-  styleUrls: [
-    '../../styles/project.shared.css'
-  ],
+  styleUrls: ['../../styles/project.shared.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewProjectComponent implements OnInit {
   @ViewChild(TemplateStepComponent)
   public templateStepComponent?: TemplateStepComponent;
 
-  constructor(private store: Store, private route: ActivatedRoute,) {}
+  constructor(private store: Store, private route: ActivatedRoute) {}
 
   public workspaceList$ = this.store.select(selectWorkspaces);
   public currentStep: Step = 'init';
@@ -62,7 +71,10 @@ export class NewProjectComponent implements OnInit {
     }
   }
 
-  public onSelectTemplate(step: Step, workspaceSlug: ProjectCreation['workspaceSlug']) {
+  public onSelectTemplate(
+    step: Step,
+    workspaceSlug: ProjectCreation['workspaceSlug']
+  ) {
     this.formData.workspaceSlug = workspaceSlug;
     this.setStep(step);
   }

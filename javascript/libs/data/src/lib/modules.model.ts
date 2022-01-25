@@ -6,4 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export type Module = 'userstories' | 'tasks' | 'sprints' | 'issues' | 'epics' | 'wiki';
+export type Module =
+  | 'userstories'
+  | 'tasks'
+  | 'sprints'
+  | 'issues'
+  | 'epics'
+  | 'wiki';

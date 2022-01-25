@@ -11,39 +11,41 @@ import { Project, User, Workspace } from '@taiga/data';
 
 export const setWorkspaceList = createAction(
   '[WorkspaceList] set',
-  props<{workspaces: Workspace[]}>()
+  props<{ workspaces: Workspace[] }>()
 );
 
-export const fetchWorkspaceList = createAction(
-  '[WorkspaceList] Fetch'
-);
+export const fetchWorkspaceList = createAction('[WorkspaceList] Fetch');
 
 export const fetchWorkspaceListSuccess = createAction(
   '[WorkspaceList] Fetch success',
-  props<{workspaces: Workspace[]}>()
+  props<{ workspaces: Workspace[] }>()
 );
 
 export const createWorkspace = createAction(
   '[WorkspaceList] Create new workspace',
-  props<{name: Workspace['name'], color: Workspace['color'], userId: User['id']}>()
+  props<{
+    name: Workspace['name'];
+    color: Workspace['color'];
+    userId: User['id'];
+  }>()
 );
 
 export const createWorkspaceSuccess = createAction(
   '[WorkspaceList] Create new workspace success',
-  props<{workspace: Workspace}>()
+  props<{ workspace: Workspace }>()
 );
 
 export const createFormHasError = createAction(
   '[WorkspaceList] Create Form has error',
-  props<{hasError: boolean}>()
+  props<{ hasError: boolean }>()
 );
 
 export const fetchWorkspaceProjects = createAction(
   '[WorkspaceList] Fetch workspace projects',
-  props<{slug: Workspace['slug']}>()
+  props<{ slug: Workspace['slug'] }>()
 );
 
 export const fetchWorkspaceProjectsSuccess = createAction(
   '[WorkspaceList] Fetch workspace projects success',
-  props<{slug: Workspace['slug'], projects: Project[]}>()
+  props<{ slug: Workspace['slug']; projects: Project[] }>()
 );

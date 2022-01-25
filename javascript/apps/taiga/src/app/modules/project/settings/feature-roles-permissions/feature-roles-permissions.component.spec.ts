@@ -9,11 +9,18 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Spectator, createComponentFactory, SpyObject } from '@ngneat/spectator/jest';
+import {
+  Spectator,
+  createComponentFactory,
+  SpyObject,
+} from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Permissions, ProjectMockFactory, RoleMockFactory } from '@taiga/data';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
-import { updatePublicRolePermissions, updateRolePermissions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import {
+  updatePublicRolePermissions,
+  updateRolePermissions,
+} from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
 
@@ -23,40 +30,40 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
   const createComponent = createComponentFactory({
     component: ProjectSettingsFeatureRolesPermissionsComponent,
-    imports: [
-      ReactiveFormsModule,
-      RouterTestingModule,
-      getTranslocoModule(),
-    ],
+    imports: [ReactiveFormsModule, RouterTestingModule, getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
-    providers: [
-      provideMockStore({}),
-    ],
-    mocks: [
-      ProjectsSettingsFeatureRolesPermissionsService
-    ],
+    providers: [provideMockStore({})],
+    mocks: [ProjectsSettingsFeatureRolesPermissionsService],
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {},
       providers: [],
-      detectChanges: false
+      detectChanges: false,
     });
 
-    projectsSettingsFeatureRolesPermissionsService = spectator.inject(ProjectsSettingsFeatureRolesPermissionsService);
+    projectsSettingsFeatureRolesPermissionsService = spectator.inject(
+      ProjectsSettingsFeatureRolesPermissionsService
+    );
 
-    projectsSettingsFeatureRolesPermissionsService.getModules.andReturn(new Map([
-      ['userstories', 'Userstories'],
-      ['tasks', 'Tasks'],
-      ['sprints', 'Sprints'],
-      ['issues', 'Issues'],
-      ['epics', 'Epics'],
-      ['wiki', 'Wiki'],
-    ]));
+    projectsSettingsFeatureRolesPermissionsService.getModules.andReturn(
+      new Map([
+        ['userstories', 'Userstories'],
+        ['tasks', 'Tasks'],
+        ['sprints', 'Sprints'],
+        ['issues', 'Issues'],
+        ['epics', 'Epics'],
+        ['wiki', 'Wiki'],
+      ])
+    );
 
-    projectsSettingsFeatureRolesPermissionsService.hasComments.mockReturnValue(true);
-    projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.mockReturnValue({} as any);
+    projectsSettingsFeatureRolesPermissionsService.hasComments.mockReturnValue(
+      true
+    );
+    projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.mockReturnValue(
+      {} as any
+    );
   });
 
   describe('create roles form', () => {
@@ -68,53 +75,77 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
         'add_us',
         'modify_us',
         'delete_us',
-        'comment_us'
+        'comment_us',
       ] as Permissions[];
 
-      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.mockReturnValue({
-        userstories: {
-          create: true,
-          modify: true,
-          delete: true,
-          comment: true
-        }
-      } as any);
+      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.mockReturnValue(
+        {
+          userstories: {
+            create: true,
+            modify: true,
+            delete: true,
+            comment: true,
+          },
+        } as any
+      );
 
-      spectator.component.createRoleFormControl(role.permissions, role.slug, spectator.component.form);
+      spectator.component.createRoleFormControl(
+        role.permissions,
+        role.slug,
+        spectator.component.form
+      );
 
-      expect(projectsSettingsFeatureRolesPermissionsService.formatRawPermissions).toHaveBeenCalledWith(role.permissions);
+      expect(
+        projectsSettingsFeatureRolesPermissionsService.formatRawPermissions
+      ).toHaveBeenCalledWith(role.permissions);
 
       expect(spectator.component.form.value).toEqual({
         [role.slug]: {
-          userstories: { create: true, modify: true, delete: true, comment: true }
-        }
+          userstories: {
+            create: true,
+            modify: true,
+            delete: true,
+            comment: true,
+          },
+        },
       });
     });
 
     it('no edit permissions', () => {
       const role = RoleMockFactory();
 
-      role.permissions = [
-        'view_us',
-      ] as Permissions[];
+      role.permissions = ['view_us'] as Permissions[];
 
-      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.andReturn({
-        userstories: {
-          create: false,
-          modify: false,
-          delete: false,
-          comment: false
+      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.andReturn(
+        {
+          userstories: {
+            create: false,
+            modify: false,
+            delete: false,
+            comment: false,
+          },
         }
-      });
+      );
 
-      spectator.component.createRoleFormControl(role.permissions, role.slug, spectator.component.form);
+      spectator.component.createRoleFormControl(
+        role.permissions,
+        role.slug,
+        spectator.component.form
+      );
 
-      expect(projectsSettingsFeatureRolesPermissionsService.formatRawPermissions).toHaveBeenCalledWith(role.permissions);
+      expect(
+        projectsSettingsFeatureRolesPermissionsService.formatRawPermissions
+      ).toHaveBeenCalledWith(role.permissions);
 
       expect(spectator.component.form.value).toEqual({
         [role.slug]: {
-          userstories: { create: false, modify: false, delete: false, comment: false }
-        }
+          userstories: {
+            create: false,
+            modify: false,
+            delete: false,
+            comment: false,
+          },
+        },
       });
     });
 
@@ -123,11 +154,19 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       role.permissions = [] as Permissions[];
 
-      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.andReturn({});
+      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.andReturn(
+        {}
+      );
 
-      spectator.component.createRoleFormControl(role.permissions, role.slug, spectator.component.form);
+      spectator.component.createRoleFormControl(
+        role.permissions,
+        role.slug,
+        spectator.component.form
+      );
 
-      expect(projectsSettingsFeatureRolesPermissionsService.formatRawPermissions).toHaveBeenCalledWith(role.permissions);
+      expect(
+        projectsSettingsFeatureRolesPermissionsService.formatRawPermissions
+      ).toHaveBeenCalledWith(role.permissions);
 
       expect(spectator.component.form.get(role.slug)?.disabled).toEqual(true);
     });
@@ -144,28 +183,34 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       store.setState({
         project: {
           project,
-          memberRoles: [role]
+          memberRoles: [role],
         },
       });
 
-      const projectsSettingsFeatureRolesPermissionsService = spectator.inject(ProjectsSettingsFeatureRolesPermissionsService);
+      const projectsSettingsFeatureRolesPermissionsService = spectator.inject(
+        ProjectsSettingsFeatureRolesPermissionsService
+      );
 
       store.refreshState();
       spectator.detectChanges();
 
       const finalPermissions = ['view_us'];
 
-      projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions.mockReturnValue(finalPermissions);
+      projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions.mockReturnValue(
+        finalPermissions
+      );
 
       const dispatchSpy = jest.spyOn(store, 'dispatch');
 
       spectator.component.saveMembers();
 
-      expect(dispatchSpy).toBeCalledWith(updateRolePermissions({
-        project: project.slug,
-        roleSlug: role.slug,
-        permissions: finalPermissions,
-      }));
+      expect(dispatchSpy).toBeCalledWith(
+        updateRolePermissions({
+          project: project.slug,
+          roleSlug: role.slug,
+          permissions: finalPermissions,
+        })
+      );
     });
 
     it('save public permissions', () => {
@@ -176,27 +221,33 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       store.setState({
         project: {
           project,
-          publicRole: role.permissions
+          publicRole: role.permissions,
         },
       });
 
-      const projectsSettingsFeatureRolesPermissionsService = spectator.inject(ProjectsSettingsFeatureRolesPermissionsService);
+      const projectsSettingsFeatureRolesPermissionsService = spectator.inject(
+        ProjectsSettingsFeatureRolesPermissionsService
+      );
 
       store.refreshState();
       spectator.detectChanges();
 
       const finalPermissions = ['view_us'];
 
-      projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions.mockReturnValue(finalPermissions);
+      projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions.mockReturnValue(
+        finalPermissions
+      );
 
       const dispatchSpy = jest.spyOn(store, 'dispatch');
 
       spectator.component.savePublic();
 
-      expect(dispatchSpy).toBeCalledWith(updatePublicRolePermissions({
-        project: project.slug,
-        permissions: finalPermissions,
-      }));
+      expect(dispatchSpy).toBeCalledWith(
+        updatePublicRolePermissions({
+          project: project.slug,
+          permissions: finalPermissions,
+        })
+      );
     });
   });
 });

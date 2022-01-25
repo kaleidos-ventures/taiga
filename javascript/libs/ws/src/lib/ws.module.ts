@@ -6,7 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import {  NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 @NgModule({})
-export class WsModule {
-}
+export class WsModule {}

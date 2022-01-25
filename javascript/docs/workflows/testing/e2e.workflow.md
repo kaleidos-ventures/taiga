@@ -1,9 +1,11 @@
 For e2e testing we will use Cypress. [Read the Cypress doc thorughly](https://docs.cypress.io/guides/getting-started/writing-your-first-test)
+
 ## e2e testing
 
 To create a e2e test, first create a new file on `src/taiga-e2e/src/integration`
 
 A simple test structure example
+
 ```js
 describe('example', () => {
   beforeEach(() => cy.visit('/'));
@@ -61,11 +63,13 @@ Helpers are functions containing one or multiple commands that avoid repetition.
 To create a new helper add it to `src/taiga-e2e/src/support/helpers`
 
 Example helper
+
 ```js
 export const getGreeting = () => cy.get('h1');
 ```
 
 And use it as follows:
+
 ```js
 getGreeting().contains('Welcome to taiga!');
 ```
@@ -91,14 +95,16 @@ export const exampleFixture = () => {
 ## A11y
 
 Init axe.
+
 ```ts
-  beforeEach(() => {
-    cy.visit('/');
-    cy.initAxe();
-  });
+beforeEach(() => {
+  cy.visit('/');
+  cy.initAxe();
+});
 ```
 
 Run axe tests
+
 ```ts
 it('is a11y', () => {
   cy.tgCheckA11y();
@@ -116,7 +122,7 @@ If you want to log a count of an amount of items you should do it like this
 cy.get('[data-e2e=workspace-item]').its('length').as('workspaceItemCount');
 
 // Then you call it returning an string
-cy.get<string>('@workspaceItemCount').then(previousCount => {
+cy.get<string>('@workspaceItemCount').then((previousCount) => {
   cy.log(previousCount);
 });
 ```
@@ -173,4 +179,5 @@ npm run e2e -- --watch
 ```
 
 ## Database fixtures backup
+
 Please, follow the step described in `.github/sql-fixtures/README.md`

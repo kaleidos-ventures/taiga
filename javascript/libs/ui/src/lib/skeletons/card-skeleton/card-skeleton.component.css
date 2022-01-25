@@ -15,7 +15,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .card-skeleton {
-  background-color: rgba(var(--white), .25);
+  background-color: rgba(var(--white), 0.25);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-12);
@@ -67,7 +67,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @define-mixin opacity $opacity {
   .opacity-$(opacity) {
-    opacity: 0.$opacity;
+    /* stylelint-disable-next-line unit-no-unknown */
+    opacity: 0$opacity;
     @mixin-content;
   }
 }

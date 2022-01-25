@@ -6,7 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createHttpFactory, HttpMethod, SpectatorHttp } from '@ngneat/spectator';
+import {
+  createHttpFactory,
+  HttpMethod,
+  SpectatorHttp,
+} from '@ngneat/spectator';
 import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { WorkspaceApiService } from './workspace-api.service';
@@ -23,7 +27,7 @@ describe('WorkspaceApiService', () => {
     ],
   });
 
-  beforeEach(() => spectator = createHttp());
+  beforeEach(() => (spectator = createHttp()));
 
   it('list Workspaces', () => {
     const base = `${ConfigServiceMock.apiUrl}/workspaces`;

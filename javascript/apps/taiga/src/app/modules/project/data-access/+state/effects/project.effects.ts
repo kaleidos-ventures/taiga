@@ -17,7 +17,6 @@ import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
 @Injectable()
 export class ProjectEffects {
-
   public loadProject$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(ProjectActions.fetchProject),
@@ -36,14 +35,17 @@ export class ProjectEffects {
     );
   });
 
-  public projectSuccess$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(ProjectActions.fetchProjectSuccess),
-      tap(({ project }) => {
-        this.navigationService.add(project);
-      })
-    );
-  }, { dispatch: false });
+  public projectSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(ProjectActions.fetchProjectSuccess),
+        tap(({ project }) => {
+          this.navigationService.add(project);
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   public loadMemberRoles$ = createEffect(() => {
     return this.actions$.pipe(
@@ -70,7 +72,9 @@ export class ProjectEffects {
         run: (action) => {
           return this.projectApiService.getPublicRoles(action.slug).pipe(
             map((permissions) => {
-              return ProjectActions.fetchPublicRolesSuccess({ publicRole: permissions });
+              return ProjectActions.fetchPublicRolesSuccess({
+                publicRole: permissions,
+              });
             })
           );
         },
@@ -86,15 +90,13 @@ export class ProjectEffects {
       ofType(ProjectActions.updateRolePermissions),
       pessimisticUpdate({
         run: (action) => {
-          return this.projectApiService.putMemberRoles(
-            action.project,
-            action.roleSlug,
-            action.permissions
-          ).pipe(
-            map(() => {
-              return ProjectActions.updateRolePermissionsSuccess();
-            })
-          );
+          return this.projectApiService
+            .putMemberRoles(action.project, action.roleSlug, action.permissions)
+            .pipe(
+              map(() => {
+                return ProjectActions.updateRolePermissionsSuccess();
+              })
+            );
         },
         onError: () => {
           return ProjectActions.updateRolePermissionsError();
@@ -108,14 +110,13 @@ export class ProjectEffects {
       ofType(ProjectActions.updatePublicRolePermissions),
       pessimisticUpdate({
         run: (action) => {
-          return this.projectApiService.putPublicRoles(
-            action.project,
-            action.permissions
-          ).pipe(
-            map(() => {
-              return ProjectActions.updateRolePermissionsSuccess();
-            })
-          );
+          return this.projectApiService
+            .putPublicRoles(action.project, action.permissions)
+            .pipe(
+              map(() => {
+                return ProjectActions.updateRolePermissionsSuccess();
+              })
+            );
         },
         onError: () => {
           return ProjectActions.updateRolePermissionsError();
@@ -127,7 +128,6 @@ export class ProjectEffects {
   constructor(
     private actions$: Actions,
     private projectApiService: ProjectApiService,
-    private navigationService: NavigationService,
+    private navigationService: NavigationService
   ) {}
-
 }

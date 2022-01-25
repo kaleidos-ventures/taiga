@@ -10,7 +10,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiButtonModule, TuiHintModule, TuiLinkModule, TuiSvgModule, TuiDataListModule } from '@taiga-ui/core';
+import {
+  TuiButtonModule,
+  TuiHintModule,
+  TuiLinkModule,
+  TuiSvgModule,
+  TuiDataListModule,
+} from '@taiga-ui/core';
 import { TuiToggleModule } from '@taiga-ui/kit';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { RoleAdvanceRowModule } from '../role-advance-row/role-advance-row.module';
@@ -30,11 +36,9 @@ import { RolePermissionRowComponent } from './role-permission-row.component';
     RoleAdvanceRowModule,
     InputsModule,
     TuiHintModule,
-    TuiDataListModule
+    TuiDataListModule,
   ],
-  declarations: [
-    RolePermissionRowComponent,
-  ],
+  declarations: [RolePermissionRowComponent],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -44,8 +48,6 @@ import { RolePermissionRowComponent } from './role-permission-row.component';
       },
     },
   ],
-  exports: [
-    RolePermissionRowComponent,
-  ]
+  exports: [RolePermissionRowComponent],
 })
 export class RolePermissionRowModule {}

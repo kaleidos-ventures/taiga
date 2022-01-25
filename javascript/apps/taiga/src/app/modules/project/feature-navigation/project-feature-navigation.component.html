@@ -6,15 +6,15 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <div class="main-nav-container">
-  <div
-    [@mainNavContainer]="menuState"
-    class="main-nav-container-inner">
+  <div [@mainNavContainer]="menuState" class="main-nav-container-inner">
     <!-- visibility: hidden prevent focus in the project menu when the setting menu is visible -->
 
     <tg-project-navigation-menu
       [collapsed]="collapsed"
       [class.collapsed]="collapsed"
-      [style.visibility]="showProjectSettings && !settingsAnimationInProgress ? 'hidden' : null"
+      [style.visibility]="
+        showProjectSettings && !settingsAnimationInProgress ? 'hidden' : null
+      "
       (collapseMenu)="toggleCollapse()"
       (displaySettingsMenu)="openSettings()"
       [project]="project">

@@ -12,15 +12,8 @@ import { TuiAvatarModule } from '@taiga-ui/kit';
 import { AvatarComponent } from './avatar.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    TuiAvatarModule
-  ],
-  declarations: [
-    AvatarComponent,
-  ],
-  exports: [
-    AvatarComponent,
-  ]
+  imports: [CommonModule, TuiAvatarModule],
+  declarations: [AvatarComponent],
+  exports: [AvatarComponent],
 })
 export class AvatarModule {}

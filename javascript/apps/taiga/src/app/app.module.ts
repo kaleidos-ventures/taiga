@@ -24,7 +24,11 @@ import { ApiModule } from '@taiga/api';
 import { WsModule } from '@taiga/ws';
 import { CoreModule } from '@taiga/core';
 import { EnvironmentService } from './services/environment.service';
-import { TuiRootModule, TUI_ICONS_PATH, TUI_ANIMATIONS_DURATION } from '@taiga-ui/core';
+import {
+  TuiRootModule,
+  TUI_ICONS_PATH,
+  TUI_ANIMATIONS_DURATION,
+} from '@taiga-ui/core';
 import { TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE } from '@taiga-ui/i18n';
 import { of } from 'rxjs';
 import { TranslocoRootModule } from './transloco/transloco-root.module';
@@ -35,7 +39,7 @@ import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module
 import { TUI_IS_CYPRESS } from '@taiga-ui/cdk';
 
 const altIconName: Record<string, string> = {
-  'tuiIconChevronDownLarge': 'chevron-down'
+  tuiIconChevronDownLarge: 'chevron-down',
 };
 
 export function iconsPath(name: string): string {
@@ -62,7 +66,7 @@ export function prefersReducedMotion(): boolean {
     AppRoutingModule,
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     BrowserAnimationsModule.withConfig({
-      disableAnimations: prefersReducedMotion()
+      disableAnimations: prefersReducedMotion(),
     }),
     StoreRouterConnectingModule.forRoot(),
     StoreModule.forRoot(
@@ -81,7 +85,7 @@ export function prefersReducedMotion(): boolean {
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     TuiRootModule,
-    TranslocoRootModule
+    TranslocoRootModule,
   ],
   bootstrap: [AppComponent],
   providers: [
@@ -89,7 +93,11 @@ export function prefersReducedMotion(): boolean {
       provide: APP_INITIALIZER,
       multi: true,
       deps: [ConfigService, EnvironmentService, TranslocoService],
-      useFactory: (appConfigService: ConfigService, environmentService: EnvironmentService, translocoService: TranslocoService) => {
+      useFactory: (
+        appConfigService: ConfigService,
+        environmentService: EnvironmentService,
+        translocoService: TranslocoService
+      ) => {
         return () => {
           const config = environmentService.getEnvironment().configLocal;
           if (config) {
@@ -110,12 +118,12 @@ export function prefersReducedMotion(): boolean {
       useFactory: () => {
         // TODO: Get user language from service
         return of(TUI_ENGLISH_LANGUAGE);
-      }
+      },
     },
     {
       provide: TUI_ANIMATIONS_DURATION,
       useFactory: () => (inject(TUI_IS_CYPRESS) ? 0 : 300),
-    }
+    },
   ],
 })
 export class AppModule {}

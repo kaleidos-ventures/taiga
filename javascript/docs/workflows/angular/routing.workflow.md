@@ -12,8 +12,11 @@ import { AuthGuard } from './features/auth/auth.guard';
 const routes: Routes = [
   {
     path: 'new-project',
-    loadChildren: () => import('./pages/project/new-project/new-project-page.module').then(m => m.NewProjectPageModule),
-    canActivate: [ AuthGuard ]
+    loadChildren: () =>
+      import('./pages/project/new-project/new-project-page.module').then(
+        (m) => m.NewProjectPageModule
+      ),
+    canActivate: [AuthGuard],
   },
 ];
 ```

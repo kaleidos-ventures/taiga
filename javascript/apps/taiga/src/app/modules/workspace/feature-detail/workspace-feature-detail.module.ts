@@ -23,9 +23,7 @@ import { AvatarModule } from '@taiga/ui/avatar';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
 
 @NgModule({
-  declarations: [
-    WorkspaceDetailComponent
-  ],
+  declarations: [WorkspaceDetailComponent],
   imports: [
     CommonModule,
     TuiButtonModule,
@@ -38,10 +36,8 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     EffectsModule.forFeature([WorkspaceDetailEffects]),
     ProjectCardModule,
     AngularResizeEventModule,
-    WorkspacePageRoutingModule
+    WorkspacePageRoutingModule,
   ],
-  providers: [
-    { provide: TRANSLOCO_SCOPE, useValue: 'workspace' },
-  ]
+  providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })
-export class WorkspaceFeatureDetailModule { }
+export class WorkspaceFeatureDetailModule {}

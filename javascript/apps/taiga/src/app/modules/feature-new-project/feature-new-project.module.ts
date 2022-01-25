@@ -11,10 +11,7 @@ import { CommonModule } from '@angular/common';
 import { EffectsModule } from '@ngrx/effects';
 import { NewProjectEffects } from './+state/effects/new-project.effects';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  TuiSvgModule,
-  TuiButtonModule,
-} from '@taiga-ui/core';
+import { TuiSvgModule, TuiButtonModule } from '@taiga-ui/core';
 import { TuiSelectModule, TuiDataListWrapperModule } from '@taiga-ui/kit';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
@@ -55,7 +52,7 @@ import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.mo
     InputsModule,
     ImageUploadModule,
     ModalModule,
-    FeatureNewProjectRoutingModule
+    FeatureNewProjectRoutingModule,
   ],
   providers: [
     {

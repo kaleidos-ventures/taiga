@@ -10,7 +10,13 @@ import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkspaceComponent } from './components/workspace/workspace.component';
-import { TuiButtonModule, TuiHintModule, TuiLinkModule, TuiSvgModule, TuiTooltipModule } from '@taiga-ui/core';
+import {
+  TuiButtonModule,
+  TuiHintModule,
+  TuiLinkModule,
+  TuiSvgModule,
+  TuiTooltipModule,
+} from '@taiga-ui/core';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { WorkspaceCreateComponent } from './components/workspace-create/workspace-create.component';
@@ -36,7 +42,7 @@ import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-rout
     WorkspaceComponent,
     WorkspaceCreateComponent,
     WorkspaceItemComponent,
-    WorkspaceSkeletonComponent
+    WorkspaceSkeletonComponent,
   ],
   imports: [
     ReactiveFormsModule,
@@ -59,13 +65,13 @@ import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-rout
     TuiHintModule,
     AngularResizeEventModule,
     ProjectCardModule,
-    WorkspaceFeatureListRoutingModule
+    WorkspaceFeatureListRoutingModule,
   ],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
-      useValue: 'workspace'
+      useValue: 'workspace',
     },
-  ]
+  ],
 })
-export class WorkspaceFeatureListModule { }
+export class WorkspaceFeatureListModule {}

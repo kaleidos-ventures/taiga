@@ -21,11 +21,9 @@ import { ProjectNavigationSettingsComponent } from './project-navigation-setting
     TuiSvgModule,
     TranslocoModule,
     AvatarModule,
-    RouterModule
+    RouterModule,
   ],
-  declarations: [
-    ProjectNavigationSettingsComponent,
-  ],
+  declarations: [ProjectNavigationSettingsComponent],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -35,9 +33,6 @@ import { ProjectNavigationSettingsComponent } from './project-navigation-setting
       },
     },
   ],
-  exports: [
-    ProjectNavigationSettingsComponent,
-  ]
-
+  exports: [ProjectNavigationSettingsComponent],
 })
 export class ProjectNavigationSettingsModule {}

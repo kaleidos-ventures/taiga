@@ -14,27 +14,39 @@ import { AuthGuard } from './modules/auth/data-access/auth.guard';
 const routes: Routes = [
   {
     path: 'login',
-    loadChildren: () => import('./modules/auth/feature-login/auth-feature-login.module').then(m => m.AuthFeatureLoginModule)
+    loadChildren: () =>
+      import('./modules/auth/feature-login/auth-feature-login.module').then(
+        (m) => m.AuthFeatureLoginModule
+      ),
   },
 
   {
     path: '',
-    loadChildren: () => import('./modules/workspace/feature-list/workspace-feature-list.module').then(m => m.WorkspaceFeatureListModule),
-    canActivate: [ AuthGuard ]
+    loadChildren: () =>
+      import(
+        './modules/workspace/feature-list/workspace-feature-list.module'
+      ).then((m) => m.WorkspaceFeatureListModule),
+    canActivate: [AuthGuard],
   },
 
   // WORKSPACE
   {
     path: 'workspace/:slug',
-    loadChildren: () => import('./modules/workspace/feature-detail/workspace-feature-detail.module').then(m => m.WorkspaceFeatureDetailModule),
-    canActivate: [ AuthGuard ]
+    loadChildren: () =>
+      import(
+        './modules/workspace/feature-detail/workspace-feature-detail.module'
+      ).then((m) => m.WorkspaceFeatureDetailModule),
+    canActivate: [AuthGuard],
   },
 
   // PROJECT
   {
     path: 'new-project',
-    loadChildren: () => import('./modules/feature-new-project/feature-new-project.module').then(m => m.FeatureNewProjectModule),
-    canActivate: [ AuthGuard ]
+    loadChildren: () =>
+      import('./modules/feature-new-project/feature-new-project.module').then(
+        (m) => m.FeatureNewProjectModule
+      ),
+    canActivate: [AuthGuard],
   },
 
   // #TODO: Project Url must be project-name+Id. See if we can add the workspace+worskpaceId on the url.
@@ -43,9 +55,12 @@ const routes: Routes = [
     children: [
       {
         path: ':slug',
-        loadChildren: () => import('./modules/project/feature-detail/project-feature-detail.module').then(m => m.ProjectFeatureDetailModule),
-      }
-    ]
+        loadChildren: () =>
+          import(
+            './modules/project/feature-detail/project-feature-detail.module'
+          ).then((m) => m.ProjectFeatureDetailModule),
+      },
+    ],
   },
 ];
 
@@ -56,12 +71,10 @@ const routes: Routes = [
     RouterModule.forRoot(routes, {
       initialNavigation: 'enabled',
       preloadingStrategy: QuicklinkStrategy,
-      anchorScrolling: 'enabled'
+      anchorScrolling: 'enabled',
     }),
   ],
   providers: [],
-  exports: [
-    RouterModule
-  ]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

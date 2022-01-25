@@ -17,11 +17,10 @@ import { ConfigService } from '@taiga/core';
 import { Example } from './example.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExampleApiService {
-
-  constructor(private http: HttpClient, private config: ConfigService) { }
+  constructor(private http: HttpClient, private config: ConfigService) {}
 
   public getData() {
     return this.http.get<Example>(`${this.config.apiUrl}/example`);
@@ -34,6 +33,7 @@ Add the service to the public api in `libs/api/src/index.ts`
 ```ts
 export * from './lib/example/example-api.service';
 ```
+
 ## Testing your service
 
 To test you API service, read the workflow doc `testing/api-testing.workflow.md`

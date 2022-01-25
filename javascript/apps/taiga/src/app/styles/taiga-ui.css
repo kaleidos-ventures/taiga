@@ -18,7 +18,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   --tui-disabled-opacity: 1; /* amount of transparency for disabled elements  */
   --tui-heading-font: "Ubuntu", sans-serif; /* font for headings */
   --tui-text-font: "Ubuntu", sans-serif; /* font for text */
-  --tui-height-l: 2rem;   /* large elements height (i.e. inputs, buttons); */
+  --tui-height-l: 2rem; /* large elements height (i.e. inputs, buttons); */
   --tui-height-m: 1.5rem;
   --tui-height-s: 4px;
   --tui-height-xs: 0;
@@ -92,21 +92,25 @@ tui-dropdown-box {
 
 tui-hint-box {
   @mixin font-body;
-
-  background: var(--color-gray100) !important; /* stylelint-disable-line declaration-no-important */
-  border-radius: 4px !important; /* stylelint-disable-line declaration-no-important */
+  /* stylelint-disable-next-line declaration-no-important */
+  background: var(--color-gray100) !important;
+  /* stylelint-disable-next-line declaration-no-important */
+  border-radius: 4px !important;
 }
 
 tui-wrapper[data-appearance="textfield"] {
   --tui-base-03: var(--color-gray40);
   --tui-primary: var(--color-secondary);
 
-  box-shadow: none !important; /* stylelint-disable-line declaration-no-important */
+  /* stylelint-disable-next-line declaration-no-important */
+  box-shadow: none !important;
 
   &::after {
     border-radius: 3px;
-    border-width: 2px !important; /* stylelint-disable-line declaration-no-important */
-    transition: none !important; /* stylelint-disable-line declaration-no-important */
+    /* stylelint-disable-next-line declaration-no-important */
+    border-width: 2px !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    transition: none !important;
   }
 }
 
@@ -140,7 +144,7 @@ tui-data-list {
 
     &:focus-visible,
     &:focus {
-        outline: solid 1px var(--color-secondary80) !important;
+      outline: solid 1px var(--color-secondary80) !important;
     }
   }
 }
@@ -159,7 +163,8 @@ tui-toggle {
   }
 
   & ._focused::after {
-    color: var(--color-secondary90) !important; /* stylelint-disable-line declaration-no-important */
+    /* stylelint-disable-next-line declaration-no-important */
+    color: var(--color-secondary90) !important;
   }
 
   & tui-wrapper[data-appearance="secondary"] {
@@ -174,23 +179,18 @@ tui-toggle {
 }
 /* stylelint-enable */
 
-button:is(
-[type="button"],
-[type="reset"],
-[type="submit"]
-):focus-visible {
+button:is([type="button"], [type="reset"], [type="submit"]):focus-visible {
   outline: 0;
 }
 
 /* stylelint-disable */
 
 tui-notification {
-
   & .content {
     font-size: var(--font-size-medium);
   }
 
-  &[data-tui-host-status=info] {
+  &[data-tui-host-status="info"] {
     background: var(--color-info20) !important;
     color: var(--color-info80) !important;
     &:after {
@@ -203,7 +203,7 @@ tui-notification {
     }
   }
 
-  &[data-tui-host-status=success] {
+  &[data-tui-host-status="success"] {
     background: var(--color-ok20) !important;
     color: var(--color-ok80) !important;
     &:after {
@@ -216,7 +216,7 @@ tui-notification {
     }
   }
 
-  &[data-tui-host-status=error] {
+  &[data-tui-host-status="error"] {
     background: var(--color-red20) !important;
     color: var(--color-red80) !important;
     &:after {
@@ -229,7 +229,7 @@ tui-notification {
     }
   }
 
-  &[data-tui-host-status=warning] {
+  &[data-tui-host-status="warning"] {
     background: var(--color-warning20) !important;
     color: var(--color-warning80) !important;
     &:after {

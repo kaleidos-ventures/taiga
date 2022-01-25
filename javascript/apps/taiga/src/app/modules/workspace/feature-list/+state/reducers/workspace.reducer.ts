@@ -12,10 +12,10 @@ import { immerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace.actions';
 
 export interface WorkspaceState {
-  workspaces: Workspace[],
-  creatingWorkspace: boolean,
-  loading: boolean,
-  createFormHasError: boolean,
+  workspaces: Workspace[];
+  creatingWorkspace: boolean;
+  loading: boolean;
+  createFormHasError: boolean;
   workspaceProjects: Record<Workspace['slug'], WorkspaceProject[]>;
 }
 
@@ -34,46 +34,58 @@ export const reducer = createReducer(
 
     return state;
   }),
-  on(WorkspaceActions.fetchWorkspaceListSuccess, (state, { workspaces }): WorkspaceState => {
-    state.workspaces = workspaces;
-    state.loading = false;
+  on(
+    WorkspaceActions.fetchWorkspaceListSuccess,
+    (state, { workspaces }): WorkspaceState => {
+      state.workspaces = workspaces;
+      state.loading = false;
 
-    state.workspaces.forEach((workspace) => {
-      state.workspaceProjects[workspace.slug] = workspace.latestProjects;
-    });
+      state.workspaces.forEach((workspace) => {
+        state.workspaceProjects[workspace.slug] = workspace.latestProjects;
+      });
 
-    return state;
-  }),
+      return state;
+    }
+  ),
   on(WorkspaceActions.createWorkspace, (state): WorkspaceState => {
     state.creatingWorkspace = true;
     state.createFormHasError = false;
 
     return state;
   }),
-  on(WorkspaceActions.createWorkspaceSuccess, (state, { workspace }): WorkspaceState => {
-    state.workspaces = [workspace, ...state.workspaces];
-    state.creatingWorkspace = false;
+  on(
+    WorkspaceActions.createWorkspaceSuccess,
+    (state, { workspace }): WorkspaceState => {
+      state.workspaces = [workspace, ...state.workspaces];
+      state.creatingWorkspace = false;
 
-    return state;
-  }),
-  on(WorkspaceActions.createFormHasError, (state, { hasError }): WorkspaceState => {
-    state.createFormHasError = hasError;
+      return state;
+    }
+  ),
+  on(
+    WorkspaceActions.createFormHasError,
+    (state, { hasError }): WorkspaceState => {
+      state.createFormHasError = hasError;
 
-    return state;
-  }),
-  on(WorkspaceActions.fetchWorkspaceProjectsSuccess, (state, { slug, projects }): WorkspaceState => {
-    state.workspaceProjects[slug] = projects.map((project) => {
-      return {
-        name: project.name,
-        slug: project.slug,
-        description: project.description,
-        color: project.color,
-        logoSmall: project.logoSmall
-      } as WorkspaceProject;
-    });
+      return state;
+    }
+  ),
+  on(
+    WorkspaceActions.fetchWorkspaceProjectsSuccess,
+    (state, { slug, projects }): WorkspaceState => {
+      state.workspaceProjects[slug] = projects.map((project) => {
+        return {
+          name: project.name,
+          slug: project.slug,
+          description: project.description,
+          color: project.color,
+          logoSmall: project.logoSmall,
+        } as WorkspaceProject;
+      });
 
-    return state;
-  })
+      return state;
+    }
+  )
 );
 
 export const workspaceFeature = createFeature({

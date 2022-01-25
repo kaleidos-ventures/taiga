@@ -6,7 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { TranslocoTestingModule, TranslocoTestingOptions } from '@ngneat/transloco';
+import {
+  TranslocoTestingModule,
+  TranslocoTestingOptions,
+} from '@ngneat/transloco';
 import en from 'apps/taiga/src/assets/i18n/en.json';
 
 export function getTranslocoModule(options: TranslocoTestingOptions = {}) {
@@ -18,6 +21,6 @@ export function getTranslocoModule(options: TranslocoTestingOptions = {}) {
       defaultLang: 'en',
     },
     preloadLangs: true,
-    ...options
+    ...options,
   });
 }

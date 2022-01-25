@@ -6,7 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createHttpFactory, HttpMethod, SpectatorHttp } from '@ngneat/spectator';
+import {
+  createHttpFactory,
+  HttpMethod,
+  SpectatorHttp,
+} from '@ngneat/spectator';
 import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { randUuid } from '@ngneat/falso';
@@ -22,15 +26,18 @@ describe('AuthApiService', () => {
     ],
   });
 
-  beforeEach(() => spectator = createHttp());
+  beforeEach(() => (spectator = createHttp()));
 
   it('login', () => {
     const username = 'username1';
     const password = '1234';
 
-    spectator.service.login({username, password}).subscribe();
+    spectator.service.login({ username, password }).subscribe();
 
-    const req = spectator.expectOne(`${ConfigServiceMock.apiUrl}/auth/token`, HttpMethod.POST);
+    const req = spectator.expectOne(
+      `${ConfigServiceMock.apiUrl}/auth/token`,
+      HttpMethod.POST
+    );
     expect(req.request.body['username']).toEqual(username);
     expect(req.request.body['password']).toEqual(password);
   });
@@ -40,7 +47,10 @@ describe('AuthApiService', () => {
 
     spectator.service.refreshToken(refresh).subscribe();
 
-    const req = spectator.expectOne(`${ConfigServiceMock.apiUrl}/auth/token/refresh`, HttpMethod.POST);
+    const req = spectator.expectOne(
+      `${ConfigServiceMock.apiUrl}/auth/token/refresh`,
+      HttpMethod.POST
+    );
     expect(req.request.body['refresh']).toEqual(refresh);
   });
 });

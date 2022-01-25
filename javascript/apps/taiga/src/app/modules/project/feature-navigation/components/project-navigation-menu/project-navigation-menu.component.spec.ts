@@ -10,7 +10,6 @@ import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { ProjectMockFactory } from '@taiga/data';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 
-
 import { randWord } from '@ngneat/falso';
 import { ProjectNavigationMenuComponent } from './project-navigation-menu.component';
 import { CommonModule } from '@angular/common';
@@ -20,16 +19,13 @@ describe('ProjectNavigationComponent', () => {
   let spectator: Spectator<ProjectNavigationMenuComponent>;
   const createComponent = createComponentFactory({
     component: ProjectNavigationMenuComponent,
-    imports: [
-      getTranslocoModule(),
-      CommonModule
-    ],
-    schemas: [NO_ERRORS_SCHEMA]
+    imports: [getTranslocoModule(), CommonModule],
+    schemas: [NO_ERRORS_SCHEMA],
   });
 
   beforeEach(() => {
     spectator = createComponent({
-      detectChanges: false
+      detectChanges: false,
     });
 
     spectator.component.project = ProjectMockFactory(true);
@@ -43,13 +39,17 @@ describe('ProjectNavigationComponent', () => {
   it('Collapsed icon - uncollapsed', () => {
     spectator.component.collapsed = false;
     const url = 'assets/icons/sprite.svg';
-    expect(spectator.component.getCollapseIcon()).toEqual(`${url}#collapse-left`);
+    expect(spectator.component.getCollapseIcon()).toEqual(
+      `${url}#collapse-left`
+    );
   });
 
   it('Collapsed icon - collapsed', () => {
     spectator.component.collapsed = true;
     const url = 'assets/icons/sprite.svg';
-    expect(spectator.component.getCollapseIcon()).toEqual(`${url}#collapse-right`);
+    expect(spectator.component.getCollapseIcon()).toEqual(
+      `${url}#collapse-right`
+    );
   });
 
   it('Toggle scrum child menu - uncollapsed', () => {
@@ -64,11 +64,14 @@ describe('ProjectNavigationComponent', () => {
     spectator.component.initDialog = jest.fn();
 
     const type = randWord();
-    const eventObj: any = { target: { value: 42 }};
+    const eventObj: any = { target: { value: 42 } };
 
     spectator.component.popup(eventObj, type);
 
-    expect(spectator.component.initDialog).toHaveBeenCalledWith(eventObj.target, type);
+    expect(spectator.component.initDialog).toHaveBeenCalledWith(
+      eventObj.target,
+      type
+    );
   });
 
   it('Popup scrum event', () => {
@@ -76,15 +79,17 @@ describe('ProjectNavigationComponent', () => {
     spectator.component.initDialog = jest.fn();
 
     const type = 'scrum';
-    const eventObj: any = { target: { value: 42 }};
+    const eventObj: any = { target: { value: 42 } };
 
     spectator.component.popupScrum(eventObj);
 
-    expect(spectator.component.initDialog).toHaveBeenCalledWith(eventObj.target, type);
+    expect(spectator.component.initDialog).toHaveBeenCalledWith(
+      eventObj.target,
+      type
+    );
   });
 
   it('Enter dialog', () => {
-
     spectator.component.enterDialog();
 
     expect(spectator.component.dialog.open).toBeTruthy;
@@ -101,5 +106,4 @@ describe('ProjectNavigationComponent', () => {
     expect(spectator.component.dialog.open).toBeFalsy;
     expect(spectator.component.dialog.type).toEqual('');
   });
-
 });

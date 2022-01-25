@@ -15,14 +15,11 @@ export const {
   selectCreateFormHasError,
   selectLoading: selectLoadingWorkpace,
   selectCreatingWorkspace,
-  selectWorkspaceProjects
+  selectWorkspaceProjects,
 } = workspaceFeature;
 
 export const selectWorkspaceProject = (workspaceSlug: Workspace['slug']) => {
-  return createSelector(
-    selectWorkspaceProjects,
-    (workspaces) => {
-      return workspaces[workspaceSlug] ?? [];
-    },
-  );
+  return createSelector(selectWorkspaceProjects, (workspaces) => {
+    return workspaces[workspaceSlug] ?? [];
+  });
 };

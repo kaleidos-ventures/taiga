@@ -19,7 +19,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
     mocks: [TranslocoService],
   });
 
-  beforeEach(() => spectator = createService());
+  beforeEach(() => (spectator = createService()));
 
   describe('apply permission to formGroup', () => {
     it('no access - disable form', () => {
@@ -30,11 +30,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         comment: new FormControl(false),
       });
 
-      spectator.service.applyPermission(
-        'wiki',
-        'no_access',
-        formGroup,
-      );
+      spectator.service.applyPermission('wiki', 'no_access', formGroup);
 
       expect(formGroup.disabled).toBeTruthy();
     });
@@ -49,11 +45,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
       formGroup.disable();
 
-      spectator.service.applyPermission(
-        'wiki',
-        'edit',
-        formGroup,
-      );
+      spectator.service.applyPermission('wiki', 'edit', formGroup);
 
       expect(formGroup.disabled).toBeFalsy();
     });
@@ -66,11 +58,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         comment: new FormControl(false),
       });
 
-      spectator.service.applyPermission(
-        'userstories',
-        'edit',
-        formGroup,
-      );
+      spectator.service.applyPermission('userstories', 'edit', formGroup);
 
       expect(formGroup.value).toEqual({
         create: true,
@@ -79,7 +67,6 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         comment: false,
       });
     });
-
 
     it('modules without comments', () => {
       const formGroup = new FormGroup({
@@ -90,20 +77,12 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
       });
 
       // userstories has comments
-      spectator.service.applyPermission(
-        'userstories',
-        'edit',
-        formGroup,
-      );
+      spectator.service.applyPermission('userstories', 'edit', formGroup);
 
       expect(formGroup.get('comment')!.disabled).toBeFalsy();
 
       // wiki don't have comments
-      spectator.service.applyPermission(
-        'wiki',
-        'edit',
-        formGroup,
-      );
+      spectator.service.applyPermission('wiki', 'edit', formGroup);
 
       expect(formGroup.get('comment')!.disabled).toBeTruthy();
     });
@@ -116,11 +95,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         comment: new FormControl(true),
       });
 
-      spectator.service.applyPermission(
-        'userstories',
-        'view',
-        formGroup,
-      );
+      spectator.service.applyPermission('userstories', 'view', formGroup);
 
       expect(formGroup.value).toEqual({
         create: false,
@@ -130,7 +105,6 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
       });
     });
   });
-
 
   describe('get formGroup permission state', () => {
     it('no access, form disabled', () => {
@@ -143,9 +117,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
       formGroup.disable();
 
-      const permission = spectator.service.formPermissionState(
-        formGroup
-      );
+      const permission = spectator.service.formPermissionState(formGroup);
 
       expect(permission).toBe('no_access');
     });
@@ -158,10 +130,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         comment: new FormControl(true),
       });
 
-
-      const permission = spectator.service.formPermissionState(
-        formGroup
-      );
+      const permission = spectator.service.formPermissionState(formGroup);
 
       expect(permission).toBe('edit');
     });
@@ -174,10 +143,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         comment: new FormControl(true),
       });
 
-
-      const permission = spectator.service.formPermissionState(
-        formGroup
-      );
+      const permission = spectator.service.formPermissionState(formGroup);
 
       expect(permission).toBe('view');
     });
@@ -190,9 +156,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         comment: new FormControl(true),
       });
 
-      const permission = spectator.service.formPermissionState(
-        formGroup
-      );
+      const permission = spectator.service.formPermissionState(formGroup);
 
       expect(permission).toBe('restricted');
     });
@@ -208,19 +172,15 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
       }),
     });
 
-    let permission = spectator.service.getRoleFormGroupPermissions(
-      formGroup
-    );
+    let permission = spectator.service.getRoleFormGroupPermissions(formGroup);
 
-    expect(permission).toEqual(
-      [
-        'view_us',
-        'add_us',
-        'modify_us',
-        'delete_us',
-        'comment_us',
-      ]
-    );
+    expect(permission).toEqual([
+      'view_us',
+      'add_us',
+      'modify_us',
+      'delete_us',
+      'comment_us',
+    ]);
 
     formGroup.setValue({
       userstories: {
@@ -228,20 +188,15 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         modify: false,
         delete: false,
         comment: false,
-      }
+      },
     });
 
-    permission = spectator.service.getRoleFormGroupPermissions(
-      formGroup
-    );
+    permission = spectator.service.getRoleFormGroupPermissions(formGroup);
 
     expect(permission).toEqual(['view_us']);
 
-
     formGroup.disable();
-    permission = spectator.service.getRoleFormGroupPermissions(
-      formGroup
-    );
+    permission = spectator.service.getRoleFormGroupPermissions(formGroup);
 
     expect(permission).toEqual([]);
   });
@@ -271,8 +226,8 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         create: true,
         modify: true,
         delete: true,
-        comment: true
-      }
+        comment: true,
+      },
     });
   });
 });

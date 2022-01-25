@@ -6,4 +6,4 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-module.exports = {extends: ['@commitlint/config-conventional']}
+module.exports = { extends: ['@commitlint/config-conventional'] };

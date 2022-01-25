@@ -5,7 +5,12 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-import { Component, ChangeDetectionStrategy, Input, HostBinding } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  HostBinding,
+} from '@angular/core';
 
 type NotificationStatus = 'info' | 'notice' | 'error' | 'success' | 'warning';
 
@@ -13,7 +18,7 @@ type NotificationStatus = 'info' | 'notice' | 'error' | 'success' | 'warning';
   selector: 'tg-ui-notification-inline',
   templateUrl: './notification-inline.component.html',
   styleUrls: ['./notification-inline.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationInlineComponent {
   @Input()

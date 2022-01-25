@@ -22,7 +22,7 @@ Create the template & the bindings:
 export const Primary = ConfigureTemplate({
   args: {
     project: ProjectMockFactory.build(),
-  }
+  },
 });
 ```
 
@@ -36,7 +36,7 @@ export const Primary = ConfigureTemplate({
   `,
   args: {
     project: ProjectMockFactory.build(),
-  }
+  },
 });
 ```
 
@@ -55,6 +55,6 @@ export default ConfigureStory({
 export const Primary = ConfigureTemplate({
   args: {
     project: ProjectMockFactory.build(),
-  }
+  },
 });
 ```

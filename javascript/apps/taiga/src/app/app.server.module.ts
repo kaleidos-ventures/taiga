@@ -14,18 +14,16 @@ import { AppComponent } from './app.component';
 import { WsService } from '@taiga/ws';
 
 @NgModule({
-  imports: [
-    AppModule,
-    ServerModule,
-  ],
+  imports: [AppModule, ServerModule],
   providers: [
     {
-      provide: WsService, useValue: {
+      provide: WsService,
+      useValue: {
         listen: () => {
           return undefined;
-        }
-      }
-    }
+        },
+      },
+    },
   ],
   bootstrap: [AppComponent],
 })

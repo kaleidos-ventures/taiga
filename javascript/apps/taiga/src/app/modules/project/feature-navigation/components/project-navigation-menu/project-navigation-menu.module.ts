@@ -21,14 +21,9 @@ import { ProjectNavigationMenuComponent } from './project-navigation-menu.compon
     TuiSvgModule,
     TranslocoModule,
     AvatarModule,
-    RouterModule
+    RouterModule,
   ],
-  declarations: [
-    ProjectNavigationMenuComponent,
-  ],
-  exports: [
-    ProjectNavigationMenuComponent,
-  ]
-
+  declarations: [ProjectNavigationMenuComponent],
+  exports: [ProjectNavigationMenuComponent],
 })
 export class ProjectNavigationMenuModule {}

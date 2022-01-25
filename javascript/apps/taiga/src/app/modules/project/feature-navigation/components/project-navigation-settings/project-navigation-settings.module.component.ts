@@ -7,7 +7,17 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Project } from '@taiga/data';
@@ -21,7 +31,7 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
   selector: 'tg-project-navigation-settings',
   templateUrl: './project-navigation-settings.component.html',
   styleUrls: ['./project-navigation-settings.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectNavigationSettingsComponent implements OnInit {
   @ViewChild('firstChild')
@@ -29,8 +39,11 @@ export class ProjectNavigationSettingsComponent implements OnInit {
     if (elm) {
       this.projectNavigationComponent.animationEvents$
         .pipe(
-          filter((event) => event.toState === 'open-settings' && event.phaseName == 'done'),
-          take(1),
+          filter(
+            (event) =>
+              event.toState === 'open-settings' && event.phaseName == 'done'
+          ),
+          take(1)
         )
         .subscribe(() => {
           (elm.nativeElement as HTMLElement).focus();
@@ -53,7 +66,7 @@ export class ProjectNavigationSettingsComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private projectNavigationComponent: ProjectNavigationComponent,
     private routeHistory: RouteHistoryService
-  ){}
+  ) {}
 
   public ngOnInit() {
     this.getFragment();
@@ -63,7 +76,7 @@ export class ProjectNavigationSettingsComponent implements OnInit {
   public getHistoryNav() {
     this.previousUrl = this.routeHistory.getPreviousUrl() || this.router.url;
     if (this.previousUrl.includes('/settings')) {
-      const params:string = this.route.snapshot.params.slug;
+      const params: string = this.route.snapshot.params.slug;
       this.previousUrl = `/project/${params}/`;
     }
   }

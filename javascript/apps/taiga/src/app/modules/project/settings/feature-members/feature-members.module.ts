@@ -12,17 +12,15 @@ import { RouterModule } from '@angular/router';
 import { ProjectsSettingsFeatureMembersComponent } from './feature-members.component';
 
 @NgModule({
-  declarations: [
-    ProjectsSettingsFeatureMembersComponent
-  ],
+  declarations: [ProjectsSettingsFeatureMembersComponent],
   imports: [
     CommonModule,
     RouterModule.forChild([
       {
         path: '',
-        component: ProjectsSettingsFeatureMembersComponent
-      }
-    ])
+        component: ProjectsSettingsFeatureMembersComponent,
+      },
+    ]),
   ],
 })
-export class ProjectsSettingsFeatureMembersModule { }
+export class ProjectsSettingsFeatureMembersModule {}

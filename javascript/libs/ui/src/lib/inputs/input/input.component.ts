@@ -6,8 +6,18 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { AfterContentInit, Component, ContentChild, HostBinding, Input } from '@angular/core';
-import { ControlContainer, FormControl, FormGroupDirective } from '@angular/forms';
+import {
+  AfterContentInit,
+  Component,
+  ContentChild,
+  HostBinding,
+  Input,
+} from '@angular/core';
+import {
+  ControlContainer,
+  FormControl,
+  FormGroupDirective,
+} from '@angular/forms';
 import { FormDirective } from '../form/form.directive';
 import { InputRefDirective } from '../input-ref.directive';
 import { FieldService } from '../services/field.service';
@@ -17,12 +27,9 @@ let nextId = 0;
 @Component({
   selector: 'tg-ui-input',
   templateUrl: './input.component.html',
-  styleUrls: [
-    '../inputs.css',
-    './input.component.css'
-  ],
+  styleUrls: ['../inputs.css', './input.component.css'],
   exportAs: 'tgInput',
-  providers: [FieldService]
+  providers: [FieldService],
 })
 export class InputComponent implements AfterContentInit {
   @Input()
@@ -72,7 +79,7 @@ export class InputComponent implements AfterContentInit {
   constructor(
     private controlContainer: ControlContainer,
     private fieldService: FieldService,
-    private formDirective: FormDirective,
+    private formDirective: FormDirective
   ) {}
 
   public get control() {

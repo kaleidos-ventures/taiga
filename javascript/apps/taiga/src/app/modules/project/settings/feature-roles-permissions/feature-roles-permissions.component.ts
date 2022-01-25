@@ -6,7 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,8 +19,17 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Role } from '@taiga/data';
 import { auditTime, filter, map, skip, take } from 'rxjs/operators';
-import { fetchMemberRoles, fetchPublicRoles, updateRolePermissions, updatePublicRolePermissions } from '~/app/modules/project/data-access/+state/actions/project.actions';
-import { selectMemberRoles, selectProject, selectPublicRole } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import {
+  fetchMemberRoles,
+  fetchPublicRoles,
+  updateRolePermissions,
+  updatePublicRolePermissions,
+} from '~/app/modules/project/data-access/+state/actions/project.actions';
+import {
+  selectMemberRoles,
+  selectProject,
+  selectPublicRole,
+} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
 
 @UntilDestroy()
@@ -27,10 +41,12 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from './services/featu
     '../styles/settings.styles.css',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState]
+  providers: [RxState],
 })
-export class ProjectSettingsFeatureRolesPermissionsComponent implements AfterViewInit {
-  private readonly defaultFragment =  'member-permissions-settings';
+export class ProjectSettingsFeatureRolesPermissionsComponent
+  implements AfterViewInit
+{
+  private readonly defaultFragment = 'member-permissions-settings';
 
   public readonly form = this.fb.group({});
   public readonly publicForm = this.fb.group({});
@@ -61,13 +77,16 @@ export class ProjectSettingsFeatureRolesPermissionsComponent implements AfterVie
     private fb: FormBuilder,
     private store: Store,
     private state: RxState<{
-      memberRoles: Role[],
-      publicRole: string[],
-      project: Project,
-    }>,
+      memberRoles: Role[];
+      publicRole: string[];
+      project: Project;
+    }>
   ) {
-    this.state.connect('project', this.store.select(selectProject).pipe(
-      filter((project): project is Project => !!project))
+    this.state.connect(
+      'project',
+      this.store
+        .select(selectProject)
+        .pipe(filter((project): project is Project => !!project))
     );
     this.state.connect('publicRole', this.store.select(selectPublicRole));
     this.state.connect('memberRoles', this.store.select(selectMemberRoles));
@@ -98,28 +117,33 @@ export class ProjectSettingsFeatureRolesPermissionsComponent implements AfterVie
         });
     });
 
-    this.form.valueChanges.pipe(
-      skip(1),
-      untilDestroyed(this),
-      auditTime(100),
-    ).subscribe(() => {
-      this.saveMembers();
-    });
+    this.form.valueChanges
+      .pipe(skip(1), untilDestroyed(this), auditTime(100))
+      .subscribe(() => {
+        this.saveMembers();
+      });
 
-    this.publicForm.valueChanges.pipe(
-      skip(1),
-      untilDestroyed(this),
-      auditTime(100),
-    ).subscribe(() => {
-      this.savePublic();
-    });
+    this.publicForm.valueChanges
+      .pipe(skip(1), untilDestroyed(this), auditTime(100))
+      .subscribe(() => {
+        this.savePublic();
+      });
   }
 
-  public createRoleFormControl(permissions: string[], slug: string, form: FormGroup) {
+  public createRoleFormControl(
+    permissions: string[],
+    slug: string,
+    form: FormGroup
+  ) {
     const roleGroup = this.fb.group({});
-    const currentPermissions = this.projectsSettingsFeatureRolesPermissionsService.formatRawPermissions(permissions);
+    const currentPermissions =
+      this.projectsSettingsFeatureRolesPermissionsService.formatRawPermissions(
+        permissions
+      );
 
-    for (const [ module ] of this.projectsSettingsFeatureRolesPermissionsService.getModules()) {
+    for (const [
+      module,
+    ] of this.projectsSettingsFeatureRolesPermissionsService.getModules()) {
       const fb = this.fb.group({
         create: [false],
         modify: [false],
@@ -127,7 +151,9 @@ export class ProjectSettingsFeatureRolesPermissionsComponent implements AfterVie
         comment: [false],
       });
 
-      if (!this.projectsSettingsFeatureRolesPermissionsService.hasComments(module)) {
+      if (
+        !this.projectsSettingsFeatureRolesPermissionsService.hasComments(module)
+      ) {
         fb.get('comment')?.disable();
       }
 
@@ -144,10 +170,14 @@ export class ProjectSettingsFeatureRolesPermissionsComponent implements AfterVie
   }
 
   public saveMembers() {
-    this.state.get('memberRoles')
+    this.state
+      .get('memberRoles')
       .filter((role) => !role.isAdmin)
       .forEach((role) => {
-        const permissions = this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(this.getRoleForm(role));
+        const permissions =
+          this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(
+            this.getRoleForm(role)
+          );
 
         this.store.dispatch(
           updateRolePermissions({
@@ -160,7 +190,10 @@ export class ProjectSettingsFeatureRolesPermissionsComponent implements AfterVie
   }
 
   public savePublic() {
-    const permissions = this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(this.getPublicRoleForm());
+    const permissions =
+      this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(
+        this.getPublicRoleForm()
+      );
 
     this.store.dispatch(
       updatePublicRolePermissions({
@@ -179,29 +212,34 @@ export class ProjectSettingsFeatureRolesPermissionsComponent implements AfterVie
       if (fragment !== this.defaultFragment) {
         this.focusFragment(fragment);
         void this.router.navigate([], {
-          fragment: fragment
+          fragment: fragment,
         });
       }
     });
 
-    this.router.events.pipe(
-      filter((evt): evt is NavigationEnd => evt instanceof NavigationEnd),
-      map((evt) => evt.url.split('#')[1])
-    ).subscribe((fragment) => {
-      const isInternal = this.router.getCurrentNavigation()?.extras.state?.internal as boolean;
+    this.router.events
+      .pipe(
+        filter((evt): evt is NavigationEnd => evt instanceof NavigationEnd),
+        map((evt) => evt.url.split('#')[1])
+      )
+      .subscribe((fragment) => {
+        const isInternal = this.router.getCurrentNavigation()?.extras.state
+          ?.internal as boolean;
 
-      if (!isInternal) {
-        this.focusFragment(fragment);
-      }
-    });
+        if (!isInternal) {
+          this.focusFragment(fragment);
+        }
+      });
   }
 
   public focusFragment(fragment: string) {
-    const el = this.nativeElement.querySelector(`[data-fragment="${fragment}"] h3`);
+    const el = this.nativeElement.querySelector(
+      `[data-fragment="${fragment}"] h3`
+    );
 
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
-      (el as HTMLElement).focus({ preventScroll:true });
+      (el as HTMLElement).focus({ preventScroll: true });
     }
   }
 
@@ -221,7 +259,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent implements AfterVie
       relativeTo: this.route,
       state: {
         internal: true,
-      }
+      },
     });
   }
 

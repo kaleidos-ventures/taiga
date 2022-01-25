@@ -14,24 +14,24 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       tuiAutoFocus
       [attr.aria-label]="t('recent_projects')">
       <ng-container *ngIf="latestProjects.length">
-      <li *ngFor="let project of latestProjects; trackBy: trackByProject">
-        <a
-          class="project"
-          [routerLink]="['/project', project.slug]">
-          <div class="project-image">
-            <tg-ui-avatar
-              type="light"
-              [color]="project.color"
-              [url]="project.logoSmall"
-              [name]="project.name">
-            </tg-ui-avatar>
-          </div>
-          <div class="project-data">
-            <span class="project-name">{{ project.name }} </span>
-            <span class="project-workspace">{{ project.workspace.name }}</span>
-          </div>
-        </a>
-      </li>
+        <li *ngFor="let project of latestProjects; trackBy: trackByProject">
+          <a class="project" [routerLink]="['/project', project.slug]">
+            <div class="project-image">
+              <tg-ui-avatar
+                type="light"
+                [color]="project.color"
+                [url]="project.logoSmall"
+                [name]="project.name">
+              </tg-ui-avatar>
+            </div>
+            <div class="project-data">
+              <span class="project-name">{{ project.name }} </span>
+              <span class="project-workspace">{{
+                project.workspace.name
+              }}</span>
+            </div>
+          </a>
+        </li>
       </ng-container>
     </ul>
 
@@ -39,18 +39,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <p class="empty-recent">{{ t('empty_recent_projects') }}</p>
     </ng-container>
 
-    <a class="view-projects"
-      href="">
+    <a class="view-projects" href="">
       {{ t('view_projects') }}
     </a>
-    <a class="new-project"
+    <a
+      class="new-project"
       tuiButton
       [routerLink]="['/new-project']"
       type="button"
       icon="plus">
       {{ t('new_project') }}
     </a>
-    <ul class="organizations"
+    <ul
+      class="organizations"
       [attr.aria-label]="'commons.organizations' | transloco">
       <li>
         <a href="">Kaleidos Ventures</a>

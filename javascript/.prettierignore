@@ -1,4 +1,47 @@
-# Add files here to ignore them from prettier formatting
+# Specific project folders
+schematics
 
+# Ignore artifacts:
+build
+coverage
+
+# compiled output
 /dist
+/tmp
+/out-tsc
+
+# dependencies
+/node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.hintrc
+
+# misc
+/.sass-cache
+/connect.lock
 /coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+
+/apps/taiga/src/assets/config.json

@@ -10,8 +10,6 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'tg-feature-settings',
   templateUrl: './feature-settings.component.html',
-  styleUrls: ['./feature-settings.component.css']
+  styleUrls: ['./feature-settings.component.css'],
 })
-export class ProjectsSettingsFeatureSettingsComponent {
-
-}
+export class ProjectsSettingsFeatureSettingsComponent {}

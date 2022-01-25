@@ -14,7 +14,11 @@ import { Observable } from 'rxjs';
 
 import { ProjectCreationMockFactory, ProjectMockFactory } from '@taiga/data';
 import { NewProjectEffects } from './new-project.effects';
-import { createProject, createProjectSuccess, inviteUsersNewProject } from '../actions/new-project.actions';
+import {
+  createProject,
+  createProjectSuccess,
+  inviteUsersNewProject,
+} from '../actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
@@ -25,16 +29,9 @@ describe('NewProjectEffects', () => {
 
   const createService = createServiceFactory({
     service: NewProjectEffects,
-    providers: [
-      provideMockActions(() => actions$),
-    ],
-    imports: [
-      RouterTestingModule,
-    ],
-    mocks: [
-      ProjectApiService,
-      Router
-    ],
+    providers: [provideMockActions(() => actions$)],
+    imports: [RouterTestingModule],
+    mocks: [ProjectApiService, Router],
   });
 
   beforeEach(() => {
@@ -53,15 +50,13 @@ describe('NewProjectEffects', () => {
 
     effects.createProject$.subscribe();
 
-    actions$ = hot('-a', { a:  createProject({project: projectCreation})});
+    actions$ = hot('-a', { a: createProject({ project: projectCreation }) });
 
     const expected = cold('--a', {
       a: createProjectSuccess({ project }),
     });
 
-    expect(
-      effects.createProject$
-    ).toBeObservable(expected);
+    expect(effects.createProject$).toBeObservable(expected);
   });
 
   it('create project success', () => {
@@ -74,13 +69,17 @@ describe('NewProjectEffects', () => {
     const router = spectator.inject(Router);
 
     actions$ = hot('-a--b--c', {
-      a: createProject({project: projectCreation}),
-      b: createProjectSuccess({project}),
+      a: createProject({ project: projectCreation }),
+      b: createProjectSuccess({ project }),
       c: inviteUsersNewProject(),
     });
 
     expect(effects.createProjectSuccess$).toSatisfyOnFlush(() => {
-      expect(router.navigate).toHaveBeenCalledWith(['/project/', project.slug, 'kanban']);
+      expect(router.navigate).toHaveBeenCalledWith([
+        '/project/',
+        project.slug,
+        'kanban',
+      ]);
     });
   });
 });

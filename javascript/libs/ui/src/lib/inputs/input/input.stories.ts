@@ -7,7 +7,13 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { ReactiveFormsModule, Validators, AbstractControlOptions, FormGroup, FormBuilder } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  Validators,
+  AbstractControlOptions,
+  FormGroup,
+  FormBuilder,
+} from '@angular/forms';
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { InputsModule } from '../inputs.module';
 import { InputComponent } from './input.component';
@@ -15,42 +21,32 @@ import { InputComponent } from './input.component';
 @Component({
   selector: 'tg-ui-forms',
   template: `
-  <div class="story-small-container">
-    <form [formGroup]="form" (submit)="submit()" #exampleForm="ngForm">
-      <tg-ui-input
-        [icon]="iconSvg"
-        [label]="label">
-        <input
-          formControlName="example"
-          inputRef
-          [attr.readOnly]="readOnly"
-          [placeholder]="placeholder">
-        <tg-ui-error
-          inputError
-          error="required">
-          Field mandatory
-        </tg-ui-error>
-      </tg-ui-input>
-      <tg-ui-input
-        [icon]="iconSvg"
-        [label]="label">
-        <input
-          formControlName="email"
-          inputRef
-          [attr.readOnly]="readOnly"
-          [placeholder]="placeholder">
-        <ng-container inputError>
-          <tg-ui-error error="required">
+    <div class="story-small-container">
+      <form [formGroup]="form" (submit)="submit()" #exampleForm="ngForm">
+        <tg-ui-input [icon]="iconSvg" [label]="label">
+          <input
+            formControlName="example"
+            inputRef
+            [attr.readOnly]="readOnly"
+            [placeholder]="placeholder" />
+          <tg-ui-error inputError error="required">
             Field mandatory
           </tg-ui-error>
-          <tg-ui-error error="email">
-            Invalid email
-          </tg-ui-error>
-        </ng-container>
-      </tg-ui-input>
-      <button type="submit">Submit</button>
-    </form>
-  </div>
+        </tg-ui-input>
+        <tg-ui-input [icon]="iconSvg" [label]="label">
+          <input
+            formControlName="email"
+            inputRef
+            [attr.readOnly]="readOnly"
+            [placeholder]="placeholder" />
+          <ng-container inputError>
+            <tg-ui-error error="required"> Field mandatory </tg-ui-error>
+            <tg-ui-error error="email"> Invalid email </tg-ui-error>
+          </ng-container>
+        </tg-ui-input>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
   `,
   styleUrls: [],
 })
@@ -73,7 +69,7 @@ class FormsComponent {
       this.form.get('example')?.enable();
       this.form.get('email')?.enable();
     }
-  };
+  }
 
   @Input()
   public set updateOn(updateOn: AbstractControlOptions['updateOn']) {
@@ -88,10 +84,13 @@ class FormsComponent {
   constructor(private fb: FormBuilder) {}
 
   public initForm(updateOn: AbstractControlOptions['updateOn'] = 'submit') {
-    this.form = this.fb.group({
-      example: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-    }, { updateOn });
+    this.form = this.fb.group(
+      {
+        example: ['', [Validators.required]],
+        email: ['', [Validators.required, Validators.email]],
+      },
+      { updateOn }
+    );
   }
 
   public submit() {
@@ -102,11 +101,8 @@ class FormsComponent {
 export default ConfigureStory({
   title: 'Inputs',
   component: InputComponent,
-  extraModules: [
-    InputsModule,
-    ReactiveFormsModule
-  ],
-  declarations: [ FormsComponent ]
+  extraModules: [InputsModule, ReactiveFormsModule],
+  declarations: [FormsComponent],
 });
 
 const baseArgs = {
@@ -117,23 +113,23 @@ const baseArgs = {
 const baseArgTypes = {
   iconSvg: {
     defaultValue: '',
-    options: ['','folder', 'help', 'discover', 'bell', 'taiga-logo'],
-    control: { type: 'select' }
+    options: ['', 'folder', 'help', 'discover', 'bell', 'taiga-logo'],
+    control: { type: 'select' },
   },
   disabled: {
     defaultValue: null,
     options: [null, true],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
   readOnly: {
     defaultValue: null,
     options: [null, true],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
   updateOn: {
     defaultValue: 'submit',
     options: ['blur', 'change', 'submit'],
-    control: { type: 'radio' }
+    control: { type: 'radio' },
   },
 };
 

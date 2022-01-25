@@ -13,7 +13,10 @@ import { SettingsPermission } from '../models/settings-permission.model';
 import { ModulePermission } from '../models/module-permission.model';
 import { Module } from '@taiga/data';
 
-const mapFormModulesPermissions: Record<Module, Partial<Record<ModulePermission, string[]>>> = {
+const mapFormModulesPermissions: Record<
+  Module,
+  Partial<Record<ModulePermission, string[]>>
+> = {
   userstories: {
     view: ['view_us'],
     create: ['add_us'],
@@ -53,7 +56,7 @@ const mapFormModulesPermissions: Record<Module, Partial<Record<ModulePermission,
     create: ['add_wiki_page', 'add_wiki_link'],
     modify: ['modify_wiki_page', 'modify_wiki_link'],
     delete: ['delete_wiki_page', 'delete_wiki_link'],
-  }
+  },
 };
 
 @Injectable({ providedIn: 'root' })
@@ -77,21 +80,55 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
 
   public getPermissions(): Map<ModulePermission, string> {
     return new Map([
-      ['create', this.translocoService.translate('project_settings.roles_permissions.create')],
-      ['modify', this.translocoService.translate('project_settings.roles_permissions.modify')],
-      ['delete', this.translocoService.translate('project_settings.roles_permissions.delete')],
+      [
+        'create',
+        this.translocoService.translate(
+          'project_settings.roles_permissions.create'
+        ),
+      ],
+      [
+        'modify',
+        this.translocoService.translate(
+          'project_settings.roles_permissions.modify'
+        ),
+      ],
+      [
+        'delete',
+        this.translocoService.translate(
+          'project_settings.roles_permissions.delete'
+        ),
+      ],
     ]);
   }
 
   public getModulePermissions(): Map<SettingsPermission, string> {
     return new Map([
-      ['no_access', this.translocoService.translate('project_settings.roles_permissions.no_access')],
-      ['view', this.translocoService.translate('project_settings.roles_permissions.can_view')],
-      ['edit', this.translocoService.translate('project_settings.roles_permissions.can_edit')],
+      [
+        'no_access',
+        this.translocoService.translate(
+          'project_settings.roles_permissions.no_access'
+        ),
+      ],
+      [
+        'view',
+        this.translocoService.translate(
+          'project_settings.roles_permissions.can_view'
+        ),
+      ],
+      [
+        'edit',
+        this.translocoService.translate(
+          'project_settings.roles_permissions.can_edit'
+        ),
+      ],
     ]);
   }
 
-  public applyPermission(module: Module, type: SettingsPermission, formGroup: FormGroup) {
+  public applyPermission(
+    module: Module,
+    type: SettingsPermission,
+    formGroup: FormGroup
+  ) {
     if (formGroup.disabled) {
       formGroup.enable();
     }
@@ -100,13 +137,13 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       formGroup.patchValue({
         create: true,
         modify: true,
-        delete: true
+        delete: true,
       });
     } else if (type === 'view') {
       formGroup.patchValue({
         create: false,
         modify: false,
-        delete: false
+        delete: false,
       });
     } else if (type === 'no_access') {
       formGroup.disable();
@@ -135,7 +172,8 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
 
   public getRoleFormGroupPermissions(roleForm: FormGroup) {
     const roleFormValue = roleForm.value as Record<
-    Module, Record<ModulePermission, boolean>
+      Module,
+      Record<ModulePermission, boolean>
     >;
 
     return Object.entries(roleFormValue)
@@ -149,10 +187,15 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
 
         Object.entries(modulePermissions)
           .filter(([modulePermission, value]) => {
-            return value && !roleForm.get(module)?.get(modulePermission)?.disabled;
+            return (
+              value && !roleForm.get(module)?.get(modulePermission)?.disabled
+            );
           })
           .forEach(([modulePermission]) => {
-            const permission = mapFormModulesPermissions[module as Module][modulePermission as ModulePermission];
+            const permission =
+              mapFormModulesPermissions[module as Module][
+                modulePermission as ModulePermission
+              ];
 
             if (permission) {
               acc.push(...permission);
@@ -163,8 +206,9 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
   }
 
   public formatRawPermissions(permission: string[]) {
-    const formatedPermissions = Object.entries(mapFormModulesPermissions).reduce((acc, [module, moduleValue]) => {
-
+    const formatedPermissions = Object.entries(
+      mapFormModulesPermissions
+    ).reduce((acc, [module, moduleValue]) => {
       Object.entries(moduleValue).forEach(([action, list]) => {
         if (list.find((it) => permission.includes(it))) {
           if (!acc[module]) {
@@ -178,6 +222,9 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       return acc;
     }, {} as Record<string, Record<string, boolean>>);
 
-    return formatedPermissions as Record<Module, Record<ModulePermission, boolean>>;
+    return formatedPermissions as Record<
+      Module,
+      Record<ModulePermission, boolean>
+    >;
   }
 }

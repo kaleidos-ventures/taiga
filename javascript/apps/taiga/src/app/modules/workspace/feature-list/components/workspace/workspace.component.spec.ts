@@ -13,29 +13,26 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { WorkspaceComponent } from './workspace.component';
 
 describe('Workspace List', () => {
-
   const workspaceItem = WorkspaceMockFactory();
 
   const initialState = {
     creatingWorkspace: false,
     showCreate: false,
     loading: false,
-    workspaceList: [ workspaceItem ],
-    createFormHasError: false
+    workspaceList: [workspaceItem],
+    createFormHasError: false,
   };
 
   let spectator: Spectator<WorkspaceComponent>;
   const createComponent = createComponentFactory({
     component: WorkspaceComponent,
     imports: [],
-    providers: [
-      provideMockStore({ initialState }),
-    ]
+    providers: [provideMockStore({ initialState })],
   });
 
   beforeEach(() => {
     spectator = createComponent({
-      detectChanges: false
+      detectChanges: false,
     });
   });
 

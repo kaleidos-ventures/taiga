@@ -19,7 +19,6 @@ import { EMPTY, timer, zip } from 'rxjs';
 
 @Injectable()
 export class WorkspaceEffects {
-
   public listWorkspaces$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(WorkspaceActions.fetchWorkspaceList),
@@ -28,7 +27,7 @@ export class WorkspaceEffects {
           return this.workspaceApiService.fetchWorkspaceList().pipe(
             map((workspaces: Workspace[]) => {
               return WorkspaceActions.fetchWorkspaceListSuccess({ workspaces });
-            }),
+            })
           );
         },
         onError: () => {
@@ -57,7 +56,7 @@ export class WorkspaceEffects {
         },
         onError: () => {
           return EMPTY;
-        }
+        },
       })
     );
   });
@@ -67,15 +66,20 @@ export class WorkspaceEffects {
       ofType(WorkspaceActions.fetchWorkspaceProjects),
       pessimisticUpdate({
         run: (action) => {
-          return this.workspaceApiService.fetchWorkspaceProjects(action.slug).pipe(
-            map((projects) => {
-              return WorkspaceActions.fetchWorkspaceProjectsSuccess({ slug: action.slug, projects });
-            })
-          );
+          return this.workspaceApiService
+            .fetchWorkspaceProjects(action.slug)
+            .pipe(
+              map((projects) => {
+                return WorkspaceActions.fetchWorkspaceProjectsSuccess({
+                  slug: action.slug,
+                  projects,
+                });
+              })
+            );
         },
         onError: () => {
           return null;
-        }
+        },
       })
     );
   });
@@ -84,5 +88,4 @@ export class WorkspaceEffects {
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService
   ) {}
-
 }

@@ -6,7 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { Component, ChangeDetectionStrategy, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
@@ -28,7 +33,7 @@ export class UserAvatarComponent implements OnInit {
   @Input()
   public set user(user: User) {
     this.state.set({ user });
-  };
+  }
 
   @Input()
   public rounded = true;
@@ -44,9 +49,9 @@ export class UserAvatarComponent implements OnInit {
     if (!this.state.get('user')) {
       this.state.connect(
         'user',
-        this.store.select(selectUser).pipe(
-          filter((user): user is User => !!user)
-        )
+        this.store
+          .select(selectUser)
+          .pipe(filter((user): user is User => !!user))
       );
     }
   }

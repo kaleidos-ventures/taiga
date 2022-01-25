@@ -20,27 +20,22 @@ describe('ProjectNavigationComponent', () => {
   let spectator: Spectator<ProjectNavigationComponent>;
   const createComponent = createComponentFactory({
     component: ProjectNavigationComponent,
-    imports: [
-      CommonModule,
-      getTranslocoModule(),
-    ],
+    imports: [CommonModule, getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
-    mocks: [
-      LocalStorageService,
-      Router,
-    ]
+    mocks: [LocalStorageService, Router],
   });
 
   beforeEach(() => {
     spectator = createComponent({
-      detectChanges: false
+      detectChanges: false,
     });
 
     spectator.component.project = ProjectMockFactory(true);
   });
 
   it('default', () => {
-    const localStorageService = spectator.inject<LocalStorageService>(LocalStorageService);
+    const localStorageService =
+      spectator.inject<LocalStorageService>(LocalStorageService);
     localStorageService.get.mockReturnValue(true);
 
     spectator.detectChanges();
@@ -49,7 +44,8 @@ describe('ProjectNavigationComponent', () => {
   });
 
   it('on init check if project navigation bar is collapsed - true', () => {
-    const localStorageService = spectator.inject<LocalStorageService>(LocalStorageService);
+    const localStorageService =
+      spectator.inject<LocalStorageService>(LocalStorageService);
     localStorageService.get.mockReturnValue(true);
 
     spectator.detectChanges();
@@ -58,13 +54,12 @@ describe('ProjectNavigationComponent', () => {
   });
 
   it('on init check if project navigation bar is collapsed - false', () => {
-    const localStorageService = spectator.inject<LocalStorageService>(LocalStorageService);
+    const localStorageService =
+      spectator.inject<LocalStorageService>(LocalStorageService);
     localStorageService.get.mockReturnValue(false);
 
     spectator.detectChanges();
 
     expect(spectator.component.collapsed).toEqual(false);
   });
-
 });
-

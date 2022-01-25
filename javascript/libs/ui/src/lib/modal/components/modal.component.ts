@@ -19,10 +19,14 @@ import {
   EventEmitter,
   Optional,
   Inject,
-  OnInit
+  OnInit,
 } from '@angular/core';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { FocusMonitor, ConfigurableFocusTrapFactory, ConfigurableFocusTrap } from '@angular/cdk/a11y';
+import {
+  FocusMonitor,
+  ConfigurableFocusTrapFactory,
+  ConfigurableFocusTrap,
+} from '@angular/cdk/a11y';
 import { DOCUMENT } from '@angular/common';
 import { ModalService } from '../services/modal.service';
 import { ShortcutsService } from '@taiga/core';
@@ -40,7 +44,7 @@ Usage example:
   selector: 'tg-ui-modal',
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalComponent implements OnDestroy, AfterViewInit, OnInit {
   public open$ = new BehaviorSubject<boolean>(false);
@@ -74,10 +78,11 @@ export class ModalComponent implements OnDestroy, AfterViewInit, OnInit {
   constructor(
     private modalService: ModalService,
     private shortcutsService: ShortcutsService,
-    private focusTrapFactory:  ConfigurableFocusTrapFactory,
+    private focusTrapFactory: ConfigurableFocusTrapFactory,
     private focusMonitor: FocusMonitor,
     private elementRef: ElementRef,
-    @Optional() @Inject(DOCUMENT) private document: Document) {}
+    @Optional() @Inject(DOCUMENT) private document: Document
+  ) {}
 
   public ngOnInit() {
     this.open$.subscribe((open) => {
@@ -124,37 +129,46 @@ export class ModalComponent implements OnDestroy, AfterViewInit, OnInit {
 
   private capturePreviouslyFocusedElement() {
     if (this.document) {
-      this.elementFocusedBeforeDialogWasOpened = this.getActiveElement() as HTMLElement;
+      this.elementFocusedBeforeDialogWasOpened =
+        this.getActiveElement() as HTMLElement;
     }
   }
 
   private getActiveElement(): Element | null {
     const activeElement = this.document.activeElement;
 
-    return activeElement?.shadowRoot?.activeElement as HTMLElement || activeElement;
+    return (
+      (activeElement?.shadowRoot?.activeElement as HTMLElement) || activeElement
+    );
   }
 
   private trapFocus() {
     this.capturePreviouslyFocusedElement();
 
     this.focusTrap = this.focusTrapFactory.create(
-      this.domPortalContent.nativeElement.querySelector('.modal-wrapper') as HTMLElement
+      this.domPortalContent.nativeElement.querySelector(
+        '.modal-wrapper'
+      ) as HTMLElement
     );
 
     void this.focusTrap.focusInitialElementWhenReady();
   }
 
   private restoreFocus() {
-    const previousElement = this.elementFocusWhenClosed ?
-      this.elementFocusWhenClosed :
-      this.elementFocusedBeforeDialogWasOpened;
+    const previousElement = this.elementFocusWhenClosed
+      ? this.elementFocusWhenClosed
+      : this.elementFocusedBeforeDialogWasOpened;
 
     if (previousElement && typeof previousElement.focus === 'function') {
       const activeElement = this.getActiveElement();
       const element = this.elementRef.nativeElement as HTMLElement;
 
-      if (!activeElement || activeElement === this.document.body || activeElement === element ||
-          element.contains(activeElement)) {
+      if (
+        !activeElement ||
+        activeElement === this.document.body ||
+        activeElement === element ||
+        element.contains(activeElement)
+      ) {
         if (this.focusMonitor) {
           this.focusMonitor.focusVia(previousElement, null);
         } else {
@@ -167,5 +181,4 @@ export class ModalComponent implements OnDestroy, AfterViewInit, OnInit {
       this.focusTrap.destroy();
     }
   }
-
 }

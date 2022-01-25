@@ -6,7 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createHttpFactory, HttpMethod, SpectatorHttp } from '@ngneat/spectator';
+import {
+  createHttpFactory,
+  HttpMethod,
+  SpectatorHttp,
+} from '@ngneat/spectator';
 import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { randDomainSuffix } from '@ngneat/falso';
@@ -22,7 +26,7 @@ describe('ProjectApiService', () => {
     ],
   });
 
-  beforeEach(() => spectator = createHttp());
+  beforeEach(() => (spectator = createHttp()));
 
   it('getProject', () => {
     const slug = randDomainSuffix({ length: 3 }).join('-');

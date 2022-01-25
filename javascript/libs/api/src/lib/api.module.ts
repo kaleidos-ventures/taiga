@@ -8,8 +8,5 @@
 
 import { NgModule } from '@angular/core';
 
-@NgModule({
-
-})
-export class ApiModule {
-}
+@NgModule({})
+export class ApiModule {}

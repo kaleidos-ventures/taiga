@@ -57,9 +57,9 @@ def create_project(**kwargs):
     defaults = {}
     defaults.update(kwargs)
 
-    workspace = defaults.pop("workspace", f.create_workspace())
+    workspace = defaults.pop("workspace", None) or f.create_workspace()
     defaults["workspace"] = workspace
-    defaults["owner"] = workspace.owner
+    defaults["owner"] = defaults.pop("owner", workspace.owner)
 
     ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
 

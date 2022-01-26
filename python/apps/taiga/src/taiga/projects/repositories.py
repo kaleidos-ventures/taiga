@@ -21,11 +21,12 @@ def get_projects(workspace_slug: str) -> Iterable[Project]:
 
 def get_workspace_projects_for_user(workspace_id: int, user_id: int) -> Iterable[Project]:
     # projects of a workspace where:
-    # - the user is member
-    # - the workspace_member_permissions allow to ws members
-    return Project.objects.filter(
-        Q(workspace_id=workspace_id), Q(members__id=user_id) | Q(workspace_member_permissions__len__gt=0)
-    ).distinct()
+    # - the user is not pj-member but the project allows to ws-members
+    # - the user is pj-member and the role has access (has at least 1 permission)
+    pj_in_workspace = Q(workspace_id=workspace_id)
+    ws_allowed = ~Q(members__id=user_id) & Q(workspace_member_permissions__len__gt=0)
+    pj_allowed = Q(members__id=user_id) & Q(memberships__role__permissions__len__gt=0)
+    return Project.objects.filter(pj_in_workspace & (ws_allowed | pj_allowed)).distinct()
 
 
 def create_project(

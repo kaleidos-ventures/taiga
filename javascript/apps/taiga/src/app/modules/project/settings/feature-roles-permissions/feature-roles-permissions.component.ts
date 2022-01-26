@@ -22,13 +22,16 @@ import { auditTime, filter, map, skip, take } from 'rxjs/operators';
 import {
   fetchMemberRoles,
   fetchPublicPermissions,
+  fetchWorkspacePermissions,
   updateRolePermissions,
   updatePublicPermissions,
+  updateWorkspacePermissions,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectMemberRoles,
   selectProject,
   selectPublicPermissions,
+  selectWorkspacePermissions
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
@@ -49,6 +52,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 {
   public readonly form = this.fb.group({});
   public readonly publicForm = this.fb.group({});
+  public readonly workspaceForm = this.fb.group({});
   public readonly model$ = this.state.select().pipe(
     map((model) => {
       const admin = model.memberRoles?.find((it) => it.isAdmin);
@@ -70,8 +74,12 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     return this.form.get(role.slug) as FormGroup;
   }
 
-  public getPublicRoleForm() {
+  public getPublicPermissionsForm() {
     return this.publicForm.get('public') as FormGroup;
+  }
+
+  public getworkspacePermissionsForm() {
+    return this.workspaceForm.get('workspace') as FormGroup;
   }
 
   constructor(
@@ -83,7 +91,8 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     private store: Store,
     private state: RxState<{
       memberRoles?: Role[];
-      publicRole?: string[];
+      publicPermissions?: string[];
+      workspacePermissions?: string[],
       project: Project;
     }>
   ) {
@@ -91,13 +100,20 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       'project',
       this.store.select(selectProject).pipe(filterNil())
     );
-    this.state.connect(
-      'publicRole',
-      this.store.select(selectPublicPermissions).pipe(filterNil())
-    );
+
     this.state.connect(
       'memberRoles',
       this.store.select(selectMemberRoles).pipe(filterNil())
+    );
+
+    this.state.connect(
+      'publicPermissions',
+      this.store.select(selectPublicPermissions).pipe(filterNil())
+    );
+
+    this.state.connect(
+      'workspacePermissions',
+      this.store.select(selectWorkspacePermissions).pipe(filterNil())
     );
 
     this.state.hold(this.state.select('project'), (project) => {
@@ -105,6 +121,9 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     });
     this.state.hold(this.state.select('project'), (project) => {
       this.store.dispatch(fetchPublicPermissions({ slug: project.slug }));
+    });
+    this.state.hold(this.state.select('project'), (project) => {
+      this.store.dispatch(fetchWorkspacePermissions({ slug: project.slug }));
     });
   }
 
@@ -114,16 +133,20 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   }
 
   public initForm() {
-    this.state.hold(this.state.select('publicRole'), (permissions = []) => {
-      this.createRoleFormControl(permissions, 'public', this.publicForm);
-    });
-
     this.state.hold(this.state.select('memberRoles'), (roles = []) => {
       roles
         .filter((role) => !role.isAdmin)
         .forEach((role) => {
           this.createRoleFormControl(role.permissions, role.slug, this.form);
         });
+    });
+
+    this.state.hold(this.state.select('publicPermissions'), (permissions = []) => {
+      this.createRoleFormControl(permissions, 'public', this.publicForm);
+    });
+
+    this.state.hold(this.state.select('workspacePermissions'), (permissions = []) => {
+      this.createRoleFormControl(permissions, 'workspace', this.workspaceForm);
     });
 
     this.form.valueChanges
@@ -136,6 +159,12 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       .pipe(skip(1), untilDestroyed(this), auditTime(100))
       .subscribe(() => {
         this.savePublic();
+      });
+
+    this.workspaceForm.valueChanges
+      .pipe(skip(1), untilDestroyed(this), auditTime(100))
+      .subscribe(() => {
+        this.saveWorkspace();
       });
   }
 
@@ -202,11 +231,22 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   public savePublic() {
     const permissions =
       this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(
-        this.getPublicRoleForm()
+        this.getPublicPermissionsForm()
       );
 
     this.store.dispatch(
       updatePublicPermissions({
+        project: this.state.get('project').slug,
+        permissions,
+      })
+    );
+  }
+
+  public saveWorkspace() {
+    const permissions = this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(this.getworkspacePermissionsForm());
+
+    this.store.dispatch(
+      updateWorkspacePermissions({
         project: this.state.get('project').slug,
         permissions,
       })

@@ -65,7 +65,7 @@ export class ProjectEffects {
     );
   });
 
-  public loadPublicRole$ = createEffect(() => {
+  public loadPublicPermissions$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(ProjectActions.fetchPublicPermissions),
       fetch({
@@ -75,6 +75,24 @@ export class ProjectEffects {
               return ProjectActions.fetchPublicPermissionsSuccess({
                 permissions: permissions,
               });
+            })
+          );
+        },
+        onError: () => {
+          return null;
+        },
+      })
+    );
+  });
+
+  public loadworkspacePermissions$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.fetchWorkspacePermissions),
+      fetch({
+        run: (action) => {
+          return this.projectApiService.getworkspacePermissions(action.slug).pipe(
+            map((permissions) => {
+              return ProjectActions.fetchWorkspacePermissionsSuccess({ workspacePermissions: permissions });
             })
           );
         },
@@ -117,6 +135,27 @@ export class ProjectEffects {
                 return ProjectActions.updateRolePermissionsSuccess();
               })
             );
+        },
+        onError: () => {
+          return ProjectActions.updateRolePermissionsError();
+        },
+      })
+    );
+  });
+
+  public updateWorkspacePermissions$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.updateWorkspacePermissions),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.projectApiService.putworkspacePermissions(
+            action.project,
+            action.permissions
+          ).pipe(
+            map(() => {
+              return ProjectActions.updateRolePermissionsSuccess();
+            })
+          );
         },
         onError: () => {
           return ProjectActions.updateRolePermissionsError();

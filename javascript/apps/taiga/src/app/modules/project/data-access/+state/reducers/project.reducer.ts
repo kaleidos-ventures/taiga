@@ -17,12 +17,14 @@ export interface ProjectState {
   project: Project | null;
   memberRoles: Role[] | null;
   publicPermissions: string[] | null;
+  workspacePermissions: string[] | null;
 }
 
 export const initialState: ProjectState = {
   project: null,
   memberRoles: null,
   publicPermissions: null,
+  workspacePermissions: null
 };
 
 export const reducer = createReducer(
@@ -44,6 +46,14 @@ export const reducer = createReducer(
     ProjectActions.fetchPublicPermissionsSuccess,
     (state, { permissions: publicPermissions }): ProjectState => {
       state.publicPermissions = publicPermissions;
+
+      return state;
+    }
+  ),
+  on(
+    ProjectActions.fetchWorkspacePermissionsSuccess,
+    (state, { workspacePermissions }): ProjectState => {
+      state.workspacePermissions = workspacePermissions;
 
       return state;
     }

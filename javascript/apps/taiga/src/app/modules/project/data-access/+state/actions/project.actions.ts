@@ -39,6 +39,16 @@ export const fetchPublicPermissionsSuccess = createAction(
   props<{ permissions: string[] }>()
 );
 
+export const fetchWorkspacePermissions = createAction(
+  '[Roles] fetch workspace permissions',
+  props<{slug: Project['slug']}>()
+);
+
+export const fetchWorkspacePermissionsSuccess = createAction(
+  '[Roles] fetch workspace permissions success',
+  props<{workspacePermissions: string[]}>()
+);
+
 export const updateRolePermissions = createAction(
   '[Roles] update role permissions',
   props<{
@@ -51,6 +61,11 @@ export const updateRolePermissions = createAction(
 export const updatePublicPermissions = createAction(
   '[Roles] update public permissions',
   props<{ project: Project['slug']; permissions: string[] }>()
+);
+
+export const updateWorkspacePermissions = createAction(
+  '[Roles] update workspace permissions',
+  props<{project: Project['slug'], permissions: string[]}>()
 );
 
 export const updateRolePermissionsSuccess = createAction(

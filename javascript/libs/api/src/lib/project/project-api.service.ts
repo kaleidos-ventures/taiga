@@ -51,6 +51,12 @@ export class ProjectApiService {
     );
   }
 
+  public getworkspacePermissions(slug: Project['slug']) {
+    return this.http.get<string[]>(
+      `${this.config.apiUrl}/projects/${slug}/workspace-member-permissions`
+    );
+  }
+
   public putMemberRoles(
     slug: Project['slug'],
     roleSlug: Role['slug'],
@@ -112,6 +118,36 @@ export class ProjectApiService {
     });
     return this.http.put<Permissions>(
       `${this.config.apiUrl}/projects/${slug}/public-permissions`,
+      {
+        permissions,
+      }
+    );
+  }
+
+  public putworkspacePermissions(slug: Project['slug'], permissions: string[]) {
+    permissions = permissions.filter((permission) => {
+      const validPermission = [
+        'add_member',
+        'delete_us',
+        'delete_task',
+        'modify_task',
+        'view_tasks',
+        'modify_us',
+        'comment_us',
+        'view_us',
+        'add_task',
+        'add_us',
+        'comment_task',
+        'view_milestones',
+        'delete_project',
+        'modify_project',
+        'view_project',
+      ];
+
+      return validPermission.includes(permission);
+    });
+    return this.http.put<Permissions>(
+      `${this.config.apiUrl}/projects/${slug}/workspace-member-permissions`,
       {
         permissions,
       }

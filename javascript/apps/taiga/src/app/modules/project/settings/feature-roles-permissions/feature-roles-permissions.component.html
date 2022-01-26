@@ -74,7 +74,28 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </section>
 
     <section
-      *ngIf="vm.publicRole"
+      *ngIf="vm.publicPermissions"
+      data-fragment="workspace-permissions-settings"
+      data-test="workspace-permissions-settings"
+      class="workspace-permissions-settings"
+      inViewport
+      (visible)="isInViewport($event)">
+      <h3 tabindex="-1"
+        class="settings-subtitle">{{ t('project_settings.workspace_permissions') }}
+      </h3>
+      <form [formGroup]="workspaceForm">
+        <tg-role-permission-row *ngIf="getworkspacePermissionsForm()"
+          [formGroup]="getworkspacePermissionsForm()"
+          [hasMembers]="false"
+          [name]="''"
+          [numMembers]="0"
+          data-test="role-permission-row">
+        </tg-role-permission-row>
+      </form>
+    </section>
+
+    <section
+      *ngIf="vm.workspacePermissions"
       data-fragment="public-permissions-settings"
       data-test="public-permissions-settings"
       class="public-permissions-settings"
@@ -85,8 +106,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </h3>
       <form [formGroup]="publicForm">
         <tg-role-permission-row
-          *ngIf="getPublicRoleForm()"
-          [formGroup]="getPublicRoleForm()"
+          *ngIf="getPublicPermissionsForm()"
+          [formGroup]="getPublicPermissionsForm()"
           [hasMembers]="false"
           [numMembers]="0"
           name=""
@@ -99,16 +120,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </button>
         </tg-ui-notification-inline>
       </form>
-    </section>
-
-    <section
-      data-fragment="workspace-permissions-settings"
-      class="workspace-permissions-settings"
-      inViewport
-      (visible)="isInViewport($event)">
-      <h3 tabindex="-1" class="settings-subtitle">
-        {{ t('project_settings.workspace_permissions') }}
-      </h3>
     </section>
   </ng-container>
 </ng-container>

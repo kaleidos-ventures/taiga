@@ -20,6 +20,7 @@ import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
   updatePublicPermissions,
   updateRolePermissions,
+  updateWorkspacePermissions,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
@@ -221,7 +222,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       store.setState({
         project: {
           project,
-          publicRole: role.permissions,
+          publicPermissions: role.permissions,
         },
       });
 
@@ -244,6 +245,43 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       expect(dispatchSpy).toBeCalledWith(
         updatePublicPermissions({
+          project: project.slug,
+          permissions: finalPermissions,
+        })
+      );
+    });
+
+    it('save workspace permissions', () => {
+      const role = RoleMockFactory();
+      const project = ProjectMockFactory();
+
+      const store = spectator.inject(MockStore);
+      store.setState({
+        project: {
+          project,
+          workspacePermissions: role.permissions,
+        },
+      });
+
+      const projectsSettingsFeatureRolesPermissionsService = spectator.inject(
+        ProjectsSettingsFeatureRolesPermissionsService
+      );
+
+      store.refreshState();
+      spectator.detectChanges();
+
+      const finalPermissions = ['view_us'];
+
+      projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions.mockReturnValue(
+        finalPermissions
+      );
+
+      const dispatchSpy = jest.spyOn(store, 'dispatch');
+
+      spectator.component.saveWorkspace();
+
+      expect(dispatchSpy).toBeCalledWith(
+        updateWorkspacePermissions({
           project: project.slug,
           permissions: finalPermissions,
         })

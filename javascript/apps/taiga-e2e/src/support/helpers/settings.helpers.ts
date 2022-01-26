@@ -43,6 +43,17 @@ export const displayPublicAdvancedSettingsForRole = (index: number) => {
   });
 };
 
+export const displayWorkspaceAdvancedSettingsForRole = (index: number) => {
+  cy.getBySel('workspace-permissions-settings').within(() => {
+    cy.getBySel('role-permission-row').should('be.visible');
+    cy.getBySel('role-permission-row')
+      .eq(index)
+      .within(() => {
+        cy.getBySel('permission-row-advanced-settings').click();
+      });
+  });
+};
+
 export const setModulePermissions = (
   index: number,
   permission: DropdownOptions

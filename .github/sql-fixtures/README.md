@@ -9,7 +9,7 @@ To regenerate the `fixtures.sql` file:
 1. Add this variable to your python .env
 `TAIGA_SECRET_KEY="secret"`
 
-2. Follow the python guide and regenerate the database 
+2. Follow the python guide and regenerate the database
 
 3. Change to the GitHub fixtures directory `taiga/.github/sql-fixtures`
 

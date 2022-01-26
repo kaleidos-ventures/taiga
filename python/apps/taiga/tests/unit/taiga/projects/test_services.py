@@ -17,6 +17,11 @@ from tests.utils.images import valid_image_upload_file
 pytestmark = pytest.mark.django_db
 
 
+##########################################################
+# create_project
+##########################################################
+
+
 def test_create_project():
     workspace = f.WorkspaceFactory()
 
@@ -65,6 +70,11 @@ def test_create_project_with_no_logo():
         )
 
 
+##########################################################
+# update_project_public_permissions
+##########################################################
+
+
 def test_update_project_public_permissions_ok():
     project = f.ProjectFactory()
     permissions = ["view_project", "view_milestones", "add_us", "view_us", "modify_task", "view_tasks"]
@@ -72,7 +82,9 @@ def test_update_project_public_permissions_ok():
 
     with patch("taiga.projects.services.projects_repo") as fake_project_repository:
         services.update_project_public_permissions(project=project, permissions=permissions)
-        assert fake_project_repository.called_once_with(project, permissions, anon_permissions)
+        assert fake_project_repository.update_project_public_permissions.called_once_with(
+            project, permissions, anon_permissions
+        )
 
 
 def test_update_project_public_permissions_not_valid():
@@ -89,6 +101,11 @@ def test_update_project_public_permissions_incompatible():
 
     with pytest.raises(ex.IncompatiblePermissionsSetError):
         services.update_project_public_permissions(project=project, permissions=incompatible_permissions)
+
+
+##########################################################
+# get_workspace_projects_for_user
+##########################################################
 
 
 def test_get_workspace_projects_for_user_admin():
@@ -113,3 +130,60 @@ def test_get_workspace_projects_for_user_member():
         fake_roles_repo.is_workspace_admin.return_value = False
         services.get_workspace_projects_for_user(workspace=workspace, user=user)
         assert fake_projects_repo.get_workspace_projects_for_user.called_once_with(workspace.id, user.id)
+
+
+##########################################################
+# update_project_workspace_member_permissions
+##########################################################
+
+
+def test_update_project_workspace_member_permissions_ok():
+    workspace = f.WorkspaceFactory(is_premium=True)
+    project = f.ProjectFactory(workspace=workspace)
+    permissions = ["view_project", "view_milestones", "add_us", "view_us", "modify_task", "view_tasks"]
+
+    with patch("taiga.projects.services.projects_repo") as fake_project_repository:
+        services.update_project_workspace_member_permissions(project=project, permissions=permissions)
+        assert fake_project_repository.update_project_workspace_member_permissions.called_once_with(
+            project, permissions
+        )
+
+
+def test_update_project_workspace_member_permissions_not_valid():
+    workspace = f.WorkspaceFactory(is_premium=True)
+    project = f.ProjectFactory(workspace=workspace)
+    not_valid_permissions = ["invalid_permission", "other_not_valid", "add_us"]
+
+    with pytest.raises(ex.NotValidPermissionsSetError):
+        services.update_project_workspace_member_permissions(project=project, permissions=not_valid_permissions)
+
+
+def test_update_project_workspace_member_permissions_incompatible():
+    workspace = f.WorkspaceFactory(is_premium=True)
+    project = f.ProjectFactory(workspace=workspace)
+    incompatible_permissions = ["view_tasks", "view_milestones"]
+
+    with pytest.raises(ex.IncompatiblePermissionsSetError):
+        services.update_project_workspace_member_permissions(project=project, permissions=incompatible_permissions)
+
+
+def test_update_project_workspace_member_permissions_not_premium():
+    workspace = f.WorkspaceFactory(is_premium=False)
+    project = f.ProjectFactory(workspace=workspace)
+    incompatible_permissions = ["view_us", "view_milestones"]
+
+    with pytest.raises(ex.NotPremiumWorkspaceError):
+        services.update_project_workspace_member_permissions(project=project, permissions=incompatible_permissions)
+
+
+##########################################################
+# get_project_workspace_member_permissions
+##########################################################
+
+
+def test_get_workspace_member_permissions_not_premium():
+    workspace = f.WorkspaceFactory(is_premium=False)
+    project = f.ProjectFactory(workspace=workspace)
+
+    with pytest.raises(ex.NotPremiumWorkspaceError):
+        services.get_workspace_member_permissions(project=project)

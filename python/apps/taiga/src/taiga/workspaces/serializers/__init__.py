@@ -15,6 +15,7 @@ class WorkspaceSummarySerializer(BaseModel):
     color: int
     latest_projects: list[ProjectSummarySerializer]
     total_projects: int
+    is_premium: bool
 
     class Config:
         orm_mode = True

@@ -83,6 +83,19 @@ def test_update_project_public_permissions():
 
 
 ##########################################################
+# update_workspace_member_permissions
+##########################################################
+
+
+def test_update_project_workspace_member_permissions():
+    project = f.ProjectFactory(name="Project 1")
+    permissions = ["view_project", "add_milestone", "view_milestones", "add_us", "view_us"]
+    repositories.update_project_workspace_member_permissions(project, permissions)
+
+    assert len(project.workspace_member_permissions) == 5
+
+
+##########################################################
 # get_workspace_projects_for_user
 ##########################################################
 

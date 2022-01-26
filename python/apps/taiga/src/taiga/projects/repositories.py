@@ -70,3 +70,13 @@ def update_project_public_permissions(
     project.anon_permissions = anon_permissions
     project.save()
     return project.public_permissions
+
+
+def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:
+    project.workspace_member_permissions = permissions
+    project.save()
+    return project.workspace_member_permissions
+
+
+def project_is_in_premium_workspace(project: Project) -> bool:
+    return project.workspace.is_premium

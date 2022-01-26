@@ -93,3 +93,23 @@ def update_project_public_permissions(project: Project, permissions: list[str]) 
     return projects_repo.update_project_public_permissions(
         project=project, permissions=permissions, anon_permissions=anon_permissions
     )
+
+
+def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:
+    if not permissions_services.permissions_are_valid(permissions):
+        raise ex.NotValidPermissionsSetError()
+
+    if not permissions_services.permissions_are_compatible(permissions):
+        raise ex.IncompatiblePermissionsSetError()
+
+    if not projects_repo.project_is_in_premium_workspace(project):
+        raise ex.NotPremiumWorkspaceError()
+
+    return projects_repo.update_project_workspace_member_permissions(project=project, permissions=permissions)
+
+
+def get_workspace_member_permissions(project: Project) -> list[str]:
+    if not projects_repo.project_is_in_premium_workspace(project):
+        raise ex.NotPremiumWorkspaceError()
+
+    return project.workspace_member_permissions

@@ -34,7 +34,9 @@ LIST_WORKSPACE_PROJECTS = HasPerm("view_workspace")
 CREATE_PROJECT = HasPerm("view_workspace")
 GET_PROJECT = HasPerm("view_project")
 GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
+GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
+UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 
 
 @router_workspaces.get(
@@ -149,6 +151,58 @@ def update_project_public_permissions(
         raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
     except services_ex.IncompatiblePermissionsSetError:
         raise ex.BadRequest("Given permissions are incompatible")
+
+
+@router.get(
+    "/{slug}/workspace-member-permissions",
+    name="project.workspace-member-permissions.get",
+    summary="Get project workspace member permissions",
+    response_model=list[str],
+    responses=ERROR_404 | ERROR_422 | ERROR_403,
+)
+def get_project_workspace_member_permissions(
+    request: Request, slug: str = Query(None, description="the project slug (str)")
+) -> list[str]:
+    """
+    Get project workspace member permissions
+    """
+
+    project = get_project_or_404(slug)
+    check_permissions(permissions=GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
+    try:
+        return projects_services.get_workspace_member_permissions(project=project)
+    except services_ex.NotPremiumWorkspaceError:
+        raise ex.BadRequest("The workspace is not a premium one, so these perms cannot be seen")
+
+
+@router.put(
+    "/{slug}/workspace-member-permissions",
+    name="project.workspace-member-permissions.put",
+    summary="Edit project workspace memeber permissions",
+    response_model=list[str],
+    responses=ERROR_404 | ERROR_422 | ERROR_403,
+)
+def update_project_workspace_member_permissions(
+    request: Request, form: PermissionsValidator, slug: str = Query(None, description="the project slug (str)")
+) -> list[str]:
+    """
+    Edit project workspace member permissions
+    """
+
+    project = get_project_or_404(slug)
+    check_permissions(permissions=UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
+
+    try:
+        workspace_member_permissions = projects_services.update_project_workspace_member_permissions(
+            project, form.permissions
+        )
+        return workspace_member_permissions
+    except services_ex.NotValidPermissionsSetError:
+        raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
+    except services_ex.IncompatiblePermissionsSetError:
+        raise ex.BadRequest("Given permissions are incompatible")
+    except services_ex.NotPremiumWorkspaceError:
+        raise ex.BadRequest("The workspace is not a premium one, so these perms cannot be set")
 
 
 def get_project_or_404(slug: str) -> Project:

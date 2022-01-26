@@ -16,3 +16,7 @@ class NotValidPermissionsSetError(Exception):
 
 class IncompatiblePermissionsSetError(Exception):
     pass
+
+
+class NotPremiumWorkspaceError(Exception):
+    pass

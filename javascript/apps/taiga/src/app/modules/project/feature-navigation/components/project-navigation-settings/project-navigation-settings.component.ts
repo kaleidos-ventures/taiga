@@ -34,6 +34,12 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectNavigationSettingsComponent implements OnInit {
+  @Input()
+  public project!: Project;
+
+  @Output()
+  public closeMenu = new EventEmitter<void>();
+
   @ViewChild('firstChild')
   public set firstChild(elm: ElementRef | undefined) {
     if (elm) {
@@ -50,12 +56,6 @@ export class ProjectNavigationSettingsComponent implements OnInit {
         });
     }
   }
-
-  @Input()
-  public project!: Project;
-
-  @Output()
-  public closeMenu = new EventEmitter<void>();
 
   public currentFragment: string | null = null;
   public previousUrl?: string;

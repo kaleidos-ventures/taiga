@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 // import { ProjectMockFactory } from '@taiga/data';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
-import { ProjectNavigationSettingsComponent } from './project-navigation-settings.module.component';
+import { ProjectNavigationSettingsComponent } from './project-navigation-settings.component';
 
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';

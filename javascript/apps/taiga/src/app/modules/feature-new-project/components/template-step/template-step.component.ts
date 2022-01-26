@@ -44,10 +44,6 @@ export type TemplateProjectForm = Pick<
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TemplateStepComponent implements OnInit {
-  public templateProjectForm!: FormGroup;
-  public showWarningModal = false;
-  public confirmationModal$?: Subject<boolean>;
-
   @Input()
   public initialForm?: TemplateProjectForm;
 
@@ -69,6 +65,28 @@ export class TemplateStepComponent implements OnInit {
   @HostListener('window:beforeunload')
   public unloadHandler() {
     return !this.formHasContent();
+  }
+
+  public templateProjectForm!: FormGroup;
+  public showWarningModal = false;
+  public confirmationModal$?: Subject<boolean>;
+
+  public get logo() {
+    return this.templateProjectForm.get('logo') as FormControl;
+  }
+
+  public get workspace() {
+    return this.templateProjectForm.get('workspace')?.value as Workspace;
+  }
+
+  public get formValue() {
+    return this.templateProjectForm.value as {
+      workspace: Workspace;
+      name: string;
+      description: string;
+      color: number;
+      logo: File;
+    };
   }
 
   public canDeactivate() {
@@ -117,14 +135,6 @@ export class TemplateStepComponent implements OnInit {
     );
   }
 
-  public get logo() {
-    return this.templateProjectForm.get('logo') as FormControl;
-  }
-
-  public get workspace() {
-    return this.templateProjectForm.get('workspace')?.value as Workspace;
-  }
-
   public previousStep() {
     this.cancel.next({
       name: this.formValue.name,
@@ -132,16 +142,6 @@ export class TemplateStepComponent implements OnInit {
       color: this.formValue.color,
       logo: this.formValue.logo,
     });
-  }
-
-  public get formValue() {
-    return this.templateProjectForm.value as {
-      workspace: Workspace;
-      name: string;
-      description: string;
-      color: number;
-      logo: File;
-    };
   }
 
   public cancelForm() {

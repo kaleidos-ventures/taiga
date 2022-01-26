@@ -39,9 +39,6 @@ interface ProjectMenuDialog {
   styleUrls: ['./project-navigation-menu.component.css'],
 })
 export class ProjectNavigationMenuComponent {
-  public collapseText = true;
-  public scrumChildMenuVisible = false;
-
   @Input()
   public project!: Project;
 
@@ -62,6 +59,9 @@ export class ProjectNavigationMenuComponent {
 
   @ViewChild('projectSettingButton', { static: false })
   public projectSettingButton!: ElementRef;
+
+  public collapseText = true;
+  public scrumChildMenuVisible = false;
 
   public dialog: ProjectMenuDialog = {
     open: false,

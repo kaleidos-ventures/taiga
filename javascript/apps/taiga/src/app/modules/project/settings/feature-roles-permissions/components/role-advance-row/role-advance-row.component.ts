@@ -29,14 +29,14 @@ let nextId = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoleAdvanceRowComponent implements OnInit {
-  public basicPermissionList =
-    this.projectsSettingsFeatureRolesPermissionsService.getModulePermissions();
-
   @Input()
   public formGroup!: FormGroup;
 
   @Input()
   public module!: KeyValue<Module, string>;
+
+  public basicPermissionList =
+    this.projectsSettingsFeatureRolesPermissionsService.getModulePermissions();
 
   public customizer = false;
 

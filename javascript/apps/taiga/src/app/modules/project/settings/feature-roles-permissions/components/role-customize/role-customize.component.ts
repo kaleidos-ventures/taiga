@@ -18,14 +18,13 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/pr
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoleCustomizeComponent {
-  public basicPermissionList =
-    this.projectsSettingsFeatureRolesPermissionsService.getPermissions();
-
   @Input()
   public formGroup!: FormGroup;
 
   @Input()
   public toggleCustomize = false;
+
+  public basicPermissionList = this.projectsSettingsFeatureRolesPermissionsService.getPermissions();
 
   constructor(
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService

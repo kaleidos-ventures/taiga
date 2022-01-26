@@ -31,15 +31,15 @@ interface State {
 })
 export class UserAvatarComponent implements OnInit {
   @Input()
-  public set user(user: User) {
-    this.state.set({ user });
-  }
-
-  @Input()
   public rounded = true;
 
   @Input()
   public size: TuiSizeXS | TuiSizeXXL = 's';
+
+  @Input()
+  public set user(user: User) {
+    this.state.set({ user });
+  }
 
   public user$ = this.state.select('user');
 

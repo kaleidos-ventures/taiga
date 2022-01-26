@@ -46,8 +46,6 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from './services/featu
 export class ProjectSettingsFeatureRolesPermissionsComponent
   implements AfterViewInit
 {
-  private readonly defaultFragment = 'member-permissions-settings';
-
   public readonly form = this.fb.group({});
   public readonly publicForm = this.fb.group({});
   public readonly model$ = this.state.select().pipe(
@@ -60,6 +58,12 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       };
     })
   );
+
+  private readonly defaultFragment = 'member-permissions-settings';
+
+  public get nativeElement() {
+    return this.el.nativeElement as HTMLElement;
+  }
 
   public getRoleForm(role: Role) {
     return this.form.get(role.slug) as FormGroup;
@@ -241,10 +245,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       el.scrollIntoView({ behavior: 'smooth' });
       (el as HTMLElement).focus({ preventScroll: true });
     }
-  }
-
-  public get nativeElement() {
-    return this.el.nativeElement as HTMLElement;
   }
 
   public isInViewport(element: HTMLElement) {

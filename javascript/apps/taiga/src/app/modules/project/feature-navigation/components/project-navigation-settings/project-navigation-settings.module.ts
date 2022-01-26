@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
-import { ProjectNavigationSettingsComponent } from './project-navigation-settings.module.component';
+import { ProjectNavigationSettingsComponent } from './project-navigation-settings.component';
 
 @NgModule({
   imports: [

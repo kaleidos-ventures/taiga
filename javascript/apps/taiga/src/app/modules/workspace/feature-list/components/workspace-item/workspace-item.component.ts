@@ -42,11 +42,11 @@ export class WorkspaceItemComponent implements OnInit {
     this.state.set({ projectsToShow });
   }
 
+  public model$!: Observable<ViewModel>;
+
   public get gridClass() {
     return `grid-items-${this.state.get('projectsToShow')}`;
   }
-
-  public model$!: Observable<ViewModel>;
 
   constructor(private store: Store, private state: RxState<ViewModel>) {
     this.state.set({

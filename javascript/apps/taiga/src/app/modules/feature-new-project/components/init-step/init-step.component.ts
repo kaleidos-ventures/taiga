@@ -100,6 +100,14 @@ export class InitStepComponent implements OnInit {
 
   public readonlyWorkspace = false;
 
+  public get currentWorkspace(): FormControl {
+    return this.createProjectForm.get('workspace') as FormControl;
+  }
+
+  public get getPreviousUrl() {
+    return this.previousUrl ? [this.previousUrl] : ['/'];
+  }
+
   constructor(
     private fb: FormBuilder,
     private translocoService: TranslocoService,
@@ -143,13 +151,5 @@ export class InitStepComponent implements OnInit {
     } else {
       this.createProjectForm.markAllAsTouched();
     }
-  }
-
-  public get currentWorkspace(): FormControl {
-    return this.createProjectForm.get('workspace') as FormControl;
-  }
-
-  public get getPreviousUrl() {
-    return this.previousUrl ? [this.previousUrl] : ['/'];
   }
 }

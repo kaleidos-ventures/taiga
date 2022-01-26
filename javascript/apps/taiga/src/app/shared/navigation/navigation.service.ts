@@ -15,11 +15,12 @@ import { Project } from '@taiga/data';
   providedIn: 'root',
 })
 export class NavigationService {
+  public readonly latestProjects!: Observable<Project[]>;
   private _latestProjects = new BehaviorSubject<Project[]>([]);
-  public readonly latestProjects: Observable<Project[]> =
-    this._latestProjects.asObservable();
 
   constructor(private localStorageService: LocalStorageService) {
+    this.latestProjects = this._latestProjects.asObservable();
+
     const projects =
       this.localStorageService.get<Project[] | undefined>('recent_projects') ??
       [];

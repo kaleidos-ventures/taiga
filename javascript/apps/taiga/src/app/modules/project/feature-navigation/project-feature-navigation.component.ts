@@ -164,10 +164,6 @@ export class ProjectNavigationComponent implements OnInit {
     };
   }
 
-  public showProjectSettings = false;
-  public settingsAnimationInProgress = false;
-  public animationEvents$ = new Subject<AnimationEvent>();
-
   @HostListener('@openCollapse.start', ['$event'])
   public captureStartEvent($event: AnimationEvent) {
     this.animationEvents$.next($event);
@@ -180,6 +176,10 @@ export class ProjectNavigationComponent implements OnInit {
 
     this.settingsAnimationInProgress = false;
   }
+
+  public showProjectSettings = false;
+  public settingsAnimationInProgress = false;
+  public animationEvents$ = new Subject<AnimationEvent>();
 
   constructor(
     private localStorage: LocalStorageService,

@@ -45,6 +45,10 @@ export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
     this.startObservingElements();
   }
 
+  public ngOnDestroy() {
+    this.observer?.unobserve(this.element.nativeElement as HTMLElement);
+  }
+
   private createObserver() {
     const options = {
       rootMargin: '0px',
@@ -78,9 +82,5 @@ export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
           this.visible.emit(target);
         }
       });
-  }
-
-  public ngOnDestroy() {
-    this.observer?.unobserve(this.element.nativeElement as HTMLElement);
   }
 }

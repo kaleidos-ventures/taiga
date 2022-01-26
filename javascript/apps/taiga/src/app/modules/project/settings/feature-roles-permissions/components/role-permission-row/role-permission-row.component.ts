@@ -29,9 +29,6 @@ let nextId = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RolePermissionRowComponent implements OnInit {
-  public basicPermissionList =
-    this.projectsSettingsFeatureRolesPermissionsService.getModulePermissions();
-
   @Input()
   public formGroup!: FormGroup;
 
@@ -44,6 +41,9 @@ export class RolePermissionRowComponent implements OnInit {
   @Input()
   @HostBinding('attr.has-members')
   public hasMembers = true;
+
+  public basicPermissionList =
+    this.projectsSettingsFeatureRolesPermissionsService.getModulePermissions();
 
   public permissionRowModel!: KeyValue<SettingsPermission, string>;
   public advancedSettingsContainerId = `advanced-settings-container-${nextId++}`;

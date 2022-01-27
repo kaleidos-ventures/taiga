@@ -21,14 +21,14 @@ import { Project, Role } from '@taiga/data';
 import { auditTime, filter, map, skip, take } from 'rxjs/operators';
 import {
   fetchMemberRoles,
-  fetchPublicRoles,
+  fetchPublicPermissions,
   updateRolePermissions,
-  updatePublicRolePermissions,
+  updatePublicPermissions,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectMemberRoles,
   selectProject,
-  selectPublicRole,
+  selectPublicPermissions,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
 
@@ -92,14 +92,17 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
         .select(selectProject)
         .pipe(filter((project): project is Project => !!project))
     );
-    this.state.connect('publicRole', this.store.select(selectPublicRole));
+    this.state.connect(
+      'publicRole',
+      this.store.select(selectPublicPermissions)
+    );
     this.state.connect('memberRoles', this.store.select(selectMemberRoles));
 
     this.state.hold(this.state.select('project'), (project) => {
       this.store.dispatch(fetchMemberRoles({ slug: project.slug }));
     });
     this.state.hold(this.state.select('project'), (project) => {
-      this.store.dispatch(fetchPublicRoles({ slug: project.slug }));
+      this.store.dispatch(fetchPublicPermissions({ slug: project.slug }));
     });
   }
 
@@ -200,7 +203,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       );
 
     this.store.dispatch(
-      updatePublicRolePermissions({
+      updatePublicPermissions({
         project: this.state.get('project').slug,
         permissions,
       })

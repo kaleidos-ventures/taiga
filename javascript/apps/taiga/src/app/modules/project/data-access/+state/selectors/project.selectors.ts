@@ -8,5 +8,5 @@
 
 import { projectFeature } from '../reducers/project.reducer';
 
-export const { selectProject, selectMemberRoles, selectPublicRole } =
+export const { selectProject, selectMemberRoles, selectPublicPermissions } =
   projectFeature;

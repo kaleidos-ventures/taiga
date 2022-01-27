@@ -16,13 +16,13 @@ export const projectFeatureKey = 'project';
 export interface ProjectState {
   project: Project | null;
   memberRoles: Role[];
-  publicRole: string[];
+  publicPermissions: string[];
 }
 
 export const initialState: ProjectState = {
   project: null,
   memberRoles: [],
-  publicRole: [],
+  publicPermissions: [],
 };
 
 export const reducer = createReducer(
@@ -41,9 +41,9 @@ export const reducer = createReducer(
     }
   ),
   on(
-    ProjectActions.fetchPublicRolesSuccess,
-    (state, { publicRole }): ProjectState => {
-      state.publicRole = publicRole;
+    ProjectActions.fetchPublicPermissionsSuccess,
+    (state, { permissions: publicPermissions }): ProjectState => {
+      state.publicPermissions = publicPermissions;
 
       return state;
     }

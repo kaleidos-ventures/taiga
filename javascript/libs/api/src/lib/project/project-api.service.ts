@@ -45,7 +45,7 @@ export class ProjectApiService {
     );
   }
 
-  public getPublicRoles(slug: Project['slug']) {
+  public getPublicPermissions(slug: Project['slug']) {
     return this.http.get<string[]>(
       `${this.config.apiUrl}/projects/${slug}/public-permissions`
     );
@@ -88,7 +88,7 @@ export class ProjectApiService {
     );
   }
 
-  public putPublicRoles(slug: Project['slug'], permissions: string[]) {
+  public putPublicPermissions(slug: Project['slug'], permissions: string[]) {
     permissions = permissions.filter((permission) => {
       const validPermission = [
         'add_member',

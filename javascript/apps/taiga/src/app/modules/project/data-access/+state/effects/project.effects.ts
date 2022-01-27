@@ -67,13 +67,13 @@ export class ProjectEffects {
 
   public loadPublicRole$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(ProjectActions.fetchPublicRoles),
+      ofType(ProjectActions.fetchPublicPermissions),
       fetch({
         run: (action) => {
-          return this.projectApiService.getPublicRoles(action.slug).pipe(
+          return this.projectApiService.getPublicPermissions(action.slug).pipe(
             map((permissions) => {
-              return ProjectActions.fetchPublicRolesSuccess({
-                publicRole: permissions,
+              return ProjectActions.fetchPublicPermissionsSuccess({
+                permissions: permissions,
               });
             })
           );
@@ -105,13 +105,13 @@ export class ProjectEffects {
     );
   });
 
-  public updatePublicRolePermissions$ = createEffect(() => {
+  public updatePublicPermissions$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(ProjectActions.updatePublicRolePermissions),
+      ofType(ProjectActions.updatePublicPermissions),
       pessimisticUpdate({
         run: (action) => {
           return this.projectApiService
-            .putPublicRoles(action.project, action.permissions)
+            .putPublicPermissions(action.project, action.permissions)
             .pipe(
               map(() => {
                 return ProjectActions.updateRolePermissionsSuccess();

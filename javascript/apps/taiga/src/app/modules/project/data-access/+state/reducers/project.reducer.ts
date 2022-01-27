@@ -15,14 +15,14 @@ export const projectFeatureKey = 'project';
 
 export interface ProjectState {
   project: Project | null;
-  memberRoles: Role[];
-  publicPermissions: string[];
+  memberRoles: Role[] | null;
+  publicPermissions: string[] | null;
 }
 
 export const initialState: ProjectState = {
   project: null,
-  memberRoles: [],
-  publicPermissions: [],
+  memberRoles: null,
+  publicPermissions: null,
 };
 
 export const reducer = createReducer(

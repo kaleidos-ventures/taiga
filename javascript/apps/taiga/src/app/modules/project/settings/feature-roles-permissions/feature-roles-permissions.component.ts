@@ -30,6 +30,7 @@ import {
   selectProject,
   selectPublicPermissions,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
 
 @UntilDestroy()
@@ -50,7 +51,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   public readonly publicForm = this.fb.group({});
   public readonly model$ = this.state.select().pipe(
     map((model) => {
-      const admin = model.memberRoles.find((it) => it.isAdmin);
+      const admin = model.memberRoles?.find((it) => it.isAdmin);
 
       return {
         ...model,
@@ -81,22 +82,23 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     private fb: FormBuilder,
     private store: Store,
     private state: RxState<{
-      memberRoles: Role[];
-      publicRole: string[];
+      memberRoles?: Role[];
+      publicRole?: string[];
       project: Project;
     }>
   ) {
     this.state.connect(
       'project',
-      this.store
-        .select(selectProject)
-        .pipe(filter((project): project is Project => !!project))
+      this.store.select(selectProject).pipe(filterNil())
     );
     this.state.connect(
       'publicRole',
-      this.store.select(selectPublicPermissions)
+      this.store.select(selectPublicPermissions).pipe(filterNil())
     );
-    this.state.connect('memberRoles', this.store.select(selectMemberRoles));
+    this.state.connect(
+      'memberRoles',
+      this.store.select(selectMemberRoles).pipe(filterNil())
+    );
 
     this.state.hold(this.state.select('project'), (project) => {
       this.store.dispatch(fetchMemberRoles({ slug: project.slug }));
@@ -112,11 +114,11 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   }
 
   public initForm() {
-    this.state.hold(this.state.select('publicRole'), (permissions) => {
+    this.state.hold(this.state.select('publicRole'), (permissions = []) => {
       this.createRoleFormControl(permissions, 'public', this.publicForm);
     });
 
-    this.state.hold(this.state.select('memberRoles'), (roles) => {
+    this.state.hold(this.state.select('memberRoles'), (roles = []) => {
       roles
         .filter((role) => !role.isAdmin)
         .forEach((role) => {
@@ -177,8 +179,9 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   }
 
   public saveMembers() {
-    this.state
-      .get('memberRoles')
+    const memberRoles = this.state.get('memberRoles') ?? [];
+
+    memberRoles
       .filter((role) => !role.isAdmin)
       .forEach((role) => {
         const permissions =

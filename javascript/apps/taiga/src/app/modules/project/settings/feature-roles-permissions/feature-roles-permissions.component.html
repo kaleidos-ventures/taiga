@@ -14,6 +14,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </h3>
     </div>
     <section
+      *ngIf="vm.memberRoles"
       class="member-permissions-settings"
       data-fragment="member-permissions-settings"
       data-test="member-permissions-settings"
@@ -73,6 +74,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </section>
 
     <section
+      *ngIf="vm.publicRole"
       data-fragment="public-permissions-settings"
       data-test="public-permissions-settings"
       class="public-permissions-settings"
@@ -86,8 +88,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           *ngIf="getPublicRoleForm()"
           [formGroup]="getPublicRoleForm()"
           [hasMembers]="false"
-          [name]="''"
           [numMembers]="0"
+          name=""
           data-test="role-permission-row">
         </tg-role-permission-row>
         <tg-ui-notification-inline [status]="'info'">

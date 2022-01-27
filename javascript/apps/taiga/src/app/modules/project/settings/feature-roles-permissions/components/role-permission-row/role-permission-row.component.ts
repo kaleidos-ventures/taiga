@@ -12,7 +12,8 @@ import {
   Component,
   HostBinding,
   Input,
-  OnInit,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -28,7 +29,7 @@ let nextId = 0;
   styleUrls: ['./role-permission-row.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RolePermissionRowComponent implements OnInit {
+export class RolePermissionRowComponent implements OnChanges {
   @Input()
   public formGroup!: FormGroup;
 
@@ -56,12 +57,14 @@ export class RolePermissionRowComponent implements OnInit {
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService
   ) {}
 
-  public ngOnInit() {
-    this.refreshPermission();
+  public ngOnChanges(changes: SimpleChanges) {
+    if (changes.formGroup) {
+      this.formGroup.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+        this.refreshPermission();
+      });
 
-    this.formGroup.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshPermission();
-    });
+    }
   }
 
   public refreshPermission() {

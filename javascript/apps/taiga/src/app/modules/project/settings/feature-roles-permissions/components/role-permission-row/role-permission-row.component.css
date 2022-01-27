@@ -68,7 +68,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & .permission-row-title {
     block-size: var(--spacing-16);
     display: flex;
-    flex-basis: 32%;
+    flex-basis: 25%;
     margin-inline-end: var(--spacing-16);
 
     & .permission-row-member {

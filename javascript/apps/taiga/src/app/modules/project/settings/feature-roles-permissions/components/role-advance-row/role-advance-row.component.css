@@ -45,9 +45,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .permission-row-title {
     align-items: center;
-    flex-basis: calc(32% + var(--spacing-16));
+    flex-basis: calc(25% + var(--spacing-16));
     flex-shrink: 0;
-    padding-inline-start: var(--spacing-80);
+    padding-inline-start: var(--spacing-16);
   }
 }
 
@@ -55,6 +55,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  max-inline-size: calc(17rem + var(--spacing-24));
+  min-inline-size: calc(14rem + var(--spacing-24));
 
   & .show-customization-disabled {
     visibility: hidden;

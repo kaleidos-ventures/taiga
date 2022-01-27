@@ -78,6 +78,10 @@ export class RoleAdvanceRowComponent implements OnInit {
       value: permissionName,
     };
 
+    this.permissionRowModel.toString = function () {
+      return this.value;
+    };
+
     if (!this.previousPermission) {
       this.previousPermission = this.permissionRowModel;
     }

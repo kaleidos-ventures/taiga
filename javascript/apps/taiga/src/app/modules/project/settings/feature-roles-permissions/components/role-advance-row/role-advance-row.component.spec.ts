@@ -58,10 +58,8 @@ describe('RoleAdvanceRowComponent', () => {
 
     spectator.component.refreshPermission();
 
-    expect(spectator.component.permissionRowModel).toEqual({
-      key: 'edit',
-      value: 'Edit',
-    });
+    expect(spectator.component.permissionRowModel.key).toBe('edit');
+    expect(spectator.component.permissionRowModel.value).toBe('Edit');
 
     expect(spectator.component.previousPermission).toEqual(
       spectator.component.permissionRowModel

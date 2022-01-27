@@ -77,6 +77,10 @@ export class RolePermissionRowComponent implements OnChanges {
       key: currentPermission,
       value: permissionName,
     };
+
+    this.permissionRowModel.toString = function () {
+      return this.value;
+    };
   }
 
   public moduleVisible(module: Module) {

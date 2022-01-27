@@ -57,6 +57,48 @@ Individually
 <tg-ui-error error="email" [enabled]="false"> Invalid email </tg-ui-error>
 ```
 
+## Selects with object value
+
+```html
+<tg-ui-select>
+  <tui-select
+    [ngModel]="dataModel"
+    [ngModelOptions]="{ standalone: true }"
+    [valueContent]="selectLabel">
+    <tui-data-list *tuiDataList>
+      <button
+        *ngFor="
+          let item of countries;
+          trackBy: trackByKey
+        "
+        tuiOption
+        [value]="item">
+        {{ item.value }}
+      </button>
+    </tui-data-list>
+  </tui-select>
+</tg-ui-select>
+<ng-template #selectLabel let-item>{{ item.value }}</ng-template>
+```
+
+```ts
+this.countries = [
+  { key: 'pt', value: 'Portugal' },
+  { key: 'fr', value: 'France' },
+  { key: 'es', value: 'Spain' },
+];
+
+this.dataModel = {
+  key: 'es',
+  value: 'Spain',
+};
+
+// this is for accesibility, taiga ui set an string as a value, so if this is not setted the value available for screen readers will be [Object Object]
+this.dataModel.toString = function () {
+  return this.value;
+};
+```
+
 ## Reactive forms
 
 Reactive forms are Angular model driven forms. It handles in the component model changes on the form template.

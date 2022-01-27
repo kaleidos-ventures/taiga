@@ -18,7 +18,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Permissions, ProjectMockFactory, RoleMockFactory } from '@taiga/data';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
-  updatePublicRolePermissions,
+  updatePublicPermissions,
   updateRolePermissions,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
@@ -243,7 +243,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       spectator.component.savePublic();
 
       expect(dispatchSpy).toBeCalledWith(
-        updatePublicRolePermissions({
+        updatePublicPermissions({
           project: project.slug,
           permissions: finalPermissions,
         })

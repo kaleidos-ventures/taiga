@@ -80,3 +80,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: -webkit-box;
   /* stylelint-enable */
 }
+
+@define-mixin table-head {
+  color: var(--color-secondary80);
+  font-family: "Ubuntu", sans-serif;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+}

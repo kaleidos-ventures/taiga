@@ -1,0 +1,48 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+:host {
+  display: block;
+
+  &::ng-deep {
+    & [tuiTable] {
+      --tui-height-m: var(--spacing-32);
+    }
+
+    & [tuith],
+    & [tuitd] {
+      padding: var(--spacing-8) var(--spacing-12);
+    }
+
+    & [tuith],
+    & .td-head {
+      @mixin table-head;
+
+      --tui-base-01: var(--color-gray10);
+      --tui-font-text-s: var(--font-size-medium);
+      --tui-text-02: var(--color-secondary80);
+      --tui-base-04: var(--color-gray20);
+
+      text-transform: uppercase;
+    }
+
+    & [tuitd] {
+      @mixin font-inline;
+
+      color: var(--color-gray80);
+
+      &.td-head {
+        @mixin table-head;
+
+        color: var(--color-secondary80);
+      }
+    }
+  }
+}

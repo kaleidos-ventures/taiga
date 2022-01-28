@@ -75,3 +75,7 @@ export const updateRolePermissionsSuccess = createAction(
 export const updateRolePermissionsError = createAction(
   '[Roles] update role permissions error'
 );
+
+export const resetPermissions = createAction(
+  '[Roles] reset all permissions'
+);

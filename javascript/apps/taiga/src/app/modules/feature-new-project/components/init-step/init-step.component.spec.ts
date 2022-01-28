@@ -63,6 +63,7 @@ describe('InitStepComponent', () => {
             color: randNumber(),
             latestProjects: [],
             totalProjects: 0,
+            isPremium: true,
           },
         ],
       },

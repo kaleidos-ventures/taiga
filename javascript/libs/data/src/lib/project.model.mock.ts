@@ -31,7 +31,7 @@ const getMilestones = () => {
 
 export const ProjectMockFactory = (
   milestones = false,
-  workspace?: Pick<Workspace, 'color' | 'name' | 'slug'>
+  workspace?: Pick<Workspace, 'color' | 'name' | 'slug' | 'isPremium'>
 ): Project => {
   const project = {
     name: randWord({ length: 3, capitalize: true }).join(' '),

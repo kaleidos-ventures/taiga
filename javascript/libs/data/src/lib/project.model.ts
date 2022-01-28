@@ -17,7 +17,7 @@ export interface Project {
   slug: string;
   description: string;
   color: number;
-  workspace: Pick<Workspace, 'name' | 'slug' | 'color'>;
+  workspace: Pick<Workspace, 'name' | 'slug' | 'color' | 'isPremium' >;
   milestones: Milestone[];
 }
 

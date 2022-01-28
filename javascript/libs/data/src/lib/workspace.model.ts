@@ -20,6 +20,7 @@ export interface Workspace {
   color: number;
   latestProjects: WorkspaceProject[];
   totalProjects: number;
+  isPremium: boolean;
 
   // TODO: Update when API provide roles
   // owner: boolean;

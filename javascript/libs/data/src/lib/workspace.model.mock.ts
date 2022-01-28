@@ -16,6 +16,7 @@ export const WorkspaceMockFactory = (): Workspace => {
     slug: randDomainSuffix({ length: 3 }).join('-'),
     name: randDepartment(),
     color: randNumber(),
+    isPremium: true,
   };
 
   const latestProjects = [];
@@ -27,6 +28,7 @@ export const WorkspaceMockFactory = (): Workspace => {
         color: workspace.color,
         slug: workspace.slug,
         name: workspace.name,
+        isPremium: workspace.isPremium,
       })
     );
   }

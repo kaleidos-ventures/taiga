@@ -11,6 +11,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  OnDestroy,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -26,6 +27,7 @@ import {
   updateRolePermissions,
   updatePublicPermissions,
   updateWorkspacePermissions,
+  resetPermissions
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectMemberRoles,
@@ -48,7 +50,7 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from './services/featu
   providers: [RxState],
 })
 export class ProjectSettingsFeatureRolesPermissionsComponent
-  implements AfterViewInit
+  implements AfterViewInit, OnDestroy
 {
   public readonly form = this.fb.group({});
   public readonly publicForm = this.fb.group({});
@@ -122,9 +124,13 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     this.state.hold(this.state.select('project'), (project) => {
       this.store.dispatch(fetchPublicPermissions({ slug: project.slug }));
     });
+
     this.state.hold(this.state.select('project'), (project) => {
-      this.store.dispatch(fetchWorkspacePermissions({ slug: project.slug }));
+      if (project.workspace.isPremium) {
+        this.store.dispatch(fetchWorkspacePermissions({ slug: project.slug }));
+      }
     });
+
   }
 
   public ngAfterViewInit() {
@@ -311,5 +317,9 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   public trackBySlug(_index: number, role: Role) {
     return role.slug;
+  }
+
+  public ngOnDestroy() {
+    this.store.dispatch(resetPermissions());
   }
 }

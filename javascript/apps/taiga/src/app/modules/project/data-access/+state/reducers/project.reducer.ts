@@ -57,6 +57,16 @@ export const reducer = createReducer(
 
       return state;
     }
+  ),
+  on(
+    ProjectActions.resetPermissions,
+    (state): ProjectState => {
+      state.memberRoles = null;
+      state.publicPermissions = null;
+      state.workspacePermissions = null;
+
+      return state;
+    }
   )
 );
 

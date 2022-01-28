@@ -21,7 +21,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .sub {
   background: var(--color-gray10);
-  padding: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
 }
 
 .permission-row-sub {
@@ -41,7 +41,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     align-items: center;
     flex-basis: calc(25% + var(--spacing-16));
     flex-shrink: 0;
-    padding-inline-start: 0;
+    padding-inline-start: var(--spacing-16);
   }
 }
 

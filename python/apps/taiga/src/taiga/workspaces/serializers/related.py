@@ -12,6 +12,7 @@ class WorkspaceSummarySerializer(BaseModel):
     name: str
     slug: str
     color: int
+    is_premium: bool
 
     class Config:
         orm_mode = True

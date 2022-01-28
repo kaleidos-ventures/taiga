@@ -27,7 +27,7 @@ class ProjectSerializer(BaseModel, ProjectLogoMixin):
     slug: str
     description: Optional[str] = None
     color: Optional[int] = None
-    workspace: Optional[WorkspaceSummarySerializer] = None
+    workspace: WorkspaceSummarySerializer
 
     class Config:
         orm_mode = True

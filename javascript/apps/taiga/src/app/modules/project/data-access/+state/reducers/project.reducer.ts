@@ -14,23 +14,26 @@ import { Project, Role } from '@taiga/data';
 export const projectFeatureKey = 'project';
 
 export interface ProjectState {
-  project: Project | null;
+  currentProjectSlug: Project['slug'] | null;
+  projects: Record<Project['slug'], Project>;
   memberRoles: Role[] | null;
   publicPermissions: string[] | null;
   workspacePermissions: string[] | null;
 }
 
 export const initialState: ProjectState = {
-  project: null,
+  currentProjectSlug: null,
+  projects: {},
   memberRoles: null,
   publicPermissions: null,
-  workspacePermissions: null
+  workspacePermissions: null,
 };
 
 export const reducer = createReducer(
   initialState,
   on(ProjectActions.fetchProjectSuccess, (state, { project }): ProjectState => {
-    state.project = project;
+    state.projects[project.slug] = project;
+    state.currentProjectSlug = project.slug;
 
     return state;
   }),
@@ -58,16 +61,13 @@ export const reducer = createReducer(
       return state;
     }
   ),
-  on(
-    ProjectActions.resetPermissions,
-    (state): ProjectState => {
-      state.memberRoles = null;
-      state.publicPermissions = null;
-      state.workspacePermissions = null;
+  on(ProjectActions.resetPermissions, (state): ProjectState => {
+    state.memberRoles = null;
+    state.publicPermissions = null;
+    state.workspacePermissions = null;
 
-      return state;
-    }
-  )
+    return state;
+  })
 );
 
 export const projectFeature = createFeature({

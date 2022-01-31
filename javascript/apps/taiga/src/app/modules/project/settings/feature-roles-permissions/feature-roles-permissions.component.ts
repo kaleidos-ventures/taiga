@@ -12,6 +12,7 @@ import {
   Component,
   ElementRef,
   OnDestroy,
+  OnInit,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -27,13 +28,13 @@ import {
   updateRolePermissions,
   updatePublicPermissions,
   updateWorkspacePermissions,
-  resetPermissions
+  resetPermissions,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectMemberRoles,
-  selectProject,
+  selectCurrentProject,
   selectPublicPermissions,
-  selectWorkspacePermissions
+  selectWorkspacePermissions,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
@@ -50,7 +51,7 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from './services/featu
   providers: [RxState],
 })
 export class ProjectSettingsFeatureRolesPermissionsComponent
-  implements AfterViewInit, OnDestroy
+  implements AfterViewInit, OnInit, OnDestroy
 {
   public readonly form = this.fb.group({});
   public readonly publicForm = this.fb.group({});
@@ -94,14 +95,13 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     private state: RxState<{
       memberRoles?: Role[];
       publicPermissions?: string[];
-      workspacePermissions?: string[],
+      workspacePermissions?: string[];
       project: Project;
     }>
-  ) {
-    this.state.connect(
-      'project',
-      this.store.select(selectProject).pipe(filterNil())
-    );
+  ) {}
+
+  public ngOnInit() {
+    this.state.connect('project', this.store.select(selectCurrentProject));
 
     this.state.connect(
       'memberRoles',
@@ -130,7 +130,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
         this.store.dispatch(fetchWorkspacePermissions({ slug: project.slug }));
       }
     });
-
   }
 
   public ngAfterViewInit() {
@@ -147,13 +146,23 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
         });
     });
 
-    this.state.hold(this.state.select('publicPermissions'), (permissions = []) => {
-      this.createRoleFormControl(permissions, 'public', this.publicForm);
-    });
+    this.state.hold(
+      this.state.select('publicPermissions'),
+      (permissions = []) => {
+        this.createRoleFormControl(permissions, 'public', this.publicForm);
+      }
+    );
 
-    this.state.hold(this.state.select('workspacePermissions'), (permissions = []) => {
-      this.createRoleFormControl(permissions, 'workspace', this.workspaceForm);
-    });
+    this.state.hold(
+      this.state.select('workspacePermissions'),
+      (permissions = []) => {
+        this.createRoleFormControl(
+          permissions,
+          'workspace',
+          this.workspaceForm
+        );
+      }
+    );
 
     this.form.valueChanges
       .pipe(skip(1), untilDestroyed(this), auditTime(100))
@@ -249,7 +258,10 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   }
 
   public saveWorkspace() {
-    const permissions = this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(this.getworkspacePermissionsForm());
+    const permissions =
+      this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(
+        this.getworkspacePermissionsForm()
+      );
 
     this.store.dispatch(
       updateWorkspacePermissions({

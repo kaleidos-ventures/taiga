@@ -8,12 +8,16 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ProjectFeatureDetailResolverService } from './project-feature-detail-resolver.service';
 import { ProjectFeatureDetailComponent } from './project-feature-detail.component';
 
 const routes: Routes = [
   {
     path: '',
     component: ProjectFeatureDetailComponent,
+    resolve: {
+      project: ProjectFeatureDetailResolverService,
+    },
     children: [
       {
         path: '',

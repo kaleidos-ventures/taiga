@@ -6,7 +6,34 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { createSelector } from '@ngrx/store';
+import { Project } from '@taiga/data';
 import { projectFeature } from '../reducers/project.reducer';
 
-export const { selectProject, selectMemberRoles, selectPublicPermissions, selectWorkspacePermissions } =
-  projectFeature;
+export const {
+  selectCurrentProjectSlug,
+  selectProjects,
+  selectMemberRoles,
+  selectPublicPermissions,
+  selectWorkspacePermissions,
+} = projectFeature;
+
+export const selectCurrentProject = createSelector(
+  selectProjects,
+  selectCurrentProjectSlug,
+  (projects, projectSlug): Project => {
+    if (!projectSlug) {
+      console.error(
+        'selectCurrentProject must only be called inside the project resolver'
+      );
+    }
+
+    return projects[projectSlug!];
+  }
+);
+
+export const selectProject = (projectSlug: Project['slug']) => {
+  return createSelector(selectProjects, (projects) => {
+    return projects[projectSlug] ?? null;
+  });
+};

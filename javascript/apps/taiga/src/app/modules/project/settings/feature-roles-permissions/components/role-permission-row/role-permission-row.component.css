@@ -39,7 +39,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     background: var(--color-gray10);
     margin-block-start: var(--spacing-8);
     margin-inline-end: var(--spacing-40);
-    padding-block-start: var(--spacing-8);
+    padding: var(--spacing-8) var(--spacing-16);
   }
 
   & tg-role-advance-row {

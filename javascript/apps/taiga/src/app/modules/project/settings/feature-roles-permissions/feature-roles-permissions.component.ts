@@ -20,7 +20,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Role } from '@taiga/data';
-import { auditTime, filter, map, skip, take } from 'rxjs/operators';
+import { auditTime, filter, map, take } from 'rxjs/operators';
 import {
   updateRolePermissions,
   updatePublicPermissions,
@@ -51,9 +51,6 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from './services/featu
 export class ProjectSettingsFeatureRolesPermissionsComponent
   implements AfterViewInit, OnInit, OnDestroy
 {
-  public readonly form = this.fb.group({});
-  public readonly publicForm = this.fb.group({});
-  public readonly workspaceForm = this.fb.group({});
   public readonly model$ = this.state.select().pipe(
     map((model) => {
       const admin = model.memberRoles?.find((it) => it.isAdmin);
@@ -64,6 +61,10 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       };
     })
   );
+
+  public form = this.fb.group({});
+  public publicForm = this.fb.group({});
+  public workspaceForm = this.fb.group({});
 
   private readonly defaultFragment = 'member-permissions-settings';
 
@@ -128,45 +129,60 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   public initForm() {
     this.state.hold(this.state.select('memberRoles'), (roles = []) => {
+      this.form = this.fb.group({});
+
       roles
         .filter((role) => !role.isAdmin)
         .forEach((role) => {
           this.createRoleFormControl(role.permissions, role.slug, this.form);
+          this.watchRoleForm(role);
         });
     });
 
     this.state.hold(
       this.state.select('publicPermissions'),
       (permissions = []) => {
+        this.publicForm = this.fb.group({});
         this.createRoleFormControl(permissions, 'public', this.publicForm);
+        this.watchPublicForm();
       }
     );
 
     this.state.hold(
       this.state.select('workspacePermissions'),
       (permissions = []) => {
+        this.workspaceForm = this.fb.group({});
         this.createRoleFormControl(
           permissions,
           'workspace',
           this.workspaceForm
         );
+        this.watchWorkspaceForm();
       }
     );
+  }
 
-    this.form.valueChanges
-      .pipe(skip(1), untilDestroyed(this), auditTime(100))
+  public watchRoleForm(role: Role) {
+    const form = this.getRoleForm(role);
+
+    form.valueChanges
+      .pipe(untilDestroyed(this), auditTime(100))
       .subscribe(() => {
-        this.saveMembers();
+        this.saveMembers(role);
       });
+  }
 
+  public watchPublicForm() {
     this.publicForm.valueChanges
-      .pipe(skip(1), untilDestroyed(this), auditTime(100))
+      .pipe(untilDestroyed(this), auditTime(100))
       .subscribe(() => {
         this.savePublic();
       });
+  }
 
+  public watchWorkspaceForm() {
     this.workspaceForm.valueChanges
-      .pipe(skip(1), untilDestroyed(this), auditTime(100))
+      .pipe(untilDestroyed(this), auditTime(100))
       .subscribe(() => {
         this.saveWorkspace();
       });
@@ -211,25 +227,21 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     form.addControl(slug, roleGroup);
   }
 
-  public saveMembers() {
-    const memberRoles = this.state.get('memberRoles') ?? [];
+  public saveMembers(role: Role) {
+    const form = this.getRoleForm(role);
 
-    memberRoles
-      .filter((role) => !role.isAdmin)
-      .forEach((role) => {
-        const permissions =
-          this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(
-            this.getRoleForm(role)
-          );
+    const permissions =
+      this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(
+        form
+      );
 
-        this.store.dispatch(
-          updateRolePermissions({
-            project: this.state.get('project').slug,
-            roleSlug: role.slug,
-            permissions,
-          })
-        );
-      });
+    this.store.dispatch(
+      updateRolePermissions({
+        project: this.state.get('project').slug,
+        roleSlug: role.slug,
+        permissions,
+      })
+    );
   }
 
   public savePublic() {

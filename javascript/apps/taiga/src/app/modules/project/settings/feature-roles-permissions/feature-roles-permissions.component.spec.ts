@@ -205,7 +205,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       const dispatchSpy = jest.spyOn(store, 'dispatch');
 
-      spectator.component.saveMembers();
+      spectator.component.saveMembers(role);
 
       expect(dispatchSpy).toBeCalledWith(
         updateRolePermissions({
@@ -290,6 +290,111 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
           permissions: finalPermissions,
         })
       );
+    });
+  });
+
+  describe('init form', () => {
+    it('members', () => {
+      const role = RoleMockFactory();
+      role.isAdmin = false;
+      const store = spectator.inject(MockStore);
+
+      store.setState({
+        project: {
+          projects: {},
+          currentProjectSlug: 'test',
+          memberRoles: [role],
+        } as ProjectState,
+      });
+
+      store.refreshState();
+
+      const createRoleFormSpy = jest.spyOn(
+        spectator.component,
+        'createRoleFormControl'
+      );
+
+      const watchRoleFormSpy = jest.spyOn(spectator.component, 'watchRoleForm');
+
+      spectator.component.ngOnInit();
+      spectator.component.initForm();
+
+      expect(createRoleFormSpy).toHaveBeenCalledWith(
+        role.permissions,
+        role.slug,
+        spectator.component.form
+      );
+      expect(watchRoleFormSpy).toHaveBeenCalledWith(role);
+    });
+
+    it('public permissions', () => {
+      const permissions = ['view_us'];
+      const store = spectator.inject(MockStore);
+
+      store.setState({
+        project: {
+          projects: {},
+          currentProjectSlug: 'test',
+          publicPermissions: permissions,
+        },
+      });
+
+      store.refreshState();
+
+      const createRoleFormSpy = jest.spyOn(
+        spectator.component,
+        'createRoleFormControl'
+      );
+
+      const watchPublicFormSpy = jest.spyOn(
+        spectator.component,
+        'watchPublicForm'
+      );
+
+      spectator.component.ngOnInit();
+      spectator.component.initForm();
+
+      expect(createRoleFormSpy).toHaveBeenCalledWith(
+        permissions,
+        'public',
+        spectator.component.publicForm
+      );
+      expect(watchPublicFormSpy).toHaveBeenCalled();
+    });
+
+    it('workspace permissions', () => {
+      const permissions = ['view_us'];
+      const store = spectator.inject(MockStore);
+
+      store.setState({
+        project: {
+          projects: {},
+          currentProjectSlug: 'test',
+          workspacePermissions: permissions,
+        },
+      });
+
+      store.refreshState();
+
+      const createRoleFormSpy = jest.spyOn(
+        spectator.component,
+        'createRoleFormControl'
+      );
+
+      const watchWorkspaceFormSpy = jest.spyOn(
+        spectator.component,
+        'watchWorkspaceForm'
+      );
+
+      spectator.component.ngOnInit();
+      spectator.component.initForm();
+
+      expect(createRoleFormSpy).toHaveBeenCalledWith(
+        permissions,
+        'workspace',
+        spectator.component.workspaceForm
+      );
+      expect(watchWorkspaceFormSpy).toHaveBeenCalled();
     });
   });
 });

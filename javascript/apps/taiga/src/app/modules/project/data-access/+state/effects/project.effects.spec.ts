@@ -17,8 +17,8 @@ import { ProjectEffects } from './project.effects';
 import {
   fetchProject,
   fetchProjectSuccess,
-  fetchMemberRoles,
   fetchMemberRolesSuccess,
+  initRolesPermissions,
 } from '../actions/project.actions';
 import { cold, hot } from 'jest-marbles';
 import { ProjectMockFactory, RoleMockFactory } from '@taiga/data';
@@ -55,7 +55,7 @@ describe('ProjectEffects', () => {
   });
 
   it('load roles', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const project = ProjectMockFactory();
     const roles = [];
     for (let i = 0; i++; i < randNumber()) {
       const role = RoleMockFactory();
@@ -66,7 +66,7 @@ describe('ProjectEffects', () => {
 
     projectApiService.getMemberRoles.mockReturnValue(cold('-b|', { b: roles }));
 
-    actions$ = hot('-a', { a: fetchMemberRoles({ slug }) });
+    actions$ = hot('-a', { a: initRolesPermissions({ project }) });
 
     const expected = cold('--a', {
       a: fetchMemberRolesSuccess({ roles }),

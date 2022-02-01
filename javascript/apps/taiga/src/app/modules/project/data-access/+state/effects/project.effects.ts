@@ -9,7 +9,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 
 import * as ProjectActions from '../actions/project.actions';
 import { ProjectApiService } from '@taiga/api';
@@ -49,14 +49,16 @@ export class ProjectEffects {
 
   public loadMemberRoles$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(ProjectActions.fetchMemberRoles),
+      ofType(ProjectActions.initRolesPermissions),
       fetch({
         run: (action) => {
-          return this.projectApiService.getMemberRoles(action.slug).pipe(
-            map((roles) => {
-              return ProjectActions.fetchMemberRolesSuccess({ roles });
-            })
-          );
+          return this.projectApiService
+            .getMemberRoles(action.project.slug)
+            .pipe(
+              map((roles) => {
+                return ProjectActions.fetchMemberRolesSuccess({ roles });
+              })
+            );
         },
         onError: () => {
           return null;
@@ -67,16 +69,18 @@ export class ProjectEffects {
 
   public loadPublicPermissions$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(ProjectActions.fetchPublicPermissions),
+      ofType(ProjectActions.initRolesPermissions),
       fetch({
         run: (action) => {
-          return this.projectApiService.getPublicPermissions(action.slug).pipe(
-            map((permissions) => {
-              return ProjectActions.fetchPublicPermissionsSuccess({
-                permissions: permissions,
-              });
-            })
-          );
+          return this.projectApiService
+            .getPublicPermissions(action.project.slug)
+            .pipe(
+              map((permissions) => {
+                return ProjectActions.fetchPublicPermissionsSuccess({
+                  permissions: permissions,
+                });
+              })
+            );
         },
         onError: () => {
           return null;
@@ -85,16 +89,21 @@ export class ProjectEffects {
     );
   });
 
-  public loadworkspacePermissions$ = createEffect(() => {
+  public loadWorkspacePermissions$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(ProjectActions.fetchWorkspacePermissions),
+      ofType(ProjectActions.initRolesPermissions),
+      filter((action) => action.project.workspace.isPremium),
       fetch({
         run: (action) => {
-          return this.projectApiService.getworkspacePermissions(action.slug).pipe(
-            map((permissions) => {
-              return ProjectActions.fetchWorkspacePermissionsSuccess({ workspacePermissions: permissions });
-            })
-          );
+          return this.projectApiService
+            .getworkspacePermissions(action.project.slug)
+            .pipe(
+              map((permissions) => {
+                return ProjectActions.fetchWorkspacePermissionsSuccess({
+                  workspacePermissions: permissions,
+                });
+              })
+            );
         },
         onError: () => {
           return null;
@@ -148,14 +157,13 @@ export class ProjectEffects {
       ofType(ProjectActions.updateWorkspacePermissions),
       pessimisticUpdate({
         run: (action) => {
-          return this.projectApiService.putworkspacePermissions(
-            action.project,
-            action.permissions
-          ).pipe(
-            map(() => {
-              return ProjectActions.updateRolePermissionsSuccess();
-            })
-          );
+          return this.projectApiService
+            .putworkspacePermissions(action.project, action.permissions)
+            .pipe(
+              map(() => {
+                return ProjectActions.updateRolePermissionsSuccess();
+              })
+            );
         },
         onError: () => {
           return ProjectActions.updateRolePermissionsError();

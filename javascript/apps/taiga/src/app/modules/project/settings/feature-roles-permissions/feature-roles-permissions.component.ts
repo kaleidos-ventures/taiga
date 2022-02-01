@@ -22,13 +22,11 @@ import { RxState } from '@rx-angular/state';
 import { Project, Role } from '@taiga/data';
 import { auditTime, filter, map, skip, take } from 'rxjs/operators';
 import {
-  fetchMemberRoles,
-  fetchPublicPermissions,
-  fetchWorkspacePermissions,
   updateRolePermissions,
   updatePublicPermissions,
   updateWorkspacePermissions,
   resetPermissions,
+  initRolesPermissions,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectMemberRoles,
@@ -119,16 +117,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     );
 
     this.state.hold(this.state.select('project'), (project) => {
-      this.store.dispatch(fetchMemberRoles({ slug: project.slug }));
-    });
-    this.state.hold(this.state.select('project'), (project) => {
-      this.store.dispatch(fetchPublicPermissions({ slug: project.slug }));
-    });
-
-    this.state.hold(this.state.select('project'), (project) => {
-      if (project.workspace.isPremium) {
-        this.store.dispatch(fetchWorkspacePermissions({ slug: project.slug }));
-      }
+      this.store.dispatch(initRolesPermissions({ project }));
     });
   }
 

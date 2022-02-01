@@ -19,19 +19,9 @@ export const fetchProject = createAction(
   props<{ slug: Project['slug'] }>()
 );
 
-export const fetchMemberRoles = createAction(
-  '[Roles] fetch members',
-  props<{ slug: Project['slug'] }>()
-);
-
 export const fetchMemberRolesSuccess = createAction(
   '[Roles] fetch members success',
   props<{ roles: Role[] }>()
-);
-
-export const fetchPublicPermissions = createAction(
-  '[Roles] fetch public permissions',
-  props<{ slug: Project['slug'] }>()
 );
 
 export const fetchPublicPermissionsSuccess = createAction(
@@ -39,14 +29,9 @@ export const fetchPublicPermissionsSuccess = createAction(
   props<{ permissions: string[] }>()
 );
 
-export const fetchWorkspacePermissions = createAction(
-  '[Roles] fetch workspace permissions',
-  props<{slug: Project['slug']}>()
-);
-
 export const fetchWorkspacePermissionsSuccess = createAction(
   '[Roles] fetch workspace permissions success',
-  props<{workspacePermissions: string[]}>()
+  props<{ workspacePermissions: string[] }>()
 );
 
 export const updateRolePermissions = createAction(
@@ -65,7 +50,7 @@ export const updatePublicPermissions = createAction(
 
 export const updateWorkspacePermissions = createAction(
   '[Roles] update workspace permissions',
-  props<{project: Project['slug'], permissions: string[]}>()
+  props<{ project: Project['slug']; permissions: string[] }>()
 );
 
 export const updateRolePermissionsSuccess = createAction(
@@ -76,6 +61,9 @@ export const updateRolePermissionsError = createAction(
   '[Roles] update role permissions error'
 );
 
-export const resetPermissions = createAction(
-  '[Roles] reset all permissions'
+export const resetPermissions = createAction('[Roles] reset all permissions');
+
+export const initRolesPermissions = createAction(
+  '[Roles] init roles and permissions',
+  props<{ project: Project }>()
 );

@@ -6,7 +6,7 @@
   "attr-value-double-quotes": true,
   "doctype-first": false,
   "doctype-html5": true,
-  "empty-tag-not-self-closed": false,
+  "empty-tag-not-self-closed": true,
   "id-class-ad-disabled": true,
   "id-class-value": "dash",
   "id-unique": true,
@@ -16,5 +16,8 @@
   "src-not-empty": true,
   "style-disabled": true,
   "tag-pair": true,
-  "tagname-lowercase": ["clipPath", "linearGradient"]
+  "tagname-lowercase": [
+    "clipPath",
+    "linearGradient"
+  ]
 }

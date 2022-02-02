@@ -7,42 +7,43 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t">
-  <form [formGroup]="createProjectForm"
+  <form
+    [formGroup]="createProjectForm"
     (keydown.esc)="close()"
     (ngSubmit)="onSubmit()"
     [attr.aria-invalid]="createProjectForm.invalid"
     class="workspace-create-padding">
-    <tg-ui-avatar class="workspace-image"
+    <tg-ui-avatar
+      class="workspace-image"
       type="dark"
       [color]="color"
       [name]="name">
     </tg-ui-avatar>
     <p>{{ createProjectForm.value.projectName }}</p>
-    <tg-ui-input class="workspace-input-project-name"
+    <tg-ui-input
+      class="workspace-input-project-name"
       [label]="t('workspace.workspace_name')">
-      <input inputRef
+      <input
+        inputRef
         (keyup)="setName($event)"
         data-test="workspace-name-input"
         formControlName="projectName"
         #firstInput
         tuiAutoFocus
         maxlength="40"
-        [placeholder]="t('workspace.workspace_name')">
-      <tg-ui-error inputError
-        error="required">
+        [placeholder]="t('workspace.workspace_name')" />
+      <tg-ui-error inputError error="required">
         {{ t('workspace.error_name_empty') }}
       </tg-ui-error>
     </tg-ui-input>
-    <button data-test="workspace-project-form-submit"
+    <button
+      data-test="workspace-project-form-submit"
       appearance="primary"
       tuiButton
       type="submit">
       {{ t('workspace.create_workspace') }}
     </button>
-    <button (click)="close()"
-      appearance="secondary"
-      tuiButton
-      type="button">
+    <button (click)="close()" appearance="secondary" tuiButton type="button">
       {{ 'commons.cancel' | transloco }}
     </button>
   </form>

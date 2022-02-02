@@ -6,23 +6,22 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<form [formGroup]="form"
-  (ngSubmit)="onSubmit()">
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
   <label for="username">Username: </label>
-  <input data-test="username"
+  <input
+    data-test="username"
     id="username"
     type="text"
-    formControlName="username">
+    formControlName="username" />
 
   <label for="password">Password: </label>
-  <input data-test="password"
+  <input
+    data-test="password"
     id="password"
     type="text"
-    formControlName="password">
+    formControlName="password" />
 
-  <button data-test="submit"
-    type="submit"
-    [disabled]="!form.valid">
+  <button data-test="submit" type="submit" [disabled]="!form.valid">
     Submit
   </button>
 </form>

@@ -39,36 +39,39 @@
           }
         ],
         "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/member-ordering": ["error", {
-          "default": [
-            "decorated-field",
-            "decorated-get",
-            "decorated-set" ,
-            "decorated-method",
+        "@typescript-eslint/member-ordering": [
+          "error",
+          {
+            "default": [
+              "decorated-field",
+              "decorated-get",
+              "decorated-set",
+              "decorated-method",
 
-            // Fields
-            "public-field",
-            "protected-field",
-            "private-field",
+              // Fields
+              "public-field",
+              "protected-field",
+              "private-field",
 
-            // Constructors
+              // Constructors
 
-            // Getters
-            "public-get",
-            "protected-get",
-            "private-get",
+              // Getters
+              "public-get",
+              "protected-get",
+              "private-get",
 
-            // Setters
-            "public-set",
-            "protected-set",
-            "private-set",
+              // Setters
+              "public-set",
+              "protected-set",
+              "private-set",
 
-            // Methods
-            "public-method",
-            "protected-method",
-            "private-method"
-          ]
-        }]
+              // Methods
+              "public-method",
+              "protected-method",
+              "private-method"
+            ]
+          }
+        ]
       }
     },
     {

@@ -24,7 +24,8 @@ export class RoleCustomizeComponent {
   @Input()
   public toggleCustomize = false;
 
-  public basicPermissionList = this.projectsSettingsFeatureRolesPermissionsService.getPermissions();
+  public basicPermissionList =
+    this.projectsSettingsFeatureRolesPermissionsService.getPermissions();
 
   constructor(
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService

@@ -142,8 +142,7 @@ tui-data-list {
       color: var(--color-secondary80) !important;
     }
 
-    &:focus-visible,
-    &:focus {
+    &:focus-visible {
       outline: solid 1px var(--color-secondary80) !important;
     }
   }

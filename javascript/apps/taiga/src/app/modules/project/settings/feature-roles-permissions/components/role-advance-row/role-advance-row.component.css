@@ -106,6 +106,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   padding-inline-end: var(--spacing-8);
 }
 
+.permission-can-comment-switch {
+  flex-shrink: 0;
+}
+
 .permission-row-name {
   @mixin line-clamp 2;
 

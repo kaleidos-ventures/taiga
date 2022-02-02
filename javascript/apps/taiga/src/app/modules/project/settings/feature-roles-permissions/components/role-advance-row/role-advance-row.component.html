@@ -7,39 +7,33 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t">
-  <div
-    [formGroup]="formGroup"
+  <div [formGroup]="formGroup"
     [attr.data-child]="isChildModule"
     class="permission-row-sub">
     <div class="permission-row-title">
-      <tui-svg
-        [tuiHint]="
+      <tui-svg [tuiHint]="
           t('project_settings.roles_permissions.userstories_child_help')
         "
         *ngIf="isChildModule"
         src="arrow-down-right">
       </tui-svg>
-      <span
-        aria-hidden="true"
+      <span aria-hidden="true"
         [class.customizing]="customizer"
-        class="permission-row-name"
-        >{{ module.value }}</span
-      >
+        class="permission-row-name">{{ module.value }}</span>
     </div>
     <div class="permission-row-customization">
       <div class="permission-row-inner">
         <div class="permission-row-select">
-          <tg-ui-select labelVisuallyHidden [label]="module.value">
-            <tui-select
-              tuiTextfieldSize="l"
+          <tg-ui-select labelVisuallyHidden
+            [label]="module.value">
+            <tui-select tuiTextfieldSize="l"
               data-test="module-permission-select"
               [valueContent]="selectLabel"
               [ngModel]="permissionRowModel"
               [ngModelOptions]="{ standalone: true }"
               (ngModelChange)="permissionChange($event)">
               <tui-data-list *tuiDataList>
-                <button
-                  *ngFor="
+                <button *ngFor="
                     let item of basicPermissionList | keyvalue: insertionOrder;
                     trackBy: trackByValue
                   "
@@ -51,7 +45,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </tui-data-list>
             </tui-select>
           </tg-ui-select>
-          <ng-template #selectLabel let-item>
+          <ng-template #selectLabel
+            let-item>
             <ng-container [ngSwitch]="permissionRowModel.key">
               <ng-container *ngSwitchCase="'custom'">
                 {{ t('project_settings.roles_permissions.custom') }}
@@ -60,19 +55,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 {{ t('project_settings.roles_permissions.can_edit') }}
                 <i class="restricted">{{
                   t('project_settings.roles_permissions.restricted')
-                }}</i>
+                  }}</i>
               </ng-container>
               <ng-container *ngSwitchDefault>
                 {{ item.value }}
               </ng-container>
             </ng-container>
           </ng-template>
-          <div
-            [attr.aria-level]="2"
+          <div [attr.aria-level]="2"
             role="heading"
             class="permission-row-button">
-            <button
-              appearance="tertiary"
+            <button appearance="tertiary"
               data-test="display-custom-permissions"
               [class.customizing]="customizer"
               [class.show-customization-disabled]="!showCustomization()"
@@ -86,12 +79,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               type="button">
               <span class="visually-hidden">{{
                 t('project_settings.roles_permissions.show_more')
-              }}</span>
+                }}</span>
             </button>
           </div>
         </div>
-        <tg-role-customize
-          *ngIf="customizer"
+        <tg-role-customize *ngIf="customizer"
           [attr.id]="rolePermissionContainerId"
           data-test="module-custom-permissions-section"
           [formGroup]="formGroup"
@@ -99,13 +91,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </tg-role-customize>
       </div>
     </div>
-    <div
-      class="permision-row-comment"
+    <div class="permision-row-comment"
       [class.permision-row-comment-disabled]="!showComment()">
       <span class="permission-row-switch-title">{{
         t('project_settings.roles_permissions.can_comment')
-      }}</span>
-      <tui-toggle
+        }}</span>
+      <tui-toggle class="permission-can-comment-switch"
         data-test="permission-can-comment-switch"
         formControlName="comment"
         [showIcons]="true">

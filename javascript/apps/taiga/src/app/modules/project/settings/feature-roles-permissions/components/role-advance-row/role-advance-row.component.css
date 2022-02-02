@@ -44,7 +44,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  max-inline-size: calc(17rem + var(--spacing-24));
+  max-inline-size: calc(17rem + var(--spacing-40));
   min-inline-size: calc(14rem + var(--spacing-24));
 
   & .show-customization-disabled {

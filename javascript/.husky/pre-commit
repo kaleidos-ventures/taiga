@@ -1,1 +1,5 @@
-node ./javascript/scripts/append-license.js
+cd javascript
+
+node ./scripts/append-license.js
+
+npm run format:write

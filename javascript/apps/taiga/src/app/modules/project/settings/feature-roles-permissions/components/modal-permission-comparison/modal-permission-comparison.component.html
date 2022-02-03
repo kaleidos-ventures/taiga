@@ -11,29 +11,28 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     aria-describedby="permission-table"
     aria-labeledby="permissions-comparison"
     class="modal-wrapper">
-    <h3 id="permissions-comparison" class="settings-title">
+    <h2 id="permissions-comparison" class="modal-title" tabindex="0">
       {{
         t('project_settings.modal_permissions.potential_permission_conflicts')
       }}
-    </h3>
+    </h2>
     <div id="permission-table">
-      <caption
+      <p
         class="explanation"
         [innerHtml]="
           t(
             'project_settings.modal_permissions.potential_permission_conflicts_explanation'
           )
-        "
-        tabindex="0"></caption>
+        "></p>
       <ng-container
         *ngFor="let module of conflictPermissions; trackBy: trackByIndex">
-        <h4>
+        <h3 class="table-title">
           {{
             t('project_settings.modal_permissions.role', {
               name: module.name
             })
           }}
-        </h4>
+        </h3>
         <table
           class="comparisson-table"
           [ngClass]="{ last: last }"
@@ -45,9 +44,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           ">
           <thead *ngIf="i === 0">
             <tr>
-              <th></th>
-              <th class="title">{{ module.name }}</th>
-              <th class="title">
+              <th aria-hidden="true"></th>
+              <th scope="col" class="title">{{ module.name }}</th>
+              <th scope="col" class="title">
                 {{ t('project_settings.modal_permissions.public') }}
               </th>
             </tr>
@@ -60,8 +59,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 trackBy: trackByIndex
               ">
               <th
-                class="title"
                 *ngIf="idx === 0"
+                scope="row"
+                class="title"
                 [attr.rowspan]="conflict.texts.member.text.length">
                 {{ modules.get(conflict.name) }}
               </th>
@@ -71,21 +71,31 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                     conflict.texts.member.restrictions?.length;
                   else member
                 ">
-                <span class="text highlight" [innerHtml]="t(text)"></span>
-                <tui-svg
-                  class="chevron"
-                  [src]="
+                <button
+                  class="restrictions-btn"
+                  [attr.aria-expanded]="
                     dropdown[getParam(module.name, 'member', idx)]
-                      ? 'chevron-up'
-                      : 'chevron-down'
                   "
+                  [attr.aria-controls]="getParam(module.name, 'member', idx)"
+                  type="button"
                   (click)="
                     handleDropdown(getParam(module.name, 'member', idx))
                   ">
-                </tui-svg>
+                  <span class="text highlight" [innerHtml]="t(text)"></span>
+                  <tui-svg
+                    class="chevron"
+                    [src]="
+                      dropdown[getParam(module.name, 'member', idx)]
+                        ? 'chevron-up'
+                        : 'chevron-down'
+                    ">
+                  </tui-svg>
+                </button>
+
                 <ul
-                  class="restriction-list"
-                  *ngIf="dropdown[getParam(module.name, 'member', idx)]">
+                  *ngIf="dropdown[getParam(module.name, 'member', idx)]"
+                  [attr.id]="getParam(module.name, 'member', idx)"
+                  class="restriction-list">
                   <li
                     class="restriction-element"
                     *ngFor="
@@ -97,7 +107,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </ul>
               </td>
               <ng-template #member>
-                <td class="text" [innerHtml]="t(text)"></td>
+                <td scope="row" class="text" [innerHtml]="t(text)"></td>
               </ng-template>
 
               <td
@@ -106,21 +116,32 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                     conflict.texts.public.restrictions?.length;
                   else public
                 ">
-                <span
-                  class="text highlight"
-                  [innerHtml]="conflict.texts.public.text[idx]"></span>
-                <tui-svg
-                  class="chevron"
-                  [src]="
+                <button
+                  class="restrictions-btn"
+                  [attr.aria-expanded]="
                     dropdown[getParam(module.name, 'public', idx)]
-                      ? 'chevron-up'
-                      : 'chevron-down'
                   "
+                  [attr.aria-controls]="getParam(module.name, 'public', idx)"
+                  type="button"
                   (click)="
                     handleDropdown(getParam(module.name, 'public', idx))
                   ">
-                </tui-svg>
-                <ul *ngIf="dropdown[getParam(module.name, 'public', idx)]">
+                  <span
+                    class="text highlight"
+                    [innerHtml]="conflict.texts.public.text[idx]"></span>
+                  <tui-svg
+                    class="chevron"
+                    [src]="
+                      dropdown[getParam(module.name, 'public', idx)]
+                        ? 'chevron-up'
+                        : 'chevron-down'
+                    ">
+                  </tui-svg>
+                </button>
+
+                <ul
+                  *ngIf="dropdown[getParam(module.name, 'public', idx)]"
+                  [attr.id]="getParam(module.name, 'public', idx)">
                   <li
                     *ngFor="
                       let restriction of conflict.texts.public.restrictions;

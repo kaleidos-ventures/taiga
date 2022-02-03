@@ -71,7 +71,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                     conflict.texts.member.restrictions?.length;
                   else member
                 ">
-                <span class="text highlight">{{ text }} </span>
+                <span class="text highlight" [innerHtml]="t(text)"></span>
                 <tui-svg
                   class="chevron"
                   [src]="
@@ -92,12 +92,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                       let restriction of conflict.texts.member.restrictions;
                       trackBy: trackByIndex
                     ">
-                    {{ restriction }}
+                    {{ t(restriction) }}
                   </li>
                 </ul>
               </td>
               <ng-template #member>
-                <td class="text">{{ text }}</td>
+                <td class="text" [innerHtml]="t(text)"></td>
               </ng-template>
 
               <td
@@ -106,9 +106,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                     conflict.texts.public.restrictions?.length;
                   else public
                 ">
-                <span class="text highlight"
-                  >{{ conflict.texts.public.text[idx] }}
-                </span>
+                <span
+                  class="text highlight"
+                  [innerHtml]="conflict.texts.public.text[idx]"></span>
                 <tui-svg
                   class="chevron"
                   [src]="
@@ -131,7 +131,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </ul>
               </td>
               <ng-template #public>
-                <td class="text">{{ conflict.texts.public.text[idx] }}</td>
+                <td
+                  class="text"
+                  [innerHtml]="t(conflict.texts.public.text[idx])"></td>
               </ng-template>
             </tr>
           </tbody>

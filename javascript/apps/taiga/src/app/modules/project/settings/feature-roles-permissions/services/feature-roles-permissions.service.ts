@@ -13,10 +13,11 @@ import { SettingsPermission } from '../models/settings-permission.model';
 import { ModulePermission } from '../models/module-permission.model';
 import {
   Conflict,
+  ModuleConflictPermission,
   PermissionConflict,
   TextConflict,
 } from '../models/modal-permission.model';
-import { Module } from '@taiga/data';
+import { Module, Role } from '@taiga/data';
 
 const mapFormModulesPermissions: Record<
   Module,
@@ -339,7 +340,14 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
         restrictions: [],
       },
     };
-    if (onlyInPublicPermission.includes('create' && 'modify' && 'delete')) {
+
+    const isEditPermissions = (permissions: ModulePermission[]) => {
+      return ['create', 'modify', 'delete'].every((it) =>
+        permissions.includes(it as ModulePermission)
+      );
+    };
+
+    if (isEditPermissions(onlyInPublicPermission)) {
       // edit case
       textsTemp.public.text.push(this.getModulePermissions().get('edit')!);
       if (!permission['member'].length) {
@@ -355,12 +363,10 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       )
     ) {
       // edit restricted case
-      const editRestrictionsText = `${this.getModulePermissions().get(
-        'edit'
-      )!} ${this.translocoService.translate(
-        'project_settings.roles_permissions.restricted'
-      )}`;
-      if (permission.public.includes('create' && 'modify' && 'delete')) {
+      const editRestrictionsText =
+        'project_settings.roles_permissions.restricted';
+
+      if (isEditPermissions(permission.public)) {
         textsTemp.public.text.push(this.getModulePermissions().get('edit')!);
       } else {
         textsTemp.public.text.push(editRestrictionsText);
@@ -373,9 +379,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
         textsTemp.member.text.push(editRestrictionsText);
       } else {
         textsTemp.member.text.push(
-          this.translocoService.translate(
-            'project_settings.modal_permissions.cannot_edit'
-          )
+          'project_settings.modal_permissions.cannot_edit'
         );
       }
 
@@ -399,14 +403,10 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       // comment case
 
       textsTemp.public.text.push(
-        this.translocoService.translate(
-          'project_settings.roles_permissions.can_comment'
-        )
+        'project_settings.roles_permissions.can_comment'
       );
       textsTemp.member.text.push(
-        this.translocoService.translate(
-          'project_settings.roles_permissions.cannot_comment'
-        )
+        'project_settings.roles_permissions.cannot_comment'
       );
     }
     if (onlyInPublicPermission.every((it) => it === 'view')) {
@@ -415,5 +415,36 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       textsTemp.member.text.push(this.getModulePermissions().get('no_access')!);
     }
     return textsTemp;
+  }
+
+  public getMembersPermissionsConflics(
+    publicPermissionsList: string[],
+    memberRoles: Role[]
+  ): ModuleConflictPermission[] {
+    const conflictPermissions: ModuleConflictPermission[] = [];
+
+    const publicPermissions = this.formatRawPermissions(publicPermissionsList);
+
+    memberRoles.forEach((memberRole) => {
+      if (!memberRole.isAdmin) {
+        const memberPermissions = this.formatRawPermissions(
+          memberRole.permissions
+        );
+
+        const conflicts = this.getConflictsPermissions(
+          publicPermissions,
+          memberPermissions
+        );
+
+        if (conflicts) {
+          conflictPermissions.push({
+            name: memberRole.name,
+            conflicts,
+          });
+        }
+      }
+    });
+
+    return conflictPermissions;
   }
 }

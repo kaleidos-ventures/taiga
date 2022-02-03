@@ -18,7 +18,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { RxState } from '@rx-angular/state';
+import { RxState, selectSlice } from '@rx-angular/state';
 import { Project, Role } from '@taiga/data';
 import { auditTime, filter, map, take } from 'rxjs/operators';
 import {
@@ -35,6 +35,7 @@ import {
   selectWorkspacePermissions,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
+import { ModuleConflictPermission } from './models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
 
 @UntilDestroy()
@@ -62,7 +63,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     })
   );
   public isModalOpen = false;
-  public publicPermissionHasConflicts = false;
 
   public form = this.fb.group({});
   public publicForm = this.fb.group({});
@@ -98,11 +98,26 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       publicPermissions?: string[];
       workspacePermissions?: string[];
       project: Project;
+      conflicts: ModuleConflictPermission[];
     }>
   ) {}
 
   public ngOnInit() {
+    this.state.set({ conflicts: [] });
+
     this.state.connect('project', this.store.select(selectCurrentProject));
+
+    this.state.connect(
+      'conflicts',
+      this.state.select(selectSlice(['publicPermissions', 'memberRoles'])).pipe(
+        map(({ publicPermissions, memberRoles }) => {
+          return this.projectsSettingsFeatureRolesPermissionsService.getMembersPermissionsConflics(
+            publicPermissions ?? [],
+            memberRoles ?? []
+          );
+        })
+      )
+    );
 
     this.state.connect(
       'memberRoles',
@@ -343,9 +358,5 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   public handleModal() {
     this.isModalOpen = !this.isModalOpen;
-  }
-
-  public onHasConflicts(hasConflicts: boolean) {
-    this.publicPermissionHasConflicts = hasConflicts;
   }
 }

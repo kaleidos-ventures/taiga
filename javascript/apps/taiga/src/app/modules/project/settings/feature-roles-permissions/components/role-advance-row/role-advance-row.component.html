@@ -57,10 +57,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 {{ t('project_settings.roles_permissions.custom') }}
               </ng-container>
               <ng-container *ngSwitchCase="'restricted'">
-                {{ t('project_settings.roles_permissions.can_edit') }}
-                <i class="restricted">{{
-                  t('project_settings.roles_permissions.restricted')
-                }}</i>
+                <div
+                  [innerHTML]="
+                    t('project_settings.roles_permissions.restricted')
+                  "></div>
               </ng-container>
               <ng-container *ngSwitchDefault>
                 {{ item.value }}

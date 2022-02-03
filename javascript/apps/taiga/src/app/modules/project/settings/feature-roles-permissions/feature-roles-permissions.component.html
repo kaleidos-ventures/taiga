@@ -114,7 +114,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           data-test="role-permission-row">
         </tg-role-permission-row>
         <tg-ui-notification-inline
-          *ngIf="publicPermissionHasConflicts"
+          *ngIf="vm.conflicts.length"
           [status]="'info'">
           <span>{{ t('project_settings.external_members') }}</span>
           <button class="link" tuiLink (click)="handleModal()">
@@ -127,10 +127,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <tg-ui-modal [open]="isModalOpen" (requestClose)="handleModal()">
       <ng-container>
         <tg-modal-permission-comparison
-          *ngIf="vm.publicPermissions && vm.memberRoles"
-          [memberRoles]="vm.memberRoles"
-          [publicPermissions]="vm.publicPermissions"
-          (hasConflicts)="onHasConflicts($event)"
+          *ngIf="vm.conflicts"
+          [conflictPermissions]="vm.conflicts"
           (closeModal)="handleModal()">
         </tg-modal-permission-comparison>
       </ng-container>

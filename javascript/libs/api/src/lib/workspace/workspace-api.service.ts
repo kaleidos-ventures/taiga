@@ -19,16 +19,16 @@ export class WorkspaceApiService {
   constructor(private http: HttpClient, private config: ConfigService) {}
 
   public fetchWorkspaceList() {
-    return this.http.get<Workspace[]>(`${this.config.apiUrl}/workspaces`);
+    return this.http.get<Workspace[]>(`${this.config.apiUrl}/my/workspaces`);
   }
 
   public fetchWorkspace(slug: Workspace['slug']) {
-    return this.http.get<Workspace>(`${this.config.apiUrl}/workspaces/${slug}`);
+    return this.http.get<Workspace>(`${this.config.apiUrl}/my/workspaces/${slug}`);
   }
 
   public createWorkspace(workspaceCreation: WorkspaceCreation) {
     return this.http
-      .post<Workspace>(`${this.config.apiUrl}/workspaces`, workspaceCreation)
+      .post<Workspace>(`${this.config.apiUrl}/my/workspaces`, workspaceCreation)
       .pipe(
         map((workspace: Workspace) => {
           return {
@@ -42,7 +42,7 @@ export class WorkspaceApiService {
 
   public fetchWorkspaceProjects(slug: Workspace['slug']) {
     return this.http.get<Project[]>(
-      `${this.config.apiUrl}/workspaces/${slug}/projects`
+      `${this.config.apiUrl}/my/workspaces/${slug}/projects`
     );
   }
 }

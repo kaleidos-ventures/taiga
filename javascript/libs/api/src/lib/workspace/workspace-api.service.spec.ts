@@ -30,7 +30,7 @@ describe('WorkspaceApiService', () => {
   beforeEach(() => (spectator = createHttp()));
 
   it('list Workspaces', () => {
-    const base = `${ConfigServiceMock.apiUrl}/workspaces`;
+    const base = `${ConfigServiceMock.apiUrl}/my/workspaces`;
 
     spectator.service.fetchWorkspaceList().subscribe();
 
@@ -40,7 +40,7 @@ describe('WorkspaceApiService', () => {
 
   it('get Workspace', () => {
     const slug = randDomainSuffix({ length: 3 }).join('-');
-    const url = `${ConfigServiceMock.apiUrl}/workspaces/${slug}`;
+    const url = `${ConfigServiceMock.apiUrl}/my/workspaces/${slug}`;
 
     spectator.service.fetchWorkspace(slug).subscribe();
 

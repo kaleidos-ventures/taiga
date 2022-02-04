@@ -40,7 +40,7 @@ describe('WorkspaceApiService', () => {
 
   it('get Workspace', () => {
     const slug = randDomainSuffix({ length: 3 }).join('-');
-    const url = `${ConfigServiceMock.apiUrl}/my/workspaces/${slug}`;
+    const url = `${ConfigServiceMock.apiUrl}/workspaces/${slug}`;
 
     spectator.service.fetchWorkspace(slug).subscribe();
 

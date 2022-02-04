@@ -23,12 +23,12 @@ export class WorkspaceApiService {
   }
 
   public fetchWorkspace(slug: Workspace['slug']) {
-    return this.http.get<Workspace>(`${this.config.apiUrl}/my/workspaces/${slug}`);
+    return this.http.get<Workspace>(`${this.config.apiUrl}/workspaces/${slug}`);
   }
 
   public createWorkspace(workspaceCreation: WorkspaceCreation) {
     return this.http
-      .post<Workspace>(`${this.config.apiUrl}/my/workspaces`, workspaceCreation)
+      .post<Workspace>(`${this.config.apiUrl}/workspaces`, workspaceCreation)
       .pipe(
         map((workspace: Workspace) => {
           return {

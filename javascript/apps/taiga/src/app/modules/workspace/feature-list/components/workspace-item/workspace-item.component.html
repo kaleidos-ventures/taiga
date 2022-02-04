@@ -24,7 +24,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             {{ workspace.name }}
           </a>
         </div>
-        <tg-ui-badge [label]="t('commons.owner')"></tg-ui-badge>
+        <tg-ui-badge
+          *ngIf="workspace.myRole"
+          [label]="t('commons.roles.' + workspace.myRole)"></tg-ui-badge>
+        <tg-ui-badge
+          *ngIf="workspace.isOwner"
+          [label]="t('commons.owner')"></tg-ui-badge>
         <div class="workspace-item-action">
           <button appearance="tertiary" tuiButton icon="user" type="button">
             {{ t('commons.members') }} (1)
@@ -44,11 +49,30 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </div>
       </div>
       <div
+        *ngIf="
+          workspace.totalProjects === 0 &&
+          workspace.hasProjects &&
+          workspace.myRole !== 'admin'
+        "
+        class="workspace-message-placeholder"
+        [innerHtml]="t('workspace.placehoder_no_access')"></div>
+      <div
+        *ngIf="
+          workspace.totalProjects === 0 &&
+          !workspace.hasProjects &&
+          workspace.myRole !== 'admin'
+        "
+        class="workspace-message-placeholder"
+        [innerHtml]="t('workspace.placehoder_no_projects')"></div>
+      <div
         [class]="gridClass"
         [class.show-all]="vm.showAllProjects"
         class="workspace-item-card-grid">
         <tg-project-card
-          *ngIf="workspace.latestProjects.length === 0"
+          *ngIf="
+            workspace.latestProjects.length === 0 &&
+            workspace.myRole === 'admin'
+          "
           [slug]="workspace.slug"
           [placeholder]="true"
           [firstProject]="true">

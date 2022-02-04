@@ -23,6 +23,11 @@
       "yes": "Yes, quit",
       "no": "No, keep editing"
     },
+    "roles": {
+      "admin": "Admin",
+      "member": "Member",
+      "guest": "Guest"
+    },
     "userstories": "User stories",
     "tasks": "Tasks",
     "sprints": "Sprints"

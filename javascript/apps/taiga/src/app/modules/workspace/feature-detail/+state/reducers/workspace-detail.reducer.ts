@@ -24,7 +24,10 @@ export const initialState: WorkspaceDetailState = {
     color: 0,
     latestProjects: [],
     totalProjects: 0,
+    hasProjects: false,
+    myRole: 'guest',
     isPremium: false,
+    isOwner: false,
   },
   workspaceProjects: [],
 };

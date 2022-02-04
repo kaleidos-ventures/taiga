@@ -13,5 +13,7 @@
   "error_name_empty": "Workspace name can’t be empty",
   "error_characters": "Workspace name can’t contain any of this characters: | ! ? * / .",
   "less_projects": "Less projects",
-  "more_projects": "{{ projects }} more projects"
+  "more_projects": "{{ projects }} more projects",
+  "placehoder_no_access": "You don't have access to any projects in this workspace yet. <br /> Check with your workspace admin.",
+  "placehoder_no_projects": "There are no projects in the workspace."
 }

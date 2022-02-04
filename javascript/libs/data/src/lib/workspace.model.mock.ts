@@ -16,7 +16,10 @@ export const WorkspaceMockFactory = (): Workspace => {
     slug: randDomainSuffix({ length: 3 }).join('-'),
     name: randDepartment(),
     color: randNumber(),
+    hasProjects: true,
+    myRole: 'admin',
     isPremium: true,
+    isOwner: true,
   };
 
   const latestProjects = [];

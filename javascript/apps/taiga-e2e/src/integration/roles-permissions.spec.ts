@@ -266,7 +266,7 @@ describe('Settings > project member roles (basic)', () => {
       });
   });
 
-  it('Workspace: Test custom permissions', () => {
+  it.skip('Workspace: Test custom permissions', () => {
     const roleIndex = 0;
     const moduleIndex = 1;
     const modulePermissionSelectHelper = new SelectHelper(
@@ -323,7 +323,7 @@ describe('Settings > project member roles (basic)', () => {
       });
   });
 
-  it('Workspace: Test comment permissions', () => {
+  it.skip('Workspace: Test comment permissions', () => {
     const roleIndex = 0;
     const moduleIndex = 0;
 

@@ -8,7 +8,6 @@
 
 import { FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { TranslocoService } from '@ngneat/transloco';
 
 import { ProjectsSettingsFeatureRolesPermissionsService } from './feature-roles-permissions.service';
 
@@ -16,7 +15,6 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
   let spectator: SpectatorService<ProjectsSettingsFeatureRolesPermissionsService>;
   const createService = createServiceFactory({
     service: ProjectsSettingsFeatureRolesPermissionsService,
-    mocks: [TranslocoService],
   });
 
   beforeEach(() => (spectator = createService()));

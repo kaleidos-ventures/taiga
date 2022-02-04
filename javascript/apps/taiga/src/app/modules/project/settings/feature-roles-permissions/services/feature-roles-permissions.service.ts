@@ -8,7 +8,6 @@
 
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { TranslocoService } from '@ngneat/transloco';
 import { SettingsPermission } from '../models/settings-permission.model';
 import { ModulePermission } from '../models/module-permission.model';
 import {
@@ -67,43 +66,26 @@ const mapFormModulesPermissions: Record<
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsSettingsFeatureRolesPermissionsService {
-  constructor(private translocoService: TranslocoService) {}
-
   public hasComments(module: Module) {
     return !['wiki', 'sprints'].includes(module);
   }
 
   public getModules(): Map<Module, string> {
     return new Map([
-      ['userstories', this.translocoService.translate('commons.userstories')],
-      ['tasks', this.translocoService.translate('commons.tasks')],
-      ['sprints', this.translocoService.translate('commons.sprints')],
-      ['issues', this.translocoService.translate('commons.issues')],
-      ['epics', this.translocoService.translate('commons.epics')],
-      ['wiki', this.translocoService.translate('commons.wiki')],
+      ['userstories', 'commons.userstories'],
+      ['tasks', 'commons.tasks'],
+      ['sprints', 'commons.sprints'],
+      ['issues', 'commons.issues'],
+      ['epics', 'commons.epics'],
+      ['wiki', 'commons.wiki'],
     ]);
   }
 
   public getPermissions(): Map<ModulePermission, string> {
     return new Map([
-      [
-        'create',
-        this.translocoService.translate(
-          'project_settings.roles_permissions.create'
-        ),
-      ],
-      [
-        'modify',
-        this.translocoService.translate(
-          'project_settings.roles_permissions.modify'
-        ),
-      ],
-      [
-        'delete',
-        this.translocoService.translate(
-          'project_settings.roles_permissions.delete'
-        ),
-      ],
+      ['create', 'project_settings.roles_permissions.create'],
+      ['modify', 'project_settings.roles_permissions.modify'],
+      ['delete', 'project_settings.roles_permissions.delete'],
     ]);
   }
 
@@ -118,34 +100,22 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       [
         'create',
         {
-          public: this.translocoService.translate(
-            'project_settings.modal_permissions.can_create'
-          ),
-          member: this.translocoService.translate(
-            'project_settings.modal_permissions.cannot_create'
-          ),
+          public: 'project_settings.modal_permissions.can_create',
+          member: 'project_settings.modal_permissions.cannot_create',
         },
       ],
       [
         'modify',
         {
-          public: this.translocoService.translate(
-            'project_settings.modal_permissions.can_modify'
-          ),
-          member: this.translocoService.translate(
-            'project_settings.modal_permissions.cannot_modify'
-          ),
+          public: 'project_settings.modal_permissions.can_modify',
+          member: 'project_settings.modal_permissions.cannot_modify',
         },
       ],
       [
         'delete',
         {
-          public: this.translocoService.translate(
-            'project_settings.modal_permissions.can_delete'
-          ),
-          member: this.translocoService.translate(
-            'project_settings.modal_permissions.cannot_delete'
-          ),
+          public: 'project_settings.modal_permissions.can_delete',
+          member: 'project_settings.modal_permissions.cannot_delete',
         },
       ],
     ]);
@@ -153,24 +123,9 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
 
   public getModulePermissions(): Map<SettingsPermission, string> {
     return new Map([
-      [
-        'no_access',
-        this.translocoService.translate(
-          'project_settings.roles_permissions.no_access'
-        ),
-      ],
-      [
-        'view',
-        this.translocoService.translate(
-          'project_settings.roles_permissions.can_view'
-        ),
-      ],
-      [
-        'edit',
-        this.translocoService.translate(
-          'project_settings.roles_permissions.can_edit'
-        ),
-      ],
+      ['no_access', 'project_settings.roles_permissions.no_access'],
+      ['view', 'project_settings.roles_permissions.can_view'],
+      ['edit', 'project_settings.roles_permissions.can_edit'],
     ]);
   }
 

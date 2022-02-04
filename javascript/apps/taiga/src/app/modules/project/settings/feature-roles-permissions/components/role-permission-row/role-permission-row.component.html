@@ -48,7 +48,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 tuiOption
                 data-test="permissions-row-option"
                 [value]="item">
-                {{ item.value }}
+                {{ t(item.value) }}
               </button>
             </tui-data-list>
           </tui-select>
@@ -65,7 +65,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 "></div>
             </ng-container>
             <ng-container *ngSwitchDefault>
-              {{ item.value }}
+              {{ t(item.value) }}
             </ng-container>
           </ng-container>
         </ng-template>

@@ -63,7 +63,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 scope="row"
                 class="title"
                 [attr.rowspan]="conflict.texts.member.text.length">
-                {{ modules.get(conflict.name) }}
+                {{ t(modules.get(conflict.name)!) }}
               </th>
               <td
                 *ngIf="
@@ -128,7 +128,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   ">
                   <span
                     class="text highlight"
-                    [innerHtml]="conflict.texts.public.text[idx]"></span>
+                    [innerHtml]="t(conflict.texts.public.text[idx])"></span>
                   <tui-svg
                     class="chevron"
                     [src]="
@@ -141,13 +141,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
                 <ul
                   *ngIf="dropdown[getParam(module.name, 'public', idx)]"
-                  [attr.id]="getParam(module.name, 'public', idx)">
+                  [attr.id]="getParam(module.name, 'public', idx)"
+                  class="restriction-list">
                   <li
                     *ngFor="
                       let restriction of conflict.texts.public.restrictions;
                       trackBy: trackByIndex
-                    ">
-                    {{ restriction }}
+                    "
+                    class="restriction-element">
+                    {{ t(restriction) }}
                   </li>
                 </ul>
               </td>

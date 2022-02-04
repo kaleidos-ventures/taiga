@@ -172,6 +172,42 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       expect(spectator.component.form.get(role.slug)?.disabled).toEqual(true);
     });
+
+    it('userstory no access', () => {
+      const role = RoleMockFactory();
+
+      role.permissions = ['view_tasks', 'view_sprints'] as Permissions[];
+
+      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.andReturn(
+        {
+          taks: {
+            create: false,
+            modify: false,
+            delete: false,
+            comment: false,
+          },
+          sprints: {
+            create: false,
+            modify: false,
+            delete: false,
+            comment: false,
+          },
+        }
+      );
+
+      spectator.component.createRoleFormControl(
+        role.permissions,
+        role.slug,
+        spectator.component.form
+      );
+
+      expect(
+        spectator.component.form.get(role.slug)?.get('tasks')?.disabled
+      ).toEqual(true);
+      expect(
+        spectator.component.form.get(role.slug)?.get('sprints')?.disabled
+      ).toEqual(true);
+    });
   });
 
   describe('save', () => {

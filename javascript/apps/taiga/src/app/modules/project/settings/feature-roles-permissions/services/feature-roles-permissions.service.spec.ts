@@ -160,7 +160,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
     });
   });
 
-  it('permission form to bakend format - userstories', () => {
+  it('permission form to backend format - userstories', () => {
     const formGroup = new FormGroup({
       userstories: new FormGroup({
         create: new FormControl(true),
@@ -195,6 +195,35 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
     formGroup.disable();
     permission = spectator.service.getRoleFormGroupPermissions(formGroup);
+
+    expect(permission).toEqual([]);
+  });
+
+  it('permission form to backend format - userstories disabled', () => {
+    const formGroup = new FormGroup({
+      userstories: new FormGroup({
+        create: new FormControl(true),
+        modify: new FormControl(true),
+        delete: new FormControl(true),
+        comment: new FormControl(true),
+      }),
+      tasks: new FormGroup({
+        create: new FormControl(true),
+        modify: new FormControl(true),
+        delete: new FormControl(true),
+        comment: new FormControl(true),
+      }),
+      sprints: new FormGroup({
+        create: new FormControl(true),
+        modify: new FormControl(true),
+        delete: new FormControl(true),
+        comment: new FormControl(true),
+      }),
+    });
+
+    formGroup.get('userstories')?.disable();
+
+    const permission = spectator.service.getRoleFormGroupPermissions(formGroup);
 
     expect(permission).toEqual([]);
   });

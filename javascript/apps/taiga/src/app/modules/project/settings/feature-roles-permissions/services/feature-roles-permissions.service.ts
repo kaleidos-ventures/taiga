@@ -134,7 +134,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
     type: SettingsPermission,
     formGroup: FormGroup
   ) {
-    if (formGroup.disabled) {
+    if (type !== 'no_access' && formGroup.disabled) {
       formGroup.enable();
     }
 
@@ -150,11 +150,11 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
         modify: false,
         delete: false,
       });
-    } else if (type === 'no_access') {
+    } else if (type === 'no_access' && formGroup.enabled) {
       formGroup.disable();
     }
 
-    if (!this.hasComments(module)) {
+    if (!this.hasComments(module) && formGroup.get('comment')?.enabled) {
       formGroup.get('comment')?.disable();
     }
   }
@@ -183,6 +183,16 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
 
     return Object.entries(roleFormValue)
       .filter(([module]) => !roleForm.get(module)?.disabled)
+      .filter(([module]) => {
+        if (
+          roleForm.get('userstories')?.disabled &&
+          (module === 'tasks' || module === 'sprints')
+        ) {
+          return false;
+        }
+
+        return true;
+      })
       .reduce((acc, [module, modulePermissions]) => {
         const permission = mapFormModulesPermissions[module as Module]['view'];
 
@@ -238,48 +248,65 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
     memberPermissions: Record<Module, Record<ModulePermission, boolean>>
   ) {
     const conflicts: Conflict[] = [];
-    (Object.keys(publicPermissions) as Module[]).forEach((key) => {
-      const publicPermissionKeys = Object.keys(
-        publicPermissions[key]
-      ) as ModulePermission[];
-      if (memberPermissions[key]) {
-        const tempMissingPerm: ModulePermission[] = [];
-        publicPermissionKeys.forEach((perm) => {
-          if (!memberPermissions[key][perm]) {
-            tempMissingPerm.push(perm);
+
+    (Object.keys(publicPermissions) as Module[])
+      .filter((permission) => {
+        if (
+          !memberPermissions['userstories'] &&
+          (permission === 'sprints' || permission === 'tasks')
+        ) {
+          return false;
+        }
+
+        return true;
+      })
+      .forEach((key) => {
+        const publicPermissionKeys = Object.keys(
+          publicPermissions[key]
+        ) as ModulePermission[];
+
+        if (memberPermissions[key]) {
+          const tempMissingPerm: ModulePermission[] = [];
+          publicPermissionKeys.forEach((perm) => {
+            if (!memberPermissions[key][perm]) {
+              tempMissingPerm.push(perm);
+            }
+          });
+          if (tempMissingPerm.length) {
+            conflicts.push({
+              name: key,
+              permission: {
+                onlyPublicPermission: tempMissingPerm,
+                public: publicPermissionKeys,
+                member: Object.keys(
+                  memberPermissions[key]
+                ) as ModulePermission[],
+              },
+              texts: this.generateConflictsTexts({
+                onlyPublicPermission: tempMissingPerm,
+                public: publicPermissionKeys,
+                member: Object.keys(
+                  memberPermissions[key]
+                ) as ModulePermission[],
+              }),
+            });
           }
-        });
-        if (tempMissingPerm.length) {
+        } else {
           conflicts.push({
             name: key,
             permission: {
-              onlyPublicPermission: tempMissingPerm,
+              onlyPublicPermission: publicPermissionKeys,
               public: publicPermissionKeys,
-              member: Object.keys(memberPermissions[key]) as ModulePermission[],
+              member: [],
             },
             texts: this.generateConflictsTexts({
-              onlyPublicPermission: tempMissingPerm,
+              onlyPublicPermission: publicPermissionKeys,
               public: publicPermissionKeys,
-              member: Object.keys(memberPermissions[key]) as ModulePermission[],
+              member: [],
             }),
           });
         }
-      } else {
-        conflicts.push({
-          name: key,
-          permission: {
-            onlyPublicPermission: publicPermissionKeys,
-            public: publicPermissionKeys,
-            member: [],
-          },
-          texts: this.generateConflictsTexts({
-            onlyPublicPermission: publicPermissionKeys,
-            public: publicPermissionKeys,
-            member: [],
-          }),
-        });
-      }
-    });
+      });
     return conflicts.length ? conflicts : undefined;
   }
 
@@ -332,6 +359,10 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
         )
       ) {
         textsTemp.member.text.push(editRestrictionsText);
+      } else if (!permission.member.length) {
+        textsTemp.member.text.push(
+          this.getModulePermissions().get('no_access')!
+        );
       } else {
         textsTemp.member.text.push(
           'project_settings.modal_permissions.cannot_edit'
@@ -343,18 +374,22 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       );
       if (restrictions.length) {
         restrictions.forEach((restriction) => {
-          if (!permission.public.includes('create' && 'modify' && 'delete')) {
-            textsTemp.public.restrictions?.push(
-              this.getModalPermissions().get(restriction)!.public
-            );
-          }
+          textsTemp.public.restrictions?.push(
+            this.getModalPermissions().get(restriction)!.public
+          );
+
           textsTemp.member.restrictions?.push(
             this.getModalPermissions().get(restriction)!.member
           );
         });
       }
     }
-    if (onlyInPublicPermission.includes('comment')) {
+
+    // only show can comment if members is not "no_access"
+    if (
+      onlyInPublicPermission.includes('comment') &&
+      permission.member.length
+    ) {
       // comment case
 
       textsTemp.public.text.push(
@@ -364,11 +399,13 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
         'project_settings.roles_permissions.cannot_comment'
       );
     }
+
     if (onlyInPublicPermission.every((it) => it === 'view')) {
       // view case
       textsTemp.public.text.push(this.getModulePermissions().get('view')!);
       textsTemp.member.text.push(this.getModulePermissions().get('no_access')!);
     }
+
     return textsTemp;
   }
 

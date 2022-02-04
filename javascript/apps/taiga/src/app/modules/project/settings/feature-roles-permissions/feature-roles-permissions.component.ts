@@ -239,6 +239,10 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
       if (!currentPermissions[module]) {
         fb.disable();
+      } else if (module === 'sprints' && !currentPermissions.userstories) {
+        fb.disable();
+      } else if (module === 'tasks' && !currentPermissions.userstories) {
+        fb.disable();
       }
     }
     roleGroup.patchValue(currentPermissions);

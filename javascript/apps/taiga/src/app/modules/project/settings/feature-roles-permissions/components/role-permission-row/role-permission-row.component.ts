@@ -61,6 +61,7 @@ export class RolePermissionRowComponent implements OnChanges {
     if (changes.formGroup) {
       this.formGroup.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.refreshPermission();
+        this.checkRestrictions();
       });
 
       this.refreshPermission();
@@ -81,6 +82,26 @@ export class RolePermissionRowComponent implements OnChanges {
     this.permissionRowModel.toString = function () {
       return this.value;
     };
+  }
+
+  public checkRestrictions() {
+    const userstoriesState =
+      this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
+        this.getModuleFormGroup('userstories')
+      );
+
+    if (userstoriesState === 'no_access') {
+      this.projectsSettingsFeatureRolesPermissionsService.applyPermission(
+        'tasks',
+        'no_access',
+        this.getModuleFormGroup('tasks')
+      );
+      this.projectsSettingsFeatureRolesPermissionsService.applyPermission(
+        'sprints',
+        'no_access',
+        this.getModuleFormGroup('sprints')
+      );
+    }
   }
 
   public moduleVisible(module: Module) {

@@ -120,6 +120,52 @@
 			]
 		},
 		{
+			"name": "users",
+			"item": [
+				{
+					"name": "users me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users/me",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "workspaces",
 			"item": [
 				{
@@ -251,52 +297,6 @@
 								"workspaces",
 								"{{ws-slug}}",
 								"projects"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "users",
-			"item": [
-				{
-					"name": "users me",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users/me",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"users",
-								"me"
 							]
 						}
 					},

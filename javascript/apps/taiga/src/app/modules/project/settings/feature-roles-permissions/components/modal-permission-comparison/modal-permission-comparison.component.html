@@ -16,7 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         t('project_settings.modal_permissions.potential_permission_conflicts')
       }}
     </h2>
-    <div id="permission-table">
+    <div id="permission-table" class="permission-table">
       <p
         class="explanation"
         [innerHtml]="
@@ -162,11 +162,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </tbody>
         </table>
       </ng-container>
-      <div class="btn-wrapper">
-        <button tuiButton (click)="close()" appearance="primary">
-          {{ t('project_settings.modal_permissions.close') }}
-        </button>
-      </div>
+    </div>
+    <div class="btn-wrapper">
+      <button tuiButton (click)="close()" appearance="primary">
+        {{ t('project_settings.modal_permissions.close') }}
+      </button>
     </div>
   </div>
 </ng-container>

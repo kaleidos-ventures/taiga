@@ -17,7 +17,6 @@ from taiga.permissions import services as permissions_services
 from taiga.projects import repositories as projects_repo
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repo
-from taiga.roles import services as roles_services
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
@@ -58,11 +57,10 @@ async def create_project(
     )
 
     # assign the owner to the project as the default owner role (should be 'admin')
-    owner_role = await roles_services.get_project_role(project=project, slug=template.default_owner_role)
+    owner_role = await roles_repo.get_project_role(project=project, slug=template.default_owner_role)
     if not owner_role:
         owner_role = await roles_repo.get_first_role(project=project)
 
-    owner = await projects_repo.get_project_owner(project)
     await roles_repo.create_membership(user=owner, project=project, role=owner_role, email=None)
 
     return project

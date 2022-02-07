@@ -27,27 +27,30 @@ async def test_create_project():
 
     with patch("taiga.projects.services.projects_repo", new_callable=AsyncMock) as fake_project_repository, patch(
         "taiga.projects.services.roles_repo", new_callable=AsyncMock
-    ) as fake_role_repository, patch(
-        "taiga.projects.services.roles_services", new_callable=AsyncMock
-    ) as fake_role_services:
+    ) as fake_role_repository:
         fake_project_repository.create_project.return_value = await f.create_project()
 
         await services.create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
 
         fake_project_repository.create_project.assert_awaited_once()
         fake_project_repository.get_template.assert_awaited_once()
-        fake_role_services.get_project_role.assert_awaited_once()
+        fake_role_repository.get_project_role.assert_awaited_once()
         fake_role_repository.create_membership.assert_awaited_once()
 
 
 async def test_create_project_with_logo():
+    template = await f.create_project_template()
     workspace = await f.create_workspace()
+    project = await f.create_project(workspace=workspace)
+    role = await f.create_role(project=project)
     logo: UploadFile = valid_image_upload_file
 
     with patch("taiga.projects.services.projects_repo", new_callable=AsyncMock) as fake_project_repository, patch(
         "taiga.projects.services.roles_repo", new_callable=AsyncMock
-    ):
-        fake_project_repository.create_project.return_value = await f.create_project()
+    ) as fake_roles_repository:
+        fake_project_repository.get_template.return_value = template
+        fake_project_repository.create_project.return_value = project
+        fake_roles_repository.get_project_role.return_value = role
 
         await services.create_project(
             workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=logo

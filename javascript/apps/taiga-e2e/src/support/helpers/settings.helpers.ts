@@ -32,9 +32,39 @@ export const displayAdvancedSettingsForRole = (index: number) => {
   });
 };
 
+export const hideAdvancedSettingsForRole = (index: number) => {
+  cy.getBySel('member-permissions-settings').within(() => {
+    cy.getBySel('permission-row-advanced-settings').should(
+      'have.attr',
+      'aria-expanded',
+      'true'
+    );
+    cy.getBySel('role-permission-row')
+      .eq(index)
+      .within(() => {
+        cy.getBySel('permission-row-advanced-settings').click();
+      });
+  });
+};
+
 export const displayPublicAdvancedSettingsForRole = (index: number) => {
   cy.getBySel('public-permissions-settings').within(() => {
     cy.getBySel('role-permission-row').should('be.visible');
+    cy.getBySel('role-permission-row')
+      .eq(index)
+      .within(() => {
+        cy.getBySel('permission-row-advanced-settings').click();
+      });
+  });
+};
+
+export const hidePublicAdvancedSettingsForRole = (index: number) => {
+  cy.getBySel('public-permissions-settings').within(() => {
+    cy.getBySel('permission-row-advanced-settings').should(
+      'have.attr',
+      'aria-expanded',
+      'true'
+    );
     cy.getBySel('role-permission-row')
       .eq(index)
       .within(() => {
@@ -95,5 +125,34 @@ export const toggleCanCommentPermission = (index: number) => {
     .eq(index)
     .within(() => {
       cy.getBySel('permission-can-comment-switch').click();
+    });
+};
+
+export const openConflictsModal = () => {
+  cy.getBySel('conflicts-notification').should('be.visible');
+  cy.getBySel('open-conflicts-modal').click();
+  cy.getBySel('conflicts-permission-modal').should('be.visible');
+  cy.tgCheckA11y();
+};
+
+export const closeConflictsModal = () => {
+  cy.getBySel('conflicts-permission-modal').should('be.visible');
+  cy.getBySel('close-conflicts-modal').click();
+  cy.getBySel('conflicts-notification').should('be.visible');
+};
+
+export const checkConflictTableText = (
+  memberText: string,
+  publicText: string
+) => {
+  cy.getBySel('comparisson-table')
+    .eq(0)
+    .within(() => {
+      cy.getBySel('member-conflict').should('contain.text', memberText);
+    });
+  cy.getBySel('comparisson-table')
+    .eq(0)
+    .within(() => {
+      cy.getBySel('public-conflict').should('contain.text', publicText);
     });
 };

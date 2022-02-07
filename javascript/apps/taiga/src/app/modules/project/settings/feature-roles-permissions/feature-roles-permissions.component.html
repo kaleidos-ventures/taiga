@@ -115,9 +115,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </tg-role-permission-row>
         <tg-ui-notification-inline
           *ngIf="vm.conflicts.length"
-          [status]="'info'">
+          [status]="'info'"
+          data-test="conflicts-notification">
           <span>{{ t('project_settings.external_members') }}</span>
-          <button class="link" tuiLink (click)="handleModal()">
+          <button
+            class="link"
+            tuiLink
+            (click)="handleModal()"
+            data-test="open-conflicts-modal">
             {{ t('project_settings.see_more') }}
           </button>
         </tg-ui-notification-inline>

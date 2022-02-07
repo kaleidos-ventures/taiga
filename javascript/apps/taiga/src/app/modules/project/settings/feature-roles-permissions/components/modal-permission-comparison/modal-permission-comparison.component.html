@@ -8,6 +8,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t">
   <div
+    data-test="conflicts-permission-modal"
     aria-describedby="permission-table"
     aria-labeledby="permissions-comparison"
     class="modal-wrapper">
@@ -34,6 +35,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           }}
         </h3>
         <table
+          data-test="comparisson-table"
           class="comparisson-table"
           [ngClass]="{ last: last }"
           *ngFor="
@@ -81,13 +83,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   [attr.aria-controls]="
                     getParam(conflict.name, module.name, 'member', idx)
                   "
+                  data-test="member-restrictions-btn"
                   type="button"
                   (click)="
                     handleDropdown(
                       getParam(conflict.name, module.name, 'member', idx)
                     )
                   ">
-                  <span class="text highlight" [innerHtml]="t(text)"></span>
+                  <span
+                    class="text highlight"
+                    [innerHtml]="t(text)"
+                    data-test="member-conflict"></span>
                   <tui-svg
                     class="chevron"
                     [src]="
@@ -111,6 +117,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   "
                   class="restriction-list">
                   <li
+                    data-test="restriction-element"
                     class="restriction-element"
                     *ngFor="
                       let restriction of conflict.texts.member.restrictions;
@@ -121,7 +128,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </ul>
               </td>
               <ng-template #member>
-                <td scope="row" class="text" [innerHtml]="t(text)"></td>
+                <td
+                  scope="row"
+                  class="text"
+                  [innerHtml]="t(text)"
+                  data-test="member-conflict"></td>
               </ng-template>
 
               <td
@@ -140,6 +151,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   [attr.aria-controls]="
                     getParam(conflict.name, module.name, 'public', idx)
                   "
+                  data-test="public-restrictions-btn"
                   type="button"
                   (click)="
                     handleDropdown(
@@ -148,7 +160,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   ">
                   <span
                     class="text highlight"
-                    [innerHtml]="t(conflict.texts.public.text[idx])"></span>
+                    [innerHtml]="t(conflict.texts.public.text[idx])"
+                    data-test="public-conflict"></span>
                   <tui-svg
                     class="chevron"
                     [src]="
@@ -176,7 +189,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                       let restriction of conflict.texts.public.restrictions;
                       trackBy: trackByIndex
                     "
-                    class="restriction-element">
+                    class="restriction-element"
+                    data-test="restriction-element">
                     {{ t(restriction) }}
                   </li>
                 </ul>
@@ -184,17 +198,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <ng-template #public>
                 <td
                   class="text"
-                  [innerHtml]="t(conflict.texts.public.text[idx])"></td>
+                  [innerHtml]="t(conflict.texts.public.text[idx])"
+                  data-test="public-conflict"></td>
               </ng-template>
             </tr>
           </tbody>
         </table>
       </ng-container>
-    </div>
-    <div class="btn-wrapper">
-      <button tuiButton (click)="close()" appearance="primary">
-        {{ t('project_settings.modal_permissions.close') }}
-      </button>
+      <div class="btn-wrapper">
+        <button
+          data-test="close-conflicts-modal"
+          tuiButton
+          (click)="close()"
+          appearance="primary">
+          {{ t('project_settings.modal_permissions.close') }}
+        </button>
+      </div>
     </div>
   </div>
 </ng-container>

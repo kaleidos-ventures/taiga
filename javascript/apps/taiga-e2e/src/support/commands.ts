@@ -104,7 +104,7 @@ function getBySelLike(selector: string, options?: CyGetOptions[1]) {
 
 Cypress.Commands.add('getBySelLike', getBySelLike);
 
-function login(username = 'admin', password = '123123') {
+function login(username = 'user1', password = '123123') {
   cy.session([username, password], () => {
     cy.visit('/login');
     cy.getBySel('username').type(username);

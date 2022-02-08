@@ -4,7 +4,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-from collections.abc import Iterable
 from functools import partial
 from typing import Optional, Union
 
@@ -21,11 +20,11 @@ from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 
-async def get_projects(workspace_slug: str) -> Iterable[Project]:
+async def get_projects(workspace_slug: str) -> list[Project]:
     return await projects_repo.get_projects(workspace_slug=workspace_slug)
 
 
-async def get_workspace_projects_for_user(workspace: Workspace, user: User) -> Iterable[Project]:
+async def get_workspace_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
     if await roles_repo.is_workspace_admin(user_id=user.id, workspace_id=workspace.id):
         return await get_projects(workspace_slug=workspace.slug)
 

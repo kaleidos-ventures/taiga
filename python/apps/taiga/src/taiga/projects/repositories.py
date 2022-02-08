@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from collections.abc import Iterable
 from typing import Optional
 
 from asgiref.sync import sync_to_async
@@ -17,14 +16,14 @@ from taiga.workspaces.models import Workspace
 
 
 @sync_to_async
-def get_projects(workspace_slug: str) -> Iterable[Project]:
+def get_projects(workspace_slug: str) -> list[Project]:
     return list(
         Project.objects.prefetch_related("workspace").filter(workspace__slug=workspace_slug).order_by("-created_date")
     )
 
 
 @sync_to_async
-def get_workspace_projects_for_user(workspace_id: int, user_id: int) -> Iterable[Project]:
+def get_workspace_projects_for_user(workspace_id: int, user_id: int) -> list[Project]:
     # projects of a workspace where:
     # - the user is not pj-member but the project allows to ws-members
     # - the user is pj-member and the role has access (has at least 1 permission)

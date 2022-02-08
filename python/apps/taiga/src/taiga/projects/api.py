@@ -47,7 +47,7 @@ UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 )
 async def list_workspace_projects(
     request: Request, workspace_slug: str = Query("", description="the workspace slug (str)")
-) -> list[ProjectSerializer]:
+) -> list[Project]:
     """
     List projects of a workspace visible by the user.
     """
@@ -55,8 +55,7 @@ async def list_workspace_projects(
 
     await check_permissions(permissions=LIST_WORKSPACE_PROJECTS, user=request.user, obj=workspace)
 
-    projects = await projects_services.get_workspace_projects_for_user(workspace=workspace, user=request.user)
-    return ProjectSerializer.from_queryset(projects)
+    return await projects_services.get_workspace_projects_for_user(workspace=workspace, user=request.user)
 
 
 @router.post(
@@ -69,7 +68,7 @@ async def list_workspace_projects(
 async def create_project(
     request: Request,
     form: ProjectValidator = Depends(ProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
-) -> ProjectSerializer:
+) -> Project:
     """
     Create project for the logged user in a given workspace.
     """
@@ -77,7 +76,7 @@ async def create_project(
 
     await check_permissions(permissions=CREATE_PROJECT, user=request.user, obj=workspace)
 
-    project = await projects_services.create_project(
+    return await projects_services.create_project(
         workspace=workspace,
         name=form.name,
         description=form.description,
@@ -85,8 +84,6 @@ async def create_project(
         owner=request.user,
         logo=form.logo,
     )
-
-    return ProjectSerializer.from_orm(project)
 
 
 @router.get(
@@ -96,16 +93,15 @@ async def create_project(
     response_model=ProjectSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def get_project(
-    request: Request, slug: str = Query("", description="the project slug (str)")
-) -> ProjectSerializer:
+async def get_project(request: Request, slug: str = Query("", description="the project slug (str)")) -> Project:
     """
     Get project detail by slug.
     """
 
     project = await get_project_or_404(slug)
     await check_permissions(permissions=GET_PROJECT, user=request.user, obj=project)
-    return ProjectSerializer.from_orm(project)
+
+    return project
 
 
 @router.get(

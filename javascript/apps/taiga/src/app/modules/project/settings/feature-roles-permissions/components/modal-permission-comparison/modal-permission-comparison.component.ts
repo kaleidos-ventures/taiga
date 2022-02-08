@@ -34,8 +34,15 @@ export class ModalPermissionComparisonComponent {
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService
   ) {}
 
-  public getParam(name: string, type: string, idx: number) {
-    return `${name}${type}${idx}`.replace(/\s/g, '').toLocaleLowerCase();
+  public getParam(
+    conflictName: string,
+    moduleName: string,
+    type: string,
+    idx: number
+  ) {
+    return `${conflictName}${moduleName}${type}${idx}`
+      .replace(/\s/g, '')
+      .toLocaleLowerCase();
   }
 
   public isRestricted(text: string) {

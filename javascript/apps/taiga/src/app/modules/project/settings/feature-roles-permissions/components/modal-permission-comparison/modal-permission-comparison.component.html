@@ -74,18 +74,26 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <button
                   class="restrictions-btn"
                   [attr.aria-expanded]="
-                    dropdown[getParam(module.name, 'member', idx)]
+                    dropdown[
+                      getParam(conflict.name, module.name, 'member', idx)
+                    ]
                   "
-                  [attr.aria-controls]="getParam(module.name, 'member', idx)"
+                  [attr.aria-controls]="
+                    getParam(conflict.name, module.name, 'member', idx)
+                  "
                   type="button"
                   (click)="
-                    handleDropdown(getParam(module.name, 'member', idx))
+                    handleDropdown(
+                      getParam(conflict.name, module.name, 'member', idx)
+                    )
                   ">
                   <span class="text highlight" [innerHtml]="t(text)"></span>
                   <tui-svg
                     class="chevron"
                     [src]="
-                      dropdown[getParam(module.name, 'member', idx)]
+                      dropdown[
+                        getParam(conflict.name, module.name, 'member', idx)
+                      ]
                         ? 'chevron-up'
                         : 'chevron-down'
                     ">
@@ -93,8 +101,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </button>
 
                 <ul
-                  *ngIf="dropdown[getParam(module.name, 'member', idx)]"
-                  [attr.id]="getParam(module.name, 'member', idx)"
+                  *ngIf="
+                    dropdown[
+                      getParam(conflict.name, module.name, 'member', idx)
+                    ]
+                  "
+                  [attr.id]="
+                    getParam(conflict.name, module.name, 'member', idx)
+                  "
                   class="restriction-list">
                   <li
                     class="restriction-element"
@@ -119,12 +133,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <button
                   class="restrictions-btn"
                   [attr.aria-expanded]="
-                    dropdown[getParam(module.name, 'public', idx)]
+                    dropdown[
+                      getParam(conflict.name, module.name, 'public', idx)
+                    ]
                   "
-                  [attr.aria-controls]="getParam(module.name, 'public', idx)"
+                  [attr.aria-controls]="
+                    getParam(conflict.name, module.name, 'public', idx)
+                  "
                   type="button"
                   (click)="
-                    handleDropdown(getParam(module.name, 'public', idx))
+                    handleDropdown(
+                      getParam(conflict.name, module.name, 'public', idx)
+                    )
                   ">
                   <span
                     class="text highlight"
@@ -132,7 +152,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   <tui-svg
                     class="chevron"
                     [src]="
-                      dropdown[getParam(module.name, 'public', idx)]
+                      dropdown[
+                        getParam(conflict.name, module.name, 'public', idx)
+                      ]
                         ? 'chevron-up'
                         : 'chevron-down'
                     ">
@@ -140,8 +162,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </button>
 
                 <ul
-                  *ngIf="dropdown[getParam(module.name, 'public', idx)]"
-                  [attr.id]="getParam(module.name, 'public', idx)"
+                  *ngIf="
+                    dropdown[
+                      getParam(conflict.name, module.name, 'public', idx)
+                    ]
+                  "
+                  [attr.id]="
+                    getParam(conflict.name, module.name, 'public', idx)
+                  "
                   class="restriction-list">
                   <li
                     *ngFor="

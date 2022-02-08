@@ -22,10 +22,9 @@ Install all the tooling with:
 ### Enable pre-commit
 
 To enable pre-commit git hooks run:
-
-```bash
-(taiga)$ pre-commit install --install-hooks
-```
+   ```bash
+   (taiga)$ pre-commit install --install-hooks
+   ```
 
 > NOTE: You can execute all pre-commit hooks **when this setup process is complete** with:
 >

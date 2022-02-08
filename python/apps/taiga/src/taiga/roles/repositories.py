@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
+from typing import Final, Optional
 
 from asgiref.sync import sync_to_async
 from django.db.models import Count
@@ -136,6 +136,30 @@ def is_workspace_admin(user_id: int, workspace_id: int) -> bool:
     return WorkspaceMembership.objects.filter(
         user_id=user_id, workspace_id=workspace_id, workspace_role__is_admin=True
     ).exists()
+
+
+WS_ROLE_NAME_ADMIN: Final = "admin"
+WS_ROLE_NAME_MEMBER: Final = "member"
+WS_ROLE_NAME_GUEST: Final = "guest"
+WS_ROLE_NAME_NONE: Final = "none"
+
+
+@sync_to_async
+def get_user_workspace_role_name(workspace_id: int, user_id: int) -> str:
+    try:
+        membership = WorkspaceMembership.objects.select_related("workspace_role").get(
+            workspace_id=workspace_id, user_id=user_id
+        )
+
+        if membership.workspace_role.is_admin:
+            return WS_ROLE_NAME_ADMIN
+        else:
+            return WS_ROLE_NAME_MEMBER
+    except WorkspaceMembership.DoesNotExist:
+        if Membership.objects.filter(user_id=user_id, project__workspace_id=workspace_id).exists():
+            return WS_ROLE_NAME_GUEST
+        else:
+            return WS_ROLE_NAME_NONE
 
 
 @sync_to_async

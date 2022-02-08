@@ -14,7 +14,7 @@ from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm
 from taiga.workspaces import services as workspaces_services
 from taiga.workspaces.models import Workspace
-from taiga.workspaces.serializers import WorkspaceSerializer, WorkspaceSummarySerializer
+from taiga.workspaces.serializers import WorkspaceDetailSerializer, WorkspaceSerializer
 from taiga.workspaces.validators import WorkspaceValidator
 
 metadata = {
@@ -33,14 +33,13 @@ GET_WORKSPACE = HasPerm("view_workspace")
     "/workspaces",
     name="my.workspaces.projects.list",
     summary="List my workspaces's projects",
-    response_model=list[WorkspaceSummarySerializer],
+    response_model=list[WorkspaceDetailSerializer],
 )
-async def list_my_workspaces(request: Request) -> list[WorkspaceSummarySerializer]:
+async def list_my_workspaces(request: Request) -> list[Workspace]:
     """
     List the workspaces of the logged user.
     """
-    workspaces = await workspaces_services.get_user_workspaces_with_latest_projects(user=request.user)
-    return WorkspaceSummarySerializer.from_queryset(workspaces)
+    return await workspaces_services.get_user_workspaces_with_latest_projects(user=request.user)
 
 
 @router.post(
@@ -50,12 +49,12 @@ async def list_my_workspaces(request: Request) -> list[WorkspaceSummarySerialize
     response_model=WorkspaceSerializer,
     responses=ERROR_422 | ERROR_403,
 )
-async def create_workspace(form: WorkspaceValidator, request: Request) -> WorkspaceSerializer:
+async def create_workspace(form: WorkspaceValidator, request: Request) -> Workspace:
     """
     Create a new workspace for the logged user.
     """
     workspace = await workspaces_services.create_workspace(name=form.name, color=form.color, owner=request.user)
-    return WorkspaceSerializer.from_orm(workspace)
+    return await workspaces_services.get_workspace_detail(id=workspace.id, user_id=request.user.id)
 
 
 @router.get(
@@ -65,15 +64,13 @@ async def create_workspace(form: WorkspaceValidator, request: Request) -> Worksp
     response_model=WorkspaceSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def get_workspace(
-    request: Request, slug: str = Query("", description="the workspace slug(str)")
-) -> WorkspaceSerializer:
+async def get_workspace(request: Request, slug: str = Query("", description="the workspace slug(str)")) -> Workspace:
     """
     Get workspace detail by slug.
     """
     workspace = await get_workspace_or_404(slug=slug)
     await check_permissions(permissions=GET_WORKSPACE, user=request.user, obj=workspace)
-    return WorkspaceSerializer.from_orm(workspace)
+    return await workspaces_services.get_workspace_detail(id=workspace.id, user_id=request.user.id)
 
 
 async def get_workspace_or_404(slug: str) -> Workspace:

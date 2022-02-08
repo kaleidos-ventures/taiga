@@ -8,7 +8,7 @@ from taiga.base.serializer import BaseModel
 from taiga.projects.serializers.related import ProjectSummarySerializer
 
 
-class WorkspaceSummarySerializer(BaseModel):
+class WorkspaceDetailSerializer(BaseModel):
     name: str
     slug: str
     color: int
@@ -28,6 +28,10 @@ class WorkspaceSerializer(BaseModel):
     slug: str
     color: int
     is_premium: bool
+    total_projects: int
+    has_projects: bool
+    my_role: str
+    is_owner: bool
 
     class Config:
         orm_mode = True

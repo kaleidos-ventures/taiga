@@ -5,19 +5,19 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from collections.abc import Iterable
 from itertools import chain
 from typing import Optional
 
 from asgiref.sync import sync_to_async
-from django.db.models import BooleanField, CharField, IntegerField, Prefetch, Q, Value
+from django.db.models import BooleanField, Case, CharField, Exists, IntegerField, OuterRef, Prefetch, Q, Value, When
 from taiga.projects.models import Project
+from taiga.roles import repositories as roles_ropositories
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 
 @sync_to_async
-def get_user_workspaces_with_latest_projects(user: User) -> Iterable[Workspace]:
+def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
     # workspaces where the user is ws-admin with all its projects
     admin_ws_ids = list(
         Workspace.objects.filter(
@@ -129,6 +129,46 @@ def create_workspace(name: str, color: int, owner: User) -> Workspace:
 def get_workspace(slug: str) -> Optional[Workspace]:
     try:
         return Workspace.objects.get(slug=slug)
+    except Workspace.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def _get_total_user_projects(workspace_id: int, user_id: int) -> int:
+    ws_admin = Q(workspace__workspace_memberships__user_id=user_id) & Q(
+        workspace__workspace_memberships__workspace_role__is_admin=True
+    )
+    ws_member_allowed = (
+        Q(workspace__workspace_memberships__user_id=user_id)
+        & ~Q(memberships__user_id=user_id)
+        & Q(workspace_member_permissions__len__gt=0)
+    )
+    pj_member_allowed = Q(memberships__user_id=user_id) & Q(memberships__role__permissions__len__gt=0)
+
+    return (
+        Project.objects.filter(workspace_id=workspace_id)
+        .filter(ws_admin | ws_member_allowed | pj_member_allowed)
+        .distinct()
+        .count()
+    )
+
+
+async def get_workspace_detail(id: int, user_id: int) -> Workspace:
+    user_workspace_role_name = await roles_ropositories.get_user_workspace_role_name(workspace_id=id, user_id=user_id)
+    user_projects_count = await _get_total_user_projects(workspace_id=id, user_id=user_id)
+
+    qs = (
+        Workspace.objects.annotate(total_projects=Value(user_projects_count, output_field=IntegerField()))
+        .annotate(has_projects=Exists(Project.objects.filter(workspace=OuterRef("pk"))))
+        .annotate(
+            is_owner=Case(When(owner_id=user_id, then=Value(True)), default=Value(False), output_field=BooleanField())
+        )
+        .annotate(my_role=Value(user_workspace_role_name, output_field=CharField()))
+        .get
+    )
+
+    try:
+        return await sync_to_async(qs)(id=id)
     except Workspace.DoesNotExist:
         return None
 

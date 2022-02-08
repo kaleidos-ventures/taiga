@@ -5,8 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from collections.abc import Iterable
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from humps import camelize
 from pydantic import BaseModel as _BaseModel
@@ -19,7 +18,3 @@ class BaseModel(_BaseModel):
     class Config:
         alias_generator = camelize
         allow_population_by_field_name = True
-
-    @classmethod
-    def from_queryset(cls: type["Model"], qs: Iterable[Any]) -> list["Model"]:
-        return [super(BaseModel, cls).from_orm(obj) for obj in qs]

@@ -48,8 +48,7 @@ async def get_project_roles(
 
     project = await get_project_or_404(slug)
     await check_permissions(permissions=GET_PROJECT_ROLES, user=request.user, obj=project)
-    roles = await roles_services.get_project_roles(project=project)
-    return roles
+    return await roles_services.get_project_roles(project=project)
 
 
 @router.put(

@@ -8,6 +8,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
+.modal-wrapper {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+
+  /* Required container height to allow grid children to overflow */
+
+  /* Custom properties inherit from modal parent (height - padding(top and bottom) */
+  max-block-size: calc(var(--modal-max-height) - (2 * var(--modal-padding)));
+}
+
 .modal-title {
   @mixin font-heading-3;
 
@@ -19,6 +29,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .permission-table {
   max-block-size: 65vh;
+  margin-block-end: var(--spacing-32);
   overflow-y: auto;
 }
 

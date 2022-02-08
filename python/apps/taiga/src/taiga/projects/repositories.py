@@ -58,7 +58,7 @@ def create_project(
 @sync_to_async
 def get_project(slug: str) -> Optional[Project]:
     try:
-        return Project.objects.get(slug=slug)
+        return Project.objects.prefetch_related("workspace").get(slug=slug)
     except Project.DoesNotExist:
         return None
 

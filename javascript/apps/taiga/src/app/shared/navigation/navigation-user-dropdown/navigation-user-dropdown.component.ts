@@ -7,6 +7,8 @@
  */
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { User } from '@taiga/data';
+import { Store } from '@ngrx/store';
+import { logout } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 
 @Component({
   selector: 'tg-navigation-user-dropdown',
@@ -17,4 +19,10 @@ import { User } from '@taiga/data';
 export class NavigationUserDropdownComponent {
   @Input()
   public user!: User;
+
+  constructor(private store: Store) {}
+
+  public logout() {
+    this.store.dispatch(logout());
+  }
 }

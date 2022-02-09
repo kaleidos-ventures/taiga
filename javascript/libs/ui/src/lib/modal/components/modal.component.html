@@ -7,15 +7,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <div #domPortalContent>
-  <div *ngIf="open" class="modal-wrapper">
-    <div class="modal-content">
-      <ng-content></ng-content>
+  <ng-container *transloco="let t">
+    <div *ngIf="open" class="modal-wrapper">
+      <div class="modal-content">
+        <ng-content></ng-content>
+      </div>
+      <button
+        class="close"
+        tuiIconButton
+        appearance="us-header-button"
+        icon="close"
+        type="button"
+        (click)="close()">
+        <span class="visually-hidden">{{ t('commons.close_modal') }}</span>
+      </button>
     </div>
-    <button
-      class="close"
-      tuiIconButton
-      appearance="us-header-button"
-      icon="close"
-      (click)="close()"></button>
-  </div>
+  </ng-container>
 </div>

@@ -13,9 +13,10 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { ModalComponent } from './components/modal.component';
 import { ModalService } from './services/modal.service';
 import { TuiButtonModule } from '@taiga-ui/core';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @NgModule({
-  imports: [CommonModule, OverlayModule, TuiButtonModule],
+  imports: [CommonModule, OverlayModule, TuiButtonModule, TranslocoModule],
   declarations: [ModalComponent],
   providers: [ModalService],
   exports: [ModalComponent],

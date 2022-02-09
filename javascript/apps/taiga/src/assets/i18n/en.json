@@ -19,6 +19,7 @@
     "workspace": "Workspace",
     "back": "Back",
     "optional": "Optional",
+    "close_modal": "Close modal",
     "confirmation_modal": {
       "yes": "Yes, quit",
       "no": "No, keep editing"

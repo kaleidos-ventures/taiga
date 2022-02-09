@@ -257,4 +257,269 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
       },
     });
   });
+
+  it('conflicts permissions: no conflicts between member and public', () => {
+    const publicPermissions: any = {
+      userstories: {
+        view: true,
+        comment: true,
+      },
+    };
+    const memberPermissions: any = {
+      userstories: {
+        view: true,
+        comment: true,
+      },
+    };
+    const value = spectator.service.getConflictsPermissions(
+      publicPermissions,
+      memberPermissions
+    );
+    expect(value).toBeUndefined();
+  });
+
+  it('conflicts permissions: member(no-access) and public(view)', () => {
+    const publicPermissions: any = {
+      userstories: {
+        view: true,
+      },
+    };
+    const memberPermissions: any = {};
+    const value: any = spectator.service.getConflictsPermissions(
+      publicPermissions,
+      memberPermissions
+    )?.[0];
+    const expectedValue = {
+      name: 'userstories',
+      permission: {
+        member: [],
+        onlyPublicPermission: ['view'],
+        public: ['view'],
+      },
+      texts: {
+        member: {
+          restrictions: [],
+          text: ['project_settings.roles_permissions.no_access'],
+        },
+        public: {
+          restrictions: [],
+          text: ['project_settings.roles_permissions.can_view'],
+        },
+      },
+    };
+    expect(value?.name).toEqual(expectedValue.name);
+    expect(value?.permission.member).toEqual(
+      expect.arrayContaining(expectedValue.permission.member)
+    );
+    expect(value?.permission.onlyPublicPermission).toEqual(
+      expect.arrayContaining(expectedValue.permission.onlyPublicPermission)
+    );
+    expect(value?.permission.public).toEqual(
+      expect.arrayContaining(expectedValue.permission.public)
+    );
+    expect(value?.texts.member.restrictions).toEqual(
+      expect.arrayContaining(expectedValue.texts.member.restrictions)
+    );
+    expect(value?.texts.member.text).toEqual(
+      expect.arrayContaining(expectedValue.texts.member.text)
+    );
+    expect(value?.texts.public.restrictions).toEqual(
+      expect.arrayContaining(expectedValue.texts.public.restrictions)
+    );
+    expect(value?.texts.public.text).toEqual(
+      expect.arrayContaining(expectedValue.texts.public.text)
+    );
+  });
+
+  it('conflicts permissions: member(no-access) and public(view and comment)', () => {
+    const publicPermissions: any = {
+      userstories: {
+        view: true,
+        comment: true,
+      },
+    };
+    const memberPermissions: any = {};
+    const value: any = spectator.service.getConflictsPermissions(
+      publicPermissions,
+      memberPermissions
+    )?.[0];
+    const expectedValue = {
+      name: 'userstories',
+      permission: {
+        member: [],
+        onlyPublicPermission: ['view', 'comment'],
+        public: ['view', 'comment'],
+      },
+      texts: {
+        member: {
+          restrictions: [],
+          text: ['project_settings.roles_permissions.no_access'],
+        },
+        public: {
+          restrictions: [],
+          text: ['project_settings.roles_permissions.can_view'],
+        },
+      },
+    };
+    expect(value?.name).toEqual(expectedValue.name);
+    expect(value?.permission.member).toEqual(
+      expect.arrayContaining(expectedValue.permission.member)
+    );
+    expect(value?.permission.onlyPublicPermission).toEqual(
+      expect.arrayContaining(expectedValue.permission.onlyPublicPermission)
+    );
+    expect(value?.permission.public).toEqual(
+      expect.arrayContaining(expectedValue.permission.public)
+    );
+    expect(value?.texts.member.restrictions).toEqual(
+      expect.arrayContaining(expectedValue.texts.member.restrictions)
+    );
+    expect(value?.texts.member.text).toEqual(
+      expect.arrayContaining(expectedValue.texts.member.text)
+    );
+    expect(value?.texts.public.restrictions).toEqual(
+      expect.arrayContaining(expectedValue.texts.public.restrictions)
+    );
+    expect(value?.texts.public.text).toEqual(
+      expect.arrayContaining(expectedValue.texts.public.text)
+    );
+  });
+
+  it('conflicts permissions: member(view) and public(edit)', () => {
+    const publicPermissions: any = {
+      userstories: {
+        view: true,
+        create: true,
+        delete: true,
+        modify: true,
+        comment: true,
+      },
+    };
+    const memberPermissions: any = {
+      userstories: {
+        view: true,
+      },
+    };
+    const value = spectator.service.getConflictsPermissions(
+      publicPermissions,
+      memberPermissions
+    )?.[0];
+
+    const expectedValue: any = {
+      name: 'userstories',
+      permission: {
+        member: ['view'],
+        onlyPublicPermission: ['create', 'modify', 'delete', 'comment'],
+        public: ['view', 'create', 'modify', 'delete', 'comment'],
+      },
+      texts: {
+        member: {
+          restrictions: [],
+          text: [
+            'project_settings.roles_permissions.can_view',
+            'project_settings.roles_permissions.cannot_comment',
+          ],
+        },
+        public: {
+          restrictions: [],
+          text: [
+            'project_settings.roles_permissions.can_edit',
+            'project_settings.roles_permissions.can_comment',
+          ],
+        },
+      },
+    };
+    expect(value?.name).toEqual(expectedValue.name);
+    expect(value?.permission.member).toEqual(
+      expect.arrayContaining(expectedValue.permission.member)
+    );
+    expect(value?.permission.onlyPublicPermission).toEqual(
+      expect.arrayContaining(expectedValue.permission.onlyPublicPermission)
+    );
+    expect(value?.permission.public).toEqual(
+      expect.arrayContaining(expectedValue.permission.public)
+    );
+    expect(value?.texts.member.restrictions).toEqual(
+      expect.arrayContaining(expectedValue.texts.member.restrictions)
+    );
+    expect(value?.texts.member.text).toEqual(
+      expect.arrayContaining(expectedValue.texts.member.text)
+    );
+    expect(value?.texts.public.restrictions).toEqual(
+      expect.arrayContaining(expectedValue.texts.public.restrictions)
+    );
+    expect(value?.texts.public.text).toEqual(
+      expect.arrayContaining(expectedValue.texts.public.text)
+    );
+  });
+
+  it('conflicts permissions: member(edit but cannot create) and public(edit)', () => {
+    const publicPermissions: any = {
+      userstories: {
+        view: true,
+        create: true,
+        delete: true,
+        modify: true,
+        comment: true,
+      },
+    };
+    const memberPermissions: any = {
+      userstories: {
+        view: true,
+        delete: true,
+        modify: true,
+      },
+    };
+    const value = spectator.service.getConflictsPermissions(
+      publicPermissions,
+      memberPermissions
+    )?.[0];
+
+    const expectedValue: any = {
+      name: 'userstories',
+      permission: {
+        member: ['view', 'modify', 'delete'],
+        onlyPublicPermission: ['create', 'comment'],
+        public: ['view', 'create', 'modify', 'delete', 'comment'],
+      },
+      texts: {
+        member: {
+          restrictions: ['project_settings.modal_permissions.cannot_create'],
+          text: [
+            'project_settings.roles_permissions.restricted',
+            'project_settings.roles_permissions.cannot_comment',
+          ],
+        },
+        public: {
+          restrictions: ['project_settings.modal_permissions.can_create'],
+          text: [
+            'project_settings.roles_permissions.can_edit',
+            'project_settings.roles_permissions.can_comment',
+          ],
+        },
+      },
+    };
+    expect(value?.name).toEqual(expectedValue.name);
+    expect(value?.permission.member).toEqual(
+      expect.arrayContaining(expectedValue.permission.member)
+    );
+    expect(value?.permission.onlyPublicPermission).toEqual(
+      expect.arrayContaining(expectedValue.permission.onlyPublicPermission)
+    );
+    expect(value?.permission.public).toEqual(
+      expect.arrayContaining(expectedValue.permission.public)
+    );
+    expect(value?.texts.member.restrictions).toEqual(
+      expect.arrayContaining(expectedValue.texts.member.restrictions)
+    );
+    expect(value?.texts.member.text).toEqual(
+      expect.arrayContaining(expectedValue.texts.member.text)
+    );
+    expect(value?.texts.public.restrictions).toEqual(
+      expect.arrayContaining(expectedValue.texts.public.restrictions)
+    );
+    expect(value?.texts.public.text).toEqual(
+      expect.arrayContaining(expectedValue.texts.public.text)
+    );
+  });
 });

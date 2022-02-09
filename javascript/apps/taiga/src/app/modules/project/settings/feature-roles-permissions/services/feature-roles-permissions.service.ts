@@ -400,7 +400,11 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       );
     }
 
-    if (onlyInPublicPermission.every((it) => it === 'view')) {
+    if (
+      onlyInPublicPermission.every((it) => it === 'view') ||
+      (onlyInPublicPermission.includes('view') &&
+        onlyInPublicPermission.includes('comment'))
+    ) {
       // view case
       textsTemp.public.text.push(this.getModulePermissions().get('view')!);
       textsTemp.member.text.push(this.getModulePermissions().get('no_access')!);

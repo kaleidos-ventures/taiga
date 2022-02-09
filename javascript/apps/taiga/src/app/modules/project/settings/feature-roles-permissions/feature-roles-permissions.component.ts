@@ -13,6 +13,8 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
+  QueryList,
+  ViewChildren,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -20,7 +22,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState, selectSlice } from '@rx-angular/state';
 import { Project, Role } from '@taiga/data';
-import { auditTime, filter, map, take } from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
+import {
+  auditTime,
+  filter,
+  map,
+  switchMap,
+  take,
+  withLatestFrom,
+} from 'rxjs/operators';
 import {
   updateRolePermissions,
   updatePublicPermissions,
@@ -34,7 +44,7 @@ import {
   selectPublicPermissions,
   selectWorkspacePermissions,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { filterNil } from '~/app/shared/utils/operators';
+import { filterNil, filterFalsy } from '~/app/shared/utils/operators';
 import { ModuleConflictPermission } from './models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
 
@@ -52,16 +62,19 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from './services/featu
 export class ProjectSettingsFeatureRolesPermissionsComponent
   implements AfterViewInit, OnInit, OnDestroy
 {
+  @ViewChildren('fragment')
+  public fragments!: QueryList<ElementRef>;
+
   public readonly model$ = this.state.select().pipe(
     map((model) => {
       const admin = model.memberRoles?.find((it) => it.isAdmin);
-
       return {
         ...model,
         admin,
       };
     })
   );
+
   public isModalOpen = false;
 
   public form = this.fb.group({});
@@ -140,8 +153,8 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   }
 
   public ngAfterViewInit() {
-    this.watchFragment();
     this.initForm();
+    this.watchFragment();
   }
 
   public initForm() {
@@ -297,18 +310,58 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   }
 
   public watchFragment() {
-    this.route.fragment.pipe(take(1)).subscribe((fragment) => {
-      if (!fragment) {
-        fragment = this.defaultFragment;
-      }
+    // initial fragment
+    this.fragments.changes
+      .pipe(
+        untilDestroyed(this),
+        withLatestFrom(this.state.select('project')),
+        map(([, project]) => {
+          if (project.workspace.isPremium && this.fragments.length === 3) {
+            return true;
+          } else if (
+            !project.workspace.isPremium &&
+            this.fragments.length === 2
+          ) {
+            return true;
+          }
 
-      if (fragment !== this.defaultFragment) {
+          return false;
+        }),
+        filterFalsy(),
+        switchMap(() => this.route.fragment.pipe(filterNil())),
+        take(1)
+      )
+      .subscribe((fragment) => {
         this.focusFragment(fragment);
         void this.router.navigate([], {
           fragment: fragment,
         });
-      }
-    });
+      });
+
+    fromEvent(window, 'scroll')
+      .pipe(
+        untilDestroyed(this),
+        withLatestFrom(this.route.fragment),
+        auditTime(200)
+      )
+      .subscribe(([, fragment]) => {
+        const fragments: HTMLElement[] = Array.from(
+          document.querySelectorAll('[data-fragment]')
+        );
+
+        const viewPortFragments = fragments.filter((el) => {
+          return this.isElementInViewport(el);
+        });
+
+        const lastFragment = viewPortFragments[viewPortFragments.length - 1];
+
+        if (
+          lastFragment?.dataset.fragment &&
+          lastFragment.dataset.fragment !== fragment
+        ) {
+          this.changeFragment(lastFragment.dataset.fragment);
+        }
+      });
 
     this.router.events
       .pipe(
@@ -327,18 +380,12 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   public focusFragment(fragment: string) {
     const el = this.nativeElement.querySelector(
-      `[data-fragment="${fragment}"] h3`
+      `[data-fragment="${fragment}"]`
     );
 
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
       (el as HTMLElement).focus({ preventScroll: true });
-    }
-  }
-
-  public isInViewport(element: HTMLElement) {
-    if (element.dataset.fragment) {
-      this.changeFragment(element.dataset.fragment);
     }
   }
 
@@ -362,5 +409,17 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   public handleModal() {
     this.isModalOpen = !this.isModalOpen;
+  }
+
+  public isElementInViewport(el: HTMLElement) {
+    const rect = el.getBoundingClientRect();
+
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
   }
 }

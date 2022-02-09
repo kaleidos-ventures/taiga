@@ -6,5 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export { filterNil } from './filter-nil';
-export { filterFalsy } from './filter-falsy';
+import { filter } from 'rxjs/operators';
+
+export function filterFalsy() {
+  return filter(<T>(value: T) => !!value);
+}

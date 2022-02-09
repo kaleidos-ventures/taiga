@@ -21,7 +21,6 @@ import { RoleCustomizeModule } from './components/role-customize/role-customize.
 import { RoleAdvanceRowModule } from './components/role-advance-row/role-advance-row.module';
 import { NotificatioInlineModule } from 'libs/ui/src/lib/notification-inline/notification-inline.module';
 import { ModalPermissionComparisonModule } from './components/modal-permission-comparison/modal-permission-comparison.module';
-
 @NgModule({
   declarations: [
     ProjectSettingsFeatureRolesPermissionsComponent,

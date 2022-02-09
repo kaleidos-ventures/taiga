@@ -21,8 +21,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Project } from '@taiga/data';
-import { interval } from 'rxjs';
-import { delay, filter, take, throttle } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
@@ -87,15 +86,9 @@ export class ProjectNavigationSettingsComponent implements OnInit {
   }
 
   public getFragment() {
-    this.route.fragment
-      .pipe(
-        delay(300),
-        throttle(() => interval(200)),
-        untilDestroyed(this)
-      )
-      .subscribe((fragment) => {
-        this.currentFragment = fragment;
-        this.cd.markForCheck();
-      });
+    this.route.fragment.pipe(untilDestroyed(this)).subscribe((fragment) => {
+      this.currentFragment = fragment;
+      this.cd.markForCheck();
+    });
   }
 }

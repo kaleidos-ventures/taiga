@@ -15,14 +15,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <section
       *ngIf="vm.memberRoles"
       class="member-permissions-settings"
-      data-fragment="member-permissions-settings"
-      data-test="member-permissions-settings"
-      inViewport
-      (visible)="isInViewport($event)">
+      data-test="member-permissions-settings">
       <h3
+        #fragment
         tabindex="-1"
         data-test="member-permissions-settings-title"
-        class="settings-subtitle">
+        class="settings-subtitle"
+        data-fragment="member-permissions-settings">
         {{ t('project_settings.member_permissions') }}
       </h3>
       <div *ngIf="vm.admin" class="project-admin">
@@ -74,12 +73,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     <section
       *ngIf="vm.workspacePermissions"
-      data-fragment="workspace-permissions-settings"
       data-test="workspace-permissions-settings"
-      class="workspace-permissions-settings"
-      inViewport
-      (visible)="isInViewport($event)">
-      <h3 tabindex="-1" class="settings-subtitle">
+      class="workspace-permissions-settings">
+      <h3
+        #fragment
+        tabindex="-1"
+        class="settings-subtitle"
+        data-fragment="workspace-permissions-settings">
         {{ t('project_settings.workspace_permissions') }}
       </h3>
       <form [formGroup]="workspaceForm">
@@ -96,12 +96,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     <section
       *ngIf="vm.publicPermissions"
-      data-fragment="public-permissions-settings"
       data-test="public-permissions-settings"
-      class="public-permissions-settings"
-      inViewport
-      (visible)="isInViewport($event)">
-      <h3 tabindex="-1" class="settings-subtitle">
+      class="public-permissions-settings">
+      <h3
+        #fragment
+        tabindex="-1"
+        class="settings-subtitle"
+        data-fragment="public-permissions-settings">
         {{ t('project_settings.public_permissions') }}
       </h3>
       <form [formGroup]="publicForm">

@@ -42,7 +42,7 @@ export class WorkspaceApiService {
 
   public fetchWorkspaceProjects(slug: Workspace['slug']) {
     return this.http.get<Project[]>(
-      `${this.config.apiUrl}/my/workspaces/${slug}/projects`
+      `${this.config.apiUrl}/workspaces/${slug}/projects`
     );
   }
 }

@@ -11,19 +11,22 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
 import { Observable } from 'rxjs';
-import { randDomainSuffix } from '@ngneat/falso';
+import { randNumber } from '@ngneat/falso';
 
-import { ProjectEffects } from './project.effects';
-import { fetchProject, fetchProjectSuccess } from '../actions/project.actions';
+import { RolesPermissionsEffects } from './roles-permissions.effects';
+import {
+  fetchMemberRolesSuccess,
+  initRolesPermissions,
+} from '../actions/roles-permissions.actions';
 import { cold, hot } from 'jest-marbles';
-import { ProjectMockFactory } from '@taiga/data';
+import { ProjectMockFactory, RoleMockFactory } from '@taiga/data';
 
-describe('ProjectEffects', () => {
+describe('RolesPermissionsEffects', () => {
   let actions$: Observable<Action>;
-  let spectator: SpectatorService<ProjectEffects>;
+  let spectator: SpectatorService<RolesPermissionsEffects>;
 
   const createService = createServiceFactory({
-    service: ProjectEffects,
+    service: RolesPermissionsEffects,
     providers: [provideMockActions(() => actions$)],
     mocks: [ProjectApiService],
   });
@@ -32,20 +35,24 @@ describe('ProjectEffects', () => {
     spectator = createService();
   });
 
-  it('load project', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
+  it('load roles', () => {
     const project = ProjectMockFactory();
+    const roles = [];
+    for (let i = 0; i++; i < randNumber()) {
+      const role = RoleMockFactory();
+      roles.push(role);
+    }
     const projectApiService = spectator.inject(ProjectApiService);
-    const effects = spectator.inject(ProjectEffects);
+    const effects = spectator.inject(RolesPermissionsEffects);
 
-    projectApiService.getProject.mockReturnValue(cold('-b|', { b: project }));
+    projectApiService.getMemberRoles.mockReturnValue(cold('-b|', { b: roles }));
 
-    actions$ = hot('-a', { a: fetchProject({ slug }) });
+    actions$ = hot('-a', { a: initRolesPermissions({ project }) });
 
     const expected = cold('--a', {
-      a: fetchProjectSuccess({ project }),
+      a: fetchMemberRolesSuccess({ roles }),
     });
 
-    expect(effects.loadProject$).toBeObservable(expected);
+    expect(effects.loadMemberRoles$).toBeObservable(expected);
   });
 });

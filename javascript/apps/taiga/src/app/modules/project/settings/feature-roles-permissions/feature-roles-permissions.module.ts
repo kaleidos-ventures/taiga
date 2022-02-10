@@ -21,6 +21,11 @@ import { RoleCustomizeModule } from './components/role-customize/role-customize.
 import { RoleAdvanceRowModule } from './components/role-advance-row/role-advance-row.module';
 import { NotificatioInlineModule } from 'libs/ui/src/lib/notification-inline/notification-inline.module';
 import { ModalPermissionComparisonModule } from './components/modal-permission-comparison/modal-permission-comparison.module';
+import { rolesPermissionsFeature } from './+state/reducers/roles-permissions.reducer';
+import { RolesPermissionsEffects } from './+state/effects/roles-permissions.effects';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+
 @NgModule({
   declarations: [
     ProjectSettingsFeatureRolesPermissionsComponent,
@@ -46,6 +51,8 @@ import { ModalPermissionComparisonModule } from './components/modal-permission-c
       },
     ]),
     InputsModule,
+    StoreModule.forFeature(rolesPermissionsFeature),
+    EffectsModule.forFeature([RolesPermissionsEffects]),
   ],
   providers: [
     {

@@ -10,13 +10,7 @@ import { createSelector } from '@ngrx/store';
 import { Project } from '@taiga/data';
 import { projectFeature } from '../reducers/project.reducer';
 
-export const {
-  selectCurrentProjectSlug,
-  selectProjects,
-  selectMemberRoles,
-  selectPublicPermissions,
-  selectWorkspacePermissions,
-} = projectFeature;
+export const { selectCurrentProjectSlug, selectProjects } = projectFeature;
 
 export const selectCurrentProject = createSelector(
   selectProjects,

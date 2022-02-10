@@ -37,13 +37,13 @@ import {
   updateWorkspacePermissions,
   resetPermissions,
   initRolesPermissions,
-} from '~/app/modules/project/data-access/+state/actions/project.actions';
+} from './+state/actions/roles-permissions.actions';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import {
   selectMemberRoles,
-  selectCurrentProject,
   selectPublicPermissions,
   selectWorkspacePermissions,
-} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+} from './+state/selectors/roles-permissions.selectors';
 import { filterNil, filterFalsy } from '~/app/shared/utils/operators';
 import { ModuleConflictPermission } from './models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';

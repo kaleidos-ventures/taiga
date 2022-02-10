@@ -9,11 +9,11 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { filter, map, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import * as ProjectActions from '../actions/project.actions';
 import { ProjectApiService } from '@taiga/api';
-import { fetch, pessimisticUpdate } from '@nrwl/angular';
+import { fetch } from '@nrwl/angular';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
 @Injectable()
 export class ProjectEffects {
@@ -46,135 +46,6 @@ export class ProjectEffects {
     },
     { dispatch: false }
   );
-
-  public loadMemberRoles$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(ProjectActions.initRolesPermissions),
-      fetch({
-        run: (action) => {
-          return this.projectApiService
-            .getMemberRoles(action.project.slug)
-            .pipe(
-              map((roles) => {
-                return ProjectActions.fetchMemberRolesSuccess({ roles });
-              })
-            );
-        },
-        onError: () => {
-          return null;
-        },
-      })
-    );
-  });
-
-  public loadPublicPermissions$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(ProjectActions.initRolesPermissions),
-      fetch({
-        run: (action) => {
-          return this.projectApiService
-            .getPublicPermissions(action.project.slug)
-            .pipe(
-              map((permissions) => {
-                return ProjectActions.fetchPublicPermissionsSuccess({
-                  permissions: permissions,
-                });
-              })
-            );
-        },
-        onError: () => {
-          return null;
-        },
-      })
-    );
-  });
-
-  public loadWorkspacePermissions$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(ProjectActions.initRolesPermissions),
-      filter((action) => action.project.workspace.isPremium),
-      fetch({
-        run: (action) => {
-          return this.projectApiService
-            .getworkspacePermissions(action.project.slug)
-            .pipe(
-              map((permissions) => {
-                return ProjectActions.fetchWorkspacePermissionsSuccess({
-                  permissions,
-                });
-              })
-            );
-        },
-        onError: () => {
-          return null;
-        },
-      })
-    );
-  });
-
-  public updateRolePermissions$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(ProjectActions.updateRolePermissions),
-      pessimisticUpdate({
-        run: (action) => {
-          return this.projectApiService
-            .putMemberRoles(action.project, action.roleSlug, action.permissions)
-            .pipe(
-              map((role) => {
-                return ProjectActions.updateRolePermissionsSuccess({ role });
-              })
-            );
-        },
-        onError: () => {
-          return ProjectActions.updateRolePermissionsError();
-        },
-      })
-    );
-  });
-
-  public updatePublicPermissions$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(ProjectActions.updatePublicPermissions),
-      pessimisticUpdate({
-        run: (action) => {
-          return this.projectApiService
-            .putPublicPermissions(action.project, action.permissions)
-            .pipe(
-              map((permissions) => {
-                return ProjectActions.updatePublicPermissionsSuccess({
-                  permissions,
-                });
-              })
-            );
-        },
-        onError: () => {
-          return ProjectActions.updateRolePermissionsError();
-        },
-      })
-    );
-  });
-
-  public updateWorkspacePermissions$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(ProjectActions.updateWorkspacePermissions),
-      pessimisticUpdate({
-        run: (action) => {
-          return this.projectApiService
-            .putworkspacePermissions(action.project, action.permissions)
-            .pipe(
-              map((permissions) => {
-                return ProjectActions.updateWorkspacePermissionsSuccess({
-                  permissions,
-                });
-              })
-            );
-        },
-        onError: () => {
-          return ProjectActions.updateRolePermissionsError();
-        },
-      })
-    );
-  });
 
   constructor(
     private actions$: Actions,

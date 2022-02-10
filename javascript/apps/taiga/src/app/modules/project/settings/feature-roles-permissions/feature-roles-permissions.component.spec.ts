@@ -21,7 +21,7 @@ import {
   updatePublicPermissions,
   updateRolePermissions,
   updateWorkspacePermissions,
-} from '~/app/modules/project/data-access/+state/actions/project.actions';
+} from './+state/actions/roles-permissions.actions';
 import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
 import { ProjectState } from '~/app/modules/project/data-access/+state/reducers/project.reducer';
@@ -219,11 +219,13 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       const store = spectator.inject(MockStore);
       store.setState({
+        rolesPermissions: {
+          memberRoles: [role],
+        },
         project: {
           projects: { [project.slug]: project },
           currentProjectSlug: project.slug,
-          memberRoles: [role],
-        } as ProjectState,
+        },
       });
 
       const projectsSettingsFeatureRolesPermissionsService = spectator.inject(
@@ -258,11 +260,13 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       const store = spectator.inject(MockStore);
       store.setState({
+        rolesPermissions: {
+          publicPermissions: role.permissions,
+        },
         project: {
           projects: { [project.slug]: project },
           currentProjectSlug: project.slug,
-          publicPermissions: role.permissions,
-        } as ProjectState,
+        },
       });
 
       const projectsSettingsFeatureRolesPermissionsService = spectator.inject(
@@ -296,11 +300,13 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       const store = spectator.inject(MockStore);
       store.setState({
-        project: {
-          projects: { [project.slug]: project },
-          currentProjectSlug: project.slug,
+        rolesPermissions: {
           workspacePermissions: role.permissions,
-        } as ProjectState,
+        },
+        project: {
+          currentProjectSlug: project.slug,
+          projects: { [project.slug]: project },
+        },
       });
 
       const projectsSettingsFeatureRolesPermissionsService = spectator.inject(
@@ -336,11 +342,13 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       const store = spectator.inject(MockStore);
 
       store.setState({
-        project: {
-          projects: {},
-          currentProjectSlug: 'test',
+        rolesPermissions: {
           memberRoles: [role],
-        } as ProjectState,
+        },
+        project: {
+          currentProjectSlug: 'test',
+          projects: {},
+        },
       });
 
       store.refreshState();
@@ -368,10 +376,12 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       const store = spectator.inject(MockStore);
 
       store.setState({
-        project: {
-          projects: {},
-          currentProjectSlug: 'test',
+        rolesPermissions: {
           publicPermissions: permissions,
+        },
+        project: {
+          currentProjectSlug: 'test',
+          projects: {},
         },
       });
 
@@ -403,10 +413,12 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       const store = spectator.inject(MockStore);
 
       store.setState({
+        rolesPermissions: {
+          workspacePermissions: permissions,
+        },
         project: {
           projects: {},
           currentProjectSlug: 'test',
-          workspacePermissions: permissions,
         },
       });
 

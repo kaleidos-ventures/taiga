@@ -34,13 +34,8 @@ export class ModalPermissionComparisonComponent {
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService
   ) {}
 
-  public getParam(
-    conflictName: string,
-    moduleName: string,
-    type: string,
-    idx: number
-  ) {
-    return `${conflictName}${moduleName}${type}${idx}`
+  public getParam(conflictName: string, moduleName: string, idx: number) {
+    return `${conflictName}${moduleName}${idx}`
       .replace(/\s/g, '')
       .toLocaleLowerCase();
   }

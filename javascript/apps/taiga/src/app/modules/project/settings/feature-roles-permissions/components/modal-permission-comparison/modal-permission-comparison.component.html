@@ -76,19 +76,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <button
                   class="restrictions-btn"
                   [attr.aria-expanded]="
-                    dropdown[
-                      getParam(conflict.name, module.name, 'member', idx)
-                    ]
+                    dropdown[getParam(conflict.name, module.name, idx)]
                   "
                   [attr.aria-controls]="
-                    getParam(conflict.name, module.name, 'member', idx)
+                    getParam(conflict.name, module.name, idx)
                   "
                   data-test="member-restrictions-btn"
                   type="button"
                   (click)="
-                    handleDropdown(
-                      getParam(conflict.name, module.name, 'member', idx)
-                    )
+                    handleDropdown(getParam(conflict.name, module.name, idx))
                   ">
                   <span
                     class="text highlight"
@@ -97,9 +93,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   <tui-svg
                     class="chevron"
                     [src]="
-                      dropdown[
-                        getParam(conflict.name, module.name, 'member', idx)
-                      ]
+                      dropdown[getParam(conflict.name, module.name, idx)]
                         ? 'chevron-up'
                         : 'chevron-down'
                     ">
@@ -107,14 +101,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </button>
 
                 <ul
-                  *ngIf="
-                    dropdown[
-                      getParam(conflict.name, module.name, 'member', idx)
-                    ]
-                  "
-                  [attr.id]="
-                    getParam(conflict.name, module.name, 'member', idx)
-                  "
+                  *ngIf="dropdown[getParam(conflict.name, module.name, idx)]"
+                  [attr.id]="getParam(conflict.name, module.name, idx)"
                   class="restriction-list">
                   <li
                     data-test="restriction-element"
@@ -144,19 +132,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <button
                   class="restrictions-btn"
                   [attr.aria-expanded]="
-                    dropdown[
-                      getParam(conflict.name, module.name, 'public', idx)
-                    ]
+                    dropdown[getParam(conflict.name, module.name, idx)]
                   "
                   [attr.aria-controls]="
-                    getParam(conflict.name, module.name, 'public', idx)
+                    getParam(conflict.name, module.name, idx)
                   "
                   data-test="public-restrictions-btn"
                   type="button"
                   (click)="
-                    handleDropdown(
-                      getParam(conflict.name, module.name, 'public', idx)
-                    )
+                    handleDropdown(getParam(conflict.name, module.name, idx))
                   ">
                   <span
                     class="text highlight"
@@ -165,9 +149,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   <tui-svg
                     class="chevron"
                     [src]="
-                      dropdown[
-                        getParam(conflict.name, module.name, 'public', idx)
-                      ]
+                      dropdown[getParam(conflict.name, module.name, idx)]
                         ? 'chevron-up'
                         : 'chevron-down'
                     ">
@@ -175,14 +157,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 </button>
 
                 <ul
-                  *ngIf="
-                    dropdown[
-                      getParam(conflict.name, module.name, 'public', idx)
-                    ]
-                  "
-                  [attr.id]="
-                    getParam(conflict.name, module.name, 'public', idx)
-                  "
+                  *ngIf="dropdown[getParam(conflict.name, module.name, idx)]"
+                  [attr.id]="getParam(conflict.name, module.name, idx)"
                   class="restriction-list">
                   <li
                     *ngFor="

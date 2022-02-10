@@ -31,7 +31,7 @@
 #   SOFTWARE.
 
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, ClassVar, Final, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, ClassVar, Final, TypeVar
 from uuid import uuid4
 
 from taiga.base.utils.datetime import aware_utcnow, datetime_to_epoch, epoch_to_datetime
@@ -54,10 +54,10 @@ class Token:
     new JWT.
     """
 
-    token_type: ClassVar[Optional[str]]
+    token_type: ClassVar[str | None]
     lifetime: ClassVar[timedelta]
 
-    def __init__(self, token: Optional[str] = None, verify: bool = True) -> None:
+    def __init__(self, token: str | None = None, verify: bool = True) -> None:
         """
         !!!! IMPORTANT !!!! MUST raise a TokenError with a user-facing error
         message if the given token is invalid, expired, or otherwise not safe
@@ -86,9 +86,7 @@ class Token:
             # Set "jti" claim
             self.set_jti()
 
-    def set_exp(
-        self, claim: str = "exp", from_time: Optional[datetime] = None, lifetime: Optional[timedelta] = None
-    ) -> None:
+    def set_exp(self, claim: str = "exp", from_time: datetime | None = None, lifetime: timedelta | None = None) -> None:
         """
         Updates the expiration time of a token.
         """
@@ -153,7 +151,7 @@ class Token:
 
         self._verify_token_type()
 
-    def _verify_exp(self, claim: str = "exp", current_time: Optional[datetime] = None) -> None:
+    def _verify_exp(self, claim: str = "exp", current_time: datetime | None = None) -> None:
         """
         Checks whether a timestamp value in the given claim has passed (since
         the given datetime value in `current_time`).  Raises a TokenError with
@@ -210,7 +208,7 @@ class Token:
         return token
 
     @classmethod
-    async def create(cls: type["TokenModel"], token: Optional[str] = None, verify: bool = True) -> "TokenModel":
+    async def create(cls: type["TokenModel"], token: str | None = None, verify: bool = True) -> "TokenModel":
         """
         Returns an authorization token or decode and verify the token than will be provided
         after authenticating the user's credentials.

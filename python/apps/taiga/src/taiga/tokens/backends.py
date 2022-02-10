@@ -30,7 +30,7 @@
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
 
-from typing import Any, Optional
+from typing import Any
 
 import jwt
 from jwt import InvalidAlgorithmError, InvalidTokenError, algorithms
@@ -46,8 +46,8 @@ class TokenBackend:
         algorithm: str,
         signing_key: str,
         verifying_key: str = "",
-        audience: Optional[str] = None,
-        issuer: Optional[str] = None,
+        audience: str | None = None,
+        issuer: str | None = None,
     ):
         self._validate_algorithm(algorithm)
 

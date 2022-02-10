@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Union
-
 from asgiref.sync import sync_to_async
 from easy_thumbnails.exceptions import InvalidImageFormatError  # type: ignore
 from easy_thumbnails.files import ThumbnailerFieldFile, get_thumbnailer  # type: ignore
@@ -25,7 +23,7 @@ def get_thumbnail(relative_image_path: str, thumbnailer_size: str) -> Thumbnaile
 
 
 @sync_to_async
-def get_thumbnail_url(relative_image_path: str, thumbnailer_size: str) -> Union[str, None]:
+def get_thumbnail_url(relative_image_path: str, thumbnailer_size: str) -> str | None:
     thumbnail = get_thumbnail(relative_image_path, thumbnailer_size)
 
     if not thumbnail:

@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
-
 from taiga.permissions import choices
 from taiga.roles import repositories as roles_repositories
 from taiga.users.models import User
@@ -18,11 +16,11 @@ async def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace
     return await workspaces_repositories.get_user_workspaces_with_latest_projects(user=user)
 
 
-async def get_workspace(slug: str) -> Optional[Workspace]:
+async def get_workspace(slug: str) -> Workspace | None:
     return await workspaces_repositories.get_workspace(slug=slug)
 
 
-async def get_workspace_detail(id: int, user_id: int) -> Workspace:
+async def get_workspace_detail(id: int, user_id: int) -> Workspace | None:
     return await workspaces_repositories.get_workspace_detail(id=id, user_id=user_id)
 
 

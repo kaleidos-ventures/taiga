@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, Optional
+from typing import Any
 
 from asgiref.sync import sync_to_async
 from django.contrib.auth.models import update_last_login as django_update_last_login
@@ -14,12 +14,12 @@ from taiga.users.models import User
 
 
 @sync_to_async
-def get_first_user(**kwargs: Any) -> Optional[User]:
+def get_first_user(**kwargs: Any) -> User | None:
     return User.objects.filter(**kwargs).first()
 
 
 @sync_to_async
-def get_user_by_username_or_email(username_or_email: str) -> Optional[User]:
+def get_user_by_username_or_email(username_or_email: str) -> User | None:
     # first search is case insensitive
     qs = User.objects.filter(Q(username__iexact=username_or_email) | Q(email__iexact=username_or_email))
 
@@ -28,8 +28,7 @@ def get_user_by_username_or_email(username_or_email: str) -> Optional[User]:
         # the search should be case sensitive
         qs = qs.filter(Q(username=username_or_email) | Q(email=username_or_email))
 
-    user: Optional[User] = qs[0] if len(qs) > 0 else None
-    return user
+    return qs[0] if len(qs) > 0 else None
 
 
 @sync_to_async

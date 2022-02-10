@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
-
 from fastapi import UploadFile
 from pydantic import validator
 from taiga.base.serializer import BaseModel
@@ -18,9 +16,9 @@ from taiga.base.validator import as_form
 class ProjectValidator(BaseModel):
     name: str
     workspace_slug: str
-    description: Optional[str]
-    color: Optional[int]
-    logo: Optional[UploadFile]
+    description: str | None = None
+    color: int | None = None
+    logo: UploadFile | None = None
 
     @validator("name")
     def check_name_not_empty(cls, v: str) -> str:
@@ -33,24 +31,25 @@ class ProjectValidator(BaseModel):
         return v
 
     @validator("description")
-    def check_description_length(cls, v: str) -> str:
+    def check_description_length(cls, v: str | None) -> str | None:
         if v:
             assert len(v) <= 200, "Description too long"
         return v
 
     @validator("color")
-    def check_allowed_color(cls, v: int) -> int:
-        assert v >= 1 and v <= 8, "Color not allowed"
+    def check_allowed_color(cls, v: int | None) -> int | None:
+        if v:
+            assert v >= 1 and v <= 8, "Color not allowed"
         return v
 
     @validator("logo")
-    def check_content_type(cls, v: UploadFile) -> UploadFile:
+    def check_content_type(cls, v: UploadFile | None) -> UploadFile | None:
         if v:
             assert valid_content_type(v), "Invalid image format"
         return v
 
     @validator("logo")
-    def check_image_format(cls, v: UploadFile) -> UploadFile:
+    def check_image_format(cls, v: UploadFile | None) -> UploadFile | None:
         if v:
             assert valid_image_format(v), "Invalid image content"
         return v

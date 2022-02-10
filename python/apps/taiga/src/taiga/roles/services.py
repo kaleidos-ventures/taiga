@@ -4,7 +4,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-from typing import Optional
 
 from taiga.exceptions import services as ex
 from taiga.permissions import services as permissions_services
@@ -19,7 +18,7 @@ async def get_project_roles(project: Project) -> list[Role]:
     return await roles_repositories.get_project_roles(project)
 
 
-async def get_project_role(project: Project, slug: str) -> Optional[Role]:
+async def get_project_role(project: Project, slug: str) -> Role | None:
     return await roles_repositories.get_project_role(project=project, slug=slug)
 
 

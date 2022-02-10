@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Final, Optional
+from typing import Final
 
 from asgiref.sync import sync_to_async
 from django.db.models import Count
@@ -22,7 +22,7 @@ from taiga.workspaces.models import Workspace
 
 
 @sync_to_async
-def get_user_project_membership(user: User, project: Project, cache: str = "user") -> Optional[Membership]:
+def get_user_project_membership(user: User, project: Project, cache: str = "user") -> Membership | None:
     """
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
@@ -37,7 +37,7 @@ def get_user_project_membership(user: User, project: Project, cache: str = "user
 
 
 @sync_to_async
-def create_membership(user: User, project: Project, role: Role, email: Optional[str] = None) -> Membership:
+def create_membership(user: User, project: Project, role: Role, email: str | None = None) -> Membership:
     return Membership.objects.create(user=user, project=project, role=role, email=email)
 
 
@@ -60,7 +60,7 @@ def get_project_roles(project: Project) -> list[Role]:
 
 
 @sync_to_async
-def get_project_role(project: Project, slug: str) -> Optional[Role]:
+def get_project_role(project: Project, slug: str) -> Role | None:
     try:
         return project.roles.annotate(num_members=Count("memberships")).get(slug=slug)
     except Role.DoesNotExist:
@@ -68,7 +68,7 @@ def get_project_role(project: Project, slug: str) -> Optional[Role]:
 
 
 @sync_to_async
-def get_first_role(project: Project) -> Optional[Role]:
+def get_first_role(project: Project) -> Role | None:
     return project.roles.first()
 
 
@@ -107,9 +107,7 @@ def update_role_permissions(role: Role, permissions: list[str]) -> Role:
 
 
 @sync_to_async
-def get_user_workspace_membership(
-    user: User, workspace: Workspace, cache: str = "user"
-) -> Optional[WorkspaceMembership]:
+def get_user_workspace_membership(user: User, workspace: Workspace, cache: str = "user") -> WorkspaceMembership | None:
     """
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache

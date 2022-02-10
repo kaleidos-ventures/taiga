@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
-
 from fastapi import Request
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi.security import HTTPBearer as HTTPBearerBase
@@ -20,7 +18,7 @@ class HTTPBearer(HTTPBearerBase):
         scheme, _, token = authorization_header_value.partition(" ")
         return scheme.strip().lower(), token.strip()
 
-    async def __call__(self, request: Request) -> Optional[HTTPAuthorizationCredentials]:
+    async def __call__(self, request: Request) -> HTTPAuthorizationCredentials | None:
         authorization: str = request.headers.get("Authorization")
         scheme, credentials = self._get_authorization_scheme_token(authorization)
         if not (authorization and scheme and credentials):

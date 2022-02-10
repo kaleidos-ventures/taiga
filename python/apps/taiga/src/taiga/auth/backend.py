@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Union
-
 from fastapi import Request, Response, status
 from starlette.authentication import AuthCredentials
 from starlette.authentication import AuthenticationError as AuthorizationError
@@ -21,7 +19,7 @@ from .security import HTTPBearer
 security = HTTPBearer()
 
 
-async def authenticate(request: Request) -> tuple[AuthCredentials, Union[AnonymousUser, User]]:
+async def authenticate(request: Request) -> tuple[AuthCredentials, AnonymousUser | User]:
     authorization = await security(request)
 
     if authorization:

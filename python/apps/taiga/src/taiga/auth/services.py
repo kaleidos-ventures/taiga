@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
-
 from taiga.auth.exceptions import BadAuthTokenError, UnauthorizedUserError
 from taiga.tokens import TokenError
 from taiga.users import repositories as users_repo
@@ -16,7 +14,7 @@ from .models import AccessWithRefreshToken
 from .tokens import AccessToken, RefreshToken
 
 
-async def login(username: str, password: str) -> Optional[AccessWithRefreshToken]:
+async def login(username: str, password: str) -> AccessWithRefreshToken | None:
     user = await users_repo.get_user_by_username_or_email(username_or_email=username)
 
     if (
@@ -34,7 +32,7 @@ async def login(username: str, password: str) -> Optional[AccessWithRefreshToken
     return AccessWithRefreshToken(token=str(refresh_token.access_token), refresh=str(refresh_token))
 
 
-async def refresh(token: str) -> Optional[AccessWithRefreshToken]:
+async def refresh(token: str) -> AccessWithRefreshToken | None:
     try:
         refresh_token = await RefreshToken.create(token)
     except TokenError:

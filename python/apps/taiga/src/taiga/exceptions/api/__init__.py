@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import status
 from fastapi.exceptions import HTTPException as FastAPIHTTPException
@@ -18,9 +18,9 @@ class HTTPException(FastAPIHTTPException):
         self,
         status_code: int,
         code: str = codes.EX_UNKNOWN.code,
-        detail: Any = None,
         message: str = "",
-        headers: Optional[dict[str, Any]] = None,
+        detail: Any = None,
+        headers: dict[str, Any] | None = None,
     ) -> None:
         self.code: str = code
         self.message: str = message
@@ -33,7 +33,7 @@ class HTTPException(FastAPIHTTPException):
 
 
 class BadRequest(HTTPException):
-    def __init__(self, message: Any = codes.EX_BAD_REQUEST.message):
+    def __init__(self, message: str = codes.EX_BAD_REQUEST.message):
         super().__init__(status_code=status.HTTP_400_BAD_REQUEST, code=codes.EX_BAD_REQUEST.code, message=message)
 
 
@@ -43,7 +43,7 @@ class BadRequest(HTTPException):
 
 
 class AuthorizationError(HTTPException):
-    def __init__(self, message: Any = codes.EX_AUTHORIZATION.message):
+    def __init__(self, message: str = codes.EX_AUTHORIZATION.message):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             code=codes.EX_AUTHORIZATION.code,
@@ -58,7 +58,7 @@ class AuthorizationError(HTTPException):
 
 
 class ForbiddenError(HTTPException):
-    def __init__(self, message: Any = codes.EX_FORBIDDEN.message):
+    def __init__(self, message: str = codes.EX_FORBIDDEN.message):
         super().__init__(status_code=status.HTTP_403_FORBIDDEN, code=codes.EX_FORBIDDEN.code, message=message)
 
 
@@ -68,5 +68,5 @@ class ForbiddenError(HTTPException):
 
 
 class NotFoundError(HTTPException):
-    def __init__(self, message: Any = codes.EX_NOT_FOUND.message):
+    def __init__(self, message: str = codes.EX_NOT_FOUND.message):
         super().__init__(status_code=status.HTTP_404_NOT_FOUND, code=codes.EX_NOT_FOUND.code, message=message)

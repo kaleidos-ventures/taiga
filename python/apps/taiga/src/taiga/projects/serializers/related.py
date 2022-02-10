@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
-
 from taiga.base.serializer import BaseModel
 from taiga.projects.serializers import ProjectLogoMixin
 
@@ -14,8 +12,8 @@ from taiga.projects.serializers import ProjectLogoMixin
 class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
     name: str
     slug: str
-    description: Optional[str] = None
-    color: Optional[int] = None
+    description: str | None = None
+    color: int | None = None
 
     class Config:
         orm_mode = True

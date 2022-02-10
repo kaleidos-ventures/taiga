@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, Generic, TypeVar, Union
+from typing import Any, Generic, TypeVar
 
 from fastapi import status
 from pydantic import BaseModel
@@ -61,7 +61,7 @@ class BadRequestErrorModel(GenericSingleError):
     message: str = codes.EX_BAD_REQUEST.message
 
 
-ErrorsDict = dict[Union[int, str], dict[str, type[ErrorResponse[Any]]]]
+ErrorsDict = dict[int | str, dict[str, type[ErrorResponse[Any]]]]
 
 ERROR_RESPONSE_400 = ErrorResponse[BadRequestErrorModel]
 ERROR_RESPONSE_401 = ErrorResponse[UnauthorizedErrorModel]

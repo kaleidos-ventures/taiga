@@ -6,7 +6,6 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from itertools import chain
-from typing import Optional
 
 from asgiref.sync import sync_to_async
 from django.db.models import BooleanField, Case, CharField, Exists, IntegerField, OuterRef, Prefetch, Q, Value, When
@@ -126,7 +125,7 @@ def create_workspace(name: str, color: int, owner: User) -> Workspace:
 
 
 @sync_to_async
-def get_workspace(slug: str) -> Optional[Workspace]:
+def get_workspace(slug: str) -> Workspace | None:
     try:
         return Workspace.objects.get(slug=slug)
     except Workspace.DoesNotExist:
@@ -177,7 +176,7 @@ async def get_workspace_detail(id: int, user_id: int) -> Workspace:
 #
 # from django.db.models import Count, OuterRef, Subquery
 #
-# def get_user_workspaces_with_latest_projects(user: User) -> Iterable[Workspace]:
+# def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
 #     # return the user"s workspaces including those projects viewable by the user:
 #     #   (1) all the workspaces the user is a member of (all workspace roles will have at least "view" permission),
 #     #         (1a) listing all the projects if the user is a ws_admin (no mattering if the user is a pj-member), or

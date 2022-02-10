@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from datetime import datetime
-from typing import Optional
+from typing import Union
 
 import pytest
 from taiga.base.mocks import MAX_LIST_LENGTH, MAX_NESTED_INDEX, MIN_LIST_LENGTH, mock_serializer
@@ -31,7 +31,7 @@ class ListsModel(BaseModel):
 
 
 class NestedModel1(BaseModel):
-    foo: Optional["NestedModel2"]
+    foo: Union["NestedModel2", None] = None
     bar: SimpleModel
 
     class Config:
@@ -39,7 +39,7 @@ class NestedModel1(BaseModel):
 
 
 class NestedModel2(BaseModel):
-    foo: Optional["NestedModel3"]
+    foo: Union["NestedModel3", None] = None
     bar: SimpleModel
 
     class Config:
@@ -47,7 +47,7 @@ class NestedModel2(BaseModel):
 
 
 class NestedModel3(BaseModel):
-    foo: Optional["NestedModel1"]
+    foo: Union["NestedModel1", None] = None
     bar: SimpleModel
 
     class Config:
@@ -55,7 +55,7 @@ class NestedModel3(BaseModel):
 
 
 class OptionalModel(BaseModel):
-    foo: Optional[SimpleModel]
+    foo: SimpleModel | None = None
     bar: int
 
     class Config:

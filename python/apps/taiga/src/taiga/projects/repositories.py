@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
-
 from asgiref.sync import sync_to_async
 from django.core.files import File
 from django.db.models import Q
@@ -39,11 +37,11 @@ def get_workspace_projects_for_user(workspace_id: int, user_id: int) -> list[Pro
 def create_project(
     workspace: Workspace,
     name: str,
-    description: Optional[str],
-    color: Optional[int],
     owner: User,
     template: ProjectTemplate,
-    logo: Optional[File] = None,
+    description: str | None = None,
+    color: int | None = None,
+    logo: File | None = None,
 ) -> Project:
 
     project = Project.objects.create(
@@ -55,7 +53,7 @@ def create_project(
 
 
 @sync_to_async
-def get_project(slug: str) -> Optional[Project]:
+def get_project(slug: str) -> Project | None:
     try:
         return Project.objects.prefetch_related("workspace").get(slug=slug)
     except Project.DoesNotExist:

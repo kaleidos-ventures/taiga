@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
-
 from taiga.base.serializer import BaseModel
 from taiga.projects.serializers.mixins import ProjectLogoMixin
 from taiga.workspaces.serializers.related import WorkspaceSummarySerializer
@@ -15,8 +13,8 @@ from taiga.workspaces.serializers.related import WorkspaceSummarySerializer
 class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
     name: str
     slug: str
-    description: Optional[str] = None
-    color: Optional[int] = None
+    description: str | None = None
+    color: int | None = None
 
     class Config:
         orm_mode = True
@@ -25,8 +23,8 @@ class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
 class ProjectSerializer(BaseModel, ProjectLogoMixin):
     name: str
     slug: str
-    description: Optional[str] = None
-    color: Optional[int] = None
+    description: str | None = None
+    color: int | None = None
     workspace: WorkspaceSummarySerializer
 
     class Config:

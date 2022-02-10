@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
-
 from pydantic import BaseSettings, validator
 
 ALLOWED_ALGORITHMS = (
@@ -23,8 +21,8 @@ class TokensSettings(BaseSettings):
     ALGORITHM: str = "HS256"
     SIGNING_KEY: str = ""
     VERIFYING_KEY: str = ""
-    AUDIENCE: Optional[str] = None
-    ISSUER: Optional[str] = None
+    AUDIENCE: str | None = None
+    ISSUER: str | None = None
 
     TOKEN_TYPE_CLAIM: str = "token_type"
     JTI_CLAIM: str = "jti"

@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from functools import partial
-from typing import Optional, Union
 
 from django.core.files import File
 from fastapi import UploadFile
@@ -34,10 +33,10 @@ async def get_workspace_projects_for_user(workspace: Workspace, user: User) -> l
 async def create_project(
     workspace: Workspace,
     name: str,
-    description: Optional[str],
-    color: Optional[int],
+    description: str | None,
+    color: int | None,
     owner: User,
-    logo: Optional[UploadFile] = None,
+    logo: UploadFile | None = None,
 ) -> Project:
     logo_file = None
     if logo:
@@ -65,11 +64,11 @@ async def create_project(
     return project
 
 
-async def get_project(slug: str) -> Optional[Project]:
+async def get_project(slug: str) -> Project | None:
     return await projects_repo.get_project(slug=slug)
 
 
-async def get_logo_thumbnail_url(thumbnailer_size: str, logo_relative_path: str) -> Union[str, None]:
+async def get_logo_thumbnail_url(thumbnailer_size: str, logo_relative_path: str) -> str | None:
     if logo_relative_path:
         return await get_thumbnail_url(logo_relative_path, thumbnailer_size)
     return None

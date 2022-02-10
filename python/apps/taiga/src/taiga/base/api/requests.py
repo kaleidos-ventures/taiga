@@ -5,13 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Union
-
 from fastapi.requests import Request as RequestBase
 from taiga.users.models import AnonymousUser, User
 
 
 class Request(RequestBase):
     @property
-    def user(self) -> Union[User, AnonymousUser]:
+    def user(self) -> User | AnonymousUser:
         return self.scope.get("user", AnonymousUser)

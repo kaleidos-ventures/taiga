@@ -6,7 +6,6 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import random
-from typing import List, Optional
 
 from asgiref.sync import sync_to_async
 from django.db import transaction
@@ -84,7 +83,7 @@ async def load_sample_data() -> None:
 ################################
 
 
-async def _create_users() -> List[User]:
+async def _create_users() -> list[User]:
     users = []
     for i in range(NUM_USERS):
         user = await _create_user(index=i + 1)
@@ -110,7 +109,7 @@ def _create_user(index: int) -> User:
 
 
 @sync_to_async
-def _create_project_role(project: Project, name: Optional[str] = None) -> Role:
+def _create_project_role(project: Project, name: str | None = None) -> Role:
     name = name or fake.word()
     return Role.objects.create(project=project, name=name, is_admin=False, permissions=choices.PROJECT_PERMISSIONS)
 
@@ -125,7 +124,7 @@ def _get_project_other_roles(project: Project) -> list[Role]:
     return list(project.roles.exclude(slug="admin"))
 
 
-async def _create_project_memberships(project: Project, users: List[User], except_for: User) -> None:
+async def _create_project_memberships(project: Project, users: list[User], except_for: User) -> None:
     # get admin and other roles
     admin_role = await _get_project_admin_role(project=project)
     other_roles = await _get_project_other_roles(project=project)
@@ -195,7 +194,7 @@ async def _create_workspace_memberships(workspace: Workspace, users: list[User],
 
 
 async def _create_workspace(
-    owner: User, name: Optional[str] = None, color: Optional[int] = None, is_premium: Optional[bool] = False
+    owner: User, name: str | None = None, color: int | None = None, is_premium: bool = False
 ) -> Workspace:
     name = name or fake.bs()[:35]
     if is_premium:
@@ -216,7 +215,7 @@ async def _create_workspace(
 
 
 async def _create_project(
-    workspace: Workspace, owner: User, name: Optional[str] = None, description: Optional[str] = None
+    workspace: Workspace, owner: User, name: str | None = None, description: str | None = None
 ) -> Project:
     name = name or fake.catch_phrase()
     description = description or fake.paragraph(nb_sentences=2)

@@ -34,7 +34,7 @@ SAMPLEDATA_DEFAULT_METHODS = {
 }
 
 
-def mock_serializer(serialized_type: Any) -> Union[BaseModel, list[BaseModel]]:
+def mock_serializer(serialized_type: Any) -> BaseModel | list[BaseModel]:
     """
     Construct mocked objects for any of the allowed types
 

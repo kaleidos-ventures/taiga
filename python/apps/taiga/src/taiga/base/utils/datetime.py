@@ -11,9 +11,8 @@
 
 from calendar import timegm
 from datetime import datetime, time, timezone
-from typing import Union
 
-_AnyTime = Union[time, datetime]
+_AnyTime = time | datetime
 
 
 def is_aware(value: _AnyTime) -> bool:

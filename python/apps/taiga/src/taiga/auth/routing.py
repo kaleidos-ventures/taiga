@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, Union
+from typing import Any
 
 from fastapi import Security
 from fastapi.params import Depends
@@ -35,7 +35,7 @@ class AuthAPIRouter(APIRouter):
         *,
         dependencies: list[Depends] = [],
         route_class: type[APIRoute] = AuthAPIRoute,
-        responses: dict[Union[int, str], dict[str, Any]] = {},
+        responses: dict[int | str, dict[str, Any]] = {},
         **kwargs: Any,
     ) -> None:
         super().__init__(

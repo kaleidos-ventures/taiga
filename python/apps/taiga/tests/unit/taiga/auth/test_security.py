@@ -5,8 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Optional
-
 from fastapi import FastAPI, Security
 from fastapi.security import HTTPAuthorizationCredentials
 from taiga.auth.security import HTTPBearer
@@ -20,7 +18,7 @@ client = TestClient(app)
 
 
 @app.get("/credentials")
-def get_credentials(credentials: Optional[HTTPAuthorizationCredentials] = Security(HTTPBearer())):
+def get_credentials(credentials: HTTPAuthorizationCredentials | None = Security(HTTPBearer())):
     return {"scheme": credentials.scheme, "credentials": credentials.credentials} if credentials else {}
 
 
@@ -46,7 +44,7 @@ def test_security_http_bearer_error_incorrect_scheme_credentials():
 
 @app.get("/credentials-no-auto-error")
 def get_credentials_no_error(
-    credentials: Optional[HTTPAuthorizationCredentials] = Security(HTTPBearer(auto_error=False)),
+    credentials: HTTPAuthorizationCredentials | None = Security(HTTPBearer(auto_error=False)),
 ):
     return {"scheme": credentials.scheme, "credentials": credentials.credentials} if credentials else {}
 

@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, Optional, Union
+from typing import Any
 
 from asgiref.sync import sync_to_async
 from taiga.permissions import choices
@@ -15,10 +15,10 @@ from taiga.roles import services as roles_services
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
-AuthorizableObj = Union[Project, Workspace]
+AuthorizableObj = Project | Workspace
 
 
-async def is_project_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
+async def is_project_admin(user: User, obj: Any) -> bool:
     project = await _get_object_project(obj)
     if project is None:
         return False
@@ -29,7 +29,7 @@ async def is_project_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
     return await roles_repositories.is_project_admin(user_id=user.id, project_id=project.id)
 
 
-async def is_workspace_admin(user: User, obj: Optional[AuthorizableObj]) -> bool:
+async def is_workspace_admin(user: User, obj: Any) -> bool:
     workspace = await _get_object_workspace(obj)
     if workspace is None:
         return False
@@ -40,7 +40,7 @@ async def is_workspace_admin(user: User, obj: Optional[AuthorizableObj]) -> bool
     return await roles_repositories.is_workspace_admin(user_id=user.id, workspace_id=workspace.id)
 
 
-async def user_has_perm(user: User, perm: str, obj: AuthorizableObj, cache: str = "user") -> bool:
+async def user_has_perm(user: User, perm: str, obj: Any, cache: str = "user") -> bool:
     """
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
@@ -68,30 +68,28 @@ async def user_can_view_project(user: User, project: Project, cache: str = "user
 
 
 @sync_to_async
-def _get_object_workspace(obj: Any) -> Optional[Workspace]:
-    workspace = None
+def _get_object_workspace(obj: Any) -> Workspace | None:
     if isinstance(obj, Workspace):
-        workspace = obj
+        return obj
     elif obj and hasattr(obj, "workspace"):
-        workspace = obj.workspace
+        return obj.workspace
 
-    return workspace
+    return None
 
 
 @sync_to_async
-def _get_object_project(obj: Any) -> Optional[Project]:
-    project = None
+def _get_object_project(obj: Any) -> Project | None:
     if isinstance(obj, Project):
-        project = obj
+        return obj
     elif obj and hasattr(obj, "project"):
-        project = obj.project
+        return obj.project
 
-    return project
+    return None
 
 
 # TODO: missing tests
 async def _get_user_permissions(
-    user: User, workspace: Workspace, project: Optional[Project] = None, cache: str = "user"
+    user: User, workspace: Workspace, project: Project | None = None, cache: str = "user"
 ) -> list[str]:
     """
     cache param determines how memberships are calculated

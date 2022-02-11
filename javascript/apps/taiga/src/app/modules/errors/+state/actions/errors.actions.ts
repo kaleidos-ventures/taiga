@@ -7,8 +7,11 @@
  */
 
 import { createAction, props } from '@ngrx/store';
+import { ErrorsState } from '../reducers/errors.reducer';
 
-export const globalLoading = createAction(
-  '[Core] Global loading',
-  props<{ loading: boolean }>()
+export const unexpectedError = createAction(
+  '[Errors] Unexpected error',
+  props<{ error: ErrorsState['unexpectedError'] }>()
 );
+
+export const errorSuccess = createAction('[Errors] An error has ocurred');

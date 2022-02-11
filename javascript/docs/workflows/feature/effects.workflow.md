@@ -106,7 +106,7 @@ class TodoEffects {
 
           return this.appService.toastError(error, {
             label: 'errors.text',
-            mesage: 'errors.please_refresh'
+            mesage: 'errors.please_refresh',
           });
         },
       })

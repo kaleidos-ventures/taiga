@@ -10,6 +10,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: grid;
   grid-template-rows: min-content 1fr;
   min-block-size: 100vh;
+
+  &.no-header {
+    grid-template-rows: 1fr;
+  }
 }
 
 router-outlet {

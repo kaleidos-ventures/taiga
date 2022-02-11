@@ -26,4 +26,8 @@ export class ConfigService {
   public get wsUrl(): string {
     return this.config.ws;
   }
+
+  public get supportEmail(): string {
+    return this.config.supportEmail;
+  }
 }

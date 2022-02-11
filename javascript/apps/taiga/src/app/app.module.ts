@@ -38,6 +38,7 @@ import { paramCase } from 'change-case';
 import { NavigationModule } from './shared/navigation/navigation.module';
 import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
 import { TUI_IS_CYPRESS } from '@taiga-ui/cdk';
+import { ErrorsModule } from './modules/errors/errors.module';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -58,6 +59,7 @@ export function prefersReducedMotion(): boolean {
   declarations: [AppComponent],
   imports: [
     DataAccessAuthModule,
+    ErrorsModule,
     ApiModule,
     WsModule,
     CoreModule,

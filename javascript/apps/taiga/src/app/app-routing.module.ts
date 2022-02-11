@@ -62,6 +62,17 @@ const routes: Routes = [
       },
     ],
   },
+
+  {
+    path: '500',
+    loadChildren: () =>
+      import('./modules/errors/500/error-500.module').then(
+        (m) => m.Error500Module
+      ),
+    data: {
+      noHeader: true,
+    },
+  },
 ];
 
 @NgModule({

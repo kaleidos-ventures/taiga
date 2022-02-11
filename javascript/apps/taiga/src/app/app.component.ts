@@ -14,8 +14,9 @@ import { LocalStorageService } from './shared/local-storage/local-storage.servic
 import { setUser } from './modules/auth/data-access/+state/actions/auth.actions';
 import { AuthService } from './modules/auth/data-access/services/auth.service';
 import { RouteHistoryService } from './shared/route-history/route-history.service';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, skip } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'tg-root',
@@ -25,8 +26,10 @@ import { distinctUntilChanged, filter, map, skip } from 'rxjs/operators';
 })
 export class AppComponent {
   public title = 'taiga next';
+  public header$: Observable<boolean>;
 
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
     private wsService: WsService,
@@ -34,6 +37,15 @@ export class AppComponent {
     private store: Store,
     private routeHistoryService: RouteHistoryService
   ) {
+    this.header$ = this.router.events.pipe(
+      filter(
+        (evt: unknown): evt is NavigationEnd => evt instanceof NavigationEnd
+      ),
+      map(() => {
+        return !(this.route.snapshot.firstChild?.data?.noHeader as boolean);
+      })
+    );
+
     this.routeHistoryService.listen();
     this.wsService.listen();
     this.authService.autoRefresh();

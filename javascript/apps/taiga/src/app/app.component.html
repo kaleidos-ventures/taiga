@@ -7,8 +7,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <tui-root>
-  <div class="app-content">
-    <tg-navigation></tg-navigation>
+  <div class="app-content" [class.no-header]="(header$ | async) === false">
+    <tg-navigation *ngIf="header$ | async"></tg-navigation>
     <div class="main-area">
       <router-outlet></router-outlet>
     </div>

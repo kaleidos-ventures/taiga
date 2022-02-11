@@ -29,7 +29,13 @@ describe('AuthEffects', () => {
     service: AuthEffects,
     providers: [provideMockActions(() => actions$)],
     imports: [RouterTestingModule],
-    mocks: [AuthApiService, UsersApiService, LocalStorageService, Router, AppService],
+    mocks: [
+      AuthApiService,
+      UsersApiService,
+      LocalStorageService,
+      Router,
+      AppService,
+    ],
   });
 
   beforeEach(() => {

@@ -7,15 +7,12 @@
  */
 
 import { createReducer, on } from '@ngrx/store';
-import { unexpectedError, globalLoading } from './core.actions';
+import { globalLoading } from './core.actions';
 
 export const coreFeatureKey = 'core';
 
 export interface CoreState {
   loading: boolean;
-  unexpectedError?: {
-    message: string;
-  };
 }
 
 export const initialState: CoreState = {
@@ -24,13 +21,6 @@ export const initialState: CoreState = {
 
 export const reducer = createReducer(
   initialState,
-
-  on(unexpectedError, (state, { error }): CoreState => {
-    return {
-      ...state,
-      unexpectedError: error,
-    };
-  }),
 
   on(globalLoading, (state, { loading }): CoreState => {
     return {

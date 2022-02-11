@@ -13,7 +13,7 @@ import {
   TuiNotificationOptions,
   TuiNotificationsService,
 } from '@taiga-ui/core';
-import { unexpectedError } from '@taiga/core';
+import { unexpectedError } from '../modules/errors/+state/actions/errors.actions';
 import { UnexpectedError } from '@taiga/data';
 import { Store } from '@ngrx/store';
 import { TranslocoService } from '@ngneat/transloco';
@@ -36,7 +36,6 @@ export class AppService {
   }
 
   public unexpectedError(error: HttpErrorResponse) {
-    //show error 500 page
     this.store.dispatch(
       unexpectedError({
         error: this.formatHttpErrorResponse(error),

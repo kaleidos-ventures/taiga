@@ -6,9 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
-from taiga.base.api.permissions import check_permissions
-from taiga.exceptions import api as ex
-from taiga.permissions import HasPerm, choices, services
+from taiga.permissions import choices, services
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -164,26 +162,3 @@ def test_permissions_are_compatible(permissions, expected):
 )
 def test_permissions_are_valid(permissions, expected):
     assert services.permissions_are_valid(permissions) == expected
-
-
-#####################################################
-# api.check_permissions
-#####################################################
-
-
-async def test_check_permissions_success():
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
-    permissions = HasPerm("modify_project")
-
-    assert await check_permissions(permissions=permissions, user=user, obj=project) is None
-
-
-async def test_check_permissions_forbidden():
-    project = await f.create_project()
-
-    user2 = await f.create_user()
-    permissions = HasPerm("modify_project")
-
-    with pytest.raises(ex.ForbiddenError):
-        await check_permissions(permissions=permissions, user=user2, obj=project)

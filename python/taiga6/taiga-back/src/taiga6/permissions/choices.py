@@ -40,8 +40,6 @@ PROJECT_PERMISSIONS = [
     ('delete_task', _('Delete task')),
     ('modify_task', _('Modify task')),
     ('view_tasks', _('View tasks')),
-    # Milestone permissions
-    ('view_milestones', _('View milestones')),
 ]
 
 # possible permissions for workspace members
@@ -59,6 +57,4 @@ ANON_PERMISSIONS = [
     ('view_us', _('View US')),
     # Task permissions
     ('view_tasks', _('View tasks')),
-    # Milestone permissions
-    ('view_milestones', _('View milestones')),
 ]

@@ -35,7 +35,7 @@ async def test_update_role_permissions_is_admin():
 
 async def test_update_role_permissions_incompatible_permissions():
     role = await f.create_role(is_admin=False)
-    permissions = ["view_tasks", "view_milestones"]
+    permissions = ["view_tasks"]
 
     with pytest.raises(ex.IncompatiblePermissionsSetError):
         await services.update_role_permissions(role=role, permissions=permissions)

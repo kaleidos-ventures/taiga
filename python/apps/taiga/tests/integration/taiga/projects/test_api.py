@@ -310,7 +310,6 @@ async def test_get_project_workspace_member_permissions_anonymous_user(client):
     "permissions",
     [
         (["view_us", "view_tasks"]),
-        (["view_us", "view_milestones"]),
         (["view_us", "view_tasks", "comment_task"]),
         (["view_us", "comment_us"]),
     ],
@@ -337,7 +336,6 @@ async def test_update_project_public_permissions_project_not_found(client):
     "permissions",
     [
         (["view_tasks"]),
-        (["view_milestones"]),
         (["comment_task"]),
         (["comment_us"]),
     ],

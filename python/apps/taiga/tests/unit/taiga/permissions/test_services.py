@@ -157,7 +157,7 @@ async def test_user_can_view_project_ok():
         (["view_tasks", "foo"], False),
         (["comment_us", "not_valid"], False),
         (["non_existent"], False),
-        (["view_us", "view_tasks", "view_milestones"], True),
+        (["view_us", "view_tasks"], True),
         (["comment_us", "view_us"], True),
         (["view_us", "comment_task", "view_tasks"], True),
         (["comment_task", "view_tasks"], True),
@@ -175,10 +175,10 @@ def test_permissions_are_valid(permissions, expected):
 @pytest.mark.parametrize(
     "permissions, expected",
     [
-        (["view_tasks", "view_milestones"], False),
+        (["view_tasks"], False),
         (["comment_us", "view_task"], False),
         (["comment_task", "view_us"], False),
-        (["view_us", "view_tasks", "view_milestones"], True),
+        (["view_us", "view_tasks"], True),
         (["comment_us", "view_us"], True),
         (["view_us", "comment_task", "view_tasks"], True),
     ],

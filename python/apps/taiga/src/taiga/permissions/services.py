@@ -156,7 +156,7 @@ def permissions_are_valid(permissions: list[str]) -> bool:
 
 def permissions_are_compatible(permissions: list[str]) -> bool:
     # a user cannot see tasks or sprints if she has no access to user stories
-    incompatible_permissions = set(["view_tasks", "view_milestones"])
+    incompatible_permissions = set(["view_tasks"])
     if "view_us" not in permissions and set.intersection(set(permissions), incompatible_permissions):
         return False
 

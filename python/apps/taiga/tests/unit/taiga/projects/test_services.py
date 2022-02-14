@@ -84,8 +84,8 @@ async def test_create_project_with_no_logo():
 
 async def test_update_project_public_permissions_ok():
     project = await f.create_project()
-    permissions = ["view_project", "view_milestones", "add_us", "view_us", "modify_task", "view_tasks"]
-    anon_permissions = ["view_project", "view_milestones", "view_us", "view_tasks"]
+    permissions = ["view_milestones", "add_us", "view_us", "modify_task", "view_tasks"]
+    anon_permissions = ["view_milestones", "view_us", "view_tasks"]
 
     with patch("taiga.projects.services.projects_repo", new_callable=AsyncMock) as fake_project_repository:
         await services.update_project_public_permissions(project=project, permissions=permissions)
@@ -149,7 +149,7 @@ async def test_get_workspace_projects_for_user_member():
 async def test_update_project_workspace_member_permissions_ok():
     workspace = await f.create_workspace(is_premium=True)
     project = await f.create_project(workspace=workspace)
-    permissions = ["view_project", "view_milestones", "add_us", "view_us", "modify_task", "view_tasks"]
+    permissions = ["view_milestones", "add_us", "view_us", "modify_task", "view_tasks"]
 
     with patch("taiga.projects.services.projects_repo", new_callable=AsyncMock) as fake_project_repository:
         await services.update_project_workspace_member_permissions(project=project, permissions=permissions)

@@ -45,6 +45,11 @@ class HasPerm(PermissionComponent):
         return await permissions_services.user_has_perm(user=user, perm=self.object_perm, obj=obj)
 
 
+class CanViewProject(PermissionComponent):
+    async def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
+        return await permissions_services.user_can_view_project(user=user, project=obj)
+
+
 class IsProjectAdmin(PermissionComponent):
     async def is_authorized(self, user: User, obj: Optional[AuthorizableObj] = None) -> bool:
         return await permissions_services.is_project_admin(user=user, obj=obj)

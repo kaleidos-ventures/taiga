@@ -107,11 +107,11 @@ async def test_get_template_return_template():
 
 async def test_update_project_public_permissions():
     project = await f.create_project(name="Project 1")
-    permissions = ["view_project", "add_milestone", "view_milestones", "add_us", "view_us"]
-    anon_permissions = ["view_project", "view_milestones", "view_us"]
+    permissions = ["add_milestone", "view_milestones", "add_us", "view_us"]
+    anon_permissions = ["view_milestones", "view_us"]
     await repositories.update_project_public_permissions(project, permissions, anon_permissions)
-    assert len(project.public_permissions) == 5
-    assert len(project.anon_permissions) == 3
+    assert len(project.public_permissions) == 4
+    assert len(project.anon_permissions) == 2
 
 
 ##########################################################
@@ -121,9 +121,9 @@ async def test_update_project_public_permissions():
 
 async def test_update_project_workspace_member_permissions():
     project = await f.create_project(name="Project 1")
-    permissions = ["view_project", "add_milestone", "view_milestones", "add_us", "view_us"]
+    permissions = ["add_milestone", "view_milestones", "add_us", "view_us"]
     await repositories.update_project_workspace_member_permissions(project, permissions)
-    assert len(project.workspace_member_permissions) == 5
+    assert len(project.workspace_member_permissions) == 4
 
 
 ##########################################################

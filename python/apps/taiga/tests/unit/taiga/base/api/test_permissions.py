@@ -11,6 +11,7 @@ from taiga.base.api.permissions import And, Not, Or, check_permissions
 from taiga.exceptions import api as ex
 from taiga.permissions import (
     AllowAny,
+    CanViewProject,
     DenyAll,
     HasPerm,
     IsAuthenticated,
@@ -125,6 +126,19 @@ async def test_check_permission_is_workspace_admin():
     # user2 isn't ws-admin
     with pytest.raises(ex.ForbiddenError):
         await check_permissions(permissions=permissions, user=user2, obj=workspace)
+
+
+async def test_check_permission_can_view_project():
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    project = await f.create_project(owner=user1)
+    permissions = CanViewProject()
+
+    # user is pj-admin
+    assert await check_permissions(permissions=permissions, user=user1, obj=project) is None
+    # user2 isn't pj-member
+    with pytest.raises(ex.ForbiddenError):
+        await check_permissions(permissions=permissions, user=user2, obj=project)
 
 
 #######################################################

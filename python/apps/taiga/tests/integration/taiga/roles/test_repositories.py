@@ -91,8 +91,8 @@ async def test_get_num_members_by_role_id_no_members():
 
 async def test_update_role_permissions():
     role = await f.create_role()
-    role = await repositories.update_role_permissions(role, ["view_project"])
-    assert "view_project" in role.permissions
+    role = await repositories.update_role_permissions(role, ["view_us"])
+    assert "view_us" in role.permissions
 
 
 ##########################################################

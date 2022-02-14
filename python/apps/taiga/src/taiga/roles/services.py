@@ -9,18 +9,18 @@ from typing import Optional
 from taiga.exceptions import services as ex
 from taiga.permissions import services as permissions_services
 from taiga.projects.models import Project
-from taiga.roles import repositories as roles_repo
+from taiga.roles import repositories as roles_repositories
 from taiga.roles.models import Membership, Role, WorkspaceMembership
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 
 async def get_project_roles(project: Project) -> list[Role]:
-    return await roles_repo.get_project_roles(project)
+    return await roles_repositories.get_project_roles(project)
 
 
 async def get_project_role(project: Project, slug: str) -> Optional[Role]:
-    return await roles_repo.get_project_role(project=project, slug=slug)
+    return await roles_repositories.get_project_role(project=project, slug=slug)
 
 
 async def update_role_permissions(role: Role, permissions: list[str]) -> Role:
@@ -33,7 +33,7 @@ async def update_role_permissions(role: Role, permissions: list[str]) -> Role:
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError()
 
-    return await roles_repo.update_role_permissions(role=role, permissions=permissions)
+    return await roles_repositories.update_role_permissions(role=role, permissions=permissions)
 
 
 async def get_user_project_membership(user: User, project: Project, cache: str = "user") -> Membership:
@@ -41,7 +41,7 @@ async def get_user_project_membership(user: User, project: Project, cache: str =
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
     """
-    return await roles_repo.get_user_project_membership(user=user, project=project, cache=cache)
+    return await roles_repositories.get_user_project_membership(user=user, project=project, cache=cache)
 
 
 async def get_user_workspace_membership(user: User, workspace: Workspace, cache: str = "user") -> WorkspaceMembership:
@@ -49,4 +49,4 @@ async def get_user_workspace_membership(user: User, workspace: Workspace, cache:
     cache param determines how memberships are calculated
     trying to reuse the existing data in cache
     """
-    return await roles_repo.get_user_workspace_membership(user=user, workspace=workspace, cache=cache)
+    return await roles_repositories.get_user_workspace_membership(user=user, workspace=workspace, cache=cache)

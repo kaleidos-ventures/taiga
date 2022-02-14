@@ -326,7 +326,7 @@ async def test_update_project_public_permissions_ok(client, permissions):
 
 async def test_update_project_public_permissions_project_not_found(client):
     user = await f.create_user()
-    data = {"permissions": ["view_project"]}
+    data = {"permissions": ["view_us"]}
 
     client.login(user)
     response = client.put("/projects/non-existent/public-permissions", json=data)
@@ -406,7 +406,7 @@ async def test_update_project_workspace_member_permissions_ok(client):
 async def test_update_project_workspace_member_permissions_no_premium(client):
     workspace = await f.create_workspace(is_premium=False)
     project = await f.create_project(workspace=workspace)
-    data = {"permissions": ["view_project"]}
+    data = {"permissions": ["view_us"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.slug}/workspace-member-permissions", json=data)
@@ -415,7 +415,7 @@ async def test_update_project_workspace_member_permissions_no_premium(client):
 
 async def test_update_project_workspace_member_permissions_project_not_found(client):
     user = await f.create_user()
-    data = {"permissions": ["view_project"]}
+    data = {"permissions": ["view_us"]}
 
     client.login(user)
     response = client.put("/projects/non-existent/workspace-member-permissions", json=data)

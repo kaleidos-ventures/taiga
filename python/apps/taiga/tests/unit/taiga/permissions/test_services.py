@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from unittest.mock import patch
+
 import pytest
 from taiga.permissions import choices, services
 from tests.utils import factories as f
@@ -13,7 +15,7 @@ pytestmark = pytest.mark.django_db
 
 
 #####################################################
-# services.is_project_admin
+# is_project_admin
 #####################################################
 
 
@@ -44,7 +46,7 @@ async def test_is_project_admin_being_project_member():
 
 
 #####################################################
-# services.is_workspace_admin
+# is_workspace_admin
 #####################################################
 
 
@@ -73,7 +75,7 @@ async def test_is_workspace_admin_being_workspace_member():
 
 
 #####################################################
-# services.user_has_perm
+# user_has_perm
 #####################################################
 
 
@@ -101,7 +103,7 @@ async def test_user_has_perm_being_project_member():
     user = await f.create_user()
     await f.create_membership(user=user, project=project, role=general_member_role)
 
-    view_perm = "view_project"
+    view_perm = "view_us"
     modify_perm = "modify_project"
 
     assert await services.user_has_perm(user=user, perm=view_perm, obj=project) is True
@@ -124,27 +126,28 @@ async def test_user_has_perm_without_workspace_and_project():
 
 
 #####################################################
-# permissions_are_compatible
+# user_can_view_project
 #####################################################
 
 
-@pytest.mark.parametrize(
-    "permissions, expected",
-    [
-        (["view_tasks", "view_milestones"], False),
-        (["comment_us", "view_project"], False),
-        (["comment_task", "view_project"], False),
-        (["view_us", "view_tasks", "view_milestones"], True),
-        (["comment_us", "view_us"], True),
-        (["view_us", "comment_task", "view_tasks"], True),
-    ],
-)
-def test_permissions_are_compatible(permissions, expected):
-    assert services.permissions_are_compatible(permissions) == expected
+async def test_user_can_view_project_without_project():
+    user = await f.create_user()
+    project = await f.create_project()
+    with patch.object(services, "_get_object_project", return_value=None):
+        assert await services.user_can_view_project(user=user, project=project) is False
+
+
+async def test_user_can_view_project_ok():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+    project = await f.create_project(workspace=workspace, owner=user)
+    with patch.object(services, "_get_user_permissions", return_value=[]) as mock_method:
+        await services.user_can_view_project(user=user, project=project)
+        mock_method.assert_awaited_once_with(user=user, workspace=workspace, project=project, cache="user")
 
 
 #####################################################
-# services.permissions_are_valid
+# permissions_are_valid
 #####################################################
 
 
@@ -162,3 +165,23 @@ def test_permissions_are_compatible(permissions, expected):
 )
 def test_permissions_are_valid(permissions, expected):
     assert services.permissions_are_valid(permissions) == expected
+
+
+#####################################################
+# permissions_are_compatible
+#####################################################
+
+
+@pytest.mark.parametrize(
+    "permissions, expected",
+    [
+        (["view_tasks", "view_milestones"], False),
+        (["comment_us", "view_task"], False),
+        (["comment_task", "view_us"], False),
+        (["view_us", "view_tasks", "view_milestones"], True),
+        (["comment_us", "view_us"], True),
+        (["view_us", "comment_task", "view_tasks"], True),
+    ],
+)
+def test_permissions_are_compatible(permissions, expected):
+    assert services.permissions_are_compatible(permissions) == expected

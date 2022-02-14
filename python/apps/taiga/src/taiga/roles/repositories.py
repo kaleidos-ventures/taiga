@@ -78,6 +78,16 @@ def get_num_members_by_role_id(role_id: int) -> int:
 
 
 @sync_to_async
+def get_project_role_from_membership(project_membership: Membership) -> Role:
+    return project_membership.role
+
+
+@sync_to_async
+def get_workspace_role_from_membership(workspace_membership: WorkspaceMembership) -> WorkspaceRole:
+    return workspace_membership.workspace_role
+
+
+@sync_to_async
 def is_project_admin(user_id: int, project_id: int) -> bool:
     return Membership.objects.filter(user_id=user_id, project_id=project_id, role__is_admin=True).exists()
 

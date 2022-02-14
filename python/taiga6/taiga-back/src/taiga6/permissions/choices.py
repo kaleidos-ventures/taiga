@@ -26,9 +26,8 @@ WORKSPACE_ADMIN_PERMISSIONS = [
 # possible permissions for members or public members
 # directly applied to default "general" project role
 # these may be changed by a project admin
+# also, permissions for ws-admins
 PROJECT_PERMISSIONS = [
-    # Project permissions
-    ('view_project', _('View project')),
     # US permissions
     ('add_us', _('Add US')),
     ('comment_us', _('Comment US')),
@@ -56,8 +55,6 @@ WORKSPACE_PERMISSIONS = [
 # only "view" permissions at most
 # these may be changed by a project admin when changing public-permissions
 ANON_PERMISSIONS = [
-    # Project permissions
-    ('view_project', _('View project')),
     # US permissions
     ('view_us', _('View US')),
     # Task permissions

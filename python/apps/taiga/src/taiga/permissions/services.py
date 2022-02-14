@@ -52,8 +52,19 @@ async def user_has_perm(user: User, perm: str, obj: AuthorizableObj, cache: str 
     if not project and not workspace:
         return False
 
-    user_permissions = await _get_user_permissions(user, workspace, project, cache=cache)
+    user_permissions = await _get_user_permissions(user=user, workspace=workspace, project=project, cache=cache)
     return perm in user_permissions
+
+
+async def user_can_view_project(user: User, project: Project, cache: str = "user") -> bool:
+    project = await _get_object_project(project)
+    if not project:
+        return False
+
+    workspace = project.workspace
+
+    user_permissions = await _get_user_permissions(user=user, workspace=workspace, project=project, cache=cache)
+    return len(user_permissions) > 0
 
 
 @sync_to_async
@@ -78,6 +89,7 @@ def _get_object_project(obj: Any) -> Optional[Project]:
     return project
 
 
+# TODO: missing tests
 async def _get_user_permissions(
     user: User, workspace: Workspace, project: Optional[Project] = None, cache: str = "user"
 ) -> list[str]:
@@ -90,46 +102,41 @@ async def _get_user_permissions(
 
     if project:
         project_membership = await roles_services.get_user_project_membership(user, project, cache=cache)
-
         is_project_member = project_membership is not None
-        is_project_admin = is_project_member and await roles_repositories.is_project_membership_admin(
-            project_membership=project_membership
+        role = (
+            await roles_repositories.get_project_role_from_membership(project_membership) if is_project_member else None
         )
-        project_role_permissions = (
-            await roles_repositories.get_project_membership_permissions(project_membership)
-            if project_membership
-            else []
-        )
+        is_project_admin = role.is_admin if role else False
+        project_role_permissions = role.permissions if role else []
 
     workspace_membership = await roles_services.get_user_workspace_membership(user, workspace, cache=cache)
     is_workspace_member = workspace_membership is not None
-    is_workspace_admin = is_workspace_member and await roles_repositories.is_workspace_membership_admin(
-        workspace_membership=workspace_membership
+    workspace_role = (
+        await roles_repositories.get_workspace_role_from_membership(workspace_membership)
+        if is_workspace_member
+        else None
     )
-    workspace_role_permissions = (
-        await roles_repositories.get_workspace_membership_permissions(workspace_membership)
-        if workspace_membership
-        else []
-    )
+    is_workspace_admin = workspace_role.is_admin if workspace_role else False
+    workspace_role_permissions = workspace_role.permissions if workspace_role else []
 
-    # pj (user is)     ws (user is)	   	Applied permission role (referred to a project)
+    # pj (user is)		ws (user is)	Applied permission role (referred to a project)
     # =================================================================================
-    # pj-admin	        ws-admin	    rol-pj-admin
-    # pj-admin	        ws-member	    rol-pj-admin
-    # pj-admin	        no-rol  	    rol-pj-admin
-    # pj-member	        ws-admin	    rol-ws-admin
-    # no-rol	        ws-admin	    rol-ws-admin
-    # pj-member	        ws-member	    rol-pj-member
-    # pj-member	        no-rol  	    rol-pj-member
-    # no-rol	        ws-member	    rol-ws-member
-    # no-rol            no-rol      	rol-public-permissions
-    # no-logged         no-logged      	rol-anon-permissions
+    # pj-admin			ws-admin		role-pj-admin.permissions
+    # pj-admin			ws-member		role-pj-admin.permissions
+    # pj-admin			no-role			role-pj-admin.permissions
+    # pj-member			ws-admin		role-ws-admin [edit permissions over pj]
+    # no-role			ws-admin		role-ws-admin [edit permissions over pj]
+    # pj-member			ws-member		role-pj-member.permissions
+    # pj-member			no-role			role-pj-member.permissions
+    # no-role			ws-member		pj.workspace-member-permissions
+    # no-role			no-role			pj.public-permissions
+    # no-logged			no-logged		pj.public-permissions [only view]
 
     if project:
         if is_project_admin:
             user_permissions = project_role_permissions
         elif is_workspace_admin:
-            user_permissions = workspace_role_permissions
+            user_permissions = choices.PROJECT_PERMISSIONS
         elif is_project_member:
             user_permissions = project_role_permissions
         elif is_workspace_member:

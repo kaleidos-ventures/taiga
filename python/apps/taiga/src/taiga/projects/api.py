@@ -13,7 +13,7 @@ from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions import services as services_ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
-from taiga.permissions import HasPerm, IsProjectAdmin
+from taiga.permissions import CanViewProject, HasPerm, IsProjectAdmin
 from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
@@ -31,7 +31,7 @@ router_workspaces = AuthAPIRouter(prefix="/workspaces/{workspace_slug}/projects"
 # PERMISSIONS
 LIST_WORKSPACE_PROJECTS = HasPerm("view_workspace")
 CREATE_PROJECT = HasPerm("view_workspace")
-GET_PROJECT = HasPerm("view_project")
+GET_PROJECT = CanViewProject()
 GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()

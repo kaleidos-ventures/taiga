@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a766faad-3007-4763-af4e-35d928c94745",
+		"_postman_id": "87dd0eb2-a469-4c2f-94d3-0cc87146cf46",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -362,10 +362,6 @@
 									"    // Validate response API fields",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"isPremium\");",
-									"    pm.expect(jsonRes).to.have.property(\"totalProjects\");",
-									"    pm.expect(jsonRes).to.have.property(\"hasProjects\");",
-									"    pm.expect(jsonRes).to.have.property(\"myRole\");",
-									"    pm.expect(jsonRes).to.have.property(\"isOwner\");     ",
 									"",
 									"    pm.expect(jsonRes.name).to.be.eql(\"My workspace\");",
 									"    pm.expect(jsonRes.color).to.be.eql(1);",
@@ -440,10 +436,6 @@
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"color\");",
 									"    pm.expect(jsonRes).to.have.property(\"isPremium\");",
-									"    pm.expect(jsonRes).to.have.property(\"totalProjects\");",
-									"    pm.expect(jsonRes).to.have.property(\"hasProjects\");",
-									"    pm.expect(jsonRes).to.have.property(\"myRole\");",
-									"    pm.expect(jsonRes).to.have.property(\"isOwner\");            ",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
@@ -1018,7 +1010,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"numMembers\");",
 									"    pm.expect(jsonRes).to.have.property(\"isAdmin\");",
 									"    ",
-									"    pm.expect(jsonRes.permissions).to.include(\"view_project\")",
+									"    pm.expect(jsonRes.permissions).to.include(\"view_us\")",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
@@ -1044,7 +1036,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_project\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_us\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"

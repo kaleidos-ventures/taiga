@@ -48,7 +48,6 @@ export enum Permissions {
   commentWikiPage = 'comment_wiki_page',
   deleteWikiPage = 'delete_wiki_page',
   // Project
-  viewProject = 'view_project',
   modifyProject = 'modify_project',
   adminProjectValues = 'admin_project_values',
   deleteProject = 'delete_project',

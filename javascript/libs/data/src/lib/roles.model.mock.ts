@@ -69,7 +69,6 @@ const getPermissions = () => {
     Permissions.commentWikiPage,
     Permissions.deleteWikiPage,
 
-    Permissions.viewProject,
     Permissions.modifyProject,
     Permissions.adminProjectValues,
     Permissions.deleteProject,

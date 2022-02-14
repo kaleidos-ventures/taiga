@@ -80,7 +80,6 @@ export class ProjectApiService {
         'view_milestones',
         'delete_project',
         'modify_project',
-        'view_project',
       ];
 
       return validPermission.includes(permission);
@@ -111,7 +110,6 @@ export class ProjectApiService {
         'view_milestones',
         'delete_project',
         'modify_project',
-        'view_project',
       ];
 
       return validPermission.includes(permission);
@@ -141,7 +139,6 @@ export class ProjectApiService {
         'view_milestones',
         'delete_project',
         'modify_project',
-        'view_project',
       ];
 
       return validPermission.includes(permission);

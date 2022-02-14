@@ -25,4 +25,17 @@ export class AppService {
       error: this.formatHttpErrorResponse(error),
     });
   }
+
+  public unexpectedError(error: HttpErrorResponse) {
+    //show error 500 page
+    console.log('unexpectedError', error);
+  }
+
+  public toastError(
+    error: HttpErrorResponse,
+    data: { label: string; message: string }
+  ) {
+    // show toast component
+    console.log('toastError', error, data);
+  }
 }

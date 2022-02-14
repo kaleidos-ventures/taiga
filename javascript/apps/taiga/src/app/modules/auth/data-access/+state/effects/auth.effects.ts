@@ -9,14 +9,15 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map, switchMap, tap } from 'rxjs/operators';
-
+import { map, tap } from 'rxjs/operators';
 import * as AuthActions from '../actions/auth.actions';
 import { AuthApiService, UsersApiService } from '@taiga/api';
-import { pessimisticUpdate } from '@nrwl/angular';
+import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { Auth, User } from '@taiga/data';
 import { Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
+import { AppService } from '~/app/services/app.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class AuthEffects {
@@ -36,9 +37,11 @@ export class AuthEffects {
               })
             );
         },
-        onError: () => {
-          return null;
-        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.toastError(httpResponse, {
+            label: 'errors.login',
+            message: 'errors.please_refresh',
+          }),
       })
     );
   });
@@ -57,19 +60,22 @@ export class AuthEffects {
   public loginSuccess$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.loginSuccess),
-      switchMap(({ auth, redirect }) => {
-        this.authService.setAuth(auth);
-
-        return this.usersApiService.me().pipe(
-          tap(() => {
-            if (redirect) {
-              void this.router.navigate(['/']);
-            }
-          }),
-          map((user: User) => {
-            return AuthActions.setUser({ user });
-          })
-        );
+      fetch({
+        run: ({ auth, redirect }) => {
+          this.authService.setAuth(auth);
+          return this.usersApiService.me().pipe(
+            tap(() => {
+              if (redirect) {
+                void this.router.navigate(['/']);
+              }
+            }),
+            map((user: User) => {
+              return AuthActions.setUser({ user });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.unexpectedError(httpResponse),
       })
     );
   });
@@ -93,6 +99,7 @@ export class AuthEffects {
     private actions$: Actions,
     private authApiService: AuthApiService,
     private authService: AuthService,
-    private usersApiService: UsersApiService
+    private usersApiService: UsersApiService,
+    private appService: AppService
   ) {}
 }

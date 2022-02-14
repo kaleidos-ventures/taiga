@@ -15,6 +15,8 @@ import * as ProjectActions from '../actions/project.actions';
 import { ProjectApiService } from '@taiga/api';
 import { fetch } from '@nrwl/angular';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
+import { AppService } from '~/app/services/app.service';
+import { HttpErrorResponse } from '@angular/common/http';
 @Injectable()
 export class ProjectEffects {
   public loadProject$ = createEffect(() => {
@@ -28,9 +30,8 @@ export class ProjectEffects {
             })
           );
         },
-        onError: () => {
-          return null;
-        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.unexpectedError(httpResponse),
       })
     );
   });
@@ -50,6 +51,7 @@ export class ProjectEffects {
   constructor(
     private actions$: Actions,
     private projectApiService: ProjectApiService,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private appService: AppService
   ) {}
 }

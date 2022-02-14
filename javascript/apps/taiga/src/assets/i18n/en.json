@@ -63,5 +63,15 @@
   "project": {
     "create_first_project": "Create your first project",
     "create_new_project": "Add a project"
+  },
+  "errors": {
+    "please_refresh": "Please refresh the page or try again in a few minutes",
+    "login": "There was a problem login your account",
+    "create_project": "There was a problem creating your project",
+    "create_workspace": "There was a problem creating your workspace",
+    "member_roles": "There was a problem loading member roles",
+    "public_permissions": "There was a problem loading public permissions",
+    "workspace_permissions": "There was a problem loading workspace  permissions",
+    "save_changes": "An error ocurred while saving your changes"
   }
 }

@@ -15,7 +15,7 @@ import {
   HttpInterceptor,
   HttpResponse,
 } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 import { ConfigService } from '@taiga/core';
 import { Store } from '@ngrx/store';
@@ -96,11 +96,8 @@ export class ApiRestInterceptorService implements HttpInterceptor {
             return this.handle401Error(request, next);
           } else if (!auth?.token || !auth?.refresh) {
             this.store.dispatch(logout());
+            return EMPTY;
           }
-        } else if (err.status !== 403) {
-          this.store.dispatch(
-            this.appService.unexpectedHttpErrorResponseAction(err)
-          );
         }
 
         return throwError(err);

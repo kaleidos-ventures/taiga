@@ -13,7 +13,9 @@ import { filter, map } from 'rxjs/operators';
 
 import * as ProjectActions from '../actions/roles-permissions.actions';
 import { ProjectApiService } from '@taiga/api';
+import { AppService } from '~/app/services/app.service';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class RolesPermissionsEffects {
@@ -30,9 +32,11 @@ export class RolesPermissionsEffects {
               })
             );
         },
-        onError: () => {
-          return null;
-        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.toastError(httpResponse, {
+            label: 'errors.member_roles',
+            message: 'errors.please_refresh',
+          }),
       })
     );
   });
@@ -52,9 +56,11 @@ export class RolesPermissionsEffects {
               })
             );
         },
-        onError: () => {
-          return null;
-        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.toastError(httpResponse, {
+            label: 'errors.public_permissions',
+            message: 'errors.please_refresh',
+          }),
       })
     );
   });
@@ -75,9 +81,11 @@ export class RolesPermissionsEffects {
               })
             );
         },
-        onError: () => {
-          return null;
-        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.toastError(httpResponse, {
+            label: 'errors.workspace_permissions',
+            message: 'errors.please_refresh',
+          }),
       })
     );
   });
@@ -95,8 +103,12 @@ export class RolesPermissionsEffects {
               })
             );
         },
-        onError: () => {
-          return ProjectActions.updateRolePermissionsError();
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          ProjectActions.updateRolePermissionsError();
+          return this.appService.toastError(httpResponse, {
+            label: 'errors.save_changes',
+            message: 'errors.please_refresh',
+          });
         },
       })
     );
@@ -117,8 +129,12 @@ export class RolesPermissionsEffects {
               })
             );
         },
-        onError: () => {
-          return ProjectActions.updateRolePermissionsError();
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          ProjectActions.updateRolePermissionsError();
+          return this.appService.toastError(httpResponse, {
+            label: 'errors.save_changes',
+            message: 'errors.please_refresh',
+          });
         },
       })
     );
@@ -139,8 +155,12 @@ export class RolesPermissionsEffects {
               })
             );
         },
-        onError: () => {
-          return ProjectActions.updateRolePermissionsError();
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          ProjectActions.updateRolePermissionsError();
+          return this.appService.toastError(httpResponse, {
+            label: 'errors.save_changes',
+            message: 'errors.please_refresh',
+          });
         },
       })
     );
@@ -148,6 +168,7 @@ export class RolesPermissionsEffects {
 
   constructor(
     private actions$: Actions,
-    private projectApiService: ProjectApiService
+    private projectApiService: ProjectApiService,
+    private appService: AppService
   ) {}
 }

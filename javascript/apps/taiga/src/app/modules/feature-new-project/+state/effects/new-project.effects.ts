@@ -17,6 +17,8 @@ import { ProjectApiService } from '@taiga/api';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { Project } from '@taiga/data';
 import { Router } from '@angular/router';
+import { AppService } from '~/app/services/app.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class NewProjectEffects {
@@ -31,8 +33,12 @@ export class NewProjectEffects {
             })
           );
         },
-        onError: (error) => {
-          return NewProjectActions.createProjectError({ error });
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          NewProjectActions.createProjectError({ error: httpResponse });
+          return this.appService.toastError(httpResponse, {
+            label: 'errors.create_project',
+            message: 'errors.please_refresh',
+          });
         },
       })
     );
@@ -63,6 +69,7 @@ export class NewProjectEffects {
   constructor(
     private actions$: Actions,
     private projectApiService: ProjectApiService,
-    private router: Router
+    private router: Router,
+    private appService: AppService
   ) {}
 }

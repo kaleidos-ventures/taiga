@@ -15,7 +15,9 @@ import * as WorkspaceActions from '../actions/workspace.actions';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { Workspace } from '@taiga/data';
 import { WorkspaceApiService } from '@taiga/api';
-import { EMPTY, timer, zip } from 'rxjs';
+import { AppService } from '~/app/services/app.service';
+import { timer, zip } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class WorkspaceEffects {
@@ -30,9 +32,8 @@ export class WorkspaceEffects {
             })
           );
         },
-        onError: () => {
-          return EMPTY;
-        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.unexpectedError(httpResponse),
       })
     );
   });
@@ -60,9 +61,11 @@ export class WorkspaceEffects {
             })
           );
         },
-        onError: () => {
-          return EMPTY;
-        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.toastError(httpResponse, {
+            label: 'errors.create_workspace',
+            message: 'errors.please_refresh',
+          }),
       })
     );
   });
@@ -83,15 +86,15 @@ export class WorkspaceEffects {
               })
             );
         },
-        onError: () => {
-          return null;
-        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.unexpectedError(httpResponse),
       })
     );
   });
 
   constructor(
     private actions$: Actions,
-    private workspaceApiService: WorkspaceApiService
+    private workspaceApiService: WorkspaceApiService,
+    private appService: AppService
   ) {}
 }

@@ -14,6 +14,8 @@ import { map } from 'rxjs/operators';
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
 import { fetch } from '@nrwl/angular';
 import { WorkspaceApiService } from '@taiga/api';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AppService } from '~/app/services/app.service';
 
 @Injectable()
 export class WorkspaceDetailEffects {
@@ -28,9 +30,8 @@ export class WorkspaceDetailEffects {
             })
           );
         },
-        onError: () => {
-          return null;
-        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.unexpectedError(httpResponse),
       })
     );
   });
@@ -50,15 +51,15 @@ export class WorkspaceDetailEffects {
               })
             );
         },
-        onError: () => {
-          return null;
-        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.unexpectedError(httpResponse),
       })
     );
   });
 
   constructor(
     private actions$: Actions,
-    private workspaceApiService: WorkspaceApiService
+    private workspaceApiService: WorkspaceApiService,
+    private appService: AppService
   ) {}
 }

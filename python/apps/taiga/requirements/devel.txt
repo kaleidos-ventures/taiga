@@ -148,7 +148,7 @@ factory-boy @ git+https://github.com/FactoryBoy/factory_boy@master
     # via
     #   -r requirements/devel.in
     #   pytest-factoryboy
-faker==12.1.0
+faker==12.3.3
     # via -r requirements/commons.in
 fastapi==0.73.0
     # via -r requirements/commons.in
@@ -268,23 +268,20 @@ pyparsing==3.0.7
     # via
     #   packaging
     #   taiga6
-pytest==7.0.0
+pytest==7.0.1
     # via
     #   -r requirements/devel.in
     #   pytest-asyncio
     #   pytest-cov
     #   pytest-django
     #   pytest-factoryboy
-    #   pytest-pythonpath
-pytest-asyncio==0.18.0
+pytest-asyncio==0.18.1
     # via -r requirements/devel.in
 pytest-cov==3.0.0
     # via -r requirements/devel.in
 pytest-django==4.5.2
     # via -r requirements/devel.in
 pytest-factoryboy==2.1.0
-    # via -r requirements/devel.in
-pytest-pythonpath==0.7.3
     # via -r requirements/devel.in
 python-dateutil==2.7.5
     # via
@@ -387,7 +384,7 @@ tomli==2.0.1
     #   pytest
 typer==0.4.0
     # via -r requirements/commons.in
-typing-extensions==4.0.1
+typing-extensions==4.1.1
     # via pydantic
 unidecode==0.4.20
     # via taiga6

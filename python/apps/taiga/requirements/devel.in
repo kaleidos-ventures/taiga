@@ -2,7 +2,6 @@
 
 # Testing
 pytest
-pytest-pythonpath
 pytest-cov
 pytest-django
 pytest-asyncio

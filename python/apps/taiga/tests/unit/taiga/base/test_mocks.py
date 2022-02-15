@@ -143,7 +143,7 @@ def _validate_bool(boolean: bool):
 
 def _validate_datetime(date_hour: datetime):
     assert isinstance(date_hour, datetime)
-    assert len(date_hour.__str__()) == 32
+    assert len(date_hour.__str__()) == 19
 
 
 def _validate_dictionary(dictionary: datetime):

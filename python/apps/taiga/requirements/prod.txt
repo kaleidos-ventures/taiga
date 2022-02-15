@@ -54,7 +54,7 @@ cffi==1.15.0
     #   cairocffi
     #   cryptography
     #   taiga6
-charset-normalizer==2.0.11
+charset-normalizer==2.0.12
     # via
     #   requests
     #   taiga6
@@ -106,7 +106,6 @@ django==3.2.12
     # via
     #   django-jinja
     #   django-picklefield
-    #   django-sampledatahelper
     #   django-sites
     #   django-sr
     #   easy-thumbnails
@@ -118,8 +117,6 @@ django-jinja==2.10.0
 django-pglocks==1.0.4
     # via taiga6
 django-picklefield==3.0.1
-    # via taiga6
-django-sampledatahelper==0.4.1
     # via taiga6
 django-sites==0.11
     # via taiga6
@@ -139,7 +136,7 @@ easy-thumbnails==2.8.1
     #   taiga6
 email-validator==1.1.3
     # via pydantic
-faker==12.1.0
+faker==12.3.3
     # via -r requirements/commons.in
 fastapi==0.73.0
     # via -r requirements/commons.in
@@ -155,7 +152,7 @@ idna==3.3
     #   email-validator
     #   requests
     #   taiga6
-imageio==2.15.0
+imageio==2.16.0
     # via
     #   scikit-image
     #   taiga6
@@ -219,7 +216,7 @@ pillow==9.0.1
     #   taiga6
 premailer==3.0.1
     # via taiga6
-prompt-toolkit==3.0.27
+prompt-toolkit==3.0.28
     # via
     #   click-repl
     #   taiga6
@@ -267,7 +264,6 @@ pytz==2021.3
     # via
     #   celery
     #   django
-    #   sampledata
     #   taiga6
 pywavelets==1.2.0
     # via
@@ -291,10 +287,6 @@ requests-oauthlib==1.3.1
     #   taiga6
 rudder-sdk-python==1.0.0b1
     # via taiga6
-sampledata==0.3.7
-    # via
-    #   django-sampledatahelper
-    #   taiga6
 scikit-image==0.19.1
     # via
     #   psd-tools
@@ -312,12 +304,10 @@ six==1.16.0
     #   bleach
     #   click-repl
     #   django-pglocks
-    #   django-sampledatahelper
     #   html5lib
     #   python-dateutil
     #   python-multipart
     #   rudder-sdk-python
-    #   sampledata
     #   serpy
     #   taiga6
     #   webcolors
@@ -333,7 +323,7 @@ svglib==1.2.1
     # via
     #   easy-thumbnails
     #   taiga6
-tifffile==2022.2.2
+tifffile==2022.2.9
     # via
     #   scikit-image
     #   taiga6
@@ -345,7 +335,7 @@ tinycss2==1.1.1
     #   taiga6
 typer==0.4.0
     # via -r requirements/commons.in
-typing-extensions==4.0.1
+typing-extensions==4.1.1
     # via pydantic
 unidecode==0.4.20
     # via taiga6

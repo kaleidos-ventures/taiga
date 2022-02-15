@@ -6,11 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import inspect
+import random
 import typing
 from datetime import datetime
 from typing import Any, Union, get_type_hints
 
-from sampledata.helper import SampleData
+from faker import Faker
 from taiga.base.serializer import BaseModel
 
 MAX_NESTED_INDEX = 5
@@ -19,14 +20,17 @@ MAX_LIST_LENGTH = 5
 # The probability for an Optional type to be `None` (1 to 100)
 OPTIONAL_NONE_PROB = 50
 
-SAMPLE_DATA = SampleData()
+SAMPLE_DATA = Faker()
+SAMPLE_DATA.seed_instance(1)
+random.seed(1)
+
 # Choose your Sampledata's methods from here:
 #   https://sampledata.readthedocs.io/en/latest/sampledata.html#time-methods
 SAMPLEDATA_DEFAULT_METHODS = {
-    "str": "words(1)",
-    "int": "digits(4)",
+    "str": "word()",
+    "int": "port_number()",
     "bool": "boolean()",
-    "datetime": "datetime(begin=-9999, end=9999)",
+    "datetime": "date_time()",
 }
 
 
@@ -38,7 +42,7 @@ def mock_serializer(serialized_type: Any) -> Union[BaseModel, list[BaseModel]]:
     """
     if typing.get_origin(serialized_type) is list:
         ret_list = list()
-        for _ in range(SAMPLE_DATA.int(MIN_LIST_LENGTH, MAX_LIST_LENGTH)):
+        for _ in range(random.randint(MIN_LIST_LENGTH, MAX_LIST_LENGTH)):
             ret_list.append(base_model_mock_serializer(typing.get_args(serialized_type)[0]))
         return ret_list
     return base_model_mock_serializer(serialized_type)
@@ -66,7 +70,7 @@ def base_model_mock_serializer(
         type_is_optional = _is_optional(prop_type)
         if type_is_optional:
             # take either None or the optional's type, as the new type
-            if SAMPLE_DATA.int(0, 100) < OPTIONAL_NONE_PROB:
+            if random.randint(0, 100) < OPTIONAL_NONE_PROB:
                 properties_dict[prop] = None
                 continue
             else:
@@ -100,7 +104,7 @@ def base_model_mock_serializer(
             properties_dict[prop] = _get_simple_random(prop_type)
 
         if typing.get_origin(prop_type) is list:
-            list_range = range(SAMPLE_DATA.int(MIN_LIST_LENGTH, MAX_LIST_LENGTH))
+            list_range = range(random.randint(MIN_LIST_LENGTH, MAX_LIST_LENGTH))
             properties_dict[prop] = []
             for count in list_range:
                 if not issubclass(typing.get_args(prop_type)[0], BaseModel):

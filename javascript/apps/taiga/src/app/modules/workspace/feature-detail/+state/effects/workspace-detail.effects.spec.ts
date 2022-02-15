@@ -15,6 +15,7 @@ import { randDomainSuffix } from '@ngneat/falso';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { WorkspaceApiService } from '@taiga/api';
+import { AppService } from '~/app/services/app.service';
 import {
   fetchWorkspace,
   fetchWorkspaceSuccess,
@@ -28,7 +29,7 @@ describe('WorkspaceEffects', () => {
   const createService = createServiceFactory({
     service: WorkspaceDetailEffects,
     providers: [provideMockActions(() => actions$)],
-    mocks: [WorkspaceApiService],
+    mocks: [WorkspaceApiService, AppService],
   });
 
   beforeEach(() => {

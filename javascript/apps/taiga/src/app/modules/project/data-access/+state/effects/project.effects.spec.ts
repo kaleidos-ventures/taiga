@@ -10,6 +10,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
+import { AppService } from '~/app/services/app.service';
 import { Observable } from 'rxjs';
 import { randDomainSuffix } from '@ngneat/falso';
 
@@ -25,7 +26,7 @@ describe('ProjectEffects', () => {
   const createService = createServiceFactory({
     service: ProjectEffects,
     providers: [provideMockActions(() => actions$)],
-    mocks: [ProjectApiService],
+    mocks: [ProjectApiService, AppService],
   });
 
   beforeEach(() => {

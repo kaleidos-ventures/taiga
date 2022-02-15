@@ -10,6 +10,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Observable } from 'rxjs';
 import { AuthApiService, UsersApiService } from '@taiga/api';
+import { AppService } from '~/app/services/app.service';
 
 import { AuthEffects } from './auth.effects';
 import { Action } from '@ngrx/store';
@@ -28,7 +29,7 @@ describe('AuthEffects', () => {
     service: AuthEffects,
     providers: [provideMockActions(() => actions$)],
     imports: [RouterTestingModule],
-    mocks: [AuthApiService, UsersApiService, LocalStorageService, Router],
+    mocks: [AuthApiService, UsersApiService, LocalStorageService, Router, AppService],
   });
 
   beforeEach(() => {

@@ -104,11 +104,11 @@ export class RolesPermissionsEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          ProjectActions.updateRolePermissionsError();
-          return this.appService.toastError(httpResponse, {
+          this.appService.toastError(httpResponse, {
             label: 'errors.save_changes',
             message: 'errors.please_refresh',
           });
+          return ProjectActions.updateRolePermissionsError();
         },
       })
     );
@@ -130,11 +130,11 @@ export class RolesPermissionsEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          ProjectActions.updateRolePermissionsError();
-          return this.appService.toastError(httpResponse, {
+          this.appService.toastError(httpResponse, {
             label: 'errors.save_changes',
             message: 'errors.please_refresh',
           });
+          return ProjectActions.updateRolePermissionsError();
         },
       })
     );
@@ -156,11 +156,11 @@ export class RolesPermissionsEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          ProjectActions.updateRolePermissionsError();
-          return this.appService.toastError(httpResponse, {
+          this.appService.toastError(httpResponse, {
             label: 'errors.save_changes',
             message: 'errors.please_refresh',
           });
+          return ProjectActions.updateRolePermissionsError();
         },
       })
     );

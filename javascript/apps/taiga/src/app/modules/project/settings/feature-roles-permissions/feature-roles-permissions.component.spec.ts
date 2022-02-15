@@ -24,7 +24,6 @@ import {
 } from './+state/actions/roles-permissions.actions';
 import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
-import { ProjectState } from '~/app/modules/project/data-access/+state/reducers/project.reducer';
 
 describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
   let spectator: Spectator<ProjectSettingsFeatureRolesPermissionsComponent>;

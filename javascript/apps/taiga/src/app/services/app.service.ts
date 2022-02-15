@@ -10,25 +10,27 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { unexpectedError } from '@taiga/core';
 import { UnexpectedError } from '@taiga/data';
+import { Store } from '@ngrx/store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppService {
+  constructor(private store: Store) {}
+
   public formatHttpErrorResponse(error: HttpErrorResponse): UnexpectedError {
     return {
       message: error.message,
     };
   }
-  public unexpectedHttpErrorResponseAction(error: HttpErrorResponse) {
-    return unexpectedError({
-      error: this.formatHttpErrorResponse(error),
-    });
-  }
 
   public unexpectedError(error: HttpErrorResponse) {
     //show error 500 page
-    console.log('unexpectedError', error);
+    this.store.dispatch(
+      unexpectedError({
+        error: this.formatHttpErrorResponse(error),
+      })
+    );
   }
 
   public toastError(

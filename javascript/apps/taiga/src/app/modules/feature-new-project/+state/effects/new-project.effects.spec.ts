@@ -10,6 +10,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
+import { AppService } from '~/app/services/app.service';
 import { Observable } from 'rxjs';
 
 import { ProjectCreationMockFactory, ProjectMockFactory } from '@taiga/data';
@@ -31,7 +32,7 @@ describe('NewProjectEffects', () => {
     service: NewProjectEffects,
     providers: [provideMockActions(() => actions$)],
     imports: [RouterTestingModule],
-    mocks: [ProjectApiService, Router],
+    mocks: [ProjectApiService, Router, AppService],
   });
 
   beforeEach(() => {

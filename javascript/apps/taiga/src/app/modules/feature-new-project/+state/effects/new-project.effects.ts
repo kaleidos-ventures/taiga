@@ -34,11 +34,11 @@ export class NewProjectEffects {
           );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          NewProjectActions.createProjectError({ error: httpResponse });
-          return this.appService.toastError(httpResponse, {
+          this.appService.toastError(httpResponse, {
             label: 'errors.create_project',
             message: 'errors.please_refresh',
           });
+          return NewProjectActions.createProjectError({ error: httpResponse });
         },
       })
     );

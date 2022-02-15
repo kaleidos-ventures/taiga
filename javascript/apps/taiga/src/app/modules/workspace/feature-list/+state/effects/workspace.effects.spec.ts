@@ -15,6 +15,7 @@ import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { WorkspaceEffects } from './workspace.effects';
 import { WorkspaceApiService } from '@taiga/api';
+import { AppService } from '~/app/services/app.service';
 import {
   fetchWorkspaceList,
   fetchWorkspaceListSuccess,
@@ -30,7 +31,7 @@ describe('WorkspaceEffects', () => {
   const createService = createServiceFactory({
     service: WorkspaceEffects,
     providers: [provideMockActions(() => actions$)],
-    mocks: [WorkspaceApiService],
+    mocks: [WorkspaceApiService, AppService],
   });
 
   beforeEach(() => {

@@ -23,7 +23,8 @@ class TodoEffects {
             .getAll()
             .pipe(map((tasks) => TodoListActions.loadTodosSucess({ tasks })));
         },
-        onError: (action, error: HttpErrorResponse) => null,
+        onError: (action, error: HttpErrorResponse) =>
+          this.appService.unexpectedError(error),
       })
     );
   });
@@ -103,9 +104,10 @@ class TodoEffects {
             return TodoListActions.createTaskError({ error: error.msg });
           }
 
-          return this.appService.unexpectedHttpErrorResponseAction(
-            httpResponse
-          );
+          return this.appService.toastError(error, {
+            label: 'errors.text',
+            mesage: 'errors.please_refresh'
+          });
         },
       })
     );
@@ -116,4 +118,23 @@ class TodoEffects {
     private todoListService: TodoListService
   ) {}
 }
+```
+
+# Server errors
+
+We have two types of errors. One will redirect to the 500 error page and the other will show a toast notification. Use the one that best suits you.
+
+To redirect to 500 error page set in the onError:
+
+```ts
+this.appService.unexpectedError(httpResponse);
+```
+
+To show the toast notification set in the onError:
+
+```ts
+this.appService.toastError(error. {
+  label: 'errors.text',
+  mesage: 'errors.please_refresh'
+});
 ```

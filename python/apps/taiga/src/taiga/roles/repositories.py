@@ -152,8 +152,7 @@ WS_ROLE_NAME_GUEST: Final = "guest"
 WS_ROLE_NAME_NONE: Final = "none"
 
 
-@sync_to_async
-def get_user_workspace_role_name(workspace_id: int, user_id: int) -> str:
+def get_user_workspace_role_name_sync(workspace_id: int, user_id: int) -> str:
     try:
         membership = WorkspaceMembership.objects.select_related("workspace_role").get(
             workspace_id=workspace_id, user_id=user_id
@@ -168,6 +167,9 @@ def get_user_workspace_role_name(workspace_id: int, user_id: int) -> str:
             return WS_ROLE_NAME_GUEST
         else:
             return WS_ROLE_NAME_NONE
+
+
+get_user_workspace_role_name = sync_to_async(get_user_workspace_role_name_sync)
 
 
 @sync_to_async

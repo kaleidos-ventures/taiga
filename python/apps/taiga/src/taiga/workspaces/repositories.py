@@ -132,8 +132,7 @@ def get_workspace(slug: str) -> Workspace | None:
         return None
 
 
-@sync_to_async
-def _get_total_user_projects(workspace_id: int, user_id: int) -> int:
+def _get_total_user_projects_sync(workspace_id: int, user_id: int) -> int:
     ws_admin = Q(workspace__workspace_memberships__user_id=user_id) & Q(
         workspace__workspace_memberships__workspace_role__is_admin=True
     )
@@ -152,22 +151,23 @@ def _get_total_user_projects(workspace_id: int, user_id: int) -> int:
     )
 
 
-async def get_workspace_detail(id: int, user_id: int) -> Workspace:
-    user_workspace_role_name = await roles_ropositories.get_user_workspace_role_name(workspace_id=id, user_id=user_id)
-    user_projects_count = await _get_total_user_projects(workspace_id=id, user_id=user_id)
-
-    qs = (
-        Workspace.objects.annotate(total_projects=Value(user_projects_count, output_field=IntegerField()))
-        .annotate(has_projects=Exists(Project.objects.filter(workspace=OuterRef("pk"))))
-        .annotate(
-            is_owner=Case(When(owner_id=user_id, then=Value(True)), default=Value(False), output_field=BooleanField())
-        )
-        .annotate(my_role=Value(user_workspace_role_name, output_field=CharField()))
-        .get
-    )
+@sync_to_async
+def get_workspace_detail(id: int, user_id: int) -> Workspace | None:
+    user_workspace_role_name = roles_ropositories.get_user_workspace_role_name_sync(workspace_id=id, user_id=user_id)
+    user_projects_count = _get_total_user_projects_sync(workspace_id=id, user_id=user_id)
 
     try:
-        return await sync_to_async(qs)(id=id)
+        return (
+            Workspace.objects.annotate(total_projects=Value(user_projects_count, output_field=IntegerField()))
+            .annotate(has_projects=Exists(Project.objects.filter(workspace=OuterRef("pk"))))
+            .annotate(
+                is_owner=Case(
+                    When(owner_id=user_id, then=Value(True)), default=Value(False), output_field=BooleanField()
+                )
+            )
+            .annotate(my_role=Value(user_workspace_role_name, output_field=CharField()))
+            .get(id=id)
+        )
     except Workspace.DoesNotExist:
         return None
 

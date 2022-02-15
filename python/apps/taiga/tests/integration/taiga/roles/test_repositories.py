@@ -10,7 +10,8 @@ from asgiref.sync import sync_to_async
 from taiga.permissions import choices
 from taiga.projects.models import Project
 from taiga.roles import repositories
-from taiga.roles.models import Membership
+from taiga.roles.models import Membership, WorkspaceRole
+from taiga.workspaces.models import Workspace
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -113,3 +114,44 @@ async def test_create_membership():
     membership = await repositories.create_membership(user=user2, project=project, role=role, email=None)
     memberships = await _get_memberships(project=project)
     assert membership in memberships
+
+
+##########################################################
+# get_user_workspace_role_name
+##########################################################
+
+
+async def test_get_user_workspace_role_name_admin():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+
+    assert await repositories.get_user_workspace_role_name(workspace.id, user.id) == "admin"
+
+
+@sync_to_async
+def _get_ws_member_role(workspace: Workspace) -> WorkspaceRole:
+    return workspace.workspace_roles.exclude(is_admin=True).first()
+
+
+async def test_get_user_workspace_role_name_member():
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+    ws_member_role = await _get_ws_member_role(workspace=workspace)
+    await f.create_workspace_membership(user=user, workspace=workspace, workspace_role=ws_member_role)
+
+    assert await repositories.get_user_workspace_role_name(workspace.id, user.id) == "member"
+
+
+async def test_get_user_workspace_role_name_guest():
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+    await f.create_project(workspace=workspace, owner=user)
+
+    assert await repositories.get_user_workspace_role_name(workspace.id, user.id) == "guest"
+
+
+async def test_get_user_workspace_role_name_none():
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+
+    assert await repositories.get_user_workspace_role_name(workspace.id, user.id) == "none"

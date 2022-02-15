@@ -40,13 +40,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .workspace-detail-title {
     margin: 0;
-    margin-inline-end: var(--spacing-16);
   }
 }
 
 .workspace-detail-title-container {
   align-items: center;
   display: flex;
+  gap: var(--spacing-16);
 }
 
 .workspace-detail-title {

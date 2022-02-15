@@ -23,7 +23,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <div class="workspace-detail-title-container">
           <h3 class="workspace-detail-title">{{ vm.workspace.name }}</h3>
           <!-- TODO: *ngIf owner when API provides roles -->
-          <tg-ui-badge [label]="t('commons.owner')"> </tg-ui-badge>
+          <tg-ui-badge
+            *ngIf="vm.workspace.myRole"
+            [label]="t('commons.roles.' + vm.workspace.myRole)"></tg-ui-badge>
+          <tg-ui-badge
+            *ngIf="vm.workspace.isOwner"
+            [label]="t('commons.owner')"></tg-ui-badge>
         </div>
       </div>
       <div class="workspace-detail-actions">
@@ -37,15 +42,28 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </a>
       </div>
     </div>
-    <!-- Add ngIf when we have back data
-    <div class="workspace-message-placeholder detail"
-    [innerHtml]="t('workspace.placehoder_no_access')"></div> -->
+    <div
+      *ngIf="
+        vm.workspace.totalProjects === 0 &&
+        vm.workspace.hasProjects &&
+        vm.workspace.myRole !== 'admin'
+      "
+      class="workspace-message-placeholder detail"
+      [innerHtml]="t('workspace.placehoder_no_access')"></div>
+    <div
+      *ngIf="
+        vm.workspace.totalProjects === 0 &&
+        !vm.workspace.hasProjects &&
+        vm.workspace.myRole !== 'admin'
+      "
+      class="workspace-message-placeholder detail"
+      [innerHtml]="t('workspace.placehoder_no_projects')"></div>
     <div
       (resized)="onResized($event)"
       [class]="gridClass"
       class="workspace-item-card-grid">
       <tg-project-card
-        *ngIf="vm.project.length === 0"
+        *ngIf="vm.project.length === 0 && vm.workspace.myRole === 'admin'"
         [slug]="vm.workspace.slug"
         [placeholder]="true"
         [firstProject]="true">

@@ -77,7 +77,6 @@ export class ProjectApiService {
         'add_task',
         'add_us',
         'comment_task',
-        'view_milestones',
         'delete_project',
         'modify_project',
       ];
@@ -107,7 +106,6 @@ export class ProjectApiService {
         'add_task',
         'add_us',
         'comment_task',
-        'view_milestones',
         'delete_project',
         'modify_project',
       ];
@@ -136,7 +134,6 @@ export class ProjectApiService {
         'add_task',
         'add_us',
         'comment_task',
-        'view_milestones',
         'delete_project',
         'modify_project',
       ];

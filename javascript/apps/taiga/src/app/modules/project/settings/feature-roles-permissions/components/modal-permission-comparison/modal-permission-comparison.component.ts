@@ -13,7 +13,10 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/pr
 @Component({
   selector: 'tg-modal-permission-comparison',
   templateUrl: './modal-permission-comparison.component.html',
-  styleUrls: ['./modal-permission-comparison.component.css'],
+  styleUrls: [
+    './modal-permission-comparison.component.css',
+    './modal-permission-comparison-common.css',
+  ],
 })
 export class ModalPermissionComparisonComponent {
   @Input()
@@ -22,35 +25,12 @@ export class ModalPermissionComparisonComponent {
   @Output()
   public closeModal = new EventEmitter();
 
-  public modules =
-    this.projectsSettingsFeatureRolesPermissionsService.getModules();
-  public dropdown: Record<string, boolean> = {};
-
-  public trackByIndex(index: number) {
-    return index;
-  }
-
   constructor(
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService
   ) {}
 
-  public getParam(conflictName: string, moduleName: string, idx: number) {
-    return `${conflictName}${moduleName}${idx}`
-      .replace(/\s/g, '')
-      .toLocaleLowerCase();
-  }
-
-  public isRestricted(text: string) {
-    const restrictedText = 'project_settings.roles_permissions.restricted';
-    return text === restrictedText;
-  }
-
-  public handleDropdown(key: string) {
-    if (this.dropdown[key]) {
-      this.dropdown[key] = !this.dropdown[key];
-    } else {
-      this.dropdown[key] = true;
-    }
+  public trackByIndex(index: number) {
+    return index;
   }
 
   public close() {

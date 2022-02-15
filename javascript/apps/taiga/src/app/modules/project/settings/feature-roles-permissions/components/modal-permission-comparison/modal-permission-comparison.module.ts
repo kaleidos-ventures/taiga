@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { ModalPermissionModuleRowComponent } from './components/modal-permission-module-row/modal-permission-module-row.component';
 import { ModalPermissionComparisonComponent } from './modal-permission-comparison.component';
 
 @NgModule({
@@ -23,7 +24,10 @@ import { ModalPermissionComparisonComponent } from './modal-permission-compariso
       },
     },
   ],
-  declarations: [ModalPermissionComparisonComponent],
+  declarations: [
+    ModalPermissionComparisonComponent,
+    ModalPermissionModuleRowComponent,
+  ],
   exports: [ModalPermissionComparisonComponent],
 })
 export class ModalPermissionComparisonModule {}

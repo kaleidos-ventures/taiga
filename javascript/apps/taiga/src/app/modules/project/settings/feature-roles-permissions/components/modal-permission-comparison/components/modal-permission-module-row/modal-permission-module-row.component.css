@@ -1,0 +1,38 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+.restrictions-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  &:focus-visible {
+    outline: 1px solid var(--color-secondary);
+  }
+}
+
+.restriction-list {
+  list-style-type: initial;
+  margin-block: var(--spacing-12);
+
+  & .restriction-element {
+    @mixin font-small;
+
+    color: var(--color-gray80);
+  }
+}
+
+.chevron {
+  block-size: var(--spacing-16);
+  fill: var(--color-secondary);
+  inline-size: var(--spacing-16);
+  margin-inline-start: var(--spacing-8);
+}

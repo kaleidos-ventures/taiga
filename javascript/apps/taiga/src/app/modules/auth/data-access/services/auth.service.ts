@@ -15,7 +15,7 @@ import { LocalStorageService } from '~/app/shared/local-storage/local-storage.se
   providedIn: 'root',
 })
 export class AuthService {
-  private refreshTokenInterval?: NodeJS.Timer;
+  private refreshTokenInterval?: ReturnType<typeof setInterval>;
 
   constructor(
     private localStorageService: LocalStorageService,

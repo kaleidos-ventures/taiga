@@ -12,22 +12,22 @@ from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
 from taiga.exceptions import services as ex
 from taiga.permissions import services as permissions_services
-from taiga.projects import repositories as projects_repo
+from taiga.projects import repositories as projects_repositories
 from taiga.projects.models import Project
-from taiga.roles import repositories as roles_repo
+from taiga.roles import repositories as roles_repositories
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
 
 async def get_projects(workspace_slug: str) -> list[Project]:
-    return await projects_repo.get_projects(workspace_slug=workspace_slug)
+    return await projects_repositories.get_projects(workspace_slug=workspace_slug)
 
 
 async def get_workspace_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
-    if await roles_repo.is_workspace_admin(user_id=user.id, workspace_id=workspace.id):
+    if await roles_repositories.is_workspace_admin(user_id=user.id, workspace_id=workspace.id):
         return await get_projects(workspace_slug=workspace.slug)
 
-    return await projects_repo.get_workspace_projects_for_user(workspace_id=workspace.id, user_id=user.id)
+    return await projects_repositories.get_workspace_projects_for_user(workspace_id=workspace.id, user_id=user.id)
 
 
 async def create_project(
@@ -42,9 +42,9 @@ async def create_project(
     if logo:
         logo_file = File(file=logo.file, name=logo.filename)
 
-    template = await projects_repo.get_template(slug=settings.DEFAULT_PROJECT_TEMPLATE)
+    template = await projects_repositories.get_template(slug=settings.DEFAULT_PROJECT_TEMPLATE)
 
-    project = await projects_repo.create_project(
+    project = await projects_repositories.create_project(
         workspace=workspace,
         name=name,
         description=description,
@@ -55,17 +55,17 @@ async def create_project(
     )
 
     # assign the owner to the project as the default owner role (should be 'admin')
-    owner_role = await roles_repo.get_project_role(project=project, slug=template.default_owner_role)
+    owner_role = await roles_repositories.get_project_role(project=project, slug=template.default_owner_role)
     if not owner_role:
-        owner_role = await roles_repo.get_first_role(project=project)
+        owner_role = await roles_repositories.get_first_role(project=project)
 
-    await roles_repo.create_membership(user=owner, project=project, role=owner_role, email=None)
+    await roles_repositories.create_membership(user=owner, project=project, role=owner_role, email=None)
 
     return project
 
 
 async def get_project(slug: str) -> Project | None:
-    return await projects_repo.get_project(slug=slug)
+    return await projects_repositories.get_project(slug=slug)
 
 
 async def get_logo_thumbnail_url(thumbnailer_size: str, logo_relative_path: str) -> str | None:
@@ -87,7 +87,7 @@ async def update_project_public_permissions(project: Project, permissions: list[
 
     # anon_permissions are the "view_" subset of the public_permissions
     anon_permissions = list(filter(lambda x: x.startswith("view_"), permissions))
-    return await projects_repo.update_project_public_permissions(
+    return await projects_repositories.update_project_public_permissions(
         project=project, permissions=permissions, anon_permissions=anon_permissions
     )
 
@@ -99,14 +99,16 @@ async def update_project_workspace_member_permissions(project: Project, permissi
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError()
 
-    if not await projects_repo.project_is_in_premium_workspace(project):
+    if not await projects_repositories.project_is_in_premium_workspace(project):
         raise ex.NotPremiumWorkspaceError()
 
-    return await projects_repo.update_project_workspace_member_permissions(project=project, permissions=permissions)
+    return await projects_repositories.update_project_workspace_member_permissions(
+        project=project, permissions=permissions
+    )
 
 
 async def get_workspace_member_permissions(project: Project) -> list[str]:
-    if not await projects_repo.project_is_in_premium_workspace(project):
+    if not await projects_repositories.project_is_in_premium_workspace(project):
         raise ex.NotPremiumWorkspaceError()
 
     return project.workspace_member_permissions

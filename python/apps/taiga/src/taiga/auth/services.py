@@ -7,7 +7,7 @@
 
 from taiga.auth.exceptions import BadAuthTokenError, UnauthorizedUserError
 from taiga.tokens import TokenError
-from taiga.users import repositories as users_repo
+from taiga.users import repositories as users_repositories
 from taiga.users.models import User
 
 from .models import AccessWithRefreshToken
@@ -15,17 +15,17 @@ from .tokens import AccessToken, RefreshToken
 
 
 async def login(username: str, password: str) -> AccessWithRefreshToken | None:
-    user = await users_repo.get_user_by_username_or_email(username_or_email=username)
+    user = await users_repositories.get_user_by_username_or_email(username_or_email=username)
 
     if (
         not user
-        or not await users_repo.check_password(user=user, password=password)
+        or not await users_repositories.check_password(user=user, password=password)
         or not user.is_active
         or user.is_system
     ):
         return None
 
-    await users_repo.update_last_login(user=user)
+    await users_repositories.update_last_login(user=user)
 
     refresh_token = await RefreshToken.create_for_user(user)
 
@@ -54,7 +54,7 @@ async def authenticate(token: str) -> tuple[list[str], User]:
 
     # Check user authorization permissions
     if user_data := access_token.user_data:
-        if user := await users_repo.get_first_user(**user_data, is_active=True, is_system=False):
+        if user := await users_repositories.get_first_user(**user_data, is_active=True, is_system=False):
             return ["auth"], user
 
     raise UnauthorizedUserError()

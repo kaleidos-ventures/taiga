@@ -25,8 +25,10 @@ pytestmark = pytest.mark.django_db
 async def test_create_project():
     workspace = await f.create_workspace()
 
-    with patch("taiga.projects.services.projects_repo", new_callable=AsyncMock) as fake_project_repository, patch(
-        "taiga.projects.services.roles_repo", new_callable=AsyncMock
+    with patch(
+        "taiga.projects.services.projects_repositories", new_callable=AsyncMock
+    ) as fake_project_repository, patch(
+        "taiga.projects.services.roles_repositories", new_callable=AsyncMock
     ) as fake_role_repository:
         fake_project_repository.create_project.return_value = await f.create_project()
 
@@ -45,8 +47,10 @@ async def test_create_project_with_logo():
     role = await f.create_role(project=project)
     logo: UploadFile = valid_image_upload_file
 
-    with patch("taiga.projects.services.projects_repo", new_callable=AsyncMock) as fake_project_repository, patch(
-        "taiga.projects.services.roles_repo", new_callable=AsyncMock
+    with patch(
+        "taiga.projects.services.projects_repositories", new_callable=AsyncMock
+    ) as fake_project_repository, patch(
+        "taiga.projects.services.roles_repositories", new_callable=AsyncMock
     ) as fake_roles_repository:
         fake_project_repository.get_template.return_value = template
         fake_project_repository.create_project.return_value = project
@@ -64,9 +68,9 @@ async def test_create_project_with_logo():
 async def test_create_project_with_no_logo():
     workspace = await f.create_workspace()
 
-    with patch("taiga.projects.services.projects_repo", new_callable=AsyncMock) as fake_project_repository, patch(
-        "taiga.projects.services.roles_repo", new_callable=AsyncMock
-    ):
+    with patch(
+        "taiga.projects.services.projects_repositories", new_callable=AsyncMock
+    ) as fake_project_repository, patch("taiga.projects.services.roles_repositories", new_callable=AsyncMock):
         fake_project_repository.create_project.return_value = await f.create_project()
         template = await f.create_project_template()
         fake_project_repository.get_template.return_value = template
@@ -87,7 +91,7 @@ async def test_update_project_public_permissions_ok():
     permissions = ["add_us", "view_us", "modify_task", "view_tasks"]
     anon_permissions = ["view_us", "view_tasks"]
 
-    with patch("taiga.projects.services.projects_repo", new_callable=AsyncMock) as fake_project_repository:
+    with patch("taiga.projects.services.projects_repositories", new_callable=AsyncMock) as fake_project_repository:
         await services.update_project_public_permissions(project=project, permissions=permissions)
         fake_project_repository.update_project_public_permissions.assert_awaited_once_with(
             project=project, permissions=permissions, anon_permissions=anon_permissions
@@ -119,8 +123,8 @@ async def test_get_workspace_projects_for_user_admin():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
 
-    with patch("taiga.projects.services.roles_repo", new_callable=AsyncMock) as fake_roles_repo, patch(
-        "taiga.projects.services.projects_repo", new_callable=AsyncMock
+    with patch("taiga.projects.services.roles_repositories", new_callable=AsyncMock) as fake_roles_repo, patch(
+        "taiga.projects.services.projects_repositories", new_callable=AsyncMock
     ) as fake_projects_repo:
         fake_roles_repo.is_workspace_admin.return_value = True
         await services.get_workspace_projects_for_user(workspace=workspace, user=user)
@@ -131,8 +135,8 @@ async def test_get_workspace_projects_for_user_member():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
 
-    with patch("taiga.projects.services.roles_repo", new_callable=AsyncMock) as fake_roles_repo, patch(
-        "taiga.projects.services.projects_repo", new_callable=AsyncMock
+    with patch("taiga.projects.services.roles_repositories", new_callable=AsyncMock) as fake_roles_repo, patch(
+        "taiga.projects.services.projects_repositories", new_callable=AsyncMock
     ) as fake_projects_repo:
         fake_roles_repo.is_workspace_admin.return_value = False
         await services.get_workspace_projects_for_user(workspace=workspace, user=user)
@@ -151,7 +155,7 @@ async def test_update_project_workspace_member_permissions_ok():
     project = await f.create_project(workspace=workspace)
     permissions = ["add_us", "view_us", "modify_task", "view_tasks"]
 
-    with patch("taiga.projects.services.projects_repo", new_callable=AsyncMock) as fake_project_repository:
+    with patch("taiga.projects.services.projects_repositories", new_callable=AsyncMock) as fake_project_repository:
         await services.update_project_workspace_member_permissions(project=project, permissions=permissions)
         fake_project_repository.update_project_workspace_member_permissions.assert_awaited_once_with(
             project=project, permissions=permissions

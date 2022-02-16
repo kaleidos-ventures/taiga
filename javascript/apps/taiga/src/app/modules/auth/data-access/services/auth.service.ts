@@ -15,6 +15,8 @@ import { LocalStorageService } from '~/app/shared/local-storage/local-storage.se
   providedIn: 'root',
 })
 export class AuthService {
+  private refreshTokenInterval?: NodeJS.Timer;
+
   constructor(
     private localStorageService: LocalStorageService,
     private authApiService: AuthApiService
@@ -46,10 +48,14 @@ export class AuthService {
   public logout() {
     this.localStorageService.remove('user');
     this.localStorageService.remove('auth');
+
+    if (this.refreshTokenInterval) {
+      clearInterval(this.refreshTokenInterval);
+    }
   }
 
   public autoRefresh() {
-    setInterval(() => {
+    this.refreshTokenInterval = setInterval(() => {
       const refreshToken = this.getAuth()?.refresh;
 
       if (refreshToken) {

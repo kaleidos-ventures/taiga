@@ -28,8 +28,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .permission-table {
-  max-block-size: 65vh;
   margin-block-end: var(--spacing-32);
+  max-block-size: 65vh;
   overflow-y: auto;
 }
 

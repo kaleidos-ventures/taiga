@@ -1,0 +1,18 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+/*
+* TAIGA UI CUSTOM PROPERTIES
+*/
+
+@import url("./tui-config.css");
+@import url("./tui-avatar.css");
+@import url("./tui-forms.css");
+@import url("./tui-data-list.css");
+@import url("./tui-toggle.css");
+@import url("./tui-notifications.css");

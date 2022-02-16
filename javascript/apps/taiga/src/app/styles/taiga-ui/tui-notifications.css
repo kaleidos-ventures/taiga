@@ -1,0 +1,169 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+tui-notifications-host {
+  --tui-height-xs: var(--spacing-16);
+  --tui-radius-m: 8px;
+  --tui-width-xs: var(--tui-height-xs);
+
+  & > .wrapper {
+    /* stylelint-disable-next-line declaration-no-important */
+    inline-size: 410px !important;
+  }
+}
+
+tui-notification {
+  &::after {
+    /* stylelint-disable-next-line declaration-no-important */
+    background: none !important;
+  }
+
+  &[data-tui-host-status="info"] {
+    --tui-text-01: var(--color-info80);
+    --tui-base-06: var(--tui-text-01);
+    --tui-focus: var(--color-secondary);
+    /* stylelint-disable-next-line declaration-no-important */
+    background: var(--color-info20) !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    color: var(--color-info80) !important;
+
+    & .heading {
+      font-size: var(--font-size-medium);
+      font-weight: var(--font-weight-bold);
+    }
+
+    & .content {
+      font-size: var(--font-size-small);
+    }
+
+    & .close {
+      --tui-radius-m: 0;
+
+      &._hovered {
+        background-color: var(--color-info30);
+        color: var(--color-info90);
+      }
+    }
+
+    & .icon {
+      color: var(--color-info50);
+
+      @nest .close & {
+        color: var(--color-info80);
+      }
+    }
+  }
+
+  &[data-tui-host-status="error"] {
+    --tui-text-01: var(--color-red80);
+    --tui-base-06: var(--tui-text-01);
+    --tui-focus: var(--color-secondary);
+    /* stylelint-disable-next-line declaration-no-important */
+    background: var(--color-red20) !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    color: var(--color-red80) !important;
+
+    & .heading {
+      font-size: var(--font-size-medium);
+      font-weight: var(--font-weight-bold);
+    }
+
+    & .content {
+      font-size: var(--font-size-small);
+    }
+
+    & .close {
+      --tui-radius-m: 0;
+
+      &._hovered {
+        background-color: var(--color-red30);
+        color: var(--color-red90);
+      }
+    }
+
+    & .icon {
+      color: var(--color-red50);
+
+      @nest .close & {
+        color: var(--color-red80);
+      }
+    }
+  }
+
+  &[data-tui-host-status="success"] {
+    --tui-text-01: var(--color-ok80);
+    --tui-base-06: var(--tui-text-01);
+    --tui-focus: var(--color-secondary);
+    /* stylelint-disable-next-line declaration-no-important */
+    background: var(--color-ok20) !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    color: var(--color-ok80) !important;
+
+    & .heading {
+      font-size: var(--font-size-medium);
+      font-weight: var(--font-weight-bold);
+    }
+
+    & .content {
+      font-size: var(--font-size-small);
+    }
+
+    & .close {
+      --tui-radius-m: 0;
+
+      &._hovered {
+        background-color: var(--color-ok30);
+        color: var(--color-ok90);
+      }
+    }
+
+    & .icon {
+      color: var(--color-ok50);
+
+      @nest .close & {
+        color: var(--color-ok80);
+      }
+    }
+  }
+
+  &[data-tui-host-status="warning"] {
+    --tui-text-01: var(--color-warning80);
+    --tui-base-06: var(--tui-text-01);
+    --tui-focus: var(--color-secondary);
+    /* stylelint-disable-next-line declaration-no-important */
+    background: var(--color-warning20) !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    color: var(--color-warning80) !important;
+
+    & .heading {
+      font-size: var(--font-size-medium);
+      font-weight: var(--font-weight-bold);
+    }
+
+    & .content {
+      font-size: var(--font-size-small);
+    }
+
+    & .close {
+      --tui-radius-m: 0;
+
+      &._hovered {
+        background-color: var(--color-warning30);
+        color: var(--color-warning90);
+      }
+    }
+
+    & .icon {
+      color: var(--color-warning50);
+
+      @nest .close & {
+        color: var(--color-warning80);
+      }
+    }
+  }
+}

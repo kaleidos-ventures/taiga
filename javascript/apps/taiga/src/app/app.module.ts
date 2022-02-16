@@ -28,6 +28,7 @@ import {
   TuiRootModule,
   TUI_ICONS_PATH,
   TUI_ANIMATIONS_DURATION,
+  TuiNotificationsModule,
 } from '@taiga-ui/core';
 import { TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE } from '@taiga-ui/i18n';
 import { of } from 'rxjs';
@@ -85,6 +86,7 @@ export function prefersReducedMotion(): boolean {
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     TuiRootModule,
+    TuiNotificationsModule,
     TranslocoRootModule,
   ],
   bootstrap: [AppComponent],

@@ -17,6 +17,6 @@ This layer holds any **global** settings for your project. This layer should onl
 @import "spacing.css";
 @import "z-index.css";
 @import "generic.css";
-@import "taiga-ui.css";
+@import "taiga-ui/taiga-ui.css";
 @import "button.css";
 @import "accesibility.css";

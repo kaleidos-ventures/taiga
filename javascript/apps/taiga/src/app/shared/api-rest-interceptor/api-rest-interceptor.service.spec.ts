@@ -26,6 +26,7 @@ import {
 } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { Router } from '@angular/router';
+import { AppService } from '~/app/services/app.service';
 
 describe('ApiRestInterceptor', () => {
   let spectator: SpectatorHttp<ApiRestInterceptorService>;
@@ -35,7 +36,7 @@ describe('ApiRestInterceptor', () => {
   const createService = createHttpFactory({
     service: ApiRestInterceptorService,
     imports: [RouterTestingModule],
-    mocks: [AuthService, AuthApiService, Router],
+    mocks: [AuthService, AuthApiService, Router, AppService],
     providers: [
       { provide: ConfigService, useValue: ConfigServiceMock },
       {

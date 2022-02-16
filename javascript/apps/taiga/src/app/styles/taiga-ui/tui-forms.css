@@ -1,0 +1,51 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+tui-dropdown-box {
+  border: none !important; /* stylelint-disable-line declaration-no-important */
+  border-radius: 3px;
+}
+
+tui-hint-box {
+  @mixin font-body;
+  /* stylelint-disable-next-line declaration-no-important */
+  background: var(--color-gray100) !important;
+  /* stylelint-disable-next-line declaration-no-important */
+  border-radius: 4px !important;
+}
+
+tui-wrapper[data-appearance="textfield"] {
+  --tui-base-03: var(--color-gray40);
+  --tui-primary: var(--color-secondary);
+
+  /* stylelint-disable-next-line declaration-no-important */
+  box-shadow: none !important;
+
+  &::after {
+    border-radius: 3px;
+    /* stylelint-disable-next-line declaration-no-important */
+    border-width: 2px !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    transition: none !important;
+  }
+}
+
+tui-text-area {
+  --tui-error-bg-night: var(--color-red40);
+
+  ::ng-deep {
+    & .placeholder {
+      --tui-text-01: var(--color-gray60);
+      --tui-text-02: var(--color-gray60);
+    }
+  }
+}
+
+button:is([type="button"], [type="reset"], [type="submit"]):focus-visible {
+  outline: 0;
+}

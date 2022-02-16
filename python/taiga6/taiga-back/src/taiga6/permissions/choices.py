@@ -7,6 +7,22 @@
 
 from django.utils.translation import gettext_lazy as _
 
+
+EDIT_US_PERMISSIONS = [
+    ('add_us', _('Add US')),
+    ('comment_us', _('Comment US')),
+    ('delete_us', _('Delete US')),
+    ('modify_us', _('Modify US')),
+]
+
+
+EDIT_TASK_PERMISSIONS = [
+    ('add_task', _('Add task')),
+    ('comment_task', _('Comment task')),
+    ('delete_task', _('Delete task')),
+    ('modify_task', _('Modify task')),
+]
+
 # possible permissions for project administrators
 # these permissions cannot be changed with the API
 PROJECT_ADMIN_PERMISSIONS = [
@@ -58,3 +74,5 @@ ANON_PERMISSIONS = [
     # Task permissions
     ('view_tasks', _('View tasks')),
 ]
+
+

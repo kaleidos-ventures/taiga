@@ -181,6 +181,10 @@ def test_permissions_are_valid(permissions, expected):
         (["view_us", "view_tasks"], True),
         (["comment_us", "view_us"], True),
         (["view_us", "comment_task", "view_tasks"], True),
+        (["view_us", "comment_task"], False),
+        (["modify_us", "comment_task"], False),
+        (["view_us", "modify_us", "comment_us"], True),
+        (["add_task", "modify_task", "comment_task"], False),
     ],
 )
 def test_permissions_are_compatible(permissions, expected):

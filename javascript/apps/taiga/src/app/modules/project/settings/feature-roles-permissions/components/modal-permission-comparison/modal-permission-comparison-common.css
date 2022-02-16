@@ -26,7 +26,7 @@ td,
 }
 
 .text {
-  @mixin font-inline;
+  @mixin font-body-inline;
 
   color: var(--color-gray80);
 

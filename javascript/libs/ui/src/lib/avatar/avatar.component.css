@@ -152,7 +152,7 @@ tui-avatar {
   }
 
   &[data-tui-host-size="l"] {
-    @mixin font-body;
+    @mixin font-body-inline;
 
     block-size: var(--spacing-32);
     border-radius: 3px;

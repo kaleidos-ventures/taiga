@@ -14,15 +14,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   line-height: 1;
 }
 
-@define-mixin font-inline {
-  font-family: "Ubuntu", sans-serif;
-  font-size: var(--font-size-medium);
-  font-weight: var(--font-weight-regular);
-  letter-spacing: normal;
-  line-height: 1;
-}
-
-@define-mixin font-body {
+@define-mixin font-body-inline {
   font-family: "Ubuntu", sans-serif;
   font-size: var(--font-size-medium);
   font-weight: var(--font-weight-regular);
@@ -35,7 +27,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   font-size: var(--font-size-medium);
   font-weight: var(--font-weight-regular);
   letter-spacing: normal;
-  line-height: 1.25rem;
+  line-height: 1.5rem;
 }
 
 @define-mixin font-heading-4 {

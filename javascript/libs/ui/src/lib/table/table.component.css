@@ -34,7 +34,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
 
     & [tuitd] {
-      @mixin font-inline;
+      @mixin font-body-inline;
 
       color: var(--color-gray80);
 

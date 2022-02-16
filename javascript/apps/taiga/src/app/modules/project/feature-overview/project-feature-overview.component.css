@@ -68,7 +68,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .project-about {
-  @mixin font-body;
+  @mixin font-body-inline;
 
   line-height: 21px;
   margin: 0;

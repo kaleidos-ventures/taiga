@@ -25,7 +25,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & .project-card-title {
-    @mixin font-body;
+    @mixin font-body-inline;
 
     align-items: center;
     display: flex;

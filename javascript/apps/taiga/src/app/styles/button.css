@@ -457,7 +457,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & .t-content {
-    @mixin font-body-inline;
+    @mixin font-inline;
 
     block-size: var(--spacing-16);
     color: var(--color-secondary);

@@ -80,7 +80,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & .workspace-call-action-text {
-    @mixin font-body-paragraph;
+    @mixin font-paragraph;
 
     color: var(--color-gray70);
     margin-block-end: var(--spacing-16);

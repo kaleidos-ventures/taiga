@@ -12,7 +12,7 @@ tui-dropdown-box {
 }
 
 tui-hint-box {
-  @mixin font-body;
+  @mixin font-inline;
   /* stylelint-disable-next-line declaration-no-important */
   background: var(--color-gray100) !important;
   /* stylelint-disable-next-line declaration-no-important */

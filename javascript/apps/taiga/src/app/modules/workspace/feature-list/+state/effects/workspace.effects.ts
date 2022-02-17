@@ -33,7 +33,7 @@ export class WorkspaceEffects {
           );
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.unexpectedError(httpResponse),
+          this.appService.errorManagement(httpResponse),
       })
     );
   });
@@ -61,11 +61,17 @@ export class WorkspaceEffects {
             })
           );
         },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.toastError(httpResponse, {
-            label: 'errors.create_workspace',
-            message: 'errors.please_refresh',
-          }),
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status === 500) {
+            this.appService.toastError(httpResponse, {
+              label: 'errors.create_workspace',
+              message: 'errors.please_refresh',
+            });
+          } else {
+            this.appService.errorManagement(httpResponse);
+          }
+          return WorkspaceActions.createWorkspaceError();
+        },
       })
     );
   });
@@ -87,7 +93,7 @@ export class WorkspaceEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.unexpectedError(httpResponse),
+          this.appService.errorManagement(httpResponse),
       })
     );
   });

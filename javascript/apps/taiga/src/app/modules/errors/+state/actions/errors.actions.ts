@@ -14,4 +14,7 @@ export const unexpectedError = createAction(
   props<{ error: ErrorsState['unexpectedError'] }>()
 );
 
-export const errorSuccess = createAction('[Errors] An error has ocurred');
+export const forbidenError = createAction(
+  '[Errors] Forbiden error',
+  props<{ error: ErrorsState['forbidenError'] }>()
+);

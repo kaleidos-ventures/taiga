@@ -73,6 +73,16 @@ const routes: Routes = [
       noHeader: true,
     },
   },
+  {
+    path: '403',
+    loadChildren: () =>
+      import('./modules/errors/403/error-403.module').then(
+        (m) => m.Error403Module
+      ),
+    data: {
+      noHeader: true,
+    },
+  },
 ];
 
 @NgModule({

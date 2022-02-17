@@ -10,24 +10,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <div class="error-wrapper">
     <div class="error-container">
       <img src="/assets/images/LogoTaiga.svg" alt="" />
-      <h1 class="error-title">{{ t('errors_page.500.something_wrong') }}</h1>
-      <p
-        class="error-paragraph"
-        [innerHtml]="t('errors_page.500.sorry_not_working')"></p>
-      <p
-        class="error-paragraph"
-        [innerHtml]="
-          t('errors_page.500.problem_contact', {
-            email: config.supportEmail
-          })
-        "></p>
+      <h1 class="error-title">{{ t('errors_page.403.title') }}</h1>
+      <p>{{ t('project_settings.member_permissions') }}</p>
+      <p class="error-paragraph" [innerHtml]="t('errors_page.403.text')"></p>
       <button appearance="primary" tuiButton (click)="backHome()" type="button">
-        {{ t('errors_page.500.take_me_to_home') }}
+        {{ t('errors_page.403.call_for_action') }}
       </button>
     </div>
     <img
       class="error-background-image"
-      src="/assets/images/error-500.svg"
+      src="https://c.tenor.com/TbuJBSvnCLkAAAAd/cheese-challenge-cat.gif"
       alt="" />
   </div>
 </ng-container>

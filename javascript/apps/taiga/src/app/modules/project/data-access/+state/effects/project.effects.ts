@@ -32,7 +32,7 @@ export class ProjectEffects {
           );
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.unexpectedError(httpResponse),
+          this.appService.errorManagement(httpResponse),
       })
     );
   });

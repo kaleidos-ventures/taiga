@@ -32,11 +32,16 @@ export class RolesPermissionsEffects {
               })
             );
         },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.toastError(httpResponse, {
-            label: 'errors.member_roles',
-            message: 'errors.please_refresh',
-          }),
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status === 500) {
+            return this.appService.toastError(httpResponse, {
+              label: 'errors.member_roles',
+              message: 'errors.please_refresh',
+            });
+          } else {
+            return this.appService.errorManagement(httpResponse);
+          }
+        },
       })
     );
   });
@@ -56,11 +61,16 @@ export class RolesPermissionsEffects {
               })
             );
         },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.toastError(httpResponse, {
-            label: 'errors.public_permissions',
-            message: 'errors.please_refresh',
-          }),
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status === 500) {
+            return this.appService.toastError(httpResponse, {
+              label: 'errors.public_permissions',
+              message: 'errors.please_refresh',
+            });
+          } else {
+            return this.appService.errorManagement(httpResponse);
+          }
+        },
       })
     );
   });
@@ -81,11 +91,16 @@ export class RolesPermissionsEffects {
               })
             );
         },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.toastError(httpResponse, {
-            label: 'errors.workspace_permissions',
-            message: 'errors.please_refresh',
-          }),
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status === 500) {
+            return this.appService.toastError(httpResponse, {
+              label: 'errors.workspace_permissions',
+              message: 'errors.please_refresh',
+            });
+          } else {
+            return this.appService.errorManagement(httpResponse);
+          }
+        },
       })
     );
   });
@@ -104,10 +119,14 @@ export class RolesPermissionsEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          this.appService.toastError(httpResponse, {
-            label: 'errors.save_changes',
-            message: 'errors.please_refresh',
-          });
+          if (httpResponse.status === 500) {
+            this.appService.toastError(httpResponse, {
+              label: 'errors.save_changes',
+              message: 'errors.please_refresh',
+            });
+          } else {
+            this.appService.errorManagement(httpResponse);
+          }
           return ProjectActions.updateRolePermissionsError();
         },
       })
@@ -130,10 +149,14 @@ export class RolesPermissionsEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          this.appService.toastError(httpResponse, {
-            label: 'errors.save_changes',
-            message: 'errors.please_refresh',
-          });
+          if (httpResponse.status === 500) {
+            this.appService.toastError(httpResponse, {
+              label: 'errors.save_changes',
+              message: 'errors.please_refresh',
+            });
+          } else {
+            this.appService.errorManagement(httpResponse);
+          }
           return ProjectActions.updateRolePermissionsError();
         },
       })
@@ -156,10 +179,14 @@ export class RolesPermissionsEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          this.appService.toastError(httpResponse, {
-            label: 'errors.save_changes',
-            message: 'errors.please_refresh',
-          });
+          if (httpResponse.status === 500) {
+            this.appService.toastError(httpResponse, {
+              label: 'errors.save_changes',
+              message: 'errors.please_refresh',
+            });
+          } else {
+            this.appService.errorManagement(httpResponse);
+          }
           return ProjectActions.updateRolePermissionsError();
         },
       })

@@ -14,10 +14,16 @@ export interface ErrorsState {
   unexpectedError: {
     message: string;
   };
+  forbidenError: {
+    message: string;
+  };
 }
 
 export const initialState: ErrorsState = {
   unexpectedError: {
+    message: '',
+  },
+  forbidenError: {
     message: '',
   },
 };
@@ -26,6 +32,11 @@ export const reducer = createReducer(
   initialState,
   on(ErrorsActions.unexpectedError, (state, { error }): ErrorsState => {
     state.unexpectedError.message = error.message;
+
+    return state;
+  }),
+  on(ErrorsActions.forbidenError, (state, { error }): ErrorsState => {
+    state.forbidenError.message = error.message;
 
     return state;
   })

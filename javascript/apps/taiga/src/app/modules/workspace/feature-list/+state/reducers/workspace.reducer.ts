@@ -62,6 +62,11 @@ export const reducer = createReducer(
       return state;
     }
   ),
+  on(WorkspaceActions.createWorkspaceError, (state): WorkspaceState => {
+    state.creatingWorkspace = false;
+
+    return state;
+  }),
   on(
     WorkspaceActions.createFormHasError,
     (state, { hasError }): WorkspaceState => {

@@ -13,7 +13,10 @@ import {
   TuiNotificationOptions,
   TuiNotificationsService,
 } from '@taiga-ui/core';
-import { unexpectedError } from '../modules/errors/+state/actions/errors.actions';
+import {
+  unexpectedError,
+  forbidenError,
+} from '../modules/errors/+state/actions/errors.actions';
 import { UnexpectedError } from '@taiga/data';
 import { Store } from '@ngrx/store';
 import { TranslocoService } from '@ngneat/transloco';
@@ -35,12 +38,20 @@ export class AppService {
     };
   }
 
-  public unexpectedError(error: HttpErrorResponse) {
-    this.store.dispatch(
-      unexpectedError({
-        error: this.formatHttpErrorResponse(error),
-      })
-    );
+  public errorManagement(error: HttpErrorResponse) {
+    if (error.status === 403) {
+      this.store.dispatch(
+        forbidenError({
+          error: this.formatHttpErrorResponse(error),
+        })
+      );
+    } else if (error.status === 500) {
+      this.store.dispatch(
+        unexpectedError({
+          error: this.formatHttpErrorResponse(error),
+        })
+      );
+    }
   }
 
   public toastError(

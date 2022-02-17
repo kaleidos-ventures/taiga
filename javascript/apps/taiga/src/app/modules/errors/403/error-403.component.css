@@ -1,0 +1,49 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+@import "tools/typography.css";
+
+:host {
+  align-items: center;
+  background: var(--color-gray20);
+  block-size: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.error-wrapper {
+  block-size: 100%;
+  inline-size: 100%;
+  margin: 0 auto;
+  max-block-size: 627px;
+  max-inline-size: 978px;
+  position: relative;
+}
+
+.error-container {
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  position: absolute;
+  z-index: var(--second-layer);
+}
+
+.error-background-image {
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  position: absolute;
+  z-index: var(--first-layer);
+}
+
+.error-title {
+  @mixin font-heading-1;
+}
+
+.error-paragraph {
+  @mixin font-paragraph;
+
+  color: var(--color-gray80);
+}

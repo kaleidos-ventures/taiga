@@ -37,11 +37,16 @@ export class AuthEffects {
               })
             );
         },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.toastError(httpResponse, {
-            label: 'errors.login',
-            message: 'errors.please_refresh',
-          }),
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status === 500) {
+            return this.appService.toastError(httpResponse, {
+              label: 'errors.login',
+              message: 'errors.please_refresh',
+            });
+          } else {
+            return this.appService.errorManagement(httpResponse);
+          }
+        },
       })
     );
   });
@@ -75,7 +80,7 @@ export class AuthEffects {
           );
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.unexpectedError(httpResponse),
+          this.appService.errorManagement(httpResponse),
       })
     );
   });

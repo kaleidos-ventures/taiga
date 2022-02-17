@@ -27,5 +27,17 @@ export class ErrorsEffects {
     { dispatch: false }
   );
 
+  public forbiddenError$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(ErrorActions.forbidenError),
+        map(() => {
+          void this.router.navigateByUrl('/403', { skipLocationChange: true });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(private router: Router, private actions$: Actions) {}
 }

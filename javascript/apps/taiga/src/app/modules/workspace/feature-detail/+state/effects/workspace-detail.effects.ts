@@ -31,7 +31,7 @@ export class WorkspaceDetailEffects {
           );
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.unexpectedError(httpResponse),
+          this.appService.errorManagement(httpResponse),
       })
     );
   });
@@ -52,7 +52,7 @@ export class WorkspaceDetailEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.unexpectedError(httpResponse),
+          this.appService.errorManagement(httpResponse),
       })
     );
   });

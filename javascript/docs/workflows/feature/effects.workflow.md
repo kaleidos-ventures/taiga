@@ -24,7 +24,7 @@ class TodoEffects {
             .pipe(map((tasks) => TodoListActions.loadTodosSucess({ tasks })));
         },
         onError: (action, error: HttpErrorResponse) =>
-          this.appService.unexpectedError(error),
+          this.appService.errorManagement(error),
       })
     );
   });
@@ -127,7 +127,7 @@ We have two types of errors. One will redirect to the 500 error page and the oth
 To redirect to 500 error page set in the onError:
 
 ```ts
-this.appService.unexpectedError(httpResponse);
+this.appService.errorManagement(httpResponse);
 ```
 
 To show the toast notification set in the onError:

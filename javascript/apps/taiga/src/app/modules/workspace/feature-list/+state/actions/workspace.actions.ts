@@ -35,6 +35,10 @@ export const createWorkspaceSuccess = createAction(
   props<{ workspace: Workspace }>()
 );
 
+export const createWorkspaceError = createAction(
+  '[WorkspaceList] Create new workspace error'
+);
+
 export const createFormHasError = createAction(
   '[WorkspaceList] Create Form has error',
   props<{ hasError: boolean }>()

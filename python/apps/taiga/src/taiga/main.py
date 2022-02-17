@@ -5,7 +5,9 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from fastapi import FastAPI
+from typing import Awaitable, Callable
+
+from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException
@@ -27,6 +29,20 @@ api = FastAPI(
 # COMMON MIDDLEWARES
 ##############################################
 
+# HACK: To add CORS headers to %00 Error
+async def add_cors_headers_to_500_errors(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    try:
+        return await call_next(request)
+    except Exception:
+        # you probably want some kind of logging here
+        return Response("Internal server error", status_code=500)
+
+
+api.middleware("http")(add_cors_headers_to_500_errors)
+# HACK END
+
 # Setup CORS middleware
 api.add_middleware(
     CORSMiddleware,
@@ -44,8 +60,6 @@ api.add_middleware(
 # Override exception handlers
 api.exception_handler(HTTPException)(http_exception_handler)
 api.exception_handler(RequestValidationError)(request_validation_exception_handler)
-# TODO: The next handler is obfuscating a Serializer error, being dealt like a Validation error (which is incorrect)
-# api.exception_handler(ValidationError)(request_validation_exception_handler)
 
 
 ##############################################

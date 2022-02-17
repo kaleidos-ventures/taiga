@@ -60,7 +60,7 @@ def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
     for ws_id in member_ws_ids:
         pj_in_workspace = Q(workspace_id=ws_id)
         ws_allowed = ~Q(memberships__user__id=user.id) & Q(workspace_member_permissions__len__gt=0)
-        pj_allowed = Q(memberships__user__id=user.id) & Q(memberships__role__permissions__len__gt=0)
+        pj_allowed = Q(memberships__user__id=user.id)
         projects_ids = list(
             Project.objects.filter(pj_in_workspace, (ws_allowed | pj_allowed))
             .order_by("-created_date")
@@ -83,7 +83,6 @@ def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
     guest_ws_ids = list(
         Project.objects.filter(
             memberships__user__id=user.id,  # user_pj_member
-            memberships__role__permissions__len__gt=0,  # _with_access,
         )
         .exclude(workspace__workspace_memberships__user__id=user.id)  # user_not_ws_member
         .order_by("workspace_id")
@@ -97,7 +96,6 @@ def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
             Project.objects.filter(
                 workspace_id=ws_id,  # pj_in_workspace,
                 memberships__user__id=user.id,  # user_pj_member
-                memberships__role__permissions__len__gt=0,  # _with_access
             )
             .order_by("-created_date")
             .values_list("id", flat=True)
@@ -141,7 +139,7 @@ def _get_total_user_projects_sync(workspace_id: int, user_id: int) -> int:
         & ~Q(memberships__user_id=user_id)
         & Q(workspace_member_permissions__len__gt=0)
     )
-    pj_member_allowed = Q(memberships__user_id=user_id) & Q(memberships__role__permissions__len__gt=0)
+    pj_member_allowed = Q(memberships__user_id=user_id)
 
     return (
         Project.objects.filter(workspace_id=workspace_id)

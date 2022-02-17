@@ -61,8 +61,11 @@ async def user_can_view_project(user: User, project: Project, cache: str = "user
     if not project:
         return False
 
-    workspace = project.workspace
+    project_membership = await roles_services.get_user_project_membership(user, project, cache=cache)
+    if project_membership:
+        return True
 
+    workspace = project.workspace
     user_permissions = await _get_user_permissions(user=user, workspace=workspace, project=project, cache=cache)
     return len(user_permissions) > 0
 
@@ -138,7 +141,7 @@ async def _get_user_permissions(
         elif is_project_member:
             user_permissions = project_role_permissions
         elif is_workspace_member:
-            user_permissions = workspace_role_permissions
+            user_permissions = project.workspace_member_permissions
         elif is_authenticated:
             user_permissions = project.public_permissions
         else:

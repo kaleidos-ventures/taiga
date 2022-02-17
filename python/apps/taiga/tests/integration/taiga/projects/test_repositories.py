@@ -161,11 +161,11 @@ async def test_get_workspace_projects_for_user_1():
     await f.create_workspace_membership(user=user7, workspace=workspace, workspace_role=ws_member_role)
     # user7 is a pj-owner
     await f.create_project(workspace=workspace, owner=user7)
-    # user7 is pj-member with access
+    # user7 is pj-member
     pj11 = await f.create_project(workspace=workspace, owner=user6)
     pj_general_role = await _get_pj_member_role(project=pj11)
     await f.create_membership(user=user7, project=pj11, role=pj_general_role)
-    # user7 is pj-member but its role has no-access, ws-members have permissions
+    # user7 is pj-member, ws-members have permissions
     pj12 = await f.create_project(workspace=workspace, owner=user6)
     pj_general_role = await _get_pj_member_role(project=pj12)
     await f.create_membership(user=user7, project=pj12, role=pj_general_role)
@@ -173,7 +173,7 @@ async def test_get_workspace_projects_for_user_1():
     await _save_role(pj_general_role)
     pj12.workspace_member_permissions = ["view_us"]
     await _save_project(project=pj12)
-    # user7 is pj-member but its role has no-access, ws-members dont have permissions
+    # user7 is pj-member, ws-members don't have permissions
     pj13 = await f.create_project(workspace=workspace, owner=user6)
     pj_general_role = await _get_pj_member_role(project=pj13)
     await f.create_membership(user=user7, project=pj13, role=pj_general_role)
@@ -189,7 +189,7 @@ async def test_get_workspace_projects_for_user_1():
     res = await repositories.get_workspace_projects_for_user(workspace.id, user6.id)
     assert len(res) == 5
     res = await repositories.get_workspace_projects_for_user(workspace.id, user7.id)
-    assert len(res) == 3
+    assert len(res) == 5
 
 
 async def test_get_workspace_projects_for_user_2():

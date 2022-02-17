@@ -134,16 +134,28 @@ async def test_user_can_view_project_without_project():
     user = await f.create_user()
     project = await f.create_project()
     with patch.object(services, "_get_object_project", return_value=None):
+        # no project to verify permissions with (permission denied)
         assert await services.user_can_view_project(user=user, project=project) is False
 
 
-async def test_user_can_view_project_ok():
+async def test_user_can_view_project_being_a_team_member():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
     project = await f.create_project(workspace=workspace, owner=user)
+
+    # the user is a project member (permission granted)
+    assert await services.user_can_view_project(user=user, project=project) is True
+
+
+async def test_user_can_view_project_ok():
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    workspace = await f.create_workspace(owner=user2)
+    project = await f.create_project(workspace=workspace, owner=user2)
     with patch.object(services, "_get_user_permissions", return_value=[]) as mock_method:
-        await services.user_can_view_project(user=user, project=project)
-        mock_method.assert_awaited_once_with(user=user, workspace=workspace, project=project, cache="user")
+        await services.user_can_view_project(user=user1, project=project)
+        # the user isn't a project member (her permissions should be calculated)
+        mock_method.assert_awaited_once_with(user=user1, workspace=workspace, project=project, cache="user")
 
 
 #####################################################

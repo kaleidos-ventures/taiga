@@ -24,10 +24,10 @@ def get_projects(workspace_slug: str) -> list[Project]:
 def get_workspace_projects_for_user(workspace_id: int, user_id: int) -> list[Project]:
     # projects of a workspace where:
     # - the user is not pj-member but the project allows to ws-members
-    # - the user is pj-member and the role has access (has at least 1 permission)
+    # - the user is pj-member
     pj_in_workspace = Q(workspace_id=workspace_id)
     ws_allowed = ~Q(members__id=user_id) & Q(workspace_member_permissions__len__gt=0)
-    pj_allowed = Q(members__id=user_id) & Q(memberships__role__permissions__len__gt=0)
+    pj_allowed = Q(members__id=user_id)
     return list(
         Project.objects.prefetch_related("workspace").filter(pj_in_workspace & (ws_allowed | pj_allowed)).distinct()
     )

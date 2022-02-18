@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi import UploadFile
@@ -138,7 +138,7 @@ async def test_get_workspace_projects_for_user_member():
     with patch("taiga.projects.services.roles_repositories", new_callable=AsyncMock) as fake_roles_repo, patch(
         "taiga.projects.services.projects_repositories", new_callable=AsyncMock
     ) as fake_projects_repo:
-        fake_roles_repo.is_workspace_admin.return_value = False
+        fake_roles_repo.get_workspace_role_for_user.return_value = MagicMock(is_admin=False)
         await services.get_workspace_projects_for_user(workspace=workspace, user=user)
         fake_projects_repo.get_workspace_projects_for_user.assert_awaited_once_with(
             workspace_id=workspace.id, user_id=user.id

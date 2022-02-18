@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from taiga.permissions import choices, services
@@ -82,13 +82,14 @@ async def test_is_workspace_admin_being_workspace_member():
 async def test_user_has_perm_without_perm():
     user = await f.create_user()
     project = await f.create_project(owner=user)
+
     assert await services.user_has_perm(user=user, perm=None, obj=project) is False
 
 
 async def test_user_has_perm_being_project_admin():
     user = await f.create_user()
     project = await f.create_project(owner=user)
-    perm = "modify_project"
+    perm = "view_us"
 
     assert await services.user_has_perm(user=user, perm=perm, obj=project) is True
 
@@ -101,26 +102,23 @@ async def test_user_has_perm_being_project_member():
         is_admin=False,
     )
     user = await f.create_user()
+    view_perm = "view_us"
     await f.create_membership(user=user, project=project, role=general_member_role)
 
-    view_perm = "view_us"
-    modify_perm = "modify_project"
-
     assert await services.user_has_perm(user=user, perm=view_perm, obj=project) is True
-    assert await services.user_has_perm(user=user, perm=modify_perm, obj=project) is False
 
 
 async def test_user_has_perm_not_being_project_member():
     project = await f.create_project()
     user = await f.create_user()
-    perm = "modify_project"
+    perm = "view_us"
 
     assert await services.user_has_perm(user=user, perm=perm, obj=project) is False
 
 
 async def test_user_has_perm_without_workspace_and_project():
     user = await f.create_user()
-    perm = "modify_project"
+    perm = "view_us"
 
     assert await services.user_has_perm(user=user, perm=perm, obj=None) is False
 
@@ -135,7 +133,7 @@ async def test_user_can_view_project_without_project():
     project = await f.create_project()
     with patch.object(services, "_get_object_project", return_value=None):
         # no project to verify permissions with (permission denied)
-        assert await services.user_can_view_project(user=user, project=project) is False
+        assert await services.user_can_view_project(user=user, obj=project) is False
 
 
 async def test_user_can_view_project_being_a_team_member():
@@ -144,18 +142,60 @@ async def test_user_can_view_project_being_a_team_member():
     project = await f.create_project(workspace=workspace, owner=user)
 
     # the user is a project member (permission granted)
-    assert await services.user_can_view_project(user=user, project=project) is True
+    assert await services.user_can_view_project(user=user, obj=project) is True
 
 
-async def test_user_can_view_project_ok():
-    user1 = await f.create_user()
-    user2 = await f.create_user()
-    workspace = await f.create_workspace(owner=user2)
-    project = await f.create_project(workspace=workspace, owner=user2)
-    with patch.object(services, "_get_user_permissions", return_value=[]) as mock_method:
-        await services.user_can_view_project(user=user1, project=project)
-        # the user isn't a project member (her permissions should be calculated)
-        mock_method.assert_awaited_once_with(user=user1, workspace=workspace, project=project, cache="user")
+#####################################################
+# get_user_project_role_info
+#####################################################
+
+
+async def get_user_project_role_info():
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+    with patch("taiga.permissions.services.roles_repositories", new_callable=AsyncMock) as fake_repository:
+        await get_user_project_role_info(user=user, project=project)
+        fake_repository.get_role_for_user.assert_awaited_once()
+
+
+#####################################################
+# get_user_workspace_role_info
+#####################################################
+
+
+async def get_user_workspace_role_info():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+    with patch("taiga.permissions.services.roles_repositories", new_callable=AsyncMock) as fake_repository:
+        await get_user_workspace_role_info(user=user, workspace=workspace)
+        fake_repository.get_workspace_role_for_user.assert_awaited_once()
+
+
+#####################################################
+# get_user_permissions_for_project
+#####################################################
+
+
+async def test_get_user_permissions_for_project():
+    project = await f.create_project()
+
+    params = [True, False, False, False, False, [], project]
+    assert await services.get_user_permissions_for_project(*params) == choices.PROJECT_PERMISSIONS
+
+    params = [False, True, False, False, False, [], project]
+    assert await services.get_user_permissions_for_project(*params) == choices.PROJECT_PERMISSIONS
+
+    params = [False, False, True, False, False, ["view_us"], project]
+    assert await services.get_user_permissions_for_project(*params) == ["view_us"]
+
+    params = [False, False, False, True, False, [], project]
+    assert await services.get_user_permissions_for_project(*params) == project.workspace_member_permissions
+
+    params = [False, False, False, False, True, [], project]
+    assert await services.get_user_permissions_for_project(*params) == project.public_permissions
+
+    params = [False, False, False, False, False, [], project]
+    assert await services.get_user_permissions_for_project(*params) == project.anon_permissions
 
 
 #####################################################

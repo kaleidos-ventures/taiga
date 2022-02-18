@@ -11,7 +11,6 @@ from asgiref.sync import sync_to_async
 from taiga.permissions import choices
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories
-from taiga.roles import services as roles_services
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
@@ -26,7 +25,8 @@ async def is_project_admin(user: User, obj: Any) -> bool:
     if user.is_superuser:
         return True
 
-    return await roles_repositories.is_project_admin(user_id=user.id, project_id=project.id)
+    role = await roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
+    return role.is_admin if role else False
 
 
 async def is_workspace_admin(user: User, obj: Any) -> bool:
@@ -37,9 +37,11 @@ async def is_workspace_admin(user: User, obj: Any) -> bool:
     if user.is_superuser:
         return True
 
-    return await roles_repositories.is_workspace_admin(user_id=user.id, workspace_id=workspace.id)
+    role = await roles_repositories.get_workspace_role_for_user(user_id=user.id, workspace_id=workspace.id)
+    return role.is_admin if role else False
 
 
+# TODO: improve tests
 async def user_has_perm(user: User, perm: str, obj: Any, cache: str = "user") -> bool:
     """
     cache param determines how memberships are calculated
@@ -52,21 +54,54 @@ async def user_has_perm(user: User, perm: str, obj: Any, cache: str = "user") ->
     if not project and not workspace:
         return False
 
-    user_permissions = await _get_user_permissions(user=user, workspace=workspace, project=project, cache=cache)
+    is_workspace_admin, is_workspace_member, workspace_role_permissions = await get_user_workspace_role_info(
+        user=user, workspace=workspace
+    )
+    if project:
+        is_project_admin, is_project_member, project_role_permissions = await get_user_project_role_info(
+            user=user, project=project
+        )
+        user_permissions = await get_user_permissions_for_project(
+            is_project_admin=is_project_admin,
+            is_workspace_admin=is_workspace_admin,
+            is_project_member=is_project_member,
+            is_workspace_member=is_workspace_member,
+            is_authenticated=user.is_authenticated,
+            project_role_permissions=project_role_permissions,
+            project=project,
+        )
+    elif workspace:
+        user_permissions = await get_user_permissions_for_workspace(
+            workspace_role_permissions=workspace_role_permissions
+        )
+
     return perm in user_permissions
 
 
-async def user_can_view_project(user: User, project: Project, cache: str = "user") -> bool:
-    project = await _get_object_project(project)
+# TODO: improve tests
+async def user_can_view_project(user: User, obj: Any, cache: str = "user") -> bool:
+    project = await _get_object_project(obj)
     if not project:
         return False
 
-    project_membership = await roles_services.get_user_project_membership(user, project, cache=cache)
-    if project_membership:
+    is_project_admin, is_project_member, project_role_permissions = await get_user_project_role_info(
+        user=user, project=project
+    )
+    if is_project_member:
         return True
 
-    workspace = project.workspace
-    user_permissions = await _get_user_permissions(user=user, workspace=workspace, project=project, cache=cache)
+    is_workspace_admin, is_workspace_member, _ = await get_user_workspace_role_info(
+        user=user, workspace=project.workspace
+    )
+    user_permissions = await get_user_permissions_for_project(
+        is_project_admin=is_project_admin,
+        is_workspace_admin=is_workspace_admin,
+        is_project_member=is_project_member,
+        is_workspace_member=is_workspace_member,
+        is_authenticated=user.is_authenticated,
+        project_role_permissions=project_role_permissions,
+        project=project,
+    )
     return len(user_permissions) > 0
 
 
@@ -90,36 +125,31 @@ def _get_object_project(obj: Any) -> Project | None:
     return None
 
 
-# TODO: missing tests
-async def _get_user_permissions(
-    user: User, workspace: Workspace, project: Project | None = None, cache: str = "user"
+async def get_user_project_role_info(user: User, project: Project) -> tuple[bool, bool, list[str]]:
+    role = await roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
+    if role:
+        return role.is_admin, True, role.permissions
+
+    return False, False, []
+
+
+async def get_user_workspace_role_info(user: User, workspace: Workspace) -> tuple[bool, bool, list[str]]:
+    role = await roles_repositories.get_workspace_role_for_user(user_id=user.id, workspace_id=workspace.id)
+    if role:
+        return role.is_admin, True, role.permissions
+
+    return False, False, []
+
+
+async def get_user_permissions_for_project(
+    is_project_admin: bool,
+    is_workspace_admin: bool,
+    is_project_member: bool,
+    is_workspace_member: bool,
+    is_authenticated: bool,
+    project_role_permissions: list[str],
+    project: Project,
 ) -> list[str]:
-    """
-    cache param determines how memberships are calculated
-    trying to reuse the existing data in cache
-    """
-
-    is_authenticated = user.is_authenticated
-
-    if project:
-        project_membership = await roles_services.get_user_project_membership(user, project, cache=cache)
-        is_project_member = project_membership is not None
-        role = (
-            await roles_repositories.get_project_role_from_membership(project_membership) if is_project_member else None
-        )
-        is_project_admin = role.is_admin if role else False
-        project_role_permissions = role.permissions if role else []
-
-    workspace_membership = await roles_services.get_user_workspace_membership(user, workspace, cache=cache)
-    is_workspace_member = workspace_membership is not None
-    workspace_role = (
-        await roles_repositories.get_workspace_role_from_membership(workspace_membership)
-        if is_workspace_member
-        else None
-    )
-    is_workspace_admin = workspace_role.is_admin if workspace_role else False
-    workspace_role_permissions = workspace_role.permissions if workspace_role else []
-
     # pj (user is)		ws (user is)	Applied permission role (referred to a project)
     # =================================================================================
     # pj-admin			ws-admin		role-pj-admin.permissions
@@ -132,25 +162,23 @@ async def _get_user_permissions(
     # no-role			ws-member		pj.workspace-member-permissions
     # no-role			no-role			pj.public-permissions
     # no-logged			no-logged		pj.public-permissions [only view]
+    if is_project_admin:
+        return choices.PROJECT_PERMISSIONS
+    elif is_workspace_admin:
+        return choices.PROJECT_PERMISSIONS
+    elif is_project_member:
+        return project_role_permissions
+    elif is_workspace_member:
+        return project.workspace_member_permissions
+    elif is_authenticated:
+        return project.public_permissions
 
-    if project:
-        if is_project_admin:
-            user_permissions = project_role_permissions
-        elif is_workspace_admin:
-            user_permissions = choices.PROJECT_PERMISSIONS
-        elif is_project_member:
-            user_permissions = project_role_permissions
-        elif is_workspace_member:
-            user_permissions = project.workspace_member_permissions
-        elif is_authenticated:
-            user_permissions = project.public_permissions
-        else:
-            user_permissions = project.anon_permissions
-    elif workspace:
-        # TODO revisar esta parte cuando tengamos permisos de WS
-        user_permissions = workspace_role_permissions
+    return project.anon_permissions
 
-    return user_permissions
+
+async def get_user_permissions_for_workspace(workspace_role_permissions: list[str]) -> list[str]:
+    # TODO review when we do workspaces permissions
+    return workspace_role_permissions
 
 
 def permissions_are_valid(permissions: list[str]) -> bool:

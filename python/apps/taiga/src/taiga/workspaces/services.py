@@ -29,7 +29,7 @@ async def create_workspace(name: str, color: int, owner: User) -> Workspace:
     workspace_role = await roles_repositories.create_workspace_role(
         name="Administrators",
         slug="admin",
-        permissions=choices.WORKSPACE_PERMISSIONS + choices.WORKSPACE_ADMIN_PERMISSIONS,
+        permissions=choices.WORKSPACE_PERMISSIONS,
         workspace=workspace,
         is_admin=True,
     )

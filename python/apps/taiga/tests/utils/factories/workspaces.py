@@ -31,7 +31,7 @@ def create_workspace(**kwargs):
     admin_role = f.WorkspaceRoleFactory.create(
         name="Administrators",
         slug="admin",
-        permissions=choices.WORKSPACE_PERMISSIONS + choices.WORKSPACE_ADMIN_PERMISSIONS,
+        permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=True,
         workspace=workspace,
     )

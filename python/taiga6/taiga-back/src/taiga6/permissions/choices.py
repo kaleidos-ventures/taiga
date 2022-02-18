@@ -15,28 +15,11 @@ EDIT_US_PERMISSIONS = [
     ('modify_us', _('Modify US')),
 ]
 
-
 EDIT_TASK_PERMISSIONS = [
     ('add_task', _('Add task')),
     ('comment_task', _('Comment task')),
     ('delete_task', _('Delete task')),
     ('modify_task', _('Modify task')),
-]
-
-# possible permissions for project administrators
-# these permissions cannot be changed with the API
-PROJECT_ADMIN_PERMISSIONS = [
-    # Project admin permissions
-    ('add_member', _('Add member')),
-    ('modify_project', _('Modify project')),
-    ('delete_project', _('Delete project')),
-]
-
-# possible permissions for workspace administrators
-# these permissions cannot be changed with the API
-WORKSPACE_ADMIN_PERMISSIONS = [
-    # Workspace admin permissions
-    ('add_member', _('Add member')),
 ]
 
 # possible permissions for members or public members

@@ -9,9 +9,7 @@ from taiga.exceptions import services as ex
 from taiga.permissions import services as permissions_services
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories
-from taiga.roles.models import Membership, Role, WorkspaceMembership
-from taiga.users.models import User
-from taiga.workspaces.models import Workspace
+from taiga.roles.models import Role
 
 
 async def get_project_roles(project: Project) -> list[Role]:
@@ -33,19 +31,3 @@ async def update_role_permissions(role: Role, permissions: list[str]) -> Role:
         raise ex.IncompatiblePermissionsSetError()
 
     return await roles_repositories.update_role_permissions(role=role, permissions=permissions)
-
-
-async def get_user_project_membership(user: User, project: Project, cache: str = "user") -> Membership:
-    """
-    cache param determines how memberships are calculated
-    trying to reuse the existing data in cache
-    """
-    return await roles_repositories.get_user_project_membership(user=user, project=project, cache=cache)
-
-
-async def get_user_workspace_membership(user: User, workspace: Workspace, cache: str = "user") -> WorkspaceMembership:
-    """
-    cache param determines how memberships are calculated
-    trying to reuse the existing data in cache
-    """
-    return await roles_repositories.get_user_workspace_membership(user=user, workspace=workspace, cache=cache)

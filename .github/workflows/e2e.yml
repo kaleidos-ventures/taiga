@@ -1,4 +1,4 @@
-name: E2E
+name: Front - e2e
 
 on: workflow_dispatch
 

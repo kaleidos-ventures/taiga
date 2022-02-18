@@ -49,7 +49,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .has-icon {
     & .icon {
-      inset-block-start: var(--spacing-12);
+      inset-block-start: var(--spacing-8);
       inset-inline-end: var(--spacing-8);
       position: absolute;
     }

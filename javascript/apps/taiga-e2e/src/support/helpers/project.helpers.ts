@@ -7,7 +7,8 @@
  */
 
 import { randText } from '@ngneat/falso';
-import { Project } from '@taiga/data';
+import { Project, Workspace } from '@taiga/data';
+import { request } from './api.helpers';
 
 // NAVIGATION
 
@@ -34,6 +35,26 @@ export const createFullProjectInWS = (
   typeProjectDescription(randText({ charCount: 100 }));
   submitProject();
   cy.getBySel('submit-invite-users').click();
+};
+
+export const createFullProjectInWSRequest = (
+  workspaceSlug: Workspace['slug'],
+  projectName: Project['name']
+) => {
+  void request(
+    'POST',
+    '/projects',
+    {
+      workspaceSlug: workspaceSlug,
+      name: projectName,
+      color: 1,
+      logo: undefined,
+      description: '',
+    },
+    {
+      form: true,
+    }
+  );
 };
 
 export const launchProjectCreationInWS = (index: number) => {

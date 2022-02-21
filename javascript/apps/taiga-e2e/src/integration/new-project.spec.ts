@@ -15,7 +15,7 @@ import {
   typeProjectDescription,
   typeProjectName,
 } from '../support/helpers/project.helpers';
-import { createWorkspace } from '../support/helpers/workspace.helpers';
+import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 
 const workspace = WorkspaceMockFactory();
@@ -29,7 +29,7 @@ describe('Workspace Create from Overview', () => {
   });
 
   it('Should create a new project from the workspace list and preselect the workspace', () => {
-    createWorkspace(workspace.name);
+    void createWorkspaceRequest(workspace.name);
     cy.tgCheckA11y();
     launchProjectCreationInWS(0);
 
@@ -40,7 +40,7 @@ describe('Workspace Create from Overview', () => {
   });
 
   it('Should not be able to create project if empty', () => {
-    createWorkspace(workspace.name);
+    void createWorkspaceRequest(workspace.name);
     launchProjectCreationInWS(0);
     selectBlankProject();
     cy.tgCheckA11y();
@@ -53,7 +53,7 @@ describe('Workspace Create from Overview', () => {
   it('Should not be able to add more than 80 chars', () => {
     const projectName = randText({ charCount: 100 });
 
-    createWorkspace(workspace.name);
+    void createWorkspaceRequest(workspace.name);
     launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectName(projectName);
@@ -63,7 +63,7 @@ describe('Workspace Create from Overview', () => {
   });
 
   it('Should display two letters of the name in file upload preview', () => {
-    createWorkspace(workspace.name);
+    void createWorkspaceRequest(workspace.name);
     launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectName(project.name);
@@ -77,7 +77,7 @@ describe('Workspace Create from Overview', () => {
   it('Should not create project with long description', () => {
     const projectDescription = randText({ charCount: 300 });
 
-    createWorkspace(workspace.name);
+    void createWorkspaceRequest(workspace.name);
     launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectDescription(projectDescription);
@@ -88,7 +88,7 @@ describe('Workspace Create from Overview', () => {
   });
 
   it('Should create project and go to kanban page', () => {
-    createWorkspace(workspace.name);
+    void createWorkspaceRequest(workspace.name);
     launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectName(project.name);
@@ -111,7 +111,7 @@ describe('Workspace Create from Overview', () => {
   });
 
   it('the cancel and the x button launch the confirmation dialog', () => {
-    createWorkspace(workspace.name);
+    void createWorkspaceRequest(workspace.name);
     launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectName(project.name);
@@ -122,7 +122,7 @@ describe('Workspace Create from Overview', () => {
   });
 
   it('the close window or f5 launch the browser confirmation dialog.', () => {
-    createWorkspace(workspace.name);
+    void createWorkspaceRequest(workspace.name);
     launchProjectCreationInWS(0);
     selectBlankProject();
     typeProjectName(project.name);
@@ -141,7 +141,7 @@ xdescribe('Workspace Create from WS page', () => {
     cy.visit('/');
     cy.initAxe();
 
-    createWorkspace(workspace.name);
+    void createWorkspaceRequest(workspace.name);
   });
 
   it('Check that you cannot change the ws the project belongs to from the WS page', () => {

@@ -8,7 +8,7 @@
 
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import {
-  createFullProjectInWS,
+  createFullProjectInWSRequest,
   navigateToProjectInWS,
 } from '../support/helpers/project.helpers';
 import {
@@ -26,7 +26,7 @@ import {
   toggleCanCommentPermission,
   checkConflictTableText,
 } from '../support/helpers/settings.helpers';
-import { createWorkspace } from '../support/helpers/workspace.helpers';
+import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 
 const workspace = WorkspaceMockFactory();
 const project = ProjectMockFactory();
@@ -34,9 +34,12 @@ const project = ProjectMockFactory();
 describe('Permission conflicts', () => {
   before(() => {
     cy.login();
-    cy.visit('/');
-    createWorkspace(workspace.name);
-    createFullProjectInWS(0, project.name);
+
+    createWorkspaceRequest(workspace.name)
+      .then((request) => {
+        createFullProjectInWSRequest(request.body.slug, project.name);
+      })
+      .catch(console.error);
   });
 
   beforeEach(() => {

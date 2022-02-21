@@ -1,0 +1,82 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<mj-style>
+  .body {
+    background-color: #EFF0F5;
+    margin: auto;
+    max-width: 632px;
+    min-width: 288px;
+    padding: 16px;
+  }
+
+  .body-content {
+    background-color: #FFFFFF;
+    max-width: 600px;
+    min-width: 224px;
+    padding: 44px 64px;
+  }
+
+  .primary-link a:link,
+  .primary-link a:visited,
+  .primary-link a:hover,
+  .primary-link a:active {
+    color: #63738F;
+  }
+
+  .secondary-link a:link,
+  .secondary-link a:visited,
+  .secondary-link a:hover,
+  .secondary-link a:active {
+    color: #007DA6;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .tertiary-link a:link,
+  .tertiary-link a:visited,
+  .tertiary-link a:active {
+    color: #007DA6;
+    font-weight: 500;
+  }
+
+  .tertiary-link a:hover {
+    color: # 006385;
+  }
+
+  .separator {
+    border-bottom: 1px solid #DADFE9;
+    border-top: 1px solid #DADFE9;
+  }
+
+  .list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0 16px 0 32px;
+  }
+
+  .list li:before {
+    border-radius: 4px;
+    content: "";
+    background-color: #007DA6;
+    display: inline-block;
+    height: 8px;
+    margin: 0 8px 0 -16px;
+    width: 8px;
+  }
+
+  strong {
+    color: #384051;
+    font-weight: 500;
+  }
+
+  @media (max-width: 320px) {
+    .body-content {
+      padding: 32px;
+    }
+  }
+</mj-style>

@@ -45,3 +45,6 @@ testem.log
 Thumbs.db
 
 /apps/taiga/src/assets/config.json
+
+# mjml files
+/apps/taiga-mjml

@@ -44,7 +44,8 @@
     "translations:split": "ng g @ngneat/transloco:split --translation-path 'apps/taiga/src/assets/i18n/'",
     "translations:join": "ng g @ngneat/transloco:join --translation-path 'apps/taiga/src/assets/i18n/'",
     "install:hooks": "cd .. && husky install javascript/.husky",
-    "prepare": "npm run install:hooks"
+    "prepare": "npm run install:hooks",
+    "generate-mjml": "npx mjml ./apps/taiga-mjml/$npm_config_name.mjml -o ../python/$npm_config_name.html"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",

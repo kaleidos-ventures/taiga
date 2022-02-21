@@ -13,6 +13,8 @@ export type WorkspaceProject = Pick<
   'name' | 'slug' | 'description' | 'color' | 'logoSmall'
 >;
 
+export type WorkspaceRole = 'admin' | 'member' | 'guest' | 'none';
+
 export interface Workspace {
   id: number;
   name: string;
@@ -21,12 +23,9 @@ export interface Workspace {
   latestProjects: WorkspaceProject[];
   totalProjects: number;
   hasProjects: boolean;
-  myRole: string;
+  myRole: WorkspaceRole;
   isPremium: boolean;
   isOwner: boolean;
-
-  // TODO: Update when API provide roles
-  // owner: boolean;
 }
 
 export interface WorkspaceCreation {

@@ -13,6 +13,7 @@ import {
   randParagraph,
   randImg,
   randProductName,
+  randBoolean,
 } from '@ngneat/falso';
 import { ProjectCreation, Workspace } from '..';
 import { Milestone } from './milestone.model';
@@ -31,7 +32,10 @@ const getMilestones = () => {
 
 export const ProjectMockFactory = (
   milestones = false,
-  workspace?: Pick<Workspace, 'color' | 'name' | 'slug' | 'isPremium'>
+  workspace?: Pick<
+    Workspace,
+    'color' | 'name' | 'slug' | 'isPremium' | 'myRole'
+  >
 ): Project => {
   const project = {
     name: randWord({ length: 3, capitalize: true }).join(' '),
@@ -43,6 +47,8 @@ export const ProjectMockFactory = (
     logo: randImg(),
     logoSmall: randImg(),
     logoBig: randImg(),
+    amIAdmin: randBoolean(),
+    myPermissions: [],
   };
 
   return project;

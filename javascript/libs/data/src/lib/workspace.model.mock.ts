@@ -11,7 +11,7 @@ import { randDepartment, randNumber, randDomainSuffix } from '@ngneat/falso';
 import { ProjectMockFactory } from '../lib/project.model.mock';
 
 export const WorkspaceMockFactory = (): Workspace => {
-  const workspace = {
+  const workspace: Workspace = {
     id: randNumber(),
     slug: randDomainSuffix({ length: 3 }).join('-'),
     name: randDepartment(),
@@ -20,6 +20,8 @@ export const WorkspaceMockFactory = (): Workspace => {
     myRole: 'admin',
     isPremium: true,
     isOwner: true,
+    latestProjects: [],
+    totalProjects: randNumber(),
   };
 
   const latestProjects = [];
@@ -32,6 +34,7 @@ export const WorkspaceMockFactory = (): Workspace => {
         slug: workspace.slug,
         name: workspace.name,
         isPremium: workspace.isPremium,
+        myRole: workspace.myRole,
       })
     );
   }

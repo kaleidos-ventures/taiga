@@ -17,8 +17,13 @@ export interface Project {
   slug: string;
   description: string;
   color: number;
-  workspace: Pick<Workspace, 'name' | 'slug' | 'color' | 'isPremium'>;
+  workspace: Pick<
+    Workspace,
+    'name' | 'slug' | 'color' | 'isPremium' | 'myRole'
+  >;
   milestones: Milestone[];
+  myPermissions: string[];
+  amIAdmin: boolean;
 }
 
 export interface ProjectCreation {

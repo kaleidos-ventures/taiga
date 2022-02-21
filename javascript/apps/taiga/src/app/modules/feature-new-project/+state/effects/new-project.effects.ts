@@ -34,14 +34,15 @@ export class NewProjectEffects {
           );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          if (httpResponse.status === 500) {
-            this.appService.toastError(httpResponse, {
-              label: 'errors.create_project',
-              message: 'errors.please_refresh',
-            });
-          } else {
-            this.appService.errorManagement(httpResponse);
-          }
+          this.appService.errorManagement(httpResponse, {
+            500: {
+              type: 'toast',
+              options: {
+                label: 'errors.create_project',
+                message: 'errors.please_refresh',
+              },
+            },
+          });
           return NewProjectActions.createProjectError({
             error: httpResponse,
           });

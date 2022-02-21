@@ -9,3 +9,15 @@
 export interface UnexpectedError {
   message: string;
 }
+export interface ErrorManagementToastOptions {
+  type: 'toast';
+  options: {
+    label: string;
+    message: string;
+  };
+}
+
+export interface ErrorManagementOptions {
+  500?: ErrorManagementToastOptions;
+  403?: ErrorManagementToastOptions;
+}

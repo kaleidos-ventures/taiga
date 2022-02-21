@@ -38,14 +38,15 @@ export class AuthEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          if (httpResponse.status === 500) {
-            return this.appService.toastError(httpResponse, {
-              label: 'errors.login',
-              message: 'errors.please_refresh',
-            });
-          } else {
-            return this.appService.errorManagement(httpResponse);
-          }
+          this.appService.errorManagement(httpResponse, {
+            500: {
+              type: 'toast',
+              options: {
+                label: 'errors.login',
+                message: 'errors.please_refresh',
+              },
+            },
+          });
         },
       })
     );

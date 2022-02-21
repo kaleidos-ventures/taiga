@@ -17,7 +17,7 @@ import {
   unexpectedError,
   forbidenError,
 } from '../modules/errors/+state/actions/errors.actions';
-import { UnexpectedError } from '@taiga/data';
+import { ErrorManagementOptions, UnexpectedError } from '@taiga/data';
 import { Store } from '@ngrx/store';
 import { TranslocoService } from '@ngneat/transloco';
 
@@ -38,15 +38,27 @@ export class AppService {
     };
   }
 
-  public errorManagement(error: HttpErrorResponse) {
-    if (error.status === 403) {
-      this.store.dispatch(
+  public errorManagement(
+    error: HttpErrorResponse,
+    errorOptions?: ErrorManagementOptions
+  ) {
+    const status = error.status as keyof ErrorManagementOptions;
+    if (errorOptions && errorOptions[status]) {
+      const config = errorOptions[status];
+      if (config && config.type === 'toast') {
+        return this.toastError(error, {
+          label: config.options.label,
+          message: config.options.message,
+        });
+      }
+    } else if (status === 403) {
+      return this.store.dispatch(
         forbidenError({
           error: this.formatHttpErrorResponse(error),
         })
       );
-    } else if (error.status === 500) {
-      this.store.dispatch(
+    } else if (status === 500) {
+      return this.store.dispatch(
         unexpectedError({
           error: this.formatHttpErrorResponse(error),
         })

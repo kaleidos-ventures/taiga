@@ -7,7 +7,7 @@
  */
 
 export * from './lib/config.model';
-export * from './lib/unexpected-error.model';
+export * from './lib/errors.model';
 export * from './lib/auth.model';
 export * from './lib/auth.model.mock';
 export * from './lib/user.model';

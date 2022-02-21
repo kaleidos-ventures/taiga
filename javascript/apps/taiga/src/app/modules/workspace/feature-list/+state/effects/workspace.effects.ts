@@ -62,14 +62,15 @@ export class WorkspaceEffects {
           );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          if (httpResponse.status === 500) {
-            this.appService.toastError(httpResponse, {
-              label: 'errors.create_workspace',
-              message: 'errors.please_refresh',
-            });
-          } else {
-            this.appService.errorManagement(httpResponse);
-          }
+          this.appService.errorManagement(httpResponse, {
+            500: {
+              type: 'toast',
+              options: {
+                label: 'errors.login',
+                message: 'errors.please_refresh',
+              },
+            },
+          });
           return WorkspaceActions.createWorkspaceError();
         },
       })

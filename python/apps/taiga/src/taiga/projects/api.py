@@ -73,10 +73,8 @@ async def create_project(
     Create project for the logged user in a given workspace.
     """
     workspace = await get_workspace_or_404(slug=form.workspace_slug)
-
     await check_permissions(permissions=CREATE_PROJECT, user=request.user, obj=workspace)
-
-    return await projects_services.create_project(
+    project = await projects_services.create_project(
         workspace=workspace,
         name=form.name,
         description=form.description,
@@ -84,6 +82,7 @@ async def create_project(
         owner=request.user,
         logo=form.logo,
     )
+    return await projects_services.get_project_detail(project=project, user=request.user)
 
 
 @router.get(
@@ -100,8 +99,7 @@ async def get_project(request: Request, slug: str = Query("", description="the p
 
     project = await get_project_or_404(slug)
     await check_permissions(permissions=GET_PROJECT, user=request.user, obj=project)
-
-    return project
+    return await projects_services.get_project_detail(project=project, user=request.user)
 
 
 @router.get(

@@ -11,8 +11,7 @@ from taiga.base.serializer import BaseModel
 class WorkspaceSummarySerializer(BaseModel):
     name: str
     slug: str
-    color: int
-    is_premium: bool
+    my_role: str
 
     class Config:
         orm_mode = True

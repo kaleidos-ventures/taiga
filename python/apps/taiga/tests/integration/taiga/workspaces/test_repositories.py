@@ -18,32 +18,6 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
-# create_workspace
-##########################################################
-
-
-async def test_create_workspace_with_non_ASCI_chars():
-    user = await f.create_user()
-    workspace = await repositories.create_workspace(name="My w0r#%&乕شspace", color=3, owner=user)
-    assert workspace.slug.startswith("my-w0rhu-shspace")
-
-
-##########################################################
-# get_workspace
-##########################################################
-
-
-async def test_get_workspace_return_workspace():
-    workspace = await f.create_workspace(name="ws 1")
-    assert await repositories.get_workspace(slug=workspace.slug) == workspace
-
-
-async def test_get_workspace_return_none():
-    await f.create_workspace(name="ws 1")
-    assert await repositories.get_workspace(slug="ws-not-exist") is None
-
-
-##########################################################
 # get_user_workspaces_with_latest_projects
 ##########################################################
 
@@ -185,6 +159,32 @@ async def test_get_user_workspaces_with_latest_projects():
             assert ws.total_projects == 0
         elif ws.name == workspace5.name:
             assert ws.total_projects == 3
+
+
+##########################################################
+# create_workspace
+##########################################################
+
+
+async def test_create_workspace_with_non_ASCI_chars():
+    user = await f.create_user()
+    workspace = await repositories.create_workspace(name="My w0r#%&乕شspace", color=3, owner=user)
+    assert workspace.slug.startswith("my-w0rhu-shspace")
+
+
+##########################################################
+# get_workspace
+##########################################################
+
+
+async def test_get_workspace_return_workspace():
+    workspace = await f.create_workspace(name="ws 1")
+    assert await repositories.get_workspace(slug=workspace.slug) == workspace
+
+
+async def test_get_workspace_return_none():
+    await f.create_workspace(name="ws 1")
+    assert await repositories.get_workspace(slug="ws-not-exist") is None
 
 
 ##########################################################
@@ -368,3 +368,55 @@ async def test_get_workspace_detail_no_ws_members():
     assert res_ws.is_owner is False
     assert res_ws.has_projects is True
     assert res_ws.my_role == "none"
+
+
+##########################################################
+# get_workspace_summary
+##########################################################
+
+
+async def test_get_workspace_summary_admin():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+    res = await repositories.get_workspace_summary(id=workspace.id, user_id=user.id)
+
+    assert res.name == workspace.name
+    assert res.my_role == "admin"
+
+
+async def test_get_workspace_summary_member():
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+    ws_member_role = await _get_ws_member_role(workspace=workspace)
+    await f.create_workspace_membership(user=user, workspace=workspace, workspace_role=ws_member_role)
+    res = await repositories.get_workspace_summary(id=workspace.id, user_id=user.id)
+
+    assert res.name == workspace.name
+    assert res.my_role == "member"
+
+
+async def test_get_workspace_summary_guest():
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+    await f.create_project(owner=user, workspace=workspace)
+    res = await repositories.get_workspace_summary(id=workspace.id, user_id=user.id)
+
+    assert res.name == workspace.name
+    assert res.my_role == "guest"
+
+
+async def test_get_workspace_summary_none():
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+    res = await repositories.get_workspace_summary(id=workspace.id, user_id=user.id)
+
+    assert res.name == workspace.name
+    assert res.my_role == "none"
+
+
+async def test_get_workspace_summary_non_existing():
+    user = await f.create_user()
+    non_existing_ws_id = (await f.create_workspace()).id + 1000
+    res = await repositories.get_workspace_summary(id=non_existing_ws_id, user_id=user.id)
+
+    assert res is None

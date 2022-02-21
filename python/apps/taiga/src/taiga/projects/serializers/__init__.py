@@ -26,6 +26,8 @@ class ProjectSerializer(BaseModel, ProjectLogoMixin):
     description: str | None = None
     color: int | None = None
     workspace: WorkspaceSummarySerializer
+    am_i_admin: bool
+    my_permissions: list[str]
 
     class Config:
         orm_mode = True

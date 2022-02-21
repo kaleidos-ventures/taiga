@@ -16,6 +16,7 @@ from taiga.projects import repositories as projects_repositories
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories
 from taiga.users.models import User
+from taiga.workspaces import repositories as workspaces_repositories
 from taiga.workspaces.models import Workspace
 
 
@@ -67,6 +68,29 @@ async def create_project(
 
 async def get_project(slug: str) -> Project | None:
     return await projects_repositories.get_project(slug=slug)
+
+
+async def get_project_detail(project: Project, user: User) -> Project:
+    (
+        is_project_admin,
+        is_project_member,
+        project_role_permissions,
+    ) = await permissions_services.get_user_project_role_info(user=user, project=project)
+    (is_workspace_admin, is_workspace_member, _) = await permissions_services.get_user_workspace_role_info(
+        user=user, workspace=project.workspace
+    )
+    project.my_permissions = await permissions_services.get_user_permissions_for_project(
+        is_project_admin=is_project_admin,
+        is_workspace_admin=is_workspace_admin,
+        is_project_member=is_project_member,
+        is_workspace_member=is_workspace_member,
+        is_authenticated=user.is_authenticated,
+        project_role_permissions=project_role_permissions,
+        project=project,
+    )
+    project.am_i_admin = is_project_admin
+    project.workspace = await workspaces_repositories.get_workspace_summary(id=project.workspace.id, user_id=user.id)
+    return project
 
 
 async def get_logo_thumbnail_url(thumbnailer_size: str, logo_relative_path: str) -> str | None:

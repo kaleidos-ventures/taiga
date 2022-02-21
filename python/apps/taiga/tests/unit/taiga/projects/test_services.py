@@ -18,6 +18,37 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
+# get_workspace_projects_for_user
+##########################################################
+
+
+async def test_get_workspace_projects_for_user_admin():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+
+    with patch("taiga.projects.services.roles_repositories", new_callable=AsyncMock) as fake_roles_repo, patch(
+        "taiga.projects.services.projects_repositories", new_callable=AsyncMock
+    ) as fake_projects_repo:
+        fake_roles_repo.is_workspace_admin.return_value = True
+        await services.get_workspace_projects_for_user(workspace=workspace, user=user)
+        fake_projects_repo.get_projects.assert_awaited_once_with(workspace_slug=workspace.slug)
+
+
+async def test_get_workspace_projects_for_user_member():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+
+    with patch("taiga.projects.services.roles_repositories", new_callable=AsyncMock) as fake_roles_repo, patch(
+        "taiga.projects.services.projects_repositories", new_callable=AsyncMock
+    ) as fake_projects_repo:
+        fake_roles_repo.get_workspace_role_for_user.return_value = MagicMock(is_admin=False)
+        await services.get_workspace_projects_for_user(workspace=workspace, user=user)
+        fake_projects_repo.get_workspace_projects_for_user.assert_awaited_once_with(
+            workspace_id=workspace.id, user_id=user.id
+        )
+
+
+##########################################################
 # create_project
 ##########################################################
 
@@ -82,6 +113,33 @@ async def test_create_project_with_no_logo():
 
 
 ##########################################################
+# get_project_detail
+##########################################################
+
+
+async def test_get_project_detail():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+    project = await f.create_project(owner=user, workspace=workspace)
+
+    with patch(
+        "taiga.projects.services.permissions_services", new_callable=AsyncMock
+    ) as fake_permissions_services, patch(
+        "taiga.projects.services.workspaces_repositories", new_callable=AsyncMock
+    ) as fake_workspaces_repositories:
+        fake_permissions_services.get_user_project_role_info.return_value = (True, True, [])
+        fake_permissions_services.get_user_workspace_role_info.return_value = (True, True, [])
+        fake_permissions_services.get_user_permissions_for_project.return_value = (True, True, [])
+        fake_workspaces_repositories.get_workspace_summary.return_value = workspace
+        await services.get_project_detail(project=project, user=user)
+
+        fake_permissions_services.get_user_project_role_info.assert_awaited_once()
+        fake_permissions_services.get_user_workspace_role_info.assert_awaited_once()
+        fake_permissions_services.get_user_permissions_for_project.assert_awaited_once()
+        fake_workspaces_repositories.get_workspace_summary.assert_awaited_once()
+
+
+##########################################################
 # update_project_public_permissions
 ##########################################################
 
@@ -112,37 +170,6 @@ async def test_update_project_public_permissions_incompatible():
 
     with pytest.raises(ex.IncompatiblePermissionsSetError):
         await services.update_project_public_permissions(project=project, permissions=incompatible_permissions)
-
-
-##########################################################
-# get_workspace_projects_for_user
-##########################################################
-
-
-async def test_get_workspace_projects_for_user_admin():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
-
-    with patch("taiga.projects.services.roles_repositories", new_callable=AsyncMock) as fake_roles_repo, patch(
-        "taiga.projects.services.projects_repositories", new_callable=AsyncMock
-    ) as fake_projects_repo:
-        fake_roles_repo.is_workspace_admin.return_value = True
-        await services.get_workspace_projects_for_user(workspace=workspace, user=user)
-        fake_projects_repo.get_projects.assert_awaited_once_with(workspace_slug=workspace.slug)
-
-
-async def test_get_workspace_projects_for_user_member():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
-
-    with patch("taiga.projects.services.roles_repositories", new_callable=AsyncMock) as fake_roles_repo, patch(
-        "taiga.projects.services.projects_repositories", new_callable=AsyncMock
-    ) as fake_projects_repo:
-        fake_roles_repo.get_workspace_role_for_user.return_value = MagicMock(is_admin=False)
-        await services.get_workspace_projects_for_user(workspace=workspace, user=user)
-        fake_projects_repo.get_workspace_projects_for_user.assert_awaited_once_with(
-            workspace_id=workspace.id, user_id=user.id
-        )
 
 
 ##########################################################
@@ -194,7 +221,7 @@ async def test_update_project_workspace_member_permissions_not_premium():
 
 
 ##########################################################
-# get_project_workspace_member_permissions
+# get_workspace_member_permissions
 ##########################################################
 
 

@@ -10,7 +10,7 @@ from itertools import chain
 from asgiref.sync import sync_to_async
 from django.db.models import BooleanField, Case, CharField, Exists, IntegerField, OuterRef, Prefetch, Q, Value, When
 from taiga.projects.models import Project
-from taiga.roles import repositories as roles_ropositories
+from taiga.roles import repositories as roles_repositories
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
@@ -151,7 +151,7 @@ def _get_total_user_projects_sync(workspace_id: int, user_id: int) -> int:
 
 @sync_to_async
 def get_workspace_detail(id: int, user_id: int) -> Workspace | None:
-    user_workspace_role_name = roles_ropositories.get_user_workspace_role_name_sync(workspace_id=id, user_id=user_id)
+    user_workspace_role_name = roles_repositories.get_user_workspace_role_name_sync(workspace_id=id, user_id=user_id)
     user_projects_count = _get_total_user_projects_sync(workspace_id=id, user_id=user_id)
 
     try:
@@ -166,6 +166,15 @@ def get_workspace_detail(id: int, user_id: int) -> Workspace | None:
             .annotate(my_role=Value(user_workspace_role_name, output_field=CharField()))
             .get(id=id)
         )
+    except Workspace.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def get_workspace_summary(id: int, user_id: int) -> Workspace | None:
+    user_workspace_role_name = roles_repositories.get_user_workspace_role_name_sync(workspace_id=id, user_id=user_id)
+    try:
+        return Workspace.objects.annotate(my_role=Value(user_workspace_role_name, output_field=CharField())).get(id=id)
     except Workspace.DoesNotExist:
         return None
 

@@ -12,6 +12,7 @@ import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { ProjectNavigationMenuComponent } from './project-navigation-menu.component';
 
 @NgModule({
@@ -23,7 +24,7 @@ import { ProjectNavigationMenuComponent } from './project-navigation-menu.compon
     AvatarModule,
     RouterModule,
   ],
-  declarations: [ProjectNavigationMenuComponent],
+  declarations: [ProjectNavigationMenuComponent, HasPermissionDirective],
   exports: [ProjectNavigationMenuComponent],
 })
 export class ProjectNavigationMenuModule {}

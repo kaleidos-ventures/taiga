@@ -67,6 +67,9 @@ ul {
   color: var(--color-gray50);
   display: block;
   max-inline-size: 130px;
+}
+
+.workspace-data-workspace-anchor {
   text-decoration: underline;
 
   &:hover {

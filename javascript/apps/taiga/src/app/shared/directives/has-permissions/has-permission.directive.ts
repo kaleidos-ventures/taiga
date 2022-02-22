@@ -10,14 +10,13 @@ import {
   ChangeDetectorRef,
   Directive,
   Input,
-  OnDestroy,
   OnInit,
   TemplateRef,
   ViewContainerRef,
 } from '@angular/core';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Project } from '@taiga/data';
-import { Subscription } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 
 // How to use
@@ -36,7 +35,7 @@ export type Operation = 'AND' | 'OR';
 
 // eslint-disable-next-line @angular-eslint/directive-selector
 @Directive({ selector: '[hasPermission]' })
-export class HasPermissionDirective implements OnInit, OnDestroy {
+export class HasPermissionDirective implements OnInit {
   @Input()
   public set hasPermission(permissions: string[]) {
     this.permissions = permissions;
@@ -53,7 +52,6 @@ export class HasPermissionDirective implements OnInit, OnDestroy {
   }
 
   public project!: Project;
-  public subscription!: Subscription;
   public project$ = this.store.select(selectCurrentProject);
   private hasView = false;
   private permissions: string[] = [];
@@ -68,14 +66,10 @@ export class HasPermissionDirective implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit() {
-    this.subscription = this.project$.subscribe((project) => {
+    this.project$.pipe(untilDestroyed(this)).subscribe((project) => {
       this.project = project;
       this.updateView();
     });
-  }
-
-  public ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 
   private updateView() {
@@ -101,14 +95,11 @@ export class HasPermissionDirective implements OnInit, OnDestroy {
 
   private checkPermission() {
     if (this.project?.myPermissions) {
-      console.log(this.project);
       if (this.operation === 'OR') {
-        console.log('OR');
         return this.permissions.some((permission) =>
           this.includesPermission(`${permission}_${this.entity}`)
         );
       } else if (this.operation === 'AND') {
-        console.log('AND');
         return this.permissions.every((permission) =>
           this.includesPermission(`${permission}_${this.entity}`)
         );

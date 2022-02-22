@@ -70,7 +70,7 @@ def create_project(**kwargs):
 
     project = ProjectFactory.create(**defaults)
     admin_role = f.RoleFactory.create(
-        name="Administrators",
+        name="Administrator",
         slug="admin",
         permissions=choices.PROJECT_PERMISSIONS,
         is_admin=True,

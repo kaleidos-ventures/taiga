@@ -29,7 +29,7 @@ def create_workspace(**kwargs):
 
     workspace = WorkspaceFactory.create(**defaults)
     admin_role = f.WorkspaceRoleFactory.create(
-        name="Administrators",
+        name="Administrator",
         slug="admin",
         permissions=choices.WORKSPACE_PERMISSIONS,
         is_admin=True,

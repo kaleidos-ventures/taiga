@@ -27,7 +27,7 @@ async def get_workspace_detail(id: int, user_id: int) -> Workspace | None:
 async def create_workspace(name: str, color: int, owner: User) -> Workspace:
     workspace = await workspaces_repositories.create_workspace(name=name, color=color, owner=owner)
     workspace_role = await roles_repositories.create_workspace_role(
-        name="Administrators",
+        name="Administrator",
         slug="admin",
         permissions=choices.WORKSPACE_PERMISSIONS,
         workspace=workspace,

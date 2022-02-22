@@ -13,6 +13,7 @@ from functools import lru_cache
 from pydantic import AnyHttpUrl, BaseSettings
 from taiga.conf.images import ImageSettings
 
+from .emails import EmailSettings
 from .logs import LOGGING_CONFIG
 from .tokens import TokensSettings
 
@@ -43,6 +44,7 @@ class Settings(BaseSettings):
     # Sub settings modules
     TOKENS: TokensSettings = TokensSettings()
     IMAGES: ImageSettings = ImageSettings()
+    EMAIL: EmailSettings = EmailSettings()
 
     class Config:
         env_prefix = "TAIGA_"

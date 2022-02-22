@@ -25,6 +25,9 @@ easy-thumbnails
 # for sample_data
 faker
 
+# Fastapi-Mailman
+git+https://github.com/marktennyson/fastapi-mailman.git@development#egg=fastapi-mailman
+
 # Templates
 jinja2
 

@@ -9,6 +9,7 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   OnDestroy,
@@ -47,7 +48,8 @@ import {
 import { filterNil, filterFalsy } from '~/app/shared/utils/operators';
 import { ModuleConflictPermission } from './models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
-
+import { Actions, ofType } from '@ngrx/effects';
+import * as ProjectActions from './+state/actions/roles-permissions.actions';
 @UntilDestroy()
 @Component({
   selector: 'tg-project-settings-feature-roles-permissions',
@@ -100,12 +102,14 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   }
 
   constructor(
+    private actions$: Actions,
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService,
     private el: ElementRef,
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private store: Store,
+    private cd: ChangeDetectorRef,
     private state: RxState<{
       memberRoles?: Role[];
       publicPermissions?: string[];
@@ -113,7 +117,14 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       project: Project;
       conflicts: ModuleConflictPermission[];
     }>
-  ) {}
+  ) {
+    this.actions$
+      .pipe(ofType(ProjectActions.resetPermissionForm))
+      .subscribe(() => {
+        this.initForm();
+        this.cd.detectChanges();
+      });
+  }
 
   public ngOnInit() {
     this.state.set({ conflicts: [] });

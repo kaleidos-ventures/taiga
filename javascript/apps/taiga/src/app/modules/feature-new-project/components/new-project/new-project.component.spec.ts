@@ -13,16 +13,23 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { NewProjectComponent } from './new-project.component';
 
 import { randDomainSuffix } from '@ngneat/falso';
+import { Observable } from 'rxjs';
+import { Action } from '@ngrx/store';
+import { provideMockActions } from '@ngrx/effects/testing';
 
 describe('NewProjectComponent', () => {
   let spectator: Spectator<NewProjectComponent>;
+  let actions$: Observable<Action>;
 
   const initialState = { project: null };
   let store: MockStore;
 
   const createComponent = createComponentFactory({
     component: NewProjectComponent,
-    providers: [provideMockStore({ initialState })],
+    providers: [
+      provideMockStore({ initialState }),
+      provideMockActions(() => actions$),
+    ],
     imports: [RouterTestingModule],
     declareComponent: false,
     mocks: [],

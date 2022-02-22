@@ -9,7 +9,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <div class="error-wrapper">
     <div class="error-container">
-      <a href="#" (click)="backHome()">
+      <a href="#" [routerLink]="['/']">
+        <span class="visually-hidden">{{ t('navigation.go_home') }}</span>
         <img src="/assets/images/LogoTaiga.svg" alt="" />
       </a>
       <h1 class="error-title">{{ t('errors_page.500.something_wrong') }}</h1>

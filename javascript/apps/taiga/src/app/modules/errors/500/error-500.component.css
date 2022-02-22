@@ -52,9 +52,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   @mixin font-paragraph;
 
   color: var(--color-gray80);
-  margin-block-end: 1rem;
+  margin-block-end: var(--spacing-16);
 }
 
 .error-button {
-  margin-block-start: 2rem;
+  margin-block-start: var(--spacing-32);
 }

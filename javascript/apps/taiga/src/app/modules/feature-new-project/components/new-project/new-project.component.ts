@@ -8,6 +8,7 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnInit,
   ViewChild,
@@ -17,6 +18,7 @@ import { ProjectCreation, User } from '@taiga/data';
 import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import {
   createProject,
+  createProjectSuccess,
   inviteUsersNewProject,
 } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { selectWorkspaces } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
@@ -27,6 +29,7 @@ import {
   TemplateStepComponent,
 } from '../template-step/template-step.component';
 import { Observable } from 'rxjs';
+import { Actions, ofType } from '@ngrx/effects';
 
 @Component({
   selector: 'tg-new-project',
@@ -38,7 +41,17 @@ export class NewProjectComponent implements OnInit {
   @ViewChild(TemplateStepComponent)
   public templateStepComponent?: TemplateStepComponent;
 
-  constructor(private store: Store, private route: ActivatedRoute) {}
+  constructor(
+    private store: Store,
+    private route: ActivatedRoute,
+    private actions$: Actions,
+    private cd: ChangeDetectorRef
+  ) {
+    this.actions$.pipe(ofType(createProjectSuccess)).subscribe(() => {
+      this.setStep('invite');
+      this.cd.detectChanges();
+    });
+  }
 
   public workspaceList$ = this.store.select(selectWorkspaces);
   public currentStep: Step = 'init';
@@ -82,7 +95,6 @@ export class NewProjectComponent implements OnInit {
   public createProject(project: ProjectCreation) {
     this.formData = project;
     this.store.dispatch(createProject({ project: this.formData }));
-    this.setStep('invite');
   }
 
   public setStep(step: Step) {

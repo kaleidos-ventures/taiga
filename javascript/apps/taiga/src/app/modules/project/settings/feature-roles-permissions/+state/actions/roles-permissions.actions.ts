@@ -58,6 +58,10 @@ export const updateRolePermissionsSuccess = createAction(
   props<{ role: Role }>()
 );
 
+export const resetPermissionForm = createAction(
+  '[Roles] reset permission form'
+);
+
 export const updateRolePermissionsError = createAction(
   '[Roles] update role permissions error'
 );

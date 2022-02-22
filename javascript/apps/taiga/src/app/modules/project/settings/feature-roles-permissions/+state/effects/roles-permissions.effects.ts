@@ -131,7 +131,8 @@ export class RolesPermissionsEffects {
               },
             },
           });
-          return ProjectActions.updateRolePermissionsError();
+          ProjectActions.updateRolePermissionsError();
+          return ProjectActions.resetPermissionForm();
         },
       })
     );
@@ -162,7 +163,8 @@ export class RolesPermissionsEffects {
               },
             },
           });
-          return ProjectActions.updateRolePermissionsError();
+          ProjectActions.updateRolePermissionsError();
+          return ProjectActions.resetPermissionForm();
         },
       })
     );
@@ -193,7 +195,8 @@ export class RolesPermissionsEffects {
               },
             },
           });
-          return ProjectActions.updateRolePermissionsError();
+          ProjectActions.updateRolePermissionsError();
+          return ProjectActions.resetPermissionForm();
         },
       })
     );

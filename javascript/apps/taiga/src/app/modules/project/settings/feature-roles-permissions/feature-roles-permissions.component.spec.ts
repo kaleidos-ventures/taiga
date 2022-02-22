@@ -14,8 +14,11 @@ import {
   createComponentFactory,
   SpyObject,
 } from '@ngneat/spectator/jest';
+import { provideMockActions } from '@ngrx/effects/testing';
+import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Permissions, ProjectMockFactory, RoleMockFactory } from '@taiga/data';
+import { Observable } from 'rxjs';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
   updatePublicPermissions,
@@ -28,12 +31,13 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from './services/featu
 describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
   let spectator: Spectator<ProjectSettingsFeatureRolesPermissionsComponent>;
   let projectsSettingsFeatureRolesPermissionsService: SpyObject<ProjectsSettingsFeatureRolesPermissionsService>;
+  let actions$: Observable<Action>;
 
   const createComponent = createComponentFactory({
     component: ProjectSettingsFeatureRolesPermissionsComponent,
     imports: [ReactiveFormsModule, RouterTestingModule, getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
-    providers: [provideMockStore({})],
+    providers: [provideMockStore({}), provideMockActions(() => actions$)],
     mocks: [ProjectsSettingsFeatureRolesPermissionsService],
   });
 

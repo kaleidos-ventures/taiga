@@ -18,9 +18,9 @@ import { login, loginSuccess, logout, setUser } from '../actions/auth.actions';
 import { AuthMockFactory, UserMockFactory } from '@taiga/data';
 import { randUserName, randPassword } from '@ngneat/falso';
 import { cold, hot } from 'jest-marbles';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
+import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 
 describe('AuthEffects', () => {
   let actions$: Observable<Action>;
@@ -29,13 +29,7 @@ describe('AuthEffects', () => {
     service: AuthEffects,
     providers: [provideMockActions(() => actions$)],
     imports: [RouterTestingModule],
-    mocks: [
-      AuthApiService,
-      UsersApiService,
-      LocalStorageService,
-      Router,
-      AppService,
-    ],
+    mocks: [AuthApiService, UsersApiService, Router, AppService, AuthService],
   });
 
   beforeEach(() => {
@@ -67,7 +61,7 @@ describe('AuthEffects', () => {
     const auth = AuthMockFactory();
 
     const effects = spectator.inject(AuthEffects);
-    const localStorageService = spectator.inject(LocalStorageService);
+    const authService = spectator.inject(AuthService);
     const routerService = spectator.inject(Router);
     const usersApiService = spectator.inject(UsersApiService);
     usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
@@ -82,20 +76,19 @@ describe('AuthEffects', () => {
 
     expect(effects.loginSuccess$).toSatisfyOnFlush(() => {
       expect(routerService.navigate).toHaveBeenCalledWith(['/']);
-      expect(localStorageService.set).toHaveBeenCalledWith('auth', auth);
+      expect(authService.setAuth).toHaveBeenCalledWith(auth);
     });
   });
 
   it('logout', () => {
     const effects = spectator.inject(AuthEffects);
-    const localStorageService = spectator.inject(LocalStorageService);
+    const authService = spectator.inject(AuthService);
     const routerService = spectator.inject(Router);
 
     actions$ = hot('-a', { a: logout() });
 
     expect(effects.logout$).toSatisfyOnFlush(() => {
-      expect(localStorageService.remove).toHaveBeenCalledWith('user');
-      expect(localStorageService.remove).toHaveBeenCalledWith('auth');
+      expect(authService.logout).toHaveBeenCalled();
       expect(routerService.navigate).toHaveBeenCalledWith(['/login']);
     });
   });
@@ -104,12 +97,12 @@ describe('AuthEffects', () => {
     const user = UserMockFactory();
 
     const effects = spectator.inject(AuthEffects);
-    const localStorageService = spectator.inject(LocalStorageService);
+    const authService = spectator.inject(AuthService);
 
     actions$ = hot('-a', { a: setUser({ user }) });
 
     expect(effects.setUser$).toSatisfyOnFlush(() => {
-      expect(localStorageService.set).toHaveBeenCalledWith('user', user);
+      expect(authService.setUser).toHaveBeenCalledWith(user);
     });
   });
 });

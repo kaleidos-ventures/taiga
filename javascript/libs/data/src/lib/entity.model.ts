@@ -6,7 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export type ModulePermission =
+export type Entity = 'us' | 'task' | 'sprint' | 'issue' | 'epic' | 'wiki';
+
+export type EntityPermission =
   | 'view'
   | 'create'
   | 'modify'

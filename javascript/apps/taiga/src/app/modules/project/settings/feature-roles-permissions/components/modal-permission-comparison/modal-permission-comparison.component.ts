@@ -7,7 +7,7 @@
  */
 
 import { Component, Input, EventEmitter, Output } from '@angular/core';
-import { ModuleConflictPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/modal-permission.model';
+import { EntityConflictPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 
 @Component({
@@ -20,7 +20,7 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/pr
 })
 export class ModalPermissionComparisonComponent {
   @Input()
-  public conflictPermissions!: ModuleConflictPermission[];
+  public conflictPermissions!: EntityConflictPermission[];
 
   @Output()
   public closeModal = new EventEmitter();

@@ -6,16 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Module } from '@taiga/data';
-import { ModulePermission } from '~/app/modules/project/settings/feature-roles-permissions/models/module-permission.model';
+import { Entity, EntityPermission } from '@taiga/data';
 
-export type ModuleConflictPermission = {
+export type EntityConflictPermission = {
   name: string;
   conflicts?: Conflict[];
 };
 
 export type Conflict = {
-  name: Module;
+  name: Entity;
   permission: PermissionConflict;
   texts: TextConflict;
 };
@@ -32,7 +31,7 @@ export type TextConflict = {
 };
 
 export type PermissionConflict = {
-  onlyPublicPermission: ModulePermission[];
-  public: ModulePermission[];
-  member: ModulePermission[];
+  onlyPublicPermission: EntityPermission[];
+  public: EntityPermission[];
+  member: EntityPermission[];
 };

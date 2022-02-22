@@ -17,7 +17,7 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Module } from '@taiga/data';
+import { Entity } from '@taiga/data';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
 
@@ -44,14 +44,14 @@ export class RolePermissionRowComponent implements OnChanges {
   public hasMembers = true;
 
   public basicPermissionList =
-    this.projectsSettingsFeatureRolesPermissionsService.getModulePermissions();
+    this.projectsSettingsFeatureRolesPermissionsService.getEntityPermissions();
 
   public permissionRowModel!: KeyValue<SettingsPermission, string>;
   public advancedSettingsContainerId = `advanced-settings-container-${nextId++}`;
 
   public showAdvancedSetting = false;
-  public modules =
-    this.projectsSettingsFeatureRolesPermissionsService.getModules();
+  public entities =
+    this.projectsSettingsFeatureRolesPermissionsService.getEntities();
 
   constructor(
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService
@@ -87,28 +87,28 @@ export class RolePermissionRowComponent implements OnChanges {
   public checkRestrictions() {
     const userstoriesState =
       this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
-        this.getModuleFormGroup('userstories')
+        this.getEntityFormGroup('us')
       );
 
     if (userstoriesState === 'no_access') {
       this.projectsSettingsFeatureRolesPermissionsService.applyPermission(
-        'tasks',
+        'task',
         'no_access',
-        this.getModuleFormGroup('tasks')
+        this.getEntityFormGroup('task')
       );
       this.projectsSettingsFeatureRolesPermissionsService.applyPermission(
-        'sprints',
+        'sprint',
         'no_access',
-        this.getModuleFormGroup('sprints')
+        this.getEntityFormGroup('sprint')
       );
     }
   }
 
-  public moduleVisible(module: Module) {
-    if (module === 'tasks' || module === 'sprints') {
+  public entityVisible(entity: Entity) {
+    if (entity === 'task' || entity === 'sprint') {
       const userstoriesState =
         this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
-          this.getModuleFormGroup('userstories')
+          this.getEntityFormGroup('us')
         );
 
       if (userstoriesState === 'no_access') {
@@ -120,16 +120,16 @@ export class RolePermissionRowComponent implements OnChanges {
   }
 
   public getGlobalPermission(): SettingsPermission {
-    const modulesPermissions = Array.from(
-      this.projectsSettingsFeatureRolesPermissionsService.getModules().keys()
-    ).map((module) => {
-      const form = this.getModuleFormGroup(module);
+    const entitiesPermissions = Array.from(
+      this.projectsSettingsFeatureRolesPermissionsService.getEntities().keys()
+    ).map((entity) => {
+      const form = this.getEntityFormGroup(entity);
       return this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
         form
       );
     });
 
-    const isView = modulesPermissions.every(
+    const isView = entitiesPermissions.every(
       (permission) => permission === 'view'
     );
 
@@ -137,7 +137,7 @@ export class RolePermissionRowComponent implements OnChanges {
       return 'view';
     }
 
-    const isEdit = modulesPermissions.every(
+    const isEdit = entitiesPermissions.every(
       (permission) => permission === 'edit'
     );
 
@@ -145,7 +145,7 @@ export class RolePermissionRowComponent implements OnChanges {
       return 'edit';
     }
 
-    const isNoAccess = modulesPermissions.every(
+    const isNoAccess = entitiesPermissions.every(
       (permission) => permission === 'no_access'
     );
 
@@ -153,7 +153,7 @@ export class RolePermissionRowComponent implements OnChanges {
       return 'no_access';
     }
 
-    const isCustom = modulesPermissions.find((permission) => {
+    const isCustom = entitiesPermissions.find((permission) => {
       return permission === 'view' || permission == 'no_access';
     });
 
@@ -164,8 +164,8 @@ export class RolePermissionRowComponent implements OnChanges {
     return 'restricted';
   }
 
-  public getModuleFormGroup(module: Module) {
-    return this.formGroup.get(module) as FormGroup;
+  public getEntityFormGroup(entity: Entity) {
+    return this.formGroup.get(entity) as FormGroup;
   }
 
   public trackByValue(_index: number, permission: KeyValue<string, string>) {
@@ -178,14 +178,14 @@ export class RolePermissionRowComponent implements OnChanges {
 
   public permissionChange(permission: KeyValue<SettingsPermission, string>) {
     for (const [
-      module,
-    ] of this.projectsSettingsFeatureRolesPermissionsService.getModules()) {
-      const moduleGroup = this.getModuleFormGroup(module);
+      entity,
+    ] of this.projectsSettingsFeatureRolesPermissionsService.getEntities()) {
+      const entityGroup = this.getEntityFormGroup(entity);
 
       this.projectsSettingsFeatureRolesPermissionsService.applyPermission(
-        module,
+        entity,
         permission.key,
-        moduleGroup
+        entityGroup
       );
     }
   }

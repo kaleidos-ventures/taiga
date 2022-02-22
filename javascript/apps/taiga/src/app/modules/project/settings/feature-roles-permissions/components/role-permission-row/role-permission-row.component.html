@@ -110,14 +110,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       *ngIf="showAdvancedSetting">
       <ng-container
         *ngFor="
-          let module of modules | keyvalue: insertionOrder;
+          let entity of entities | keyvalue: insertionOrder;
           trackBy: trackByValue
         ">
         <tg-role-advance-row
-          *ngIf="moduleVisible(module.key)"
+          *ngIf="entityVisible(entity.key)"
           hideMembers
-          [module]="module"
-          [formGroup]="getModuleFormGroup(module.key)"
+          [entity]="entity"
+          [formGroup]="getEntityFormGroup(entity.key)"
           data-test="module-permissions-row">
         </tg-role-advance-row>
       </ng-container>

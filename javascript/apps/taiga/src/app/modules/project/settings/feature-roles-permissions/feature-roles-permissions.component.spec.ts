@@ -19,6 +19,7 @@ import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Permissions, ProjectMockFactory, RoleMockFactory } from '@taiga/data';
 import { Observable } from 'rxjs';
+import { PermissionsService } from '~/app/services/permissions.service';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
   updatePublicPermissions,
@@ -32,13 +33,14 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
   let spectator: Spectator<ProjectSettingsFeatureRolesPermissionsComponent>;
   let projectsSettingsFeatureRolesPermissionsService: SpyObject<ProjectsSettingsFeatureRolesPermissionsService>;
   let actions$: Observable<Action>;
+  let permissionsService: SpyObject<PermissionsService>;
 
   const createComponent = createComponentFactory({
     component: ProjectSettingsFeatureRolesPermissionsComponent,
     imports: [ReactiveFormsModule, RouterTestingModule, getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [provideMockStore({}), provideMockActions(() => actions$)],
-    mocks: [ProjectsSettingsFeatureRolesPermissionsService],
+    mocks: [ProjectsSettingsFeatureRolesPermissionsService, PermissionsService],
   });
 
   beforeEach(() => {
@@ -52,13 +54,15 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       ProjectsSettingsFeatureRolesPermissionsService
     );
 
-    projectsSettingsFeatureRolesPermissionsService.getModules.andReturn(
+    permissionsService = spectator.inject(PermissionsService);
+
+    projectsSettingsFeatureRolesPermissionsService.getEntities.andReturn(
       new Map([
-        ['userstories', 'Userstories'],
-        ['tasks', 'Tasks'],
-        ['sprints', 'Sprints'],
-        ['issues', 'Issues'],
-        ['epics', 'Epics'],
+        ['us', 'Userstories'],
+        ['task', 'Tasks'],
+        ['sprint', 'Sprints'],
+        ['issue', 'Issues'],
+        ['epic', 'Epics'],
         ['wiki', 'Wiki'],
       ])
     );
@@ -66,9 +70,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
     projectsSettingsFeatureRolesPermissionsService.hasComments.mockReturnValue(
       true
     );
-    projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.mockReturnValue(
-      {} as any
-    );
+    permissionsService.formatRawPermissions.mockReturnValue({} as any);
   });
 
   describe('create roles form', () => {
@@ -83,16 +85,14 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
         'comment_us',
       ] as Permissions[];
 
-      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.mockReturnValue(
-        {
-          userstories: {
-            create: true,
-            modify: true,
-            delete: true,
-            comment: true,
-          },
-        } as any
-      );
+      permissionsService.formatRawPermissions.mockReturnValue({
+        us: {
+          create: true,
+          modify: true,
+          delete: true,
+          comment: true,
+        },
+      } as any);
 
       spectator.component.createRoleFormControl(
         role.permissions,
@@ -100,13 +100,13 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
         spectator.component.form
       );
 
-      expect(
-        projectsSettingsFeatureRolesPermissionsService.formatRawPermissions
-      ).toHaveBeenCalledWith(role.permissions);
+      expect(permissionsService.formatRawPermissions).toHaveBeenCalledWith(
+        role.permissions
+      );
 
       expect(spectator.component.form.value).toEqual({
         [role.slug]: {
-          userstories: {
+          us: {
             create: true,
             modify: true,
             delete: true,
@@ -121,16 +121,14 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       role.permissions = ['view_us'] as Permissions[];
 
-      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.andReturn(
-        {
-          userstories: {
-            create: false,
-            modify: false,
-            delete: false,
-            comment: false,
-          },
-        }
-      );
+      permissionsService.formatRawPermissions.andReturn({
+        us: {
+          create: false,
+          modify: false,
+          delete: false,
+          comment: false,
+        },
+      });
 
       spectator.component.createRoleFormControl(
         role.permissions,
@@ -138,13 +136,13 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
         spectator.component.form
       );
 
-      expect(
-        projectsSettingsFeatureRolesPermissionsService.formatRawPermissions
-      ).toHaveBeenCalledWith(role.permissions);
+      expect(permissionsService.formatRawPermissions).toHaveBeenCalledWith(
+        role.permissions
+      );
 
       expect(spectator.component.form.value).toEqual({
         [role.slug]: {
-          userstories: {
+          us: {
             create: false,
             modify: false,
             delete: false,
@@ -159,9 +157,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       role.permissions = [] as Permissions[];
 
-      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.andReturn(
-        {}
-      );
+      permissionsService.formatRawPermissions.andReturn({});
 
       spectator.component.createRoleFormControl(
         role.permissions,
@@ -169,9 +165,9 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
         spectator.component.form
       );
 
-      expect(
-        projectsSettingsFeatureRolesPermissionsService.formatRawPermissions
-      ).toHaveBeenCalledWith(role.permissions);
+      expect(permissionsService.formatRawPermissions).toHaveBeenCalledWith(
+        role.permissions
+      );
 
       expect(spectator.component.form.get(role.slug)?.disabled).toEqual(true);
     });
@@ -181,22 +177,20 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       role.permissions = ['view_tasks', 'view_sprints'] as Permissions[];
 
-      projectsSettingsFeatureRolesPermissionsService.formatRawPermissions.andReturn(
-        {
-          taks: {
-            create: false,
-            modify: false,
-            delete: false,
-            comment: false,
-          },
-          sprints: {
-            create: false,
-            modify: false,
-            delete: false,
-            comment: false,
-          },
-        }
-      );
+      permissionsService.formatRawPermissions.andReturn({
+        task: {
+          create: false,
+          modify: false,
+          delete: false,
+          comment: false,
+        },
+        sprint: {
+          create: false,
+          modify: false,
+          delete: false,
+          comment: false,
+        },
+      });
 
       spectator.component.createRoleFormControl(
         role.permissions,
@@ -205,10 +199,10 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       );
 
       expect(
-        spectator.component.form.get(role.slug)?.get('tasks')?.disabled
+        spectator.component.form.get(role.slug)?.get('task')?.disabled
       ).toEqual(true);
       expect(
-        spectator.component.form.get(role.slug)?.get('sprints')?.disabled
+        spectator.component.form.get(role.slug)?.get('sprint')?.disabled
       ).toEqual(true);
     });
   });

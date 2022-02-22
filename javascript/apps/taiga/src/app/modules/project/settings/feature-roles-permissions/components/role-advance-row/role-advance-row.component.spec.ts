@@ -81,8 +81,8 @@ describe('RoleAdvanceRowComponent', () => {
       value: 'View',
     };
 
-    spectator.component.module = {
-      key: 'sprints',
+    spectator.component.entity = {
+      key: 'sprint',
       value: 'Sprints',
     };
 
@@ -112,8 +112,8 @@ describe('RoleAdvanceRowComponent', () => {
       value: 'No access',
     };
 
-    spectator.component.module = {
-      key: 'sprints',
+    spectator.component.entity = {
+      key: 'sprint',
       value: 'Sprints',
     };
 
@@ -145,8 +145,8 @@ describe('RoleAdvanceRowComponent', () => {
       value: 'View',
     };
 
-    spectator.component.module = {
-      key: 'sprints',
+    spectator.component.entity = {
+      key: 'sprint',
       value: 'Sprints',
     };
 

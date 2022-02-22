@@ -15,14 +15,12 @@ export const { selectCurrentProjectSlug, selectProjects } = projectFeature;
 export const selectCurrentProject = createSelector(
   selectProjects,
   selectCurrentProjectSlug,
-  (projects, projectSlug): Project => {
+  (projects, projectSlug): Project | undefined => {
     if (!projectSlug) {
-      console.error(
-        'selectCurrentProject must only be called inside the project resolver'
-      );
+      return undefined;
     }
 
-    return projects[projectSlug!];
+    return projects[projectSlug];
   }
 );
 

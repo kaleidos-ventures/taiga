@@ -46,10 +46,12 @@ import {
   selectWorkspacePermissions,
 } from './+state/selectors/roles-permissions.selectors';
 import { filterNil, filterFalsy } from '~/app/shared/utils/operators';
-import { ModuleConflictPermission } from './models/modal-permission.model';
+import { EntityConflictPermission } from './models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
 import { Actions, ofType } from '@ngrx/effects';
 import * as ProjectActions from './+state/actions/roles-permissions.actions';
+import { PermissionsService } from '~/app/services/permissions.service';
+
 @UntilDestroy()
 @Component({
   selector: 'tg-project-settings-feature-roles-permissions',
@@ -103,6 +105,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   constructor(
     private actions$: Actions,
+    private permissionsService: PermissionsService,
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService,
     private el: ElementRef,
     private router: Router,
@@ -115,7 +118,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       publicPermissions?: string[];
       workspacePermissions?: string[];
       project: Project;
-      conflicts: ModuleConflictPermission[];
+      conflicts: EntityConflictPermission[];
     }>
   ) {
     this.actions$
@@ -129,7 +132,10 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   public ngOnInit() {
     this.state.set({ conflicts: [] });
 
-    this.state.connect('project', this.store.select(selectCurrentProject));
+    this.state.connect(
+      'project',
+      this.store.select(selectCurrentProject).pipe(filterNil())
+    );
 
     this.state.connect(
       'conflicts',
@@ -239,13 +245,11 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   ) {
     const roleGroup = this.fb.group({});
     const currentPermissions =
-      this.projectsSettingsFeatureRolesPermissionsService.formatRawPermissions(
-        permissions
-      );
+      this.permissionsService.formatRawPermissions(permissions);
 
     for (const [
-      module,
-    ] of this.projectsSettingsFeatureRolesPermissionsService.getModules()) {
+      entity,
+    ] of this.projectsSettingsFeatureRolesPermissionsService.getEntities()) {
       const fb = this.fb.group({
         create: [false],
         modify: [false],
@@ -254,18 +258,18 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       });
 
       if (
-        !this.projectsSettingsFeatureRolesPermissionsService.hasComments(module)
+        !this.projectsSettingsFeatureRolesPermissionsService.hasComments(entity)
       ) {
         fb.get('comment')?.disable();
       }
 
-      roleGroup.addControl(module, fb);
+      roleGroup.addControl(entity, fb);
 
-      if (!currentPermissions[module]) {
+      if (!currentPermissions[entity]) {
         fb.disable();
-      } else if (module === 'sprints' && !currentPermissions.userstories) {
+      } else if (entity === 'sprint' && !currentPermissions.us) {
         fb.disable();
-      } else if (module === 'tasks' && !currentPermissions.userstories) {
+      } else if (entity === 'task' && !currentPermissions.us) {
         fb.disable();
       }
     }

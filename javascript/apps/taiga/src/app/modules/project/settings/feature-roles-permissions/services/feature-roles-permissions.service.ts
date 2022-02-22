@@ -9,79 +9,35 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { SettingsPermission } from '../models/settings-permission.model';
-import { ModulePermission } from '../models/module-permission.model';
 import {
   Conflict,
-  ModuleConflictPermission,
+  EntityConflictPermission,
   PermissionConflict,
   TextConflict,
 } from '../models/modal-permission.model';
-import { Module, Role } from '@taiga/data';
-
-const mapFormModulesPermissions: Record<
-  Module,
-  Partial<Record<ModulePermission, string[]>>
-> = {
-  userstories: {
-    view: ['view_us'],
-    create: ['add_us'],
-    modify: ['modify_us'],
-    delete: ['delete_us'],
-    comment: ['comment_us'],
-  },
-  tasks: {
-    view: ['view_tasks'],
-    create: ['add_task'],
-    modify: ['modify_task'],
-    delete: ['delete_task'],
-    comment: ['comment_task'],
-  },
-  sprints: {
-    view: ['view_milestones'],
-    create: ['add_milestone'],
-    modify: ['modify_milestone'],
-    delete: ['delete_milestone'],
-  },
-  issues: {
-    view: ['view_issues'],
-    create: ['add_issue'],
-    modify: ['modify_issue'],
-    delete: ['delete_issue'],
-    comment: ['comment_issue'],
-  },
-  epics: {
-    view: ['view_epics'],
-    create: ['add_epic'],
-    modify: ['modify_epic'],
-    delete: ['delete_epic'],
-    comment: ['comment_epic'],
-  },
-  wiki: {
-    view: ['view_wiki_pages', 'view_wiki_links'],
-    create: ['add_wiki_page', 'add_wiki_link'],
-    modify: ['modify_wiki_page', 'modify_wiki_link'],
-    delete: ['delete_wiki_page', 'delete_wiki_link'],
-  },
-};
+import { Entity, EntityPermission, Role } from '@taiga/data';
+import { PermissionsService } from '~/app/services/permissions.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsSettingsFeatureRolesPermissionsService {
-  public hasComments(module: Module) {
-    return !['wiki', 'sprints'].includes(module);
+  constructor(private permissionsService: PermissionsService) {}
+
+  public hasComments(entity: Entity) {
+    return !['wiki', 'sprints'].includes(entity);
   }
 
-  public getModules(): Map<Module, string> {
+  public getEntities(): Map<Entity, string> {
     return new Map([
-      ['userstories', 'commons.userstories'],
-      ['tasks', 'commons.tasks'],
-      ['sprints', 'commons.sprints'],
-      ['issues', 'commons.issues'],
-      ['epics', 'commons.epics'],
+      ['us', 'commons.userstories'],
+      ['task', 'commons.tasks'],
+      ['sprint', 'commons.sprints'],
+      ['issue', 'commons.issues'],
+      ['epic', 'commons.epics'],
       ['wiki', 'commons.wiki'],
     ]);
   }
 
-  public getPermissions(): Map<ModulePermission, string> {
+  public getPermissions(): Map<EntityPermission, string> {
     return new Map([
       ['create', 'project_settings.roles_permissions.create'],
       ['modify', 'project_settings.roles_permissions.modify'],
@@ -90,7 +46,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
   }
 
   public getModalPermissions(): Map<
-    ModulePermission,
+    EntityPermission,
     {
       public: string;
       member: string;
@@ -121,7 +77,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
     ]);
   }
 
-  public getModulePermissions(): Map<SettingsPermission, string> {
+  public getEntityPermissions(): Map<SettingsPermission, string> {
     return new Map([
       ['no_access', 'project_settings.roles_permissions.no_access'],
       ['view', 'project_settings.roles_permissions.can_view'],
@@ -130,7 +86,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
   }
 
   public applyPermission(
-    module: Module,
+    entity: Entity,
     type: SettingsPermission,
     formGroup: FormGroup
   ) {
@@ -154,7 +110,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       formGroup.disable();
     }
 
-    if (!this.hasComments(module) && formGroup.get('comment')?.enabled) {
+    if (!this.hasComments(entity) && formGroup.get('comment')?.enabled) {
       formGroup.get('comment')?.disable();
     }
   }
@@ -164,7 +120,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       return 'no_access';
     }
 
-    const formValue = formGroup.value as Record<ModulePermission, boolean>;
+    const formValue = formGroup.value as Record<EntityPermission, boolean>;
 
     if (formValue.create && formValue.modify && formValue.delete) {
       return 'edit';
@@ -176,40 +132,42 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
   }
 
   public getRoleFormGroupPermissions(roleForm: FormGroup) {
+    const mapFormEntitiesPermissions =
+      PermissionsService.mapFormEntitiesPermissions;
     const roleFormValue = roleForm.value as Record<
-      Module,
-      Record<ModulePermission, boolean>
+      Entity,
+      Record<EntityPermission, boolean>
     >;
 
     return Object.entries(roleFormValue)
-      .filter(([module]) => !roleForm.get(module)?.disabled)
-      .filter(([module]) => {
+      .filter(([entity]) => !roleForm.get(entity)?.disabled)
+      .filter(([entity]) => {
         if (
-          roleForm.get('userstories')?.disabled &&
-          (module === 'tasks' || module === 'sprints')
+          roleForm.get('us')?.disabled &&
+          (entity === 'task' || entity === 'sprint')
         ) {
           return false;
         }
 
         return true;
       })
-      .reduce((acc, [module, modulePermissions]) => {
-        const permission = mapFormModulesPermissions[module as Module]['view'];
+      .reduce((acc, [entity, entityPermissions]) => {
+        const permission = mapFormEntitiesPermissions[entity as Entity]['view'];
 
         if (permission) {
           acc.push(...permission);
         }
 
-        Object.entries(modulePermissions)
-          .filter(([modulePermission, value]) => {
+        Object.entries(entityPermissions)
+          .filter(([entityPermission, value]) => {
             return (
-              value && !roleForm.get(module)?.get(modulePermission)?.disabled
+              value && !roleForm.get(entity)?.get(entityPermission)?.disabled
             );
           })
-          .forEach(([modulePermission]) => {
+          .forEach(([entityPermission]) => {
             const permission =
-              mapFormModulesPermissions[module as Module][
-                modulePermission as ModulePermission
+              mapFormEntitiesPermissions[entity as Entity][
+                entityPermission as EntityPermission
               ];
 
             if (permission) {
@@ -220,40 +178,21 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       }, [] as string[]);
   }
 
-  public formatRawPermissions(permission: string[]) {
-    const formatedPermissions = Object.entries(
-      mapFormModulesPermissions
-    ).reduce((acc, [module, moduleValue]) => {
-      Object.entries(moduleValue).forEach(([action, list]) => {
-        if (list.find((it) => permission.includes(it))) {
-          if (!acc[module]) {
-            acc[module] = {};
-          }
-
-          acc[module][action] = true;
-        }
-      });
-
-      return acc;
-    }, {} as Record<string, Record<string, boolean>>);
-
-    return formatedPermissions as Record<
-      Module,
-      Record<ModulePermission, boolean>
-    >;
-  }
-
   public getConflictsPermissions(
-    publicPermissions: Record<Module, Record<ModulePermission, boolean>>,
-    memberPermissions: Record<Module, Record<ModulePermission, boolean>>
+    publicPermissions: Partial<
+      Record<Entity, Record<EntityPermission, boolean>>
+    >,
+    memberPermissions: Partial<
+      Record<Entity, Record<EntityPermission, boolean>>
+    >
   ) {
     const conflicts: Conflict[] = [];
 
-    (Object.keys(publicPermissions) as Module[])
+    (Object.keys(publicPermissions) as Entity[])
       .filter((permission) => {
         if (
-          !memberPermissions['userstories'] &&
-          (permission === 'sprints' || permission === 'tasks')
+          !memberPermissions['us'] &&
+          (permission === 'sprint' || permission === 'task')
         ) {
           return false;
         }
@@ -262,13 +201,13 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       })
       .forEach((key) => {
         const publicPermissionKeys = Object.keys(
-          publicPermissions[key]
-        ) as ModulePermission[];
+          publicPermissions[key]!
+        ) as EntityPermission[];
 
         if (memberPermissions[key]) {
-          const tempMissingPerm: ModulePermission[] = [];
+          const tempMissingPerm: EntityPermission[] = [];
           publicPermissionKeys.forEach((perm) => {
-            if (!memberPermissions[key][perm]) {
+            if (!memberPermissions?.[key]?.[perm]) {
               tempMissingPerm.push(perm);
             }
           });
@@ -279,15 +218,15 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
                 onlyPublicPermission: tempMissingPerm,
                 public: publicPermissionKeys,
                 member: Object.keys(
-                  memberPermissions[key]
-                ) as ModulePermission[],
+                  memberPermissions[key]!
+                ) as EntityPermission[],
               },
               texts: this.generateConflictsTexts({
                 onlyPublicPermission: tempMissingPerm,
                 public: publicPermissionKeys,
                 member: Object.keys(
-                  memberPermissions[key]
-                ) as ModulePermission[],
+                  memberPermissions[key]!
+                ) as EntityPermission[],
               }),
             });
           }
@@ -323,21 +262,21 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       },
     };
 
-    const isEditPermissions = (permissions: ModulePermission[]) => {
+    const isEditPermissions = (permissions: EntityPermission[]) => {
       return ['create', 'modify', 'delete'].every((it) =>
-        permissions.includes(it as ModulePermission)
+        permissions.includes(it as EntityPermission)
       );
     };
 
     if (isEditPermissions(onlyInPublicPermission)) {
       // edit case
-      textsTemp.public.text.push(this.getModulePermissions().get('edit')!);
+      textsTemp.public.text.push(this.getEntityPermissions().get('edit')!);
       if (!permission['member'].length) {
         textsTemp.member.text.push(
-          this.getModulePermissions().get('no_access')!
+          this.getEntityPermissions().get('no_access')!
         );
       } else if (permission['member'].includes('view')) {
-        textsTemp.member.text.push(this.getModulePermissions().get('view')!);
+        textsTemp.member.text.push(this.getEntityPermissions().get('view')!);
       }
     } else if (
       onlyInPublicPermission.some(
@@ -349,7 +288,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
         'project_settings.roles_permissions.restricted';
 
       if (isEditPermissions(permission.public)) {
-        textsTemp.public.text.push(this.getModulePermissions().get('edit')!);
+        textsTemp.public.text.push(this.getEntityPermissions().get('edit')!);
       } else {
         textsTemp.public.text.push(editRestrictionsText);
       }
@@ -361,7 +300,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
         textsTemp.member.text.push(editRestrictionsText);
       } else if (!permission.member.length) {
         textsTemp.member.text.push(
-          this.getModulePermissions().get('no_access')!
+          this.getEntityPermissions().get('no_access')!
         );
       } else {
         textsTemp.member.text.push(
@@ -406,8 +345,8 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
         onlyInPublicPermission.includes('comment'))
     ) {
       // view case
-      textsTemp.public.text.push(this.getModulePermissions().get('view')!);
-      textsTemp.member.text.push(this.getModulePermissions().get('no_access')!);
+      textsTemp.public.text.push(this.getEntityPermissions().get('view')!);
+      textsTemp.member.text.push(this.getEntityPermissions().get('no_access')!);
     }
 
     return textsTemp;
@@ -416,14 +355,16 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
   public getMembersPermissionsConflics(
     publicPermissionsList: string[],
     memberRoles: Role[]
-  ): ModuleConflictPermission[] {
-    const conflictPermissions: ModuleConflictPermission[] = [];
+  ): EntityConflictPermission[] {
+    const conflictPermissions: EntityConflictPermission[] = [];
 
-    const publicPermissions = this.formatRawPermissions(publicPermissionsList);
+    const publicPermissions = this.permissionsService.formatRawPermissions(
+      publicPermissionsList
+    );
 
     memberRoles.forEach((memberRole) => {
       if (!memberRole.isAdmin) {
-        const memberPermissions = this.formatRawPermissions(
+        const memberPermissions = this.permissionsService.formatRawPermissions(
           memberRole.permissions
         );
 

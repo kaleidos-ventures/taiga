@@ -38,18 +38,13 @@ describe.skip('HasPermissionDirective', () => {
     );
     store = spectator.inject(MockStore);
     store.select = jest.fn();
-    spectator.directive.project = ProjectMockFactory();
   });
 
   it('should be invisible', () => {
-    spectator.directive.project.myPermissions = ['view_us'];
-
     expect(spectator.element).toBeVisible();
   });
 
   it('should be invisible', () => {
-    spectator.directive.project.myPermissions = ['view_issue'];
-
     expect(spectator.element.innerHTML).not.toBeVisible();
   });
 });

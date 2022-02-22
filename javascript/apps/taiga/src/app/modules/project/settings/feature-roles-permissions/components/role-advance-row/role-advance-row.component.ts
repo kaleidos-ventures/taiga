@@ -18,7 +18,7 @@ import { FormGroup } from '@angular/forms';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Module } from '@taiga/data';
+import { Entity } from '@taiga/data';
 
 let nextId = 0;
 @UntilDestroy()
@@ -33,10 +33,10 @@ export class RoleAdvanceRowComponent implements OnInit {
   public formGroup!: FormGroup;
 
   @Input()
-  public module!: KeyValue<Module, string>;
+  public entity!: KeyValue<Entity, string>;
 
   public basicPermissionList =
-    this.projectsSettingsFeatureRolesPermissionsService.getModulePermissions();
+    this.projectsSettingsFeatureRolesPermissionsService.getEntityPermissions();
 
   public customizer = false;
 
@@ -51,9 +51,9 @@ export class RoleAdvanceRowComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
-    const childModules: Module[] = ['tasks', 'sprints'];
+    const childEntities: Entity[] = ['task', 'sprint'];
 
-    this.isChildModule = childModules.includes(this.module.key);
+    this.isChildModule = childEntities.includes(this.entity.key);
 
     this.refreshPermission();
     this.previousPermission = this.permissionRowModel;
@@ -105,7 +105,7 @@ export class RoleAdvanceRowComponent implements OnInit {
 
   public permissionChange(permission: KeyValue<SettingsPermission, string>) {
     this.projectsSettingsFeatureRolesPermissionsService.applyPermission(
-      this.module.key,
+      this.entity.key,
       permission.key,
       this.formGroup
     );

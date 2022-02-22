@@ -14,14 +14,14 @@ let nextId = 0;
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
-  selector: '[tg-modal-permission-module-row]',
-  templateUrl: './modal-permission-module-row.component.html',
+  selector: '[tg-modal-permission-entity-row]',
+  templateUrl: './modal-permission-entity-row.component.html',
   styleUrls: [
-    './modal-permission-module-row.component.css',
+    './modal-permission-entity-row.component.css',
     '../../modal-permission-comparison-common.css',
   ],
 })
-export class ModalPermissionModuleRowComponent {
+export class ModalPermissionEntityRowComponent {
   @Input()
   public conflict!: Conflict;
 
@@ -38,8 +38,8 @@ export class ModalPermissionModuleRowComponent {
 
   public open = false;
 
-  public modules =
-    this.projectsSettingsFeatureRolesPermissionsService.getModules();
+  public entities =
+    this.projectsSettingsFeatureRolesPermissionsService.getEntities();
 
   constructor(
     private projectsSettingsFeatureRolesPermissionsService: ProjectsSettingsFeatureRolesPermissionsService

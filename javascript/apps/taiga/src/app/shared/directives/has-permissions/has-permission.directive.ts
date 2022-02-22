@@ -14,10 +14,9 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from '@angular/core';
-import { untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
-import { Project } from '@taiga/data';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Entity, EntityPermission } from '@taiga/data';
+import { PermissionsService } from '~/app/services/permissions.service';
 
 // How to use
 
@@ -33,17 +32,18 @@ import { selectCurrentProject } from '~/app/modules/project/data-access/+state/s
 
 export type Operation = 'AND' | 'OR';
 
+@UntilDestroy()
 // eslint-disable-next-line @angular-eslint/directive-selector
 @Directive({ selector: '[hasPermission]' })
 export class HasPermissionDirective implements OnInit {
   @Input()
-  public set hasPermission(permissions: string[]) {
-    this.permissions = permissions;
+  public set hasPermission(permission: EntityPermission[]) {
+    this.permissions = Array.isArray(permission) ? permission : [permission];
   }
 
   @Input()
-  public set hasPermissionEntity(entity: string) {
-    this.entity = entity;
+  public set hasPermissionEntity(entity: Entity | Entity[]) {
+    this.entities = Array.isArray(entity) ? entity : [entity];
   }
 
   @Input()
@@ -51,29 +51,29 @@ export class HasPermissionDirective implements OnInit {
     this.operation = operation;
   }
 
-  public project!: Project;
-  public project$ = this.store.select(selectCurrentProject);
   private hasView = false;
-  private permissions: string[] = [];
-  private operation = 'AND';
-  private entity!: string;
+  private operation: 'AND' | 'OR' = 'AND';
+  private permissions: EntityPermission[] = [];
+  private entities!: Entity[];
 
   constructor(
+    private permissionsService: PermissionsService,
     private templateRef: TemplateRef<unknown>,
     private viewContainer: ViewContainerRef,
-    private cd: ChangeDetectorRef,
-    private store: Store
+    private cd: ChangeDetectorRef
   ) {}
 
   public ngOnInit() {
-    this.project$.pipe(untilDestroyed(this)).subscribe((project) => {
-      this.project = project;
-      this.updateView();
-    });
+    this.permissionsService
+      .hasPermissions$(this.entities, this.permissions, this.operation)
+      .pipe(untilDestroyed(this))
+      .subscribe((view) => {
+        this.updateView(view);
+      });
   }
 
-  private updateView() {
-    if (this.checkPermission() && !this.hasView) {
+  private updateView(view: boolean) {
+    if (view && !this.hasView) {
       this.hasView = true;
       this.viewContainer.createEmbeddedView(this.templateRef);
       this.cd.markForCheck();
@@ -81,30 +81,5 @@ export class HasPermissionDirective implements OnInit {
       this.viewContainer.clear();
       this.hasView = false;
     }
-  }
-
-  private includesPermission(permission: string) {
-    if (this.project.myPermissions.length) {
-      return this.project.myPermissions.find(
-        (projectPermission: string) =>
-          projectPermission.toUpperCase() === permission.toUpperCase()
-      );
-    }
-    return false;
-  }
-
-  private checkPermission() {
-    if (this.project?.myPermissions) {
-      if (this.operation === 'OR') {
-        return this.permissions.some((permission) =>
-          this.includesPermission(`${permission}_${this.entity}`)
-        );
-      } else if (this.operation === 'AND') {
-        return this.permissions.every((permission) =>
-          this.includesPermission(`${permission}_${this.entity}`)
-        );
-      }
-    }
-    return true;
   }
 }

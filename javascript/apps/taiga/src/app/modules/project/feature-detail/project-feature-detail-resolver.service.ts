@@ -8,25 +8,41 @@
 
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { catchError, tap } from 'rxjs/operators';
+import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { ProjectApiService } from '@taiga/api';
+import { AppService } from '~/app/services/app.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { of } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { take } from 'rxjs/operators';
 import { filterNil } from '~/app/shared/utils/operators';
-import { fetchProject } from '../data-access/+state/actions/project.actions';
-import { selectProject } from '../data-access/+state/selectors/project.selectors';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectFeatureDetailResolverService {
-  constructor(private readonly router: Router, private store: Store) {}
+  constructor(
+    private router: Router,
+    private store: Store,
+    private appService: AppService,
+    private projectApiService: ProjectApiService
+  ) {}
 
   public resolve(route: ActivatedRouteSnapshot) {
     const params = route.params as Record<string, string>;
 
-    this.store.dispatch(fetchProject({ slug: params['slug'] }));
+    return this.projectApiService.getProject(params['slug']).pipe(
+      filterNil(),
+      tap((project) => {
+        this.store.dispatch(ProjectActions.fetchProjectSuccess({ project }));
+      }),
+      catchError((httpResponse: HttpErrorResponse) => {
+        requestAnimationFrame(() => {
+          this.appService.errorManagement(httpResponse);
+        });
 
-    return this.store
-      .select(selectProject(params['slug']))
-      .pipe(filterNil(), take(1));
+        return of(null);
+      })
+    );
   }
 }

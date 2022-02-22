@@ -22,6 +22,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   max-block-size: 627px;
   max-inline-size: 978px;
   position: relative;
+  @media only screen and (max-width: 1279px) {
+    max-inline-size: 850px;
+  }
 }
 
 .error-container {
@@ -36,6 +39,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   inset-inline-end: 0;
   position: absolute;
   z-index: var(--first-layer);
+  @media only screen and (max-width: 1279px) {
+    max-inline-size: 575px;
+  }
 }
 
 .error-title {
@@ -46,4 +52,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   @mixin font-paragraph;
 
   color: var(--color-gray80);
+  margin-block-end: 1rem;
+}
+
+.error-button {
+  margin-block-start: 2rem;
 }

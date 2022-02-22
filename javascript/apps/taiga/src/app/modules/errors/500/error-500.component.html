@@ -9,7 +9,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <div class="error-wrapper">
     <div class="error-container">
-      <img src="/assets/images/LogoTaiga.svg" alt="" />
+      <a href="#" (click)="backHome()">
+        <img src="/assets/images/LogoTaiga.svg" alt="" />
+      </a>
       <h1 class="error-title">{{ t('errors_page.500.something_wrong') }}</h1>
       <p
         class="error-paragraph"
@@ -21,7 +23,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             email: config.supportEmail
           })
         "></p>
-      <button appearance="primary" tuiButton (click)="backHome()" type="button">
+      <button
+        class="error-button"
+        appearance="primary"
+        tuiButton
+        (click)="backHome()"
+        iconRight="'chevron-right'"
+        type="button">
         {{ t('errors_page.500.take_me_to_home') }}
       </button>
     </div>

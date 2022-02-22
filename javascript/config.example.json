@@ -1,5 +1,6 @@
 {
   "api": "http://localhost:8000/api/v2",
   "ws": "ws://localhost:8080",
-  "defaultLanguage": "en"
+  "defaultLanguage": "en",
+  "supportEmail": "support@taiga.io"
 }

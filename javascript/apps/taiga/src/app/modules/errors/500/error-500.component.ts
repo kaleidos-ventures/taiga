@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 export class Error500Component {
   constructor(private router: Router, public config: ConfigService) {}
 
-  public backHome() {
-    void this.router.navigate(['/']);
+  public refreshPage() {
+    window.location.reload();
   }
 }

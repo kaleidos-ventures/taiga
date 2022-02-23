@@ -3,7 +3,8 @@
     "something_wrong": "Something went wrong",
     "sorry_not_working": "Sorry, something is not working properly. <br /> Please refresh the page or try again in a few minutes.",
     "problem_contact": "If the problem persists contact with us here: <a href='mailto:mailto:{{ email }}'>{{ email }}</a>",
-    "take_me_to_home": "Take me to home"
+    "take_me_to_home": "Take me to home",
+    "refresh": "Refresh page"
   },
   "403": {
     "title": "You are forbidden",

@@ -58,3 +58,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .error-button {
   margin-block-start: var(--spacing-32);
 }
+
+.error-home {
+  display: block;
+  font-weight: var(--font-weight-medium);
+  inline-size: 100%;
+  inset-block-end: calc(-1 * var(--spacing-64));
+  position: absolute;
+  text-align: center;
+}

@@ -829,7 +829,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(10);",
 									"});"
@@ -936,7 +936,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(10);",
 									"});"

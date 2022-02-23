@@ -5,6 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
+/* stylelint-disable declaration-no-important */
 
 tui-notifications-host {
   --tui-height-xs: var(--spacing-16);
@@ -12,34 +13,64 @@ tui-notifications-host {
   --tui-width-xs: var(--tui-height-xs);
 
   & > .wrapper {
-    /* stylelint-disable-next-line declaration-no-important */
-    inline-size: 410px !important;
+    inline-size: calc(410px + var(--spacing-48)) !important;
+    padding-block-start: var(--spacing-64) !important;
+  }
+
+  & .alert {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1) !important;
   }
 }
 
 tui-notification {
+  padding-block-end: var(--spacing-16) !important;
+  padding-block-start: var(--spacing-16) !important;
+
+  &._has-icon {
+    padding-inline-start: var(--spacing-40) !important;
+  }
+
+  &._has-close-button {
+    padding-inline-end: var(--spacing-40) !important;
+  }
+
+  & .close {
+    inset-block-start: calc(var(--spacing-16) + 2px) !important;
+    inset-inline-end: var(--spacing-16) !important;
+
+    & .icon {
+      margin-block-start: 0;
+    }
+  }
+
   &::after {
-    /* stylelint-disable-next-line declaration-no-important */
     background: none !important;
+  }
+
+  & .icon {
+    block-size: var(--spacing-16) !important;
+    inline-size: var(--spacing-16) !important;
+    margin-block-start: calc(var(--spacing-16) + 2px);
+  }
+
+  & .content {
+    font-size: var(--font-size-small);
+    line-height: 1rem;
+
+    & .heading {
+      font-size: var(--font-size-medium);
+      font-weight: var(--font-weight-medium);
+      margin-block-end: var(--spacing-8);
+    }
   }
 
   &[data-tui-host-status="info"] {
     --tui-text-01: var(--color-info80);
     --tui-base-06: var(--tui-text-01);
     --tui-focus: var(--color-secondary);
-    /* stylelint-disable-next-line declaration-no-important */
+
     background: var(--color-info20) !important;
-    /* stylelint-disable-next-line declaration-no-important */
     color: var(--color-info80) !important;
-
-    & .heading {
-      font-size: var(--font-size-medium);
-      font-weight: var(--font-weight-bold);
-    }
-
-    & .content {
-      font-size: var(--font-size-small);
-    }
 
     & .close {
       --tui-radius-m: 0;
@@ -63,19 +94,9 @@ tui-notification {
     --tui-text-01: var(--color-red80);
     --tui-base-06: var(--tui-text-01);
     --tui-focus: var(--color-secondary);
-    /* stylelint-disable-next-line declaration-no-important */
+
     background: var(--color-red20) !important;
-    /* stylelint-disable-next-line declaration-no-important */
     color: var(--color-red80) !important;
-
-    & .heading {
-      font-size: var(--font-size-medium);
-      font-weight: var(--font-weight-bold);
-    }
-
-    & .content {
-      font-size: var(--font-size-small);
-    }
 
     & .close {
       --tui-radius-m: 0;
@@ -99,19 +120,9 @@ tui-notification {
     --tui-text-01: var(--color-ok80);
     --tui-base-06: var(--tui-text-01);
     --tui-focus: var(--color-secondary);
-    /* stylelint-disable-next-line declaration-no-important */
+
     background: var(--color-ok20) !important;
-    /* stylelint-disable-next-line declaration-no-important */
     color: var(--color-ok80) !important;
-
-    & .heading {
-      font-size: var(--font-size-medium);
-      font-weight: var(--font-weight-bold);
-    }
-
-    & .content {
-      font-size: var(--font-size-small);
-    }
 
     & .close {
       --tui-radius-m: 0;
@@ -135,19 +146,9 @@ tui-notification {
     --tui-text-01: var(--color-warning80);
     --tui-base-06: var(--tui-text-01);
     --tui-focus: var(--color-secondary);
-    /* stylelint-disable-next-line declaration-no-important */
+
     background: var(--color-warning20) !important;
-    /* stylelint-disable-next-line declaration-no-important */
     color: var(--color-warning80) !important;
-
-    & .heading {
-      font-size: var(--font-size-medium);
-      font-weight: var(--font-weight-bold);
-    }
-
-    & .content {
-      font-size: var(--font-size-small);
-    }
 
     & .close {
       --tui-radius-m: 0;

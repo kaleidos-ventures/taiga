@@ -77,7 +77,7 @@ export class AppService {
       hasCloseButton: true,
       autoClose: false,
       label,
-      status: TuiNotification.Warning,
+      status: TuiNotification.Error,
     };
 
     this.notificationsService.show(message, toastOptions).subscribe();

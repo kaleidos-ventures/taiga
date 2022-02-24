@@ -10,7 +10,8 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(path.join(__dirname, '../'));
-const EXTNAMES = ['.ts', '.js', '.html', '.css'];
+const ROOT_PYTHON = path.resolve(path.join(__dirname, '../../python/emails'));
+const EXTNAMES = ['.ts', '.js', '.html', '.css', '.jinja'];
 const EXCLUDE = ['node_modules', 'dist'];
 const SEARCH_TEXT = 'Copyright (c)';
 
@@ -24,8 +25,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 `;
 }
 
-function getCommentedText(text, ext) {
-  if (ext === '.html') {
+function getCommentedText(text, ext, filename) {
+  if (ext === '.html' || filename.includes('.html.jinja')) {
     return `<!--${text}-->\n\n`;
   } else if (ext === '.css') {
     return `/*${text}*/\n\n`;
@@ -45,19 +46,23 @@ function getCommentedText(text, ext) {
         })
         .join('\n') + '\n\n'
     );
+  } else if (filename.includes('.txt.jinja')) {
+    return `{#${text}#}\n\n`;
   }
 
   return text;
 }
 
-function findFiles(directory, filepaths = []) {
-  const files = fs.readdirSync(directory);
-  for (let filename of files) {
-    const filepath = path.join(directory, filename);
-    if (fs.statSync(filepath).isDirectory() && !EXCLUDE.includes(filename)) {
-      findFiles(filepath, filepaths);
-    } else if (EXTNAMES.includes(path.extname(filename))) {
-      filepaths.push(filepath);
+function findFiles(directories, filepaths = []) {
+  for (const directory of directories) {
+    const files = fs.readdirSync(directory);
+    for (let filename of files) {
+      const filepath = path.join(directory, filename);
+      if (fs.statSync(filepath).isDirectory() && !EXCLUDE.includes(filename)) {
+        findFiles([filepath], filepaths);
+      } else if (EXTNAMES.includes(path.extname(filename))) {
+        filepaths.push(filepath);
+      }
     }
   }
   return filepaths;
@@ -76,16 +81,15 @@ function prepend(filepath, text) {
 
 console.info(' > Checking misseed license prephaces... ');
 
-const files = findFiles(ROOT);
+const files = findFiles([ROOT, ROOT_PYTHON]);
 let fixed = 0;
 
 for (let filepath of files) {
   const data = fs.readFileSync(filepath);
-
   if (!data.includes(SEARCH_TEXT)) {
     const filename = path.basename(filepath);
     let license = getLicense();
-    license = getCommentedText(license, path.extname(filename));
+    license = getCommentedText(license, path.extname(filename), filename);
 
     prepend(filepath, license);
 

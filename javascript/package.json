@@ -45,7 +45,9 @@
     "translations:join": "ng g @ngneat/transloco:join --translation-path 'apps/taiga/src/assets/i18n/'",
     "install:hooks": "cd .. && husky install javascript/.husky",
     "prepare": "npm run install:hooks",
-    "generate-mjml": "npx mjml ./apps/taiga-mjml/$npm_config_name.mjml -o ../python/$npm_config_name.html"
+    "emails:compile-html": "npx mjml --config.keepComments=0 ./apps/taiga-mjml/templates/*.mjml.html.jinja -o ../python/apps/taiga/src/taiga/mails/templates",
+    "emails:copy-text": "npx copyfiles -f ./apps/taiga-mjml/templates/*.txt.jinja ../python/apps/taiga/src/taiga/mails/templates",
+    "emails": "npm run build emails:compile-html && npm run emails:copy-text"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
@@ -136,6 +138,7 @@
     "@typescript-eslint/eslint-plugin": "5.10.2",
     "@typescript-eslint/parser": "5.10.2",
     "axe-core": "^4.3.5",
+    "copyfiles": "^2.4.1",
     "cypress": "^9.3.1",
     "cypress-axe": "^0.14.0",
     "dotenv": "14.2.0",
@@ -151,6 +154,7 @@
     "jest-marbles": "^3.0.2",
     "jest-preset-angular": "11.1.0",
     "lint-staged": "^12.3.1",
+    "mjml": "^4.12.0",
     "ng-mocks": "^13.0.0",
     "ng-packagr": "13.2.1",
     "postcss": "^8.4.5",

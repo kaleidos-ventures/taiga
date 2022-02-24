@@ -8,6 +8,7 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ProjectAdminResolver } from './project-admin.resolver.service';
 import { ProjectFeatureDetailResolverService } from './project-feature-detail-resolver.service';
 import { ProjectFeatureDetailComponent } from './project-feature-detail.component';
 
@@ -39,6 +40,9 @@ const routes: Routes = [
           import(
             '~/app/modules/project/settings/feature-settings/feature-settings.module'
           ).then((m) => m.ProjectSettingsFeatureSettingsModule),
+        resolve: {
+          project: ProjectAdminResolver,
+        },
       },
     ],
   },

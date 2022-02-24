@@ -15,6 +15,7 @@ import {
   TuiButtonModule,
   TuiDropdownControllerModule,
   TuiHostedDropdownModule,
+  TuiLinkModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { TuiAvatarModule } from '@taiga-ui/kit';
@@ -29,6 +30,7 @@ import { NavigationComponent } from './navigation.component';
     CommonModule,
     TuiButtonModule,
     TuiAvatarModule,
+    TuiLinkModule,
     TuiSvgModule,
     TranslocoModule,
     TuiHostedDropdownModule,

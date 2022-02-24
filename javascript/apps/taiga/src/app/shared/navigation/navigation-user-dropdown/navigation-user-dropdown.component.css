@@ -71,6 +71,7 @@ li {
   color: var(--color-gray80);
   display: flex;
   font-weight: var(--font-weight-medium);
+  inline-size: 100%;
   padding: var(--spacing-8);
 
   &:hover {

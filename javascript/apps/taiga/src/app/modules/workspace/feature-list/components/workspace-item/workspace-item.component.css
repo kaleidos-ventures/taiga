@@ -41,7 +41,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   color: var(--color-gray100);
   display: block;
   margin: 0;
+}
 
+.workspace-item-title-active {
   &:hover {
     color: var(--color-secondary);
   }

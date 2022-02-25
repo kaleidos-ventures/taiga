@@ -26,7 +26,6 @@ ul {
 .workspace {
   align-items: center;
   background: var(--color-black);
-  cursor: pointer;
   display: flex;
   padding: var(--spacing-8);
   padding-inline-start: var(--spacing-12);

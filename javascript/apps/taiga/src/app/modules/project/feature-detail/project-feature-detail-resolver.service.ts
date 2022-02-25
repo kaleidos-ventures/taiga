@@ -7,7 +7,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { ProjectApiService } from '@taiga/api';
@@ -15,14 +15,12 @@ import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { filterNil } from '~/app/shared/utils/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectFeatureDetailResolverService {
   constructor(
-    private router: Router,
     private store: Store,
     private appService: AppService,
     private projectApiService: ProjectApiService
@@ -32,7 +30,6 @@ export class ProjectFeatureDetailResolverService {
     const params = route.params as Record<string, string>;
 
     return this.projectApiService.getProject(params['slug']).pipe(
-      filterNil(),
       tap((project) => {
         this.store.dispatch(ProjectActions.fetchProjectSuccess({ project }));
       }),

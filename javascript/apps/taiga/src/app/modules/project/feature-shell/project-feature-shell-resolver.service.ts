@@ -19,7 +19,7 @@ import { Store } from '@ngrx/store';
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectFeatureDetailResolverService {
+export class ProjectFeatureShellResolverService {
   constructor(
     private store: Store,
     private appService: AppService,

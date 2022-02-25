@@ -57,8 +57,8 @@ const routes: Routes = [
         path: ':slug',
         loadChildren: () =>
           import(
-            './modules/project/feature-detail/project-feature-detail.module'
-          ).then((m) => m.ProjectFeatureDetailModule),
+            './modules/project/feature-shell/project-feature-shell.module'
+          ).then((m) => m.ProjectFeatureShellModule),
       },
     ],
   },

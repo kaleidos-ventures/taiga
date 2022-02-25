@@ -10,11 +10,11 @@ import { selectCurrentProject } from '~/app/modules/project/data-access/+state/s
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 @Component({
-  selector: 'tg-project-feature-detail',
-  templateUrl: './project-feature-detail.component.html',
-  styleUrls: ['./project-feature-detail.component.css'],
+  selector: 'tg-project-feature-shell',
+  templateUrl: './project-feature-shell.component.html',
+  styleUrls: ['./project-feature-shell.component.css'],
 })
-export class ProjectFeatureDetailComponent {
+export class ProjectFeatureShellComponent {
   constructor(private store: Store) {}
 
   public project$ = this.store.select(selectCurrentProject);

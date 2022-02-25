@@ -9,15 +9,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ProjectAdminResolver } from './project-admin.resolver.service';
-import { ProjectFeatureDetailResolverService } from './project-feature-detail-resolver.service';
-import { ProjectFeatureDetailComponent } from './project-feature-detail.component';
+import { ProjectFeatureShellResolverService } from './project-feature-shell-resolver.service';
+import { ProjectFeatureShellComponent } from './project-feature-shell.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: ProjectFeatureDetailComponent,
+    component: ProjectFeatureShellComponent,
     resolve: {
-      project: ProjectFeatureDetailResolverService,
+      project: ProjectFeatureShellResolverService,
     },
     children: [
       {
@@ -52,4 +52,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ProjectFeatureDetailRoutingModule {}
+export class ProjectFeatureShellRoutingModule {}

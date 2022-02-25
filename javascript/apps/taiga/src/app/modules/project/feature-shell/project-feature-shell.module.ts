@@ -9,22 +9,22 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ProjectFeatureDetailComponent } from './project-feature-detail.component';
-import { ProjectFeatureDetailRoutingModule } from './project-feature-detail-routing.module';
+import { ProjectFeatureShellComponent } from './project-feature-shell.component';
+import { ProjectFeatureShellRoutingModule } from './project-feature-shell-routing.module';
 import { ProjectFeatureNavigationModule } from '~/app/modules/project/feature-navigation/project-feature-navigation.module';
 import { ProjectDataAccessModule } from '~/app/modules/project/data-access/project.module';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AvatarModule } from '@taiga/ui/avatar';
 
 @NgModule({
-  declarations: [ProjectFeatureDetailComponent],
+  declarations: [ProjectFeatureShellComponent],
   imports: [
     CommonModule,
-    ProjectFeatureDetailRoutingModule,
+    ProjectFeatureShellRoutingModule,
     ProjectFeatureNavigationModule,
     ProjectDataAccessModule,
     TranslocoModule,
     AvatarModule,
   ],
 })
-export class ProjectFeatureDetailModule {}
+export class ProjectFeatureShellModule {}

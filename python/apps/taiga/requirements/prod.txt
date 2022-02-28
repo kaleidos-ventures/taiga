@@ -158,6 +158,7 @@ imageio==2.16.0
     #   taiga6
 jinja2==3.0.3
     # via
+    #   -r requirements/commons.in
     #   django-jinja
     #   taiga6
 kombu==5.2.3

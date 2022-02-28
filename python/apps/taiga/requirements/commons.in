@@ -22,6 +22,9 @@ easy-thumbnails
 # for sample_data
 faker
 
+# Templates
+jinja2
+
 # Do NOT add any dependencies below this line
 # Taiga 6
 #   we use -e for dev and prod because relative path in pip-compile only works with -e

@@ -20,6 +20,7 @@ import django
 import typer
 import uvicorn
 from taiga import __version__
+from taiga.emails.commands import cli as emails_cli
 
 app = typer.Typer(
     name="Taiga Manager",
@@ -52,6 +53,9 @@ def main(
     )
 ) -> None:
     _initialize_django()
+
+
+app.add_typer(emails_cli, name="emails")
 
 
 def _run(**kwargs: Any) -> None:

@@ -1,0 +1,33 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<mj-style>
+  :root {
+    color-scheme: light dark;
+    supported-color-schemes: light dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .lightimage {
+      display: none !important;
+    }
+
+    .darkimage {
+      display: block !important;
+    }
+  }
+
+  /*styling for support in Outlook app (Android)*/
+  [data-ogsc] .lightimage {
+    display: none !important;
+  }
+
+  [data-ogsc] .darkimage {
+    display: block !important;
+  }
+
+</mj-style>

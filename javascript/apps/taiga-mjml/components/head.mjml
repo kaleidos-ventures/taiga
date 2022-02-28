@@ -5,8 +5,13 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
+<mj-raw>
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+</mj-raw>
 <mj-font
   name="Ubuntu"
   href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500" />
+<mj-include path="../styles/dark_mode.mjml" />
 <mj-include path="../styles/common.mjml" />
 <mj-include path="../styles/attributes.mjml" />

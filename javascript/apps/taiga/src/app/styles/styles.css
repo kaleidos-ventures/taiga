@@ -13,7 +13,6 @@ This layer holds any **global** settings for your project. This layer should onl
 @import "@angular/cdk/overlay-prebuilt.css";
 @import "swatches.css";
 @import "typography.css";
-@import "responsive.css";
 @import "spacing.css";
 @import "z-index.css";
 @import "generic.css";

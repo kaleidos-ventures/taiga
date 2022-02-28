@@ -6,6 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 @import "tools/typography.css";
+@import "tools/responsive.css";
 
 :host {
   align-items: center;
@@ -22,7 +23,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   max-block-size: 627px;
   max-inline-size: 978px;
   position: relative;
-  @media only screen and (max-width: 1279px) {
+  @media (--lt-large) {
     max-inline-size: 850px;
   }
 }

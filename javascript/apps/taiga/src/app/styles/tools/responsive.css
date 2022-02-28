@@ -1,0 +1,38 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@custom-media --lt-xlarge (width <= 1920px);
+@custom-media --gt-xlarge (width > 1920px);
+@custom-media --lt-large (width <= 1280px);
+@custom-media --gt-large (width > 1280px);
+@custom-media --lt-medium (width <= 1024px);
+@custom-media --gt-medium (width > 1024px);
+@custom-media --lt-small (width <= 600px);
+@custom-media --gt-small (width > 600px);
+
+/***************
+How to use media queries
+****************/
+
+/*
+Import this tool into your CSS file
+@import "tools/responsive.css";
+*/
+
+/*
+And use it for media queries
+
+@media (--lt-large) {
+  ...
+}
+
+Or even combine many of the media declarations
+@media (--gt-large) and (--lt-xlarge) {
+  ...
+}
+*/

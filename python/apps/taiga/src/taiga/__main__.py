@@ -14,15 +14,18 @@
 
 
 import os
+from multiprocessing import Process
 from typing import Any
 
-import django
 import typer
 import uvicorn
 from taiga import __version__
+from taiga.base.django import setup_django
 from taiga.emails.commands import cli as emails_cli
+from taiga.tasksqueue.commands import cli as tasksqueue_cli
+from taiga.tasksqueue.commands import run_worker
 
-app = typer.Typer(
+cli = typer.Typer(
     name="Taiga Manager",
     help="Manage a Taiga server.",
     add_completion=True,
@@ -35,14 +38,7 @@ def _version_callback(value: bool) -> None:
         raise typer.Exit()
 
 
-def _initialize_django() -> None:
-    # initialize django settings and django app
-    # so we can use the ORM across taiga-next
-    os.environ["DJANGO_SETTINGS_MODULE"] = "taiga.conf.taiga6"
-    django.setup()
-
-
-@app.callback()
+@cli.callback()
 def main(
     version: bool = typer.Option(
         None,
@@ -52,28 +48,15 @@ def main(
         help="Show version information.",
     )
 ) -> None:
-    _initialize_django()
+    setup_django()
 
 
-app.add_typer(emails_cli, name="emails")
+# Load module commands
+cli.add_typer(emails_cli, name="emails")
+cli.add_typer(tasksqueue_cli, name="tasksqueue")
 
 
-def _run(**kwargs: Any) -> None:
-    wsgi_app = os.getenv("TAIGA_WSGI_APP", "taiga.wsgi:app")
-    uvicorn.run(wsgi_app, **kwargs)
-
-
-@app.command(help="Run a Taiga server (dev mode).")
-def devserve(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000)) -> None:
-    _run(host=host, port=port, access_log=True, use_colors=True, reload=True, debug=True)
-
-
-@app.command(help="Run a Taiga server.")
-def serve(host: str = typer.Option("0.0.0.0"), port: int = typer.Option(8000)) -> None:
-    _run(host=host, port=port, reload=False, debug=False)
-
-
-@app.command(help="Load sample data.")
+@cli.command(help="Load sample data.")
 def sampledata() -> None:
     from taiga.base.utils.asyncio import run_async_as_sync
     from taiga.base.utils.sample_data import load_sample_data
@@ -81,5 +64,28 @@ def sampledata() -> None:
     run_async_as_sync(load_sample_data())
 
 
+def _run_api(**kwargs: Any) -> None:
+    wsgi_app = os.getenv("TAIGA_WSGI_APP", "taiga.wsgi:app")
+    uvicorn.run(wsgi_app, **kwargs)
+
+
+@cli.command(help="Run a Taiga server (dev mode).")
+def devserve(
+    host: str = typer.Option("0.0.0.0", "--host", "-h"),
+    port: int = typer.Option(8000, "--port", "-p"),
+    with_worker: bool = typer.Option(False, "--worker", "-w"),
+) -> None:
+    if with_worker:
+        worker = Process(target=run_worker)
+        worker.start()
+
+    _run_api(host=host, port=port, access_log=True, use_colors=True, reload=True, debug=True)
+
+
+@cli.command(help="Run a Taiga server.")
+def serve(host: str = typer.Option("0.0.0.0", "--host", "-h"), port: int = typer.Option(8000, "--port", "-p")) -> None:
+    _run_api(host=host, port=port, reload=False, debug=False)
+
+
 if __name__ == "__main__":
-    app()
+    cli()

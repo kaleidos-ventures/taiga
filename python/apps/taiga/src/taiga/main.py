@@ -14,6 +14,7 @@ from taiga.conf import settings
 from taiga.exceptions.handlers import http_exception_handler, request_validation_exception_handler
 from taiga.exceptions.middlewares import UnexpectedExceptionMiddleware
 from taiga.routers import router, tags_metadata
+from taiga.tasksqueue.middlewares import TaskQueueMiddleware
 
 api = FastAPI(
     title=__title__,
@@ -25,10 +26,13 @@ api = FastAPI(
 
 
 ##############################################
-# COMMON MIDDLEWARES
+# MIDDLEWARES
 ##############################################
 
-# Catch unexpected exceptions
+# TaskQueue middleware
+api.add_middleware(TaskQueueMiddleware)
+
+# Catch unexpected exceptions middleware
 api.add_middleware(UnexpectedExceptionMiddleware)
 
 # Setup CORS middleware

@@ -4,6 +4,9 @@ pydantic[email,dotenv]
 python-multipart
 uvicorn
 
+# The task queue
+procrastinate
+
 # For manage CLI
 typer
 

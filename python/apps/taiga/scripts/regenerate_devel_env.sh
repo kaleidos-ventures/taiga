@@ -47,6 +47,7 @@ if [ "$?" -ne "0" ]; then
 else
   echo "-> Load migrations"
   python -m taiga6.manage migrate
+  python -m taiga tasksqueue init
   python -m taiga6.manage createcachetable
   echo "-> Load initial user (admin/123123)"
   python -m taiga6.manage loaddata initial_user --traceback

@@ -84,7 +84,7 @@ jobs:
     - name: Run back server
       working-directory: ./python/apps/taiga
       run: |
-        python -m taiga devserve &
+        python -m taiga devserve -w &
       env:
         TAIGA_DEBUG: true
         TAIGA_DB_NAME: taiga

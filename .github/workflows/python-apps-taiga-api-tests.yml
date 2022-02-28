@@ -66,6 +66,7 @@ jobs:
         working-directory: ./python/apps/taiga
         run: |
           python -m taiga6.manage migrate
+          python -m taiga tasksqueue init
         env:
           DJANGO_SETTINGS_MODULE: taiga.conf.taiga6
           TAIGA_DB_NAME: taiga
@@ -78,7 +79,7 @@ jobs:
       - name: Run back server
         working-directory: ./python/apps/taiga
         run: |
-          python -m taiga devserve > taiga-back.log 2> taiga-back.err &
+          python -m taiga devserve -w > taiga-back.log 2> taiga-back.err &
         env:
           TAIGA_DEBUG: true
           TAIGA_DB_NAME: taiga

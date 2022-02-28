@@ -30,16 +30,6 @@ Tests in which we use the `client` fixture to make API calls must be marked as `
   ```
 
 
-### Databese
-
-Currently we are reusing the test database (`--reuse-db`) by default to improve the speed.
-
-If you **create some new migration**, remeber to run the test with `--create-db` to drop the current db and recreate a new one.
-
-```shell
-(taiga)$ python -m pytest --create-db
-```
-
 ### Coverage
 
 To run tests and get the coverage info run:

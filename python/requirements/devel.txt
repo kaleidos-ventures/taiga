@@ -8,7 +8,7 @@ asgiref==3.5.0
     # via django
 cfgv==3.3.1
     # via pre-commit
-click==8.0.3
+click==8.0.4
     # via pip-tools
 distlib==0.3.4
     # via virtualenv
@@ -21,9 +21,9 @@ django-stubs==1.9.0
     # via -r requirements/devel.in
 django-stubs-ext==0.3.1
     # via django-stubs
-filelock==3.4.2
+filelock==3.6.0
     # via virtualenv
-identify==2.4.8
+identify==2.4.11
     # via pre-commit
 mypy==0.931
     # via
@@ -37,7 +37,7 @@ pep517==0.12.0
     # via pip-tools
 pip-tools==6.5.1
     # via -r requirements/devel.in
-platformdirs==2.4.1
+platformdirs==2.5.1
     # via virtualenv
 pre-commit==2.17.0
     # via -r requirements/devel.in
@@ -57,16 +57,16 @@ tomli==2.0.1
     # via
     #   mypy
     #   pep517
-types-pytz==2021.3.4
+types-pytz==2021.3.5
     # via django-stubs
 types-pyyaml==6.0.4
     # via django-stubs
-typing-extensions==4.0.1
+typing-extensions==4.1.1
     # via
     #   django-stubs
     #   django-stubs-ext
     #   mypy
-virtualenv==20.13.1
+virtualenv==20.13.2
     # via pre-commit
 wheel==0.37.1
     # via pip-tools

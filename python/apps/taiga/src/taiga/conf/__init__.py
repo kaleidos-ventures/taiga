@@ -30,18 +30,19 @@ class Settings(BaseSettings):
     DB_NAME: str = "taiga"
     DB_USER: str = "taiga"
     DB_PASSWORD: str = "taiga"
-    DB_HOST: str = ""
-    DB_PORT: str = ""
+    DB_HOST: str = "localhost"
+    DB_PORT: int = 5432
 
     # Auth
     ACCESS_TOKEN_LIFETIME: int = 30  # 30 minutes
     REFRESH_TOKEN_LIFETIME: int = 8 * 24 * 60  # 8 * 24 * 60 minutes = 8 days
 
+    # Default values
+    DEFAULT_PROJECT_TEMPLATE: str = "kanban"
+
     # Sub settings modules
     TOKENS: TokensSettings = TokensSettings()
     IMAGES: ImageSettings = ImageSettings()
-
-    DEFAULT_PROJECT_TEMPLATE: str = "kanban"
 
     class Config:
         env_prefix = "TAIGA_"

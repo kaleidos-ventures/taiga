@@ -7,9 +7,15 @@
 
 import pytest
 from taiga.main import api
+from tests.utils.tasksqueue import TestTasksQueueManager
 from tests.utils.testclient import TestClient
 
 
 @pytest.fixture
 def client() -> TestClient:
     return TestClient(api)
+
+
+@pytest.fixture
+def tqmanager() -> TestTasksQueueManager:
+    return TestTasksQueueManager()

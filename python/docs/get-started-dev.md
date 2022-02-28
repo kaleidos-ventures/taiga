@@ -59,7 +59,7 @@ Generate the database, load the initial fixtures and create the sample data:
 Start the backend in dev mode
 
 ```
-(taiga)$ python -m taiga devserve
+(taiga)$ python -m taiga devserve -w
 ```
 
 ## Some tips:

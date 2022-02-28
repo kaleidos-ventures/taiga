@@ -47,7 +47,8 @@
     "prepare": "npm run install:hooks",
     "emails:compile-html": "npx mjml --config.keepComments=0 ./apps/taiga-mjml/templates/*.mjml.html.jinja -o ../python/apps/taiga/src/taiga/mails/templates",
     "emails:copy-text": "npx copyfiles -f ./apps/taiga-mjml/templates/*.txt.jinja ../python/apps/taiga/src/taiga/mails/templates",
-    "emails": "npm run build emails:compile-html && npm run emails:copy-text"
+    "emails:copy-subject": "npx copyfiles -f ./apps/taiga-mjml/templates/*.subject.jinja ../python/apps/taiga/src/taiga/mails/templates",
+    "emails": "npm run emails:compile-html && npm run emails:copy-text && npm run emails:copy-subject"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",

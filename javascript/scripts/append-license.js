@@ -46,7 +46,10 @@ function getCommentedText(text, ext, filename) {
         })
         .join('\n') + '\n\n'
     );
-  } else if (filename.includes('.txt.jinja')) {
+  } else if (
+    filename.includes('.txt.jinja') ||
+    filename.includes('.subject.jinja')
+  ) {
     return `{#${text}#}\n\n`;
   }
 

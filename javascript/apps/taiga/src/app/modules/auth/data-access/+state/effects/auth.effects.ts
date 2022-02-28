@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TuiNotification } from '@taiga-ui/core';
 
 @Injectable()
 export class AuthEffects {
@@ -44,6 +45,7 @@ export class AuthEffects {
               options: {
                 label: 'errors.login',
                 message: 'errors.please_refresh',
+                status: TuiNotification.Error,
               },
             },
           });

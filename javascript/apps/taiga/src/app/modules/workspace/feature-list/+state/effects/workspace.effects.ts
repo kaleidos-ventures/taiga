@@ -18,6 +18,7 @@ import { WorkspaceApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 import { timer, zip } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TuiNotification } from '@taiga-ui/core';
 
 @Injectable()
 export class WorkspaceEffects {
@@ -68,6 +69,7 @@ export class WorkspaceEffects {
               options: {
                 label: 'errors.login',
                 message: 'errors.please_refresh',
+                status: TuiNotification.Error,
               },
             },
           });

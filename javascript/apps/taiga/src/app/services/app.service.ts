@@ -46,9 +46,10 @@ export class AppService {
     if (errorOptions && errorOptions[status]) {
       const config = errorOptions[status];
       if (config && config.type === 'toast') {
-        return this.toastError(error, {
+        return this.toastNotification({
           label: config.options.label,
           message: config.options.message,
+          status: config.options.status,
         });
       }
     } else if (status === 403) {
@@ -66,10 +67,11 @@ export class AppService {
     }
   }
 
-  public toastError(
-    error: HttpErrorResponse,
-    data: { label: string; message: string }
-  ) {
+  public toastNotification(data: {
+    label: string;
+    message: string;
+    status: TuiNotification;
+  }) {
     const label = this.translocoService.translate(data.label);
     const message = this.translocoService.translate(data.message);
     const toastOptions: TuiNotificationOptions = {
@@ -77,7 +79,7 @@ export class AppService {
       hasCloseButton: true,
       autoClose: false,
       label,
-      status: TuiNotification.Error,
+      status: data.status,
     };
 
     this.notificationsService.show(message, toastOptions).subscribe();

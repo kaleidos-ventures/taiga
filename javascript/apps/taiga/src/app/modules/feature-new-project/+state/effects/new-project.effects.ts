@@ -19,6 +19,7 @@ import { Project } from '@taiga/data';
 import { Router } from '@angular/router';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TuiNotification } from '@taiga-ui/core';
 
 @Injectable()
 export class NewProjectEffects {
@@ -40,6 +41,7 @@ export class NewProjectEffects {
               options: {
                 label: 'errors.create_project',
                 message: 'errors.please_refresh',
+                status: TuiNotification.Error,
               },
             },
           });

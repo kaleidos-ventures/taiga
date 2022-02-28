@@ -6,6 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { TuiNotification } from '@taiga-ui/core';
+
 export interface UnexpectedError {
   message: string;
 }
@@ -14,6 +16,7 @@ export interface ErrorManagementToastOptions {
   options: {
     label: string;
     message: string;
+    status: TuiNotification;
   };
 }
 

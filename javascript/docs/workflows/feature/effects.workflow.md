@@ -104,9 +104,10 @@ class TodoEffects {
             return TodoListActions.createTaskError({ error: error.msg });
           }
 
-          return this.appService.toastError(error, {
+          return this.appService.toastNotification({
             label: 'errors.text',
             mesage: 'errors.please_refresh',
+            status: TuiNotification.Error,
           });
         },
       })
@@ -133,8 +134,9 @@ this.appService.errorManagement(httpResponse);
 To show the toast notification set in the onError:
 
 ```ts
-this.appService.toastError(error. {
+this.appService.toastNotification({
   label: 'errors.text',
-  mesage: 'errors.please_refresh'
+  mesage: 'errors.please_refresh',
+  status: TuiNotification.Error,
 });
 ```

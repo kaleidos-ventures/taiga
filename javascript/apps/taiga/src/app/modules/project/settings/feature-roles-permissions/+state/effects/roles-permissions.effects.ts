@@ -12,6 +12,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { filter, map } from 'rxjs/operators';
 
 import * as ProjectActions from '../actions/roles-permissions.actions';
+import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
@@ -39,6 +40,7 @@ export class RolesPermissionsEffects {
               options: {
                 label: 'errors.member_roles',
                 message: 'errors.please_refresh',
+                status: TuiNotification.Error,
               },
             },
           });
@@ -69,6 +71,7 @@ export class RolesPermissionsEffects {
               options: {
                 label: 'errors.public_permissions',
                 message: 'errors.please_refresh',
+                status: TuiNotification.Error,
               },
             },
           });
@@ -100,6 +103,7 @@ export class RolesPermissionsEffects {
               options: {
                 label: 'errors.workspace_permissions',
                 message: 'errors.please_refresh',
+                status: TuiNotification.Error,
               },
             },
           });
@@ -128,6 +132,7 @@ export class RolesPermissionsEffects {
               options: {
                 label: 'errors.save_changes',
                 message: 'errors.please_refresh',
+                status: TuiNotification.Error,
               },
             },
           });
@@ -160,6 +165,7 @@ export class RolesPermissionsEffects {
               options: {
                 label: 'errors.save_changes',
                 message: 'errors.please_refresh',
+                status: TuiNotification.Error,
               },
             },
           });
@@ -192,6 +198,7 @@ export class RolesPermissionsEffects {
               options: {
                 label: 'errors.save_changes',
                 message: 'errors.please_refresh',
+                status: TuiNotification.Error,
               },
             },
           });

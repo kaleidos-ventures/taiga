@@ -10,7 +10,9 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(path.join(__dirname, '../'));
-const ROOT_PYTHON = path.resolve(path.join(__dirname, '../../python/emails'));
+const ROOT_PYTHON = path.resolve(
+  path.join(__dirname, '../../python/apps/taiga/src/taiga/emails/templates')
+);
 const EXTNAMES = ['.ts', '.js', '.html', '.css', '.jinja'];
 const EXCLUDE = ['node_modules', 'dist'];
 const SEARCH_TEXT = 'Copyright (c)';

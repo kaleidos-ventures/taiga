@@ -21,16 +21,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <mj-text mj-class="font-heading2 color-gray90">
             To start using Taiga just click on the button below
           </mj-text>
-          <mj-button mj-class="btn-primary" href="#">
+          <mj-button mj-class="btn-primary" href="{{ verify_url }}">
             Verify your email
           </mj-button>
           <mj-text mj-class="font-body color-gray70">
             Button not working? Copy and paste this URL into you web browser:
           </mj-text>
           <mj-text css-class="primary-link" mj-class="font-body padding-bottom">
-            <a href="https://taiga6.kaleidos.net/verify-email/396438bb-894a-4401-8d3b-7c0d22abaf5b">
-              https://taiga6.kaleidos.net/verify-email/396438bb-894a-4401-8d3b-7c0d22abaf5b
-            </a>
+              <a href="{{ verify_url }}">{{ verify_url }}</a>
           </mj-text>
           <mj-text mj-class="font-body"> Welcome, </mj-text>
           <mj-text mj-class="font-body padding-bottom">

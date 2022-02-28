@@ -7,10 +7,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <mj-column css-class="separator" mj-class="full-width padding-section">
   <mj-text mj-class="font-small color-gray90">
-    This link will expire in X days.
+    This link will expire in 4 days.
   </mj-text>
   <mj-text mj-class="font-small color-gray90">
-    If you did not create an account using this address, please ignore this
-    email.
+    If you did not create an account using this address, please ignore this email.
   </mj-text>
 </mj-column>

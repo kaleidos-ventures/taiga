@@ -12,6 +12,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <mj-font
   name="Ubuntu"
   href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500" />
-<mj-include path="../styles/dark_mode.mjml" />
 <mj-include path="../styles/common.mjml" />
 <mj-include path="../styles/attributes.mjml" />
+<mj-include path="../styles/dark_mode.mjml" />

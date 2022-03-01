@@ -22,6 +22,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   .body-content {
     background-color: #FFFFFF;
+    box-sizing: border-box;
     max-width: 600px;
     min-width: 224px;
     padding: 44px 64px;
@@ -51,7 +52,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   .tertiary-link a:hover {
-    color: # 006385;
+    color: #006385;
   }
 
   .separator {
@@ -60,19 +61,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   .list {
-    list-style-type: none;
     margin: 0;
     padding: 0 16px 0 32px;
-  }
-
-  .list li:before {
-    border-radius: 4px;
-    content: "";
-    background-color: #007DA6;
-    display: inline-block;
-    height: 8px;
-    margin: 0 8px 0 -16px;
-    width: 8px;
   }
 
   strong {
@@ -80,7 +70,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     font-weight: 500;
   }
 
-  @media (max-width: 320px) {
+  @media (max-width: 600px) {
     .body-content {
       padding: 32px;
     }

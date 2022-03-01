@@ -7,7 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <mj-section mj-class="padding-top">
   <mj-column>
-    <mj-text css-class="secondary-link" mj-class="font-body color-gray70">
+    <mj-text css-class="secondary-link dm-text" mj-class="font-body color-gray70 dm-link">
       Need help?
       <a href="#"> Contact support </a></mj-text
     >

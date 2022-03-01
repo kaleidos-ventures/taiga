@@ -8,7 +8,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <mj-section>
   <mj-include path="./expiration-date.mjml" />
   <mj-column width="100%" mj-class="padding-top">
-    <mj-text css-class="secondary-link" mj-class="font-body color-gray70">
+    <mj-text css-class="secondary-link dm-text" mj-class="font-body color-gray70">
       Need help?
       <a href="mailto:{{ support_email }}"> Contact support </a></mj-text>
   </mj-column>

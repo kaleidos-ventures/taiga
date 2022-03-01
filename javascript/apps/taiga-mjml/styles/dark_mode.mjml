@@ -19,6 +19,59 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     .darkimage {
       display: block !important;
     }
+
+    .body {
+      background-color: #262c39;
+    }
+
+    .body-content {
+      background-color: #384051;
+    }
+
+    .dm-title div {
+      color: #F9F9FB !important;
+    }
+
+    .dm-subtitle div {
+      color: #EFF0F5 !important;
+    }
+
+    .dm-text div {
+      color: #DADFE9 !important;
+    }
+
+    .dm-text-gray div {
+      color: #BEC7D8 !important;
+    }
+
+    .primary-link a:link,
+    .primary-link a:visited,
+    .primary-link a:active
+    .primary-link a:hover {
+      color: #BEC7D8;
+    }
+
+    .secondary-link a:link,
+    .secondary-link a:visited,
+    .secondary-link a:active
+    .secondary-link a:hover {
+      color: #83EEDE;
+    }
+
+    .tertiary-link a:link,
+    .tertiary-link a:visited,
+    .tertiary-link a:active
+    .tertiary-link a:hover {
+      color: #83EEDE;
+    }
+
+    strong {
+      color: #83EEDE;
+    }
+
+    .list li:before {
+      background-color: #83EEDE;
+    }
   }
 
   /*styling for support in Outlook app (Android)*/
@@ -28,6 +81,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   [data-ogsc] .darkimage {
     display: block !important;
+  }
+
+  [data-ogab] .body,
+  [data-ogsb] .body {
+    background-color: #262c39;
+  }
+
+  [data-ogab] .body-content,
+  [data-ogsb] .body-content {
+    background-color: #384051;
   }
 
 </mj-style>

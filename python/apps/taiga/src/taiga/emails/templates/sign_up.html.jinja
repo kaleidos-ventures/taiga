@@ -101,30 +101,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   </style>
   <style type="text/css">
-    :root {
-      color-scheme: light dark;
-      supported-color-schemes: light dark;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .lightimage {
-        display: none !important;
-      }
-
-      .darkimage {
-        display: block !important;
-      }
-    }
-
-    /*styling for support in Outlook app (Android)*/
-    [data-ogsc] .lightimage {
-      display: none !important;
-    }
-
-    [data-ogsc] .darkimage {
-      display: block !important;
-    }
-
     .lightimage {
       display: block;
     }
@@ -141,6 +117,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     .body-content {
       background-color: #FFFFFF;
+      box-sizing: border-box;
       max-width: 600px;
       min-width: 224px;
       padding: 44px 64px;
@@ -170,7 +147,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
 
     .tertiary-link a:hover {
-      color: # 006385;
+      color: #006385;
     }
 
     .separator {
@@ -179,19 +156,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
 
     .list {
-      list-style-type: none;
       margin: 0;
       padding: 0 16px 0 32px;
-    }
-
-    .list li:before {
-      border-radius: 4px;
-      content: "";
-      background-color: #007DA6;
-      display: inline-block;
-      height: 8px;
-      margin: 0 8px 0 -16px;
-      width: 8px;
     }
 
     strong {
@@ -199,10 +165,94 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       font-weight: 500;
     }
 
-    @media (max-width: 320px) {
+    @media (max-width: 600px) {
       .body-content {
         padding: 32px;
       }
+    }
+
+    :root {
+      color-scheme: light dark;
+      supported-color-schemes: light dark;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .lightimage {
+        display: none !important;
+      }
+
+      .darkimage {
+        display: block !important;
+      }
+
+      .body {
+        background-color: #262c39;
+      }
+
+      .body-content {
+        background-color: #384051;
+      }
+
+      .dm-title div {
+        color: #F9F9FB !important;
+      }
+
+      .dm-subtitle div {
+        color: #EFF0F5 !important;
+      }
+
+      .dm-text div {
+        color: #DADFE9 !important;
+      }
+
+      .dm-text-gray div {
+        color: #BEC7D8 !important;
+      }
+
+      .primary-link a:link,
+      .primary-link a:visited,
+      .primary-link a:active .primary-link a:hover {
+        color: #BEC7D8;
+      }
+
+      .secondary-link a:link,
+      .secondary-link a:visited,
+      .secondary-link a:active .secondary-link a:hover {
+        color: #83EEDE;
+      }
+
+      .tertiary-link a:link,
+      .tertiary-link a:visited,
+      .tertiary-link a:active .tertiary-link a:hover {
+        color: #83EEDE;
+      }
+
+      strong {
+        color: #83EEDE;
+      }
+
+      .list li:before {
+        background-color: #83EEDE;
+      }
+    }
+
+    /*styling for support in Outlook app (Android)*/
+    [data-ogsc] .lightimage {
+      display: none !important;
+    }
+
+    [data-ogsc] .darkimage {
+      display: block !important;
+    }
+
+    [data-ogab] .body,
+    [data-ogsb] .body {
+      background-color: #262c39;
+    }
+
+    [data-ogab] .body-content,
+    [data-ogsb] .body-content {
+      background-color: #384051;
     }
 
   </style>
@@ -274,12 +324,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                           <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
                             <tbody>
                               <tr>
-                                <td align="left" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
                                   <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">Verify your email</div>
                                 </td>
                               </tr>
                               <tr>
-                                <td align="left" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
                                   <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:18px;font-weight:400;line-height:150%;text-align:left;color:#384051;">To start using Taiga just click on the button below</div>
                                 </td>
                               </tr>
@@ -297,22 +347,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                                 </td>
                               </tr>
                               <tr>
-                                <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
                                   <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Button not working? Copy and paste this URL into you web browser:</div>
                                 </td>
                               </tr>
                               <tr>
-                                <td align="left" class="primary-link" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
+                                <td align="left" class="dm-text-gray primary-link" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
                                   <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;"><a href="{{ verify_url }}">{{ verify_url }}</a></div>
                                 </td>
                               </tr>
                               <tr>
-                                <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
                                   <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Welcome,</div>
                                 </td>
                               </tr>
                               <tr>
-                                <td align="left" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
                                   <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">The Taiga Team</div>
                                 </td>
                               </tr>
@@ -340,12 +390,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                                   <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
                                     <tbody>
                                       <tr>
-                                        <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
+                                        <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
                                           <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:12px;font-weight:400;line-height:1.5;text-align:left;color:#384051;">This link will expire in 4 days.</div>
                                         </td>
                                       </tr>
                                       <tr>
-                                        <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
+                                        <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
                                           <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:12px;font-weight:400;line-height:1.5;text-align:left;color:#384051;">If you did not create an account using this address, please ignore this email.</div>
                                         </td>
                                       </tr>
@@ -365,7 +415,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                                   <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
                                     <tbody>
                                       <tr>
-                                        <td align="left" class="secondary-link" style="font-size:0px;padding:0;word-break:break-word;">
+                                        <td align="left" class="secondary-link dm-text" style="font-size:0px;padding:0;word-break:break-word;">
                                           <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a href="mailto:{{ support_email }}"> Contact support </a></div>
                                         </td>
                                       </tr>

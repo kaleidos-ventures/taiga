@@ -12,11 +12,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   @media (prefers-color-scheme: dark) {
-    .lightimage {
+    .light-image {
       display: none !important;
     }
 
-    .darkimage {
+    .dark-image-wrapper,
+    .dark-image {
       display: block !important;
     }
 
@@ -46,22 +47,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     .primary-link a:link,
     .primary-link a:visited,
-    .primary-link a:active
-    .primary-link a:hover {
+    .primary-link a:active .primary-link a:hover {
       color: #BEC7D8;
     }
 
     .secondary-link a:link,
     .secondary-link a:visited,
-    .secondary-link a:active
-    .secondary-link a:hover {
+    .secondary-link a:active .secondary-link a:hover {
       color: #83EEDE;
     }
 
     .tertiary-link a:link,
     .tertiary-link a:visited,
-    .tertiary-link a:active
-    .tertiary-link a:hover {
+    .tertiary-link a:active .tertiary-link a:hover {
       color: #83EEDE;
     }
 
@@ -75,14 +73,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   /*styling for support in Outlook app (Android)*/
-  [data-ogsc] .lightimage {
-    display: none !important;
-  }
-
-  [data-ogsc] .darkimage {
-    display: block !important;
-  }
-
   [data-ogab] .body,
   [data-ogsb] .body {
     background-color: #262c39;
@@ -93,4 +83,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     background-color: #384051;
   }
 
+  [data-ogsc] .light-image {
+    display: none !important;
+  }
+
+  [data-ogsc] .dark-image-wrapper,
+  [data-ogsc] .dark-image {
+    display: block !important;
+  }
 </mj-style>

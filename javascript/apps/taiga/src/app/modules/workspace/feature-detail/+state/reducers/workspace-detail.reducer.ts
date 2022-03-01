@@ -12,7 +12,7 @@ import { immerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
 
 export interface WorkspaceDetailState {
-  workspace: Workspace;
+  workspace: Workspace | null;
   workspaceProjects: Project[];
 }
 
@@ -49,7 +49,12 @@ export const reducer = createReducer(
 
       return state;
     }
-  )
+  ),
+  on(WorkspaceActions.resetWorkspace, (state): WorkspaceDetailState => {
+    state.workspace = null;
+
+    return state;
+  })
 );
 
 export const workspaceDetailFeature = createFeature({

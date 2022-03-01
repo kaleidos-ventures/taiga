@@ -17,7 +17,11 @@ import {
   selectWorkspace,
   selectWorkspaceProjects,
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
-import { fetchWorkspace } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
+import {
+  fetchWorkspace,
+  resetWorkspace,
+} from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
+import { filterNil } from '~/app/shared/utils/operators';
 
 @UntilDestroy()
 @Component({
@@ -40,7 +44,7 @@ export class WorkspaceDetailComponent implements OnInit {
     private store: Store,
     private state: RxState<{
       projectsToShow: boolean;
-      workspace: Workspace;
+      workspace: Workspace | null;
       project: Project[];
     }>
   ) {}
@@ -54,7 +58,10 @@ export class WorkspaceDetailComponent implements OnInit {
       }
     });
 
-    this.state.connect('workspace', this.store.select(selectWorkspace));
+    this.state.connect(
+      'workspace',
+      this.store.select(selectWorkspace).pipe(filterNil())
+    );
     this.state.connect('project', this.store.select(selectWorkspaceProjects));
   }
 
@@ -69,5 +76,9 @@ export class WorkspaceDetailComponent implements OnInit {
 
   public onResized(event: ResizedEvent) {
     this.setCardAmounts(event.newRect.width);
+  }
+
+  public ngOnDestroy() {
+    this.store.dispatch(resetWorkspace());
   }
 }

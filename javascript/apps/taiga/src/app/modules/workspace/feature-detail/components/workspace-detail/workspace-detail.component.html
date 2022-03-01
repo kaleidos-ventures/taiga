@@ -8,75 +8,76 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *ngIf="model$ | async as vm">
   <ng-container *transloco="let t">
-    <div class="workspace-detail-top">
-      <div class="workspace-detail-avatar">
-        <tg-ui-avatar
-          class="workspace-avatar"
-          type="dark"
-          [color]="vm.workspace.color"
-          size="xl"
-          [name]="vm.workspace.name">
-        </tg-ui-avatar>
-      </div>
-      <div class="workspace-detail-title-wrapper">
-        <div class="workspace-detail-title-route">Workspace/</div>
-        <div class="workspace-detail-title-container">
-          <h3 class="workspace-detail-title">{{ vm.workspace.name }}</h3>
-          <!-- TODO: *ngIf owner when API provides roles -->
-          <tg-ui-badge
-            *ngIf="vm.workspace.myRole"
-            [label]="t('commons.roles.' + vm.workspace.myRole)"></tg-ui-badge>
-          <tg-ui-badge
-            *ngIf="vm.workspace.isOwner"
-            [label]="t('commons.owner')"></tg-ui-badge>
+    <ng-container *ngIf="vm.workspace">
+      <div class="workspace-detail-top">
+        <div class="workspace-detail-avatar">
+          <tg-ui-avatar
+            class="workspace-avatar"
+            type="dark"
+            [color]="vm.workspace.color"
+            size="xl"
+            [name]="vm.workspace.name">
+          </tg-ui-avatar>
+        </div>
+        <div class="workspace-detail-title-wrapper">
+          <div class="workspace-detail-title-route">Workspace/</div>
+          <div class="workspace-detail-title-container">
+            <h3 class="workspace-detail-title">{{ vm.workspace.name }}</h3>
+            <tg-ui-badge
+              *ngIf="vm.workspace.myRole"
+              [label]="t('commons.roles.' + vm.workspace.myRole)"></tg-ui-badge>
+            <tg-ui-badge
+              *ngIf="vm.workspace.isOwner"
+              [label]="t('commons.owner')"></tg-ui-badge>
+          </div>
+        </div>
+        <div class="workspace-detail-actions">
+          <a
+            tuiButton
+            type="button"
+            appearance="tertiary"
+            [routerLink]="['/']"
+            iconRight="arrow-right">
+            {{ t('workspace.back_to_projects') }}
+          </a>
         </div>
       </div>
-      <div class="workspace-detail-actions">
-        <a
-          tuiButton
-          type="button"
-          appearance="tertiary"
-          [routerLink]="['/']"
-          iconRight="arrow-right">
-          {{ t('workspace.back_to_projects') }}
-        </a>
+      <div
+        *ngIf="
+          vm.workspace.totalProjects === 0 &&
+          vm.workspace.hasProjects &&
+          vm.workspace.myRole !== 'admin'
+        "
+        class="workspace-message-placeholder detail"
+        [innerHtml]="t('workspace.placehoder_no_access')"></div>
+      <div
+        *ngIf="
+          vm.workspace.totalProjects === 0 &&
+          !vm.workspace.hasProjects &&
+          vm.workspace.myRole !== 'admin'
+        "
+        class="workspace-message-placeholder detail"
+        [innerHtml]="t('workspace.placehoder_no_projects')"></div>
+      <div
+        (resized)="onResized($event)"
+        [class]="gridClass"
+        class="workspace-item-card-grid">
+        <tg-project-card
+          *ngIf="vm.project.length === 0 && vm.workspace.myRole === 'admin'"
+          [slug]="vm.workspace.slug"
+          [placeholder]="true"
+          [firstProject]="true">
+        </tg-project-card>
+        <tg-project-card
+          *ngFor="let project of vm.project; trackBy: trackByLatestProject"
+          [project]="project">
+        </tg-project-card>
+        <tg-project-card
+          *ngIf="vm.project.length > 0"
+          [slug]="vm.workspace.slug"
+          [placeholder]="true">
+        </tg-project-card>
       </div>
-    </div>
-    <div
-      *ngIf="
-        vm.workspace.totalProjects === 0 &&
-        vm.workspace.hasProjects &&
-        vm.workspace.myRole !== 'admin'
-      "
-      class="workspace-message-placeholder detail"
-      [innerHtml]="t('workspace.placehoder_no_access')"></div>
-    <div
-      *ngIf="
-        vm.workspace.totalProjects === 0 &&
-        !vm.workspace.hasProjects &&
-        vm.workspace.myRole !== 'admin'
-      "
-      class="workspace-message-placeholder detail"
-      [innerHtml]="t('workspace.placehoder_no_projects')"></div>
-    <div
-      (resized)="onResized($event)"
-      [class]="gridClass"
-      class="workspace-item-card-grid">
-      <tg-project-card
-        *ngIf="vm.project.length === 0 && vm.workspace.myRole === 'admin'"
-        [slug]="vm.workspace.slug"
-        [placeholder]="true"
-        [firstProject]="true">
-      </tg-project-card>
-      <tg-project-card
-        *ngFor="let project of vm.project; trackBy: trackByLatestProject"
-        [project]="project">
-      </tg-project-card>
-      <tg-project-card
-        *ngIf="vm.project.length > 0"
-        [slug]="vm.workspace.slug"
-        [placeholder]="true">
-      </tg-project-card>
-    </div>
+    </ng-container>
   </ng-container>
 </ng-container>

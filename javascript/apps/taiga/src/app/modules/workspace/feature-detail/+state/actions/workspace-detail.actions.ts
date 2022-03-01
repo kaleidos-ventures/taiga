@@ -23,3 +23,5 @@ export const fetchWorkspaceProjectsSuccess = createAction(
   '[Workspace] Fetch Projects Success',
   props<{ projects: Project[] }>()
 );
+
+export const resetWorkspace = createAction('[Workspace] Reset workspace');

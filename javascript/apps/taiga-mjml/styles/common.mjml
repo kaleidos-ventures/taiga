@@ -17,8 +17,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   .body {
     background-color: #EFF0F5;
     margin: auto;
-    max-width: 632px;
-    min-width: 288px;
     padding: 16px;
   }
 

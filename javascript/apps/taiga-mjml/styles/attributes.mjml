@@ -8,7 +8,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <mj-attributes>
   <!-- components overrides -->
   <mj-section padding="0" />
-  <mj-text font-family="Ubuntu" padding="0" color="#505C74" />
+  <mj-text font-family="Ubuntu, Arial, Helvetica, sans-serif" padding="0" color="#505C74" />
 
   <!-- buttons -->
   <mj-class
@@ -16,7 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     background-color="#83EEDE"
     border-radius="4px"
     color="#505C74"
-    font-family="Ubuntu"
+    font-family="Ubuntu, Arial, Helvetica, sans-serif "
     font-size="18px"
     font-weight="500"
     line-height="21px"

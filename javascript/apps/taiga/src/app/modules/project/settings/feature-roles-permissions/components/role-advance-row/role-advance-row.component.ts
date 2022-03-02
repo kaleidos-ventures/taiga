@@ -13,6 +13,8 @@ import {
   Component,
   Input,
   OnInit,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
@@ -28,7 +30,7 @@ let nextId = 0;
   styleUrls: ['./role-advance-row.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoleAdvanceRowComponent implements OnInit {
+export class RoleAdvanceRowComponent implements OnInit, OnChanges {
   @Input()
   public formGroup!: FormGroup;
 
@@ -57,11 +59,16 @@ export class RoleAdvanceRowComponent implements OnInit {
 
     this.refreshPermission();
     this.previousPermission = this.permissionRowModel;
+  }
 
-    this.formGroup.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+  public ngOnChanges(changes: SimpleChanges) {
+    if (changes.formGroup) {
+      this.formGroup.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+        this.refreshPermission();
+      });
+
       this.refreshPermission();
-      this.cd.detectChanges();
-    });
+    }
   }
 
   public refreshPermission() {

@@ -10,12 +10,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <div class="left">
       <a
         appearance="home-button"
+        [attr.aria-label]="t('go_home')"
         [routerLink]="['/']"
         class="home-button"
         tuiIconButton
         icon="taigaLogo"
         type="button">
-        <span class="visually-hidden">{{ t('go_home') }}</span>
       </a>
       <tui-hosted-dropdown
         [tuiDropdownMaxHeight]="800"
@@ -30,44 +30,48 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div class="actions">
         <button
           appearance="nav-icon-button"
+          [attr.aria-label]="t('search')"
           tuiIconButton
           icon="search"
-          type="button">
-          <span class="visually-hidden">{{ t('search') }}</span>
-        </button>
+          type="button"></button>
         <button
           appearance="nav-icon-button"
           tuiIconButton
+          [attr.aria-label]="t('discover')"
           icon="discover"
-          type="button">
-          <span class="visually-hidden">{{ t('discover') }}</span>
-        </button>
+          type="button"></button>
         <button
           appearance="nav-icon-button"
           tuiIconButton
+          [attr.aria-label]="t('help')"
           icon="help"
-          type="button">
-          <span class="visually-hidden">{{ t('help') }}</span>
-        </button>
-        <div class="notification-button">
-          <div class="counter">13</div>
+          type="button"></button>
+        <tui-badged-content
+          [contentTop]="24"
+          colorTop="var(--color-red)"
+          size="s">
           <button
             appearance="nav-icon-button"
+            [attr.aria-label]="t('notification')"
+            [attr.aria-description]="
+              t('notification_desc', {
+                notifications: 24
+              })
+            "
             tuiIconButton
             icon="bell"
-            type="button">
-            <span class="visually-hidden">{{ t('notification') }}</span>
-            <div class="counter">13</div>
-          </button>
-        </div>
+            type="button"></button>
+        </tui-badged-content>
       </div>
       <div class="separator"></div>
       <div class="avatar-holder">
         <tui-hosted-dropdown
           [content]="userDropdown"
           [(open)]="openUserDropdown">
-          <button class="avatar-dropdown-button" type="button">
-            <span class="visually-hidden">{{ t('user_avatar') }}</span>
+          <button
+            class="avatar-dropdown-button"
+            [attr.aria-label]="t('user_avatar')"
+            type="button">
             <tg-user-avatar [attr.title]="t('user_avatar')"></tg-user-avatar>
           </button>
         </tui-hosted-dropdown>

@@ -34,7 +34,7 @@ def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
             .values_list("id", flat=True)
         )
         total_projects = len(projects_ids)
-        projects_qs = Project.objects.filter(id__in=projects_ids[:6])
+        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         is_owner = Workspace.objects.get(id=ws_id).owner.id == user.id
         qs = (
@@ -67,7 +67,7 @@ def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
             .values_list("id", flat=True)
         )
         total_projects = len(projects_ids)
-        projects_qs = Project.objects.filter(id__in=projects_ids[:6])
+        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         qs = (
             Workspace.objects.filter(id=ws_id)
@@ -101,7 +101,7 @@ def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
             .values_list("id", flat=True)
         )
         total_projects = len(projects_ids)
-        projects_qs = Project.objects.filter(id__in=projects_ids[:6])
+        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         qs = (
             Workspace.objects.filter(id=ws_id)

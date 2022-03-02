@@ -29,7 +29,10 @@ def get_workspace_projects_for_user(workspace_id: int, user_id: int) -> list[Pro
     ws_allowed = ~Q(members__id=user_id) & Q(workspace_member_permissions__len__gt=0)
     pj_allowed = Q(members__id=user_id)
     return list(
-        Project.objects.prefetch_related("workspace").filter(pj_in_workspace & (ws_allowed | pj_allowed)).distinct()
+        Project.objects.prefetch_related("workspace")
+        .filter(pj_in_workspace & (ws_allowed | pj_allowed))
+        .order_by("-created_date")
+        .distinct()
     )
 
 

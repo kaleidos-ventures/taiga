@@ -25,9 +25,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"",
@@ -88,9 +85,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
@@ -179,9 +173,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
 									""
 								],
 								"type": "text/javascript"
@@ -228,9 +219,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
@@ -299,9 +287,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -352,9 +337,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
@@ -425,9 +407,6 @@
 									"    pm.response.to.have.status(200);",
 									"",
 									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"",
@@ -494,9 +473,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -558,9 +534,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -607,9 +580,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Check values\", function () {",
 									"    jsonRes = pm.response.json();",
@@ -697,9 +667,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -743,9 +710,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
@@ -801,9 +765,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
@@ -912,9 +873,6 @@
 									"    pm.response.to.have.status(200);",
 									"",
 									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"",
@@ -999,9 +957,6 @@
 									"    pm.response.to.have.status(200);",
 									"",
 									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"",
@@ -1076,9 +1031,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
@@ -1157,9 +1109,6 @@
 									"    pm.response.to.have.status(200);",
 									"",
 									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"",
@@ -1223,9 +1172,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
@@ -1294,9 +1240,6 @@
 									"    pm.response.to.have.status(200);",
 									"",
 									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"",
@@ -1363,9 +1306,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1427,9 +1367,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1479,9 +1416,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1599,9 +1533,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1658,9 +1589,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1707,9 +1635,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
@@ -1772,9 +1697,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
@@ -1839,12 +1761,7 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"",
 									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
-									"",
 									"",
 									"// NOTE: This test simply undo the previous changes"
 								],
@@ -1905,9 +1822,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1965,9 +1879,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2013,9 +1924,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(400);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"// WARNING: THIS TEST MAY FAIL DUE TO IT'S NOT VERIFIED THE USER IS A PJ-ADMIN",
 									"pm.test(\"Error JSON is correct\", function () {",
@@ -2087,9 +1995,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(400);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"// WARNING: THIS TEST MAY FAIL DUE TO IT'S NOT VERIFIED THE USER IS A PJ-ADMIN",
 									"pm.test(\"Error JSON is correct\", function () {",
@@ -2167,9 +2072,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2213,9 +2115,6 @@
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
@@ -2327,9 +2226,6 @@
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
-									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"",
@@ -2393,9 +2289,6 @@
 									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(1);",
 									"    pm.expect(numOfErrorFields).to.equal(3);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2455,9 +2348,6 @@
 									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(1);",
 									"    pm.expect(numOfErrorFields).to.equal(3);  ",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2518,9 +2408,6 @@
 									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(1);",
 									"    pm.expect(numOfErrorFields).to.equal(3);    ",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2590,9 +2477,6 @@
 									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(1);",
 									"    pm.expect(numOfErrorFields).to.equal(3);   ",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2652,9 +2536,6 @@
 									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(1);",
 									"    pm.expect(numOfErrorFields).to.equal(3);",
-									"});",
-									"pm.test(\"Response time is less than 200ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(200);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2712,9 +2593,6 @@
 									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(1);",
 									"    pm.expect(numOfErrorFields).to.equal(3);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2771,11 +2649,6 @@
 									"pm.test(\"Environment variable settings\", function () {",
 									"    pm.environment.set(\"auth_token\", pm.response.json().token);",
 									"    pm.environment.set(\"refresh_token\", pm.response.json().refresh);",
-									"});",
-									"",
-									"// Tests",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2842,9 +2715,6 @@
 									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(1);",
 									"    pm.expect(numOfErrorFields).to.equal(3);",
-									"});",
-									"pm.test(\"Response time is less than the expected ms\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(600);",
 									"});"
 								],
 								"type": "text/javascript"

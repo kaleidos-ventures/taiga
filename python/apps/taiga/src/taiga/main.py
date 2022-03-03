@@ -10,6 +10,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException
 from taiga import __description__, __title__, __version__
+from taiga.base.db.middlewares import DBConnectionMiddleware
 from taiga.conf import settings
 from taiga.exceptions.handlers import http_exception_handler, request_validation_exception_handler
 from taiga.exceptions.middlewares import UnexpectedExceptionMiddleware
@@ -28,6 +29,9 @@ api = FastAPI(
 ##############################################
 # MIDDLEWARES
 ##############################################
+
+# DB connections middleware
+api.add_middleware(DBConnectionMiddleware)
 
 # TaskQueue middleware
 api.add_middleware(TaskQueueMiddleware)

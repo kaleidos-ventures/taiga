@@ -10,41 +10,48 @@ import {
   createDirectiveFactory,
   SpectatorDirective,
 } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { ProjectMockFactory } from '@taiga/data';
+import { of } from 'rxjs';
+import { PermissionsService } from '~/app/services/permissions.service';
 import { HasPermissionDirective } from './has-permission.directive';
 
-describe.skip('HasPermissionDirective', () => {
+describe('HasPermissionDirective', () => {
   let spectator: SpectatorDirective<HasPermissionDirective>;
-
-  const initialState = { project: ProjectMockFactory() };
-  let store: MockStore;
 
   const createDirective = createDirectiveFactory({
     directive: HasPermissionDirective,
-    mocks: [],
-    providers: [provideMockStore({ initialState })],
+    mocks: [PermissionsService],
+    providers: [],
     detectChanges: false,
   });
 
   beforeEach(() => {
-    spectator = createDirective(
-      `<div *hasPermission="
+    spectator = createDirective(`
+      <div *hasPermission="
         ['view', 'edit'];
         entity: 'us';
         operation: 'OR'">
         Visible
-      </div>`
-    );
-    store = spectator.inject(MockStore);
-    store.select = jest.fn();
+      </div>
+    `);
+  });
+
+  it('should be visile', () => {
+    const permissionsService = spectator.inject(PermissionsService);
+
+    permissionsService.hasPermissions$.mockReturnValue(of(true));
+
+    spectator.detectChanges();
+
+    expect(spectator.fixture.nativeElement.innerHTML).toHaveText('Visible');
   });
 
   it('should be invisible', () => {
-    expect(spectator.element).toBeVisible();
-  });
+    const permissionsService = spectator.inject(PermissionsService);
 
-  it('should be invisible', () => {
-    expect(spectator.element.innerHTML).not.toBeVisible();
+    permissionsService.hasPermissions$.mockReturnValue(of(false));
+
+    spectator.detectChanges();
+
+    expect(spectator.fixture.nativeElement.innerHTML).not.toHaveText('Visible');
   });
 });

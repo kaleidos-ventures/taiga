@@ -6,7 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -31,7 +36,7 @@ import { filterNil } from '~/app/shared/utils/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
 })
-export class WorkspaceDetailComponent implements OnInit {
+export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   public readonly model$ = this.state.select();
   public amountOfProjectsToShow = 6;
 

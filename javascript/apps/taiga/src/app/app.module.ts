@@ -42,6 +42,12 @@ import { ErrorsModule } from './modules/errors/errors.module';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
+  tuiIconCloseLarge: 'close',
+  tuiIconInfo: 'info',
+  notificationInfo: 'info',
+  tuiIconCancel: 'alert',
+  tuiIconAttention: 'alert',
+  tuiIconCheckCircle: 'check',
 };
 
 export function iconsPath(name: string): string {

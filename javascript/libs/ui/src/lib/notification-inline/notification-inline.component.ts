@@ -29,6 +29,8 @@ export class NotificationInlineComponent {
   public hasIcon = true;
 
   public get icon(): string {
-    return 'notification-' + this.status;
+    return `notification${this.status
+      .charAt(0)
+      .toUpperCase()}${this.status.slice(1)}`;
   }
 }

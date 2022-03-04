@@ -1,0 +1,54 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<ng-container *transloco="let t; read: 'auth'">
+  <main class="login">
+    <div class="login-wrapper">
+      <img
+        class="taiga-logo"
+        role="presentation"
+        src="/assets/images/LogoTaiga.svg"
+        alt="" />
+      <h1 class="login-title">{{ t('signup.title') }}</h1>
+      <p class="login-subtitle">{{ t('signup.subtitle') }}</p>
+      <ng-container *ngIf="!displayForm">
+        <button
+          (click)="displaySignUpForm(true)"
+          appearance="tertiary"
+          tuiButton
+          icon="mail"
+          type="button">
+          {{ t('signup.create_account_email') }}
+        </button>
+      </ng-container>
+      <ng-container *ngIf="displayForm">
+        <!-- Display form here -->
+        <p>display form here</p>
+      </ng-container>
+      <p
+        class="terms-and-privacy"
+        [innerHtml]="
+          t('signup.terms_and_privacy', {
+            termsOfService: getURL('terms-of-service'),
+            privacyPolicy: getURL('privacy-policy')
+          })
+        "></p>
+    </div>
+  </main>
+  <footer class="login-footer">
+    <p
+      class="login-link"
+      [innerHtml]="
+        t('signup.already_account', {
+          login: getURL('login')
+        })
+      "></p>
+    <p class="premium-link">
+      Copy about premium plan or whatever. <a href="#">A link</a>
+    </p>
+  </footer>
+</ng-container>

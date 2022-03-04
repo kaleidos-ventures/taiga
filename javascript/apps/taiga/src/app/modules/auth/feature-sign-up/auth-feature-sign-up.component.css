@@ -1,0 +1,100 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+@import "tools/responsive.css";
+
+:host {
+  background-image: url("/assets/images/signup/signup-bg-left.svg"),
+    url("/assets/images/signup/signup-bg-right.svg");
+  background-position: bottom left, bottom right;
+  background-repeat: no-repeat, no-repeat;
+  background-size: 33vw, 33vw;
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+
+  @media (--lt-medium) {
+    background: none;
+  }
+
+  @media (--gt-xlarge) {
+    background-size: 500px, 500px;
+  }
+
+  & > .login {
+    flex: 1;
+  }
+
+  & > .login-footer {
+    flex: 0;
+  }
+}
+
+.login {
+  display: grid;
+  place-items: center;
+}
+
+.login-wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  inline-size: 384px;
+  justify-content: center;
+  padding: var(--spacing-16);
+  padding-block-end: var(--spacing-32);
+}
+
+.taiga-logo {
+  aspect-ratio: 1/1;
+  inline-size: var(--spacing-56);
+}
+
+.login-title,
+.login-subtitle {
+  margin: 0;
+  text-align: center;
+}
+
+.login-title {
+  @mixin font-heading-3;
+}
+
+.login-subtitle {
+  @mixin font-paragraph;
+
+  margin-block-end: var(--spacing-8);
+}
+
+.terms-and-privacy {
+  @mixin font-small;
+
+  hyphens: none;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.login-footer {
+  @mixin font-paragraph;
+
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--spacing-16);
+}
+
+.login-link,
+.premium-link {
+  margin: 0;
+}
+
+.login-link {
+  margin-block-end: var(--spacing-8);
+}

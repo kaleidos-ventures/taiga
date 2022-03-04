@@ -1,0 +1,9 @@
+{
+  "signup": {
+    "title": "Create an account in Taiga",
+    "subtitle": "Free for all",
+    "create_account_email": "Create an account with your email",
+    "terms_and_privacy": "By creating an account, you agree to our <a href='{{ termsOfService }}'>terms of service</a> and <a href='{{ privacyPolicy }}'> privacy policy</a>.",
+    "already_account": "Already have an account? <a href='{{ login }}'>login here</a>"
+  }
+}

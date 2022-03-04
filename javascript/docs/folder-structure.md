@@ -56,7 +56,7 @@ Example without group scope:
 | │   ├── reducers
 | │   └── selectors
 | └── projects-data-access.module.ts
-├── feature-settings
+├── feature-shell (the name of the parent feature, in case there are many)
 └── feature-list
 ├── +state (only if the feature needs a state for the UI)
 │   ├── actions

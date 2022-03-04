@@ -23,3 +23,8 @@ class UserFactory(Factory):
 @sync_to_async
 def create_user(**kwargs):
     return UserFactory.create(**kwargs)
+
+
+@sync_to_async
+def build_user(**kwargs):
+    return UserFactory.build(**kwargs)

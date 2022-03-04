@@ -20,7 +20,3 @@ class IncompatiblePermissionsSetError(Exception):
 
 class NotPremiumWorkspaceError(Exception):
     pass
-
-
-class EmailAlreadyExistsError(Exception):
-    pass

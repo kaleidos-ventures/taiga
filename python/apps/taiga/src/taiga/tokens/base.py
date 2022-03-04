@@ -36,10 +36,15 @@ from uuid import uuid4
 
 from taiga.base.utils.datetime import aware_utcnow, datetime_to_epoch, epoch_to_datetime
 from taiga.conf import settings
-
-from . import services as tokens_services
-from .backends import TokenBackend, token_backend
-from .exceptions import TokenBackendError, TokenError
+from taiga.tokens import services as tokens_services
+from taiga.tokens.backends import TokenBackend, token_backend
+from taiga.tokens.exceptions import (
+    DeniedTokenError,
+    ExpiredTokenBackendError,
+    ExpiredTokenError,
+    TokenBackendError,
+    TokenError,
+)
 
 USER_ID_FIELD: Final = "id"
 USER_ID_CLAIM: Final = "user_id"
@@ -74,8 +79,10 @@ class Token:
             # Decode token
             try:
                 self.payload = self.token_backend.decode(token, verify=verify)
+            except ExpiredTokenBackendError:
+                raise ExpiredTokenError("Token is expired")
             except TokenBackendError:
-                raise TokenError("Token is invalid or expired")
+                raise TokenError("Token is invalid")
         else:
             # New token.  Skip all the verification steps.
             self.payload = {settings.TOKENS.TOKEN_TYPE_CLAIM: self.token_type}
@@ -168,7 +175,7 @@ class Token:
         claim_time = epoch_to_datetime(claim_value)
 
         if claim_time <= current_time:
-            raise TokenError(f"Token '{claim}' claim has expired")
+            raise ExpiredTokenError(f"Token '{claim}' claim has expired")
 
     def _verify_token_type(self) -> None:
         """
@@ -241,7 +248,7 @@ class DenylistMixin(_BaseMixin):
         jti = self.payload[settings.TOKENS.JTI_CLAIM]
 
         if await tokens_services.token_is_denied(jti=jti):
-            raise TokenError("Token is denylisted")
+            raise DeniedTokenError("Token is denylisted")
 
     async def denylist(self) -> None:
         """

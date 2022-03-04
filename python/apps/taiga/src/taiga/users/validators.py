@@ -48,3 +48,7 @@ class CreateUserValidator(BaseModel):
     def check_accept_terms(cls, v: bool) -> bool:
         assert v is True, "User has to accept terms of service"
         return v
+
+
+class VerifyTokenValidator(BaseModel):
+    token: str

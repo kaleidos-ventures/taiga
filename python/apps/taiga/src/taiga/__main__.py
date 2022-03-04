@@ -20,7 +20,7 @@ from typing import Any
 import typer
 import uvicorn
 from taiga import __version__
-from taiga.base.django import setup_django
+from taiga.base.django import call_django_command, setup_django
 from taiga.emails.commands import cli as emails_cli
 from taiga.tasksqueue.commands import cli as tasksqueue_cli
 from taiga.tasksqueue.commands import run_worker
@@ -56,14 +56,6 @@ cli.add_typer(emails_cli, name="emails")
 cli.add_typer(tasksqueue_cli, name="tasksqueue")
 
 
-@cli.command(help="Load sample data.")
-def sampledata() -> None:
-    from taiga.base.utils.asyncio import run_async_as_sync
-    from taiga.base.utils.sample_data import load_sample_data
-
-    run_async_as_sync(load_sample_data())
-
-
 def _run_api(**kwargs: Any) -> None:
     wsgi_app = os.getenv("TAIGA_WSGI_APP", "taiga.wsgi:app")
     uvicorn.run(wsgi_app, **kwargs)
@@ -85,6 +77,19 @@ def devserve(
 @cli.command(help="Run a Taiga server.")
 def serve(host: str = typer.Option("0.0.0.0", "--host", "-h"), port: int = typer.Option(8000, "--port", "-p")) -> None:
     _run_api(host=host, port=port, reload=False, debug=False)
+
+
+@cli.command(help="Run a python shell, initializing the database and the rest of the environment")
+def shell() -> None:
+    call_django_command("shell")
+
+
+@cli.command(help="Load sample data.")
+def sampledata() -> None:
+    from taiga.base.utils.asyncio import run_async_as_sync
+    from taiga.base.utils.sample_data import load_sample_data
+
+    run_async_as_sync(load_sample_data())
 
 
 if __name__ == "__main__":

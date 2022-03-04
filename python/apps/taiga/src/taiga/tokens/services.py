@@ -7,14 +7,13 @@
 
 from datetime import datetime
 
+from taiga.tokens import repositories as tokens_repo
+from taiga.tokens.models import DenylistedToken, OutstandingToken
 from taiga.users.models import User
 
-from . import repositories as tokens_repo
-from .models import DenylistedToken, OutstandingToken
-
-# -----------------
+###########################################
 # Outstanding Token
-# -----------------
+###########################################
 
 
 async def create_outstanding_token(
@@ -29,9 +28,9 @@ async def get_or_create_outstanding_token(jti: str, token: str, expires_at: date
     return await tokens_repo.get_or_create_outstanding_token(jti=jti, token=token, expires_at=expires_at)
 
 
-# ----------------
+###########################################
 # Denylisted Token
-# ----------------
+###########################################
 
 
 async def deny_token(token: OutstandingToken) -> tuple[DenylistedToken, bool]:

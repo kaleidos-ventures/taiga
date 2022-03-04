@@ -38,7 +38,7 @@ from django.core.management import call_command
 from taiga.auth.tokens import AccessToken, RefreshToken
 from taiga.base.utils.datetime import epoch_to_datetime
 from taiga.conf import settings
-from taiga.tokens.exceptions import TokenError
+from taiga.tokens.exceptions import DeniedTokenError
 from taiga.tokens.models import DenylistedToken, OutstandingToken
 from tests.utils import factories as f
 
@@ -89,7 +89,7 @@ async def test_token_will_not_validate_if_denylisted():
     # Add token to denylist
     await dt_create(token=outstanding_token)
 
-    with pytest.raises(TokenError) as e:
+    with pytest.raises(DeniedTokenError) as e:
         # Should raise exception
         await RefreshToken.create(str(token))
         assert "denylisted" in e.exception.args[0]
@@ -119,7 +119,7 @@ async def test_tokens_can_be_manually_denylisted():
     denylisted_token = (await ot_first()).denylistedtoken
     assert denylisted_token.token.jti == token["jti"]
 
-    with pytest.raises(TokenError) as e:
+    with pytest.raises(DeniedTokenError) as e:
         # Should raise exception
         await RefreshToken.create(str(token))
         assert "denylisted" in e.exception.args[0]

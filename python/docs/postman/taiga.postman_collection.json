@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "643187ab-1ed6-4d97-a5b4-cc0f82beb566",
+		"_postman_id": "7ab6238f-3f2a-4fea-8d8e-376e509f580d",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -165,6 +165,34 @@
 				},
 				{
 					"name": "new user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"your_verify_token_here\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users/verify",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"users",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify new user",
 					"request": {
 						"method": "POST",
 						"header": [],

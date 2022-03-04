@@ -10,6 +10,7 @@ from typing import Any
 from asgiref.sync import sync_to_async
 from django.contrib.auth.models import update_last_login as django_update_last_login
 from django.db.models import Q
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.users.models import User
 
 
@@ -53,3 +54,10 @@ def create_user(email: str, username: str, full_name: str, password: str) -> Use
     )
     user.set_password(password)
     return user
+
+
+@sync_to_async
+def verify_user(user: User) -> None:
+    user.is_active = True
+    user.date_verification = aware_utcnow()
+    user.save()

@@ -31,9 +31,31 @@
 #   SOFTWARE.
 
 
+###########################################
+# TOKEN BACKEND ERRORS
+###########################################
+
+
 class TokenBackendError(Exception):
     pass
 
 
+class ExpiredTokenBackendError(TokenBackendError):
+    pass
+
+
+###########################################
+# TOKEN ERRORS
+###########################################
+
+
 class TokenError(Exception):
+    pass
+
+
+class ExpiredTokenError(TokenError):
+    pass
+
+
+class DeniedTokenError(TokenError):
     pass

@@ -5,11 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.tokens.base import DenylistMixin, Token
-from taiga.tokens.exceptions import TokenError
+from datetime import timedelta
 
-__all__ = [
-    "TokenError",
-    "Token",
-    "DenylistMixin",
-]
+from taiga.conf import settings
+from taiga.tokens import DenylistMixin, Token
+
+
+class VerifyUserToken(DenylistMixin, Token):
+    token_type = "verify-user"
+    lifetime = timedelta(minutes=settings.VERIFY_USER_TOKEN_LIFETIME)

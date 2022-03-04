@@ -5,8 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from datetime import timedelta
+from unittest import mock
+
 import pytest
 from fastapi import status
+
+from taiga.users.services import _generate_verify_user_token
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -20,7 +25,7 @@ pytestmark = pytest.mark.django_db
 async def test_me_error_no_authenticated_user(client):
     response = client.get("/users/me")
 
-    assert response.status_code == 401
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 async def test_me_success(client):
@@ -29,7 +34,7 @@ async def test_me_success(client):
     client.login(user)
     response = client.get("/users/me")
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert "email" in response.json().keys()
 
 
@@ -60,3 +65,50 @@ async def test_create_user_email_already_exists(client):
     client.post("/users", json=data)
     response = client.post("/users", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+##########################################################
+# POST /users/verify
+##########################################################
+
+
+async def test_verify_user_ok(client):
+    user = await f.create_user(is_active=False)
+
+    data = {"token": await _generate_verify_user_token(user)}
+
+    response = client.post("/users/verify", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_verify_user_error_invalid_token(client):
+    data = {"token": "invalid token"}
+
+    response = client.post("/users/verify", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+    assert response.json()["error"]["detail"] == "invalid_token"
+
+
+async def test_verify_user_error_expired_token(client):
+    with mock.patch(
+        "taiga.users.tokens.VerifyUserToken.lifetime", new_callable=mock.PropertyMock(return_value=timedelta(days=-1))
+    ):
+        user = await f.create_user(is_active=False)
+
+        data = {"token": await _generate_verify_user_token(user)}
+
+        response = client.post("/users/verify", json=data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+        assert response.json()["error"]["detail"] == "expired_token"
+
+
+async def test_verify_user_error_used_token(client):
+    user = await f.create_user(is_active=False)
+
+    data = {"token": await _generate_verify_user_token(user)}
+
+    response = client.post("/users/verify", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    response = client.post("/users/verify", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+    assert response.json()["error"]["detail"] == "used_token"

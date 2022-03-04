@@ -8,6 +8,7 @@
 import os
 
 import django
+from django.core.management import call_command as call_django_command  # noqa
 
 
 def setup_django() -> None:

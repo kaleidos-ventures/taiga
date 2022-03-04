@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import patch
 
 import pytest
 from taiga.permissions import choices, services
@@ -153,7 +153,7 @@ async def test_user_can_view_project_being_a_team_member():
 async def get_user_project_role_info():
     user = await f.create_user()
     project = await f.create_project(owner=user)
-    with patch("taiga.permissions.services.roles_repositories", new_callable=AsyncMock) as fake_repository:
+    with patch("taiga.permissions.services.roles_repositories", autospec=True) as fake_repository:
         await get_user_project_role_info(user=user, project=project)
         fake_repository.get_role_for_user.assert_awaited_once()
 
@@ -166,7 +166,7 @@ async def get_user_project_role_info():
 async def get_user_workspace_role_info():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
-    with patch("taiga.permissions.services.roles_repositories", new_callable=AsyncMock) as fake_repository:
+    with patch("taiga.permissions.services.roles_repositories", autospec=True) as fake_repository:
         await get_user_workspace_role_info(user=user, workspace=workspace)
         fake_repository.get_workspace_role_for_user.assert_awaited_once()
 

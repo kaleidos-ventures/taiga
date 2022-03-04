@@ -38,7 +38,7 @@ import pytest
 from taiga.base.utils.datetime import datetime_to_epoch
 from taiga.conf import settings
 from taiga.tokens.base import USER_ID_CLAIM, Token, token_backend
-from taiga.tokens.exceptions import TokenError
+from taiga.tokens.exceptions import ExpiredTokenError, TokenError
 
 
 @dataclass
@@ -167,7 +167,7 @@ async def test_init_expired_token_given() -> None:
     t = await MyToken.create()
     t.set_exp(lifetime=-timedelta(seconds=1))
 
-    with pytest.raises(TokenError):
+    with pytest.raises(ExpiredTokenError):
         await MyToken.create(str(t))
 
 
@@ -294,11 +294,11 @@ async def test_check_exp() -> None:
     # By default, checks 'exp' claim against `self.current_time`.  Should
     # raise an exception if claim has expired.
     token.current_time = exp
-    with pytest.raises(TokenError):
+    with pytest.raises(ExpiredTokenError):
         token._verify_exp()
 
     token.current_time = exp + timedelta(seconds=1)
-    with pytest.raises(TokenError):
+    with pytest.raises(ExpiredTokenError):
         token._verify_exp()
 
     # Otherwise, should raise no exception
@@ -309,7 +309,7 @@ async def test_check_exp() -> None:
     # compare against
 
     # Default claim
-    with pytest.raises(TokenError):
+    with pytest.raises(ExpiredTokenError):
         token._verify_exp(current_time=exp)
 
     token.set_exp("refresh_exp", lifetime=timedelta(days=1))
@@ -318,9 +318,9 @@ async def test_check_exp() -> None:
     token._verify_exp("refresh_exp")
 
     # Given claim and timestamp
-    with pytest.raises(TokenError):
+    with pytest.raises(ExpiredTokenError):
         token._verify_exp("refresh_exp", current_time=current_time + timedelta(days=1))
-    with pytest.raises(TokenError):
+    with pytest.raises(ExpiredTokenError):
         token._verify_exp("refresh_exp", current_time=current_time + timedelta(days=2))
 
 

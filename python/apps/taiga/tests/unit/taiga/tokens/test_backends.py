@@ -38,7 +38,7 @@ import pytest
 from jwt import PyJWS, algorithms
 from taiga.base.utils.datetime import datetime_to_epoch
 from taiga.tokens.backends import TokenBackend
-from taiga.tokens.exceptions import TokenBackendError
+from taiga.tokens.exceptions import ExpiredTokenBackendError, TokenBackendError
 
 SECRET = "not_secret"
 
@@ -251,7 +251,7 @@ def test_decode_hmac_with_expiry() -> None:
 
     expired_token = jwt.encode(payload, SECRET, algorithm="HS256")
 
-    with pytest.raises(TokenBackendError):
+    with pytest.raises(ExpiredTokenBackendError):
         hmac_token_backend.decode(expired_token)
 
 
@@ -312,7 +312,7 @@ def test_decode_rsa_with_expiry() -> None:
 
     expired_token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
 
-    with pytest.raises(TokenBackendError):
+    with pytest.raises(ExpiredTokenBackendError):
         rsa_token_backend.decode(expired_token)
 
 

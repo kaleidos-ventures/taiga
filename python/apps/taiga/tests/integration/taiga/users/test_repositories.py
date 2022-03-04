@@ -7,6 +7,7 @@
 
 import pytest
 from taiga.users import repositories as users_repositories
+from tests.utils import db
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -81,3 +82,21 @@ async def test_create_user():
     user = await users_repositories.create_user(email=email, username=username, full_name=full_name, password=password)
     assert user.username == username
     assert user.password is not None
+
+
+##########################################################
+# activate_user
+##########################################################
+
+
+async def test_verify_user():
+    user = await f.create_user(is_active=False)
+
+    assert not user.is_active
+    assert user.date_verification is None
+
+    await users_repositories.verify_user(user)
+    await db.refresh_model_from_db(user)
+
+    assert user.is_active
+    assert user.date_verification is not None

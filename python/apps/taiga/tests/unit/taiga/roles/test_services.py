@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import patch
 
 import pytest
 from taiga.exceptions import services as ex
@@ -19,7 +19,7 @@ async def test_get_project_role():
     project = await f.create_project()
     slug = "general"
 
-    with patch("taiga.roles.services.roles_repositories", new_callable=AsyncMock) as fake_role_repository:
+    with patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository:
         fake_role_repository.get_project_role.return_value = await f.create_role()
         await services.get_project_role(project=project, slug=slug)
         fake_role_repository.get_project_role.assert_awaited_once()
@@ -53,7 +53,7 @@ async def test_update_role_permissions_ok():
     role = await f.create_role()
     permissions = ["view_us"]
 
-    with patch("taiga.roles.services.roles_repositories", new_callable=AsyncMock) as fake_role_repository:
+    with patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository:
         fake_role_repository.update_role_permissions.return_value = await f.create_role()
         await services.update_role_permissions(role=role, permissions=permissions)
         fake_role_repository.update_role_permissions.assert_awaited_once()

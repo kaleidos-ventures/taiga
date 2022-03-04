@@ -33,11 +33,10 @@
 from typing import Any
 
 import jwt
-from jwt import InvalidAlgorithmError, InvalidTokenError, algorithms
+from jwt import ExpiredSignatureError, InvalidAlgorithmError, InvalidTokenError, algorithms
 from taiga.conf import settings
 from taiga.conf.tokens import ALLOWED_ALGORITHMS
-
-from .exceptions import TokenBackendError
+from taiga.tokens.exceptions import ExpiredTokenBackendError, TokenBackendError
 
 
 class TokenBackend:
@@ -101,10 +100,12 @@ class TokenBackend:
                 issuer=self.issuer,
                 options={"verify_aud": self.audience is not None, "verify_signature": verify},
             )
-        except InvalidAlgorithmError as ex:
-            raise TokenBackendError("Invalid algorithm specified") from ex
+        except ExpiredSignatureError:
+            raise ExpiredTokenBackendError("Expired token")
+        except InvalidAlgorithmError:
+            raise TokenBackendError("Invalid algorithm specified")
         except InvalidTokenError:
-            raise TokenBackendError("Token is invalid or expired")
+            raise TokenBackendError("Token is invalid")
 
 
 token_backend = TokenBackend(

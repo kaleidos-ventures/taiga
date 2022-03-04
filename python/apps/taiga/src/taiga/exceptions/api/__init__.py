@@ -33,8 +33,10 @@ class HTTPException(FastAPIHTTPException):
 
 
 class BadRequest(HTTPException):
-    def __init__(self, message: str = codes.EX_BAD_REQUEST.message):
-        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, code=codes.EX_BAD_REQUEST.code, message=message)
+    def __init__(self, message: str = codes.EX_BAD_REQUEST.message, detail: Any = None) -> None:
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST, code=codes.EX_BAD_REQUEST.code, message=message, detail=detail
+        )
 
 
 ##########################

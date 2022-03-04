@@ -5,11 +5,18 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.tokens.base import DenylistMixin, Token
-from taiga.tokens.exceptions import TokenError
 
-__all__ = [
-    "TokenError",
-    "Token",
-    "DenylistMixin",
-]
+class EmailAlreadyExistsError(Exception):
+    ...
+
+
+class BadVerifyUserTokenError(Exception):
+    ...
+
+
+class ExpiredVerifyUserTokenError(Exception):
+    ...
+
+
+class UsedVerifyUserTokenError(Exception):
+    ...

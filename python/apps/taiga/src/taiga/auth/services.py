@@ -25,11 +25,7 @@ async def login(username: str, password: str) -> AccessWithRefreshToken | None:
     ):
         return None
 
-    await users_repositories.update_last_login(user=user)
-
-    refresh_token = await RefreshToken.create_for_user(user)
-
-    return AccessWithRefreshToken(token=str(refresh_token.access_token), refresh=str(refresh_token))
+    return await generate_auth_credentials(user=user)
 
 
 async def refresh(token: str) -> AccessWithRefreshToken | None:
@@ -58,3 +54,11 @@ async def authenticate(token: str) -> tuple[list[str], User]:
             return ["auth"], user
 
     raise UnauthorizedUserError()
+
+
+async def generate_auth_credentials(user: User) -> AccessWithRefreshToken:
+    await users_repositories.update_last_login(user=user)
+
+    refresh_token = await RefreshToken.create_for_user(user)
+
+    return AccessWithRefreshToken(token=str(refresh_token.access_token), refresh=str(refresh_token))

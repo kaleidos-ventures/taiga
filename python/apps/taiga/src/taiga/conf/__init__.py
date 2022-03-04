@@ -11,11 +11,10 @@ import secrets
 from functools import lru_cache
 
 from pydantic import AnyHttpUrl, BaseSettings
+from taiga.conf.emails import EmailSettings
 from taiga.conf.images import ImageSettings
-
-from .emails import EmailSettings
-from .logs import LOGGING_CONFIG
-from .tokens import TokensSettings
+from taiga.conf.logs import LOGGING_CONFIG
+from taiga.conf.tokens import TokensSettings
 
 
 class Settings(BaseSettings):
@@ -38,11 +37,12 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_LIFETIME: int = 30  # 30 minutes
     REFRESH_TOKEN_LIFETIME: int = 8 * 24 * 60  # 8 * 24 * 60 minutes = 8 days
 
-    # Default values
-    DEFAULT_PROJECT_TEMPLATE: str = "kanban"
-
-    # User
+    # Users
     USER_EMAIL_ALLOWED_DOMAINS: list[str] = []
+    VERIFY_USER_TOKEN_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
+
+    # Projects
+    DEFAULT_PROJECT_TEMPLATE: str = "kanban"
 
     # Sub settings modules
     TOKENS: TokensSettings = TokensSettings()

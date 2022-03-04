@@ -33,13 +33,12 @@
 from datetime import datetime
 
 from asgiref.sync import sync_to_async
+from taiga.tokens.models import DenylistedToken, OutstandingToken
 from taiga.users.models import User
 
-from .models import DenylistedToken, OutstandingToken
-
-# -----------------
+###########################################
 # Outstanding Token
-# -----------------
+###########################################
 
 
 @sync_to_async
@@ -62,9 +61,9 @@ def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) 
     )
 
 
-# ----------------
+###########################################
 # Denylisted Token
-# ----------------
+###########################################
 
 
 @sync_to_async

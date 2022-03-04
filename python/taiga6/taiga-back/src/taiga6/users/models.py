@@ -142,6 +142,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                              verbose_name=_("photo"))
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
     date_cancelled = models.DateTimeField(_("date cancelled"), null=True, blank=True, default=None)
+    date_verification = models.DateTimeField(_("date verification"), null=True, blank=True, default=None)
     accepted_terms = models.BooleanField(_("accepted terms"), default=True)
     read_new_terms = models.BooleanField(_("new terms read"), default=False)
     lang = models.CharField(max_length=20, null=True, blank=True, default="",

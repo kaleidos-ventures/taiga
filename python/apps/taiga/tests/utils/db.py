@@ -5,11 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.tokens.base import DenylistMixin, Token
-from taiga.tokens.exceptions import TokenError
+from typing import Any
 
-__all__ = [
-    "TokenError",
-    "Token",
-    "DenylistMixin",
-]
+from asgiref.sync import sync_to_async
+
+
+@sync_to_async
+def refresh_model_from_db(obj: Any) -> None:
+    obj.refresh_from_db()

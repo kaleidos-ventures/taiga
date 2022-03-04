@@ -16,13 +16,13 @@ Check `folder-structure.md` to see how these folders look.
 Using cli to create a feature without state:
 
 ```
-npx schematics ./schematics:create-module --name ProjectsFeatureList --module app-routing.module --path apps/taiga/src/app/modules/projects/feature-list --routing --route projects/list --dry-run false --no-interactive
+npx nx g ./schematics:create-module --name ProjectsFeatureList --module app-routing.module --path apps/taiga/src/app/modules/projects/feature-list --routing --route projects/list --dry-run false --no-interactive
 ```
 
 Using cli to create a data-access with state:
 
 ```
-npx schematics ./schematics:create-module --name ProjectsDataAccess --path apps/taiga/src/app/modules/projects/data-access --stateFilesName list --globalState --dry-run false --no-interactive
+npx nx g ./schematics:create-module --name ProjectsDataAccess --path apps/taiga/src/app/modules/projects/data-access --stateFilesName list --globalState --dry-run false --no-interactive
 ```
 
 ## Configure lazy load translation

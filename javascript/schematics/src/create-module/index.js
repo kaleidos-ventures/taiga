@@ -22,19 +22,19 @@ const workspace_1 = require("@schematics/angular/utility/workspace");
 function default_1(options) {
     return (host) => __awaiter(this, void 0, void 0, function* () {
         var _a;
-        const workspace = yield workspace_1.getWorkspace(host);
+        const workspace = yield (0, workspace_1.getWorkspace)(host);
         const project = workspace.projects.get('taiga');
         if (!options.project) {
             options.project = workspace.extensions.defaultProject;
         }
         if (options.path === undefined && project) {
-            options.path = workspace_1.buildDefaultPath(project);
+            options.path = (0, workspace_1.buildDefaultPath)(project);
         }
         const stateFilesName = (_a = options.stateFilesName) !== null && _a !== void 0 ? _a : options.name;
-        const templateSource = schematics_1.apply(schematics_1.url('./files'), [
-            !options.routing ? schematics_1.filter((path) => !path.endsWith('-routing.module.ts.template')) : schematics_1.noop(),
-            !options.globalState ? schematics_1.filter((path) => !path.includes('+state')) : schematics_1.noop(),
-            schematics_1.applyTemplates({
+        const templateSource = (0, schematics_1.apply)((0, schematics_1.url)('./files'), [
+            !options.routing ? (0, schematics_1.filter)((path) => !path.endsWith('-routing.module.ts.template')) : (0, schematics_1.noop)(),
+            !options.globalState ? (0, schematics_1.filter)((path) => !path.includes('+state')) : (0, schematics_1.noop)(),
+            (0, schematics_1.applyTemplates)({
                 classify: core_1.strings.classify,
                 dasherize: core_1.strings.dasherize,
                 camelize: core_1.strings.camelize,
@@ -45,10 +45,10 @@ function default_1(options) {
                 globalState: options.globalState,
                 stateFilesName,
             }),
-            schematics_1.move(core_1.normalize(options.path))
+            (0, schematics_1.move)((0, core_1.normalize)(options.path))
         ]);
         const resultChain = [
-            schematics_1.externalSchematic('@schematics/angular', 'module', {
+            (0, schematics_1.externalSchematic)('@schematics/angular', 'module', {
                 name: options.name,
                 project: options.project,
                 flat: options.flat,
@@ -60,7 +60,7 @@ function default_1(options) {
             })
         ];
         if (options.globalState) {
-            resultChain.push(schematics_1.externalSchematic('@ngrx/schematics', 'feature', {
+            resultChain.push((0, schematics_1.externalSchematic)('@ngrx/schematics', 'feature', {
                 name: stateFilesName,
                 path: options.path + '/+state',
                 group: true,
@@ -71,10 +71,10 @@ function default_1(options) {
                 noInteractive: true
             }));
         }
-        resultChain.push(schematics_1.mergeWith(templateSource, schematics_1.MergeStrategy.Overwrite));
+        resultChain.push((0, schematics_1.mergeWith)(templateSource, schematics_1.MergeStrategy.Overwrite));
         if (options.component) {
-            const componentTemplateSource = schematics_1.apply(schematics_1.url('../files/component'), [
-                schematics_1.applyTemplates({
+            const componentTemplateSource = (0, schematics_1.apply)((0, schematics_1.url)('../files/component'), [
+                (0, schematics_1.applyTemplates)({
                     classify: core_1.strings.classify,
                     dasherize: core_1.strings.dasherize,
                     camelize: core_1.strings.camelize,
@@ -84,11 +84,11 @@ function default_1(options) {
                     globalState: options.globalState,
                     stateFilesName,
                 }),
-                schematics_1.move(core_1.normalize(options.path))
+                (0, schematics_1.move)((0, core_1.normalize)(options.path))
             ]);
-            resultChain.push(schematics_1.mergeWith(componentTemplateSource, schematics_1.MergeStrategy.Overwrite));
+            resultChain.push((0, schematics_1.mergeWith)(componentTemplateSource, schematics_1.MergeStrategy.Overwrite));
         }
-        return schematics_1.chain(resultChain);
+        return (0, schematics_1.chain)(resultChain);
     });
 }
 exports.default = default_1;

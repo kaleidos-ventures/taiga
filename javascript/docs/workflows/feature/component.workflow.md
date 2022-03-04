@@ -16,13 +16,13 @@ Create an `Example` component for a feature in the shared/ folder (or any other 
 
 ```bash
 // shared component
-npx schematics ./schematics:create-component --name example --dryRun=false
+npx nx g ./schematics:create-component --name example --dryRun=false
 
 // feature component
-npx schematics ./schematics:create-component --name list --module todo-list.module --path apps/taiga/src/app/features/todo-list/components --dryRun=false
+npx nx g ./schematics:create-component --name list --module todo-list.module --path apps/taiga/src/app/features/todo-list/components --dryRun=false
 
 // disable localState or globalState
-npx schematics ./schematics:create-component --name example --dryRun=false --localState false --globalState false
+npx nx g ./schematics:create-component --name example --dryRun=false --localState false --globalState false
 ```
 
 This will generate the component files (html, css, ts, spec) and will add the component to the parent module declarations and exports.

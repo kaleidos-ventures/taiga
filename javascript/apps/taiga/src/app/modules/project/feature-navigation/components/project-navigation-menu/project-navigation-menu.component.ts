@@ -181,9 +181,7 @@ export class ProjectNavigationMenuComponent {
   }
 
   public getCollapseIcon() {
-    const url = 'assets/icons/sprite.svg';
-    const icon = this.collapsed ? 'collapse-right' : 'collapse-left';
-    return `${url}#${icon}`;
+    return this.collapsed ? 'collapseRight' : 'collapseLeft';
   }
 
   public toggleCollapse() {

@@ -38,18 +38,12 @@ describe('ProjectNavigationComponent', () => {
 
   it('Collapsed icon - uncollapsed', () => {
     spectator.component.collapsed = false;
-    const url = 'assets/icons/sprite.svg';
-    expect(spectator.component.getCollapseIcon()).toEqual(
-      `${url}#collapse-left`
-    );
+    expect(spectator.component.getCollapseIcon()).toEqual('collapseLeft');
   });
 
   it('Collapsed icon - collapsed', () => {
     spectator.component.collapsed = true;
-    const url = 'assets/icons/sprite.svg';
-    expect(spectator.component.getCollapseIcon()).toEqual(
-      `${url}#collapse-right`
-    );
+    expect(spectator.component.getCollapseIcon()).toEqual('collapseRight');
   });
 
   it('Toggle scrum child menu - uncollapsed', () => {

@@ -12,7 +12,11 @@ import { TuiSvgModule, TuiTextfieldControllerModule } from '@taiga-ui/core';
 import { InputComponent } from './input/input.component';
 import { InputRefDirective } from './input-ref.directive';
 import { SelectComponent } from './select/select.component';
-import { TuiDataListModule } from '@taiga-ui/core';
+import {
+  TuiDataListModule,
+  TuiButtonModule,
+  TuiLinkModule,
+} from '@taiga-ui/core';
 import {
   TuiDataListWrapperModule,
   TuiSelectModule,
@@ -22,6 +26,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TextareaComponent } from './textarea/textarea.component';
 import { FormDirective } from './form/form.directive';
 import { UiErrorModule } from './error/error.module';
+import { UiPasswordStrengthModule } from './password-strength/password-strength.module';
+import { TranslocoModule } from '@ngneat/transloco';
 @NgModule({
   imports: [
     TuiSvgModule,
@@ -33,6 +39,10 @@ import { UiErrorModule } from './error/error.module';
     TuiTextfieldControllerModule,
     TuiTextAreaModule,
     UiErrorModule,
+    UiPasswordStrengthModule,
+    TuiButtonModule,
+    TuiLinkModule,
+    TranslocoModule,
   ],
   declarations: [
     FormDirective,
@@ -55,6 +65,7 @@ import { UiErrorModule } from './error/error.module';
     TuiTextfieldControllerModule,
     TuiTextAreaModule,
     UiErrorModule,
+    UiPasswordStrengthModule,
   ],
 })
 export class InputsModule {}

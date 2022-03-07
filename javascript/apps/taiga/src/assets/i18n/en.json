@@ -31,7 +31,17 @@
     },
     "userstories": "User stories",
     "tasks": "Tasks",
-    "sprints": "Sprints"
+    "sprints": "Sprints",
+    "forms": {
+      "password_weak": "Weak",
+      "password_medium": "Medium",
+      "password_strong": "Strong",
+      "password_help_weak": "At least {{number}} characters, including an uppercase and a number or a symbol",
+      "password_help_medium": "For a stronger password try with at least 15 characters or a special character",
+      "password_help_strong": "Your password is great!",
+      "show_password": "Show password",
+      "hide_password": "Hide password"
+    }
   },
   "navigation": {
     "go_home": "Go to home",

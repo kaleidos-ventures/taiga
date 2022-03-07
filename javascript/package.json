@@ -86,6 +86,7 @@
     "@taiga-ui/kit": "^2.31.0",
     "angular-resize-event": "^3.1.1",
     "change-case": "^4.1.2",
+    "check-password-strength": "^2.0.4",
     "eslint-plugin-taiga": "file:eslint-plugin-taiga",
     "hotkeys-js": "^3.8.7",
     "immer": "^9.0.12",

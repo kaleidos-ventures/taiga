@@ -23,6 +23,9 @@ import {
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import imageUpload from 'apps/taiga/src/assets/i18n/image_upload/en.json';
 
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import common from 'apps/taiga/src/assets/i18n/en.json';
+
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
 };
@@ -32,6 +35,7 @@ function getTranslocoModule(options: TranslocoTestingOptions = {}) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     langs: {
       en: {
+        ...common,
         image_upload: imageUpload,
       },
     },

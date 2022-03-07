@@ -76,6 +76,9 @@ export class InputComponent implements AfterContentInit {
     return '';
   }
 
+  public isPassword = false;
+  public passwordVisible = false;
+
   constructor(
     private controlContainer: ControlContainer,
     private fieldService: FieldService,
@@ -90,6 +93,16 @@ export class InputComponent implements AfterContentInit {
     return this.controlContainer.formDirective as FormGroupDirective;
   }
 
+  public togglePasswordVisibility() {
+    const input = this.ref.nativeElement;
+
+    this.passwordVisible = input.getAttribute('type') === 'password';
+
+    input.setAttribute('type', this.passwordVisible ? 'text' : 'password');
+
+    this.icon = this.passwordVisible ? 'eye-off' : 'eye';
+  }
+
   public ngAfterContentInit() {
     if (this.ref) {
       this.fieldService.control = this.control;
@@ -98,6 +111,9 @@ export class InputComponent implements AfterContentInit {
 
       const input = this.ref.nativeElement;
       input.setAttribute('id', this.id);
+
+      this.isPassword = input.getAttribute('type') === 'password';
+      this.icon = 'eye';
     } else {
       console.error('InputRefDirective is mandatory');
     }

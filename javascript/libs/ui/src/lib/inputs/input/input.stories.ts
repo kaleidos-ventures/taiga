@@ -21,7 +21,7 @@ import { InputComponent } from './input.component';
 @Component({
   selector: 'tg-ui-forms',
   template: `
-    <div class="story-small-container">
+    <div class="container">
       <form [formGroup]="form" (submit)="submit()" #exampleForm="ngForm">
         <tg-ui-input [icon]="iconSvg" [label]="label">
           <input
@@ -44,11 +44,31 @@ import { InputComponent } from './input.component';
             <tg-ui-error error="email"> Invalid email </tg-ui-error>
           </ng-container>
         </tg-ui-input>
+        <tg-ui-input [label]="label">
+          <input
+            type="password"
+            formControlName="password"
+            inputRef
+            [placeholder]="placeholder"
+            [attr.readOnly]="readOnly" />
+          <ng-container inputError>
+            <tg-ui-error error="required">Field mandatory</tg-ui-error>
+          </ng-container>
+          <ng-container passwordStrength>
+            <tg-ui-password-strength></tg-ui-password-strength>
+          </ng-container>
+        </tg-ui-input>
         <button type="submit">Submit</button>
       </form>
     </div>
   `,
-  styleUrls: [],
+  styles: [
+    `
+      .container {
+        width: 350px;
+      }
+    `,
+  ],
 })
 class FormsComponent {
   @Input()
@@ -65,9 +85,11 @@ class FormsComponent {
     if (disabled) {
       this.form.get('example')?.disable();
       this.form.get('email')?.disable();
+      this.form.get('password')?.disable();
     } else {
       this.form.get('example')?.enable();
       this.form.get('email')?.enable();
+      this.form.get('password')?.enable();
     }
   }
 
@@ -88,6 +110,7 @@ class FormsComponent {
       {
         example: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required]],
       },
       { updateOn }
     );

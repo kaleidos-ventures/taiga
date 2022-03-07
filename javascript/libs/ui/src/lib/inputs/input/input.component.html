@@ -9,6 +9,30 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <label class="input-label" *ngIf="label" [attr.for]="id">{{ label }}</label>
 <div class="input-container" [class.has-icon]="icon">
   <ng-content></ng-content>
-  <tui-svg *ngIf="icon" class="icon" [src]="icon"></tui-svg>
+  <tui-svg *ngIf="icon && !isPassword" class="icon" [src]="icon"></tui-svg>
+
+  <button
+    class="password-visibility"
+    *ngIf="isPassword"
+    [title]="
+      (passwordVisible
+        ? 'commons.forms.hide_password'
+        : 'commons.forms.show_password'
+      ) | transloco
+    "
+    [attr.aria-label]="
+      (passwordVisible
+        ? 'commons.forms.hide_password'
+        : 'commons.forms.show_password'
+      ) | transloco
+    "
+    tuiLink
+    type="button"
+    role="switch"
+    [attr.aria-pressed]="passwordVisible ? true : false"
+    (click)="togglePasswordVisibility()">
+    <tui-svg [src]="icon"></tui-svg>
+  </button>
 </div>
 <ng-content select="[inputError]"></ng-content>
+<ng-content select="[passwordStrength]"></ng-content>

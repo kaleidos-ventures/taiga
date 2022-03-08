@@ -50,6 +50,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & .password-visibility {
     & tui-svg {
       block-size: 1rem;
+      display: block;
       fill: var(--color-gray80);
       inline-size: 1rem;
     }

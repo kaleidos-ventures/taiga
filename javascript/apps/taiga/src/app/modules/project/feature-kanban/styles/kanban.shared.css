@@ -1,0 +1,18 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+.user {
+  align-items: center;
+  display: grid;
+  gap: var(--spacing-16);
+  grid-template-columns: 32px 1fr 1fr 32px;
+  padding-block-start: var(--spacing-8);
+  padding-inline: var(--spacing-40) var(--spacing-8);
+}

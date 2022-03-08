@@ -19,7 +19,7 @@ import { User } from '@taiga/data';
 import { filter } from 'rxjs/operators';
 
 interface State {
-  user: User;
+  user: Partial<User>;
 }
 
 @Component({
@@ -37,7 +37,7 @@ export class UserAvatarComponent implements OnInit {
   public size: TuiSizeXS | TuiSizeXXL = 's';
 
   @Input()
-  public set user(user: User) {
+  public set user(user: Partial<User>) {
     this.state.set({ user });
   }
 

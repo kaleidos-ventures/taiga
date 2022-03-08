@@ -11,15 +11,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import {
-  TuiButtonModule,
-  TuiSvgModule,
-  TuiLinkModule,
-  TuiDataListModule,
-} from '@taiga-ui/core';
-import { InviteToProjectComponent } from './invite-to-project.component';
+import { TuiButtonModule, TuiSvgModule, TuiLinkModule } from '@taiga-ui/core';
+import { UserToInviteComponent } from './user-to-invite.component';
 import { UserAvatarModule } from '~/app/shared/user-avatar/user-avatar.component.module';
-import { UserToInviteModule } from './components/user-to-invite.module';
 
 @NgModule({
   imports: [
@@ -32,8 +26,6 @@ import { UserToInviteModule } from './components/user-to-invite.module';
     InputsModule,
     TuiSvgModule,
     TranslocoModule,
-    TuiDataListModule,
-    UserToInviteModule,
   ],
   providers: [
     {
@@ -44,7 +36,7 @@ import { UserToInviteModule } from './components/user-to-invite.module';
       },
     },
   ],
-  declarations: [InviteToProjectComponent],
-  exports: [InviteToProjectComponent],
+  declarations: [UserToInviteComponent],
+  exports: [UserToInviteComponent],
 })
-export class InviteToProjectModule {}
+export class UserToInviteModule {}

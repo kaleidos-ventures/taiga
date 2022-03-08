@@ -1,7 +1,17 @@
 {
   "invite_step": {
-    "title": "Invite people to this project",
+    "title": "Invite people to {{ project }}",
+    "instructions": "Start typing a <strong>name</strong>, <strong>username</strong> or <strong>email</strong>.",
+    "alternative": "You can also enter multiple email addresses separated by a comma.",
     "send_invites": "Send invites",
-    "later": "I'll do it later"
+    "later": "Maybe later",
+    "add_people": "Add some people to invte",
+    "placeholder": "e.g. username@mail.com, userpetname@mail.com",
+    "add": "Add",
+    "name_email": "Name or email",
+    "role": "Role",
+    "general": "General",
+    "member": "Member",
+    "close": "Close"
   }
 }

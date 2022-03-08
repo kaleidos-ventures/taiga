@@ -1,0 +1,42 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t" [formGroup]="user">
+  <div class="user">
+    <tg-user-avatar [user]="user.value"></tg-user-avatar>
+    <div class="user-identifier">
+      <span class="user-name">{{ user.get('fullName')?.value }}</span>
+      <span class="user-alias">{{ user.get('username')?.value }}</span>
+    </div>
+    <tg-ui-select [label]="t('kanban.invite_step.role')" labelVisuallyHidden>
+      <tui-select
+        class="select-rol"
+        tuiTextfieldSize="l"
+        [valueContent]="user.get('roles')?.value"
+        formControlName="roles">
+        <tui-data-list *tuiDataList>
+          <button
+            *ngFor="
+              let item of rolesList | keyvalue: insertionOrder;
+              trackBy: trackByIndex
+            "
+            tuiOption
+            [value]="item.value">
+            {{ item.value }}
+          </button>
+        </tui-data-list>
+      </tui-select>
+    </tg-ui-select>
+    <button
+      [attr.aria-label]="t('kanban.invite_step.close')"
+      tuiIconButton
+      icon="close"
+      (click)="deleteUser()"
+      appearance="tertiary"></button>
+  </div>
+</ng-container>

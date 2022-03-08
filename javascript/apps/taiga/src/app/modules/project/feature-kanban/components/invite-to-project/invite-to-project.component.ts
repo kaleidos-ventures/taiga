@@ -10,50 +10,79 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  OnInit,
+  Input,
   Output,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { User } from '@taiga/data';
+import { Project, User } from '@taiga/data';
 
 @Component({
   selector: 'tg-invite-to-project',
   templateUrl: './invite-to-project.component.html',
-  styleUrls: ['./invite-to-project.component.css'],
+  styleUrls: [
+    '../../styles/kanban.shared.css',
+    './invite-to-project.component.css',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InviteToProjectComponent implements OnInit {
+export class InviteToProjectComponent {
+  @Input()
+  public project!: Project;
+
   @Output()
   public finishNewProject = new EventEmitter<Partial<User>[]>();
 
   @Output()
   public closeModal = new EventEmitter();
 
+  public inviteEmails?: string;
+
   // This is a temporal variable until we get real users here.
   public userExample: Partial<User>[] = [
     {
-      username: 'test-user',
+      username: '@test-user',
+      fullName: 'Test User',
+      roles: ['General'],
       id: 1,
     },
     {
-      username: 'test-user-2',
+      username: '@test-user-2',
+      fullName: 'Test User2',
+      roles: ['General'],
+      id: 2,
+    },
+    {
+      username: undefined,
+      fullName: undefined,
+      email: 'test@test.com',
+      roles: ['General'],
       id: 2,
     },
   ];
 
-  public inviteProjectForm!: FormGroup;
+  public inviteProjectForm: FormGroup = this.fb.group({
+    users: new FormArray([]),
+  });
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute) {}
 
-  public ngOnInit() {
-    this.initForm();
+  public get users() {
+    return (this.inviteProjectForm.controls['users'] as FormArray)
+      .controls as FormGroup[];
   }
 
-  public initForm() {
-    this.inviteProjectForm = this.fb.group({
-      inviteUser: [null, Validators.required],
-    });
+  public trackByIndex(index: number) {
+    return index;
+  }
+
+  public addUser() {
+    //TODO connect with the api to verify the email
+    this.users.push(this.fb.group(this.userExample[0]));
+  }
+
+  public deleteUser(i: number) {
+    (this.inviteProjectForm.controls['users'] as FormArray).removeAt(i);
   }
 
   public sendForm(users?: Partial<User>[]) {

@@ -9,6 +9,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 tui-dropdown-box {
   border: none !important; /* stylelint-disable-line declaration-no-important */
   border-radius: 3px;
+
+  /* temporary fix, should be delete it when we move to portals our modal */
+  z-index: 1005 !important; /* stylelint-disable-line declaration-no-important */
 }
 
 tui-hint-box {

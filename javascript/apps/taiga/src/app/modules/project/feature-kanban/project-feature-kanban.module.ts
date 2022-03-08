@@ -8,13 +8,20 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ProjectFeatureKanbanRoutingModule } from './project-feature-kanban-routing.module';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
 import { TuiSvgModule } from '@taiga-ui/core';
+import { InviteToProjectModule } from './components/invite-to-project/invite-to-project.module';
+import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 
 @NgModule({
   declarations: [ProjectFeatureKanbanComponent],
-  imports: [CommonModule, ProjectFeatureKanbanRoutingModule, TuiSvgModule],
+  imports: [
+    CommonModule,
+    ProjectFeatureKanbanRoutingModule,
+    TuiSvgModule,
+    ModalModule,
+    InviteToProjectModule,
+  ],
 })
 export class ProjectFeatureKanbanModule {}

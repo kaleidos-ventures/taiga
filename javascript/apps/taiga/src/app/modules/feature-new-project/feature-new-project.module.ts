@@ -19,7 +19,6 @@ import { NewProjectComponent } from './components/new-project/new-project.compon
 import { InitStepComponent } from './components/init-step/init-step.component';
 import { RouterModule } from '@angular/router';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
-import { InviteStepComponent } from './components/invite-step/invite-step.component';
 import { ImageUploadModule } from 'libs/ui/src/lib/inputs/image-upload/image-upload.module';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
@@ -28,12 +27,7 @@ import { TemplateStepComponent } from './components/template-step/template-step.
 import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.module';
 
 @NgModule({
-  declarations: [
-    NewProjectComponent,
-    InitStepComponent,
-    TemplateStepComponent,
-    InviteStepComponent,
-  ],
+  declarations: [NewProjectComponent, InitStepComponent, TemplateStepComponent],
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -41,8 +35,6 @@ import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.mo
     TranslocoModule,
     EffectsModule.forFeature([NewProjectEffects]),
     TuiSvgModule,
-    FormsModule,
-    ReactiveFormsModule,
     TuiSelectModule,
     TuiDataListWrapperModule,
     TuiAutoFocusModule,

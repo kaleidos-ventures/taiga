@@ -18,11 +18,6 @@
     "discard_project": "Discard this project?",
     "discard_warning": "Closing this window without clicking “create project” will delete the content you’ve added."
   },
-  "invite_step": {
-    "title": "Invite people to this project",
-    "send_invites": "Send invites",
-    "later": "I'll do it later"
-  },
   "second_step": {
     "project_details": "Project details",
     "project_name": "Project name",

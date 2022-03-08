@@ -18,14 +18,17 @@ import { ActivatedRoute } from '@angular/router';
 import { User } from '@taiga/data';
 
 @Component({
-  selector: 'tg-invite-step',
-  templateUrl: './invite-step.component.html',
-  styleUrls: ['../../styles/project.shared.css', './invite-step.component.css'],
+  selector: 'tg-invite-to-project',
+  templateUrl: './invite-to-project.component.html',
+  styleUrls: ['./invite-to-project.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InviteStepComponent implements OnInit {
+export class InviteToProjectComponent implements OnInit {
   @Output()
   public finishNewProject = new EventEmitter<Partial<User>[]>();
+
+  @Output()
+  public closeModal = new EventEmitter();
 
   // This is a temporal variable until we get real users here.
   public userExample: Partial<User>[] = [
@@ -56,8 +59,11 @@ export class InviteStepComponent implements OnInit {
   public sendForm(users?: Partial<User>[]) {
     if (users && users.length) {
       this.finishNewProject.next(this.userExample);
-    } else {
-      this.finishNewProject.next([]);
+      this.close();
     }
+  }
+
+  public close() {
+    this.closeModal.next();
   }
 }

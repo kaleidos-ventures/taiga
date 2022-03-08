@@ -18,7 +18,6 @@ import { NewProjectEffects } from './new-project.effects';
 import {
   createProject,
   createProjectSuccess,
-  inviteUsersNewProject,
 } from '../actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -69,10 +68,9 @@ describe('NewProjectEffects', () => {
 
     const router = spectator.inject(Router);
 
-    actions$ = hot('-a--b--c', {
+    actions$ = hot('-a--b', {
       a: createProject({ project: projectCreation }),
-      b: createProjectSuccess({ project }),
-      c: inviteUsersNewProject(),
+      b: createProjectSuccess({ project })
     });
 
     expect(effects.createProjectSuccess$).toSatisfyOnFlush(() => {
@@ -80,7 +78,7 @@ describe('NewProjectEffects', () => {
         '/project/',
         project.slug,
         'kanban',
-      ]);
+      ], {state: {'invite': true}});
     });
   });
 });

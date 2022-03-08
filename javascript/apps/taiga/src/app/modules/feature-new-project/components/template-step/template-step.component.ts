@@ -70,6 +70,7 @@ export class TemplateStepComponent implements OnInit {
   public templateProjectForm!: FormGroup;
   public showWarningModal = false;
   public confirmationModal$?: Subject<boolean>;
+  public formSubmitted = false;
 
   public get logo() {
     return this.templateProjectForm.get('logo') as FormControl;
@@ -90,7 +91,7 @@ export class TemplateStepComponent implements OnInit {
   }
 
   public canDeactivate() {
-    if (this.formHasContent()) {
+    if (this.formHasContent() && !this.formSubmitted) {
       this.confirmationModal$ = new Subject();
       this.showWarningModal = true;
       this.cd.detectChanges();
@@ -173,6 +174,7 @@ export class TemplateStepComponent implements OnInit {
         logo: this.formValue.logo,
       };
       this.projectData.next(projectFormValue);
+      this.formSubmitted = true;
     }
   }
 

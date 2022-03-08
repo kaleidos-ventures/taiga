@@ -29,11 +29,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </tg-template-step>
       </ng-container>
 
-      <!-- Invite step -->
-      <ng-container *ngIf="currentStep === 'invite'">
-        <tg-invite-step (finishNewProject)="onInvite($event)"> </tg-invite-step>
-      </ng-container>
-
       <!-- Template step -->
       <ng-container *ngIf="currentStep === 'template'">
         <ng-template [ngTemplateOutlet]="wip"></ng-template>

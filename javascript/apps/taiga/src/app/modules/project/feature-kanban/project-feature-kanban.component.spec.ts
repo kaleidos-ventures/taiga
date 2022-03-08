@@ -7,7 +7,7 @@
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { StoreModule } from '@ngrx/store';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
 
 describe('KanbanPageComponent', () => {
@@ -16,6 +16,9 @@ describe('KanbanPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [
+        StoreModule.forRoot({})
+      ],
       declarations: [ProjectFeatureKanbanComponent],
     }).compileComponents();
   });

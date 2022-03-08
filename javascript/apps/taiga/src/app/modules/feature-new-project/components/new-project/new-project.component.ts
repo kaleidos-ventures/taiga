@@ -14,13 +14,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ProjectCreation, User } from '@taiga/data';
+import { ProjectCreation } from '@taiga/data';
 import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
-import {
-  createProject,
-  createProjectSuccess,
-  inviteUsersNewProject,
-} from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
+import { createProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { selectWorkspaces } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import { Step } from '~/app/modules/feature-new-project/data/new-project.model';
 import { ActivatedRoute } from '@angular/router';
@@ -29,7 +25,7 @@ import {
   TemplateStepComponent,
 } from '../template-step/template-step.component';
 import { Observable } from 'rxjs';
-import { Actions, ofType } from '@ngrx/effects';
+import { Actions } from '@ngrx/effects';
 
 @Component({
   selector: 'tg-new-project',
@@ -46,12 +42,7 @@ export class NewProjectComponent implements OnInit {
     private route: ActivatedRoute,
     private actions$: Actions,
     private cd: ChangeDetectorRef
-  ) {
-    this.actions$.pipe(ofType(createProjectSuccess)).subscribe(() => {
-      this.setStep('invite');
-      this.cd.detectChanges();
-    });
-  }
+  ) {}
 
   public workspaceList$ = this.store.select(selectWorkspaces);
   public currentStep: Step = 'init';
@@ -73,7 +64,6 @@ export class NewProjectComponent implements OnInit {
     if (this.currentStep === 'blank' && this.templateStepComponent) {
       return this.templateStepComponent.canDeactivate();
     }
-
     return true;
   }
 
@@ -99,14 +89,6 @@ export class NewProjectComponent implements OnInit {
 
   public setStep(step: Step) {
     this.currentStep = step;
-  }
-
-  public onInvite(users: Partial<User>[]) {
-    if (users.length) {
-      console.log('This user will be added', users);
-    }
-
-    this.store.dispatch(inviteUsersNewProject());
   }
 
   public cancelTemplateStep(savedForm?: TemplateProjectForm) {

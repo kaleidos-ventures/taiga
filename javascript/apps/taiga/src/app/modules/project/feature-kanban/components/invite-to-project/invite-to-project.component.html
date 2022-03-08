@@ -8,12 +8,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t">
   <div class="new-step-wrapper">
-    <h1 class="new-step-title">{{ t('new_project.invite_step.title') }}</h1>
+    <h1 class="new-step-title">{{ t('kanban.invite_step.title') }}</h1>
     <form [formGroup]="inviteProjectForm">
       <div class="invite-placeholder tui-skeleton"></div>
       <div class="new-step-actions">
-        <button tuiButton (click)="sendForm([])" appearance="tertiary">
-          {{ t('new_project.invite_step.later') }}
+        <button tuiButton (click)="close()" appearance="tertiary">
+          {{ t('kanban.invite_step.later') }}
         </button>
         <button
           appearance="primary"
@@ -21,7 +21,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           tuiButton
           (click)="sendForm(userExample)"
           type="button">
-          {{ t('new_project.invite_step.send_invites') }}
+          {{ t('kanban.invite_step.send_invites') }}
         </button>
       </div>
     </form>

@@ -16,7 +16,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'tg-project-feature-overview',
   templateUrl: './project-feature-overview.component.html',
@@ -33,8 +32,7 @@ export class ProjectFeatureOverviewComponent
 
   constructor(
     private store: Store,
-    private route: ActivatedRoute,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
   ) {}
 
   public project$ = this.store.select(selectCurrentProject);

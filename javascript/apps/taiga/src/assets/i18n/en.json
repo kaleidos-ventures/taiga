@@ -83,6 +83,7 @@
     "member_roles": "There was a problem loading member roles",
     "public_permissions": "There was a problem loading public permissions",
     "workspace_permissions": "There was a problem loading workspace  permissions",
+    "resend_email": "There was a problem reseind your email",
     "save_changes": "An error ocurred while saving your changes"
   }
 }

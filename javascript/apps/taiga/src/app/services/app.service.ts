@@ -19,7 +19,7 @@ import {
 } from '../modules/errors/+state/actions/errors.actions';
 import { ErrorManagementOptions, UnexpectedError } from '@taiga/data';
 import { Store } from '@ngrx/store';
-import { TranslocoService } from '@ngneat/transloco';
+import { HashMap, TranslocoService } from '@ngneat/transloco';
 
 @Injectable({
   providedIn: 'root',
@@ -71,9 +71,20 @@ export class AppService {
     label: string;
     message: string;
     status: TuiNotification;
+    scope?: string;
+    paramsLabel?: HashMap<unknown>;
+    paramsMessage?: HashMap<unknown>;
   }) {
-    const label = this.translocoService.translate(data.label);
-    const message = this.translocoService.translate(data.message);
+    const label = this.translocoService.translate(
+      data.label,
+      data.paramsLabel,
+      data.scope
+    );
+    const message = this.translocoService.translate(
+      data.message,
+      data.paramsMessage,
+      data.scope
+    );
     const toastOptions: TuiNotificationOptions = {
       hasIcon: true,
       hasCloseButton: true,

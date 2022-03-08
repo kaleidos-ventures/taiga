@@ -5,5 +5,15 @@
     "create_account_email": "Create an account with your email",
     "terms_and_privacy": "By creating an account, you agree to our <a href='{{ termsOfService }}'>terms of service</a> and <a href='{{ privacyPolicy }}'> privacy policy</a>.",
     "already_account": "Already have an account? <a href='{{ login }}'>login here</a>"
+  },
+  "verify": {
+    "title": "Check your inbox to complete your registration",
+    "verification_link_sent": "Click the verification link in the email we sent you to:",
+    "mail_not_received": "Didn't receive the email?",
+    "resend_button": "Resend email",
+    "footer_text": "Want to use a different email?",
+    "footer_button": "Create a new account",
+    "resend_toast_label": "We just sent you an email",
+    "resend_toast_message": "The verification email is on its way!"
   }
 }

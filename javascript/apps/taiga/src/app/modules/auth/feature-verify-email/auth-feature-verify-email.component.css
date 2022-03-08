@@ -1,0 +1,75 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+@import "tools/responsive.css";
+
+:host {
+  align-items: center;
+  background-image: url("/assets/images/signup/verify-email_bg-right.svg"),
+    linear-gradient(
+      90deg,
+      var(--color-white) 0%,
+      var(--color-white) 49%,
+      var(--color-gray20) 50%
+    );
+  background-position: calc(50% + 300px) 50%;
+  background-repeat: no-repeat, no-repeat;
+  background-size: auto 100vh;
+  block-size: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-inline-size: 100%;
+}
+
+.owl {
+  margin-block-end: var(--spacing-48);
+  max-inline-size: 180px;
+}
+
+.verify-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-inline-size: 400px;
+  padding-block-end: 25vh;
+}
+
+.verify-title {
+  @mixin font-heading-3;
+
+  color: var(--color-gray100);
+  margin-block-end: var(--spacing-24);
+  padding: 0 var(--spacing-16);
+  text-align: center;
+}
+
+.verify-text {
+  @mixin font-paragraph;
+
+  color: var(--color-gray80);
+  display: flex;
+  gap: var(--spacing-8);
+  margin-block-end: var(--spacing-24);
+
+  &.email {
+    color: var(--color-gray90);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.verify-footer {
+  color: var(--color-gray80);
+  display: flex;
+  gap: var(--spacing-8);
+  inset-block-end: 0;
+  padding-block-end: var(--spacing-20);
+  position: absolute;
+}

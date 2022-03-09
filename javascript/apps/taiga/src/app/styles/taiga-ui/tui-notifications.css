@@ -173,3 +173,14 @@ tui-notification {
     }
   }
 }
+
+.no-header {
+  & tui-notifications-host .wrapper {
+    padding-block-start: var(--spacing-16) !important;
+  }
+
+  /* stylelint-disable-next-line selector-max-type */
+  & tui-notifications-host tui-wrapper.wrapper {
+    padding-block-start: 0 !important;
+  }
+}

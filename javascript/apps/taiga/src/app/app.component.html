@@ -6,11 +6,11 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<tui-root>
+<tui-root [class.no-header]="(header$ | async) === false">
   <tg-ui-svg-sprite src="/assets/icons/sprite.svg"></tg-ui-svg-sprite>
-  <div class="app-content" [class.no-header]="(header$ | async) === false">
-    <tg-navigation *ngIf="header$ | async" role="navigation"></tg-navigation>
-    <div class="main-area" role="main">
+  <div class="app-content">
+    <tg-navigation *ngIf="header$ | async"></tg-navigation>
+    <div class="main-area">
       <router-outlet></router-outlet>
     </div>
   </div>

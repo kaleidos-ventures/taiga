@@ -126,7 +126,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             validators.RegexValidator(re.compile(r"^[\w.-]+$"), _("Enter a valid username."), "invalid")
         ])
     email = models.EmailField(_("email address"), max_length=255, null=False, blank=False, unique=True)
-    is_active = models.BooleanField(_("active"), default=True,
+    is_active = models.BooleanField(_("active"), default=False,
         help_text=_("Designates whether this user should be treated as "
                     "active. Unselect this instead of deleting accounts."))
     is_staff = models.BooleanField(_('staff status'), default=False,
@@ -159,7 +159,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                          verbose_name=_("email token"))
 
     new_email = models.EmailField(_("new email address"), null=True, blank=True)
-    verified_email = models.BooleanField(null=False, blank=False, default=True)
+    verified_email = models.BooleanField(null=False, blank=False, default=False)
     is_system = models.BooleanField(null=False, blank=False, default=False)
 
 

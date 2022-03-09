@@ -7,8 +7,9 @@
 import logging
 
 from aiosmtplib import SMTPConnectError
-from fastapi_mailman import EmailMultiAlternatives  # type: ignore
-from taiga.emails import mail_connection
+from fastapi_mailman import EmailMultiAlternatives, Mail  # type: ignore
+from fastapi_mailman.config import ConnectionConfig  # type: ignore
+from taiga.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ async def send_email(
     to multiple recipients using the configured backend"""
 
     message = EmailMultiAlternatives(
-        connection=mail_connection,
+        connection=_get_mail_connection(),
         subject=subject,
         body=text_content,
         to=to_emails,
@@ -48,3 +49,26 @@ async def send_email(
         logger.error(f"SMTP connection error. {exception}")
     except Exception as exception:
         logger.error(f"Unknown email error. {exception}")
+
+
+def _get_mail_connection() -> Mail:
+    connection_config = ConnectionConfig(
+        # common email settings
+        MAIL_BACKEND=settings.EMAIL.BACKEND.value,
+        MAIL_DEFAULT_SENDER=settings.EMAIL.DEFAULT_SENDER,
+        # smtp backend settings
+        MAIL_SERVER=settings.EMAIL.SERVER,
+        MAIL_USERNAME=settings.EMAIL.USERNAME,
+        MAIL_PASSWORD=settings.EMAIL.PASSWORD,
+        MAIL_PORT=settings.EMAIL.PORT,
+        MAIL_TIMEOUT=settings.EMAIL.TIMEOUT,
+        MAIL_USE_TLS=settings.EMAIL.USE_TLS,
+        MAIL_USE_SSL=settings.EMAIL.USE_SSL,
+        MAIL_SSL_CERTFILE=settings.EMAIL.SSL_CERTFILE,
+        MAIL_SSL_KEYFILE=settings.EMAIL.SSL_KEYFILE,
+        MAIL_USE_LOCALTIME=settings.EMAIL.USE_LOCALTIME,
+        # file backend settings
+        MAIL_FILE_PATH=settings.EMAIL.FILE_PATH,
+    )
+
+    return Mail(connection_config).get_connection()

@@ -156,7 +156,7 @@ fastapi==0.75.0
     # via
     #   -r requirements/commons.in
     #   fastapi-mailman
-fastapi-mailman @ git+https://github.com/marktennyson/fastapi-mailman.git@development
+fastapi-mailman==0.0.4
     # via -r requirements/commons.in
 gunicorn==20.1.0
     # via taiga6

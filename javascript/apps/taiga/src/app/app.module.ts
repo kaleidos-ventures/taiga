@@ -39,6 +39,7 @@ import { NavigationModule } from './shared/navigation/navigation.module';
 import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
 import { TUI_IS_CYPRESS } from '@taiga-ui/cdk';
 import { ErrorsModule } from './modules/errors/errors.module';
+import { SvgSpriteModule } from '@taiga/ui/svg-sprite';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -52,7 +53,7 @@ const altIconName: Record<string, string> = {
 
 export function iconsPath(name: string): string {
   name = altIconName[name] ?? name;
-  return `assets/icons/sprite.svg#${paramCase(name)}`;
+  return `#${paramCase(name)}`;
 }
 
 export function prefersReducedMotion(): boolean {
@@ -64,6 +65,7 @@ export function prefersReducedMotion(): boolean {
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    SvgSpriteModule,
     DataAccessAuthModule,
     ErrorsModule,
     ApiModule,

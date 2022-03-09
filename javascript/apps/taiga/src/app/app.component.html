@@ -7,6 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <tui-root>
+  <tg-ui-svg-sprite src="/assets/icons/sprite.svg"></tg-ui-svg-sprite>
   <div class="app-content" [class.no-header]="(header$ | async) === false">
     <tg-navigation *ngIf="header$ | async"></tg-navigation>
     <div class="main-area">

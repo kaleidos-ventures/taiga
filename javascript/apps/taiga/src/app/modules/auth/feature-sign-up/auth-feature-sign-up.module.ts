@@ -11,9 +11,17 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule } from '@taiga-ui/core';
+import { VerifyEmailGuard } from './verify-email.guard';
 import { AuthFeatureSignUpComponent } from './auth-feature-sign-up.component';
 
-const routes: Routes = [{ path: '', component: AuthFeatureSignUpComponent }];
+const routes: Routes = [
+  { path: '', component: AuthFeatureSignUpComponent },
+  {
+    path: 'verify/:path',
+    children: [],
+    canActivate: [VerifyEmailGuard],
+  },
+];
 
 @NgModule({
   declarations: [AuthFeatureSignUpComponent],

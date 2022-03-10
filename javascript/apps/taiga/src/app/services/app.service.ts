@@ -20,6 +20,8 @@ import {
 import { ErrorManagementOptions, UnexpectedError } from '@taiga/data';
 import { Store } from '@ngrx/store';
 import { HashMap, TranslocoService } from '@ngneat/transloco';
+import { take } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +52,7 @@ export class AppService {
           label: config.options.label,
           message: config.options.message,
           status: config.options.status,
+          scope: config.options.scope,
         });
       }
     } else if (status === 403) {
@@ -58,7 +61,7 @@ export class AppService {
           error: this.formatHttpErrorResponse(error),
         })
       );
-    } else if (status === 500) {
+    } else if (status === 500 || status === 400 || status === 404) {
       return this.store.dispatch(
         unexpectedError({
           error: this.formatHttpErrorResponse(error),
@@ -75,24 +78,33 @@ export class AppService {
     paramsLabel?: HashMap<unknown>;
     paramsMessage?: HashMap<unknown>;
   }) {
-    const label = this.translocoService.translate(
-      data.label,
-      data.paramsLabel,
-      data.scope
-    );
-    const message = this.translocoService.translate(
-      data.message,
-      data.paramsMessage,
-      data.scope
-    );
-    const toastOptions: TuiNotificationOptions = {
-      hasIcon: true,
-      hasCloseButton: true,
-      autoClose: false,
-      label,
-      status: data.status,
-    };
+    forkJoin([
+      this.translocoService
+        .selectTranslate(data.label, {}, data.scope)
+        .pipe(take(1)),
+      this.translocoService
+        .selectTranslate(data.message, {}, data.scope)
+        .pipe(take(1)),
+    ]).subscribe(() => {
+      const label = this.translocoService.translate(
+        data.label,
+        data.paramsLabel,
+        data.scope
+      );
+      const message = this.translocoService.translate(
+        data.message,
+        data.paramsMessage,
+        data.scope
+      );
+      const toastOptions: TuiNotificationOptions = {
+        hasIcon: true,
+        hasCloseButton: true,
+        autoClose: false,
+        label,
+        status: data.status,
+      };
 
-    this.notificationsService.show(message, toastOptions).subscribe();
+      this.notificationsService.show(message, toastOptions).subscribe();
+    });
   }
 }

@@ -17,10 +17,21 @@ export interface ErrorManagementToastOptions {
     label: string;
     message: string;
     status: TuiNotification;
+    scope?: string;
   };
 }
 
 export interface ErrorManagementOptions {
-  500?: ErrorManagementToastOptions;
+  400?: ErrorManagementToastOptions;
   403?: ErrorManagementToastOptions;
+  404?: ErrorManagementToastOptions;
+  500?: ErrorManagementToastOptions;
+}
+
+export interface genericResponseError {
+  error: {
+    code: string;
+    detail: string;
+    message: string;
+  };
 }

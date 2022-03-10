@@ -14,6 +14,14 @@
     "footer_text": "Want to use a different email?",
     "footer_button": "Create a new account",
     "resend_toast_label": "We just sent you an email",
-    "resend_toast_message": "The verification email is on its way!"
+    "resend_toast_message": "The verification email is on its way!",
+    "errors": {
+      "invalid_token_label": "Sorry, your validation link is invalid",
+      "invalid_token_message": "Check that your link is correct.",
+      "expired_token_label": "Sorry, your validation link has expired",
+      "expired_token_message": "Try to create your account again.",
+      "used_token_label": "Sorry, your validation link has already been used",
+      "used_token_message": "Try to create your account again."
+    }
   }
 }

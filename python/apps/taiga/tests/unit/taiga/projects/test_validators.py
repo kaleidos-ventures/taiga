@@ -23,9 +23,9 @@ def test_validate_project_with_empty_name(client):
 def test_validate_project_with_long_name(client):
     name = "Project ab c de f gh i jk l mn pw r st u vw x yz ab c de f gh i jk l mn pw r st u vw x yz"
     color = 1
-
-    with pytest.raises(ValidationError, match=r"Name too long"):
-        ProjectValidator(name=name, color=color)
+    workspace_slug = "slug"
+    with pytest.raises(ValidationError, match=r"ensure this value has at most 80 characters"):
+        ProjectValidator(name=name, color=color, workspace_slug=workspace_slug)
 
 
 def test_validate_project_with_long_description(client):
@@ -36,17 +36,19 @@ def test_validate_project_with_long_description(client):
         "et magnis dis parturient montes, nascetur ridiculus mus. Donec quam fe"
     )
     color = 1
+    workspace_slug = "slug"
 
-    with pytest.raises(ValidationError, match=r"Description too long"):
-        ProjectValidator(name=name, description=description, color=color)
+    with pytest.raises(ValidationError, match=r"ensure this value has at most 200 characters"):
+        ProjectValidator(name=name, description=description, color=color, workspace_slug=workspace_slug)
 
 
 def test_validate_project_with_invalid_color(client):
     name = "Project test"
     color = 9
+    workspace_slug = "slug"
 
-    with pytest.raises(ValidationError, match=r"Color not allowed"):
-        ProjectValidator(name=name, color=color)
+    with pytest.raises(ValidationError, match=r"ensure this value is less than 9"):
+        ProjectValidator(name=name, color=color, workspace_slug=workspace_slug)
 
 
 def test_validate_correct_logo(client):

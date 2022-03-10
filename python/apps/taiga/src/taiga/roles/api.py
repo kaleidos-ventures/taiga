@@ -20,11 +20,6 @@ from taiga.roles import services as roles_services
 from taiga.roles.models import Role
 from taiga.roles.serializers import RoleSerializer
 
-metadata = {
-    "name": "roles",
-    "description": "Endpoint for roles, permissions and memberships resources.",
-}
-
 router = AuthAPIRouter(prefix="/projects", tags=["projects"])
 
 # PERMISSIONS

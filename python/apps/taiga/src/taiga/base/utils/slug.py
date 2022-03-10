@@ -5,22 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
-class NonEditableRoleError(Exception):
-    pass
+import random
 
 
-class NotValidPermissionsSetError(Exception):
-    pass
-
-
-class IncompatiblePermissionsSetError(Exception):
-    pass
-
-
-class NotPremiumWorkspaceError(Exception):
-    pass
-
-
-class EmailAlreadyExistsError(Exception):
-    pass
+def generate_username_suffix() -> str:
+    return f"{random.randint(0,999):03}"

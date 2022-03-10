@@ -96,7 +96,7 @@ def _create_user(index: int) -> User:
     username = f"user{index}"
     email = f"{username}@taiga.demo"
     full_name = fake.name()
-    user = User.objects.create(username=username, email=email, full_name=full_name)
+    user = User.objects.create(username=username, email=email, full_name=full_name, is_active=True)
     user.set_password("123123")
     user.save()
     return user

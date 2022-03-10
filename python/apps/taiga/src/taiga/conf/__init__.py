@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     # Default values
     DEFAULT_PROJECT_TEMPLATE: str = "kanban"
 
+    # User
+    USER_EMAIL_ALLOWED_DOMAINS: list[str] = []
+
     # Sub settings modules
     TOKENS: TokensSettings = TokensSettings()
     IMAGES: ImageSettings = ImageSettings()

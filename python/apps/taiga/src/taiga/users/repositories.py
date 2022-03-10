@@ -19,6 +19,11 @@ def get_first_user(**kwargs: Any) -> User | None:
 
 
 @sync_to_async
+def user_exists(**kwargs: Any) -> bool:
+    return User.objects.filter(**kwargs).exists()
+
+
+@sync_to_async
 def get_user_by_username_or_email(username_or_email: str) -> User | None:
     # first search is case insensitive
     qs = User.objects.filter(Q(username__iexact=username_or_email) | Q(email__iexact=username_or_email))
@@ -39,3 +44,12 @@ def check_password(user: User, password: str) -> bool:
 @sync_to_async
 def update_last_login(user: User) -> None:
     django_update_last_login(User, user)
+
+
+@sync_to_async
+def create_user(email: str, username: str, full_name: str, password: str) -> User:
+    user = User.objects.create(
+        email=email, username=username, full_name=full_name, is_active=False, accepted_terms=True
+    )
+    user.set_password(password)
+    return user

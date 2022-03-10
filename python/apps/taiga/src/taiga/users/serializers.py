@@ -10,12 +10,18 @@ from taiga.base.serializer import BaseModel
 
 
 class UserBaseSerializer(BaseModel):
-    id: int
     username: str
     full_name: str
     # photo: str  # TODO
     # big_photo: str  # TODO
     # gravatar_id: str  # TODO
+
+
+class UserSerializer(UserBaseSerializer):
+    ...
+
+    class Config:
+        orm_mode = True
 
 
 class UserMeSerializer(UserBaseSerializer):

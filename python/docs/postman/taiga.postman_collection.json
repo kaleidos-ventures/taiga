@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "21f63213-16e1-40bd-a31f-20350eaa3953",
+		"_postman_id": "643187ab-1ed6-4d97-a5b4-cc0f82beb566",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -158,6 +158,33 @@
 							"path": [
 								"users",
 								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"acceptTerms\": true,\n  \"fullName\": \"Ada Lovelace\",\n  \"email\": \"ada.lovelace@email.com\",\n  \"password\": \"adaLov3%\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"users"
 							]
 						}
 					},
@@ -465,7 +492,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_us\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_project\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"

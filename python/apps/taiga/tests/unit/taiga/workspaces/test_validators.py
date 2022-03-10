@@ -23,7 +23,7 @@ def test_validate_workspace_with_long_name(client):
     name = "WS ab c de f gh i jk l mn pw r st u vw x yz"
     color = 1
 
-    with pytest.raises(ValidationError, match=r"Name too long"):
+    with pytest.raises(ValidationError, match=r"ensure this value has at most 40 characters"):
         WorkspaceValidator(name=name, color=color)
 
 
@@ -31,7 +31,7 @@ def test_validate_workspace_with_invalid_color(client):
     name = "WS test"
     color = 9
 
-    with pytest.raises(ValidationError, match=r"Color not allowed"):
+    with pytest.raises(ValidationError, match=r"ensure this value is less than 9"):
         WorkspaceValidator(name=name, color=color)
 
 

@@ -5,11 +5,16 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from fastapi import APIRouter
 from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
+from taiga.exceptions import services as services_ex
+from taiga.exceptions.api.errors import ERROR_400, ERROR_422
+from taiga.users import services as users_services
 from taiga.users.models import User
-from taiga.users.serializers import UserMeSerializer
+from taiga.users.serializers import UserMeSerializer, UserSerializer
+from taiga.users.validators import CreateUserValidator
 
 metadata = {
     "name": "users",
@@ -17,6 +22,7 @@ metadata = {
 }
 
 router = AuthAPIRouter(prefix="/users", tags=["users"])
+unauthorized_router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/me", name="users.me", summary="Get authenticared user profile", response_model=UserMeSerializer)
@@ -28,3 +34,20 @@ def me(request: Request) -> User:
         raise ex.AuthorizationError("User is anonymous")
 
     return request.user
+
+
+@unauthorized_router.post(
+    "",
+    name="users.create",
+    summary="Sign up user",
+    response_model=UserSerializer,
+    responses=ERROR_400 | ERROR_422,
+)
+async def create_user(form: CreateUserValidator) -> User:
+    """
+    Create new user, which is not yet verified.
+    """
+    try:
+        return await users_services.create_user(email=form.email, full_name=form.full_name, password=form.password)
+    except services_ex.EmailAlreadyExistsError:
+        raise ex.BadRequest("Email already exists")

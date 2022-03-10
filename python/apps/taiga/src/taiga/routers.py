@@ -17,6 +17,7 @@ router = APIRouter()
 router.include_router(auth_api.router)
 router.include_router(projects_api.router)
 router.include_router(users_api.router)
+router.include_router(users_api.unauthorized_router)
 router.include_router(workspaces_api.router)
 router.include_router(workspaces_api.router_my)
 router.include_router(projects_api.router_workspaces)
@@ -28,5 +29,4 @@ tags_metadata = [
     users_api.metadata,
     workspaces_api.metadata,
     workspaces_api.my_metadata,
-    roles_api.metadata,
 ]

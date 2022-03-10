@@ -11,7 +11,7 @@ from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions import services as services_ex
-from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
+from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import IsProjectAdmin
 from taiga.projects.api import get_project_or_404
 from taiga.projects.models import Project
@@ -56,7 +56,7 @@ async def get_project_roles(
     name="project.permissions.put",
     summary="Edit project roles permissions",
     response_model=RoleSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def update_project_role_permissions(
     request: Request,

@@ -12,7 +12,7 @@ from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions import services as services_ex
-from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
+from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import CanViewProject, HasPerm, IsProjectAdmin
 from taiga.projects import services as projects_services
 from taiga.projects.models import Project
@@ -126,7 +126,7 @@ async def get_project_public_permissions(
     name="project.public-permissions.put",
     summary="Edit project public permissions",
     response_model=list[str],
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def update_project_public_permissions(
     request: Request, form: PermissionsValidator, slug: str = Query(None, description="the project slug (str)")
@@ -151,7 +151,7 @@ async def update_project_public_permissions(
     name="project.workspace-member-permissions.get",
     summary="Get project workspace member permissions",
     response_model=list[str],
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def get_project_workspace_member_permissions(
     request: Request, slug: str = Query(None, description="the project slug (str)")
@@ -173,7 +173,7 @@ async def get_project_workspace_member_permissions(
     name="project.workspace-member-permissions.put",
     summary="Edit project workspace memeber permissions",
     response_model=list[str],
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def update_project_workspace_member_permissions(
     request: Request, form: PermissionsValidator, slug: str = Query(None, description="the project slug (str)")

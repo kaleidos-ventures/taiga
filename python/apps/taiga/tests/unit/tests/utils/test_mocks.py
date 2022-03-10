@@ -19,13 +19,29 @@ from tests.utils import mocks
 
 
 @mocks.override_settings({"SECRET_KEY": "test-secret"})
-def test_overwrite_settings_as_decorator():
+def test_overwrite_settings_as_decorator_in_sync_test():
     from taiga.conf import settings
 
     assert settings.SECRET_KEY == "test-secret"
 
 
-def test_overwrite_settings_as_contextmanager():
+def test_overwrite_settings_as_contextmanager_in_sync_test():
+    from taiga.conf import settings
+
+    old_secret = settings.SECRET_KEY
+
+    with mocks.override_settings({"SECRET_KEY": "test-secret"}):
+        from taiga.conf import settings
+
+        assert settings.SECRET_KEY == "test-secret"
+        assert settings.SECRET_KEY != old_secret
+
+    from taiga.conf import settings
+
+    assert settings.SECRET_KEY == old_secret
+
+
+async def test_overwrite_settings_as_contextmanager_in_async_test():
     from taiga.conf import settings
 
     old_secret = settings.SECRET_KEY

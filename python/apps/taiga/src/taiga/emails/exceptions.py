@@ -4,8 +4,19 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-from enum import Enum
 
 
-class Emails(Enum):
-    SIGN_UP = "sign_up"
+class EmailTemplateError(Exception):
+    pass
+
+
+class EmailSMTPError(Exception):
+    pass
+
+
+class EmailAttachmentError(Exception):
+    pass
+
+
+class EmailDeliveryError(Exception):
+    pass

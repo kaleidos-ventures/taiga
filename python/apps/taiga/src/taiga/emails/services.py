@@ -4,17 +4,14 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-import logging
 
-from aiosmtplib import SMTPConnectError
+
 from fastapi_mailman import EmailMultiAlternatives, Mail  # type: ignore
 from fastapi_mailman.config import ConnectionConfig  # type: ignore
 from taiga.conf import settings
 
-logger = logging.getLogger(__name__)
 
-
-async def send_email(
+async def send_email_message(
     subject: str | None = None,
     to_emails: list[str] = [],
     from_email: str | None = None,
@@ -23,8 +20,11 @@ async def send_email(
     attachment_paths: list[str] = [],
 ) -> None:
     """
+    NOTE: DO NOT USE THIS SERVICE DIRECTLY, USE THE TASK INSTEAD
+
     Send multipart (attachments) / alternative (text and HTML version) messages
-    to multiple recipients using the configured backend"""
+    to multiple recipients using the configured backend
+    """
 
     message = EmailMultiAlternatives(
         connection=_get_mail_connection(),
@@ -38,17 +38,9 @@ async def send_email(
         message.attach_alternative(html_content, "text/html")
 
     for attachment_path in attachment_paths:
-        try:
-            message.attach_file(path=attachment_path)
-        except FileNotFoundError as exception:
-            logging.error(f"Email attachment error. {exception}")
+        message.attach_file(path=attachment_path)
 
-    try:
-        await message.send()
-    except SMTPConnectError as exception:
-        logger.error(f"SMTP connection error. {exception}")
-    except Exception as exception:
-        logger.error(f"Unknown email error. {exception}")
+    await message.send()
 
 
 def _get_mail_connection() -> Mail:

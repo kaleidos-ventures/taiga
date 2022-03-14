@@ -6,27 +6,31 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import json
-from typing import Any
+from typing import Any, Final
 
 from jinja2 import Environment, PackageLoader, select_autoescape
+
+TXT_BODY_TEMPLATE_SUFFIX: Final = ".txt.jinja"
+HTML_BODY_TEMPLATE_SUFFIX: Final = ".html.jinja"
+SUBJECT_TEMPLATE_SUFFIX: Final = ".subject.jinja"
 
 env = Environment(loader=PackageLoader("taiga.emails"), autoescape=select_autoescape())
 
 
 def render_email_html(email_name: str, context: dict[str, Any]) -> str:
-    html = f"{email_name}.html.jinja"
+    html = f"{email_name}{HTML_BODY_TEMPLATE_SUFFIX}"
     template_html = env.get_template(html)
     return template_html.render(context)
 
 
-def render_subject_html(email_name: str, context: dict[str, Any]) -> str:
-    html = f"{email_name}-subject.html.jinja"
+def render_subject(email_name: str, context: dict[str, Any]) -> str:
+    html = f"{email_name}{SUBJECT_TEMPLATE_SUFFIX}"
     template_html = env.get_template(html)
-    return template_html.render(context)
+    return template_html.render(context).replace("\n", "")
 
 
 def render_email_txt(email_name: str, context: dict[str, Any]) -> str:
-    txt = f"{email_name}.txt.jinja"
+    txt = f"{email_name}{TXT_BODY_TEMPLATE_SUFFIX}"
     template_txt = env.get_template(txt)
     return template_txt.render(context)
 

@@ -8,7 +8,7 @@
 import logging
 
 import typer
-from taiga.emails.emails import AVAILABLE_EMAILS
+from taiga.emails.emails import Emails
 from taiga.emails.render import test_render_html
 
 logger = logging.getLogger(__name__)
@@ -33,5 +33,5 @@ def render(email_name: str = typer.Argument(None, help="Name of the email")) -> 
 
 @cli.command(help="Show available emails")
 def list() -> None:
-    for email in AVAILABLE_EMAILS:
-        print(f"{ email }\n")
+    for email in Emails:
+        print(f"{ email.value }\n")

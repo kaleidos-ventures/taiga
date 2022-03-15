@@ -84,6 +84,7 @@
     "@taiga-ui/core": "^2.31.0",
     "@taiga-ui/icons": "^2.31.0",
     "@taiga-ui/kit": "^2.31.0",
+    "@tinkoff/ng-dompurify": "^3.0.0",
     "angular-resize-event": "^3.1.1",
     "change-case": "^4.1.2",
     "check-password-strength": "^2.0.4",

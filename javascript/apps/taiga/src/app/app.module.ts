@@ -37,9 +37,10 @@ import { TranslocoService } from '@ngneat/transloco';
 import { paramCase } from 'change-case';
 import { NavigationModule } from './shared/navigation/navigation.module';
 import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
-import { TUI_IS_CYPRESS } from '@taiga-ui/cdk';
+import { TUI_IS_CYPRESS, TUI_SANITIZER } from '@taiga-ui/cdk';
 import { ErrorsModule } from './modules/errors/errors.module';
 import { SvgSpriteModule } from '@taiga/ui/svg-sprite';
+import { NgDompurifySanitizer } from '@tinkoff/ng-dompurify';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -124,6 +125,10 @@ export function prefersReducedMotion(): boolean {
     {
       provide: TUI_ICONS_PATH,
       useValue: iconsPath,
+    },
+    {
+      provide: TUI_SANITIZER,
+      useClass: NgDompurifySanitizer,
     },
     {
       provide: TUI_LANGUAGE,

@@ -181,7 +181,7 @@ export class ProjectNavigationMenuComponent {
   }
 
   public getCollapseIcon() {
-    return this.collapsed ? 'collapseRight' : 'collapseLeft';
+    return this.collapsed ? 'collapse-right' : 'collapse-left';
   }
 
   public toggleCollapse() {

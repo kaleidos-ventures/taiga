@@ -38,12 +38,12 @@ describe('ProjectNavigationComponent', () => {
 
   it('Collapsed icon - uncollapsed', () => {
     spectator.component.collapsed = false;
-    expect(spectator.component.getCollapseIcon()).toEqual('collapseLeft');
+    expect(spectator.component.getCollapseIcon()).toEqual('collapse-left');
   });
 
   it('Collapsed icon - collapsed', () => {
     spectator.component.collapsed = true;
-    expect(spectator.component.getCollapseIcon()).toEqual('collapseRight');
+    expect(spectator.component.getCollapseIcon()).toEqual('collapse-right');
   });
 
   it('Toggle scrum child menu - uncollapsed', () => {

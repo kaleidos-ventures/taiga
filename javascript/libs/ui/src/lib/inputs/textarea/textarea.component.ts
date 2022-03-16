@@ -12,6 +12,7 @@ import {
   ContentChild,
   HostBinding,
   Input,
+  Optional,
 } from '@angular/core';
 import {
   ControlContainer,
@@ -69,11 +70,13 @@ export class TextareaComponent implements AfterContentInit {
   }
 
   @HostBinding('class.submitted') public get submitted() {
-    return this.form.submitted;
+    return this.form?.submitted;
   }
 
   @HostBinding('class.show-errors') public get showErrors() {
-    return this.formDirective.showFormErrors && this.fieldService.enabledErrors;
+    return (
+      this.formDirective?.showFormErrors && this.fieldService.enabledErrors
+    );
   }
 
   @HostBinding('class') public get updateOn() {
@@ -85,9 +88,9 @@ export class TextareaComponent implements AfterContentInit {
   }
 
   constructor(
-    private controlContainer: ControlContainer,
     private fieldService: FieldService,
-    private formDirective: FormDirective
+    @Optional() private formDirective?: FormDirective,
+    @Optional() private controlContainer?: ControlContainer
   ) {}
 
   public get control() {
@@ -95,7 +98,9 @@ export class TextareaComponent implements AfterContentInit {
   }
 
   public get form() {
-    return this.controlContainer.formDirective as FormGroupDirective;
+    return this.controlContainer?.formDirective as
+      | FormGroupDirective
+      | undefined;
   }
 
   public ngAfterContentInit() {

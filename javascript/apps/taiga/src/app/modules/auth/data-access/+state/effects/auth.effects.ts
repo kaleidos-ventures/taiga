@@ -140,7 +140,6 @@ export class AuthEffects {
               },
             });
           }
-
           return AuthActions.signUpError({ response: httpResponse });
         },
       })

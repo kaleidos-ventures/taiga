@@ -7,25 +7,29 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t; read: 'auth'">
-  <form #form="ngForm" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+  <form
+    #form="ngForm"
+    [formGroup]="signUpForm"
+    (ngSubmit)="onSubmit()"
+    data-test="signup-form">
     <tg-ui-input class="input-email" [label]="t('signup.email')">
       <input formControlName="email" data-test="signup-email" inputRef />
       <ng-container inputError>
         <tg-ui-error
           [enabled]="form.submitted"
-          data-test="email-required-error"
+          data-test="signup-required-email"
           error="required">
           {{ t('signup.errors.email_required') }}
         </tg-ui-error>
         <tg-ui-error
           [enabled]="form.submitted"
-          data-test="invalid-email"
+          data-test="signup-invalid-email"
           error="email">
           {{ t('signup.errors.invalid_email') }}
         </tg-ui-error>
         <tg-ui-error
           [enabled]="form.submitted"
-          data-test="email-exists"
+          data-test="signup-email-exists"
           error="exists">
           {{ t('signup.errors.email_exists') }}
         </tg-ui-error>
@@ -40,7 +44,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         type="password"
         formControlName="password"
         inputRef
+        data-test="signup-password"
         [attr.aria-description]="t('password.help_weak')" />
+
       <ng-container inputError>
         <tg-ui-error
           [enabled]="form.submitted"
@@ -58,7 +64,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <tg-ui-input class="input-fullname" [label]="t('signup.full_name')">
       <input
         formControlName="fullName"
-        data-test="signup-fullName"
+        data-test="signup-fullname"
         maxlength="50"
         inputRef />
       <ng-container inputError>
@@ -80,7 +86,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         })
       "></p>
 
-    <button class="create-account" appearance="primary" tuiButton type="submit">
+    <button
+      class="create-account"
+      data-test="signup-submit-button"
+      appearance="primary"
+      tuiButton
+      type="submit">
       {{ t('signup.create_account') }}
     </button>
 

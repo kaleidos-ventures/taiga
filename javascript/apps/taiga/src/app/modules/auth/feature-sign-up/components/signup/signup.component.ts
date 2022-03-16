@@ -8,6 +8,7 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -29,7 +30,6 @@ import {
   signup,
   signUpError,
 } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
-
 interface SignUp {
   email: string;
   password: string;
@@ -52,7 +52,8 @@ export class SignupComponent implements OnInit {
     private fb: FormBuilder,
     private store: Store,
     private el: ElementRef,
-    private actions$: Actions
+    private actions$: Actions,
+    private cd: ChangeDetectorRef
   ) {
     this.actions$
       .pipe(ofType(signUpError), untilDestroyed(this))
@@ -77,6 +78,7 @@ export class SignupComponent implements OnInit {
             }
           });
         }
+        this.cd.detectChanges();
       });
   }
 
@@ -106,6 +108,7 @@ export class SignupComponent implements OnInit {
     } else {
       this.signUpForm.markAllAsTouched();
       this.focusFirstInvalidField();
+      this.cd.detectChanges();
     }
   }
 

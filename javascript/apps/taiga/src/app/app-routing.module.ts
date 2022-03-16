@@ -28,16 +28,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'verify-email',
-    loadChildren: () =>
-      import(
-        './modules/auth/feature-verify-email/auth-feature-verify-email.module'
-      ).then((m) => m.AuthFeatureVerifyEmailModule),
-    data: {
-      noHeader: true,
-    },
-  },
-  {
     path: '',
     loadChildren: () =>
       import(

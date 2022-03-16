@@ -60,8 +60,21 @@ def run_healthchecks(timestamp: int) -> None:
     ...
 ```
 
-You can find more info at [DOC:Launch a task periodically](https://procrastinate.readthedocs.io/en/stable/howto/cron.html).
+## About synch / asynch
 
+Have in mind all tasks are asynchronous functions by default. If you need to make a call to the database from inside a task, the task should be `async`.
+
+```python
+from taiga.tasksqueue.manager import manager as tqmanager
+
+# scheduled at the 0th minute of each hour
+@tqmanager.periodic(cron="0 * * * *")
+@tqmanager.task
+async def cleanup_foobar(timestamp: int) -> None:
+    await user_repositories.clean_users()
+```
+
+You can find more info at [DOC:Launch a task periodically](https://procrastinate.readthedocs.io/en/stable/howto/cron.html).
 
 ## About the command line
 

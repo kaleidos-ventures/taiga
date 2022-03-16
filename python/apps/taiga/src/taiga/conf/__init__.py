@@ -44,6 +44,10 @@ class Settings(BaseSettings):
     # Projects
     DEFAULT_PROJECT_TEMPLATE: str = "kanban"
 
+    # Tasks (linux crontab style)
+    CLEAN_EXPIRED_TOKENS_CRON: str = "0 0 * * *"  # default: once a day
+    CLEAN_EXPIRED_USERS_CRON: str = "0 0 * * *"  # default: once a day
+
     # Sub settings modules
     TOKENS: TokensSettings = TokensSettings()
     IMAGES: ImageSettings = ImageSettings()

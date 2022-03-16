@@ -12,6 +12,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+# flake8: noqa: E402
+
+from taiga.base.django import call_django_command, setup_django
+
+setup_django()
 
 import os
 from multiprocessing import Process
@@ -20,10 +25,11 @@ from typing import Any
 import typer
 import uvicorn
 from taiga import __version__
-from taiga.base.django import call_django_command, setup_django
 from taiga.emails.commands import cli as emails_cli
 from taiga.tasksqueue.commands import cli as tasksqueue_cli
 from taiga.tasksqueue.commands import run_worker
+from taiga.tokens.commands import cli as tokens_cli
+from taiga.users.commands import cli as users_cli
 
 cli = typer.Typer(
     name="Taiga Manager",
@@ -48,12 +54,14 @@ def main(
         help="Show version information.",
     )
 ) -> None:
-    setup_django()
+    ...
 
 
 # Load module commands
 cli.add_typer(emails_cli, name="emails")
 cli.add_typer(tasksqueue_cli, name="tasksqueue")
+cli.add_typer(tokens_cli, name="tokens")
+cli.add_typer(users_cli, name="users")
 
 
 def _run_api(**kwargs: Any) -> None:

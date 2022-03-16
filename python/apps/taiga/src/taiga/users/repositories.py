@@ -11,6 +11,7 @@ from asgiref.sync import sync_to_async
 from django.contrib.auth.models import update_last_login as django_update_last_login
 from django.db.models import Q
 from taiga.base.utils.datetime import aware_utcnow
+from taiga.tokens.models import OutstandingToken
 from taiga.users.models import User
 
 
@@ -61,3 +62,15 @@ def verify_user(user: User) -> None:
     user.is_active = True
     user.date_verification = aware_utcnow()
     user.save()
+
+
+@sync_to_async
+def clean_expired_users() -> None:
+    # delete all users that are not currently active (is_active=False)
+    # and have never verified the account (date_verification=None)
+    # and don't have an outstanding token associated (exclude)
+    (
+        User.objects.filter(is_system=False, is_active=False, date_verification=None)
+        .exclude(id__in=OutstandingToken.objects.all().values_list("user_id"))
+        .delete()
+    )

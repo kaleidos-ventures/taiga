@@ -6,7 +6,10 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
+from asgiref.sync import sync_to_async
 from taiga.users import repositories as users_repositories
+from taiga.users.models import User
+from taiga.users.tokens import VerifyUserToken
 from tests.utils import db
 from tests.utils import factories as f
 
@@ -100,3 +103,24 @@ async def test_verify_user():
 
     assert user.is_active
     assert user.date_verification is not None
+
+
+##########################################################
+# clean_expired_users
+##########################################################
+
+
+@sync_to_async
+def get_total_users() -> int:
+    return User.objects.count()
+
+
+async def test_clean_expired_users():
+    total_users = await get_total_users()
+    await f.create_user(is_active=False)  # without token - it'll be cleaned
+    user = await f.create_user(is_active=False)  # with token - it won't be cleaned
+    await VerifyUserToken.create_for_user(user)
+
+    assert await get_total_users() == total_users + 2
+    await users_repositories.clean_expired_users()
+    assert await get_total_users() == total_users + 1

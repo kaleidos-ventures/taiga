@@ -111,3 +111,14 @@ async def test_verify_user_with_invalid_data():
         fake_users_repo.get_first_user.return_value = None
 
         await services.verify_user("some_token")
+
+
+##########################################################
+# clean_expired_users
+##########################################################
+
+
+async def test_clean_expired_users():
+    with patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repositories:
+        await services.clean_expired_users()
+        fake_users_repositories.clean_expired_users.assert_awaited_once()

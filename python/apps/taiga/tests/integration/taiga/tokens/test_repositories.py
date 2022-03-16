@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 #
-#
 # The code is partially taken (and modified) from djangorestframework-simplejwt v. 4.7.1
 # (https://github.com/jazzband/djangorestframework-simplejwt/tree/5997c1aee8ad5182833d6b6759e44ff0a704edb4)
 # that is licensed under the following terms:
@@ -30,53 +29,37 @@
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
 
-from datetime import datetime
 
+from datetime import timedelta
+from unittest import mock
+
+import pytest
 from asgiref.sync import sync_to_async
-from taiga.base.utils.datetime import aware_utcnow
-from taiga.tokens.models import DenylistedToken, OutstandingToken
-from taiga.users.models import User
+from taiga.tokens import repositories as tokens_repositories
+from taiga.tokens.models import OutstandingToken
+from taiga.users.tokens import VerifyUserToken
+from tests.utils import factories as f
 
-###########################################
-# Outstanding Token
-###########################################
+pytestmark = pytest.mark.django_db()
 
-
-@sync_to_async
-def create_outstanding_token(
-    user: User, jti: str, token: str, created_at: datetime, expires_at: datetime
-) -> OutstandingToken:
-    return OutstandingToken.objects.create(
-        user=user, jti=jti, token=token, created_at=created_at, expires_at=expires_at
-    )
+##########################################################
+# clean_expired_tokens
+##########################################################
 
 
 @sync_to_async
-def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> tuple[OutstandingToken, bool]:
-    return OutstandingToken.objects.get_or_create(
-        jti=jti,
-        defaults={
-            "token": token,
-            "expires_at": expires_at,
-        },
-    )
+def get_total_tokens() -> int:
+    return OutstandingToken.objects.count()
 
 
-###########################################
-# Denylisted Token
-###########################################
+async def test_clean_expired_tokens_yms():
+    total_tokens = await get_total_tokens()
+    with mock.patch(
+        "taiga.users.tokens.VerifyUserToken.lifetime", new_callable=mock.PropertyMock(return_value=timedelta(days=-1))
+    ):
+        user = await f.create_user()
+        await VerifyUserToken.create_for_user(user)
 
-
-@sync_to_async
-def get_or_create_denylisted_token(token: OutstandingToken) -> tuple[DenylistedToken, bool]:
-    return DenylistedToken.objects.get_or_create(token=token)
-
-
-@sync_to_async
-def denylisted_token_exist(jti: str) -> bool:
-    return DenylistedToken.objects.filter(token__jti=jti).exists()
-
-
-@sync_to_async
-def clean_expired_tokens() -> None:
-    OutstandingToken.objects.filter(expires_at__lt=aware_utcnow()).delete()
+        assert await get_total_tokens() == total_tokens + 1
+        await tokens_repositories.clean_expired_tokens()
+        assert await get_total_tokens() == total_tokens

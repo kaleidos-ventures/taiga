@@ -7,7 +7,6 @@
 
 from taiga.base.utils.slug import generate_username_suffix
 from taiga.tokens import exceptions as tokens_ex
-
 from taiga.users import exceptions as ex
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
@@ -65,3 +64,7 @@ async def verify_user(token: str) -> User:
             return user
 
     raise ex.BadVerifyUserTokenError()
+
+
+async def clean_expired_users() -> None:
+    await users_repositories.clean_expired_users()

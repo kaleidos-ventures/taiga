@@ -7,25 +7,20 @@
  */
 
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'tg-sign-up',
   templateUrl: './auth-feature-sign-up.component.html',
-  styleUrls: ['./auth-feature-sign-up.component.css'],
+  styleUrls: [
+    './auth-feature-sign-up.component.css',
+    './styles/sign-up.shared.css',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthFeatureSignUpComponent {
-  constructor(private router: Router) {}
-
   public displayForm = false;
 
   public displaySignUpForm(value: boolean) {
     this.displayForm = value;
-  }
-
-  public getURL(url: string): string {
-    const tree = this.router.createUrlTree([`/${url}`]);
-    return this.router.serializeUrl(tree);
   }
 }

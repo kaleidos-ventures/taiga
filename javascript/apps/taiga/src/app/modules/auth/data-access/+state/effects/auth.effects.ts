@@ -13,7 +13,7 @@ import { map, tap } from 'rxjs/operators';
 import * as AuthActions from '../actions/auth.actions';
 import { AuthApiService, UsersApiService } from '@taiga/api';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
-import { Auth, User } from '@taiga/data';
+import { Auth, ErrorManagementOptions, SignUpError, User } from '@taiga/data';
 import { Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { AppService } from '~/app/services/app.service';
@@ -101,6 +101,63 @@ export class AuthEffects {
     },
     { dispatch: false }
   );
+
+  public signUp$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.signup),
+      pessimisticUpdate({
+        run: ({ email, password, fullName, acceptTerms }) => {
+          return this.authApiService
+            .signUp({
+              email,
+              password,
+              fullName,
+              acceptTerms,
+            })
+            .pipe(
+              map(() => {
+                return AuthActions.signUpSuccess();
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          const status = httpResponse.status as keyof ErrorManagementOptions;
+          const signUpError = httpResponse.error as SignUpError;
+
+          if (
+            status === 400 &&
+            signUpError.error.message !== 'Email already exists'
+          ) {
+            this.appService.errorManagement(httpResponse, {
+              400: {
+                type: 'toast',
+                options: {
+                  label: 'signup.errors.register',
+                  message: 'signup.errors.please_refresh',
+                  status: TuiNotification.Error,
+                  scope: 'auth',
+                },
+              },
+            });
+          }
+
+          return AuthActions.signUpError({ response: httpResponse });
+        },
+      })
+    );
+  });
+
+  public signUpSuccess$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.signUpSuccess),
+      map(() => {
+        void this.router.navigate(['signup', 'email-verification-sent'], {
+          skipLocationChange: true,
+        });
+        return AuthActions.setUser({ user: null });
+      })
+    );
+  });
 
   constructor(
     private router: Router,

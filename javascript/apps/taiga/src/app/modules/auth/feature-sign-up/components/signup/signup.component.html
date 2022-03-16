@@ -1,0 +1,98 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t; read: 'auth'">
+  <form #form="ngForm" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+    <tg-ui-input class="input-email" [label]="t('signup.email')">
+      <input formControlName="email" data-test="signup-email" inputRef />
+      <ng-container inputError>
+        <tg-ui-error
+          [enabled]="form.submitted"
+          data-test="email-required-error"
+          error="required">
+          {{ t('signup.errors.email_required') }}
+        </tg-ui-error>
+        <tg-ui-error
+          [enabled]="form.submitted"
+          data-test="invalid-email"
+          error="email">
+          {{ t('signup.errors.invalid_email') }}
+        </tg-ui-error>
+        <tg-ui-error
+          [enabled]="form.submitted"
+          data-test="email-exists"
+          error="exists">
+          {{ t('signup.errors.email_exists') }}
+        </tg-ui-error>
+      </ng-container>
+    </tg-ui-input>
+
+    <tg-ui-input
+      #input="tgInput"
+      class="input-password"
+      [label]="t('signup.password')">
+      <input
+        type="password"
+        formControlName="password"
+        inputRef
+        [attr.aria-description]="t('password.help_weak')" />
+      <ng-container inputError>
+        <tg-ui-error
+          [enabled]="form.submitted"
+          data-test="invalid-password"
+          error="required">
+          {{ t('signup.errors.password_required') }}
+        </tg-ui-error>
+      </ng-container>
+      <ng-container passwordStrength>
+        <tg-ui-password-strength [showErrors]="form.submitted">
+        </tg-ui-password-strength>
+      </ng-container>
+    </tg-ui-input>
+
+    <tg-ui-input class="input-fullname" [label]="t('signup.full_name')">
+      <input
+        formControlName="fullName"
+        data-test="signup-fullName"
+        maxlength="50"
+        inputRef />
+      <ng-container inputError>
+        <tg-ui-error
+          [enabled]="form.submitted"
+          data-test="full-name-required-error"
+          error="required">
+          {{ t('signup.errors.full_name_required') }}
+        </tg-ui-error>
+      </ng-container>
+    </tg-ui-input>
+
+    <p
+      class="terms-and-privacy"
+      [innerHtml]="
+        t('signup.terms_and_privacy', {
+          termsOfService: 'terms-of-service' | getUrl,
+          privacyPolicy: 'privacy-policy' | getUrl
+        })
+      "></p>
+
+    <button class="create-account" appearance="primary" tuiButton type="submit">
+      {{ t('signup.create_account') }}
+    </button>
+
+    <button
+      class="login-options"
+      (click)="viewAllOptions()"
+      appearance="primary"
+      tuiLink
+      icon="chevron-left"
+      iconAlign="left"
+      type="button">
+      {{ t('signup.all_options') }}
+    </button>
+  </form>
+</ng-container>

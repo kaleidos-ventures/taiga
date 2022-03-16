@@ -8,10 +8,19 @@
 
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroupDirective } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class FieldService {
-  public control?: FormControl;
+  public control$ = new BehaviorSubject(
+    null
+  ) as BehaviorSubject<null | FormControl>;
+  public set control(control: null | FormControl) {
+    this.control$.next(control);
+  }
+  public get control() {
+    return this.control$.value;
+  }
   public form?: FormGroupDirective;
   public id = '';
   public enabledErrors = true;

@@ -8,19 +8,33 @@
 
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { AuthApiService, UsersApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 
 import { AuthEffects } from './auth.effects';
 import { Action } from '@ngrx/store';
-import { login, loginSuccess, logout, setUser } from '../actions/auth.actions';
-import { AuthMockFactory, UserMockFactory } from '@taiga/data';
-import { randUserName, randPassword } from '@ngneat/falso';
+import {
+  login,
+  loginSuccess,
+  logout,
+  setUser,
+  signup,
+  signUpError,
+  signUpSuccess,
+} from '../actions/auth.actions';
+import { AuthMockFactory, SignUpInput, UserMockFactory } from '@taiga/data';
+import {
+  randUserName,
+  randPassword,
+  randFullName,
+  randEmail,
+} from '@ngneat/falso';
 import { cold, hot } from 'jest-marbles';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 
 describe('AuthEffects', () => {
   let actions$: Observable<Action>;
@@ -104,5 +118,76 @@ describe('AuthEffects', () => {
     expect(effects.setUser$).toSatisfyOnFlush(() => {
       expect(authService.setUser).toHaveBeenCalledWith(user);
     });
+  });
+
+  it('signup', () => {
+    const signupData = {
+      email: randEmail(),
+      password: randPassword(),
+      fullName: randFullName(),
+      acceptTerms: true,
+    };
+    const response = AuthMockFactory();
+    const authApiService = spectator.inject(AuthApiService);
+    const effects = spectator.inject(AuthEffects);
+
+    authApiService.signUp.mockReturnValue(cold('-b|', { b: response }));
+
+    actions$ = hot('-a', { a: signup(signupData) });
+
+    const expected = cold('--a', {
+      a: signUpSuccess(),
+    });
+
+    expect(effects.signUp$).toBeObservable(expected);
+  });
+
+  it('signup success', () => {
+    const effects = spectator.inject(AuthEffects);
+    const routerService = spectator.inject(Router);
+
+    actions$ = hot('-a', { a: signUpSuccess() });
+
+    expect(effects.signUpSuccess$).toSatisfyOnFlush(() => {
+      expect(routerService.navigate).toHaveBeenCalledWith(
+        ['signup', 'verify-email'],
+        {
+          skipLocationChange: true,
+        }
+      );
+    });
+  });
+
+  it('signup - error', () => {
+    const signupData = {
+      email: 'email@patata',
+      password: randPassword(),
+      fullName: randFullName(),
+      acceptTerms: false,
+    };
+
+    const authApiService = spectator.inject(AuthApiService);
+    const effects = spectator.inject(AuthEffects);
+
+    const httpError = new HttpErrorResponse({
+      status: 400,
+      error: {
+        error: {
+          message: 'Email already exists',
+        },
+      },
+    });
+
+    authApiService.signUp.mockImplementation(() => {
+      return throwError(httpError);
+    });
+
+    actions$ = hot('-a', { a: signup(signupData) });
+
+    const expected = cold('-a', {
+      a: signUpError({ response: httpError }),
+    });
+
+    expect(effects.signUp$).toBeObservable(expected);
   });
 });

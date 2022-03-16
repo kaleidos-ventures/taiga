@@ -15,16 +15,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     class="password-visibility"
     *ngIf="isPassword"
     [title]="
-      (passwordVisible
-        ? 'commons.forms.hide_password'
-        : 'commons.forms.show_password'
-      ) | transloco
+      (passwordVisible ? 'auth.password.hide' : 'auth.password.show')
+        | transloco
     "
     [attr.aria-label]="
-      (passwordVisible
-        ? 'commons.forms.hide_password'
-        : 'commons.forms.show_password'
-      ) | transloco
+      (passwordVisible ? 'auth.password.hide' : 'auth.password.show')
+        | transloco
     "
     tuiLink
     type="button"

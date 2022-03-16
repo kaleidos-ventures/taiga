@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { createAction, props } from '@ngrx/store';
 import { Auth, User } from '@taiga/data';
 import { AuthState } from '../reducers/auth.reducer';
@@ -25,4 +26,21 @@ export const logout = createAction('[Auth] logout');
 export const loginSuccess = createAction(
   '[Auth] login success',
   props<{ auth: Auth; redirect?: boolean }>()
+);
+
+export const signup = createAction(
+  '[Auth] sign up',
+  props<{
+    email: User['email'];
+    password: string;
+    fullName: User['fullName'];
+    acceptTerms: boolean;
+  }>()
+);
+
+export const signUpSuccess = createAction('[Auth] sign up success');
+
+export const signUpError = createAction(
+  '[Auth] sign up error',
+  props<{ response: HttpErrorResponse }>()
 );

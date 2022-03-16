@@ -113,7 +113,10 @@ export class InputComponent implements AfterContentInit {
       input.setAttribute('id', this.id);
 
       this.isPassword = input.getAttribute('type') === 'password';
-      this.icon = 'eye';
+
+      if (this.isPassword) {
+        this.icon = 'eye';
+      }
     } else {
       console.error('InputRefDirective is mandatory');
     }

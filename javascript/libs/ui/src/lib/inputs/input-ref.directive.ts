@@ -7,7 +7,7 @@
  */
 
 import { Directive, ElementRef, HostBinding, Optional } from '@angular/core';
-import { AbstractControl, NgControl } from '@angular/forms';
+import { NgControl, Validators } from '@angular/forms';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
@@ -24,17 +24,7 @@ export class InputRefDirective {
   }
 
   @HostBinding('attr.aria-required') public get required() {
-    const control = this.control;
-
-    if (control?.validator) {
-      const validator = control.validator({} as AbstractControl);
-
-      if (validator?.required) {
-        return true;
-      }
-    }
-
-    return undefined;
+    return this.control?.hasValidator(Validators.required);
   }
 
   public get control() {

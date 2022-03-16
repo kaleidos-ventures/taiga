@@ -24,19 +24,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           type="button">
           {{ t('signup.create_account_email') }}
         </button>
+        <p
+          class="terms-and-privacy"
+          [innerHtml]="
+            t('signup.terms_and_privacy', {
+              termsOfService: 'terms-of-service' | getUrl,
+              privacyPolicy: 'privacy-policy' | getUrl
+            })
+          "></p>
       </ng-container>
       <ng-container *ngIf="displayForm">
-        <!-- Display form here -->
-        <p>display form here</p>
+        <tg-signup (displayLoginOptions)="displaySignUpForm(false)"></tg-signup>
       </ng-container>
-      <p
-        class="terms-and-privacy"
-        [innerHtml]="
-          t('signup.terms_and_privacy', {
-            termsOfService: getURL('terms-of-service'),
-            privacyPolicy: getURL('privacy-policy')
-          })
-        "></p>
     </div>
   </main>
   <footer class="login-footer">
@@ -44,7 +43,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="login-link"
       [innerHtml]="
         t('signup.already_account', {
-          login: getURL('login')
+          login: 'login' | getUrl
         })
       "></p>
     <p class="premium-link">

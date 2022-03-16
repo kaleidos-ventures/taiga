@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
 
-import { Auth, LoginInput } from '@taiga/data';
+import { Auth, LoginInput, SignUpInput } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +20,10 @@ export class AuthApiService {
 
   public login(data: LoginInput) {
     return this.http.post<Auth>(`${this.config.apiUrl}/auth/token`, data);
+  }
+
+  public signUp(data: SignUpInput) {
+    return this.http.post<Auth>(`${this.config.apiUrl}/users`, data);
   }
 
   public refreshToken(refresh: Auth['refresh']) {

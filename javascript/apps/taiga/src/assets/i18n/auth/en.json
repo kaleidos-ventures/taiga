@@ -2,9 +2,23 @@
   "signup": {
     "title": "Create an account in Taiga",
     "subtitle": "Free for all",
+    "email": "Email",
+    "password": "Password",
+    "full_name": "Full name",
+    "create_account": "Create an account",
     "create_account_email": "Create an account with your email",
     "terms_and_privacy": "By creating an account, you agree to our <a href='{{ termsOfService }}'>terms of service</a> and <a href='{{ privacyPolicy }}'> privacy policy</a>.",
-    "already_account": "Already have an account? <a href='{{ login }}'>login here</a>"
+    "already_account": "Already have an account? <a href='{{ login }}'>Login here</a>",
+    "all_options": "All options",
+    "errors": {
+      "email_required": "Enter your email address",
+      "full_name_required": "Enter a full name",
+      "password_required": "Enter a password",
+      "invalid_email": "Invalid email address",
+      "email_exists": "The email is already in use",
+      "register": "There was a problem registering your account",
+      "please_refresh": "Please refresh the page or try again in a few minutes"
+    }
   },
   "verify": {
     "title": "Check your inbox to complete your registration",
@@ -22,6 +36,26 @@
       "expired_token_message": "Try to create your account again.",
       "used_token_label": "Sorry, your validation link has already been used",
       "used_token_message": "Try to create your account again."
+    }
+  },
+  "password": {
+    "weak": "Weak",
+    "medium": "Medium",
+    "strong": "Strong",
+    "help_weak": "At least {{number}} characters, including an uppercase and a number or a symbol",
+    "help_medium": "For a stronger password try with at least 15 characters or a special character",
+    "help_strong": "Your password is great!",
+    "show": "Show password",
+    "hide": "Hide password",
+    "num_characters": "{{number}} characters",
+    "validation": "1 {{characterType}}",
+    "validation_multiple": "1 {{characterType1}} or {{characterType2}}",
+    "password_help": "Enter a password with at least:",
+    "character": {
+      "uppercase": "uppercase",
+      "lowercase": "lowercase",
+      "symbol": "symbol",
+      "number": "number"
     }
   }
 }

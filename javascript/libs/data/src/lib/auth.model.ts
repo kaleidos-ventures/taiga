@@ -16,3 +16,27 @@ export interface LoginInput {
   password: string;
   username: User['username'];
 }
+
+export interface SignUpInput {
+  email: User['email'];
+  password: LoginInput['password'];
+  fullName: User['fullName'];
+  acceptTerms: boolean;
+}
+
+// This interface implements `message` and `msg` since backend provide both options depending on the error
+// According to backend, will be fixed in the future.
+export interface SignUpError {
+  error: {
+    code: string;
+    detail: SignUpErrorDetail[];
+    message?: string;
+    msg?: string;
+  };
+}
+
+export interface SignUpErrorDetail {
+  loc: string[];
+  msg: string;
+  type: string;
+}

@@ -21,7 +21,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'sign-up',
+    path: 'signup',
     loadChildren: () =>
       import('./modules/auth/feature-sign-up/auth-feature-sign-up.module').then(
         (m) => m.AuthFeatureSignUpModule

@@ -84,10 +84,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </h3>
       <form [formGroup]="workspaceForm">
         <tg-role-permission-row
+          class="hidden-row-name"
           *ngIf="getworkspacePermissionsForm()"
           [formGroup]="getworkspacePermissionsForm()"
           [hasMembers]="false"
-          [name]="''"
+          [name]="t('project_settings.workspace_permissions')"
           [numMembers]="0"
           data-test="role-permission-row">
         </tg-role-permission-row>
@@ -107,11 +108,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </h3>
       <form [formGroup]="publicForm">
         <tg-role-permission-row
+          class="hidden-row-name"
           *ngIf="getPublicPermissionsForm()"
           [formGroup]="getPublicPermissionsForm()"
           [hasMembers]="false"
           [numMembers]="0"
-          name=""
+          [name]="t('project_settings.public_permissions')"
           data-test="role-permission-row">
         </tg-role-permission-row>
         <tg-ui-notification-inline

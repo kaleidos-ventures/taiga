@@ -102,15 +102,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <div
       class="permision-row-comment"
       [class.permision-row-comment-disabled]="!showComment()">
-      <span class="permission-row-switch-title">{{
-        t('project_settings.roles_permissions.can_comment')
-      }}</span>
-      <tui-toggle
-        class="permission-can-comment-switch"
-        data-test="permission-can-comment-switch"
-        formControlName="comment"
-        [showIcons]="true">
-      </tui-toggle>
+      <label class="permission-row-switch-title">
+        <span class="label-text">{{
+          t('project_settings.roles_permissions.can_comment')
+        }}</span>
+        <tui-toggle
+          class="permission-can-comment-switch"
+          data-test="permission-can-comment-switch"
+          formControlName="comment"
+          [showIcons]="true">
+        </tui-toggle>
+      </label>
     </div>
   </div>
   <ng-template #tooltip>

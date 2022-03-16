@@ -44,12 +44,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & .permission-row-switch-title {
-    /* stylelint-disable */
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    display: -webkit-box;
-    /* stylelint-enable */
+    align-items: center;
+    display: flex;
     overflow: hidden;
-    padding-inline-end: var(--spacing-8);
+
+    & .label-text {
+      @mixin line-clamp 1;
+
+      padding-inline-end: var(--spacing-8);
+    }
   }
 }

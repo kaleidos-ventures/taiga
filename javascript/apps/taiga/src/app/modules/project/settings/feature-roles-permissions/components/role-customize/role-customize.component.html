@@ -17,12 +17,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             trackBy: trackByValue
           "
           class="permmission-row-switch">
-          <span class="permission-row-switch-title">{{ t(action.value) }}</span>
-          <tui-toggle
-            [formControlName]="action.key"
-            [showIcons]="true"
-            data-test="permissions-switch">
-          </tui-toggle>
+          <label class="permission-row-switch-title">
+            <span class="label-text">{{ t(action.value) }}</span>
+            <tui-toggle
+              [formControlName]="action.key"
+              [showIcons]="true"
+              data-test="permissions-switch">
+            </tui-toggle>
+          </label>
         </div>
       </div>
     </div>

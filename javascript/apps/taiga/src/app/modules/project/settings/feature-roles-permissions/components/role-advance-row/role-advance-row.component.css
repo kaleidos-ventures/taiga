@@ -100,10 +100,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .permission-row-switch-title {
-  @mixin line-clamp 1;
-
+  align-items: center;
+  display: flex;
   overflow: hidden;
-  padding-inline-end: var(--spacing-8);
+
+  & .label-text {
+    @mixin line-clamp 1;
+
+    padding-inline-end: var(--spacing-8);
+  }
 }
 
 .permission-can-comment-switch {

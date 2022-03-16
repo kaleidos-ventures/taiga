@@ -53,15 +53,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <button
             appearance="nav-icon-button"
             [attr.aria-label]="t('notification')"
-            [attr.aria-description]="
-              t('notification_desc', {
-                notifications: 24
-              })
-            "
+            aria-describedby="aria-notifications-description"
             tuiIconButton
             icon="bell"
             type="button"></button>
         </tui-badged-content>
+        <p id="aria-notifications-description" class="visually-hidden">
+          {{
+            t('notification_desc', {
+              notifications: 24
+            })
+          }}
+        </p>
       </div>
       <div class="separator"></div>
       <div class="avatar-holder">

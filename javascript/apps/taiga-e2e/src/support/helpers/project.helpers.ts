@@ -72,6 +72,7 @@ export const typeProjectName = (name: string) =>
   cy.getBySel('input-name').type(name);
 export const typeProjectDescription = (description: string) =>
   cy.getBySel('input-description').type(description);
-
+export const submitVisible = () =>
+  cy.getBySel('submit-create-project').should('be.visible');
 export const cancelProject = () => cy.getBySel('cancel-create-project').click();
 export const submitProject = () => cy.getBySel('submit-create-project').click();

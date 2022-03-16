@@ -12,16 +12,22 @@ import {
   launchProjectCreationInWS,
   selectBlankProject,
   submitProject,
+  submitVisible,
   typeProjectDescription,
   typeProjectName,
 } from '../support/helpers/project.helpers';
 import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 
-const workspace = WorkspaceMockFactory();
-const project = ProjectMockFactory();
-
 describe('Workspace Create from Overview', () => {
+  let workspace: ReturnType<typeof WorkspaceMockFactory>;
+  let project: ReturnType<typeof ProjectMockFactory>;
+
+  before(() => {
+    workspace = WorkspaceMockFactory();
+    project = ProjectMockFactory();
+  });
+
   beforeEach(() => {
     cy.login();
     cy.visit('/');
@@ -30,19 +36,24 @@ describe('Workspace Create from Overview', () => {
 
   it('Should create a new project from the workspace list and preselect the workspace', () => {
     void createWorkspaceRequest(workspace.name);
-    cy.tgCheckA11y();
+    cy.reload(true);
+    cy.initAxe();
     launchProjectCreationInWS(0);
 
     // expect
     cy.getBySel('create-project-select').within(() => {
+      cy.tgCheckA11y();
       cy.get('.name').should('contain.text', workspace.name);
     });
   });
 
   it('Should not be able to create project if empty', () => {
     void createWorkspaceRequest(workspace.name);
+    cy.reload(true);
+    cy.initAxe();
     launchProjectCreationInWS(0);
     selectBlankProject();
+    submitVisible();
     cy.tgCheckA11y();
     submitProject();
 

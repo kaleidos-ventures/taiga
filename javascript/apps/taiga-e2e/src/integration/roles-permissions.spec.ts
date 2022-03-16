@@ -184,43 +184,48 @@ describe('Settings > project member roles (basic)', () => {
     cy.tgCheckA11y();
     cy.getBySel('permissions-switch').should('have.class', '_checked');
 
-    // Turn a permission off and check module select text update
-    toggleCustomPermission('create');
-    cy.getBySel('module-permissions-row')
-      .eq(moduleIndex)
-      .within(() => {
-        modulePermissionSelectHelper
-          .getValue()
-          .should('contain.text', 'Can edit (restricted)');
-      });
+    cy.getBySel('public-permissions-settings').within(() => {
+      // Turn a permission off and check module select text update
+      toggleCustomPermission('create');
+      cy.getBySel('module-permissions-row')
+        .eq(moduleIndex)
+        .within(() => {
+          modulePermissionSelectHelper
+            .getValue()
+            .should('contain.text', 'Can edit (restricted)');
+        });
 
-    // Turn all custom permissions of a module off and ensure that this module select changed to CAN VIEW and global to CUSTOM
-    toggleCustomPermission('delete');
-    toggleCustomPermission('modify');
-    cy.getBySel('module-permissions-row')
-      .eq(moduleIndex)
-      .within(() => {
-        modulePermissionSelectHelper
-          .getValue()
-          .should('contain.text', 'Can view');
-      });
-    cy.getBySel('role-permission-row')
-      .first()
-      .within(() => {
-        rowPermissionSelectHelper.getValue().should('contain.text', 'Custom');
-      });
+      // Turn all custom permissions of a module off and ensure that this module select changed to CAN VIEW and global to CUSTOM
+      toggleCustomPermission('delete');
+      toggleCustomPermission('modify');
+      cy.getBySel('module-permissions-row')
+        .eq(moduleIndex)
+        .within(() => {
+          modulePermissionSelectHelper
+            .getValue()
+            .should('contain.text', 'Can view');
+        });
 
-    // Turn again all ON and ensure levels are CAN EDIT on both
-    toggleCustomPermission('create');
-    toggleCustomPermission('delete');
-    toggleCustomPermission('modify');
-    cy.getBySel('module-permissions-row')
-      .eq(moduleIndex)
-      .within(() => {
-        modulePermissionSelectHelper
-          .getValue()
-          .should('contain.text', 'Can edit');
-      });
+      cy.screenshot();
+
+      cy.getBySel('role-permission-row')
+        .first()
+        .within(() => {
+          rowPermissionSelectHelper.getValue().should('contain.text', 'Custom');
+        });
+
+      // Turn again all ON and ensure levels are CAN EDIT on both
+      toggleCustomPermission('create');
+      toggleCustomPermission('delete');
+      toggleCustomPermission('modify');
+      cy.getBySel('module-permissions-row')
+        .eq(moduleIndex)
+        .within(() => {
+          modulePermissionSelectHelper
+            .getValue()
+            .should('contain.text', 'Can edit');
+        });
+    });
   });
 
   it('Public: Test comment permissions', () => {

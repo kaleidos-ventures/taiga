@@ -7,7 +7,7 @@ When the first element to focus is a text it must have a `tabindex="0"`. If the 
 ```html
 <tg-ui-modal [open]="booleanVariable" (requestClose)="triggerWhenModalClosed()">
   <ng-container>
-    <div aria-describedby="aria_description" aria-labeledby="arial_label">
+    <div aria-describedby="aria_description" aria-labelledby="arial_label">
       <h1 id="aria_label">Modal Title</h1>
       <div id="aria_description">
         <p tabindex="0">First description paragraph</p>
@@ -30,7 +30,7 @@ While `elementFocus` is null we will keep the basic focus functionality that go
   (requestClose)="triggerWhenModalClosed()"
   [elementFocus]="HTMLelementVariable">
   <ng-container>
-    <div aria-describedby="aria_description" aria-labeledby="arial_label">
+    <div aria-describedby="aria_description" aria-labelledby="arial_label">
       <h1 id="aria_label">Modal Title</h1>
       <div id="aria_description">
         <p tabindex="0">First description paragraph</p>

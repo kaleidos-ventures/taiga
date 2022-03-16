@@ -17,6 +17,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 :host {
   --max-inline-size: 17rem;
   --min-inline-size: 14rem;
+
+  &.hidden-row-name .permission-row .permission-row-name {
+    display: none;
+  }
 }
 
 .permission-row {

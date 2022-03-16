@@ -34,6 +34,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ tip }}
         </div>
         <button
+          [attr.id]="'action-upload' + id"
           class="uploader-button"
           (click)="displayImageUploader()"
           tuiButton

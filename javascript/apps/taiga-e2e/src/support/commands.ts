@@ -18,25 +18,11 @@
 
 function initAxeCommand(): void {
   // https://github.com/component-driven/cypress-axe/issues/84
-  cy.readFile('../../node_modules/axe-core/axe.js').then((source) => {
+  cy.readFile('../../node_modules/axe-core/axe.js').then((source: string) => {
     return cy.window({ log: false }).then((window) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       window.eval(source);
     });
-  });
-
-  // https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md
-  cy.configureAxe({
-    rules: [
-      {
-        id: 'landmark-one-main',
-        enabled: false,
-      },
-      {
-        id: 'page-has-heading-one',
-        enabled: false,
-      },
-    ],
   });
 }
 
@@ -66,6 +52,8 @@ const terminalLog = (violations: any[]) => {
     })
   );
 
+  cy.task('log', JSON.stringify(violations));
+
   cy.task('table', violationData);
 };
 /* eslint-enable */
@@ -76,9 +64,11 @@ function checkA11y(params: CheckA11yParams = {}): void {
     axe: {
       runOnly: {
         type: 'tag',
-        values: ['wcag21aa'],
+        values: ['wcag2a', 'wcag2aa'],
       },
       rules: {
+        'landmark-one-main': { enabled: false },
+        'page-has-heading-one': { enabled: false },
         'color-contrast': { enabled: false },
       },
     },

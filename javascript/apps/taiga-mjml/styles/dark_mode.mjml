@@ -45,23 +45,40 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: #BEC7D8 !important;
     }
 
+    a.primary-link:link,
+    a.primary-link:visited,
+    a.primary-link:active,
+    a.primary-link:hover,
     .primary-link a:link,
     .primary-link a:visited,
-    .primary-link a:active .primary-link a:hover {
+    .primary-link a:active,
+    .primary-link a:hover {
       color: #BEC7D8;
     }
 
+    a.secondary-link:link,
+    a.secondary-link:visited,
+    a.secondary-link:active,
+    a.secondary-link:hover,
     .secondary-link a:link,
     .secondary-link a:visited,
-    .secondary-link a:active .secondary-link a:hover {
+    .secondary-link a:active,
+    .secondary-link a:hover {
+      color: #83EEDE !important;
+    }
+
+
+    a.tertiary-link:link,
+    a.tertiary-link:visited,
+    a.tertiary-link:active,
+    a.tertiary-link:hover,
+    .tertiary-link a:link,
+    .tertiary-link a:visited,
+    .tertiary-link a:active,
+    .tertiary-link a:hover {
       color: #83EEDE;
     }
 
-    .tertiary-link a:link,
-    .tertiary-link a:visited,
-    .tertiary-link a:active .tertiary-link a:hover {
-      color: #83EEDE;
-    }
 
     strong {
       color: #83EEDE;

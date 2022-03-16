@@ -28,6 +28,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     padding: 44px 64px;
   }
 
+  a.primary-link:link,
+  a.primary-link:visited,
+  a.primary-link:active,
+  a.primary-link:hover,
   .primary-link a:link,
   .primary-link a:visited,
   .primary-link a:hover,
@@ -35,6 +39,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     color: #63738F;
   }
 
+    a.secondary-link:link,
+  a.secondary-link:visited,
+  a.secondary-link:active,
+  a.secondary-link:hover,
   .secondary-link a:link,
   .secondary-link a:visited,
   .secondary-link a:hover,
@@ -44,11 +52,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     text-decoration: none;
   }
 
+  a.tertiary-link:link,
+  a.tertiary-link:visited,
+  a.tertiary-link:active,
+  a.tertiary-link:hover,
   .tertiary-link a:link,
   .tertiary-link a:visited,
   .tertiary-link a:active {
     color: #007DA6;
     font-weight: 500;
+  }
+
+  .btn-primary a {
+    display: block !important;
   }
 
   .tertiary-link a:hover {

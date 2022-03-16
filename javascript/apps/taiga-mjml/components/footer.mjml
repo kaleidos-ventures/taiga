@@ -9,7 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <mj-column>
     <mj-text css-class="secondary-link dm-text" mj-class="font-body color-gray70 dm-link">
       Need help?
-      <a href="#"> Contact support </a></mj-text
+      <a css-class="secondary-link" href="https://www.taiga.io/" > Contact support </a></mj-text
     >
   </mj-column>
 </mj-section>

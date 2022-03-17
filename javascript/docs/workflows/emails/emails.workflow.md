@@ -38,9 +38,10 @@ Once back is done adding things to the template, we generate the final version o
 
 This are the step to generate the HTML of the final version:
 
-1. Go into python/apps/taiga/
-2. Make you to have have VENV up.
-3. Use command `python -m taiga emails render NAMEOFEMAILTORENDER`
+1. Make sure to`npm run emails` to have the latest render version
+2. Go into python/apps/taiga/
+3. Make you to have have VENV up.
+4. Use command `python -m taiga emails render NAMEOFEMAILTORENDER`
    ex: `python -m taiga emails render sign_up`
 
 ## How to test on emailonacid

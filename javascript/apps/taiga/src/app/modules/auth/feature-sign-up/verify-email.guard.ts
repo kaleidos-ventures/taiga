@@ -32,7 +32,7 @@ export class VerifyEmailGuard implements CanActivate {
   public canActivate(route: ActivatedRouteSnapshot) {
     const verifyParam = route.params.path as string;
     return this.http
-      .post<Auth>(`${this.config.apiUrl}/users/verify/`, {
+      .post<Auth>(`${this.config.apiUrl}/users/verify`, {
         token: verifyParam,
       })
       .pipe(

@@ -6,6 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.utils.slug import generate_username_suffix
+from taiga.emails.emails import Emails
+from taiga.emails.tasks import send_email
 from taiga.tokens import exceptions as tokens_ex
 from taiga.users import exceptions as ex
 from taiga.users import repositories as users_repositories
@@ -20,13 +22,11 @@ async def create_user(email: str, full_name: str, password: str) -> None:
     username = await _generate_username(email=email)
     user = await users_repositories.create_user(email=email, username=username, full_name=full_name, password=password)
 
-    # await send_email.defer(
-    #    email_name='sign_up',
-    #    to=[user.email],
-    #    context={
-    #       "verify_token": await _generate_verify_user_token(user)
-    #    }
-    # )
+    await send_email.defer(  # type: ignore
+        email_name=Emails.SIGN_UP.value,
+        to=user.email,
+        email_data={"verify_token": await _generate_verify_user_token(user)},
+    )
 
     return user
 

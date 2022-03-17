@@ -18,17 +18,33 @@ from tests.utils import factories as f
 ##########################################################
 
 
-async def test_create_user_ok():
+async def test_create_user_ok(tqmanager):
     email = "email@email.com"
     username = "email"
     full_name = "Full Name"
     password = "CorrectP4ssword$"
-    with patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo:
+    user = await f.build_user(id=1, email=email, username=username, full_name=full_name)
+
+    with (
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
+        patch("taiga.users.services._generate_verify_user_token", return_value="verify_token"),
+    ):
         fake_users_repo.user_exists.return_value = False
+        fake_users_repo.create_user.return_value = user
+
         await services.create_user(email=email, full_name=full_name, password=password)
+
         fake_users_repo.create_user.assert_awaited_once_with(
             email=email, username=username, full_name=full_name, password=password
         )
+        assert len(tqmanager.pending_jobs) == 1
+        job = tqmanager.pending_jobs[0]
+        assert "send_email" in job["task_name"]
+        assert job["args"] == {
+            "email_name": "sign_up",
+            "to": "email@email.com",
+            "email_data": {"verify_token": "verify_token"},
+        }
 
 
 async def test_create_user_email_exists():

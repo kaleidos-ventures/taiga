@@ -15,7 +15,7 @@ import { setUser } from './modules/auth/data-access/+state/actions/auth.actions'
 import { AuthService } from './modules/auth/data-access/services/auth.service';
 import { RouteHistoryService } from './shared/route-history/route-history.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { distinctUntilChanged, filter, map, skip } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, share, skip } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -42,8 +42,10 @@ export class AppComponent {
         (evt: unknown): evt is NavigationEnd => evt instanceof NavigationEnd
       ),
       map(() => {
-        return !(this.route.snapshot.firstChild?.data?.noHeader as boolean);
-      })
+        const data = this.getRouteData(this.route);
+        return !data.noHeader;
+      }),
+      share()
     );
 
     this.routeHistoryService.listen();
@@ -83,5 +85,21 @@ export class AppComponent {
           }
         });
       });
+  }
+
+  public getRouteData(route: ActivatedRoute) {
+    let data: Record<string, unknown> = {};
+    let currentRoute = route.snapshot.firstChild;
+
+    while (currentRoute) {
+      data = {
+        ...data,
+        ...currentRoute.data,
+      };
+
+      currentRoute = currentRoute.firstChild;
+    }
+
+    return data;
   }
 }

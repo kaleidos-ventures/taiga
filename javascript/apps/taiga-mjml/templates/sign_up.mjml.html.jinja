@@ -11,6 +11,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <mj-include path="../components/head.mjml" />
   </mj-head>
   <mj-body css-class="body">
+    <mj-raw>
+      {% set verify_url = "https://next-dev.taiga.io/signup/verify/" ~ verification_token -%}
+    </mj-raw>
     <mj-wrapper css-class="body-content">
       <mj-include path="../components/header-logo.mjml" />
       <mj-section mj-class="padding-section">

@@ -10,7 +10,6 @@ from unittest import mock
 
 import pytest
 from fastapi import status
-
 from taiga.users.services import _generate_verify_user_token
 from tests.utils import factories as f
 

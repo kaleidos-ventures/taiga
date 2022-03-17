@@ -43,7 +43,7 @@ async def test_create_user_ok(tqmanager):
         assert job["args"] == {
             "email_name": "sign_up",
             "to": "email@email.com",
-            "email_data": {"verify_token": "verify_token"},
+            "email_data": {"verification_token": "verify_token"},
         }
 
 

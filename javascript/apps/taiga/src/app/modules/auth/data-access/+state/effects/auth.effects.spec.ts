@@ -23,7 +23,7 @@ import {
   signUpError,
   signUpSuccess,
 } from '../actions/auth.actions';
-import { AuthMockFactory, SignUpInput, UserMockFactory } from '@taiga/data';
+import { AuthMockFactory, UserMockFactory } from '@taiga/data';
 import {
   randUserName,
   randPassword,
@@ -34,7 +34,14 @@ import { cold, hot } from 'jest-marbles';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
+
+const signupData = {
+  email: randEmail(),
+  password: randPassword(),
+  fullName: randFullName(),
+  acceptTerms: true,
+};
 
 describe('AuthEffects', () => {
   let actions$: Observable<Action>;
@@ -121,12 +128,6 @@ describe('AuthEffects', () => {
   });
 
   it('signup', () => {
-    const signupData = {
-      email: randEmail(),
-      password: randPassword(),
-      fullName: randFullName(),
-      acceptTerms: true,
-    };
     const response = AuthMockFactory();
     const authApiService = spectator.inject(AuthApiService);
     const effects = spectator.inject(AuthEffects);
@@ -136,7 +137,7 @@ describe('AuthEffects', () => {
     actions$ = hot('-a', { a: signup(signupData) });
 
     const expected = cold('--a', {
-      a: signUpSuccess(),
+      a: signUpSuccess({ email: signupData.email }),
     });
 
     expect(effects.signUp$).toBeObservable(expected);
@@ -146,12 +147,13 @@ describe('AuthEffects', () => {
     const effects = spectator.inject(AuthEffects);
     const routerService = spectator.inject(Router);
 
-    actions$ = hot('-a', { a: signUpSuccess() });
+    actions$ = hot('-a', { a: signUpSuccess({ email: signupData.email }) });
 
     expect(effects.signUpSuccess$).toSatisfyOnFlush(() => {
       expect(routerService.navigate).toHaveBeenCalledWith(
-        ['signup', 'verify-email'],
+        ['signup', 'verification-sent'],
         {
+          queryParams: { email: signupData.email },
           skipLocationChange: true,
         }
       );

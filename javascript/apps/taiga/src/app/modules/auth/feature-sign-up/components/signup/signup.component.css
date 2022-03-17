@@ -29,11 +29,3 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .login-options {
   justify-content: center;
 }
-
-.terms-and-privacy {
-  color: var(--color-gray80);
-
-  &::ng-deep a {
-    text-decoration: underline;
-  }
-}

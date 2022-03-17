@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <img class="owl" src="/assets/images/signup/verify-email-owl.svg" alt="" />
     <h1 class="verify-title">{{ t('verify.title') }}</h1>
     <p class="verify-text">{{ t('verify.verification_link_sent') }}</p>
-    <p class="verify-text email">mail@mail.com</p>
+    <p class="verify-text email">{{ emailAddress }}</p>
     <p class="verify-text">
       <span>{{ t('verify.mail_not_received') }}</span>
       <button tuiLink (click)="resendEmail()">
@@ -19,7 +19,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </p>
     <p class="verify-footer">
       <span>{{ t('verify.footer_text') }}</span>
-      <button tuiLink [routerLink]="['/sign-up']">
+      <button tuiLink [routerLink]="['/signup']">
         {{ t('verify.footer_button') }}
       </button>
     </p>

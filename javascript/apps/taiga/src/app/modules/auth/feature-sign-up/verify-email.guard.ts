@@ -13,8 +13,8 @@ import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ConfigService } from '@taiga/core';
 import { Auth, genericResponseError } from '@taiga/data';
-import { of, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
 import { loginSuccess } from '../data-access/+state/actions/auth.actions';
 

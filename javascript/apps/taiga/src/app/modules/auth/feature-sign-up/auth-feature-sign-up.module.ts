@@ -21,7 +21,7 @@ import { SignupComponent } from './components/signup/signup.component';
 const routes: Routes = [
   { path: '', component: AuthFeatureSignUpComponent },
   {
-    path: 'email-verification-sent',
+    path: 'verification-sent',
     loadChildren: () =>
       import('./../feature-verify-email/auth-feature-verify-email.module').then(
         (m) => m.AuthFeatureVerifyEmailModule

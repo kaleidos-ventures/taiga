@@ -116,7 +116,7 @@ export class AuthEffects {
             })
             .pipe(
               map(() => {
-                return AuthActions.signUpSuccess();
+                return AuthActions.signUpSuccess({ email });
               })
             );
         },
@@ -149,8 +149,9 @@ export class AuthEffects {
   public signUpSuccess$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.signUpSuccess),
-      map(() => {
-        void this.router.navigate(['signup', 'email-verification-sent'], {
+      map(({ email }) => {
+        void this.router.navigate(['signup', 'verification-sent'], {
+          queryParams: { email },
           skipLocationChange: true,
         });
         return AuthActions.setUser({ user: null });

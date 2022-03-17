@@ -38,7 +38,10 @@ export const signup = createAction(
   }>()
 );
 
-export const signUpSuccess = createAction('[Auth] sign up success');
+export const signUpSuccess = createAction(
+  '[Auth] sign up success',
+  props<{ email: User['email'] }>()
+);
 
 export const signUpError = createAction(
   '[Auth] sign up error',

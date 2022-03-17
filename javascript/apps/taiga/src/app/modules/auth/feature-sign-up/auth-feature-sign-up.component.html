@@ -35,7 +35,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           "></p>
       </ng-container>
       <ng-container *ngIf="displayForm">
-        <tg-signup (displayLoginOptions)="displaySignUpForm(false)"></tg-signup>
+        <tg-signup
+          (displayLoginOptions)="keepFormData($event)"
+          [data]="signUpFormData"></tg-signup>
       </ng-container>
     </div>
   </main>

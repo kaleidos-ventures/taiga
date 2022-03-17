@@ -7,6 +7,7 @@
  */
 
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { SignUp } from './models/sign-up.model';
 
 @Component({
   selector: 'tg-sign-up',
@@ -19,6 +20,12 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 })
 export class AuthFeatureSignUpComponent {
   public displayForm = false;
+  public signUpFormData: SignUp | null = null;
+
+  public keepFormData(data: SignUp) {
+    this.signUpFormData = data;
+    this.displaySignUpForm(false);
+  }
 
   public displaySignUpForm(value: boolean) {
     this.displayForm = value;

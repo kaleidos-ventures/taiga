@@ -6,7 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { resendVerifyEmail } from './+state/actions/auth-feature-verify-email.actions';
 
@@ -16,8 +17,14 @@ import { resendVerifyEmail } from './+state/actions/auth-feature-verify-email.ac
   styleUrls: ['./auth-feature-verify-email.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AuthFeatureVerifyEmailComponent {
-  constructor(private store: Store) {}
+export class AuthFeatureVerifyEmailComponent implements OnInit {
+  public emailAddress = '';
+
+  constructor(private store: Store, private route: ActivatedRoute) {}
+
+  public ngOnInit(): void {
+    this.emailAddress = this.route.snapshot.queryParams.email as string;
+  }
 
   public resendEmail() {
     this.store.dispatch(resendVerifyEmail());

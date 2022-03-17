@@ -12,6 +12,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  Input,
   OnInit,
   Output,
 } from '@angular/core';
@@ -30,11 +31,8 @@ import {
   signup,
   signUpError,
 } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
-interface SignUp {
-  email: string;
-  password: string;
-  fullName: string;
-}
+import { SignUp } from '~/app/modules/auth/feature-sign-up/models/sign-up.model';
+
 @UntilDestroy()
 @Component({
   selector: 'tg-signup',
@@ -43,6 +41,9 @@ interface SignUp {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignupComponent implements OnInit {
+  @Input()
+  public data: SignUp | null = null;
+
   @Output()
   public displayLoginOptions = new EventEmitter();
 
@@ -91,6 +92,9 @@ export class SignupComponent implements OnInit {
       ],
       fullName: [null, [Validators.required]],
     });
+    if (this.data) {
+      this.signUpForm.setValue(this.data);
+    }
   }
 
   public onSubmit() {
@@ -123,6 +127,6 @@ export class SignupComponent implements OnInit {
   }
 
   public viewAllOptions() {
-    this.displayLoginOptions.next();
+    this.displayLoginOptions.next(this.signUpForm.value);
   }
 }

@@ -24,8 +24,20 @@ async def create_outstanding_token(
     )
 
 
+async def update_or_create_outstanding_token(
+    user: User, jti: str, token: str, created_at: datetime, expires_at: datetime
+) -> tuple[OutstandingToken, bool]:
+    return await tokens_repositories.update_or_create_outstanding_token(
+        user=user, jti=jti, token=token, created_at=created_at, expires_at=expires_at
+    )
+
+
 async def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> tuple[OutstandingToken, bool]:
     return await tokens_repositories.get_or_create_outstanding_token(jti=jti, token=token, expires_at=expires_at)
+
+
+async def outstanding_token_exist(jti: str) -> bool:
+    return await tokens_repositories.outstanding_token_exist(jti=jti)
 
 
 ###########################################

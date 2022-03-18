@@ -49,9 +49,6 @@ from taiga.tokens.exceptions import (
 USER_ID_FIELD: Final = "id"
 USER_ID_CLAIM: Final = "user_id"
 
-if TYPE_CHECKING:
-    TokenModel = TypeVar("TokenModel", bound="Token")
-
 
 class Token:
     """
@@ -230,15 +227,29 @@ class Token:
 
 
 if TYPE_CHECKING:
+    TokenModel = TypeVar("TokenModel", bound="Token")
     _BaseMixin = Token
 else:
     _BaseMixin = object
 
 
 class DenylistMixin(_BaseMixin):
+    is_unique: bool = False
+
     async def verify(self) -> None:
+        await self._check_outstanding()
         await self._check_denylist()
         await super().verify()
+
+    async def _check_outstanding(self) -> None:
+        """
+        Checks if this token is in the outstanding list. Raises
+        `TokenError` if it's not.
+        """
+        jti = self.payload[settings.TOKENS.JTI_CLAIM]
+
+        if not await tokens_services.outstanding_token_exist(jti=jti):
+            raise TokenError("This is not an outstanding token")
 
     async def _check_denylist(self) -> None:
         """
@@ -275,8 +286,14 @@ class DenylistMixin(_BaseMixin):
         created_at = token.current_time
         expires_at = epoch_to_datetime(token["exp"])
 
-        await tokens_services.create_outstanding_token(
-            user=user, jti=jti, token=str(token), created_at=created_at, expires_at=expires_at
-        )
+        if cls.is_unique:  # type: ignore[attr-defined]
+            await tokens_services.update_or_create_outstanding_token(
+                user=user, jti=jti, token=str(token), created_at=created_at, expires_at=expires_at
+            )
+
+        else:
+            await tokens_services.create_outstanding_token(
+                user=user, jti=jti, token=str(token), created_at=created_at, expires_at=expires_at
+            )
 
         return token

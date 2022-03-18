@@ -35,14 +35,32 @@ from unittest.mock import patch
 import pytest
 from asgiref.sync import sync_to_async
 from django.core.management import call_command
-from taiga.auth.tokens import AccessToken, RefreshToken
 from taiga.base.utils.datetime import epoch_to_datetime
 from taiga.conf import settings
-from taiga.tokens.exceptions import DeniedTokenError
+from taiga.tokens import DenylistMixin, Token
+from taiga.tokens.exceptions import DeniedTokenError, TokenError
 from taiga.tokens.models import DenylistedToken, OutstandingToken
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)
+
+
+class CommonToken(Token):
+    token_type = "test-common-token"
+    lifetime = timedelta(minutes=100)
+
+
+class DeniableToken(DenylistMixin, Token):
+    token_type = "test-deniable-token"
+    lifetime = timedelta(minutes=100)
+    is_unique = False
+
+
+class UniqueToken(DenylistMixin, Token):
+    token_type = "test-deniable-token"
+    lifetime = timedelta(minutes=100)
+    is_unique = True
+
 
 ot_count = sync_to_async(OutstandingToken.objects.count)
 ot_first = sync_to_async(OutstandingToken.objects.select_related("denylistedtoken").first)
@@ -58,7 +76,7 @@ dt_create = sync_to_async(DenylistedToken.objects.create)
 
 async def test_refresh_tokens_are_added_to_outstanding_list():
     user = await f.create_user()
-    token = await RefreshToken.create_for_user(user)
+    token = await DeniableToken.create_for_user(user)
 
     assert await ot_count() == 1
 
@@ -71,27 +89,27 @@ async def test_refresh_tokens_are_added_to_outstanding_list():
     assert outstanding_token.expires_at == epoch_to_datetime(token["exp"])
 
 
-async def test_access_tokens_are_not_added_to_outstanding_list():
+async def test_common_tokens_are_not_added_to_outstanding_list():
     user = await f.create_user()
-    await AccessToken.create_for_user(user)
+    await CommonToken.create_for_user(user)
 
     assert await ot_count() == 0
 
 
 async def test_token_will_not_validate_if_denylisted():
     user = await f.create_user()
-    token = await RefreshToken.create_for_user(user)
+    token = await DeniableToken.create_for_user(user)
     outstanding_token = await ot_first()
 
     # Should raise no exception
-    await RefreshToken.create(str(token))
+    await DeniableToken.create(str(token))
 
     # Add token to denylist
     await dt_create(token=outstanding_token)
 
     with pytest.raises(DeniedTokenError) as e:
         # Should raise exception
-        await RefreshToken.create(str(token))
+        await DeniableToken.create(str(token))
         assert "denylisted" in e.exception.args[0]
 
 
@@ -101,9 +119,9 @@ async def test_tokens_can_be_manually_denylisted():
     assert await ot_count() == 0
     assert await dt_count() == 0
 
-    token = await RefreshToken.create_for_user(user)
+    token = await DeniableToken.create_for_user(user)
     # Should raise no exception
-    await RefreshToken.create(str(token))
+    await DeniableToken.create(str(token))
 
     assert await ot_count() == 1
     assert await dt_count() == 0
@@ -121,7 +139,7 @@ async def test_tokens_can_be_manually_denylisted():
 
     with pytest.raises(DeniedTokenError) as e:
         # Should raise exception
-        await RefreshToken.create(str(token))
+        await DeniableToken.create(str(token))
         assert "denylisted" in e.exception.args[0]
 
     # If denylisted token already exists, no create it
@@ -134,7 +152,7 @@ async def test_tokens_can_be_manually_denylisted():
     assert denylisted_token.token.jti == token["jti"]
 
     # Should add token to outstanding list if not already present
-    new_token = await RefreshToken.create()
+    new_token = await DeniableToken.create()
     await new_token.denylist()
 
     assert await ot_count() == 2
@@ -148,9 +166,9 @@ async def test_flush_expired_tokens_should_delete_any_expired_tokens():
     user = await f.create_user()
 
     # Make some tokens that won't expire soon
-    not_expired_1 = await RefreshToken.create_for_user(user)
-    not_expired_2 = await RefreshToken.create_for_user(user)
-    not_expired_3 = await RefreshToken.create()
+    not_expired_1 = await DeniableToken.create_for_user(user)
+    not_expired_2 = await DeniableToken.create_for_user(user)
+    not_expired_3 = await DeniableToken.create()
 
     # Denylist fresh tokens
     await not_expired_2.denylist()
@@ -161,15 +179,15 @@ async def test_flush_expired_tokens_should_delete_any_expired_tokens():
 
     with patch("taiga.tokens.base.aware_utcnow") as fake_aware_utcnow:
         fake_aware_utcnow.return_value = now
-        expired_1 = await RefreshToken.create_for_user(user)
-        expired_2 = await RefreshToken.create()
+        expired_1 = await DeniableToken.create_for_user(user)
+        expired_2 = await DeniableToken.create()
 
     # Denylist expired tokens
     await expired_1.denylist()
     await expired_2.denylist()
 
     # Make another token that won't expire soon
-    not_expired_4 = await RefreshToken.create_for_user(user)
+    not_expired_4 = await DeniableToken.create_for_user(user)
 
     # Should be certain number of outstanding tokens and denylisted
     # tokens
@@ -194,3 +212,44 @@ async def test_flush_expired_tokens_should_delete_any_expired_tokens():
         lambda: list(DenylistedToken.objects.order_by("id").values_list("token__jti", flat=True))
     )()
     assert dts == [not_expired_2["jti"], not_expired_3["jti"]]
+
+
+async def test_create_multiples_tokens_not_unique_for_the_same_user():
+    user = await f.create_user()
+
+    # Make some tokens for the same user
+    await DeniableToken.create_for_user(user)
+    await DeniableToken.create_for_user(user)
+
+    assert await ot_count() == 2
+    assert await dt_count() == 0
+
+
+async def test_create_multiples_tokens_unique_for_the_same_user():
+    user = await f.create_user()
+
+    # Make some tokens for the same user
+    await UniqueToken.create_for_user(user)
+    await UniqueToken.create_for_user(user)
+
+    assert await ot_count() == 1
+    assert await dt_count() == 0
+
+
+async def test_old_unique_token_is_not_valid():
+    user = await f.create_user()
+
+    # Make some tokens for the same user
+    old_token = await UniqueToken.create_for_user(user)
+    new_token = await UniqueToken.create_for_user(user)
+
+    # Old token should raise exception
+    with pytest.raises(TokenError):
+        await UniqueToken.create(str(old_token))
+
+    await UniqueToken.create(str(new_token))
+    await new_token.denylist()
+
+    # New token should raise exception if it's used
+    with pytest.raises(DeniedTokenError):
+        await UniqueToken.create(str(new_token))

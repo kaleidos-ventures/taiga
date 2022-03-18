@@ -14,3 +14,4 @@ from taiga.tokens import DenylistMixin, Token
 class VerifyUserToken(DenylistMixin, Token):
     token_type = "verify-user"
     lifetime = timedelta(minutes=settings.VERIFY_USER_TOKEN_LIFETIME)
+    is_unique = True

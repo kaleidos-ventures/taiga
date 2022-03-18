@@ -30,6 +30,7 @@ import { PasswordStrengthComponent } from '@taiga/ui/inputs/password-strength/pa
 import {
   signup,
   signUpError,
+  signUpSuccess,
 } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { SignUp } from '~/app/modules/auth/feature-sign-up/models/sign-up.model';
 
@@ -46,6 +47,9 @@ export class SignupComponent implements OnInit {
 
   @Output()
   public displayLoginOptions = new EventEmitter();
+
+  @Output()
+  public signUpSuccess = new EventEmitter();
 
   public signUpForm!: FormGroup;
 
@@ -81,6 +85,13 @@ export class SignupComponent implements OnInit {
         }
         this.cd.detectChanges();
       });
+
+    this.actions$
+      .pipe(ofType(signUpSuccess), untilDestroyed(this))
+      .subscribe(() => {
+        this.signUpDone();
+        this.cd.detectChanges();
+      });
   }
 
   public ngOnInit(): void {
@@ -107,6 +118,7 @@ export class SignupComponent implements OnInit {
           password: signUpFormData.password,
           fullName: signUpFormData.fullName,
           acceptTerms: true,
+          resend: false,
         })
       );
     } else {
@@ -128,5 +140,9 @@ export class SignupComponent implements OnInit {
 
   public viewAllOptions() {
     this.displayLoginOptions.next(this.signUpForm.value);
+  }
+
+  public signUpDone() {
+    this.signUpSuccess.next(this.signUpForm.value);
   }
 }

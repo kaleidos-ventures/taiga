@@ -21,10 +21,16 @@ import { SignUp } from './models/sign-up.model';
 export class AuthFeatureSignUpComponent {
   public displayForm = false;
   public signUpFormData: SignUp | null = null;
+  public displayVerifyEmail = false;
 
   public keepFormData(data: SignUp) {
     this.signUpFormData = data;
     this.displaySignUpForm(false);
+  }
+
+  public signUpSucess(data: SignUp) {
+    this.signUpFormData = data;
+    this.displayVerifyEmail = true;
   }
 
   public displaySignUpForm(value: boolean) {

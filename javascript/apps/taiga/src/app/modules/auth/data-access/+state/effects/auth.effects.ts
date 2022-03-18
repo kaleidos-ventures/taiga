@@ -106,7 +106,7 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.signup),
       pessimisticUpdate({
-        run: ({ email, password, fullName, acceptTerms }) => {
+        run: ({ email, password, fullName, acceptTerms, resend }) => {
           return this.authApiService
             .signUp({
               email,
@@ -116,14 +116,17 @@ export class AuthEffects {
             })
             .pipe(
               map(() => {
-                return AuthActions.signUpSuccess({ email });
+                if (!resend) {
+                  return AuthActions.signUpSuccess({ email });
+                } else {
+                  return AuthActions.resendSuccess();
+                }
               })
             );
         },
-        onError: (_, httpResponse: HttpErrorResponse) => {
+        onError: (action, httpResponse: HttpErrorResponse) => {
           const status = httpResponse.status as keyof ErrorManagementOptions;
           const signUpError = httpResponse.error as SignUpError;
-
           if (
             status === 400 &&
             signUpError.error.message !== 'Email already exists'
@@ -132,8 +135,12 @@ export class AuthEffects {
               400: {
                 type: 'toast',
                 options: {
-                  label: 'signup.errors.register',
-                  message: 'signup.errors.please_refresh',
+                  label: action.resend
+                    ? 'signup.errors.resend_email_label'
+                    : 'signup.errors.register',
+                  message: action.resend
+                    ? 'signup.errors.resend_email_message'
+                    : 'signup.errors.please_refresh',
                   status: TuiNotification.Error,
                   scope: 'auth',
                 },
@@ -146,18 +153,23 @@ export class AuthEffects {
     );
   });
 
-  public signUpSuccess$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(AuthActions.signUpSuccess),
-      map(({ email }) => {
-        void this.router.navigate(['signup', 'verification-sent'], {
-          queryParams: { email },
-          skipLocationChange: true,
-        });
-        return AuthActions.setUser({ user: null });
-      })
-    );
-  });
+  public resendSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(AuthActions.resendSuccess),
+        tap(() => {
+          this.appService.toastNotification({
+            label: 'signup.resend_email_label',
+            message: 'signup.resend_email_message',
+            status: TuiNotification.Success,
+            scope: 'auth',
+            autoClose: true,
+          });
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   constructor(
     private router: Router,

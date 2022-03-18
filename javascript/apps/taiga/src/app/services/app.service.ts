@@ -75,9 +75,11 @@ export class AppService {
     message: string;
     status: TuiNotification;
     scope?: string;
+    autoClose?: boolean;
     paramsLabel?: HashMap<unknown>;
     paramsMessage?: HashMap<unknown>;
   }) {
+    const autoCloseTimer = 7000;
     forkJoin([
       this.translocoService
         .selectTranslate(data.label, {}, data.scope)
@@ -99,7 +101,7 @@ export class AppService {
       const toastOptions: TuiNotificationOptions = {
         hasIcon: true,
         hasCloseButton: true,
-        autoClose: false,
+        autoClose: data.autoClose ? autoCloseTimer : false,
         label,
         status: data.status,
       };

@@ -6,52 +6,58 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t; read: 'auth'">
-  <main class="login">
-    <div class="login-wrapper">
-      <img
-        class="taiga-logo"
-        role="presentation"
-        src="/assets/images/LogoTaiga.svg"
-        alt="" />
-      <h1 class="login-title">{{ t('signup.title') }}</h1>
-      <p class="login-subtitle">{{ t('signup.subtitle') }}</p>
-      <ng-container *ngIf="!displayForm">
-        <button
-          (click)="displaySignUpForm(true)"
-          appearance="tertiary"
-          data-test="display-signup-button"
-          class="display-signup-button"
-          tuiButton
-          icon="mail"
-          type="button">
-          {{ t('signup.create_account_email') }}
-        </button>
-        <p
-          class="terms-and-privacy"
-          [innerHtml]="
-            t('signup.terms_and_privacy', {
-              termsOfService: 'terms-of-service' | getUrl,
-              privacyPolicy: 'privacy-policy' | getUrl
-            })
-          "></p>
-      </ng-container>
-      <ng-container *ngIf="displayForm">
-        <tg-signup
-          (displayLoginOptions)="keepFormData($event)"
-          [data]="signUpFormData"></tg-signup>
-      </ng-container>
-    </div>
-  </main>
-  <footer class="login-footer">
-    <p
-      class="login-link"
-      [innerHtml]="
-        t('signup.already_account', {
-          login: 'login' | getUrl
-        })
-      "></p>
-    <p class="premium-link">
-      Copy about premium plan or whatever. <a href="#">A link</a>
-    </p>
-  </footer>
+  <ng-container *ngIf="!displayVerifyEmail">
+    <main class="login">
+      <div class="login-wrapper">
+        <img
+          class="taiga-logo"
+          role="presentation"
+          src="/assets/images/LogoTaiga.svg"
+          alt="" />
+        <h1 class="login-title">{{ t('signup.title') }}</h1>
+        <p class="login-subtitle">{{ t('signup.subtitle') }}</p>
+        <ng-container *ngIf="!displayForm">
+          <button
+            (click)="displaySignUpForm(true)"
+            appearance="tertiary"
+            data-test="display-signup-button"
+            class="display-signup-button"
+            tuiButton
+            icon="mail"
+            type="button">
+            {{ t('signup.create_account_email') }}
+          </button>
+          <p
+            class="terms-and-privacy"
+            [innerHtml]="
+              t('signup.terms_and_privacy', {
+                termsOfService: 'terms-of-service' | getUrl,
+                privacyPolicy: 'privacy-policy' | getUrl
+              })
+            "></p>
+        </ng-container>
+        <ng-container *ngIf="displayForm">
+          <tg-signup
+            (displayLoginOptions)="keepFormData($event)"
+            (signUpSuccess)="signUpSucess($event)"
+            [data]="signUpFormData"></tg-signup>
+        </ng-container>
+      </div>
+    </main>
+    <footer class="login-footer">
+      <p
+        class="login-link"
+        [innerHtml]="
+          t('signup.already_account', {
+            login: 'login' | getUrl
+          })
+        "></p>
+      <p class="premium-link">
+        Copy about premium plan or whatever. <a href="#">A link</a>
+      </p>
+    </footer>
+  </ng-container>
+  <ng-container *ngIf="displayVerifyEmail && signUpFormData">
+    <tg-verify-email [formData]="signUpFormData"></tg-verify-email>
+  </ng-container>
 </ng-container>

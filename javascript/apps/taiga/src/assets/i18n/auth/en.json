@@ -10,6 +10,10 @@
     "terms_and_privacy": "By creating an account, you agree to our <a href='{{ termsOfService }}'>terms of service</a> and <a href='{{ privacyPolicy }}'> privacy policy</a>.",
     "already_account": "Already have an account? <a href='{{ login }}'>Login here</a>",
     "all_options": "All options",
+    "resend_email_label": "We just sent you an email",
+    "resend_email_message": "The verification email is on its way!",
+    "sent_email_label": "Didn't received the email?",
+    "sent_email_message": "Check your spam and if not, try resending the email in a few minutes.",
     "errors": {
       "email_required": "Enter your email address",
       "full_name_required": "Enter a full name",
@@ -17,7 +21,9 @@
       "invalid_email": "Invalid email address",
       "email_exists": "The email is already in use",
       "register": "There was a problem registering your account",
-      "please_refresh": "Please refresh the page or try again in a few minutes"
+      "please_refresh": "Please refresh the page or try again in a few minutes",
+      "resend_email_label": "Sorry, something went wrong sending the email",
+      "resend_email_message": "Wait a few minutes and try again"
     }
   },
   "verify": {

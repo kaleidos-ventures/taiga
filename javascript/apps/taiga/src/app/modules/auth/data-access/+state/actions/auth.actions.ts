@@ -35,6 +35,7 @@ export const signup = createAction(
     password: string;
     fullName: User['fullName'];
     acceptTerms: boolean;
+    resend: boolean;
   }>()
 );
 
@@ -42,6 +43,8 @@ export const signUpSuccess = createAction(
   '[Auth] sign up success',
   props<{ email: User['email'] }>()
 );
+
+export const resendSuccess = createAction('[Auth] resend sucess');
 
 export const signUpError = createAction(
   '[Auth] sign up error',

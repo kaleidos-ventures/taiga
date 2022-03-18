@@ -17,6 +17,7 @@ import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { getUrlPipe } from '~/app/shared/pipes/get-url.pipe';
 import { AuthFeatureSignUpComponent } from './auth-feature-sign-up.component';
 import { SignupComponent } from './components/signup/signup.component';
+import { AuthFeatureVerifyEmailModule } from '~/app/modules/auth/feature-verify-email/auth-feature-verify-email.module';
 
 const routes: Routes = [
   {
@@ -51,6 +52,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     TranslocoModule,
     TuiButtonModule,
+    AuthFeatureVerifyEmailModule,
     InputsModule,
     TuiLinkModule,
   ],

@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from taiga.tokens import exceptions as tokens_ex
@@ -28,8 +28,9 @@ async def test_create_user_ok(tqmanager):
     with (
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.users.services._generate_verify_user_token", return_value="verify_token"),
+        patch("taiga.users.services._generate_username", return_value=username),
     ):
-        fake_users_repo.user_exists.return_value = False
+        fake_users_repo.get_first_user.return_value = None
         fake_users_repo.create_user.return_value = user
 
         await services.create_user(email=email, full_name=full_name, password=password)
@@ -47,12 +48,37 @@ async def test_create_user_ok(tqmanager):
         }
 
 
+async def test_create_user_unverified(tqmanager):
+    email = "email@email.com"
+    username = "email"
+    full_name = "Full Name"
+    user = await f.build_user(id=1, email=email, username=username, full_name=full_name, is_active=False)
+
+    with (
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
+        patch("taiga.users.services._generate_verify_user_token", return_value="verify_token"),
+    ):
+        fake_users_repo.get_first_user.return_value = user
+        fake_users_repo.update_user.return_value = user
+        await services.create_user(email=email, full_name="New Full Name", password="NewCorrectP4ssword&")
+
+        fake_users_repo.update_user.assert_awaited_once()
+        assert len(tqmanager.pending_jobs) == 1
+        job = tqmanager.pending_jobs[0]
+        assert "send_email" in job["task_name"]
+        assert job["args"] == {
+            "email_name": "sign_up",
+            "to": "email@email.com",
+            "email_data": {"verification_token": "verify_token"},
+        }
+
+
 async def test_create_user_email_exists():
     with (
         pytest.raises(ex.EmailAlreadyExistsError),
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
     ):
-        fake_users_repo.user_exists.return_value = True
+        fake_users_repo.get_first_user.return_value = MagicMock(is_active=True)
         await services.create_user(email="dup.email@email.com", full_name="Full Name", password="CorrectP4ssword&")
 
 

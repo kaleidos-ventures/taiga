@@ -52,7 +52,7 @@ def get_total_tokens() -> int:
     return OutstandingToken.objects.count()
 
 
-async def test_clean_expired_tokens_yms():
+async def test_clean_expired_tokens():
     total_tokens = await get_total_tokens()
     with mock.patch(
         "taiga.users.tokens.VerifyUserToken.lifetime", new_callable=mock.PropertyMock(return_value=timedelta(days=-1))

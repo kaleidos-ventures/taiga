@@ -55,8 +55,9 @@ async def test_create_user_ok(client):
 
 
 async def test_create_user_email_already_exists(client):
+    user = await f.create_user()
     data = {
-        "email": "test.create@email.com",
+        "email": user.email,
         "fullName": "Ada Lovelace",
         "password": "correctP4ssword%",
         "acceptTerms": True,

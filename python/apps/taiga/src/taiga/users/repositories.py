@@ -65,6 +65,18 @@ def verify_user(user: User) -> None:
 
 
 @sync_to_async
+def update_user(user: User, new_values: Any) -> User:
+    if "password" in new_values:
+        user.set_password(new_values.pop("password"))
+
+    for attr, value in new_values.items():
+        setattr(user, attr, value)
+
+    user.save()
+    return user
+
+
+@sync_to_async
 def clean_expired_users() -> None:
     # delete all users that are not currently active (is_active=False)
     # and have never verified the account (date_verification=None)

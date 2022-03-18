@@ -16,11 +16,21 @@ from taiga.users.tokens import VerifyUserToken
 
 
 async def create_user(email: str, full_name: str, password: str) -> None:
-    if await users_repositories.user_exists(email=email):
+    user = await users_repositories.get_first_user(email=email)
+    if user and user.is_active:
         raise ex.EmailAlreadyExistsError()
 
-    username = await _generate_username(email=email)
-    user = await users_repositories.create_user(email=email, username=username, full_name=full_name, password=password)
+    if not user:
+        # new user
+        username = await _generate_username(email=email)
+        user = await users_repositories.create_user(
+            email=email, username=username, full_name=full_name, password=password
+        )
+    else:
+        # the user (is_active=False) tries to sign-up again before verifying the previous attempt
+        user = await users_repositories.update_user(
+            user=user, new_values={"full_name": full_name, "password": password}
+        )
 
     await send_email.defer(  # type: ignore
         email_name=Emails.SIGN_UP.value,

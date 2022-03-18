@@ -476,7 +476,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     transition: color 0.1s ease-in-out;
   }
 
-  & .icon {
+  & .t-icon {
     block-size: 1rem;
     fill: var(--color-secondary);
     inline-size: 1rem;

@@ -102,5 +102,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-gray80);
       pointer-events: none;
     }
+
+    &.password-hidden {
+      letter-spacing: 2px;
+    }
   }
 }

@@ -72,4 +72,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   inset-block-end: 0;
   padding-block-end: var(--spacing-20);
   position: absolute;
+
+  & .verify-footer-sign-up {
+    font-weight: var(--font-weight-medium);
+    text-decoration: underline;
+  }
 }

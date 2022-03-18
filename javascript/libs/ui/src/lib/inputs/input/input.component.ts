@@ -99,6 +99,7 @@ export class InputComponent implements AfterContentInit {
     this.passwordVisible = input.getAttribute('type') === 'password';
 
     input.setAttribute('type', this.passwordVisible ? 'text' : 'password');
+    input.setAttribute('class', !this.passwordVisible ? 'password-hidden' : '');
 
     this.icon = this.passwordVisible ? 'eye-off' : 'eye';
   }
@@ -116,6 +117,7 @@ export class InputComponent implements AfterContentInit {
 
       if (this.isPassword) {
         this.icon = 'eye';
+        input.setAttribute('class', 'password-hidden');
       }
     } else {
       console.error('InputRefDirective is mandatory');

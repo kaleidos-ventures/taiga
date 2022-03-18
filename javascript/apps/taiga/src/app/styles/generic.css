@@ -42,6 +42,7 @@ body {
 
 a {
   color: var(--color-secondary);
+  hyphens: none;
   text-decoration: none;
 
   &[href] {

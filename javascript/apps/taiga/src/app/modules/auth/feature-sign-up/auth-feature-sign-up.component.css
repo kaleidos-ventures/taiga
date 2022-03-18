@@ -71,6 +71,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   @mixin font-paragraph;
 }
 
+.display-signup-button {
+  inline-size: 100%;
+}
+
 .login-footer {
   @mixin font-paragraph;
 
@@ -86,6 +90,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   margin: 0;
 
   &::ng-deep a {
+    font-weight: var(--font-weight-medium);
     text-decoration: underline;
   }
 }

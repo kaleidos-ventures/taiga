@@ -19,7 +19,13 @@ import { AuthFeatureSignUpComponent } from './auth-feature-sign-up.component';
 import { SignupComponent } from './components/signup/signup.component';
 
 const routes: Routes = [
-  { path: '', component: AuthFeatureSignUpComponent },
+  {
+    path: '',
+    component: AuthFeatureSignUpComponent,
+    data: {
+      noHeader: true,
+    },
+  },
   {
     path: 'verification-sent',
     loadChildren: () =>

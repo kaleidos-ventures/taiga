@@ -8,9 +8,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
-.input-email,
-.input-password {
+.input-email {
   margin-block-end: var(--spacing-8);
+}
+
+.input-password {
+  margin-block-end: var(--spacing-12);
 }
 
 .input-fullname {

@@ -52,7 +52,7 @@ class TasksQueueManager:
 
     def task(
         self, func: Callable[..., Any] | None = None, *, name: str | None = None, queue: str = DEFAULT_QUEUE
-    ) -> Callable[[Callable[..., Any]], Task]:
+    ) -> Any:
         """
         Declare a function as a task. This method is meant to be used as a decorator:
 
@@ -95,7 +95,7 @@ class TasksQueueManager:
 
         return wrapper(func)  # Called as @manager.task
 
-    def periodic(self, *, cron: str) -> Callable[[Task], Task]:
+    def periodic(self, *, cron: str, periodic_id: str = "") -> Any:
         """
         Task decorator, marks task as being scheduled for periodic deferring.
 
@@ -111,7 +111,12 @@ class TasksQueueManager:
         """
 
         def wrapper(task: Task) -> Task:
-            self._app.periodic_deferrer.register_task(task=task._task, cron=cron, periodic_id="", configure_kwargs={})
+            self._app.periodic_deferrer.register_task(
+                task=task._task,
+                cron=cron,
+                periodic_id=f"periodic/{periodic_id or task._task.name}",
+                configure_kwargs={},
+            )
             return task
 
         return wrapper

@@ -16,11 +16,11 @@ class Task:
     def __init__(self, task: ProcrastinateTask) -> None:
         self._task = task
 
-    def __call__(self, *args: Any, **kwargs: dict[str, Any]) -> Any:
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         return self._task.__call__(*args, **kwargs)
 
-    def defer_sync(self, **kwargs: dict[str, Any]) -> int:
+    def defer_sync(self, **kwargs: Any) -> int:
         return self._task.defer(**kwargs)
 
-    async def defer(self, **kwargs: dict[str, Any]) -> int:
+    async def defer(self, **kwargs: Any) -> int:
         return await self._task.defer_async(**kwargs)

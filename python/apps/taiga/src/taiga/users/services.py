@@ -35,7 +35,7 @@ async def create_user(email: str, full_name: str, password: str) -> None:
     await send_email.defer(
         email_name=Emails.SIGN_UP.value,
         to=user.email,
-        email_data={"verification_token": await _generate_verify_user_token(user)},
+        context={"verification_token": await _generate_verify_user_token(user)},
     )
 
     return user

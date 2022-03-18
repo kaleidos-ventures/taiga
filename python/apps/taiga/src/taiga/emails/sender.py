@@ -15,8 +15,8 @@ async def send_email_message(
     subject: str | None = None,
     to_emails: list[str] = [],
     from_email: str | None = None,
-    text_content: str | None = None,
-    html_content: str | None = None,
+    body_txt: str | None = None,
+    body_html: str | None = None,
     attachment_paths: list[str] = [],
 ) -> None:
     """
@@ -29,13 +29,13 @@ async def send_email_message(
     message = EmailMultiAlternatives(
         connection=_get_mail_connection(),
         subject=subject,
-        body=text_content,
+        body=body_txt,
         to=to_emails,
         from_email=from_email,
     )
 
-    if html_content:
-        message.attach_alternative(html_content, "text/html")
+    if body_html:
+        message.attach_alternative(body_html, "text/html")
 
     for attachment_path in attachment_paths:
         message.attach_file(path=attachment_path)

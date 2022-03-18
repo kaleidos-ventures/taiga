@@ -14,7 +14,7 @@ from jinja2 import TemplateNotFound
 from taiga.emails.emails import Emails
 from taiga.emails.exceptions import EmailAttachmentError, EmailDeliveryError, EmailSMTPError, EmailTemplateError
 from taiga.emails.render import render_email_html, render_email_txt, render_subject
-from taiga.emails.services import send_email_message
+from taiga.emails.sender import send_email_message
 from taiga.tasksqueue.manager import manager as tqmanager
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 async def send_email(
     email_name: str,
     to: str | list[str],
-    email_data: dict[str, Any] = {},  # TODO: rename it to ´context´ and make use of template tags
+    context: dict[str, Any] = {},
     attachment_paths: list[str] = [],
 ) -> None:
 
@@ -44,9 +44,9 @@ async def send_email(
 
     # render the email contents using both the email template and variables dictionary
     try:
-        text_content = render_email_txt(email_name, email_data)
-        subject = render_subject(email_name, email_data)
-        html_content = render_email_html(email_name, email_data)
+        body_txt = render_email_txt(email_name, context)
+        subject = render_subject(email_name, context)
+        body_html = render_email_html(email_name, context)
     except TemplateNotFound as template_exception:
         raise EmailTemplateError(f"Missing or invalid email template. {template_exception}")
 
@@ -55,8 +55,8 @@ async def send_email(
         await send_email_message(
             subject=subject,
             to_emails=to_emails,
-            text_content=text_content,
-            html_content=html_content,
+            body_txt=body_txt,
+            body_html=body_html,
             attachment_paths=attachment_paths,
         )
     except SMTPConnectError as smtp_exception:

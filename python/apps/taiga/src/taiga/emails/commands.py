@@ -22,16 +22,11 @@ cli = typer.Typer(
 
 
 @cli.command(help="Render one email to test it")
-def render(email_name: str = typer.Argument(None, help="Name of the email")) -> None:
-    try:
-        test_render_html(email_name)
-    except FileNotFoundError:
-        error = typer.style(f"There isn't any email named '{ email_name }'. ", fg=typer.colors.RED, bold=True)
-        hint = "Hint: check available emails with `python -m taiga emails list`"
-        typer.echo(f"{ error }\n{ hint }")
+def render(email: Emails = typer.Argument(..., case_sensitive=False, help="Name of the email")) -> None:
+    test_render_html(email.value)
 
 
 @cli.command(help="Show available emails")
 def list() -> None:
     for email in Emails:
-        print(f"{ email.value }\n")
+        typer.echo(f"{ email.value }\n")

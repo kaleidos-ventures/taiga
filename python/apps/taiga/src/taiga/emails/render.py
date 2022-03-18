@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import json
+from os import path
 from typing import Any, Final
 
 from jinja2 import Environment, PackageLoader, select_autoescape
@@ -14,7 +15,9 @@ TXT_BODY_TEMPLATE_SUFFIX: Final = ".txt.jinja"
 HTML_BODY_TEMPLATE_SUFFIX: Final = ".html.jinja"
 SUBJECT_TEMPLATE_SUFFIX: Final = ".subject.jinja"
 
-env = Environment(loader=PackageLoader("taiga.emails"), autoescape=select_autoescape())
+TEMPLATES_PATH: Final = path.join(path.dirname(path.abspath(__file__)), "templates")
+
+env: Final = Environment(loader=PackageLoader("taiga.emails"), autoescape=select_autoescape())
 
 
 def render_email_html(email_name: str, context: dict[str, Any]) -> str:
@@ -36,7 +39,7 @@ def render_email_txt(email_name: str, context: dict[str, Any]) -> str:
 
 
 def test_render_html(email_name: str) -> None:
-    context_json = f"src/taiga/emails/templates/{email_name}.json"
+    context_json = path.join(TEMPLATES_PATH, f"{email_name}.json")
     with open(context_json) as context_file:
         context = json.loads(context_file.read())
         email_html = render_email_html(email_name, context)

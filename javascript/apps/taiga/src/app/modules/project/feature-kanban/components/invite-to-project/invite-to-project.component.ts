@@ -72,6 +72,16 @@ export class InviteToProjectComponent {
       .controls as FormGroup[];
   }
 
+  public get getEmails() {
+    const regexp = /\S+@\S+\.\S+/g;
+    return this.inviteEmails?.match(regexp) || [];
+  }
+
+  public emailsWithoutDuplications() {
+    const emails = this.getEmails;
+    return emails?.filter((email, i) => emails.indexOf(email) === i);
+  }
+
   public trackByIndex(index: number) {
     return index;
   }

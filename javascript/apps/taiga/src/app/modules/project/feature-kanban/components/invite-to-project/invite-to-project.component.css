@@ -33,6 +33,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .text-area {
     flex-grow: 1;
+    position: relative;
+  }
+
+  & .emails-count {
+    @mixin font-small;
+
+    color: var(--color-gray90);
+    inset-block-end: var(--spacing-16);
+    inset-inline-end: var(--spacing-8);
+    position: absolute;
   }
 
   & .add-btn {

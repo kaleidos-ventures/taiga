@@ -16,15 +16,28 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <form [formGroup]="inviteProjectForm">
       <div class="add-wrapper">
         <tui-svg class="add-icon" src="user" aria-hidden="true"></tui-svg>
-        <tg-ui-textarea class="text-area">
-          <tui-text-area
-            tuiTextfieldSize="s"
-            [(ngModel)]="inviteEmails"
-            [ngModelOptions]="{ standalone: true }"
-            [expandable]="true">
-            {{ t('kanban.invite_step.placeholder') }}
-          </tui-text-area>
-        </tg-ui-textarea>
+        <div class="text-area">
+          <tg-ui-textarea>
+            <tui-text-area
+              [class.small]="getEmails.length < 2"
+              [class.bottom-space]="emailsWithoutDuplications().length > 1"
+              tuiTextfieldSize="s"
+              [(ngModel)]="inviteEmails"
+              [ngModelOptions]="{ standalone: true }"
+              [expandable]="true">
+              {{ t('kanban.invite_step.placeholder') }}
+            </tui-text-area>
+          </tg-ui-textarea>
+          <span
+            *ngIf="emailsWithoutDuplications().length > 1"
+            class="emails-count"
+            >{{
+              t('kanban.invite_step.emails_detected', {
+                emails: emailsWithoutDuplications().length
+              })
+            }}</span
+          >
+        </div>
         <button
           class="add-btn"
           appearance="primary"

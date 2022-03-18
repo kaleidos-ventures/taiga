@@ -12,6 +12,7 @@
     "role": "Role",
     "general": "General",
     "member": "Member",
-    "close": "Close"
+    "close": "Close",
+    "emails_detected": "Emails detected: {{ emails }}"
   }
 }

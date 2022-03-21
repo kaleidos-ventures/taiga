@@ -142,7 +142,7 @@ tui-avatar {
     }
   }
 
-  &[data-tui-host-size="m"] {
+  &[data-size="m"] {
     @mixin font-small;
 
     block-size: var(--spacing-24);
@@ -151,7 +151,7 @@ tui-avatar {
     inline-size: var(--spacing-24);
   }
 
-  &[data-tui-host-size="l"] {
+  &[data-size="l"] {
     @mixin font-inline;
 
     block-size: var(--spacing-32);
@@ -160,7 +160,7 @@ tui-avatar {
     inline-size: var(--spacing-32);
   }
 
-  &[data-tui-host-size="xl"] {
+  &[data-size="xl"] {
     @mixin font-heading-4;
 
     block-size: var(--spacing-48);
@@ -169,7 +169,7 @@ tui-avatar {
     inline-size: var(--spacing-48);
   }
 
-  &[data-tui-host-size="xxl"] {
+  &[data-size="xxl"] {
     @mixin font-heading-4;
 
     block-size: var(--spacing-64);

@@ -9,7 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 /* select type: avatar | text */
 .avatar {
   & ::ng-deep {
-    & .input_template {
+    & .t-input_template {
       /* stylelint-disable-next-line declaration-no-important */
       padding-inline-start: var(--spacing-4) !important;
     }
@@ -100,7 +100,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  & .placeholder {
+  & .t-placeholder {
     margin-block-end: 0;
   }
 

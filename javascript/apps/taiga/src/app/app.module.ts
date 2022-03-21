@@ -41,6 +41,7 @@ import { TUI_IS_CYPRESS, TUI_SANITIZER } from '@taiga-ui/cdk';
 import { ErrorsModule } from './modules/errors/errors.module';
 import { SvgSpriteModule } from '@taiga/ui/svg-sprite';
 import { NgDompurifySanitizer } from '@tinkoff/ng-dompurify';
+import { tuiToggleOptionsProvider } from '@taiga-ui/kit';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -141,6 +142,13 @@ export function prefersReducedMotion(): boolean {
       provide: TUI_ANIMATIONS_DURATION,
       useFactory: () => (inject(TUI_IS_CYPRESS) ? 0 : 300),
     },
+    tuiToggleOptionsProvider({
+      icons: {
+        toggleOff: () => '',
+        toggleOn: () => '',
+      },
+      showIcons: false,
+    }),
   ],
 })
 export class AppModule {}

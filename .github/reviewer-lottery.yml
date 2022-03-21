@@ -1,8 +1,0 @@
-groups:
-  - name: front
-    internal_reviewers: 1
-    usernames:
-      - cocotime
-      - rsanchezbalo
-      - juanfran
-      - Xaviju

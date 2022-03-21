@@ -135,12 +135,21 @@ export class AuthEffects {
               400: {
                 type: 'toast',
                 options: {
-                  label: action.resend
-                    ? 'signup.errors.resend_email_label'
-                    : 'signup.errors.register',
-                  message: action.resend
-                    ? 'signup.errors.resend_email_message'
-                    : 'signup.errors.please_refresh',
+                  label: 'signup.errors.register',
+                  message: 'signup.errors.please_refresh',
+                  status: TuiNotification.Error,
+                  scope: 'auth',
+                },
+              },
+            });
+          }
+          if (status === 400 && action.resend) {
+            this.appService.errorManagement(httpResponse, {
+              400: {
+                type: 'toast',
+                options: {
+                  label: 'signup.errors.resend_email_label',
+                  message: 'signup.errors.resend_email_message',
                   status: TuiNotification.Error,
                   scope: 'auth',
                 },

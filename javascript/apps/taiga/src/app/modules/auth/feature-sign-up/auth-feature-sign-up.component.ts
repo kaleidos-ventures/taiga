@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, HostBinding } from '@angular/core';
 import { SignUp } from './models/sign-up.model';
 
 @Component({
@@ -19,9 +19,10 @@ import { SignUp } from './models/sign-up.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthFeatureSignUpComponent {
+  @HostBinding('class.verify-email') public displayVerifyEmail = false;
+
   public displayForm = false;
   public signUpFormData: SignUp | null = null;
-  public displayVerifyEmail = false;
 
   public keepFormData(data: SignUp) {
     this.signUpFormData = data;

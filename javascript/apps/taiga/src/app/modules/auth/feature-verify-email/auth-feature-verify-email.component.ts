@@ -11,14 +11,20 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   Input,
+  ChangeDetectorRef,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { SignUp } from '~/app/modules/auth/feature-sign-up/models/sign-up.model';
-import { signup } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import {
+  resendSuccess,
+  signup,
+} from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { AppService } from '~/app/services/app.service';
 import { TuiNotification } from '@taiga-ui/core';
+import { Actions, ofType } from '@ngrx/effects';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-verify-email',
   templateUrl: './auth-feature-verify-email.component.html',
@@ -32,18 +38,30 @@ export class AuthFeatureVerifyEmailComponent implements OnInit {
   public emailAddress = '';
   public resendCooldown = false;
 
-  constructor(private store: Store, private appService: AppService) {}
+  constructor(
+    private store: Store,
+    private appService: AppService,
+    private actions$: Actions,
+    private cd: ChangeDetectorRef
+  ) {}
 
   public ngOnInit(): void {
     this.emailAddress = this.formData.email;
+    this.actions$
+      .pipe(ofType(resendSuccess), untilDestroyed(this))
+      .subscribe(() => {
+        if (!this.resendCooldown) {
+          this.resendCooldown = true;
+          setTimeout(() => {
+            this.resendCooldown = false;
+          }, 5000);
+        }
+        this.cd.detectChanges();
+      });
   }
 
   public resendEmail() {
     if (!this.resendCooldown) {
-      this.resendCooldown = true;
-      setTimeout(() => {
-        this.resendCooldown = false;
-      }, 30000);
       this.store.dispatch(
         signup({
           email: this.formData.email,

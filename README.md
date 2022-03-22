@@ -1,10 +1,10 @@
-# Taiga Next (Work In Progress)
+# Taiga Next (Work In Progress) 
 
 [![Managed with Taiga.io](https://img.shields.io/badge/managed%20with-TAIGA.io-709f14.svg)](https://tree.taiga.io/project/taiga-next/ "Managed with Taiga.io")
-[![Front tests](https://github.com/kaleidos-ventures/taiga/actions/workflows/javascript-apps-taiga-tests.yml/badge.svg)](https://github.com/kaleidos-ventures/taiga/actions/workflows/javascript-apps-taiga-tests.yml)
-[![Front e2e](https://github.com/kaleidos-ventures/taiga/actions/workflows/e2e.yml/badge.svg)](https://github.com/kaleidos-ventures/taiga/actions/workflows/e2e.yml)
-[![API tests](https://github.com/kaleidos-ventures/taiga/actions/workflows/python-apps-taiga-tests.yml/badge.svg)](https://github.com/kaleidos-ventures/taiga/actions/workflows/python-apps-taiga-tests.yml)
-[![API e2e](https://github.com/kaleidos-ventures/taiga/actions/workflows/python-apps-taiga-api-tests.yml/badge.svg)](https://github.com/kaleidos-ventures/taiga/actions/workflows/python-apps-taiga-api-tests.yml)
+[![Front - tests](https://github.com/kaleidos-ventures/taiga/actions/workflows/javascript-front-tests.yml/badge.svg)](https://github.com/kaleidos-ventures/taiga/actions/workflows/javascript-front-tests.yml)
+[![Front - e2e](https://github.com/kaleidos-ventures/taiga/actions/workflows/javascript-front-e2e.yml/badge.svg)](https://github.com/kaleidos-ventures/taiga/actions/workflows/javascript-front-e2e.yml)
+[![API - tests](https://github.com/kaleidos-ventures/taiga/actions/workflows/python-api-tests.yml/badge.svg)](https://github.com/kaleidos-ventures/taiga/actions/workflows/python-api-tests.yml)
+[![API - e2e](https://github.com/kaleidos-ventures/taiga/actions/workflows/python-api-e2e.yml/badge.svg)](https://github.com/kaleidos-ventures/taiga/actions/workflows/python-api-e2e.yml)
 
 ## Code of Conduct
 

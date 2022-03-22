@@ -41,6 +41,7 @@ const signupData = {
   password: randPassword(),
   fullName: randFullName(),
   acceptTerms: true,
+  resend: false,
 };
 
 describe('AuthEffects', () => {
@@ -143,29 +144,13 @@ describe('AuthEffects', () => {
     expect(effects.signUp$).toBeObservable(expected);
   });
 
-  it('signup success', () => {
-    const effects = spectator.inject(AuthEffects);
-    const routerService = spectator.inject(Router);
-
-    actions$ = hot('-a', { a: signUpSuccess({ email: signupData.email }) });
-
-    expect(effects.signUpSuccess$).toSatisfyOnFlush(() => {
-      expect(routerService.navigate).toHaveBeenCalledWith(
-        ['signup', 'verification-sent'],
-        {
-          queryParams: { email: signupData.email },
-          skipLocationChange: true,
-        }
-      );
-    });
-  });
-
   it('signup - error', () => {
     const signupData = {
       email: 'email@patata',
       password: randPassword(),
       fullName: randFullName(),
       acceptTerms: false,
+      resend: false,
     };
 
     const authApiService = spectator.inject(AuthApiService);

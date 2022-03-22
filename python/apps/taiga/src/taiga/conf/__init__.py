@@ -10,7 +10,7 @@ import os
 import secrets
 from functools import lru_cache
 
-from pydantic import AnyHttpUrl, BaseSettings
+from pydantic import AnyHttpUrl, BaseSettings, EmailStr
 from taiga.conf.emails import EmailSettings
 from taiga.conf.images import ImageSettings
 from taiga.conf.logs import LOGGING_CONFIG
@@ -47,6 +47,9 @@ class Settings(BaseSettings):
     # Tasks (linux crontab style)
     CLEAN_EXPIRED_TOKENS_CRON: str = "0 0 * * *"  # default: once a day
     CLEAN_EXPIRED_USERS_CRON: str = "0 0 * * *"  # default: once a day
+
+    # Templates
+    SUPPORT_EMAIL: EmailStr = EmailStr("support@example.com")
 
     # Sub settings modules
     TOKENS: TokensSettings = TokensSettings()

@@ -6,7 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 #}
 
-{% set verify_url = "https://next-dev.taiga.io/signup/verify/" ~ verification_token -%}
+{% set verify_url = resolve_front_url("VERIFY_SIGNUP", verification_token=verification_token) -%}
 Taiga sign up
 
 Verify your email
@@ -18,4 +18,4 @@ Taiga Team
 
 This link will expire in 4 days.
 If you did not create an account using this address, please ignore this email.
-Need help? Contact us at {{ support_email }}
+Need help? Contact us at {{ settings.SUPPORT_EMAIL }}

@@ -284,7 +284,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 </head>
 
 <body style="word-spacing:normal;">
-  <div class="body" style=""> {% set verify_url = "https://next-dev.taiga.io/signup/verify/" ~ verification_token -%}
+  <div class="body" style=""> {% set verify_url = resolve_front_url("VERIFY_SIGNUP", verification_token=verification_token) -%}
     <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="body-content-outlook" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     <div class="body-content" style="margin:0px auto;max-width:600px;">
       <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
@@ -435,7 +435,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                                     <tbody>
                                       <tr>
                                         <td align="left" class="secondary-link dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a class="secondary-link" href="mailto:{{ support_email }}"> Contact support </a></div>
+                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> Contact support </a></div>
                                         </td>
                                       </tr>
                                     </tbody>

@@ -10,6 +10,8 @@ from os import path
 from typing import Any, Final
 
 from jinja2 import Environment, PackageLoader, select_autoescape
+from taiga.base.front import resolve_front_url
+from taiga.conf import settings
 
 TXT_BODY_TEMPLATE_SUFFIX: Final = ".txt.jinja"
 HTML_BODY_TEMPLATE_SUFFIX: Final = ".html.jinja"
@@ -17,7 +19,9 @@ SUBJECT_TEMPLATE_SUFFIX: Final = ".subject.jinja"
 
 TEMPLATES_PATH: Final = path.join(path.dirname(path.abspath(__file__)), "templates")
 
-env: Final = Environment(loader=PackageLoader("taiga.emails"), autoescape=select_autoescape())
+env = Environment(loader=PackageLoader("taiga.emails"), autoescape=select_autoescape())
+env.globals["settings"] = settings
+env.globals["resolve_front_url"] = resolve_front_url
 
 
 def render_email_html(email_name: str, context: dict[str, Any]) -> str:

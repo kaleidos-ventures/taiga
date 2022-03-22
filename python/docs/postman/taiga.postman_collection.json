@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7ab6238f-3f2a-4fea-8d8e-376e509f580d",
+		"_postman_id": "4711d475-7e0b-4e62-aa50-b1de6419df67",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -170,6 +170,33 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
+							"raw": "{\n  \"acceptTerms\": true,\n  \"fullName\": \"Ada Lovelace\",\n  \"email\": \"ada.lovelace@email.com\",\n  \"password\": \"adaLov3%\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify new user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
 							"raw": "{\n  \"token\": \"your_verify_token_here\"\n}",
 							"options": {
 								"raw": {
@@ -186,33 +213,6 @@
 							"path": [
 								"users",
 								"verify"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "verify new user",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"acceptTerms\": true,\n  \"fullName\": \"Ada Lovelace\",\n  \"email\": \"ada.lovelace@email.com\",\n  \"password\": \"adaLov3%\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"users"
 							]
 						}
 					},

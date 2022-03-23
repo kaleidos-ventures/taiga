@@ -54,7 +54,7 @@ export class AuthFeatureVerifyEmailComponent implements OnInit {
           this.resendCooldown = true;
           setTimeout(() => {
             this.resendCooldown = false;
-          }, 5000);
+          }, 60000);
         }
         this.cd.detectChanges();
       });

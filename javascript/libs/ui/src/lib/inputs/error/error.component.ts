@@ -22,6 +22,9 @@ export class ErrorComponent implements OnChanges {
   @Input()
   public enabled = true;
 
+  @Input()
+  public show: 'auto' | boolean = 'auto';
+
   constructor(
     public fieldService: FieldService,
     public formDirective: FormDirective
@@ -34,13 +37,16 @@ export class ErrorComponent implements OnChanges {
   }
 
   public get showError() {
+    if (this.show !== 'auto') {
+      return this.show;
+    }
+
     if (!this.formDirective.showFormErrors || !this.enabled) {
       return false;
     }
 
     const errors = this.fieldService.control?.errors;
     const fieldControl = this.fieldService.control;
-
     if (errors && errors[this.error] && fieldControl) {
       const isOnSubmit = fieldControl.updateOn === 'submit';
 

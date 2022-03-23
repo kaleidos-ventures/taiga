@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { ProjectFeatureKanbanRoutingModule } from './project-feature-kanban-routing.module';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
 import { TuiSvgModule } from '@taiga-ui/core';
-import { InviteToProjectModule } from './components/invite-to-project/invite-to-project.module';
+import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
 import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 
 @NgModule({

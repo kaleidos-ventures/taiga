@@ -16,10 +16,12 @@ import {
   TuiSvgModule,
   TuiLinkModule,
   TuiDataListModule,
+  TuiScrollbarModule,
 } from '@taiga-ui/core';
 import { InviteToProjectComponent } from './invite-to-project.component';
 import { UserAvatarModule } from '~/app/shared/user-avatar/user-avatar.component.module';
 import { UserToInviteModule } from './components/user-to-invite.module';
+import { NotificatioInlineModule } from 'libs/ui/src/lib/notification-inline/notification-inline.module';
 
 @NgModule({
   imports: [
@@ -33,7 +35,9 @@ import { UserToInviteModule } from './components/user-to-invite.module';
     TuiSvgModule,
     TranslocoModule,
     TuiDataListModule,
+    TuiScrollbarModule,
     UserToInviteModule,
+    NotificatioInlineModule,
   ],
   providers: [
     {

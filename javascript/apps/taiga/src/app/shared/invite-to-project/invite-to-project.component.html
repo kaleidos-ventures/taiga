@@ -1,0 +1,132 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <div class="wrapper">
+    <h1 class="modal-title">
+      {{ t('kanban.invite_step.title', { project: project.name }) }}
+    </h1>
+    <form [formGroup]="inviteProjectForm">
+      <tui-scrollbar class="scroll">
+        <p class="text" [innerHtml]="t('kanban.invite_step.instructions')"></p>
+        <p class="text">{{ t('kanban.invite_step.alternative') }}</p>
+        <div class="add-wrapper">
+          <tui-svg class="add-icon" src="user" aria-hidden="true"></tui-svg>
+          <div class="text-area">
+            <tg-ui-textarea>
+              <tui-text-area
+                [class.small]="validEmails.length < 2"
+                [class.bottom-space]="emailsWithoutDuplications().length > 1"
+                [class.invalid]="
+                  inviteEmailsErrors.required ||
+                  inviteEmailsErrors.regex ||
+                  inviteEmailsErrors.peopleNotAdded
+                "
+                tuiTextfieldSize="s"
+                [(ngModel)]="inviteEmails"
+                [ngModelOptions]="{ standalone: true }"
+                [expandable]="true">
+                {{ t('kanban.invite_step.placeholder') }}
+              </tui-text-area>
+              <tg-ui-error inputError [show]="inviteEmailsErrors.required">
+                {{ t('kanban.invite_step.error_add_email') }}
+              </tg-ui-error>
+              <tg-ui-error inputError [show]="inviteEmailsErrors.regex">
+                {{ t('kanban.invite_step.error_email_regex') }}
+              </tg-ui-error>
+              <tg-ui-error
+                inputError
+                [show]="inviteEmailsErrors.peopleNotAdded">
+                {{ t('kanban.invite_step.error_missing_people') }}
+              </tg-ui-error>
+              <tg-ui-error inputError [show]="inviteEmailsErrors.bulkError">
+                {{ t('kanban.invite_step.error_several_emails') }}
+              </tg-ui-error>
+            </tg-ui-textarea>
+            <span
+              *ngIf="emailsWithoutDuplications().length > 1"
+              class="emails-count"
+              >{{
+                t('kanban.invite_step.emails_detected', {
+                  emails: emailsWithoutDuplications().length
+                })
+              }}</span
+            >
+          </div>
+          <button
+            class="add-btn"
+            appearance="primary"
+            tuiButton
+            (click)="addUser()"
+            type="button">
+            {{ t('kanban.invite_step.add') }}
+          </button>
+        </div>
+
+        <ng-container *ngIf="users.length === 0">
+          <div class="tip-wrapper">
+            <tui-svg
+              class="tip-icon"
+              src="/assets/images/curved-arrow.svg"
+              aria-hidden="true"></tui-svg>
+            <p class="tip">{{ t('kanban.invite_step.add_people') }}</p>
+          </div>
+        </ng-container>
+
+        <div *ngIf="users.length" class="user-list">
+          <div class="user">
+            <span></span>
+            <span class="user-title">{{
+              t('kanban.invite_step.name_email')
+            }}</span>
+            <span class="user-title">{{ t('kanban.invite_step.role') }}</span>
+            <span></span>
+          </div>
+
+          <ng-container
+            *ngFor="let user of users; index as i; trackBy: trackByIndex">
+            <tg-user-to-invite
+              [user]="user"
+              [userIndex]="i"
+              (delete)="deleteUser($event)"></tg-user-to-invite>
+          </ng-container>
+        </div>
+      </tui-scrollbar>
+
+      <div class="actions-wrapper">
+        <tg-ui-notification-inline
+          *ngIf="inviteEmailsErrors.listEmpty"
+          class="notification"
+          status="error"
+          [hasIcon]="true">
+          {{ t('kanban.invite_step.error_add_least_one') }}
+        </tg-ui-notification-inline>
+        <tg-ui-notification-inline
+          *ngIf="inviteEmailsErrors.moreThanFifty"
+          class="notification"
+          status="error"
+          [hasIcon]="true">
+          {{ t('kanban.invite_step.error_more_than_fifty') }}
+        </tg-ui-notification-inline>
+        <div class="form-actions">
+          <button tuiLink (click)="close()" appearance="tertiary">
+            {{ t('kanban.invite_step.later') }}
+          </button>
+          <button
+            appearance="primary"
+            data-test="submit-invite-users"
+            tuiButton
+            (click)="sendForm()"
+            type="button">
+            {{ t('kanban.invite_step.send_invites') }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-container>

@@ -1,0 +1,28 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+/* stylelint-disable declaration-no-important */
+
+tui-scroll-controls {
+  & .bar_vertical {
+    & .thumb {
+      background: rgba(196, 196, 196, 1);
+      inline-size: 0.5rem !important;
+      opacity: 1;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+tui-scrollbar {
+  & .content {
+    padding-inline-end: var(--spacing-16);
+  }
+}

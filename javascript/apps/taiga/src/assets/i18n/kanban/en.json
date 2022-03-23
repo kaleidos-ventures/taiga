@@ -13,6 +13,12 @@
     "general": "General",
     "member": "Member",
     "close": "Close",
-    "emails_detected": "Emails detected: {{ emails }}"
+    "emails_detected": "Emails detected: {{ emails }}",
+    "error_add_email": "Add at least an email or username",
+    "error_email_regex": "Invalid email address",
+    "error_missing_people": "There are people not added to the list. Add them and try again.",
+    "error_add_least_one": "Add at least one person to the list",
+    "error_several_emails": "There are one or more invalid email addresses.",
+    "error_more_than_fifty": "You can only invite 50 people at once. Remove some users and try again"
   }
 }

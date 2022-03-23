@@ -14,7 +14,7 @@ import { TranslocoService } from '@ngneat/transloco';
   selector: 'tg-user-to-invite',
   templateUrl: './user-to-invite.component.html',
   styleUrls: [
-    '../../../styles/kanban.shared.css',
+    '../styles/invite-to-project.shared.css',
     './user-to-invite.component.css',
   ],
 })

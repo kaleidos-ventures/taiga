@@ -14,6 +14,7 @@ from taiga.workspaces import api as workspaces_api
 
 router = APIRouter()
 
+router.include_router(auth_api.unauthorized_router)
 router.include_router(auth_api.router)
 router.include_router(projects_api.router)
 router.include_router(users_api.router)

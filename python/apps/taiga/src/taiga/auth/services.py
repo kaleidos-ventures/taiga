@@ -5,13 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth.exceptions import BadAuthTokenError, UnauthorizedUserError
-from taiga.tokens import TokenError
+from taiga.auth import exceptions as ex
+from taiga.auth.models import AccessWithRefreshToken
+from taiga.auth.tokens import AccessToken, RefreshToken
+from taiga.tokens import USER_ID_FIELD, TokenError
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
-
-from .models import AccessWithRefreshToken
-from .tokens import AccessToken, RefreshToken
 
 
 async def login(username: str, password: str) -> AccessWithRefreshToken | None:
@@ -25,38 +24,59 @@ async def login(username: str, password: str) -> AccessWithRefreshToken | None:
     ):
         return None
 
-    return await generate_auth_credentials(user=user)
+    return await create_auth_credentials(user=user)
 
 
 async def refresh(token: str) -> AccessWithRefreshToken | None:
+    # Create a refresh token from a token code
     try:
         refresh_token = await RefreshToken.create(token)
     except TokenError:
         return None
 
+    # Deny the current token and create a new one, using almost the same payload
     await refresh_token.denylist()
-    refresh_token.set_jti()
-    refresh_token.set_exp()
+    refresh_token.regenerate()
 
     return AccessWithRefreshToken(token=str(refresh_token.access_token), refresh=str(refresh_token))
 
 
 async def authenticate(token: str) -> tuple[list[str], User]:
-    # Getnerate Access token
+    # Create an access token from a token code
     try:
         access_token = await AccessToken.create(token)
     except TokenError:
-        raise BadAuthTokenError()
+        raise ex.BadAuthTokenError()
 
     # Check user authorization permissions
     if user_data := access_token.user_data:
         if user := await users_repositories.get_first_user(**user_data, is_active=True, is_system=False):
             return ["auth"], user
 
-    raise UnauthorizedUserError()
+    raise ex.UnauthorizedUserError()
 
 
-async def generate_auth_credentials(user: User) -> AccessWithRefreshToken:
+async def deny_refresh_token(user: User, token: str) -> None:
+    # Create a refresh token from a token code
+    try:
+        refresh_token = await RefreshToken.create(token)
+    except TokenError:
+        raise ex.BadRefreshTokenError()
+
+    # Check if the user who wants to deny the token is the owner (stored in the token).
+    owner_id = refresh_token.user_data.get(USER_ID_FIELD, None)
+    if not owner_id or owner_id != getattr(user, USER_ID_FIELD):
+        raise ex.UnauthorizedUserError()
+
+    # Deny the token
+    await refresh_token.denylist()
+
+
+async def create_auth_credentials(user: User) -> AccessWithRefreshToken:
+    """
+    This function create new auth credentiasl (an access token and a refresh token) for one user.
+    It will also update the date of the user's last login.
+    """
     await users_repositories.update_last_login(user=user)
 
     refresh_token = await RefreshToken.create_for_user(user)

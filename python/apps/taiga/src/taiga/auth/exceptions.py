@@ -6,9 +6,13 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
+class UnauthorizedUserError(Exception):
+    ...
+
+
 class BadAuthTokenError(Exception):
     ...
 
 
-class UnauthorizedUserError(Exception):
+class BadRefreshTokenError(Exception):
     ...

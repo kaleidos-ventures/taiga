@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4711d475-7e0b-4e62-aa50-b1de6419df67",
+		"_postman_id": "67bc250b-df6e-4d95-8aed-c0acad203fce",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -112,6 +112,71 @@
 								"auth",
 								"token",
 								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deny refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    pm.environment.unset(\"auth_token\");",
+									"    pm.environment.unset(\"refresh_token\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}/api/v2/auth/token/deny",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"auth",
+								"token",
+								"deny"
 							]
 						}
 					},

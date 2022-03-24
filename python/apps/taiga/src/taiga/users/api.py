@@ -73,7 +73,7 @@ async def create_user(form: CreateUserValidator) -> User:
 async def verify(form: VerifyTokenValidator) -> AccessWithRefreshToken:
     try:
         user = await users_services.verify_user(token=form.token)
-        return await auth_services.generate_auth_credentials(user=user)
+        return await auth_services.create_auth_credentials(user=user)
     except services_ex.UsedVerifyUserTokenError:
         raise ex.BadRequest("The token has already been used.", detail="used_token")
     except services_ex.ExpiredVerifyUserTokenError:

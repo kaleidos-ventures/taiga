@@ -77,3 +77,11 @@ class RefreshToken(DenylistMixin, Token):
                 access[claim] = value
 
         return access
+
+    def regenerate(self) -> None:
+        """
+        This method is useful to generate a new token from an existing one,
+        maintaining the payload.
+        """
+        self.set_exp()
+        self.set_jti()

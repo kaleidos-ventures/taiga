@@ -35,6 +35,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 
 const signupData = {
   email: randEmail(),
@@ -50,7 +51,7 @@ describe('AuthEffects', () => {
   const createService = createServiceFactory({
     service: AuthEffects,
     providers: [provideMockActions(() => actions$)],
-    imports: [RouterTestingModule],
+    imports: [RouterTestingModule, getTranslocoModule()],
     mocks: [AuthApiService, UsersApiService, Router, AppService, AuthService],
   });
 
@@ -106,10 +107,12 @@ describe('AuthEffects', () => {
     const effects = spectator.inject(AuthEffects);
     const authService = spectator.inject(AuthService);
     const routerService = spectator.inject(Router);
+    const appService = spectator.inject(AppService);
 
     actions$ = hot('-a', { a: logout() });
 
     expect(effects.logout$).toSatisfyOnFlush(() => {
+      expect(appService.toastNotification).toHaveBeenCalled();
       expect(authService.logout).toHaveBeenCalled();
       expect(routerService.navigate).toHaveBeenCalledWith(['/login']);
     });

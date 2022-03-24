@@ -19,6 +19,7 @@ import { AuthService } from '~/app/modules/auth/data-access/services/auth.servic
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TuiNotification } from '@taiga-ui/core';
+import { TranslocoService } from '@ngneat/transloco';
 
 @Injectable()
 export class AuthEffects {
@@ -60,6 +61,16 @@ export class AuthEffects {
       map(() => {
         this.authService.logout();
         void this.router.navigate(['/login']);
+        const label = this.translocoService.translate('logout.logged_out');
+        const message = this.translocoService.translate('logout.see_you_soon');
+        const data = {
+          label,
+          message,
+          status: TuiNotification.Success,
+          scope: 'auth',
+          autoClose: true,
+        };
+        void this.appService.toastNotification(data);
         return AuthActions.setUser({ user: null });
       })
     );
@@ -186,6 +197,7 @@ export class AuthEffects {
     private authApiService: AuthApiService,
     private authService: AuthService,
     private usersApiService: UsersApiService,
-    private appService: AppService
+    private appService: AppService,
+    private translocoService: TranslocoService
   ) {}
 }

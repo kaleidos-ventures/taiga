@@ -63,5 +63,9 @@
       "symbol": "symbol",
       "number": "number"
     }
+  },
+  "logout": {
+    "logged_out": "You are now logged out",
+    "see_you_soon": "We hope to see you soon!"
   }
 }

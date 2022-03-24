@@ -16,7 +16,8 @@ from taiga.users.tokens import VerifyUserToken
 
 
 async def create_user(email: str, full_name: str, password: str) -> None:
-    user = await users_repositories.get_first_user(email=email)
+    user = await users_repositories.get_user_by_username_or_email(username_or_email=email)
+
     if user and user.is_active:
         raise ex.EmailAlreadyExistsError()
 

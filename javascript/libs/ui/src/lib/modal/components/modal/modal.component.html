@@ -6,9 +6,9 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<div #domPortalContent>
+<ng-template #domPortalContent>
   <ng-container *transloco="let t">
-    <div *ngIf="open" class="modal-wrapper">
+    <div class="modal-inner-wrapper">
       <div class="modal-content">
         <ng-content></ng-content>
       </div>
@@ -23,4 +23,4 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </button>
     </div>
   </ng-container>
-</div>
+</ng-template>

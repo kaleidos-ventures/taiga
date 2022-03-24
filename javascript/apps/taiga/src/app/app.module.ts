@@ -42,6 +42,7 @@ import { ErrorsModule } from './modules/errors/errors.module';
 import { SvgSpriteModule } from '@taiga/ui/svg-sprite';
 import { NgDompurifySanitizer } from '@tinkoff/ng-dompurify';
 import { tuiToggleOptionsProvider } from '@taiga-ui/kit';
+import { PROMPT_PROVIDER } from '@taiga/ui/modal/services/modal.service';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -103,6 +104,7 @@ export function prefersReducedMotion(): boolean {
   ],
   bootstrap: [AppComponent],
   providers: [
+    PROMPT_PROVIDER,
     {
       provide: APP_INITIALIZER,
       multi: true,

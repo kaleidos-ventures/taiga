@@ -8,17 +8,16 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OverlayModule } from '@angular/cdk/overlay';
 
-import { ModalComponent } from './components/modal.component';
-import { ModalService } from './services/modal.service';
+import { ModalComponent } from './components/modal/modal.component';
 import { TuiButtonModule } from '@taiga-ui/core';
 import { TranslocoModule } from '@ngneat/transloco';
+import { ModalWrapperComponent } from './components/wrapper/modal-wrapper.component';
+import { PolymorpheusModule } from '@tinkoff/ng-polymorpheus';
 
 @NgModule({
-  imports: [CommonModule, OverlayModule, TuiButtonModule, TranslocoModule],
-  declarations: [ModalComponent],
-  providers: [ModalService],
-  exports: [ModalComponent],
+  imports: [CommonModule, TuiButtonModule, TranslocoModule, PolymorpheusModule],
+  declarations: [ModalComponent, ModalWrapperComponent],
+  exports: [ModalComponent, ModalWrapperComponent],
 })
 export class ModalModule {}

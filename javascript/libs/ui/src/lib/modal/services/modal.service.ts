@@ -6,38 +6,23 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, Provider } from '@angular/core';
+import { AbstractTuiDialogService, TUI_DIALOGS } from '@taiga-ui/cdk';
+import { PolymorpheusComponent } from '@tinkoff/ng-polymorpheus';
+import { ModalWrapperComponent } from '../components/wrapper/modal-wrapper.component';
 
-import { BehaviorSubject } from 'rxjs';
-import { DomPortal } from '@angular/cdk/portal';
-import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+@Injectable({
+  providedIn: 'root',
+})
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class ModalService extends AbstractTuiDialogService<any> {
+  public defaultOptions = {} as const;
 
-@Injectable()
-export class ModalService {
-  private portal$ = new BehaviorSubject<DomPortal | null>(null);
-  private overlayRef!: OverlayRef;
-
-  constructor(private overlay: Overlay) {
-    this.overlayRef = this.overlay.create({
-      hasBackdrop: true,
-      panelClass: ['modal', 'is-active'],
-      backdropClass: 'modal-bg',
-    });
-  }
-
-  public open(domPortal: DomPortal) {
-    this.close();
-
-    if (domPortal) {
-      this.overlayRef.attach(domPortal);
-    }
-  }
-
-  public close(): void {
-    this.overlayRef.detach();
-  }
-
-  public get portal() {
-    return this.portal$.asObservable();
-  }
+  public component = new PolymorpheusComponent(ModalWrapperComponent);
 }
+
+export const PROMPT_PROVIDER: Provider = {
+  provide: TUI_DIALOGS,
+  useExisting: ModalService,
+  multi: true,
+};

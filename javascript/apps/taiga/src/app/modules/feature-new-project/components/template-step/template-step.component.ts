@@ -24,7 +24,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ProjectCreation, Workspace } from '@taiga/data';
-import { ModalComponent } from '@taiga/ui/modal/components/modal.component';
+import { ModalComponent } from '@taiga/ui/modal/components';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
 import { Subject } from 'rxjs';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';

@@ -23,6 +23,7 @@ const getConfig = () => {
           'focus-visible-pseudo-class': false,
         },
       }),
+      require('postcss-color-mod-function')(),
     ],
   };
 };

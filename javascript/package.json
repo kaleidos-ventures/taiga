@@ -162,6 +162,7 @@
     "ng-mocks": "^13.0.0",
     "ng-packagr": "13.2.1",
     "postcss": "^8.4.5",
+    "postcss-color-mod-function": "^3.0.3",
     "postcss-import": "^14.0.2",
     "postcss-loader": "^6.2.1",
     "postcss-mixins": "^9.0.1",

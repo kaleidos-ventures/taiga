@@ -54,6 +54,7 @@ def create_user(email: str, username: str, full_name: str, password: str) -> Use
         email=email, username=username, full_name=full_name, is_active=False, accepted_terms=True
     )
     user.set_password(password)
+    user.save()
     return user
 
 

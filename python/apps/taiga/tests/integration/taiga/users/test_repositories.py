@@ -83,8 +83,9 @@ async def test_create_user():
     full_name = "Full Name"
     password = "password"
     user = await users_repositories.create_user(email=email, username=username, full_name=full_name, password=password)
+    await db.refresh_model_from_db(user)
     assert user.username == username
-    assert user.password is not None
+    assert user.password
 
 
 ##########################################################

@@ -4,12 +4,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
+from functools import reduce
 from typing import Any
 
 from asgiref.sync import sync_to_async
 from django.contrib.auth.models import update_last_login as django_update_last_login
 from django.db.models import Q
+from pydantic import EmailStr
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import User
@@ -88,3 +89,17 @@ def clean_expired_users() -> None:
         .exclude(id__in=OutstandingToken.objects.filter(token_type=VerifyUserToken.token_type).values_list("object_id"))
         .delete()
     )
+
+
+@sync_to_async
+def get_user_contacts(user_id: int, emails: list[EmailStr] = []) -> list[User]:
+    user_contacts_query = User.objects.filter(is_active=True).exclude(id=user_id)
+
+    if emails:
+        # The email search must be case insensitive
+        email_qs_list = map(lambda email: Q(email__iexact=email), emails)
+        email_qs = reduce(lambda a, b: a | b, email_qs_list)
+
+        user_contacts_query = user_contacts_query.filter(email_qs)
+
+    return list(user_contacts_query.order_by("full_name"))

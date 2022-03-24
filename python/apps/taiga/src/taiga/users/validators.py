@@ -52,3 +52,7 @@ class CreateUserValidator(BaseModel):
 
 class VerifyTokenValidator(BaseModel):
     token: str
+
+
+class UserContactsValidator(BaseModel):
+    emails: list[EmailStr]

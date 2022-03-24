@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "67bc250b-df6e-4d95-8aed-c0acad203fce",
+		"_postman_id": "834aedf6-a2f7-43c3-a5c1-3c24e4ee8010",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -914,6 +914,68 @@
 							"path": [
 								"my",
 								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "my contacts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"emails\": [\"EMAIL@email.com\", \"email2@email.com\", \"user1000@taiga.demo\", \"user1001@taiga.demo\", \"user1@taiga.demo\", \"email5@email.com\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/contacts",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"contacts"
+							],
+							"query": [
+								{
+									"key": "emails",
+									"value": "user1001@taiga.demo",
+									"disabled": true
+								},
+								{
+									"key": "emails",
+									"value": "user1000@taiga.demo",
+									"disabled": true
+								}
 							]
 						}
 					},

@@ -125,3 +125,34 @@ async def test_clean_expired_users():
     assert await get_total_users() == total_users + 2
     await users_repositories.clean_expired_users()
     assert await get_total_users() == total_users + 1
+
+
+async def test_user_contacts_filtered():
+    user1 = await f.create_user(is_active=True, email="email@email.com")
+    user2 = await f.create_user(is_active=True, email="EMAIL@email.com")
+    user3 = await f.create_user(is_active=False, email="inactive@email.com")
+    user4 = await f.create_user(is_active=True, email="other_email@email.com")
+
+    emails = [user1.email, user2.email, user3.email]
+
+    contacts = await users_repositories.get_user_contacts(user_id=user1.id, emails=emails)
+    assert len(contacts) == 1
+    assert user1 not in contacts  # logged user
+    assert user3 not in contacts  # inactive
+    assert user4 not in contacts  # not considered in the email list
+    assert user2 in contacts  # a case insensitive match
+
+
+async def test_user_contacts_filtered_empty_emails():
+    user1 = await f.create_user(is_active=True, email="email@email.com")
+    user2 = await f.create_user(is_active=True, email="EMAIL@email.com")
+    user3 = await f.create_user(is_active=False, email="inactive@email.com")
+    user4 = await f.create_user(is_active=True, email="other_email@email.com")
+
+    contacts = await users_repositories.get_user_contacts(user_id=user1.id, emails=[])
+
+    assert len(contacts) == 2
+    assert user1 not in contacts  # logged user
+    assert user3 not in contacts  # inactive
+    assert user2 in contacts  # case insensitive match
+    assert user4 in contacts  # a normal match

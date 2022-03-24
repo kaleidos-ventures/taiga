@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "71f6ff5c-f80c-43b6-be1f-fe27cbdcb140",
+		"_postman_id": "608c812f-14e7-43d4-bf52-d4c389bb7bcc",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -2423,6 +2423,87 @@
 							"path": [
 								"my",
 								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 my.contacts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    // Validate response API fields",
+									"    var firstContact = jsonRes[0]",
+									"    pm.expect(firstContact).to.have.property(\"username\");",
+									"    pm.expect(firstContact).to.have.property(\"fullName\");",
+									"    pm.expect(firstContact).to.have.property(\"email\");",
+									"",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"emails\": [\"EMAIL@email.com\", \"email2@email.com\", \"user1000@taiga.demo\", \"user1001@taiga.demo\", \"user1@taiga.demo\", \"email5@email.com\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/contacts",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"contacts"
+							],
+							"query": [
+								{
+									"key": "emails",
+									"value": "user1001@taiga.demo",
+									"disabled": true
+								},
+								{
+									"key": "emails",
+									"value": "user1000@taiga.demo",
+									"disabled": true
+								}
 							]
 						}
 					},

@@ -31,3 +31,10 @@ class UserMeSerializer(UserBaseSerializer):
 
     class Config:
         orm_mode = True
+
+
+class UserContactSerializer(UserBaseSerializer):
+    email: str
+
+    class Config:
+        orm_mode = True

@@ -164,3 +164,15 @@ async def test_clean_expired_users():
     with patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repositories:
         await services.clean_expired_users()
         fake_users_repositories.clean_expired_users.assert_awaited_once()
+
+
+##########################################################
+# my_contacts
+##########################################################
+
+
+async def test_list_my_contacts():
+    with patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repositories:
+        user = await f.build_user(is_active=True)
+        await services.list_user_contacts(user, [user.email])
+        fake_users_repositories.get_user_contacts.assert_awaited_once_with(user_id=user.id, emails=[user.email])

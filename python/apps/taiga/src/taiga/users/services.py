@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from pydantic import EmailStr
 from taiga.base.utils.slug import generate_username_suffix, slugify
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
@@ -79,3 +80,7 @@ async def verify_user(token: str) -> User:
 
 async def clean_expired_users() -> None:
     await users_repositories.clean_expired_users()
+
+
+async def list_user_contacts(user: User, emails: list[EmailStr] = []) -> list[User]:
+    return await users_repositories.get_user_contacts(user_id=user.id, emails=emails)

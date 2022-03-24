@@ -112,3 +112,28 @@ async def test_verify_user_error_used_token(client):
     response = client.post("/users/verify", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
     assert response.json()["error"]["detail"] == "used_token"
+
+
+async def test_my_contacts(client):
+    user1 = await f.create_user(is_active=True)
+    user2 = await f.create_user(is_active=True)
+    user3 = await f.create_user(is_active=False)
+
+    data = {"emails": [user1.email, user2.email, user3.email]}
+
+    client.login(user1)
+    response = client.post("/my/contacts", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert len(response.json()) == 1
+    assert response.json()[0]["username"] == user2.username
+
+
+async def test_my_contacts_wrong_email_format(client):
+    user1 = await f.create_user(is_active=True)
+
+    data = {"emails": ["bad.email.com"]}
+
+    client.login(user1)
+    response = client.post("/my/contacts", json=data)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
+    assert response.json()["error"]["detail"][0]["type"] == "value_error.email"

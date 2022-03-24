@@ -7,6 +7,12 @@
 
 import random
 
+from slugify import slugify as slgf
+
 
 def generate_username_suffix() -> str:
     return f"{random.randint(0,999):03}"
+
+
+def slugify(name: str) -> str:
+    return slgf(name)

@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.utils.slug import generate_username_suffix
+from taiga.base.utils.slug import generate_username_suffix, slugify
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
 from taiga.tokens import exceptions as tokens_ex
@@ -43,7 +43,7 @@ async def create_user(email: str, full_name: str, password: str) -> None:
 
 
 async def _generate_username(email: str) -> str:
-    username = email.split("@")[0]
+    username = slugify(email.split("@")[0])
     suffix = ""
     while True:
         potential = f"{username}{suffix}"

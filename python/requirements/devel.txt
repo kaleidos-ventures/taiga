@@ -57,6 +57,8 @@ tomli==2.0.1
     # via
     #   mypy
     #   pep517
+types-python-slugify==5.0.3
+    # via -r requirements/devel.in
 types-pytz==2021.3.5
     # via django-stubs
 types-pyyaml==6.0.4

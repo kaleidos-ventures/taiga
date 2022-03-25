@@ -31,4 +31,10 @@ export class AuthApiService {
       refresh,
     });
   }
+
+  public denyRefreshToken(refresh: Auth['refresh'] | undefined) {
+    return this.http.post<Auth>(`${this.config.apiUrl}/auth/token/deny`, {
+      refresh,
+    });
+  }
 }

@@ -60,13 +60,13 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.logout),
       map(() => {
-        this.authService.logout();
+        const refresh = this.authService.getAuth()?.refresh;
+        this.authApiService.denyRefreshToken(refresh).subscribe();
+        void this.authService.logout();
         void this.router.navigate(['/login']);
-        const label = this.translocoService.translate('logout.logged_out');
-        const message = this.translocoService.translate('logout.see_you_soon');
         const data = {
-          label,
-          message,
+          label: this.translocoService.translate('logout.logged_out'),
+          message: this.translocoService.translate('logout.see_you_soon'),
           status: TuiNotification.Success,
           scope: 'auth',
           autoClose: true,

@@ -108,13 +108,16 @@ describe('AuthEffects', () => {
     const authService = spectator.inject(AuthService);
     const routerService = spectator.inject(Router);
     const appService = spectator.inject(AppService);
+    const authApiService = spectator.inject(AuthApiService);
+
+    authApiService.denyRefreshToken.mockReturnValue(cold('-b|'));
 
     actions$ = hot('-a', { a: logout() });
 
     expect(effects.logout$).toSatisfyOnFlush(() => {
-      expect(appService.toastNotification).toHaveBeenCalled();
       expect(authService.logout).toHaveBeenCalled();
       expect(routerService.navigate).toHaveBeenCalledWith(['/login']);
+      expect(appService.toastNotification).toHaveBeenCalled();
     });
   });
 

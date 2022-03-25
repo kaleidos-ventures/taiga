@@ -53,4 +53,15 @@ describe('AuthApiService', () => {
     );
     expect(req.request.body['refresh']).toEqual(refresh);
   });
+
+  it('deny', () => {
+    const refresh = randUuid();
+    spectator.service.denyRefreshToken(refresh).subscribe();
+
+    const req = spectator.expectOne(
+      `${ConfigServiceMock.apiUrl}/auth/token/deny`,
+      HttpMethod.POST
+    );
+    expect(req.request.body['refresh']).toEqual(refresh);
+  });
 });

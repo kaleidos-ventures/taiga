@@ -7,10 +7,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { AuthApiService } from '@taiga/api';
 import { Auth, User } from '@taiga/data';
-import { PermissionsService } from '~/app/services/permissions.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 @Injectable({
@@ -21,9 +19,7 @@ export class AuthService {
 
   constructor(
     private localStorageService: LocalStorageService,
-    private authApiService: AuthApiService,
-    private store: Store,
-    private permissionsService: PermissionsService
+    private authApiService: AuthApiService
   ) {}
 
   public isLogged() {

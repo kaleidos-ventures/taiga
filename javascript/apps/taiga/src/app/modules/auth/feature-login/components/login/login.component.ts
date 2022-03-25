@@ -6,11 +6,19 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+} from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { AuthApiService } from '@taiga/api';
+import { RxState } from '@rx-angular/state';
 import { login } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import { selectLoginError } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
+import { filterNil } from '~/app/shared/utils/operators';
 
 interface Login {
   username: string;
@@ -21,28 +29,55 @@ interface Login {
   selector: 'tg-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
+  providers: [RxState],
+  animations: [fadeIntOutAnimation],
 })
 export class LoginComponent implements OnInit {
-  public form!: FormGroup;
+  public readonly model$ = this.state.select();
+
+  public loginForm!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
-    private authApiService: AuthApiService,
-    private store: Store
+    private store: Store,
+    private state: RxState<{ loginError: boolean }>,
+    private cd: ChangeDetectorRef,
+    private el: ElementRef
   ) {}
 
   public ngOnInit(): void {
-    this.form = this.fb.group({
-      username: [''],
-      password: [''],
+    this.state.connect(
+      'loginError',
+      this.store.select(selectLoginError).pipe(filterNil())
+    );
+
+    this.state.hold(this.store.select(selectLoginError).pipe());
+
+    this.loginForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required],
     });
   }
 
-  public onSubmit() {
-    const { username, password } = this.form.value as Login;
+  public focusFirstInvalidField() {
+    const invalidControl = (
+      this.el.nativeElement as HTMLElement
+    ).querySelector<HTMLEmbedElement>('form .ng-invalid');
 
-    if (username && password) {
+    if (invalidControl) {
+      invalidControl.focus();
+    }
+  }
+
+  public onSubmit() {
+    const { username, password } = this.loginForm.value as Login;
+
+    if (this.loginForm.valid) {
       this.store.dispatch(login({ username, password }));
+    } else {
+      this.loginForm.markAllAsTouched();
+      this.focusFirstInvalidField();
+      this.cd.detectChanges();
     }
   }
 }

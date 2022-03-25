@@ -28,6 +28,11 @@ export const loginSuccess = createAction(
   props<{ auth: Auth; redirect?: boolean }>()
 );
 
+export const setLoginError = createAction(
+  '[Auth] login error',
+  props<{ loginError: boolean }>()
+);
+
 export const signup = createAction(
   '[Auth] sign up',
   props<{

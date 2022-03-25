@@ -10,7 +10,7 @@ export class SelectHelper {
   constructor(private el: string, private option?: string) {}
 
   public getValue() {
-    return cy.getBySel(this.el).find('.input_template');
+    return cy.getBySel(this.el).find('.t-input_template');
   }
 
   public setValue(optionIndex: number) {

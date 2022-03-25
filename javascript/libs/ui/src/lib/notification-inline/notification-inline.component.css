@@ -5,16 +5,20 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
+@import "tools/typography.css";
 
 :host {
   --color-border: var(--color-gray20);
 
   border-radius: 4px;
   display: inline-block;
-  padding: var(--spacing-8) var(--spacing-16);
+  padding-block: var(--spacing-8);
+  padding-inline: var(--spacing-8) var(--spacing-16);
 
   & .content {
-    align-items: center;
+    @mixin font-paragraph;
+
+    align-items: flex-start;
     display: flex;
   }
 
@@ -23,6 +27,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       margin-inline-start: var(--spacing-4);
 
       & .t-content {
+        @mixin font-paragraph;
+
         font-weight: var(--font-weight-medium);
       }
 
@@ -35,6 +41,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & tui-svg {
     block-size: var(--spacing-16);
     inline-size: var(--spacing-16);
+    margin-block-start: 2px;
     margin-inline-end: var(--spacing-8);
   }
 
@@ -49,7 +56,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     &::ng-deep {
       & .content {
         color: var(--color-info80);
-        display: flex;
       }
 
       & .link .t-content {
@@ -73,7 +79,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     & .content {
       color: var(--color-ok80);
-      display: flex;
     }
 
     &::ng-deep {
@@ -98,7 +103,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     & .content {
       color: var(--color-red80);
-      display: flex;
     }
 
     &::ng-deep {
@@ -123,7 +127,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     & .content {
       color: var(--color-warning80);
-      display: flex;
     }
 
     &::ng-deep {
@@ -148,7 +151,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     & .content {
       color: var(--color-notice80);
-      display: flex;
     }
 
     &::ng-deep {

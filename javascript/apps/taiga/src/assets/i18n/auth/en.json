@@ -26,6 +26,20 @@
       "resend_email_message": "Wait a few minutes and try again"
     }
   },
+  "login": {
+    "title": "Log in to your Taiga account",
+    "username": "Email or username",
+    "password": "Password",
+    "forgot_password": "Forgot your password?",
+    "login": "Log in",
+    "not_registered_yet": "Not registered yet?",
+    "create_free_account": "Create a free account",
+    "errors": {
+      "username_required": "Enter your email or username",
+      "password_required": "Enter a password",
+      "submited_error": "Your email, username or password are incorrect. Check them and try again"
+    }
+  },
   "verify": {
     "title": "Check your inbox to complete your registration",
     "verification_link_sent": "Click the verification link in the email we sent you to:",

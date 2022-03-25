@@ -97,9 +97,9 @@ Cypress.Commands.add('getBySelLike', getBySelLike);
 function login(username = 'user1', password = '123123') {
   cy.session([username, password], () => {
     cy.visit('/login');
-    cy.getBySel('username').type(username);
-    cy.getBySel('password').type(password);
-    cy.getBySel('submit').click();
+    cy.getBySel('login-username').type(username);
+    cy.getBySel('login-password').type(password);
+    cy.getBySel('login-submit').click();
 
     const baseUrl = Cypress.config().baseUrl ?? 'http://localhost:4400';
     cy.url().should('eq', baseUrl);

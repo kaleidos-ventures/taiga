@@ -18,6 +18,9 @@ const routes: Routes = [
       import('./modules/auth/feature-login/auth-feature-login.module').then(
         (m) => m.AuthFeatureLoginModule
       ),
+    data: {
+      noHeader: true,
+    },
   },
 
   {

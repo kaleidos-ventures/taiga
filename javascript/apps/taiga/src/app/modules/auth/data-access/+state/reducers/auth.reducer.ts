@@ -13,16 +13,28 @@ import * as AuthActions from '../actions/auth.actions';
 
 export interface AuthState {
   user: User | null;
+  loginError: boolean;
 }
 
 export const initialState: AuthState = {
   user: null,
+  loginError: false,
 };
 
 export const reducer = createReducer(
   initialState,
   on(AuthActions.setUser, (state, { user }): AuthState => {
     state.user = user;
+
+    return state;
+  }),
+  on(AuthActions.setLoginError, (state, { loginError }): AuthState => {
+    state.loginError = loginError;
+
+    return state;
+  }),
+  on(AuthActions.loginSuccess, (state): AuthState => {
+    state.loginError = false;
 
     return state;
   })

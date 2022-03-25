@@ -147,6 +147,12 @@ describe('Workspace Create from Overview', () => {
 });
 
 xdescribe('Workspace Create from WS page', () => {
+  let workspace: ReturnType<typeof WorkspaceMockFactory>;
+
+  before(() => {
+    workspace = WorkspaceMockFactory();
+  });
+
   beforeEach(() => {
     cy.login();
     cy.visit('/');

@@ -50,6 +50,7 @@ export class AuthEffects {
               },
             },
           });
+          return AuthActions.setLoginError({ loginError: true });
         },
       })
     );

@@ -9,7 +9,7 @@
 import { createSelector } from '@ngrx/store';
 import { authFeature } from '../reducers/auth.reducer';
 
-export const { selectUser } = authFeature;
+export const { selectUser, selectLoginError } = authFeature;
 
 export const selectIsLogged = () => {
   return createSelector(selectUser, (user) => !!user);

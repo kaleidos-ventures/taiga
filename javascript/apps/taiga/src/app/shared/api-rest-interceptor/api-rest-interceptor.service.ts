@@ -94,7 +94,10 @@ export class ApiRestInterceptorService implements HttpInterceptor {
             !request.url.includes('/auth/token')
           ) {
             return this.handle401Error(request, next);
-          } else if (!auth?.token || !auth?.refresh) {
+          } else if (
+            (!auth?.token || !auth?.refresh) &&
+            !request.url.includes('/auth/token')
+          ) {
             this.store.dispatch(logout());
             return EMPTY;
           }

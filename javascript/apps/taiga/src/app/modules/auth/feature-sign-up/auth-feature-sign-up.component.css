@@ -8,6 +8,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 @import "tools/responsive.css";
+@import "../styles/auth.styles.css";
 
 :host {
   background-image: url("/assets/images/signup/signup-bg-left.svg"),
@@ -15,90 +16,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   background-position: bottom left, bottom right;
   background-repeat: no-repeat, no-repeat;
   background-size: 33vw, 33vw;
-  block-size: 100%;
-  display: flex;
-  flex-direction: column;
-
-  @media (--lt-medium) {
-    background: none;
-  }
-
-  @media (--gt-xlarge) {
-    background-size: 500px, 500px;
-  }
-
-  &.verify-email {
-    background: none;
-  }
-
-  & > .login {
-    flex: 1;
-  }
-
-  & > .login-footer {
-    flex: 0;
-  }
-}
-
-.login {
-  display: grid;
-  place-items: center;
-}
-
-.login-wrapper {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-16);
-  inline-size: 384px;
-  justify-content: center;
-  padding: var(--spacing-16);
-  padding-block-end: var(--spacing-32);
-}
-
-.taiga-logo {
-  aspect-ratio: 1/1;
-  inline-size: var(--spacing-56);
-}
-
-.login-title,
-.login-subtitle {
-  margin: 0;
-  text-align: center;
-}
-
-.login-title {
-  @mixin font-heading-3;
-}
-
-.login-subtitle {
-  @mixin font-paragraph;
 }
 
 .display-signup-button {
   inline-size: 100%;
-}
-
-.login-footer {
-  @mixin font-paragraph;
-
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  padding-block: var(--spacing-16);
-}
-
-.login-link,
-.premium-link {
-  color: var(--color-gray80);
-  margin: 0;
-
-  &::ng-deep a {
-    font-weight: var(--font-weight-medium);
-    text-decoration: underline;
-  }
-}
-
-.login-link {
-  margin-block-end: var(--spacing-4);
 }

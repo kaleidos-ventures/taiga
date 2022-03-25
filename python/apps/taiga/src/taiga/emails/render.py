@@ -11,6 +11,7 @@ from typing import Any, Final
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 from taiga.base.front import resolve_front_url
+from taiga.base.utils.datetime import display_lifetime
 from taiga.conf import settings
 
 TXT_BODY_TEMPLATE_SUFFIX: Final = ".txt.jinja"
@@ -22,6 +23,7 @@ TEMPLATES_PATH: Final = path.join(path.dirname(path.abspath(__file__)), "templat
 env = Environment(loader=PackageLoader("taiga.emails"), autoescape=select_autoescape())
 env.globals["settings"] = settings
 env.globals["resolve_front_url"] = resolve_front_url
+env.globals["display_lifetime"] = display_lifetime
 
 
 def render_email_html(email_name: str, context: dict[str, Any]) -> str:

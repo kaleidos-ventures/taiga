@@ -60,3 +60,19 @@ def epoch_to_datetime(ts: int) -> datetime:
     Convert a unix time representation to a datetime.datetime.
     """
     return datetime.fromtimestamp(ts, tz=timezone.utc)
+
+
+def display_lifetime(minutes: int) -> str:
+    """
+    This function take minutes and rounding down to days.
+    If we don't have a full day than in hours and if we don't have a full hour then in minutes.
+    """
+    days = minutes // (24 * 60)
+    if days > 0:
+        return f"{days} days" if days > 1 else f"{days} day"
+    else:
+        hours = minutes // 60
+        if hours > 0:
+            return f"{hours} hours" if hours > 1 else f"{hours} hour"
+        else:
+            return f"{minutes} minutes" if minutes <= 0 or minutes > 1 else f"{minutes} minute"

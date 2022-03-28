@@ -47,7 +47,7 @@ export const UserMockFactory = (): User => {
     timezone: '',
     totalPrivateProjects: randNumber(),
     totalPublicProjects: randNumber(),
-    username: randUserName(),
+    username: '@' + randUserName(),
     uuid: randUuid(),
   };
 };

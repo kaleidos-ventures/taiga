@@ -1,0 +1,79 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+.member-list {
+  margin-block-end: var(--spacing-8);
+  padding: 0;
+
+  & li {
+    margin-block-end: var(--spacing-8);
+  }
+}
+
+.member-link {
+  display: block;
+
+  &:not(.pending-member):hover {
+    background-color: var(--color-gray10);
+
+    & tg-user-card {
+      --color-user-name: var(--color-secondary80);
+    }
+  }
+}
+
+.admin {
+  @mixin font-small;
+
+  background-color: var(--color-info20);
+  border-radius: 8px;
+  color: var(--color-info60);
+  margin-inline-start: var(--spacing-8);
+  padding-inline: var(--spacing-8);
+  white-space: nowrap;
+}
+
+.pending-msg {
+  color: var(--color-gray70);
+  font-style: italic;
+  white-space: nowrap;
+
+  & tui-svg {
+    block-size: var(--spacing-16);
+    fill: var(--color-gray40);
+    inline-size: var(--spacing-16);
+    margin-inline-end: var(--spacing-4);
+  }
+}
+
+.pending-member {
+  background-color: var(--color-gray10);
+
+  & tg-user-card {
+    --color-user-name: var(--color-gray70);
+  }
+
+  &::ng-deep img {
+    opacity: 0.5;
+  }
+}
+
+.member-info {
+  align-items: center;
+  block-size: 100%;
+  display: flex;
+  justify-self: stretch;
+
+  & .block-end {
+    align-items: center;
+    display: flex;
+    margin-inline-start: auto;
+  }
+}

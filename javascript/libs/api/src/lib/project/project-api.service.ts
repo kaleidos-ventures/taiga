@@ -8,10 +8,20 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { randNumber } from '@ngneat/falso';
 import { ApiUtilsService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 
-import { Contact, Project, ProjectCreation, Role } from '@taiga/data';
+import {
+  Contact,
+  Project,
+  ProjectCreation,
+  Role,
+  MembershipMockFactory,
+  InvitationMockFactory,
+} from '@taiga/data';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -152,5 +162,25 @@ export class ProjectApiService {
         permissions,
       }
     );
+  }
+
+  public getMembers() {
+    const users = [];
+
+    for (let i = 0; i < randNumber({ min: 1, max: 30 }); i++) {
+      users.push(MembershipMockFactory());
+    }
+
+    return of(users).pipe(delay(1000));
+  }
+
+  public getInvitations() {
+    const users = [];
+
+    for (let i = 0; i < randNumber({ min: 0, max: 4 }); i++) {
+      users.push(InvitationMockFactory());
+    }
+
+    return of(users).pipe(delay(1000));
   }
 }

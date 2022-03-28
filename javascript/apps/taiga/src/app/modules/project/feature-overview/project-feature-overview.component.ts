@@ -16,6 +16,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { initProjectOverview } from './data-access/+state/actions/project-overview.actions';
 @Component({
   selector: 'tg-project-feature-overview',
   templateUrl: './project-feature-overview.component.html',
@@ -30,16 +31,15 @@ export class ProjectFeatureOverviewComponent
   public showDescription = false;
   public hideOverflow = false;
 
-  constructor(
-    private store: Store,
-    private cd: ChangeDetectorRef,
-  ) {}
+  constructor(private store: Store, private cd: ChangeDetectorRef) {}
 
   public project$ = this.store.select(selectCurrentProject);
 
   public ngOnInit() {
     this.showDescription = false;
     this.hideOverflow = false;
+
+    this.store.dispatch(initProjectOverview());
   }
 
   public hasClamping(el: HTMLElement) {

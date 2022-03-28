@@ -8,14 +8,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
+:host {
+  --color-user-name: var(--color-gray80);
+}
+
 .user-identifier {
+  align-items: flex-start;
+  block-size: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  justify-self: stretch;
 
   & .user-name {
     @mixin font-inline;
 
-    color: var(--color-gray80);
+    color: var(--color-user-name);
   }
 
   & .user-alias {
@@ -35,7 +43,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   align-items: center;
   display: grid;
   gap: var(--spacing-16);
-  grid-template-columns: 32px 1fr;
+  grid-auto-flow: column;
+  grid-auto-rows: auto;
+  grid-template-columns: 32px minmax(0, auto) 1fr;
+  justify-items: start;
+  padding: var(--spacing-4);
+  padding-inline-end: var(--spacing-16);
 }
 
 .avatar {
@@ -48,5 +61,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .overflow {
   @mixin text-overflow;
 
-  max-inline-size: 265px;
+  display: inline;
+  inline-size: auto;
+  max-inline-size: 100%;
 }

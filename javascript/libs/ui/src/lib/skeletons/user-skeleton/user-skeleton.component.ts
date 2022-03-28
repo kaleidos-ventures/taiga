@@ -9,12 +9,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'tg-ui-card-skeleton',
-  templateUrl: './card-skeleton.component.html',
-  styleUrls: ['../skeleton.css', './card-skeleton.component.css'],
+  selector: 'tg-ui-user-skeleton',
+  templateUrl: './user-skeleton.component.html',
+  styleUrls: ['../skeleton.css', './user-skeleton.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
-// NOTES
-// Shared angular animations
-export class CardSkeletonComponent {}
+export class UserSkeletonComponent {}

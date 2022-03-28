@@ -10,12 +10,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CardSkeletonComponent } from './card-skeleton/card-skeleton.component';
-
-// import { ModalComponent } from './components/modal.component';
+import { UserSkeletonComponent } from './user-skeleton/user-skeleton.component';
 
 @NgModule({
   imports: [CommonModule, OverlayModule],
-  declarations: [CardSkeletonComponent],
-  exports: [CardSkeletonComponent],
+  declarations: [CardSkeletonComponent, UserSkeletonComponent],
+  exports: [CardSkeletonComponent, UserSkeletonComponent],
 })
 export class SkeletonsModule {}

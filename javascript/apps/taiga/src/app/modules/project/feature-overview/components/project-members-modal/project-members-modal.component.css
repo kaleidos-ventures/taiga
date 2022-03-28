@@ -1,0 +1,61 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+.modal-wrapper {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  max-block-size: calc(var(--modal-max-height) - (2 * var(--modal-padding)));
+}
+
+.title {
+  @mixin font-heading-4;
+
+  align-items: center;
+  border-block-end: 1px solid var(--color-gray30);
+  display: flex;
+  font-size: var(--font-size-heading-3);
+  margin: 0;
+  margin-block-end: var(--spacing-16);
+  padding-block-end: var(--spacing-16);
+
+  & tui-svg {
+    block-size: var(--spacing-16);
+    fill: var(--color-gray60);
+    inline-size: var(--spacing-16);
+    margin-inline-end: var(--spacing-4);
+  }
+}
+
+.count {
+  color: var(--color-gray80);
+  margin-inline-start: var(--spacing-4);
+}
+
+.pending {
+  @mixin font-paragraph;
+
+  color: var(--color-gray80);
+  font-size: var(--font-size-heading-4);
+  font-style: italic;
+  margin-inline-start: var(--spacing-16);
+}
+
+.member-list-wrapper {
+  margin-block-end: var(--spacing-16);
+  max-block-size: 55vh;
+  overflow-y: auto;
+  padding: var(--spacing-4);
+}
+
+.modal-bottom {
+  border-block-start: 1px solid var(--color-gray30);
+  padding-block-start: var(--spacing-16);
+  text-align: end;
+}

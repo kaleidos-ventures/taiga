@@ -10,25 +10,26 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
-import { AvatarModule } from '@taiga/ui/avatar';
-import { ProjectMembersModule } from './components/project-members/project-members.module';
-import { DataAccessProjectOverviewModule } from './data-access/project-overview-data-access.module';
-import { ProjectOverviewRoutingModule } from './project-feature-overview-routing.module';
-import { ProjectFeatureOverviewComponent } from './project-feature-overview.component';
+import { ModalModule } from '@taiga/ui/modal';
+import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
+import { ProjectMembersListModule } from '../project-members-list/project-members-list.module';
+import { ProjectMembersModalModule } from '../project-members-modal/project-members-modal.module';
+import { ProjectMembersComponent } from './project-members.component';
 
 @NgModule({
   imports: [
     CommonModule,
     TuiButtonModule,
     TuiSvgModule,
-    AvatarModule,
     TranslocoModule,
-    ProjectOverviewRoutingModule,
     TuiLinkModule,
-    DataAccessProjectOverviewModule,
-    ProjectMembersModule,
+    ModalModule,
+    ProjectMembersModalModule,
+    SkeletonsModule,
+    ProjectMembersListModule,
   ],
-  declarations: [ProjectFeatureOverviewComponent],
+  declarations: [ProjectMembersComponent],
+  exports: [ProjectMembersComponent],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -39,4 +40,4 @@ import { ProjectFeatureOverviewComponent } from './project-feature-overview.comp
     },
   ],
 })
-export class ProjectFeatureOverviewModule {}
+export class ProjectMembersModule {}

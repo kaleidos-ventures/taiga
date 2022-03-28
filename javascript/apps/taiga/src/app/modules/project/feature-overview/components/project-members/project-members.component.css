@@ -1,0 +1,44 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+.title {
+  @mixin font-inline;
+
+  align-items: center;
+  display: flex;
+  margin: 0;
+  margin-block-end: var(--spacing-16);
+
+  & tui-svg {
+    block-size: var(--spacing-16);
+    fill: var(--color-gray60);
+    inline-size: var(--spacing-16);
+    margin-inline-end: var(--spacing-4);
+  }
+}
+
+.count {
+  color: var(--color-gray80);
+  margin-inline-start: var(--spacing-4);
+}
+
+.pending {
+  color: var(--color-gray80);
+  font-style: italic;
+  padding-inline-start: var(--spacing-4);
+}
+
+.invite-button {
+  margin-inline-start: auto;
+}
+
+.view-all-button {
+  inline-size: 100%;
+}

@@ -1,0 +1,64 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <h2 class="title">
+      <tui-svg src="members"></tui-svg>
+      {{ t('project_overview.members.title') }}
+      <ng-container *ngIf="!vm.loading">
+        <span class="count">({{ vm.members.length }})</span>
+        <span class="pending" *ngIf="vm.pending"
+          >-
+          {{
+            t('project_overview.members.count_pending', { number: vm.pending })
+          }}</span
+        >
+
+        <button
+          class="invite-button"
+          appearance="tertiary"
+          tuiButton
+          icon="plus"
+          type="button">
+          {{ t('project_overview.members.invite') }}
+        </button>
+      </ng-container>
+    </h2>
+
+    <tg-project-members-list
+      *ngIf="vm.previewMembers.length"
+      [members]="vm.previewMembers"></tg-project-members-list>
+
+    <div *ngIf="vm.loading">
+      <tg-ui-user-skeleton></tg-ui-user-skeleton>
+      <tg-ui-user-skeleton></tg-ui-user-skeleton>
+      <tg-ui-user-skeleton></tg-ui-user-skeleton>
+    </div>
+
+    <button
+      *ngIf="vm.viewAllMembers"
+      (click)="showAllMembers = true"
+      class="view-all-button"
+      appearance="tertiary"
+      tuiButton
+      type="button">
+      {{ t('project_overview.members.view_all') }}
+    </button>
+
+    <tg-ui-modal
+      [open]="showAllMembers"
+      (requestClose)="showAllMembers = false">
+      <tg-project-members-modal
+        *ngIf="vm.members"
+        [members]="vm.members"
+        [pending]="vm.pending"
+        (closeModal)="showAllMembers = false"></tg-project-members-modal>
+    </tg-ui-modal>
+  </ng-container>
+</ng-container>

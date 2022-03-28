@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <tg-user-avatar [user]="user"></tg-user-avatar>
     <div class="user-identifier">
       <span class="user-name overflow">{{ user.fullName }}</span>
-      <span class="user-alias overflow">{{ user.username }}</span>
+      <div class="user-alias overflow">{{ user.username }}</div>
     </div>
   </ng-container>
 
@@ -23,4 +23,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <span class="user-email overflow">{{ user.email }}</span>
     </div>
   </ng-container>
+
+  <ng-content></ng-content>
 </div>

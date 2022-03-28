@@ -9,24 +9,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "tools/animations.css";
 
 :host {
-  --white: 255, 255, 255;
+  --white: rgb(255, 255, 255);
 
   display: block;
 }
 
-.card-skeleton {
+.wrapper-skeleton {
   background-color: rgba(var(--white), 0.25);
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-12);
-  max-inline-size: 230px;
+  gap: var(--spacing-4);
+  max-inline-size: 280px;
   padding: var(--spacing-12);
 }
 
 .row {
-  block-size: 1rem;
   display: flex;
-  gap: var(--spacing-12);
+  gap: var(--spacing-4);
+  inline-size: 100%;
+
+  &.column {
+    flex-direction: column;
+  }
 
   &.space-between {
     justify-content: space-between;
@@ -35,16 +38,23 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :is(.avatar, .line) {
   @mixin pulseAnimation;
+
+  flex-shrink: 0;
 }
 
 .avatar {
   aspect-ratio: 1/1;
   background: var(--color-gray20);
-  inline-size: 1rem;
+  inline-size: 2rem;
 }
 
 .line {
   background: var(--color-gray20);
+  block-size: 0.875rem;
   border-radius: 4px;
   display: block;
+}
+
+.rounded {
+  border-radius: 50%;
 }

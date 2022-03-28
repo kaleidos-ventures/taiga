@@ -37,29 +37,36 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: grid;
   flex-grow: 1;
   gap: var(--spacing-16);
-  grid-template: 169px 1fr 1fr, 1fr 1fr 353px;
+  grid-template: 169px 1fr 1fr / 1fr 1fr minmax(392px, 528px);
   grid-template-areas:
     "main main description"
-    "main main empty"
-    "main main empty"
+    "main main members"
+    "main main members"
     "main main .";
+  max-inline-size: 1400px;
   padding-block-start: var(--spacing-16);
 
-  & :is(.project-main, .project-description, .project-empty) {
+  & :is(.project-main, .project-description, .project-members) {
     background: var(--color-white);
     padding: var(--spacing-16);
   }
 
   & > .project-main {
+    align-self: flex-start;
     grid-area: main;
+
+    /* fake height */
+    min-block-size: 500px;
+    min-inline-size: 640px;
   }
 
   & > .project-description {
     grid-area: description;
   }
 
-  & > .project-empty {
-    grid-area: empty;
+  & > .project-members {
+    align-self: flex-start;
+    grid-area: members;
   }
 }
 

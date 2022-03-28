@@ -1,5 +1,13 @@
 {
   "show_full_description": "Show full description",
   "hide_full_description": "Hide full description",
-  "about": "About"
+  "about": "About",
+  "members": {
+    "title": "Members",
+    "view_all": "View all members",
+    "pending": "Pending",
+    "count_pending": "{{number}} pending",
+    "leave": "Leave this project",
+    "invite": "Invite people"
+  }
 }

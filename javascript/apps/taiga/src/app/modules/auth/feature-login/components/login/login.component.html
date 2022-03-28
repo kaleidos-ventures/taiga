@@ -21,9 +21,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </ng-container>
       </tg-ui-input>
       <tg-ui-input class="input-password" [label]="t('login.password')">
-        <a class="forgot-password" appearance="primary" tuiLink type="button">
-          {{ t('login.forgot_password') }}
-        </a>
+        <ng-container adjacentLabelContent>
+          <a class="forgot-password" appearance="primary" tuiLink type="button">
+            {{ t('login.forgot_password') }}
+          </a>
+        </ng-container>
         <input
           formControlName="password"
           data-test="login-password"

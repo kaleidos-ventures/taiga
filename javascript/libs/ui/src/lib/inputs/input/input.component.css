@@ -47,6 +47,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 :host::ng-deep {
+  & .input-label-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
   & .input-container {
     display: flex;
     max-inline-size: 100%;

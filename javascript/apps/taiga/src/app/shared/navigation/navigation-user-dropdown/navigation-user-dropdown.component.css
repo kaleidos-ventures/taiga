@@ -84,7 +84,7 @@ li {
   }
 }
 
-.sign-out {
+.log-out {
   border-block-start: solid 1px var(--color-gray30);
   color: var(--color-secondary);
   margin-block-start: var(--spacing-8);

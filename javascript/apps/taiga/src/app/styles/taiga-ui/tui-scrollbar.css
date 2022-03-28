@@ -20,9 +20,3 @@ tui-scroll-controls {
     }
   }
 }
-
-tui-scrollbar {
-  & .content {
-    padding-inline-end: var(--spacing-16);
-  }
-}

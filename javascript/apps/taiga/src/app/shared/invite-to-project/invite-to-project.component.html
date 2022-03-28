@@ -12,7 +12,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       {{ t('kanban.invite_step.title', { project: project.name }) }}
     </h1>
     <form [formGroup]="inviteProjectForm">
-      <tui-scrollbar class="scroll">
+      <tui-scrollbar class="padding-scroll">
         <p class="text" [innerHtml]="t('kanban.invite_step.instructions')"></p>
         <p class="text">{{ t('kanban.invite_step.alternative') }}</p>
         <div class="add-wrapper">
@@ -20,6 +20,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <div class="text-area">
             <tg-ui-textarea>
               <tui-text-area
+                data-test="input-add-invites"
                 [class.small]="validEmails.length < 2"
                 [class.bottom-space]="emailsWithoutDuplications().length > 1"
                 [class.invalid]="
@@ -59,6 +60,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             >
           </div>
           <button
+            data-test="add-invites"
             class="add-btn"
             appearance="primary"
             tuiButton

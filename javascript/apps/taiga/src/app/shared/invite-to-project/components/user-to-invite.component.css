@@ -8,23 +8,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
-.user-identifier {
-  display: flex;
-  flex-direction: column;
-
-  & .user-name {
-    @mixin font-inline;
-
-    color: var(--color-gray80);
-  }
-
-  & .user-alias {
-    @mixin font-small;
-
-    color: var(--color-gray70);
-  }
-}
-
 .select-rol {
   margin-block: var(--spacing-4);
 }

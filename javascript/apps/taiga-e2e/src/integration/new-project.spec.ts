@@ -6,13 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randText } from '@ngneat/falso';
+import { randText, randEmail } from '@ngneat/falso';
 import {
+  addEmailToInvite,
   cancelProject,
   launchProjectCreationInWS,
   selectBlankProject,
   submitProject,
   submitVisible,
+  typeEmailToInvite,
   typeProjectDescription,
   typeProjectName,
 } from '../support/helpers/project.helpers';
@@ -109,6 +111,8 @@ describe('Workspace Create from Overview', () => {
     cy.getBySel('submit-create-project').should('not.exist');
     cy.getBySel('submit-invite-users').should('be.visible');
 
+    typeEmailToInvite(randEmail());
+    addEmailToInvite();
     cy.getBySel('submit-invite-users')
       .click()
       .then(() => {

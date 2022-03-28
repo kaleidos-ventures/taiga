@@ -1,0 +1,26 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<div class="user-card">
+  <ng-container *ngIf="user.get('fullName')?.value">
+    <tg-user-avatar [user]="user.value"></tg-user-avatar>
+    <div class="user-identifier">
+      <span class="user-name overflow">{{ user.get('fullName')?.value }}</span>
+      <span class="user-alias overflow">{{ user.get('username')?.value }}</span>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!user.get('fullName')?.value">
+    <tui-svg
+      class="avatar"
+      src="/assets/images/avatar.svg"
+      aria-hidden="true"></tui-svg>
+    <div class="user-identifier">
+      <span class="user-email overflow">{{ user.get('email')?.value }}</span>
+    </div>
+  </ng-container>
+</div>

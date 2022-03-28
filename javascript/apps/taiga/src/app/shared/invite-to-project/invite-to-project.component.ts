@@ -127,10 +127,17 @@ export class InviteToProjectComponent {
       this.inviteEmailsErrors.bulkError = true;
     } else {
       // to test more than 50 users
-      Array.from(Array(51).keys()).forEach(() =>
-        this.users.push(this.fb.group(this.userExample[0]))
-      );
-      // this.users.push(this.fb.group(this.userExample[0]));
+      // Array.from(Array(51).keys()).forEach(() =>
+      //   this.users.push(
+      //     this.fb.group({
+      //       email: 'user1000@taiga.demo',
+      //       username: undefined,
+      //       fullName: undefined,
+      //       roles: ['General'],
+      //     })
+      //   )
+      // );
+      this.users.push(this.fb.group(this.userExample[0]));
       this.inviteEmails = '';
     }
   }

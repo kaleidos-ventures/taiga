@@ -20,3 +20,9 @@ tui-scroll-controls {
     }
   }
 }
+
+.padding-scroll {
+  & .content {
+    padding-inline-end: var(--spacing-16);
+  }
+}

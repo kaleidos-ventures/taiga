@@ -7,12 +7,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t" [formGroup]="user">
-  <div class="user">
-    <tg-user-avatar [user]="user.value"></tg-user-avatar>
-    <div class="user-identifier">
-      <span class="user-name">{{ user.get('fullName')?.value }}</span>
-      <span class="user-alias">{{ user.get('username')?.value }}</span>
-    </div>
+  <div class="user content">
+    <tg-user-card [user]="user"></tg-user-card>
     <tg-ui-select [label]="t('kanban.invite_step.role')" labelVisuallyHidden>
       <tui-select
         class="select-rol"

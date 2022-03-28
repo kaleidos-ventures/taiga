@@ -76,3 +76,6 @@ export const submitVisible = () =>
   cy.getBySel('submit-create-project').should('be.visible');
 export const cancelProject = () => cy.getBySel('cancel-create-project').click();
 export const submitProject = () => cy.getBySel('submit-create-project').click();
+export const typeEmailToInvite = (email: string) =>
+  cy.getBySel('input-add-invites').type(email);
+export const addEmailToInvite = () => cy.getBySel('add-invites').click();

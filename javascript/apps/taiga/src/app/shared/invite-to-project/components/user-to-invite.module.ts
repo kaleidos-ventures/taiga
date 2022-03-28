@@ -12,20 +12,20 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule, TuiLinkModule } from '@taiga-ui/core';
+import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 import { UserToInviteComponent } from './user-to-invite.component';
-import { UserAvatarModule } from '~/app/shared/user-avatar/user-avatar.component.module';
 
 @NgModule({
   imports: [
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    UserAvatarModule,
     TuiButtonModule,
     TuiLinkModule,
     InputsModule,
     TuiSvgModule,
     TranslocoModule,
+    UserCardModule,
   ],
   providers: [
     {

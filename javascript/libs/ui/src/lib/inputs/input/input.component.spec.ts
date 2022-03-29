@@ -35,7 +35,8 @@ describe('InputComponent', () => {
       `
     <tg-ui-input
       [icon]="icon"
-      [label]="label">
+      [label]="label"
+      [accessibleLabel]='accessibleLabel'>
       <input
         [formControl]="control"
         inputRef>
@@ -46,6 +47,7 @@ describe('InputComponent', () => {
           control: new FormControl('', [Validators.required]),
           icon: 'example',
           label: 'example',
+          accessibleLabel: 'example',
         },
         detectChanges: false,
       }
@@ -72,7 +74,7 @@ describe('InputComponent', () => {
   it('label should be visible', () => {
     spectator.detectChanges();
     expect(spectator.query('label.input-label')).toHaveExactText(
-      spectator.component.label
+      `${spectator.component.label} ${spectator.component.accessibleLabel}`
     );
   });
 

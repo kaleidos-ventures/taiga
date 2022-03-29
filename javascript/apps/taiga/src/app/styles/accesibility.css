@@ -16,6 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   margin: 0;
   overflow: hidden;
   padding: 0;
-  position: absolute !important; /* stylelint-disable-line declaration-no-important */
+  /* stylelint-disable-next-line declaration-no-important */
+  position: absolute !important;
   white-space: nowrap;
 }

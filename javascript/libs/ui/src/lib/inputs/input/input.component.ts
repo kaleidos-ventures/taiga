@@ -39,6 +39,9 @@ export class InputComponent implements AfterContentInit {
   public label = '';
 
   @Input()
+  public accessibleLabel = '';
+
+  @Input()
   public id = `input-${nextId++}`;
 
   @ContentChild(InputRefDirective, { static: false })

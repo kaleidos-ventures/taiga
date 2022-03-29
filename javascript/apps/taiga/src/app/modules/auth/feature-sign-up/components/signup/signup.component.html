@@ -39,13 +39,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <tg-ui-input
       #input="tgInput"
       class="input-password"
-      [label]="t('signup.password')">
+      [label]="t('signup.password')"
+      [accessibleLabel]="t('password.help_weak', { number: 8 })">
       <input
         type="password"
         formControlName="password"
         inputRef
-        data-test="signup-password"
-        [attr.aria-description]="t('password.help_weak')" />
+        data-test="signup-password" />
 
       <ng-container inputError>
         <tg-ui-error

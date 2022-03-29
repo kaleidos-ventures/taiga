@@ -7,7 +7,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <div class="input-label-container">
-  <label class="input-label" *ngIf="label" [attr.for]="id">{{ label }}</label>
+  <label class="input-label" *ngIf="label" [attr.for]="id"
+    >{{ label }}
+    <span class="visually-hidden">{{ accessibleLabel }}</span></label
+  >
   <ng-content select="[adjacentLabelContent]"></ng-content>
 </div>
 <div class="input-container" [class.has-icon]="icon">
@@ -27,7 +30,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     "
     tuiLink
     type="button"
-    role="switch"
     [attr.aria-pressed]="passwordVisible ? true : false"
     (click)="togglePasswordVisibility()">
     <tui-svg [src]="icon"></tui-svg>

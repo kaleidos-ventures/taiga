@@ -7,6 +7,7 @@
 
 from fastapi import APIRouter
 from taiga.auth import api as auth_api
+from taiga.invitations import api as invitations_api
 from taiga.projects import api as projects_api
 from taiga.roles import api as roles_api
 from taiga.users import api as users_api
@@ -24,6 +25,7 @@ router.include_router(workspaces_api.router)
 router.include_router(workspaces_api.router_my)
 router.include_router(projects_api.router_workspaces)
 router.include_router(roles_api.router)
+router.include_router(invitations_api.router)
 
 tags_metadata = [
     auth_api.metadata,

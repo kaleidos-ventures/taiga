@@ -41,6 +41,15 @@ def get_user_by_username_or_email(username_or_email: str) -> User | None:
 
 
 @sync_to_async
+def get_users_by_emails_as_dict(emails: list[str]) -> dict[str, User]:
+    """
+    This repository returns users with these emails as a dict whose key
+    is the email and value the User object.
+    """
+    return {u.email: u for u in User.objects.filter(email__in=emails)}
+
+
+@sync_to_async
 def check_password(user: User, password: str) -> bool:
     return user.check_password(password)
 

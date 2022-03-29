@@ -109,10 +109,10 @@ class Invitation(models.Model):
 
 
 class Membership(models.Model):
-    # This model stores all project memberships. Also
-    # stores invitations to memberships that does not have
-    # assigned user.
+    # This model stores all project memberships.
 
+    # TODO: migration-review. This field (user) will be null=False blank=False without default.
+    # In taiga-next user will be mandatory (we have an invitation table).
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -121,7 +121,6 @@ class Membership(models.Model):
         related_name="memberships",
         on_delete=models.CASCADE,
     )
-
     project = models.ForeignKey(
         "Project",
         null=False,
@@ -136,6 +135,8 @@ class Membership(models.Model):
         related_name="memberships",
         on_delete=models.CASCADE,
     )
+    created_at = models.DateTimeField(default=timezone.now,
+                                      verbose_name=_("create at"))
 
     # TODO: migration-review. This field (is_admin) is to be deprecated.
     # In taiga-next, admin will be an attribute of a role, instead of a user.
@@ -143,13 +144,18 @@ class Membership(models.Model):
     is_admin = models.BooleanField(default=False, null=False, blank=False)
 
     # Invitation metadata
+    # TODO: migration-review. This field (email) is to be deprecated.
+    # In taiga-next we have an invitation table.
     email = models.EmailField(max_length=255, default=None, null=True, blank=True,
                               verbose_name=_("email"))
     created_at = models.DateTimeField(default=timezone.now,
                                       verbose_name=_("created at"))
+    # TODO: migration-review. This field (token) is to be deprecated.
+    # In taiga-next, tokens are self-contained and are no longer needed in the database.
     token = models.CharField(max_length=60, blank=True, null=True, default=None,
                              verbose_name=_("token"))
-
+    # TODO: migration-review. This field (invited_by) is to be deprecated.
+    # In taiga-next we have an invitation table.
     invited_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="ihaveinvited+",
@@ -157,7 +163,8 @@ class Membership(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
-
+    # TODO: migration-review. This field (invitation_extra_text) is to be deprecated.
+    # In taiga-next is no longer needed in the database.
     invitation_extra_text = models.TextField(null=True, blank=True,
                                              verbose_name=_("invitation extra text"))
 

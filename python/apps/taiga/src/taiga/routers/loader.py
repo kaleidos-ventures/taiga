@@ -10,6 +10,7 @@ from fastapi import FastAPI
 # these import are needed to load the api
 # before adding the routes to Fastapi
 from taiga.auth import api as auth_api  # noqa
+from taiga.invitations import api as invitations_api  # noqa
 from taiga.projects import api as projects_api  # noqa
 from taiga.roles import api as roles_api  # noqa
 from taiga.routers import routes

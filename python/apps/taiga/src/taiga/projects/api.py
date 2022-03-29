@@ -163,7 +163,7 @@ async def get_project_workspace_member_permissions(
 @routes.projects.put(
     "/{slug}/workspace-member-permissions",
     name="project.workspace-member-permissions.put",
-    summary="Edit project workspace memeber permissions",
+    summary="Edit project workspace member permissions",
     response_model=list[str],
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )

@@ -35,6 +35,14 @@ def get_project_roles(project: Project) -> list[Role]:
 
 
 @sync_to_async
+def get_project_roles_as_dict(project: Project) -> dict[str, Role]:
+    """
+    This repository returns a dict whose key is the role slug and value the Role object
+    """
+    return {r.slug: r for r in project.roles.all()}
+
+
+@sync_to_async
 def get_project_role(project: Project, slug: str) -> Role | None:
     try:
         return project.roles.annotate(num_members=Count("memberships")).get(slug=slug)

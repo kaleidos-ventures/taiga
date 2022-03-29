@@ -17,7 +17,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .forgot-password {
   inset-block-end: calc(100% + 0.4rem);
-  padding-inline-end: 0.5rem;
+  padding-inline-end: var(--spacing-8);
 
   &::ng-deep .t-content {
     color: var(--color-secondary80);

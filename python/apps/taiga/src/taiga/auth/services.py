@@ -36,9 +36,9 @@ async def refresh(token: str) -> AccessWithRefreshToken | None:
 
     # Deny the current token and create a new one, using almost the same payload
     await refresh_token.denylist()
-    refresh_token.regenerate()
+    new_refresh_token = refresh_token.regenerate()
 
-    return AccessWithRefreshToken(token=str(refresh_token.access_token), refresh=str(refresh_token))
+    return AccessWithRefreshToken(token=str(new_refresh_token.access_token), refresh=str(new_refresh_token))
 
 
 async def authenticate(token: str) -> tuple[list[str], User]:

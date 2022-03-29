@@ -237,7 +237,8 @@ class DenylistMixin(_BaseMixin):
     is_unique: bool = False
 
     async def verify(self) -> None:
-        await self._check_outstanding()
+        if self.is_unique:
+            await self._check_outstanding()
         await self._check_denylist()
         await super().verify()
 

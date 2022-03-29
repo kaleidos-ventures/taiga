@@ -26,7 +26,7 @@ export class AuthService {
     const user = this.getUser();
     const auth = this.getAuth();
 
-    return user && auth?.refresh && auth.token;
+    return !!(user && auth?.refresh && auth.token);
   }
 
   public getAuth(): Auth | undefined {

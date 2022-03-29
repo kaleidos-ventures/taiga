@@ -10,6 +10,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
 import { AuthGuard } from './modules/auth/data-access/auth.guard';
+import { AuthFeatureLoginGuard } from './modules/auth/feature-login/auth-feature-login.guard';
 
 const routes: Routes = [
   {
@@ -18,6 +19,7 @@ const routes: Routes = [
       import('./modules/auth/feature-login/auth-feature-login.module').then(
         (m) => m.AuthFeatureLoginModule
       ),
+    canActivate: [AuthFeatureLoginGuard],
     data: {
       noHeader: true,
     },

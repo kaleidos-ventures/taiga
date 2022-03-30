@@ -45,37 +45,73 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: #BEC7D8 !important;
     }
 
+    a.primary-link,
     a.primary-link:link,
     a.primary-link:visited,
     a.primary-link:active,
     a.primary-link:hover,
+    a[href].primary-link,
+    a[href].primary-link:link,
+    a[href].primary-link:visited,
+    a[href].primary-link:active,
+    a[href].primary-link:hover,
+    .primary-link a,
     .primary-link a:link,
     .primary-link a:visited,
+    .primary-link a:hover,
     .primary-link a:active,
-    .primary-link a:hover {
+    .primary-link a[href],
+    .primary-link a[href]:link,
+    .primary-link a[href]:visited,
+    .primary-link a[href]:hover,
+    .primary-link a[href]:active {
       color: #BEC7D8;
     }
 
+    a.secondary-link,
     a.secondary-link:link,
     a.secondary-link:visited,
     a.secondary-link:active,
     a.secondary-link:hover,
+    a[href].secondary-link,
+    a[href].secondary-link:link,
+    a[href].secondary-link:visited,
+    a[href].secondary-link:active,
+    a[href].secondary-link:hover,
+    .secondary-link a,
     .secondary-link a:link,
     .secondary-link a:visited,
+    .secondary-link a:hover,
     .secondary-link a:active,
-    .secondary-link a:hover {
+    .secondary-link a[href],
+    .secondary-link a[href]:link,
+    .secondary-link a[href]:visited,
+    .secondary-link a[href]:hover,
+    .secondary-link a[href]:active {
       color: #83EEDE !important;
     }
 
 
+    a.tertiary-link,
     a.tertiary-link:link,
     a.tertiary-link:visited,
     a.tertiary-link:active,
     a.tertiary-link:hover,
+    a[href].tertiary-link,
+    a[href].tertiary-link:link,
+    a[href].tertiary-link:visited,
+    a[href].tertiary-link:active,
+    a[href].tertiary-link:hover,
+    .tertiary-link a,
     .tertiary-link a:link,
     .tertiary-link a:visited,
     .tertiary-link a:active,
-    .tertiary-link a:hover {
+    .tertiary-link a:hover,
+    .tertiary-link a[href],
+    .tertiary-link a[href]:link,
+    .tertiary-link a[href]:visited,
+    .tertiary-link a[href]:active,
+    .tertiary-link a[href]:hover {
       color: #83EEDE;
     }
 

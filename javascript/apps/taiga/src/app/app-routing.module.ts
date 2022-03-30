@@ -31,6 +31,7 @@ const routes: Routes = [
       import('./modules/auth/feature-sign-up/auth-feature-sign-up.module').then(
         (m) => m.AuthFeatureSignUpModule
       ),
+    canActivate: [AuthFeatureLoginGuard],
   },
   {
     path: '',

@@ -11,12 +11,26 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnInit,
   Output,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { Project, User } from '@taiga/data';
+import { Store } from '@ngrx/store';
+import { Project, Role, User } from '@taiga/data';
+import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
+import { fetchMyContacts } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import {
+  selectContacts,
+  selectMemberRolesOrdered,
+  selectUsersToInvite,
+} from '~/app/shared/invite-to-project/data-access/+state/selectors/project.selectors';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { skip, switchMap } from 'rxjs/operators';
 
+interface Invitation {
+  email: string;
+  role: string;
+}
 @Component({
   selector: 'tg-invite-to-project',
   templateUrl: './invite-to-project.component.html',
@@ -26,12 +40,12 @@ import { Project, User } from '@taiga/data';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InviteToProjectComponent {
+export class InviteToProjectComponent implements OnInit {
   @Input()
   public project!: Project;
 
   @Output()
-  public finishNewProject = new EventEmitter<Partial<User>[]>();
+  public finishNewProject = new EventEmitter<Invitation[]>();
 
   @Output()
   public closeModal = new EventEmitter();
@@ -53,35 +67,17 @@ export class InviteToProjectComponent {
     bulkError: false,
     moreThanFifty: false,
   };
-
-  // This is a temporal variable until we get real users here.
-  public userExample: Partial<User>[] = [
-    {
-      username: '@test-user',
-      fullName: 'Test User',
-      roles: ['General'],
-      id: 1,
-    },
-    {
-      username: '@test-user-2',
-      fullName: 'Test User2',
-      roles: ['General'],
-      id: 2,
-    },
-    {
-      username: undefined,
-      fullName: undefined,
-      email: 'test@test.com',
-      roles: ['General'],
-      id: 2,
-    },
-  ];
-
   public inviteProjectForm: FormGroup = this.fb.group({
     users: new FormArray([]),
   });
+  public orderedRoles!: Role[] | null;
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute) {}
+  public validEmails$ = new BehaviorSubject([] as string[]);
+  public memberRoles$ = this.store.select(selectMemberRolesOrdered);
+  public contacts$ = this.store.select(selectContacts);
+  public usersToInvite$!: Observable<Partial<User>[]>;
+
+  constructor(private fb: FormBuilder, private store: Store) {}
 
   public get users() {
     return (this.inviteProjectForm.controls['users'] as FormArray)
@@ -89,11 +85,42 @@ export class InviteToProjectComponent {
   }
 
   public get validEmails() {
-    return this.inviteEmails?.match(this.regexpEmail) || [];
+    return this.validEmails$.value;
+  }
+
+  public get validInviteEmails() {
+    return this.inviteEmails.match(this.regexpEmail) || [];
+  }
+
+  public ngOnInit() {
+    this.usersToInvite$ = this.validEmails$.pipe(
+      switchMap((validEmails) => {
+        return this.store
+          .select(selectUsersToInvite(validEmails))
+          .pipe(skip(1));
+      })
+    );
+    this.store.dispatch(initRolesPermissions({ project: this.project }));
+
+    // when we add users to invite its necessary to add the result to the form
+    this.usersToInvite$.subscribe((userToInvite) => {
+      userToInvite.forEach((user) => {
+        const userAlreadyExist = this.users?.find((it: FormGroup) => {
+          return (it.value as Partial<User>).email === user.email;
+        });
+        !userAlreadyExist && this.users.push(this.fb.group(user));
+      });
+      this.inviteEmails = '';
+      this.inviteEmailsChange('');
+    });
+
+    this.memberRoles$.subscribe((memberRoles) => {
+      this.orderedRoles = memberRoles;
+    });
   }
 
   public emailsWithoutDuplications() {
-    const emails = this.validEmails;
+    const emails = this.validInviteEmails;
     return emails?.filter((email, i) => emails.indexOf(email) === i);
   }
 
@@ -112,8 +139,12 @@ export class InviteToProjectComponent {
     };
   }
 
+  public inviteEmailsChange(value: string) {
+    const result = value.match(this.regexpEmail) || [];
+    this.validEmails$.next([...result]);
+  }
+
   public addUser() {
-    //TODO connect with the api to verify the email
     const emailRgx = this.regexpEmail.test(this.inviteEmails);
     const bulkErrors = this.inviteEmails
       .replace(this.regexpEmail, '')
@@ -126,19 +157,8 @@ export class InviteToProjectComponent {
     } else if (bulkErrors) {
       this.inviteEmailsErrors.bulkError = true;
     } else {
-      // to test more than 50 users
-      // Array.from(Array(51).keys()).forEach(() =>
-      //   this.users.push(
-      //     this.fb.group({
-      //       email: 'user1000@taiga.demo',
-      //       username: undefined,
-      //       fullName: undefined,
-      //       roles: ['General'],
-      //     })
-      //   )
-      // );
-      this.users.push(this.fb.group(this.userExample[0]));
-      this.inviteEmails = '';
+      this.inviteEmailsChange(this.inviteEmails);
+      this.store.dispatch(fetchMyContacts({ emails: this.validEmails }));
     }
   }
 
@@ -146,12 +166,25 @@ export class InviteToProjectComponent {
     (this.inviteProjectForm.controls['users'] as FormArray).removeAt(i);
   }
 
+  public getRoleSlug(roleName: string) {
+    return this.orderedRoles?.find((role) => role.name === roleName);
+  }
+
+  public generatePayload(): Invitation[] {
+    return this.users.map((user) => {
+      return {
+        email: user.get('email')?.value as string,
+        role: this.getRoleSlug(user.get('roles')?.value as string)?.slug || '',
+      };
+    });
+  }
+
   public sendForm() {
     this.resetErrors();
     if (this.users.length > 50) {
       this.inviteEmailsErrors.moreThanFifty = true;
     } else if (this.users.length) {
-      this.finishNewProject.next(this.userExample);
+      this.finishNewProject.next(this.generatePayload());
       this.close();
     } else {
       this.inviteEmailsErrors.listEmpty = true;

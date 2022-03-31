@@ -9,7 +9,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
-import { User } from '@taiga/data';
+import { Role, User } from '@taiga/data';
 
 @Component({
   selector: 'tg-user-to-invite',
@@ -31,10 +31,8 @@ export class UserToInviteComponent {
   @Input()
   public userIndex!: number;
 
-  public rolesList = [
-    this.translocoService.translate('kanban.invite_step.general'),
-    this.translocoService.translate('kanban.invite_step.member'),
-  ];
+  @Input()
+  public roles!: Role[] | null;
 
   public get userObj(): Partial<User> {
     return {

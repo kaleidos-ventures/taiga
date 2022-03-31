@@ -33,3 +33,9 @@ export interface ProjectCreation {
   color: number;
   logo?: File;
 }
+
+export interface Contact {
+  email: string;
+  username: string;
+  fullName: string;
+}

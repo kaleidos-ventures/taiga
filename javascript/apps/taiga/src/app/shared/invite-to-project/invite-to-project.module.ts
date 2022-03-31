@@ -22,6 +22,12 @@ import { InviteToProjectComponent } from './invite-to-project.component';
 import { UserAvatarModule } from '~/app/shared/user-avatar/user-avatar.component.module';
 import { UserToInviteModule } from './components/user-to-invite.module';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { rolesPermissionsFeature } from '~/app/modules/project/settings/feature-roles-permissions/+state/reducers/roles-permissions.reducer';
+import { RolesPermissionsEffects } from '~/app/modules/project/settings/feature-roles-permissions/+state/effects/roles-permissions.effects';
+import { invitationFeature } from '~/app/shared/invite-to-project/data-access/+state/reducers/invitation.reducers';
+import { InvitationEffects } from '~/app/shared/invite-to-project/data-access/+state/effects/invitation.effects';
 
 @NgModule({
   imports: [
@@ -38,6 +44,9 @@ import { ContextNotificationModule } from '@taiga/ui/context-notification/contex
     TuiScrollbarModule,
     UserToInviteModule,
     ContextNotificationModule,
+    StoreModule.forFeature(rolesPermissionsFeature),
+    StoreModule.forFeature(invitationFeature),
+    EffectsModule.forFeature([RolesPermissionsEffects, InvitationEffects]),
   ],
   providers: [
     {

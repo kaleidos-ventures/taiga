@@ -17,13 +17,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         formControlName="roles">
         <tui-data-list *tuiDataList>
           <button
-            *ngFor="
-              let item of rolesList | keyvalue: insertionOrder;
-              trackBy: trackByIndex
-            "
+            *ngFor="let role of roles; trackBy: trackByIndex"
             tuiOption
-            [value]="item.value">
-            {{ item.value }}
+            [value]="role.name">
+            {{ role.name }}
           </button>
         </tui-data-list>
       </tui-select>

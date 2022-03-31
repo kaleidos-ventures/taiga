@@ -13,3 +13,4 @@ export * from './lib/auth/auth-api.service';
 export * from './lib/project/project-api.service';
 export * from './lib/workspace/workspace-api.service';
 export * from './lib/users/users-api.service';
+export * from './lib/invitation/invitation-api.service';

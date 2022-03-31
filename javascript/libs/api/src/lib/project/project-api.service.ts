@@ -11,7 +11,7 @@ import { Injectable } from '@angular/core';
 import { ApiUtilsService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 
-import { Project, ProjectCreation, Role } from '@taiga/data';
+import { Contact, Project, ProjectCreation, Role } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
@@ -55,6 +55,12 @@ export class ProjectApiService {
     return this.http.get<string[]>(
       `${this.config.apiUrl}/projects/${slug}/workspace-member-permissions`
     );
+  }
+
+  public myContacts(emails: string[]) {
+    return this.http.post<Contact[]>(`${this.config.apiUrl}/my/contacts`, {
+      emails,
+    });
   }
 
   public putMemberRoles(

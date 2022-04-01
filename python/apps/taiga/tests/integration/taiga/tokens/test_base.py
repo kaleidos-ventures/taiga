@@ -76,13 +76,13 @@ dt_create = sync_to_async(DenylistedToken.objects.create)
 
 async def test_refresh_tokens_are_added_to_outstanding_list():
     user = await f.create_user()
-    token = await DeniableToken.create_for_user(user)
+    token = await DeniableToken.create_for_object(user)
 
     assert await ot_count() == 1
 
     outstanding_token = await ot_first()
 
-    assert outstanding_token.user_id == user.id
+    assert outstanding_token.object_id == user.id
     assert outstanding_token.jti == token["jti"]
     assert outstanding_token.token == str(token)
     assert outstanding_token.created_at == token.current_time
@@ -91,14 +91,14 @@ async def test_refresh_tokens_are_added_to_outstanding_list():
 
 async def test_common_tokens_are_not_added_to_outstanding_list():
     user = await f.create_user()
-    await CommonToken.create_for_user(user)
+    await CommonToken.create_for_object(user)
 
     assert await ot_count() == 0
 
 
 async def test_token_will_not_validate_if_denylisted():
     user = await f.create_user()
-    token = await DeniableToken.create_for_user(user)
+    token = await DeniableToken.create_for_object(user)
     outstanding_token = await ot_first()
 
     # Should raise no exception
@@ -119,7 +119,7 @@ async def test_tokens_can_be_manually_denylisted():
     assert await ot_count() == 0
     assert await dt_count() == 0
 
-    token = await DeniableToken.create_for_user(user)
+    token = await DeniableToken.create_for_object(user)
     # Should raise no exception
     await DeniableToken.create(str(token))
 
@@ -166,8 +166,8 @@ async def test_flush_expired_tokens_should_delete_any_expired_tokens():
     user = await f.create_user()
 
     # Make some tokens that won't expire soon
-    not_expired_1 = await DeniableToken.create_for_user(user)
-    not_expired_2 = await DeniableToken.create_for_user(user)
+    not_expired_1 = await DeniableToken.create_for_object(user)
+    not_expired_2 = await DeniableToken.create_for_object(user)
     not_expired_3 = await DeniableToken.create()
 
     # Denylist fresh tokens
@@ -179,7 +179,7 @@ async def test_flush_expired_tokens_should_delete_any_expired_tokens():
 
     with patch("taiga.tokens.base.aware_utcnow") as fake_aware_utcnow:
         fake_aware_utcnow.return_value = now
-        expired_1 = await DeniableToken.create_for_user(user)
+        expired_1 = await DeniableToken.create_for_object(user)
         expired_2 = await DeniableToken.create()
 
     # Denylist expired tokens
@@ -187,7 +187,7 @@ async def test_flush_expired_tokens_should_delete_any_expired_tokens():
     await expired_2.denylist()
 
     # Make another token that won't expire soon
-    not_expired_4 = await DeniableToken.create_for_user(user)
+    not_expired_4 = await DeniableToken.create_for_object(user)
 
     # Should be certain number of outstanding tokens and denylisted
     # tokens
@@ -218,8 +218,8 @@ async def test_create_multiples_tokens_not_unique_for_the_same_user():
     user = await f.create_user()
 
     # Make some tokens for the same user
-    await DeniableToken.create_for_user(user)
-    await DeniableToken.create_for_user(user)
+    await DeniableToken.create_for_object(user)
+    await DeniableToken.create_for_object(user)
 
     assert await ot_count() == 2
     assert await dt_count() == 0
@@ -229,8 +229,8 @@ async def test_create_multiples_tokens_unique_for_the_same_user():
     user = await f.create_user()
 
     # Make some tokens for the same user
-    await UniqueToken.create_for_user(user)
-    await UniqueToken.create_for_user(user)
+    await UniqueToken.create_for_object(user)
+    await UniqueToken.create_for_object(user)
 
     assert await ot_count() == 1
     assert await dt_count() == 0
@@ -240,8 +240,8 @@ async def test_old_unique_token_is_not_valid():
     user = await f.create_user()
 
     # Make some tokens for the same user
-    old_token = await UniqueToken.create_for_user(user)
-    new_token = await UniqueToken.create_for_user(user)
+    old_token = await UniqueToken.create_for_object(user)
+    new_token = await UniqueToken.create_for_object(user)
 
     # Old token should raise exception
     with pytest.raises(TokenError):

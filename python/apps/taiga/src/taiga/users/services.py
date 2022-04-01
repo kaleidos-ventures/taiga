@@ -53,7 +53,7 @@ async def _generate_username(email: str) -> str:
 
 
 async def _generate_verify_user_token(user: User) -> str:
-    verify_user_token = await VerifyUserToken.create_for_user(user)
+    verify_user_token = await VerifyUserToken.create_for_object(user)
     return str(verify_user_token)
 
 
@@ -69,7 +69,7 @@ async def verify_user(token: str) -> User:
 
     await verify_token.denylist()
 
-    if user_data := verify_token.user_data:
+    if user_data := verify_token.object_data:
         if user := await users_repositories.get_first_user(**user_data, is_active=False, is_system=False):
             await users_repositories.verify_user(user=user)
             return user

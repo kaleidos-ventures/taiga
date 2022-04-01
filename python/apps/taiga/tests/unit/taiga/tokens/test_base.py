@@ -37,7 +37,7 @@ import jwt
 import pytest
 from taiga.base.utils.datetime import datetime_to_epoch
 from taiga.conf import settings
-from taiga.tokens.base import USER_ID_CLAIM, Token, token_backend
+from taiga.tokens.base import Token, token_backend
 from taiga.tokens.exceptions import ExpiredTokenError, TokenError
 
 
@@ -52,6 +52,11 @@ class MyToken(Token):
     lifetime = timedelta(days=1)
 
 
+class MyTokenWithoutLifetime(Token):
+    token_type = "test"
+    lifetime = None
+
+
 @pytest.fixture
 async def token() -> MyToken:
     return await MyToken.create()
@@ -62,20 +67,9 @@ async def token() -> MyToken:
 ##########################################################
 
 
-async def test_init_no_token_type_or_lifetime() -> None:
+async def test_init_no_token_type() -> None:
     class MyTestToken(Token):
         pass
-
-    with pytest.raises(TokenError):
-        await MyTestToken.create()
-
-    MyTestToken.token_type = "test"
-
-    with pytest.raises(TokenError):
-        await MyTestToken.create()
-
-    del MyTestToken.token_type
-    MyTestToken.lifetime = timedelta(days=1)
 
     with pytest.raises(TokenError):
         await MyTestToken.create()
@@ -127,6 +121,26 @@ async def test_init_token_given() -> None:
     assert t["some_value"] == "arst"
     assert t["exp"] == datetime_to_epoch(original_now + MyToken.lifetime)
     assert t[settings.TOKENS.TOKEN_TYPE_CLAIM] == MyToken.token_type
+    assert "jti" in t.payload
+
+
+async def test_init_token_given_without_lifetime() -> None:
+    # Test successful instantiation
+    good_token = await MyTokenWithoutLifetime.create()
+
+    good_token["some_value"] = "arst"
+    encoded_good_token = str(good_token)
+
+    # Create new token from encoded token
+    t = await MyTokenWithoutLifetime.create(encoded_good_token)
+
+    # Should have expected properties
+    assert t.token == encoded_good_token
+
+    assert len(t.payload) == 3
+    assert t["some_value"] == "arst"
+    assert "exp" not in t.payload
+    assert t[settings.TOKENS.TOKEN_TYPE_CLAIM] == MyTokenWithoutLifetime.token_type
     assert "jti" in t.payload
 
 
@@ -278,6 +292,13 @@ async def test_set_exp() -> None:
     assert token["refresh_exp"] == datetime_to_epoch(now + timedelta(days=1))
 
 
+async def test_set_exp_to_token_without_lifetime() -> None:
+    token = await MyTokenWithoutLifetime.create()
+
+    with pytest.raises(TokenError):
+        token.set_exp()
+
+
 async def test_check_exp() -> None:
     token = await MyToken.create()
 
@@ -324,17 +345,14 @@ async def test_check_exp() -> None:
         token._verify_exp("refresh_exp", current_time=current_time + timedelta(days=2))
 
 
-async def test_for_user() -> None:
+async def test_for_object() -> None:
     user_id = 2
     username = "test_user"
     user = User(id=user_id, username=username)
 
-    token = await MyToken.create_for_user(user)
+    token = await MyToken.create_for_object(user)
 
-    if not isinstance(user_id, int):
-        user_id = str(user_id)
-
-    assert token[USER_ID_CLAIM] == user_id
+    assert token[token.object_id_claim] == user_id
 
 
 async def test_get_token_backend() -> None:

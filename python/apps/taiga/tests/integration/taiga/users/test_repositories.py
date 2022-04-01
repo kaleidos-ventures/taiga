@@ -120,7 +120,7 @@ async def test_clean_expired_users():
     total_users = await get_total_users()
     await f.create_user(is_active=False)  # without token - it'll be cleaned
     user = await f.create_user(is_active=False)  # with token - it won't be cleaned
-    await VerifyUserToken.create_for_user(user)
+    await VerifyUserToken.create_for_object(user)
 
     assert await get_total_users() == total_users + 2
     await users_repositories.clean_expired_users()

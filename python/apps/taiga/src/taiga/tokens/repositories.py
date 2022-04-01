@@ -33,9 +33,9 @@
 from datetime import datetime
 
 from asgiref.sync import sync_to_async
+from taiga.base.db import ContentType, Model
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.tokens.models import DenylistedToken, OutstandingToken
-from taiga.users.models import User
 
 ###########################################
 # Outstanding Token
@@ -44,27 +44,45 @@ from taiga.users.models import User
 
 @sync_to_async
 def create_outstanding_token(
-    user: User, jti: str, token: str, created_at: datetime, expires_at: datetime
+    obj: Model, jti: str, token_type: str, token: str, created_at: datetime, expires_at: datetime
 ) -> OutstandingToken:
+    content_type = ContentType.objects.get_for_model(obj)
+    object_id = obj.pk
+
     return OutstandingToken.objects.create(
-        user=user, jti=jti, token=token, created_at=created_at, expires_at=expires_at
+        content_type=content_type,
+        object_id=object_id,
+        jti=jti,
+        token_type=token_type,
+        token=token,
+        created_at=created_at,
+        expires_at=expires_at,
     )
 
 
 @sync_to_async
 def update_or_create_outstanding_token(
-    user: User, jti: str, token: str, created_at: datetime, expires_at: datetime
+    obj: Model, jti: str, token_type: str, token: str, created_at: datetime, expires_at: datetime
 ) -> tuple[OutstandingToken, bool]:
+    content_type = ContentType.objects.get_for_model(obj)
+    object_id = obj.pk
+
     return OutstandingToken.objects.update_or_create(
-        user=user, defaults={"jti": jti, "token": token, "created_at": created_at, "expires_at": expires_at}
+        content_type=content_type,
+        object_id=object_id,
+        token_type=token_type,
+        defaults={"jti": jti, "token": token, "created_at": created_at, "expires_at": expires_at},
     )
 
 
 @sync_to_async
-def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> tuple[OutstandingToken, bool]:
+def get_or_create_outstanding_token(
+    jti: str, token_type: str, token: str, expires_at: datetime
+) -> tuple[OutstandingToken, bool]:
     return OutstandingToken.objects.get_or_create(
         jti=jti,
         defaults={
+            "token_type": token_type,
             "token": token,
             "expires_at": expires_at,
         },

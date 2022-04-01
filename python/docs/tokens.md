@@ -1,7 +1,6 @@
 # `taiga.tokens` package
 
-The package `taiga.tokens` is used to define JWT tokens. It's based on the [JWT standard](https://jwt.io) and the library [djangorestframework-simplejwt](https://github.com/jazzband/djangorestframework-simplejwt) (version 4.7.1). But it has some modifications and new functionalities.
-
+The package `taiga.tokens` is used to define JWT tokens. It's based on the [JWT standard](https://jwt.io) and the library [djangorestframework-simplejwt](https://github.com/jazzband/djangorestframework-simplejwt) (version 4.7.1). But it has some modifications and new functionalities, for example: you can create tokens to associate with any ORM model, not just users, and you can create unique tokens per user.
 
 ## Token types:
 
@@ -14,7 +13,10 @@ By default, a token class has the following attributes:
 
 - From `taiga.tokens.Token`:
   - `token_type: str`: is a string, unique, to identify the token
-  - `lifetime: timedelta`: used to define the lifetime of a token
+  - `lifetime: timedelta | None`: used to define the lifetime of a token. `None` to define non-expiring tokens
+  - `object_id_field: str = "id"`: the field of the model to store in the token
+  - `object_id_claim: str = "object_id"`: the key used in the token to store the model value
+
 - From `taiga.tokens.DenylistMixin`:
   - `is_unique: bool = False`: `True` to allows to have a single active token per user
 
@@ -74,11 +76,13 @@ There are two tables in the database to manage tokens that implement the `Denyli
 
 - Outstanding Token: Stores the tokens created, pending to be used. They will be created by calling the class method `TokenExample.create_for_user(user)`
   Attributes:
-  - `user: User` [1:n]
-  - `jti: str`
-  - `token: token`
-  - `created_at: datetime`
-  - `expires_at: datetime`
+  - `content_type` [n:m]: the type of the ORM model related with this token
+  - `object_id`: int: the instance id of the ORM model related with this token
+  - `jti: str`: token info
+  - `token_type: str`: token info
+  - `token: str`: token info
+  - `created_at: datetime`: token info
+  - `expires_at: datetime`: token info
 
 - Denylisted Token: Input that is generated when marking a token as used. To do this, call the `token.denylist()` instance method.
   Attributes:
@@ -90,9 +94,9 @@ There are two tables in the database to manage tokens that implement the `Denyli
 
 To generate the code of a token:
 
-1. Create an instance of a token from a user instance `user`
+1. Create an instance of a token from any object instance of `Model` ORM model.
    ```python
-   token = TokenExample.create_for_user(user)
+   token = TokenExample.create_for_object(obj)
    ```
 2. To get the token code (in text mode) we will use `str()`
    ```python
@@ -114,9 +118,9 @@ To validate a token code:
    ```python
    token.denylist()
    ```
-3. We get the stored user information, by default the user id
+3. We get the stored object information, by default the object id
    ```pytho
-   token.user_data   # should be {"id": 4}
+   token.object_data   # should be {"id": 4}
    ```
 
 

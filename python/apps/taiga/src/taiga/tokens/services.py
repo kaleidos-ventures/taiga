@@ -7,9 +7,9 @@
 
 from datetime import datetime
 
+from taiga.base.db import Model
 from taiga.tokens import repositories as tokens_repositories
 from taiga.tokens.models import DenylistedToken, OutstandingToken
-from taiga.users.models import User
 
 ###########################################
 # Outstanding Token
@@ -17,23 +17,27 @@ from taiga.users.models import User
 
 
 async def create_outstanding_token(
-    user: User, jti: str, token: str, created_at: datetime, expires_at: datetime
+    obj: Model, jti: str, token_type: str, token: str, created_at: datetime, expires_at: datetime
 ) -> OutstandingToken:
     return await tokens_repositories.create_outstanding_token(
-        user=user, jti=jti, token=token, created_at=created_at, expires_at=expires_at
+        obj=obj, jti=jti, token_type=token_type, token=token, created_at=created_at, expires_at=expires_at
     )
 
 
 async def update_or_create_outstanding_token(
-    user: User, jti: str, token: str, created_at: datetime, expires_at: datetime
+    obj: Model, jti: str, token_type: str, token: str, created_at: datetime, expires_at: datetime
 ) -> tuple[OutstandingToken, bool]:
     return await tokens_repositories.update_or_create_outstanding_token(
-        user=user, jti=jti, token=token, created_at=created_at, expires_at=expires_at
+        obj=obj, jti=jti, token_type=token_type, token=token, created_at=created_at, expires_at=expires_at
     )
 
 
-async def get_or_create_outstanding_token(jti: str, token: str, expires_at: datetime) -> tuple[OutstandingToken, bool]:
-    return await tokens_repositories.get_or_create_outstanding_token(jti=jti, token=token, expires_at=expires_at)
+async def get_or_create_outstanding_token(
+    jti: str, token_type: str, token: str, expires_at: datetime
+) -> tuple[OutstandingToken, bool]:
+    return await tokens_repositories.get_or_create_outstanding_token(
+        jti=jti, token_type=token_type, token=token, expires_at=expires_at
+    )
 
 
 async def outstanding_token_exist(jti: str) -> bool:

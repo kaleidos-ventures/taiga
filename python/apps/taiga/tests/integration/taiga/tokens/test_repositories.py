@@ -58,7 +58,7 @@ async def test_clean_expired_tokens():
         "taiga.users.tokens.VerifyUserToken.lifetime", new_callable=mock.PropertyMock(return_value=timedelta(days=-1))
     ):
         user = await f.create_user()
-        await VerifyUserToken.create_for_user(user)
+        await VerifyUserToken.create_for_object(user)
 
         assert await get_total_tokens() == total_tokens + 1
         await tokens_repositories.clean_expired_tokens()

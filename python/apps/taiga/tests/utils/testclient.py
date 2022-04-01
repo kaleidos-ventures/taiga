@@ -13,7 +13,7 @@ from taiga.users.models import User
 
 class TestClient(TestClientBase):
     def login(self, user: User) -> None:
-        token = run_async_as_sync(AccessToken.create_for_user(user))
+        token = run_async_as_sync(AccessToken.create_for_object(user))
         self.headers["Authorization"] = f"Bearer {str(token)}"
 
     def logout(self) -> None:

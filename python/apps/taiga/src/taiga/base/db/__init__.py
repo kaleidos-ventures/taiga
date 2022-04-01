@@ -4,3 +4,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+
+from django.contrib.contenttypes.models import ContentType  # noqa
+from django.db.models import Model, QuerySet  # noqa

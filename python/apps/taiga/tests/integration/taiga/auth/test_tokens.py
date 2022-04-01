@@ -16,7 +16,7 @@ async def test_refresh_token_regenerate() -> None:
     # This test proves that it is possible to generate a refresh token from an existing one
     # and continue to use it without problems, postponing the creation of the OutstandingToken.
     user = await f.create_user(is_active=True)
-    token = await RefreshToken.create_for_user(user)
+    token = await RefreshToken.create_for_object(user)
     await token.denylist()
 
     token1 = token.regenerate()

@@ -89,14 +89,14 @@ async def test_create_user_email_exists():
 
 async def test_verify_user_ok():
     user = await f.build_user(is_active=False)
-    user_data = {"id": 1}
+    object_data = {"id": 1}
 
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
     ):
         fake_token = AsyncMock()
-        fake_token.user_data = user_data
+        fake_token.object_data = object_data
         FakeVerifyUserToken.create.return_value = fake_token
         fake_users_repo.get_first_user.return_value = user
 
@@ -105,7 +105,7 @@ async def test_verify_user_ok():
         assert verified_user == user
 
         fake_token.denylist.assert_awaited_once()
-        fake_users_repo.get_first_user.assert_awaited_once_with(**user_data, is_active=False, is_system=False)
+        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_active=False, is_system=False)
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
 
 
@@ -140,7 +140,7 @@ async def test_verify_user_with_invalid_token():
 
 
 async def test_verify_user_with_invalid_data():
-    user_data = {"id": 1}
+    object_data = {"id": 1}
 
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
@@ -148,7 +148,7 @@ async def test_verify_user_with_invalid_data():
         pytest.raises(ex.BadVerifyUserTokenError),
     ):
         fake_token = AsyncMock()
-        fake_token.user_data = user_data
+        fake_token.object_data = object_data
         FakeVerifyUserToken.create.return_value = fake_token
         fake_users_repo.get_first_user.return_value = None
 

@@ -37,23 +37,29 @@ from .models import DenylistedToken, OutstandingToken
 
 class OutstandingTokenAdmin(admin.ModelAdmin):
     list_display = (
+        'token_type',
         'jti',
-        'user',
+        'content_type',
+        'content_object',
         'created_at',
         'expires_at',
     )
     search_fields = (
-        'user__id',
+        'token_type',
+        'content_type',
+        'object_id',
         'jti',
     )
     ordering = (
-        'user',
+        'token_type',
+        'content_type',
+        'content_object',
     )
 
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset(*args, **kwargs)
 
-        return qs.select_related('user')
+        return qs.select_related('content_object')
 
     # Read-only behavior defined below
     actions = None
@@ -79,34 +85,50 @@ admin.site.register(OutstandingToken, OutstandingTokenAdmin)
 
 class DenylistedTokenAdmin(admin.ModelAdmin):
     list_display = (
+        'token_token_type',
         'token_jti',
-        'token_user',
+        'token_content_type',
+        'token_content_object',
         'token_created_at',
         'token_expires_at',
         'denylisted_at',
     )
     search_fields = (
-        'token__user__id',
+        'token__token_type',
+        'token__content_type',
+        'token__object_id',
         'token__jti',
     )
     ordering = (
-        'token__user',
+        'token__token_type',
+        'token__content_type',
+        'token__content_object',
     )
 
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset(*args, **kwargs)
 
-        return qs.select_related('token__user')
+        return qs.select_related('token__content_object')
+
+    def token_token_type(self, obj):
+        return obj.token.token_type
+    token_token_type.short_description = _('token_type')
+    token_token_type.admin_order_field = 'token__token_type'
 
     def token_jti(self, obj):
         return obj.token.jti
     token_jti.short_description = _('jti')
     token_jti.admin_order_field = 'token__jti'
 
-    def token_user(self, obj):
-        return obj.token.user
-    token_user.short_description = _('user')
-    token_user.admin_order_field = 'token__user'
+    def token_content_type(self, obj):
+        return obj.token.content_type
+    token_content_type.short_description = _('content_type')
+    token_content_type.admin_order_field = 'token__content_type'
+
+    def token_content_object(self, obj):
+        return obj.token.content_object
+    token_content_object.short_description = _('content_object')
+    token_content_object.admin_order_field = 'token__content_object'
 
     def token_created_at(self, obj):
         return obj.token.created_at

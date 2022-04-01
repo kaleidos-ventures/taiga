@@ -28,7 +28,7 @@ async def test_authenticate_success_without_token():
 
 async def test_authenticate_success_with_token():
     user = await f.create_user()
-    token = await AccessToken.create_for_user(user)
+    token = await AccessToken.create_for_object(user)
 
     request = Request(default_scope)
     request._headers = {"Authorization": f"Bearer {token}"}

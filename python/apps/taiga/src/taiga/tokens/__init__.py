@@ -5,11 +5,10 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.tokens.base import USER_ID_FIELD, DenylistMixin, Token
+from taiga.tokens.base import DenylistMixin, Token
 from taiga.tokens.exceptions import TokenError
 
 __all__ = [
-    "USER_ID_FIELD",
     "TokenError",
     "Token",
     "DenylistMixin",

@@ -13,6 +13,7 @@ from django.db.models import Q
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import User
+from taiga.users.tokens import VerifyUserToken
 
 
 @sync_to_async
@@ -84,6 +85,6 @@ def clean_expired_users() -> None:
     # and don't have an outstanding token associated (exclude)
     (
         User.objects.filter(is_system=False, is_active=False, date_verification=None)
-        .exclude(id__in=OutstandingToken.objects.all().values_list("user_id"))
+        .exclude(id__in=OutstandingToken.objects.filter(token_type=VerifyUserToken.token_type).values_list("object_id"))
         .delete()
     )

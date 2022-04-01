@@ -128,7 +128,7 @@ async def test_refresh_success():
         fake_tokens_services.outstanding_token_exist.return_value = True
         fake_tokens_services.get_or_create_outstanding_token.return_value = (token, None)
 
-        refresh_token = await RefreshToken.create_for_user(user)
+        refresh_token = await RefreshToken.create_for_object(user)
         token.return_value = str(refresh_token)
 
         data = await auth_serv.refresh(token=str(refresh_token))
@@ -151,7 +151,7 @@ async def test_refresh_error_invalid_token():
 
 async def test_authenticate_success():
     user = await f.build_user(id=1, is_active=False, is_system=False)
-    token = await AccessToken.create_for_user(user)
+    token = await AccessToken.create_for_object(user)
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
         fake_users_repo.get_first_user.return_value = user
@@ -169,7 +169,7 @@ async def test_authenticate_error_bad_auth_token():
 
 async def test_authenticate_error_inactive_user():
     user = await f.build_user(id=1, is_active=False, is_system=False)
-    token = await AccessToken.create_for_user(user)
+    token = await AccessToken.create_for_object(user)
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
         fake_users_repo.get_first_user.return_value = None
@@ -180,7 +180,7 @@ async def test_authenticate_error_inactive_user():
 
 async def test_authenticate_system_user():
     user = await f.build_user(id=1, is_active=True, is_system=True)
-    token = await AccessToken.create_for_user(user)
+    token = await AccessToken.create_for_object(user)
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
         fake_users_repo.get_first_user.return_value = None
@@ -203,7 +203,7 @@ async def test_deny_refresh_token_success():
         fake_tokens_services.outstanding_token_exist.return_value = True
         fake_tokens_services.get_or_create_outstanding_token.return_value = (token, None)
 
-        refresh_token = await RefreshToken.create_for_user(user1)
+        refresh_token = await RefreshToken.create_for_object(user1)
         token.return_value = str(refresh_token)
 
         await auth_serv.deny_refresh_token(user=user1, token=str(refresh_token))
@@ -230,7 +230,7 @@ async def test_deny_refresh_token_error_unauthorized_user():
         fake_tokens_services.token_is_denied.return_value = False
         fake_tokens_services.outstanding_token_exist.return_value = True
 
-        refresh_token = await RefreshToken.create_for_user(user1)
+        refresh_token = await RefreshToken.create_for_object(user1)
 
         with pytest.raises(ex.UnauthorizedUserError):
             await auth_serv.deny_refresh_token(user=user2, token=str(refresh_token))

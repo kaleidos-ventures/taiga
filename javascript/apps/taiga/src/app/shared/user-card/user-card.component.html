@@ -6,21 +6,21 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <div class="user-card">
-  <ng-container *ngIf="user.get('fullName')?.value">
-    <tg-user-avatar [user]="user.value"></tg-user-avatar>
+  <ng-container *ngIf="user.fullName">
+    <tg-user-avatar [user]="user"></tg-user-avatar>
     <div class="user-identifier">
-      <span class="user-name overflow">{{ user.get('fullName')?.value }}</span>
-      <span class="user-alias overflow">{{ user.get('username')?.value }}</span>
+      <span class="user-name overflow">{{ user.fullName }}</span>
+      <span class="user-alias overflow">{{ user.username }}</span>
     </div>
   </ng-container>
 
-  <ng-container *ngIf="!user.get('fullName')?.value">
+  <ng-container *ngIf="!user.fullName">
     <tui-svg
       class="avatar"
       src="/assets/images/avatar.svg"
       aria-hidden="true"></tui-svg>
     <div class="user-identifier">
-      <span class="user-email overflow">{{ user.get('email')?.value }}</span>
+      <span class="user-email overflow">{{ user.email }}</span>
     </div>
   </ng-container>
 </div>

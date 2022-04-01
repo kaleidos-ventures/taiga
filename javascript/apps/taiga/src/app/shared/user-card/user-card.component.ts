@@ -7,7 +7,7 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { User } from '@taiga/data';
 
 @Component({
   selector: 'tg-user-card',
@@ -15,5 +15,5 @@ import { FormGroup } from '@angular/forms';
   styleUrls: ['./user-card.component.css'],
 })
 export class UserCardComponent {
-  @Input() public user!: FormGroup;
+  @Input() public user!: Partial<User>;
 }

@@ -9,6 +9,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
+import { User } from '@taiga/data';
 
 @Component({
   selector: 'tg-user-to-invite',
@@ -34,6 +35,14 @@ export class UserToInviteComponent {
     this.translocoService.translate('kanban.invite_step.general'),
     this.translocoService.translate('kanban.invite_step.member'),
   ];
+
+  public get userObj(): Partial<User> {
+    return {
+      fullName: (this.user.value as Partial<User>).fullName,
+      username: (this.user.value as Partial<User>).username,
+      email: (this.user.value as Partial<User>).email,
+    };
+  }
 
   public trackByIndex(index: number) {
     return index;

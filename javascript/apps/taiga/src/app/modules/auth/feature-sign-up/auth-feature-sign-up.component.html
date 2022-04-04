@@ -7,7 +7,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t; read: 'auth'">
   <ng-container *ngIf="!displayVerifyEmail">
-    <main class="login">
+    <main class="signup">
+      <tg-ui-context-notification
+        *ngIf="params.project"
+        class="notification"
+        status="info"
+        size="l"
+        [hasIcon]="false"
+        [innerHtml]="t('signup.join', { project: params.project })">
+      </tg-ui-context-notification>
       <div class="login-wrapper">
         <img
           class="taiga-logo"
@@ -40,6 +48,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <tg-signup
             (displayLoginOptions)="keepFormData($event)"
             (signUpSuccess)="signUpSucess($event)"
+            [isEmailReadonly]="readOnlyEmail"
             [data]="signUpFormData"></tg-signup>
         </ng-container>
       </div>

@@ -9,12 +9,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TuiSvgModule } from '@taiga-ui/core';
-import { NotificationInlineComponent } from './notification-inline.component';
+import { ContextNotificationComponent } from './context-notification.component';
 
 @NgModule({
   imports: [CommonModule, TuiSvgModule],
-  declarations: [NotificationInlineComponent],
+  declarations: [ContextNotificationComponent],
   providers: [],
-  exports: [NotificationInlineComponent],
+  exports: [ContextNotificationComponent],
 })
-export class NotificatioInlineModule {}
+export class ContextNotificationModule {}

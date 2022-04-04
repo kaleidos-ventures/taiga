@@ -13,7 +13,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { NotificatioInlineModule } from '@taiga/ui/notification-inline/notification-inline.module';
+import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { AuthFeatureLoginComponent } from './auth-feature-login.component';
 import { LoginComponent } from './components/login/login.component';
 
@@ -38,7 +38,7 @@ const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
     TuiButtonModule,
     InputsModule,
     TuiLinkModule,
-    NotificatioInlineModule,
+    ContextNotificationModule,
   ],
 })
 export class AuthFeatureLoginModule {}

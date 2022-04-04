@@ -116,9 +116,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [name]="t('project_settings.public_permissions')"
           data-test="role-permission-row">
         </tg-role-permission-row>
-        <tg-ui-notification-inline
+        <tg-ui-context-notification
           *ngIf="vm.conflicts.length"
-          [status]="'info'"
+          alertLevel="polite"
+          status="info"
           data-test="conflicts-notification">
           <span>{{ t('project_settings.external_members') }}</span>
           <button
@@ -128,7 +129,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             data-test="open-conflicts-modal">
             {{ t('project_settings.see_more') }}
           </button>
-        </tg-ui-notification-inline>
+        </tg-ui-context-notification>
       </form>
     </section>
 

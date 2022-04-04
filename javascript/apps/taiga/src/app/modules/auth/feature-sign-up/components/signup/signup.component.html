@@ -13,7 +13,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     (ngSubmit)="onSubmit()"
     data-test="signup-form">
     <tg-ui-input class="input-email" [label]="t('signup.email')">
-      <input formControlName="email" data-test="signup-email" inputRef />
+      <input
+        formControlName="email"
+        data-test="signup-email"
+        inputRef
+        [readOnly]="isEmailReadonly" />
       <ng-container inputError>
         <tg-ui-error
           [enabled]="form.submitted"

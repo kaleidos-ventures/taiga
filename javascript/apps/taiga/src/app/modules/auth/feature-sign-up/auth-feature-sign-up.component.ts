@@ -6,9 +6,23 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, ChangeDetectionStrategy, HostBinding } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  HostBinding,
+  OnInit,
+  ChangeDetectorRef,
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SignUp } from './models/sign-up.model';
 
+interface Invitation {
+  email: string;
+  project: string;
+}
+
+@UntilDestroy()
 @Component({
   selector: 'tg-sign-up',
   templateUrl: './auth-feature-sign-up.component.html',
@@ -18,11 +32,32 @@ import { SignUp } from './models/sign-up.model';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AuthFeatureSignUpComponent {
+export class AuthFeatureSignUpComponent implements OnInit {
   @HostBinding('class.verify-email') public displayVerifyEmail = false;
 
   public displayForm = false;
-  public signUpFormData: SignUp | null = null;
+  public signUpFormData: SignUp = {
+    email: '',
+    fullName: '',
+    password: '',
+  };
+  public params: Invitation = {
+    email: '',
+    project: '',
+  };
+  public readOnlyEmail = false;
+
+  constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef) {}
+
+  public ngOnInit() {
+    this.route.queryParams.pipe(untilDestroyed(this)).subscribe((params) => {
+      this.params = params as Invitation;
+      if (this.params.email) {
+        this.readOnlyEmail = true;
+        this.signUpFormData.email = this.params.email;
+      }
+    });
+  }
 
   public keepFormData(data: SignUp) {
     this.signUpFormData = data;

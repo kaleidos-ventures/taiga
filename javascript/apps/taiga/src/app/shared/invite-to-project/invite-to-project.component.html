@@ -101,20 +101,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tui-scrollbar>
 
       <div class="actions-wrapper">
-        <tg-ui-notification-inline
+        <tg-ui-context-notification
           *ngIf="inviteEmailsErrors.listEmpty"
+          alertLevel="polite"
           class="notification"
-          status="error"
-          [hasIcon]="true">
+          status="error">
           {{ t('kanban.invite_step.error_add_least_one') }}
-        </tg-ui-notification-inline>
-        <tg-ui-notification-inline
+        </tg-ui-context-notification>
+        <tg-ui-context-notification
           *ngIf="inviteEmailsErrors.moreThanFifty"
           class="notification"
           status="error"
           [hasIcon]="true">
           {{ t('kanban.invite_step.error_more_than_fifty') }}
-        </tg-ui-notification-inline>
+        </tg-ui-context-notification>
         <div class="form-actions">
           <button tuiLink (click)="close()" appearance="tertiary">
             {{ t('kanban.invite_step.later') }}

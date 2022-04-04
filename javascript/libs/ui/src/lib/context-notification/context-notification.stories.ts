@@ -8,11 +8,11 @@
 
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { TuiSvgModule } from '@taiga-ui/core';
-import { NotificationInlineComponent } from './notification-inline.component';
+import { ContextNotificationComponent } from './context-notification.component';
 
 export default ConfigureStory({
-  title: 'NotificationInline',
-  component: NotificationInlineComponent,
+  title: 'ContextNotification',
+  component: ContextNotificationComponent,
   extraModules: [TuiSvgModule],
 });
 

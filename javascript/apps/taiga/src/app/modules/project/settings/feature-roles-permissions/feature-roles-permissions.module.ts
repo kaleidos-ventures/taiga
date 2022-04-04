@@ -19,7 +19,7 @@ import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 import { RolePermissionRowModule } from './components/role-permission-row/role-permission-row.module';
 import { RoleCustomizeModule } from './components/role-customize/role-customize.module';
 import { RoleAdvanceRowModule } from './components/role-advance-row/role-advance-row.module';
-import { NotificatioInlineModule } from 'libs/ui/src/lib/notification-inline/notification-inline.module';
+import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { ModalPermissionComparisonModule } from './components/modal-permission-comparison/modal-permission-comparison.module';
 import { rolesPermissionsFeature } from './+state/reducers/roles-permissions.reducer';
 import { RolesPermissionsEffects } from './+state/effects/roles-permissions.effects';
@@ -38,7 +38,7 @@ import { EffectsModule } from '@ngrx/effects';
     TuiSvgModule,
     TranslocoModule,
     TuiToggleModule,
-    NotificatioInlineModule,
+    ContextNotificationModule,
     ModalModule,
     RolePermissionRowModule,
     RoleCustomizeModule,

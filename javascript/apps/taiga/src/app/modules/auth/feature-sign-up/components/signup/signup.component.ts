@@ -45,6 +45,9 @@ export class SignupComponent implements OnInit {
   @Input()
   public data: SignUp | null = null;
 
+  @Input()
+  public isEmailReadonly!: boolean;
+
   @Output()
   public displayLoginOptions = new EventEmitter();
 

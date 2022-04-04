@@ -40,14 +40,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </tg-ui-error>
         </ng-container>
       </tg-ui-input>
-      <tg-ui-notification-inline
+      <tg-ui-context-notification
         @fadeInOut
+        alertLevel="polite"
         *ngIf="vm.loginError"
         class="error-submitted"
-        [status]="'error'"
+        status="error"
         data-test="submitted-error">
         <span>{{ t('login.errors.submited_error') }}</span>
-      </tg-ui-notification-inline>
+      </tg-ui-context-notification>
       <button
         class="button-login"
         tuiButton

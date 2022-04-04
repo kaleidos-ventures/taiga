@@ -37,6 +37,7 @@
     "dev:ssr": "ng run taiga:serve-ssr",
     "serve:ssr": "node dist/taiga/server/main.js",
     "storybook": "nx run ui:storybook",
+    "storybook:build": "nx build-storybook ui",
     "transloco:optimize": "transloco-optimize dist/taiga/browser/assets/i18n",
     "build:prod": "ng build --prod && npm run transloco:optimize",
     "build:ssr": "npm run build:prod && ng run taiga:server:production",

@@ -13,6 +13,10 @@ label {
   margin-block-end: var(--spacing-4);
   margin-inline-start: var(--spacing-4);
   min-inline-size: 0;
+
+  &[for] {
+    cursor: pointer;
+  }
 }
 
 :host:focus-within label {

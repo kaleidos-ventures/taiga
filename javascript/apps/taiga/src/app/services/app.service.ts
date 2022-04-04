@@ -20,8 +20,9 @@ import {
 import { ErrorManagementOptions, UnexpectedError } from '@taiga/data';
 import { Store } from '@ngrx/store';
 import { HashMap, TranslocoService } from '@ngneat/transloco';
-import { take } from 'rxjs/operators';
+import { filter, take, takeUntil } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
+import { NavigationStart, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +31,7 @@ export class AppService {
   constructor(
     private store: Store,
     private translocoService: TranslocoService,
+    private router: Router,
     @Inject(TuiNotificationsService)
     private readonly notificationsService: TuiNotificationsService
   ) {}
@@ -106,7 +108,19 @@ export class AppService {
         status: data.status,
       };
 
-      this.notificationsService.show(message, toastOptions).subscribe();
+      this.notificationsService
+        .show(message, toastOptions)
+        .pipe(
+          takeUntil(
+            this.router.events.pipe(
+              filter(
+                (evt: unknown): evt is NavigationStart =>
+                  evt instanceof NavigationStart
+              )
+            )
+          )
+        )
+        .subscribe();
     });
   }
 }

@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 
 <head>
-  <title> Taiga sign up </title>
+  <title> Taiga invitation </title>
   <!--[if !mso]><!-->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!--<![endif]-->
@@ -356,7 +356,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 </head>
 
 <body style="word-spacing:normal;">
-  <div class="body" style=""> {% set verify_url = resolve_front_url("VERIFY_SIGNUP", verification_token=verification_token) -%}
+  <div class="body" style=""> {% set invitation_url = resolve_front_url("INVITATION", verification_token=verification_token) -%} {% set project_url = resolve_front_url("PROJECT", verification_token=verification_token) -%}
     <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="body-content-outlook" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     <div class="body-content" style="margin:0px auto;max-width:600px;">
       <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
@@ -397,28 +397,90 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
                   <tbody>
                     <tr>
-                      <td style="direction:ltr;font-size:0px;padding:24px 0;text-align:center;">
+                      <td style="direction:ltr;font-size:0px;padding:0;padding-top:24px;text-align:center;">
                         <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
                         <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
                           <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
                             <tbody>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">Verify your email</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">Hi {{ receptor_name }},</div>
                                 </td>
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:18px;font-weight:400;line-height:150%;text-align:left;color:#384051;">To start using Taiga just click on the button below</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:18px;font-weight:400;line-height:150%;text-align:left;color:#262C39;"><strong>{{ sender_name }}</strong> sent you an invitation to join:</div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <!--[if mso | IE]></td></tr></table><![endif]-->
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]></td></tr></table></td></tr><tr><td class="" width="600px" ><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+              <div style="margin:0px auto;max-width:600px;">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+                  <tbody>
+                    <tr>
+                      <td style="direction:ltr;font-size:0px;padding:0;padding-bottom:24px;text-align:left;">
+                        <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
+                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                            <tbody>
+                              <tr>
+                                <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:13px;line-height:1;text-align:left;color:#505C74;">
+                                    <table>
+                                      <tr>
+                                        <td style="vertical-align:top;">
+                                          <a style="padding-top: 3px; padding-bottom: 3px; padding-left: 8px; width: 32px" href="{{ project_url }}">
+                                            <img height="32" width="32" style="border-radius: 3px" src="{{ project_image_url }}" />
+                                          </a>
+                                        </td>
+                                        <td style="padding-left: 12px; vertical-align:top">
+                                          <a style="font-size: 14px; font-weight: 400; line-height: 1;" class="secondary-link" href="{{ project_url }}">{{ project_name }}</a>
+                                          <p class="dm-text" style="margin: 6px 0 0 0">{{ project_description }}</p>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <!--[if mso | IE]></td></tr></table><![endif]-->
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]></td></tr></table></td></tr><tr><td class="" width="600px" ><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+              <div style="margin:0px auto;max-width:600px;">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+                  <tbody>
+                    <tr>
+                      <td style="direction:ltr;font-size:0px;padding:0;padding-bottom:24px;text-align:center;">
+                        <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
+                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                            <tbody>
+                              <tr>
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Taiga is an Open Source Agile Project Management Tool. There is no cost for you to be a Taiga user.</div>
                                 </td>
                               </tr>
                               <tr>
-                                <td align="center" vertical-align="middle" class="btn-primary" style="font-size:0px;padding:0 0 24px;word-break:break-word;">
+                                <td align="center" vertical-align="middle" class="btn-primary" style="font-size:0px;padding:0 0 24px;padding-top:24px;word-break:break-word;">
                                   <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;width:100%;line-height:100%;">
                                     <tbody>
                                       <tr>
                                         <td align="center" bgcolor="#83EEDE" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px;text-align:center;background:#83EEDE;" valign="middle">
-                                          <a href="{{ verify_url }}" style="display:inline-block;background:#83EEDE;color:#505C74;font-family:Ubuntu, Arial, Helvetica, sans-serif ;font-size:18px;font-weight:500;line-height:21px;margin:0;text-decoration:none;text-transform:none;padding:10px;mso-padding-alt:0px;border-radius:4px;" target="_blank"> Verify your email </a>
+                                          <a href="{{ invitation_url }}" style="display:inline-block;background:#83EEDE;color:#505C74;font-family:Ubuntu, Arial, Helvetica, sans-serif ;font-size:18px;font-weight:500;line-height:21px;margin:0;text-decoration:none;text-transform:none;padding:10px;mso-padding-alt:0px;border-radius:4px;" target="_blank"> Accept your invitation </a>
                                         </td>
                                       </tr>
                                     </tbody>
@@ -432,17 +494,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text-gray primary-link" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;"><a class="primary-link" href="{{ verify_url }}">{{ verify_url }}</a></div>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Welcome,</div>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Taiga Team</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;"><a class="primary-link" href="{{ verify_url }}">{{ invitation_url }}</a></div>
                                 </td>
                               </tr>
                             </tbody>
@@ -459,59 +511,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
                   <tbody>
                     <tr>
-                      <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
-                        <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="separator-outlook" style="vertical-align:top;width:600px;" ><![endif]-->
-                        <div class="mj-column-per-100 mj-outlook-group-fix separator" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
-                            <tbody>
-                              <tr>
-                                <td style="vertical-align:top;padding:24px 0;">
-                                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
-                                    <tbody>
-                                      <tr>
-                                        <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:12px;font-weight:400;line-height:1.5;text-align:left;color:#384051;">This link will expire in {{ display_lifetime(settings.VERIFY_USER_TOKEN_LIFETIME) }}.</div>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:12px;font-weight:400;line-height:1.5;text-align:left;color:#384051;">If you did not create an account using this address, please ignore this email.</div>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <!--[if mso | IE]></td></tr></table><![endif]-->
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!--[if mso | IE]></td></tr></table></td></tr><tr><td class="" width="600px" ><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-              <div style="margin:0px auto;max-width:600px;">
-                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-                  <tbody>
-                    <tr>
-                      <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
+                      <td style="direction:ltr;font-size:0px;padding:0;padding-top:24px;text-align:center;">
                         <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
                         <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
                             <tbody>
                               <tr>
-                                <td style="vertical-align:top;padding-top:24px;">
-                                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
-                                    <tbody>
-                                      <tr>
-                                        <td align="left" class="secondary-link dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> Contact support </a></div>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
+                                <td align="left" class="secondary-link dm-text" style="font-size:0px;padding:0;word-break:break-word;">
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a css-class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> Contact support </a></div>
                                 </td>
                               </tr>
                             </tbody>

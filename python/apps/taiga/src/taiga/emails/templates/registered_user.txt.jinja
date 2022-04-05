@@ -1,0 +1,26 @@
+{#
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+#}
+
+{% set invitation_url = resolve_front_url("INVITATION", verification_token=verification_token) -%}
+Taiga invitation
+
+Hi there,
+{{ sender_name }} sent you an invitation to join:
+
+{{ project_name }}
+{{ project_description }}
+
+<!-- Start: This text only appear if you are not registered -->
+Taiga is an Open Source Agile Project Management Tool. There is no cost for you to be a Taiga user.
+<!-- End -->
+{{ invitation_url }}
+
+Welcome,
+Taiga Team
+
+Need help? Contact us at {{ settings.SUPPORT_EMAIL }}

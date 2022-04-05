@@ -1,0 +1,76 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<mjml>
+  <mj-head>
+    <mj-title>Taiga invitation</mj-title>
+    <mj-include path="../components/head.mjml" />
+  </mj-head>
+  <mj-body css-class="body">
+    <mj-raw>
+      {% set invitation_url = resolve_front_url("INVITATION", verification_token=verification_token) -%}
+      {% set project_url = resolve_front_url("PROJECT", verification_token=verification_token) -%}
+    </mj-raw>
+    <mj-wrapper css-class="body-content">
+      <mj-include path="../components/header-logo.mjml" />
+      <mj-section mj-class="padding-top">
+        <mj-column>
+
+          <!-- This text only appear if you are not registered -->
+          <!-- <mj-text css-class="dm-text" mj-class="font-heading1 color-gray100">
+            Hi there,
+          </mj-text> -->
+          <!-- This text only appear if you are  registered -->
+          <mj-text css-class="dm-text" mj-class="font-heading1 color-gray100">
+            Hi {{ receptor_name }},
+          </mj-text>
+          <mj-text css-class="dm-text" mj-class="font-heading2 color-gray100">
+            <strong>{{ sender_name }}</strong> sent you an invitation to join:
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section text-align="left"  mj-class="padding-bottom">
+        <mj-column>
+          <mj-text>
+            <table>
+              <tr>
+                <td style="vertical-align:top;">
+                  <a style="padding-top: 3px; padding-bottom: 3px; padding-left: 8px; width: 32px" href="{{ project_url }}" >
+                    <img height="32" width="32" style="border-radius: 3px" src="{{ project_image_url }}" />
+                  </a>
+                </td>
+                <td style="padding-left: 12px; vertical-align:top">
+                  <a style="font-size: 14px; font-weight: 400; line-height: 1;" class="secondary-link" href="{{ project_url }}" >{{ project_name }}</a>
+                  <p class="dm-text" style="margin: 6px 0 0 0">{{ project_description }}</p>
+                </td>
+              </tr>
+            </table>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section mj-class="padding-bottom">
+        <mj-column>
+          <!-- Start: This text only appear if you are not registered -->
+          <mj-text css-class="dm-text" mj-class="font-body color-gray80">
+            Taiga is an Open Source Agile Project Management Tool. There is no cost for you to be a Taiga user.
+          </mj-text>
+          <!-- End -->
+          <mj-button css-class="btn-primary" mj-class="btn-primary padding-top" href="{{ invitation_url }}">
+            Accept your invitation
+          </mj-button>
+          <mj-text css-class="dm-text" mj-class="font-body color-gray70">
+            Button not working? Copy and paste this URL into your web browser:
+          </mj-text>
+          <mj-text css-class="dm-text-gray primary-link" mj-class="font-body padding-bottom">
+              <a class="primary-link" href="{{ verify_url }}">{{ invitation_url }}</a>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-include path="../components/footer.mjml" />
+    </mj-wrapper>
+  </mj-body>
+</mjml>

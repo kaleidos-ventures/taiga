@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from enum import Enum
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
@@ -51,6 +53,61 @@ def get_project_logo_file_path(instance, filename):
     return get_file_path(instance, filename, "project")
 
 
+class InvitationStatus(Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+
+    @classmethod
+    def choices(cls):
+        return [(item, item.value) for item in cls]
+
+
+class Invitation(models.Model):
+    """
+    This model stores all project invitations
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        default=None,
+        related_name="invitations",
+        on_delete=models.CASCADE,
+    )
+    project = models.ForeignKey(
+        "Project",
+        null=False,
+        blank=False,
+        related_name="invitations",
+        on_delete=models.CASCADE,
+    )
+    role = models.ForeignKey(
+        "users.Role",
+        null=False,
+        blank=False,
+        related_name="invitations",
+        on_delete=models.CASCADE,
+    )
+    email = models.EmailField(max_length=255, null=False, blank=False,
+                                verbose_name=_("email"))
+    status = models.CharField(choices=InvitationStatus.choices(), default=InvitationStatus.PENDING, max_length=50)
+    created_at = models.DateTimeField(default=timezone.now,
+                                        verbose_name=_("created at"))
+    invited_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="ihaveinvited+",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    class Meta:
+        verbose_name = "invitation"
+        verbose_name_plural = "invitations"
+        unique_together = ("email", "project",)
+        ordering = ["project", "user__full_name", "user__username", "user__email", "email"]
+
+
 class Membership(models.Model):
     # This model stores all project memberships. Also
     # stores invitations to memberships that does not have
@@ -89,7 +146,7 @@ class Membership(models.Model):
     email = models.EmailField(max_length=255, default=None, null=True, blank=True,
                               verbose_name=_("email"))
     created_at = models.DateTimeField(default=timezone.now,
-                                      verbose_name=_("create at"))
+                                      verbose_name=_("created at"))
     token = models.CharField(max_length=60, blank=True, null=True, default=None,
                              verbose_name=_("token"))
 

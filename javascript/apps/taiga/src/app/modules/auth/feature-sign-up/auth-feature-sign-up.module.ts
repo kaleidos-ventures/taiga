@@ -19,6 +19,7 @@ import { AuthFeatureSignUpComponent } from './auth-feature-sign-up.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { AuthFeatureVerifyEmailModule } from '~/app/modules/auth/feature-verify-email/auth-feature-verify-email.module';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+import { ExternalLinkModule } from '~/app/shared/directives/external-link/external-link.module';
 
 const routes: Routes = [
   {
@@ -57,6 +58,7 @@ const routes: Routes = [
     InputsModule,
     TuiLinkModule,
     ContextNotificationModule,
+    ExternalLinkModule,
   ],
   providers: [
     {

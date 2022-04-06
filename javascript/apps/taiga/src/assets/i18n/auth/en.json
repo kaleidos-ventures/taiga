@@ -7,7 +7,7 @@
     "full_name": "Full name",
     "create_account": "Create an account",
     "create_account_email": "Create an account with your email",
-    "terms_and_privacy": "By creating an account, you agree to our <a  href='{{ termsOfService }}' target='_blank'>terms of service</a> and <a href='{{ privacyPolicy }}' target='_blank'> privacy policy</a>.",
+    "terms_and_privacy": "By creating the account, you agree to our <a  href='{{ termsOfService }}' target='_blank'>terms of service</a> and <a href='{{ privacyPolicy }}' target='_blank'> privacy policy</a>.",
     "already_account": "Already have an account? <a href='{{ login }}'>Login here</a>",
     "all_options": "All options",
     "resend_email_label": "We just sent you an email",

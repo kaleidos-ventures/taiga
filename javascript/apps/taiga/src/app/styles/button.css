@@ -500,3 +500,24 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 }
+
+.external-link {
+  align-items: center;
+  display: inline-flex;
+
+  &:hover {
+    & svg {
+      fill: var(--color-secondary90);
+    }
+  }
+
+  & .external-svg {
+    align-items: center;
+    display: inline-flex;
+    margin-inline-start: var(--spacing-4);
+  }
+
+  & svg {
+    fill: var(--color-secondary);
+  }
+}

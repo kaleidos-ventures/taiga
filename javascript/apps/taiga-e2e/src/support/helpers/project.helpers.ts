@@ -58,24 +58,24 @@ export const createFullProjectInWSRequest = (
 };
 
 export const launchProjectCreationInWS = (index: number) => {
-  cy.getBySel('workspace-item')
+  cy.getBySel('workspace-item', { timeout: 100000 })
     .eq(index)
     .within(() => {
-      cy.getBySel('create-project-card').click();
+      cy.getBySel('create-project-card', { timeout: 100000 }).click();
     });
+  cy.getBySel('select-workspace', { timeout: 100000 }).should('be.visible');
 };
 
-export const selectBlankProject = () =>
-  cy.getBySel('template-item').first().click();
+export const selectBlankProject = () => {
+  cy.getBySel('template-item', { timeout: 100000 }).first().should('be.visible');
+  cy.getBySel('template-item', { timeout: 100000 }).first().click();
+};
 
 export const typeProjectName = (name: string) =>
-  cy.getBySel('input-name').type(name);
+  cy.getBySel('input-name', { timeout: 100000 }).type(name);
 export const typeProjectDescription = (description: string) =>
   cy.getBySel('input-description').type(description);
 export const submitVisible = () =>
   cy.getBySel('submit-create-project').should('be.visible');
 export const cancelProject = () => cy.getBySel('cancel-create-project').click();
 export const submitProject = () => cy.getBySel('submit-create-project').click();
-export const typeEmailToInvite = (email: string) =>
-  cy.getBySel('input-add-invites').type(email);
-export const addEmailToInvite = () => cy.getBySel('add-invites').click();

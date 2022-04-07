@@ -8,16 +8,19 @@
 
 import { randText, randEmail } from '@ngneat/falso';
 import {
-  addEmailToInvite,
   cancelProject,
   launchProjectCreationInWS,
   selectBlankProject,
   submitProject,
   submitVisible,
-  typeEmailToInvite,
   typeProjectDescription,
   typeProjectName,
 } from '../support/helpers/project.helpers';
+import {
+  typeEmailToInvite,
+  addEmailToInvite,
+  inviteUsers
+} from '../support/helpers/invitation.helpers';
 import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 
@@ -113,8 +116,7 @@ describe('Workspace Create from Overview', () => {
 
     typeEmailToInvite(randEmail());
     addEmailToInvite();
-    cy.getBySel('submit-invite-users')
-      .click()
+    inviteUsers()
       .then(() => {
         cy.getBySel('submit-invite-users').should('not.exist');
         cy.getBySel('project-name').should('be.visible');

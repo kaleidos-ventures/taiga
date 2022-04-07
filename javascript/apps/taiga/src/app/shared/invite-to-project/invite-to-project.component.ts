@@ -26,7 +26,7 @@ import {
   selectContacts,
   selectMemberRolesOrdered,
   selectUsersToInvite,
-} from '~/app/shared/invite-to-project/data-access/+state/selectors/project.selectors';
+} from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { skip, switchMap } from 'rxjs/operators';
 import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
@@ -50,7 +50,7 @@ export class InviteToProjectComponent implements OnInit {
   @Output()
   public closeModal = new EventEmitter();
 
-  public regexpEmail = /\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+/g;
+  public regexpEmail = /\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+/g;
   public inviteEmails = '';
   public inviteEmailsErrors: {
     required: boolean;

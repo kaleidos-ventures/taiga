@@ -20,3 +20,10 @@ export interface InvitationRequest {
   role?: string;
   roleSlug?: string;
 }
+
+export interface InvitationResponse {
+  userId: number | null;
+  projectId: number;
+  roleId: number;
+  email: string;
+}

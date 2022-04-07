@@ -39,17 +39,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [expandable]="true">
                 {{ t('kanban.invite_step.placeholder') }}
               </tui-text-area>
-              <tg-ui-error
-                inputError
-                [show]="inviteEmailsErrors.required">
+              <tg-ui-error data-test="error-add-email" inputError [show]="inviteEmailsErrors.required">
                 {{ t('kanban.invite_step.error_add_email') }}
               </tg-ui-error>
-              <tg-ui-error
-                inputError
-                [show]="inviteEmailsErrors.regex">
+              <tg-ui-error data-test="error-regex" inputError [show]="inviteEmailsErrors.regex">
                 {{ t('kanban.invite_step.error_email_regex') }}
               </tg-ui-error>
               <tg-ui-error
+                data-test="error-missing-people"
                 inputError
                 [show]="inviteEmailsErrors.peopleNotAdded">
                 {{ t('kanban.invite_step.error_missing_people') }}
@@ -61,6 +58,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               </tg-ui-error>
             </tg-ui-textarea>
             <span
+              data-test="email-count"
               *ngIf="emailsWithoutDuplications().length > 1"
               class="emails-count"
               >{{
@@ -119,6 +117,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div class="actions-wrapper">
         <tg-ui-context-notification
           *ngIf="inviteEmailsErrors.listEmpty"
+          data-test="error-at-lest-one"
           alertLevel="polite"
           class="notification"
           status="error">

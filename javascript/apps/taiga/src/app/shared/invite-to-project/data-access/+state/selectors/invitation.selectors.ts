@@ -32,7 +32,7 @@ export const selectMemberRolesOrdered = createSelector(
 );
 
 export const selectUsersToInvite = (inviteEmails: string[]) => {
-  // from the introdued emails to invite tro the project, we must complete data with the user contacts. We should display name and username from added contacts and just email from the others.
+  // from the introdued emails to invite to the project, we must complete data with the user contacts. We should display name and username from added contacts and just email from the others.
   return createSelector(
     selectMemberRolesOrdered,
     selectContacts,

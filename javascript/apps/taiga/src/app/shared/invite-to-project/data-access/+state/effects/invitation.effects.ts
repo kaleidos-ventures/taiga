@@ -17,7 +17,7 @@ import { InvitationApiService } from '@taiga/api';
 import { fetch } from '@nrwl/angular';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Contact, ErrorManagementToastOptions } from '@taiga/data';
+import { Contact, ErrorManagementToastOptions, InvitationResponse } from '@taiga/data';
 import { TuiNotification } from '@taiga-ui/core';
 
 @Injectable()
@@ -47,9 +47,9 @@ export class InvitationEffects {
           return this.invitationApiService
             .inviteUsers(action.slug, action.invitation)
             .pipe(
-              map(() => {
+              map((response: InvitationResponse[]) => {
                 return InvitationActions.inviteUsersSuccess({
-                  invitations: action.invitation.length,
+                  invitations: response.length,
                 });
               })
             );

@@ -26,7 +26,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           (selectedWorkspaceSlug && workspaces.length) || !selectedWorkspaceSlug
         "
         [label]="t('commons.workspace')"
-        type="avatar">
+        type="avatar"
+        data-test="select-workspace">
         <tui-select
           tuiTextfieldSize="l"
           formControlName="workspace"

@@ -6,6 +6,39 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t; read: 'navigation'">
+  <ng-container>
+    <div class="left">
+      <a
+        appearance="home-button"
+        [attr.aria-label]="t('go_home')"
+        [routerLink]="['/']"
+        class="home-button"
+        tuiIconButton
+        icon="taiga-logo"
+        type="button">
+      </a>
+    </div>
+    <div class="right">
+      <div class="actions">
+        <a
+          [routerLink]="['/login']"
+          data-test="navigation-login-button"
+          appearance="secondary"
+          tuiButton
+          type="submit">
+          {{ t('log_in') }}
+        </a>
+        <a
+          [routerLink]="['/signup']"
+          data-test="navigation-create-account-button"
+          appearance="primary"
+          tuiButton
+          type="submit">
+          {{ t('create_account') }}
+        </a>
+      </div>
+    </div>
+  </ng-container>
   <ng-container *ngIf="user$ | async as user">
     <div class="left">
       <a

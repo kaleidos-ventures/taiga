@@ -15,7 +15,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [attr.aria-label]="t('recent_projects')">
       <ng-container *ngIf="latestProjects.length">
         <li *ngFor="let project of latestProjects; trackBy: trackByProject">
-          <a class="project" [routerLink]="['/project', project.slug]">
+          <a
+            class="project"
+            [routerLink]="['/project', project.slug]">
             <div class="project-image">
               <tg-ui-avatar
                 type="light"
@@ -39,7 +41,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <p class="empty-recent">{{ t('empty_recent_projects') }}</p>
     </ng-container>
 
-    <a class="view-projects" href="">
+    <a
+      class="view-projects"
+      href="">
       {{ t('view_projects') }}
     </a>
     <a

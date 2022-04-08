@@ -30,11 +30,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         class="text highlight"
         [innerHtml]="t(memberText)"
         data-test="member-conflict"></span>
-      <tui-svg class="chevron" [src]="open ? 'chevron-up' : 'chevron-down'">
+      <tui-svg
+        class="chevron"
+        [src]="open ? 'chevron-up' : 'chevron-down'">
       </tui-svg>
     </button>
 
-    <ul *ngIf="open" [attr.id]="id" class="restriction-list">
+    <ul
+      *ngIf="open"
+      [attr.id]="id"
+      class="restriction-list">
       <li
         data-test="restriction-element"
         class="restriction-element"
@@ -70,11 +75,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         class="text highlight"
         [innerHtml]="t(publicText)"
         data-test="public-conflict"></span>
-      <tui-svg class="chevron" [src]="open ? 'chevron-up' : 'chevron-down'">
+      <tui-svg
+        class="chevron"
+        [src]="open ? 'chevron-up' : 'chevron-down'">
       </tui-svg>
     </button>
 
-    <ul *ngIf="open" [attr.id]="id" class="restriction-list">
+    <ul
+      *ngIf="open"
+      [attr.id]="id"
+      class="restriction-list">
       <li
         *ngFor="
           let restriction of conflict.texts.public.restrictions;

@@ -8,7 +8,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t; read: 'navigation_user'">
   <div class="user">
-    <a href="#" class="user-inner" tuiAutoFocus>
+    <a
+      href="#"
+      class="user-inner"
+      tuiAutoFocus>
       <tg-user-avatar size="m"></tg-user-avatar>
       <div class="user-info">
         <span class="user-name">{{ user.fullName }}</span>
@@ -18,27 +21,38 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   </div>
   <ul>
     <li>
-      <a href="#" class="user-link">
+      <a
+        href="#"
+        class="user-link">
         {{ t('user_profile') }}
       </a>
     </li>
     <li>
-      <a href="#" class="user-link">
+      <a
+        href="#"
+        class="user-link">
         {{ t('edit_setting') }}
       </a>
     </li>
     <li>
-      <a href="#" class="user-link">
+      <a
+        href="#"
+        class="user-link">
         {{ t('account_setting') }}
       </a>
     </li>
     <li>
-      <a href="#" class="user-link">
+      <a
+        href="#"
+        class="user-link">
         {{ t('accesibility_setting') }}
       </a>
     </li>
     <li class="log-out">
-      <button tuiLink class="user-link" (click)="logout()">
+      <button
+        tuiLink
+        class="user-link"
+        (click)="logout()">
         {{ t('log_out') }}
       </button>
     </li>

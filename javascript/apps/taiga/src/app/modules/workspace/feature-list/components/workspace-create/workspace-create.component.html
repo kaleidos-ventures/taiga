@@ -32,7 +32,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         tuiAutoFocus
         maxlength="40"
         [placeholder]="t('workspace.workspace_name')" />
-      <tg-ui-error inputError error="required">
+      <tg-ui-error
+        inputError
+        error="required">
         {{ t('workspace.error_name_empty') }}
       </tg-ui-error>
     </tg-ui-input>
@@ -43,7 +45,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       type="submit">
       {{ t('workspace.create_workspace') }}
     </button>
-    <button (click)="close()" appearance="secondary" tuiButton type="button">
+    <button
+      (click)="close()"
+      appearance="secondary"
+      tuiButton
+      type="button">
       {{ 'commons.cancel' | transloco }}
     </button>
   </form>

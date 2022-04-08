@@ -13,7 +13,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       {{ t('project_overview.members.title') }}
       <ng-container *ngIf="!vm.loading">
         <span class="count">({{ vm.members.length }})</span>
-        <span class="pending" *ngIf="vm.pending"
+        <span
+          class="pending"
+          *ngIf="vm.pending"
           >-
           {{
             t('project_overview.members.count_pending', { number: vm.pending })

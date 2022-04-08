@@ -70,15 +70,14 @@ describe('NewProjectEffects', () => {
 
     actions$ = hot('-a--b', {
       a: createProject({ project: projectCreation }),
-      b: createProjectSuccess({ project })
+      b: createProjectSuccess({ project }),
     });
 
     expect(effects.createProjectSuccess$).toSatisfyOnFlush(() => {
-      expect(router.navigate).toHaveBeenCalledWith([
-        '/project/',
-        project.slug,
-        'kanban',
-      ], {state: {'invite': true}});
+      expect(router.navigate).toHaveBeenCalledWith(
+        ['/project/', project.slug, 'kanban'],
+        { state: { invite: true } }
+      );
     });
   });
 });

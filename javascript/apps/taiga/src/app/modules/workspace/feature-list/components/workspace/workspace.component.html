@@ -46,7 +46,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           cdkTrapFocus
           *ngIf="vm.showCreate">
         </tg-workspace-create>
-        <div *ngIf="vm.creatingWorkspace" class="skeleton-container">
+        <div
+          *ngIf="vm.creatingWorkspace"
+          class="skeleton-container">
           <tg-workspace-skeleton data-test="workspace-skeleton">
           </tg-workspace-skeleton>
         </div>
@@ -67,7 +69,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <p class="workspace-call-action-text">
             {{ t('workspace.placeholder_text') }}
           </p>
-          <a class="workspace-call-action-link" tuiLink icon="'arrow-up-right'">
+          <a
+            class="workspace-call-action-link"
+            tuiLink
+            icon="'arrow-up-right'">
             {{ t('workspace.placeholder_link') }}
           </a>
           <button
@@ -96,7 +101,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <p>{{ t('workspace.tooltip_add_workspace') }}</p>
     </ng-template>
 
-    <div class="sliding-panel" *ngIf="vm.showActivity" [@slidePanelInOut]>
+    <div
+      class="sliding-panel"
+      *ngIf="vm.showActivity"
+      [@slidePanelInOut]>
       <button (click)="toggleActivity(false)">Hide activity</button>
     </div>
   </ng-container>

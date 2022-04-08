@@ -16,7 +16,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [url]="project.logoBig"
           [name]="project.name">
         </tg-ui-avatar>
-        <h1 class="project-name" data-test="project-name">
+        <h1
+          class="project-name"
+          data-test="project-name">
           {{ project.name }}
         </h1>
       </div>
@@ -24,7 +26,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <section class="project-main"></section>
         <section class="project-description">
           <h2 class="project-about">{{ t('project_overview.about') }}</h2>
-          <div [class.hide]="hideOverflow" class="description">
+          <div
+            [class.hide]="hideOverflow"
+            class="description">
             <p #descriptionOverflow>{{ project.description }}</p>
           </div>
           <div class="actions">

@@ -6,11 +6,17 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t">
-  <div class="modal-wrapper" aria-labelledby="members-modal-title">
-    <h1 id="members-modal-title" class="title">
+  <div
+    class="modal-wrapper"
+    aria-labelledby="members-modal-title">
+    <h1
+      id="members-modal-title"
+      class="title">
       {{ t('project_overview.members.title') }}
       <span class="count">({{ members.length }})</span>
-      <span class="pending" *ngIf="pending">
+      <span
+        class="pending"
+        *ngIf="pending">
         <tui-svg src="clock"></tui-svg>
         {{
           t('project_overview.members.count_pending', { number: pending })
@@ -25,7 +31,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </tui-scrollbar>
 
     <div class="modal-bottom">
-      <button (click)="closeModal.next()" class="close" tuiButton type="button">
+      <button
+        (click)="closeModal.next()"
+        class="close"
+        tuiButton
+        type="button">
         {{ t('commons.close') }}
       </button>
     </div>

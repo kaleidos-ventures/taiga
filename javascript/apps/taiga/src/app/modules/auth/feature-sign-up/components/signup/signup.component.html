@@ -12,7 +12,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [formGroup]="signUpForm"
     (ngSubmit)="onSubmit()"
     data-test="signup-form">
-    <tg-ui-input class="input-email" [label]="t('signup.email')">
+    <tg-ui-input
+      class="input-email"
+      [label]="t('signup.email')">
       <input
         formControlName="email"
         data-test="signup-email"
@@ -65,7 +67,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </ng-container>
     </tg-ui-input>
 
-    <tg-ui-input class="input-fullname" [label]="t('signup.full_name')">
+    <tg-ui-input
+      class="input-fullname"
+      [label]="t('signup.full_name')">
       <input
         formControlName="fullName"
         data-test="signup-fullname"

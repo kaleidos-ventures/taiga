@@ -39,10 +39,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           *ngIf="workspace.isOwner"
           [label]="t('commons.owner')"></tg-ui-badge>
         <div class="workspace-item-action">
-          <button appearance="tertiary" tuiButton icon="user" type="button">
+          <button
+            appearance="tertiary"
+            tuiButton
+            icon="user"
+            type="button">
             {{ t('commons.members') }} (1)
           </button>
-          <button appearance="secondary" tuiButton type="button">
+          <button
+            appearance="secondary"
+            tuiButton
+            type="button">
             {{ t('commons.upgrade') }}
           </button>
           <a

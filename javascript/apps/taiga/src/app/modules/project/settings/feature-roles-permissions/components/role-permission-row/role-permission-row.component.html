@@ -12,8 +12,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     class="permission-row"
     [class.advanced-settings]="showAdvancedSetting">
     <div class="main">
-      <div *ngIf="hasMembers" class="permission-row-title">
-        <span aria-hidden="true" class="permission-row-name">
+      <div
+        *ngIf="hasMembers"
+        class="permission-row-title">
+        <span
+          aria-hidden="true"
+          class="permission-row-name">
           {{ name }}
         </span>
         <button
@@ -28,7 +32,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           }}
         </button>
       </div>
-      <div [class.hide-members]="!hasMembers" class="permission-row-select">
+      <div
+        [class.hide-members]="!hasMembers"
+        class="permission-row-select">
         <tg-ui-select
           [label]="name"
           labelVisuallyHidden
@@ -53,7 +59,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </tui-data-list>
           </tui-select>
         </tg-ui-select>
-        <ng-template #selectLabel let-item>
+        <ng-template
+          #selectLabel
+          let-item>
           <ng-container [ngSwitch]="permissionRowModel.key">
             <ng-container *ngSwitchCase="'custom'">
               {{ t('project_settings.roles_permissions.custom') }}
@@ -70,8 +78,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </ng-container>
         </ng-template>
       </div>
-      <div [class.hide-members]="!hasMembers" class="permission-row-action">
-        <div [attr.aria-level]="1" role="heading" class="permission-row-button">
+      <div
+        [class.hide-members]="!hasMembers"
+        class="permission-row-action">
+        <div
+          [attr.aria-level]="1"
+          role="heading"
+          class="permission-row-button">
           <button
             appearance="tertiary"
             data-test="permission-row-advanced-settings"

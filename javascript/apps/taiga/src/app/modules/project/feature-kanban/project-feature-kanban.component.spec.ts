@@ -16,9 +16,7 @@ describe('KanbanPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        StoreModule.forRoot({})
-      ],
+      imports: [StoreModule.forRoot({})],
       declarations: [ProjectFeatureKanbanComponent],
     }).compileComponents();
   });

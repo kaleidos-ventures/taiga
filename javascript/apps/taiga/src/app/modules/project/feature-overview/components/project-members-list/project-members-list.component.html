@@ -7,7 +7,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t">
-  <ul class="member-list" *ngIf="members.length">
+  <ul
+    class="member-list"
+    *ngIf="members.length">
     <li
       *ngFor="
         let member of members;
@@ -15,10 +17,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         let i = index
       "
       class="pending">
-      <a class="member-link" href="" [class.pending-member]="isPending(member)">
+      <a
+        class="member-link"
+        href=""
+        [class.pending-member]="isPending(member)">
         <tg-user-card [user]="getUser(member)">
           <div class="member-info">
-            <div class="admin" *ngIf="member.role?.isAdmin">
+            <div
+              class="admin"
+              *ngIf="member.role?.isAdmin">
               {{ t('commons.roles.admin') }}
             </div>
             <div class="block-end">
@@ -33,7 +40,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   t('project_overview.members.leave')
                 }}</span>
               </button>
-              <div class="pending-msg" *ngIf="isPending(member)">
+              <div
+                class="pending-msg"
+                *ngIf="isPending(member)">
                 <tui-svg src="clock"></tui-svg>
                 {{ t('project_overview.members.pending') }}
               </div>

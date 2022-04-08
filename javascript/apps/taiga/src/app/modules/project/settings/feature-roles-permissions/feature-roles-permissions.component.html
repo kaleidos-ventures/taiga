@@ -8,7 +8,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *ngIf="model$ | async as vm">
   <ng-container *transloco="let t">
     <div class="settings-permissions-wrapper">
-      <h3 tabindex="-1" mainFocus class="settings-title">
+      <h3
+        tabindex="-1"
+        mainFocus
+        class="settings-title">
         {{ t('project_settings.roles_and_permissions') }}
       </h3>
     </div>
@@ -24,7 +27,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         data-fragment="member-permissions-settings">
         {{ t('project_settings.member_permissions') }}
       </h3>
-      <div *ngIf="vm.admin" class="project-admin">
+      <div
+        *ngIf="vm.admin"
+        class="project-admin">
         <div class="project-admin-title">
           <span class="project-admin-text">{{
             t('project_settings.roles_permissions.project_administrators')
@@ -133,7 +138,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </form>
     </section>
 
-    <tg-ui-modal [open]="isModalOpen" (requestClose)="handleModal()">
+    <tg-ui-modal
+      [open]="isModalOpen"
+      (requestClose)="handleModal()">
       <ng-container>
         <tg-modal-permission-comparison
           *ngIf="vm.conflicts"

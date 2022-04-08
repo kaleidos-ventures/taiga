@@ -12,12 +12,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     aria-describedby="permission-table"
     aria-labelledby="permissions-comparison"
     class="modal-wrapper">
-    <h2 id="permissions-comparison" class="modal-title" tabindex="0">
+    <h2
+      id="permissions-comparison"
+      class="modal-title"
+      tabindex="0">
       {{
         t('project_settings.modal_permissions.potential_permission_conflicts')
       }}
     </h2>
-    <div id="permission-table" class="permission-table">
+    <div
+      id="permission-table"
+      class="permission-table">
       <p
         class="explanation"
         [innerHtml]="
@@ -47,8 +52,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <thead *ngIf="i === 0">
             <tr>
               <th aria-hidden="true"></th>
-              <th scope="col" class="title">{{ module.name }}</th>
-              <th scope="col" class="title">
+              <th
+                scope="col"
+                class="title">
+                {{ module.name }}
+              </th>
+              <th
+                scope="col"
+                class="title">
                 {{ t('project_settings.modal_permissions.public') }}
               </th>
             </tr>

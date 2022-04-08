@@ -29,7 +29,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [name]="project.name">
           </tg-ui-avatar>
         </a>
-        <div *ngIf="!collapsed" class="workspace-data">
+        <div
+          *ngIf="!collapsed"
+          class="workspace-data">
           <a
             class="workspace-data-project"
             data-test="project-name"
@@ -75,7 +77,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 routerLinkActive
                 #overviewActive="routerLinkActive"
                 [routerLinkActiveOptions]="{ exact: true }">
-                <tui-svg class="menu-option-icon" src="overview"></tui-svg>
+                <tui-svg
+                  class="menu-option-icon"
+                  src="overview"></tui-svg>
                 <span
                   *ngIf="!collapsed"
                   class="menu-option-text"
@@ -168,7 +172,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [routerLink]="['/project', project.slug, 'kanban']"
                 routerLinkActive
                 #kanbanActive="routerLinkActive">
-                <tui-svg class="menu-option-icon" src="kanban"></tui-svg>
+                <tui-svg
+                  class="menu-option-icon"
+                  src="kanban"></tui-svg>
                 <span
                   *ngIf="!collapsed"
                   class="menu-option-text"
@@ -297,7 +303,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               "
               class="project-settings menu-option-item"
               [class.active-dialog]="dialog.type === 'project-settings'">
-              <tui-svg class="menu-option-icon" src="settings"></tui-svg>
+              <tui-svg
+                class="menu-option-icon"
+                src="settings"></tui-svg>
               <span
                 *ngIf="!collapsed"
                 class="bottom-menu-option-text"
@@ -317,7 +325,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               data-animation="text">
               {{ t('main_project_navigation.collapse_menu') }}
             </span>
-            <tui-svg class="collapse-icon" [src]="getCollapseIcon()"></tui-svg>
+            <tui-svg
+              class="collapse-icon"
+              [src]="getCollapseIcon()"></tui-svg>
           </button>
         </div>
       </div>
@@ -367,15 +377,24 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </span>
         </li>
         <li class="child-menu-option">
-          <a class="child-menu-option-item" #backlogSubmenu href="">
+          <a
+            class="child-menu-option-item"
+            #backlogSubmenu
+            href="">
             {{ t('commons.backlog') }}
           </a>
         </li>
         <li class="child-menu-option">
-          <a class="child-menu-option-item" href=""> Milestone 1 </a>
+          <a
+            class="child-menu-option-item"
+            href="">
+            Milestone 1
+          </a>
         </li>
         <li class="menu-option">
-          <a class="child-menu-option-item" href="">
+          <a
+            class="child-menu-option-item"
+            href="">
             <span class="menu-option-text"> Milestone 1 </span>
           </a>
         </li>

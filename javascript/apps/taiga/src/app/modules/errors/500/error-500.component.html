@@ -9,8 +9,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <div class="error-wrapper">
     <div class="error-container">
-      <a [routerLink]="['/']" [attr.aria-label]="t('navigation.go_home')">
-        <img src="/assets/images/LogoTaiga.svg" alt="" />
+      <a
+        [routerLink]="['/']"
+        [attr.aria-label]="t('navigation.go_home')">
+        <img
+          src="/assets/images/LogoTaiga.svg"
+          alt="" />
       </a>
       <h1 class="error-title">{{ t('errors_page.500.something_wrong') }}</h1>
       <p
@@ -37,7 +41,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="error-background-image"
       src="/assets/images/error-500.svg"
       alt="" />
-    <a class="error-home" tuiLink [routerLink]="['/']">
+    <a
+      class="error-home"
+      tuiLink
+      [routerLink]="['/']">
       {{ t('errors_page.500.take_me_home') }}
     </a>
   </div>

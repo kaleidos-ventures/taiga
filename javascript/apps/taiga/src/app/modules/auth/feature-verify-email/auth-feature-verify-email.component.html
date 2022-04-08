@@ -6,20 +6,29 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t; read: 'auth'">
-  <div class="verify-container" data-test="verify-email-page">
-    <img class="owl" src="/assets/images/signup/verify-email-owl.svg" alt="" />
+  <div
+    class="verify-container"
+    data-test="verify-email-page">
+    <img
+      class="owl"
+      src="/assets/images/signup/verify-email-owl.svg"
+      alt="" />
     <h1 class="verify-title">{{ t('verify.title') }}</h1>
     <p class="verify-text">{{ t('verify.verification_link_sent') }}</p>
     <p class="verify-text email">{{ emailAddress }}</p>
     <p class="verify-text">
       <span>{{ t('verify.mail_not_received') }}</span>
-      <button tuiLink (click)="resendEmail()">
+      <button
+        tuiLink
+        (click)="resendEmail()">
         {{ t('verify.resend_button') }}
       </button>
     </p>
     <p class="verify-footer">
       <span>{{ t('verify.footer_text') }}</span>
-      <a class="verify-footer-sign-up" [routerLink]="['/signup']">
+      <a
+        class="verify-footer-sign-up"
+        [routerLink]="['/signup']">
         {{ t('verify.footer_button') }}
       </a>
     </p>

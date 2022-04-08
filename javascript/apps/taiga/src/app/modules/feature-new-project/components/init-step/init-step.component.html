@@ -21,7 +21,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <h1 class="new-step-title">{{ t('new_project.new_project') }}</h1>
 
     <form [formGroup]="createProjectForm">
-      <tg-ui-select [label]="t('commons.workspace')" type="avatar">
+      <tg-ui-select
+        [label]="t('commons.workspace')"
+        type="avatar">
         <tui-select
           tuiTextfieldSize="l"
           formControlName="workspace"
@@ -36,7 +38,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [itemContent]="content">
           </tui-data-list-wrapper>
         </tui-select>
-        <tg-ui-error inputError error="required">
+        <tg-ui-error
+          inputError
+          error="required">
           {{ t('new_project.choose_workspace_error') }}
         </tg-ui-error>
       </tg-ui-select>
@@ -48,11 +52,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             data-test="template-item"
             (click)="template.action()"
             class="template-item">
-            <tui-svg class="template-icon" [src]="template.icon"></tui-svg>
+            <tui-svg
+              class="template-icon"
+              [src]="template.icon"></tui-svg>
             <div class="template-data">
               <div class="template-title">
                 {{ template.title }}
-                <tui-svg *ngIf="template.tip" class="template-tip" src="help">
+                <tui-svg
+                  *ngIf="template.tip"
+                  class="template-tip"
+                  src="help">
                 </tui-svg>
               </div>
               <div class="template-description">{{ template.description }}</div>
@@ -61,7 +70,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </ng-container>
       </div>
 
-      <ng-template #content let-data>
+      <ng-template
+        #content
+        let-data>
         <div class="workspace-option">
           <tg-ui-avatar
             size="m"

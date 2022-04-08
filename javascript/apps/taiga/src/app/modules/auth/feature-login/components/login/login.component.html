@@ -8,9 +8,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t; read: 'auth'">
   <ng-container *ngIf="model$ | async as vm">
-    <form #form="ngForm" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <tg-ui-input class="input-username" [label]="t('login.username')">
-        <input formControlName="username" data-test="login-username" inputRef />
+    <form
+      #form="ngForm"
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()">
+      <tg-ui-input
+        class="input-username"
+        [label]="t('login.username')">
+        <input
+          formControlName="username"
+          data-test="login-username"
+          inputRef />
         <ng-container inputError>
           <tg-ui-error
             [enabled]="form.submitted"
@@ -20,9 +28,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </tg-ui-error>
         </ng-container>
       </tg-ui-input>
-      <tg-ui-input class="input-password" [label]="t('login.password')">
+      <tg-ui-input
+        class="input-password"
+        [label]="t('login.password')">
         <ng-container adjacentLabelContent>
-          <a class="forgot-password" appearance="primary" tuiLink type="button">
+          <a
+            class="forgot-password"
+            appearance="primary"
+            tuiLink
+            type="button">
             {{ t('login.forgot_password') }}
           </a>
         </ng-container>

@@ -9,12 +9,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <div class="error-wrapper">
     <div class="error-container">
-      <a [routerLink]="['/']" [attr.aria-label]="t('navigation.go_home')">
-        <img src="/assets/images/LogoTaiga.svg" alt="" />
+      <a
+        [routerLink]="['/']"
+        [attr.aria-label]="t('navigation.go_home')">
+        <img
+          src="/assets/images/LogoTaiga.svg"
+          alt="" />
       </a>
       <h1 class="error-title">{{ t('errors_page.403.title') }}</h1>
-      <p class="error-paragraph" [innerHtml]="t('errors_page.403.text')"></p>
-      <button appearance="primary" tuiButton (click)="backHome()" type="button">
+      <p
+        class="error-paragraph"
+        [innerHtml]="t('errors_page.403.text')"></p>
+      <button
+        appearance="primary"
+        tuiButton
+        (click)="backHome()"
+        type="button">
         {{ t('errors_page.403.call_for_action') }}
       </button>
     </div>

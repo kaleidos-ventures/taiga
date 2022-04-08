@@ -57,13 +57,12 @@ export class NewProjectEffects {
       return this.actions$.pipe(
         ofType(NewProjectActions.createProjectSuccess),
         map((action) => {
-          void this.router.navigate([
-            '/project/',
-            action.project.slug,
-            'kanban',
-          ], {
-            state: { invite: true }
-          });
+          void this.router.navigate(
+            ['/project/', action.project.slug, 'kanban'],
+            {
+              state: { invite: true },
+            }
+          );
         })
       );
     },

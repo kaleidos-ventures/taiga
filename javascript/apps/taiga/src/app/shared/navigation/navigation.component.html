@@ -6,7 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t; read: 'navigation'">
-  <ng-container>
+  <ng-container *ngIf="!logged">
     <div class="left">
       <a
         appearance="home-button"

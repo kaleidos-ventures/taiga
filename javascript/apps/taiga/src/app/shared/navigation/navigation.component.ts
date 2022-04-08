@@ -9,6 +9,7 @@
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 @Component({
   selector: 'tg-navigation',
   templateUrl: './navigation.component.html',
@@ -20,6 +21,7 @@ export class NavigationComponent {
   public openUserDropdown = false;
 
   public user$ = this.store.select(selectUser);
+  public logged = this.authService.isLogged();
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, private authService: AuthService) {}
 }

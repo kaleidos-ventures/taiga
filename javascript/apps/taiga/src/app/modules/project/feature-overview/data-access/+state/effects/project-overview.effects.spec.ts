@@ -13,28 +13,45 @@ import { ProjectApiService } from '@taiga/api';
 
 import { ProjectOverviewEffects } from './project-overview.effects';
 import { Action } from '@ngrx/store';
-import { InvitationMockFactory, MembershipMockFactory } from '@taiga/data';
+import {
+  InvitationMockFactory,
+  MembershipMockFactory,
+  ProjectMockFactory,
+} from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import {
   fetchMembersSuccess,
   initMembers,
 } from '../actions/project-overview.actions';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 
 describe('ProjectOverviewEffects', () => {
   let actions$: Observable<Action>;
+  let store: MockStore;
   let spectator: SpectatorService<ProjectOverviewEffects>;
   const createService = createServiceFactory({
     service: ProjectOverviewEffects,
-    providers: [provideMockActions(() => actions$)],
+    providers: [
+      provideMockActions(() => actions$),
+      provideMockStore({ initialState: {} }),
+    ],
     imports: [],
     mocks: [ProjectApiService],
   });
 
   beforeEach(() => {
     spectator = createService();
+    store = spectator.inject(MockStore);
   });
 
-  it('init members', () => {
+  it('init members admin', () => {
+    const project = ProjectMockFactory();
+
+    project.amIAdmin = true;
+
+    store.overrideSelector(selectCurrentProject, project);
+
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectOverviewEffects);
 
@@ -65,5 +82,46 @@ describe('ProjectOverviewEffects', () => {
     });
 
     expect(effects.initMembers$).toBeObservable(expected);
+    expect(effects.initMembers$).toSatisfyOnFlush(() => {
+      expect(projectApiService.getMembers).toHaveBeenCalledWith(project.slug);
+      expect(projectApiService.getInvitations).toHaveBeenCalledWith(
+        project.slug
+      );
+    });
+  });
+
+  it('init members regular user', () => {
+    const project = ProjectMockFactory();
+
+    project.amIAdmin = false;
+
+    store.overrideSelector(selectCurrentProject, project);
+
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(ProjectOverviewEffects);
+
+    const membershipResponse = [
+      MembershipMockFactory(),
+      MembershipMockFactory(),
+    ];
+
+    projectApiService.getMembers.mockReturnValue(
+      cold('-b|', { b: membershipResponse })
+    );
+
+    actions$ = hot('-a', { a: initMembers() });
+
+    const expected = cold('--a', {
+      a: fetchMembersSuccess({
+        members: membershipResponse,
+        invitations: [],
+      }),
+    });
+
+    expect(effects.initMembers$).toBeObservable(expected);
+    expect(effects.initMembers$).toSatisfyOnFlush(() => {
+      expect(projectApiService.getMembers).toHaveBeenCalledWith(project.slug);
+      expect(projectApiService.getInvitations).not.toHaveBeenCalled();
+    });
   });
 });

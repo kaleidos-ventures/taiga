@@ -16,6 +16,7 @@ import {
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { initMembers } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { map } from 'rxjs/operators';
+import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 
 @Component({
   selector: 'tg-project-members',
@@ -27,7 +28,20 @@ import { map } from 'rxjs/operators';
 export class ProjectMembersComponent {
   public readonly model$ = this.state.select().pipe(
     map((state) => {
-      const membersAndInvitations = [...state.members, ...state.invitations];
+      const currentUser = this.auth.getUser();
+
+      const currentMember = state.members.find(
+        (member) => member.user.username === currentUser?.username
+      );
+      const members = state.members.filter(
+        (member) => member.user.username !== currentUser?.username
+      );
+
+      const membersAndInvitations = [
+        ...(currentMember ? [currentMember] : []),
+        ...members,
+        ...state.invitations,
+      ];
 
       return {
         loading: !state.members.length,
@@ -41,6 +55,7 @@ export class ProjectMembersComponent {
   public showAllMembers = false;
 
   constructor(
+    private auth: AuthService,
     private store: Store,
     private state: RxState<{
       members: Membership[];

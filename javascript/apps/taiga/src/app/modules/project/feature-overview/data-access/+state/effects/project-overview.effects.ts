@@ -7,11 +7,14 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { fetch } from '@nrwl/angular';
 import { ProjectApiService } from '@taiga/api';
 import { zip } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
 
 @Injectable()
@@ -19,16 +22,30 @@ export class ProjectOverviewEffects {
   public initMembers$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(ProjectOverviewActions.initMembers),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
       fetch({
-        run: () => {
-          return zip(
-            this.projectApiService.getMembers(),
-            this.projectApiService.getInvitations()
-          ).pipe(
-            map(([members, invitations]) => {
+        run: (_, project) => {
+          if (project.amIAdmin) {
+            return zip(
+              this.projectApiService.getMembers(project.slug),
+              this.projectApiService.getInvitations(project.slug)
+            ).pipe(
+              map(([members, invitations]) => {
+                return ProjectOverviewActions.fetchMembersSuccess({
+                  members,
+                  invitations,
+                });
+              })
+            );
+          }
+
+          return this.projectApiService.getMembers(project.slug).pipe(
+            map((members) => {
               return ProjectOverviewActions.fetchMembersSuccess({
                 members,
-                invitations,
+                invitations: [],
               });
             })
           );
@@ -38,6 +55,7 @@ export class ProjectOverviewEffects {
   });
 
   constructor(
+    private store: Store,
     private actions$: Actions,
     private projectApiService: ProjectApiService
   ) {}

@@ -10,11 +10,18 @@ import { createAction, props } from '@ngrx/store';
 import { Contact } from '@taiga/data';
 
 export const fetchMyContacts = createAction(
-  '[Project] fetch my contacts',
+  '[Invitation] fetch my contacts',
   props<{ emails: string[] }>()
 );
 
 export const fetchMyContactsSuccess = createAction(
-  '[Project] fetch my contacts success',
+  '[Invitation] fetch my contacts success',
   props<{ contacts: Contact[] }>()
 );
+
+export const inviteUsersSuccess = createAction(
+  '[Invitation] invite users success',
+  props<{ invitations: number }>()
+);
+
+export const inviteUsersError = createAction('[Invitation] invite users error');

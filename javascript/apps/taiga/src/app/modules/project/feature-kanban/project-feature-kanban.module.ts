@@ -13,6 +13,7 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
 import { TuiSvgModule } from '@taiga-ui/core';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
 import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 
 @NgModule({
   declarations: [ProjectFeatureKanbanComponent],
@@ -22,6 +23,12 @@ import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
     TuiSvgModule,
     ModalModule,
     InviteToProjectModule,
+  ],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'kanban',
+    },
   ],
 })
 export class ProjectFeatureKanbanModule {}

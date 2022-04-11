@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
 
-import { Contact } from '@taiga/data';
+import { Contact, InvitationRequest } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
@@ -22,5 +22,14 @@ export class InvitationApiService {
     return this.http.post<Contact[]>(`${this.config.apiUrl}/my/contacts`, {
       emails,
     });
+  }
+
+  public inviteUsers(slug: string, invitations: InvitationRequest[]) {
+    return this.http.post(
+      `${this.config.apiUrl}/projects/${slug}/invitations`,
+      {
+        invitations,
+      }
+    );
   }
 }

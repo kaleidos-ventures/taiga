@@ -53,6 +53,7 @@ export class AppService {
         return this.toastNotification({
           label: config.options.label,
           message: config.options.message,
+          paramsMessage: config.options.paramsMessage,
           status: config.options.status,
           scope: config.options.scope,
         });

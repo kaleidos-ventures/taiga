@@ -7,6 +7,7 @@
  */
 
 import { TuiNotification } from '@taiga-ui/core';
+import { HashMap } from '@ngneat/transloco';
 
 export interface UnexpectedError {
   message: string;
@@ -16,6 +17,7 @@ export interface ErrorManagementToastOptions {
   options: {
     label: string;
     message: string;
+    paramsMessage?: HashMap<unknown>;
     status: TuiNotification;
     scope?: string;
   };

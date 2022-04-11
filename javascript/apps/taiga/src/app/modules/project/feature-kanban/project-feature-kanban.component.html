@@ -8,13 +8,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <p>kanban-page works!</p>
 
-<tg-ui-modal
-  [open]="invitePeopleModal"
-  (requestClose)="closeModal()">
+<tg-ui-modal [open]="invitePeopleModal" (requestClose)="closeModal()">
   <ng-container *ngIf="project$ | async as project">
     <tg-invite-to-project
       (closeModal)="closeModal()"
-      (finishNewProject)="onInvite($event)"
       [project]="project"></tg-invite-to-project>
   </ng-container>
 </tg-ui-modal>

@@ -7,7 +7,16 @@
  */
 
 import { Membership } from './membership.model';
-
 export interface Invitation extends Partial<Membership> {
   email: string;
+}
+export interface Contact {
+  email: string;
+  username: string;
+  fullName: string;
+}
+export interface InvitationRequest {
+  email: string;
+  role?: string;
+  roleSlug?: string;
 }

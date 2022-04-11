@@ -16,9 +16,12 @@ import {
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Project, Role, User } from '@taiga/data';
+import { InvitationRequest, Project, Role, User } from '@taiga/data';
 import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
-import { fetchMyContacts } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import {
+  fetchMyContacts,
+  inviteUsersSuccess,
+} from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import {
   selectContacts,
   selectMemberRolesOrdered,
@@ -26,11 +29,11 @@ import {
 } from '~/app/shared/invite-to-project/data-access/+state/selectors/project.selectors';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { skip, switchMap } from 'rxjs/operators';
+import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
+import { Actions, ofType } from '@ngrx/effects';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
-interface Invitation {
-  email: string;
-  role: string;
-}
+@UntilDestroy()
 @Component({
   selector: 'tg-invite-to-project',
   templateUrl: './invite-to-project.component.html',
@@ -43,9 +46,6 @@ interface Invitation {
 export class InviteToProjectComponent implements OnInit {
   @Input()
   public project!: Project;
-
-  @Output()
-  public finishNewProject = new EventEmitter<Invitation[]>();
 
   @Output()
   public closeModal = new EventEmitter();
@@ -77,7 +77,17 @@ export class InviteToProjectComponent implements OnInit {
   public contacts$ = this.store.select(selectContacts);
   public usersToInvite$!: Observable<Partial<User>[]>;
 
-  constructor(private fb: FormBuilder, private store: Store) {}
+  constructor(
+    private fb: FormBuilder,
+    private store: Store,
+    private actions$: Actions
+  ) {
+    this.actions$
+      .pipe(ofType(inviteUsersSuccess), untilDestroyed(this))
+      .subscribe(() => {
+        this.close();
+      });
+  }
 
   public get users() {
     return (this.inviteProjectForm.controls['users'] as FormArray)
@@ -170,11 +180,12 @@ export class InviteToProjectComponent implements OnInit {
     return this.orderedRoles?.find((role) => role.name === roleName);
   }
 
-  public generatePayload(): Invitation[] {
+  public generatePayload(): InvitationRequest[] {
     return this.users.map((user) => {
       return {
         email: user.get('email')?.value as string,
-        role: this.getRoleSlug(user.get('roles')?.value as string)?.slug || '',
+        roleSlug:
+          this.getRoleSlug(user.get('roles')?.value as string)?.slug || '',
       };
     });
   }
@@ -184,8 +195,12 @@ export class InviteToProjectComponent implements OnInit {
     if (this.users.length > 50) {
       this.inviteEmailsErrors.moreThanFifty = true;
     } else if (this.users.length) {
-      this.finishNewProject.next(this.generatePayload());
-      this.close();
+      this.store.dispatch(
+        inviteUsersNewProject({
+          slug: this.project.slug,
+          invitation: this.generatePayload(),
+        })
+      );
     } else {
       this.inviteEmailsErrors.listEmpty = true;
     }

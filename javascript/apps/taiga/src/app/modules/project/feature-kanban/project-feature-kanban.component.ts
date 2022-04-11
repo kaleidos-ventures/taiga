@@ -7,9 +7,7 @@
  */
 
 import { Component } from '@angular/core';
-import { User } from '@taiga/data';
 import { Store } from '@ngrx/store';
-import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 
 @Component({
@@ -26,14 +24,6 @@ export class ProjectFeatureKanbanComponent {
   }
 
   public project$ = this.store.select(selectCurrentProject);
-
-  public onInvite(users: Partial<User>[]) {
-    if (users.length) {
-      console.log('This user will be added', users);
-    }
-
-    this.store.dispatch(inviteUsersNewProject());
-  }
 
   public closeModal() {
     this.invitePeopleModal = false;

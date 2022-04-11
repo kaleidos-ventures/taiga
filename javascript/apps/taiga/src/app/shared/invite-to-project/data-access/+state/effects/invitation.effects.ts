@@ -9,18 +9,20 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import * as InvitationActions from '../actions/invitation.action';
+import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { InvitationApiService } from '@taiga/api';
 import { fetch } from '@nrwl/angular';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Contact } from '@taiga/data';
+import { Contact, ErrorManagementToastOptions } from '@taiga/data';
+import { TuiNotification } from '@taiga-ui/core';
 
 @Injectable()
 export class InvitationEffects {
-  public myContactsSuccess$ = createEffect(() => {
+  public myContacts$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(InvitationActions.fetchMyContacts),
       fetch({
@@ -36,6 +38,73 @@ export class InvitationEffects {
       })
     );
   });
+
+  public sendInvitations$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(NewProjectActions.inviteUsersNewProject),
+      fetch({
+        run: (action) => {
+          return this.invitationApiService
+            .inviteUsers(action.slug, action.invitation)
+            .pipe(
+              map(() => {
+                return InvitationActions.inviteUsersSuccess({
+                  invitations: action.invitation.length,
+                });
+              })
+            );
+        },
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          const options: ErrorManagementToastOptions = {
+            type: 'toast',
+            options: {
+              label: 'invite_step.invitation_error',
+              message:
+                action.invitation.length === 1
+                  ? 'failed_send_invite'
+                  : 'failed_send_invites',
+              paramsMessage:
+                action.invitation.length === 1
+                  ? undefined
+                  : { invitations: action.invitation.length },
+              status: TuiNotification.Error,
+              scope: 'kanban',
+            },
+          };
+          this.appService.errorManagement(httpResponse, {
+            400: options,
+            500: options,
+          });
+          return InvitationActions.inviteUsersError();
+        },
+      })
+    );
+  });
+
+  public sendInvitationsSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(InvitationActions.inviteUsersSuccess),
+        tap((action) => {
+          this.appService.toastNotification({
+            label: 'invite_step.invitation_ok',
+            message:
+              action.invitations === 1
+                ? 'invite_step.invitation_success'
+                : 'invite_step.invitations_success',
+            paramsMessage:
+              action.invitations > 1
+                ? { invitations: action.invitations }
+                : undefined,
+            status: TuiNotification.Success,
+            scope: 'kanban',
+            autoClose: true,
+          });
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   constructor(
     private actions$: Actions,

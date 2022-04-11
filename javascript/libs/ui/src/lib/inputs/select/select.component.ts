@@ -100,6 +100,10 @@ export class SelectComponent implements AfterContentInit {
     return '';
   }
 
+  @HostBinding('class.readonly') public get readonly() {
+    return this.select.readOnly;
+  }
+
   constructor(
     private controlContainer: ControlContainer,
     private fieldService: FieldService,

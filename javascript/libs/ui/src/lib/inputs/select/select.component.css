@@ -35,6 +35,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 :host {
   display: block;
 
+  &.readonly ::ng-deep {
+    & tui-arrow {
+      visibility: hidden;
+    }
+  }
+
   &.invalid.show-errors {
     &.update-on-submit.submitted::ng-deep,
     &.update-on-blur.dirty::ng-deep,

@@ -8,18 +8,21 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 label {
   color: var(--color-gray80);
-  font-weight: var(--font-weight-medium);
   line-height: 1.5;
   margin-block-end: var(--spacing-4);
   margin-inline-start: var(--spacing-4);
   min-inline-size: 0;
 
-  &[for] {
+  &:not(.readonly) {
+    font-weight: var(--font-weight-medium);
+  }
+
+  &[for]:not(.readonly) {
     cursor: pointer;
   }
 }
 
-:host:focus-within label {
+:host:focus-within:not(.readonly) label {
   color: var(--color-secondary);
 }
 

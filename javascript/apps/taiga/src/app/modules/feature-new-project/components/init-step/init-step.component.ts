@@ -11,8 +11,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -32,7 +34,7 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
   styleUrls: ['../../styles/project.shared.css', './init-step.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InitStepComponent implements OnInit {
+export class InitStepComponent implements OnInit, OnChanges {
   @Input()
   public selectedWorkspaceSlug!: ProjectCreation['workspaceSlug'];
 
@@ -127,7 +129,7 @@ export class InitStepComponent implements OnInit {
 
   public initForm() {
     this.createProjectForm = this.fb.group({
-      workspace: [this.getCurrentWorkspace(), Validators.required],
+      workspace: [undefined, Validators.required],
     });
   }
 
@@ -150,6 +152,14 @@ export class InitStepComponent implements OnInit {
       });
     } else {
       this.createProjectForm.markAllAsTouched();
+    }
+  }
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (this.createProjectForm && changes.workspaces) {
+      this.createProjectForm
+        .get('workspace')
+        ?.setValue(this.getCurrentWorkspace());
     }
   }
 }

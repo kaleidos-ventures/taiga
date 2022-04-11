@@ -16,6 +16,7 @@ import { FormBuilder } from '@angular/forms';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { ActivatedRoute } from '@angular/router';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
+import { SimpleChange } from '@angular/core';
 
 const workspaceSlug = randDomainSuffix({ length: 3 }).join('-');
 
@@ -99,6 +100,10 @@ describe('InitStepComponent', () => {
     spectator.component.workspaces = [workspace];
     spectator.component.selectedWorkspaceSlug = workspace.slug;
     spectator.component.initForm();
+    spectator.component.ngOnChanges({
+      workspaces: new SimpleChange(null, spectator.component.workspaces, false),
+    });
+
     expect(spectator.component.createProjectForm.get('workspace')?.value).toBe(
       workspace
     );

@@ -13,7 +13,7 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Workspace } from '@taiga/data';
@@ -30,7 +30,10 @@ import {
   selectLoadingWorkpace,
   selectWorkspaces,
 } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
-import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
+import {
+  fetchWorkspaceList,
+  resetWorkspace,
+} from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 
 @Component({
   selector: 'tg-workspace',
@@ -60,7 +63,7 @@ import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/
     ]),
   ],
 })
-export class WorkspaceComponent {
+export class WorkspaceComponent implements OnDestroy {
   public readonly model$ = this.state.select().pipe(
     map((model) => {
       let skeletonAnimation = 'nothing';
@@ -126,5 +129,9 @@ export class WorkspaceComponent {
   public setCardAmounts(width: number) {
     const amount = Math.ceil(width / 250);
     this.amountOfProjectsToShow = amount >= 6 ? 6 : amount;
+  }
+
+  public ngOnDestroy() {
+    this.store.dispatch(resetWorkspace());
   }
 }

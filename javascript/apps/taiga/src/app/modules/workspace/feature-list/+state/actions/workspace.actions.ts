@@ -53,3 +53,5 @@ export const fetchWorkspaceProjectsSuccess = createAction(
   '[WorkspaceList] Fetch workspace projects success',
   props<{ slug: Workspace['slug']; projects: Project[] }>()
 );
+
+export const resetWorkspace = createAction('[WorkspaceList] reset');

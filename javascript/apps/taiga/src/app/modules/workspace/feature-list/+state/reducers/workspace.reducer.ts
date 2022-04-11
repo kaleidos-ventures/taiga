@@ -90,7 +90,14 @@ export const reducer = createReducer(
 
       return state;
     }
-  )
+  ),
+  on(WorkspaceActions.resetWorkspace, (state): WorkspaceState => {
+    state = {
+      ...initialState,
+    };
+
+    return state;
+  })
 );
 
 export const workspaceFeature = createFeature({

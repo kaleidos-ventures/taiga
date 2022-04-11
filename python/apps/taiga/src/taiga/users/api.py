@@ -5,30 +5,21 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from fastapi import APIRouter
 from taiga.auth import services as auth_services
 from taiga.auth.models import AccessWithRefreshToken
-from taiga.auth.routing import AuthAPIRouter
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_422
+from taiga.routers import routes
 from taiga.users import exceptions as services_ex
 from taiga.users import services as users_services
 from taiga.users.models import User
 from taiga.users.serializers import UserMeSerializer, UserSerializer
 from taiga.users.validators import CreateUserValidator, VerifyTokenValidator
 
-metadata = {
-    "name": "users",
-    "description": "Endpoint for users resources.",
-}
 
-router = AuthAPIRouter(prefix="/users", tags=["users"])
-unauthorized_router = APIRouter(prefix="/users", tags=["users"])
-
-
-@router.get(
+@routes.users.get(
     "/me",
     name="users.me",
     summary="Get authenticared user profile",
@@ -46,7 +37,7 @@ async def me(request: Request) -> User:
     return request.user
 
 
-@unauthorized_router.post(
+@routes.unauth_users.post(
     "",
     name="users.create",
     summary="Sign up user",
@@ -63,7 +54,7 @@ async def create_user(form: CreateUserValidator) -> User:
         raise ex.BadRequest("Email already exists")
 
 
-@unauthorized_router.post(
+@routes.unauth_users.post(
     "/verify",
     name="users.verify",
     summary="Verify the account of a new signup user",

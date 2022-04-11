@@ -5,26 +5,18 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from fastapi import APIRouter, Response, status
+from fastapi import Response, status
 from taiga.auth import exceptions as services_ex
 from taiga.auth import services as auth_services
-from taiga.auth.routing import AuthAPIRouter
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.auth.validators import AccessTokenValidator, RefreshTokenValidator
 from taiga.base.api import Request
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_403, ERROR_422
-
-metadata = {
-    "name": "auth",
-    "description": "Enpoints for API authentication.",
-}
-
-router = AuthAPIRouter(prefix="/auth", tags=["auth"])
-unauthorized_router = APIRouter(prefix="/auth", tags=["auth"], responses=ERROR_401)
+from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_422
+from taiga.routers import routes
 
 
-@unauthorized_router.post(
+@routes.unauth.post(
     "/token",
     name="auth.token",
     summary="Get token",
@@ -41,7 +33,7 @@ async def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
     return AccessTokenWithRefreshSerializer(token=data.token, refresh=data.refresh)
 
 
-@unauthorized_router.post(
+@routes.unauth.post(
     "/token/refresh",
     name="auth.token.refresh",
     summary="Refresh token",
@@ -58,7 +50,7 @@ async def refresh(form: RefreshTokenValidator) -> AccessTokenWithRefreshSerializ
     return AccessTokenWithRefreshSerializer(token=data.token, refresh=data.refresh)
 
 
-@router.post(
+@routes.auth.post(
     "/token/deny",
     name="auth.token.denu",
     summary="Deny a refresh token",

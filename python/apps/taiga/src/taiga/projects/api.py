@@ -7,7 +7,6 @@
 
 from fastapi import Query
 from fastapi.params import Depends
-from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
@@ -18,15 +17,8 @@ from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.projects.validators import PermissionsValidator, ProjectValidator
+from taiga.routers import routes
 from taiga.workspaces.api import get_workspace_or_404
-
-metadata = {
-    "name": "projects",
-    "description": "Endpoint for projects resources.",
-}
-
-router = AuthAPIRouter(prefix="/projects", tags=["projects"])
-router_workspaces = AuthAPIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"])
 
 # PERMISSIONS
 LIST_WORKSPACE_PROJECTS = HasPerm("view_workspace")
@@ -38,7 +30,7 @@ UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 
 
-@router_workspaces.get(
+@routes.workspaces_projects.get(
     "",
     name="workspace.projects.list",
     summary="List workspace projects",
@@ -58,7 +50,7 @@ async def list_workspace_projects(
     return await projects_services.get_workspace_projects_for_user(workspace=workspace, user=request.user)
 
 
-@router.post(
+@routes.projects.post(
     "",
     name="projects.create",
     summary="Create project",
@@ -85,7 +77,7 @@ async def create_project(
     return await projects_services.get_project_detail(project=project, user=request.user)
 
 
-@router.get(
+@routes.projects.get(
     "/{slug}",
     name="projects.get",
     summary="Get project",
@@ -102,7 +94,7 @@ async def get_project(request: Request, slug: str = Query("", description="the p
     return await projects_services.get_project_detail(project=project, user=request.user)
 
 
-@router.get(
+@routes.projects.get(
     "/{slug}/public-permissions",
     name="project.public-permissions.get",
     summary="Get project public permissions",
@@ -121,7 +113,7 @@ async def get_project_public_permissions(
     return project.public_permissions
 
 
-@router.put(
+@routes.projects.put(
     "/{slug}/public-permissions",
     name="project.public-permissions.put",
     summary="Edit project public permissions",
@@ -146,7 +138,7 @@ async def update_project_public_permissions(
         raise ex.BadRequest("Given permissions are incompatible")
 
 
-@router.get(
+@routes.projects.get(
     "/{slug}/workspace-member-permissions",
     name="project.workspace-member-permissions.get",
     summary="Get project workspace member permissions",
@@ -168,7 +160,7 @@ async def get_project_workspace_member_permissions(
         raise ex.BadRequest("The workspace is not a premium one, so these perms cannot be seen")
 
 
-@router.put(
+@routes.projects.put(
     "/{slug}/workspace-member-permissions",
     name="project.workspace-member-permissions.put",
     summary="Edit project workspace memeber permissions",

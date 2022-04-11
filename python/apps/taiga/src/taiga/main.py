@@ -14,14 +14,13 @@ from taiga.base.db.middlewares import DBConnectionMiddleware
 from taiga.conf import settings
 from taiga.exceptions.handlers import http_exception_handler, request_validation_exception_handler
 from taiga.exceptions.middlewares import UnexpectedExceptionMiddleware
-from taiga.routers import router, tags_metadata
+from taiga.routers.loader import load_routes
 from taiga.tasksqueue.middlewares import TaskQueueMiddleware
 
 api = FastAPI(
     title=__title__,
     description=__description__,
     version=__version__,
-    openapi_tags=tags_metadata,
     debug=settings.DEBUG,
 )
 
@@ -63,4 +62,4 @@ api.exception_handler(RequestValidationError)(request_validation_exception_handl
 ##############################################
 
 # Add routers
-api.include_router(router)
+load_routes(api)

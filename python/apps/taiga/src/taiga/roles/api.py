@@ -6,7 +6,6 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from fastapi import Query
-from taiga.auth.routing import AuthAPIRouter
 from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
@@ -19,15 +18,14 @@ from taiga.projects.validators import PermissionsValidator
 from taiga.roles import services as roles_services
 from taiga.roles.models import Role
 from taiga.roles.serializers import RoleSerializer
-
-router = AuthAPIRouter(prefix="/projects", tags=["projects"])
+from taiga.routers import routes
 
 # PERMISSIONS
 GET_PROJECT_ROLES = IsProjectAdmin()
 UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
 
 
-@router.get(
+@routes.projects.get(
     "/{slug}/roles",
     name="project.permissions.get",
     summary="Get project roles permissions",
@@ -46,7 +44,7 @@ async def get_project_roles(
     return await roles_services.get_project_roles(project=project)
 
 
-@router.put(
+@routes.projects.put(
     "/{slug}/roles/{role_slug}/permissions",
     name="project.permissions.put",
     summary="Edit project roles permissions",

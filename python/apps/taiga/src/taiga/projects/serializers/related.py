@@ -17,3 +17,11 @@ class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
 
     class Config:
         orm_mode = True
+
+
+class ProjectSmallSummarySerializer(BaseModel):
+    name: str
+    slug: str
+
+    class Config:
+        orm_mode = True

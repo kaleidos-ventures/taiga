@@ -8,38 +8,130 @@
 from unittest.mock import patch
 
 import pytest
+from taiga.invitations import exceptions as ex
 from taiga.invitations import services
+from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.roles import exceptions as roles_ex
 from tests.utils import factories as f
 
-pytestmark = pytest.mark.django_db
+#######################################################
+# get_public_project_invitation
+#######################################################
+
+
+async def test_get_public_project_invitation_ok():
+    invitation = f.build_invitation(id=123)
+    token = await ProjectInvitationToken.create_for_object(invitation)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.users_repositories", autospec=True) as fake_users_repo,
+    ):
+        fake_invitations_repo.get_project_invitation.return_value = invitation
+        fake_users_repo.get_user_by_username_or_email.return_value = invitation.user
+        pub_invitation = await services.get_public_project_invitation(str(token))
+        fake_invitations_repo.get_project_invitation.assert_awaited_once_with(id=invitation.id)
+        assert pub_invitation.status == invitation.status
+        assert pub_invitation.email == invitation.email
+        assert pub_invitation.existing_user is True
+        assert pub_invitation.project == invitation.project
+
+
+async def test_get_public_project_invitation_ok_without_user():
+    invitation = f.build_invitation(id=123, user=None)
+    token = await ProjectInvitationToken.create_for_object(invitation)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.users_repositories", autospec=True) as fake_users_repo,
+    ):
+        fake_invitations_repo.get_project_invitation.return_value = invitation
+        fake_users_repo.get_user_by_username_or_email.return_value = None
+        pub_invitation = await services.get_public_project_invitation(str(token))
+        fake_invitations_repo.get_project_invitation.assert_awaited_once_with(id=invitation.id)
+        assert pub_invitation.status == invitation.status
+        assert pub_invitation.email == invitation.email
+        assert pub_invitation.existing_user is False
+        assert pub_invitation.project == invitation.project
+
+
+async def test_get_public_project_invitation_error_invalid_token():
+    with pytest.raises(ex.BadInvitationTokenError):
+        await services.get_public_project_invitation("invalid-token")
+
+
+async def test_get_public_project_invitation_error_invitation_not_exists():
+    invitation = f.build_invitation(id=123, user=None)
+    token = await ProjectInvitationToken.create_for_object(invitation)
+
+    with patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo:
+        fake_invitations_repo.get_project_invitation.return_value = None
+        pub_invitation = await services.get_public_project_invitation(str(token))
+        fake_invitations_repo.get_project_invitation.assert_awaited_once_with(id=invitation.id)
+        assert pub_invitation is None
+
+
+#######################################################
+# create_invitations
+#######################################################
 
 
 async def test_create_invitations_non_existing_role():
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
-    await f.create_role(project=project)
+    user = f.build_user()
+    project = f.build_project(owner=user)
+    role = f.build_role(project=project, slug="role")
     invitations = [{"email": "test@email.com", "role_slug": "non_existing_role"}]
 
-    with pytest.raises(roles_ex.NonExistingRoleError):
-        await services.create_invitations(project=project, invitations=invitations, invited_by=user)
+    with patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo:
+        fake_roles_repo.get_project_roles_as_dict.return_value = {role.slug: role}
+
+        with pytest.raises(roles_ex.NonExistingRoleError):
+            await services.create_invitations(project=project, invitations=invitations, invited_by=user)
 
 
 async def test_create_invitations():
-    user = await f.create_user()
-    await f.create_user(email="user-test@email.com")
-    project = await f.create_project(owner=user)
-    await f.create_role(project=project)
+    user1 = f.build_user()
+    user2 = f.build_user(email="user-test@email.com")
+    project = f.build_project(owner=user1)
+    role1 = f.build_role(project=project, slug="admin")
+    role2 = f.build_role(project=project, slug="general")
+
     invitations = [
-        {"email": "user-test@email.com", "role_slug": "admin"},
-        {"email": "test@email.com", "role_slug": "general"},
+        {"email": user2.email, "role_slug": role1.slug},
+        {"email": "test@email.com", "role_slug": role2.slug},
     ]
 
-    with patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo:
-        await services.create_invitations(project=project, invitations=invitations, invited_by=user)
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.invitations.services.users_repositories", autospec=True) as fake_users_repo,
+    ):
+        fake_roles_repo.get_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
+        fake_users_repo.get_users_by_emails_as_dict.return_value = {user2.email: user2}
+        await services.create_invitations(project=project, invitations=invitations, invited_by=user1)
 
+        fake_roles_repo.get_project_roles_as_dict.assert_awaited_once_with(project=project)
+        fake_users_repo.get_users_by_emails_as_dict.assert_awaited_once_with(emails=[user2.email, "test@email.com"])
         fake_invitations_repo.create_invitations.assert_awaited_once()
 
+        inv1 = fake_invitations_repo.create_invitations.await_args[1]["objs"][0]
+        assert inv1.user == user2
+        assert inv1.project == project
+        assert inv1.role == role1
+        assert inv1.email == user2.email
+        assert inv1.invited_by == user1
+
+        inv2 = fake_invitations_repo.create_invitations.await_args[1]["objs"][1]
+        assert inv2.user is None
+        assert inv2.project == project
+        assert inv2.role == role2
+        assert inv2.email == "test@email.com"
+        assert inv2.invited_by == user1
+
+
+#######################################################
+# get_project_invitations
+#######################################################
 
 async def test_get_project_invitations():
     project = f.build_project()

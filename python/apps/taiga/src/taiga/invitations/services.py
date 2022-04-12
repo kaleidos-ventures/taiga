@@ -5,13 +5,37 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from taiga.invitations import exceptions as ex
 from taiga.invitations import repositories as invitations_repositories
-from taiga.invitations.models import Invitation
+from taiga.invitations.models import Invitation, PublicInvitation
+from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.projects.models import Project
 from taiga.roles import exceptions as roles_ex
 from taiga.roles import repositories as roles_repositories
+from taiga.tokens import TokenError
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
+
+
+async def get_public_project_invitation(token: str) -> PublicInvitation | None:
+    try:
+        invitation_token = await ProjectInvitationToken.create(token=token)
+    except TokenError:
+        raise ex.BadInvitationTokenError()
+
+    # Get invitation
+    if invitation_data := invitation_token.object_data:
+        if invitation := await invitations_repositories.get_project_invitation(**invitation_data):
+            invited_user = await users_repositories.get_user_by_username_or_email(invitation.email)
+
+            return PublicInvitation(
+                status=invitation.status,
+                email=invitation.email,
+                existing_user=invited_user is not None,
+                project=invitation.project,
+            )
+
+    return None
 
 
 async def create_invitations(project: Project, invitations: list[dict[str, str]], invited_by: User) -> list[Invitation]:

@@ -10,10 +10,15 @@ from taiga.invitations.models import Invitation, InvitationStatus
 
 
 @sync_to_async
+def get_project_invitation(id: int) -> Invitation | None:
+    try:
+        return Invitation.objects.prefetch_related("user", "project").get(id=id)
+    except Invitation.DoesNotExist:
+        return None
+
+
+@sync_to_async
 def create_invitations(objs: list[Invitation]) -> list[Invitation]:
-    """
-    This repository create invitations in bulk
-    """
     return Invitation.objects.bulk_create(objs=objs)
 
 

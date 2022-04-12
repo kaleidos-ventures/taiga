@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     VERIFY_USER_TOKEN_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
 
     # Projects
+    PROJECT_INVITATION_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
     DEFAULT_PROJECT_TEMPLATE: str = "kanban"
 
     # Tasks (linux crontab style)

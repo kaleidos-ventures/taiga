@@ -27,6 +27,7 @@ users_metadata = {
 
 # /projects
 projects = AuthAPIRouter(prefix="/projects", tags=["projects"])
+unauth_projects = APIRouter(prefix="/projects", tags=["projects"])
 projects_metadata = {
     "name": "projects",
     "description": "Endpoint for projects resources.",
@@ -43,5 +44,6 @@ workspaces_metadata = {
 # /my
 my = AuthAPIRouter(prefix="/my", tags=["my"])
 my_metadata = {"name": "my", "description": "Endpoints for logged-in user's resources."}
+
 
 tags_metadata = [auth_metadata, users_metadata, projects_metadata, workspaces_metadata, my_metadata]

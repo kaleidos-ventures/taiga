@@ -5,17 +5,20 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import random
 from asgiref.sync import sync_to_async
+
+from taiga.invitations.choices import InvitationStatus
 
 from .base import Factory, factory
 
 
 class InvitationFactory(Factory):
-    email = factory.LazyAttribute(lambda obj: f"{obj.username}@email.com")
-    user = None
+    status = factory.LazyFunction(lambda: random.choice([s.value for s in InvitationStatus]))
+    email = factory.Sequence(lambda n: f"user{n}@email.com")
+    user = factory.SubFactory("tests.utils.factories.UserFactory")
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
     role = factory.SubFactory("tests.utils.factories.RoleFactory")
-    status = "pending"
 
     class Meta:
         model = "projects.Invitation"
@@ -24,3 +27,7 @@ class InvitationFactory(Factory):
 @sync_to_async
 def create_invitation(**kwargs):
     return InvitationFactory.create(**kwargs)
+
+
+def build_invitation(**kwargs):
+    return InvitationFactory.build(**kwargs)

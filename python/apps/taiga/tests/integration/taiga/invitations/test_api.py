@@ -9,9 +9,10 @@
 import pytest
 from fastapi import status
 from taiga.permissions import choices
+from taiga.invitations.tokens import ProjectInvitationToken
 from tests.utils import factories as f
 
-pytestmark = pytest.mark.django_db(transaction=True)
+pytestmark = pytest.mark.django_db
 
 
 ##########################################################
@@ -130,3 +131,29 @@ async def test_get_project_invitations_not_a_member(client):
     client.login(not_a_member)
     response = client.get(f"/projects/{project.slug}/invitations")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+#########################################################################
+# GET /projects/invitations/<token>
+#########################################################################
+
+
+async def test_get_project_invitation_ok(client):
+    invitation = await f.create_invitation()
+    token = await ProjectInvitationToken.create_for_object(invitation)
+
+    response = client.get(f"/projects/invitations/{str(token)}")
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_get_project_invitation_invalid_token(client):
+    response = client.get("/projects/invitations/invalid-token")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+async def test_get_project_invitation_invitation_does_not_exist(client):
+    invitation = f.build_invitation(id=111)
+    token = await ProjectInvitationToken.create_for_object(invitation)
+
+    response = client.get(f"/projects/invitations/{str(token)}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

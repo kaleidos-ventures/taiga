@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from .invitations import InvitationFactory, create_invitation  # noqa
+from .invitations import InvitationFactory, build_invitation, create_invitation  # noqa
 from .projects import (  # noqa
     ProjectFactory,
     ProjectTemplateFactory,

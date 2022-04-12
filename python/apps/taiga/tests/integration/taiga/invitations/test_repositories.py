@@ -14,10 +14,30 @@ from tests.utils import factories as f
 pytestmark = pytest.mark.django_db
 
 
+##########################################################
+# get_project_invitation
+##########################################################
+
+async def test_get_project_invitation_ok() -> None:
+    invitation = await f.create_invitation()
+    new_invitation = await repositories.get_project_invitation(invitation.id)
+    assert new_invitation is not None
+    assert new_invitation == invitation
+
+
+async def test_get_project_invitation_not_found() -> None:
+    new_invitation = await repositories.get_project_invitation(1001)
+    assert new_invitation is None
+
+
+##########################################################
+# create_invitations
+##########################################################
+
 async def test_create_invitations():
     user = await f.create_user()
-    user2 = await f.create_user()
     project = await f.create_project(owner=user)
+    user2 = await f.create_user()
     role = await f.create_role(project=project)
     role2 = await f.create_role(project=project)
     objs = [

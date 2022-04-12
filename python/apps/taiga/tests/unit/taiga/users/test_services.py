@@ -23,7 +23,7 @@ async def test_create_user_ok(tqmanager):
     username = "email"
     full_name = "Full Name"
     password = "CorrectP4ssword$"
-    user = await f.build_user(id=1, email=email, username=username, full_name=full_name)
+    user = f.build_user(id=1, email=email, username=username, full_name=full_name)
 
     with (
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
@@ -52,7 +52,7 @@ async def test_create_user_unverified(tqmanager):
     email = "email@email.com"
     username = "email"
     full_name = "Full Name"
-    user = await f.build_user(id=1, email=email, username=username, full_name=full_name, is_active=False)
+    user = f.build_user(id=1, email=email, username=username, full_name=full_name, is_active=False)
 
     with (
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
@@ -88,7 +88,7 @@ async def test_create_user_email_exists():
 
 
 async def test_verify_user_ok():
-    user = await f.build_user(is_active=False)
+    user = f.build_user(is_active=False)
     object_data = {"id": 1}
 
     with (
@@ -173,6 +173,6 @@ async def test_clean_expired_users():
 
 async def test_list_my_contacts():
     with patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repositories:
-        user = await f.build_user(is_active=True)
+        user = f.build_user(is_active=True)
         await services.list_user_contacts(user, [user.email])
         fake_users_repositories.get_user_contacts.assert_awaited_once_with(user_id=user.id, emails=[user.email])

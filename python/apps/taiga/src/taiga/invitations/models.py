@@ -5,6 +5,18 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from dataclasses import dataclass
 
 from taiga6.projects.choices import InvitationStatus  # noqa
 from taiga6.projects.models import Invitation  # noqa
+
+from taiga.invitations.choices import InvitationStatus
+from taiga.projects.models import Project
+
+
+@dataclass
+class PublicInvitation:
+    status: InvitationStatus
+    email: str
+    existing_user: bool
+    project: Project

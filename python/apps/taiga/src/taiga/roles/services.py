@@ -5,11 +5,18 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.exceptions import services as ex
+from taiga.exceptions import services as commons_ex
 from taiga.permissions import services as permissions_services
 from taiga.projects.models import Project
+from taiga.roles import exceptions as ex
 from taiga.roles import repositories as roles_repositories
 from taiga.roles.models import Membership, Role
+
+###############################################################
+# PROJECTS
+###############################################################
+
+# Roles
 
 
 async def get_project_roles(project: Project) -> list[Role]:
@@ -25,10 +32,10 @@ async def update_role_permissions(role: Role, permissions: list[str]) -> Role:
         raise ex.NonEditableRoleError()
 
     if not permissions_services.permissions_are_valid(permissions):
-        raise ex.NotValidPermissionsSetError()
+        raise commons_ex.NotValidPermissionsSetError()
 
     if not permissions_services.permissions_are_compatible(permissions):
-        raise ex.IncompatiblePermissionsSetError()
+        raise commons_ex.IncompatiblePermissionsSetError()
 
     return await roles_repositories.update_role_permissions(role=role, permissions=permissions)
 

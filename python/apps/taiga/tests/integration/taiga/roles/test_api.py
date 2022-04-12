@@ -13,6 +13,11 @@ from tests.utils import factories as f
 pytestmark = pytest.mark.django_db
 
 
+#########################################################################
+# PUT /projects/<project_slug>/roles/<role_slug>/permissions
+#########################################################################
+
+
 async def test_update_project_role_permissions_anonymous_user(client):
     project = await f.create_project()
     role_slug = "general"
@@ -87,16 +92,16 @@ async def test_update_project_role_permissions_not_valid_permissions(client):
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
-# async def test_update_project_role_permissions_ok(client):
-#     project = await f.create_project()
-#     role_slug = "general"
-#     data = {"permissions": ["view_us"]}
-#
-#     client.login(project.owner)
-#     response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
-#
-#     assert response.status_code == status.HTTP_200_OK, response.text
-#     assert data["permissions"] == response.json()["permissions"]
+async def test_update_project_role_permissions_ok(client):
+    project = await f.create_project()
+    role_slug = "general"
+    data = {"permissions": ["view_us"]}
+
+    client.login(project.owner)
+    response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
+
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert data["permissions"] == response.json()["permissions"]
 
 
 ##########################################################

@@ -8,25 +8,33 @@
 from unittest.mock import patch
 
 import pytest
-from taiga.exceptions import services as ex
+from taiga.exceptions import services as commons_ex
+from taiga.roles import exceptions as ex
 from taiga.roles import services
 from tests.utils import factories as f
 
-pytestmark = pytest.mark.django_db
+#######################################################
+# get_project_role
+#######################################################
 
 
 async def test_get_project_role():
-    project = await f.create_project()
+    project = f.build_project()
     slug = "general"
 
     with patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository:
-        fake_role_repository.get_project_role.return_value = await f.create_role()
+        fake_role_repository.get_project_role.return_value = f.build_role()
         await services.get_project_role(project=project, slug=slug)
         fake_role_repository.get_project_role.assert_awaited_once()
 
 
+#######################################################
+# update_project_role
+#######################################################
+
+
 async def test_update_role_permissions_is_admin():
-    role = await f.create_role(is_admin=True)
+    role = f.build_role(is_admin=True)
     permissions = []
 
     with pytest.raises(ex.NonEditableRoleError):
@@ -34,27 +42,27 @@ async def test_update_role_permissions_is_admin():
 
 
 async def test_update_role_permissions_incompatible_permissions():
-    role = await f.create_role(is_admin=False)
+    role = f.build_role(is_admin=False)
     permissions = ["view_tasks"]
 
-    with pytest.raises(ex.IncompatiblePermissionsSetError):
+    with pytest.raises(commons_ex.IncompatiblePermissionsSetError):
         await services.update_role_permissions(role=role, permissions=permissions)
 
 
 async def test_update_role_permissions_not_valid_permissions():
-    role = await f.create_role(is_admin=False)
+    role = f.build_role(is_admin=False)
     permissions = ["not_valid", "foo", "bar"]
 
-    with pytest.raises(ex.NotValidPermissionsSetError):
+    with pytest.raises(commons_ex.NotValidPermissionsSetError):
         await services.update_role_permissions(role=role, permissions=permissions)
 
 
 async def test_update_role_permissions_ok():
-    role = await f.create_role()
+    role = f.build_role()
     permissions = ["view_us"]
 
     with patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository:
-        fake_role_repository.update_role_permissions.return_value = await f.create_role()
+        fake_role_repository.update_role_permissions.return_value = role
         await services.update_role_permissions(role=role, permissions=permissions)
         fake_role_repository.update_role_permissions.assert_awaited_once()
 

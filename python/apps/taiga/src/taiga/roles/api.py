@@ -9,12 +9,13 @@ from fastapi import Query
 from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
-from taiga.exceptions import services as services_ex
+from taiga.exceptions import services as commons_services_ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import CanViewProject, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
 from taiga.projects.models import Project
 from taiga.projects.validators import PermissionsValidator
+from taiga.roles import exceptions as services_ex
 from taiga.roles import services as roles_services
 from taiga.roles.models import Membership, Role
 from taiga.roles.serializers import MembershipSerializer, RoleSerializer
@@ -24,6 +25,11 @@ from taiga.routers import routes
 GET_PROJECT_ROLES = IsProjectAdmin()
 UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
 GET_PROJECT_MEMBERSHIPS = CanViewProject()
+
+
+################################################
+# ROLES
+################################################
 
 
 @routes.projects.get(
@@ -70,12 +76,17 @@ async def update_project_role_permissions(
         await roles_services.update_role_permissions(role, form.permissions)
     except services_ex.NonEditableRoleError:
         raise ex.ForbiddenError("Cannot edit permissions in an admin role")
-    except services_ex.NotValidPermissionsSetError:
+    except commons_services_ex.NotValidPermissionsSetError:
         raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
-    except services_ex.IncompatiblePermissionsSetError:
+    except commons_services_ex.IncompatiblePermissionsSetError:
         raise ex.BadRequest("Given permissions are incompatible")
 
     return await get_project_role_or_404(project=project, slug=role_slug)
+
+
+################################################
+# MEMBERSHIPS
+################################################
 
 
 @routes.projects.get(
@@ -96,6 +107,11 @@ async def get_project_memberships(
     await check_permissions(permissions=GET_PROJECT_MEMBERSHIPS, user=request.user, obj=project)
 
     return await roles_services.get_project_memberships(project=project)
+
+
+################################################
+# COMMONS
+################################################
 
 
 async def get_project_role_or_404(project: Project, slug: str) -> Role:

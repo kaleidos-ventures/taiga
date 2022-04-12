@@ -27,6 +27,10 @@ def create_role(**kwargs):
     return RoleFactory.create(**kwargs)
 
 
+def build_role(**kwargs):
+    return RoleFactory.build(**kwargs)
+
+
 class WorkspaceRoleFactory(Factory):
     name = factory.Sequence(lambda n: f"WS Role {n}")
     slug = factory.Sequence(lambda n: f"test-ws-role-{n}")

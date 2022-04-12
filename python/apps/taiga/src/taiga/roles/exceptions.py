@@ -8,3 +8,7 @@
 
 class NonExistingRoleError(Exception):
     ...
+
+
+class NonEditableRoleError(Exception):
+    ...

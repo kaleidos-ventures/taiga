@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='outstandingtoken',
-            options={'ordering': ('content_type', 'object_id')},
+            options={'ordering': ('content_type', 'object_id', 'token_type')},
         ),
         migrations.AddField(
             model_name='outstandingtoken',

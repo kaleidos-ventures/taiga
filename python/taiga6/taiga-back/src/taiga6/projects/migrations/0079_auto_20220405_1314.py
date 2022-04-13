@@ -4,7 +4,6 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
-import taiga6.projects.models
 
 
 class Migration(migrations.Migration):
@@ -26,7 +25,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('email', models.EmailField(max_length=255, verbose_name='email')),
-                ('status', models.CharField(choices=[(taiga6.projects.models.InvitationStatus['PENDING'], 'pending'), (taiga6.projects.models.InvitationStatus['ACCEPTED'], 'accepted')], default=taiga6.projects.models.InvitationStatus['PENDING'], max_length=50)),
+                ('status', models.CharField(choices=[('pending', 'Pending'), ('accepted', 'Accepted')], default='pending', max_length=50, verbose_name='status')),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now, verbose_name='created at')),
                 ('invited_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='ihaveinvited+', to=settings.AUTH_USER_MODEL)),
                 ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='invitations', to='projects.project')),

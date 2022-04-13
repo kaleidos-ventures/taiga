@@ -5,5 +5,4 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
-from taiga6.projects.models import Invitation  # noqa
+from taiga6.projects.choices import InvitationStatus  # noqa

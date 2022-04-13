@@ -53,15 +53,6 @@ def get_project_logo_file_path(instance, filename):
     return get_file_path(instance, filename, "project")
 
 
-class InvitationStatus(Enum):
-    PENDING = "pending"
-    ACCEPTED = "accepted"
-
-    @classmethod
-    def choices(cls):
-        return [(item, item.value) for item in cls]
-
-
 class Invitation(models.Model):
     """
     This model stores all project invitations
@@ -90,9 +81,10 @@ class Invitation(models.Model):
     )
     email = models.EmailField(max_length=255, null=False, blank=False,
                                 verbose_name=_("email"))
-    status = models.CharField(choices=InvitationStatus.choices(), default=InvitationStatus.PENDING, max_length=50)
+    status = models.CharField(max_length=50, null=False, blank=False, choices=choices.InvitationStatus.choices,
+                              default=choices.InvitationStatus.PENDING, verbose_name=_("status"))
     created_at = models.DateTimeField(default=timezone.now,
-                                        verbose_name=_("created at"))
+                                      verbose_name=_("created at"))
     invited_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="ihaveinvited+",

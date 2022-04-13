@@ -12,7 +12,8 @@ from django.db import transaction
 from faker import Faker
 from fastapi import UploadFile
 from taiga.invitations import repositories as invitations_repositories
-from taiga.invitations.models import Invitation, InvitationStatus
+from taiga.invitations.choices import InvitationStatus
+from taiga.invitations.models import Invitation
 from taiga.permissions import choices
 from taiga.projects import services as projects_services
 from taiga.projects.models import Project

@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from django.db.models import TextChoices
 from django.utils.translation import gettext_lazy as _
 
 
@@ -26,3 +27,8 @@ BLOCKING_CODES = [
     (BLOCKED_BY_OWNER_LEAVING, _("This project is blocked because the owner left")),
     (BLOCKED_BY_DELETING, _("This project is blocked while it's deleted"))
 ]
+
+
+class InvitationStatus(TextChoices):
+    PENDING = "pending", _("Pending")
+    ACCEPTED = "accepted", _("Accepted")

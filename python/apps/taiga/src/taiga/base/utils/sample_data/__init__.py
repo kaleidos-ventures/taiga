@@ -11,11 +11,13 @@ from asgiref.sync import sync_to_async
 from django.db import transaction
 from faker import Faker
 from fastapi import UploadFile
+from taiga.invitations import repositories as invitations_repositories
+from taiga.invitations.models import Invitation, InvitationStatus
 from taiga.permissions import choices
 from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories
-from taiga.roles.models import Role, WorkspaceRole
+from taiga.roles.models import Membership, Role, WorkspaceRole
 from taiga.users.models import User
 from taiga.workspaces import services as workspaces_services
 from taiga.workspaces.models import Workspace
@@ -75,6 +77,10 @@ async def load_sample_data() -> None:
     await _create_project_with_several_roles(owner=custom_owner, workspace=workspace, users=users)
     await _create_membership_scenario()
 
+    # PROJECT INVITATIONS
+    for project in projects:
+        await _create_project_invitations(project=project, users=users)
+
     print("Sample data loaded.")
 
 
@@ -115,6 +121,11 @@ def _create_project_role(project: Project, name: str | None = None) -> Role:
 
 
 @sync_to_async
+def _get_project_roles(project: Project) -> list[Role]:
+    return list(project.roles.all())
+
+
+@sync_to_async
 def _get_project_admin_role(project: Project) -> Role:
     return project.roles.get(slug="admin")
 
@@ -122,6 +133,36 @@ def _get_project_admin_role(project: Project) -> Role:
 @sync_to_async
 def _get_project_other_roles(project: Project) -> list[Role]:
     return list(project.roles.exclude(slug="admin"))
+
+
+@sync_to_async
+def _get_project_memberships(project: Project) -> list[Membership]:
+    return list(project.memberships.all())
+
+
+@sync_to_async
+def _get_project_memberships_without_owner(project: Project) -> list[Membership]:
+    return list(project.memberships.exclude(user=project.owner))
+
+
+@sync_to_async
+def _get_project_members(project: Project) -> list[User]:
+    return list(project.members.all())
+
+
+@sync_to_async
+def _get_project_owner(project: Project) -> User:
+    return project.owner
+
+
+@sync_to_async
+def _get_membership_user(membership: Membership) -> User:
+    return membership.user
+
+
+@sync_to_async
+def _get_membership_role(membership: Membership) -> Role:
+    return membership.role
 
 
 async def _create_project_memberships(project: Project, users: list[User], except_for: User) -> None:
@@ -548,3 +589,59 @@ async def _create_membership_scenario() -> None:
     await sync_to_async(members_role.save)()
     await roles_repositories.create_membership(user=user1002, project=project, role=members_role)
     await sync_to_async(project.save)()
+
+
+################################
+# PROJECT INVITATIONS
+################################
+
+
+async def _create_project_invitations(project: Project, users: list[User]) -> None:
+    # add accepted invitations for project memberships
+    project_owner = await _get_project_owner(project=project)
+    invitations = [
+        Invitation(
+            user=await _get_membership_user(membership=membership),
+            project=project,
+            role=await _get_membership_role(membership=membership),
+            email=(await _get_membership_user(membership=membership)).email,
+            status=InvitationStatus.ACCEPTED,
+            invited_by=project_owner,
+        )
+        for membership in await _get_project_memberships_without_owner(project=project)
+    ]
+
+    # get users except the owner and the memberships of the project
+    other_users = [user for user in users if user not in await _get_project_members(project=project)]
+    random.shuffle(other_users)
+
+    # add 0, 1 or 2 pending invitations for registered users
+    num_users = random.randint(0, 2)
+    for user in other_users[:num_users]:
+        invitations.append(
+            Invitation(
+                user=user,
+                project=project,
+                role=random.choice(await _get_project_roles(project=project)),
+                email=user.email,
+                status=InvitationStatus.PENDING,
+                invited_by=project_owner,
+            )
+        )
+
+    # add 0, 1 or 2 pending invitations for unregistered users
+    num_users = random.randint(0, 2)
+    for i in range(num_users):
+        invitations.append(
+            Invitation(
+                user=None,
+                project=project,
+                role=random.choice(await _get_project_roles(project=project)),
+                email=f"email-{i}@email.com",
+                status=InvitationStatus.PENDING,
+                invited_by=project_owner,
+            )
+        )
+
+    # create invitations in bulk
+    await invitations_repositories.create_invitations(objs=invitations)

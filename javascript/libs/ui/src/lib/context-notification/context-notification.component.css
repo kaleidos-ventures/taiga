@@ -8,10 +8,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "tools/typography.css";
 
 :host {
-  --color-border: var(--color-gray20);
-
+  border: solid 1px var(--color-gray20);
   border-radius: 4px;
   display: inline-block;
+  line-height: 1.5;
   padding-block: var(--spacing-8);
   padding-inline: var(--spacing-8) var(--spacing-16);
 
@@ -57,6 +57,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host([status="info"]) {
   background: var(--color-info20);
+  border-color: var(--color-info30);
   color: var(--color-info80);
 
   &::after {
@@ -81,6 +82,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host([status="success"]) {
   background: var(--color-ok20);
+  border-color: var(--color-ok30);
   color: var(--color-ok80);
 
   &::after {
@@ -105,6 +107,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host([status="error"]) {
   background: var(--color-red20);
+  border-color: var(--color-red30);
   color: var(--color-red80);
 
   &::after {
@@ -129,6 +132,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host([status="warning"]) {
   background: var(--color-warning20);
+  border-color: var(--color-warning30);
   color: var(--color-warning80);
 
   &::after {
@@ -153,6 +157,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host([status="notice"]) {
   background: var(--color-notice20);
+  border-color: var(--color-notice30);
   color: var(--color-notice80);
 
   &::after {

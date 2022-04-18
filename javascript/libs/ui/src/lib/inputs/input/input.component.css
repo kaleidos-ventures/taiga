@@ -102,9 +102,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
 
     &:read-only {
-      background: var(--color-gray20);
-      border-color: var(--color-white);
-      color: var(--color-gray80);
+      background: var(--color-gray10);
+      border-color: var(--color-gray10);
+      color: var(--color-gray100);
       pointer-events: none;
     }
 

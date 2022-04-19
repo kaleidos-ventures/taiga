@@ -157,3 +157,41 @@ async def test_get_project_invitation_invitation_does_not_exist(client):
 
     response = client.get(f"/projects/invitations/{str(token)}")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+#########################################################################
+# POST /projects/invitations/<token>/accept
+#########################################################################
+
+
+async def test_accept_project_invitation_ok(client):
+    user = await f.create_user()
+    invitation = await f.create_invitation(email=user.email)
+    token = await ProjectInvitationToken.create_for_object(invitation)
+
+    client.login(user)
+    response = client.post(f"/projects/invitations/{str(token)}/accept")
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_accept_project_invitation_error_invitation_invalid_token(client):
+    response = client.post("/projects/invitations/invalid-token/accept")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+async def test_accept_project_invitation_error_invitation_does_not_exist(client):
+    invitation = f.build_invitation(id=111)
+    token = await ProjectInvitationToken.create_for_object(invitation)
+
+    response = client.post(f"/projects/invitations/{str(token)}/accept")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_accept_project_invitation_error_user_has_no_permission_over_this_invitation(client):
+    user = await f.create_user()
+    invitation = await f.create_invitation(user=await f.create_user())
+    token = await ProjectInvitationToken.create_for_object(invitation)
+
+    client.login(user)
+    response = client.post(f"/projects/invitations/{str(token)}/accept")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text

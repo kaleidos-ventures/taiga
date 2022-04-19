@@ -8,3 +8,7 @@
 
 class BadInvitationTokenError(Exception):
     ...
+
+
+class InvitationAlreadyAcceptedError(Exception):
+    ...

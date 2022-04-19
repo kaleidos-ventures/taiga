@@ -61,7 +61,7 @@ async def create_project(
     if not owner_role:
         owner_role = await roles_repositories.get_first_role(project=project)
 
-    await roles_repositories.create_membership(user=owner, project=project, role=owner_role, email=None)
+    await roles_repositories.create_membership(user=owner, project=project, role=owner_role)
 
     return project
 

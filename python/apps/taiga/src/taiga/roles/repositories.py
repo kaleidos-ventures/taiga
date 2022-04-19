@@ -22,8 +22,8 @@ from taiga.workspaces.models import Workspace
 
 
 @sync_to_async
-def create_membership(user: User, project: Project, role: Role, email: str | None = None) -> Membership:
-    return Membership.objects.create(user=user, project=project, role=role, email=email)
+def create_membership(user: User, project: Project, role: Role) -> Membership:
+    return Membership.objects.create(user=user, project=project, role=role)
 
 
 @sync_to_async

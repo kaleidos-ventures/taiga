@@ -10,6 +10,7 @@ from unittest.mock import patch
 import pytest
 from taiga.invitations import exceptions as ex
 from taiga.invitations import services
+from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.roles import exceptions as roles_ex
 from tests.utils import factories as f
@@ -140,6 +141,19 @@ async def test_send_project_invitations_for_new_user(tqmanager):
 
 
 #######################################################
+# get_project_invitations
+#######################################################
+
+
+async def test_get_project_invitations():
+    project = f.build_project()
+    with patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo:
+        await services.get_project_invitations(project=project)
+
+        fake_invitations_repo.get_project_invitations.assert_awaited_once()
+
+
+#######################################################
 # create_invitations
 #######################################################
 
@@ -214,12 +228,40 @@ async def test_create_invitations(tqmanager):
 
 
 #######################################################
-# get_project_invitations
+# accept_project_invitation
 #######################################################
 
-async def test_get_project_invitations():
-    project = f.build_project()
-    with patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo:
-        await services.get_project_invitations(project=project)
 
-        fake_invitations_repo.get_project_invitations.assert_awaited_once()
+async def tests_accept_project_invitation() -> None:
+    user = f.build_user()
+    project = f.build_project()
+    role = f.build_role(project=project)
+    invitation = f.build_invitation(project=project, role=role, user=user)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+    ):
+        fake_invitations_repo.accept_project_invitation.return_value = invitation
+
+        await services.accept_project_invitation(invitation=invitation, user=user)
+
+        fake_invitations_repo.accept_project_invitation.assert_awaited_once_with(invitation=invitation, user=user)
+        fake_roles_repo.create_membership.assert_awaited_once_with(project=project, role=role, user=user)
+
+
+async def tests_accept_project_invitation_error_invitation_has_already_been_accepted() -> None:
+    user = f.build_user()
+    project = f.build_project()
+    role = f.build_role(project=project)
+    invitation = f.build_invitation(project=project, role=role, user=user, status=InvitationStatus.ACCEPTED)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        pytest.raises(ex.InvitationAlreadyAcceptedError),
+    ):
+        await services.accept_project_invitation(invitation=invitation, user=user)
+
+        fake_invitations_repo.accept_project_invitation.assert_not_awaited()
+        fake_roles_repo.create_membership.assert_not_awaited()

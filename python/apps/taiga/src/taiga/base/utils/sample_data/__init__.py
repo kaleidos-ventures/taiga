@@ -179,14 +179,14 @@ async def _create_project_memberships(project: Project, users: list[User], excep
     num_admins = random.randint(0, 2)
     for _ in range(num_admins):
         user = other_users.pop(0)
-        await roles_repositories.create_membership(user=user, project=project, role=admin_role, email=user.email)
+        await roles_repositories.create_membership(user=user, project=project, role=admin_role)
 
     # add other members in the different roles
     num_members = random.randint(0, len(other_users))
     for _ in range(num_members):
         user = other_users.pop(0)
         role = random.choice(other_roles)
-        await roles_repositories.create_membership(user=user, project=project, role=role, email=user.email)
+        await roles_repositories.create_membership(user=user, project=project, role=role)
 
 
 @sync_to_async

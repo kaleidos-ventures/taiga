@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3d7e96a0-6fd4-4aab-acba-01c0e548f5cb",
+		"_postman_id": "c0ec571d-f1ee-4739-bf25-36d6412a672e",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -928,7 +928,7 @@
 					"response": []
 				},
 				{
-					"name": "new project invitations",
+					"name": "new project invitation",
 					"event": [
 						{
 							"listen": "test",
@@ -979,7 +979,7 @@
 					"response": []
 				},
 				{
-					"name": "project invitations (public info)",
+					"name": "project invitation (public info)",
 					"event": [
 						{
 							"listen": "test",
@@ -1074,6 +1074,49 @@
 								"projects",
 								"{{pj-slug}}",
 								"invitations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "accept project invitation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/invitations/{{inv_token}}/accept",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"invitations",
+								"{{inv_token}}",
+								"accept"
 							]
 						}
 					},

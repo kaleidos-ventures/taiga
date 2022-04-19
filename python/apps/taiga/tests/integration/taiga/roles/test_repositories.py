@@ -29,10 +29,9 @@ def _get_memberships(project: Project) -> list[Membership]:
 
 async def test_create_membership():
     user = await f.create_user()
-    user2 = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project()
     role = await f.create_role(project=project)
-    membership = await repositories.create_membership(user=user2, project=project, role=role, email=None)
+    membership = await repositories.create_membership(user=user, project=project, role=role)
     memberships = await _get_memberships(project=project)
     assert membership in memberships
 
@@ -48,8 +47,8 @@ async def test_get_project_memberships():
     user2 = await f.create_user()
     project = await f.create_project(owner=owner)
     role = await f.create_role(project=project)
-    await repositories.create_membership(user=user1, project=project, role=role, email=user1.email)
-    await repositories.create_membership(user=user2, project=project, role=role, email=user2.email)
+    await repositories.create_membership(user=user1, project=project, role=role)
+    await repositories.create_membership(user=user2, project=project, role=role)
 
     memberships = await repositories.get_project_memberships(project_slug=project.slug)
     assert len(memberships) == 3
@@ -140,7 +139,7 @@ async def test_get_role_for_user_member():
     user = await f.create_user()
     project = await f.create_project()
     role = await sync_to_async(project.roles.exclude(slug="admin").first)()
-    await repositories.create_membership(user=user, project=project, role=role, email=None)
+    await repositories.create_membership(user=user, project=project, role=role)
 
     assert await repositories.get_role_for_user(user_id=user.id, project_id=project.id) == role
 
@@ -173,10 +172,9 @@ def _get_workspace_memberships(workspace: Workspace) -> list[WorkspaceMembership
 
 async def test_create_workspace_membership():
     user = await f.create_user()
-    user2 = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
     role = await f.create_workspace_role(workspace=workspace)
-    membership = await repositories.create_workspace_membership(user=user2, workspace=workspace, workspace_role=role)
+    membership = await repositories.create_workspace_membership(user=user, workspace=workspace, workspace_role=role)
     memberships = await _get_workspace_memberships(workspace=workspace)
     assert membership in memberships
 

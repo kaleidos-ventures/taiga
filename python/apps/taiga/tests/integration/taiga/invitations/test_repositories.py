@@ -8,6 +8,7 @@
 import pytest
 from asgiref.sync import sync_to_async
 from taiga.invitations import repositories
+from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.models import Invitation
 from tests.utils import factories as f
 
@@ -18,21 +19,41 @@ pytestmark = pytest.mark.django_db
 # get_project_invitation
 ##########################################################
 
+
 async def test_get_project_invitation_ok() -> None:
     invitation = await f.create_invitation()
+
     new_invitation = await repositories.get_project_invitation(invitation.id)
+
     assert new_invitation is not None
     assert new_invitation == invitation
 
 
 async def test_get_project_invitation_not_found() -> None:
     new_invitation = await repositories.get_project_invitation(1001)
+
     assert new_invitation is None
+
+
+##########################################################
+# accept_project_invitation
+##########################################################
+
+
+async def tests_accept_project_invitation() -> None:
+    user = await f.create_user()
+    invitation = await f.create_invitation(user=None)
+
+    accepted_invitation = await repositories.accept_project_invitation(invitation=invitation, user=user)
+
+    assert accepted_invitation.user == user
+    assert accepted_invitation.status == InvitationStatus.ACCEPTED
 
 
 ##########################################################
 # create_invitations
 ##########################################################
+
 
 async def test_create_invitations():
     user = await f.create_user()
@@ -56,7 +77,9 @@ async def test_create_invitations():
             invited_by=user,
         ),
     ]
+
     response = await repositories.create_invitations(objs=objs)
+
     assert len(response) == 2
 
 

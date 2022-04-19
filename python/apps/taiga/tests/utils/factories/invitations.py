@@ -5,16 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-import random
 from asgiref.sync import sync_to_async
-
 from taiga.invitations.choices import InvitationStatus
 
 from .base import Factory, factory
 
 
 class InvitationFactory(Factory):
-    status = factory.LazyFunction(lambda: random.choice([s.value for s in InvitationStatus]))
+    status = InvitationStatus.PENDING
     email = factory.Sequence(lambda n: f"user{n}@email.com")
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")

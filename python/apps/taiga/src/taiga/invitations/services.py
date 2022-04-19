@@ -9,6 +9,7 @@ from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
 from taiga.invitations import exceptions as ex
 from taiga.invitations import repositories as invitations_repositories
+from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.models import Invitation, PublicInvitation
 from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.projects.models import Project
@@ -20,7 +21,7 @@ from taiga.users import repositories as users_repositories
 from taiga.users.models import User
 
 
-async def get_public_project_invitation(token: str) -> PublicInvitation | None:
+async def get_project_invitation(token: str) -> Invitation | None:
     try:
         invitation_token = await ProjectInvitationToken.create(token=token)
     except TokenError:
@@ -28,17 +29,27 @@ async def get_public_project_invitation(token: str) -> PublicInvitation | None:
 
     # Get invitation
     if invitation_data := invitation_token.object_data:
-        if invitation := await invitations_repositories.get_project_invitation(**invitation_data):
-            invited_user = await users_repositories.get_user_by_username_or_email(invitation.email)
-
-            return PublicInvitation(
-                status=invitation.status,
-                email=invitation.email,
-                existing_user=invited_user is not None,
-                project=invitation.project,
-            )
+        return await invitations_repositories.get_project_invitation(**invitation_data)
 
     return None
+
+
+async def get_public_project_invitation(token: str) -> PublicInvitation | None:
+    if invitation := await get_project_invitation(token=token):
+        invited_user = await users_repositories.get_user_by_username_or_email(invitation.email)
+
+        return PublicInvitation(
+            status=invitation.status,
+            email=invitation.email,
+            existing_user=invited_user is not None,
+            project=invitation.project,
+        )
+
+    return None
+
+
+async def get_project_invitations(project: Project) -> list[Invitation]:
+    return await invitations_repositories.get_project_invitations(project.slug)
 
 
 async def send_project_invitation_email(invitation: Invitation) -> None:
@@ -108,5 +119,12 @@ async def create_invitations(project: Project, invitations: list[dict[str, str]]
     return invitations
 
 
-async def get_project_invitations(project: Project) -> list[Invitation]:
-    return await invitations_repositories.get_project_invitations(project.slug)
+async def accept_project_invitation(invitation: Invitation, user: User) -> Invitation:
+    if invitation.status == InvitationStatus.ACCEPTED:
+        raise ex.InvitationAlreadyAcceptedError()
+
+    accepted_invitation = await invitations_repositories.accept_project_invitation(invitation=invitation, user=user)
+
+    await roles_repositories.create_membership(project=invitation.project, role=invitation.role, user=invitation.user)
+
+    return accepted_invitation

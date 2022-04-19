@@ -10,6 +10,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   OnInit,
   Output,
@@ -49,6 +50,11 @@ export class InviteToProjectComponent implements OnInit {
 
   @Output()
   public closeModal = new EventEmitter();
+
+  @HostListener('window:beforeunload')
+  public unloadHandler() {
+    return !this.formHasContent();
+  }
 
   public regexpEmail = /\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+/g;
   public inviteEmails = '';
@@ -127,6 +133,10 @@ export class InviteToProjectComponent implements OnInit {
     this.memberRoles$.subscribe((memberRoles) => {
       this.orderedRoles = memberRoles;
     });
+  }
+
+  public formHasContent() {
+    return !!this.inviteEmails || !!this.users.length;
   }
 
   public emailsWithoutDuplications() {

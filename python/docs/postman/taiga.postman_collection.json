@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "834aedf6-a2f7-43c3-a5c1-3c24e4ee8010",
+		"_postman_id": "781a3e84-c4dc-4862-acf1-1ba57f53bc62",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -868,6 +868,57 @@
 								"projects",
 								"{{pj-slug}}",
 								"workspace-member-permissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new project invitations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"admin\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"invitations"
 							]
 						}
 					},

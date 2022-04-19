@@ -15,14 +15,14 @@ from taiga.conf import settings
 
 class Urls(Enum):
     VERIFY_SIGNUP = "/signup/verify/{verification_token}"
+    PROJECT_HOME = "/project/{project_slug}"
+    PROJECT_INVITATION = "/accept-project-invitation/{invitation_token}"
 
 
 def resolve_front_url(relative_uri: str, **kwargs: Any) -> str:
-    site = settings.FRONTEND_URL
-
     try:
         front_url = Urls[relative_uri]
     except KeyError:
         raise InvalidFrontUrl(f"Theres no front-end url matching the key `{relative_uri}`")
 
-    return urllib.parse.urljoin(site, front_url.value.format(**kwargs))
+    return urllib.parse.urljoin(settings.FRONTEND_URL, front_url.value.format(**kwargs))

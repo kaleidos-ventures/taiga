@@ -48,7 +48,9 @@ def create_project_template(**kwargs):
 
 
 class ProjectFactory(Factory):
-    name = factory.Sequence(lambda n: f"project {n}")
+    name = factory.Sequence(lambda n: f"Project {n}")
+    slug = factory.Sequence(lambda n: f"project-{n}")
+    description = factory.Sequence(lambda n: f"Description {n}")
     owner = factory.SubFactory("tests.utils.factories.UserFactory")
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
     creation_template = factory.SubFactory("tests.utils.factories.ProjectTemplateFactory")

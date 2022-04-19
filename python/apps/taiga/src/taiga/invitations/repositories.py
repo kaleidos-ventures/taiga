@@ -19,13 +19,13 @@ def get_project_invitation(id: int) -> Invitation | None:
 
 @sync_to_async
 def create_invitations(objs: list[Invitation]) -> list[Invitation]:
-    return Invitation.objects.bulk_create(objs=objs)
+    return Invitation.objects.prefetch_related("user", "project").bulk_create(objs=objs)
 
 
 @sync_to_async
 def get_project_invitations(project_slug: str) -> list[Invitation]:
     project_invitees = Invitation.objects.filter(
-        project__slug=project_slug, status=InvitationStatus.PENDING.value
+        project__slug=project_slug, status=InvitationStatus.PENDING
     ).select_related("user", "role")
 
     # pending invitations with NULL users will implicitly be listed after invitations with users (and valid full names)

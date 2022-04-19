@@ -6,17 +6,23 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 #}
 
-{% set invitation_url = resolve_front_url("INVITATION", verification_token=verification_token) -%}
+{% set invitation_url = resolve_front_url("PROJECT_INVITATION", invitation_token=invitation_token) -%}
 Taiga invitation
 
+{% if receiver_name -%}
+Hi {{ receiver_name }},
+{% else -%}
 Hi there,
+{% endif -%}
 {{ sender_name }} sent you an invitation to join:
 
 {{ project_name }}
 {{ project_description }}
 
 <!-- Start: This text only appear if you are not registered -->
+{% if not receiver_name -%}
 Taiga is an Open Source Agile Project Management Tool. There is no cost for you to be a Taiga user.
+{% endif -%}
 <!-- End -->
 {{ invitation_url }}
 

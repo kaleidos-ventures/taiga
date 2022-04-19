@@ -12,8 +12,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   </mj-head>
   <mj-body css-class="body">
     <mj-raw>
-      {% set invitation_url = resolve_front_url("INVITATION", verification_token=verification_token) -%}
-      {% set project_url = resolve_front_url("PROJECT", verification_token=verification_token) -%}
+        {% set invitation_url = resolve_front_url("PROJECT_INVITATION", invitation_token=invitation_token) -%}
+        {% set project_url = resolve_front_url("PROJECT_HOME", project_slug=project_slug) -%}
+        {% set project_abbreviation = project_name[:2].upper() -%}
     </mj-raw>
     <mj-wrapper css-class="body-content">
       <mj-include path="../components/header-logo.mjml" />
@@ -26,7 +27,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </mj-text> -->
           <!-- This text only appear if you are  registered -->
           <mj-text css-class="dm-text" mj-class="font-heading1 color-gray100">
-            Hi {{ receptor_name }},
+            {% if receiver_name -%}
+            Hi {{ receiver_name }},
+            {% else -%}
+            Hi there,
+            {% endif -%}
           </mj-text>
           <mj-text css-class="dm-text" mj-class="font-heading2 color-gray100">
             <strong>{{ sender_name }}</strong> sent you an invitation to join:
@@ -38,11 +43,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <mj-text>
             <table>
               <tr>
+                {% if project_image_url -%}
                 <td style="vertical-align:top;">
                   <a style="padding-top: 3px; padding-bottom: 3px; padding-left: 8px; width: 32px" href="{{ project_url }}" >
                     <img height="32" width="32" style="border-radius: 3px" src="{{ project_image_url }}" />
                   </a>
                 </td>
+                {% endif -%}
                 <td style="padding-left: 12px; vertical-align:top">
                   <a style="font-size: 14px; font-weight: 400; line-height: 1;" class="secondary-link" href="{{ project_url }}" >{{ project_name }}</a>
                   <p class="dm-text" style="margin: 6px 0 0 0">{{ project_description }}</p>
@@ -55,9 +62,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <mj-section mj-class="padding-bottom">
         <mj-column>
           <!-- Start: This text only appear if you are not registered -->
+          {% if not receiver_name -%}
           <mj-text css-class="dm-text" mj-class="font-body color-gray80">
             Taiga is an Open Source Agile Project Management Tool. There is no cost for you to be a Taiga user.
           </mj-text>
+          {% endif -%}
           <!-- End -->
           <mj-button css-class="btn-primary" mj-class="btn-primary padding-top" href="{{ invitation_url }}">
             Accept your invitation
@@ -66,7 +75,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             Button not working? Copy and paste this URL into your web browser:
           </mj-text>
           <mj-text css-class="dm-text-gray primary-link" mj-class="font-body padding-bottom">
-              <a class="primary-link" href="{{ verify_url }}">{{ invitation_url }}</a>
+            <a class="primary-link" href="{{ invitation_url }}">{{ invitation_url }}</a>
           </mj-text>
         </mj-column>
       </mj-section>

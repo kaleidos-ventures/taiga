@@ -5,11 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from taiga.emails.emails import Emails
+from taiga.emails.tasks import send_email
 from taiga.invitations import exceptions as ex
 from taiga.invitations import repositories as invitations_repositories
 from taiga.invitations.models import Invitation, PublicInvitation
 from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.projects.models import Project
+from taiga.projects.services import get_logo_small_thumbnail_url
 from taiga.roles import exceptions as roles_ex
 from taiga.roles import repositories as roles_repositories
 from taiga.tokens import TokenError
@@ -36,6 +39,31 @@ async def get_public_project_invitation(token: str) -> PublicInvitation | None:
             )
 
     return None
+
+
+async def send_project_invitation_email(invitation: Invitation) -> None:
+    project = invitation.project
+    sender = invitation.invited_by
+    receiver = invitation.user
+    email = receiver.email if receiver else invitation.email
+    invitation_token = await ProjectInvitationToken.create_for_object(invitation)
+
+    context = {
+        "invitation_token": str(invitation_token),
+        "project_name": project.name,
+        "project_slug": project.slug,
+        "project_color": project.color,
+        "project_image_url": await get_logo_small_thumbnail_url(project.logo),
+        "project_description": project.description,
+        "sender_name": sender.full_name,
+        "receiver_name": receiver.full_name if receiver else None,
+    }
+
+    await send_email.defer(
+        email_name=Emails.PROJECT_INVITATION.value,
+        to=email,
+        context=context,
+    )
 
 
 async def create_invitations(project: Project, invitations: list[dict[str, str]], invited_by: User) -> list[Invitation]:
@@ -72,7 +100,12 @@ async def create_invitations(project: Project, invitations: list[dict[str, str]]
             )
         )
 
-    return await invitations_repositories.create_invitations(objs=objs)
+    invitations = await invitations_repositories.create_invitations(objs=objs)
+
+    for invitation in invitations:
+        await send_project_invitation_email(invitation=invitation)
+
+    return invitations
 
 
 async def get_project_invitations(project: Project) -> list[Invitation]:

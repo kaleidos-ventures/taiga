@@ -29,4 +29,4 @@ def render(email: Emails = typer.Argument(..., case_sensitive=False, help="Name 
 @cli.command(help="Show available emails")
 def list() -> None:
     for email in Emails:
-        typer.echo(f"{ email.value }\n")
+        typer.echo(f"\t{ email.value }")

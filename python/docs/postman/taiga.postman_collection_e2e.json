@@ -1989,7 +1989,7 @@
 					"response": []
 				},
 				{
-					"name": "403 projects.invitations",
+					"name": "400 projects.invitations",
 					"event": [
 						{
 							"listen": "test",
@@ -1999,7 +1999,7 @@
 									"",
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(403);",
+									"    pm.response.to.have.status(400);",
 									"});",
 									"pm.test(\"Error JSON is correct\", function () {",
 									"    var jsonData = pm.response.json();",

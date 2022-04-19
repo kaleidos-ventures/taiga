@@ -1,0 +1,10 @@
+{
+  "invitation_token": "ayJ0eXAiOiJKV1QaLCJhbGciOiJIUzI1fiJ9.eyJ3b2tlbl904XBlIjoicm6grmVzaCIsImV4cCI6MTY0O55erjQ1NiwianRpIjoiNzdjyyy1MW6eMeY2NGQwZGFmOGFiZjBjOWY0OTIyNjEiLCJ1c2VyX2lkIjo1fQ.WVMHFRX866t-socB8kugtrfgyhiunbvcdxHiMVXCLys",
+  "project_name": "Example project",
+  "project_slug": "example-project",
+  "project_color": 1,
+  "project_image_url": null,
+  "project_description": "This is an example project to test invitation to a project emails.",
+  "sender_name": "John Doe",
+  "receiver_name": null
+}

@@ -13,18 +13,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </h1>
     <form [formGroup]="inviteProjectForm">
       <tui-scrollbar class="padding-scroll">
-        <p
-          class="text"
-          [innerHtml]="t('kanban.invite_step.instructions')"></p>
+        <p class="text" [innerHtml]="t('kanban.invite_step.instructions')"></p>
         <p class="text">{{ t('kanban.invite_step.alternative') }}</p>
         <div class="add-wrapper">
-          <tui-svg
-            class="add-icon"
-            src="user"
-            aria-hidden="true"></tui-svg>
+          <tui-svg class="add-icon" src="user" aria-hidden="true"></tui-svg>
           <div class="text-area">
             <tg-ui-textarea>
               <tui-text-area
+                #emailInput
+                tuiAutoFocus
                 data-test="input-add-invites"
                 [class.small]="validInviteEmails.length < 2"
                 [class.bottom-space]="emailsWithoutDuplications().length > 1"
@@ -39,10 +36,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [expandable]="true">
                 {{ t('kanban.invite_step.placeholder') }}
               </tui-text-area>
-              <tg-ui-error data-test="error-add-email" inputError [show]="inviteEmailsErrors.required">
+              <tg-ui-error
+                data-test="error-add-email"
+                inputError
+                [show]="inviteEmailsErrors.required">
                 {{ t('kanban.invite_step.error_add_email') }}
               </tg-ui-error>
-              <tg-ui-error data-test="error-regex" inputError [show]="inviteEmailsErrors.regex">
+              <tg-ui-error
+                data-test="error-regex"
+                inputError
+                [show]="inviteEmailsErrors.regex">
                 {{ t('kanban.invite_step.error_email_regex') }}
               </tg-ui-error>
               <tg-ui-error
@@ -51,9 +54,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [show]="inviteEmailsErrors.peopleNotAdded">
                 {{ t('kanban.invite_step.error_missing_people') }}
               </tg-ui-error>
-              <tg-ui-error
-                inputError
-                [show]="inviteEmailsErrors.bulkError">
+              <tg-ui-error inputError [show]="inviteEmailsErrors.bulkError">
                 {{ t('kanban.invite_step.error_several_emails') }}
               </tg-ui-error>
             </tg-ui-textarea>
@@ -89,9 +90,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </div>
         </ng-container>
 
-        <div
-          *ngIf="users.length"
-          class="user-list">
+        <div *ngIf="users.length" class="user-list">
           <div class="user">
             <span></span>
             <span class="user-title">{{
@@ -131,10 +130,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ t('kanban.invite_step.error_more_than_fifty') }}
         </tg-ui-context-notification>
         <div class="form-actions">
-          <button
-            tuiLink
-            (click)="close()"
-            appearance="tertiary">
+          <button tuiLink (click)="close()" appearance="tertiary">
             {{ t('kanban.invite_step.later') }}
           </button>
           <button

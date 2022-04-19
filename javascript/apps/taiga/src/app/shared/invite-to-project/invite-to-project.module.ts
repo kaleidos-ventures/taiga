@@ -28,6 +28,7 @@ import { rolesPermissionsFeature } from '~/app/modules/project/settings/feature-
 import { RolesPermissionsEffects } from '~/app/modules/project/settings/feature-roles-permissions/+state/effects/roles-permissions.effects';
 import { invitationFeature } from '~/app/shared/invite-to-project/data-access/+state/reducers/invitation.reducers';
 import { InvitationEffects } from '~/app/shared/invite-to-project/data-access/+state/effects/invitation.effects';
+import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 
 @NgModule({
   imports: [
@@ -47,6 +48,7 @@ import { InvitationEffects } from '~/app/shared/invite-to-project/data-access/+s
     StoreModule.forFeature(rolesPermissionsFeature),
     StoreModule.forFeature(invitationFeature),
     EffectsModule.forFeature([RolesPermissionsEffects, InvitationEffects]),
+    TuiAutoFocusModule,
   ],
   providers: [
     {

@@ -14,6 +14,7 @@ import {
   Input,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -33,6 +34,7 @@ import { skip, switchMap } from 'rxjs/operators';
 import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { Actions, ofType } from '@ngrx/effects';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TuiTextAreaComponent } from '@taiga-ui/kit';
 
 @UntilDestroy()
 @Component({
@@ -50,6 +52,9 @@ export class InviteToProjectComponent implements OnInit {
 
   @Output()
   public closeModal = new EventEmitter();
+
+  @ViewChild('emailInput', { static: false })
+  public emailInput!: TuiTextAreaComponent;
 
   @HostListener('window:beforeunload')
   public unloadHandler() {
@@ -128,6 +133,7 @@ export class InviteToProjectComponent implements OnInit {
       });
       this.inviteEmails = '';
       this.inviteEmailsChange('');
+      this.emailInput?.nativeFocusableElement?.focus();
     });
 
     this.memberRoles$.subscribe((memberRoles) => {
@@ -213,6 +219,7 @@ export class InviteToProjectComponent implements OnInit {
       );
     } else {
       this.inviteEmailsErrors.listEmpty = true;
+      this.emailInput?.nativeFocusableElement?.focus();
     }
     this.inviteEmailsErrors.peopleNotAdded = !!this.inviteEmails;
   }

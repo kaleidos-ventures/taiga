@@ -16,6 +16,7 @@ import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { AuthFeatureLoginComponent } from './auth-feature-login.component';
 import { LoginComponent } from './components/login/login.component';
+import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 
 const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
 
@@ -39,6 +40,7 @@ const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
     InputsModule,
     TuiLinkModule,
     ContextNotificationModule,
+    ButtonLoadingModule,
   ],
 })
 export class AuthFeatureLoginModule {}

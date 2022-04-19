@@ -33,6 +33,8 @@
     "password": "Password",
     "forgot_password": "Forgot your password?",
     "login": "Log in",
+    "in_progress": "Logging in",
+    "success": "Logged in",
     "not_registered_yet": "Not registered yet?",
     "create_free_account": "Create a free account",
     "errors": {

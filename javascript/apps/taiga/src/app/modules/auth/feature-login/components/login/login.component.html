@@ -63,7 +63,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         data-test="submitted-error">
         <span>{{ t('login.errors.submited_error') }}</span>
       </tg-ui-context-notification>
+
       <button
+        loading
+        [loadingMsg]="t('login.in_progress')"
+        [loadingSuccess]="t('login.success')"
         class="button-login"
         tuiButton
         appearance="primary"

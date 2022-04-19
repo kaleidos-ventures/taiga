@@ -9,7 +9,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 import * as InvitationActions from '../actions/invitation.action';
 import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
@@ -23,6 +23,7 @@ import {
   InvitationResponse,
 } from '@taiga/data';
 import { TuiNotification } from '@taiga-ui/core';
+import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 
 @Injectable()
 export class InvitationEffects {
@@ -48,9 +49,12 @@ export class InvitationEffects {
       ofType(NewProjectActions.inviteUsersNewProject),
       pessimisticUpdate({
         run: (action) => {
+          this.buttonLoadingService.start();
+
           return this.invitationApiService
             .inviteUsers(action.slug, action.invitation)
             .pipe(
+              switchMap(this.buttonLoadingService.waitLoading()),
               map((response: InvitationResponse[]) => {
                 return InvitationActions.inviteUsersSuccess({
                   invitations: response.length,
@@ -59,6 +63,8 @@ export class InvitationEffects {
             );
         },
         onError: (action, httpResponse: HttpErrorResponse) => {
+          this.buttonLoadingService.error();
+
           const options: ErrorManagementToastOptions = {
             type: 'toast',
             options: {
@@ -101,6 +107,7 @@ export class InvitationEffects {
   constructor(
     private actions$: Actions,
     private invitationApiService: InvitationApiService,
-    private appService: AppService
+    private appService: AppService,
+    private buttonLoadingService: ButtonLoadingService
   ) {}
 }

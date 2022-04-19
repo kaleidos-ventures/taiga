@@ -23,6 +23,7 @@ import { Store } from '@ngrx/store';
 import { selectUser } from '../selectors/auth.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import { EMPTY } from 'rxjs';
+import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 
 @Injectable()
 export class AuthEffects {
@@ -31,12 +32,15 @@ export class AuthEffects {
       ofType(AuthActions.login),
       pessimisticUpdate({
         run: ({ username, password, invitationToken, next }) => {
+          this.buttonLoadingService.start();
+
           return this.authApiService
             .login({
               username,
               password,
             })
             .pipe(
+              switchMap(this.buttonLoadingService.waitLoading()),
               map((auth: Auth) => {
                 return AuthActions.loginSuccess({
                   auth,
@@ -47,6 +51,8 @@ export class AuthEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
+          this.buttonLoadingService.error();
+
           this.appService.errorManagement(httpResponse, {
             500: {
               type: 'toast',
@@ -234,6 +240,7 @@ export class AuthEffects {
   );
 
   constructor(
+    private buttonLoadingService: ButtonLoadingService,
     private router: Router,
     private actions$: Actions,
     private authApiService: AuthApiService,

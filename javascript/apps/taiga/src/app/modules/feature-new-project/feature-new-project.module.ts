@@ -25,6 +25,7 @@ import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { ModalModule } from '@taiga/ui/modal';
 import { TemplateStepComponent } from './components/template-step/template-step.component';
 import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.module';
+import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 
 @NgModule({
   declarations: [NewProjectComponent, InitStepComponent, TemplateStepComponent],
@@ -45,6 +46,7 @@ import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.mo
     ImageUploadModule,
     ModalModule,
     FeatureNewProjectRoutingModule,
+    ButtonLoadingModule,
   ],
   providers: [
     {

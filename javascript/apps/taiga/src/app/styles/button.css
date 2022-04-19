@@ -256,8 +256,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     fill: var(--color-gray80);
   }
 
-  &[disabled] {
+  &[disabled]:not([loading]) {
     opacity: 50%;
+  }
+
+  &[loading].loading-done svg {
+    fill: var(--color-ok50);
   }
 
   &.large[data-tui-host-size="l"] {

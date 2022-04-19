@@ -26,6 +26,8 @@
     "project_description_placeholder": "Add a short description to help others better understand your project.",
     "project_icon": "Project icon",
     "create_project": "Create project",
+    "create_project_in_progress": "Creating",
+    "create_project_success": "Created",
     "max_length_error": "Project description must be 200 characters or fewer",
     "choose_image_tip": "Allowed formats: gif, png, jpg, svg and webp",
     "format_error": "The file format is not allowed. Allowed formats: gif, png, jpg, svg or webp"

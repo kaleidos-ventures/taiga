@@ -118,6 +118,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ t('commons.cancel') }}
         </button>
         <button
+          loading
+          [loadingMsg]="t('new_project.second_step.create_project_in_progress')"
+          [loadingSuccess]="t('new_project.second_step.create_project_success')"
           iconRight="chevron-right"
           data-test="submit-create-project"
           tuiButton

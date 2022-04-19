@@ -9,7 +9,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { ProjectApiService } from '@taiga/api';
@@ -19,6 +19,7 @@ import { Router } from '@angular/router';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TuiNotification } from '@taiga-ui/core';
+import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 
 @Injectable()
 export class NewProjectEffects {
@@ -27,13 +28,18 @@ export class NewProjectEffects {
       ofType(NewProjectActions.createProject),
       pessimisticUpdate({
         run: (action) => {
+          this.buttonLoadingService.start();
+
           return this.projectApiService.createProject(action.project).pipe(
+            switchMap(this.buttonLoadingService.waitLoading()),
             map((project: Project) => {
               return NewProjectActions.createProjectSuccess({ project });
             })
           );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
+          this.buttonLoadingService.error();
+
           this.appService.errorManagement(httpResponse, {
             500: {
               type: 'toast',
@@ -70,6 +76,7 @@ export class NewProjectEffects {
   );
 
   constructor(
+    private buttonLoadingService: ButtonLoadingService,
     private actions$: Actions,
     private projectApiService: ProjectApiService,
     private router: Router,

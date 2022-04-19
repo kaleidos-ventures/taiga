@@ -3,6 +3,8 @@
   "instructions": "Start typing a <strong class='strong'>name</strong>, <strong class='strong'>username</strong> or <strong class='strong'>email</strong>.",
   "alternative": "You can also enter multiple email addresses separated by a comma.",
   "send_invites": "Send invites",
+  "send_invites_in_progress": "Sending",
+  "send_invites_success": "Sent",
   "later": "Maybe later",
   "add_people": "Add some people to invte",
   "placeholder": "e.g. username@mail.com, userpetname@mail.com",

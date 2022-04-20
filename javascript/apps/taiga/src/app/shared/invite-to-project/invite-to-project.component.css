@@ -47,6 +47,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     inset-block-end: var(--spacing-16);
     inset-inline-end: var(--spacing-8);
     position: absolute;
+
+    &.errors {
+      inset-block-end: var(--spacing-40);
+    }
   }
 
   & .add-btn {

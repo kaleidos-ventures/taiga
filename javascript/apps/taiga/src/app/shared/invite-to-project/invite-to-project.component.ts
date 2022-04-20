@@ -113,6 +113,15 @@ export class InviteToProjectComponent implements OnInit {
     return this.inviteEmails.match(this.regexpEmail) || [];
   }
 
+  public get emailsHaveErrors() {
+    return (
+      this.inviteEmailsErrors.required ||
+      this.inviteEmailsErrors.regex ||
+      this.inviteEmailsErrors.peopleNotAdded ||
+      this.inviteEmailsErrors.bulkError
+    );
+  }
+
   public ngOnInit() {
     this.usersToInvite$ = this.validEmails$.pipe(
       switchMap((validEmails) => {
@@ -129,7 +138,8 @@ export class InviteToProjectComponent implements OnInit {
         const userAlreadyExist = this.users?.find((it: FormGroup) => {
           return (it.value as Partial<User>).email === user.email;
         });
-        !userAlreadyExist && this.users.push(this.fb.group(user));
+        !userAlreadyExist &&
+          this.users.splice(this.positionInArray(user), 0, this.fb.group(user));
       });
       this.inviteEmails = '';
       this.inviteEmailsChange('');
@@ -138,6 +148,30 @@ export class InviteToProjectComponent implements OnInit {
 
     this.memberRoles$.subscribe((memberRoles) => {
       this.orderedRoles = memberRoles;
+    });
+  }
+
+  public positionInArray(user: Partial<User>) {
+    const usersArrayOrdered = [
+      ...this.getFilteredUsers(user, true),
+      ...this.getFilteredUsers(user, false),
+    ];
+    return usersArrayOrdered.findIndex(
+      (it) => (it.value as Partial<User>).email === user.email
+    );
+  }
+
+  public getFilteredUsers(user: Partial<User>, registered: boolean) {
+    const param = registered ? 'fullName' : 'email';
+    const newUsersArray = this.users.slice();
+    newUsersArray.push(this.fb.group(user));
+    const filteredArray = registered
+      ? newUsersArray.filter((it) => (it.value as Partial<User>).fullName)
+      : newUsersArray.filter((it) => !(it.value as Partial<User>).fullName);
+    return filteredArray.slice().sort((a, b) => {
+      const firstValue = (a.value as Partial<User>)[param] || '';
+      const secondValue = (b.value as Partial<User>)[param] || '';
+      return firstValue.localeCompare(secondValue);
     });
   }
 
@@ -152,6 +186,10 @@ export class InviteToProjectComponent implements OnInit {
 
   public trackByIndex(index: number) {
     return index;
+  }
+
+  public emailsChange(emails: string) {
+    !emails && this.resetErrors();
   }
 
   public resetErrors() {

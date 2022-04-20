@@ -50,11 +50,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & .small {
-    line-height: 1;
+    line-height: 1.2;
     min-block-size: var(--spacing-32);
 
     & .t-wrapper {
-      line-height: 1;
+      line-height: 1.2;
     }
   }
 

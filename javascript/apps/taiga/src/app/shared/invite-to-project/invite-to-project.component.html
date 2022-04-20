@@ -28,10 +28,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [class.invalid]="
                   inviteEmailsErrors.required ||
                   inviteEmailsErrors.regex ||
-                  inviteEmailsErrors.peopleNotAdded
+                  inviteEmailsErrors.peopleNotAdded ||
+                  inviteEmailsErrors.bulkError
                 "
                 tuiTextfieldSize="s"
                 [(ngModel)]="inviteEmails"
+                (ngModelChange)="emailsChange($event)"
                 [ngModelOptions]="{ standalone: true }"
                 [expandable]="true">
                 {{ t('kanban.invite_step.placeholder') }}
@@ -62,6 +64,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               data-test="email-count"
               *ngIf="emailsWithoutDuplications().length > 1"
               class="emails-count"
+              [class.errors]="emailsHaveErrors"
               >{{
                 t('kanban.invite_step.emails_detected', {
                   emails: emailsWithoutDuplications().length

@@ -7,12 +7,13 @@
 
 from pydantic import EmailStr
 from taiga.base.serializer import BaseModel
+from taiga.roles.serializers import BaseRoleSerializer
+from taiga.users.serializers import UserSerializer
 
 
 class InvitationSerializer(BaseModel):
-    user_id: int | None = None
-    project_id: int
-    role_id: int
+    user: UserSerializer | None
+    role: BaseRoleSerializer
     email: EmailStr
 
     class Config:

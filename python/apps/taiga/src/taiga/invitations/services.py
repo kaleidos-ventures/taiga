@@ -49,3 +49,7 @@ async def create_invitations(project: Project, invitations: list[dict[str, str]]
         )
 
     return await invitations_repositories.create_invitations(objs=objs)
+
+
+async def get_project_invitations(project: Project) -> list[Invitation]:
+    return await invitations_repositories.get_project_invitations(project.slug)

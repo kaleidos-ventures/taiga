@@ -9,7 +9,7 @@ from taiga.exceptions import services as ex
 from taiga.permissions import services as permissions_services
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories
-from taiga.roles.models import Role
+from taiga.roles.models import Membership, Role
 
 
 async def get_project_roles(project: Project) -> list[Role]:
@@ -31,3 +31,7 @@ async def update_role_permissions(role: Role, permissions: list[str]) -> Role:
         raise ex.IncompatiblePermissionsSetError()
 
     return await roles_repositories.update_role_permissions(role=role, permissions=permissions)
+
+
+async def get_project_memberships(project: Project) -> list[Membership]:
+    return await roles_repositories.get_project_memberships(project.slug)

@@ -12,14 +12,13 @@ from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_422
-from taiga.routers import routes
 from taiga.permissions import IsAuthenticated
+from taiga.routers import routes
 from taiga.users import exceptions as services_ex
 from taiga.users import services as users_services
 from taiga.users.models import User
 from taiga.users.serializers import UserContactSerializer, UserMeSerializer, UserSerializer
 from taiga.users.validators import CreateUserValidator, UserContactsValidator, VerifyTokenValidator
-
 
 # PERMISSIONS
 GET_MY_CONTACTS = IsAuthenticated()

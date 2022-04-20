@@ -11,18 +11,19 @@ from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions import services as services_ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
-from taiga.permissions import IsProjectAdmin
+from taiga.permissions import CanViewProject, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
 from taiga.projects.models import Project
 from taiga.projects.validators import PermissionsValidator
 from taiga.roles import services as roles_services
-from taiga.roles.models import Role
-from taiga.roles.serializers import RoleSerializer
+from taiga.roles.models import Membership, Role
+from taiga.roles.serializers import MembershipSerializer, RoleSerializer
 from taiga.routers import routes
 
 # PERMISSIONS
 GET_PROJECT_ROLES = IsProjectAdmin()
 UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
+GET_PROJECT_MEMBERSHIPS = CanViewProject()
 
 
 @routes.projects.get(
@@ -75,6 +76,26 @@ async def update_project_role_permissions(
         raise ex.BadRequest("Given permissions are incompatible")
 
     return await get_project_role_or_404(project=project, slug=role_slug)
+
+
+@routes.projects.get(
+    "/{slug}/memberships",
+    name="project.memberships.get",
+    summary="Get project memberships",
+    response_model=list[MembershipSerializer],
+    responses=ERROR_404 | ERROR_422,
+)
+async def get_project_memberships(
+    request: Request, slug: str = Query(None, description="the project slug (str)")
+) -> list[Membership]:
+    """
+    Get project memberships
+    """
+
+    project = await get_project_or_404(slug)
+    await check_permissions(permissions=GET_PROJECT_MEMBERSHIPS, user=request.user, obj=project)
+
+    return await roles_services.get_project_memberships(project=project)
 
 
 async def get_project_role_or_404(project: Project, slug: str) -> Role:

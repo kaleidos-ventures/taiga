@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "089fb793-a67c-4a60-9dbb-746b923ea2d6",
+		"_postman_id": "d20bc8d5-a477-4017-bd4c-aa4a46435464",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1185,7 +1185,6 @@
 									"    var jsonRes = pm.response.json();",
 									"",
 									"    // Validate response API fields",
-									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"name\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"order\");",
@@ -1196,7 +1195,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(7);",
+									"    pm.expect(numOfReturnedFields).to.equal(6);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1261,7 +1260,6 @@
 									"",
 									"    // Validate response API fields",
 									"    var role = jsonRes[0]",
-									"    pm.expect(role).to.have.property(\"id\");",
 									"    pm.expect(role).to.have.property(\"name\");",
 									"    pm.expect(role).to.have.property(\"slug\");",
 									"    pm.expect(role).to.have.property(\"order\");",
@@ -1272,7 +1270,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes[0]).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(7);",
+									"    pm.expect(numOfReturnedFields).to.equal(6);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1451,6 +1449,260 @@
 					"response": []
 				},
 				{
+					"name": "200 projects.{p}.memberships",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    var membership = jsonRes[0];",
+									"    var membershipUser = jsonRes[0].user;",
+									"    var membershipRole = jsonRes[0].role;",
+									"    // Validate response API fields",
+									"    pm.expect(membership).to.have.property(\"user\");",
+									"    pm.expect(membership).to.have.property(\"role\");",
+									"    ",
+									"    pm.expect(membershipUser).to.have.property(\"username\");",
+									"    pm.expect(membershipUser).to.have.property(\"fullName\");",
+									"",
+									"    pm.expect(membershipRole).to.have.property(\"isAdmin\");",
+									"    pm.expect(membershipRole).to.have.property(\"name\");",
+									"    pm.expect(membershipRole).to.have.property(\"slug\");",
+									"",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(membership).length;",
+									"    var numOfReturnedUserFields = Object.keys(membershipUser).length;",
+									"    var numOfReturnedRoleFields = Object.keys(membershipRole).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(2);",
+									"    pm.expect(numOfReturnedUserFields).to.equal(2);",
+									"    pm.expect(numOfReturnedRoleFields).to.equal(3);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"memberships"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 projects.{p}.invitations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    ",
+									"    // Validate response API fields",
+									"    pm.expect(jsonRes.length).to.eql(2);",
+									"",
+									"    var invitation = jsonRes[0];",
+									"    var invitationUser = jsonRes[0].user;",
+									"    var invitationRole = jsonRes[0].role;",
+									"    ",
+									"    // Validate response API fields",
+									"    pm.expect(invitation).to.have.property(\"user\");",
+									"    pm.expect(invitation).to.have.property(\"role\");",
+									"    pm.expect(invitation).to.have.property(\"email\");",
+									"",
+									"    pm.expect(invitationUser).to.have.property(\"username\");",
+									"    pm.expect(invitationUser).to.have.property(\"fullName\");",
+									"",
+									"    pm.expect(invitationRole).to.have.property(\"isAdmin\");",
+									"    pm.expect(invitationRole).to.have.property(\"name\");",
+									"    pm.expect(invitationRole).to.have.property(\"slug\");",
+									"",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(invitation).length;",
+									"    var numOfReturnedUserFields = Object.keys(invitationUser).length;",
+									"    var numOfReturnedRoleFields = Object.keys(invitationRole).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    pm.expect(numOfReturnedUserFields).to.equal(2);",
+									"    pm.expect(numOfReturnedRoleFields).to.equal(3);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user3@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"invitations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 projects.{p}.invitations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    var invitation = jsonRes[0];",
+									"    var invitationUser = jsonRes[0].user;",
+									"    var invitationRole = jsonRes[0].role;",
+									"",
+									"    // Validate response API fields",
+									"    pm.expect(invitation).to.have.property(\"user\");",
+									"    pm.expect(invitation).to.have.property(\"role\");",
+									"    pm.expect(invitation).to.have.property(\"email\");",
+									"",
+									"    pm.expect(invitationUser).to.have.property(\"username\");",
+									"    pm.expect(invitationUser).to.have.property(\"fullName\");",
+									"",
+									"    pm.expect(invitationRole).to.have.property(\"isAdmin\");",
+									"    pm.expect(invitationRole).to.have.property(\"name\");",
+									"    pm.expect(invitationRole).to.have.property(\"slug\");",
+									"",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(invitation).length;",
+									"    var numOfReturnedUserFields = Object.keys(invitationUser).length;",
+									"    var numOfReturnedRoleFields = Object.keys(invitationRole).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    pm.expect(numOfReturnedUserFields).to.equal(2);",
+									"    pm.expect(numOfReturnedRoleFields).to.equal(3);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"invitations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "200 workspaces.{w}.projects",
 					"event": [
 						{
@@ -1509,83 +1761,6 @@
 								"workspaces",
 								"{{ws-slug}}",
 								"projects"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "200 projects.{p}.invitations",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response JSON is correct\", function () {",
-									"    var jsonRes = pm.response.json();",
-									"",
-									"    // Validate response API fields",
-									"    pm.expect(jsonRes.length).to.eql(2);",
-									"",
-									"    var invitation = jsonRes[0]    ",
-									"    pm.expect(invitation).to.have.property(\"userId\");",
-									"    pm.expect(invitation).to.have.property(\"projectId\");",
-									"    pm.expect(invitation).to.have.property(\"roleId\");",
-									"    pm.expect(invitation).to.have.property(\"email\");",
-									"    pm.expect(invitation.email).to.be.eql(\"user3@taiga.demo\");",
-									"",
-									"    var invitation = jsonRes[1]    ",
-									"    pm.expect(invitation).to.have.property(\"userId\");",
-									"    pm.expect(invitation).to.have.property(\"projectId\");",
-									"    pm.expect(invitation).to.have.property(\"roleId\");",
-									"    pm.expect(invitation).to.have.property(\"email\");",
-									"    pm.expect(invitation.userId).to.be.eql(null);",
-									"    pm.expect(invitation.email).to.be.eql(\"user-test@example.com\");",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user3@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-slug}}",
-								"invitations"
 							]
 						}
 					},

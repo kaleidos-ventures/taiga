@@ -26,6 +26,13 @@ def create_membership(user: User, project: Project, role: Role, email: str | Non
     return Membership.objects.create(user=user, project=project, role=role, email=email)
 
 
+@sync_to_async
+def get_project_memberships(project_slug: str) -> list[Membership]:
+    project_memberships = Membership.objects.filter(project__slug=project_slug).select_related("user", "role")
+
+    return list(project_memberships.order_by("user__full_name"))
+
+
 # Roles
 
 

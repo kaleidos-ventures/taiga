@@ -87,3 +87,7 @@ def create_project(**kwargs):
     f.MembershipFactory.create(user=project.owner, project=project, role=admin_role)
 
     return project
+
+
+def build_project(**kwargs):
+    return ProjectFactory.build(**kwargs)

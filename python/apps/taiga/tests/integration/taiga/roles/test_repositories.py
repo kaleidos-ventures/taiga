@@ -38,6 +38,24 @@ async def test_create_membership():
 
 
 ##########################################################
+# get_project_memberships
+##########################################################
+
+
+async def test_get_project_memberships():
+    owner = await f.create_user()
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    project = await f.create_project(owner=owner)
+    role = await f.create_role(project=project)
+    await repositories.create_membership(user=user1, project=project, role=role, email=user1.email)
+    await repositories.create_membership(user=user2, project=project, role=role, email=user2.email)
+
+    memberships = await repositories.get_project_memberships(project_slug=project.slug)
+    assert len(memberships) == 3
+
+
+##########################################################
 # get_project_roles
 ##########################################################
 

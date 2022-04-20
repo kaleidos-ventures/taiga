@@ -57,3 +57,10 @@ async def test_update_role_permissions_ok():
         fake_role_repository.update_role_permissions.return_value = await f.create_role()
         await services.update_role_permissions(role=role, permissions=permissions)
         fake_role_repository.update_role_permissions.assert_awaited_once()
+
+
+async def test_get_project_memberships():
+    project = f.build_project()
+    with patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository:
+        await services.get_project_memberships(project=project)
+        fake_role_repository.get_project_memberships.assert_awaited_once()

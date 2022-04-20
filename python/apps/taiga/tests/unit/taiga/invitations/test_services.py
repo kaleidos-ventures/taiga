@@ -39,3 +39,11 @@ async def test_create_invitations():
         await services.create_invitations(project=project, invitations=invitations, invited_by=user)
 
         fake_invitations_repo.create_invitations.assert_awaited_once()
+
+
+async def test_get_project_invitations():
+    project = f.build_project()
+    with patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo:
+        await services.get_project_invitations(project=project)
+
+        fake_invitations_repo.get_project_invitations.assert_awaited_once()

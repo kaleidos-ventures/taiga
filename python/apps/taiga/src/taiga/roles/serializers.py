@@ -6,16 +6,30 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializer import BaseModel
+from taiga.users.serializers import UserSerializer
 
 
-class RoleSerializer(BaseModel):
-    id: str
+class BaseRoleSerializer(BaseModel):
+    is_admin: bool
     name: str
     slug: str
+
+    class Config:
+        orm_mode = True
+
+
+class RoleSerializer(BaseRoleSerializer):
     order: int
     num_members: int = 0
-    is_admin: bool
     permissions: list[str]
+
+    class Config:
+        orm_mode = True
+
+
+class MembershipSerializer(BaseModel):
+    user: UserSerializer
+    role: BaseRoleSerializer
 
     class Config:
         orm_mode = True

@@ -28,6 +28,40 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     padding: 44px 64px;
   }
 
+  .color-1 {
+    background: rgba(251, 215, 205, 1);
+    color: rgba(144, 72, 28, 1);
+  }
+
+  .color-2 {
+    background: rgba(247, 215, 220, 1);
+    color: rgba(170, 40, 80, 1);
+  }
+  .color-3 {
+    background: rgba(246, 214, 240, 1);
+    color: rgba(146, 44, 164, 1);
+  }
+  .color-4 {
+    background: rgba(194, 237, 122, 1);
+    color: rgba(78, 99, 36, 1);
+  }
+  .color-5 {
+    background: rgba(190, 228, 255, 1);
+    color: rgba(0, 99, 133, 1);
+  }
+  .color-6 {
+    background: rgba(213, 223, 251, 1);
+    color: rgba(28, 93, 162, 1);
+  }
+  .color-7 {
+    background: rgba(185, 241, 181, 1);
+    color: rgba(68, 100, 66, 1);
+  }
+  .color-8 {
+    background: rgba(249, 220, 161, 1);
+    color: rgba(109, 90, 36, 1);
+  }
+
   a.primary-link,
   a.primary-link:link,
   a.primary-link:visited,

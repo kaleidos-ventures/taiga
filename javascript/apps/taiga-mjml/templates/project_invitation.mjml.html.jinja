@@ -20,17 +20,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <mj-include path="../components/header-logo.mjml" />
       <mj-section mj-class="padding-top">
         <mj-column>
-
-          <!-- This text only appear if you are not registered -->
-          <!-- <mj-text css-class="dm-text" mj-class="font-heading1 color-gray100">
-            Hi there,
-          </mj-text> -->
-          <!-- This text only appear if you are  registered -->
           <mj-text css-class="dm-text" mj-class="font-heading1 color-gray100">
             {% if receiver_name -%}
-            Hi {{ receiver_name }},
-            {% else -%}
-            Hi there,
+              Hi {{ receiver_name }},
+            {% else %}
+              Hi there,
             {% endif -%}
           </mj-text>
           <mj-text css-class="dm-text" mj-class="font-heading2 color-gray100">
@@ -44,10 +38,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             <table>
               <tr>
                 {% if project_image_url -%}
-                <td style="vertical-align:top;">
+                <td style="vertical-align:top; width: 32px;">
                   <a style="padding-top: 3px; padding-bottom: 3px; padding-left: 8px; width: 32px" href="{{ project_url }}" >
                     <img height="32" width="32" style="border-radius: 3px" src="{{ project_image_url }}" />
                   </a>
+                </td>
+                {% else %}
+                <td style="vertical-align:top; width: 32px; height: 32px;">
+                  <table>
+                    <tr>
+                      <td class="color-1" style="height: 32px; width: 32px; text-align: center; font-size: 14px; text-transform: uppercase; border-radius: 3px;">EA</td>
+                    </tr>
+                  </table>
                 </td>
                 {% endif -%}
                 <td style="padding-left: 12px; vertical-align:top">
@@ -59,23 +61,36 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </mj-text>
         </mj-column>
       </mj-section>
-      <mj-section mj-class="padding-bottom">
+      <mj-section>
         <mj-column>
-          <!-- Start: This text only appear if you are not registered -->
           {% if not receiver_name -%}
           <mj-text css-class="dm-text" mj-class="font-body color-gray80">
             Taiga is an Open Source Agile Project Management Tool. There is no cost for you to be a Taiga user.
           </mj-text>
           {% endif -%}
-          <!-- End -->
           <mj-button css-class="btn-primary" mj-class="btn-primary padding-top" href="{{ invitation_url }}">
             Accept your invitation
           </mj-button>
           <mj-text css-class="dm-text" mj-class="font-body color-gray70">
             Button not working? Copy and paste this URL into your web browser:
           </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section mj-class="padding-bottom">
+        <mj-column>
           <mj-text css-class="dm-text-gray primary-link" mj-class="font-body padding-bottom">
-            <a class="primary-link" href="{{ invitation_url }}">{{ invitation_url }}</a>
+            <table style="border-collapse:collapse;border:0;width:100%" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tbody>
+                <tr>
+                  <td valign="top">
+                    <p style="font-size:14px;line-height:21px;margin:0; text-align: left; word-break:break-all;">
+                      <!-- #TODO: Add wbr every 70 characters on the text display of this link -->
+                      <a class="primary-link" href="{{ invitation_url }}" style="word-wrap:break-word; word-break:break-all;">{{ invitation_url }}</a>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </mj-text>
         </mj-column>
       </mj-section>

@@ -41,8 +41,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .pending-msg {
+  align-items: center;
   color: var(--color-gray70);
+  display: flex;
   font-style: italic;
+  padding-inline-end: var(--spacing-16);
   white-space: nowrap;
 
   & tui-svg {
@@ -55,12 +58,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .pending-member {
   background-color: var(--color-gray10);
+  pointer-events: none;
 
   & tg-user-card {
     --color-user-name: var(--color-gray70);
   }
 
-  &::ng-deep img {
+  &::ng-deep img,
+  &::ng-deep tui-avatar {
     opacity: 0.5;
   }
 }
@@ -75,5 +80,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     align-items: center;
     display: flex;
     margin-inline-start: auto;
+    padding-inline-start: var(--spacing-16);
   }
 }

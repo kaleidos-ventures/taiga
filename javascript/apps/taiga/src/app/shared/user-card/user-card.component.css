@@ -42,19 +42,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .user-card {
   align-items: center;
   display: grid;
-  gap: var(--spacing-16);
+  gap: var(--spacing-12);
   grid-auto-flow: column;
   grid-auto-rows: auto;
   grid-template-columns: 32px minmax(0, auto) 1fr;
   justify-items: start;
   padding: var(--spacing-4);
-  padding-inline-end: var(--spacing-16);
 }
 
 .avatar {
-  block-size: 28px;
+  block-size: 32px;
+  border: solid 2px var(--color-gray20);
   border-radius: 50%;
-  inline-size: 28px;
+  inline-size: 32px;
   overflow: hidden;
 }
 

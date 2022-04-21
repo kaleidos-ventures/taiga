@@ -13,6 +13,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   align-items: center;
   display: flex;
+  font-weight: var(--font-weight-medium);
   margin: 0;
   margin-block-end: var(--spacing-16);
 
@@ -25,7 +26,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .count {
-  color: var(--color-gray80);
+  color: var(--color-gray70);
   margin-inline-start: var(--spacing-4);
 }
 

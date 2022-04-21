@@ -9,8 +9,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <ng-container *ngIf="user.fullName">
     <tg-user-avatar [user]="user"></tg-user-avatar>
     <div class="user-identifier">
-      <span class="user-name overflow" data-test="user-fullname">{{ user.fullName }}</span>
-      <span class="user-alias overflow">{{ user.username }}</span>
+      <span
+        class="user-name overflow"
+        data-test="user-fullname"
+        >{{ user.fullName }}</span
+      >
+      <span class="user-alias overflow">@{{ user.username }}</span>
     </div>
   </ng-container>
 
@@ -19,8 +23,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="avatar"
       src="/assets/images/avatar.svg"
       aria-hidden="true"></tui-svg>
-    <div class="user-identifier" >
-      <span class="user-email overflow" data-test="user-email">{{ user.email }}</span>
+    <div class="user-identifier">
+      <span
+        class="user-email overflow"
+        data-test="user-email"
+        >{{ user.email }}</span
+      >
     </div>
   </ng-container>
 

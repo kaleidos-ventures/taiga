@@ -55,6 +55,7 @@ export class VerifyEmailGuard implements CanActivate {
                 },
               },
             });
+            void this.router.navigate(['/signup']);
           } else if (httpResponse.status === 400) {
             this.appService.errorManagement(httpResponse, {
               400: {
@@ -67,8 +68,8 @@ export class VerifyEmailGuard implements CanActivate {
                 },
               },
             });
+            void this.router.navigate(['/login']);
           }
-          void this.router.navigate(['/signup']);
           return throwError(httpResponse);
         })
       );

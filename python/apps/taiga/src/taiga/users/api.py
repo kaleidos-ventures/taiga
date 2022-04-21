@@ -54,7 +54,12 @@ async def create_user(form: CreateUserValidator) -> User:
     Create new user, which is not yet verified.
     """
     try:
-        return await users_services.create_user(email=form.email, full_name=form.full_name, password=form.password)
+        return await users_services.create_user(
+            email=form.email,
+            full_name=form.full_name,
+            password=form.password,
+            project_invitation_token=form.project_invitation_token,
+        )
     except services_ex.EmailAlreadyExistsError:
         raise ex.BadRequest("Email already exists")
 
@@ -66,7 +71,7 @@ async def create_user(form: CreateUserValidator) -> User:
     response_model=AccessTokenWithRefreshSerializer,
     responses=ERROR_400 | ERROR_422,
 )
-async def verify(form: VerifyTokenValidator) -> AccessWithRefreshToken:
+async def verify_user(form: VerifyTokenValidator) -> AccessWithRefreshToken:
     try:
         user = await users_services.verify_user(token=form.token)
         return await auth_services.create_auth_credentials(user=user)

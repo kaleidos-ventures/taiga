@@ -8,6 +8,7 @@
 from typing import Any
 
 from taiga.base.api.permissions import PermissionComponent
+from taiga.invitations import services
 from taiga.users.models import User
 
 
@@ -16,4 +17,4 @@ class IsAnInvitationForMe(PermissionComponent):
         if not obj or user.is_anonymous:
             return False
 
-        return obj.email.casefold() == user.email.casefold()
+        return await services.project_invitation_is_for_this_user(obj, user)

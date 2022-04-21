@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from taiga.base.utils import emails
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
 from taiga.invitations import exceptions as ex
@@ -128,3 +129,20 @@ async def accept_project_invitation(invitation: Invitation, user: User) -> Invit
     await roles_repositories.create_membership(project=invitation.project, role=invitation.role, user=invitation.user)
 
     return accepted_invitation
+
+
+async def accept_project_invitation_from_token(token: str, user: User) -> Invitation:
+    invitation = await get_project_invitation(token=token)
+
+    if not project_invitation_is_for_this_user(invitation=invitation, user=user):
+        raise ex.InvitationIsNotForThisUserError()
+
+    return await accept_project_invitation(invitation=invitation, user=user)
+
+
+async def project_invitation_is_for_this_user(invitation: Invitation, user: User) -> bool:
+    """
+    Check if a project invitation if for an specific user. First try to compare the user associated and, if
+    there is no one, compare the email.
+    """
+    return (user.id == invitation.user_id is not None) or emails.are_the_same(user.email, invitation.email)

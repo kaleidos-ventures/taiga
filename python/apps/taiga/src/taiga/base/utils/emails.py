@@ -6,13 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-class BadInvitationTokenError(Exception):
-    ...
-
-
-class InvitationAlreadyAcceptedError(Exception):
-    ...
-
-
-class InvitationIsNotForThisUserError(Exception):
-    ...
+def are_the_same(email1: str, email2: str) -> bool:
+    """
+    Compare two email addresses and check if they are the same.
+    """
+    return email1.casefold() == email2.casefold()

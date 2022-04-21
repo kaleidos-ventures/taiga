@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from taiga.tokens import exceptions as tokens_ex
@@ -95,8 +95,9 @@ async def test_verify_user_ok():
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
     ):
-        fake_token = AsyncMock()
+        fake_token = FakeVerifyUserToken()
         fake_token.object_data = object_data
+        fake_token.get.return_value = None
         FakeVerifyUserToken.create.return_value = fake_token
         fake_users_repo.get_first_user.return_value = user
 
@@ -109,7 +110,36 @@ async def test_verify_user_ok():
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
 
 
-async def test_verify_user_with_used_token():
+async def test_verify_user_ok_with_project_invitation_token():
+    user = f.build_user(is_active=False)
+    object_data = {"id": 1}
+    project_invitation_token = "invitation_token"
+
+    with (
+        patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
+        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitation_service,
+    ):
+        fake_token = FakeVerifyUserToken()
+        fake_token.object_data = object_data
+        fake_token.get.return_value = project_invitation_token
+        FakeVerifyUserToken.create.return_value = fake_token
+        fake_users_repo.get_first_user.return_value = user
+
+        verified_user = await services.verify_user("some_token")
+
+        assert verified_user == user
+
+        fake_token.denylist.assert_awaited_once()
+        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_active=False, is_system=False)
+        fake_users_repo.verify_user.assert_awaited_once_with(user=user)
+        fake_token.get.assert_called_once()
+        fake_invitation_service.accept_project_invitation_from_token.assert_awaited_once_with(
+            token=project_invitation_token, user=user
+        )
+
+
+async def test_verify_user_error_with_used_token():
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         pytest.raises(ex.UsedVerifyUserTokenError),
@@ -119,7 +149,7 @@ async def test_verify_user_with_used_token():
         await services.verify_user("some_token")
 
 
-async def test_verify_user_with_expired_token():
+async def test_verify_user_error_with_expired_token():
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         pytest.raises(ex.ExpiredVerifyUserTokenError),
@@ -129,7 +159,7 @@ async def test_verify_user_with_expired_token():
         await services.verify_user("some_token")
 
 
-async def test_verify_user_with_invalid_token():
+async def test_verify_user_error_with_invalid_token():
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         pytest.raises(ex.BadVerifyUserTokenError),
@@ -139,7 +169,7 @@ async def test_verify_user_with_invalid_token():
         await services.verify_user("some_token")
 
 
-async def test_verify_user_with_invalid_data():
+async def test_verify_user_error_with_invalid_data():
     object_data = {"id": 1}
 
     with (
@@ -147,7 +177,7 @@ async def test_verify_user_with_invalid_data():
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
         pytest.raises(ex.BadVerifyUserTokenError),
     ):
-        fake_token = AsyncMock()
+        fake_token = FakeVerifyUserToken()
         fake_token.object_data = object_data
         FakeVerifyUserToken.create.return_value = fake_token
         fake_users_repo.get_first_user.return_value = None

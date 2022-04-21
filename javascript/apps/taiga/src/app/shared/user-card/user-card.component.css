@@ -30,6 +30,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     @mixin font-small;
 
     color: var(--color-gray70);
+
+    &::before {
+      content: "@";
+    }
   }
 
   & .user-email {

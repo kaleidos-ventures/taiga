@@ -17,7 +17,11 @@ import { InvitationApiService } from '@taiga/api';
 import { fetch } from '@nrwl/angular';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Contact, ErrorManagementToastOptions, InvitationResponse } from '@taiga/data';
+import {
+  Contact,
+  ErrorManagementToastOptions,
+  InvitationResponse,
+} from '@taiga/data';
 import { TuiNotification } from '@taiga-ui/core';
 
 @Injectable()
@@ -61,8 +65,8 @@ export class InvitationEffects {
               label: 'invite_step.invitation_error',
               message:
                 action.invitation.length === 1
-                  ? 'failed_send_invite'
-                  : 'failed_send_invites',
+                  ? 'invite_step.failed_send_invite'
+                  : 'invite_step.failed_send_invites',
               paramsMessage:
                 action.invitation.length === 1
                   ? undefined

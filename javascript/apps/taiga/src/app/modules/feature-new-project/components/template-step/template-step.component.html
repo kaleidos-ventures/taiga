@@ -27,9 +27,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       #form="ngForm"
       [formGroup]="templateProjectForm"
       (ngSubmit)="createProject()">
-      <tg-ui-select
-        [label]="t('commons.workspace')"
-        type="avatar">
+      <tg-ui-select [label]="t('commons.workspace')" type="avatar">
         <tui-select
           tuiTextfieldSize="l"
           formControlName="workspace"
@@ -44,9 +42,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </tui-data-list-wrapper>
         </tui-select>
       </tg-ui-select>
-      <ng-template
-        #content
-        let-data>
+      <ng-template #content let-data>
         <div class="workspace-option">
           <tg-ui-avatar
             size="m"
@@ -81,6 +77,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [label]="t('new_project.second_step.project_description')"
         [optional]="true">
         <tui-text-area
+          class="general-textarea"
           formControlName="description"
           data-test="input-description"
           [expandable]="true"
@@ -128,16 +125,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </form>
   </div>
 
-  <tg-ui-modal
-    [open]="showWarningModal"
-    (requestClose)="cancelRedirect()">
+  <tg-ui-modal [open]="showWarningModal" (requestClose)="cancelRedirect()">
     <ng-container>
-      <div
-        class="confirmation-modal"
-        data-test="discard-project-modal">
-        <div
-          aria-describedby="aria-description"
-          aria-labelledby="arial-label">
+      <div class="confirmation-modal" data-test="discard-project-modal">
+        <div aria-describedby="aria-description" aria-labelledby="arial-label">
           <h1 id="aria-label">
             {{ t('new_project.first_step.discard_project') }}
           </h1>
@@ -147,10 +138,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </p>
           </div>
           <div class="actions">
-            <button
-              tuiButton
-              appearance="tertiary"
-              (click)="cancelRedirect()">
+            <button tuiButton appearance="tertiary" (click)="cancelRedirect()">
               {{ t('commons.confirmation_modal.no') }}
             </button>
             <button

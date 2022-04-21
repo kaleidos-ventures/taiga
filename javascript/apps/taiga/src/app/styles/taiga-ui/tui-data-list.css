@@ -5,36 +5,38 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
+/* stylelint-disable declaration-no-important */
 
 tui-data-list {
   border: 1px solid var(--color-gray40);
   border-radius: 3px;
-  /* stylelint-disable-next-line declaration-no-important */
   padding: var(--spacing-4) !important;
 
   /* stylelint-disable-next-line selector-max-type */
   & button {
-    /* stylelint-disable-next-line declaration-no-important */
-    border-block-end: 0 !important;
-    /* stylelint-disable-next-line declaration-no-important */
-    border-block-start: 0 !important;
-    /* stylelint-disable-next-line declaration-no-important */
+    border: solid 1px var(--color-white) !important;
     margin: 0 !important;
-    /* stylelint-disable-next-line declaration-no-important */
     min-block-size: var(--spacing-24) !important;
-    /* stylelint-disable-next-line declaration-no-important */
     padding: var(--spacing-8) !important;
 
     /* stylelint-disable-next-line selector-max-type */
     &:hover {
-      /* stylelint-disable-next-line declaration-no-important */
+      background: var(--color-gray20) !important;
       color: var(--color-secondary80) !important;
     }
 
     /* stylelint-disable-next-line selector-max-type */
     &:focus-visible {
-      /* stylelint-disable-next-line declaration-no-important */
-      outline: solid 1px var(--color-secondary80) !important;
+      background: var(--color-white) !important;
+      border-color: var(--color-secondary80) !important;
     }
+  }
+
+  & .selected {
+    background: var(--color-gray20) !important;
+  }
+
+  & [data-size="s"] {
+    block-size: var(--spacing-32);
   }
 }

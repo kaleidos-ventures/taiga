@@ -1,7 +1,7 @@
 {
   "invite_step": {
     "title": "Invite people to {{ project }}",
-    "instructions": "Start typing a <strong>name</strong>, <strong>username</strong> or <strong>email</strong>.",
+    "instructions": "Start typing a <strong class='strong'>name</strong>, <strong class='strong'>username</strong> or <strong class='strong'>email</strong>.",
     "alternative": "You can also enter multiple email addresses separated by a comma.",
     "send_invites": "Send invites",
     "later": "Maybe later",

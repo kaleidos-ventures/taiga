@@ -5,6 +5,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
+/* stylelint-disable declaration-no-important */
+
 @import "tools/typography.css";
 
 :host {
@@ -17,81 +19,121 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     &.update-on-blur.touched::ng-deep,
     &.update-on-change.touched::ng-deep {
       & tui-wrapper::after {
-        /* stylelint-disable-next-line declaration-no-important */
         color: var(--color-red) !important;
       }
     }
   }
 }
 
-:host::ng-deep {
-  & tui-wrapper[data-appearance="textfield"] {
-    background: var(--color-white);
+tui-text-area {
+  --tui-error-bg-night: var(--color-red40);
 
-    &::after {
-      color: var(--color-gray40);
+  & ::ng-deep {
+    & .placeholder {
+      --tui-text-01: var(--color-gray60);
+      --tui-text-02: var(--color-gray60);
     }
-
-    &._focused {
-      &::after {
-        color: var(--color-secondary);
-      }
-    }
-  }
-
-  & .invalid {
-    & tui-wrapper[data-appearance="textfield"] {
-      &::after {
-        background: var(--color-red10);
-        border: 2px solid var(--color-red60);
-        border-radius: 3px;
-      }
-    }
-  }
-
-  & .small {
-    line-height: 1.2;
-    min-block-size: var(--spacing-32);
-
-    & .t-wrapper {
-      line-height: 1.2;
-    }
-  }
-
-  & .bottom-space {
-    & .t-wrapper {
-      padding-block: var(--spacing-8) var(--spacing-24);
-    }
-  }
-
-  & .input-container {
-    margin-block-end: var(--spacing-8);
-  }
-
-  & .t-placeholder {
-    /* stylelint-disable-next-line declaration-no-important */
-    color: var(--color-gray60) !important;
-    /* stylelint-disable-next-line declaration-no-important */
-    inset-block-start: var(--spacing-8) !important;
-    /* stylelint-disable-next-line declaration-no-important */
-    line-height: 1.1 !important;
-  }
-
-  & .t-wrapper {
-    color: var(--color-gray80);
-    line-height: 1.5;
-    padding-block: var(--spacing-8);
-    padding-inline: var(--spacing-12);
-  }
-
-  & .counter {
-    /* stylelint-disable-next-line declaration-no-important */
-    color: var(--color-gray70) !important;
   }
 }
 
-.optional {
-  @mixin font-small;
+:host::ng-deep {
+  & .invitation-textarea {
+    @mixin font-paragraph;
 
-  color: var(--color-gray70);
+    &.invalid {
+      & tui-wrapper[data-appearance="textfield"] {
+        /* stylelint-disable-next-line max-nesting-depth */
+        &::after {
+          background: var(--color-red10);
+          border: 2px solid var(--color-red60);
+          border-radius: 3px;
+        }
+      }
+    }
+
+    &._focused {
+      & .t-placeholder {
+        color: var(--color-gray60);
+      }
+    }
+
+    &.bottom-space {
+      & .t-wrapper {
+        padding-block: var(--spacing-8) var(--spacing-24);
+      }
+    }
+
+    & .input-container {
+      margin-block-end: var(--spacing-8);
+    }
+
+    & .t-placeholder {
+      align-items: center;
+      color: var(--color-gray60);
+      display: flex;
+      font: inherit;
+      font-size: inherit;
+      inset-block-start: var(--spacing-8);
+      padding-inline-start: var(--spacing-12);
+    }
+
+    & .t-wrapper {
+      color: var(--color-gray80);
+      line-height: 1.1429;
+      padding-block: var(--spacing-8);
+      padding-inline: var(--spacing-12);
+      word-break: break-word;
+    }
+
+    &.compressed {
+      min-block-size: 0;
+    }
+
+    &.optional {
+      @mixin font-small;
+
+      color: var(--color-gray70);
+    }
+  }
+
+  & .general-textarea {
+    & tui-wrapper[data-appearance="textfield"] {
+      background: var(--color-white);
+
+      &::after {
+        color: var(--color-gray40);
+      }
+
+      &._focused {
+        /* stylelint-disable-next-line max-nesting-depth */
+        &::after {
+          color: var(--color-secondary);
+        }
+      }
+    }
+
+    & .input-container {
+      margin-block-end: var(--spacing-8);
+    }
+
+    & .t-placeholder {
+      color: var(--color-gray60) !important;
+      inset-block-start: var(--spacing-8) !important;
+      line-height: 1.5 !important;
+    }
+
+    & .t-wrapper {
+      padding-block-start: var(--spacing-8) !important;
+    }
+
+    & .t-counter {
+      color: var(--color-gray70) !important;
+    }
+  }
+
+  & .optional {
+    @mixin font-small;
+
+    color: var(--color-gray70);
+  }
 }

@@ -38,17 +38,6 @@ tui-wrapper[data-appearance="textfield"] {
   }
 }
 
-tui-text-area {
-  --tui-error-bg-night: var(--color-red40);
-
-  & ::ng-deep {
-    & .placeholder {
-      --tui-text-01: var(--color-gray60);
-      --tui-text-02: var(--color-gray60);
-    }
-  }
-}
-
 button:is([type="button"], [type="reset"], [type="submit"]):focus-visible {
   outline: 0;
 }

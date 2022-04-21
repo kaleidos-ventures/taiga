@@ -11,7 +11,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <h1 class="modal-title">
       {{ t('kanban.invite_step.title', { project: project.name }) }}
     </h1>
-    <form [formGroup]="inviteProjectForm">
+    <form class="form-container" [formGroup]="inviteProjectForm">
       <tui-scrollbar class="padding-scroll">
         <p
           class="text"
@@ -25,10 +25,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <div class="text-area">
             <tg-ui-textarea>
               <tui-text-area
+                class="invitation-textarea compressed"
                 #emailInput
                 tuiAutoFocus
                 data-test="input-add-invites"
-                [class.small]="(validInviteEmails$ | async)!.length < 2"
                 [class.bottom-space]="
                   (emailsWithoutDuplications$ | async)!.length > 1
                 "
@@ -42,7 +42,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [(ngModel)]="inviteEmails"
                 (ngModelChange)="emailsChange($event)"
                 [ngModelOptions]="{ standalone: true }"
-                [expandable]="true">
+                [expandable]="true"
+                [rows]="9999">
                 {{ t('kanban.invite_step.placeholder') }}
               </tui-text-area>
               <tg-ui-error
@@ -131,7 +132,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </ng-container>
         </div>
       </tui-scrollbar>
-
       <div class="actions-wrapper">
         <tg-ui-context-notification
           *ngIf="inviteEmailsErrors.listEmpty"

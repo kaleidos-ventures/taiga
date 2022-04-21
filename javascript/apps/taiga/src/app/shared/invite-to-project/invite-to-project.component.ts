@@ -30,6 +30,7 @@ import {
   selectMemberRolesOrdered,
   selectUsersToInvite,
 } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
   debounceTime,
@@ -40,7 +41,7 @@ import {
   switchMap,
 } from 'rxjs/operators';
 import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
-import { Actions, ofType } from '@ngrx/effects';
+import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TuiTextAreaComponent } from '@taiga-ui/kit';
 import { TuiScrollbarComponent } from '@taiga-ui/core';
@@ -73,7 +74,7 @@ export class InviteToProjectComponent implements OnInit {
     return !this.formHasContent();
   }
 
-  public regexpEmail = /\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+/g;
+  public regexpEmail = /\w+([.\-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+/g;
   public inviteEmails = '';
   public inviteEmails$ = new BehaviorSubject('');
   public inviteEmailsErrors: {
@@ -160,18 +161,26 @@ export class InviteToProjectComponent implements OnInit {
     this.store.dispatch(initRolesPermissions({ project: this.project }));
 
     // when we add users to invite its necessary to add the result to the form
-    this.usersToInvite$.subscribe((userToInvite) => {
-      userToInvite.forEach((user) => {
-        const userAlreadyExist = this.users?.find((it: FormGroup) => {
-          return (it.value as Partial<User>).email === user.email;
+    this.usersToInvite$
+      .pipe(concatLatestFrom(() => this.store.select(selectUser)))
+      .subscribe(([userToInvite, currentUser]) => {
+        userToInvite.forEach((user) => {
+          const userNotExist = this.users?.find((it: FormGroup) => {
+            return (it.value as Partial<User>).email !== user.email;
+          });
+          const isNotCurrentUser = currentUser?.email !== user.email;
+          userNotExist &&
+            isNotCurrentUser &&
+            this.users.splice(
+              this.positionInArray(user),
+              0,
+              this.fb.group(user)
+            );
         });
-        !userAlreadyExist &&
-          this.users.splice(this.positionInArray(user), 0, this.fb.group(user));
+        this.inviteEmails = '';
+        this.inviteEmailsChange('');
+        this.emailInput?.nativeFocusableElement?.focus();
       });
-      this.inviteEmails = '';
-      this.inviteEmailsChange('');
-      this.emailInput?.nativeFocusableElement?.focus();
-    });
 
     this.memberRoles$.subscribe((memberRoles) => {
       this.orderedRoles = memberRoles;

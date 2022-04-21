@@ -8,6 +8,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
+.form-container {
+  block-size: 100%;
+  display: grid;
+  grid-template-rows: 1fr min-content;
+  max-block-size: calc(76vh - 80px);
+  min-block-size: 0;
+  min-inline-size: 0;
+}
+
 .modal-title {
   @mixin font-heading-3;
 
@@ -24,6 +33,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   color: var(--color-gray80);
   margin-block: 0;
+
+  &::ng-deep .strong {
+    color: var(--color-gray90);
+  }
 }
 
 .add-wrapper {
@@ -33,6 +46,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .add-icon {
     fill: var(--color-gray50);
+    margin-block-start: var(--spacing-4);
   }
 
   & .text-area {
@@ -44,8 +58,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     @mixin font-small;
 
     color: var(--color-gray90);
-    inset-block-end: var(--spacing-16);
-    inset-inline-end: var(--spacing-8);
+    inset-block-end: var(--spacing-8);
+    inset-inline-end: var(--spacing-12);
     position: absolute;
 
     &.errors {
@@ -64,7 +78,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   gap: var(--spacing-8);
   justify-content: center;
   margin-block-start: var(--spacing-16);
-  padding-block: var(--spacing-28);
+  padding-block: var(--spacing-32);
 
   & .tip-icon {
     fill: var(--color-gray30);

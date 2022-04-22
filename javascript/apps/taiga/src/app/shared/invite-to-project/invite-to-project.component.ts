@@ -9,6 +9,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   HostListener,
   Input,
@@ -35,6 +36,7 @@ import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/
 import { Actions, ofType } from '@ngrx/effects';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TuiTextAreaComponent } from '@taiga-ui/kit';
+import { TuiScrollbarComponent } from '@taiga-ui/core';
 
 @UntilDestroy()
 @Component({
@@ -47,6 +49,9 @@ import { TuiTextAreaComponent } from '@taiga-ui/kit';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InviteToProjectComponent implements OnInit {
+  @ViewChild(TuiScrollbarComponent, { read: ElementRef })
+  private readonly scrollBar?: ElementRef<HTMLElement>;
+
   @Input()
   public project!: Project;
 
@@ -213,6 +218,7 @@ export class InviteToProjectComponent implements OnInit {
     const bulkErrors = this.inviteEmails
       .replace(this.regexpEmail, '')
       .replace(/[;,\s\n]/g, '');
+
     this.resetErrors();
     if (this.inviteEmails === '') {
       this.inviteEmailsErrors.required = true;
@@ -228,6 +234,15 @@ export class InviteToProjectComponent implements OnInit {
 
   public deleteUser(i: number) {
     (this.inviteProjectForm.controls['users'] as FormArray).removeAt(i);
+
+    // force recalculate scroll height in Firefox
+    requestAnimationFrame(() => {
+      if (this.scrollBar) {
+        this.scrollBar.nativeElement.scrollTop = 0;
+        this.scrollBar.nativeElement.scrollTop =
+          this.scrollBar.nativeElement.scrollHeight;
+      }
+    });
   }
 
   public getRoleSlug(roleName: string) {

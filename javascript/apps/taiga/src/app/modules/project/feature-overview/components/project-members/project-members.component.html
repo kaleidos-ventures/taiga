@@ -12,7 +12,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <tui-svg src="members"></tui-svg>
       <span class="title-inner">{{ t('project_overview.members.title') }}</span>
       <ng-container *ngIf="!vm.loading">
-        <span class="count">({{ vm.members.length }})</span>
+        <span class="count">({{ vm.members.length - vm.pending }})</span>
         <span
           class="pending"
           *ngIf="vm.pending"

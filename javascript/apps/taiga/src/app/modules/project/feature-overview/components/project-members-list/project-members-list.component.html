@@ -25,7 +25,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <div class="member-info">
             <div
               class="admin"
-              *ngIf="member.role?.isAdmin">
+              *ngIf="member.role?.isAdmin && !isPending(member)">
               {{ t('commons.roles.admin') }}
             </div>
             <div class="block-end">

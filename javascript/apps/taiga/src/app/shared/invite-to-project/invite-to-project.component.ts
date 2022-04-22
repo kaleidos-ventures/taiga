@@ -31,7 +31,14 @@ import {
   selectUsersToInvite,
 } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { skip, switchMap } from 'rxjs/operators';
+import {
+  debounceTime,
+  map,
+  share,
+  skip,
+  startWith,
+  switchMap,
+} from 'rxjs/operators';
 import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { Actions, ofType } from '@ngrx/effects';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -68,6 +75,7 @@ export class InviteToProjectComponent implements OnInit {
 
   public regexpEmail = /\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+/g;
   public inviteEmails = '';
+  public inviteEmails$ = new BehaviorSubject('');
   public inviteEmailsErrors: {
     required: boolean;
     regex: boolean;
@@ -92,6 +100,8 @@ export class InviteToProjectComponent implements OnInit {
   public memberRoles$ = this.store.select(selectMemberRolesOrdered);
   public contacts$ = this.store.select(selectContacts);
   public usersToInvite$!: Observable<Partial<User>[]>;
+  public validInviteEmails$!: Observable<RegExpMatchArray>;
+  public emailsWithoutDuplications$!: Observable<string[]>;
 
   constructor(
     private fb: FormBuilder,
@@ -103,6 +113,21 @@ export class InviteToProjectComponent implements OnInit {
       .subscribe(() => {
         this.close();
       });
+
+    this.validInviteEmails$ = this.inviteEmails$.pipe(
+      debounceTime(200),
+      map((emails) => this.validateEmails(emails)),
+      share(),
+      startWith([])
+    );
+
+    this.emailsWithoutDuplications$ = this.validInviteEmails$.pipe(
+      map((emails) => {
+        return emails?.filter((email, i) => emails.indexOf(email) === i);
+      }),
+      share(),
+      startWith([])
+    );
   }
 
   public get users() {
@@ -112,10 +137,6 @@ export class InviteToProjectComponent implements OnInit {
 
   public get validEmails() {
     return this.validEmails$.value;
-  }
-
-  public get validInviteEmails() {
-    return this.inviteEmails.match(this.regexpEmail) || [];
   }
 
   public get emailsHaveErrors() {
@@ -135,6 +156,7 @@ export class InviteToProjectComponent implements OnInit {
           .pipe(skip(1));
       })
     );
+
     this.store.dispatch(initRolesPermissions({ project: this.project }));
 
     // when we add users to invite its necessary to add the result to the form
@@ -180,13 +202,12 @@ export class InviteToProjectComponent implements OnInit {
     });
   }
 
-  public formHasContent() {
-    return !!this.inviteEmails || !!this.users.length;
+  public validateEmails(emails: string) {
+    return emails.match(this.regexpEmail) || [];
   }
 
-  public emailsWithoutDuplications() {
-    const emails = this.validInviteEmails;
-    return emails?.filter((email, i) => emails.indexOf(email) === i);
+  public formHasContent() {
+    return !!this.inviteEmails || !!this.users.length;
   }
 
   public trackByIndex(index: number) {
@@ -195,6 +216,8 @@ export class InviteToProjectComponent implements OnInit {
 
   public emailsChange(emails: string) {
     !emails && this.resetErrors();
+
+    this.inviteEmails$.next(emails);
   }
 
   public resetErrors() {

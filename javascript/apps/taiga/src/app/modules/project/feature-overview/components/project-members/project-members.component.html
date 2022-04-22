@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <ng-container *ngIf="model$ | async as vm">
     <h2 class="title">
       <tui-svg src="members"></tui-svg>
-      {{ t('project_overview.members.title') }}
+      <span class="title-inner">{{ t('project_overview.members.title') }}</span>
       <ng-container *ngIf="!vm.loading">
         <span class="count">({{ vm.members.length }})</span>
         <span

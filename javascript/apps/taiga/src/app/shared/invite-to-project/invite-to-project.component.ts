@@ -165,12 +165,12 @@ export class InviteToProjectComponent implements OnInit {
       .pipe(concatLatestFrom(() => this.store.select(selectUser)))
       .subscribe(([userToInvite, currentUser]) => {
         userToInvite.forEach((user) => {
-          const userNotExist = this.users?.find((it: FormGroup) => {
-            return (it.value as Partial<User>).email !== user.email;
+          const userAlreadyExist = this.users?.find((it: FormGroup) => {
+            return (it.value as Partial<User>).email === user.email;
           });
-          const isNotCurrentUser = currentUser?.email !== user.email;
-          userNotExist &&
-            isNotCurrentUser &&
+          const isCurrentUser = currentUser?.email === user.email;
+          !userAlreadyExist &&
+            !isCurrentUser &&
             this.users.splice(
               this.positionInArray(user),
               0,
@@ -178,7 +178,7 @@ export class InviteToProjectComponent implements OnInit {
             );
         });
         this.inviteEmails = '';
-        this.inviteEmailsChange('');
+        this.emailsChange('');
         this.emailInput?.nativeFocusableElement?.focus();
       });
 
@@ -240,9 +240,8 @@ export class InviteToProjectComponent implements OnInit {
     };
   }
 
-  public inviteEmailsChange(value: string) {
-    const result = value.match(this.regexpEmail) || [];
-    this.validEmails$.next([...result]);
+  public filterValidEmails(value: string) {
+    return value.match(this.regexpEmail) || [];
   }
 
   public addUser() {
@@ -259,7 +258,7 @@ export class InviteToProjectComponent implements OnInit {
     } else if (bulkErrors) {
       this.inviteEmailsErrors.bulkError = true;
     } else {
-      this.inviteEmailsChange(this.inviteEmails);
+      this.validEmails$.next(this.filterValidEmails(this.inviteEmails));
       this.store.dispatch(fetchMyContacts({ emails: this.validEmails }));
     }
   }

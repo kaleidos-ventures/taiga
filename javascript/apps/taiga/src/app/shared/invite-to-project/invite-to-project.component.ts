@@ -39,6 +39,7 @@ import {
   skip,
   startWith,
   switchMap,
+  throttleTime,
 } from 'rxjs/operators';
 import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
@@ -116,7 +117,7 @@ export class InviteToProjectComponent implements OnInit {
       });
 
     this.validInviteEmails$ = this.inviteEmails$.pipe(
-      debounceTime(200),
+      throttleTime(200, undefined, { leading: true, trailing: true }),
       map((emails) => this.validateEmails(emails)),
       share(),
       startWith([])

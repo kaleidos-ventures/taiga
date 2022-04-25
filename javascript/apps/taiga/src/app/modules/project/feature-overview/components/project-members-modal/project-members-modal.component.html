@@ -13,7 +13,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       id="members-modal-title"
       class="title">
       {{ t('project_overview.members.title') }}
-      <span class="count">({{ members.length }})</span>
+      <span class="count">({{ members.length - pending }})</span>
       <span
         class="pending"
         *ngIf="pending">

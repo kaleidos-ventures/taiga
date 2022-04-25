@@ -63,14 +63,8 @@ export class InvitationEffects {
             type: 'toast',
             options: {
               label: 'invite_step.invitation_error',
-              message:
-                action.invitation.length === 1
-                  ? 'invite_step.failed_send_invite'
-                  : 'invite_step.failed_send_invites',
-              paramsMessage:
-                action.invitation.length === 1
-                  ? undefined
-                  : { invitations: action.invitation.length },
+              message: 'invite_step.failed_send_invite',
+              paramsMessage: { invitations: action.invitation.length },
               status: TuiNotification.Error,
               scope: 'kanban',
             },
@@ -92,14 +86,8 @@ export class InvitationEffects {
         tap((action) => {
           this.appService.toastNotification({
             label: 'invite_step.invitation_ok',
-            message:
-              action.invitations === 1
-                ? 'invite_step.invitation_success'
-                : 'invite_step.invitations_success',
-            paramsMessage:
-              action.invitations > 1
-                ? { invitations: action.invitations }
-                : undefined,
+            message: 'invite_step.invitation_success',
+            paramsMessage: { invitations: action.invitations },
             status: TuiNotification.Success,
             scope: 'kanban',
             autoClose: true,

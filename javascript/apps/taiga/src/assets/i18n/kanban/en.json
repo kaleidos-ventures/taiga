@@ -19,12 +19,10 @@
     "error_missing_people": "There are people not added to the list. Add them and try again.",
     "error_add_least_one": "Add at least one person to the list",
     "error_several_emails": "There are one or more invalid email addresses.",
-    "error_more_than_fifty": "You can only invite 50 people at once. Remove some users and try again",
+    "error_more_than_fifty": "You can only invite 50 people at once. Remove { invitations, plural, one {1 user} other {# users} } and try again.",
     "invitation_ok": "All good!",
-    "invitation_success": "Your invitation was successfully sent!",
-    "invitations_success": "Your {{ invitations }} invitations were successfully sent!",
+    "invitation_success": "Your { invitations, plural, one { invitation was } other { # invitations were } } successfully sent!",
     "invitation_error": "An error ocurred!",
-    "failed_send_invite": "Failed to send the invitation. Please try again in a few minutes.",
-    "failed_send_invites": "Failed to send {{ invitations }} invitations. Please try again in a few minutes."
+    "failed_send_invite": "Failed to send { invitations, plural, one { the invitation. } other {# invitations.} } Please try again in a few minutes."
   }
 }

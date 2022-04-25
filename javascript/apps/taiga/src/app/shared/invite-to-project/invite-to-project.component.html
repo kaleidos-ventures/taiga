@@ -11,7 +11,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <h1 class="modal-title">
       {{ t('kanban.invite_step.title', { project: project.name }) }}
     </h1>
-    <form class="form-container" [formGroup]="inviteProjectForm">
+    <form
+      class="form-container"
+      [formGroup]="inviteProjectForm">
       <tui-scrollbar class="padding-scroll">
         <p
           class="text"
@@ -146,7 +148,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           class="notification"
           status="error"
           [hasIcon]="true">
-          {{ t('kanban.invite_step.error_more_than_fifty') }}
+          {{
+            t('kanban.invite_step.error_more_than_fifty', {
+              invitations: users.length - 50
+            })
+          }}
         </tg-ui-context-notification>
         <div class="form-actions">
           <button

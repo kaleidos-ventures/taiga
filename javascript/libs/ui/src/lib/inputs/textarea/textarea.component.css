@@ -73,14 +73,19 @@ tui-text-area {
       display: flex;
       font: inherit;
       font-size: inherit;
-      inset-block-start: var(--spacing-8);
+      inset-block-start: var(--spacing-4);
+      line-height: inherit;
+      margin-block-start: 1px;
       padding-inline-start: var(--spacing-12);
     }
 
     & .t-wrapper {
+      align-items: center;
       color: var(--color-gray80);
-      line-height: 1.1429;
-      padding-block: var(--spacing-8);
+      display: flex;
+      line-height: 1.5;
+      min-block-size: var(--spacing-32);
+      padding-block: var(--spacing-4);
       padding-inline: var(--spacing-12);
       word-break: break-word;
     }

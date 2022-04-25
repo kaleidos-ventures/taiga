@@ -36,6 +36,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   &::ng-deep .strong {
     color: var(--color-gray90);
+    font-weight: var(--font-weight-medium);
   }
 }
 

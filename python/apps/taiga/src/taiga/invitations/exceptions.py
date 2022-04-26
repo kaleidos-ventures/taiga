@@ -10,6 +10,10 @@ class BadInvitationTokenError(Exception):
     ...
 
 
+class InvitationDoesNotExistError(Exception):
+    ...
+
+
 class InvitationAlreadyAcceptedError(Exception):
     ...
 

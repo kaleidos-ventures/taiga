@@ -10,6 +10,7 @@ from unittest import mock
 
 import pytest
 from fastapi import status
+from taiga.invitations.services import _generate_project_invitation_token
 from taiga.users.services import _generate_verify_user_token
 from tests.utils import factories as f
 
@@ -79,6 +80,32 @@ async def test_verify_user_ok(client):
 
     response = client.post("/users/verify", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["projectInvitation"] is None
+
+
+async def test_verify_user_ok_with_invitation(client):
+    user = await f.create_user(is_active=False)
+    project = await f.create_project()
+    role = await f.create_role(project=project)
+    project_invitation = await f.create_invitation(project=project, role=role, email=user.email)
+
+    project_invitation_token = await _generate_project_invitation_token(project_invitation)
+    data = {"token": await _generate_verify_user_token(user, project_invitation_token)}
+
+    response = client.post("/users/verify", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["projectInvitation"] is not None
+
+
+async def test_verify_user_ok_with_invalid_invitation(client):
+    user = await f.create_user(is_active=False)
+
+    project_invitation_token = "invalid-invitation-token"
+    data = {"token": await _generate_verify_user_token(user, project_invitation_token)}
+
+    response = client.post("/users/verify", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["projectInvitation"] is None
 
 
 async def test_verify_user_error_invalid_token(client):
@@ -112,6 +139,11 @@ async def test_verify_user_error_used_token(client):
     response = client.post("/users/verify", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
     assert response.json()["error"]["detail"] == "used_token"
+
+
+##########################################################
+# GET /my/contacts
+##########################################################
 
 
 async def test_my_contacts(client):

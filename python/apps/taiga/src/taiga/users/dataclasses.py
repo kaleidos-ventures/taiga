@@ -5,4 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga6.projects.models import Invitation  # noqa
+from dataclasses import dataclass
+
+from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.invitations.models import Invitation
+
+
+@dataclass
+class VerificationInfo:
+    auth: AccessWithRefreshToken
+    project_invitation: Invitation | None

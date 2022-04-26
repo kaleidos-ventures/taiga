@@ -8,6 +8,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+from taiga.auth.dataclasses import AccessWithRefreshToken
 from taiga.tokens import exceptions as tokens_ex
 from taiga.users import exceptions as ex
 from taiga.users import services
@@ -90,45 +91,59 @@ async def test_create_user_email_exists():
 async def test_verify_user_ok():
     user = f.build_user(is_active=False)
     object_data = {"id": 1}
-
-    with (
-        patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
-        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
-    ):
-        fake_token = FakeVerifyUserToken()
-        fake_token.object_data = object_data
-        fake_token.get.return_value = None
-        FakeVerifyUserToken.create.return_value = fake_token
-        fake_users_repo.get_first_user.return_value = user
-
-        verified_user = await services.verify_user("some_token")
-
-        assert verified_user == user
-
-        fake_token.denylist.assert_awaited_once()
-        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_active=False, is_system=False)
-        fake_users_repo.verify_user.assert_awaited_once_with(user=user)
-
-
-async def test_verify_user_ok_with_project_invitation_token():
-    user = f.build_user(is_active=False)
-    object_data = {"id": 1}
-    project_invitation_token = "invitation_token"
+    auth_credentials = AccessWithRefreshToken(token="token", refresh="refresh")
 
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.users.services.invitations_services", autospec=True) as fake_invitation_service,
+        patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
+    ):
+        fake_token = FakeVerifyUserToken()
+        fake_token.object_data = object_data
+        fake_token.get.return_value = None
+        fake_auth_services.create_auth_credentials.return_value = auth_credentials
+        FakeVerifyUserToken.create.return_value = fake_token
+        fake_users_repo.get_first_user.return_value = user
+
+        info = await services.verify_user("some_token")
+
+        assert info.auth == auth_credentials
+        assert info.project_invitation is None
+
+        fake_token.denylist.assert_awaited_once()
+        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_active=False, is_system=False)
+        fake_users_repo.verify_user.assert_awaited_once_with(user=user)
+        fake_token.get.assert_called_once()
+        fake_invitation_service.accept_project_invitation_from_token.assert_not_awaited()
+        fake_auth_services.create_auth_credentials.assert_awaited_once_with(user=user)
+
+
+async def test_verify_user_ok_with_project_invitation_token():
+    user = f.build_user(is_active=False)
+    project_invitation = f.build_invitation()
+    object_data = {"id": 1}
+    project_invitation_token = "invitation_token"
+    auth_credentials = AccessWithRefreshToken(token="token", refresh="refresh")
+
+    with (
+        patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
+        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitation_service,
+        patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
     ):
         fake_token = FakeVerifyUserToken()
         fake_token.object_data = object_data
         fake_token.get.return_value = project_invitation_token
+        fake_auth_services.create_auth_credentials.return_value = auth_credentials
         FakeVerifyUserToken.create.return_value = fake_token
+        fake_invitation_service.accept_project_invitation_from_token.return_value = project_invitation
         fake_users_repo.get_first_user.return_value = user
 
-        verified_user = await services.verify_user("some_token")
+        info = await services.verify_user("some_token")
 
-        assert verified_user == user
+        assert info.auth == auth_credentials
+        assert info.project_invitation == project_invitation
 
         fake_token.denylist.assert_awaited_once()
         fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_active=False, is_system=False)
@@ -137,6 +152,7 @@ async def test_verify_user_ok_with_project_invitation_token():
         fake_invitation_service.accept_project_invitation_from_token.assert_awaited_once_with(
             token=project_invitation_token, user=user
         )
+        fake_auth_services.create_auth_credentials.assert_awaited_once_with(user=user)
 
 
 async def test_verify_user_error_with_used_token():

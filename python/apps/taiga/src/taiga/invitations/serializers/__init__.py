@@ -7,10 +7,10 @@
 
 from pydantic import EmailStr
 from taiga.base.serializer import BaseModel
-from taiga.roles.serializers import BaseRoleSerializer
-from taiga.users.serializers import UserSerializer
 from taiga.invitations.choices import InvitationStatus
 from taiga.projects.serializers.related import ProjectSmallSummarySerializer
+from taiga.roles.serializers import BaseRoleSerializer
+from taiga.users.serializers import UserSerializer
 
 
 class PublicInvitationSerializer(BaseModel):

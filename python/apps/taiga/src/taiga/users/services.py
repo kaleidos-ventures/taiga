@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from pydantic import EmailStr
+from taiga.auth import services as auth_services
 from taiga.base.utils.slug import generate_username_suffix, slugify
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
@@ -14,6 +15,7 @@ from taiga.invitations import services as invitations_services
 from taiga.tokens import exceptions as tokens_ex
 from taiga.users import exceptions as ex
 from taiga.users import repositories as users_repositories
+from taiga.users.dataclasses import VerificationInfo
 from taiga.users.models import User
 from taiga.users.tokens import VerifyUserToken
 
@@ -66,7 +68,7 @@ async def _generate_verify_user_token(user: User, project_invitation_token: str 
     return str(verify_user_token)
 
 
-async def verify_user(token: str) -> User:
+async def verify_user(token: str) -> VerificationInfo:
     # Get token and deny it
     try:
         verify_token = await VerifyUserToken.create(token)
@@ -80,28 +82,30 @@ async def verify_user(token: str) -> User:
     await verify_token.denylist()
 
     # Get user and verify it
-    user_data = verify_token.object_data
-    if not user_data:
-        raise ex.BadVerifyUserTokenError()
-
-    user = await users_repositories.get_first_user(**user_data, is_active=False, is_system=False)
+    user = await users_repositories.get_first_user(**verify_token.object_data, is_active=False, is_system=False)
     if not user:
         raise ex.BadVerifyUserTokenError()
 
     await users_repositories.verify_user(user=user)
 
     # Accept project invitation, if exist. Errors will be ignored
+    project_invitation = None
     if project_invitation_token := verify_token.get("project_invitation_token", None):
         try:
-            await invitations_services.accept_project_invitation_from_token(token=project_invitation_token, user=user)
+            project_invitation = await invitations_services.accept_project_invitation_from_token(
+                token=project_invitation_token, user=user
+            )
         except (
             invitations_ex.BadInvitationTokenError,
+            invitations_ex.InvitationDoesNotExistError,
             invitations_ex.InvitationIsNotForThisUserError,
             invitations_ex.InvitationAlreadyAcceptedError,
         ):
             pass  # TODO: Logging invitation is invalid
 
-    return user
+    # Generate auth credemntials and attach invitation
+    auth = await auth_services.create_auth_credentials(user=user)
+    return VerificationInfo(auth=auth, project_invitation=project_invitation)
 
 
 async def clean_expired_users() -> None:

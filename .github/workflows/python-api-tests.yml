@@ -61,4 +61,10 @@ jobs:
     - name: Test with pytest
       working-directory: ./python/apps/taiga
       run: |
-        python -m pytest --cov --fast_only
+        python -m pytest --fast_only --cov --cov-report=term-missing:skip-covered --junitxml=pytest.xml | tee pytest-coverage.txt
+
+    - name: Pytest coverage comment
+      uses: MishaKav/pytest-coverage-comment@main
+      with:
+        pytest-coverage-path: python/apps/taiga/pytest-coverage.txt
+        junitxml-path: python/apps/taiga/pytest.xml

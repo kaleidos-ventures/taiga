@@ -8,8 +8,9 @@
 
 import pytest
 from fastapi import status
-from taiga.permissions import choices
+from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.tokens import ProjectInvitationToken
+from taiga.permissions import choices
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -195,3 +196,13 @@ async def test_accept_project_invitation_error_user_has_no_permission_over_this_
     client.login(user)
     response = client.post(f"/projects/invitations/{str(token)}/accept")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_accept_project_invitation_error_invitation_already_accepted(client):
+    user = await f.create_user()
+    invitation = await f.create_invitation(email=user.email, status=InvitationStatus.ACCEPTED)
+    token = await ProjectInvitationToken.create_for_object(invitation)
+
+    client.login(user)
+    response = client.post(f"/projects/invitations/{str(token)}/accept")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text

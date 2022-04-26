@@ -6,7 +6,9 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from pydantic import EmailStr
+from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.serializer import BaseModel
+from taiga.invitations.serializers.related import InvitationSummaryVerifyUserSerializer
 
 
 class UserBaseSerializer(BaseModel):
@@ -35,6 +37,14 @@ class UserMeSerializer(UserBaseSerializer):
 
 class UserContactSerializer(UserBaseSerializer):
     email: str
+
+    class Config:
+        orm_mode = True
+
+
+class VerificationInfoSerializer(BaseModel):
+    auth: AccessTokenWithRefreshSerializer
+    project_invitation: InvitationSummaryVerifyUserSerializer | None
 
     class Config:
         orm_mode = True

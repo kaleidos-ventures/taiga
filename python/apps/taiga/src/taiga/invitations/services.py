@@ -11,7 +11,8 @@ from taiga.emails.tasks import send_email
 from taiga.invitations import exceptions as ex
 from taiga.invitations import repositories as invitations_repositories
 from taiga.invitations.choices import InvitationStatus
-from taiga.invitations.models import Invitation, PublicInvitation
+from taiga.invitations.dataclasses import PublicInvitation
+from taiga.invitations.models import Invitation
 from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.projects.models import Project
 from taiga.projects.services import get_logo_small_thumbnail_url
@@ -29,15 +30,12 @@ async def get_project_invitation(token: str) -> Invitation | None:
         raise ex.BadInvitationTokenError()
 
     # Get invitation
-    if invitation_data := invitation_token.object_data:
-        return await invitations_repositories.get_project_invitation(**invitation_data)
-
-    return None
+    return await invitations_repositories.get_project_invitation(**invitation_token.object_data)
 
 
 async def get_public_project_invitation(token: str) -> PublicInvitation | None:
     if invitation := await get_project_invitation(token=token):
-        invited_user = await users_repositories.get_user_by_username_or_email(invitation.email)
+        invited_user = invitation.user or await users_repositories.get_user_by_username_or_email(invitation.email)
 
         return PublicInvitation(
             status=invitation.status,
@@ -53,15 +51,19 @@ async def get_project_invitations(project: Project) -> list[Invitation]:
     return await invitations_repositories.get_project_invitations(project.slug)
 
 
+async def _generate_project_invitation_token(invitation: Invitation) -> str:
+    return str(await ProjectInvitationToken.create_for_object(invitation))
+
+
 async def send_project_invitation_email(invitation: Invitation) -> None:
     project = invitation.project
     sender = invitation.invited_by
     receiver = invitation.user
     email = receiver.email if receiver else invitation.email
-    invitation_token = await ProjectInvitationToken.create_for_object(invitation)
+    invitation_token = await _generate_project_invitation_token(invitation)
 
     context = {
-        "invitation_token": str(invitation_token),
+        "invitation_token": invitation_token,
         "project_name": project.name,
         "project_slug": project.slug,
         "project_color": project.color,
@@ -134,13 +136,16 @@ async def accept_project_invitation(invitation: Invitation, user: User) -> Invit
 async def accept_project_invitation_from_token(token: str, user: User) -> Invitation:
     invitation = await get_project_invitation(token=token)
 
+    if not invitation:
+        raise ex.InvitationDoesNotExistError()
+
     if not project_invitation_is_for_this_user(invitation=invitation, user=user):
         raise ex.InvitationIsNotForThisUserError()
 
     return await accept_project_invitation(invitation=invitation, user=user)
 
 
-async def project_invitation_is_for_this_user(invitation: Invitation, user: User) -> bool:
+def project_invitation_is_for_this_user(invitation: Invitation, user: User) -> bool:
     """
     Check if a project invitation if for an specific user. First try to compare the user associated and, if
     there is no one, compare the email.

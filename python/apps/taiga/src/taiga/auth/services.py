@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.auth import exceptions as ex
-from taiga.auth.models import AccessWithRefreshToken
+from taiga.auth.dataclasses import AccessWithRefreshToken
 from taiga.auth.tokens import AccessToken, RefreshToken
 from taiga.tokens import TokenError
 from taiga.users import repositories as users_repositories
@@ -49,9 +49,8 @@ async def authenticate(token: str) -> tuple[list[str], User]:
         raise ex.BadAuthTokenError()
 
     # Check user authorization permissions
-    if user_data := access_token.object_data:
-        if user := await users_repositories.get_first_user(**user_data, is_active=True, is_system=False):
-            return ["auth"], user
+    if user := await users_repositories.get_first_user(**access_token.object_data, is_active=True, is_system=False):
+        return ["auth"], user
 
     raise ex.UnauthorizedUserError()
 

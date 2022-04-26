@@ -12,7 +12,8 @@ from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.invitations import exceptions as services_ex
 from taiga.invitations import services as invitations_services
-from taiga.invitations.models import Invitation, PublicInvitation
+from taiga.invitations.dataclasses import PublicInvitation
+from taiga.invitations.models import Invitation
 from taiga.invitations.permissions import IsAnInvitationForMe
 from taiga.invitations.serializers import InvitationSerializer, PublicInvitationSerializer
 from taiga.invitations.validators import InvitationsValidator

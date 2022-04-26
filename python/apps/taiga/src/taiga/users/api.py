@@ -5,9 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth import services as auth_services
-from taiga.auth.models import AccessWithRefreshToken
-from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
@@ -16,8 +13,9 @@ from taiga.permissions import IsAuthenticated
 from taiga.routers import routes
 from taiga.users import exceptions as services_ex
 from taiga.users import services as users_services
+from taiga.users.dataclasses import VerificationInfo
 from taiga.users.models import User
-from taiga.users.serializers import UserContactSerializer, UserMeSerializer, UserSerializer
+from taiga.users.serializers import UserContactSerializer, UserMeSerializer, UserSerializer, VerificationInfoSerializer
 from taiga.users.validators import CreateUserValidator, UserContactsValidator, VerifyTokenValidator
 
 # PERMISSIONS
@@ -68,13 +66,12 @@ async def create_user(form: CreateUserValidator) -> User:
     "/verify",
     name="users.verify",
     summary="Verify the account of a new signup user",
-    response_model=AccessTokenWithRefreshSerializer,
+    response_model=VerificationInfoSerializer,
     responses=ERROR_400 | ERROR_422,
 )
-async def verify_user(form: VerifyTokenValidator) -> AccessWithRefreshToken:
+async def verify_user(form: VerifyTokenValidator) -> VerificationInfo:
     try:
-        user = await users_services.verify_user(token=form.token)
-        return await auth_services.create_auth_credentials(user=user)
+        return await users_services.verify_user(token=form.token)
     except services_ex.UsedVerifyUserTokenError:
         raise ex.BadRequest("The token has already been used.", detail="used_token")
     except services_ex.ExpiredVerifyUserTokenError:

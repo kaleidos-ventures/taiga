@@ -17,4 +17,4 @@ class IsAnInvitationForMe(PermissionComponent):
         if not obj or user.is_anonymous:
             return False
 
-        return await services.project_invitation_is_for_this_user(obj, user)
+        return services.project_invitation_is_for_this_user(obj, user)

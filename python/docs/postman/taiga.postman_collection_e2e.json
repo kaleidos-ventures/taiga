@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d20bc8d5-a477-4017-bd4c-aa4a46435464",
+		"_postman_id": "1b6c6835-241f-4601-a900-de08558ef51e",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -430,6 +430,70 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"email\": \"ada.lovelace{{$randomInt}}@email.com\",\n  \"fullName\": \"Ada Lovelace\",\n  \"password\": \"CorrectP4ssword%\",\n  \"acceptTerms\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 users with projectInvitationToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    // Validate response API fields",
+									"    pm.expect(jsonRes).to.have.property(\"username\");",
+									"    pm.expect(jsonRes).to.have.property(\"fullName\");",
+									"",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(2);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"ada.lovelace{{$randomInt}}@email.com\",\n  \"fullName\": \"Ada Lovelace\",\n  \"password\": \"CorrectP4ssword%\",\n  \"acceptTerms\": true,\n  \"projectInvitationToken\": \"token\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1989,7 +2053,7 @@
 					"response": []
 				},
 				{
-					"name": "400 projects.invitations",
+					"name": "400 projects.invitations.{token}",
 					"event": [
 						{
 							"listen": "test",
@@ -2028,6 +2092,59 @@
 								"projects",
 								"invitations",
 								"{{inv_token}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 projects.invitations.{token}.accept",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Error JSON is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error.code).to.eql(\"bad-request-error\");",
+									"    pm.expect(jsonData.error.detail).to.eql(\"Bad Request\");",
+									"    pm.expect(jsonData.error.message).to.include(\"Invalid token\");  ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/invitations/{{inv_token}}/accept",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"invitations",
+								"{{inv_token}}",
+								"accept"
 							]
 						}
 					},
@@ -3291,131 +3408,6 @@
 							"path": [
 								"auth",
 								"token"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "400 bad-request-error invitations",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(400);",
-									"});",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"bad-request-error\");",
-									"    pm.expect(jsonData.error.detail).to.eql(\"Bad Request\");",
-									"",
-									"    // Validate we're not returning more fields than expected",
-									"    var numOfReturnedFields = Object.keys(jsonData).length;",
-									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(1);",
-									"    pm.expect(numOfErrorFields).to.equal(3);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"non-existing-role-slug\"\n    }\n  ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-slug}}",
-								"invitations"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "422 validation-error pj invitations",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(422);",
-									"});",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"validation-error\");",
-									"    pm.expect(jsonData.error.detail[0].loc[3]).to.eql(\"roleSlug\");",
-									"    pm.expect(jsonData.error.detail[0].msg).to.eql(\"Empty field is not allowed\");",
-									"    pm.expect(jsonData.error.detail[0].type).to.eql(\"assertion_error\");",
-									"",
-									"    // Validate we're not returning more fields than expected",
-									"    var numOfReturnedFields = Object.keys(jsonData).length;",
-									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(1);",
-									"    pm.expect(numOfErrorFields).to.equal(3);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"\"\n    }\n  ]\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-slug}}",
-								"invitations"
 							]
 						}
 					},

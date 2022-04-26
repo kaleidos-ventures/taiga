@@ -84,8 +84,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <tr>
                   <td valign="top">
                     <p style="font-size:14px;line-height:21px;margin:0; text-align: left; word-break:break-all;">
-                      <!-- #TODO: Add wbr every 70 characters on the text display of this link -->
-                      <a class="primary-link" href="{{ invitation_url }}" style="word-wrap:break-word; word-break:break-all;">{{ invitation_url }}</a>
+                      <a class="primary-link" href="{{ invitation_url }}" style="word-wrap:break-word; word-break:break-all;">{{ invitation_url | wbr_split }}</a>
                     </p>
                   </td>
                 </tr>

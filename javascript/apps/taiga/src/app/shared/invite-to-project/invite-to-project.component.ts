@@ -294,14 +294,14 @@ export class InviteToProjectComponent implements OnInit {
     this.resetErrors();
     if (this.users.length > 50) {
       this.inviteEmailsErrors.moreThanFifty = true;
-    } else if (this.users.length) {
+    } else if (this.users.length && this.inviteEmails === '') {
       this.store.dispatch(
         inviteUsersNewProject({
           slug: this.project.slug,
           invitation: this.generatePayload(),
         })
       );
-    } else {
+    } else if (this.inviteEmails === '') {
       this.inviteEmailsErrors.listEmpty = true;
       this.emailInput?.nativeFocusableElement?.focus();
     }

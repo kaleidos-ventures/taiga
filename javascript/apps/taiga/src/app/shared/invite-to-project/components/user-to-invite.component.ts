@@ -34,6 +34,9 @@ export class UserToInviteComponent {
   @Input()
   public roles!: Role[] | null;
 
+  @Input()
+  public isPending!: boolean;
+
   public get userObj(): Partial<User> {
     return {
       fullName: (this.user.value as Partial<User>).fullName,

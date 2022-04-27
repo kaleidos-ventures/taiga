@@ -13,13 +13,22 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { InvitationRequest, Project, Role, User } from '@taiga/data';
+import {
+  Membership,
+  Invitation,
+  InvitationRequest,
+  Project,
+  Role,
+  User,
+} from '@taiga/data';
 import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import {
   fetchMyContacts,
@@ -56,12 +65,21 @@ import { TuiScrollbarComponent } from '@taiga-ui/core';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InviteToProjectComponent implements OnInit {
+export class InviteToProjectComponent implements OnInit, OnChanges {
   @ViewChild(TuiScrollbarComponent, { read: ElementRef })
   private readonly scrollBar?: ElementRef<HTMLElement>;
 
   @Input()
   public project!: Project;
+
+  @Input()
+  public pending?: Invitation[];
+
+  @Input()
+  public reset?: boolean;
+
+  @Input()
+  public members?: (Membership | Invitation)[];
 
   @Output()
   public closeModal = new EventEmitter();
@@ -169,8 +187,14 @@ export class InviteToProjectComponent implements OnInit {
             return (it.value as Partial<User>).email === user.email;
           });
           const isCurrentUser = currentUser?.email === user.email;
+          const isAlreadyProjectMember =
+            !!user.username &&
+            this.members
+              ?.filter((it) => !(it as Invitation).email)
+              ?.find((member) => member.user?.username === user.username);
           !userAlreadyExist &&
             !isCurrentUser &&
+            !isAlreadyProjectMember &&
             this.users.splice(
               this.positionInArray(user),
               0,
@@ -185,6 +209,10 @@ export class InviteToProjectComponent implements OnInit {
     this.memberRoles$.subscribe((memberRoles) => {
       this.orderedRoles = memberRoles;
     });
+  }
+
+  public ngOnChanges(changes: SimpleChanges) {
+    changes.reset && this.cleanForm();
   }
 
   public positionInArray(user: Partial<User>) {
@@ -221,6 +249,10 @@ export class InviteToProjectComponent implements OnInit {
 
   public trackByIndex(index: number) {
     return index;
+  }
+
+  public isPending(email: string) {
+    return !!this.pending?.find((it) => it.email === email);
   }
 
   public emailsChange(emails: string) {
@@ -308,7 +340,17 @@ export class InviteToProjectComponent implements OnInit {
     this.inviteEmailsErrors.peopleNotAdded = !!this.inviteEmails;
   }
 
+  public cleanForm() {
+    this.resetErrors();
+    this.inviteEmails = '';
+    this.emailsChange('');
+    this.inviteProjectForm = this.fb.group({
+      users: new FormArray([]),
+    });
+  }
+
   public close() {
+    this.cleanForm();
     this.closeModal.next();
   }
 }

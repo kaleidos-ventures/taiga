@@ -17,6 +17,7 @@ import {
 import { initMembers } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { map } from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 
 @Component({
   selector: 'tg-project-members',
@@ -49,10 +50,14 @@ export class ProjectMembersComponent {
         previewMembers: membersAndInvitations.slice(0, 10),
         members: membersAndInvitations,
         pending: state.invitations.length,
+        invitations: state.invitations,
+        currentMember
       };
     })
   );
   public showAllMembers = false;
+  public invitePeople = false;
+  public resetForm = false;
 
   constructor(
     private auth: AuthService,
@@ -65,5 +70,12 @@ export class ProjectMembersComponent {
     this.store.dispatch(initMembers());
     this.state.connect('members', this.store.select(selectMembers));
     this.state.connect('invitations', this.store.select(selectInvitations));
+  }
+
+  public project$ = this.store.select(selectCurrentProject);
+
+  public invitePeopleModal() {
+    this.resetForm = this.invitePeople;
+    this.invitePeople = !this.invitePeople;
   }
 }

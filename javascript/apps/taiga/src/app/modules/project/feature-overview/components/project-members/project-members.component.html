@@ -23,11 +23,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         >
 
         <button
+          *ngIf="vm.currentMember && vm.currentMember.role.isAdmin"
           class="invite-button"
           appearance="tertiary"
           tuiButton
           icon="plus"
-          type="button">
+          type="button"
+          (click)="invitePeopleModal()">
           {{ t('project_overview.members.invite') }}
         </button>
       </ng-container>
@@ -62,5 +64,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [pending]="vm.pending"
         (closeModal)="showAllMembers = false"></tg-project-members-modal>
     </tg-ui-modal>
+
+    <ng-container *ngIf="vm.currentMember && vm.currentMember.role.isAdmin">
+      <tg-ui-modal
+        *ngIf="project$ | async as project "
+        [open]="invitePeople"
+        (requestClose)="invitePeopleModal()">
+        <tg-invite-to-project
+          (closeModal)="invitePeopleModal()"
+          [reset]="resetForm"
+          [members]="vm.members"
+          [pending]="vm.invitations"
+          [project]="project"></tg-invite-to-project>
+      </tg-ui-modal>
+    </ng-container>
   </ng-container>
 </ng-container>

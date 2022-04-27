@@ -14,7 +14,7 @@ import { map, tap } from 'rxjs/operators';
 import * as InvitationActions from '../actions/invitation.action';
 import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { InvitationApiService } from '@taiga/api';
-import { fetch } from '@nrwl/angular';
+import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -46,7 +46,7 @@ export class InvitationEffects {
   public sendInvitations$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(NewProjectActions.inviteUsersNewProject),
-      fetch({
+      pessimisticUpdate({
         run: (action) => {
           return this.invitationApiService
             .inviteUsers(action.slug, action.invitation)
@@ -66,7 +66,7 @@ export class InvitationEffects {
               message: 'invite_step.failed_send_invite',
               paramsMessage: { invitations: action.invitation.length },
               status: TuiNotification.Error,
-              scope: 'kanban',
+              scope: 'invitation_modal',
             },
           };
           this.appService.errorManagement(httpResponse, {
@@ -89,7 +89,7 @@ export class InvitationEffects {
             message: 'invite_step.invitation_success',
             paramsMessage: { invitations: action.invitations },
             status: TuiNotification.Success,
-            scope: 'kanban',
+            scope: 'invitation_modal',
             autoClose: true,
           });
         })

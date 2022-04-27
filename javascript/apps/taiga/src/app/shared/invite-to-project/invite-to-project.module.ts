@@ -54,8 +54,8 @@ import { TuiAutoFocusModule } from '@taiga-ui/cdk';
     {
       provide: TRANSLOCO_SCOPE,
       useValue: {
-        scope: 'kanban',
-        alias: 'kanban',
+        scope: 'invitation_modal',
+        alias: 'invitation_modal',
       },
     },
   ],

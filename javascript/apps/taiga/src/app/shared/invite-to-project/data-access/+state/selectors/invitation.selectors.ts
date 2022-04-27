@@ -10,7 +10,7 @@ import { createSelector } from '@ngrx/store';
 import { Role, User } from '@taiga/data';
 import { invitationFeature } from '../reducers/invitation.reducers';
 
-export const { selectMemberRoles, selectContacts } = invitationFeature;
+export const { selectMemberRoles, selectContacts, selectInvitations } = invitationFeature;
 
 // roles list should be shown by the order setted from 'order' the property
 export const selectMemberRolesOrdered = createSelector(
@@ -36,20 +36,23 @@ export const selectUsersToInvite = (inviteEmails: string[]) => {
   return createSelector(
     selectMemberRolesOrdered,
     selectContacts,
-    (roles, contacts): Partial<User>[] => {
+    selectInvitations,
+    (roles, contacts, invitations): Partial<User>[] => {
       const users: Partial<User>[] = [];
       const defaultRole = roles ? [roles[1].name] : undefined;
       inviteEmails.forEach((email) => {
         const myContact = contacts?.find((contact) => contact.email === email);
+        const hasPendingInvitation = invitations?.find((invitation) => invitation.email === email);
+        const role = hasPendingInvitation?.role?.name ? [hasPendingInvitation.role.name] :  defaultRole;
         if (myContact) {
           users.push({
             ...myContact,
-            roles: defaultRole,
+            roles: role,
           });
         } else {
           users.push({
             email,
-            roles: defaultRole,
+            roles: role,
           });
         }
       });

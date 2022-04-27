@@ -15,6 +15,7 @@ import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { ProjectMembersListModule } from '../project-members-list/project-members-list.module';
 import { ProjectMembersModalModule } from '../project-members-modal/project-members-modal.module';
 import { ProjectMembersComponent } from './project-members.component';
+import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import { ProjectMembersComponent } from './project-members.component';
     ProjectMembersModalModule,
     SkeletonsModule,
     ProjectMembersListModule,
+    InviteToProjectModule,
   ],
   declarations: [ProjectMembersComponent],
   exports: [ProjectMembersComponent],

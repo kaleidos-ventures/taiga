@@ -27,7 +27,7 @@ import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
-      useValue: 'kanban',
+      useValue: 'invitation_modal',
     },
   ],
 })

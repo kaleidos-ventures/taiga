@@ -13,5 +13,7 @@ export interface Membership {
   };
   role: {
     isAdmin: boolean;
+    name?: string;
+    slug?: string;
   };
 }

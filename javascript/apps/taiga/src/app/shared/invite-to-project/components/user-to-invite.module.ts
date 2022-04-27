@@ -11,7 +11,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiButtonModule, TuiSvgModule, TuiLinkModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiSvgModule, TuiLinkModule, TuiHintModule } from '@taiga-ui/core';
 import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 import { UserToInviteComponent } from './user-to-invite.component';
 
@@ -24,6 +24,7 @@ import { UserToInviteComponent } from './user-to-invite.component';
     TuiLinkModule,
     InputsModule,
     TuiSvgModule,
+    TuiHintModule,
     TranslocoModule,
     UserCardModule,
   ],
@@ -31,8 +32,8 @@ import { UserToInviteComponent } from './user-to-invite.component';
     {
       provide: TRANSLOCO_SCOPE,
       useValue: {
-        scope: 'kanban',
-        alias: 'kanban',
+        scope: 'invitation_modal',
+        alias: 'invitation_modal',
       },
     },
   ],

@@ -6,31 +6,33 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <div class="user-card">
-  <ng-container *ngIf="user.fullName">
-    <tg-user-avatar [user]="user"></tg-user-avatar>
-    <div class="user-identifier">
+  <tg-user-avatar
+    class="top"
+    *ngIf="user.fullName"
+    [user]="user"></tg-user-avatar>
+  <tui-svg
+    *ngIf="!user.fullName"
+    class="avatar top"
+    src="/assets/images/avatar.svg"
+    aria-hidden="true"></tui-svg>
+  <div class="user-identifier">
+    <ng-container *ngIf="user.fullName">
       <span
         class="user-name overflow"
         data-test="user-fullname"
         >{{ user.fullName }}</span
       >
       <span class="user-alias overflow">@{{ user.username }}</span>
-    </div>
-  </ng-container>
-
-  <ng-container *ngIf="!user.fullName">
-    <tui-svg
-      class="avatar"
-      src="/assets/images/avatar.svg"
-      aria-hidden="true"></tui-svg>
-    <div class="user-identifier">
+    </ng-container>
+    <ng-container *ngIf="!user.fullName">
       <span
         class="user-email overflow"
         data-test="user-email"
         >{{ user.email }}</span
       >
-    </div>
-  </ng-container>
+    </ng-container>
+    <ng-content select="[invitation]"></ng-content>
+  </div>
 
-  <ng-content></ng-content>
+  <ng-content select="[member]"></ng-content>
 </div>

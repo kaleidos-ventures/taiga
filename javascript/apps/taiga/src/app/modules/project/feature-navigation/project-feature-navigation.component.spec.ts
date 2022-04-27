@@ -15,14 +15,23 @@ import { LocalStorageService } from '~/app/shared/local-storage/local-storage.se
 import { ProjectNavigationComponent } from './project-feature-navigation.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { mockProvider } from '@ngneat/spectator/jest';
+import { Subject } from 'rxjs';
 
 describe('ProjectNavigationComponent', () => {
+  const events$ = new Subject();
   let spectator: Spectator<ProjectNavigationComponent>;
   const createComponent = createComponentFactory({
     component: ProjectNavigationComponent,
     imports: [CommonModule, getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
-    mocks: [LocalStorageService, Router],
+    mocks: [LocalStorageService],
+    providers: [
+      mockProvider(Router, {
+        events: events$,
+        url: '/settings',
+      }),
+    ],
   });
 
   beforeEach(() => {
@@ -39,6 +48,7 @@ describe('ProjectNavigationComponent', () => {
     localStorageService.get.mockReturnValue(true);
 
     spectator.detectChanges();
+    events$.next();
 
     expect(spectator.component.collapsed).toEqual(true);
   });

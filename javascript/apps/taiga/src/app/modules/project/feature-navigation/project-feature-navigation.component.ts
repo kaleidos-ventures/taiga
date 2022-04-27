@@ -189,6 +189,11 @@ export class ProjectNavigationComponent implements OnInit {
 
   public ngOnInit() {
     this.collapsed = !!this.localStorage.get('projectnav-collapsed');
+    this.router.events.subscribe(() => {
+      !this.router.url.includes('/settings')
+        ? (this.showProjectSettings = false)
+        : (this.showProjectSettings = true);
+    });
     this.showProjectSettings = this.router.isActive(
       this.router.createUrlTree(['project', this.project.slug, 'settings']),
       {

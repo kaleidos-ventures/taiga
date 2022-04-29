@@ -200,24 +200,62 @@ async def test_create_invitations_non_existing_role(tqmanager):
         assert len(tqmanager.pending_jobs) == 0
 
 
+async def test_create_invitations_already_member(tqmanager):
+    user = f.build_user()
+    user2 = f.build_user()
+    project = f.build_project()
+    role = f.build_role(project=project, slug="general")
+    f.create_membership(user=user2, project=project, role=role)
+    invitations = [{"email": user2.email, "role_slug": role.slug}]
+
+    with (
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.users_repositories", autospec=True) as fake_users_repo,
+    ):
+        fake_roles_repo.get_project_roles_as_dict.return_value = {role.slug: role}
+        fake_users_repo.get_users_by_emails_as_dict.return_value = {user2.email: user2}
+        fake_roles_repo.get_project_members.return_value = [user2]
+
+        await services.create_invitations(project=project, invitations=invitations, invited_by=user)
+
+        fake_invitations_repo.create_invitations.assert_not_awaited()
+        assert len(tqmanager.pending_jobs) == 0
+
+
+async def test_create_invitations_with_pending_invitations(tqmanager):
+    project = f.build_project()
+    user = project.owner
+    role = f.build_role(project=project, slug="admin")
+    role2 = f.build_role(project=project, slug="general")
+    invitation = f.build_invitation(user=None, project=project, role=role, email="test@email.com", invited_by=user)
+    invitations = [{"email": invitation.email, "role_slug": role2.slug}]
+
+    with (
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.users_repositories", autospec=True) as fake_users_repo,
+    ):
+        fake_roles_repo.get_project_roles_as_dict.return_value = {role2.slug: role2}
+        fake_invitations_repo.get_project_invitation_by_email.return_value = invitation
+        fake_users_repo.get_users_by_emails_as_dict.return_value = {}
+
+        await services.create_invitations(project=project, invitations=invitations, invited_by=user)
+
+        fake_invitations_repo.update_invitations.assert_awaited_once()
+        assert len(tqmanager.pending_jobs) == 1
+
+
 async def test_create_invitations(tqmanager):
     user1 = f.build_user()
     user2 = f.build_user(email="user-test@email.com")
-    project = f.build_project(owner=user1)
+    project = f.build_project()
     role1 = f.build_role(project=project, slug="admin")
     role2 = f.build_role(project=project, slug="general")
 
-    invitation1 = f.build_invitation(
-        id=101, user=user2, project=project, role=role1, email=user2.email, invited_by=user1
-    )
-
-    invitation2 = f.build_invitation(
-        id=102, user=None, project=project, role=role2, email="test@email.com", invited_by=user1
-    )
-
     invitations = [
-        {"email": invitation1.email, "role_slug": invitation1.role.slug},
-        {"email": invitation2.email, "role_slug": invitation2.role.slug},
+        {"email": user2.email, "role_slug": role1.slug},
+        {"email": "test@email.com", "role_slug": role2.slug},
     ]
 
     with (
@@ -227,30 +265,15 @@ async def test_create_invitations(tqmanager):
     ):
         fake_roles_repo.get_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
         fake_users_repo.get_users_by_emails_as_dict.return_value = {user2.email: user2}
-        fake_invitations_repo.create_invitations.return_value = [invitation1, invitation2]
+        fake_invitations_repo.get_project_invitation_by_email.return_value = None
 
         await services.create_invitations(project=project, invitations=invitations, invited_by=user1)
 
         fake_roles_repo.get_project_roles_as_dict.assert_awaited_once_with(project=project)
-        fake_users_repo.get_users_by_emails_as_dict.assert_awaited_once_with(
-            emails=[invitation1.email, invitation2.email]
-        )
+        fake_users_repo.get_users_by_emails_as_dict.assert_awaited_once_with(emails=[user2.email, "test@email.com"])
         fake_invitations_repo.create_invitations.assert_awaited_once()
 
-        inv1 = fake_invitations_repo.create_invitations.await_args[1]["objs"][0]
-        assert inv1.user == invitation1.user
-        assert inv1.project == invitation1.project
-        assert inv1.role == invitation1.role
-        assert inv1.email == invitation1.email
-        assert inv1.invited_by == invitation1.invited_by
-
-        inv2 = fake_invitations_repo.create_invitations.await_args[1]["objs"][1]
-        assert inv2.user == invitation2.user
-        assert inv2.project == invitation2.project
-        assert inv2.role == invitation2.role
-        assert inv2.email == invitation2.email
-        assert inv2.invited_by == invitation2.invited_by
-
+        print(tqmanager.pending_jobs)
         assert len(tqmanager.pending_jobs) == 2
 
 

@@ -17,6 +17,7 @@ class InvitationFactory(Factory):
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
     role = factory.SubFactory("tests.utils.factories.RoleFactory")
+    invited_by = factory.SubFactory("tests.utils.factories.UserFactory")
 
     class Meta:
         model = "projects.Invitation"

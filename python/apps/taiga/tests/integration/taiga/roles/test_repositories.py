@@ -37,6 +37,25 @@ async def test_create_membership():
 
 
 ##########################################################
+# get_project_members
+##########################################################
+
+
+async def test_get_project_members():
+    user = await f.create_user()
+    project = await f.create_project()
+    role = await f.create_role(project=project)
+
+    project_member = await repositories.get_project_members(project=project)
+    assert len(project_member) == 1
+
+    await repositories.create_membership(user=user, project=project, role=role)
+
+    project_member = await repositories.get_project_members(project=project)
+    assert len(project_member) == 2
+
+
+##########################################################
 # get_project_memberships
 ##########################################################
 

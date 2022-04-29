@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.utils import emails
+from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
 from taiga.invitations import exceptions as ex
@@ -48,7 +49,9 @@ async def get_public_project_invitation(token: str) -> PublicInvitation | None:
 
 
 async def get_project_invitations(project: Project) -> list[Invitation]:
-    return await invitations_repositories.get_project_invitations(project.slug)
+    return await invitations_repositories.get_project_invitations(
+        project_slug=project.slug, status=InvitationStatus.PENDING
+    )
 
 
 async def _generate_project_invitation_token(invitation: Invitation) -> str:
@@ -81,17 +84,21 @@ async def send_project_invitation_email(invitation: Invitation) -> None:
 
 
 async def create_invitations(project: Project, invitations: list[dict[str, str]], invited_by: User) -> list[Invitation]:
-    # project's roles dict, whose key is the role slug and value the Role object
-    # {'admin': Role1, 'general': Role2}
-    project_roles_dict = await roles_repositories.get_project_roles_as_dict(project=project)
-    # set a list of roles slug {'admin', 'general'}
-    project_roles_slugs = set(project_roles_dict.keys())
     # create two lists with roles_slug and emails received
     roles_slug = []
     emails = []
     for invitation in invitations:
         roles_slug.append(invitation["role_slug"])
-        emails.append(invitation["email"])
+        email = invitation["email"].lower()
+        if email in emails:
+            raise ex.DuplicatedEmailError()
+        emails.append(email)
+
+    # project's roles dict, whose key is the role slug and value the Role object
+    # {'admin': Role1, 'general': Role2}
+    project_roles_dict = await roles_repositories.get_project_roles_as_dict(project=project)
+    # set a list of roles slug {'admin', 'general'}
+    project_roles_slugs = set(project_roles_dict.keys())
 
     # if some role_slug doesn't exist in project's roles then raise an exception
     if not set(roles_slug).issubset(project_roles_slugs):
@@ -101,25 +108,52 @@ async def create_invitations(project: Project, invitations: list[dict[str, str]]
     # {'user1@taiga.demo': User1, 'user2@taiga.demo': User2}
     users_dict = await users_repositories.get_users_by_emails_as_dict(emails=emails)
 
-    # create invitations objects list
-    objs = []
+    # create or update invitations and send invitations
+    invitations_to_create = []
+    invitations_to_update = []
+    invitations_to_send = []
+    project_members = await roles_repositories.get_project_members(project=project)
     for email, role_slug in zip(emails, roles_slug):
-        objs.append(
-            Invitation(
-                user=users_dict.get(email, None),
+        user = users_dict.get(email, None)
+        # check if user is already member and do nothing
+        if user and user in project_members:
+            continue
+        # check if this email has already a pending invitation
+        pending_invitation = await invitations_repositories.get_project_invitation_by_email(
+            project_slug=project.slug, email=email, status=InvitationStatus.PENDING
+        )
+        if pending_invitation:
+            pending_invitation.project = project
+            pending_invitation.user = user
+            pending_invitation.role = project_roles_dict[role_slug]
+            pending_invitation.invited_by = invited_by
+            # num_emails_sent >= PROJECT_INVITATION_RESEND_LIMIT not send email
+            if pending_invitation.num_emails_sent < settings.PROJECT_INVITATION_RESEND_LIMIT:
+                invitations_to_send.append(pending_invitation)
+                pending_invitation.num_emails_sent += 1
+
+            invitations_to_update.append(pending_invitation)
+        else:
+            new_invitation = Invitation(
+                user=user,
                 project=project,
                 role=project_roles_dict[role_slug],
                 email=email,
                 invited_by=invited_by,
             )
-        )
+            invitations_to_create.append(new_invitation)
+            invitations_to_send.append(new_invitation)
 
-    invitations = await invitations_repositories.create_invitations(objs=objs)
+    if len(invitations_to_update) > 0:
+        await invitations_repositories.update_invitations(objs=invitations_to_update)
 
-    for invitation in invitations:
+    if len(invitations_to_create) > 0:
+        await invitations_repositories.create_invitations(objs=invitations_to_create)
+
+    for invitation in invitations_to_send:
         await send_project_invitation_email(invitation=invitation)
 
-    return invitations
+    return invitations_to_send
 
 
 async def accept_project_invitation(invitation: Invitation, user: User) -> Invitation:

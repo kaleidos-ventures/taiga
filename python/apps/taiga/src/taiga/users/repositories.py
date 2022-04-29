@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from functools import reduce
+from operator import or_
 from typing import Any
 
 from asgiref.sync import sync_to_async
@@ -46,7 +47,8 @@ def get_users_by_emails_as_dict(emails: list[str]) -> dict[str, User]:
     This repository returns users with these emails as a dict whose key
     is the email and value the User object.
     """
-    return {u.email: u for u in User.objects.filter(email__in=emails)}
+    query = reduce(or_, (Q(email__iexact=email) for email in emails))
+    return {u.email.lower(): u for u in User.objects.filter(query)}
 
 
 @sync_to_async

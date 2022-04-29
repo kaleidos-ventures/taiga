@@ -22,13 +22,19 @@ def get_project_invitation(id: int) -> Invitation | None:
 
 
 @sync_to_async
-def get_project_invitations(project_slug: str) -> list[Invitation]:
+def get_project_invitation_by_email(project_slug: str, email: str, status: InvitationStatus) -> Invitation | None:
+    try:
+        return Invitation.objects.get(project__slug=project_slug, email__iexact=email, status=status)
+    except Invitation.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def get_project_invitations(project_slug: str, status: InvitationStatus) -> list[Invitation]:
     project_invitees = (
-        Invitation.objects.select_related("user", "role").filter(
-            project__slug=project_slug, status=InvitationStatus.PENDING
-        )
-        # pending invitations with NULL users will implicitly be listed after invitations with users
-        # (and valid full names)
+        Invitation.objects.select_related("user", "role").filter(project__slug=project_slug, status=status)
+        # pending invitations with NULL users will implicitly be listed
+        # after invitations with users (and valid full names)
         .order_by("user__full_name")
     )
     return list(project_invitees)
@@ -45,6 +51,13 @@ def accept_project_invitation(invitation: Invitation, user: User) -> Invitation:
 @sync_to_async
 def create_invitations(objs: list[Invitation]) -> list[Invitation]:
     return Invitation.objects.select_related("user", "project").bulk_create(objs=objs)
+
+
+@sync_to_async
+def update_invitations(objs: list[Invitation]) -> int:
+    return Invitation.objects.select_related("user", "project").bulk_update(
+        objs=objs, fields=["role", "invited_by", "num_emails_sent"]
+    )
 
 
 @sync_to_async

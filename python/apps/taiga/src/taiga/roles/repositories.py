@@ -33,6 +33,11 @@ def get_project_memberships(project_slug: str) -> list[Membership]:
     return list(project_memberships.order_by("user__full_name"))
 
 
+@sync_to_async
+def get_project_members(project: Project) -> list[User]:
+    return list(project.members.all())
+
+
 # Roles
 
 

@@ -92,6 +92,8 @@ class Invitation(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+    num_emails_sent = models.IntegerField(default=1, null=False,
+                                blank=False, verbose_name=_("num emails sent"))
 
     class Meta:
         verbose_name = "invitation"

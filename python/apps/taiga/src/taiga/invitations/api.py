@@ -120,5 +120,7 @@ async def create_invitations(
         return await invitations_services.create_invitations(
             project=project, invitations=form.get_invitations_dict(), invited_by=request.user
         )
+    except services_ex.DuplicatedEmailError:
+        raise ex.BadRequest("Duplicated email")
     except roles_ex.NonExistingRoleError:
         raise ex.BadRequest("The role_slug does not exist")

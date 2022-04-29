@@ -60,6 +60,20 @@ async def test_create_invitations_project_not_found(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
+async def test_create_invitations_duplicated_email(client):
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+    data = {
+        "invitations": [
+            {"email": "test@email.com", "role_slug": "general"},
+            {"email": "test@email.com", "role_slug": "admin"},
+        ]
+    }
+    client.login(user)
+    response = client.post(f"/projects/{project.slug}/invitations", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
 async def test_create_invitations_non_existing_role(client):
     user = await f.create_user()
     project = await f.create_project(owner=user)

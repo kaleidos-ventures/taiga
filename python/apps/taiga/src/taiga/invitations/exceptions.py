@@ -6,6 +6,10 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
+class DuplicatedEmailError(Exception):
+    ...
+
+
 class BadInvitationTokenError(Exception):
     ...
 

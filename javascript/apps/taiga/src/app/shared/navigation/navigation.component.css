@@ -42,11 +42,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
+:host::ng-deep .nav-badged-button .content {
+  pointer-events: none;
+}
+
 .separator {
   background: var(--color-gray40);
   block-size: 28px;
-  inline-size: 1px;
-  margin-inline-start: var(--spacing-16);
+  inline-size: 2px;
 }
 
 .avatar-holder {

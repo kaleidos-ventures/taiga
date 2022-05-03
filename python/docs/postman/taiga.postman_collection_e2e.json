@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "1b6c6835-241f-4601-a900-de08558ef51e",
-		"name": "taiga-next e2e",
+		"_postman_id": "46badd00-b0e1-49c6-959a-6981da74865c",
+		"name": "taiga-next e2e Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -1990,69 +1990,6 @@
 					"response": []
 				},
 				{
-					"name": "403 projects.{p}",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(403);",
-									"});",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"forbidden-error\");",
-									"    pm.expect(jsonData.error.detail).to.eql(\"Forbidden\");",
-									"    pm.expect(jsonData.error.message).to.include(\"User doesn't have permissions to perform this action\");  ",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-slug}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "400 projects.invitations.{token}",
 					"event": [
 						{
@@ -2083,7 +2020,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/invitations/{{inv_token}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/invitations/INVALID_TOKEN",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -2091,7 +2028,7 @@
 							"path": [
 								"projects",
 								"invitations",
-								"{{inv_token}}"
+								"INVALID_TOKEN"
 							]
 						}
 					},
@@ -2135,7 +2072,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/invitations/{{inv_token}}/accept",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/invitations/INVALID_TOKEN/accept",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -2143,7 +2080,7 @@
 							"path": [
 								"projects",
 								"invitations",
-								"{{inv_token}}",
+								"INVALID_TOKEN",
 								"accept"
 							]
 						}

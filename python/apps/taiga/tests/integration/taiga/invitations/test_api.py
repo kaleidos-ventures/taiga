@@ -10,7 +10,6 @@ import pytest
 from fastapi import status
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.tokens import ProjectInvitationToken
-from taiga.permissions import choices
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -115,20 +114,22 @@ async def test_get_project_invitations_admin(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_get_project_invitations_member(client):
+async def test_get_project_invitations_allowed_to_public_users(client):
     project = await f.create_project()
-    general_member_role = await f.create_role(
-        project=project,
-        permissions=choices.PROJECT_PERMISSIONS,
-        is_admin=False,
-    )
+    not_a_member = await f.create_user()
 
-    pj_member = await f.create_user()
-    await f.create_membership(user=pj_member, project=project, role=general_member_role)
-
-    client.login(pj_member)
+    client.login(not_a_member)
     response = client.get(f"/projects/{project.slug}/invitations")
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json() == []
+
+
+async def test_get_project_invitations_not_allowed_to_anonymous_users(client):
+    project = await f.create_project()
+
+    response = client.get(f"/projects/{project.slug}/invitations")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json() == []
 
 
 async def test_get_project_invitations_wrong_slug(client):
@@ -137,15 +138,6 @@ async def test_get_project_invitations_wrong_slug(client):
     client.login(project.owner)
     response = client.get("/projects/WRONG_PJ_SLUG/invitations")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-async def test_get_project_invitations_not_a_member(client):
-    project = await f.create_project()
-    not_a_member = await f.create_user()
-
-    client.login(not_a_member)
-    response = client.get(f"/projects/{project.slug}/invitations")
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 #########################################################################
@@ -175,7 +167,7 @@ async def test_get_project_invitation_invitation_does_not_exist(client):
 
 
 #########################################################################
-# POST /projects/invitations/<token>/accept
+# POST /projects/invitations/<token>/accept (accept a project invitation)
 #########################################################################
 
 
@@ -220,3 +212,45 @@ async def test_accept_project_invitation_error_invitation_already_accepted(clien
     client.login(user)
     response = client.post(f"/projects/invitations/{str(token)}/accept")
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+#########################################################################
+# POST /projects/<slug>/invitations/accept (accept my project invitations)
+#########################################################################
+
+
+async def test_accept_my_project_invitation(client):
+    project = await f.create_project()
+    invited_user = await f.create_user()
+    invitation = await f.create_invitation(
+        email=invited_user.email, user=invited_user, status=InvitationStatus.PENDING, project=project
+    )
+    await ProjectInvitationToken.create_for_object(invitation)
+
+    client.login(invited_user)
+    response = client.post(f"projects/{project.slug}/invitations/accept")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["user"]["username"] == invited_user.username
+    assert response.json()["email"] == invited_user.email
+
+
+async def test_accept_my_project_not_invited(client):
+    project = await f.create_project()
+    uninvited_user = await f.create_user()
+
+    client.login(uninvited_user)
+    response = client.post(f"projects/{project.slug}/invitations/accept")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_accept_my_already_accepted_project_invitation(client):
+    project = await f.create_project()
+    invited_user = await f.create_user()
+    invitation = await f.create_invitation(
+        email=invited_user.email, user=invited_user, status=InvitationStatus.ACCEPTED, project=project
+    )
+    await ProjectInvitationToken.create_for_object(invitation)
+
+    client.login(invited_user)
+    response = client.post(f"projects/{project.slug}/invitations/accept")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

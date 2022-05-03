@@ -57,6 +57,7 @@ async def create_user(form: CreateUserValidator) -> User:
             full_name=form.full_name,
             password=form.password,
             project_invitation_token=form.project_invitation_token,
+            accept_project_invitation=form.accept_project_invitation,
         )
     except services_ex.EmailAlreadyExistsError:
         raise ex.BadRequest("Email already exists")

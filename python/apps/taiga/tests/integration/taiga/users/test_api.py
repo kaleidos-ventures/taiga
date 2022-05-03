@@ -49,6 +49,8 @@ async def test_create_user_ok(client):
         "fullName": "Ada Lovelace",
         "password": "correctP4ssword%",
         "acceptTerms": True,
+        "projectInvitationToken": "eyJ0eXAiOToken",
+        "accept_project_invitation": False,
     }
 
     response = client.post("/users", json=data)
@@ -84,6 +86,20 @@ async def test_verify_user_ok(client):
 
 
 async def test_verify_user_ok_with_invitation(client):
+    user = await f.create_user(is_active=False)
+    project = await f.create_project()
+    role = await f.create_role(project=project)
+    project_invitation = await f.create_invitation(project=project, role=role, email=user.email)
+
+    project_invitation_token = await _generate_project_invitation_token(project_invitation)
+    data = {"token": await _generate_verify_user_token(user, project_invitation_token)}
+
+    response = client.post("/users/verify", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["projectInvitation"] is not None
+
+
+async def test_verify_user_ok_with_invitation_(client):
     user = await f.create_user(is_active=False)
     project = await f.create_project()
     role = await f.create_role(project=project)

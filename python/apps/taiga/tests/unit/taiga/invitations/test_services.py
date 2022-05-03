@@ -100,6 +100,70 @@ async def test_get_public_project_invitation_error_invitation_not_exists():
 
 
 #######################################################
+# get_project_invitations
+#######################################################
+
+
+async def test_get_project_invitations_ok_admin():
+    invitation = f.build_invitation()
+    role_admin = f.build_role(is_admin=True)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+    ):
+        fake_invitations_repo.get_project_invitations.return_value = [invitation]
+        fake_roles_repo.get_role_for_user.return_value = role_admin
+
+        invitations = await services.get_project_invitations(project=invitation.project, user=invitation.project.owner)
+
+        fake_invitations_repo.get_project_invitations.assert_awaited_once_with(
+            project_slug=invitation.project.slug, status=InvitationStatus.PENDING
+        )
+        assert invitations == [invitation]
+
+
+async def test_get_project_invitations_ok_not_admin():
+    invitation = f.build_invitation(id=123)
+    not_admin_role = f.build_role(is_admin=False)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+    ):
+        fake_invitations_repo.get_project_invitations.return_value = [invitation]
+        fake_roles_repo.get_role_for_user.return_value = not_admin_role
+
+        invitations = await services.get_project_invitations(project=invitation.project, user=invitation.user)
+
+        fake_invitations_repo.get_project_invitations.assert_awaited_once_with(
+            project_slug=invitation.project.slug, user=invitation.user, status=InvitationStatus.PENDING
+        )
+        assert invitations == [invitation]
+
+
+#######################################################
+# get_project_invitation_by_user
+#######################################################
+
+
+async def get_project_invitation_by_user_ok():
+    invitation = f.build_invitation()
+
+    with (patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo):
+        fake_invitations_repo.get_project_invitation_by_user.return_value = invitation
+
+        ret_invitation = await services.get_project_invitation_by_user(
+            project_slug=invitation.project.slug, user=invitation.user
+        )
+
+        fake_invitations_repo.get_project_invitation_by_user.assert_awaited_once_with(
+            project_slug=invitation.project.slug, user=invitation.user
+        )
+        assert ret_invitation == invitation
+
+
+#######################################################
 # send_project_invitation_email
 #######################################################
 
@@ -173,10 +237,15 @@ async def test_send_project_invitations_for_new_user(tqmanager):
 
 
 async def test_get_project_invitations():
-    project = f.build_project()
-    with patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo:
-        await services.get_project_invitations(project=project)
+    user = f.build_user()
+    project = f.build_project(owner=user)
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+    ):
+        await services.get_project_invitations(project=project, user=user)
 
+        fake_roles_repo.get_role_for_user.assert_awaited_once()
         fake_invitations_repo.get_project_invitations.assert_awaited_once()
 
 
@@ -205,7 +274,6 @@ async def test_create_invitations_already_member(tqmanager):
     user2 = f.build_user()
     project = f.build_project()
     role = f.build_role(project=project, slug="general")
-    f.create_membership(user=user2, project=project, role=role)
     invitations = [{"email": user2.email, "role_slug": role.slug}]
 
     with (

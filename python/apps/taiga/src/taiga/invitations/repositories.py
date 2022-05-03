@@ -30,14 +30,41 @@ def get_project_invitation_by_email(project_slug: str, email: str, status: Invit
 
 
 @sync_to_async
-def get_project_invitations(project_slug: str, status: InvitationStatus) -> list[Invitation]:
-    project_invitees = (
-        Invitation.objects.select_related("user", "role").filter(project__slug=project_slug, status=status)
-        # pending invitations with NULL users will implicitly be listed
-        # after invitations with users (and valid full names)
+def get_project_invitations(
+    project_slug: str, user: User | None = None, status: InvitationStatus | None = None
+) -> list[Invitation]:
+    project_invitees_qs = (
+        Invitation.objects.select_related("user", "role").filter(project__slug=project_slug)
+        # pending invitations for NULL users will be listed after invitations for existing users (with a fullname)
         .order_by("user__full_name")
     )
-    return list(project_invitees)
+
+    if status:
+        project_invitees_qs &= project_invitees_qs.filter(status=status)
+
+    if user:
+        same_user_id = Q(user_id=user.id)
+        same_user_email = Q(user__isnull=True, email__iexact=user.email)
+        # the invitation may be outdated, and the initially unregistered user may have (by other means) become a user
+        project_invitees_qs &= project_invitees_qs.filter(same_user_id | same_user_email)
+
+    return list(project_invitees_qs)
+
+
+@sync_to_async
+def get_project_invitation_by_user(project_slug: str, user: User) -> Invitation | None:
+    is_pending = Q(status=InvitationStatus.PENDING)
+    same_project = Q(project__slug=project_slug)
+    same_user_id = Q(user_id=user.id)
+    same_user_email = Q(user__isnull=True) & Q(email__iexact=user.email)
+
+    # the invitation may be outdated, and the initially unregistered user may have (by other means) become a user
+    try:
+        return Invitation.objects.select_related("user", "role", "project").get(
+            is_pending, same_project, same_user_id | same_user_email
+        )
+    except Invitation.DoesNotExist:
+        return None
 
 
 @sync_to_async

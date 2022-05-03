@@ -17,15 +17,15 @@ from taiga.invitations.models import Invitation
 from taiga.invitations.permissions import IsProjectInvitationRecipient
 from taiga.invitations.serializers import InvitationSerializer, PublicInvitationSerializer
 from taiga.invitations.validators import InvitationsValidator
-from taiga.permissions import IsProjectAdmin
+from taiga.permissions import IsAuthenticated, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
 from taiga.roles import exceptions as roles_ex
 from taiga.routers import routes
 
 # PERMISSIONS
+ACCEPT_MY_INVITATION = IsAuthenticated()
 ACCEPT_INVITATION = IsProjectInvitationRecipient()
 CREATE_INVITATIONS = IsProjectAdmin()
-LIST_PROJECT_INVITATIONS = IsProjectAdmin()
 
 
 @routes.unauth_projects.get(
@@ -63,26 +63,28 @@ async def list_project_invitations(
     request: Request, slug: str = Query(None, description="the project slug (str)")
 ) -> list[Invitation]:
     """
-    List project invitations
+    List (pending) project invitations
+    If the user is a project admin: return all the pending project invitation list
+    If the user is invited to the project: return a list with just her project invitation
+    If the user is not invited to the project (including anonymous users): return an empty list
     """
     project = await get_project_or_404(slug)
-    await check_permissions(permissions=LIST_PROJECT_INVITATIONS, user=request.user, obj=project)
 
-    return await invitations_services.get_project_invitations(project=project)
+    return await invitations_services.get_project_invitations(project=project, user=request.user)
 
 
 @routes.projects.post(
     "/invitations/{token}/accept",
     name="project.invitations.accept",
-    summary="Accept a project invitations",
+    summary="Accept a project invitation",
     response_model=InvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def acccept_invitations(
+async def accept_invitations(
     request: Request, token: str = Query(None, description="the project invitation token (str)")
 ) -> Invitation:
     """
-    Accept an invitations for a project
+    Accept a project invitation
     """
     try:
         invitation = await invitations_services.get_project_invitation(token=token)
@@ -98,6 +100,29 @@ async def acccept_invitations(
         return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
     except services_ex.InvitationAlreadyAcceptedError:
         raise ex.BadRequest("The invitation has already been accepted")
+
+
+@routes.projects.post(
+    "/{slug}/invitations/accept",
+    name="project.my.invitations.accept",
+    summary="Accept my project invitation",
+    response_model=InvitationSerializer,
+    responses=ERROR_404 | ERROR_403,
+)
+async def accept_my_invitations(
+    request: Request, slug: str = Query(None, description="the project slug (str)")
+) -> Invitation:
+    """
+    Accept my project invitation (if the user has any one pending)
+    """
+    await check_permissions(permissions=ACCEPT_MY_INVITATION, user=request.user, obj=None)
+
+    invitation = await invitations_services.get_project_invitation_by_user(project_slug=slug, user=request.user)
+
+    if not invitation:
+        raise ex.NotFoundError()
+
+    return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
 
 
 @routes.projects.post(

@@ -293,12 +293,10 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
         default=None,
         verbose_name=_("creation template"))
 
-    is_private = models.BooleanField(default=True, null=False, blank=True,
-                                     verbose_name=_("is private"))
     anon_permissions = ArrayField(models.TextField(null=False, blank=False, choices=ANON_PERMISSIONS),
                                   null=True, blank=True, default=list, verbose_name=_("anonymous permissions"))
-    public_permissions = ArrayField(models.TextField(null=False, blank=False, choices=PROJECT_PERMISSIONS),
-                                    null=True, blank=True, default=list, verbose_name=_("public permissions"))
+    public_permissions = ArrayField(models.TextField(null=False, blank=False, choices=PROJECT_PERMISSIONS), null=True,
+                                    blank=True, default=list, verbose_name=_("public permissions"))
     workspace_member_permissions = ArrayField(models.TextField(null=False, blank=False, choices=PROJECT_PERMISSIONS),
                                     null=True, blank=True, default=list, verbose_name=_("workspace member permissions"))
 
@@ -374,6 +372,25 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
 
     def __repr__(self):
         return "<Project {0}>".format(self.id)
+
+    @property
+    def is_public(self):
+        """
+        Any registered user can view the project
+        """
+        return len(self.public_permissions) > 0    @property
+
+    @property
+    def is_anon(self):
+        """
+        Any unregistered/anonymous user can view the project
+        """
+        return len(self.anon_permissions) > 0
+
+    @property
+    def is_private(self):
+        # NOTE: We keep this property just for compatibility issues (current permissions are more complex)
+        return not self.is_public and not self.is_anon
 
     def save(self, *args, **kwargs):
         if not self._importing or not self.modified_date:

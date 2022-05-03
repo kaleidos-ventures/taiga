@@ -20,7 +20,13 @@ from taiga.users.models import User
 from taiga.users.tokens import VerifyUserToken
 
 
-async def create_user(email: str, full_name: str, password: str, project_invitation_token: str | None = None) -> None:
+async def create_user(
+    email: str,
+    full_name: str,
+    password: str,
+    project_invitation_token: str | None = None,
+    accept_project_invitation: bool = True,
+) -> None:
     user = await users_repositories.get_user_by_username_or_email(username_or_email=email)
 
     if user and user.is_active:
@@ -38,7 +44,11 @@ async def create_user(email: str, full_name: str, password: str, project_invitat
             user=user, new_values={"full_name": full_name, "password": password}
         )
 
-    await _send_verify_user_email(user=user, project_invitation_token=project_invitation_token)
+    await _send_verify_user_email(
+        user=user,
+        accept_project_invitation=accept_project_invitation,
+        project_invitation_token=project_invitation_token,
+    )
 
     return user
 
@@ -53,17 +63,27 @@ async def _generate_username(email: str) -> str:
         suffix = f"{generate_username_suffix()}"
 
 
-async def _send_verify_user_email(user: User, project_invitation_token: str | None = None) -> None:
-    context = {"verification_token": await _generate_verify_user_token(user, project_invitation_token)}
+async def _send_verify_user_email(
+    user: User, accept_project_invitation: bool = True, project_invitation_token: str | None = None
+) -> None:
+    context = {
+        "verification_token": await _generate_verify_user_token(
+            user, project_invitation_token, accept_project_invitation
+        )
+    }
 
     await send_email.defer(email_name=Emails.SIGN_UP.value, to=user.email, context=context)
 
 
-async def _generate_verify_user_token(user: User, project_invitation_token: str | None = None) -> str:
+async def _generate_verify_user_token(
+    user: User, project_invitation_token: str | None = None, accept_project_invitation: bool = True
+) -> str:
     verify_user_token = await VerifyUserToken.create_for_object(user)
 
     if project_invitation_token:
         verify_user_token["project_invitation_token"] = project_invitation_token
+        if accept_project_invitation:
+            verify_user_token["accept_project_invitation"] = accept_project_invitation
 
     return str(verify_user_token)
 
@@ -88,9 +108,12 @@ async def verify_user(token: str) -> VerificationInfo:
 
     await users_repositories.verify_user(user=user)
 
-    # Accept project invitation, if exist. Errors will be ignored
+    # Accept project invitation, if it exists and the user comes from the email's CTA. Errors will be ignored
     project_invitation = None
-    if project_invitation_token := verify_token.get("project_invitation_token", None):
+    project_invitation_token = verify_token.get("project_invitation_token", None)
+    accept_project_invitation = verify_token.get("accept_project_invitation", False)
+
+    if accept_project_invitation and project_invitation_token:
         try:
             project_invitation = await invitations_services.accept_project_invitation_from_token(
                 token=project_invitation_token, user=user
@@ -103,7 +126,13 @@ async def verify_user(token: str) -> VerificationInfo:
         ):
             pass  # TODO: Logging invitation is invalid
 
-    # Generate auth credemntials and attach invitation
+    elif project_invitation_token:
+        try:
+            project_invitation = await invitations_services.get_project_invitation(token=project_invitation_token)
+        except (invitations_ex.BadInvitationTokenError, invitations_ex.InvitationDoesNotExistError):
+            pass  # TODO: Logging invitation is invalid
+
+    # Generate auth credentials and attach invitation
     auth = await auth_services.create_auth_credentials(user=user)
     return VerificationInfo(auth=auth, project_invitation=project_invitation)
 

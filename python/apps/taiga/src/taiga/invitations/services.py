@@ -48,10 +48,24 @@ async def get_public_project_invitation(token: str) -> PublicInvitation | None:
     return None
 
 
-async def get_project_invitations(project: Project) -> list[Invitation]:
-    return await invitations_repositories.get_project_invitations(
-        project_slug=project.slug, status=InvitationStatus.PENDING
-    )
+async def get_project_invitations(project: Project, user: User) -> list[Invitation]:
+    if user.is_anonymous:
+        return []
+
+    role = await roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
+
+    if role and role.is_admin:
+        return await invitations_repositories.get_project_invitations(
+            project_slug=project.slug, status=InvitationStatus.PENDING
+        )
+    else:
+        return await invitations_repositories.get_project_invitations(
+            project_slug=project.slug, status=InvitationStatus.PENDING, user=user
+        )
+
+
+async def get_project_invitation_by_user(project_slug: str, user: User) -> Invitation | None:
+    return await invitations_repositories.get_project_invitation_by_user(project_slug=project_slug, user=user)
 
 
 async def _generate_project_invitation_token(invitation: Invitation) -> str:

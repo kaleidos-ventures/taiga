@@ -22,6 +22,7 @@ class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
 class ProjectSmallSummarySerializer(BaseModel):
     name: str
     slug: str
+    is_anon: bool
 
     class Config:
         orm_mode = True

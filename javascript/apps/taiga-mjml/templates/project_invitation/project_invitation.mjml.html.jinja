@@ -14,8 +14,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <mj-raw>
       {% set invitation_url = resolve_front_url("PROJECT_INVITATION",
       invitation_token=invitation_token) -%}
-      {% set project_url = resolve_front_url("PROJECT_HOME",
-      project_slug=project_slug) -%}
+      {% set project_url = resolve_front_url("PROJECT_INVITATION_PREVIEW",
+      project_slug=project_slug, invitation_token=invitation_token) -%}
       {% set project_abbreviation = project_name[:2].upper() -%}
     </mj-raw>
     <mj-wrapper css-class="body-content">

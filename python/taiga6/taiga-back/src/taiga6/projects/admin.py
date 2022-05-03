@@ -68,7 +68,7 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "slug", "is_private","owner_url", "workspace_url",
                     "blocked_code", "is_featured", "created_date"]
     list_display_links = ["id", "name", "slug"]
-    list_filter = ("is_private", "blocked_code", "is_featured", "created_date")
+    list_filter = ("blocked_code", "is_featured", "created_date")
     list_editable = ["is_featured", "blocked_code"]
     search_fields = ["id", "name", "slug", "owner__username", "owner__email", "owner__full_name"]
     inlines = [RoleInline,

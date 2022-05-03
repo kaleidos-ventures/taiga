@@ -19,6 +19,7 @@ class CreateUserValidator(BaseModel):
     password: constr(min_length=8, max_length=256)  # type: ignore
     accept_terms: StrictBool
     project_invitation_token: str | None
+    accept_project_invitation: StrictBool = True
 
     @validator("email", "full_name", "password")
     def check_not_empty(cls, v: str) -> str:

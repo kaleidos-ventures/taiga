@@ -23,7 +23,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         src="/assets/images/LogoTaiga.svg"
         alt="" />
       <h1 class="login-title">{{ t('login.title') }}</h1>
-      <ng-container>
+      <ng-container *ngIf="queryParams$ | async as queryParams">
         <tg-login
           [invitationToken]="queryParams.invitationToken"
           [next]="queryParams.next"></tg-login>

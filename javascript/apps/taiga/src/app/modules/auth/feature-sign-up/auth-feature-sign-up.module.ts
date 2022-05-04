@@ -17,24 +17,14 @@ import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { getUrlPipe } from '~/app/shared/pipes/get-url.pipe';
 import { AuthFeatureSignUpComponent } from './auth-feature-sign-up.component';
 import { SignupComponent } from './components/signup/signup.component';
-import { AuthFeatureVerifyEmailModule } from '~/app/modules/auth/feature-verify-email/auth-feature-verify-email.module';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { ExternalLinkModule } from '~/app/shared/directives/external-link/external-link.module';
+import { AuthFeatureVerifyEmailComponent } from './components/verify-email/verify-email.component';
 
 const routes: Routes = [
   {
     path: '',
     component: AuthFeatureSignUpComponent,
-    data: {
-      noHeader: true,
-    },
-  },
-  {
-    path: 'verification-sent',
-    loadChildren: () =>
-      import('./../feature-verify-email/auth-feature-verify-email.module').then(
-        (m) => m.AuthFeatureVerifyEmailModule
-      ),
     data: {
       noHeader: true,
     },
@@ -47,14 +37,18 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AuthFeatureSignUpComponent, SignupComponent, getUrlPipe],
+  declarations: [
+    AuthFeatureSignUpComponent,
+    SignupComponent,
+    getUrlPipe,
+    AuthFeatureVerifyEmailComponent,
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
     ReactiveFormsModule,
     TranslocoModule,
     TuiButtonModule,
-    AuthFeatureVerifyEmailModule,
     InputsModule,
     TuiLinkModule,
     ContextNotificationModule,

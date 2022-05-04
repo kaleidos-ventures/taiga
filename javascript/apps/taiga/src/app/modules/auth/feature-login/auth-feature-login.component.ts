@@ -6,13 +6,23 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
-
+@UntilDestroy()
 @Component({
   selector: 'tg-auth-feature-login',
   templateUrl: './auth-feature-login.component.html',
   styleUrls: ['./auth-feature-login.component.css'],
   animations: [fadeIntOutAnimation],
 })
-export class AuthFeatureLoginComponent {}
+export class AuthFeatureLoginComponent implements OnInit {
+  public queryParams$!: typeof this.route.queryParams;
+
+  constructor(private route: ActivatedRoute) {}
+
+  public ngOnInit() {
+    this.queryParams$ = this.route.queryParams;
+  }
+}

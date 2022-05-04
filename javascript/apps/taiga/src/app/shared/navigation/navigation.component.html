@@ -54,7 +54,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [tuiDropdownMaxHeight]="800"
         [content]="projectsDropdown"
         [(open)]="openProjectsDropdown">
-        <button appearance="main-nav" tuiButton icon="folder" type="button">
+        <button
+          appearance="main-nav"
+          tuiButton
+          icon="folder"
+          type="button">
           {{ 'commons.projects' | transloco }}
         </button>
       </tui-hosted-dropdown>
@@ -92,7 +96,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             icon="bell"
             type="button"></button>
         </tui-badged-content>
-        <p id="aria-notifications-description" class="visually-hidden">
+        <p
+          id="aria-notifications-description"
+          class="visually-hidden">
           {{
             t('notification_desc', {
               notifications: 24

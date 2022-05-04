@@ -15,7 +15,11 @@ import {
 } from '../support/helpers/project.helpers';
 import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
-import { addEmailToInvite, inviteUsers, typeEmailToInvite } from '../support/helpers/invitation.helpers';
+import {
+  addEmailToInvite,
+  inviteUsers,
+  typeEmailToInvite,
+} from '../support/helpers/invitation.helpers';
 
 describe('Invite users to project', () => {
   let workspace: ReturnType<typeof WorkspaceMockFactory>;
@@ -37,15 +41,21 @@ describe('Invite users to project', () => {
     typeProjectName(project.name);
     submitProject();
 
-    cy.getBySel('submit-create-project', { timeout: 100000 }).should('not.exist');
-    cy.getBySel('submit-invite-users', { timeout: 100000 }).should('be.visible');
+    cy.getBySel('submit-create-project', { timeout: 100000 }).should(
+      'not.exist'
+    );
+    cy.getBySel('submit-invite-users', { timeout: 100000 }).should(
+      'be.visible'
+    );
   });
 
   it('Should invite user from my contacts', () => {
     typeEmailToInvite('user1001@taiga.demo');
     addEmailToInvite();
-    cy.getBySel('user-fullname',  { timeout: 100000 }).should('exist');
-    cy.getBySel('user-fullname').invoke('text').should('to.have.string', 'Caleb Fleming');
+    cy.getBySel('user-fullname', { timeout: 100000 }).should('exist');
+    cy.getBySel('user-fullname')
+      .invoke('text')
+      .should('to.have.string', 'Caleb Fleming');
     cy.getBySel('user-email').should('not.exist');
   });
 
@@ -53,14 +63,18 @@ describe('Invite users to project', () => {
     const emailToInvite = randEmail();
     typeEmailToInvite(emailToInvite);
     addEmailToInvite();
-    cy.getBySel('user-email', { timeout: 100000 }).invoke('text').should('to.have.string', emailToInvite);
+    cy.getBySel('user-email', { timeout: 100000 })
+      .invoke('text')
+      .should('to.have.string', emailToInvite);
     cy.getBySel('user-fullname', { timeout: 100000 }).should('not.exist');
   });
 
   it('Should introduce wrong email', () => {
     typeEmailToInvite(randWord());
     addEmailToInvite();
-    cy.getBySel('error-regex').invoke('text').should('to.have.string', 'Invalid email address');
+    cy.getBySel('error-regex')
+      .invoke('text')
+      .should('to.have.string', 'Invalid email address');
   });
 
   it('Should introduce repeated emails', () => {
@@ -74,7 +88,9 @@ describe('Invite users to project', () => {
 
   it('Should add user without typing an email', () => {
     addEmailToInvite();
-    cy.getBySel('error-add-email').invoke('text').should('to.have.string', 'Add at least an email or username');
+    cy.getBySel('error-add-email')
+      .invoke('text')
+      .should('to.have.string', 'Add at least an email or username');
   });
 
   it('Should send invite with a user on the list and other not added on the list', () => {
@@ -83,11 +99,18 @@ describe('Invite users to project', () => {
     cy.getBySel('user-email', { timeout: 100000 }).should('exist');
     typeEmailToInvite(randEmail());
     inviteUsers();
-    cy.getBySel('error-missing-people').invoke('text').should('to.have.string', 'There are people not added to the list. Add them and try again.');
+    cy.getBySel('error-missing-people')
+      .invoke('text')
+      .should(
+        'to.have.string',
+        'There are people not added to the list. Add them and try again.'
+      );
   });
 
   it('Should send invite withouth adding users to invite', () => {
     inviteUsers();
-    cy.getBySel('error-at-lest-one').invoke('text').should('to.have.string', 'Add at least one person to the list');
+    cy.getBySel('error-at-lest-one')
+      .invoke('text')
+      .should('to.have.string', 'Add at least one person to the list');
   });
 });

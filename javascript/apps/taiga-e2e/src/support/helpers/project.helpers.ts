@@ -67,7 +67,9 @@ export const launchProjectCreationInWS = (index: number) => {
 };
 
 export const selectBlankProject = () => {
-  cy.getBySel('template-item', { timeout: 100000 }).first().should('be.visible');
+  cy.getBySel('template-item', { timeout: 100000 })
+    .first()
+    .should('be.visible');
   cy.getBySel('template-item', { timeout: 100000 }).first().click();
 };
 

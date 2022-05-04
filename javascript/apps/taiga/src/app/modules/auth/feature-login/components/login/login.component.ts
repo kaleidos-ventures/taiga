@@ -10,6 +10,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  Input,
   OnInit,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -33,6 +34,9 @@ interface Login {
   animations: [fadeIntOutAnimation],
 })
 export class LoginComponent implements OnInit {
+  @Input() public invitationToken = '';
+  @Input() public next = '';
+
   public readonly model$ = this.state.select();
 
   public loginForm!: FormGroup;
@@ -73,7 +77,14 @@ export class LoginComponent implements OnInit {
     const { username, password } = this.loginForm.value as Login;
 
     if (this.loginForm.valid) {
-      this.store.dispatch(login({ username, password }));
+      this.store.dispatch(
+        login({
+          username,
+          password,
+          invitationToken: this.invitationToken,
+          next: this.next,
+        })
+      );
     } else {
       this.loginForm.markAllAsTouched();
       this.focusFirstInvalidField();

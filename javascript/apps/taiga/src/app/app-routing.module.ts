@@ -11,6 +11,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
 import { AuthGuard } from './modules/auth/data-access/auth.guard';
 import { AuthFeatureLoginGuard } from './modules/auth/feature-login/auth-feature-login.guard';
+import { ProjectInvitationGuard } from './modules/project/data-access/guards/project-invitation.guard';
 
 const routes: Routes = [
   {
@@ -32,6 +33,11 @@ const routes: Routes = [
         (m) => m.AuthFeatureSignUpModule
       ),
     canActivate: [AuthFeatureLoginGuard],
+  },
+  {
+    path: 'accept-project-invitation/:token',
+    children: [],
+    canActivate: [ProjectInvitationGuard],
   },
   {
     path: '',

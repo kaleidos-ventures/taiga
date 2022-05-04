@@ -7,7 +7,7 @@
  */
 
 export const typeEmailToInvite = (email: string) =>
- cy.getBySel('input-add-invites').type(email);
+  cy.getBySel('input-add-invites').type(email);
 export const addEmailToInvite = () => {
   cy.getBySel('add-invites', { timeout: 100000 }).click();
 };

@@ -10,4 +10,5 @@ export interface SignUp {
   email: string;
   password: string;
   fullName: string;
+  invitationToken?: string;
 }

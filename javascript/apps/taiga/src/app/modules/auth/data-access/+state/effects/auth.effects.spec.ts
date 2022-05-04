@@ -9,11 +9,11 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Observable, throwError } from 'rxjs';
-import { AuthApiService, UsersApiService } from '@taiga/api';
+import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 
 import { AuthEffects } from './auth.effects';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import {
   login,
   loginSuccess,
@@ -29,6 +29,8 @@ import {
   randPassword,
   randFullName,
   randEmail,
+  randSequence,
+  randUrl,
 } from '@ngneat/falso';
 import { cold, hot } from 'jest-marbles';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -52,7 +54,15 @@ describe('AuthEffects', () => {
     service: AuthEffects,
     providers: [provideMockActions(() => actions$)],
     imports: [RouterTestingModule, getTranslocoModule()],
-    mocks: [AuthApiService, UsersApiService, Router, AppService, AuthService],
+    mocks: [
+      AuthApiService,
+      UsersApiService,
+      Router,
+      Store,
+      AppService,
+      AuthService,
+      ProjectApiService,
+    ],
   });
 
   beforeEach(() => {
@@ -60,9 +70,13 @@ describe('AuthEffects', () => {
   });
 
   it('login', () => {
+    const token = randSequence({ size: 100 });
+    const next = randUrl();
     const loginData = {
       username: randUserName(),
       password: randPassword(),
+      invitationToken: token,
+      next,
     };
     const response = AuthMockFactory();
     const authApiService = spectator.inject(AuthApiService);
@@ -73,7 +87,7 @@ describe('AuthEffects', () => {
     actions$ = hot('-a', { a: login(loginData) });
 
     const expected = cold('--a', {
-      a: loginSuccess({ auth: response, redirect: true }),
+      a: loginSuccess({ auth: response, invitationToken: token, next }),
     });
 
     expect(effects.login$).toBeObservable(expected);
@@ -85,11 +99,10 @@ describe('AuthEffects', () => {
 
     const effects = spectator.inject(AuthEffects);
     const authService = spectator.inject(AuthService);
-    const routerService = spectator.inject(Router);
     const usersApiService = spectator.inject(UsersApiService);
     usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
 
-    actions$ = hot('-a', { a: loginSuccess({ auth, redirect: true }) });
+    actions$ = hot('-a', { a: loginSuccess({ auth }) });
 
     const expected = cold('--a', {
       a: setUser({ user }),
@@ -98,7 +111,6 @@ describe('AuthEffects', () => {
     expect(effects.loginSuccess$).toBeObservable(expected);
 
     expect(effects.loginSuccess$).toSatisfyOnFlush(() => {
-      expect(routerService.navigate).toHaveBeenCalledWith(['/']);
       expect(authService.setAuth).toHaveBeenCalledWith(auth);
     });
   });

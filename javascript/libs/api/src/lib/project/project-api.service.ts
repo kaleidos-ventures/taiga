@@ -172,4 +172,11 @@ export class ProjectApiService {
       `${this.config.apiUrl}/projects/${slug}/invitations`
     );
   }
+
+  public acceptInvitation(token: string) {
+    return this.http.post<Invitation[]>(
+      `${this.config.apiUrl}/projects/invitations/${token}/accept`,
+      {}
+    );
+  }
 }

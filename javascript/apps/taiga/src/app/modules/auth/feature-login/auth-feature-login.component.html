@@ -24,7 +24,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         alt="" />
       <h1 class="login-title">{{ t('login.title') }}</h1>
       <ng-container>
-        <tg-login></tg-login>
+        <tg-login
+          [invitationToken]="queryParams.invitationToken"
+          [next]="queryParams.next"></tg-login>
       </ng-container>
     </div>
   </main>

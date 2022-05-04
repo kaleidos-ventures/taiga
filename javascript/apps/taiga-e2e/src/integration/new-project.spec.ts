@@ -19,7 +19,7 @@ import {
 import {
   typeEmailToInvite,
   addEmailToInvite,
-  inviteUsers
+  inviteUsers,
 } from '../support/helpers/invitation.helpers';
 import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
@@ -116,15 +116,14 @@ describe('Workspace Create from Overview', () => {
 
     typeEmailToInvite(randEmail());
     addEmailToInvite();
-    inviteUsers()
-      .then(() => {
-        cy.getBySel('submit-invite-users').should('not.exist');
-        cy.getBySel('project-name').should('be.visible');
-        cy.url({ timeout: 60000 }).should('include', '/kanban');
-        cy.getBySel('project-name')
-          .invoke('text')
-          .should('to.have.string', project.name);
-      });
+    inviteUsers().then(() => {
+      cy.getBySel('submit-invite-users').should('not.exist');
+      cy.getBySel('project-name').should('be.visible');
+      cy.url({ timeout: 60000 }).should('include', '/kanban');
+      cy.getBySel('project-name')
+        .invoke('text')
+        .should('to.have.string', project.name);
+    });
   });
 
   it('the cancel and the x button launch the confirmation dialog', () => {

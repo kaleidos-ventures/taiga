@@ -18,14 +18,19 @@ export const setUser = createAction(
 
 export const login = createAction(
   '[Auth] login',
-  props<{ username: User['username']; password: string }>()
+  props<{
+    username: User['username'];
+    password: string;
+    invitationToken: string;
+    next: string;
+  }>()
 );
 
 export const logout = createAction('[Auth] logout');
 
 export const loginSuccess = createAction(
   '[Auth] login success',
-  props<{ auth: Auth; redirect?: boolean }>()
+  props<{ auth: Auth; invitationToken?: string; next?: string }>()
 );
 
 export const setLoginError = createAction(
@@ -41,6 +46,7 @@ export const signup = createAction(
     fullName: User['fullName'];
     acceptTerms: boolean;
     resend: boolean;
+    invitationToken?: string;
   }>()
 );
 

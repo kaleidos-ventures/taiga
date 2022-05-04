@@ -18,11 +18,9 @@ import { InvitationEffects } from './invitation.effects';
 import {
   fetchMyContacts,
   fetchMyContactsSuccess,
-  inviteUsersSuccess
+  inviteUsersSuccess,
 } from '../actions/invitation.action';
-import {
-  inviteUsersNewProject
-} from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
+import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
 import { Contact } from '@taiga/data';
 
@@ -46,7 +44,9 @@ describe('InvitationEffects', () => {
     const invitationApiService = spectator.inject(InvitationApiService);
     const effects = spectator.inject(InvitationEffects);
 
-    invitationApiService.myContacts.mockReturnValue(cold('-b|', { b: contacts }));
+    invitationApiService.myContacts.mockReturnValue(
+      cold('-b|', { b: contacts })
+    );
 
     actions$ = hot('-a', { a: fetchMyContacts({ emails }) });
 
@@ -59,13 +59,19 @@ describe('InvitationEffects', () => {
 
   it('get contacts from user to invite: match with my contacts', () => {
     const emails = randEmail({ length: 5 });
-    const contacts: Contact[] = [{email: "user1001@taiga.demo", username: '', fullName: ''}];
+    const contacts: Contact[] = [
+      { email: 'user1001@taiga.demo', username: '', fullName: '' },
+    ];
     const invitationApiService = spectator.inject(InvitationApiService);
     const effects = spectator.inject(InvitationEffects);
 
-    invitationApiService.myContacts.mockReturnValue(cold('-b|', { b: contacts }));
+    invitationApiService.myContacts.mockReturnValue(
+      cold('-b|', { b: contacts })
+    );
 
-    actions$ = hot('-a', { a: fetchMyContacts({ emails: [...emails, "user1001@taiga.demo"] }) });
+    actions$ = hot('-a', {
+      a: fetchMyContacts({ emails: [...emails, 'user1001@taiga.demo'] }),
+    });
 
     const expected = cold('--a', {
       a: fetchMyContactsSuccess({ contacts }),
@@ -78,20 +84,31 @@ describe('InvitationEffects', () => {
     const invitationApiService = spectator.inject(InvitationApiService);
     const effects = spectator.inject(InvitationEffects);
 
-    const invitationMockPayload = [{email: "hola@hola.es", roleSlug: "general"}];
-    const invitationMockResponse = [{
-      'userId': null,
-      'projectId': randNumber(),
-      'roleId': randNumber(),
-      'email': randEmail()
-    }];
+    const invitationMockPayload = [
+      { email: 'hola@hola.es', roleSlug: 'general' },
+    ];
+    const invitationMockResponse = [
+      {
+        userId: null,
+        projectId: randNumber(),
+        roleId: randNumber(),
+        email: randEmail(),
+      },
+    ];
 
-    invitationApiService.inviteUsers.mockReturnValue(cold('-b|', {b: invitationMockResponse}));
+    invitationApiService.inviteUsers.mockReturnValue(
+      cold('-b|', { b: invitationMockResponse })
+    );
 
-    actions$ = hot('-a', { a: inviteUsersNewProject({ slug: randSlug(), invitation:  invitationMockPayload}) });
+    actions$ = hot('-a', {
+      a: inviteUsersNewProject({
+        slug: randSlug(),
+        invitation: invitationMockPayload,
+      }),
+    });
 
     const expected = cold('--a', {
-      a: inviteUsersSuccess({invitations: 1}),
+      a: inviteUsersSuccess({ invitations: 1 }),
     });
 
     expect(effects.sendInvitations$).toBeObservable(expected);

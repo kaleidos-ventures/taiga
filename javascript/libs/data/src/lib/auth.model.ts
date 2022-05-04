@@ -22,6 +22,7 @@ export interface SignUpInput {
   password: LoginInput['password'];
   fullName: User['fullName'];
   acceptTerms: boolean;
+  invitationToken?: string;
 }
 
 // This interface implements `message` and `msg` since backend provide both options depending on the error

@@ -27,8 +27,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 @UntilDestroy()
 @Component({
   selector: 'tg-verify-email',
-  templateUrl: './auth-feature-verify-email.component.html',
-  styleUrls: ['./auth-feature-verify-email.component.css'],
+  templateUrl: './verify-email.component.html',
+  styleUrls: ['./verify-email.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthFeatureVerifyEmailComponent implements OnInit {
@@ -69,6 +69,7 @@ export class AuthFeatureVerifyEmailComponent implements OnInit {
           fullName: this.formData.fullName,
           acceptTerms: true,
           resend: true,
+          invitationToken: this.formData.invitationToken,
         })
       );
     } else {

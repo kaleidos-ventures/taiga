@@ -27,3 +27,12 @@ export interface InvitationResponse {
   roleId: number;
   email: string;
 }
+export interface InvitationInfo {
+  status: 'pending' | 'accepted' | 'cacelled';
+  email: string;
+  existingUser: boolean;
+  project: {
+    name: string;
+    slug: string;
+  };
+}

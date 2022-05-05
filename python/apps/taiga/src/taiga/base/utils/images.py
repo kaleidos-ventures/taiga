@@ -33,7 +33,7 @@ def get_thumbnail_url(relative_image_path: str, thumbnailer_size: str) -> str | 
 
 
 def valid_content_type(uploaded_img: UploadFile) -> bool:
-    return uploaded_img.content_type in settings.IMAGES.VALID_IMAGE_FORMATS
+    return uploaded_img.content_type in settings.IMAGES.VALID_CONTENT_TYPES
 
 
 def valid_image_format(uploaded_img: UploadFile) -> bool:

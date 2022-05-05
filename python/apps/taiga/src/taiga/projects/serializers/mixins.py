@@ -16,26 +16,27 @@ from taiga.projects.services import get_logo_large_thumbnail_url, get_logo_small
 class ProjectLogoMixin(BaseModel):
     logo: Any = None
     logo_small: AnyHttpUrl | None = None
-    logo_big: AnyHttpUrl | None = None
+    logo_large: AnyHttpUrl | None = None
 
     @validator("logo", always=True)
     def logo_serializer(cls, v: FieldFile | str | None) -> str | None:
-        if v and isinstance(v, FieldFile):
-            # Serializing from creation (thumbnails have to be created)
-            return v.name
-        if v and isinstance(v, str):
-            # Thumbnails already available
-            return v
-        return None
+        if not v:
+            return None
+
+        return str(v)
 
     @validator("logo_small", always=True)
-    def get_logo_small(cls, value: str | None) -> str | None:
-        if value:
-            return run_async_as_sync(get_logo_small_thumbnail_url(value))
-        return None
+    def get_logo_small(cls, v: str | None, values: dict[str, str | None]) -> str | None:
+        logo = v or values.get("logo", None)
 
-    @validator("logo_big", always=True)
-    def get_logo_big(cls, value: str | None) -> str | None:
-        if value:
-            return run_async_as_sync(get_logo_large_thumbnail_url(value))
-        return None
+        if not logo:
+            return None
+        return run_async_as_sync(get_logo_small_thumbnail_url(logo))
+
+    @validator("logo_large", always=True)
+    def get_logo_large(cls, v: str | None, values: dict[str, str | None]) -> str | None:
+        logo = v or values.get("logo", None)
+
+        if not logo:
+            return None
+        return run_async_as_sync(get_logo_large_thumbnail_url(logo))

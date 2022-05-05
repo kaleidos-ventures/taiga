@@ -16,7 +16,7 @@ class ImageSettings(BaseSettings):
         "32x32_crop": {"size": (32, 32), "crop": True},
         "80x80_crop": {"size": (80, 80), "crop": True},
     }
-    VALID_IMAGE_FORMATS: list[str] = [
+    VALID_CONTENT_TYPES: list[str] = [
         "image/jpeg",
         "image/png",
         "image/gif",

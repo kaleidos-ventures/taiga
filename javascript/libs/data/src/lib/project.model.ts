@@ -11,7 +11,7 @@ import { Workspace } from './workspace.model';
 
 export interface Project {
   logoSmall: string;
-  logoBig: string;
+  logoLarge: string;
   logo: string;
   name: string;
   slug: string;

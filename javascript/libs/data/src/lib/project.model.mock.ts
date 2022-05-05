@@ -46,7 +46,7 @@ export const ProjectMockFactory = (
     workspace: workspace ?? WorkspaceMockFactory(),
     logo: randImg(),
     logoSmall: randImg(),
-    logoBig: randImg(),
+    logoLarge: randImg(),
     amIAdmin: randBoolean(),
     myPermissions: [],
   };

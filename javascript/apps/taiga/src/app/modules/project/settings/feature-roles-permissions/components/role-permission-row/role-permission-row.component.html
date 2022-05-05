@@ -110,11 +110,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           class="permission-row-button"
           tuiIconButton
           icon="more-vertical"
-          type="button">
-          <span class="visually-hidden">{{
+          type="button"
+          [attr.aria-label]="
             t('project_settings.roles_permissions.show_more')
-          }}</span>
-        </button>
+          "></button>
       </div>
     </div>
     <div

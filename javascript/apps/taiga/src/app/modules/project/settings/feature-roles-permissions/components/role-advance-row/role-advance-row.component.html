@@ -80,6 +80,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               data-test="display-custom-permissions"
               [class.customizing]="customizer"
               [class.show-customization-disabled]="!showCustomization()"
+              [attr.aria-label]="
+                t('project_settings.roles_permissions.show_more')
+              "
               [attr.aria-expanded]="customizer"
               [attr.aria-controls]="rolePermissionContainerId"
               (click)="toggleCustomizer()"
@@ -87,11 +90,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               [icon]="customizer ? 'close' : 'sliders-vertical'"
               [tuiHint]="tooltip"
               tuiHintDirection="top-right"
-              type="button">
-              <span class="visually-hidden">{{
-                t('project_settings.roles_permissions.show_more')
-              }}</span>
-            </button>
+              type="button"></button>
           </div>
         </div>
         <tg-role-customize

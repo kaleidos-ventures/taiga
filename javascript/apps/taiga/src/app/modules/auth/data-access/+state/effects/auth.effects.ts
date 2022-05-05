@@ -91,18 +91,18 @@ export class AuthEffects {
     () => {
       return this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
-        switchMap((invite) => {
+        switchMap(({ next, invitationToken }) => {
           return this.store
             .select(selectUser)
             .pipe(filterNil())
             .pipe(
               mergeMap(() => {
-                if (invite.invitationToken && invite.next) {
+                if (invitationToken && next) {
                   return this.projectApiService
-                    .acceptInvitation(invite.invitationToken)
+                    .acceptInvitation(invitationToken)
                     .pipe(
                       tap(() => {
-                        void this.router.navigate([invite.next]);
+                        void this.router.navigate([next]);
                         return EMPTY;
                       })
                     );

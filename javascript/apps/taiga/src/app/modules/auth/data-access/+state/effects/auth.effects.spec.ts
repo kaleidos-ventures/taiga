@@ -13,7 +13,7 @@ import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 
 import { AuthEffects } from './auth.effects';
-import { Action, Store } from '@ngrx/store';
+import { Action } from '@ngrx/store';
 import {
   login,
   loginSuccess,
@@ -23,7 +23,11 @@ import {
   signUpError,
   signUpSuccess,
 } from '../actions/auth.actions';
-import { AuthMockFactory, UserMockFactory } from '@taiga/data';
+import {
+  AuthMockFactory,
+  InviteMockFactory,
+  UserMockFactory,
+} from '@taiga/data';
 import {
   randUserName,
   randPassword,
@@ -38,6 +42,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { selectUser } from '../selectors/auth.selectors';
 
 const signupData = {
   email: randEmail(),
@@ -47,18 +53,26 @@ const signupData = {
   resend: false,
 };
 
+const initialState = {
+  user: null,
+};
+
 describe('AuthEffects', () => {
   let actions$: Observable<Action>;
   let spectator: SpectatorService<AuthEffects>;
+  let store: MockStore;
+
   const createService = createServiceFactory({
     service: AuthEffects,
-    providers: [provideMockActions(() => actions$)],
+    providers: [
+      provideMockActions(() => actions$),
+      provideMockStore({ initialState }),
+    ],
     imports: [RouterTestingModule, getTranslocoModule()],
     mocks: [
       AuthApiService,
       UsersApiService,
       Router,
-      Store,
       AppService,
       AuthService,
       ProjectApiService,
@@ -67,6 +81,7 @@ describe('AuthEffects', () => {
 
   beforeEach(() => {
     spectator = createService();
+    store = spectator.inject(MockStore);
   });
 
   it('login', () => {
@@ -94,8 +109,8 @@ describe('AuthEffects', () => {
   });
 
   it('login success', () => {
-    const user = UserMockFactory();
     const auth = AuthMockFactory();
+    const user = UserMockFactory();
 
     const effects = spectator.inject(AuthEffects);
     const authService = spectator.inject(AuthService);
@@ -112,6 +127,57 @@ describe('AuthEffects', () => {
 
     expect(effects.loginSuccess$).toSatisfyOnFlush(() => {
       expect(authService.setAuth).toHaveBeenCalledWith(auth);
+    });
+  });
+
+  it('login redirect - next', () => {
+    const router = spectator.inject(Router);
+    const effects = spectator.inject(AuthEffects);
+
+    const auth = AuthMockFactory();
+    const invite = InviteMockFactory();
+    const user = UserMockFactory();
+
+    store.overrideSelector(selectUser, user);
+
+    const projectApiService = spectator.inject(ProjectApiService);
+    projectApiService.acceptInvitation.mockReturnValue(cold('-a|', { a: [] }));
+
+    actions$ = hot('a', {
+      a: loginSuccess({
+        auth,
+        next: invite.next,
+        invitationToken: invite.invitationToken,
+      }),
+    });
+
+    expect(effects.loginRedirect$).toSatisfyOnFlush(() => {
+      expect(router.navigate).toHaveBeenCalledWith([invite.next]);
+    });
+  });
+
+  it('login redirect - NO next', () => {
+    const router = spectator.inject(Router);
+    const effects = spectator.inject(AuthEffects);
+
+    const auth = AuthMockFactory();
+    const user = UserMockFactory();
+
+    store.overrideSelector(selectUser, user);
+
+    const projectApiService = spectator.inject(ProjectApiService);
+    projectApiService.acceptInvitation.mockReturnValue(cold('-a|', { a: [] }));
+
+    actions$ = hot('a', {
+      a: loginSuccess({
+        auth,
+        next: '',
+        invitationToken: '',
+      }),
+    });
+
+    expect(effects.loginRedirect$).toSatisfyOnFlush(() => {
+      expect(router.navigate).toHaveBeenCalledWith(['/']);
     });
   });
 

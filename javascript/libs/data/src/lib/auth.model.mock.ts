@@ -6,13 +6,21 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randUuid } from '@ngneat/falso';
-
-import { Auth } from './auth.model';
+import { randUrl, randUuid } from '@ngneat/falso';
+import { Auth, Login } from './auth.model';
 
 export const AuthMockFactory = (): Auth => {
   return {
     refresh: randUuid(),
     token: randUuid(),
+  };
+};
+
+export const InviteMockFactory = (): Login => {
+  return {
+    refresh: randUuid(),
+    token: randUuid(),
+    invitationToken: randUuid(),
+    next: randUrl(),
   };
 };

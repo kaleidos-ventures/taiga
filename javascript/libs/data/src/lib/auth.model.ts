@@ -12,6 +12,11 @@ export interface Auth {
   refresh: string;
 }
 
+export interface Login extends Auth {
+  invitationToken: string;
+  next: string;
+}
+
 export interface LoginInput {
   password: string;
   username: User['username'];

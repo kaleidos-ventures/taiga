@@ -9,7 +9,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
-import { ProjectApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 import { InvitationInfo, Project } from '@taiga/data';
 import { of, throwError } from 'rxjs';
@@ -24,8 +23,7 @@ export class ProjectInvitationGuard implements CanActivate {
     private authService: AuthService,
     private router: Router,
     private http: HttpClient,
-    private config: ConfigService,
-    private projectApiService: ProjectApiService
+    private config: ConfigService
   ) {}
 
   public canActivate(route: ActivatedRouteSnapshot) {

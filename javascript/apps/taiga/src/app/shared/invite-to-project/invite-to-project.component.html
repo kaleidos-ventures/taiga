@@ -101,7 +101,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </div>
 
         <ng-container *ngIf="users.length === 0">
-          <div class="tip-wrapper">
+          <div
+            class="tip-wrapper"
+            data-test="tip-wrapper">
             <tui-svg
               class="tip-icon"
               src="/assets/images/curved-arrow.svg"
@@ -112,7 +114,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
         <div
           *ngIf="users.length"
-          class="user-list">
+          class="user-list"
+          data-test="user-list">
           <div class="user">
             <span></span>
             <span class="user-title">{{
@@ -159,7 +162,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <button
             tuiLink
             (click)="close()"
-            appearance="tertiary">
+            appearance="tertiary"
+            data-test="close-modal">
             {{
               pending
                 ? t('invitation_modal.close')

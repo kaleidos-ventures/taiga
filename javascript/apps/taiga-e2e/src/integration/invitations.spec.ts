@@ -18,10 +18,11 @@ import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import {
   addEmailToInvite,
   inviteUsers,
+  openInvitationModal,
   typeEmailToInvite,
 } from '../support/helpers/invitation.helpers';
 
-describe('Invite users to project', () => {
+describe('Invite users to project after creating it', () => {
   let workspace: ReturnType<typeof WorkspaceMockFactory>;
   let project: ReturnType<typeof ProjectMockFactory>;
 
@@ -112,5 +113,57 @@ describe('Invite users to project', () => {
     cy.getBySel('error-at-lest-one')
       .invoke('text')
       .should('to.have.string', 'Add at least one person to the list');
+  });
+});
+
+describe('Invite users to project from overview when user is admin', () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit('/');
+    cy.initAxe();
+
+    // TODO create the scenario when is implemented 'accept invitation from
+    cy.contains('Cross-platform zero tolerance circuit').click();
+  });
+
+  it('Should ignore invitation from a member', () => {
+    openInvitationModal();
+    typeEmailToInvite('user3@taiga.demo');
+    addEmailToInvite();
+    cy.getBySel('tip-wrapper').should('exist');
+    cy.getBySel('user-list').should('not.exist');
+  });
+
+  it('Should add tag pending from an already sent invitation', () => {
+    openInvitationModal();
+    typeEmailToInvite('user5@taiga.demo');
+    addEmailToInvite();
+    cy.getBySel('pending-tag').should('exist');
+    cy.getBySel('pending-tag')
+      .invoke('text')
+      .should('to.have.string', 'Pending');
+  });
+
+  it('Should considered defined role from the invitation sent before', () => {
+    openInvitationModal();
+    typeEmailToInvite('email-1@email.com');
+    addEmailToInvite();
+    cy.getBySel('pending-tag').should('exist');
+    cy.getBySel('select-value')
+      .invoke('text')
+      .should('to.have.string', 'Administrator');
+  });
+});
+
+describe('Invite users to project from overview when user is not admin', () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit('/');
+    cy.initAxe();
+    cy.contains('Synchronized context-sensitive access').click();
+  });
+
+  it('Should hide invite people button', () => {
+    cy.getBySel('open-invite-modal').should('not.exist');
   });
 });

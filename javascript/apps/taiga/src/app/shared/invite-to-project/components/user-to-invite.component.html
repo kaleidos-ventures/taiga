@@ -14,6 +14,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div
         invitation
         class="pending-msg"
+        data-test="pending-tag"
         *ngIf="isPending">
         <tui-svg src="clock"></tui-svg>
         <span
@@ -35,7 +36,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         tuiTextfieldSize="l"
         [valueContent]="user.get('roles')?.value"
         formControlName="roles"
-        (keydown.enter)="$event.preventDefault()">
+        (keydown.enter)="$event.preventDefault()"
+        data-test="select-value">
         <tui-data-list *tuiDataList>
           <button
             *ngFor="let role of roles; trackBy: trackByIndex"

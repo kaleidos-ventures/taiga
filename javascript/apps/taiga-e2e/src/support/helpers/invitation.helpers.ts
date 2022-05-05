@@ -13,3 +13,8 @@ export const addEmailToInvite = () => {
 };
 export const deleteUserFromList = () => cy.getBySel('delete-user').click();
 export const inviteUsers = () => cy.getBySel('submit-invite-users').click();
+
+export const openInvitationModal = () => {
+  cy.getBySel('open-invite-modal').should('exist');
+  cy.getBySel('open-invite-modal').click();
+};

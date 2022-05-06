@@ -68,8 +68,8 @@ export class InvitationEffects {
           const options: ErrorManagementToastOptions = {
             type: 'toast',
             options: {
-              label: 'invite_step.invitation_error',
-              message: 'invite_step.failed_send_invite',
+              label: 'invitation_error',
+              message: 'failed_send_invite',
               paramsMessage: { invitations: action.invitation.length },
               status: TuiNotification.Error,
               scope: 'invitation_modal',
@@ -91,8 +91,8 @@ export class InvitationEffects {
         ofType(InvitationActions.inviteUsersSuccess),
         tap((action) => {
           this.appService.toastNotification({
-            label: 'invite_step.invitation_ok',
-            message: 'invite_step.invitation_success',
+            label: 'invitation_ok',
+            message: 'invitation_success',
             paramsMessage: { invitations: action.invitations },
             status: TuiNotification.Success,
             scope: 'invitation_modal',

@@ -353,35 +353,35 @@ async def tests_accept_project_invitation_from_token_error_invitation_is_for_oth
 
 
 #######################################################
-# project_invitation_is_for_this_user
+# is_project_invitation_for_this_user
 #######################################################
 
 
-def test_project_invitation_is_for_this_user_ok_same_user() -> None:
+def test_is_project_invitation_for_this_user_ok_same_user() -> None:
     user = f.build_user(id=2)
     invitation = f.build_invitation(user=user)
 
-    assert services.project_invitation_is_for_this_user(invitation=invitation, user=user)
+    assert services.is_project_invitation_for_this_user(invitation=invitation, user=user)
 
 
-def test_project_invitation_is_for_this_user_ok_same_email() -> None:
+def test_is_project_invitation_for_this_user_ok_same_email() -> None:
     user = f.build_user(id=2)
     invitation = f.build_invitation(email=user.email, user=None)
 
-    assert services.project_invitation_is_for_this_user(invitation=invitation, user=user)
+    assert services.is_project_invitation_for_this_user(invitation=invitation, user=user)
 
 
-def test_project_invitation_is_for_this_user_error_different_user() -> None:
+def test_is_project_invitation_for_this_user_error_different_user() -> None:
     user = f.build_user(id=2)
     other_user = f.build_user(id=3)
     invitation = f.build_invitation(user=other_user)
 
-    assert not services.project_invitation_is_for_this_user(invitation=invitation, user=user)
+    assert not services.is_project_invitation_for_this_user(invitation=invitation, user=user)
 
 
-def test_project_invitation_is_for_this_user_ok_different_email() -> None:
+def test_is_project_invitation_for_this_user_ok_different_email() -> None:
     user = f.build_user(id=2)
     other_user = f.build_user(id=3)
     invitation = f.build_invitation(email=other_user.email, user=None)
 
-    assert not services.project_invitation_is_for_this_user(invitation=invitation, user=user)
+    assert not services.is_project_invitation_for_this_user(invitation=invitation, user=user)

@@ -139,15 +139,19 @@ async def accept_project_invitation_from_token(token: str, user: User) -> Invita
     if not invitation:
         raise ex.InvitationDoesNotExistError()
 
-    if not project_invitation_is_for_this_user(invitation=invitation, user=user):
+    if not is_project_invitation_for_this_user(invitation=invitation, user=user):
         raise ex.InvitationIsNotForThisUserError()
 
     return await accept_project_invitation(invitation=invitation, user=user)
 
 
-def project_invitation_is_for_this_user(invitation: Invitation, user: User) -> bool:
+def is_project_invitation_for_this_user(invitation: Invitation, user: User) -> bool:
     """
     Check if a project invitation if for an specific user. First try to compare the user associated and, if
     there is no one, compare the email.
     """
     return (user.id == invitation.user_id is not None) or emails.are_the_same(user.email, invitation.email)
+
+
+async def has_pending_project_invitation_for_user(project: Project, user: User) -> bool:
+    return await invitations_repositories.has_pending_project_invitation_for_user(user=user, project=project)

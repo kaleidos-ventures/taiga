@@ -6,8 +6,10 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from asgiref.sync import sync_to_async
+from django.db.models import Q
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.models import Invitation
+from taiga.projects.models import Project
 from taiga.users.models import User
 
 
@@ -21,10 +23,12 @@ def get_project_invitation(id: int) -> Invitation | None:
 
 @sync_to_async
 def get_project_invitations(project_slug: str) -> list[Invitation]:
-    project_invitees = (Invitation.objects
-        .select_related("user", "role")
-        .filter(project__slug=project_slug, status=InvitationStatus.PENDING)
-        # pending invitations with NULL users will implicitly be listed after invitations with users (and valid full names)
+    project_invitees = (
+        Invitation.objects.select_related("user", "role").filter(
+            project__slug=project_slug, status=InvitationStatus.PENDING
+        )
+        # pending invitations with NULL users will implicitly be listed after invitations with users
+        # (and valid full names)
         .order_by("user__full_name")
     )
     return list(project_invitees)
@@ -41,3 +45,13 @@ def accept_project_invitation(invitation: Invitation, user: User) -> Invitation:
 @sync_to_async
 def create_invitations(objs: list[Invitation]) -> list[Invitation]:
     return Invitation.objects.select_related("user", "project").bulk_create(objs=objs)
+
+
+@sync_to_async
+def has_pending_project_invitation_for_user(user: User, project: Project) -> bool:
+    return (
+        Invitation.objects.filter(project_id=project.id)
+        .filter(status=InvitationStatus.PENDING)
+        .filter(Q(user_id=user.id) | Q(user__isnull=True, email__iexact=user.email))
+        .exists()
+    )

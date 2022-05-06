@@ -95,7 +95,7 @@ async def test_list_workspace_projects_success(client):
     assert len(response.json()) == 1
 
 
-async def test_get_workspace_projects_workspace_not_found(client):
+async def test_list_workspace_projects_workspace_not_found(client):
     user = await f.create_user()
 
     client.login(user)
@@ -126,6 +126,22 @@ async def test_get_project_being_project_member(client):
 
     user2 = await f.create_user()
     await f.create_membership(user=user2, project=project, role=general_member_role)
+
+    client.login(user2)
+    response = client.get(f"/projects/{project.slug}")
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_get_project_being_invited_user(client):
+    project = await f.create_project()
+    general_member_role = await f.create_role(
+        permissions=choices.PROJECT_PERMISSIONS,
+        is_admin=False,
+        project=project,
+    )
+
+    user2 = await f.create_user()
+    await f.create_invitation(user=user2, project=project, role=general_member_role)
 
     client.login(user2)
     response = client.get(f"/projects/{project.slug}")

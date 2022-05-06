@@ -7,10 +7,11 @@
 
 from fastapi import Query
 from taiga.base.api import Request
-from taiga.base.api.permissions import check_permissions
+from taiga.base.api.permissions import Or, check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions import services as commons_services_ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
+from taiga.invitations.permissions import HasPendingProjectInvitation
 from taiga.permissions import CanViewProject, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
 from taiga.projects.models import Project
@@ -24,7 +25,7 @@ from taiga.routers import routes
 # PERMISSIONS
 GET_PROJECT_ROLES = IsProjectAdmin()
 UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
-GET_PROJECT_MEMBERSHIPS = CanViewProject()
+GET_PROJECT_MEMBERSHIPS = Or(CanViewProject(), HasPendingProjectInvitation())
 
 
 ################################################

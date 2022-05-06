@@ -14,7 +14,7 @@ from taiga.invitations import exceptions as services_ex
 from taiga.invitations import services as invitations_services
 from taiga.invitations.dataclasses import PublicInvitation
 from taiga.invitations.models import Invitation
-from taiga.invitations.permissions import IsAnInvitationForMe
+from taiga.invitations.permissions import IsProjectInvitationRecipient
 from taiga.invitations.serializers import InvitationSerializer, PublicInvitationSerializer
 from taiga.invitations.validators import InvitationsValidator
 from taiga.permissions import IsProjectAdmin
@@ -23,7 +23,7 @@ from taiga.roles import exceptions as roles_ex
 from taiga.routers import routes
 
 # PERMISSIONS
-ACCEPT_INVITATION = IsAnInvitationForMe()
+ACCEPT_INVITATION = IsProjectInvitationRecipient()
 CREATE_INVITATIONS = IsProjectAdmin()
 LIST_PROJECT_INVITATIONS = IsProjectAdmin()
 

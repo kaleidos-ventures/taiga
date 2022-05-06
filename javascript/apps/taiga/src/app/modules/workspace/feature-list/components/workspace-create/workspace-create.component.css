@@ -21,12 +21,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & .workspace-image {
-    margin-block-start: var(--spacing-20);
+    margin-block-start: var(--spacing-24);
     margin-inline-end: var(--spacing-16);
   }
 
   & button {
-    margin-block-start: var(--spacing-20);
+    margin-block-start: var(--spacing-24);
     margin-inline-start: var(--spacing-8);
   }
 

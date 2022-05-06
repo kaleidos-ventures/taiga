@@ -54,7 +54,7 @@ export class ProjectInvitationGuard implements CanActivate {
               void this.router.navigate(['/login'], {
                 queryParams: {
                   next: `/project/${invitation.project.slug}`,
-                  invitationToken: token,
+                  projectInvitationToken: token,
                 },
               });
             } else {
@@ -62,7 +62,7 @@ export class ProjectInvitationGuard implements CanActivate {
                 queryParams: {
                   project: invitation.project.name,
                   email: invitation.email,
-                  token,
+                  projectInvitationToken: token,
                 },
               });
             }

@@ -31,7 +31,7 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.login),
       pessimisticUpdate({
-        run: ({ username, password, invitationToken, next }) => {
+        run: ({ username, password, projectInvitationToken, next }) => {
           this.buttonLoadingService.start();
 
           return this.authApiService
@@ -44,7 +44,7 @@ export class AuthEffects {
               map((auth: Auth) => {
                 return AuthActions.loginSuccess({
                   auth,
-                  invitationToken,
+                  projectInvitationToken,
                   next,
                 });
               })
@@ -91,21 +91,24 @@ export class AuthEffects {
     () => {
       return this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
-        switchMap(({ next, invitationToken }) => {
+        switchMap(({ next, projectInvitationToken }) => {
           return this.store
             .select(selectUser)
             .pipe(filterNil())
             .pipe(
               mergeMap(() => {
-                if (invitationToken && next) {
+                if (projectInvitationToken && next) {
                   return this.projectApiService
-                    .acceptInvitation(invitationToken)
+                    .acceptInvitation(projectInvitationToken)
                     .pipe(
                       tap(() => {
-                        void this.router.navigate([next]);
+                        void this.router.navigateByUrl(next);
                         return EMPTY;
                       })
                     );
+                } else if (!projectInvitationToken && next) {
+                  void this.router.navigateByUrl(next);
+                  return EMPTY;
                 } else {
                   void this.router.navigate(['/']);
                   return EMPTY;
@@ -163,7 +166,7 @@ export class AuthEffects {
           fullName,
           acceptTerms,
           resend,
-          invitationToken,
+          projectInvitationToken,
         }) => {
           return this.authApiService
             .signUp({
@@ -171,7 +174,7 @@ export class AuthEffects {
               password,
               fullName,
               acceptTerms,
-              invitationToken,
+              projectInvitationToken,
             })
             .pipe(
               map(() => {

@@ -34,7 +34,7 @@ interface Login {
   animations: [fadeIntOutAnimation],
 })
 export class LoginComponent implements OnInit {
-  @Input() public invitationToken = '';
+  @Input() public projectInvitationToken = '';
   @Input() public next = '';
 
   public readonly model$ = this.state.select();
@@ -81,7 +81,7 @@ export class LoginComponent implements OnInit {
         login({
           username,
           password,
-          invitationToken: this.invitationToken,
+          projectInvitationToken: this.projectInvitationToken,
           next: this.next,
         })
       );

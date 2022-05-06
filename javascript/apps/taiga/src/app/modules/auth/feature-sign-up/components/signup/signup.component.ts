@@ -105,7 +105,7 @@ export class SignupComponent implements OnInit {
         [Validators.required, PasswordStrengthComponent.validator],
       ],
       fullName: [null, [Validators.required]],
-      invitationToken: null,
+      projectInvitationToken: null,
     });
     if (this.data) {
       this.signUpForm.setValue(this.data);
@@ -123,7 +123,7 @@ export class SignupComponent implements OnInit {
           fullName: signUpFormData.fullName,
           acceptTerms: true,
           resend: false,
-          invitationToken: signUpFormData.invitationToken,
+          projectInvitationToken: signUpFormData.projectInvitationToken,
         })
       );
     } else {

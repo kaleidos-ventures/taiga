@@ -12,11 +12,13 @@ import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ConfigService } from '@taiga/core';
-import { Auth, genericResponseError } from '@taiga/data';
+import { Auth, genericResponseError, InvitationInfo } from '@taiga/data';
 import { throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
 import { loginSuccess } from '../data-access/+state/actions/auth.actions';
+
+type InvitationVerification = Pick<InvitationInfo, 'project'>;
 
 @Injectable({
   providedIn: 'root',
@@ -32,15 +34,32 @@ export class VerifyEmailGuard implements CanActivate {
   public canActivate(route: ActivatedRouteSnapshot) {
     const verifyParam = route.params.path as string;
     return this.http
-      .post<Auth>(`${this.config.apiUrl}/users/verify`, {
+      .post<{
+        auth: Auth;
+        projectInvitation: InvitationVerification;
+      }>(`${this.config.apiUrl}/users/verify`, {
         token: verifyParam,
       })
       .pipe(
-        map((auth) => {
-          this.store.dispatch(loginSuccess({ auth }));
-          void this.router.navigate(['/']);
-          return true;
-        }),
+        map(
+          (verification: {
+            auth: Auth;
+            projectInvitation: InvitationVerification;
+          }) => {
+            if (verification.projectInvitation?.project?.slug) {
+              this.store.dispatch(
+                loginSuccess({
+                  auth: verification.auth,
+                  next: `/project/${verification.projectInvitation.project.slug}`,
+                })
+              );
+              return true;
+            } else {
+              this.store.dispatch(loginSuccess({ auth: verification.auth }));
+              return true;
+            }
+          }
+        ),
         catchError((httpResponse: HttpErrorResponse) => {
           const responseError = httpResponse.error as genericResponseError;
           if (httpResponse.status === 404) {

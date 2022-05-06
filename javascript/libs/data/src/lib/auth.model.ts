@@ -13,7 +13,7 @@ export interface Auth {
 }
 
 export interface Login extends Auth {
-  invitationToken: string;
+  projectInvitationToken: string;
   next: string;
 }
 
@@ -27,7 +27,7 @@ export interface SignUpInput {
   password: LoginInput['password'];
   fullName: User['fullName'];
   acceptTerms: boolean;
-  invitationToken?: string;
+  projectInvitationToken?: string;
 }
 
 // This interface implements `message` and `msg` since backend provide both options depending on the error

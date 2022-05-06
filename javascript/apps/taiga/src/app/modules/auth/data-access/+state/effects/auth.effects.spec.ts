@@ -90,7 +90,7 @@ describe('AuthEffects', () => {
     const loginData = {
       username: randUserName(),
       password: randPassword(),
-      invitationToken: token,
+      projectInvitationToken: token,
       next,
     };
     const response = AuthMockFactory();
@@ -102,7 +102,7 @@ describe('AuthEffects', () => {
     actions$ = hot('-a', { a: login(loginData) });
 
     const expected = cold('--a', {
-      a: loginSuccess({ auth: response, invitationToken: token, next }),
+      a: loginSuccess({ auth: response, projectInvitationToken: token, next }),
     });
 
     expect(effects.login$).toBeObservable(expected);
@@ -135,8 +135,8 @@ describe('AuthEffects', () => {
     const effects = spectator.inject(AuthEffects);
 
     const auth = AuthMockFactory();
-    const invite = InviteMockFactory();
     const user = UserMockFactory();
+    const invite = InviteMockFactory();
 
     store.overrideSelector(selectUser, user);
 
@@ -147,12 +147,12 @@ describe('AuthEffects', () => {
       a: loginSuccess({
         auth,
         next: invite.next,
-        invitationToken: invite.invitationToken,
+        projectInvitationToken: invite.projectInvitationToken,
       }),
     });
 
     expect(effects.loginRedirect$).toSatisfyOnFlush(() => {
-      expect(router.navigate).toHaveBeenCalledWith([invite.next]);
+      expect(router.navigateByUrl).toHaveBeenCalledWith(invite.next);
     });
   });
 
@@ -172,7 +172,7 @@ describe('AuthEffects', () => {
       a: loginSuccess({
         auth,
         next: '',
-        invitationToken: '',
+        projectInvitationToken: '',
       }),
     });
 

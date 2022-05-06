@@ -20,7 +20,7 @@ export const InviteMockFactory = (): Login => {
   return {
     refresh: randUuid(),
     token: randUuid(),
-    invitationToken: randUuid(),
+    projectInvitationToken: randUuid(),
     next: randUrl(),
   };
 };

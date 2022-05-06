@@ -25,7 +25,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <h1 class="login-title">{{ t('login.title') }}</h1>
       <ng-container *ngIf="queryParams$ | async as queryParams">
         <tg-login
-          [invitationToken]="queryParams.invitationToken"
+          [projectInvitationToken]="queryParams.projectInvitationToken"
           [next]="queryParams.next"></tg-login>
       </ng-container>
     </div>

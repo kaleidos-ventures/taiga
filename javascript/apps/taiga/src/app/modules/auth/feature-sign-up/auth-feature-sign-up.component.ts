@@ -20,7 +20,7 @@ import { SignUp } from './models/sign-up.model';
 interface Invitation {
   email: string;
   project: string;
-  token: string;
+  projectInvitationToken: string;
   slug: string;
 }
 
@@ -42,12 +42,12 @@ export class AuthFeatureSignUpComponent implements OnInit {
     email: '',
     fullName: '',
     password: '',
-    invitationToken: '',
+    projectInvitationToken: '',
   };
   public params: Invitation = {
     email: '',
     project: '',
-    token: '',
+    projectInvitationToken: '',
     slug: '',
   };
   public readOnlyEmail = false;
@@ -61,9 +61,10 @@ export class AuthFeatureSignUpComponent implements OnInit {
         this.readOnlyEmail = true;
         this.signUpFormData.email = this.params.email;
       }
-      if (this.params.token) {
+      if (this.params.projectInvitationToken) {
         this.displaySignUpForm(true);
-        this.signUpFormData.invitationToken = this.params.token;
+        this.signUpFormData.projectInvitationToken =
+          this.params.projectInvitationToken;
       }
     });
   }

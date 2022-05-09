@@ -23,6 +23,7 @@ export const login = createAction(
     password: string;
     projectInvitationToken: string;
     next: string;
+    acceptProjectInvitation?: boolean;
   }>()
 );
 
@@ -30,7 +31,12 @@ export const logout = createAction('[Auth] logout');
 
 export const loginSuccess = createAction(
   '[Auth] login success',
-  props<{ auth: Auth; projectInvitationToken?: string; next?: string }>()
+  props<{
+    auth: Auth;
+    projectInvitationToken?: string;
+    next?: string;
+    acceptProjectInvitation?: boolean;
+  }>()
 );
 
 export const setLoginError = createAction(
@@ -46,6 +52,7 @@ export const signup = createAction(
     fullName: User['fullName'];
     acceptTerms: boolean;
     resend: boolean;
+    acceptProjectInvitation: boolean;
     projectInvitationToken?: string;
   }>()
 );

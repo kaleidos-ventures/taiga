@@ -8,9 +8,7 @@
 
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 import { map, switchMap, tap } from 'rxjs/operators';
-
 import * as InvitationActions from '../actions/invitation.action';
 import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { InvitationApiService } from '@taiga/api';
@@ -22,6 +20,9 @@ import { TuiNotification } from '@taiga-ui/core';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { InvitationService } from '~/app/services/invitation.service';
 import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { ProjectApiService } from '@taiga/api';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { Store } from '@ngrx/store';
 import { filterNil } from '~/app/shared/utils/operators';
 
 @Injectable()
@@ -52,7 +53,6 @@ export class InvitationEffects {
       pessimisticUpdate({
         run: (action, invitationsState) => {
           this.buttonLoadingService.start();
-
           return this.invitationApiService
             .inviteUsers(action.slug, action.invitation)
             .pipe(
@@ -84,7 +84,6 @@ export class InvitationEffects {
         },
         onError: (action, httpResponse: HttpErrorResponse) => {
           this.buttonLoadingService.error();
-
           const options: ErrorManagementToastOptions = {
             type: 'toast',
             options: {
@@ -124,12 +123,44 @@ export class InvitationEffects {
     { dispatch: false }
   );
 
+  public acceptInvitationSlug$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(InvitationActions.acceptInvitationSlug),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.projectApiService.acceptInvitationSlug(action.slug).pipe(
+            tap(() => {
+              this.appService.toastNotification({
+                message: 'invitation_accept_message',
+                status: TuiNotification.Success,
+                scope: 'invitation_modal',
+                autoClose: true,
+              });
+            }),
+            concatLatestFrom(() =>
+              this.store.select(selectUser).pipe(filterNil())
+            ),
+            map(([, user]) => {
+              return InvitationActions.acceptedInvitationSlug({
+                projectSlug: action.slug,
+                username: user.username,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
   constructor(
     private store: Store,
     private actions$: Actions,
     private invitationApiService: InvitationApiService,
     private invitationService: InvitationService,
     private appService: AppService,
-    private buttonLoadingService: ButtonLoadingService
+    private buttonLoadingService: ButtonLoadingService,
+    private projectApiService: ProjectApiService
   ) {}
 }

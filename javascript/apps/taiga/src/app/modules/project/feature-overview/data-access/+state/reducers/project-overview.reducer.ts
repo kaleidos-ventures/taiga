@@ -15,11 +15,15 @@ import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+
 export interface ProjectOverviewState {
   members: Membership[];
   invitations: Invitation[];
+  notificationClosed: boolean;
+  onAcceptedInvitation: boolean;
 }
 
 export const initialState: ProjectOverviewState = {
   members: [],
   invitations: [],
+  notificationClosed: false,
+  onAcceptedInvitation: false,
 };
 
 export const reducer = createReducer(
@@ -49,7 +53,48 @@ export const reducer = createReducer(
 
       return state;
     }
-  )
+  ),
+  on(
+    ProjectOverviewActions.setNotificationClosed,
+    (state, { notificationClosed }): ProjectOverviewState => {
+      state.notificationClosed = notificationClosed;
+
+      return state;
+    }
+  ),
+  on(
+    ProjectOverviewActions.onAcceptedInvitation,
+    (state, { onAcceptedInvitation }): ProjectOverviewState => {
+      state.onAcceptedInvitation = onAcceptedInvitation;
+
+      return state;
+    }
+  ),
+  on(ProjectOverviewActions.resetOverview, (state): ProjectOverviewState => {
+    state.notificationClosed = false;
+    state.onAcceptedInvitation = false;
+    return state;
+  }),
+  on(InvitationActions.acceptedInvitationSlug, (state, { username }) => {
+    const acceptedUser = state.invitations.find(
+      (invitation) => invitation.user?.username === username
+    );
+
+    state.invitations = state.invitations.filter(
+      (invitation) => invitation.user?.username !== username
+    );
+
+    if (acceptedUser) {
+      const member: Membership = {
+        role: acceptedUser.role!,
+        user: acceptedUser.user!,
+      };
+
+      state.members = [member, ...state.members];
+    }
+
+    return state;
+  })
 );
 
 export const projectOverviewFeature = createFeature({

@@ -17,7 +17,6 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { InvitationParams } from '@taiga/data';
 import { SignUp } from './models/sign-up.model';
-
 @UntilDestroy()
 @Component({
   selector: 'tg-sign-up',
@@ -36,6 +35,7 @@ export class AuthFeatureSignUpComponent implements OnInit {
     email: '',
     fullName: '',
     password: '',
+    acceptProjectInvitation: true,
     projectInvitationToken: '',
   };
   public params: InvitationParams = {
@@ -43,6 +43,7 @@ export class AuthFeatureSignUpComponent implements OnInit {
     project: '',
     projectInvitationToken: '',
     slug: '',
+    acceptProjectInvitation: true,
   };
   public readOnlyEmail = false;
 
@@ -50,7 +51,10 @@ export class AuthFeatureSignUpComponent implements OnInit {
 
   public ngOnInit() {
     this.route.queryParams.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.params = params as InvitationParams;
+      this.params = {
+        ...params,
+        acceptProjectInvitation: params.acceptProjectInvitation === 'true',
+      } as InvitationParams;
       if (this.params.email) {
         this.readOnlyEmail = true;
         this.signUpFormData.email = this.params.email;
@@ -59,6 +63,10 @@ export class AuthFeatureSignUpComponent implements OnInit {
         this.displaySignUpForm(true);
         this.signUpFormData.projectInvitationToken =
           this.params.projectInvitationToken;
+      }
+      if ('acceptProjectInvitation' in this.params) {
+        this.signUpFormData.acceptProjectInvitation =
+          this.params?.acceptProjectInvitation;
       }
     });
   }

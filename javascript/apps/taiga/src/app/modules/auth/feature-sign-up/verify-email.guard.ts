@@ -55,7 +55,11 @@ export class VerifyEmailGuard implements CanActivate {
               );
               return true;
             } else {
-              this.store.dispatch(loginSuccess({ auth: verification.auth }));
+              this.store.dispatch(
+                loginSuccess({
+                  auth: verification.auth,
+                })
+              );
               return true;
             }
           }

@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { animate, style, transition, trigger } from '@angular/animations';
 import {
   ChangeDetectorRef,
   Component,
@@ -32,11 +33,30 @@ interface ProjectMenuDialog {
     link: string[];
   }[];
 }
+const cssValue = getComputedStyle(document.documentElement);
 
 @Component({
   selector: 'tg-project-navigation-menu',
   templateUrl: './project-navigation-menu.component.html',
   styleUrls: ['./project-navigation-menu.component.css'],
+  animations: [
+    trigger('blockInitialRenderAnimation', [transition(':enter', [])]),
+    trigger('slideIn', [
+      transition(':enter', [
+        style({
+          background: `${cssValue.getPropertyValue('--color-gray90')}`,
+          color: `${cssValue.getPropertyValue('--color-primary')}`,
+        }),
+        animate(
+          '1000ms',
+          style({
+            background: 'none',
+            color: `${cssValue.getPropertyValue('--color-gray40')}`,
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class ProjectNavigationMenuComponent {
   @Input()
@@ -78,7 +98,7 @@ export class ProjectNavigationMenuComponent {
 
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
 
-  constructor(private readonly cd: ChangeDetectorRef) {}
+  constructor(private cd: ChangeDetectorRef) {}
 
   public initDialog(
     el: HTMLElement,

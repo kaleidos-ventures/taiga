@@ -59,7 +59,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
       <div class="menu-wrapper">
         <nav class="primary-menu">
-          <ul>
+          <ul @blockInitialRenderAnimation>
             <li
               class="menu-option"
               [class.active]="overviewActive.isActive"
@@ -163,6 +163,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               (pointerenter)="popup($event, 'kanban')"
               (pointerleave)="out()">
               <a
+                @slideIn
                 (focus)="popup($event, 'kanban')"
                 (focusout)="out()"
                 [attr.data-text]="t('commons.kanban')"

@@ -109,6 +109,7 @@ export class SignupComponent implements OnInit {
       ],
       fullName: [null, [Validators.required]],
       projectInvitationToken: null,
+      acceptProjectInvitation: null,
     });
     if (this.data) {
       this.signUpForm.setValue(this.data);
@@ -117,7 +118,6 @@ export class SignupComponent implements OnInit {
 
   public onSubmit() {
     const signUpFormData = this.signUpForm.value as SignUp;
-
     if (this.signUpForm.valid) {
       this.store.dispatch(
         signup({
@@ -126,6 +126,7 @@ export class SignupComponent implements OnInit {
           fullName: signUpFormData.fullName,
           acceptTerms: true,
           resend: false,
+          acceptProjectInvitation: signUpFormData.acceptProjectInvitation,
           projectInvitationToken: signUpFormData.projectInvitationToken,
         })
       );

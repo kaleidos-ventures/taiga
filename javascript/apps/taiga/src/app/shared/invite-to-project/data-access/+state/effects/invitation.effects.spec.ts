@@ -9,7 +9,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { InvitationApiService } from '@taiga/api';
+import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 import { Observable } from 'rxjs';
 import { randEmail, randSlug } from '@ngneat/falso';
@@ -33,8 +33,11 @@ describe('InvitationEffects', () => {
 
   const createService = createServiceFactory({
     service: InvitationEffects,
-    providers: [provideMockActions(() => actions$), provideMockStore({ initialState: {} }),],
-    mocks: [InvitationApiService, AppService],
+    providers: [
+      provideMockActions(() => actions$),
+      provideMockStore({ initialState: {} }),
+    ],
+    mocks: [InvitationApiService, AppService, ProjectApiService],
   });
 
   beforeEach(() => {
@@ -111,7 +114,10 @@ describe('InvitationEffects', () => {
     });
 
     const expected = cold('--a', {
-      a: inviteUsersSuccess({ newInvitations: invitationMockResponse, allInvitationsOrdered: invitationMockResponse }),
+      a: inviteUsersSuccess({
+        newInvitations: invitationMockResponse,
+        allInvitationsOrdered: invitationMockResponse,
+      }),
     });
 
     expect(effects.sendInvitations$).toBeObservable(expected);

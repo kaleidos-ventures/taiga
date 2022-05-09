@@ -6,56 +6,90 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t">
-  <ng-container *ngIf="project$ | async as project">
-    <div class="project-content">
-      <div class="project-title">
-        <tg-ui-avatar
-          size="xxl"
-          type="light"
-          [color]="project.color"
-          [url]="project.logoLarge"
-          [name]="project.name">
-        </tg-ui-avatar>
-        <h1
-          class="project-name"
-          data-test="project-name">
-          {{ project.name }}
-        </h1>
-      </div>
-      <div class="project-content-inner">
-        <section class="project-main"></section>
-        <section class="project-description">
-          <h2 class="project-about">{{ t('project_overview.about') }}</h2>
-          <div
-            [class.hide]="hideOverflow"
-            class="description">
-            <p #descriptionOverflow>{{ project.description }}</p>
+  <ng-container *ngIf="model$ | async as vm">
+    <ng-container *ngIf="vm.project">
+      <div class="project-content">
+        <tg-ui-context-notification
+          @slideOut
+          *ngIf="vm.haveInvitation"
+          class="invitation-notification"
+          (closed)="onNotificationClosed()"
+          [hasClose]="true"
+          [closedNotification]="vm.onAcceptedInvitation"
+          alertLevel="polite"
+          status="info"
+          data-test="logged-user-invitation">
+          <div class="project-invitation-wrapper">
+            <div class="project-invitation-content">
+              <h1 class="project-invitation-title">
+                {{ t('project_overview.pending_invitation') }}
+              </h1>
+              <span class="project-invitation-text">
+                {{ t('project_overview.accept_member') }}
+              </span>
+            </div>
+            <div class="project-invitation-action">
+              <button
+                (click)="acceptInvitationSlug()"
+                class="create-account"
+                data-test="signup-submit-button"
+                appearance="primary"
+                tuiButton
+                type="submit">
+                {{ t('project_overview.accept_invitation') }}
+              </button>
+            </div>
           </div>
-          <div class="actions">
-            <a
-              *ngIf="showDescription && !hideOverflow"
-              class="link"
-              tuiLink
-              (click)="toggleShowDescription()"
-              icon="chevron-down"
-              iconAlign="right">
-              {{ t('project_overview.show_full_description') }}
-            </a>
-            <a
-              *ngIf="showDescription && hideOverflow"
-              class="link"
-              tuiLink
-              (click)="toggleShowDescription()"
-              icon="chevron-up"
-              iconAlign="right">
-              {{ t('project_overview.hide_full_description') }}
-            </a>
-          </div>
-        </section>
-        <section class="project-members">
-          <tg-project-members></tg-project-members>
-        </section>
+        </tg-ui-context-notification>
+        <div class="project-title">
+          <tg-ui-avatar
+            size="xxl"
+            type="light"
+            [color]="vm.project.color"
+            [url]="vm.project.logoLarge"
+            [name]="vm.project.name">
+          </tg-ui-avatar>
+          <h1
+            class="project-name"
+            data-test="project-name">
+            {{ vm.project.name }}
+          </h1>
+        </div>
+        <div class="project-content-inner">
+          <section class="project-main"></section>
+          <section class="project-description">
+            <h2 class="project-about">{{ t('project_overview.about') }}</h2>
+            <div
+              [class.hide]="hideOverflow"
+              class="description">
+              <p #descriptionOverflow>{{ vm.project.description }}</p>
+            </div>
+            <div class="actions">
+              <a
+                *ngIf="showDescription && !hideOverflow"
+                class="link"
+                tuiLink
+                (click)="toggleShowDescription()"
+                icon="chevron-down"
+                iconAlign="right">
+                {{ t('project_overview.show_full_description') }}
+              </a>
+              <a
+                *ngIf="showDescription && hideOverflow"
+                class="link"
+                tuiLink
+                (click)="toggleShowDescription()"
+                icon="chevron-up"
+                iconAlign="right">
+                {{ t('project_overview.hide_full_description') }}
+              </a>
+            </div>
+          </section>
+          <section class="project-members">
+            <tg-project-members></tg-project-members>
+          </section>
+        </div>
       </div>
-    </div>
+    </ng-container>
   </ng-container>
 </ng-container>

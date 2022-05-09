@@ -75,6 +75,7 @@ export class AuthFeatureVerifyEmailComponent implements OnInit {
           fullName: this.formData.fullName,
           acceptTerms: true,
           resend: true,
+          acceptProjectInvitation: this.formData.acceptProjectInvitation,
           projectInvitationToken: this.formData.projectInvitationToken,
         })
       );

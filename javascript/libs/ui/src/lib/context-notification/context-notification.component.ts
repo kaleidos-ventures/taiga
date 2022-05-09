@@ -7,10 +7,19 @@
  */
 
 import {
+  animate,
+  style,
+  transition,
+  trigger,
+  AnimationEvent,
+} from '@angular/animations';
+import {
   Component,
   ChangeDetectionStrategy,
   Input,
   HostBinding,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 
 type NotificationStatus = 'info' | 'notice' | 'error' | 'success' | 'warning';
@@ -36,6 +45,19 @@ type AlertLevel = 'none' | 'polite' | 'important';
   selector: 'tg-ui-context-notification',
   templateUrl: './context-notification.component.html',
   styleUrls: ['./context-notification.component.css'],
+  animations: [
+    trigger('slideOut', [
+      transition(':leave', [
+        animate(
+          '300ms ease-in',
+          style({
+            blockSize: '0',
+            opacity: '0',
+          })
+        ),
+      ]),
+    ]),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContextNotificationComponent {
@@ -49,9 +71,28 @@ export class ContextNotificationComponent {
   @Input()
   public hasIcon = true;
 
+  @Input()
+  public hasClose = false;
+
+  @Output()
+  public closed = new EventEmitter<void>();
+
+  @Input()
+  public closedNotification = false;
+
+  public leave(event: AnimationEvent) {
+    if (event.toState === 'void') {
+      this.closed.next();
+    }
+  }
+
   public get icon(): string {
     return `notification${this.status
       .charAt(0)
       .toUpperCase()}${this.status.slice(1)}`;
+  }
+
+  public closeNotification() {
+    this.closedNotification = true;
   }
 }

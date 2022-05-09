@@ -16,6 +16,7 @@ import { map } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
+import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 
 @Injectable()
 export class ProjectOverviewEffects {
@@ -27,29 +28,29 @@ export class ProjectOverviewEffects {
       ),
       fetch({
         run: (_, project) => {
-          if (project.amIAdmin) {
-            return zip(
-              this.projectApiService.getMembers(project.slug),
-              this.projectApiService.getInvitations(project.slug)
-            ).pipe(
-              map(([members, invitations]) => {
-                return ProjectOverviewActions.fetchMembersSuccess({
-                  members,
-                  invitations,
-                });
-              })
-            );
-          }
-
-          return this.projectApiService.getMembers(project.slug).pipe(
-            map((members) => {
+          return zip(
+            this.projectApiService.getMembers(project.slug),
+            this.projectApiService.getInvitations(project.slug)
+          ).pipe(
+            map(([members, invitations]) => {
               return ProjectOverviewActions.fetchMembersSuccess({
                 members,
-                invitations: [],
+                invitations,
               });
             })
           );
         },
+      })
+    );
+  });
+
+  public acceptedInvitation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(InvitationActions.acceptedInvitationSlug),
+      map(() => {
+        return ProjectOverviewActions.onAcceptedInvitation({
+          onAcceptedInvitation: true,
+        });
       })
     );
   });

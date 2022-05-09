@@ -27,6 +27,7 @@ export interface InvitationInfo {
   project: {
     name: string;
     slug: string;
+    isAnon: boolean;
   };
 }
 
@@ -35,4 +36,5 @@ export interface InvitationParams {
   project: string;
   projectInvitationToken: string;
   slug: string;
+  acceptProjectInvitation: boolean;
 }

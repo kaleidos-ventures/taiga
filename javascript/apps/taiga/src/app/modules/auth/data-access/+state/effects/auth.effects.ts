@@ -31,9 +31,14 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.login),
       pessimisticUpdate({
-        run: ({ username, password, projectInvitationToken, next }) => {
+        run: ({
+          username,
+          password,
+          projectInvitationToken,
+          next,
+          acceptProjectInvitation,
+        }) => {
           this.buttonLoadingService.start();
-
           return this.authApiService
             .login({
               username,
@@ -46,6 +51,7 @@ export class AuthEffects {
                   auth,
                   projectInvitationToken,
                   next,
+                  acceptProjectInvitation,
                 });
               })
             );
@@ -91,31 +97,44 @@ export class AuthEffects {
     () => {
       return this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
-        switchMap(({ next, projectInvitationToken }) => {
-          return this.store
-            .select(selectUser)
-            .pipe(filterNil())
-            .pipe(
-              mergeMap(() => {
-                if (projectInvitationToken && next) {
-                  return this.projectApiService
-                    .acceptInvitation(projectInvitationToken)
-                    .pipe(
-                      tap(() => {
-                        void this.router.navigateByUrl(next);
-                        return EMPTY;
-                      })
-                    );
-                } else if (!projectInvitationToken && next) {
-                  void this.router.navigateByUrl(next);
-                  return EMPTY;
-                } else {
-                  void this.router.navigate(['/']);
-                  return EMPTY;
-                }
-              })
-            );
-        })
+        switchMap(
+          ({ next, projectInvitationToken, acceptProjectInvitation }) => {
+            return this.store
+              .select(selectUser)
+              .pipe(filterNil())
+              .pipe(
+                mergeMap(() => {
+                  if (
+                    projectInvitationToken &&
+                    next &&
+                    acceptProjectInvitation
+                  ) {
+                    return this.projectApiService
+                      .acceptInvitationToken(projectInvitationToken)
+                      .pipe(
+                        tap(() => {
+                          void this.router.navigateByUrl(next);
+                          return EMPTY;
+                        })
+                      );
+                  } else if (
+                    projectInvitationToken &&
+                    next &&
+                    !acceptProjectInvitation
+                  ) {
+                    void this.router.navigateByUrl(next);
+                    return EMPTY;
+                  } else if (!projectInvitationToken && next) {
+                    void this.router.navigateByUrl(next);
+                    return EMPTY;
+                  } else {
+                    void this.router.navigate(['/']);
+                    return EMPTY;
+                  }
+                })
+              );
+          }
+        )
       );
     },
     { dispatch: false }
@@ -166,6 +185,7 @@ export class AuthEffects {
           fullName,
           acceptTerms,
           resend,
+          acceptProjectInvitation,
           projectInvitationToken,
         }) => {
           return this.authApiService
@@ -174,6 +194,7 @@ export class AuthEffects {
               password,
               fullName,
               acceptTerms,
+              acceptProjectInvitation,
               projectInvitationToken,
             })
             .pipe(

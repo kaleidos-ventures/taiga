@@ -10,7 +10,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { ConfigService } from '@taiga/core';
-import { InvitationInfo } from '@taiga/data';
+import { InvitationInfo, Project } from '@taiga/data';
 import { of, throwError } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
@@ -18,7 +18,7 @@ import { AuthService } from '~/app/modules/auth/data-access/services/auth.servic
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectInvitationGuard implements CanActivate {
+export class ProjectInvitationCTAGuard implements CanActivate {
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -35,38 +35,45 @@ export class ProjectInvitationGuard implements CanActivate {
       )
       .pipe(
         mergeMap((invitation: InvitationInfo) => {
-          if (invitation.existingUser) {
-            if (this.authService.isLogged()) {
-              void this.router.navigate([
-                `/project/${invitation.project.slug}`,
-              ]);
-              return of(true);
-            } else {
+          if (this.authService.isLogged()) {
+            return this.http
+              .post<{ slug: Project['slug'] }>(
+                `${this.config.apiUrl}/projects/invitations/${token}/accept`,
+                {}
+              )
+              .pipe(
+                mergeMap(() => {
+                  void this.router.navigate([
+                    `/project/${invitation.project.slug}`,
+                  ]);
+                  return of(true);
+                }),
+                catchError((httpResponse: HttpErrorResponse) => {
+                  void this.router.navigate(['/']);
+                  return throwError(httpResponse);
+                })
+              );
+          } else {
+            if (invitation.existingUser) {
               void this.router.navigate(['/login'], {
                 queryParams: {
                   next: `/project/${invitation.project.slug}`,
+                  acceptProjectInvitation: true,
                   projectInvitationToken: token,
-                  acceptProjectInvitation: false,
                 },
               });
-            }
-          } else {
-            if (invitation.project.isAnon) {
-              void this.router.navigate([
-                `/project/${invitation.project.slug}`,
-              ]);
             } else {
               void this.router.navigate(['/signup'], {
                 queryParams: {
                   project: invitation.project.name,
                   email: invitation.email,
-                  acceptProjectInvitation: false,
+                  acceptProjectInvitation: true,
                   projectInvitationToken: token,
                 },
               });
             }
+            return of(true);
           }
-          return of(true);
         }),
         catchError((httpResponse: HttpErrorResponse) => {
           void this.router.navigate(['/']);

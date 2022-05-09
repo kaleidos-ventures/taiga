@@ -26,6 +26,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <ng-container *ngIf="queryParams$ | async as queryParams">
         <tg-login
           [projectInvitationToken]="queryParams.projectInvitationToken"
+          [acceptProjectInvitation]="queryParams.acceptProjectInvitation"
           [next]="queryParams.next"></tg-login>
       </ng-container>
     </div>

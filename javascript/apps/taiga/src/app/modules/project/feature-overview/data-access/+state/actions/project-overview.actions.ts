@@ -15,3 +15,14 @@ export const fetchMembersSuccess = createAction(
   '[Project overview][api] fetch members success',
   props<{ members: Membership[]; invitations: Invitation[] }>()
 );
+export const setNotificationClosed = createAction(
+  '[Project overview] set notification closed',
+  props<{ notificationClosed: boolean }>()
+);
+
+export const onAcceptedInvitation = createAction(
+  '[Project overview] on Accepted Invitation',
+  props<{ onAcceptedInvitation: boolean }>()
+);
+
+export const resetOverview = createAction('[Project overview] reset overview');

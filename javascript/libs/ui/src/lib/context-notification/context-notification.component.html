@@ -6,12 +6,30 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<div [class]="status">
-  <div
-    class="content"
-    [attr.role]="alertLevel === 'important' ? 'alert' : null"
-    [attr.aria-live]="alertLevel === 'polite' ? 'polite' : null">
-    <tui-svg *ngIf="hasIcon" class="icon" [src]="icon"></tui-svg>
-    <ng-content></ng-content>
+<div
+  *ngIf="!closedNotification"
+  class="wrapper"
+  @slideOut
+  (@slideOut.done)="leave($event)">
+  <div [class]="status">
+    <div
+      class="content"
+      [attr.role]="alertLevel === 'important' ? 'alert' : null"
+      [attr.aria-live]="alertLevel === 'polite' ? 'polite' : null">
+      <tui-svg
+        *ngIf="hasIcon"
+        class="icon"
+        [src]="icon"></tui-svg>
+      <ng-content></ng-content>
+      <button
+        *ngIf="hasClose"
+        (click)="closeNotification()"
+        class="close-button"
+        tuiIconButton
+        aria-label="close"
+        appearance="us-header-button"
+        icon="close"
+        type="button"></button>
+    </div>
   </div>
 </div>

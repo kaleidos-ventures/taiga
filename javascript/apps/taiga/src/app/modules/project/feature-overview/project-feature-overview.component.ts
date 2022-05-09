@@ -12,33 +12,105 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { initProjectOverview } from './data-access/+state/actions/project-overview.actions';
+import {
+  initProjectOverview,
+  resetOverview,
+  setNotificationClosed,
+} from './data-access/+state/actions/project-overview.actions';
+import { Invitation, Project, User } from '@taiga/data';
+import { RxState } from '@rx-angular/state';
+import { map } from 'rxjs/operators';
+import { selectInvitations } from './data-access/+state/selectors/project-overview.selectors';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { filterNil } from '~/app/shared/utils/operators';
+import {
+  selectNotificationClosed,
+  selectOnAcceptedInvitation,
+} from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { animate, style, transition, trigger } from '@angular/animations';
+
 @Component({
   selector: 'tg-project-feature-overview',
   templateUrl: './project-feature-overview.component.html',
   styleUrls: ['./project-feature-overview.component.css'],
+  providers: [RxState],
+  animations: [
+    trigger('slideOut', [
+      transition(':leave', [
+        animate(
+          '300ms ease-in',
+          style({
+            blockSize: '0',
+            opacity: '0',
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class ProjectFeatureOverviewComponent
-  implements OnInit, AfterViewChecked
+  implements OnInit, AfterViewChecked, OnDestroy
 {
   @ViewChild('descriptionOverflow')
   public descriptionOverflow?: ElementRef;
 
+  public readonly model$ = this.state.select().pipe(
+    map((state) => {
+      let invitation = null;
+      if (state.user) {
+        invitation = state.invitations.some(
+          (invitation) =>
+            invitation.email.toLowerCase() === state.user?.email.toLowerCase()
+        );
+      }
+
+      return {
+        ...state,
+        haveInvitation: invitation,
+      };
+    })
+  );
+
   public showDescription = false;
   public hideOverflow = false;
 
-  constructor(private store: Store, private cd: ChangeDetectorRef) {}
-
-  public project$ = this.store.select(selectCurrentProject);
+  constructor(
+    private store: Store,
+    private cd: ChangeDetectorRef,
+    private state: RxState<{
+      project: Project;
+      haveInvitation: boolean;
+      invitations: Invitation[];
+      notificationClosed: boolean;
+      onAcceptedInvitation: boolean;
+      user?: User | null;
+    }>
+  ) {
+    this.state.connect('invitations', this.store.select(selectInvitations));
+    this.state.connect('user', this.store.select(selectUser));
+    this.state.connect(
+      'project',
+      this.store.select(selectCurrentProject).pipe(filterNil())
+    );
+    this.state.connect(
+      'notificationClosed',
+      this.store.select(selectNotificationClosed)
+    );
+    this.state.connect(
+      'onAcceptedInvitation',
+      this.store.select(selectOnAcceptedInvitation)
+    );
+  }
 
   public ngOnInit() {
     this.showDescription = false;
     this.hideOverflow = false;
-
     this.store.dispatch(initProjectOverview());
   }
 
@@ -58,5 +130,21 @@ export class ProjectFeatureOverviewComponent
       );
       this.cd.detectChanges();
     }
+  }
+
+  public acceptInvitationSlug() {
+    this.store.dispatch(
+      acceptInvitationSlug({
+        slug: this.state.get('project').slug,
+      })
+    );
+  }
+
+  public onNotificationClosed() {
+    this.store.dispatch(setNotificationClosed({ notificationClosed: true }));
+  }
+
+  public ngOnDestroy() {
+    this.store.dispatch(resetOverview());
   }
 }

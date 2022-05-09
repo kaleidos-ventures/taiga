@@ -24,4 +24,14 @@ export const inviteUsersSuccess = createAction(
   props<{ newInvitations: Invitation[]; allInvitationsOrdered: Invitation[] }>()
 );
 
+export const acceptInvitationSlug = createAction(
+  '[Invitation] Accept your invitation via Slug',
+  props<{ slug: string }>()
+);
+
+export const acceptedInvitationSlug = createAction(
+  '[Invitation] Accepted your invitation via Slug',
+  props<{ projectSlug: string; username: string }>()
+);
+
 export const inviteUsersError = createAction('[Invitation] invite users error');

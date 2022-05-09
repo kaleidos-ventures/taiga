@@ -27,5 +27,7 @@
   "invitation_error": "An error ocurred!",
   "failed_send_invite": "Failed to send { invitations, plural, one { the invitation. } other {# invitations.} } Please try again in a few minutes.",
   "pending": "Pending",
-  "pending_tooltip": "This user has already been invited. You are going to resend them an invitation."
+  "pending_tooltip": "This user has already been invited. You are going to resend them an invitation.",
+  "invitation_accept_label": "Congratulations",
+  "invitation_accept_message": "You are now a member of this project."
 }

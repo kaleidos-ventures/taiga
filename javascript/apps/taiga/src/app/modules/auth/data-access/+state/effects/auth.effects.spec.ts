@@ -51,6 +51,7 @@ const signupData = {
   fullName: randFullName(),
   acceptTerms: true,
   resend: false,
+  acceptProjectInvitation: true,
 };
 
 const initialState = {
@@ -141,7 +142,9 @@ describe('AuthEffects', () => {
     store.overrideSelector(selectUser, user);
 
     const projectApiService = spectator.inject(ProjectApiService);
-    projectApiService.acceptInvitation.mockReturnValue(cold('-a|', { a: [] }));
+    projectApiService.acceptInvitationToken.mockReturnValue(
+      cold('-a|', { a: [] })
+    );
 
     actions$ = hot('a', {
       a: loginSuccess({
@@ -166,7 +169,9 @@ describe('AuthEffects', () => {
     store.overrideSelector(selectUser, user);
 
     const projectApiService = spectator.inject(ProjectApiService);
-    projectApiService.acceptInvitation.mockReturnValue(cold('-a|', { a: [] }));
+    projectApiService.acceptInvitationToken.mockReturnValue(
+      cold('-a|', { a: [] })
+    );
 
     actions$ = hot('a', {
       a: loginSuccess({
@@ -235,6 +240,7 @@ describe('AuthEffects', () => {
       fullName: randFullName(),
       acceptTerms: false,
       resend: false,
+      acceptProjectInvitation: true,
     };
 
     const authApiService = spectator.inject(AuthApiService);

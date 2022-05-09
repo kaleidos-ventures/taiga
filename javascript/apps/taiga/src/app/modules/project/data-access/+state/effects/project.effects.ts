@@ -17,6 +17,7 @@ import { fetch } from '@nrwl/angular';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 
 @Injectable()
 export class ProjectEffects {
@@ -48,6 +49,15 @@ export class ProjectEffects {
     },
     { dispatch: false }
   );
+
+  public acceptedInvitation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(InvitationActions.acceptedInvitationSlug),
+      map(({ projectSlug }) => {
+        return ProjectActions.fetchProject({ slug: projectSlug });
+      })
+    );
+  });
 
   constructor(
     private actions$: Actions,

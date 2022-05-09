@@ -173,9 +173,16 @@ export class ProjectApiService {
     );
   }
 
-  public acceptInvitation(token: string) {
+  public acceptInvitationToken(token: string) {
     return this.http.post<Invitation[]>(
       `${this.config.apiUrl}/projects/invitations/${token}/accept`,
+      {}
+    );
+  }
+
+  public acceptInvitationSlug(slug: string) {
+    return this.http.post(
+      `${this.config.apiUrl}/projects/${slug}/invitations/accept`,
       {}
     );
   }

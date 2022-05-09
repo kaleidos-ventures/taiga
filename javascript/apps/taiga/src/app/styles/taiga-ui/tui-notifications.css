@@ -12,7 +12,7 @@ tui-notifications-host {
   --tui-radius-m: 8px;
   --tui-width-xs: var(--tui-height-xs);
 
-  & > .wrapper {
+  & > .t-wrapper {
     inline-size: calc(410px + var(--spacing-48)) !important;
     padding-block-start: var(--spacing-64) !important;
     padding-inline-end: var(--spacing-16) !important;
@@ -181,12 +181,12 @@ tui-notification {
 }
 
 .no-header {
-  & tui-notifications-host .wrapper {
+  & tui-notifications-host .t-wrapper {
     padding-block-start: var(--spacing-16) !important;
   }
 
   /* stylelint-disable-next-line selector-max-type */
-  & tui-notifications-host tui-wrapper.wrapper {
+  & tui-notifications-host tui-wrapper.t-wrapper {
     padding-block-start: 0 !important;
   }
 }

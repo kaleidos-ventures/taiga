@@ -27,6 +27,7 @@ export interface SignUpInput {
   password: LoginInput['password'];
   fullName: User['fullName'];
   acceptTerms: boolean;
+  acceptProjectInvitation: boolean;
   projectInvitationToken?: string;
 }
 

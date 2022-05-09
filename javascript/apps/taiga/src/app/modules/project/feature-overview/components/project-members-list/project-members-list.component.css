@@ -5,8 +5,86 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
+/* stylelint-disable selector-max-compound-selectors */
 
 @import "tools/typography.css";
+
+@keyframes fade-in-down {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.leave-button {
+  animation: fade-in-down 1s 1 ease-in-out;
+}
+
+:host::ng-deep {
+  &.pending-state {
+    background-color: var(--color-gray10);
+    pointer-events: none;
+
+    & tg-user-card {
+      --color-user-name: var(--color-gray70);
+    }
+
+    &::ng-deep img,
+    &::ng-deep tui-avatar {
+      opacity: 0.5;
+    }
+
+    & .pending-msg {
+      opacity: 0;
+    }
+
+    & .leave-button {
+      opacity: 0;
+    }
+  }
+
+  & .animation-first-state {
+    & .member-link {
+      background: var(--color-white);
+
+      &::before {
+        opacity: 1;
+      }
+    }
+
+    & .user-identifier {
+      & .user-name,
+      & .user-alias {
+        color: var(--color-secondary80);
+      }
+    }
+
+    & .pending-msg {
+      display: none;
+    }
+
+    & .member-info {
+      opacity: 0;
+    }
+  }
+
+  & .animation-two-state {
+    & .member-link {
+      background: var(--color-gray10);
+    }
+
+    & .leave-button {
+      opacity: 1;
+    }
+
+    & .member-info {
+      opacity: 1;
+    }
+  }
+}
 
 .member-list {
   margin-block-end: var(--spacing-8);
@@ -18,7 +96,26 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .member-link {
+  background: var(--color-white);
+  border: 0;
   display: block;
+  inline-size: 100%;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+
+  &::before {
+    block-size: 100%;
+    border: solid 2px var(--color-secondary);
+    content: "";
+    inline-size: 100%;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: all 0.3s ease-in-out;
+    z-index: var(--first-layer);
+  }
 
   &:not(.pending-member):hover {
     background-color: var(--color-gray10);
@@ -68,6 +165,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   &::ng-deep tui-avatar {
     opacity: 0.5;
   }
+}
+
+.create-account {
+  pointer-events: auto;
 }
 
 .member-info {

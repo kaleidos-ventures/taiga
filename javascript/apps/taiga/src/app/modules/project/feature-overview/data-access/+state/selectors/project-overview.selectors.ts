@@ -7,4 +7,9 @@
  */
 import { projectOverviewFeature } from '../reducers/project-overview.reducer';
 
-export const { selectMembers, selectInvitations } = projectOverviewFeature;
+export const {
+  selectMembers,
+  selectInvitations,
+  selectNotificationClosed,
+  selectOnAcceptedInvitation,
+} = projectOverviewFeature;

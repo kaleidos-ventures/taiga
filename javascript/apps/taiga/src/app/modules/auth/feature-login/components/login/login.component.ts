@@ -35,6 +35,7 @@ interface Login {
 })
 export class LoginComponent implements OnInit {
   @Input() public projectInvitationToken = '';
+  @Input() public acceptProjectInvitation = undefined;
   @Input() public next = '';
 
   public readonly model$ = this.state.select();
@@ -83,6 +84,7 @@ export class LoginComponent implements OnInit {
           password,
           projectInvitationToken: this.projectInvitationToken,
           next: this.next,
+          acceptProjectInvitation: this.acceptProjectInvitation === 'true',
         })
       );
     } else {

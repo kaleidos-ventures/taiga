@@ -8,11 +8,11 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TuiSvgModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { ContextNotificationComponent } from './context-notification.component';
 
 @NgModule({
-  imports: [CommonModule, TuiSvgModule],
+  imports: [CommonModule, TuiSvgModule, TuiButtonModule],
   declarations: [ContextNotificationComponent],
   providers: [],
   exports: [ContextNotificationComponent],

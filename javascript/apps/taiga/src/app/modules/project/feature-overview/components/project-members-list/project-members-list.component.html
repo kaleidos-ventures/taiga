@@ -16,8 +16,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         trackBy: trackById.bind(this);
         let i = index
       "
-      class="pending">
+      [class.pending-state]="
+        animationPendingState && getUser(member).username === user?.username
+      "
+      [class.animation-first-state]="
+        animationFirstState && getUser(member).username === user?.username
+      "
+      [class.animation-two-state]="
+        animationSecondState && getUser(member).username === user?.username
+      ">
       <a
+        (click)="$event.preventDefault()"
         class="member-link"
         href=""
         [class.pending-member]="isPending(member)">
@@ -32,10 +41,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </div>
             <div class="block-end">
               <button
-                *ngIf="i === 0 && leaveProject"
+                *ngIf="i === 0 && leaveProject && !isPending(member)"
                 [attr.aria-label]="t('project_overview.members.leave')"
                 icon="remove-user"
                 appearance="tertiary"
+                class="leave-button"
                 tuiIconButton
                 [tuiHint]="t('project_overview.members.leave')"
                 type="button"></button>
@@ -44,6 +54,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 *ngIf="isPending(member)">
                 <tui-svg src="clock"></tui-svg>
                 {{ t('project_overview.members.pending') }}
+              </div>
+              <div
+                *ngIf="
+                  showAcceptInvitationButton &&
+                  getUser(member).username === user?.username
+                ">
+                <button
+                  (click)="acceptInvitationSlug()"
+                  class="create-account"
+                  data-test="invitation-accept"
+                  appearance="primary"
+                  tuiButton>
+                  {{ t('project_overview.members.accept') }}
+                </button>
               </div>
             </div>
           </div>

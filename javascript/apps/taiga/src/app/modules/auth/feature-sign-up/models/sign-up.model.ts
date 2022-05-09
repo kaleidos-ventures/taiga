@@ -10,5 +10,6 @@ export interface SignUp {
   email: string;
   password: string;
   fullName: string;
+  acceptProjectInvitation: boolean;
   projectInvitationToken?: string;
 }

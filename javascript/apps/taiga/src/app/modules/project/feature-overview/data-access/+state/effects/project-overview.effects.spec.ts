@@ -45,7 +45,7 @@ describe('ProjectOverviewEffects', () => {
     store = spectator.inject(MockStore);
   });
 
-  it('init members admin', () => {
+  it('init members', () => {
     const project = ProjectMockFactory();
 
     project.amIAdmin = true;
@@ -87,41 +87,6 @@ describe('ProjectOverviewEffects', () => {
       expect(projectApiService.getInvitations).toHaveBeenCalledWith(
         project.slug
       );
-    });
-  });
-
-  it('init members regular user', () => {
-    const project = ProjectMockFactory();
-
-    project.amIAdmin = false;
-
-    store.overrideSelector(selectCurrentProject, project);
-
-    const projectApiService = spectator.inject(ProjectApiService);
-    const effects = spectator.inject(ProjectOverviewEffects);
-
-    const membershipResponse = [
-      MembershipMockFactory(),
-      MembershipMockFactory(),
-    ];
-
-    projectApiService.getMembers.mockReturnValue(
-      cold('-b|', { b: membershipResponse })
-    );
-
-    actions$ = hot('-a', { a: initMembers() });
-
-    const expected = cold('--a', {
-      a: fetchMembersSuccess({
-        members: membershipResponse,
-        invitations: [],
-      }),
-    });
-
-    expect(effects.initMembers$).toBeObservable(expected);
-    expect(effects.initMembers$).toSatisfyOnFlush(() => {
-      expect(projectApiService.getMembers).toHaveBeenCalledWith(project.slug);
-      expect(projectApiService.getInvitations).not.toHaveBeenCalled();
     });
   });
 });

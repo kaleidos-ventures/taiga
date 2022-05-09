@@ -7,7 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { Contact } from '@taiga/data';
+import { Contact, Invitation } from '@taiga/data';
 
 export const fetchMyContacts = createAction(
   '[Invitation] fetch my contacts',
@@ -21,7 +21,7 @@ export const fetchMyContactsSuccess = createAction(
 
 export const inviteUsersSuccess = createAction(
   '[Invitation] invite users success',
-  props<{ invitations: number }>()
+  props<{ invitations: Invitation[] }>()
 );
 
 export const inviteUsersError = createAction('[Invitation] invite users error');

@@ -57,7 +57,7 @@ export class InvitationEffects {
               switchMap(this.buttonLoadingService.waitLoading()),
               map((response: InvitationResponse[]) => {
                 return InvitationActions.inviteUsersSuccess({
-                  invitations: response.length,
+                  invitations: response,
                 });
               })
             );
@@ -93,7 +93,7 @@ export class InvitationEffects {
           this.appService.toastNotification({
             label: 'invitation_ok',
             message: 'invitation_success',
-            paramsMessage: { invitations: action.invitations },
+            paramsMessage: { invitations: action.invitations.length },
             status: TuiNotification.Success,
             scope: 'invitation_modal',
             autoClose: true,

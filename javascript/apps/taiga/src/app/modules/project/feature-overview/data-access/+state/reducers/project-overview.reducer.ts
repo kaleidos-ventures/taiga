@@ -10,6 +10,7 @@ import { createFeature, createReducer, on } from '@ngrx/store';
 import { immerReducer } from '~/app/shared/utils/store';
 import { Invitation, Membership } from '@taiga/data';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
+import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 
 export interface ProjectOverviewState {
   members: Membership[];
@@ -37,6 +38,14 @@ export const reducer = createReducer(
     (state, { members, invitations }): ProjectOverviewState => {
       state.members = members;
       state.invitations = invitations;
+
+      return state;
+    }
+  ),
+  on(
+    InvitationActions.inviteUsersSuccess,
+    (state, action): ProjectOverviewState => {
+      state.invitations = [...state.invitations, ...action.invitations];
 
       return state;
     }

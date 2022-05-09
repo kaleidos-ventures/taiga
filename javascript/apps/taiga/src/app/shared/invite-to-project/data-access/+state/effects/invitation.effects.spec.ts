@@ -108,7 +108,7 @@ describe('InvitationEffects', () => {
     });
 
     const expected = cold('--a', {
-      a: inviteUsersSuccess({ invitations: 1 }),
+      a: inviteUsersSuccess({ invitations: invitationMockResponse }),
     });
 
     expect(effects.sendInvitations$).toBeObservable(expected);

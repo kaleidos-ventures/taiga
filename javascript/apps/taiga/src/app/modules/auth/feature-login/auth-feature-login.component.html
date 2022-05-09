@@ -7,31 +7,25 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t; read: 'auth'">
-  <main class="login">
-    <img
-      src="/assets/images/signup/login-left.svg"
-      alt=""
-      class="login-decor left" />
-    <img
-      src="/assets/images/signup/login-right.svg"
-      alt=""
-      class="login-decor right" />
-    <div class="login-wrapper">
-      <img
-        class="taiga-logo"
-        role="presentation"
-        src="/assets/images/LogoTaiga.svg"
-        alt="" />
-      <h1 class="login-title">{{ t('login.title') }}</h1>
-      <ng-container *ngIf="queryParams$ | async as queryParams">
-        <tg-login
-          [projectInvitationToken]="queryParams.projectInvitationToken"
-          [acceptProjectInvitation]="queryParams.acceptProjectInvitation"
-          [next]="queryParams.next"></tg-login>
-      </ng-container>
-    </div>
+  <main class="auth">
+    <tg-auth-forest>
+      <div class="auth-wrapper">
+        <img
+          class="taiga-logo"
+          role="presentation"
+          src="/assets/images/LogoTaiga.svg"
+          alt="" />
+        <h1 class="auth-title">{{ t('login.title') }}</h1>
+        <ng-container *ngIf="queryParams$ | async as queryParams">
+          <tg-login
+            [projectInvitationToken]="queryParams.projectInvitationToken"
+            [acceptProjectInvitation]="queryParams.acceptProjectInvitation"
+            [next]="queryParams.next"></tg-login>
+        </ng-container>
+      </div>
+    </tg-auth-forest>
   </main>
-  <footer class="login-footer">
+  <footer class="auth-footer">
     <p class="premium-link">
       <span>{{ t('login.not_registered_yet') }} </span>
       <a [routerLink]="['/signup']">{{ t('login.create_free_account') }}</a>

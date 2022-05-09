@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Directive, Input } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
@@ -15,4 +15,26 @@ import { Directive, Input } from '@angular/core';
 export class FormDirective {
   @Input()
   public showFormErrors = true;
+
+  @Input()
+  public focusInvalidInput = true;
+
+  public get nativeElement() {
+    return this.el.nativeElement as HTMLElement;
+  }
+
+  constructor(private el: ElementRef) {}
+
+  @HostListener('submit')
+  public formSubmit() {
+    if (this.focusInvalidInput) {
+      const invalidControl = this.nativeElement.querySelector(
+        '.ng-invalid'
+      ) as HTMLElement;
+
+      if (invalidControl) {
+        invalidControl.focus();
+      }
+    }
+  }
 }

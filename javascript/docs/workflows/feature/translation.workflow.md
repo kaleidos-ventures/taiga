@@ -43,3 +43,29 @@ Go to the Taiga front component, "Manage", "Repository maintenance" and click "C
 [Weblate docs](https://docs.weblate.org/en/latest/admin/continuous.html#push-changes)
 
 After approving the pull request you have to split the translation files to their scopes. Run `npm run translations:split`.
+
+## Links inside the translation
+
+If it makes sense, split the string in multiple translations.
+
+```html
+<p>
+  {{ t('translation1' }} <a [routerLink]="[/test]">{{ t('translation2' }}</a>
+</p>
+```
+
+If this is not possible you muset use the `InternalLink` directive
+
+```json
+"translation_with_link": "Translation <a href='{{ url }}'>link</a> text."
+```
+
+```html
+<p
+  withInternalLink
+  [innerHtml]="
+    t('translation_with_link', {
+      url: '/test' | getUrl
+    })
+  "></p>
+```

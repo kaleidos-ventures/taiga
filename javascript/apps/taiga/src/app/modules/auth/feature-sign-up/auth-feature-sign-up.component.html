@@ -17,14 +17,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <span
           [innerHtml]="t('signup.join', { project: params.project })"></span>
       </tg-ui-context-notification>
-      <div class="login-wrapper">
+      <div class="auth-wrapper">
         <img
           class="taiga-logo"
           role="presentation"
           src="/assets/images/LogoTaiga.svg"
           alt="" />
-        <h1 class="login-title">{{ t('signup.title') }}</h1>
-        <p class="login-subtitle">{{ t('signup.subtitle') }}</p>
+        <h1 class="auth-title">{{ t('signup.title') }}</h1>
+        <p class="auth-subtitle">{{ t('signup.subtitle') }}</p>
         <ng-container *ngIf="!displayForm">
           <button
             (click)="displaySignUpForm(true)"
@@ -56,9 +56,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </ng-container>
       </div>
     </main>
-    <footer class="login-footer">
+    <footer class="auth-footer">
       <p
         class="login-link"
+        withInternalLink
         [innerHtml]="
           t('signup.already_account', {
             login: 'login' | getUrl

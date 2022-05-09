@@ -14,11 +14,13 @@ import * as AuthActions from '../actions/auth.actions';
 export interface AuthState {
   user: User | null;
   loginError: boolean;
+  showResetPasswordConfirmation: boolean;
 }
 
 export const initialState: AuthState = {
   user: null,
   loginError: false,
+  showResetPasswordConfirmation: false,
 };
 
 export const reducer = createReducer(
@@ -36,6 +38,16 @@ export const reducer = createReducer(
   on(AuthActions.loginSuccess, (state, { user }): AuthState => {
     state.user = user!;
     state.loginError = false;
+
+    return state;
+  }),
+  on(AuthActions.requestResetPasswordSuccess, (state): AuthState => {
+    state.showResetPasswordConfirmation = true;
+
+    return state;
+  }),
+  on(AuthActions.initResetPasswordPage, (state): AuthState => {
+    state.showResetPasswordConfirmation = false;
 
     return state;
   })

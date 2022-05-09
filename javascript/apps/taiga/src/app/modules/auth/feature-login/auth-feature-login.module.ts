@@ -17,6 +17,7 @@ import { ContextNotificationModule } from '@taiga/ui/context-notification/contex
 import { AuthFeatureLoginComponent } from './auth-feature-login.component';
 import { LoginComponent } from './components/login/login.component';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+import { AuthForestModule } from '../components/auth-forest/auth-forest.module';
 
 const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
 
@@ -41,6 +42,7 @@ const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
     TuiLinkModule,
     ContextNotificationModule,
     ButtonLoadingModule,
+    AuthForestModule,
   ],
 })
 export class AuthFeatureLoginModule {}

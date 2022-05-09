@@ -18,6 +18,11 @@ import {
   login,
   loginSuccess,
   logout,
+  newPassword,
+  newPasswordError,
+  requestResetPassword,
+  requestResetPasswordError,
+  requestResetPasswordSuccess,
   signup,
   signUpError,
   signUpSuccess,
@@ -45,6 +50,7 @@ import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { selectUser } from '../selectors/auth.selectors';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
+import { ButtonLoadingServiceMock } from '~/app/shared/directives/button-loading/button-loading.service.mock';
 
 const signupData = {
   email: randEmail(),
@@ -69,6 +75,7 @@ describe('AuthEffects', () => {
     providers: [
       provideMockActions(() => actions$),
       provideMockStore({ initialState }),
+      { provide: ButtonLoadingService, useClass: ButtonLoadingServiceMock },
     ],
     imports: [RouterTestingModule, getTranslocoModule()],
     mocks: [
@@ -78,7 +85,6 @@ describe('AuthEffects', () => {
       AppService,
       AuthService,
       ProjectApiService,
-      ButtonLoadingService,
     ],
   });
 
@@ -101,20 +107,15 @@ describe('AuthEffects', () => {
     const auth = AuthMockFactory();
     const user = UserMockFactory();
     const authApiService = spectator.inject(AuthApiService);
-    const buttonLoadingService = spectator.inject(ButtonLoadingService);
     const usersApiService = spectator.inject(UsersApiService);
     const effects = spectator.inject(AuthEffects);
 
     authApiService.login.mockReturnValue(cold('-b|', { b: auth }));
     usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
 
-    buttonLoadingService.waitLoading.mockReturnValue(() =>
-      cold('-b|', { b: auth })
-    );
-
     actions$ = hot('-a', { a: login(loginData) });
 
-    const expected = cold('----a', {
+    const expected = cold('---a', {
       a: loginSuccess({
         user,
         auth,
@@ -249,5 +250,115 @@ describe('AuthEffects', () => {
     });
 
     expect(effects.signUp$).toBeObservable(expected);
+  });
+
+  it('request resend password', () => {
+    const email = randEmail();
+
+    const usersApiService = spectator.inject(UsersApiService);
+    const effects = spectator.inject(AuthEffects);
+    const buttonLoadingService = spectator.inject(ButtonLoadingService);
+
+    usersApiService.requestResetPassword.mockReturnValue(cold('-a|'));
+
+    const expected = cold('--a', {
+      a: requestResetPasswordSuccess(),
+    });
+
+    actions$ = hot('-a', { a: requestResetPassword({ email }) });
+
+    expect(effects.requestResendPassword$).toBeObservable(expected);
+    expect(effects.requestResendPassword$).toSatisfyOnFlush(() => {
+      expect(buttonLoadingService.start).toHaveBeenCalled();
+    });
+  });
+
+  it('request resend password', () => {
+    const email = randEmail();
+
+    const usersApiService = spectator.inject(UsersApiService);
+    const effects = spectator.inject(AuthEffects);
+    const buttonLoadingService = spectator.inject(ButtonLoadingService);
+    const appService = spectator.inject(AppService);
+
+    usersApiService.requestResetPassword.mockReturnValue(cold('-#'));
+
+    const expected = cold('--a', {
+      a: requestResetPasswordError(),
+    });
+
+    actions$ = hot('-a', { a: requestResetPassword({ email }) });
+
+    expect(effects.requestResendPassword$).toBeObservable(expected);
+
+    expect(effects.requestResendPassword$).toSatisfyOnFlush(() => {
+      expect(appService.errorManagement).toHaveBeenCalled();
+      expect(buttonLoadingService.error).toHaveBeenCalled();
+    });
+  });
+
+  it('new password', () => {
+    const auth = AuthMockFactory();
+    const user = UserMockFactory();
+    const token = randSequence({ size: 100 });
+    const password = randPassword();
+
+    const usersApiService = spectator.inject(UsersApiService);
+    const authService = spectator.inject(AuthService);
+    const effects = spectator.inject(AuthEffects);
+    const buttonLoadingService = spectator.inject(ButtonLoadingService);
+
+    usersApiService.newPassword.mockReturnValue(cold('-a|', { a: auth }));
+    usersApiService.me.mockReturnValue(cold('-a|', { a: user }));
+
+    const expected = cold('---a', {
+      a: loginSuccess({ user, auth }),
+    });
+
+    actions$ = hot('-a', { a: newPassword({ token, password }) });
+
+    expect(effects.newPassword$).toBeObservable(expected);
+    expect(effects.newPassword$).toSatisfyOnFlush(() => {
+      expect(authService.setUser).toHaveBeenCalledWith(user);
+
+      expect(buttonLoadingService.start).toHaveBeenCalled();
+    });
+  });
+
+  it('new password error', () => {
+    const user = UserMockFactory();
+    const token = randSequence({ size: 100 });
+    const password = randPassword();
+
+    const usersApiService = spectator.inject(UsersApiService);
+    const router = spectator.inject(Router);
+    const effects = spectator.inject(AuthEffects);
+    const buttonLoadingService = spectator.inject(ButtonLoadingService);
+
+    usersApiService.newPassword.mockReturnValue(
+      cold(
+        '-#|',
+        {},
+        {
+          status: 400,
+        }
+      )
+    );
+    usersApiService.me.mockReturnValue(cold('-a|', { a: user }));
+
+    const expected = cold('--a', {
+      a: newPasswordError({ status: 400 }),
+    });
+
+    actions$ = hot('-a', { a: newPassword({ token, password }) });
+
+    expect(effects.newPassword$).toBeObservable(expected);
+    expect(effects.newPassword$).toSatisfyOnFlush(() => {
+      expect(router.navigate).toHaveBeenCalledWith([
+        '/reset-password',
+        { expiredToken: true },
+      ]);
+      expect(buttonLoadingService.error).toHaveBeenCalled();
+    });
   });
 });

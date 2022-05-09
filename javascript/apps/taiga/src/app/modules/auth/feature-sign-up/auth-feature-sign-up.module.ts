@@ -14,12 +14,13 @@ import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { VerifyEmailGuard } from './verify-email.guard';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { getUrlPipe } from '~/app/shared/pipes/get-url.pipe';
 import { AuthFeatureSignUpComponent } from './auth-feature-sign-up.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { ExternalLinkModule } from '~/app/shared/directives/external-link/external-link.module';
 import { AuthFeatureVerifyEmailComponent } from './components/verify-email/verify-email.component';
+import { GetUrlPipeModule } from '~/app/shared/pipes/get-url.pipe.module';
+import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
 
 const routes: Routes = [
   {
@@ -40,7 +41,6 @@ const routes: Routes = [
   declarations: [
     AuthFeatureSignUpComponent,
     SignupComponent,
-    getUrlPipe,
     AuthFeatureVerifyEmailComponent,
   ],
   imports: [
@@ -53,6 +53,8 @@ const routes: Routes = [
     TuiLinkModule,
     ContextNotificationModule,
     ExternalLinkModule,
+    GetUrlPipeModule,
+    InternalLinkModule,
   ],
   providers: [
     {

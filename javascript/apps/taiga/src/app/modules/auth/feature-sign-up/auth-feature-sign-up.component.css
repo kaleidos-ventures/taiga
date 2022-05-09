@@ -10,14 +10,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "tools/responsive.css";
 @import "../styles/auth.styles.css";
 
-:host {
-  background-image: url("/assets/images/signup/signup-bg-left.svg"),
-    url("/assets/images/signup/signup-bg-right.svg");
-  background-position: bottom left, bottom right;
-  background-repeat: no-repeat, no-repeat;
-  background-size: 33vw, 33vw;
-}
-
 .signup {
   align-items: center;
   display: flex;

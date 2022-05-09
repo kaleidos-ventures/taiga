@@ -64,16 +64,6 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  public focusFirstInvalidField() {
-    const invalidControl = (
-      this.el.nativeElement as HTMLElement
-    ).querySelector<HTMLEmbedElement>('form .ng-invalid');
-
-    if (invalidControl) {
-      invalidControl.focus();
-    }
-  }
-
   public onSubmit() {
     const { username, password } = this.loginForm.value as Login;
 
@@ -89,7 +79,6 @@ export class LoginComponent implements OnInit {
       );
     } else {
       this.loginForm.markAllAsTouched();
-      this.focusFirstInvalidField();
       this.cd.detectChanges();
     }
   }

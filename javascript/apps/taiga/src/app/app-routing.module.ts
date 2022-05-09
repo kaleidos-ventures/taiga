@@ -35,6 +35,16 @@ const routes: Routes = [
     canActivate: [AuthFeatureLoginGuard],
   },
   {
+    path: 'reset-password',
+    loadChildren: () =>
+      import(
+        './modules/auth/feature-reset-password/auth-feature-reset-password.module'
+      ).then((m) => m.AuthFeatureResetPasswordModule),
+    data: {
+      noHeader: true,
+    },
+  },
+  {
     path: 'accept-project-invitation/:token',
     children: [],
     canActivate: [ProjectInvitationCTAGuard],

@@ -131,6 +131,21 @@ To redirect to 500 error page set in the onError:
 this.appService.errorManagement(httpResponse);
 ```
 
+You can override the default error for a status, for example if there is an error 500 it will show a toast instead of redirecting to the unexpected error page.
+
+```ts
+this.appService.errorManagement(httpResponse, {
+  500: {
+    type: 'toast',
+    options: {
+      label: 'errors.save_changes',
+      message: 'errors.please_refresh',
+      status: TuiNotification.Error,
+    },
+  },
+});
+```
+
 To show the toast notification set in the onError:
 
 ```ts
@@ -138,5 +153,25 @@ this.appService.toastNotification({
   label: 'errors.text',
   mesage: 'errors.please_refresh',
   status: TuiNotification.Error,
+});
+```
+
+# Testing server error
+
+```ts
+exampleApiService.callApi.mockReturnValue(
+  cold(
+    '-#|',
+    {},
+    {
+      // HttpErrorResponse
+      status: 400,
+    }
+  )
+);
+
+expect(effects.example$).toSatisfyOnFlush(() => {
+  expect(buttonLoadingService.error).toHaveBeenCalled();
+  expect(appService.errorManagement).toHaveBeenCalled();
 });
 ```

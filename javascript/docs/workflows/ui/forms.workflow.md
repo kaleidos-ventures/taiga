@@ -59,6 +59,26 @@ With `{ updateOn: 'submit' }` the validation only happens on submit.
   }
 ```
 
+## Start realtime validation only on submit
+
+Show errors only on submit
+
+```html
+<form
+  #form="ngForm"
+  [showFormErrors]="form.submitted"
+  [formGroup]="form"
+  (ngSubmit)="submit()"></form>
+```
+
+And mark as touched all fields on submit.
+
+```ts
+public submit() {
+  this.form.markAllAsTouched();
+}
+```
+
 ## Disable form errors
 
 Globally

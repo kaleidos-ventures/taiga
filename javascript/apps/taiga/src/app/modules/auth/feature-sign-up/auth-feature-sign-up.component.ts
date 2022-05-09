@@ -29,6 +29,7 @@ import { SignUp } from './models/sign-up.model';
 })
 export class AuthFeatureSignUpComponent implements OnInit {
   @HostBinding('class.verify-email') public displayVerifyEmail = false;
+  @HostBinding('class.waves') public waves = true;
 
   public displayForm = false;
   public signUpFormData: SignUp = {

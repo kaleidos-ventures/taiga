@@ -132,18 +132,7 @@ export class SignupComponent implements OnInit {
       );
     } else {
       this.signUpForm.markAllAsTouched();
-      this.focusFirstInvalidField();
       this.cd.detectChanges();
-    }
-  }
-
-  public focusFirstInvalidField() {
-    const invalidControl = (
-      this.el.nativeElement as HTMLElement
-    ).querySelector<HTMLEmbedElement>('form .ng-invalid');
-
-    if (invalidControl) {
-      invalidControl.focus();
     }
   }
 

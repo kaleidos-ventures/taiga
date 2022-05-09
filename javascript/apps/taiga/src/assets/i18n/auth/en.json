@@ -84,5 +84,33 @@
   "logout": {
     "logged_out": "You are now logged out",
     "see_you_soon": "We hope to see you soon!"
+  },
+  "reset_password": {
+    "title": "Reset your Taiga password",
+    "description": "Enter your email and we will send you a reset link.",
+    "submit": "Send reset link",
+    "send_in_progress": "Sending",
+    "send_success": "Sent",
+    "go_back": "Nah, I remember the password. <a href='{{ login }}'>Take me back</a>",
+    "confirm": {
+      "title": "Check your inbox",
+      "description": "If there is an account associated with this email address you will receive an email with instructions to reset your password to:",
+      "back": "Go back to login",
+      "new_email": "Want to use a different email?",
+      "create_account": "Create a new account"
+    },
+    "expired_invitation": {
+      "title": "Your reset link has expired.",
+      "description": "Please enter your email address and we will send you a new reset link to your inbox."
+    },
+    "new_password": {
+      "title": "Choose a new password",
+      "password_label": "New password",
+      "repeat_password": "Repeat password",
+      "submit": "Reset password",
+      "submit_in_progress": "Resetting",
+      "submit_success": "Reset",
+      "password_match": "Password do not match"
+    }
   }
 }

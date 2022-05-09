@@ -8,7 +8,7 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { createAction, props } from '@ngrx/store';
-import { Auth, User } from '@taiga/data';
+import { Auth, LoginInput, User } from '@taiga/data';
 import { AuthState } from '../reducers/auth.reducer';
 
 export const setUser = createAction(
@@ -68,4 +68,33 @@ export const resendSuccess = createAction('[Auth] resend sucess');
 export const signUpError = createAction(
   '[Auth] sign up error',
   props<{ response: HttpErrorResponse }>()
+);
+
+export const requestResetPassword = createAction(
+  '[Auth] request reset password',
+  props<{ email: User['email'] }>()
+);
+
+export const requestResetPasswordSuccess = createAction(
+  '[Auth] request reset password success'
+);
+
+export const requestResetPasswordError = createAction(
+  '[Auth] request reset password error'
+);
+
+export const newPassword = createAction(
+  '[Auth] new password',
+  props<{ token: string; password: LoginInput['password'] }>()
+);
+
+export const newPasswordSuccess = createAction('[Auth] new password success');
+
+export const newPasswordError = createAction(
+  '[Auth] new password error',
+  props<{ status: HttpErrorResponse['status'] }>()
+);
+
+export const initResetPasswordPage = createAction(
+  '[Auth] init reset password page'
 );

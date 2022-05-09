@@ -9,7 +9,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
-import { User } from '@taiga/data';
+import { Auth, User } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
@@ -19,5 +19,26 @@ export class UsersApiService {
 
   public me() {
     return this.http.get<User>(`${this.config.apiUrl}/users/me`);
+  }
+
+  public requestResetPassword(email: string) {
+    return this.http.post(`${this.config.apiUrl}/users/reset-password`, {
+      email,
+    });
+  }
+
+  public verifyResetPassword(token: string) {
+    return this.http.get(
+      `${this.config.apiUrl}/users/reset-password/${token}/verify`
+    );
+  }
+
+  public newPassword(token: string, password: string) {
+    return this.http.post<Auth>(
+      `${this.config.apiUrl}/users/reset-password/${token}`,
+      {
+        password,
+      }
+    );
   }
 }

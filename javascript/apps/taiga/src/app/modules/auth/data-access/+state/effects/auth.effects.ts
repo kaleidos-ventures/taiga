@@ -241,6 +241,89 @@ export class AuthEffects {
     { dispatch: false }
   );
 
+  public requestResendPassword$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.requestResetPassword),
+      pessimisticUpdate({
+        run: ({ email }) => {
+          this.buttonLoadingService.start();
+          return this.usersApiService.requestResetPassword(email).pipe(
+            switchMap(this.buttonLoadingService.waitLoading()),
+            map(() => {
+              return AuthActions.requestResetPasswordSuccess();
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.buttonLoadingService.error();
+
+          this.appService.errorManagement(httpResponse, {
+            500: {
+              type: 'toast',
+              options: {
+                label: 'errors.save_changes',
+                message: 'errors.please_refresh',
+                status: TuiNotification.Error,
+              },
+            },
+          });
+
+          return AuthActions.requestResetPasswordError();
+        },
+      })
+    );
+  });
+
+  public newPassword$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.newPassword),
+      pessimisticUpdate({
+        run: ({ token, password }) => {
+          this.buttonLoadingService.start();
+
+          return this.usersApiService.newPassword(token, password).pipe(
+            mergeMap((auth: Auth) => {
+              this.authService.setAuth(auth);
+              return this.usersApiService.me().pipe(
+                map((user) => {
+                  this.authService.setUser(user);
+                  return { user, auth };
+                })
+              );
+            }),
+            switchMap(this.buttonLoadingService.waitLoading()),
+            map(({ user, auth }) => {
+              return AuthActions.loginSuccess({ user, auth });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.buttonLoadingService.error();
+
+          if (httpResponse.status === 400) {
+            void this.router.navigate([
+              '/reset-password',
+              { expiredToken: true },
+            ]);
+          } else {
+            this.appService.errorManagement(httpResponse, {
+              500: {
+                type: 'toast',
+                options: {
+                  label: 'errors.save_changes',
+                  message: 'errors.please_refresh',
+                  status: TuiNotification.Error,
+                },
+              },
+            });
+          }
+
+          return AuthActions.newPasswordError({ status: httpResponse.status });
+        },
+      })
+    );
+  });
+
   constructor(
     private buttonLoadingService: ButtonLoadingService,
     private router: Router,

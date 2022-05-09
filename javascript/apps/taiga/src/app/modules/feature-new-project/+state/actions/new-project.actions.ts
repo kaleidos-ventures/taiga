@@ -24,7 +24,7 @@ export const createProjectError = createAction(
   props<{ error: unknown }>()
 );
 
-export const inviteUsersNewProject = createAction(
+export const inviteUsersToProject = createAction(
   '[NewProject] invite users',
   props<{ slug: string; invitation: InvitationRequest[] }>()
 );

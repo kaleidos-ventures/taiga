@@ -11,6 +11,7 @@ import { immerReducer } from '~/app/shared/utils/store';
 import * as InvitationActions from '../actions/invitation.action';
 import * as RolesPermissionsActions from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import { Contact, Invitation, Membership, Role } from '@taiga/data';
+import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 
 export interface InvitationState {
   memberRoles: Role[] | null;
@@ -18,6 +19,7 @@ export interface InvitationState {
   members: Membership[];
   invitations: Invitation[];
   acceptedInvite: string[];
+  suggestedUsers: Contact[];
 }
 
 export const initialState: InvitationState = {
@@ -26,6 +28,7 @@ export const initialState: InvitationState = {
   members: [],
   invitations: [],
   acceptedInvite: [],
+  suggestedUsers: [],
 };
 
 export const reducer = createReducer(
@@ -39,17 +42,18 @@ export const reducer = createReducer(
     }
   ),
   on(
-    InvitationActions.fetchMyContactsSuccess,
-    (state, { contacts }): InvitationState => {
-      state.contacts = [...contacts];
+    ProjectOverviewActions.fetchMembersSuccess,
+    (state, { members, invitations }): InvitationState => {
+      state.members = members;
+      state.invitations = invitations;
 
       return state;
     }
   ),
   on(
-    InvitationActions.fetchMyContactsSuccess,
-    (state, { contacts }): InvitationState => {
-      state.contacts = [...contacts];
+    InvitationActions.searchUserSuccess,
+    (state, { suggestedUsers }): InvitationState => {
+      state.suggestedUsers = [...suggestedUsers];
 
       return state;
     }
@@ -69,6 +73,13 @@ export const reducer = createReducer(
         return invitation !== projectSlug;
       });
 
+      return state;
+    }
+  ),
+  on(
+    InvitationActions.addSuggestedContact,
+    (state, { contact }): InvitationState => {
+      state.contacts = [contact];
       return state;
     }
   )

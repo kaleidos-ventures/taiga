@@ -1,7 +1,7 @@
 {
   "title": "Invite people to {{ project }}",
-  "instructions": "Start typing a <strong class='strong'>name</strong>, <strong class='strong'>username</strong> or <strong class='strong'>email</strong>.",
-  "alternative": "You can also enter multiple email addresses separated by a comma.",
+  "instructions": "Start typing a <strong class='strong'>name</strong> or <strong class='strong'>username</strong>.",
+  "alternative": "You can also invite by <strong class='strong'>email</strong> or enter multiple addresses separated by a comma.",
   "send_invites": "Send invites",
   "send_invites_in_progress": "Sending",
   "send_invites_success": "Sent",
@@ -29,5 +29,6 @@
   "pending": "Pending",
   "pending_tooltip": "This user has already been invited. You are going to resend them an invitation.",
   "invitation_accept_label": "Congratulations",
-  "invitation_accept_message": "You are now a member of this project."
+  "invitation_accept_message": "You are now a member of this project.",
+  "no_results": "There are no matching results. Use an email instead."
 }

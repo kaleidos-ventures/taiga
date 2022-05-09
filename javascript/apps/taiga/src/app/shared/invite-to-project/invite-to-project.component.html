@@ -18,13 +18,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <p
           class="text"
           [innerHtml]="t('invitation_modal.instructions')"></p>
-        <p class="text">{{ t('invitation_modal.alternative') }}</p>
+        <p
+          class="text"
+          [innerHtml]="t('invitation_modal.alternative')"></p>
         <div class="add-wrapper">
           <tui-svg
             class="add-icon"
             src="user"
             aria-hidden="true"></tui-svg>
-          <div class="text-area">
+          <div
+            class="text-area"
+            #textArea>
             <tg-ui-textarea>
               <tui-text-area
                 class="invitation-textarea compressed"
@@ -35,40 +39,49 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   (emailsWithoutDuplications$ | async)!.length > 1
                 "
                 [class.invalid]="
-                  inviteEmailsErrors.required ||
-                  inviteEmailsErrors.regex ||
-                  inviteEmailsErrors.peopleNotAdded ||
-                  inviteEmailsErrors.bulkError
+                  inviteIdentifierErrors.required ||
+                  inviteIdentifierErrors.regex ||
+                  inviteIdentifierErrors.peopleNotAdded ||
+                  inviteIdentifierErrors.bulkError
                 "
                 tuiTextfieldSize="s"
-                [(ngModel)]="inviteEmails"
-                (ngModelChange)="emailsChange($event)"
+                [(ngModel)]="inviteIdentifier"
+                (ngModelChange)="searchChange($event)"
                 [ngModelOptions]="{ standalone: true }"
                 [expandable]="true"
-                [rows]="12">
+                [rows]="12"
+                [tuiDropdownContent]="dropdownContent"
+                [tuiDropdown]="inviteIdentifier.length > 1 && notInBulkMode"
+                (keydown.arrowUp)="handleArrow('up')"
+                (keydown.arrowDown)="handleArrow('down')"
+                (keydown.enter)="
+                  suggestionContactsDropdownActivate
+                    ? includeSuggestedContact(suggestionSelected, $event)
+                    : null
+                ">
                 {{ t('invitation_modal.placeholder') }}
               </tui-text-area>
               <tg-ui-error
                 data-test="error-add-email"
                 inputError
-                [show]="inviteEmailsErrors.required">
+                [show]="inviteIdentifierErrors.required">
                 {{ t('invitation_modal.error_add_email') }}
               </tg-ui-error>
               <tg-ui-error
                 data-test="error-regex"
                 inputError
-                [show]="inviteEmailsErrors.regex">
+                [show]="inviteIdentifierErrors.regex">
                 {{ t('invitation_modal.error_email_regex') }}
               </tg-ui-error>
               <tg-ui-error
                 data-test="error-missing-people"
                 inputError
-                [show]="inviteEmailsErrors.peopleNotAdded">
+                [show]="inviteIdentifierErrors.peopleNotAdded">
                 {{ t('invitation_modal.error_missing_people') }}
               </tg-ui-error>
               <tg-ui-error
                 inputError
-                [show]="inviteEmailsErrors.bulkError">
+                [show]="inviteIdentifierErrors.bulkError">
                 {{ t('invitation_modal.error_several_emails') }}
               </tg-ui-error>
             </tg-ui-textarea>
@@ -88,7 +101,41 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 }}</span
               >
             </ng-container>
+            <ng-template #dropdownContent>
+              <ng-container
+                *ngIf="inviteIdentifier.length > 1 && notInBulkMode">
+                <tui-data-list
+                  id="suggestions"
+                  role="listbox"
+                  data-test="suggestions-list"
+                  [emptyContent]="t('invitation_modal.no_results')">
+                  <ng-container
+                    *ngIf="suggestedUsers$ | async as suggestedUsers">
+                    <button
+                      *ngFor="
+                        let contact of suggestedUsers;
+                        index as i;
+                        trackBy: trackByIndex
+                      "
+                      tuiOption
+                      role="option"
+                      class="suggested-btn"
+                      data-test="option"
+                      [attr.id]="'suggestion-' + i"
+                      [class.selected]="suggestionSelected === i"
+                      [attr.aria-disabled]="suggestionSelected === i"
+                      [attr.aria-selected]="suggestionSelected === i"
+                      (click)="includeSuggestedContact(i, $event)">
+                      <tg-user-card
+                        [user]="contact"
+                        [textToHighlight]="inviteIdentifier"></tg-user-card>
+                    </button>
+                  </ng-container>
+                </tui-data-list>
+              </ng-container>
+            </ng-template>
           </div>
+
           <button
             data-test="add-invites"
             class="add-btn"
@@ -132,7 +179,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [user]="user"
                 [userIndex]="i"
                 [roles]="memberRoles"
-                [isPending]="isPending(user.get('email')?.value)"
+                [isPending]="isPending(user.get('username')?.value)"
                 (delete)="deleteUser($event)"></tg-user-to-invite>
             </ng-container>
           </ng-container>
@@ -140,7 +187,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tui-scrollbar>
       <div class="actions-wrapper">
         <tg-ui-context-notification
-          *ngIf="inviteEmailsErrors.listEmpty"
+          *ngIf="inviteIdentifierErrors.listEmpty"
           data-test="error-at-lest-one"
           alertLevel="polite"
           class="notification"
@@ -148,7 +195,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ t('invitation_modal.error_add_least_one') }}
         </tg-ui-context-notification>
         <tg-ui-context-notification
-          *ngIf="inviteEmailsErrors.moreThanFifty && users.length > 50"
+          *ngIf="inviteIdentifierErrors.moreThanFifty && users.length > 50"
           class="notification"
           status="error"
           [hasIcon]="true">

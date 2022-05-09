@@ -7,17 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { Contact, Invitation } from '@taiga/data';
-
-export const fetchMyContacts = createAction(
-  '[Invitation] fetch my contacts',
-  props<{ emails: string[] }>()
-);
-
-export const fetchMyContactsSuccess = createAction(
-  '[Invitation] fetch my contacts success',
-  props<{ contacts: Contact[] }>()
-);
+import { Contact, Invitation, SearchUserRequest } from '@taiga/data';
 
 export const inviteUsersSuccess = createAction(
   '[Invitation] invite users success',
@@ -40,3 +30,18 @@ export const acceptInvitationSlugError = createAction(
 );
 
 export const inviteUsersError = createAction('[Invitation] invite users error');
+
+export const searchUser = createAction(
+  '[Invitation] fetch suggested contacts',
+  props<{ searchUser: SearchUserRequest }>()
+);
+
+export const searchUserSuccess = createAction(
+  '[Invitation] fetch suggested contacts success',
+  props<{ suggestedUsers: Contact[] }>()
+);
+
+export const addSuggestedContact = createAction(
+  '[Invitation] add suggested contact',
+  props<{ contact: Contact }>()
+);

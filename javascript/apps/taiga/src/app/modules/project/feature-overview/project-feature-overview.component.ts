@@ -64,9 +64,11 @@ export class ProjectFeatureOverviewComponent
     map((state) => {
       let invitation = null;
       if (state.user) {
-        invitation = state.invitations.some(
-          (invitation) =>
-            invitation.email.toLowerCase() === state.user?.email.toLowerCase()
+        invitation = state.invitations.some((invitation) =>
+          invitation.email
+            ? invitation.email.toLowerCase() === state.user?.email.toLowerCase()
+            : invitation.user?.username.toLowerCase() ===
+              state.user?.username.toLowerCase()
         );
       }
 

@@ -15,14 +15,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     class="avatar top"
     src="/assets/images/avatar.svg"
     aria-hidden="true"></tui-svg>
-  <div class="user-identifier">
+  <div
+    class="user-identifier"
+    [class.highlight]="textToHighlight">
     <ng-container *ngIf="user.fullName">
       <span
         class="user-name overflow"
         data-test="user-fullname"
-        >{{ user.fullName }}</span
-      >
-      <span class="user-alias overflow">@{{ user.username }}</span>
+        [attr.aria-label]="user.fullName"
+        [innerHtml]="fullNameHighlight || user.fullName"></span>
+      <span
+        class="user-alias overflow"
+        [attr.aria-label]="user.username"
+        [innerHtml]="usernameHighlight || user.username"></span>
     </ng-container>
     <ng-container *ngIf="!user.fullName">
       <span

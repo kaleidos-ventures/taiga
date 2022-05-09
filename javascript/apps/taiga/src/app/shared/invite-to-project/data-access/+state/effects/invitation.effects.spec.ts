@@ -12,19 +12,19 @@ import { Action } from '@ngrx/store';
 import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 import { Observable } from 'rxjs';
-import { randEmail, randSlug, randUserName } from '@ngneat/falso';
+import { randEmail, randSlug, randUserName, randWord } from '@ngneat/falso';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
 import { InvitationEffects } from './invitation.effects';
 import {
   acceptInvitationSlugSuccess,
   acceptInvitationSlug,
-  fetchMyContacts,
-  fetchMyContactsSuccess,
+  searchUser,
+  searchUserSuccess,
   inviteUsersSuccess,
   acceptInvitationSlugError,
 } from '../actions/invitation.action';
-import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
+import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
 import { Contact, Invitation, UserMockFactory } from '@taiga/data';
 import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
@@ -49,48 +49,6 @@ describe('InvitationEffects', () => {
     store = spectator.inject(MockStore);
   });
 
-  it('get contacts from user to invite: no match with my contacts', () => {
-    const emails = randEmail({ length: 10 });
-    const contacts: Contact[] = [];
-    const invitationApiService = spectator.inject(InvitationApiService);
-    const effects = spectator.inject(InvitationEffects);
-
-    invitationApiService.myContacts.mockReturnValue(
-      cold('-b|', { b: contacts })
-    );
-
-    actions$ = hot('-a', { a: fetchMyContacts({ emails }) });
-
-    const expected = cold('--a', {
-      a: fetchMyContactsSuccess({ contacts }),
-    });
-
-    expect(effects.myContacts$).toBeObservable(expected);
-  });
-
-  it('get contacts from user to invite: match with my contacts', () => {
-    const emails = randEmail({ length: 5 });
-    const contacts: Contact[] = [
-      { email: 'user1001@taiga.demo', username: '', fullName: '' },
-    ];
-    const invitationApiService = spectator.inject(InvitationApiService);
-    const effects = spectator.inject(InvitationEffects);
-
-    invitationApiService.myContacts.mockReturnValue(
-      cold('-b|', { b: contacts })
-    );
-
-    actions$ = hot('-a', {
-      a: fetchMyContacts({ emails: [...emails, 'user1001@taiga.demo'] }),
-    });
-
-    const expected = cold('--a', {
-      a: fetchMyContactsSuccess({ contacts }),
-    });
-
-    expect(effects.myContacts$).toBeObservable(expected);
-  });
-
   it('send invitations', () => {
     store.overrideSelector(selectInvitations, []);
     const invitationApiService = spectator.inject(InvitationApiService);
@@ -111,7 +69,7 @@ describe('InvitationEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: inviteUsersNewProject({
+      a: inviteUsersToProject({
         slug: randSlug(),
         invitation: invitationMockPayload,
       }),
@@ -191,5 +149,53 @@ describe('InvitationEffects', () => {
     expect(effects.acceptInvitationSlug$).toSatisfyOnFlush(() => {
       expect(appService.toastNotification).toHaveBeenCalled();
     });
+  });
+
+  it('Search user: no results', () => {
+    const effects = spectator.inject(InvitationEffects);
+    const invitationApiService = spectator.inject(InvitationApiService);
+    const searchText: string = randWord();
+    const suggestedUsers: Contact[] = [];
+
+    invitationApiService.searchUser.mockReturnValue(
+      cold('-b|', { b: suggestedUsers })
+    );
+
+    actions$ = hot('-a', {
+      a: searchUser({ searchUser: { text: searchText } }),
+    });
+
+    const expected = cold('--a', {
+      a: searchUserSuccess({ suggestedUsers }),
+    });
+
+    expect(effects.searchUser$).toBeObservable(expected);
+  });
+
+  it('Search user: results', () => {
+    const effects = spectator.inject(InvitationEffects);
+    const invitationApiService = spectator.inject(InvitationApiService);
+    const searchText: string = randWord();
+    const suggestedUsers: Contact[] = [
+      {
+        username: `${searchText} ${randWord()}`,
+        fullName: randWord(),
+        email: randEmail(),
+      },
+    ];
+
+    invitationApiService.searchUser.mockReturnValue(
+      cold('-b|', { b: suggestedUsers })
+    );
+
+    actions$ = hot('-a', {
+      a: searchUser({ searchUser: { text: searchText } }),
+    });
+
+    const expected = cold('--a', {
+      a: searchUserSuccess({ suggestedUsers }),
+    });
+
+    expect(effects.searchUser$).toBeObservable(expected);
   });
 });

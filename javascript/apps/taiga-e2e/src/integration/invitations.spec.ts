@@ -53,17 +53,17 @@ describe('Invite users to project after creating it', () => {
     );
   });
 
-  it('Should invite user from my contacts', () => {
-    typeEmailToInvite('user1001@taiga.demo');
+  it('Should add registered user by email', () => {
+    const emailToInvite = 'user1001@taiga.demo';
+    typeEmailToInvite(emailToInvite);
     addEmailToInvite();
-    cy.getBySel('user-fullname', { timeout: 100000 }).should('exist');
-    cy.getBySel('user-fullname')
+    cy.getBySel('user-email', { timeout: 100000 })
       .invoke('text')
-      .should('to.have.string', 'Caleb Fleming');
-    cy.getBySel('user-email').should('not.exist');
+      .should('to.have.string', emailToInvite);
+    cy.getBySel('user-fullname', { timeout: 100000 }).should('not.exist');
   });
 
-  it('Should invite user not existing on my contacts', () => {
+  it('Should add not registered user by email', () => {
     const emailToInvite = randEmail();
     typeEmailToInvite(emailToInvite);
     addEmailToInvite();
@@ -90,14 +90,14 @@ describe('Invite users to project after creating it', () => {
     cy.getBySel('user-email').should('have.length', 1);
   });
 
-  it('Should add user without typing an email', () => {
+  it('Should show an error when trying to add user without typing an email', () => {
     addEmailToInvite();
     cy.getBySel('error-add-email')
       .invoke('text')
       .should('to.have.string', 'Add at least an email or username');
   });
 
-  it('Should send invite with a user on the list and other not added on the list', () => {
+  it('Should show an error when trying to send invitations with a user on the list and other not added', () => {
     typeEmailToInvite(randEmail());
     addEmailToInvite();
     cy.getBySel('user-email', { timeout: 100000 }).should('exist');
@@ -111,11 +111,26 @@ describe('Invite users to project after creating it', () => {
       );
   });
 
-  it('Should send invite withouth adding users to invite', () => {
+  it('Should show an error when sending invitations withouth adding', () => {
     inviteUsers();
     cy.getBySel('error-at-lest-one')
       .invoke('text')
       .should('to.have.string', 'Add at least one person to the list');
+  });
+
+  it('Should show results from autocomplete when there is a match', () => {
+    typeEmailToInvite('use');
+    cy.getBySel('option').its('length').should('eq', 6);
+  });
+
+  it('Should show empty message when there are not results on the autocomplete', () => {
+    typeEmailToInvite('ose');
+    cy.getBySel('suggestions-list')
+      .invoke('text')
+      .should(
+        'to.have.string',
+        'There are no matching results. Use an email instead.'
+      );
   });
 });
 
@@ -163,15 +178,22 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should ignore invitation from a member', () => {
     openInvitationModal();
-    typeEmailToInvite('user2@taiga.demo');
+    typeEmailToInvite('jorge');
     addEmailToInvite();
     cy.getBySel('tip-wrapper').should('exist');
     cy.getBySel('user-list').should('not.exist');
   });
 
+  it('Should add invitation from a member if it is added by the email', () => {
+    openInvitationModal();
+    typeEmailToInvite('user2@taiga.demo');
+    addEmailToInvite();
+    cy.getBySel('user-list').should('exist');
+  });
+
   it('Should add tag pending from an already sent invitation', () => {
     openInvitationModal();
-    typeEmailToInvite('user3@taiga.demo');
+    typeEmailToInvite('elizabeth');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('exist');
     cy.getBySel('pending-tag')
@@ -181,7 +203,7 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should considered defined role from the invitation sent before', () => {
     openInvitationModal();
-    typeEmailToInvite('user4@taiga.demo');
+    typeEmailToInvite('susan wagner');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('exist');
     cy.getBySel('select-value')

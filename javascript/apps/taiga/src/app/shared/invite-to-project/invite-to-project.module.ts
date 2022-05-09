@@ -17,7 +17,9 @@ import {
   TuiLinkModule,
   TuiDataListModule,
   TuiScrollbarModule,
+  TuiDropdownModule,
 } from '@taiga-ui/core';
+import { TuiComboBoxModule, TuiDataListWrapperModule } from '@taiga-ui/kit';
 import { InviteToProjectComponent } from './invite-to-project.component';
 import { UserAvatarModule } from '~/app/shared/user-avatar/user-avatar.component.module';
 import { UserToInviteModule } from './components/user-to-invite.module';
@@ -30,6 +32,7 @@ import { invitationFeature } from '~/app/shared/invite-to-project/data-access/+s
 import { InvitationEffects } from '~/app/shared/invite-to-project/data-access/+state/effects/invitation.effects';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { ButtonLoadingModule } from '../directives/button-loading/button-loading.module';
+import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 
 @NgModule({
   imports: [
@@ -44,6 +47,9 @@ import { ButtonLoadingModule } from '../directives/button-loading/button-loading
     TranslocoModule,
     TuiDataListModule,
     TuiScrollbarModule,
+    TuiDropdownModule,
+    TuiComboBoxModule,
+    TuiDataListWrapperModule,
     UserToInviteModule,
     ContextNotificationModule,
     StoreModule.forFeature(rolesPermissionsFeature),
@@ -51,6 +57,7 @@ import { ButtonLoadingModule } from '../directives/button-loading/button-loading
     EffectsModule.forFeature([RolesPermissionsEffects, InvitationEffects]),
     TuiAutoFocusModule,
     ButtonLoadingModule,
+    UserCardModule,
   ],
   declarations: [InviteToProjectComponent],
   exports: [InviteToProjectComponent],

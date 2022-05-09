@@ -10,7 +10,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
 
-import { Contact, InvitationRequest, Invitation } from '@taiga/data';
+import {
+  Contact,
+  InvitationRequest,
+  Invitation,
+  SearchUserRequest,
+} from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +35,13 @@ export class InvitationApiService {
       {
         invitations,
       }
+    );
+  }
+
+  public searchUser(data: SearchUserRequest) {
+    return this.http.post<{ username: string; fullName: string }[]>(
+      `${this.config.apiUrl}/users/search`,
+      data
     );
   }
 }

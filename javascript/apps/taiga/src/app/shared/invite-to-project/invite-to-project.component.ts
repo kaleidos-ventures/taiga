@@ -28,35 +28,37 @@ import {
   Project,
   Role,
   User,
+  Contact,
 } from '@taiga/data';
 import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import {
-  fetchMyContacts,
   inviteUsersSuccess,
+  addSuggestedContact,
+  searchUser,
 } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import {
   selectContacts,
   selectMemberRolesOrdered,
+  selectSuggestedUsers,
   selectUsersToInvite,
 } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { BehaviorSubject, Observable } from 'rxjs';
-import {
-  map,
-  share,
-  skip,
-  startWith,
-  switchMap,
-  throttleTime,
-} from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map, share, startWith, switchMap, throttleTime } from 'rxjs/operators';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
+import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TuiTextAreaComponent } from '@taiga-ui/kit';
 import { TuiScrollbarComponent } from '@taiga-ui/core';
 import { InvitationService } from '~/app/services/invitation.service';
 
+interface InvitationForm {
+  fullName: string;
+  username?: string;
+  roles: string;
+  email?: string;
+}
 @UntilDestroy()
 @Component({
   selector: 'tg-invite-to-project',
@@ -98,15 +100,18 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   @ViewChild('emailInput', { static: false })
   public emailInput!: TuiTextAreaComponent;
 
+  @ViewChild('textArea')
+  private textArea!: ElementRef<HTMLElement>;
+
   @HostListener('window:beforeunload')
   public unloadHandler() {
     return !this.formHasContent();
   }
 
   public regexpEmail = /\w+([.\-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+/g;
-  public inviteEmails = '';
-  public inviteEmails$ = new BehaviorSubject('');
-  public inviteEmailsErrors: {
+  public inviteIdentifier = '';
+  public inviteIdentifier$ = new BehaviorSubject('');
+  public inviteIdentifierErrors: {
     required: boolean;
     regex: boolean;
     listEmpty: boolean;
@@ -129,9 +134,15 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public validEmails$ = new BehaviorSubject([] as string[]);
   public memberRoles$ = this.store.select(selectMemberRolesOrdered);
   public contacts$ = this.store.select(selectContacts);
+  public suggestedUsers$ = this.store.select(selectSuggestedUsers);
   public usersToInvite$!: Observable<Partial<User>[]>;
-  public validInviteEmails$!: Observable<RegExpMatchArray>;
+  public validInviteIdentifier$!: Observable<RegExpMatchArray>;
   public emailsWithoutDuplications$!: Observable<string[]>;
+  public suggestedUsers: Contact[] = [];
+  public suggestionSelected = 0;
+  public search$: Subject<string | null> = new Subject();
+  public notInBulkMode = true;
+  public excludedUsers: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -145,17 +156,17 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
         this.close();
       });
 
-    this.validInviteEmails$ = this.inviteEmails$.pipe(
+    this.validInviteIdentifier$ = this.inviteIdentifier$.pipe(
       throttleTime(200, undefined, { leading: true, trailing: true }),
       map((emails) => this.validateEmails(emails)),
       share(),
       startWith([])
     );
 
-    this.emailsWithoutDuplications$ = this.validInviteEmails$.pipe(
-      map((emails) => {
-        return emails?.filter((email, i) => emails.indexOf(email) === i);
-      }),
+    this.emailsWithoutDuplications$ = this.validInviteIdentifier$.pipe(
+      map((emails) =>
+        emails?.filter((email, i) => emails.indexOf(email) === i)
+      ),
       share(),
       startWith([])
     );
@@ -166,25 +177,27 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
       .controls as FormGroup[];
   }
 
-  public get validEmails() {
-    return this.validEmails$.value;
-  }
-
   public get emailsHaveErrors() {
     return (
-      this.inviteEmailsErrors.required ||
-      this.inviteEmailsErrors.regex ||
-      this.inviteEmailsErrors.peopleNotAdded ||
-      this.inviteEmailsErrors.bulkError
+      this.inviteIdentifierErrors.required ||
+      this.inviteIdentifierErrors.regex ||
+      this.inviteIdentifierErrors.peopleNotAdded ||
+      this.inviteIdentifierErrors.bulkError
+    );
+  }
+
+  public get suggestionContactsDropdownActivate() {
+    return (
+      !!(this.inviteIdentifier.length > 1) &&
+      !!this.suggestedUsers.length &&
+      !!this.notInBulkMode
     );
   }
 
   public ngOnInit() {
     this.usersToInvite$ = this.validEmails$.pipe(
       switchMap((validEmails) => {
-        return this.store
-          .select(selectUsersToInvite(validEmails))
-          .pipe(skip(1));
+        return this.store.select(selectUsersToInvite(validEmails));
       })
     );
 
@@ -194,47 +207,51 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     this.usersToInvite$
       .pipe(concatLatestFrom(() => this.store.select(selectUser)))
       .subscribe(([userToInvite, currentUser]) => {
+        currentUser?.username &&
+          this.updateExcludedUsers('add', currentUser?.username);
         userToInvite.forEach((user) => {
           const userAlreadyExist = this.users?.find((it: FormGroup) => {
-            return (it.value as Partial<User>).email === user.email;
+            return (it.value as Partial<User>).email
+              ? (it.value as Partial<User>).email === user.email
+              : (it.value as Partial<User>).username === user.username;
           });
-          const isCurrentUser = currentUser?.email === user.email;
+          const isCurrentUser = currentUser?.email
+            ? currentUser?.email === user.email
+            : currentUser?.username === user.username;
           const isAlreadyProjectMember =
             !!user.username &&
             this.members
               ?.filter((it) => !(it as Invitation).email)
               ?.find((member) => member.user?.username === user.username);
-          !userAlreadyExist &&
-            !isCurrentUser &&
-            !isAlreadyProjectMember &&
+          if (!userAlreadyExist && !isCurrentUser && !isAlreadyProjectMember) {
+            user?.username && this.updateExcludedUsers('add', user?.username);
             this.users.splice(
               this.positionInArray(user),
               0,
               this.fb.group(user)
             );
+          }
         });
-        this.inviteEmails = '';
-        this.emailsChange('');
+        this.resetField();
         this.emailInput?.nativeFocusableElement?.focus();
       });
 
     this.memberRoles$.subscribe((memberRoles) => {
       this.orderedRoles = memberRoles;
     });
+
+    this.suggestedUsers$.subscribe((suggestedUsers) => {
+      this.suggestedUsers = suggestedUsers;
+    });
   }
 
   public ngOnChanges(changes: SimpleChanges) {
-    changes.reset && this.cleanForm();
+    changes.reset && this.cleanFormBeforeClose();
   }
 
   public positionInArray(user: Partial<User>) {
     const tempInvitations = this.users.map((it) => {
-      const data = it.value as {
-        fullName: string;
-        username?: string;
-        roles: string;
-        email: string;
-      };
+      const data = it.value as InvitationForm;
       return {
         user:
           data.username && data.fullName
@@ -269,25 +286,63 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   }
 
   public formHasContent() {
-    return !!this.inviteEmails || !!this.users.length;
+    return !!this.inviteIdentifier || !!this.users.length;
   }
 
   public trackByIndex(index: number) {
     return index;
   }
 
-  public isPending(email: string) {
-    return !!this.pending?.find((it) => it.email === email);
+  public isPending(username: string) {
+    return !!this.pending?.find((it) => it.user?.username === username);
   }
 
-  public emailsChange(emails: string) {
-    !emails && this.resetErrors();
+  public updateExcludedUsers(action: 'add' | 'delete', username: string) {
+    if (action === 'add' && !this.excludedUsers.includes(username)) {
+      this.excludedUsers = [...this.excludedUsers, username];
+    } else if (action === 'delete') {
+      this.excludedUsers = this.excludedUsers.filter(
+        (user) => user !== username
+      );
+    }
+  }
 
-    this.inviteEmails$.next(emails);
+  public searchChange(emails: string) {
+    !emails && this.resetErrors();
+    this.suggestionSelected = 0;
+
+    if (/[^@]+@/.test(emails)) {
+      // when the input contains and @ the search is disabled
+      this.notInBulkMode = false;
+      this.inviteIdentifier$.next(emails);
+      this.handleAccessibilityAttributes(false);
+    } else if (emails.trim().length > 1) {
+      const searchText = this.inviteIdentifier.replace(/^@/, '');
+      this.store.dispatch(
+        searchUser({
+          searchUser: {
+            text: searchText,
+            project: this.project.slug,
+            excludedUsers: this.excludedUsers,
+            offset: 0,
+            limit: 6,
+          },
+        })
+      );
+      this.handleAccessibilityAttributes(true);
+    }
+  }
+
+  public onSearchChange(searchQuery: string | null): void {
+    this.search$.next(searchQuery);
+  }
+
+  public extractValueFromEvent(event: Event): string | null {
+    return (event.target as HTMLInputElement)?.value || null;
   }
 
   public resetErrors() {
-    this.inviteEmailsErrors = {
+    this.inviteIdentifierErrors = {
       required: false,
       regex: false,
       listEmpty: false,
@@ -302,27 +357,35 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   }
 
   public addUser() {
-    const emailRgx = this.regexpEmail.test(this.inviteEmails);
-    const bulkErrors = this.inviteEmails
+    const emailRgx = this.regexpEmail.test(this.inviteIdentifier);
+    const bulkErrors = this.inviteIdentifier
       .replace(this.regexpEmail, '')
       .replace(/[;,\s\n]/g, '');
 
     this.resetErrors();
-    if (this.inviteEmails === '') {
-      this.inviteEmailsErrors.required = true;
+    if (this.suggestionContactsDropdownActivate) {
+      this.includeSuggestedContact(this.suggestionSelected);
+    } else if (this.inviteIdentifier === '') {
+      this.inviteIdentifierErrors.required = true;
     } else if (!emailRgx) {
-      this.inviteEmailsErrors.regex = true;
+      this.inviteIdentifierErrors.regex = true;
     } else if (bulkErrors) {
-      this.inviteEmailsErrors.bulkError = true;
+      this.inviteIdentifierErrors.bulkError = true;
     } else {
-      this.validEmails$.next(this.filterValidEmails(this.inviteEmails));
-      this.store.dispatch(fetchMyContacts({ emails: this.validEmails }));
+      this.validEmails$.next(this.filterValidEmails(this.inviteIdentifier));
     }
   }
 
   public deleteUser(i: number) {
-    (this.inviteProjectForm.controls['users'] as FormArray).removeAt(i);
+    const formValue = (
+      this.inviteProjectForm.controls['users'] as FormArray
+    ).at(i).value as InvitationForm;
+    const username = formValue?.username;
+    if (username) {
+      this.updateExcludedUsers('delete', username);
+    }
 
+    (this.inviteProjectForm.controls['users'] as FormArray).removeAt(i);
     // force recalculate scroll height in Firefox
     requestAnimationFrame(() => {
       if (this.scrollBar) {
@@ -333,6 +396,55 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     });
   }
 
+  public includeSuggestedContact(index: number, event?: Event) {
+    event?.preventDefault();
+    this.validEmails$.next([this.suggestedUsers[index].username]);
+    this.store.dispatch(
+      addSuggestedContact({ contact: this.suggestedUsers[index] })
+    );
+  }
+
+  public handleArrow(arrow: 'up' | 'down') {
+    if (arrow === 'up') {
+      this.suggestionSelected =
+        this.suggestionSelected === 0 ? 0 : this.suggestionSelected - 1;
+    } else {
+      this.suggestionSelected =
+        this.suggestionSelected === this.suggestedUsers.length - 1
+          ? this.suggestionSelected
+          : this.suggestionSelected + 1;
+    }
+    this.updateActiveDescendant();
+  }
+
+  public handleAccessibilityAttributes(activate: boolean) {
+    const textArea = this.textArea.nativeElement.querySelector('textarea');
+    if (activate) {
+      textArea?.setAttribute('role', 'combobox');
+      textArea?.setAttribute('aria-controls', 'suggestions');
+      textArea?.setAttribute('aria-autocomplete', 'list');
+      textArea?.setAttribute('aria-haspopup', 'true');
+      textArea?.setAttribute('aria-expanded', 'true');
+    } else {
+      textArea?.setAttribute('role', 'textbox');
+      textArea?.setAttribute('aria-controls', '');
+      textArea?.setAttribute('aria-autocomplete', '');
+      textArea?.setAttribute('aria-haspopup', 'false');
+      textArea?.setAttribute('aria-expanded', 'false');
+      textArea?.setAttribute('aria-activedescendant', '');
+      this.suggestionSelected = 0;
+    }
+    this.updateActiveDescendant();
+  }
+
+  public updateActiveDescendant() {
+    const textArea = this.textArea.nativeElement.querySelector('textarea');
+    textArea?.setAttribute(
+      'aria-activedescendant',
+      `suggestion-${this.suggestionSelected}`
+    );
+  }
+
   public getRoleSlug(roleName: string) {
     return this.orderedRoles?.find((role) => role.name === roleName);
   }
@@ -341,6 +453,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     return this.users.map((user) => {
       return {
         email: user.get('email')?.value as string,
+        username: user.get('username')?.value as string,
         roleSlug:
           this.getRoleSlug(user.get('roles')?.value as string)?.slug || '',
       };
@@ -350,32 +463,38 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public sendForm() {
     this.resetErrors();
     if (this.users.length > 50) {
-      this.inviteEmailsErrors.moreThanFifty = true;
-    } else if (this.users.length && this.inviteEmails === '') {
+      this.inviteIdentifierErrors.moreThanFifty = true;
+    } else if (this.users.length && this.inviteIdentifier === '') {
       this.store.dispatch(
-        inviteUsersNewProject({
+        inviteUsersToProject({
           slug: this.project.slug,
           invitation: this.generatePayload(),
         })
       );
-    } else if (this.inviteEmails === '') {
-      this.inviteEmailsErrors.listEmpty = true;
+    } else if (this.inviteIdentifier === '') {
+      this.inviteIdentifierErrors.listEmpty = true;
       this.emailInput?.nativeFocusableElement?.focus();
     }
-    this.inviteEmailsErrors.peopleNotAdded = !!this.inviteEmails;
+    this.inviteIdentifierErrors.peopleNotAdded = !!this.inviteIdentifier;
   }
 
-  public cleanForm() {
+  public cleanFormBeforeClose() {
     this.resetErrors();
-    this.inviteEmails = '';
-    this.emailsChange('');
+    this.resetField();
     this.inviteProjectForm = this.fb.group({
       users: new FormArray([]),
     });
+    this.excludedUsers = [];
+  }
+
+  public resetField() {
+    this.inviteIdentifier = '';
+    this.searchChange('');
+    this.inviteIdentifier$.next('');
   }
 
   public close() {
-    this.cleanForm();
+    this.cleanFormBeforeClose();
     this.closeModal.next();
   }
 }

@@ -27,26 +27,9 @@ import { filterNil } from '~/app/shared/utils/operators';
 
 @Injectable()
 export class InvitationEffects {
-  public myContacts$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(InvitationActions.fetchMyContacts),
-      fetch({
-        run: (action) => {
-          return this.invitationApiService.myContacts(action.emails).pipe(
-            map((contacts: Contact[]) => {
-              return InvitationActions.fetchMyContactsSuccess({ contacts });
-            })
-          );
-        },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.errorManagement(httpResponse),
-      })
-    );
-  });
-
   public sendInvitations$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(NewProjectActions.inviteUsersNewProject),
+      ofType(NewProjectActions.inviteUsersToProject),
       concatLatestFrom(() =>
         this.store.select(selectInvitations).pipe(filterNil())
       ),
@@ -151,6 +134,23 @@ export class InvitationEffects {
             projectSlug: action.slug,
           });
         },
+      })
+    );
+  });
+
+  public searchUser$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(InvitationActions.searchUser),
+      fetch({
+        run: (action) => {
+          return this.invitationApiService.searchUser(action.searchUser).pipe(
+            map((suggestedUsers: Contact[]) => {
+              return InvitationActions.searchUserSuccess({ suggestedUsers });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
       })
     );
   });

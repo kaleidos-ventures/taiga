@@ -91,7 +91,7 @@ describe('invite selectors', () => {
   });
 
   it('users to invite', () => {
-    const emails = ['test@test.com', 'test2@test.com'];
+    const userIdentifier = ['user1', 'test2@test.com'];
     const rolesOrdered = [
       {
         id: '123',
@@ -131,18 +131,16 @@ describe('invite selectors', () => {
     ];
     const contacts = [
       {
-        email: 'test@test.com',
         username: 'user1',
         fullName: 'user one',
       },
     ];
-    const userToInvite = selectUsersToInvite(emails).projector(
+    const userToInvite = selectUsersToInvite(userIdentifier).projector(
       rolesOrdered,
       contacts
     );
     expect(userToInvite).toEqual([
       {
-        email: 'test@test.com',
         username: 'user1',
         fullName: 'user one',
         roles: ['General'],

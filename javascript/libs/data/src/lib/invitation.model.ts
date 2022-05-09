@@ -11,13 +11,13 @@ export interface Invitation extends Partial<Membership> {
   email: string;
 }
 export interface Contact {
-  email: string;
+  email?: string;
   username: string;
   fullName: string;
 }
 export interface InvitationRequest {
-  email: string;
-  role?: string;
+  email?: string;
+  username?: string;
   roleSlug?: string;
 }
 export interface InvitationInfo {
@@ -37,4 +37,12 @@ export interface InvitationParams {
   projectInvitationToken: string;
   slug: string;
   acceptProjectInvitation: boolean;
+}
+
+export interface SearchUserRequest {
+  text: string;
+  project?: string;
+  excludedUsers?: string[];
+  offset?: number;
+  limit?: number;
 }

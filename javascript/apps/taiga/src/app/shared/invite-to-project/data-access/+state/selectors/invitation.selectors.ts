@@ -15,6 +15,7 @@ export const {
   selectContacts,
   selectInvitations,
   selectAcceptedInvite,
+  selectSuggestedUsers,
 } = invitationFeature;
 
 // roles list should be shown by the order setted from 'order' the property
@@ -36,8 +37,8 @@ export const selectMemberRolesOrdered = createSelector(
   }
 );
 
-export const selectUsersToInvite = (inviteEmails: string[]) => {
-  // from the introdued emails to invite to the project, we must complete data with the user contacts. We should display name and username from added contacts and just email from the others.
+export const selectUsersToInvite = (inviteIdentifiers: string[]) => {
+  // from the introdued identifiers to invite to the project, we must complete data with the user contacts
   return createSelector(
     selectMemberRolesOrdered,
     selectContacts,
@@ -45,10 +46,10 @@ export const selectUsersToInvite = (inviteEmails: string[]) => {
     (roles, contacts, invitations): Partial<User>[] => {
       const users: Partial<User>[] = [];
       const defaultRole = roles ? [roles[1].name] : undefined;
-      inviteEmails.forEach((email) => {
-        const myContact = contacts?.find((contact) => contact.email === email);
+      inviteIdentifiers.forEach((identifier) => {
+        const myContact = contacts?.find((contact) => contact.username === identifier);
         const hasPendingInvitation = invitations?.find(
-          (invitation) => invitation.email === email
+          (invitation) => invitation.user?.username === identifier
         );
         const role = hasPendingInvitation?.role?.name
           ? [hasPendingInvitation.role.name]
@@ -58,9 +59,9 @@ export const selectUsersToInvite = (inviteEmails: string[]) => {
             ...myContact,
             roles: role,
           });
-        } else {
+        } else if (identifier.includes('@')) {
           users.push({
-            email,
+            email: identifier,
             roles: role,
           });
         }

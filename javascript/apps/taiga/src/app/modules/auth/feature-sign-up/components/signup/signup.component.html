@@ -106,6 +106,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <button
       class="login-options"
       (click)="viewAllOptions()"
+      *ngIf="!invitation.project || !invitation.email"
       appearance="primary"
       tuiLink
       icon="chevron-left"

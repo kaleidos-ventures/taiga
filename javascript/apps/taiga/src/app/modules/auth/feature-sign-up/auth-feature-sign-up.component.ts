@@ -15,14 +15,8 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { InvitationParams } from '@taiga/data';
 import { SignUp } from './models/sign-up.model';
-
-interface Invitation {
-  email: string;
-  project: string;
-  projectInvitationToken: string;
-  slug: string;
-}
 
 @UntilDestroy()
 @Component({
@@ -44,7 +38,7 @@ export class AuthFeatureSignUpComponent implements OnInit {
     password: '',
     projectInvitationToken: '',
   };
-  public params: Invitation = {
+  public params: InvitationParams = {
     email: '',
     project: '',
     projectInvitationToken: '',
@@ -56,7 +50,7 @@ export class AuthFeatureSignUpComponent implements OnInit {
 
   public ngOnInit() {
     this.route.queryParams.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.params = params as Invitation;
+      this.params = params as InvitationParams;
       if (this.params.email) {
         this.readOnlyEmail = true;
         this.signUpFormData.email = this.params.email;

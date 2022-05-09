@@ -25,7 +25,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { SignUpError } from '@taiga/data';
+import { InvitationParams, SignUpError } from '@taiga/data';
 import { PasswordStrengthComponent } from '@taiga/ui/inputs/password-strength/password-strength.component';
 import {
   signup,
@@ -47,6 +47,9 @@ export class SignupComponent implements OnInit {
 
   @Input()
   public isEmailReadonly!: boolean;
+
+  @Input()
+  public invitation!: InvitationParams;
 
   @Output()
   public displayLoginOptions = new EventEmitter();

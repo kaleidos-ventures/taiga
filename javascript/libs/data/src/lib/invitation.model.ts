@@ -36,3 +36,10 @@ export interface InvitationInfo {
     slug: string;
   };
 }
+
+export interface InvitationParams {
+  email: string;
+  project: string;
+  projectInvitationToken: string;
+  slug: string;
+}

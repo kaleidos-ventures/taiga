@@ -73,6 +73,7 @@ export class ButtonLoadingDirective implements AfterViewInit {
 
   public defaultState() {
     this.enable();
+    this.stopLoading();
 
     if (this.currentState !== 'default') {
       this.currentState = 'default';

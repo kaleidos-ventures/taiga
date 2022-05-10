@@ -9,4 +9,5 @@ from enum import Enum
 
 class Emails(Enum):
     SIGN_UP = "sign_up"
+    RESET_PASSWORD = "reset_password"
     PROJECT_INVITATION = "project_invitation"

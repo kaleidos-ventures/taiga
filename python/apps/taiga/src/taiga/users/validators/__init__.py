@@ -5,23 +5,24 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-import string
-from collections import Counter
-
 from pydantic import EmailStr, StrictBool, constr, validator
 from taiga.base.serializer import BaseModel
 from taiga.conf import settings
+from taiga.users.validators.mixins import PasswordMixin
+
+#####################################################################
+# User Profile
+#####################################################################
 
 
-class CreateUserValidator(BaseModel):
+class CreateUserValidator(PasswordMixin, BaseModel):
     email: EmailStr
     full_name: constr(max_length=50)  # type: ignore
-    password: constr(min_length=8, max_length=256)  # type: ignore
     accept_terms: StrictBool
     project_invitation_token: str | None
     accept_project_invitation: StrictBool = True
 
-    @validator("email", "full_name", "password")
+    @validator("email", "full_name")
     def check_not_empty(cls, v: str) -> str:
         assert v != "", "Empty field is not allowed"
         return v
@@ -35,17 +36,6 @@ class CreateUserValidator(BaseModel):
         assert domain in settings.USER_EMAIL_ALLOWED_DOMAINS, "Email domain not allowed"
         return v
 
-    @validator("password")
-    def check_password(cls, v: str) -> str:
-        has_upper = len(set(string.ascii_uppercase).intersection(v)) > 0
-        has_lower = len(set(string.ascii_lowercase).intersection(v)) > 0
-        has_number = len(set(string.digits).intersection(v)) > 0
-        has_symbol = len(set(string.punctuation).intersection(v)) > 0
-
-        c = Counter([has_upper, has_lower, has_number, has_symbol])
-        assert c[True] >= 3, "Invalid password"
-        return v
-
     @validator("accept_terms")
     def check_accept_terms(cls, v: bool) -> bool:
         assert v is True, "User has to accept terms of service"
@@ -54,6 +44,24 @@ class CreateUserValidator(BaseModel):
 
 class VerifyTokenValidator(BaseModel):
     token: str
+
+
+#####################################################################
+# Reset Password
+#####################################################################
+
+
+class RequestResetPasswordValidator(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordValidator(PasswordMixin, BaseModel):
+    ...
+
+
+#####################################################################
+# Contact
+#####################################################################
 
 
 class UserContactsValidator(BaseModel):

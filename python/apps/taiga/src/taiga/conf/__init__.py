@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     # Users
     USER_EMAIL_ALLOWED_DOMAINS: list[str] = []
     VERIFY_USER_TOKEN_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
+    RESET_PASSWORD_TOKEN_LIFETIME: int = 2 * 60  # 2 * 60 minutes = 2 hours
 
     # Projects
     PROJECT_INVITATION_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days

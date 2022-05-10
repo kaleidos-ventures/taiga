@@ -73,6 +73,25 @@ async def test_get_user_by_username_or_email_error_invalid_email_case_sensitive(
 
 
 ##########################################################
+# check_password / change_password
+##########################################################
+
+
+async def test_change_password_and_check_password():
+    password1 = "password-one"
+    password2 = "password-two"
+    user = await f.create_user(password=password1)
+
+    assert await users_repositories.check_password(user, password1)
+    assert not await users_repositories.check_password(user, password2)
+
+    await users_repositories.change_password(user, password2)
+
+    assert not await users_repositories.check_password(user, password1)
+    assert await users_repositories.check_password(user, password2)
+
+
+##########################################################
 # create_user
 ##########################################################
 

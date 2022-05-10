@@ -15,16 +15,12 @@ def autodiscover(root_package: str, module_name: str) -> set[str]:
 
     (This function is useful to discover all import_path to initialize a procastinate.App)
     """
-    if isinstance(root_package, str):
-        pakage = importlib.import_module(root_package)
-
+    package = importlib.import_module(root_package)
     results = set()
-    for loader, name, is_pakage in pkgutil.walk_packages(pakage.__path__):
-        full_name = f"{pakage.__name__}.{name}"
-
-        if is_pakage:
-            results.update(autodiscover(full_name, module_name))
-        elif name == module_name:
-            results.add(full_name)
+    for loader, name, is_package in pkgutil.walk_packages(package.__path__, f"{package.__name__}."):
+        if is_package:
+            results.update(autodiscover(name, module_name))
+        elif name.endswith(module_name):
+            results.add(name)
 
     return results

@@ -15,3 +15,8 @@ class VerifyUserToken(DenylistMixin, Token):
     token_type = "verify-user"
     lifetime = timedelta(minutes=settings.VERIFY_USER_TOKEN_LIFETIME)
     is_unique = True
+
+
+class ResetPasswordToken(DenylistMixin, Token):
+    token_type = "reset-password"
+    lifetime = timedelta(minutes=settings.RESET_PASSWORD_TOKEN_LIFETIME)

@@ -20,3 +20,15 @@ class ExpiredVerifyUserTokenError(Exception):
 
 class UsedVerifyUserTokenError(Exception):
     ...
+
+
+class UsedResetPasswordTokenError(Exception):
+    ...
+
+
+class ExpiredResetPassswordTokenError(Exception):
+    ...
+
+
+class BadResetPasswordTokenError(Exception):
+    ...

@@ -330,7 +330,7 @@ async def test_generate_verify_ok_with_project_invitation_accepting(
     user = f.build_user(is_active=False)
     token = {}
 
-    with (patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,):
+    with (patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken):
         FakeVerifyUserToken.create_for_object.return_value = token
 
         verify_user_token_str = await services._generate_verify_user_token(
@@ -345,3 +345,212 @@ async def test_generate_verify_ok_with_project_invitation_accepting(
         if "accept_project_invitation" in list(token.keys()):
             assert token["accept_project_invitation"] == accept_project_invitation
         assert str(token) == verify_user_token_str
+
+
+#####################################################################
+# Reset Password
+#####################################################################
+
+
+async def test_password_reset_ok():
+    user = f.build_user(is_active=True)
+    object_data = {"id": 1}
+
+    with (
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repositories,
+        patch("taiga.users.services.ResetPasswordToken", autospec=True) as FakeResetPasswordToken,
+    ):
+        fake_token = FakeResetPasswordToken()
+        fake_token.object_data = object_data
+        FakeResetPasswordToken.create.return_value = fake_token
+        fake_users_repositories.get_first_user.return_value = user
+
+        ret = await services._get_user_and_reset_password_token(fake_token)
+        fake_users_repositories.get_first_user.assert_awaited_once_with(
+            **fake_token.object_data, is_active=True, is_system=False
+        )
+        assert ret == (fake_token, user)
+
+
+@pytest.mark.parametrize(
+    "catched_ex, raised_ex",
+    [
+        (tokens_ex.DeniedTokenError, ex.UsedResetPasswordTokenError),
+        (tokens_ex.ExpiredTokenError, ex.ExpiredResetPassswordTokenError),
+        (tokens_ex.TokenError, ex.BadResetPasswordTokenError),
+    ],
+)
+async def test_password_reset_error_token(catched_ex, raised_ex):
+    with (
+        patch("taiga.users.services.ResetPasswordToken", autospec=True) as FakeResetPasswordToken,
+        pytest.raises(raised_ex),
+    ):
+        FakeResetPasswordToken.create.side_effect = catched_ex
+
+        await services._get_user_and_reset_password_token("some_token")
+
+
+async def test_password_reset_error_no_user_token():
+    object_data = {"id": 1}
+
+    with (
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repositories,
+        patch("taiga.users.services.ResetPasswordToken", autospec=True) as FakeResetPasswordToken,
+        pytest.raises(ex.BadResetPasswordTokenError),
+    ):
+        fake_token = FakeResetPasswordToken()
+        fake_token.object_data = object_data
+        FakeResetPasswordToken.create.return_value = fake_token
+        fake_users_repositories.get_first_user.return_value = None
+
+        await services._get_user_and_reset_password_token(fake_token)
+        fake_token.denylist.assert_awaited()
+
+
+async def test_request_reset_password_ok():
+    user = f.build_user(is_active=True, is_system=False)
+
+    with (
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repositories,
+        patch("taiga.users.services._send_reset_password_email", return_value=None) as fake_send_reset_password_email,
+    ):
+        fake_users_repositories.get_user_by_username_or_email.return_value = user
+
+        ret = await services.request_reset_password(user.email)
+
+        fake_users_repositories.get_user_by_username_or_email.assert_awaited_once_with(username_or_email=user.email)
+        fake_send_reset_password_email.assert_awaited_once_with(user)
+        assert ret is None
+
+
+@pytest.mark.parametrize(
+    "user",
+    [
+        (None),
+        (f.build_user(is_active=False, is_system=False)),
+        (f.build_user(is_active=True, is_system=True)),
+    ],
+)
+async def test_request_reset_password_error_user(user):
+    with (
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repositories,
+        patch("taiga.users.services._send_reset_password_email", return_value=None) as fake_send_reset_password_email,
+    ):
+        fake_users_repositories.get_user_by_username_or_email.return_value = user
+
+        ret = await services.request_reset_password("user@email.com")
+
+        fake_users_repositories.get_user_by_username_or_email.assert_awaited_once()
+        fake_send_reset_password_email.assert_not_awaited()
+        assert ret is None
+
+
+async def test_reset_password_send_reset_password_email_ok(tqmanager):
+    user = f.build_user()
+
+    with (
+        patch(
+            "taiga.users.services._generate_reset_password_token", return_value="reset_token"
+        ) as fake_generate_reset_password_token,
+    ):
+        await services._send_reset_password_email(user=user)
+
+        assert len(tqmanager.pending_jobs) == 1
+        job = tqmanager.pending_jobs[0]
+        assert "send_email" in job["task_name"]
+        assert job["args"] == {
+            "email_name": "reset_password",
+            "to": user.email,
+            "context": {"reset_password_token": "reset_token"},
+        }
+
+        fake_generate_reset_password_token.assert_awaited_once_with(user)
+
+
+async def test_reset_password_generate_reset_password_token_ok():
+    user = f.build_user()
+
+    with (patch("taiga.users.services.ResetPasswordToken", autospec=True) as FakeResetPasswordToken,):
+        fake_token = FakeResetPasswordToken()
+        FakeResetPasswordToken.create_for_object.return_value = fake_token
+
+        ret = await services._generate_reset_password_token(user=user)
+        FakeResetPasswordToken.create_for_object.assert_awaited_once_with(user)
+        FakeResetPasswordToken.create_for_object.assert_awaited_once_with(user)
+        assert ret == str(fake_token)
+
+
+async def test_verify_reset_password_token():
+    user = f.build_user(is_active=True)
+
+    with (
+        patch(
+            "taiga.users.services._get_user_and_reset_password_token", autospec=True
+        ) as fake_get_user_and_reset_password_token,
+        patch("taiga.users.services.ResetPasswordToken", autospec=True) as FakeResetPasswordToken,
+    ):
+        fake_token = FakeResetPasswordToken()
+        fake_get_user_and_reset_password_token.return_value = (fake_token, user)
+
+        ret = await services.verify_reset_password_token(fake_token)
+
+        fake_get_user_and_reset_password_token.assert_awaited_once_with(fake_token)
+        assert ret == bool((fake_token, user))
+
+
+async def test_verify_reset_password_token_ok():
+    user = f.build_user(is_active=True)
+
+    with (
+        patch(
+            "taiga.users.services._get_user_and_reset_password_token", autospec=True
+        ) as fake_get_user_and_reset_password_token,
+        patch("taiga.users.services.ResetPasswordToken", autospec=True) as FakeResetPasswordToken,
+    ):
+        fake_token = FakeResetPasswordToken()
+        fake_get_user_and_reset_password_token.return_value = (fake_token, user)
+
+        ret = await services.verify_reset_password_token(fake_token)
+
+        fake_get_user_and_reset_password_token.assert_awaited_once_with(fake_token)
+        assert ret == bool((fake_token, user))
+
+
+async def test_reset_password_ok_with_user():
+    user = f.build_user(is_active=True)
+    password = "password"
+
+    with (
+        patch(
+            "taiga.users.services._get_user_and_reset_password_token", autospec=True
+        ) as fake_get_user_and_reset_password_token,
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repositories,
+        patch("taiga.users.services.ResetPasswordToken", autospec=True) as FakeResetPasswordToken,
+    ):
+        fake_token = FakeResetPasswordToken()
+        fake_token.denylist.return_value = None
+        fake_get_user_and_reset_password_token.return_value = (fake_token, user)
+        fake_users_repositories.change_password.return_value = None
+
+        ret = await services.reset_password(str(fake_token), password)
+
+        fake_users_repositories.change_password.assert_awaited_once_with(user=user, password=password)
+        assert ret == user
+
+
+async def test_reset_password_ok_without_user():
+    password = "password"
+
+    with (
+        patch(
+            "taiga.users.services._get_user_and_reset_password_token", autospec=True
+        ) as fake_get_user_and_reset_password_token,
+        patch("taiga.users.services.ResetPasswordToken", autospec=True) as FakeResetPasswordToken,
+    ):
+        fake_token = FakeResetPasswordToken()
+        fake_token.denylist.return_value = None
+        fake_get_user_and_reset_password_token.return_value = (fake_token, None)
+
+        ret = await services.reset_password(str(fake_token), password)
+
+        assert ret is None

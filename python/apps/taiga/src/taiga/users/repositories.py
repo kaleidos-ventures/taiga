@@ -57,6 +57,12 @@ def check_password(user: User, password: str) -> bool:
 
 
 @sync_to_async
+def change_password(user: User, password: str) -> None:
+    user.set_password(password)
+    user.save()
+
+
+@sync_to_async
 def update_last_login(user: User) -> None:
     django_update_last_login(User, user)
 

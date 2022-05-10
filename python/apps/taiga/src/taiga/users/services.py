@@ -17,7 +17,11 @@ from taiga.users import exceptions as ex
 from taiga.users import repositories as users_repositories
 from taiga.users.dataclasses import VerificationInfo
 from taiga.users.models import User
-from taiga.users.tokens import VerifyUserToken
+from taiga.users.tokens import ResetPasswordToken, VerifyUserToken
+
+#####################################################################
+# User Profile
+#####################################################################
 
 
 async def create_user(
@@ -139,6 +143,65 @@ async def verify_user(token: str) -> VerificationInfo:
 
 async def clean_expired_users() -> None:
     await users_repositories.clean_expired_users()
+
+
+#####################################################################
+# Reset Password
+#####################################################################
+
+
+async def _get_user_and_reset_password_token(token: str) -> tuple[ResetPasswordToken, User]:
+    try:
+        reset_token = await ResetPasswordToken.create(token)
+    except tokens_ex.DeniedTokenError:
+        raise ex.UsedResetPasswordTokenError()
+    except tokens_ex.ExpiredTokenError:
+        raise ex.ExpiredResetPassswordTokenError()
+    except tokens_ex.TokenError:
+        raise ex.BadResetPasswordTokenError()
+
+    # Get user
+    user = await users_repositories.get_first_user(**reset_token.object_data, is_active=True, is_system=False)
+    if not user:
+        await reset_token.denylist()
+        raise ex.BadResetPasswordTokenError()
+
+    return reset_token, user
+
+
+async def _generate_reset_password_token(user: User) -> str:
+    return str(await ResetPasswordToken.create_for_object(user))
+
+
+async def _send_reset_password_email(user: User) -> None:
+    context = {"reset_password_token": await _generate_reset_password_token(user)}
+    await send_email.defer(email_name=Emails.RESET_PASSWORD.value, to=user.email, context=context)
+
+
+async def request_reset_password(email: str) -> None:
+    user = await users_repositories.get_user_by_username_or_email(username_or_email=email)
+    if user and user.is_active and not user.is_system:
+        await _send_reset_password_email(user)
+
+
+async def verify_reset_password_token(token: str) -> bool:
+    return bool(await _get_user_and_reset_password_token(token))
+
+
+async def reset_password(token: str, password: str) -> User | None:
+    reset_token, user = await _get_user_and_reset_password_token(token)
+
+    if user:
+        await users_repositories.change_password(user=user, password=password)
+        await reset_token.denylist()
+        return user
+
+    return None
+
+
+#####################################################################
+# Contact
+#####################################################################
 
 
 async def list_user_contacts(user: User, emails: list[EmailStr] = []) -> list[User]:

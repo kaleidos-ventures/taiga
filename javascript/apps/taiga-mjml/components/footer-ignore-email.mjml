@@ -1,0 +1,17 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<mj-section>
+  <mj-include path="./ignore-email.mjml" />
+</mj-section>
+<mj-section>
+  <mj-column width="100%" mj-class="padding-top">
+    <mj-text css-class="secondary-link dm-text" mj-class="font-body color-gray70">
+      Need help?
+      <a class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> Contact support </a></mj-text>
+  </mj-column>
+</mj-section>

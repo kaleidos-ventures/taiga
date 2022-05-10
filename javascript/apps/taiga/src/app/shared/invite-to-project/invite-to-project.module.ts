@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoModule } from '@ngneat/transloco';
 import {
   TuiButtonModule,
   TuiSvgModule,
@@ -51,15 +51,6 @@ import { ButtonLoadingModule } from '../directives/button-loading/button-loading
     EffectsModule.forFeature([RolesPermissionsEffects, InvitationEffects]),
     TuiAutoFocusModule,
     ButtonLoadingModule,
-  ],
-  providers: [
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: {
-        scope: 'invitation_modal',
-        alias: 'invitation_modal',
-      },
-    },
   ],
   declarations: [InviteToProjectComponent],
   exports: [InviteToProjectComponent],

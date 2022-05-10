@@ -9,7 +9,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StoreModule } from '@ngrx/store';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoModule } from '@ngneat/transloco';
 import { projectFeature } from './+state/reducers/project.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { ProjectEffects } from './+state/effects/project.effects';
@@ -22,14 +22,6 @@ import { ProjectEffects } from './+state/effects/project.effects';
     TranslocoModule,
   ],
   exports: [],
-  providers: [
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: {
-        scope: 'invitation_modal',
-        alias: 'invitation_modal',
-      },
-    },
-  ],
+  providers: [],
 })
 export class ProjectDataAccessModule {}

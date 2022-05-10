@@ -49,6 +49,7 @@ import {
   switchMap,
   throttleTime,
 } from 'rxjs/operators';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -64,6 +65,15 @@ import { TuiScrollbarComponent } from '@taiga-ui/core';
     './invite-to-project.component.css',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'invitation_modal',
+        alias: 'invitation_modal',
+      },
+    },
+  ],
 })
 export class InviteToProjectComponent implements OnInit, OnChanges {
   @ViewChild(TuiScrollbarComponent, { read: ElementRef })

@@ -112,6 +112,7 @@ const routes: Routes = [
       initialNavigation: 'enabled',
       preloadingStrategy: QuicklinkStrategy,
       anchorScrolling: 'enabled',
+      onSameUrlNavigation: 'reload',
     }),
   ],
   providers: [],

@@ -23,6 +23,7 @@ import { AppService } from '~/app/services/app.service';
 import { TuiNotification } from '@taiga-ui/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Router } from '@angular/router';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +43,8 @@ export class AuthFeatureVerifyEmailComponent implements OnInit {
     private store: Store,
     private appService: AppService,
     private actions$: Actions,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   public ngOnInit(): void {
@@ -58,6 +60,10 @@ export class AuthFeatureVerifyEmailComponent implements OnInit {
         }
         this.cd.detectChanges();
       });
+
+    this.router.routeReuseStrategy.shouldReuseRoute = () => {
+      return false;
+    };
   }
 
   public resendEmail() {

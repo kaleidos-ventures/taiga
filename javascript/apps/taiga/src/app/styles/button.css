@@ -260,6 +260,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     opacity: 50%;
   }
 
+  &[loading].loading-in-progress {
+    /* stylelint-disable-next-line declaration-no-important */
+    padding: 0 !important;
+    text-align: center;
+
+    & tui-wrapper {
+      background-color: var(--color-primary40);
+    }
+  }
+
   &[loading].loading-done svg {
     fill: var(--color-ok50);
   }

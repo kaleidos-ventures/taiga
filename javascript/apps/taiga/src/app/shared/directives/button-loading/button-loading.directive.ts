@@ -79,6 +79,7 @@ export class ButtonLoadingDirective implements AfterViewInit {
       this.currentState = 'default';
       this.restoreButtonContent();
 
+      this.element().removeAttribute('style');
       this.backgroundHtmlElement.removeAttribute('style');
 
       this.cd.markForCheck();
@@ -87,6 +88,7 @@ export class ButtonLoadingDirective implements AfterViewInit {
 
   public inProgressState() {
     this.storeButtonContent();
+    this.fixWidth();
 
     this.currentState = 'inProgress';
     this.tuiButtonComponent.iconRight = '';
@@ -168,6 +170,12 @@ export class ButtonLoadingDirective implements AfterViewInit {
     if (this.dotsInterval) {
       clearInterval(this.dotsInterval);
     }
+  }
+
+  private fixWidth() {
+    const width = this.element().offsetWidth;
+
+    this.element().style.width = `${width}px`;
   }
 
   private storeButtonContent() {

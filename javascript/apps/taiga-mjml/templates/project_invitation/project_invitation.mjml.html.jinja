@@ -1,0 +1,127 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<mjml>
+  <mj-head>
+    <mj-title>Taiga invitation</mj-title>
+    <mj-include path="../../components/head.mjml" />
+  </mj-head>
+  <mj-body css-class="body">
+    <mj-raw>
+      {% set invitation_url = resolve_front_url("PROJECT_INVITATION",
+      invitation_token=invitation_token) -%}
+      {% set project_url = resolve_front_url("PROJECT_HOME",
+      project_slug=project_slug) -%}
+      {% set project_abbreviation = project_name[:2].upper() -%}
+    </mj-raw>
+    <mj-wrapper css-class="body-content">
+      <mj-include path="../../components/header-logo.mjml" />
+      <mj-section mj-class="padding-top">
+        <mj-column>
+          <mj-text css-class="dm-text"
+            mj-class="font-heading1 color-gray100">
+            {% if receiver_name -%}
+            Hi {{ receiver_name }},
+            {% else %}
+            Hi there,
+            {% endif -%}
+          </mj-text>
+          <mj-text css-class="dm-text"
+            mj-class="font-heading2 color-gray100">
+            <strong>{{ sender_name }}</strong> sent you an invitation to join:
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section text-align="left"
+        mj-class="padding-bottom">
+        <mj-column>
+          <mj-text>
+            <table>
+              <tr>
+                {% if project_image_url -%}
+                <td style="vertical-align:top; width: 32px;">
+                  <a style="padding-top: 3px; padding-bottom: 3px; padding-left: 8px; width: 32px"
+                    href="{{ project_url }}">
+                    <img height="32"
+                      width="32"
+                      style="border-radius: 3px"
+                      src="{{ project_image_url }}" />
+                  </a>
+                </td>
+                {% else %}
+                <td style="vertical-align:top; width: 32px; height: 32px;">
+                  <table>
+                    <tr>
+                      <td class="color-1"
+                        style="height: 32px; width: 32px; text-align: center; font-size: 14px; text-transform: uppercase; border-radius: 3px;">
+                        EA</td>
+                    </tr>
+                  </table>
+                </td>
+                {% endif -%}
+                <td style="padding-left: 12px; vertical-align:top">
+                  <a style="font-size: 14px; font-weight: 400; line-height: 1; font-family: Ubuntu, Arial, Helvetica, sans-serif;"
+                    class="secondary-link"
+                    href="{{ project_url }}">{{ project_name }}</a>
+                  <p class="dm-text"
+                    style="margin: 6px 0 0 0">{{ project_description }}</p>
+                </td>
+              </tr>
+            </table>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section>
+        <mj-column>
+          {% if not receiver_name -%}
+          <mj-text css-class="dm-text"
+            mj-class="font-body color-gray80">
+            Taiga is an Open Source Agile Project Management Tool. There is no
+            cost for you to be a Taiga user.
+          </mj-text>
+          {% endif -%}
+          <mj-button css-class="btn-primary"
+            mj-class="btn-primary padding-top"
+            href="{{ invitation_url }}">
+            Accept your invitation
+          </mj-button>
+          <mj-text css-class="dm-text"
+            mj-class="font-body color-gray70">
+            Button not working? Copy and paste this URL into your web browser:
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section mj-class="padding-bottom">
+        <mj-column>
+          <mj-text css-class="dm-text-gray primary-link"
+            mj-class="font-body padding-bottom">
+            <table style="border-collapse:collapse;border:0;width:100%"
+              width="100%"
+              cellspacing="0"
+              cellpadding="0"
+              border="0">
+              <tbody>
+                <tr>
+                  <td valign="top">
+                    <p
+                      style="font-size:14px;line-height:21px;margin:0; text-align: left; word-break:break-all; ">
+                      <a class="primary-link"
+                        href="{{ invitation_url }}"
+                        style="word-wrap:break-word; word-break:break-all; font-family: Ubuntu, Arial, Helvetica, sans-serif;">{{
+                        invitation_url | wbr_split }}</a>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-include path="../../components/footer.mjml" />
+    </mj-wrapper>
+  </mj-body>
+</mjml>

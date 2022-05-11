@@ -21,7 +21,7 @@ import { ErrorManagementOptions, UnexpectedError } from '@taiga/data';
 import { Store } from '@ngrx/store';
 import { HashMap, TranslocoService } from '@ngneat/transloco';
 import { filter, take, takeUntil } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { NavigationStart, Router } from '@angular/router';
 
 @Injectable({
@@ -74,7 +74,7 @@ export class AppService {
   }
 
   public toastNotification(data: {
-    label: string;
+    label?: string;
     message: string;
     status: TuiNotification;
     scope?: string;
@@ -84,18 +84,22 @@ export class AppService {
   }) {
     const autoCloseTimer = 7000;
     forkJoin([
-      this.translocoService
-        .selectTranslate(data.label, {}, data.scope)
-        .pipe(take(1)),
+      data.label
+        ? this.translocoService
+            .selectTranslate(data.label, {}, data.scope)
+            .pipe(take(1))
+        : of({}),
       this.translocoService
         .selectTranslate(data.message, {}, data.scope)
         .pipe(take(1)),
     ]).subscribe(() => {
-      const label = this.translocoService.translate(
-        data.label,
-        data.paramsLabel,
-        data.scope
-      );
+      const label =
+        data.label &&
+        this.translocoService.translate(
+          data.label,
+          data.paramsLabel,
+          data.scope
+        );
       const message = this.translocoService.translate(
         data.message,
         data.paramsMessage,

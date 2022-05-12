@@ -74,7 +74,7 @@ describe('InputComponent', () => {
   it('label should be visible', () => {
     spectator.detectChanges();
     expect(spectator.query('label.input-label')).toHaveExactText(
-      `${spectator.component.label} ${spectator.component.accessibleLabel}`
+      spectator.component.label
     );
   });
 

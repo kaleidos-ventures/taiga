@@ -10,6 +10,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .input-email {
   margin-block-end: var(--spacing-8);
+
+  & input[readOnly] {
+    margin-block-end: var(--spacing-24);
+  }
 }
 
 .input-password {

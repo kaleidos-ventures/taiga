@@ -71,6 +71,10 @@ export class InputComponent implements AfterContentInit {
     return this.formDirective.showFormErrors && this.fieldService.enabledErrors;
   }
 
+  @HostBinding('class.readonly') public get readonly() {
+    return (this.ref.el.nativeElement as HTMLInputElement).readOnly;
+  }
+
   @HostBinding('class') public get updateOn() {
     if (this.control?.updateOn) {
       return `update-on-${this.control?.updateOn}`;

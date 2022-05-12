@@ -7,8 +7,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { map, switchMap, tap } from 'rxjs/operators';
 
 import * as InvitationActions from '../actions/invitation.action';
@@ -17,13 +17,12 @@ import { InvitationApiService } from '@taiga/api';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import {
-  Contact,
-  ErrorManagementToastOptions,
-  InvitationResponse,
-} from '@taiga/data';
+import { Contact, ErrorManagementToastOptions, Invitation } from '@taiga/data';
 import { TuiNotification } from '@taiga-ui/core';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
+import { InvitationService } from '~/app/services/invitation.service';
+import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { filterNil } from '~/app/shared/utils/operators';
 
 @Injectable()
 export class InvitationEffects {
@@ -47,17 +46,38 @@ export class InvitationEffects {
   public sendInvitations$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(NewProjectActions.inviteUsersNewProject),
+      concatLatestFrom(() =>
+        this.store.select(selectInvitations).pipe(filterNil())
+      ),
       pessimisticUpdate({
-        run: (action) => {
+        run: (action, invitationsState) => {
           this.buttonLoadingService.start();
 
           return this.invitationApiService
             .inviteUsers(action.slug, action.invitation)
             .pipe(
               switchMap(this.buttonLoadingService.waitLoading()),
-              map((response: InvitationResponse[]) => {
+              map((response: Invitation[]) => {
+                const invitationsOrdered: Invitation[] =
+                  invitationsState.slice();
+                response.forEach((inv) => {
+                  const isAlreadyInTheList = invitationsState.find(
+                    (it) => it.email === inv.email
+                  );
+                  if (!isAlreadyInTheList) {
+                    invitationsOrdered.splice(
+                      this.invitationService.positionInvitationInArray(
+                        invitationsOrdered,
+                        inv
+                      ),
+                      0,
+                      inv
+                    );
+                  }
+                });
                 return InvitationActions.inviteUsersSuccess({
-                  invitations: response,
+                  newInvitations: response,
+                  allInvitationsOrdered: invitationsOrdered,
                 });
               })
             );
@@ -93,7 +113,7 @@ export class InvitationEffects {
           this.appService.toastNotification({
             label: 'invitation_ok',
             message: 'invitation_success',
-            paramsMessage: { invitations: action.invitations.length },
+            paramsMessage: { invitations: action.newInvitations.length },
             status: TuiNotification.Success,
             scope: 'invitation_modal',
             autoClose: true,
@@ -105,8 +125,10 @@ export class InvitationEffects {
   );
 
   constructor(
+    private store: Store,
     private actions$: Actions,
     private invitationApiService: InvitationApiService,
+    private invitationService: InvitationService,
     private appService: AppService,
     private buttonLoadingService: ButtonLoadingService
   ) {}

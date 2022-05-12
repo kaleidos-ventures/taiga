@@ -55,6 +55,7 @@ import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TuiTextAreaComponent } from '@taiga-ui/kit';
 import { TuiScrollbarComponent } from '@taiga-ui/core';
+import { InvitationService } from '~/app/services/invitation.service';
 
 @UntilDestroy()
 @Component({
@@ -135,7 +136,8 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder,
     private store: Store,
-    private actions$: Actions
+    private actions$: Actions,
+    private invitationService: InvitationService
   ) {
     this.actions$
       .pipe(ofType(inviteUsersSuccess), untilDestroyed(this))
@@ -226,27 +228,40 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   }
 
   public positionInArray(user: Partial<User>) {
-    const usersArrayOrdered = [
-      ...this.getFilteredUsers(user, true),
-      ...this.getFilteredUsers(user, false),
-    ];
-    return usersArrayOrdered.findIndex(
-      (it) => (it.value as Partial<User>).email === user.email
-    );
-  }
-
-  public getFilteredUsers(user: Partial<User>, registered: boolean) {
-    const param = registered ? 'fullName' : 'email';
-    const newUsersArray = this.users.slice();
-    newUsersArray.push(this.fb.group(user));
-    const filteredArray = registered
-      ? newUsersArray.filter((it) => (it.value as Partial<User>).fullName)
-      : newUsersArray.filter((it) => !(it.value as Partial<User>).fullName);
-    return filteredArray.slice().sort((a, b) => {
-      const firstValue = (a.value as Partial<User>)[param] || '';
-      const secondValue = (b.value as Partial<User>)[param] || '';
-      return firstValue.localeCompare(secondValue);
+    const tempInvitations = this.users.map((it) => {
+      const data = it.value as {
+        fullName: string;
+        username?: string;
+        roles: string;
+        email: string;
+      };
+      return {
+        user:
+          data.username && data.fullName
+            ? { username: data.username, fullName: data.fullName }
+            : undefined,
+        email: data.email || '',
+        role: {
+          isAdmin: data.roles === 'Administrator',
+          name: data.roles,
+        },
+      };
     });
+    const tempInvitation = {
+      user:
+        user.username && user.fullName
+          ? { username: user.username, fullName: user.fullName }
+          : undefined,
+      email: user.email || '',
+      role: {
+        isAdmin: (user.roles && user.roles[0]) === 'Administrator',
+        name: user.roles && user.roles[0],
+      },
+    };
+    return this.invitationService.positionInvitationInArray(
+      tempInvitations,
+      tempInvitation
+    );
   }
 
   public validateEmails(emails: string) {

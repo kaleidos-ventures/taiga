@@ -45,7 +45,7 @@ export const reducer = createReducer(
   on(
     InvitationActions.inviteUsersSuccess,
     (state, action): ProjectOverviewState => {
-      state.invitations = [...state.invitations, ...action.invitations];
+      state.invitations = action.allInvitationsOrdered;
 
       return state;
     }

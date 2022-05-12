@@ -12,7 +12,8 @@ import { Action } from '@ngrx/store';
 import { InvitationApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 import { Observable } from 'rxjs';
-import { randEmail, randNumber, randSlug } from '@ngneat/falso';
+import { randEmail, randSlug } from '@ngneat/falso';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
 import { InvitationEffects } from './invitation.effects';
 import {
@@ -22,20 +23,23 @@ import {
 } from '../actions/invitation.action';
 import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
-import { Contact } from '@taiga/data';
+import { Contact, Invitation } from '@taiga/data';
+import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 
 describe('InvitationEffects', () => {
   let actions$: Observable<Action>;
   let spectator: SpectatorService<InvitationEffects>;
+  let store: MockStore;
 
   const createService = createServiceFactory({
     service: InvitationEffects,
-    providers: [provideMockActions(() => actions$)],
+    providers: [provideMockActions(() => actions$), provideMockStore({ initialState: {} }),],
     mocks: [InvitationApiService, AppService],
   });
 
   beforeEach(() => {
     spectator = createService();
+    store = spectator.inject(MockStore);
   });
 
   it('get contacts from user to invite: no match with my contacts', () => {
@@ -81,18 +85,17 @@ describe('InvitationEffects', () => {
   });
 
   it('send invitations', () => {
+    store.overrideSelector(selectInvitations, []);
     const invitationApiService = spectator.inject(InvitationApiService);
     const effects = spectator.inject(InvitationEffects);
 
     const invitationMockPayload = [
       { email: 'hola@hola.es', roleSlug: 'general' },
     ];
-    const invitationMockResponse = [
+    const invitationMockResponse: Invitation[] = [
       {
-        userId: null,
-        projectId: randNumber(),
-        roleId: randNumber(),
-        email: randEmail(),
+        role: { isAdmin: false, name: 'General', slug: 'general' },
+        email: 'hola@hola.es',
       },
     ];
 
@@ -108,7 +111,7 @@ describe('InvitationEffects', () => {
     });
 
     const expected = cold('--a', {
-      a: inviteUsersSuccess({ invitations: invitationMockResponse }),
+      a: inviteUsersSuccess({ newInvitations: invitationMockResponse, allInvitationsOrdered: invitationMockResponse }),
     });
 
     expect(effects.sendInvitations$).toBeObservable(expected);

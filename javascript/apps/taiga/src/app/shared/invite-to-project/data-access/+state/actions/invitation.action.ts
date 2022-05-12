@@ -21,7 +21,7 @@ export const fetchMyContactsSuccess = createAction(
 
 export const inviteUsersSuccess = createAction(
   '[Invitation] invite users success',
-  props<{ invitations: Invitation[] }>()
+  props<{ newInvitations: Invitation[]; allInvitationsOrdered: Invitation[] }>()
 );
 
 export const inviteUsersError = createAction('[Invitation] invite users error');

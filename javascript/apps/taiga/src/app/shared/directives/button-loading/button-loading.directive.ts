@@ -27,7 +27,9 @@ export class ButtonLoadingDirective implements AfterViewInit {
   public loadingMsg = '';
 
   @HostBinding('class') public get class() {
-    if (this.currentState === 'inProgress') {
+    if (this.currentState === 'start') {
+      return 'loading-start';
+    } else if (this.currentState === 'inProgress') {
       return 'loading-in-progress';
     } else if (this.currentState === 'done') {
       return 'loading-done';
@@ -36,7 +38,7 @@ export class ButtonLoadingDirective implements AfterViewInit {
     return '';
   }
 
-  public currentState: 'default' | 'inProgress' | 'done' = 'default';
+  public currentState: 'default' | 'start' | 'inProgress' | 'done' = 'default';
 
   private buttonText = '';
   private iconRight: typeof this.tuiButtonComponent.iconRight = '';
@@ -69,6 +71,12 @@ export class ButtonLoadingDirective implements AfterViewInit {
       this.currentState = 'done';
       this.cd.markForCheck();
     }
+  }
+
+  public start() {
+    this.disable();
+
+    this.currentState = 'start';
   }
 
   public defaultState() {

@@ -21,7 +21,7 @@ export class ButtonLoadingService implements OnDestroy {
   private backToInitialStateTimeout?: ReturnType<typeof setTimeout>;
 
   public start() {
-    this.button?.disable();
+    this.button?.start();
 
     this.initLoadingTimeout = setTimeout(() => {
       this.initTimer = new Date().getTime();

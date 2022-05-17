@@ -32,6 +32,7 @@ export const logout = createAction('[Auth] logout');
 export const loginSuccess = createAction(
   '[Auth] login success',
   props<{
+    user?: User;
     auth: Auth;
     projectInvitationToken?: string;
     next?: string;

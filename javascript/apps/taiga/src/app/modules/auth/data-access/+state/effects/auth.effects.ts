@@ -12,8 +12,8 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import * as AuthActions from '../actions/auth.actions';
 import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
-import { fetch, pessimisticUpdate } from '@nrwl/angular';
-import { Auth, ErrorManagementOptions, SignUpError, User } from '@taiga/data';
+import { pessimisticUpdate } from '@nrwl/angular';
+import { Auth, ErrorManagementOptions, SignUpError } from '@taiga/data';
 import { Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { AppService } from '~/app/services/app.service';
@@ -46,8 +46,18 @@ export class AuthEffects {
             })
             .pipe(
               switchMap(this.buttonLoadingService.waitLoading()),
-              map((auth: Auth) => {
+              mergeMap((auth: Auth) => {
+                this.authService.setAuth(auth);
+                return this.usersApiService.me().pipe(
+                  map((user) => {
+                    this.authService.setUser(user);
+                    return { user, auth };
+                  })
+                );
+              }),
+              map(({ user, auth }) => {
                 return AuthActions.loginSuccess({
+                  user,
                   auth,
                   projectInvitationToken,
                   next,
@@ -75,24 +85,6 @@ export class AuthEffects {
     );
   });
 
-  public loginSuccess$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(AuthActions.loginSuccess),
-      fetch({
-        run: ({ auth }) => {
-          this.authService.setAuth(auth);
-          return this.usersApiService.me().pipe(
-            map((user: User) => {
-              return AuthActions.setUser({ user });
-            })
-          );
-        },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.errorManagement(httpResponse),
-      })
-    );
-  });
-
   public loginRedirect$ = createEffect(
     () => {
       return this.actions$.pipe(
@@ -110,7 +102,7 @@ export class AuthEffects {
                     acceptProjectInvitation
                   ) {
                     return this.projectApiService
-                      .acceptInvitationToken(projectInvitationToken)
+                      .acceptInvitationSlug(projectInvitationToken)
                       .pipe(
                         tap(() => {
                           void this.router.navigateByUrl(next);
@@ -160,20 +152,6 @@ export class AuthEffects {
       })
     );
   });
-
-  public setUser$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(AuthActions.setUser),
-        tap(({ user }) => {
-          if (user) {
-            this.authService.setUser(user);
-          }
-        })
-      );
-    },
-    { dispatch: false }
-  );
 
   public signUp$ = createEffect(() => {
     return this.actions$.pipe(

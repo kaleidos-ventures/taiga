@@ -33,7 +33,8 @@ export const reducer = createReducer(
 
     return state;
   }),
-  on(AuthActions.loginSuccess, (state): AuthState => {
+  on(AuthActions.loginSuccess, (state, { user }): AuthState => {
+    state.user = user!;
     state.loginError = false;
 
     return state;

@@ -18,7 +18,6 @@ import {
   login,
   loginSuccess,
   logout,
-  setUser,
   signup,
   signUpError,
   signUpSuccess,
@@ -35,6 +34,7 @@ import {
   randEmail,
   randSequence,
   randUrl,
+  randBoolean,
 } from '@ngneat/falso';
 import { cold, hot } from 'jest-marbles';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -44,6 +44,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { selectUser } from '../selectors/auth.selectors';
+import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 
 const signupData = {
   email: randEmail(),
@@ -77,6 +78,7 @@ describe('AuthEffects', () => {
       AppService,
       AuthService,
       ProjectApiService,
+      ButtonLoadingService,
     ],
   });
 
@@ -88,47 +90,41 @@ describe('AuthEffects', () => {
   it('login', () => {
     const token = randSequence({ size: 100 });
     const next = randUrl();
+    const acceptProjectInvitation = randBoolean();
     const loginData = {
       username: randUserName(),
       password: randPassword(),
       projectInvitationToken: token,
       next,
+      acceptProjectInvitation,
     };
-    const response = AuthMockFactory();
+    const auth = AuthMockFactory();
+    const user = UserMockFactory();
     const authApiService = spectator.inject(AuthApiService);
+    const buttonLoadingService = spectator.inject(ButtonLoadingService);
+    const usersApiService = spectator.inject(UsersApiService);
     const effects = spectator.inject(AuthEffects);
 
-    authApiService.login.mockReturnValue(cold('-b|', { b: response }));
+    authApiService.login.mockReturnValue(cold('-b|', { b: auth }));
+    usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
+
+    buttonLoadingService.waitLoading.mockReturnValue(() =>
+      cold('-b|', { b: auth })
+    );
 
     actions$ = hot('-a', { a: login(loginData) });
 
-    const expected = cold('--a', {
-      a: loginSuccess({ auth: response, projectInvitationToken: token, next }),
+    const expected = cold('----a', {
+      a: loginSuccess({
+        user,
+        auth,
+        projectInvitationToken: token,
+        next,
+        acceptProjectInvitation,
+      }),
     });
 
     expect(effects.login$).toBeObservable(expected);
-  });
-
-  it('login success', () => {
-    const auth = AuthMockFactory();
-    const user = UserMockFactory();
-
-    const effects = spectator.inject(AuthEffects);
-    const authService = spectator.inject(AuthService);
-    const usersApiService = spectator.inject(UsersApiService);
-    usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
-
-    actions$ = hot('-a', { a: loginSuccess({ auth }) });
-
-    const expected = cold('--a', {
-      a: setUser({ user }),
-    });
-
-    expect(effects.loginSuccess$).toBeObservable(expected);
-
-    expect(effects.loginSuccess$).toSatisfyOnFlush(() => {
-      expect(authService.setAuth).toHaveBeenCalledWith(auth);
-    });
   });
 
   it('login redirect - next', () => {
@@ -148,6 +144,7 @@ describe('AuthEffects', () => {
 
     actions$ = hot('a', {
       a: loginSuccess({
+        user,
         auth,
         next: invite.next,
         projectInvitationToken: invite.projectInvitationToken,
@@ -175,9 +172,8 @@ describe('AuthEffects', () => {
 
     actions$ = hot('a', {
       a: loginSuccess({
+        user,
         auth,
-        next: '',
-        projectInvitationToken: '',
       }),
     });
 
@@ -201,19 +197,6 @@ describe('AuthEffects', () => {
       expect(authService.logout).toHaveBeenCalled();
       expect(routerService.navigate).toHaveBeenCalledWith(['/login']);
       expect(appService.toastNotification).toHaveBeenCalled();
-    });
-  });
-
-  it('set user', () => {
-    const user = UserMockFactory();
-
-    const effects = spectator.inject(AuthEffects);
-    const authService = spectator.inject(AuthService);
-
-    actions$ = hot('-a', { a: setUser({ user }) });
-
-    expect(effects.setUser$).toSatisfyOnFlush(() => {
-      expect(authService.setUser).toHaveBeenCalledWith(user);
     });
   });
 

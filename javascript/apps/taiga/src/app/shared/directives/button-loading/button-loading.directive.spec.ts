@@ -73,8 +73,6 @@ describe('ButtonLoadingDirective', () => {
 
     expect(content).toContainText('Testing ...');
 
-    console.log(element.querySelector('.t-content')!.innerHTML);
-
     service.whenReady().subscribe();
     jest.runOnlyPendingTimers();
 
@@ -109,6 +107,31 @@ describe('ButtonLoadingDirective', () => {
     expect(instance).toBeDefined();
 
     service.error();
+
+    expect(content).toContainText('Test');
+    expect(element).not.toHaveAttribute('disabled');
+    expect(button.componentInstance.iconRight).toEqual('test');
+  });
+
+  it('fast loading', () => {
+    const element = spectator.element as HTMLElement;
+    const service = spectator.inject(ButtonLoadingService);
+
+    service.start();
+
+    const content = element.querySelector('.t-content');
+
+    expect(element).toHaveAttribute('disabled');
+    expect(content).toContainText('Test');
+
+    jest.advanceTimersByTime(100);
+
+    const button = spectator.fixture.debugElement.query(
+      By.directive(TuiButtonComponent)
+    );
+
+    service.whenReady().subscribe();
+    jest.runOnlyPendingTimers();
 
     expect(content).toContainText('Test');
     expect(element).not.toHaveAttribute('disabled');

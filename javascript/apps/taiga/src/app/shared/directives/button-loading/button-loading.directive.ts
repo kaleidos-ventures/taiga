@@ -75,6 +75,7 @@ export class ButtonLoadingDirective implements AfterViewInit {
 
   public start() {
     this.disable();
+    this.storeButtonContent();
 
     this.currentState = 'start';
   }
@@ -95,7 +96,6 @@ export class ButtonLoadingDirective implements AfterViewInit {
   }
 
   public inProgressState() {
-    this.storeButtonContent();
     this.fixWidth();
 
     this.currentState = 'inProgress';
@@ -113,7 +113,7 @@ export class ButtonLoadingDirective implements AfterViewInit {
     this.backgroundHtmlElement.style.backgroundSize = '0%, 100%';
 
     let currentProgress = 0;
-    let step = this.randomIntFromInterval(5, 30) / 100;
+    let step = 0.2;
 
     const nextStep = () => {
       currentProgress += step;
@@ -136,13 +136,13 @@ export class ButtonLoadingDirective implements AfterViewInit {
 
       this.nextTimeout = setTimeout(
         nextStep,
-        this.randomIntFromInterval(100, 400)
+        this.randomIntFromInterval(100, 250)
       );
     };
 
     this.nextTimeout = setTimeout(
       nextStep,
-      this.randomIntFromInterval(100, 400)
+      this.randomIntFromInterval(100, 250)
     );
 
     this.cd.markForCheck();

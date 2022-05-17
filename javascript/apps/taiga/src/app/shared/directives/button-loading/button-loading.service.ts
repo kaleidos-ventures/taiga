@@ -42,7 +42,7 @@ export class ButtonLoadingService implements OnDestroy {
   public whenReady() {
     if (!this.initTimer) {
       this.destroyTimers();
-      this.button?.enable();
+      this.button?.defaultState();
 
       return of(null);
     }

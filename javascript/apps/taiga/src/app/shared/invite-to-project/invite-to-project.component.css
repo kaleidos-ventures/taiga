@@ -108,6 +108,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .notification {
   inline-size: 100%;
+
+  &::ng-deep .wrapper {
+    display: block;
+  }
 }
 
 .actions-wrapper {

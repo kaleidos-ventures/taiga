@@ -9,7 +9,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map, tap } from 'rxjs/operators';
+import { delay, map, tap } from 'rxjs/operators';
 
 import * as ProjectActions from '../actions/project.actions';
 import { ProjectApiService } from '@taiga/api';
@@ -18,6 +18,11 @@ import { NavigationService } from '~/app/shared/navigation/navigation.service';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { TuiNotification } from '@taiga-ui/core';
+import {
+  WaitingForContextClosing,
+  WaitingForMemberAnimation,
+} from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
 
 @Injectable()
 export class ProjectEffects {
@@ -53,6 +58,16 @@ export class ProjectEffects {
   public acceptedInvitation$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(InvitationActions.acceptedInvitationSlug),
+      delay(WaitingForContextClosing),
+      tap(() => {
+        this.appService.toastNotification({
+          message: 'invitation_accept_message',
+          status: TuiNotification.Success,
+          scope: 'invitation_modal',
+          autoClose: true,
+        });
+      }),
+      delay(WaitingForMemberAnimation),
       map(({ projectSlug }) => {
         return ProjectActions.fetchProject({ slug: projectSlug });
       })

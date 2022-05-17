@@ -97,17 +97,17 @@ export class ProjectMembersListComponent {
 
     of(true)
       .pipe(
-        delay(100),
+        delay(100 + 300), // DelayTime + AnimationTime
         tap(() => {
           this.animationFirstState = true;
           this.cd.detectChanges();
         }),
-        delay(500),
+        delay(200 + 300), // DelayTime + AnimationTime
         tap(() => {
           this.animationSecondState = true;
           this.cd.detectChanges();
         }),
-        delay(300),
+        delay(0 + 300), // DelayTime + AnimationTime
         tap(() => {
           this.animationPendingState = false;
           this.animationSecondState = false;

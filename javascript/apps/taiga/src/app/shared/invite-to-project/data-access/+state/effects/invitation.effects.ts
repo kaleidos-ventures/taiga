@@ -129,14 +129,6 @@ export class InvitationEffects {
       pessimisticUpdate({
         run: (action) => {
           return this.projectApiService.acceptInvitationSlug(action.slug).pipe(
-            tap(() => {
-              this.appService.toastNotification({
-                message: 'invitation_accept_message',
-                status: TuiNotification.Success,
-                scope: 'invitation_modal',
-                autoClose: true,
-              });
-            }),
             concatLatestFrom(() =>
               this.store.select(selectUser).pipe(filterNil())
             ),

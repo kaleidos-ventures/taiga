@@ -49,7 +49,7 @@ type AlertLevel = 'none' | 'polite' | 'important';
     trigger('slideOut', [
       transition(':leave', [
         animate(
-          '300ms ease-in',
+          '400ms ease-in',
           style({
             blockSize: '0',
             opacity: '0',

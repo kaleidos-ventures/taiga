@@ -12,11 +12,12 @@ import { Store } from '@ngrx/store';
 import { fetch } from '@nrwl/angular';
 import { ProjectApiService } from '@taiga/api';
 import { zip } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
 
 @Injectable()
 export class ProjectOverviewEffects {
@@ -47,6 +48,7 @@ export class ProjectOverviewEffects {
   public acceptedInvitation$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(InvitationActions.acceptedInvitationSlug),
+      delay(WaitingForToastNotification),
       map(() => {
         return ProjectOverviewActions.onAcceptedInvitation({
           onAcceptedInvitation: true,

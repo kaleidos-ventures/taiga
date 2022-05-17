@@ -37,7 +37,10 @@ export class ProjectMembersComponent {
 
   public readonly model$ = this.state.select().pipe(
     map((state) => {
-      const currentMember = [...state.members, ...state.invitations].find(
+      const user = [...state.members, ...state.invitations].find(
+        (member) => member?.user?.username === state.user?.username
+      );
+      const currentMember = state.members.find(
         (member) => member?.user?.username === state.user?.username
       );
       const members = state.members.filter(
@@ -49,7 +52,7 @@ export class ProjectMembersComponent {
       );
 
       const membersAndInvitations = [
-        ...(currentMember ? [currentMember] : []),
+        ...(user ? [user] : []),
         ...members,
         ...invitations,
       ];

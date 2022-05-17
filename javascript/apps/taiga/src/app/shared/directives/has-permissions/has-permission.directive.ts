@@ -77,7 +77,7 @@ export class HasPermissionDirective implements OnInit {
       this.hasView = true;
       this.viewContainer.createEmbeddedView(this.templateRef);
       this.cd.markForCheck();
-    } else {
+    } else if (!view) {
       this.viewContainer.clear();
       this.hasView = false;
     }

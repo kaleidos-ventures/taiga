@@ -13,8 +13,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         class="notification"
         status="info"
         size="l"
-        [hasIcon]="false"
-        [innerHtml]="t('signup.join', { project: params.project })">
+        [hasIcon]="false">
+        <span
+          [innerHtml]="t('signup.join', { project: params.project })"></span>
       </tg-ui-context-notification>
       <div class="login-wrapper">
         <img

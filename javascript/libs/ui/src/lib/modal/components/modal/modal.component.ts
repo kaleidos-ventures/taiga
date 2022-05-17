@@ -28,7 +28,7 @@ Usage example:
   [open]="open"
   (requestClose)="open = !open">
   <h1>Hi!</h1>
-  <my-modal-component></my-modal-component>
+  <my-modal-component *ngIf="open"></my-modal-component>
 </tg-ui-modal>
 */
 @UntilDestroy()

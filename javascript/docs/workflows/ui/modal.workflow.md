@@ -5,9 +5,13 @@
 When the first element to focus is a text it must have a `tabindex="0"`. If the modal has a text that define the content it must be a wrapper around a container (It can't be `ng-container`) with a `aria-describedby` that must point to the content that define the message.
 
 ```html
-<tg-ui-modal [open]="booleanVariable" (requestClose)="triggerWhenModalClosed()">
+<tg-ui-modal
+  [open]="booleanVariable"
+  (requestClose)="triggerWhenModalClosed()">
   <ng-container>
-    <div aria-describedby="aria_description" aria-labelledby="arial_label">
+    <div
+      aria-describedby="aria_description"
+      aria-labelledby="arial_label">
       <h1 id="aria_label">Modal Title</h1>
       <div id="aria_description">
         <p tabindex="0">First description paragraph</p>
@@ -30,7 +34,9 @@ While `elementFocus` is null we will keep the basic focus functionality that go
   (requestClose)="triggerWhenModalClosed()"
   [elementFocus]="HTMLelementVariable">
   <ng-container>
-    <div aria-describedby="aria_description" aria-labelledby="arial_label">
+    <div
+      aria-describedby="aria_description"
+      aria-labelledby="arial_label">
       <h1 id="aria_label">Modal Title</h1>
       <div id="aria_description">
         <p tabindex="0">First description paragraph</p>
@@ -48,7 +54,9 @@ While `elementFocus` is null we will keep the basic focus functionality that go
 When we make a basic confirmation modal that usually has an "OK" button and a text, the focus has to be on the button. The content must be a wrapped around a container (It can't be `ng-container`) with a `aria-describedby` that must point to the content that define the message.
 
 ```html
-<tg-ui-modal [open]="booleanVariable" (requestClose)="triggerWhenModalClosed()">
+<tg-ui-modal
+  [open]="booleanVariable"
+  (requestClose)="triggerWhenModalClosed()">
   <ng-container>
     <div aria-describedby="aria_description">
       <p id="aria_description">Confirmation description</p>
@@ -74,6 +82,18 @@ export class TestComponent {
     });
   }
 }
+```
+
+# Prevent render modal child
+
+The content inside an `ts-ui-modal` is always rendered, so is a good practice avoid the render with a `*ngIf` until the modal is open.
+
+```html
+<tg-ui-modal
+  [open]="isModalOpen"
+  (requestClose)="isModalOpen = false">
+  <tg-child-component *ngIf="isModalOpen"></tg-child-component>
+</tg-ui-modal>
 ```
 
 # Accesibility

@@ -168,7 +168,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .create-account {
+  overflow: hidden;
   pointer-events: auto;
+  white-space: nowrap;
 }
 
 .member-info {

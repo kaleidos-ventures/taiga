@@ -56,6 +56,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 {{ t('project_overview.members.pending') }}
               </div>
               <div
+                @fadeInRight
                 *ngIf="
                   showAcceptInvitationButton &&
                   getUser(member).username === user?.username
@@ -64,7 +65,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   (click)="acceptInvitationSlug()"
                   class="create-account"
                   data-test="invitation-accept"
-                  appearance="primary"
+                  appearance="secondary"
                   tuiButton>
                   {{ t('project_overview.members.accept') }}
                 </button>

@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { animate, style, transition, trigger } from '@angular/animations';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -24,7 +25,47 @@ import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
   templateUrl: './project-members-list.component.html',
   styleUrls: ['./project-members-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [fadeIntOutAnimation],
+  animations: [
+    fadeIntOutAnimation,
+    trigger('fadeInRight', [
+      transition(':enter', [
+        style({
+          visibility: 'visible',
+          opacity: 0,
+          transform: 'translate3d(30px, 0, 0)',
+          offset: 0,
+          width: 0,
+        }),
+        animate(
+          '300ms ease-in',
+          style({
+            opacity: 1,
+            transform: 'translate3d(0, 0, 0)',
+            offset: 1,
+            width: '*',
+          })
+        ),
+      ]),
+      transition(':leave', [
+        style({
+          opacity: 1,
+          transform: 'translate3d(0, 0, 0)',
+          offset: 1,
+          width: '*',
+        }),
+        animate(
+          '300ms ease-in',
+          style({
+            visibility: 'visible',
+            opacity: 0,
+            transform: 'translate3d(30px, 0, 0)',
+            offset: 0,
+            width: 0,
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class ProjectMembersListComponent {
   @Input()

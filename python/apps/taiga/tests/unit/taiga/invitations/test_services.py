@@ -191,7 +191,7 @@ async def test_send_project_invitations_for_existing_user(tqmanager):
         assert args["to"] == invitation.email
         assert args["context"]["invitation_token"] == "invitation-token"
         assert args["context"]["project_color"] == invitation.project.color
-        assert args["context"]["project_description"] == invitation.project.description
+        assert args["context"]["project_workspace"] == invitation.project.workspace.name
         assert args["context"]["project_image_url"] is None
         assert args["context"]["project_name"] == invitation.project.name
         assert args["context"]["project_slug"] == invitation.project.slug
@@ -223,7 +223,7 @@ async def test_send_project_invitations_for_new_user(tqmanager):
         assert args["to"] == invitation.email
         assert args["context"]["invitation_token"] == "invitation-token"
         assert args["context"]["project_color"] == invitation.project.color
-        assert args["context"]["project_description"] == invitation.project.description
+        assert args["context"]["project_workspace"] == invitation.project.workspace.name
         assert args["context"]["project_image_url"] is None
         assert args["context"]["project_name"] == invitation.project.name
         assert args["context"]["project_slug"] == invitation.project.slug

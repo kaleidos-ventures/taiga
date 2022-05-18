@@ -9,7 +9,16 @@ import pytest
 from pydantic import ValidationError
 from taiga.projects.validators import ProjectValidator
 from tests.unit.utils import check_validation_errors
-from tests.utils.images import invalid_image_upload_file, text_upload_file, valid_image_upload_file
+from tests.utils.images import invalid_image_upload_file, text_upload_file
+
+
+def test_validate_create_user_wrong_not_all_required_fields():
+    with pytest.raises(ValidationError) as validation_errors:
+        ProjectValidator()
+
+    expected_error_fields = ["name", "workspaceSlug"]
+    expected_error_messages = ["field required"]
+    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
 
 
 def test_validate_project_with_empty_name(client):
@@ -51,18 +60,16 @@ def test_validate_project_with_invalid_color(client):
         ProjectValidator(name=name, color=color, workspace_slug=workspace_slug)
 
 
-def test_validate_correct_logo(client):
+def test_valid_project():
     name = "Project test"
+    workspace_slug = "ws_slug"
     color = 1
-    logo = valid_image_upload_file
 
-    with pytest.raises(ValidationError) as validations_errors:
-        ProjectValidator(name=name, color=color, logo=logo)
+    project = ProjectValidator(workspace_slug=workspace_slug, name=name, color=color)
 
-        # `WorkspaceSlug` validation error is expected
-        expected_error_fields = ["workspaceSlug"]
-        expected_error_messages = ["field required"]
-        check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)
+    assert project.name == name
+    assert project.workspace_slug == workspace_slug
+    assert project.color == color
 
 
 def test_validate_logo_content_type(client):
@@ -73,12 +80,12 @@ def test_validate_logo_content_type(client):
     with pytest.raises(ValidationError) as validations_errors:
         ProjectValidator(name=name, color=color, logo=logo)
 
-        expected_error_fields = [
-            "logo",
-            "workspaceSlug",
-        ]
-        expected_error_messages = ["Invalid image format", "field required"]
-        check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)
+    expected_error_fields = [
+        "logo",
+        "workspaceSlug",
+    ]
+    expected_error_messages = ["Invalid image format", "field required"]
+    check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)
 
 
 def test_validate_logo_content(client):
@@ -89,6 +96,6 @@ def test_validate_logo_content(client):
     with pytest.raises(ValidationError) as validations_errors:
         ProjectValidator(name=name, color=color, logo=logo)
 
-        expected_error_fields = ["logo", "workspaceSlug"]
-        expected_error_messages = ["Invalid image content", "field required"]
-        check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)
+    expected_error_fields = ["logo", "workspaceSlug"]
+    expected_error_messages = ["Invalid image content", "field required"]
+    check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)

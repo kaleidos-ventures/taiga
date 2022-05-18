@@ -10,7 +10,7 @@ from pydantic import ValidationError
 from taiga.invitations.validators import InvitationsValidator, InvitationValidator
 
 
-def test_validate_invitation_with_empty_role_slug(client):
+def test_validate_invitation_with_empty_role_slug():
     email = "test@email.com"
     role_slug = ""
 
@@ -18,7 +18,7 @@ def test_validate_invitation_with_empty_role_slug(client):
         InvitationValidator(email=email, role_slug=role_slug)
 
 
-def test_validate_invitations_with_duplicated_items(client):
+def test_validate_invitations_with_duplicated_items():
     invitations = [
         {"email": "test@email.com", "role_slug": "general"},
         {"email": "test@email.com", "role_slug": "general"},
@@ -28,7 +28,7 @@ def test_validate_invitations_with_duplicated_items(client):
         InvitationsValidator(invitations=invitations)
 
 
-def test_validate_invitations_more_than_50(client):
+def test_validate_invitations_more_than_50():
     invitations = []
     for i in range(55):
         invitations.append({"email": f"test{i}@email.com", "role_slug": "general"})

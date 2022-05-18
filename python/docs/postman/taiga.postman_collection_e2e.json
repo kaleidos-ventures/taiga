@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "46badd00-b0e1-49c6-959a-6981da74865c",
-		"name": "taiga-next e2e Copy",
+		"_postman_id": "3f6c3952-388a-494b-a8ec-a6dfabdc41f6",
+		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -1659,7 +1659,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user3@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user1000@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1874,6 +1874,81 @@
 							"path": [
 								"auth",
 								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 projects.{p}.invitations.accept",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    var invitation = jsonRes;",
+									"    var invitationUser = jsonRes.user;",
+									"    var invitationRole = jsonRes.role;",
+									"",
+									"    // Validate response API fields",
+									"    pm.expect(invitation).to.have.property(\"user\");",
+									"    pm.expect(invitation).to.have.property(\"role\");",
+									"    pm.expect(invitation).to.have.property(\"email\");",
+									"",
+									"    pm.expect(invitationUser).to.have.property(\"username\");",
+									"    pm.expect(invitationUser).to.have.property(\"fullName\");",
+									"",
+									"    pm.expect(invitationRole).to.have.property(\"isAdmin\");",
+									"    pm.expect(invitationRole).to.have.property(\"name\");",
+									"    pm.expect(invitationRole).to.have.property(\"slug\");",
+									"",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(invitation).length;",
+									"    var numOfReturnedUserFields = Object.keys(invitationUser).length;",
+									"    var numOfReturnedRoleFields = Object.keys(invitationRole).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    pm.expect(numOfReturnedUserFields).to.equal(2);",
+									"    pm.expect(numOfReturnedRoleFields).to.equal(3);",
+									"});// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/accept",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"invitations",
+								"accept"
 							]
 						}
 					},

@@ -66,7 +66,7 @@ async def test_get_project_invitation_by_email_not_found() -> None:
 ##########################################################
 
 
-async def test_get_project_invitations():
+async def test_get_project_invitations_all_pending_users():
     project = await f.create_project()
     general_role = await sync_to_async(project.roles.get)(slug="general")
 
@@ -88,6 +88,67 @@ async def test_get_project_invitations():
 
     response = await repositories.get_project_invitations(project_slug=project.slug, status=InvitationStatus.PENDING)
     assert len(response) == 3
+    assert response[0].email == user1.email
+    assert response[1].email == user2.email
+
+
+async def test_get_project_invitations_single_pending_user():
+    project = await f.create_project()
+    general_role = await sync_to_async(project.roles.get)(slug="general")
+
+    user1 = await f.create_user(full_name="AAA")
+    await f.create_invitation(
+        email=user1.email, user=user1, project=project, role=general_role, status=InvitationStatus.PENDING
+    )
+    await f.create_invitation(
+        email="non-existing@email.com", user=None, project=project, role=general_role, status=InvitationStatus.PENDING
+    )
+
+    response = await repositories.get_project_invitations(
+        project_slug=project.slug,
+        user=user1,
+        status=InvitationStatus.PENDING,
+    )
+    assert len(response) == 1
+    assert response[0].email == user1.email
+
+
+async def test_get_project_invitations_single_pending_inactive_user():
+    project = await f.create_project()
+    general_role = await sync_to_async(project.roles.get)(slug="general")
+
+    user1 = await f.create_user(full_name="AAA")
+    await f.create_invitation(
+        email=user1.email, user=user1, project=project, role=general_role, status=InvitationStatus.PENDING
+    )
+    inactive_user = await f.create_user(is_active=False, email="non-existing@email.com")
+
+    await f.create_invitation(
+        email=inactive_user.email, user=None, project=project, role=general_role, status=InvitationStatus.PENDING
+    )
+
+    response = await repositories.get_project_invitations(
+        project_slug=project.slug, user=inactive_user, status=InvitationStatus.PENDING
+    )
+    assert len(response) == 1
+    assert response[0].email == inactive_user.email
+
+
+async def test_get_project_invitations_all_accepted_users():
+    project = await f.create_project()
+    general_role = await sync_to_async(project.roles.get)(slug="general")
+
+    user1 = await f.create_user(full_name="AAA")
+    await f.create_invitation(
+        email=user1.email, user=user1, project=project, role=general_role, status=InvitationStatus.ACCEPTED
+    )
+    user2 = await f.create_user(full_name="BBB")
+    await f.create_invitation(
+        email=user2.email, user=user2, project=project, role=general_role, status=InvitationStatus.ACCEPTED
+    )
+
+    response = await repositories.get_project_invitations(project_slug=project.slug, status=InvitationStatus.ACCEPTED)
+    assert len(response) == 2
     assert response[0].email == user1.email
     assert response[1].email == user2.email
 

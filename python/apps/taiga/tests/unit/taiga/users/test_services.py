@@ -9,6 +9,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.invitations.exceptions import BadInvitationTokenError, InvitationDoesNotExistError
 from taiga.tokens import exceptions as tokens_ex
 from taiga.users import exceptions as ex
 from taiga.users import services
@@ -56,6 +57,7 @@ async def test_create_user_ok(tqmanager):
             "to": "email@email.com",
             "context": {"verification_token": "verify_token"},
         }
+
         fake_user_token.assert_awaited_once_with(user, project_invitation_token, accept_project_invitation)
 
 
@@ -247,6 +249,45 @@ async def test_verify_user_error_with_invalid_data():
         await services.verify_user("some_token")
 
 
+@pytest.mark.parametrize(
+    "exception",
+    [
+        BadInvitationTokenError,
+        InvitationDoesNotExistError,
+    ],
+)
+async def test_verify_user_error_project_invitation_token(exception):
+    user = f.build_user(is_active=False)
+    project_invitation = f.build_invitation()
+    object_data = {"id": 1}
+    project_invitation_token = "invitation_token"
+    accept_project_invitation = False
+    auth_credentials = AccessWithRefreshToken(token="token", refresh="refresh")
+
+    with (
+        patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
+        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitation_service,
+        patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
+    ):
+        fake_token = FakeVerifyUserToken()
+        fake_token.object_data = object_data
+        fake_token.get.side_effect = [project_invitation_token, accept_project_invitation]
+        fake_auth_services.create_auth_credentials.return_value = auth_credentials
+        FakeVerifyUserToken.create.return_value = fake_token
+        fake_invitation_service.get_project_invitation.return_value = project_invitation
+        fake_users_repo.get_first_user.return_value = user
+
+        #  exception when recovering the project invitation
+        fake_invitation_service.get_project_invitation.side_effect = exception
+
+        info = await services.verify_user("some_token")
+
+        assert info.auth == auth_credentials
+        # the exception is controlled returning no content (pass)
+        assert info.project_invitation is None
+
+
 ##########################################################
 # clean_expired_users
 ##########################################################
@@ -297,7 +338,7 @@ async def test_generate_verify_ok_with_project_invitation_accepting(
             project_invitation_token=project_invitation_token,
             accept_project_invitation=accept_project_invitation,
         )
-        # breakpoint()
+
         assert list(token.keys()) == expected_keys
         if "project_invitation_token" in list(token.keys()):
             assert token["project_invitation_token"] == project_invitation_token

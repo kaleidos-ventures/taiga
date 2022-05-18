@@ -15,12 +15,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <button
         class="close"
         tuiIconButton
+        [attr.aria-label]="t('commons.close_modal')"
         appearance="us-header-button"
         icon="close"
         type="button"
-        (click)="close()">
-        <span class="visually-hidden">{{ t('commons.close_modal') }}</span>
-      </button>
+        (click)="close()"></button>
     </div>
   </ng-container>
 </ng-template>

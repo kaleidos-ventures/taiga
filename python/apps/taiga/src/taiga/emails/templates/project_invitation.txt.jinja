@@ -17,13 +17,11 @@ Hi there,
 {{ sender_name }} sent you an invitation to join:
 
 {{ project_name }}
-{{ project_description }}
+{{ project_workspace }}
 
-<!-- Start: This text only appear if you are not registered -->
 {% if not receiver_name -%}
 Taiga is an Open Source Agile Project Management Tool. There is no cost for you to be a Taiga user.
 {% endif -%}
-<!-- End -->
 {{ invitation_url }}
 
 Welcome,

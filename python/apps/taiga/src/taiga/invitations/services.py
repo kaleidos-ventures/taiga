@@ -85,7 +85,7 @@ async def send_project_invitation_email(invitation: Invitation) -> None:
         "project_slug": project.slug,
         "project_color": project.color,
         "project_image_url": await get_logo_small_thumbnail_url(project.logo),
-        "project_description": project.description,
+        "project_workspace": project.workspace.name,
         "sender_name": sender.full_name,
         "receiver_name": receiver.full_name if receiver else None,
     }

@@ -4,7 +4,7 @@
   "project_slug": "example-project",
   "project_color": 1,
   "project_image_url": null,
-  "project_description": "This is an example project to test invitation to a project emails.",
+  "project_workspace": "Example workspace",
   "sender_name": "John Doe",
   "receiver_name": null
 }

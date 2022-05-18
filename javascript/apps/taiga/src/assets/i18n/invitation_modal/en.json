@@ -14,7 +14,7 @@
   "general": "General",
   "member": "Member",
   "close": "Close",
-  "remove": "Remove",
+  "remove": "Remove user from invite list",
   "emails_detected": "Emails detected: {{ emails }}",
   "error_add_email": "Add at least an email or username",
   "error_email_regex": "Invalid email address",

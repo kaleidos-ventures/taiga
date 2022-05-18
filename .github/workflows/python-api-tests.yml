@@ -61,7 +61,9 @@ jobs:
     - name: Test with pytest
       working-directory: ./python/apps/taiga
       run: |
+        set -o pipefail
         python -m pytest --fast_only --cov --cov-report=term-missing:skip-covered --junitxml=pytest.xml | tee pytest-coverage.txt
+        set +o pipefail
 
     - name: Pytest coverage comment
       uses: MishaKav/pytest-coverage-comment@main

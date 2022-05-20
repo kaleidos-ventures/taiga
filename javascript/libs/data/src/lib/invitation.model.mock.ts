@@ -6,13 +6,28 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randEmail } from '@ngneat/falso';
-import { Invitation } from './invitation.model';
+import { randBoolean, randEmail } from '@ngneat/falso';
+import { Invitation, InvitationInfo } from './invitation.model';
 import { MembershipMockFactory } from './membership.model.mock';
+import { ProjectMockFactory } from './project.model.mock';
 
 export const InvitationMockFactory = (): Invitation => {
   return {
     ...MembershipMockFactory(),
     email: randEmail(),
+  };
+};
+
+export const InvitationInfoMockFactory = (): InvitationInfo => {
+  const project = ProjectMockFactory();
+  return {
+    status: 'pending',
+    email: randEmail(),
+    existingUser: randBoolean(),
+    project: {
+      name: project.name,
+      slug: project.slug,
+      isAnon: randBoolean(),
+    },
   };
 };

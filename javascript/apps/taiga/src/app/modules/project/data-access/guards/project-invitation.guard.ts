@@ -40,7 +40,6 @@ export class ProjectInvitationGuard implements CanActivate {
               void this.router.navigate([
                 `/project/${invitation.project.slug}`,
               ]);
-              return of(true);
             } else {
               void this.router.navigate(['/login'], {
                 queryParams: {
@@ -55,6 +54,7 @@ export class ProjectInvitationGuard implements CanActivate {
               void this.router.navigate([
                 `/project/${invitation.project.slug}`,
               ]);
+              return of(true);
             } else {
               void this.router.navigate(['/signup'], {
                 queryParams: {

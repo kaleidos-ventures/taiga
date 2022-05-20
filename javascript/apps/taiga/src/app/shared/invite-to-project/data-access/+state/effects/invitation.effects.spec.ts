@@ -12,19 +12,22 @@ import { Action } from '@ngrx/store';
 import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 import { Observable } from 'rxjs';
-import { randEmail, randSlug } from '@ngneat/falso';
+import { randEmail, randSlug, randUserName } from '@ngneat/falso';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
 import { InvitationEffects } from './invitation.effects';
 import {
+  acceptedInvitationSlug,
+  acceptInvitationSlug,
   fetchMyContacts,
   fetchMyContactsSuccess,
   inviteUsersSuccess,
 } from '../actions/invitation.action';
 import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
-import { Contact, Invitation } from '@taiga/data';
+import { Contact, Invitation, UserMockFactory } from '@taiga/data';
 import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 
 describe('InvitationEffects', () => {
   let actions$: Observable<Action>;
@@ -121,5 +124,41 @@ describe('InvitationEffects', () => {
     });
 
     expect(effects.sendInvitations$).toBeObservable(expected);
+  });
+
+  it('Accept invitation slug', () => {
+    const user = UserMockFactory();
+    const slug = randSlug();
+    const username = user.username;
+    const acceptInvitationSlugMockPayload = [
+      {
+        user: {
+          username: username,
+          fullName: randUserName(),
+        },
+        role: {
+          isAdmin: true,
+          name: randUserName(),
+          slug: slug,
+        },
+        email: randEmail({ length: 5 }),
+      },
+    ];
+    const effects = spectator.inject(InvitationEffects);
+    const projectApiService = spectator.inject(ProjectApiService);
+    store.overrideSelector(selectUser, user);
+    projectApiService.acceptInvitationSlug.mockReturnValue(
+      cold('-a|', { a: acceptInvitationSlugMockPayload })
+    );
+
+    actions$ = hot('-a', {
+      a: acceptInvitationSlug({ slug }),
+    });
+
+    const expected = cold('--a', {
+      a: acceptedInvitationSlug({ projectSlug: slug, username }),
+    });
+
+    expect(effects.acceptInvitationSlug$).toBeObservable(expected);
   });
 });

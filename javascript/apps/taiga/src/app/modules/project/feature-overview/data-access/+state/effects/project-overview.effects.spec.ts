@@ -17,19 +17,26 @@ import {
   InvitationMockFactory,
   MembershipMockFactory,
   ProjectMockFactory,
+  UserMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import {
   fetchMembersSuccess,
   initMembers,
+  onAcceptedInvitation,
 } from '../actions/project-overview.actions';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { acceptedInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { randDomainSuffix } from '@ngneat/falso';
+import { TestScheduler } from 'rxjs/testing';
 
 describe('ProjectOverviewEffects', () => {
   let actions$: Observable<Action>;
   let store: MockStore;
   let spectator: SpectatorService<ProjectOverviewEffects>;
+  let testScheduler: TestScheduler;
+
   const createService = createServiceFactory({
     service: ProjectOverviewEffects,
     providers: [
@@ -41,6 +48,9 @@ describe('ProjectOverviewEffects', () => {
   });
 
   beforeEach(() => {
+    testScheduler = new TestScheduler((actual) => {
+      expect(actual).toEqual(actual);
+    });
     spectator = createService();
     store = spectator.inject(MockStore);
   });
@@ -87,6 +97,24 @@ describe('ProjectOverviewEffects', () => {
       expect(projectApiService.getInvitations).toHaveBeenCalledWith(
         project.slug
       );
+    });
+  });
+
+  it('Accepted Invitation', () => {
+    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const user = UserMockFactory();
+    const username = user.username;
+    const effects = spectator.inject(ProjectOverviewEffects);
+
+    testScheduler.run((helpers) => {
+      const { hot, expectObservable } = helpers;
+      actions$ = hot('-a', {
+        a: acceptedInvitationSlug({ projectSlug: slug, username }),
+      });
+
+      expectObservable(effects.acceptedInvitation$).toBe('700ms c', {
+        c: onAcceptedInvitation({ onAcceptedInvitation: false }),
+      });
     });
   });
 });

@@ -31,8 +31,8 @@ UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 
 
-@routes.workspaces_projects.get(
-    "",
+@routes.workspaces.get(
+    "/{workspace_slug}/projects",
     name="workspace.projects.list",
     summary="List workspace projects",
     response_model=list[ProjectSummarySerializer],

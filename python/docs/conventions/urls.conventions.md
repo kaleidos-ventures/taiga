@@ -30,25 +30,14 @@ POST /workspaces
 POST /tasks
 POST /users
 
-## Router naming
+## Routes
 
-In a file we may find more than one router/prefix depending on the previous conventions; for example:
+In `routers/routes.py` we can find the first level of the urls; the rest of the url is defined in each api entry. For example:
 
-```
+```python
+# routes.py
+workspaces = AuthAPIRouter(prefix="/workspaces", tags=["workspaces"])
+
 # projects/api.py
-APIRouter(prefix="/projects"...)
-APIRouter(prefix="/workspaces/{workspace_slug}/projects"...)
-```
-
-In these cases, the naming should go as follows:
-
-- `router` is the name for the url with the main entity
-- `router_{url}` is the name for the url with the parent entity
-
-In the previous example, it should be:
-
-```
-# projects/api.py
-router = APIRouter(prefix="/projects"...)
-router_workspaces = APIRouter(prefix="/workspaces/{workspace_slug}/projects"...)
+@routes.workspaces.get("/{workspace_slug}/projects")
 ```

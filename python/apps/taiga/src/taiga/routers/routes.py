@@ -35,7 +35,6 @@ projects_metadata = {
 
 # /workspaces
 workspaces = AuthAPIRouter(prefix="/workspaces", tags=["workspaces"])
-workspaces_projects = AuthAPIRouter(prefix="/workspaces/{workspace_slug}/projects", tags=["workspaces"])
 workspaces_metadata = {
     "name": "workspaces",
     "description": "Endpoint for workspaces resources.",

@@ -11,14 +11,20 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
+import { UsersApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
-import { Auth, genericResponseError, InvitationInfo } from '@taiga/data';
+import { Auth, genericResponseError, InvitationInfo, User } from '@taiga/data';
 import { throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, mergeMap } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
 import { loginSuccess } from '../data-access/+state/actions/auth.actions';
+import { AuthService } from '../data-access/services/auth.service';
 
 type InvitationVerification = Pick<InvitationInfo, 'project'>;
+type VerificationData = {
+  auth: Auth;
+  projectInvitation: InvitationVerification;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +35,9 @@ export class VerifyEmailGuard implements CanActivate {
     private config: ConfigService,
     private appService: AppService,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private authService: AuthService,
+    private usersApiService: UsersApiService
   ) {}
   public canActivate(route: ActivatedRouteSnapshot) {
     const verifyParam = route.params.path as string;
@@ -41,29 +49,26 @@ export class VerifyEmailGuard implements CanActivate {
         token: verifyParam,
       })
       .pipe(
-        map(
-          (verification: {
-            auth: Auth;
-            projectInvitation: InvitationVerification;
-          }) => {
-            if (verification.projectInvitation?.project?.slug) {
-              this.store.dispatch(
-                loginSuccess({
-                  auth: verification.auth,
-                  next: `/project/${verification.projectInvitation.project.slug}`,
-                })
-              );
-              return true;
-            } else {
-              this.store.dispatch(
-                loginSuccess({
-                  auth: verification.auth,
-                })
-              );
-              return true;
-            }
-          }
-        ),
+        mergeMap((verification: VerificationData) => {
+          this.authService.setAuth(verification.auth);
+          return this.usersApiService.me().pipe(
+            map((user: User) => {
+              this.authService.setUser(user);
+              return { user, verification };
+            })
+          );
+        }),
+        map(({ user, verification }) => {
+          const slug = verification.projectInvitation?.project?.slug;
+          const data = {
+            user,
+            auth: verification.auth,
+            next: slug ? `/project/${slug}` : undefined,
+          };
+
+          this.store.dispatch(loginSuccess(data));
+          return true;
+        }),
         catchError((httpResponse: HttpErrorResponse) => {
           const responseError = httpResponse.error as genericResponseError;
           if (httpResponse.status === 404) {

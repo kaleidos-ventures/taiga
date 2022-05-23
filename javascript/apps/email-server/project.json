@@ -1,0 +1,8 @@
+{
+  "root": "apps/email-server",
+  "sourceRoot": "apps/email-server",
+  "projectType": "application",
+  "targets": {},
+  "tags": ["scope:taiga"],
+  "implicitDependencies": ["taiga"]
+}

@@ -23,8 +23,8 @@ from taiga.roles import exceptions as roles_ex
 from taiga.routers import routes
 
 # PERMISSIONS
-ACCEPT_MY_INVITATION = IsAuthenticated()
-ACCEPT_INVITATION = IsProjectInvitationRecipient()
+ACCEPT_INVITATION = IsAuthenticated()
+ACCEPT_TOKEN_INVITATION = IsProjectInvitationRecipient()
 CREATE_INVITATIONS = IsProjectAdmin()
 
 
@@ -80,11 +80,11 @@ async def list_project_invitations(
     response_model=InvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def accept_invitations(
+async def accept_token_invitation(
     request: Request, token: str = Query(None, description="the project invitation token (str)")
 ) -> Invitation:
     """
-    Accept a project invitation
+    A user accepts a project invitation using an invitation token
     """
     try:
         invitation = await invitations_services.get_project_invitation(token=token)
@@ -94,7 +94,7 @@ async def accept_invitations(
     if not invitation:
         raise ex.NotFoundError()
 
-    await check_permissions(permissions=ACCEPT_INVITATION, user=request.user, obj=invitation)
+    await check_permissions(permissions=ACCEPT_TOKEN_INVITATION, user=request.user, obj=invitation)
 
     try:
         return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
@@ -107,22 +107,25 @@ async def accept_invitations(
     name="project.my.invitations.accept",
     summary="Accept my project invitation",
     response_model=InvitationSerializer,
-    responses=ERROR_404 | ERROR_403,
+    responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def accept_my_invitations(
+async def accept_invitation(
     request: Request, slug: str = Query(None, description="the project slug (str)")
 ) -> Invitation:
     """
-    Accept my project invitation (if the user has any one pending)
+    An authenticated user accepts a project invitation
     """
-    await check_permissions(permissions=ACCEPT_MY_INVITATION, user=request.user, obj=None)
+    await check_permissions(permissions=ACCEPT_INVITATION, user=request.user, obj=None)
 
     invitation = await invitations_services.get_project_invitation_by_user(project_slug=slug, user=request.user)
 
     if not invitation:
         raise ex.NotFoundError()
 
-    return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
+    try:
+        return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
+    except services_ex.InvitationAlreadyAcceptedError:
+        raise ex.BadRequest("The invitation has already been accepted")
 
 
 @routes.projects.post(

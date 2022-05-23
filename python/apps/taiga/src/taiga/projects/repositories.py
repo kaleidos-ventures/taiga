@@ -8,6 +8,7 @@
 from asgiref.sync import sync_to_async
 from django.core.files import File
 from django.db.models import Q
+from taiga.invitations.choices import InvitationStatus
 from taiga.projects.models import Project, ProjectTemplate
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
@@ -33,6 +34,15 @@ def get_workspace_projects_for_user(workspace_id: int, user_id: int) -> list[Pro
         .filter(pj_in_workspace & (ws_allowed | pj_allowed))
         .order_by("-created_date")
         .distinct()
+    )
+
+
+@sync_to_async
+def get_workspace_invited_projects_for_user(workspace_id: int, user_id: int) -> list[Project]:
+    return list(
+        Project.objects.filter(
+            workspace_id=workspace_id, invitations__user_id=user_id, invitations__status=InvitationStatus.PENDING
+        )
     )
 
 

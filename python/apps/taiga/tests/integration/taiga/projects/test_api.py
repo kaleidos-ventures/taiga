@@ -104,6 +104,33 @@ async def test_list_workspace_projects_workspace_not_found(client):
 
 
 ##########################################################
+# GET /workspaces/<slug>/invited-projects
+##########################################################
+
+
+async def test_list_workspace_invited_projects_success(client):
+    user1 = await f.create_user()
+    workspace = await f.create_workspace(owner=user1)
+    project = await f.create_project(workspace=workspace, owner=user1)
+    user2 = await f.create_user()
+    await f.create_workspace_membership(user=user2, workspace=workspace)
+    await f.create_invitation(email=user2.email, user=user2, project=project, invited_by=user1)
+
+    client.login(user2)
+    response = client.get(f"/workspaces/{workspace.slug}/invited-projects")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert len(response.json()) == 1
+
+
+async def test_list_workspace_invited_projects_workspace_not_found(client):
+    user = await f.create_user()
+
+    client.login(user)
+    response = client.get("/workspaces/non-existent/invited-projects")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+##########################################################
 # GET /projects/<slug>
 ##########################################################
 

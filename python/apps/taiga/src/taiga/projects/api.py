@@ -23,6 +23,7 @@ from taiga.workspaces.api import get_workspace_or_404
 
 # PERMISSIONS
 LIST_WORKSPACE_PROJECTS = HasPerm("view_workspace")
+LIST_WORKSPACE_INVITED_PROJECTS = HasPerm("view_workspace")
 CREATE_PROJECT = HasPerm("view_workspace")
 GET_PROJECT = Or(CanViewProject(), HasPendingProjectInvitation())
 GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
@@ -36,7 +37,7 @@ UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
     name="workspace.projects.list",
     summary="List workspace projects",
     response_model=list[ProjectSummarySerializer],
-    responses=ERROR_422 | ERROR_403,
+    responses=ERROR_403 | ERROR_404,
 )
 async def list_workspace_projects(
     request: Request, workspace_slug: str = Query("", description="the workspace slug (str)")
@@ -49,6 +50,26 @@ async def list_workspace_projects(
     await check_permissions(permissions=LIST_WORKSPACE_PROJECTS, user=request.user, obj=workspace)
 
     return await projects_services.get_workspace_projects_for_user(workspace=workspace, user=request.user)
+
+
+@routes.workspaces.get(
+    "/{workspace_slug}/invited-projects",
+    name="workspace.invited-projects.list",
+    summary="List of projects in a workspace where the user is invited",
+    response_model=list[ProjectSummarySerializer],
+    responses=ERROR_403 | ERROR_404,
+)
+async def list_workspace_invited_projects(
+    request: Request, workspace_slug: str = Query(None, description="the workspace slug (str)")
+) -> list[Project]:
+    """
+    Get all the invitations to projects that  a user has in a workspace
+    """
+    workspace = await get_workspace_or_404(slug=workspace_slug)
+
+    await check_permissions(permissions=LIST_WORKSPACE_INVITED_PROJECTS, user=request.user, obj=workspace)
+
+    return await projects_services.get_workspace_invited_projects_for_user(workspace=workspace, user=request.user)
 
 
 @routes.projects.post(

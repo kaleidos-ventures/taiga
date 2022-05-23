@@ -32,6 +32,12 @@ async def get_workspace_projects_for_user(workspace: Workspace, user: User) -> l
     return await projects_repositories.get_workspace_projects_for_user(workspace_id=workspace.id, user_id=user.id)
 
 
+async def get_workspace_invited_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
+    return await projects_repositories.get_workspace_invited_projects_for_user(
+        workspace_id=workspace.id, user_id=user.id
+    )
+
+
 async def create_project(
     workspace: Workspace,
     name: str,

@@ -57,6 +57,9 @@ async def load_sample_data() -> None:
     for workspace in workspaces:
         await _create_workspace_memberships(workspace=workspace, users=users, except_for=workspace.owner)
 
+    # CUSTOM WORKSPACES
+    await _create_workspace_with_invitations()
+
     # PROJECTS
     projects = []
     for workspace in workspaces:
@@ -249,6 +252,36 @@ async def _create_workspace(
         await _create_workspace_role(workspace=workspace)
         await sync_to_async(workspace.save)()
     return workspace
+
+
+async def _create_workspace_with_invitations() -> None:
+    # user900 is admin of a workspace
+    user900 = await _create_user(900)
+    workspace = await workspaces_services.create_workspace(
+        name="Workspace to test invitations(p)", owner=user900, color=2
+    )
+    workspace.is_premium = True
+    # create non-admin role
+    members_role = await _create_workspace_role(workspace=workspace)
+    await sync_to_async(workspace.save)()
+
+    # user901 is member of a workspace
+    user901 = await _create_user(901)
+    await roles_repositories.create_workspace_membership(user=user901, workspace=workspace, workspace_role=members_role)
+
+    # user900 creates a project in the workspace
+    pj1 = await _create_project(workspace=workspace, owner=user900)
+
+    # user900 invites user901 to the project
+    invitation = Invitation(
+        user=user901,
+        project=pj1,
+        role=random.choice(await _get_project_roles(project=pj1)),
+        email=user901.email,
+        status=InvitationStatus.PENDING,
+        invited_by=user900,
+    )
+    await invitations_repositories.create_invitations(objs=[invitation])
 
 
 ################################

@@ -20,8 +20,35 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
+# utils
+##########################################################
+
+
+@sync_to_async
+def _get_ws_member_role(workspace: Workspace) -> WorkspaceRole:
+    return workspace.workspace_roles.exclude(is_admin=True).first()
+
+
+@sync_to_async
+def _get_pj_member_role(project: Project) -> Role:
+    return project.roles.get(slug="general")
+
+
+@sync_to_async
+def _save_project(project: Project) -> Project:
+    return project.save()
+
+
+@sync_to_async
+def _save_role(role: Role) -> Role:
+    return role.save()
+
+
+##########################################################
 # get_project
 ##########################################################
+
+
 async def test_get_projects():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
@@ -131,26 +158,6 @@ async def test_update_project_workspace_member_permissions():
 ##########################################################
 
 
-@sync_to_async
-def _get_ws_member_role(workspace: Workspace) -> WorkspaceRole:
-    return workspace.workspace_roles.exclude(is_admin=True).first()
-
-
-@sync_to_async
-def _get_pj_member_role(project: Project) -> Role:
-    return project.roles.get(slug="general")
-
-
-@sync_to_async
-def _save_project(project: Project) -> Project:
-    return project.save()
-
-
-@sync_to_async
-def _save_role(role: Role) -> Role:
-    return role.save()
-
-
 async def test_get_workspace_projects_for_user_1():
     user6 = await f.create_user()
     user7 = await f.create_user()
@@ -222,3 +229,30 @@ async def test_get_workspace_projects_for_user_3():
     assert len(res) == 0
     res = await repositories.get_workspace_projects_for_user(workspace.id, user7.id)
     assert len(res) == 0
+
+
+##########################################################
+# get_workspace_invited_projects_for_user
+##########################################################
+
+
+async def test_get_workspace_invited_projects_for_user():
+    user8 = await f.create_user()
+    user9 = await f.create_user()
+
+    # workspace premium, user8(ws-admin), user9(ws-member)
+    workspace = await f.create_workspace(owner=user8, is_premium=True)
+    ws_member_role = await _get_ws_member_role(workspace=workspace)
+    await f.create_workspace_membership(user=user9, workspace=workspace, workspace_role=ws_member_role)
+    # user8 is a pj-owner of several projects
+    pj1 = await f.create_project(workspace=workspace, owner=user8)
+    await f.create_project(workspace=workspace, owner=user8)
+    pj3 = await f.create_project(workspace=workspace, owner=user8)
+    # user8 invites user9 to several projects
+    await f.create_invitation(email=user9.email, user=user9, project=pj1, invited_by=user8)
+    await f.create_invitation(email=user9.email, user=user9, project=pj3, invited_by=user8)
+
+    res = await repositories.get_workspace_invited_projects_for_user(workspace.id, user9.id)
+    assert len(res) == 2
+    assert res[0].name == pj1.name
+    assert res[1].name == pj3.name

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c38a08be-a3fc-49ad-b8ac-c34d590c2261",
+		"_postman_id": "4addb853-5823-4798-8e9e-2b1622889ba8",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -517,6 +517,48 @@
 								"workspaces",
 								"{{ws-slug}}",
 								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "workspace's invitations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-slug}}/invited-projects",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"workspaces",
+								"{{ws-slug}}",
+								"invited-projects"
 							]
 						}
 					},

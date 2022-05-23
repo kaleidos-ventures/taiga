@@ -7,7 +7,7 @@
 
 
 from unidecode import unidecode
-import secrets
+import random
 import string
 import time
 
@@ -22,7 +22,7 @@ def slugify(value):
 
 def _generate_suffix():
     alphabet = string.ascii_letters + string.digits
-    return ''.join(secrets.choice(alphabet) for i in range(6))
+    return ''.join(random.choice(alphabet) for i in range(6))
 
 def slugify_uniquely(value, model, slugfield="slug"):
     """

@@ -47,6 +47,22 @@ async def test_get_workspace_projects_for_user_member():
 
 
 ##########################################################
+# get_workspace_invited_projects_for_user
+##########################################################
+
+
+async def test_get_workspace_invited_projects_for_user():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+
+    with patch("taiga.projects.services.projects_repositories", autospec=True) as fake_projects_repo:
+        await services.get_workspace_invited_projects_for_user(workspace=workspace, user=user)
+        fake_projects_repo.get_workspace_invited_projects_for_user.assert_awaited_once_with(
+            workspace_id=workspace.id, user_id=user.id
+        )
+
+
+##########################################################
 # create_project
 ##########################################################
 

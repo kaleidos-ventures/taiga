@@ -8,6 +8,8 @@
 import inspect
 
 from fastapi import Form
+from fastapi.exceptions import RequestValidationError
+from pydantic import ValidationError
 from taiga.base.serializer import BaseModel
 
 
@@ -26,7 +28,10 @@ def as_form(cls: type[BaseModel]) -> type[BaseModel]:
     ]
 
     async def _as_form(**data):  # type: ignore[no-untyped-def]
-        return cls(**data)
+        try:
+            return cls(**data)
+        except ValidationError as e:
+            raise RequestValidationError(e.raw_errors)
 
     sig = inspect.signature(_as_form)
     sig = sig.replace(parameters=new_params)

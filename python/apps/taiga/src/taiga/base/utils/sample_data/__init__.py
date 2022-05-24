@@ -255,28 +255,63 @@ async def _create_workspace(
 
 
 async def _create_workspace_with_invitations() -> None:
-    # user900 is admin of a workspace
     user900 = await _create_user(900)
-    workspace = await workspaces_services.create_workspace(
-        name="Workspace to test invitations(p)", owner=user900, color=2
-    )
-    workspace.is_premium = True
-    # create non-admin role
-    members_role = await _create_workspace_role(workspace=workspace)
-    await sync_to_async(workspace.save)()
-
-    # user901 is member of a workspace
     user901 = await _create_user(901)
-    await roles_repositories.create_workspace_membership(user=user901, workspace=workspace, workspace_role=members_role)
 
-    # user900 creates a project in the workspace
-    pj1 = await _create_project(workspace=workspace, owner=user900)
+    # user900 is admin of several workspaces
+    ws1 = await workspaces_services.create_workspace(name="ws invitations for members(p)", owner=user900, color=2)
+    ws1.is_premium = True
+    await sync_to_async(ws1.save)()
+    # create non-admin role
+    members_role = await _create_workspace_role(workspace=ws1)
 
-    # user900 invites user901 to the project
+    ws2 = await workspaces_services.create_workspace(name="ws invitations for guests(p)", owner=user900, color=2)
+    ws2.is_premium = True
+    await sync_to_async(ws2.save)()
+
+    ws3 = await workspaces_services.create_workspace(name="ws invitations for invited(p)", owner=user900, color=2)
+    ws3.is_premium = True
+    await sync_to_async(ws3.save)()
+
+    # user901 is member of ws1
+    await roles_repositories.create_workspace_membership(user=user901, workspace=ws1, workspace_role=members_role)
+
+    # user900 creates a project in ws1
+    pj1 = await _create_project(workspace=ws1, owner=user900)
+    # and invites user901 to the project
     invitation = Invitation(
         user=user901,
         project=pj1,
         role=random.choice(await _get_project_roles(project=pj1)),
+        email=user901.email,
+        status=InvitationStatus.PENDING,
+        invited_by=user900,
+    )
+    await invitations_repositories.create_invitations(objs=[invitation])
+
+    # user901 is guest of ws2
+    pj2 = await _create_project(workspace=ws2, owner=user900)
+    await roles_repositories.create_membership(
+        user=user901, project=pj2, role=random.choice(await _get_project_roles(project=pj2))
+    )
+    # and has an invitation
+    pj3 = await _create_project(workspace=ws2, owner=user900)
+    invitation = Invitation(
+        user=user901,
+        project=pj3,
+        role=random.choice(await _get_project_roles(project=pj3)),
+        email=user901.email,
+        status=InvitationStatus.PENDING,
+        invited_by=user900,
+    )
+    await invitations_repositories.create_invitations(objs=[invitation])
+
+    # user901 is invited of ws3 (not member)
+    pj4 = await _create_project(workspace=ws3, owner=user900)
+    invitation = Invitation(
+        user=user901,
+        project=pj4,
+        role=random.choice(await _get_project_roles(project=pj4)),
         email=user901.email,
         status=InvitationStatus.PENDING,
         invited_by=user900,

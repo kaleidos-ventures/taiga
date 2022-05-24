@@ -18,13 +18,18 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
-# get_user_workspaces_with_latest_projects
+# get_user_workspaces_overview
 ##########################################################
 
 
 @sync_to_async
 def _get_ws_member_role(workspace: Workspace) -> WorkspaceRole:
     return workspace.workspace_roles.exclude(is_admin=True).first()
+
+
+@sync_to_async
+def _get_ws_admin_role(workspace: Workspace) -> WorkspaceRole:
+    return workspace.workspace_roles.filter(is_admin=True).first()
 
 
 @sync_to_async
@@ -42,7 +47,7 @@ def _save_role(role: Role) -> Role:
     return role.save()
 
 
-async def test_get_user_workspaces_with_latest_projects():
+async def test_get_user_workspaces_overview_latest_projects():
     user6 = await f.create_user()
     user7 = await f.create_user()
 
@@ -119,7 +124,7 @@ async def test_get_user_workspaces_with_latest_projects():
     # user6 and user7 are NOT pj-member
     await f.create_project(workspace=workspace7)
 
-    res = await repositories.get_user_workspaces_with_latest_projects(user6)
+    res = await repositories.get_user_workspaces_overview(user6)
 
     assert len(res) == 5  # workspaces
 
@@ -139,7 +144,7 @@ async def test_get_user_workspaces_with_latest_projects():
         elif ws.name == workspace6.name:
             assert ws.total_projects == 1
 
-    res = await repositories.get_user_workspaces_with_latest_projects(user7)
+    res = await repositories.get_user_workspaces_overview(user7)
 
     assert len(res) == 5  # workspaces
 
@@ -159,6 +164,54 @@ async def test_get_user_workspaces_with_latest_projects():
             assert ws.total_projects == 0
         elif ws.name == workspace5.name:
             assert ws.total_projects == 3
+
+
+async def test_get_user_workspaces_overview_invited_projects():
+    user8 = await f.create_user()
+    user9 = await f.create_user()
+
+    # user8 is admin of several workspaces
+    ws1 = await f.create_workspace(name="ws1 for admin", owner=user8, is_premium=True)
+    ws1_admin_role = await _get_ws_admin_role(workspace=ws1)
+    ws2 = await f.create_workspace(name="ws2 for member", owner=user8, is_premium=True)
+    ws2_member_role = await _get_ws_member_role(workspace=ws2)
+    ws3 = await f.create_workspace(name="ws2 for guest", owner=user8, is_premium=True)
+    ws4 = await f.create_workspace(name="ws2 for invited", owner=user8, is_premium=True)
+
+    # user9 is admin of ws1 as well
+    await f.create_workspace_membership(user=user9, workspace=ws1, workspace_role=ws1_admin_role)
+    # user9 is member of ws2 as well
+    await f.create_workspace_membership(user=user9, workspace=ws2, workspace_role=ws2_member_role)
+    # user9 is guest of ws3
+    pj = await f.create_project(name="pj1", workspace=ws3, owner=user8)
+    pj_general_role = await _get_pj_member_role(project=pj)
+    await f.create_membership(user=user9, project=pj, role=pj_general_role)
+
+    # user8 invites user9 to a project in ws1
+    pj = await f.create_project(name="pj2", workspace=ws1, owner=user8)
+    pj_general_role = await _get_pj_member_role(project=pj)
+    await f.create_invitation(email=user9.email, user=user9, project=pj, role=pj_general_role, invited_by=user8)
+
+    # user8 invites user9 to a project in ws2
+    pj = await f.create_project(name="pj3", workspace=ws2, owner=user8)
+    pj_general_role = await _get_pj_member_role(project=pj)
+    await f.create_invitation(email=user9.email, user=user9, project=pj, role=pj_general_role, invited_by=user8)
+
+    # user8 invites user9 to a project in ws3
+    pj = await f.create_project(name="pj4", workspace=ws3, owner=user8)
+    pj_general_role = await _get_pj_member_role(project=pj)
+    await f.create_invitation(email=user9.email, user=user9, project=pj, role=pj_general_role, invited_by=user8)
+
+    # user8 invites user9 to a project in ws4
+    pj = await f.create_project(name="pj5", workspace=ws4, owner=user8)
+    pj_general_role = await _get_pj_member_role(project=pj)
+    await f.create_invitation(email=user9.email, user=user9, project=pj, role=pj_general_role, invited_by=user8)
+
+    res = await repositories.get_user_workspaces_overview(user9)
+
+    assert len(res) == 4  # workspaces
+    for ws in res:
+        assert len(ws.invited_projects) == 1
 
 
 ##########################################################

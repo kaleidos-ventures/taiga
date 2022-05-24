@@ -9,6 +9,7 @@ from itertools import chain
 
 from asgiref.sync import sync_to_async
 from django.db.models import BooleanField, Case, CharField, Exists, IntegerField, OuterRef, Prefetch, Q, Value, When
+from taiga.invitations.choices import InvitationStatus
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories
 from taiga.users.models import User
@@ -16,7 +17,7 @@ from taiga.workspaces.models import Workspace
 
 
 @sync_to_async
-def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
+def get_user_workspaces_overview(user: User) -> list[Workspace]:
     # workspaces where the user is ws-admin with all its projects
     admin_ws_ids = list(
         Workspace.objects.filter(
@@ -37,9 +38,15 @@ def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
         projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         is_owner = Workspace.objects.get(id=ws_id).owner.id == user.id
+        invited_projects_qs = Project.objects.filter(
+            workspace_id=ws_id, invitations__user_id=user.id, invitations__status=InvitationStatus.PENDING
+        )
         qs = (
             Workspace.objects.filter(id=ws_id)
-            .prefetch_related(Prefetch("projects", queryset=projects_qs, to_attr="latest_projects"))
+            .prefetch_related(
+                Prefetch("projects", queryset=projects_qs, to_attr="latest_projects"),
+                Prefetch("projects", queryset=invited_projects_qs, to_attr="invited_projects"),
+            )
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
             .annotate(my_role=Value("admin", output_field=CharField()))
@@ -69,9 +76,15 @@ def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
         total_projects = len(projects_ids)
         projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
+        invited_projects_qs = Project.objects.filter(
+            workspace_id=ws_id, invitations__user_id=user.id, invitations__status=InvitationStatus.PENDING
+        )
         qs = (
             Workspace.objects.filter(id=ws_id)
-            .prefetch_related(Prefetch("projects", queryset=projects_qs, to_attr="latest_projects"))
+            .prefetch_related(
+                Prefetch("projects", queryset=projects_qs, to_attr="latest_projects"),
+                Prefetch("projects", queryset=invited_projects_qs, to_attr="invited_projects"),
+            )
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
             .annotate(my_role=Value("member", output_field=CharField()))
@@ -80,10 +93,11 @@ def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
         member_ws = chain(member_ws, qs)
 
     # workspaces where the user is ws-guest with all its visible projects
+    # or is not even a guest and only have invited projects
+    user_pj_member = Q(memberships__user__id=user.id)
+    user_invited_pj = Q(invitations__user_id=user.id, invitations__status=InvitationStatus.PENDING)
     guest_ws_ids = list(
-        Project.objects.filter(
-            memberships__user__id=user.id,  # user_pj_member
-        )
+        Project.objects.filter(user_pj_member | user_invited_pj)
         .exclude(workspace__workspace_memberships__user__id=user.id)  # user_not_ws_member
         .order_by("workspace_id")
         .distinct("workspace_id")
@@ -103,9 +117,15 @@ def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
         total_projects = len(projects_ids)
         projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
+        invited_projects_qs = Project.objects.filter(
+            workspace_id=ws_id, invitations__user_id=user.id, invitations__status=InvitationStatus.PENDING
+        )
         qs = (
             Workspace.objects.filter(id=ws_id)
-            .prefetch_related(Prefetch("projects", queryset=projects_qs, to_attr="latest_projects"))
+            .prefetch_related(
+                Prefetch("projects", queryset=projects_qs, to_attr="latest_projects"),
+                Prefetch("projects", queryset=invited_projects_qs, to_attr="invited_projects"),
+            )
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
             .annotate(my_role=Value("guest", output_field=CharField()))
@@ -183,7 +203,7 @@ def get_workspace_summary(id: int, user_id: int) -> Workspace | None:
 #
 # from django.db.models import Count, OuterRef, Subquery
 #
-# def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
+# def get_user_workspaces_overview(user: User) -> list[Workspace]:
 #     # return the user"s workspaces including those projects viewable by the user:
 #     #   (1) all the workspaces the user is a member of (all workspace roles will have at least "view" permission),
 #     #         (1a) listing all the projects if the user is a ws_admin (no mattering if the user is a pj-member), or

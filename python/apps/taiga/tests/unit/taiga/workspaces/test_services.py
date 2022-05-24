@@ -23,8 +23,8 @@ async def test_get_my_workspaces_projects():
     user = await f.create_user()
 
     with patch("taiga.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo:
-        await services.get_user_workspaces_with_latest_projects(user=user)
-        fake_workspaces_repo.get_user_workspaces_with_latest_projects.assert_awaited_once_with(user=user)
+        await services.get_user_workspaces_overview(user=user)
+        fake_workspaces_repo.get_user_workspaces_overview.assert_awaited_once_with(user=user)
 
 
 ##########################################################

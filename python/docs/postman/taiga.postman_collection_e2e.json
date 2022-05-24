@@ -1214,14 +1214,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/workspace-to-test-invitationsp-7dtl2H/invited-projects",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/ws-invitations-for-membersp-tl2HUe/invited-projects",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"workspaces",
-								"workspace-to-test-invitationsp-7dtl2H",
+								"ws-invitations-for-membersp-tl2HUe",
 								"invited-projects"
 							]
 						}
@@ -3001,7 +3001,7 @@
 			"name": "my",
 			"item": [
 				{
-					"name": "N/A auth as user1000",
+					"name": "N/A auth as user901",
 					"event": [
 						{
 							"listen": "test",
@@ -3033,7 +3033,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1000\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"user901\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -3082,9 +3082,18 @@
 									"            pm.expect(ws.latestProjects[0]).to.have.property(\"description\");",
 									"            pm.expect(ws.latestProjects[0]).to.have.property(\"color\");",
 									"",
+									"            // expect invitedProjects to contain the right fields",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"logo\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"logoSmall\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"logoLarge\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"name\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"slug\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"description\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"color\");",
+									"",
 									"            // Validate we're not returning more fields than expected",
 									"            var numOfReturnedFields = Object.keys(ws).length;",
-									"            pm.expect(numOfReturnedFields).to.equal(9);",
+									"            pm.expect(numOfReturnedFields).to.equal(10);",
 									"            numOfReturnedFields = Object.keys(ws.latestProjects[0]).length;",
 									"            pm.expect(numOfReturnedFields).to.equal(7);",
 									"        }",
@@ -3099,6 +3108,7 @@
 									"            pm.expect(ws).to.have.property(\"slug\");",
 									"            pm.expect(ws).to.have.property(\"color\");",
 									"            pm.expect(ws).to.have.property(\"latestProjects\");",
+									"            pm.expect(ws).to.have.property(\"invitedProjects\");",
 									"            pm.expect(ws).to.have.property(\"totalProjects\");",
 									"            pm.expect(ws).to.have.property(\"hasProjects\");",
 									"            pm.expect(ws).to.have.property(\"myRole\");",

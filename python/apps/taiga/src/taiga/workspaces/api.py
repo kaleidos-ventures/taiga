@@ -31,7 +31,7 @@ async def list_my_workspaces(request: Request) -> list[Workspace]:
     """
     List the workspaces of the logged user.
     """
-    return await workspaces_services.get_user_workspaces_with_latest_projects(user=request.user)
+    return await workspaces_services.get_user_workspaces_overview(user=request.user)
 
 
 @routes.workspaces.post(

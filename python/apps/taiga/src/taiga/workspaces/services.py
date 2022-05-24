@@ -12,8 +12,8 @@ from taiga.workspaces import repositories as workspaces_repositories
 from taiga.workspaces.models import Workspace
 
 
-async def get_user_workspaces_with_latest_projects(user: User) -> list[Workspace]:
-    return await workspaces_repositories.get_user_workspaces_with_latest_projects(user=user)
+async def get_user_workspaces_overview(user: User) -> list[Workspace]:
+    return await workspaces_repositories.get_user_workspaces_overview(user=user)
 
 
 async def get_workspace(slug: str) -> Workspace | None:

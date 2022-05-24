@@ -13,6 +13,7 @@ class WorkspaceDetailSerializer(BaseModel):
     slug: str
     color: int
     latest_projects: list[ProjectSummarySerializer]
+    invited_projects: list[ProjectSummarySerializer]
     total_projects: int
     has_projects: bool
     my_role: str

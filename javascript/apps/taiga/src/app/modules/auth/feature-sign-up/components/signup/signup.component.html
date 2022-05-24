@@ -95,6 +95,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       "></p>
 
     <button
+      loading
+      [loadingMsg]="t('signup.in_progress')"
+      [loadingSuccess]="t('signup.success')"
       class="create-account"
       data-test="signup-submit-button"
       appearance="primary"
@@ -102,7 +105,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       type="submit">
       {{ t('signup.create_account') }}
     </button>
-
     <button
       class="auth-options"
       (click)="viewAllOptions()"

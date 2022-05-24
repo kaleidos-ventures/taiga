@@ -15,6 +15,8 @@
     "sent_email_label": "Didn't received the email?",
     "sent_email_message": "Check your spam and if not, try resending the email in a few minutes.",
     "join": "Create an account to join the project <strong>{{ project }}</strong>",
+    "in_progress": "Creating account",
+    "success": "Account created",
     "errors": {
       "email_required": "Enter your email address",
       "full_name_required": "Enter a full name",

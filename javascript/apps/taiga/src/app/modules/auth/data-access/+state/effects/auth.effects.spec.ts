@@ -109,6 +109,7 @@ describe('AuthEffects', () => {
     const authApiService = spectator.inject(AuthApiService);
     const usersApiService = spectator.inject(UsersApiService);
     const effects = spectator.inject(AuthEffects);
+    const buttonLoadingService = spectator.inject(ButtonLoadingService);
 
     authApiService.login.mockReturnValue(cold('-b|', { b: auth }));
     usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
@@ -126,6 +127,9 @@ describe('AuthEffects', () => {
     });
 
     expect(effects.login$).toBeObservable(expected);
+    expect(effects.login$).toSatisfyOnFlush(() => {
+      expect(buttonLoadingService.start).toHaveBeenCalled();
+    });
   });
 
   it('login redirect - next', () => {
@@ -205,6 +209,7 @@ describe('AuthEffects', () => {
     const response = AuthMockFactory();
     const authApiService = spectator.inject(AuthApiService);
     const effects = spectator.inject(AuthEffects);
+    const buttonLoadingService = spectator.inject(ButtonLoadingService);
 
     authApiService.signUp.mockReturnValue(cold('-b|', { b: response }));
 
@@ -215,6 +220,9 @@ describe('AuthEffects', () => {
     });
 
     expect(effects.signUp$).toBeObservable(expected);
+    expect(effects.signUp$).toSatisfyOnFlush(() => {
+      expect(buttonLoadingService.start).toHaveBeenCalled();
+    });
   });
 
   it('signup - error', () => {
@@ -227,8 +235,9 @@ describe('AuthEffects', () => {
       acceptProjectInvitation: true,
     };
 
-    const authApiService = spectator.inject(AuthApiService);
     const effects = spectator.inject(AuthEffects);
+    const authApiService = spectator.inject(AuthApiService);
+    const buttonLoadingService = spectator.inject(ButtonLoadingService);
 
     const httpError = new HttpErrorResponse({
       status: 400,
@@ -250,6 +259,9 @@ describe('AuthEffects', () => {
     });
 
     expect(effects.signUp$).toBeObservable(expected);
+    expect(effects.signUp$).toSatisfyOnFlush(() => {
+      expect(buttonLoadingService.error).toHaveBeenCalled();
+    });
   });
 
   it('request resend password', () => {

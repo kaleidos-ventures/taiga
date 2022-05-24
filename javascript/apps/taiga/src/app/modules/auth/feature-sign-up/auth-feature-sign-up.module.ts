@@ -21,6 +21,7 @@ import { ExternalLinkModule } from '~/app/shared/directives/external-link/extern
 import { AuthFeatureVerifyEmailComponent } from './components/verify-email/verify-email.component';
 import { GetUrlPipeModule } from '~/app/shared/pipes/get-url.pipe.module';
 import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
+import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 
 const routes: Routes = [
   {
@@ -55,6 +56,7 @@ const routes: Routes = [
     ExternalLinkModule,
     GetUrlPipeModule,
     InternalLinkModule,
+    ButtonLoadingModule,
   ],
   providers: [
     {

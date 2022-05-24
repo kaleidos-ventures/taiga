@@ -166,6 +166,7 @@ export class AuthEffects {
           acceptProjectInvitation,
           projectInvitationToken,
         }) => {
+          this.buttonLoadingService.start();
           return this.authApiService
             .signUp({
               email,
@@ -176,6 +177,7 @@ export class AuthEffects {
               projectInvitationToken,
             })
             .pipe(
+              switchMap(this.buttonLoadingService.waitLoading()),
               map(() => {
                 if (!resend) {
                   return AuthActions.signUpSuccess({ email });
@@ -186,6 +188,8 @@ export class AuthEffects {
             );
         },
         onError: (action, httpResponse: HttpErrorResponse) => {
+          this.buttonLoadingService.error();
+
           const status = httpResponse.status as keyof ErrorManagementOptions;
           const signUpError = httpResponse.error as SignUpError;
           if (

@@ -15,6 +15,8 @@ const { sendTestEmail } = require('./send-email');
 
 const SMTP_PORT = 2525;
 
+const emailUrls = [];
+
 module.exports.initMailServer = () => {
   const server = new SMTPServer({
     secure: false,
@@ -35,6 +37,8 @@ module.exports.initMailServer = () => {
           const previewUrl = nodemailer.getTestMessageUrl(info);
           console.log('Preview URL: %s', previewUrl);
 
+          emailUrls.push(previewUrl);
+
           send(JSON.stringify({ previewUrl }));
         }
       });
@@ -44,4 +48,8 @@ module.exports.initMailServer = () => {
   });
 
   server.listen(SMTP_PORT, () => {});
+};
+
+module.exports.getPreviews = () => {
+  return emailUrls;
 };

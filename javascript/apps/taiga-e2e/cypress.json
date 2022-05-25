@@ -9,5 +9,6 @@
   "videosFolder": "../../dist/cypress/apps/taiga-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/taiga-e2e/screenshots",
   "chromeWebSecurity": false,
-  "experimentalSessionSupport": true
+  "experimentalSessionSupport": true,
+  "experimentalSessionAndOrigin": true
 }

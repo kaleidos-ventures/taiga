@@ -38,3 +38,11 @@ export function request<T>(
   });
 }
 /* eslint-enable */
+
+export function getEmailsPreviews(): Cypress.Chainable<
+  Cypress.Response<{
+    emails: string[];
+  }>
+> {
+  return cy.request('http://localhost:3000/emails-previews');
+}

@@ -8,6 +8,7 @@
 
 const { initWsServer } = require('./ws');
 const { initMailServer } = require('./server');
+require('./api-server');
 
 /*
 .env example

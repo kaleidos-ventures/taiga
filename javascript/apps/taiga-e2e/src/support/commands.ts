@@ -115,5 +115,10 @@ declare namespace Cypress {
     login: typeof login;
     getBySel: typeof getBySel;
     getBySelLike: typeof getBySelLike;
+    // only available on email preview domain
+    getBySelEmail: (
+      selector: string,
+      options?: CyGetOptions[1]
+    ) => Chainable<JQuery<HTMLElement>>;
   }
 }

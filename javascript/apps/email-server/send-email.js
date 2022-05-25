@@ -7,6 +7,7 @@
  */
 
 const nodemailer = require('nodemailer');
+const emails = [];
 
 module.exports.sendTestEmail = (from, to, subject, text, html) => {
   return new Promise((resolve) => {
@@ -39,7 +40,13 @@ module.exports.sendTestEmail = (from, to, subject, text, html) => {
         html,
       };
 
+      emails.push(message);
+
       resolve(transporter.sendMail(message));
     });
   });
+};
+
+module.exports.getEmails = () => {
+  return emails;
 };

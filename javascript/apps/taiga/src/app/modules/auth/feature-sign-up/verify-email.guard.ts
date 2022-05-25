@@ -13,7 +13,7 @@ import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { UsersApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
-import { Auth, genericResponseError, InvitationInfo, User } from '@taiga/data';
+import { Auth, InvitationInfo, User } from '@taiga/data';
 import { throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
@@ -70,7 +70,6 @@ export class VerifyEmailGuard implements CanActivate {
           return true;
         }),
         catchError((httpResponse: HttpErrorResponse) => {
-          const responseError = httpResponse.error as genericResponseError;
           if (httpResponse.status === 404) {
             this.appService.errorManagement(httpResponse, {
               404: {
@@ -85,17 +84,6 @@ export class VerifyEmailGuard implements CanActivate {
             });
             void this.router.navigate(['/signup']);
           } else if (httpResponse.status === 400) {
-            this.appService.errorManagement(httpResponse, {
-              400: {
-                type: 'toast',
-                options: {
-                  label: `verify.errors.${responseError.error.detail}_label`,
-                  message: 'verify.errors.used_token_message',
-                  status: TuiNotification.Error,
-                  scope: 'auth',
-                },
-              },
-            });
             void this.router.navigate(['/login']);
           }
           return throwError(httpResponse);

@@ -7,7 +7,7 @@
 
 from pydantic import EmailStr
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
 from taiga.invitations.serializers.related import InvitationSummaryVerifyUserSerializer
 
 
@@ -30,13 +30,6 @@ class UserMeSerializer(UserBaseSerializer):
     email: EmailStr
     lang: str
     theme: str
-
-    class Config:
-        orm_mode = True
-
-
-class UserContactSerializer(UserBaseSerializer):
-    email: str
 
     class Config:
         orm_mode = True

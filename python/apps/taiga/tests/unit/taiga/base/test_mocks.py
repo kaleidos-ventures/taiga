@@ -10,7 +10,7 @@ from typing import Union
 
 import pytest
 from taiga.base.mocks import MAX_LIST_LENGTH, MAX_NESTED_INDEX, MIN_LIST_LENGTH, mock_serializer
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
 
 
 class SimpleModel(BaseModel):

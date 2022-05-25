@@ -9,7 +9,7 @@ import string
 from collections import Counter
 
 from pydantic import constr, validator
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
 
 
 class PasswordMixin(BaseModel):

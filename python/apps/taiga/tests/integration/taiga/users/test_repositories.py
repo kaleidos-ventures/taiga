@@ -7,6 +7,7 @@
 
 import pytest
 from asgiref.sync import sync_to_async
+from taiga.permissions import choices
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
 from taiga.users.tokens import VerifyUserToken
@@ -146,32 +147,62 @@ async def test_clean_expired_users():
     assert await get_total_users() == total_users + 1
 
 
-async def test_user_contacts_filtered():
-    user1 = await f.create_user(is_active=True, email="email@email.com")
-    user2 = await f.create_user(is_active=True, email="EMAIL@email.com")
-    user3 = await f.create_user(is_active=False, email="inactive@email.com")
-    user4 = await f.create_user(is_active=True, email="other_email@email.com")
-
-    emails = [user1.email, user2.email, user3.email]
-
-    contacts = await users_repositories.get_user_contacts(user_id=user1.id, emails=emails)
-    assert len(contacts) == 1
-    assert user1 not in contacts  # logged user
-    assert user3 not in contacts  # inactive
-    assert user4 not in contacts  # not considered in the email list
-    assert user2 in contacts  # a case insensitive match
+##########################################################
+# get_users_by_text
+##########################################################
 
 
-async def test_user_contacts_filtered_empty_emails():
-    user1 = await f.create_user(is_active=True, email="email@email.com")
-    user2 = await f.create_user(is_active=True, email="EMAIL@email.com")
-    user3 = await f.create_user(is_active=False, email="inactive@email.com")
-    user4 = await f.create_user(is_active=True, email="other_email@email.com")
+async def test_get_users_by_text():
+    ws_pj_admin = await f.create_user(full_name="ws-pj-admin")
+    elettescar = await f.create_user(is_active=True, username="elettescar", full_name="Martina Eaton")
+    electra = await f.create_user(is_active=True, username="electra@email.com", full_name="Sonia Moreno")
+    danvers = await f.create_user(is_active=True, username="danvers@email.com", full_name="Elena Riego")
+    elmarv = await f.create_user(is_active=True, username="elmary@email.com", full_name="Joanna Marinari")
+    storm = await f.create_user(is_active=True, username="storm@email.com", full_name="Martina Elliott Wagner")
+    inactive_user = await f.create_user(is_active=False, username="inactive@email.com", full_name="Inactive User")
 
-    contacts = await users_repositories.get_user_contacts(user_id=user1.id, emails=[])
+    # elettescar is ws-member
+    workspace = await f.create_workspace(is_premium=True, owner=ws_pj_admin, color=2)
+    general_member_role = await f.create_workspace_role(
+        permissions=choices.WORKSPACE_PERMISSIONS, is_admin=False, workspace=workspace
+    )
+    await f.create_workspace_membership(user=elettescar, workspace=workspace, workspace_role=general_member_role)
 
-    assert len(contacts) == 2
-    assert user1 not in contacts  # logged user
-    assert user3 not in contacts  # inactive
-    assert user2 in contacts  # case insensitive match
-    assert user4 in contacts  # a normal match
+    # electra is a pj-member (from the previous workspace)
+    project = await f.create_project(workspace=workspace, owner=ws_pj_admin)
+    general_member_role = await f.create_role(project=project, is_admin=False)
+    await f.create_membership(user=electra, project=project, role=general_member_role)
+
+    all_active_users_result = await users_repositories.get_users_by_text(
+        text_search=None, project_slug=None, excluded_usernames=[]
+    )
+    assert len(all_active_users_result) == 6
+    assert all_active_users_result[0] == danvers
+    assert all_active_users_result[1] == elmarv
+    assert all_active_users_result[2] == elettescar
+    assert inactive_user not in all_active_users_result
+
+    search_by_text_no_pj_result = await users_repositories.get_users_by_text(
+        text_search="el", project_slug=project.slug, excluded_usernames=["ws-pj-admin"]
+    )
+    assert len(search_by_text_no_pj_result) == 5
+    assert search_by_text_no_pj_result[0] == electra
+    assert search_by_text_no_pj_result[1] == elettescar
+    assert search_by_text_no_pj_result[2] == danvers
+    assert inactive_user not in search_by_text_no_pj_result
+    assert ws_pj_admin not in search_by_text_no_pj_result
+
+    search_by_text_no_pj_pagination_result = await users_repositories.get_users_by_text(
+        text_search="el", project_slug=project.slug, excluded_usernames=["ws-pj-admin"], offset=2, limit=3
+    )
+    assert len(search_by_text_no_pj_pagination_result) == 3
+    assert search_by_text_no_pj_pagination_result[0] == danvers
+    assert search_by_text_no_pj_pagination_result[1] == elmarv
+    assert search_by_text_no_pj_pagination_result[2] == storm
+    assert inactive_user not in search_by_text_no_pj_pagination_result
+    assert ws_pj_admin not in search_by_text_no_pj_pagination_result
+    assert electra not in search_by_text_no_pj_pagination_result
+
+    search_by_text_spaces_result = await users_repositories.get_users_by_text(text_search="martina elliott wag")
+    assert len(search_by_text_spaces_result) == 1
+    assert search_by_text_spaces_result[0] == storm

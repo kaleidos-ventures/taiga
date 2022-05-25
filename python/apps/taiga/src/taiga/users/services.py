@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from pydantic import EmailStr
 from taiga.auth import services as auth_services
 from taiga.base.utils.slug import generate_username_suffix, slugify
 from taiga.emails.emails import Emails
@@ -30,7 +29,7 @@ async def create_user(
     password: str,
     project_invitation_token: str | None = None,
     accept_project_invitation: bool = True,
-) -> None:
+) -> User:
     user = await users_repositories.get_user_by_username_or_email(username_or_email=email)
 
     if user and user.is_active:
@@ -200,9 +199,18 @@ async def reset_password(token: str, password: str) -> User | None:
 
 
 #####################################################################
-# Contact
+# User Search
 #####################################################################
 
 
-async def list_user_contacts(user: User, emails: list[EmailStr] = []) -> list[User]:
-    return await users_repositories.get_user_contacts(user_id=user.id, emails=emails)
+async def get_users_by_text(
+    text: str | None = None,
+    project_slug: str | None = None,
+    excluded_usernames: list[str] | None = [],
+    offset: int | None = None,
+    limit: int | None = None,
+) -> list[User]:
+
+    return await users_repositories.get_users_by_text(
+        text_search=text, project_slug=project_slug, excluded_usernames=excluded_usernames, offset=offset, limit=limit
+    )

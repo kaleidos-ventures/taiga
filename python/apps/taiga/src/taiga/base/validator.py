@@ -10,7 +10,7 @@ import inspect
 from fastapi import Form
 from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
 
 
 def as_form(cls: type[BaseModel]) -> type[BaseModel]:

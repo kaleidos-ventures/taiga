@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from pydantic import conint, constr, validator
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
 
 
 class WorkspaceValidator(BaseModel):

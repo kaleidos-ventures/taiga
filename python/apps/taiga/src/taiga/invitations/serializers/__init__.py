@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from pydantic import EmailStr
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
 from taiga.invitations.choices import InvitationStatus
 from taiga.projects.serializers.related import ProjectSmallSummarySerializer
 from taiga.roles.serializers import BaseRoleSerializer

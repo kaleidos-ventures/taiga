@@ -7,7 +7,7 @@
 
 import pytest
 from pydantic import ValidationError
-from taiga.users.validators import CreateUserValidator, UserContactsValidator
+from taiga.users.validators import CreateUserValidator
 from tests.unit.utils import check_validation_errors
 
 
@@ -114,32 +114,4 @@ def test_validate_create_user_invalid_short_password():
 
     expected_error_fields = ["password"]
     expected_error_messages = ["ensure this value has at least 8 characters"]
-    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
-
-
-def test_validate_user_contacts_ok():
-    email1 = "user1@email.com"
-    email2 = "user2@email.com"
-    emails = [email1, email2]
-    user_contacts = UserContactsValidator(emails=emails)
-
-    assert email1 in user_contacts.emails
-    assert email2 in user_contacts.emails
-
-
-@pytest.mark.parametrize(
-    "email",
-    [
-        "noAtnoDomain" "not.at.domain",
-        "email@domain",
-    ],
-)
-def test_validate_user_contacts_invalid_emails(email):
-    emails = [email]
-
-    with pytest.raises(ValidationError) as validation_errors:
-        UserContactsValidator(emails=emails)
-
-    expected_error_fields = ["emails"]
-    expected_error_messages = ["value is not a valid email address"]
     check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)

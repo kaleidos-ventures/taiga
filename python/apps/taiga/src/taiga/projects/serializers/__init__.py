@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
 from taiga.projects.serializers.mixins import ProjectLogoMixin
 from taiga.workspaces.serializers.related import WorkspaceSummarySerializer
 

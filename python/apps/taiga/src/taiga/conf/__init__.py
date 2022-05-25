@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     DB_HOST: str = "localhost"
     DB_PORT: int = 5432
 
+    # Pagination
+    MAX_PAGE_SIZE: int = 100
+
     # Auth
     ACCESS_TOKEN_LIFETIME: int = 30  # 30 minutes
     REFRESH_TOKEN_LIFETIME: int = 8 * 24 * 60  # 8 * 24 * 60 minutes = 8 days

@@ -4,7 +4,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
 from taiga.auth import services as auth_services
 from taiga.auth.dataclasses import AccessWithRefreshToken
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
@@ -19,10 +18,12 @@ from taiga.users import services as users_services
 from taiga.users import validators as users_validators
 from taiga.users.dataclasses import VerificationInfo
 from taiga.users.models import User
-from taiga.users.serializers import UserContactSerializer, UserMeSerializer, UserSerializer, VerificationInfoSerializer
+from taiga.users.serializers import UserMeSerializer, UserSerializer, VerificationInfoSerializer
+from taiga.users.validators import SearchUsersByTextValidator
 
 # PERMISSIONS
-GET_MY_CONTACTS = IsAuthenticated()
+LIST_USERS = IsAuthenticated()
+GET_USERS_BY_TEXT = IsAuthenticated()
 
 
 #####################################################################
@@ -39,7 +40,7 @@ GET_MY_CONTACTS = IsAuthenticated()
 )
 async def me(request: Request) -> User:
     """
-    Get the profile of the current authenticated user (according to the auth token in the request heades).
+    Get the profile of the current authenticated user (according to the auth token in the request headers).
     """
     if request.user.is_anonymous:
         # NOTE: We force a 401 instead of using the permissions system (which would return a 403)
@@ -83,6 +84,35 @@ async def verify_user(form: users_validators.VerifyTokenValidator) -> Verificati
         return await users_services.verify_user(token=form.token)
     except TaigaServiceException as exc:
         raise ex.BadRequest(str(exc), detail=exc.detail)
+
+
+#####################################################################
+# User Search
+#####################################################################
+
+
+@routes.users.post(
+    "/search",
+    name="users",
+    summary="List all users matching a full text search, ordered (when provided) by their project closeness",
+    response_model=list[UserSerializer],
+)
+async def get_users_by_text(request: Request, form: SearchUsersByTextValidator) -> list[User]:
+    """
+    List all the users matching the full-text search criteria, ordering results by their proximity to a project :
+        1st. project members of this project
+        2nd. members of the project's workspace / members of the project's organization (if any)
+        3rd. rest of users (the priority for this group is not too important)
+    """
+    await check_permissions(permissions=GET_USERS_BY_TEXT, user=request.user)
+
+    return await users_services.get_users_by_text(
+        text=form.text,
+        project_slug=form.project,
+        excluded_usernames=form.excluded_users,
+        offset=form.offset,
+        limit=form.limit,
+    )
 
 
 #####################################################################
@@ -133,28 +163,3 @@ async def reset_password(token: str, form: users_validators.ResetPasswordValidat
         return await auth_services.create_auth_credentials(user=user)
     except TaigaServiceException as exc:
         raise ex.BadRequest(str(exc), detail=exc.detail)
-
-
-#####################################################################
-# Contact
-#####################################################################
-
-
-@routes.my.post(
-    "/contacts",
-    name="my.contacts",
-    summary="List my known contacts",
-    response_model=list[UserContactSerializer],
-)
-async def list_my_contacts(request: Request, form: users_validators.UserContactsValidator) -> list[User]:
-    """
-    List the visible contacts the logged user knows.
-    """
-    # This endpoint should be a GET but it's a POST because of the following:
-    # - it receives lots of data that potentially could exceed the max limit of the URL length
-    # - so we decided to use the body of the request (with GET)
-    # - however, Angular cannot process the body in a GET request
-    # - thus we are using the POST verb here
-    await check_permissions(permissions=GET_MY_CONTACTS, user=request.user)
-
-    return await users_services.list_user_contacts(user=request.user, emails=form.emails)

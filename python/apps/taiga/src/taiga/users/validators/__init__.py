@@ -6,7 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from pydantic import EmailStr, StrictBool, constr, validator
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
+from taiga.base.serializers.mixins import PaginationMixin
 from taiga.conf import settings
 from taiga.users.validators.mixins import PasswordMixin
 
@@ -46,6 +47,12 @@ class VerifyTokenValidator(BaseModel):
     token: str
 
 
+class SearchUsersByTextValidator(BaseModel, PaginationMixin):
+    text: str | None
+    project: str | None
+    excluded_users: list[str] | None
+
+
 #####################################################################
 # Reset Password
 #####################################################################
@@ -57,12 +64,3 @@ class RequestResetPasswordValidator(BaseModel):
 
 class ResetPasswordValidator(PasswordMixin, BaseModel):
     ...
-
-
-#####################################################################
-# Contact
-#####################################################################
-
-
-class UserContactsValidator(BaseModel):
-    emails: list[EmailStr]

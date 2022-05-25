@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Any, Union, get_type_hints
 
 from faker import Faker
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
 
 MAX_NESTED_INDEX = 5
 MIN_LIST_LENGTH = 2

@@ -10,9 +10,10 @@ from typing import Any
 
 from asgiref.sync import sync_to_async
 from django.contrib.auth.models import update_last_login as django_update_last_login
-from django.db.models import Q
-from pydantic import EmailStr
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.db.models import Q, QuerySet
 from taiga.base.utils.datetime import aware_utcnow
+from taiga.conf import settings
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import User
 from taiga.users.tokens import VerifyUserToken
@@ -109,14 +110,97 @@ def clean_expired_users() -> None:
 
 
 @sync_to_async
-def get_user_contacts(user_id: int, emails: list[EmailStr] = []) -> list[User]:
-    user_contacts_query = User.objects.filter(is_active=True).exclude(id=user_id)
+def get_users_by_text(
+    text_search: str = "",
+    excluded_usernames: list[str] = [],
+    project_slug: str | None = None,
+    exclude_inactive: bool = True,
+    exclude_system: bool = True,
+    offset: int = 0,
+    limit: int = settings.MAX_PAGE_SIZE,
+) -> list[User]:
+    """
+    Get all the users that match a full text search (against their full_name and username fields), returning a
+    prioritized (not filtered) list by their closeness to a given project (if any).
 
-    if emails:
-        # The email search must be case insensitive
-        email_qs_list = map(lambda email: Q(email__iexact=email), emails)
-        email_qs = reduce(lambda a, b: a | b, email_qs_list)
+    :param excluded_usernames: Users matching any of the usernames won't be considered
+    :param text_search: The text the users should match in either their full names or usernames to be considered
+    :param project_slug: Users will be ordered by their proximity to this project excluding itself
+    :param exclude_inactive: true (return just active users), false (returns all users)
+    :param exclude_system: true (returns users where is_system=False), false (returns all users)
+    :param offset: number of rows which we want to skip
+    :param limit: total number of rows we want to retrieve
+    :return: a prioritized list of users
+    """
+    users_qs = User.objects.all()
 
-        user_contacts_query = user_contacts_query.filter(email_qs)
+    if exclude_inactive:
+        users_qs &= users_qs.exclude(is_active=False)
 
-    return list(user_contacts_query.order_by("full_name"))
+    if exclude_system:
+        users_qs &= users_qs.exclude(is_system=True)
+
+    if text_search:
+        users_matching_full_text_search = get_users_by_fullname_or_username_sync(text_search, users_qs)
+        users_qs = users_matching_full_text_search
+
+    if excluded_usernames:
+        users_qs &= users_qs.exclude(username__in=excluded_usernames)
+
+    if project_slug:
+        # List all the users matching the full-text search criteria, ordering results by their proximity to a project :
+        #     1st. project members of this project
+        #     2nd. members of the project's workspace / members of the project's organization (if any)
+        #     3rd. rest of users (the priority for this group is not too important)
+
+        # 1st: Users that share the same project
+        project_users_qs = users_qs.filter(projects__slug=project_slug).order_by("full_name", "username")
+
+        # 2nd: Users that are members of the project's workspace but are NOT project members
+        workspace_users_qs = (
+            users_qs.filter(workspaces__projects__slug=project_slug)
+            .exclude(projects__slug=project_slug)
+            .order_by("full_name", "username")
+        )
+
+        # 3rd: Users that are neither a project member nor a member of its workspace
+        other_users_qs = (
+            users_qs.exclude(workspaces__projects__slug=project_slug)
+            .exclude(projects__slug=project_slug)
+            .order_by("full_name", "username")
+        )
+
+        # NOTE: `Union all` are important to keep the individual ordering when combining the different search criteria.
+        users_qs = project_users_qs.union(workspace_users_qs.union(other_users_qs, all=True), all=True)
+        return list(users_qs)[offset : offset + limit]
+
+    return list(users_qs.order_by("full_name", "username"))[offset : offset + limit]
+
+
+def get_users_by_fullname_or_username_sync(text_search: str, user_qs: QuerySet[User]) -> QuerySet[User]:
+    parsed_text_search = _get_parsed_text_search(text_search)
+    search_query = SearchQuery(f"{parsed_text_search}:*", search_type="raw")
+    search_vector = SearchVector("full_name", weight="A") + SearchVector("username", weight="B")
+    # By default values: [0.1, 0.2, 0.4, 1.0]
+    # [D-weight, C-weight, B-weight, A-weight]
+    rank_weights = [0.1, 0.2, 0.4, 1.0]
+
+    full_text_matching_users = (
+        user_qs.annotate(rank=SearchRank(search_vector, search_query, weights=rank_weights))
+        .filter(rank__gte=0.2)
+        .order_by("-rank", "full_name")
+    )
+
+    return full_text_matching_users
+
+
+get_users_by_fullname_or_username = sync_to_async(get_users_by_fullname_or_username_sync)
+
+
+def _get_parsed_text_search(text_search: str) -> str:
+    # Prepares the SearchQuery text by escaping it and fixing spaces for searches over several words
+    parsed_text_search = repr(text_search.strip())
+    if len(parsed_text_search) > 1 and parsed_text_search.rfind(" ") != -1:
+        return parsed_text_search.replace(" ", " & ")
+
+    return parsed_text_search

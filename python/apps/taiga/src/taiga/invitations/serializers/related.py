@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
 from taiga.invitations.choices import InvitationStatus
 from taiga.projects.serializers.related import ProjectSmallSummarySerializer
 

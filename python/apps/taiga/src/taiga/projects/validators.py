@@ -7,7 +7,7 @@
 
 from fastapi import UploadFile
 from pydantic import conint, constr, validator
-from taiga.base.serializer import BaseModel
+from taiga.base.serializers import BaseModel
 from taiga.base.utils.images import valid_content_type, valid_image_format
 from taiga.base.validator import as_form
 

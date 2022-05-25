@@ -42,12 +42,13 @@ def test_validate_project_with_long_description(client):
     description = (
         "Project Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         "Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus "
-        "et magnis dis parturient montes, nascetur ridiculus mus. Donec quam fe"
+        "et magnis dis parturient montes, nascetur ridiculus mus. Donec quam fe "
+        "aenean massa. Cum sociis natoque penatibus"
     )
     color = 1
     workspace_slug = "slug"
 
-    with pytest.raises(ValidationError, match=r"ensure this value has at most 200 characters"):
+    with pytest.raises(ValidationError, match=r"ensure this value has at most 220 characters"):
         ProjectValidator(name=name, description=description, color=color, workspace_slug=workspace_slug)
 
 

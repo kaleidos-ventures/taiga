@@ -80,7 +80,7 @@ async def list_project_invitations(
     response_model=InvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def accept_token_invitation(
+async def accept_invitation_by_token(
     request: Request, token: str = Query(None, description="the project invitation token (str)")
 ) -> Invitation:
     """
@@ -109,7 +109,7 @@ async def accept_token_invitation(
     response_model=InvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def accept_invitation(
+async def accept_invitation_by_project(
     request: Request, slug: str = Query(None, description="the project slug (str)")
 ) -> Invitation:
     """

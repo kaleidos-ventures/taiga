@@ -7,7 +7,10 @@
  */
 
 interface TestEmailEvent {
-  previewUrl?: string;
+  subject: string;
+  to: string;
+  previewUrl: string;
+  localPreview: string;
 }
 
 export const init = () => {
@@ -16,8 +19,12 @@ export const init = () => {
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data as string) as TestEmailEvent;
 
-    if (data.previewUrl) {
-      console.log(`New email: ${data.previewUrl}`);
+    if (data.subject) {
+      console.log(`
+Subject: ${data.subject}
+To: ${data.to}
+Preview URL: ${data.previewUrl}
+Local preview URL: ${data.localPreview}`);
     }
   };
 };

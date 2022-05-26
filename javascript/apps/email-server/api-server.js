@@ -9,12 +9,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const { getEmails } = require('./send-email');
-const { getPreviews } = require('./server');
+
+const { getEmails } = require('./server');
+const { apiPort } = require('./config');
 
 app.use(bodyParser.json());
 app.use(bodyParser.raw());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.set('view engine', 'ejs');
+app.set('views', __dirname);
 
 app.get('/emails', function (req, res) {
   const emails = getEmails();
@@ -23,9 +26,29 @@ app.get('/emails', function (req, res) {
 });
 
 app.get('/emails-previews', function (req, res) {
-  const emails = getPreviews();
+  const emails = getEmails().map((it) => {
+    return {
+      preview: it.preview,
+      localPreview: it.localPreview,
+    };
+  });
 
   res.json({ emails });
 });
 
-app.listen(3000);
+app.get('/emails/:emailId', function (req, res) {
+  const email = getEmails().find((it) => {
+    return it.id === req.params.emailId;
+  });
+
+  if (email) {
+    res.render('./email-preview', {
+      email,
+    });
+  } else {
+    res.status(404);
+    res.type('txt').send('Not found');
+  }
+});
+
+app.listen(apiPort);

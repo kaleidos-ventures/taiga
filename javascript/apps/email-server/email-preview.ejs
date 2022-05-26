@@ -1,0 +1,24 @@
+<style>
+  .mail-data {
+    font-family: sans-serif;
+    list-style: none;
+    padding: 20px;
+  }
+
+  .mail-data li {
+    margin-bottom: 10px;
+  }
+
+  .mail-data span {
+    font-weight: bold;
+  }
+</style>
+
+<ul class="mail-data">
+  <li><span>Subject:</span> <%= email.subject %></li>
+  <li><span>From:</span> <%= email.from %></li>
+  <li><span>To:</span> <%= email.to %></li>
+  <li><span>Message-ID:</span> <%= email.id %></li>
+</ul>
+
+<div class="mail-wrapper"><%- email.html %></div>

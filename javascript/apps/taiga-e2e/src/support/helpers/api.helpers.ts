@@ -41,7 +41,10 @@ export function request<T>(
 
 export function getEmailsPreviews(): Cypress.Chainable<
   Cypress.Response<{
-    emails: string[];
+    emails: {
+      preview: string;
+      localPreview: string;
+    }[];
   }>
 > {
   return cy.request('http://localhost:3000/emails-previews');

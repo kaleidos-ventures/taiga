@@ -1,29 +1,26 @@
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * Copyright (c) 2021-present Kaleidos Ventures SL
+ */
+
 /*
   before(() => {
-    cy.origin('https://ethereal.email', initEmailCommands);
+    cy.origin('http://localhost:3000', initEmailCommands);
   });
 
   ...
 
-  cy.origin('https://ethereal.email', { args: {} }, () => {
+  cy.origin('http://localhost:3000', { args: {} }, () => {
       cy.getBySelEmail('selector').click();
   });
 */
 
 export const initEmailCommands = () => {
-  const getIframeDocument = () => {
-    return cy.get('iframe').its('0.contentDocument').should('exist');
-  };
-
-  function getIframeBody() {
-    return getIframeDocument()
-      .its('body')
-      .should('not.be.undefined')
-      .then(cy.wrap);
-  }
-
   function getBySelEmail(selector: string, options?: CyGetOptions[1]) {
-    return getIframeBody().find(`[data-test=${selector}]`, options);
+    return cy.get(`.mail-wrapper [data-test=${selector}]`, options);
   }
 
   Cypress.Commands.add('getBySelEmail', getBySelEmail);

@@ -7,7 +7,7 @@
  */
 
 const WebSocket = require('ws');
-const WS_PORT = 8090;
+const { wsPort } = require('./config');
 
 let wsClients = [];
 
@@ -26,7 +26,7 @@ module.exports.send = (msg) => {
 };
 
 module.exports.initWsServer = () => {
-  const wss = new WebSocket.Server({ port: WS_PORT });
+  const wss = new WebSocket.Server({ port: wsPort });
   wss.on('connection', (ws) => {
     addClient(ws);
 

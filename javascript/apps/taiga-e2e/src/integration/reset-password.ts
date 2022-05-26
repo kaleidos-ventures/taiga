@@ -11,7 +11,7 @@ import { initEmailCommands } from '../support/helpers/email-commands';
 
 describe('reset password', () => {
   before(() => {
-    cy.origin('https://ethereal.email', initEmailCommands);
+    cy.origin('http://localhost:3000', initEmailCommands);
   });
 
   beforeEach(() => {
@@ -37,11 +37,14 @@ describe('reset password', () => {
 
     getEmailsPreviews().then((response) => {
       cy.log(JSON.stringify(response.body.emails));
-      const email = response.body.emails[response.body.emails.length - 1];
+      const email =
+        response.body.emails[response.body.emails.length - 1].localPreview;
 
-      cy.origin('https://ethereal.email', { args: email }, (email) => {
+      cy.origin('http://localhost:3000', { args: email }, (email) => {
         cy.visit(email);
-        cy.getBySelEmail('accept-reset-password').click();
+        cy.getBySelEmail('accept-reset-password')
+          .invoke('removeAttr', 'target')
+          .click();
       });
 
       cy.location('pathname').should((loc) => {

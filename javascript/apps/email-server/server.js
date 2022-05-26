@@ -9,13 +9,14 @@
 const SMTPServer = require('smtp-server').SMTPServer;
 const simpleParser = require('mailparser').simpleParser;
 const nodemailer = require('nodemailer');
+const { v4 } = require('uuid');
+
+const { smtpPort, host, apiPort, ethereal } = require('./config');
 
 const { send } = require('./ws');
 const { sendTestEmail } = require('./send-email');
 
-const SMTP_PORT = 2525;
-
-const emailUrls = [];
+const emails = [];
 
 module.exports.initMailServer = () => {
   const server = new SMTPServer({
@@ -26,20 +27,55 @@ module.exports.initMailServer = () => {
         if (err) {
           console.error(err);
         } else {
-          const info = await sendTestEmail(
-            parsed.from.text,
-            parsed.to.text,
-            parsed.subject,
-            parsed.text,
-            parsed.html
+          let previewUrl = '';
+
+          if (ethereal) {
+            try {
+              const info = await sendTestEmail(
+                parsed.from.text,
+                parsed.to.text,
+                parsed.subject,
+                parsed.text,
+                parsed.html
+              );
+
+              previewUrl = nodemailer.getTestMessageUrl(info);
+            } catch (err) {
+              console.error(
+                `Failed to create a testing account. ${err.message}`
+              );
+            }
+          }
+
+          const id = v4();
+          const localPreview = `${host}:${apiPort}/emails/${id}`;
+
+          console.log(`
+Id: ${id}
+Subject: ${parsed.subject}
+To: ${parsed.to.text}
+Preview URL: ${previewUrl}
+Local preview URL: ${host}:${apiPort}/emails/${id}`);
+
+          emails.push({
+            id,
+            from: parsed.from.text,
+            to: parsed.to.text,
+            subject: parsed.subject,
+            text: parsed.text,
+            html: parsed.html,
+            preview: previewUrl,
+            localPreview,
+          });
+
+          send(
+            JSON.stringify({
+              previewUrl,
+              subject: parsed.subject,
+              to: parsed.to.text,
+              localPreview,
+            })
           );
-
-          const previewUrl = nodemailer.getTestMessageUrl(info);
-          console.log('Preview URL: %s', previewUrl);
-
-          emailUrls.push(previewUrl);
-
-          send(JSON.stringify({ previewUrl }));
         }
       });
 
@@ -47,9 +83,9 @@ module.exports.initMailServer = () => {
     },
   });
 
-  server.listen(SMTP_PORT, () => {});
+  server.listen(smtpPort, () => {});
 };
 
-module.exports.getPreviews = () => {
-  return emailUrls;
+module.exports.getEmails = () => {
+  return emails;
 };

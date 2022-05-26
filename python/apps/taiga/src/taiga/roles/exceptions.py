@@ -12,3 +12,11 @@ class NonExistingRoleError(Exception):
 
 class NonEditableRoleError(Exception):
     ...
+
+
+class NotValidPermissionsSetError(Exception):
+    ...
+
+
+class IncompatiblePermissionsSetError(Exception):
+    ...

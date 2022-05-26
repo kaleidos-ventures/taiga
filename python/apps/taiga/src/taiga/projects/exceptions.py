@@ -6,13 +6,13 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-class NotValidPermissionsSetError(Exception):
-    pass
-
-
 class IncompatiblePermissionsSetError(Exception):
-    pass
+    ...
+
+
+class NotValidPermissionsSetError(Exception):
+    ...
 
 
 class NotPremiumWorkspaceError(Exception):
-    pass
+    ...

@@ -10,8 +10,8 @@ from django.core.files import File
 from fastapi import UploadFile
 from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
-from taiga.exceptions import services as ex
 from taiga.permissions import services as permissions_services
+from taiga.projects import exceptions as ex
 from taiga.projects import repositories as projects_repositories
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories

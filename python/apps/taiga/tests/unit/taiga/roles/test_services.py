@@ -8,7 +8,6 @@
 from unittest.mock import patch
 
 import pytest
-from taiga.exceptions import services as commons_ex
 from taiga.roles import exceptions as ex
 from taiga.roles import services
 from tests.utils import factories as f
@@ -45,7 +44,7 @@ async def test_update_role_permissions_incompatible_permissions():
     role = f.build_role(is_admin=False)
     permissions = ["view_tasks"]
 
-    with pytest.raises(commons_ex.IncompatiblePermissionsSetError):
+    with pytest.raises(ex.IncompatiblePermissionsSetError):
         await services.update_role_permissions(role=role, permissions=permissions)
 
 
@@ -53,7 +52,7 @@ async def test_update_role_permissions_not_valid_permissions():
     role = f.build_role(is_admin=False)
     permissions = ["not_valid", "foo", "bar"]
 
-    with pytest.raises(commons_ex.NotValidPermissionsSetError):
+    with pytest.raises(ex.NotValidPermissionsSetError):
         await services.update_role_permissions(role=role, permissions=permissions)
 
 

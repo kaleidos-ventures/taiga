@@ -16,9 +16,12 @@ import {
 import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import {
+  acceptInvitationFromProjectOverview,
   addEmailToInvite,
   inviteUsers,
+  logout,
   openInvitationModal,
+  selectRoleAdministrator,
   typeEmailToInvite,
 } from '../support/helpers/invitation.helpers';
 
@@ -117,18 +120,48 @@ describe('Invite users to project after creating it', () => {
 });
 
 describe('Invite users to project from overview when user is admin', () => {
+  let workspace: ReturnType<typeof WorkspaceMockFactory>;
+  let project: ReturnType<typeof ProjectMockFactory>;
+
+  before(() => {
+    workspace = WorkspaceMockFactory();
+    project = ProjectMockFactory();
+  });
+
   beforeEach(() => {
     cy.login();
     cy.visit('/');
     cy.initAxe();
 
-    // TODO create the scenario when is implemented 'accept invitation from
-    cy.contains('Cross-platform zero tolerance circuit').click();
+    void createWorkspaceRequest(workspace.name);
+    launchProjectCreationInWS(0);
+    selectBlankProject();
+    typeProjectName(project.name);
+    submitProject();
+
+    typeEmailToInvite('user4@taiga.demo');
+    addEmailToInvite();
+    selectRoleAdministrator();
+    typeEmailToInvite('user2@taiga.demo, user3@taiga.demo');
+    addEmailToInvite();
+    inviteUsers();
+
+    cy.url().then((url) => {
+      const projectUrl = /http:\/\/localhost:\d+\/(.*)(?:\/kanban|\/overview)/g.exec(url)?.[1] || '/';
+      logout();
+      cy.login('user2', '123123');
+      cy.visit(projectUrl);
+      acceptInvitationFromProjectOverview();
+      logout();
+      cy.login();
+      cy.visit('/');
+      cy.contains(project.name).click();
+    });
   });
 
   it('Should ignore invitation from a member', () => {
     openInvitationModal();
-    typeEmailToInvite('user3@taiga.demo');
+    typeEmailToInvite('user2@taiga.demo');
     addEmailToInvite();
     cy.getBySel('tip-wrapper').should('exist');
     cy.getBySel('user-list').should('not.exist');
@@ -136,7 +169,7 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should add tag pending from an already sent invitation', () => {
     openInvitationModal();
-    typeEmailToInvite('user5@taiga.demo');
+    typeEmailToInvite('user3@taiga.demo');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('exist');
     cy.getBySel('pending-tag')
@@ -146,7 +179,7 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should considered defined role from the invitation sent before', () => {
     openInvitationModal();
-    typeEmailToInvite('email-1@email.com');
+    typeEmailToInvite('user4@taiga.demo');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('exist');
     cy.getBySel('select-value')

@@ -14,10 +14,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       tuiAutoFocus
       [attr.aria-label]="t('recent_projects')">
       <ng-container *ngIf="latestProjects.length">
-        <li *ngFor="let project of latestProjects; trackBy: trackByProject">
+        <li
+          *ngFor="
+            let project of latestProjects;
+            trackBy: trackByProject;
+            let i = index
+          ">
           <a
             class="project"
-            [routerLink]="['/project', project.slug]">
+            [routerLink]="['/project', project.slug]"
+            [attr.data-test]="'recent-project-' + i">
             <div class="project-image">
               <tg-ui-avatar
                 type="light"

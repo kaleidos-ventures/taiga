@@ -18,3 +18,17 @@ export const openInvitationModal = () => {
   cy.getBySel('open-invite-modal').should('exist');
   cy.getBySel('open-invite-modal').click();
 };
+
+export const logout = () => {
+  cy.getBySel('user-settings').click();
+  cy.getBySel('log-out').click();
+};
+
+export const selectRoleAdministrator = () => {
+  cy.getBySel('select-value').click();
+  cy.getBySel('administrator').click();
+};
+
+export const acceptInvitationFromProjectOverview = () => {
+  cy.getBySel('signup-submit-button').click();
+};

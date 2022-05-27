@@ -262,8 +262,6 @@ async def _create_workspace_with_invitations() -> None:
     ws1 = await workspaces_services.create_workspace(name="ws invitations for members(p)", owner=user900, color=2)
     ws1.is_premium = True
     await sync_to_async(ws1.save)()
-    # create non-admin role
-    members_role = await _create_workspace_role(workspace=ws1)
 
     ws2 = await workspaces_services.create_workspace(name="ws invitations for guests(p)", owner=user900, color=2)
     ws2.is_premium = True
@@ -273,7 +271,12 @@ async def _create_workspace_with_invitations() -> None:
     ws3.is_premium = True
     await sync_to_async(ws3.save)()
 
+    ws4 = await workspaces_services.create_workspace(name="ws for admins", owner=user900, color=2)
+    ws4.is_premium = True
+    await sync_to_async(ws4.save)()
+
     # user901 is member of ws1
+    members_role = await _create_workspace_role(workspace=ws1)
     await roles_repositories.create_workspace_membership(user=user901, workspace=ws1, workspace_role=members_role)
 
     # user900 creates a project in ws1
@@ -317,6 +320,10 @@ async def _create_workspace_with_invitations() -> None:
         invited_by=user900,
     )
     await invitations_repositories.create_invitations(objs=[invitation])
+
+    # user901 is admin of ws4
+    ws_admin_role = await _get_workspace_admin_role(workspace=ws4)
+    await roles_repositories.create_workspace_membership(user=user901, workspace=ws4, workspace_role=ws_admin_role)
 
 
 ################################

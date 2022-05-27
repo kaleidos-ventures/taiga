@@ -63,6 +63,7 @@ describe('InitStepComponent', () => {
             slug: randDomainSuffix({ length: 3 }).join('-'),
             color: randNumber(),
             latestProjects: [],
+            invitedProjects: [],
             totalProjects: 0,
             hasProjects: true,
             myRole: 'admin',

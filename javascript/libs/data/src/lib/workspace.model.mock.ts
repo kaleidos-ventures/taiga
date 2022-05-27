@@ -20,11 +20,13 @@ export const WorkspaceMockFactory = (): Workspace => {
     myRole: 'admin',
     isPremium: true,
     isOwner: true,
+    invitedProjects: [],
     latestProjects: [],
     totalProjects: randNumber(),
   };
 
   const latestProjects = [];
+  const invitedProjects = [];
   const numProjects = 6;
 
   for (let i = 0; i < numProjects; i++) {
@@ -39,9 +41,22 @@ export const WorkspaceMockFactory = (): Workspace => {
     );
   }
 
+  for (let i = 0; i < numProjects; i++) {
+    invitedProjects.push(
+      ProjectMockFactory(false, {
+        color: workspace.color,
+        slug: workspace.slug,
+        name: workspace.name,
+        isPremium: workspace.isPremium,
+        myRole: workspace.myRole,
+      })
+    );
+  }
+
   return {
     ...workspace,
-    latestProjects: latestProjects,
+    latestProjects,
+    invitedProjects,
     totalProjects: numProjects * 2,
   };
 };

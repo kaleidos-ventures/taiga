@@ -65,7 +65,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tg-project-card
           *ngIf="vm.project.length === 0 && vm.workspace.myRole === 'admin'"
           [slug]="vm.workspace.slug"
-          [placeholder]="true"
+          variant="placeholder"
           [firstProject]="true">
         </tg-project-card>
         <tg-project-card
@@ -75,7 +75,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tg-project-card
           *ngIf="vm.project.length > 0"
           [slug]="vm.workspace.slug"
-          [placeholder]="true">
+          variant="placeholder">
         </tg-project-card>
       </div>
     </ng-container>

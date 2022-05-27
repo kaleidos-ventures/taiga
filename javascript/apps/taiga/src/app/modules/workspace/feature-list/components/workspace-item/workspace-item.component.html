@@ -5,125 +5,108 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-<ng-container *ngIf="model$ | async as vm">
-  <ng-container *transloco="let t">
-    <ng-container *ngIf="workspace">
-      <div class="workspace-item-top">
-        <tg-ui-avatar
-          class="workspace-avatar"
-          [color]="workspace.color"
-          type="dark"
-          size="m"
-          [name]="workspace.name">
-        </tg-ui-avatar>
-        <div class="workspace-item-title-wrapper">
-          <a
-            *ngIf="
-              workspace.myRole === 'admin' || workspace.myRole === 'member'
-            "
-            data-test="workspace-item-title"
-            [routerLink]="['/workspace/', workspace.slug]"
-            class="workspace-item-title workspace-item-title-active">
-            {{ workspace.name }}
-          </a>
-          <span
-            *ngIf="workspace.myRole === 'guest' || workspace.myRole === 'none'"
-            class="workspace-item-title guest">
-            {{ workspace.name }}
-          </span>
-        </div>
-        <tg-ui-badge
-          *ngIf="workspace.myRole"
-          [label]="t('commons.roles.' + workspace.myRole)"></tg-ui-badge>
-        <tg-ui-badge
-          *ngIf="workspace.isOwner"
-          [label]="t('commons.owner')"></tg-ui-badge>
-        <div class="workspace-item-action">
-          <button
-            appearance="tertiary"
-            tuiButton
-            icon="user"
-            type="button">
-            {{ t('commons.members') }} (1)
-          </button>
-          <button
-            appearance="secondary"
-            tuiButton
-            type="button">
-            {{ t('commons.upgrade') }}
-          </button>
-          <a
-            appearance="primary"
-            [routerLink]="['/new-project']"
-            [queryParams]="{ workspace: workspace.slug }"
-            tuiButton
-            icon="plus"
-            type="button">
-            {{ t('commons.project') }}
-          </a>
-        </div>
-      </div>
-      <div
-        *ngIf="
-          workspace.totalProjects === 0 &&
-          workspace.hasProjects &&
-          workspace.myRole !== 'admin'
-        "
-        class="workspace-message-placeholder"
-        [innerHtml]="t('workspace.placehoder_no_access')"></div>
-      <div
-        *ngIf="
-          workspace.totalProjects === 0 &&
-          !workspace.hasProjects &&
-          workspace.myRole !== 'admin'
-        "
-        class="workspace-message-placeholder"
-        [innerHtml]="t('workspace.placehoder_no_projects')"></div>
-      <div
-        [class]="gridClass"
-        [class.show-all]="vm.showAllProjects"
-        class="workspace-item-card-grid">
-        <tg-project-card
-          *ngIf="
-            workspace.latestProjects.length === 0 &&
-            workspace.myRole === 'admin'
-          "
-          [slug]="workspace.slug"
-          [placeholder]="true"
-          [firstProject]="true">
-        </tg-project-card>
-        <tg-project-card
-          *ngFor="let project of vm.projects; trackBy: trackByLatestProject"
-          [slug]="workspace.slug"
-          [project]="project">
-        </tg-project-card>
-      </div>
+<ng-container *transloco="let t">
+  <div class="workspace-item-top">
+    <tg-ui-avatar
+      class="workspace-avatar"
+      [color]="workspace.color"
+      type="dark"
+      size="m"
+      [name]="workspace.name">
+    </tg-ui-avatar>
+    <div class="workspace-item-title-wrapper">
+      <a
+        *ngIf="workspace.myRole === 'admin' || workspace.myRole === 'member'"
+        data-test="workspace-item-title"
+        [routerLink]="['/workspace/', workspace.slug]"
+        class="workspace-item-title workspace-item-title-active">
+        {{ workspace.name }}
+      </a>
+      <span
+        *ngIf="workspace.myRole === 'guest' || workspace.myRole === 'none'"
+        class="workspace-item-title workspace-guest">
+        {{ workspace.name }}
+      </span>
+    </div>
+    <tg-ui-badge
+      *ngIf="workspace.myRole"
+      [label]="t('commons.roles.' + workspace.myRole)"></tg-ui-badge>
+    <tg-ui-badge
+      *ngIf="workspace.isOwner"
+      [label]="t('commons.owner')"></tg-ui-badge>
+    <div class="workspace-item-action">
       <button
-        *ngIf="
-          !vm.showAllProjects && workspace.totalProjects > vm.projectsToShow
-        "
-        (click)="setShowAllProjects(true)"
-        tuiButton
         appearance="tertiary"
-        class="workspace-show-all"
-        iconRight="chevron-down">
-        {{
-          t('workspace.more_projects', {
-            projects: workspace.totalProjects - vm.projectsToShow
-          })
-        }}
+        tuiButton
+        icon="user"
+        type="button">
+        {{ t('commons.members') }} (1)
       </button>
       <button
-        *ngIf="
-          vm.showAllProjects && workspace.totalProjects > vm.projectsToShow
-        "
-        (click)="setShowAllProjects(false)"
+        appearance="secondary"
         tuiButton
-        appearance="tertiary"
-        class="workspace-show-all"
-        iconRight="chevron-up">
-        {{ t('workspace.less_projects') }}
+        type="button">
+        {{ t('commons.upgrade') }}
       </button>
-    </ng-container>
-  </ng-container>
+      <a
+        appearance="primary"
+        [routerLink]="['/new-project']"
+        [queryParams]="{ workspace: workspace.slug }"
+        tuiButton
+        icon="plus"
+        type="button">
+        {{ t('commons.project') }}
+      </a>
+    </div>
+  </div>
+  <!-- Case: User has more project but is not allowed to see them -->
+  <div
+    *ngIf="
+      !workspace.totalProjects &&
+      !workspace.invitedProjects &&
+      workspace.hasProjects &&
+      workspace.myRole !== 'admin'
+    "
+    class="workspace-message-placeholder"
+    [innerHtml]="t('workspace.placehoder_no_access')"></div>
+
+  <!-- Case: User has no more projects -->
+  <div
+    *ngIf="
+      !workspace.totalProjects &&
+      !workspace.invitedProjects &&
+      !workspace.hasProjects &&
+      workspace.myRole !== 'admin'
+    "
+    class="workspace-message-placeholder"
+    [innerHtml]="t('workspace.placehoder_no_projects')"></div>
+
+  <!-- Project list -->
+  <div
+    [class.show-all]="showAllProjects"
+    class="workspace-item-card-grid">
+    <!-- Project placeholder if new workspace -->
+    <tg-project-card
+      *ngIf="
+        workspace.latestProjects.length === 0 && workspace.myRole === 'admin'
+      "
+      [slug]="workspace.slug"
+      variant="placeholder"
+      [firstProject]="true">
+    </tg-project-card>
+    <tg-project-card
+      variant="invitation"
+      (rejectInvite)="rejectProjectInvite($event)"
+      *ngFor="let invitation of invitations; trackBy: trackByLatestProject"
+      [project]="invitation">
+    </tg-project-card>
+    <tg-project-card
+      *ngFor="
+        let project of workspace.latestProjects;
+        trackBy: trackByLatestProject
+      "
+      [slug]="workspace.slug"
+      [project]="project">
+    </tg-project-card>
+  </div>
 </ng-container>

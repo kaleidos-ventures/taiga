@@ -147,7 +147,9 @@ describe('Invite users to project from overview when user is admin', () => {
     inviteUsers();
 
     cy.url().then((url) => {
-      const projectUrl = /http:\/\/localhost:\d+\/(.*)(?:\/kanban|\/overview)/g.exec(url)?.[1] || '/';
+      const projectUrl =
+        /http:\/\/localhost:\d+\/(.*)(?:\/kanban|\/overview)/g.exec(url)?.[1] ||
+        '/';
       logout();
       cy.login('user2', '123123');
       cy.visit(projectUrl);

@@ -23,6 +23,7 @@ export const initialState: WorkspaceDetailState = {
     slug: '',
     color: 0,
     latestProjects: [],
+    invitedProjects: [],
     totalProjects: 0,
     hasProjects: false,
     myRole: 'guest',

@@ -18,11 +18,7 @@ import {
   TuiLinkModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
-import {
-  TuiAvatarModule,
-  TuiBadgedContentModule,
-  TuiBadgeModule,
-} from '@taiga-ui/kit';
+import { TuiAvatarModule, TuiBadgedContentModule } from '@taiga-ui/kit';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { UserAvatarModule } from '../user-avatar/user-avatar.component.module';
 import { NavigationProjectsComponent } from './navigation-projects/navigation-projects.component';
@@ -43,7 +39,6 @@ import { NavigationComponent } from './navigation.component';
     RouterModule,
     AvatarModule,
     TuiDropdownControllerModule,
-    TuiBadgeModule,
     TuiBadgedContentModule,
   ],
   declarations: [

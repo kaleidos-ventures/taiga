@@ -21,6 +21,7 @@
     "optional": "Optional",
     "close": "Close",
     "close_modal": "Close modal",
+    "pending": "Pending",
     "confirmation_modal": {
       "yes": "Yes, quit",
       "no": "No, keep editing"
@@ -67,7 +68,11 @@
   },
   "project": {
     "create_first_project": "Create your first project",
-    "create_new_project": "Add a project"
+    "create_new_project": "Add a project",
+    "card": {
+      "accept_invite": "Accept invitation",
+      "pending_invitation": "Pending invitation"
+    }
   },
   "errors": {
     "please_refresh": "Please refresh the page or try again in a few minutes",

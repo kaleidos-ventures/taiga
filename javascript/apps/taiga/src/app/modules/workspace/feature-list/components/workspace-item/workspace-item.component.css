@@ -42,10 +42,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: block;
   margin: 0;
 
-  &.guest {
+  &.workspace-guest {
     color: var(--color-gray70);
     font-weight: var(--font-weight-regular);
   }
+}
+
+.workspace-show-all {
+  margin-block-start: var(--spacing-16);
 }
 
 .workspace-item-title-active {
@@ -57,8 +61,4 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     outline: solid 1px var(--color-secondary);
     text-underline: none;
   }
-}
-
-.workspace-show-all {
-  margin-block-start: var(--spacing-16);
 }

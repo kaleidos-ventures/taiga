@@ -21,6 +21,7 @@ export interface Workspace {
   slug: string;
   color: number;
   latestProjects: WorkspaceProject[];
+  invitedProjects: WorkspaceProject[];
   totalProjects: number;
   hasProjects: boolean;
   myRole: WorkspaceRole;

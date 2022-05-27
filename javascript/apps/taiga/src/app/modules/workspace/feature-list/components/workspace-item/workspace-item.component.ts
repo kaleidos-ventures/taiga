@@ -13,75 +13,76 @@ import {
   OnInit,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { RxState } from '@rx-angular/state';
-import { Workspace, WorkspaceProject } from '@taiga/data';
-import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Project, Workspace, WorkspaceProject } from '@taiga/data';
+import { Observable } from 'rxjs';
 import { fetchWorkspaceProjects } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { selectWorkspaceProject } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
-
-interface ViewModel {
-  projectsToShow: number;
-  showAllProjects: boolean;
-  projects: WorkspaceProject[];
-}
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 @Component({
   selector: 'tg-workspace-item',
   templateUrl: './workspace-item.component.html',
   styleUrls: ['./workspace-item.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState],
 })
 export class WorkspaceItemComponent implements OnInit {
   @Input()
   public workspace!: Workspace;
 
   @Input()
-  public set projectsToShow(projectsToShow: number) {
-    this.state.set({ projectsToShow });
-  }
+  public projectsToShow!: number;
 
-  public model$!: Observable<ViewModel>;
+  public showAllProjects = false;
 
-  public get gridClass() {
-    return `grid-items-${this.state.get('projectsToShow')}`;
-  }
+  public workspaceProjects$!: Observable<WorkspaceProject[]>;
 
-  constructor(private store: Store, private state: RxState<ViewModel>) {
-    this.state.set({
-      projectsToShow: 6,
-    });
+  public rejectedInvites: Project['slug'][] = [];
+
+  public invitations: Workspace['invitedProjects'] = [];
+
+  constructor(
+    private store: Store,
+    private localStorageService: LocalStorageService
+  ) {}
+
+  public get getRejectedInvites(): Project['slug'][] {
+    return (
+      this.localStorageService.get<Project['slug'][] | undefined>(
+        'rejected_invites'
+      ) ?? []
+    );
   }
 
   public ngOnInit() {
-    const workspaceProjects$ = this.store.select(
+    this.workspaceProjects$ = this.store.select(
       selectWorkspaceProject(this.workspace.slug)
     );
 
-    this.model$ = combineLatest([this.state.select(), workspaceProjects$]).pipe(
-      map(([state, projects]) => {
-        if (!state.showAllProjects) {
-          projects = projects.slice(
-            0,
-            state.projectsToShow <= 3 ? 3 : state.projectsToShow
-          );
-        }
+    this.rejectedInvites = this.getRejectedInvites;
 
-        return {
-          ...state,
-          projects,
-        };
-      })
-    );
+    this.invitations = this.workspace.invitedProjects.filter((project) => {
+      return !this.rejectedInvites.includes(project.slug);
+    });
   }
 
   public trackByLatestProject(index: number, project: WorkspaceProject) {
     return project.slug;
   }
 
+  public rejectProjectInvite(slug: Project['slug']) {
+    this.rejectedInvites.push(slug);
+    this.localStorageService.set('rejected_invites', this.rejectedInvites);
+    const invitationsIndex = this.invitations.findIndex((invite, index) => {
+      if (invite.slug === slug) {
+        return index;
+      }
+      return null;
+    });
+    this.invitations.splice(invitationsIndex, 1);
+  }
+
   public setShowAllProjects(showAllProjects: boolean) {
-    this.state.set({ showAllProjects });
+    this.showAllProjects = showAllProjects;
     this.store.dispatch(fetchWorkspaceProjects({ slug: this.workspace.slug }));
   }
 }

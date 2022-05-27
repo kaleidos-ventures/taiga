@@ -7,46 +7,90 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t">
-  <div
-    *ngIf="placeholder"
-    class="project-item-card placeholder">
-    <tg-ui-avatar
-      type="light"
-      [color]="0"
-      [name]="''">
-    </tg-ui-avatar>
-    <a
-      tuiLink
-      [routerLink]="['/new-project']"
-      [queryParams]="{ workspace: slug }"
-      data-test="create-project-card"
-      class="project-item-link">
-      <ng-container *ngIf="firstProject">
-        {{ t('project.create_first_project') }}
-      </ng-container>
-      <ng-container *ngIf="!firstProject">
-        {{ t('project.create_new_project') }}
-      </ng-container>
-    </a>
-  </div>
-  <div
-    *ngIf="!placeholder"
-    class="project-item-card">
-    <div class="project-card-title">
+  <ng-container *ngIf="variant === 'placeholder'">
+    <div class="project-item-card placeholder">
       <tg-ui-avatar
-        class="project-card-image"
         type="light"
-        [color]="project.color"
-        [url]="project.logoSmall"
-        [name]="project.name">
+        [color]="0"
+        [name]="''">
       </tg-ui-avatar>
       <a
-        [routerLink]="['/project', project.slug]"
-        class="project-card-link"
-        data-test="project-card">
-        {{ project.name }}
+        tuiLink
+        [routerLink]="['/new-project']"
+        [queryParams]="{ workspace: slug }"
+        data-test="create-project-card"
+        class="project-item-link">
+        <ng-container *ngIf="firstProject">
+          {{ t('project.create_first_project') }}
+        </ng-container>
+        <ng-container *ngIf="!firstProject">
+          {{ t('project.create_new_project') }}
+        </ng-container>
       </a>
     </div>
-    <p class="project-card-description">{{ project.description }}</p>
-  </div>
+  </ng-container>
+  <ng-container *ngIf="variant === 'project'">
+    <div class="project-item-card">
+      <div class="project-card-title">
+        <tg-ui-avatar
+          class="project-card-image"
+          type="light"
+          [color]="project.color"
+          [url]="project.logoSmall"
+          [name]="project.name">
+        </tg-ui-avatar>
+        <a
+          [routerLink]="['/project', project.slug]"
+          class="project-card-link"
+          data-test="project-card">
+          {{ project.name }}
+        </a>
+      </div>
+      <p class="project-card-description">{{ project.description }}</p>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="variant === 'invitation'">
+    <div
+      #invitationCardContainer
+      data-animation="card-container">
+      <button
+        (click)="rejectInviteAnimationStart()"
+        class="project-reject-invite"
+        tuiIconButton
+        appearance="us-header-button"
+        [attr.aria-label]="t('commons.close')"
+        icon="close"
+        type="button"></button>
+      <div class="project-item-card">
+        <span class="project-status-badge">
+          <tui-svg src="clock"></tui-svg>
+          {{ t('project.card.pending_invitation') }}
+        </span>
+        <div class="project-card-title">
+          <tg-ui-avatar
+            class="project-card-image"
+            type="light"
+            [color]="project.color"
+            [url]="project.logoSmall"
+            [name]="project.name">
+          </tg-ui-avatar>
+          <a
+            [routerLink]="['/project', project.slug]"
+            class="project-card-link"
+            data-test="project-card">
+            {{ project.name }}
+          </a>
+        </div>
+        <button
+          class="project-accept-invite"
+          tuiButton
+          (click)="acceptInvite()"
+          appearance="primary"
+          type="button">
+          {{ t('project.card.accept_invite') }}
+        </button>
+        <!-- <p class="project-card-description">{{ project.description }}</p> -->
+      </div>
+    </div>
+  </ng-container>
 </ng-container>

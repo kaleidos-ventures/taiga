@@ -8,7 +8,7 @@
 
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 
@@ -42,8 +42,7 @@ import {
   randBoolean,
 } from '@ngneat/falso';
 import { cold, hot } from 'jest-marbles';
-import { RouterTestingModule } from '@angular/router/testing';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
@@ -77,7 +76,7 @@ describe('AuthEffects', () => {
       provideMockStore({ initialState }),
       { provide: ButtonLoadingService, useClass: ButtonLoadingServiceMock },
     ],
-    imports: [RouterTestingModule, getTranslocoModule()],
+    imports: [getTranslocoModule()],
     mocks: [
       AuthApiService,
       UsersApiService,
@@ -319,6 +318,8 @@ describe('AuthEffects', () => {
     const authService = spectator.inject(AuthService);
     const effects = spectator.inject(AuthEffects);
     const buttonLoadingService = spectator.inject(ButtonLoadingService);
+    const appService = spectator.inject(AppService);
+    const router = spectator.inject(Router);
 
     usersApiService.newPassword.mockReturnValue(cold('-a|', { a: auth }));
     usersApiService.me.mockReturnValue(cold('-a|', { a: user }));
@@ -327,6 +328,9 @@ describe('AuthEffects', () => {
       a: loginSuccess({ user, auth }),
     });
 
+    const routerEvents = new BehaviorSubject(new NavigationEnd(0, '/', '/'));
+    (router as any).events = routerEvents;
+
     actions$ = hot('-a', { a: newPassword({ token, password }) });
 
     expect(effects.newPassword$).toBeObservable(expected);
@@ -334,6 +338,8 @@ describe('AuthEffects', () => {
       expect(authService.setUser).toHaveBeenCalledWith(user);
 
       expect(buttonLoadingService.start).toHaveBeenCalled();
+      expect(buttonLoadingService.start).toHaveBeenCalled();
+      expect(appService.toastNotification).toHaveBeenCalled();
     });
   });
 

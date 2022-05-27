@@ -7,8 +7,13 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import {
+  FormGroup,
+  Validators,
+  FormBuilder,
+  FormControl,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
   initResetPasswordPage,
@@ -27,21 +32,41 @@ export class AuthFeatureResetPasswordComponent implements OnInit {
     selectShowResetPasswordConfirmation
   );
   public expirationToken = false;
+  public initialEmail = '';
 
   constructor(
     private fb: FormBuilder,
     private store: Store,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+    const state = this.router.getCurrentNavigation()!.extras.state;
+
+    this.loginEmail(state?.usernameInput as string);
+  }
 
   public ngOnInit(): void {
     this.expirationToken = this.route.snapshot.paramMap.has('expiredToken');
 
     this.resetPasswordForm = this.fb.group({
-      email: [null, [Validators.required, Validators.email]],
+      email: [this.initialEmail, [Validators.required, Validators.email]],
     });
 
     this.store.dispatch(initResetPasswordPage());
+  }
+
+  public loginEmail(emailCandidate: string) {
+    const control = new FormControl(emailCandidate);
+
+    const isEmail = !(
+      Validators.email(control) as {
+        email: boolean;
+      } | null
+    )?.email;
+
+    if (isEmail) {
+      this.initialEmail = emailCandidate;
+    }
   }
 
   public submit() {

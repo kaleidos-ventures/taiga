@@ -9,12 +9,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import * as AuthActions from '../actions/auth.actions';
 import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { Auth, ErrorManagementOptions, SignUpError } from '@taiga/data';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -297,6 +297,24 @@ export class AuthEffects {
             }),
             switchMap(this.buttonLoadingService.waitLoading()),
             map(({ user, auth }) => {
+              this.router.events
+                .pipe(
+                  filter(
+                    (evt: unknown): evt is NavigationEnd =>
+                      evt instanceof NavigationEnd
+                  ),
+                  take(1)
+                )
+                .subscribe(() => {
+                  this.appService.toastNotification({
+                    label: 'reset_password.reset_success',
+                    message: '',
+                    status: TuiNotification.Success,
+                    scope: 'auth',
+                    autoClose: true,
+                  });
+                });
+
               return AuthActions.loginSuccess({ user, auth });
             })
           );

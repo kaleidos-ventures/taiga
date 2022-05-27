@@ -140,8 +140,13 @@ export class InvitationEffects {
             })
           );
         },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.errorManagement(httpResponse),
+        onError: () => {
+          this.appService.toastNotification({
+            label: 'errors.generic_toast_label',
+            message: 'errors.generic_toast_message',
+            status: TuiNotification.Error,
+          });
+        },
       })
     );
   });

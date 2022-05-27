@@ -9,11 +9,13 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
+import { TuiNotification } from '@taiga-ui/core';
 import { ConfigService } from '@taiga/core';
 import { InvitationInfo, Project } from '@taiga/data';
 import { of, throwError } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
+import { AppService } from '~/app/services/app.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +25,8 @@ export class ProjectInvitationCTAGuard implements CanActivate {
     private authService: AuthService,
     private router: Router,
     private http: HttpClient,
-    private config: ConfigService
+    private config: ConfigService,
+    private appService: AppService
   ) {}
 
   public canActivate(route: ActivatedRouteSnapshot) {
@@ -76,7 +79,15 @@ export class ProjectInvitationCTAGuard implements CanActivate {
           }
         }),
         catchError((httpResponse: HttpErrorResponse) => {
-          void this.router.navigate(['/']);
+          if (this.authService.isLogged()) {
+            void this.router.navigate(['/']);
+          } else {
+            void this.router.navigate(['/login']);
+          }
+          this.appService.toastNotification({
+            message: 'errors.invalid_token_toast_message',
+            status: TuiNotification.Error,
+          });
           return throwError(httpResponse);
         })
       );

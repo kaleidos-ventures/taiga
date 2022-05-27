@@ -19,6 +19,7 @@ import { InvitationInfoMockFactory } from '@taiga/data';
 
 import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
 import { ProjectInvitationGuard } from './project-invitation.guard';
+import { AppService } from '~/app/services/app.service';
 
 describe('Project Invitation Guard', () => {
   let spectator: SpectatorService<ProjectInvitationGuard>;
@@ -27,7 +28,7 @@ describe('Project Invitation Guard', () => {
     service: ProjectInvitationGuard,
     providers: [{ provide: ConfigService, useValue: ConfigServiceMock }],
     imports: [RouterTestingModule, HttpClientTestingModule],
-    mocks: [AuthService, Router],
+    mocks: [AuthService, Router, AppService],
   });
 
   beforeEach(() => (spectator = createService()));

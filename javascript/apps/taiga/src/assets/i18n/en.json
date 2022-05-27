@@ -78,6 +78,9 @@
     "public_permissions": "There was a problem loading public permissions",
     "workspace_permissions": "There was a problem loading workspace  permissions",
     "resend_email": "There was a problem reseind your email",
-    "save_changes": "An error ocurred while saving your changes"
+    "save_changes": "An error ocurred while saving your changes",
+    "generic_toast_label": "Something went wrong!",
+    "generic_toast_message": "Try again in a few minutes.",
+    "invalid_token_toast_message": "Invalid token."
   }
 }

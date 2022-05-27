@@ -106,7 +106,7 @@ class TodoEffects {
 
           return this.appService.toastNotification({
             label: 'errors.text',
-            mesage: 'errors.please_refresh',
+            message: 'errors.please_refresh',
             status: TuiNotification.Error,
           });
         },

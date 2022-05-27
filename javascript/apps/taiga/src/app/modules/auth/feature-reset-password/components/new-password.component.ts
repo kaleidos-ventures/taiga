@@ -55,10 +55,14 @@ export class NewPasswordComponent implements OnInit {
     const pass = group.get('password')?.value as string;
     const confirmPass = group.get('confirmPassword')?.value as string;
 
-    return pass === confirmPass ? null : { mismatch: true };
+    return pass === confirmPass || !pass.length || !confirmPass.length
+      ? null
+      : { mismatch: true };
   };
 
   public submit() {
+    this.resetPasswordForm.markAllAsTouched();
+
     if (this.resetPasswordForm.valid) {
       const token = this.activatedRoute.snapshot.params.token as string;
 

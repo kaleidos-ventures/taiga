@@ -93,7 +93,7 @@
     "submit": "Send reset link",
     "send_in_progress": "Sending",
     "send_success": "Sent",
-    "go_back": "Nah, I remember the password. <a href='{{ login }}'>Take me back</a>",
+    "go_back": "Nah, I remember the password. <a href='{{ login }}'>Take me back.</a>",
     "confirm": {
       "title": "Check your inbox",
       "description": "If there is an account associated with this email address you will receive an email with instructions to reset your password to:",

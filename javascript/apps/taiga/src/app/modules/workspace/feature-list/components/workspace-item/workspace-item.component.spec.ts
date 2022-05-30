@@ -28,8 +28,8 @@ describe('WorkspaceItem', () => {
   const createComponent = createComponentFactory({
     component: WorkspaceItemComponent,
     imports: [],
-    mocks: [LocalStorageService],
     providers: [provideMockStore({ initialState })],
+    mocks: [LocalStorageService],
   });
   let store: MockStore;
 
@@ -44,7 +44,7 @@ describe('WorkspaceItem', () => {
     store = spectator.inject(MockStore);
   });
 
-  it('on init', () => {
+  it('on init', (done) => {
     const localStorageService =
       spectator.inject<LocalStorageService>(LocalStorageService);
 
@@ -53,21 +53,36 @@ describe('WorkspaceItem', () => {
 
     const availableInvites = workspaceItem.invitedProjects.slice(1);
 
-    spectator.component.ngOnInit();
+    spectator.component.projectsToShow = availableInvites.length;
 
-    expect(spectator.component.rejectedInvites).toEqual(rejectedInvites);
-    expect(spectator.component.invitations.length).toEqual(
-      availableInvites.length
-    );
+    spectator.detectChanges();
+
+    spectator.component.model$.subscribe(({ invitations }) => {
+      expect(invitations.length).toEqual(availableInvites.length);
+      done();
+    });
   });
 
-  it('reject project invite', () => {
+  it('reject project invite', (done) => {
+    const localStorageService =
+      spectator.inject<LocalStorageService>(LocalStorageService);
+
     const slug = workspaceItem.invitedProjects.at(0)!.slug;
-    spectator.component.invitations = [workspaceItem.invitedProjects.at(0)!];
+    spectator.component.projectsToShow = workspaceItem.invitedProjects.length;
+
+    spectator.detectChanges();
 
     spectator.component.rejectProjectInvite(slug);
-    expect(spectator.component.rejectedInvites).toEqual([slug]);
-    expect(spectator.component.invitations).toEqual([]);
+
+    spectator.component.model$.subscribe(({ invitations }) => {
+      expect(localStorageService.set.mock.calls[0][0]).toEqual(
+        'general_rejected_invites'
+      );
+      expect(invitations.length).toEqual(
+        workspaceItem.invitedProjects.length - 1
+      );
+      done();
+    });
   });
 
   it('Change Show All Projects', () => {
@@ -81,8 +96,73 @@ describe('WorkspaceItem', () => {
 
     expect(dispatchSpy).toBeCalledWith(action);
 
-    spectator.component.setShowAllProjects(false);
+    spectator.component.setShowAllProjects(true);
 
     expect(dispatchSpy).toBeCalledWith(action);
+  });
+
+  it('Animate sibling rows on reject', (done) => {
+    const slug = workspaceItem.invitedProjects.at(0)!.slug;
+
+    spectator.detectChanges();
+
+    spectator.component.rejectProjectInvite(slug);
+
+    spectator.component.model$.subscribe(() => {
+      expect(Object.keys(spectator.component.reorder).length).toEqual(2);
+      expect(
+        (spectator.component.reorder[
+          workspaceItem.invitedProjects.at(1)!.slug
+        ] = 'moving')
+      );
+      expect(
+        (spectator.component.reorder[
+          workspaceItem.invitedProjects.at(2)!.slug
+        ] = 'moving')
+      );
+      done();
+    });
+  });
+
+  it('The project has to reflect at least 3 projects', (done) => {
+    spectator.component.projectsToShow = 1;
+    spectator.detectChanges();
+
+    spectator.component.model$.subscribe(({ projects, invitations }) => {
+      expect(projects.length + invitations.length).toEqual(3);
+      done();
+    });
+  });
+
+  it('A number between 3 to 6 projectToShow should return an equal number of projects ', (done) => {
+    spectator.component.projectsToShow = 5;
+    spectator.detectChanges();
+
+    spectator.component.model$.subscribe(({ projects, invitations }) => {
+      expect(projects.length + invitations.length).toEqual(5);
+      done();
+    });
+  });
+
+  it('The project has to reflect no more than 12 projects if its not showing all projects', (done) => {
+    spectator.component.projectsToShow = 30;
+    spectator.detectChanges();
+
+    spectator.component.model$.subscribe(({ projects, invitations }) => {
+      expect(projects.length + invitations.length).toEqual(12);
+      done();
+    });
+  });
+
+  it('If show all project is true, it should show all the projects ignoring projectsToShow', (done) => {
+    spectator.component.setShowAllProjects(true);
+
+    spectator.component.projectsToShow = 3;
+    spectator.detectChanges();
+
+    spectator.component.model$.subscribe(({ projects }) => {
+      expect(projects.length).toEqual(workspaceItem.latestProjects.length);
+      done();
+    });
   });
 });

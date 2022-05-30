@@ -9,11 +9,34 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .workspace-item-card-grid {
   --max-width: 233px;
 
-  align-items: flex-start;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 1rem;
+  grid-template-columns: minmax(0, var(--max-width));
   padding: auto var(--spacing-16) var(--spacing-16);
+
+  &.show-all {
+    max-block-size: none;
+  }
+
+  &.grid-items-2 {
+    grid-template-columns: repeat(2, minmax(0, var(--max-width)));
+  }
+
+  &.grid-items-3 {
+    grid-template-columns: repeat(3, minmax(0, var(--max-width)));
+  }
+
+  &.grid-items-4 {
+    grid-template-columns: repeat(4, minmax(0, var(--max-width)));
+  }
+
+  &.grid-items-5 {
+    grid-template-columns: repeat(5, minmax(0, var(--max-width)));
+  }
+
+  &.grid-items-6 {
+    grid-template-columns: repeat(6, minmax(0, var(--max-width)));
+  }
 }
 
 .workspace-message-placeholder {

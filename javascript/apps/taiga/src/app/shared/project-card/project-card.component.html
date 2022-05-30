@@ -52,7 +52,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <ng-container *ngIf="variant === 'invitation'">
     <div #invitationCardContainer>
       <button
-        (click)="rejectInviteAnimationStart()"
+        (click)="onRejectInvite()"
         class="project-reject-invite"
         tuiIconButton
         [@itemSlideOutAnimation]

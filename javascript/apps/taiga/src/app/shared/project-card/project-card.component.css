@@ -8,6 +8,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @import "tools/typography.css";
 
+:host {
+  display: block;
+}
+
 .project-item-card {
   background: var(--color-white);
   block-size: 100%;
@@ -73,12 +77,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   inline-size: 100%;
   max-inline-size: 233px;
   position: relative;
-}
-
-[data-animation="card-container"] {
-  inset-block-start: 0;
-  inset-inline-start: 0;
-  position: absolute;
 }
 
 .card-badge-container {

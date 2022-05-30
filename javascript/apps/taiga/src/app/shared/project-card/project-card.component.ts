@@ -8,10 +8,7 @@
 
 import {
   animate,
-  AnimationEvent,
-  group,
   keyframes,
-  query,
   style,
   transition,
   trigger,
@@ -23,8 +20,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  HostBinding,
-  HostListener,
   Input,
   Output,
   ViewChild,
@@ -44,32 +39,6 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
   styleUrls: ['./project-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
-    trigger('slideOut', [
-      transition('* => reject', [
-        group([
-          query(
-            '[data-animation="card-container"]',
-            animate(
-              '0.3s ease',
-              style({
-                transform: 'translateX(-120%)',
-                inlineSize: '233px',
-                opacity: 0,
-              })
-            )
-          ),
-          query(
-            ':self',
-            animate(
-              '0.5s ease',
-              style({
-                inlineSize: 0,
-              })
-            )
-          ),
-        ]),
-      ]),
-    ]),
     trigger('itemSlideOutAnimation', [
       transition(':enter', [
         style({
@@ -121,11 +90,7 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
   ],
 })
 export class ProjectCardComponent implements AfterViewInit {
-  constructor(
-    private el: ElementRef,
-    private store: Store,
-    private cd: ChangeDetectorRef
-  ) {}
+  constructor(private store: Store, private cd: ChangeDetectorRef) {}
 
   @Input()
   public variant: CardVariant = 'project';
@@ -148,18 +113,6 @@ export class ProjectCardComponent implements AfterViewInit {
   @ViewChild('invitationCardContainer')
   public invitationCardContainer!: ElementRef;
 
-  @HostBinding('@slideOut') public get slideOut() {
-    return this.animationState;
-  }
-
-  @HostListener('@slideOut.done', ['$event']) public animationDone(
-    event: AnimationEvent
-  ) {
-    if (event.toState === 'reject' && event.totalTime === 500) {
-      this.rejectInviteAnimationEnd();
-    }
-  }
-
   public animationState = '';
   public invitationStatus = '';
   public acceptedInvitation$ = this.store.select(selectAcceptedInvite);
@@ -173,22 +126,6 @@ export class ProjectCardComponent implements AfterViewInit {
           this.cd.markForCheck();
         }
       });
-
-    if (this.invitationCardContainer) {
-      const invitationCardContainerInlineSize = (
-        this.invitationCardContainer.nativeElement as HTMLElement
-      ).offsetWidth;
-      const invitationCardContainerBlockSize = (
-        this.invitationCardContainer.nativeElement as HTMLElement
-      ).offsetHeight;
-
-      (
-        this.el.nativeElement as HTMLElement
-      ).style.inlineSize = `${invitationCardContainerInlineSize}px`;
-      (
-        this.el.nativeElement as HTMLElement
-      ).style.blockSize = `${invitationCardContainerBlockSize}px`;
-    }
   }
 
   public acceptInvite() {
@@ -199,12 +136,7 @@ export class ProjectCardComponent implements AfterViewInit {
     );
   }
 
-  public rejectInviteAnimationStart() {
-    this.animationState = 'reject';
-  }
-
-  public rejectInviteAnimationEnd() {
-    this.animationState = '';
+  public onRejectInvite() {
     this.rejectInvite.next(this.project.slug);
   }
 }

@@ -6,29 +6,32 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-class EmailAlreadyExistsError(Exception):
+from taiga.exceptions.services import TaigaServiceException
+
+
+class EmailAlreadyExistsError(TaigaServiceException):
     ...
 
 
-class BadVerifyUserTokenError(Exception):
+class BadVerifyUserTokenError(TaigaServiceException):
     ...
 
 
-class ExpiredVerifyUserTokenError(Exception):
+class ExpiredVerifyUserTokenError(TaigaServiceException):
     ...
 
 
-class UsedVerifyUserTokenError(Exception):
+class UsedVerifyUserTokenError(TaigaServiceException):
     ...
 
 
-class UsedResetPasswordTokenError(Exception):
+class UsedResetPasswordTokenError(TaigaServiceException):
     ...
 
 
-class ExpiredResetPassswordTokenError(Exception):
+class ExpiredResetPassswordTokenError(TaigaServiceException):
     ...
 
 
-class BadResetPasswordTokenError(Exception):
+class BadResetPasswordTokenError(TaigaServiceException):
     ...

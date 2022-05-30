@@ -11,9 +11,9 @@ from taiga.base.api import Request
 from taiga.base.api.permissions import Or, check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
+from taiga.exceptions.services import TaigaServiceException
 from taiga.invitations.permissions import HasPendingProjectInvitation
 from taiga.permissions import CanViewProject, HasPerm, IsProjectAdmin
-from taiga.projects import exceptions as services_ex
 from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
@@ -154,10 +154,8 @@ async def update_project_public_permissions(
 
     try:
         return await projects_services.update_project_public_permissions(project, form.permissions)
-    except services_ex.NotValidPermissionsSetError:
-        raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
-    except services_ex.IncompatiblePermissionsSetError:
-        raise ex.BadRequest("Given permissions are incompatible")
+    except TaigaServiceException as exc:
+        raise ex.BadRequest(str(exc))
 
 
 @routes.projects.get(
@@ -178,8 +176,8 @@ async def get_project_workspace_member_permissions(
     await check_permissions(permissions=GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
     try:
         return await projects_services.get_workspace_member_permissions(project=project)
-    except services_ex.NotPremiumWorkspaceError:
-        raise ex.BadRequest("The workspace is not a premium one, so these perms cannot be seen")
+    except TaigaServiceException as exc:
+        raise ex.BadRequest(str(exc))
 
 
 @routes.projects.put(
@@ -201,12 +199,8 @@ async def update_project_workspace_member_permissions(
 
     try:
         return await projects_services.update_project_workspace_member_permissions(project, form.permissions)
-    except services_ex.NotValidPermissionsSetError:
-        raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
-    except services_ex.IncompatiblePermissionsSetError:
-        raise ex.BadRequest("Given permissions are incompatible")
-    except services_ex.NotPremiumWorkspaceError:
-        raise ex.BadRequest("The workspace is not a premium one, so these perms cannot be set")
+    except TaigaServiceException as exc:
+        raise ex.BadRequest(str(exc))
 
 
 async def get_project_or_404(slug: str) -> Project:

@@ -11,8 +11,8 @@ from typing import Any
 
 from aiosmtplib import SMTPConnectError
 from jinja2 import TemplateNotFound
+from taiga.emails import exceptions as ex
 from taiga.emails.emails import Emails
-from taiga.emails.exceptions import EmailAttachmentError, EmailDeliveryError, EmailSMTPError, EmailTemplateError
 from taiga.emails.render import render_email_html, render_email_txt, render_subject
 from taiga.emails.sender import send_email_message
 from taiga.tasksqueue.manager import manager as tqmanager
@@ -32,7 +32,7 @@ async def send_email(
     try:
         Emails(email_name)
     except ValueError:
-        raise EmailTemplateError(f"The email `{email_name}` it's not an allowed `Emails` instance")
+        raise ex.EmailTemplateError(f"The email `{email_name}` it's not an allowed `Emails` instance")
 
     # prepare the email recipients
     to_emails = to
@@ -48,7 +48,7 @@ async def send_email(
         subject = render_subject(email_name, context)
         body_html = render_email_html(email_name, context)
     except TemplateNotFound as template_exception:
-        raise EmailTemplateError(f"Missing or invalid email template. {template_exception}")
+        raise ex.EmailTemplateError(f"Missing or invalid email template. {template_exception}")
 
     # send the email message using the configured backend
     try:
@@ -60,8 +60,8 @@ async def send_email(
             attachment_paths=attachment_paths,
         )
     except SMTPConnectError as smtp_exception:
-        raise EmailSMTPError(f"SMTP connection could not be established. {smtp_exception}")
+        raise ex.EmailSMTPError(f"SMTP connection could not be established. {smtp_exception}")
     except FileNotFoundError as file_attachments_exception:
-        raise EmailAttachmentError(f"Email attachment error. {file_attachments_exception}")
+        raise ex.EmailAttachmentError(f"Email attachment error. {file_attachments_exception}")
     except Exception as delivery_exception:
-        raise EmailDeliveryError(f"Unknown error while delivering an email. {delivery_exception}")
+        raise ex.EmailDeliveryError(f"Unknown error while delivering an email. {delivery_exception}")

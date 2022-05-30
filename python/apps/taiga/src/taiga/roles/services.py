@@ -28,13 +28,13 @@ async def get_project_role(project: Project, slug: str) -> Role | None:
 
 async def update_role_permissions(role: Role, permissions: list[str]) -> Role:
     if role.is_admin:
-        raise ex.NonEditableRoleError()
+        raise ex.NonEditableRoleError("Cannot edit permissions in an admin role")
 
     if not permissions_services.permissions_are_valid(permissions):
-        raise ex.NotValidPermissionsSetError()
+        raise ex.NotValidPermissionsSetError("One or more permissions are not valid. Maybe, there is a typo.")
 
     if not permissions_services.permissions_are_compatible(permissions):
-        raise ex.IncompatiblePermissionsSetError()
+        raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
     return await roles_repositories.update_role_permissions(role=role, permissions=permissions)
 

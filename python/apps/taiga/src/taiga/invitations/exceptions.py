@@ -6,21 +6,28 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-class DuplicatedEmailError(Exception):
+from taiga.exceptions.services import TaigaServiceException
+
+
+class DuplicatedEmailError(TaigaServiceException):
     ...
 
 
-class BadInvitationTokenError(Exception):
+class BadInvitationTokenError(TaigaServiceException):
     ...
 
 
-class InvitationDoesNotExistError(Exception):
+class InvitationDoesNotExistError(TaigaServiceException):
     ...
 
 
-class InvitationAlreadyAcceptedError(Exception):
+class InvitationAlreadyAcceptedError(TaigaServiceException):
     ...
 
 
-class InvitationIsNotForThisUserError(Exception):
+class InvitationIsNotForThisUserError(TaigaServiceException):
+    ...
+
+
+class NonExistingRoleError(TaigaServiceException):
     ...

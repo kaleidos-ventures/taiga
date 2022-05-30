@@ -6,13 +6,16 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-class IncompatiblePermissionsSetError(Exception):
+from taiga.exceptions.services import TaigaServiceException
+
+
+class IncompatiblePermissionsSetError(TaigaServiceException):
     ...
 
 
-class NotValidPermissionsSetError(Exception):
+class NotValidPermissionsSetError(TaigaServiceException):
     ...
 
 
-class NotPremiumWorkspaceError(Exception):
+class NotPremiumWorkspaceError(TaigaServiceException):
     ...

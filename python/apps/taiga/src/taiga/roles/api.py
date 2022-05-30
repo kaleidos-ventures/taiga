@@ -10,6 +10,7 @@ from taiga.base.api import Request
 from taiga.base.api.permissions import Or, check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
+from taiga.exceptions.services import TaigaServiceException
 from taiga.invitations.permissions import HasPendingProjectInvitation
 from taiga.permissions import CanViewProject, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
@@ -74,12 +75,10 @@ async def update_project_role_permissions(
 
     try:
         await roles_services.update_role_permissions(role, form.permissions)
-    except services_ex.NonEditableRoleError:
-        raise ex.ForbiddenError("Cannot edit permissions in an admin role")
-    except services_ex.NotValidPermissionsSetError:
-        raise ex.BadRequest("One or more permissions are not valid. Maybe, there is a typo.")
-    except services_ex.IncompatiblePermissionsSetError:
-        raise ex.BadRequest("Given permissions are incompatible")
+    except services_ex.NonEditableRoleError as exc:
+        raise ex.ForbiddenError(str(exc))
+    except TaigaServiceException as exc:
+        raise ex.BadRequest(str(exc))
 
     return await get_project_role_or_404(project=project, slug=role_slug)
 

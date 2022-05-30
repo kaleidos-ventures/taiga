@@ -17,7 +17,6 @@ from taiga.invitations.models import Invitation
 from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.projects.models import Project
 from taiga.projects.services import get_logo_small_thumbnail_url
-from taiga.roles import exceptions as roles_ex
 from taiga.roles import repositories as roles_repositories
 from taiga.tokens import TokenError
 from taiga.users import repositories as users_repositories
@@ -28,7 +27,7 @@ async def get_project_invitation(token: str) -> Invitation | None:
     try:
         invitation_token = await ProjectInvitationToken.create(token=token)
     except TokenError:
-        raise ex.BadInvitationTokenError()
+        raise ex.BadInvitationTokenError("Invalid token")
 
     # Get invitation
     return await invitations_repositories.get_project_invitation(**invitation_token.object_data)
@@ -105,7 +104,7 @@ async def create_invitations(project: Project, invitations: list[dict[str, str]]
         roles_slug.append(invitation["role_slug"])
         email = invitation["email"].lower()
         if email in emails:
-            raise ex.DuplicatedEmailError()
+            raise ex.DuplicatedEmailError("Duplicated email")
         emails.append(email)
 
     # project's roles dict, whose key is the role slug and value the Role object
@@ -116,7 +115,7 @@ async def create_invitations(project: Project, invitations: list[dict[str, str]]
 
     # if some role_slug doesn't exist in project's roles then raise an exception
     if not set(roles_slug).issubset(project_roles_slugs):
-        raise roles_ex.NonExistingRoleError()
+        raise ex.NonExistingRoleError("The role_slug does not exist")
 
     # users dict, whose key is the email and value the User object
     # {'user1@taiga.demo': User1, 'user2@taiga.demo': User2}
@@ -172,7 +171,7 @@ async def create_invitations(project: Project, invitations: list[dict[str, str]]
 
 async def accept_project_invitation(invitation: Invitation, user: User) -> Invitation:
     if invitation.status == InvitationStatus.ACCEPTED:
-        raise ex.InvitationAlreadyAcceptedError()
+        raise ex.InvitationAlreadyAcceptedError("The invitation has already been accepted")
 
     accepted_invitation = await invitations_repositories.accept_project_invitation(invitation=invitation, user=user)
 

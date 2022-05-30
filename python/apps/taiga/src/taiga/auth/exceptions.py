@@ -6,13 +6,16 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-class UnauthorizedUserError(Exception):
+from taiga.exceptions.services import TaigaServiceException
+
+
+class UnauthorizedUserError(TaigaServiceException):
     ...
 
 
-class BadAuthTokenError(Exception):
+class BadAuthTokenError(TaigaServiceException):
     ...
 
 
-class BadRefreshTokenError(Exception):
+class BadRefreshTokenError(TaigaServiceException):
     ...

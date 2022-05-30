@@ -37,11 +37,11 @@
 
 
 class TokenBackendError(Exception):
-    pass
+    ...
 
 
 class ExpiredTokenBackendError(TokenBackendError):
-    pass
+    ...
 
 
 ###########################################
@@ -50,12 +50,12 @@ class ExpiredTokenBackendError(TokenBackendError):
 
 
 class TokenError(Exception):
-    pass
+    ...
 
 
 class ExpiredTokenError(TokenError):
-    pass
+    ...
 
 
 class DeniedTokenError(TokenError):
-    pass
+    ...

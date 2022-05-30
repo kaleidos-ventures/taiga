@@ -5,17 +5,10 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
-from taiga.exceptions.services import TaigaServiceException
-
-
-class NonEditableRoleError(TaigaServiceException):
-    ...
+from typing import Any
 
 
-class NotValidPermissionsSetError(TaigaServiceException):
-    ...
-
-
-class IncompatiblePermissionsSetError(TaigaServiceException):
-    ...
+class TaigaServiceException(Exception):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__()
+        self.detail = kwargs.get("detail")

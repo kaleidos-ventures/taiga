@@ -12,9 +12,9 @@ from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_422
+from taiga.exceptions.services import TaigaServiceException
 from taiga.permissions import IsAuthenticated
 from taiga.routers import routes
-from taiga.users import exceptions as services_ex
 from taiga.users import services as users_services
 from taiga.users import validators as users_validators
 from taiga.users.dataclasses import VerificationInfo
@@ -67,8 +67,8 @@ async def create_user(form: users_validators.CreateUserValidator) -> User:
             project_invitation_token=form.project_invitation_token,
             accept_project_invitation=form.accept_project_invitation,
         )
-    except services_ex.EmailAlreadyExistsError:
-        raise ex.BadRequest("Email already exists")
+    except TaigaServiceException as exc:
+        raise ex.BadRequest(str(exc), detail=exc.detail)
 
 
 @routes.unauth_users.post(
@@ -81,12 +81,8 @@ async def create_user(form: users_validators.CreateUserValidator) -> User:
 async def verify_user(form: users_validators.VerifyTokenValidator) -> VerificationInfo:
     try:
         return await users_services.verify_user(token=form.token)
-    except services_ex.UsedVerifyUserTokenError:
-        raise ex.BadRequest("The token has already been used.", detail="used_token")
-    except services_ex.ExpiredVerifyUserTokenError:
-        raise ex.BadRequest("The token has expired.", detail="expired_token")
-    except services_ex.BadVerifyUserTokenError:
-        raise ex.BadRequest("Invalid or malformed token.", detail="invalid_token")
+    except TaigaServiceException as exc:
+        raise ex.BadRequest(str(exc), detail=exc.detail)
 
 
 #####################################################################
@@ -116,12 +112,8 @@ async def request_reset_password(form: users_validators.RequestResetPasswordVali
 async def verify_reset_password_token(token: str) -> bool:
     try:
         return await users_services.verify_reset_password_token(token=token)
-    except services_ex.BadResetPasswordTokenError:
-        raise ex.BadRequest("Invalid or malformed token.", detail="invalid_token")
-    except services_ex.UsedResetPasswordTokenError:
-        raise ex.BadRequest("The token has already been used.", detail="used_token")
-    except services_ex.ExpiredResetPassswordTokenError:
-        raise ex.BadRequest("The token has expired.", detail="expired_token")
+    except TaigaServiceException as exc:
+        raise ex.BadRequest(str(exc), detail=exc.detail)
 
 
 @routes.unauth_users.post(
@@ -139,13 +131,8 @@ async def reset_password(token: str, form: users_validators.ResetPasswordValidat
             raise ex.BadRequest("The user is inactive or does not exist.", detail="inactive_user")
 
         return await auth_services.create_auth_credentials(user=user)
-
-    except services_ex.BadResetPasswordTokenError:
-        raise ex.BadRequest("Invalid or malformed token.", detail="invalid_token")
-    except services_ex.UsedResetPasswordTokenError:
-        raise ex.BadRequest("The token has already been used.", detail="used_token")
-    except services_ex.ExpiredResetPassswordTokenError:
-        raise ex.BadRequest("The token has expired.", detail="expired_token")
+    except TaigaServiceException as exc:
+        raise ex.BadRequest(str(exc), detail=exc.detail)
 
 
 #####################################################################

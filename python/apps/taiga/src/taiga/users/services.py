@@ -34,7 +34,7 @@ async def create_user(
     user = await users_repositories.get_user_by_username_or_email(username_or_email=email)
 
     if user and user.is_active:
-        raise ex.EmailAlreadyExistsError()
+        raise ex.EmailAlreadyExistsError("Email already exists")
 
     if not user:
         # new user
@@ -97,11 +97,11 @@ async def verify_user(token: str) -> VerificationInfo:
     try:
         verify_token = await VerifyUserToken.create(token)
     except tokens_ex.DeniedTokenError:
-        raise ex.UsedVerifyUserTokenError()
+        raise ex.UsedVerifyUserTokenError("The token has already been used.", detail="used_token")
     except tokens_ex.ExpiredTokenError:
-        raise ex.ExpiredVerifyUserTokenError()
+        raise ex.ExpiredVerifyUserTokenError("The token has expired.", detail="expired_token")
     except tokens_ex.TokenError:
-        raise ex.BadVerifyUserTokenError()
+        raise ex.BadVerifyUserTokenError("Invalid or malformed token.", detail="invalid_token")
 
     await verify_token.denylist()
 
@@ -154,17 +154,17 @@ async def _get_user_and_reset_password_token(token: str) -> tuple[ResetPasswordT
     try:
         reset_token = await ResetPasswordToken.create(token)
     except tokens_ex.DeniedTokenError:
-        raise ex.UsedResetPasswordTokenError()
+        raise ex.UsedResetPasswordTokenError("The token has already been used.", detail="used_token")
     except tokens_ex.ExpiredTokenError:
-        raise ex.ExpiredResetPassswordTokenError()
+        raise ex.ExpiredResetPassswordTokenError("The token has expired.", detail="expired_token")
     except tokens_ex.TokenError:
-        raise ex.BadResetPasswordTokenError()
+        raise ex.BadResetPasswordTokenError("Invalid or malformed token.", detail="invalid_token")
 
     # Get user
     user = await users_repositories.get_first_user(**reset_token.object_data, is_active=True, is_system=False)
     if not user:
         await reset_token.denylist()
-        raise ex.BadResetPasswordTokenError()
+        raise ex.BadResetPasswordTokenError("Invalid or malformed token.", detail="invalid_token")
 
     return reset_token, user
 

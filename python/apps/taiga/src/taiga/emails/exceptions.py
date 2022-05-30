@@ -7,16 +7,16 @@
 
 
 class EmailTemplateError(Exception):
-    pass
+    ...
 
 
 class EmailSMTPError(Exception):
-    pass
+    ...
 
 
 class EmailAttachmentError(Exception):
-    pass
+    ...
 
 
 class EmailDeliveryError(Exception):
-    pass
+    ...

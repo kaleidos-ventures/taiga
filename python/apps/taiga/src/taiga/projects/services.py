@@ -111,10 +111,10 @@ get_logo_large_thumbnail_url = partial(get_logo_thumbnail_url, settings.IMAGES.T
 
 async def update_project_public_permissions(project: Project, permissions: list[str]) -> list[str]:
     if not permissions_services.permissions_are_valid(permissions):
-        raise ex.NotValidPermissionsSetError()
+        raise ex.NotValidPermissionsSetError("One or more permissions are not valid. Maybe, there is a typo.")
 
     if not permissions_services.permissions_are_compatible(permissions):
-        raise ex.IncompatiblePermissionsSetError()
+        raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
     # anon_permissions are the "view_" subset of the public_permissions
     anon_permissions = list(filter(lambda x: x.startswith("view_"), permissions))
@@ -125,13 +125,13 @@ async def update_project_public_permissions(project: Project, permissions: list[
 
 async def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:
     if not permissions_services.permissions_are_valid(permissions):
-        raise ex.NotValidPermissionsSetError()
+        raise ex.NotValidPermissionsSetError("One or more permissions are not valid. Maybe, there is a typo.")
 
     if not permissions_services.permissions_are_compatible(permissions):
-        raise ex.IncompatiblePermissionsSetError()
+        raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
     if not await projects_repositories.project_is_in_premium_workspace(project):
-        raise ex.NotPremiumWorkspaceError()
+        raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be set")
 
     return await projects_repositories.update_project_workspace_member_permissions(
         project=project, permissions=permissions
@@ -140,6 +140,6 @@ async def update_project_workspace_member_permissions(project: Project, permissi
 
 async def get_workspace_member_permissions(project: Project) -> list[str]:
     if not await projects_repositories.project_is_in_premium_workspace(project):
-        raise ex.NotPremiumWorkspaceError()
+        raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be seen")
 
     return project.workspace_member_permissions

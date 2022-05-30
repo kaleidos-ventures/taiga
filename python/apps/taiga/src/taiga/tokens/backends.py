@@ -36,7 +36,7 @@ import jwt
 from jwt import ExpiredSignatureError, InvalidAlgorithmError, InvalidTokenError, algorithms
 from taiga.conf import settings
 from taiga.conf.tokens import ALLOWED_ALGORITHMS
-from taiga.tokens.exceptions import ExpiredTokenBackendError, TokenBackendError
+from taiga.tokens import exceptions as ex
 
 
 class TokenBackend:
@@ -65,10 +65,10 @@ class TokenBackend:
         algorithms that require it
         """
         if algorithm not in ALLOWED_ALGORITHMS:
-            raise TokenBackendError(f"Unrecognized algorithm type '{algorithm}'")
+            raise ex.TokenBackendError(f"Unrecognized algorithm type '{algorithm}'")
 
         if algorithm in algorithms.requires_cryptography and not algorithms.has_crypto:
-            raise TokenBackendError(f"You must have cryptography installed to use '{algorithm}'.")
+            raise ex.TokenBackendError(f"You must have cryptography installed to use '{algorithm}'.")
 
     def encode(self, payload: dict[str, Any]) -> str:
         """
@@ -101,11 +101,11 @@ class TokenBackend:
                 options={"verify_aud": self.audience is not None, "verify_signature": verify},
             )
         except ExpiredSignatureError:
-            raise ExpiredTokenBackendError("Expired token")
+            raise ex.ExpiredTokenBackendError("Expired token")
         except InvalidAlgorithmError:
-            raise TokenBackendError("Invalid algorithm specified")
+            raise ex.TokenBackendError("Invalid algorithm specified")
         except InvalidTokenError:
-            raise TokenBackendError("Token is invalid")
+            raise ex.TokenBackendError("Token is invalid")
 
 
 token_backend = TokenBackend(

@@ -12,7 +12,6 @@ from taiga.invitations import exceptions as ex
 from taiga.invitations import services
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.tokens import ProjectInvitationToken
-from taiga.roles import exceptions as roles_ex
 from tests.utils import factories as f
 
 #######################################################
@@ -263,7 +262,7 @@ async def test_create_invitations_non_existing_role(tqmanager):
     with patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo:
         fake_roles_repo.get_project_roles_as_dict.return_value = {role.slug: role}
 
-        with pytest.raises(roles_ex.NonExistingRoleError):
+        with pytest.raises(ex.NonExistingRoleError):
             await services.create_invitations(project=project, invitations=invitations, invited_by=user)
 
         assert len(tqmanager.pending_jobs) == 0

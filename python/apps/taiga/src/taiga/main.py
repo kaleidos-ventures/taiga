@@ -12,8 +12,9 @@ from starlette.exceptions import HTTPException
 from taiga import __description__, __title__, __version__
 from taiga.base.db.middlewares import DBConnectionMiddleware
 from taiga.conf import settings
-from taiga.exceptions.handlers import http_exception_handler, request_validation_exception_handler
+from taiga.exceptions import handlers
 from taiga.exceptions.middlewares import UnexpectedExceptionMiddleware
+from taiga.exceptions.services import TaigaServiceException
 from taiga.routers.loader import load_routes
 from taiga.tasksqueue.middlewares import TaskQueueMiddleware
 
@@ -53,8 +54,9 @@ api.add_middleware(
 ##############################################
 
 # Override exception handlers
-api.exception_handler(HTTPException)(http_exception_handler)
-api.exception_handler(RequestValidationError)(request_validation_exception_handler)
+api.exception_handler(HTTPException)(handlers.http_exception_handler)
+api.exception_handler(RequestValidationError)(handlers.request_validation_exception_handler)
+api.exception_handler(TaigaServiceException)(handlers.taiga_service_exception_handler)
 
 
 ##############################################

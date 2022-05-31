@@ -6,5 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-class TaigaServiceException(Exception):
-    ...
+from humps import decamelize
+
+
+def camel_to_kebab(msg: str) -> str:
+    return decamelize(msg).replace("_", "-")

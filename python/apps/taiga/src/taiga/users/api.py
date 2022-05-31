@@ -11,7 +11,6 @@ from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_422
-from taiga.exceptions.services import TaigaServiceException
 from taiga.permissions import IsAuthenticated
 from taiga.routers import routes
 from taiga.users import services as users_services
@@ -60,16 +59,13 @@ async def create_user(form: users_validators.CreateUserValidator) -> User:
     """
     Create new user, which is not yet verified.
     """
-    try:
-        return await users_services.create_user(
-            email=form.email,
-            full_name=form.full_name,
-            password=form.password,
-            project_invitation_token=form.project_invitation_token,
-            accept_project_invitation=form.accept_project_invitation,
-        )
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc), detail=exc.detail)
+    return await users_services.create_user(
+        email=form.email,
+        full_name=form.full_name,
+        password=form.password,
+        project_invitation_token=form.project_invitation_token,
+        accept_project_invitation=form.accept_project_invitation,
+    )
 
 
 @routes.unauth_users.post(
@@ -80,10 +76,10 @@ async def create_user(form: users_validators.CreateUserValidator) -> User:
     responses=ERROR_400 | ERROR_422,
 )
 async def verify_user(form: users_validators.VerifyTokenValidator) -> VerificationInfo:
-    try:
-        return await users_services.verify_user(token=form.token)
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc), detail=exc.detail)
+    """
+    Verify the account of a new signup user.
+    """
+    return await users_services.verify_user(token=form.token)
 
 
 #####################################################################
@@ -128,6 +124,9 @@ async def get_users_by_text(request: Request, form: SearchUsersByTextValidator) 
     responses=ERROR_422,
 )
 async def request_reset_password(form: users_validators.RequestResetPasswordValidator) -> bool:
+    """
+    Request a user password reset.
+    """
     await users_services.request_reset_password(email=form.email)
     return True
 
@@ -140,10 +139,10 @@ async def request_reset_password(form: users_validators.RequestResetPasswordVali
     responses=ERROR_400 | ERROR_422,
 )
 async def verify_reset_password_token(token: str) -> bool:
-    try:
-        return await users_services.verify_reset_password_token(token=token)
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc), detail=exc.detail)
+    """
+    Verify reset password token
+    """
+    return await users_services.verify_reset_password_token(token=token)
 
 
 @routes.unauth_users.post(
@@ -154,12 +153,11 @@ async def verify_reset_password_token(token: str) -> bool:
     responses=ERROR_400 | ERROR_422,
 )
 async def reset_password(token: str, form: users_validators.ResetPasswordValidator) -> AccessWithRefreshToken:
-    try:
-        user = await users_services.reset_password(token=token, password=form.password)
+    """
+    Reset user password
+    """
+    user = await users_services.reset_password(token=token, password=form.password)
 
-        if not user:
-            raise ex.BadRequest("The user is inactive or does not exist.", detail="inactive_user")
-
-        return await auth_services.create_auth_credentials(user=user)
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc), detail=exc.detail)
+    if not user:
+        raise ex.BadRequest("The user is inactive or does not exist.", detail="inactive-user")
+    return await auth_services.create_auth_credentials(user=user)

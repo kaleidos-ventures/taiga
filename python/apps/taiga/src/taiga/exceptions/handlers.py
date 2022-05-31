@@ -12,9 +12,11 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_422_UNPROCESSABLE_ENTITY
+from taiga.base.utils.strings import camel_to_kebab
 from taiga.exceptions.api import HTTPException as TaigaHTTPException
 from taiga.exceptions.api import codes
+from taiga.exceptions.services import TaigaServiceException
 
 
 async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
@@ -40,6 +42,19 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
         return JSONResponse(status_code=exc.status_code, content=content, headers=headers)
     else:
         return JSONResponse(status_code=exc.status_code, content=content)
+
+
+async def taiga_service_exception_handler(request: Request, exc: TaigaServiceException) -> JSONResponse:
+    return JSONResponse(
+        status_code=HTTP_400_BAD_REQUEST,
+        content={
+            "error": {
+                "code": codes.EX_BAD_REQUEST.code,
+                "detail": camel_to_kebab(exc.__class__.__name__),
+                "message": str(exc),
+            }
+        },
+    )
 
 
 async def request_validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:

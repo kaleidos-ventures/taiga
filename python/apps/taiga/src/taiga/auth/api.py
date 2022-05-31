@@ -68,7 +68,5 @@ async def deny(form: RefreshTokenValidator, request: Request) -> None:
 
     try:
         await auth_services.deny_refresh_token(user=request.user, token=form.refresh)
-    except services_ex.BadRefreshTokenError:
-        raise ex.BadRequest("Invalid token")
-    except services_ex.UnauthorizedUserError:
-        raise ex.ForbiddenError("You don't have permmission to deny this token")
+    except services_ex.UnauthorizedUserError as exc:
+        raise ex.ForbiddenError(str(exc))

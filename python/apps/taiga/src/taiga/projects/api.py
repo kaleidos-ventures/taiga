@@ -11,7 +11,6 @@ from taiga.base.api import Request
 from taiga.base.api.permissions import Or, check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
-from taiga.exceptions.services import TaigaServiceException
 from taiga.invitations.permissions import HasPendingProjectInvitation
 from taiga.permissions import CanViewProject, HasPerm, IsAuthenticated, IsProjectAdmin
 from taiga.projects import services as projects_services
@@ -152,10 +151,7 @@ async def update_project_public_permissions(
     project = await get_project_or_404(slug)
     await check_permissions(permissions=UPDATE_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
 
-    try:
-        return await projects_services.update_project_public_permissions(project, form.permissions)
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc))
+    return await projects_services.update_project_public_permissions(project, form.permissions)
 
 
 @routes.projects.get(
@@ -174,10 +170,8 @@ async def get_project_workspace_member_permissions(
 
     project = await get_project_or_404(slug)
     await check_permissions(permissions=GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
-    try:
-        return await projects_services.get_workspace_member_permissions(project=project)
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc))
+
+    return await projects_services.get_workspace_member_permissions(project=project)
 
 
 @routes.projects.put(
@@ -197,10 +191,7 @@ async def update_project_workspace_member_permissions(
     project = await get_project_or_404(slug)
     await check_permissions(permissions=UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
 
-    try:
-        return await projects_services.update_project_workspace_member_permissions(project, form.permissions)
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc))
+    return await projects_services.update_project_workspace_member_permissions(project, form.permissions)
 
 
 async def get_project_or_404(slug: str) -> Project:

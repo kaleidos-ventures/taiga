@@ -10,8 +10,6 @@ from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
-from taiga.exceptions.services import TaigaServiceException
-from taiga.invitations import exceptions as services_ex
 from taiga.invitations import services as invitations_services
 from taiga.invitations.dataclasses import PublicInvitation
 from taiga.invitations.models import Invitation
@@ -41,10 +39,7 @@ async def get_public_project_invitation(
     """
     Get public information about a project invitation
     """
-    try:
-        invitation = await invitations_services.get_public_project_invitation(token=token)
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc))
+    invitation = await invitations_services.get_public_project_invitation(token=token)
 
     if not invitation:
         raise ex.NotFoundError("Invitation not found")
@@ -86,20 +81,14 @@ async def accept_invitation_by_token(
     """
     A user accepts a project invitation using an invitation token
     """
-    try:
-        invitation = await invitations_services.get_project_invitation(token=token)
-    except services_ex.BadInvitationTokenError:
-        raise ex.BadRequest("Invalid token")
+    invitation = await invitations_services.get_project_invitation(token=token)
 
     if not invitation:
         raise ex.NotFoundError("Invitation not found")
 
     await check_permissions(permissions=ACCEPT_TOKEN_INVITATION, user=request.user, obj=invitation)
 
-    try:
-        return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc))
+    return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
 
 
 @routes.projects.post(
@@ -122,10 +111,7 @@ async def accept_invitation_by_project(
     if not invitation:
         raise ex.NotFoundError("Invitation not found")
 
-    try:
-        return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc))
+    return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
 
 
 @routes.projects.post(
@@ -146,9 +132,6 @@ async def create_invitations(
     project = await get_project_or_404(slug=slug)
     await check_permissions(permissions=CREATE_INVITATIONS, user=request.user, obj=project)
 
-    try:
-        return await invitations_services.create_invitations(
-            project=project, invitations=form.get_invitations_dict(), invited_by=request.user
-        )
-    except TaigaServiceException as exc:
-        raise ex.BadRequest(str(exc))
+    return await invitations_services.create_invitations(
+        project=project, invitations=form.get_invitations_dict(), invited_by=request.user
+    )

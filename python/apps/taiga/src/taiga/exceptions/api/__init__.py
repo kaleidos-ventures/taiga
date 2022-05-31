@@ -9,6 +9,7 @@ from typing import Any
 
 from fastapi import status
 from fastapi.exceptions import HTTPException as FastAPIHTTPException
+from taiga.base.utils.strings import camel_to_kebab
 
 from . import codes
 
@@ -24,6 +25,8 @@ class HTTPException(FastAPIHTTPException):
     ) -> None:
         self.code: str = code
         self.message: str = message
+        if not detail:
+            detail = camel_to_kebab(self.__class__.__name__)
         super().__init__(status_code=status_code, detail=detail, headers=headers)
 
 
@@ -60,8 +63,10 @@ class AuthorizationError(HTTPException):
 
 
 class ForbiddenError(HTTPException):
-    def __init__(self, message: str = codes.EX_FORBIDDEN.message):
-        super().__init__(status_code=status.HTTP_403_FORBIDDEN, code=codes.EX_FORBIDDEN.code, message=message)
+    def __init__(self, message: str = codes.EX_FORBIDDEN.message, detail: Any = None) -> None:
+        super().__init__(
+            status_code=status.HTTP_403_FORBIDDEN, code=codes.EX_FORBIDDEN.code, message=message, detail=detail
+        )
 
 
 ##########################

@@ -96,11 +96,11 @@ async def verify_user(token: str) -> VerificationInfo:
     try:
         verify_token = await VerifyUserToken.create(token)
     except tokens_ex.DeniedTokenError:
-        raise ex.UsedVerifyUserTokenError("The token has already been used.", detail="used_token")
+        raise ex.UsedVerifyUserTokenError("The token has already been used.")
     except tokens_ex.ExpiredTokenError:
-        raise ex.ExpiredVerifyUserTokenError("The token has expired.", detail="expired_token")
+        raise ex.ExpiredVerifyUserTokenError("The token has expired.")
     except tokens_ex.TokenError:
-        raise ex.BadVerifyUserTokenError("Invalid or malformed token.", detail="invalid_token")
+        raise ex.BadVerifyUserTokenError("Invalid or malformed token.")
 
     await verify_token.denylist()
 
@@ -153,17 +153,17 @@ async def _get_user_and_reset_password_token(token: str) -> tuple[ResetPasswordT
     try:
         reset_token = await ResetPasswordToken.create(token)
     except tokens_ex.DeniedTokenError:
-        raise ex.UsedResetPasswordTokenError("The token has already been used.", detail="used_token")
+        raise ex.UsedResetPasswordTokenError("The token has already been used.")
     except tokens_ex.ExpiredTokenError:
-        raise ex.ExpiredResetPassswordTokenError("The token has expired.", detail="expired_token")
+        raise ex.ExpiredResetPassswordTokenError("The token has expired.")
     except tokens_ex.TokenError:
-        raise ex.BadResetPasswordTokenError("Invalid or malformed token.", detail="invalid_token")
+        raise ex.BadResetPasswordTokenError("Invalid or malformed token.")
 
     # Get user
     user = await users_repositories.get_first_user(**reset_token.object_data, is_active=True, is_system=False)
     if not user:
         await reset_token.denylist()
-        raise ex.BadResetPasswordTokenError("Invalid or malformed token.", detail="invalid_token")
+        raise ex.BadResetPasswordTokenError("Invalid or malformed token.")
 
     return reset_token, user
 

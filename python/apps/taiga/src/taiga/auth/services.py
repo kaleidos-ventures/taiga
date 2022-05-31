@@ -52,7 +52,7 @@ async def authenticate(token: str) -> tuple[list[str], User]:
     if user := await users_repositories.get_first_user(**access_token.object_data, is_active=True, is_system=False):
         return ["auth"], user
 
-    raise ex.UnauthorizedUserError()
+    raise ex.UnauthorizedUserError("Error authenticating the user")
 
 
 async def deny_refresh_token(user: User, token: str) -> None:
@@ -60,12 +60,12 @@ async def deny_refresh_token(user: User, token: str) -> None:
     try:
         refresh_token = await RefreshToken.create(token)
     except TokenError:
-        raise ex.BadRefreshTokenError()
+        raise ex.BadRefreshTokenError("Invalid token")
 
     # Check if the user who wants to deny the token is the owner (stored in the token).
     owner_id = refresh_token.object_data.get(refresh_token.object_id_field, None)
     if not owner_id or owner_id != getattr(user, refresh_token.object_id_field):
-        raise ex.UnauthorizedUserError()
+        raise ex.UnauthorizedUserError("You don't have permmission to deny this token")
 
     # Deny the token
     await refresh_token.denylist()

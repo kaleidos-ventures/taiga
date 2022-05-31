@@ -4,14 +4,3 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
-from django_jinja import library
-from jinja2.utils import markupsafe
-from taiga6.mdrender.service import render
-
-
-@library.global_function
-def mdrender(project, text) -> str:
-    if text:
-        return markupsafe.Markup(render(project, text))
-    return ""

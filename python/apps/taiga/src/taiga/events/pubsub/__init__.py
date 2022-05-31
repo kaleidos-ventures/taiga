@@ -5,13 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from django_jinja import library
-from jinja2.utils import markupsafe
-from taiga6.mdrender.service import render
-
-
-@library.global_function
-def mdrender(project, text) -> str:
-    if text:
-        return markupsafe.Markup(render(project, text))
-    return ""
+from .backends.base import PubSubBackend  # noqa
+from .backends.memory import MemoryPubSubBackend  # noqa
+from .backends.postgres import PostgresPubSubBackend  # noqa
+from .events import Event  # noqa

@@ -7,6 +7,9 @@ uvicorn
 # The task queue
 procrastinate
 
+# For pubsub postgres backend
+asyncpg
+
 # For manage CLI
 typer
 

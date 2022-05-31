@@ -8,3 +8,6 @@ pytest-asyncio
 pytest-factoryboy
 git+https://github.com/FactoryBoy/factory_boy@master#egg=factory-boy # factory-boy > 3.2.1
 validators
+
+# Typing stubs
+asyncpg-stubs

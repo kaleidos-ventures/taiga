@@ -4,7 +4,7 @@ Pillow
 Pygments>=2.7.4
 Unidecode==0.4.20
 asana
-bleach
+bleach<5.0.0
 celery==5.2.3
 diff-match-patch==20121119
 django-ipware==1.1.6

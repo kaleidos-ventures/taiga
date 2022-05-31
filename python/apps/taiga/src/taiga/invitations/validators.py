@@ -5,16 +5,26 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from pydantic import EmailStr, conlist, validator
+from pydantic import EmailStr, conlist, root_validator, validator
 from taiga.base.serializers import BaseModel
 from taiga.conf import settings
 
 
 class InvitationValidator(BaseModel):
-    email: EmailStr
+    email: EmailStr | None
+    username: str | None
     role_slug: str
 
-    @validator("email", "role_slug")
+    @root_validator
+    def username_or_email(cls, values: dict[str, str]) -> dict[str, str]:
+        username = values.get("username")
+        email = values.get("email")
+        username_has_value = username is not None and username != ""
+        email_has_value = email is not None and email != ""
+        assert username_has_value or email_has_value, "Username or email required"
+        return values
+
+    @validator("role_slug")
     def check_not_empty(cls, v: str) -> str:
         assert v != "", "Empty field is not allowed"
         return v

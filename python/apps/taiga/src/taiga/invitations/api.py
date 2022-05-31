@@ -16,7 +16,7 @@ from taiga.invitations import services as invitations_services
 from taiga.invitations.dataclasses import PublicInvitation
 from taiga.invitations.models import Invitation
 from taiga.invitations.permissions import IsProjectInvitationRecipient
-from taiga.invitations.serializers import InvitationSerializer, PublicInvitationSerializer
+from taiga.invitations.serializers import CreateInvitationsSerializer, InvitationSerializer, PublicInvitationSerializer
 from taiga.invitations.validators import InvitationsValidator
 from taiga.permissions import IsAuthenticated, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
@@ -39,7 +39,7 @@ async def get_public_project_invitation(
     token: str = Query(None, description="the project invitation token (str)")
 ) -> PublicInvitation:
     """
-    Get public information about  a project invitation
+    Get public information about a project invitation
     """
     try:
         invitation = await invitations_services.get_public_project_invitation(token=token)
@@ -132,14 +132,16 @@ async def accept_invitation_by_project(
     "/{slug}/invitations",
     name="project.invitations.create",
     summary="Create project invitations",
-    response_model=list[InvitationSerializer],
+    response_model=list[CreateInvitationsSerializer],
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_invitations(
     request: Request, form: InvitationsValidator, slug: str = Query(None, description="the project slug (str)")
 ) -> list[Invitation]:
     """
-    Create some invitations for a project
+    Create invitations to a project for a list of users (identified either by their username or their email, and the
+    role they'll take in the project). In case of receiving several invitations for the same user, just the first
+    role will be considered.
     """
     project = await get_project_or_404(slug=slug)
     await check_permissions(permissions=CREATE_INVITATIONS, user=request.user, obj=project)

@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "9bb83dfc-6a44-4d78-ad87-06935c98ce00",
-		"name": "taiga-next-export",
+		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "3299216"
 	},
@@ -1149,7 +1149,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user-test20@example.com\",\n      \"roleSlug\": \"admin\"\n    }\n  ]\n}",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user6@taiga.demo\",\n      \"roleSlug\": \"general\"\n    },\n    {\n      \"username\": \"user3\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"new_user@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"

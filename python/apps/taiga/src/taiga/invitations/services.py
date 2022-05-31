@@ -13,6 +13,7 @@ from taiga.invitations import exceptions as ex
 from taiga.invitations import repositories as invitations_repositories
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.dataclasses import PublicInvitation
+from taiga.invitations.exceptions import UsernameDoesNotExistError
 from taiga.invitations.models import Invitation
 from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.projects.models import Project
@@ -97,15 +98,24 @@ async def send_project_invitation_email(invitation: Invitation) -> None:
 
 
 async def create_invitations(project: Project, invitations: list[dict[str, str]], invited_by: User) -> list[Invitation]:
-    # create two lists with roles_slug and emails received
+    # create two lists with roles_slug and the emails received (either directly by the invitation's email, or by the
+    # invited username's email)
     roles_slug = []
     emails = []
     for invitation in invitations:
-        roles_slug.append(invitation["role_slug"])
-        email = invitation["email"].lower()
-        if email in emails:
-            raise ex.DuplicatedEmailError("Duplicated email")
-        emails.append(email)
+        # it may receive different invitations referring to the same user, an email and later a username or vice versa
+        username = invitation["username"] if invitation.get("username") else None
+        email = invitation["email"].lower() if invitation.get("email") else None
+        if username:
+            user = await users_repositories.get_first_user(username=username)
+            if not user:
+                raise UsernameDoesNotExistError("Username doesn't exist")
+            if not (user.email.lower() in emails):
+                emails.append(user.email.lower())
+                roles_slug.append(invitation["role_slug"])
+        elif email and not (email in emails):
+            roles_slug.append(invitation["role_slug"])
+            emails.append(email)
 
     # project's roles dict, whose key is the role slug and value the Role object
     # {'admin': Role1, 'general': Role2}

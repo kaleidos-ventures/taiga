@@ -4,8 +4,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+from typing import Any
 
-from pydantic import EmailStr
+from pydantic import EmailStr, validator
 from taiga.base.serializers import BaseModel
 from taiga.invitations.choices import InvitationStatus
 from taiga.projects.serializers.related import ProjectSmallSummarySerializer
@@ -30,3 +31,20 @@ class InvitationSerializer(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CreateInvitationsSerializer(BaseModel):
+    user: UserSerializer | None
+    role: BaseRoleSerializer
+    email: EmailStr | None
+
+    class Config:
+        orm_mode = True
+
+    @validator("email")
+    def avoid_to_publish_when_username(cls, email: str, values: dict[str, Any]) -> str | None:
+        user = values.get("user")
+        if user:
+            return None
+        else:
+            return email

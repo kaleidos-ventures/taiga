@@ -340,7 +340,6 @@ async def test_create_invitations(tqmanager):
         fake_users_repo.get_users_by_emails_as_dict.assert_awaited_once_with(emails=[user2.email, "test@email.com"])
         fake_invitations_repo.create_invitations.assert_awaited_once()
 
-        print(tqmanager.pending_jobs)
         assert len(tqmanager.pending_jobs) == 2
 
 

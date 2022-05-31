@@ -13,7 +13,7 @@ from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.exceptions.services import TaigaServiceException
 from taiga.invitations.permissions import HasPendingProjectInvitation
-from taiga.permissions import CanViewProject, HasPerm, IsProjectAdmin
+from taiga.permissions import CanViewProject, HasPerm, IsAuthenticated, IsProjectAdmin
 from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
@@ -22,8 +22,8 @@ from taiga.routers import routes
 from taiga.workspaces.api import get_workspace_or_404
 
 # PERMISSIONS
-LIST_WORKSPACE_PROJECTS = HasPerm("view_workspace")
-LIST_WORKSPACE_INVITED_PROJECTS = HasPerm("view_workspace")
+LIST_WORKSPACE_PROJECTS = IsAuthenticated()  # HasPerm("view_workspace")
+LIST_WORKSPACE_INVITED_PROJECTS = IsAuthenticated()  # HasPerm("view_workspace")
 CREATE_PROJECT = HasPerm("view_workspace")
 GET_PROJECT = Or(CanViewProject(), HasPendingProjectInvitation())
 GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()

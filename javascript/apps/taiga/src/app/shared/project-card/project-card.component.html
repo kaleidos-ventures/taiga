@@ -17,7 +17,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <a
         tuiLink
         [routerLink]="['/new-project']"
-        [queryParams]="{ workspace: slug }"
+        [queryParams]="{ workspace: workspaceSlug }"
         data-test="create-project-card"
         class="project-item-link">
         <ng-container *ngIf="firstProject">
@@ -50,22 +50,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
   </ng-container>
   <ng-container *ngIf="variant === 'invitation'">
-    <div
-      #invitationCardContainer
-      data-animation="card-container">
+    <div #invitationCardContainer>
       <button
         (click)="rejectInviteAnimationStart()"
         class="project-reject-invite"
         tuiIconButton
+        [@itemSlideOutAnimation]
+        *ngIf="invitationStatus !== 'accepted'"
         appearance="us-header-button"
         [attr.aria-label]="t('commons.close')"
         icon="close"
         type="button"></button>
       <div class="project-item-card">
-        <span class="project-status-badge">
-          <tui-svg src="clock"></tui-svg>
-          {{ t('project.card.pending_invitation') }}
-        </span>
+        <div
+          class="card-badge-container"
+          [@itemSlideOutAnimation]
+          *ngIf="invitationStatus !== 'accepted'">
+          <span class="project-status-badge">
+            <tui-svg src="clock"></tui-svg>
+            {{ t('project.card.pending_invitation') }}
+          </span>
+        </div>
         <div class="project-card-title">
           <tg-ui-avatar
             class="project-card-image"
@@ -84,12 +89,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <button
           class="project-accept-invite"
           tuiButton
+          [@itemSlideOutAnimation]
+          *ngIf="invitationStatus !== 'accepted'"
           (click)="acceptInvite()"
           appearance="primary"
           type="button">
           {{ t('project.card.accept_invite') }}
         </button>
-        <!-- <p class="project-card-description">{{ project.description }}</p> -->
+        <p
+          class="project-card-description"
+          [@itemSlideOutAnimation]
+          *ngIf="invitationStatus === 'accepted'">
+          {{ project.description }}
+        </p>
       </div>
     </div>
   </ng-container>

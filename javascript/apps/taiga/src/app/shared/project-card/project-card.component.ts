@@ -10,6 +10,7 @@ import {
   animate,
   AnimationEvent,
   group,
+  keyframes,
   query,
   style,
   transition,
@@ -18,6 +19,7 @@ import {
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -27,10 +29,15 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { Project } from '@taiga/data';
 
-type CardVariant = 'project' | 'placeholder' | 'invitation';
+import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { selectAcceptedInvite } from '../invite-to-project/data-access/+state/selectors/invitation.selectors';
 
+type CardVariant = 'project' | 'placeholder' | 'invitation';
+@UntilDestroy()
 @Component({
   selector: 'tg-project-card',
   templateUrl: './project-card.component.html',
@@ -63,16 +70,68 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
         ]),
       ]),
     ]),
+    trigger('itemSlideOutAnimation', [
+      transition(':enter', [
+        style({
+          opacity: 0,
+          transform: 'translateY(5px)',
+        }),
+        animate(
+          '600ms ease-out',
+          keyframes([
+            style({
+              transform: 'translateY(5px)',
+              offset: 0.5,
+            }),
+            style({
+              opacity: 1,
+              transform: 'translateY(0)',
+              offset: 1,
+            }),
+          ])
+        ),
+      ]),
+      transition(':leave', [
+        style({
+          transform: 'translateY(0)',
+          opacity: 1,
+          blockSize: '*',
+          margin: '*',
+          padding: '*',
+        }),
+        animate(
+          '300ms ease-out',
+          keyframes([
+            style({
+              opacity: 0,
+              offset: 0.7,
+            }),
+            style({
+              transform: 'translateY(-30px)',
+              opacity: 0,
+              blockSize: 0,
+              margin: '0',
+              padding: '0',
+              offset: 1,
+            }),
+          ])
+        ),
+      ]),
+    ]),
   ],
 })
 export class ProjectCardComponent implements AfterViewInit {
-  constructor(private el: ElementRef) {}
+  constructor(
+    private el: ElementRef,
+    private store: Store,
+    private cd: ChangeDetectorRef
+  ) {}
 
   @Input()
   public variant: CardVariant = 'project';
 
   @Input()
-  public slug = '';
+  public workspaceSlug = '';
 
   @Input()
   public firstProject = false;
@@ -102,8 +161,19 @@ export class ProjectCardComponent implements AfterViewInit {
   }
 
   public animationState = '';
+  public invitationStatus = '';
+  public acceptedInvitation$ = this.store.select(selectAcceptedInvite);
 
   public ngAfterViewInit() {
+    this.acceptedInvitation$
+      .pipe(untilDestroyed(this))
+      .subscribe((invitation) => {
+        if (invitation === this.project.slug) {
+          this.invitationStatus = 'accepted';
+          this.cd.markForCheck();
+        }
+      });
+
     if (this.invitationCardContainer) {
       const invitationCardContainerInlineSize = (
         this.invitationCardContainer.nativeElement as HTMLElement
@@ -122,8 +192,11 @@ export class ProjectCardComponent implements AfterViewInit {
   }
 
   public acceptInvite() {
-    // Temporary trace
-    console.log('accept invite');
+    this.store.dispatch(
+      acceptInvitationSlug({
+        slug: this.project.slug,
+      })
+    );
   }
 
   public rejectInviteAnimationStart() {
@@ -131,6 +204,7 @@ export class ProjectCardComponent implements AfterViewInit {
   }
 
   public rejectInviteAnimationEnd() {
+    this.animationState = '';
     this.rejectInvite.next(this.project.slug);
   }
 }

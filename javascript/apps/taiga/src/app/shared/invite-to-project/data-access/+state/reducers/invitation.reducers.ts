@@ -11,13 +11,13 @@ import { immerReducer } from '~/app/shared/utils/store';
 import * as InvitationActions from '../actions/invitation.action';
 import * as RolesPermissionsActions from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import { Contact, Invitation, Membership, Role } from '@taiga/data';
-import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 
 export interface InvitationState {
   memberRoles: Role[] | null;
   contacts: Contact[];
   members: Membership[];
   invitations: Invitation[];
+  acceptedInvite: string | null;
 }
 
 export const initialState: InvitationState = {
@@ -25,6 +25,7 @@ export const initialState: InvitationState = {
   contacts: [],
   members: [],
   invitations: [],
+  acceptedInvite: null,
 };
 
 export const reducer = createReducer(
@@ -46,10 +47,17 @@ export const reducer = createReducer(
     }
   ),
   on(
-    ProjectOverviewActions.fetchMembersSuccess,
-    (state, { members, invitations }): InvitationState => {
-      state.members = members;
-      state.invitations = invitations;
+    InvitationActions.fetchMyContactsSuccess,
+    (state, { contacts }): InvitationState => {
+      state.contacts = [...contacts];
+
+      return state;
+    }
+  ),
+  on(
+    InvitationActions.acceptedInvitationSlug,
+    (state, { projectSlug }): InvitationState => {
+      state.acceptedInvite = projectSlug;
 
       return state;
     }

@@ -48,7 +48,7 @@ export class WorkspaceItemComponent implements OnInit {
   public get getRejectedInvites(): Project['slug'][] {
     return (
       this.localStorageService.get<Project['slug'][] | undefined>(
-        'rejected_invites'
+        'general_rejected_invites'
       ) ?? []
     );
   }
@@ -71,7 +71,10 @@ export class WorkspaceItemComponent implements OnInit {
 
   public rejectProjectInvite(slug: Project['slug']) {
     this.rejectedInvites.push(slug);
-    this.localStorageService.set('rejected_invites', this.rejectedInvites);
+    this.localStorageService.set(
+      'general_rejected_invites',
+      this.rejectedInvites
+    );
     const invitationsIndex = this.invitations.findIndex((invite, index) => {
       if (invite.slug === slug) {
         return index;

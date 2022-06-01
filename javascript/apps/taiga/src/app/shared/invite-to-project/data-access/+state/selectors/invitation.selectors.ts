@@ -10,8 +10,12 @@ import { createSelector } from '@ngrx/store';
 import { Role, User } from '@taiga/data';
 import { invitationFeature } from '../reducers/invitation.reducers';
 
-export const { selectMemberRoles, selectContacts, selectInvitations } =
-  invitationFeature;
+export const {
+  selectMemberRoles,
+  selectContacts,
+  selectInvitations,
+  selectAcceptedInvite,
+} = invitationFeature;
 
 // roles list should be shown by the order setted from 'order' the property
 export const selectMemberRolesOrdered = createSelector(

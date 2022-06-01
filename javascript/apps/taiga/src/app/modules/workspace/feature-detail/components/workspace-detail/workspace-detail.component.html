@@ -63,17 +63,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [class]="gridClass"
         class="workspace-item-card-grid">
         <tg-project-card
-          *ngIf="vm.project.length === 0 && vm.workspace.myRole === 'admin'"
+          *ngIf="vm.projects.length === 0 && vm.workspace.myRole === 'admin'"
           [workspace]="vm.workspace"
           variant="placeholder"
           [firstProject]="true">
         </tg-project-card>
         <tg-project-card
-          *ngFor="let project of vm.project; trackBy: trackByLatestProject"
+          variant="invitation"
+          (rejectInvite)="rejectInvitedProject($event)"
+          *ngFor="
+            let invitedProject of invitations;
+            trackBy: trackByLatestProject
+          "
+          [workspace]="vm.workspace"
+          [project]="invitedProject">
+        </tg-project-card>
+        <tg-project-card
+          *ngFor="let project of vm.projects; trackBy: trackByLatestProject"
           [project]="project">
         </tg-project-card>
         <tg-project-card
-          *ngIf="vm.project.length > 0"
+          *ngIf="vm.projects.length > 0"
           [workspace]="vm.workspace"
           variant="placeholder">
         </tg-project-card>

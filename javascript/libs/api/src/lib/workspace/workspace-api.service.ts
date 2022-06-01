@@ -45,4 +45,10 @@ export class WorkspaceApiService {
       `${this.config.apiUrl}/workspaces/${slug}/projects`
     );
   }
+
+  public fetchWorkspaceInvitedProjects(slug: Workspace['slug']) {
+    return this.http.get<Project[]>(
+      `${this.config.apiUrl}/workspaces/${slug}/invited-projects`
+    );
+  }
 }

@@ -21,7 +21,7 @@ export const fetchWorkspaceSuccess = createAction(
 
 export const fetchWorkspaceProjectsSuccess = createAction(
   '[Workspace] Fetch Projects Success',
-  props<{ projects: Project[] }>()
+  props<{ projects: Project[]; invitedProjects: Project[] }>()
 );
 
 export const resetWorkspace = createAction('[Workspace] Reset workspace');

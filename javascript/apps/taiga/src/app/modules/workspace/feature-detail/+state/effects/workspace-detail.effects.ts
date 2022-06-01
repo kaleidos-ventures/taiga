@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
 import { map } from 'rxjs/operators';
-
+import { zip } from 'rxjs';
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
 import { fetch } from '@nrwl/angular';
 import { WorkspaceApiService } from '@taiga/api';
@@ -36,20 +36,22 @@ export class WorkspaceDetailEffects {
     );
   });
 
-  public loadWorkspaceProject$ = createEffect(() => {
+  public loadWorkspaceProjects$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(WorkspaceActions.fetchWorkspace),
       fetch({
         run: (action) => {
-          return this.workspaceApiService
-            .fetchWorkspaceProjects(action.slug)
-            .pipe(
-              map((projects) => {
-                return WorkspaceActions.fetchWorkspaceProjectsSuccess({
-                  projects,
-                });
-              })
-            );
+          return zip(
+            this.workspaceApiService.fetchWorkspaceProjects(action.slug),
+            this.workspaceApiService.fetchWorkspaceInvitedProjects(action.slug)
+          ).pipe(
+            map(([projects, invitedProjects]) => {
+              return WorkspaceActions.fetchWorkspaceProjectsSuccess({
+                projects,
+                invitedProjects,
+              });
+            })
+          );
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
           this.appService.errorManagement(httpResponse),

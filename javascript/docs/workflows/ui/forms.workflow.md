@@ -148,7 +148,6 @@ this.dataModel.toString = function () {
 Reactive forms are Angular model driven forms. It handles in the component model changes on the form template.
 Reactive forma are widely explained in [Angular documentation](https://angular.io/guide/reactive-forms)
 
-
 ## Send data
 
 Check `/javascript/docs/workflows/feature/effects.workflow.md`

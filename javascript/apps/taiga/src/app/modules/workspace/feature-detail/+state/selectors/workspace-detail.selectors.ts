@@ -8,5 +8,8 @@
 
 import { workspaceDetailFeature } from '../reducers/workspace-detail.reducer';
 
-export const { selectWorkspace, selectWorkspaceProjects } =
-  workspaceDetailFeature;
+export const {
+  selectWorkspace,
+  selectWorkspaceProjects,
+  selectWorkspaceInvitedProjects,
+} = workspaceDetailFeature;

@@ -20,6 +20,7 @@ import { Project, Workspace } from '@taiga/data';
 import { ResizedEvent } from 'angular-resize-event';
 import {
   selectWorkspace,
+  selectWorkspaceInvitedProjects,
   selectWorkspaceProjects,
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import {
@@ -27,6 +28,7 @@ import {
   resetWorkspace,
 } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import { filterNil } from '~/app/shared/utils/operators';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 @UntilDestroy()
 @Component({
@@ -40,17 +42,30 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   public readonly model$ = this.state.select();
   public amountOfProjectsToShow = 6;
 
+  public wsRejectedInvites: Project['slug'][] = [];
+  public invitations: Project[] = [];
+
   public get gridClass() {
     return `grid-items-${this.amountOfProjectsToShow}`;
+  }
+
+  public get getWsRejectedInvites(): Project['slug'][] {
+    return (
+      this.localStorageService.get<Project['slug'][] | undefined>(
+        'workspace_rejected_invites'
+      ) ?? []
+    );
   }
 
   constructor(
     private route: ActivatedRoute,
     private store: Store,
+    private localStorageService: LocalStorageService,
     private state: RxState<{
       projectsToShow: boolean;
       workspace: Workspace | null;
-      project: Project[];
+      projects: Project[];
+      invitedProjects: Project[];
     }>
   ) {}
 
@@ -67,7 +82,22 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       'workspace',
       this.store.select(selectWorkspace).pipe(filterNil())
     );
-    this.state.connect('project', this.store.select(selectWorkspaceProjects));
+    this.state.connect('projects', this.store.select(selectWorkspaceProjects));
+    this.state.connect(
+      'invitedProjects',
+      this.store.select(selectWorkspaceInvitedProjects)
+    );
+
+    this.wsRejectedInvites = this.getWsRejectedInvites;
+
+    this.state.hold(
+      this.store.select(selectWorkspaceInvitedProjects),
+      (invitedProjects) => {
+        this.invitations = invitedProjects.filter((project) => {
+          return !this.wsRejectedInvites.includes(project.slug);
+        });
+      }
+    );
   }
 
   public trackByLatestProject(index: number, project: Project) {
@@ -81,6 +111,21 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
   public onResized(event: ResizedEvent) {
     this.setCardAmounts(event.newRect.width);
+  }
+
+  public rejectInvitedProject(slug: Project['slug']) {
+    this.wsRejectedInvites.push(slug);
+    this.localStorageService.set(
+      'workspace_rejected_invites',
+      this.wsRejectedInvites
+    );
+    const invitationsIndex = this.invitations.findIndex((invite, index) => {
+      if (invite.slug === slug) {
+        return index;
+      }
+      return null;
+    });
+    this.invitations.splice(invitationsIndex, 1);
   }
 
   public ngOnDestroy() {

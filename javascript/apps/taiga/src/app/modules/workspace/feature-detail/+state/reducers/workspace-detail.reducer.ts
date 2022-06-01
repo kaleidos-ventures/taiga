@@ -14,6 +14,7 @@ import * as WorkspaceActions from '../actions/workspace-detail.actions';
 export interface WorkspaceDetailState {
   workspace: Workspace | null;
   workspaceProjects: Project[];
+  workspaceInvitedProjects: Project[];
 }
 
 export const initialState: WorkspaceDetailState = {
@@ -31,6 +32,7 @@ export const initialState: WorkspaceDetailState = {
     isOwner: false,
   },
   workspaceProjects: [],
+  workspaceInvitedProjects: [],
 };
 
 export const reducer = createReducer(
@@ -45,8 +47,9 @@ export const reducer = createReducer(
   ),
   on(
     WorkspaceActions.fetchWorkspaceProjectsSuccess,
-    (state, { projects }): WorkspaceDetailState => {
+    (state, { projects, invitedProjects }): WorkspaceDetailState => {
       state.workspaceProjects = projects;
+      state.workspaceInvitedProjects = invitedProjects;
 
       return state;
     }

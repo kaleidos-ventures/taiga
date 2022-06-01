@@ -50,7 +50,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
   </ng-container>
   <ng-container *ngIf="variant === 'invitation' && project">
-    <div #invitationCardContainer>
+    <div
+      #invitationCardContainer
+      data-animation="card-container">
       <button
         (click)="onRejectInvite()"
         class="project-reject-invite"

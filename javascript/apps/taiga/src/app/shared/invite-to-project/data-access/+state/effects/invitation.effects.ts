@@ -12,7 +12,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import * as InvitationActions from '../actions/invitation.action';
 import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { InvitationApiService } from '@taiga/api';
-import { fetch, pessimisticUpdate } from '@nrwl/angular';
+import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Contact, ErrorManagementToastOptions, Invitation } from '@taiga/data';
@@ -126,25 +126,29 @@ export class InvitationEffects {
   public acceptInvitationSlug$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(InvitationActions.acceptInvitationSlug),
-      pessimisticUpdate({
+      optimisticUpdate({
         run: (action) => {
           return this.projectApiService.acceptInvitationSlug(action.slug).pipe(
             concatLatestFrom(() =>
               this.store.select(selectUser).pipe(filterNil())
             ),
             map(([, user]) => {
-              return InvitationActions.acceptedInvitationSlug({
+              return InvitationActions.acceptInvitationSlugSuccess({
                 projectSlug: action.slug,
                 username: user.username,
               });
             })
           );
         },
-        onError: () => {
+        undoAction: (action) => {
           this.appService.toastNotification({
             label: 'errors.generic_toast_label',
             message: 'errors.generic_toast_message',
             status: TuiNotification.Error,
+          });
+
+          return InvitationActions.acceptInvitationSlugError({
+            projectSlug: action.slug,
           });
         },
       })

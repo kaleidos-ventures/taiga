@@ -52,12 +52,6 @@ export class WorkspaceEffects {
             timer(1000)
           ).pipe(
             map(([workspace]) => {
-              // #TODO: When back give us this info, remove all modifications.
-              workspace.myRole = 'admin';
-              workspace.isOwner = true;
-              workspace.hasProjects = false;
-              workspace.isPremium = true;
-              workspace.totalProjects = 0;
               return WorkspaceActions.createWorkspaceSuccess({ workspace });
             })
           );

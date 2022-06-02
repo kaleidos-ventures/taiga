@@ -17,7 +17,7 @@ export interface InvitationState {
   contacts: Contact[];
   members: Membership[];
   invitations: Invitation[];
-  acceptedInvite: string | null;
+  acceptedInvite: string[];
 }
 
 export const initialState: InvitationState = {
@@ -25,7 +25,7 @@ export const initialState: InvitationState = {
   contacts: [],
   members: [],
   invitations: [],
-  acceptedInvite: null,
+  acceptedInvite: [],
 };
 
 export const reducer = createReducer(
@@ -55,9 +55,19 @@ export const reducer = createReducer(
     }
   ),
   on(
-    InvitationActions.acceptedInvitationSlug,
+    InvitationActions.acceptInvitationSlug,
+    (state, { slug }): InvitationState => {
+      state.acceptedInvite.push(slug);
+
+      return state;
+    }
+  ),
+  on(
+    InvitationActions.acceptInvitationSlugError,
     (state, { projectSlug }): InvitationState => {
-      state.acceptedInvite = projectSlug;
+      state.acceptedInvite = state.acceptedInvite.filter((invitation) => {
+        return invitation !== projectSlug;
+      });
 
       return state;
     }

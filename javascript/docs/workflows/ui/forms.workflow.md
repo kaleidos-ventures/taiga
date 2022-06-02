@@ -148,51 +148,7 @@ this.dataModel.toString = function () {
 Reactive forms are Angular model driven forms. It handles in the component model changes on the form template.
 Reactive forma are widely explained in [Angular documentation](https://angular.io/guide/reactive-forms)
 
+
 ## Send data
 
-### Prevent submit multiple
-
-#### Using button loading directive
-
-If you are using a `button[submit]` inside a `form` you can use [button loader](/javascript/docs/workflows/ui/loaders.workflow.md). The `loading` will disable the button and therefore the form.
-
-#### Using exhaustMap
-
-`exhaustMap` will prevent any other request to continue if one is already one in progress.
-
-```ts
-public effect$ = createEffect(() => {
-  return this.actions$.pipe(
-    ofType(AllActions.action),
-    exhaustMap() => {
-      return this.theService.requestExample();
-    })
-  );
-});
-```
-
-#### Feature state
-
-Sync your button status or the function send with the feature state. The state will store the status of the request and will be update with the "init" action and the "error/success" actions.
-
-### Multi request
-
-#### Sending data -> change state
-
-If you want to update the state or make another action after the request you must use `pessimisticUpdate`. Check `/javascript/docs/workflows/feature/effects.workflow.md`. This will force the developer to provide a way to handle the error. Also it works like `concatMap`.
-
-#### Sending data and change state at the same time
-
-If you want to make the changes to the state before the server, use `optimisticUpdate`. Check `/javascript/docs/workflows/feature/effects.workflow.md`. This will force the developer to provide a way to undo the action if there is an error. Also it works like `concatMap`.
-
-#### concatMap
-
-The requests will be queued. For example for publishing a comment if you click twice the button, it will run the first request from the first click and the the second one, so maybe two equal comments are created. It can be useful to update something and with no lost updates and no race conditions.
-
-#### switchMap
-
-The current request will be cancelled if a new action come through. For example if you request an item `a` and an item `b` with the same action before the first request is complete, the `a` request will be cancelled.
-
-### mergeMap
-
-This will be run every request even is there are other actions in progress.
+Check `/javascript/docs/workflows/feature/effects.workflow.md`

@@ -47,7 +47,7 @@ export class ProjectOverviewEffects {
 
   public acceptedInvitation$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.acceptedInvitationSlug),
+      ofType(InvitationActions.acceptInvitationSlugSuccess),
       delay(WaitingForToastNotification),
       map(() => {
         return ProjectOverviewActions.onAcceptedInvitation({

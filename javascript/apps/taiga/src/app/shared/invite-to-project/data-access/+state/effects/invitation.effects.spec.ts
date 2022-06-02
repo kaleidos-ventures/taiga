@@ -17,11 +17,12 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
 import { InvitationEffects } from './invitation.effects';
 import {
-  acceptedInvitationSlug,
+  acceptInvitationSlugSuccess,
   acceptInvitationSlug,
   fetchMyContacts,
   fetchMyContactsSuccess,
   inviteUsersSuccess,
+  acceptInvitationSlugError,
 } from '../actions/invitation.action';
 import { inviteUsersNewProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
@@ -156,9 +157,39 @@ describe('InvitationEffects', () => {
     });
 
     const expected = cold('--a', {
-      a: acceptedInvitationSlug({ projectSlug: slug, username }),
+      a: acceptInvitationSlugSuccess({ projectSlug: slug, username }),
     });
 
     expect(effects.acceptInvitationSlug$).toBeObservable(expected);
+  });
+
+  it('Accept invitation slug error', () => {
+    const slug = randSlug();
+    const effects = spectator.inject(InvitationEffects);
+    const appService = spectator.inject(AppService);
+    const projectApiService = spectator.inject(ProjectApiService);
+    projectApiService.acceptInvitationSlug.mockReturnValue(
+      cold(
+        '-#|',
+        {},
+        {
+          status: 400,
+        }
+      )
+    );
+
+    actions$ = hot('-a', {
+      a: acceptInvitationSlug({ slug }),
+    });
+
+    const expected = cold('--a', {
+      a: acceptInvitationSlugError({ projectSlug: slug }),
+    });
+
+    expect(effects.acceptInvitationSlug$).toBeObservable(expected);
+
+    expect(effects.acceptInvitationSlug$).toSatisfyOnFlush(() => {
+      expect(appService.toastNotification).toHaveBeenCalled();
+    });
   });
 });

@@ -27,7 +27,7 @@ import {
 } from '../actions/project-overview.actions';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { acceptedInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { randDomainSuffix } from '@ngneat/falso';
 import { TestScheduler } from 'rxjs/testing';
 
@@ -109,7 +109,7 @@ describe('ProjectOverviewEffects', () => {
     testScheduler.run((helpers) => {
       const { hot, expectObservable } = helpers;
       actions$ = hot('-a', {
-        a: acceptedInvitationSlug({ projectSlug: slug, username }),
+        a: acceptInvitationSlugSuccess({ projectSlug: slug, username }),
       });
 
       expectObservable(effects.acceptedInvitation$).toBe('700ms c', {

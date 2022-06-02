@@ -126,9 +126,22 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
         let invitations = state.invitations;
         let projects = state.workspaceProjects;
 
+        const invitationProjects = projects.filter((project) => {
+          return invitations.find((invitation) => {
+            return invitation.slug === project.slug;
+          });
+        });
+
+        // workspace admin may have an invitation to a project that it already has access to.
+        projects = projects.filter((project) => {
+          return !invitations.find((invitation) => {
+            return invitation.slug === project.slug;
+          });
+        });
+
         if (!state.showAllProjects) {
           invitations = state.invitations.slice(0, state.projectsToShow);
-          projects = state.workspaceProjects.slice(
+          projects = projects.slice(
             0,
             state.projectsToShow - invitations.length
           );
@@ -136,18 +149,23 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
         const showMoreProjects =
           !state.showAllProjects &&
-          this.workspace.totalProjects + state.invitations.length >
+          this.workspace.totalProjects +
+            state.invitations.length -
+            invitationProjects.length >
             state.projectsToShow;
 
         const showLessProjects =
           state.showAllProjects &&
-          this.workspace.totalProjects + state.invitations.length >
+          this.workspace.totalProjects +
+            state.invitations.length -
+            invitationProjects.length >
             state.projectsToShow;
 
         const remainingProjects =
           this.workspace.totalProjects +
           state.invitations.length -
-          state.projectsToShow;
+          state.projectsToShow -
+          invitationProjects.length;
 
         return {
           ...state,
@@ -193,24 +211,26 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     rejectedInvites.push(slug);
     this.localStorageService.set('general_rejected_invites', rejectedInvites);
 
-    const siblings = this.getSiblingsRow(slug);
+    if (this.workspace.myRole !== 'admin') {
+      const siblings = this.getSiblingsRow(slug);
 
-    if (siblings) {
-      const rejectedIndex = siblings.findIndex(
-        (project) => project.slug === slug
-      );
-      siblings.forEach((project, index) => {
-        if (index > rejectedIndex) {
-          this.reorder[project.slug] = 'moving';
-        }
+      if (siblings) {
+        const rejectedIndex = siblings.findIndex(
+          (project) => project.slug === slug
+        );
+        siblings.forEach((project, index) => {
+          if (index > rejectedIndex) {
+            this.reorder[project.slug] = 'moving';
+          }
+        });
+      }
+
+      this.state.set({
+        invitations: this.state.get('invitations').filter((invitation) => {
+          return invitation.slug !== slug;
+        }),
       });
     }
-
-    this.state.set({
-      invitations: this.state.get('invitations').filter((invitation) => {
-        return invitation.slug !== slug;
-      }),
-    });
   }
 
   public reorderDone(event: AnimationEvent) {

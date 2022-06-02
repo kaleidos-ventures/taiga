@@ -62,3 +62,30 @@ it('non-dispatching', () => {
   expect(localStorageService.set).toHaveBeenCalled();
 });
 ```
+
+### Errors
+
+```ts
+it('testing error', () => {
+  randomApiService.methonName.mockReturnValue(
+    cold(
+      '-#|',
+      {},
+      {
+        status: 400,
+      }
+    )
+  );
+
+  const expected = cold('-a', {
+    a: actionTestError({ status: 400 }),
+  });
+
+  actions$ = hot('-a', { a: actionTest({ token, password }) });
+
+  expect(effects.test$).toBeObservable(expected);
+  expect(effects.test$).toSatisfyOnFlush(() => {
+    expect(buttonLoadingService.error).toHaveBeenCalled();
+  });
+});
+```

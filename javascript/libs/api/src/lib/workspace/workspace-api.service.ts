@@ -33,8 +33,8 @@ export class WorkspaceApiService {
         map((workspace: Workspace) => {
           return {
             ...workspace,
+            invitedProjects: [],
             latestProjects: [],
-            totalProjects: 0,
           };
         })
       );

@@ -57,7 +57,7 @@ export class ProjectEffects {
 
   public acceptedInvitation$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.acceptedInvitationSlug),
+      ofType(InvitationActions.acceptInvitationSlugSuccess),
       delay(WaitingForContextClosing),
       tap(() => {
         this.appService.toastNotification({

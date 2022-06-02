@@ -14,19 +14,18 @@ import {
   trigger,
 } from '@angular/animations';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   EventEmitter,
   Input,
+  OnInit,
   Output,
-  ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { Project } from '@taiga/data';
+import { Project, Workspace } from '@taiga/data';
+import { distinctUntilChanged, map, skip } from 'rxjs/operators';
 
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { selectAcceptedInvite } from '../invite-to-project/data-access/+state/selectors/invitation.selectors';
@@ -89,20 +88,20 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
     ]),
   ],
 })
-export class ProjectCardComponent implements AfterViewInit {
+export class ProjectCardComponent implements OnInit {
   constructor(private store: Store, private cd: ChangeDetectorRef) {}
 
   @Input()
   public variant: CardVariant = 'project';
 
   @Input()
-  public workspaceSlug = '';
+  public workspace!: Workspace;
 
   @Input()
   public firstProject = false;
 
   @Input()
-  public project!: Pick<
+  public project?: Pick<
     Project,
     'name' | 'slug' | 'description' | 'color' | 'logoSmall'
   >;
@@ -110,33 +109,53 @@ export class ProjectCardComponent implements AfterViewInit {
   @Output()
   public rejectInvite = new EventEmitter<Project['slug']>();
 
-  @ViewChild('invitationCardContainer')
-  public invitationCardContainer!: ElementRef;
-
   public animationState = '';
-  public invitationStatus = '';
-  public acceptedInvitation$ = this.store.select(selectAcceptedInvite);
+  public invitationStatus?: 'accepted';
 
-  public ngAfterViewInit() {
-    this.acceptedInvitation$
-      .pipe(untilDestroyed(this))
-      .subscribe((invitation) => {
-        if (invitation === this.project.slug) {
-          this.invitationStatus = 'accepted';
-          this.cd.markForCheck();
-        }
+  public invitationStatus$ = this.store.select(selectAcceptedInvite);
+  public rejectedByAdmin = false;
+
+  public ngOnInit(): void {
+    this.invitationStatus$
+      .pipe(
+        untilDestroyed(this),
+        map((accepted) => {
+          if (
+            (this.project && accepted.includes(this.project.slug)) ||
+            this.rejectedByAdmin
+          ) {
+            return 'accepted';
+          }
+
+          return undefined;
+        }),
+        distinctUntilChanged(),
+        skip(1)
+      )
+      .subscribe((invitationStatus) => {
+        this.invitationStatus = invitationStatus;
+        this.cd.markForCheck();
       });
   }
 
   public acceptInvite() {
-    this.store.dispatch(
-      acceptInvitationSlug({
-        slug: this.project.slug,
-      })
-    );
+    if (this.project) {
+      this.store.dispatch(
+        acceptInvitationSlug({
+          slug: this.project.slug,
+        })
+      );
+    }
   }
 
   public onRejectInvite() {
-    this.rejectInvite.next(this.project.slug);
+    if (this.project) {
+      if (this.workspace.myRole === 'admin') {
+        this.rejectedByAdmin = true;
+        this.invitationStatus = 'accepted';
+      }
+
+      this.rejectInvite.next(this.project.slug);
+    }
   }
 }

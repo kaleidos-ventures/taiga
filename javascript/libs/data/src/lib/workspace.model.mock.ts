@@ -17,7 +17,7 @@ export const WorkspaceMockFactory = (): Workspace => {
     name: randDepartment(),
     color: randNumber(),
     hasProjects: true,
-    myRole: 'admin',
+    myRole: 'guest',
     isPremium: true,
     isOwner: true,
     invitedProjects: [],
@@ -51,6 +51,60 @@ export const WorkspaceMockFactory = (): Workspace => {
         myRole: workspace.myRole,
       })
     );
+  }
+
+  return {
+    ...workspace,
+    latestProjects,
+    invitedProjects,
+    totalProjects: numProjects,
+  };
+};
+
+export const WorkspaceAdminMockFactory = (): Workspace => {
+  const workspace: Workspace = {
+    id: randNumber(),
+    slug: randDomainSuffix({ length: 3 }).join('-'),
+    name: randDepartment(),
+    color: randNumber(),
+    hasProjects: true,
+    myRole: 'admin',
+    isPremium: true,
+    isOwner: true,
+    invitedProjects: [],
+    latestProjects: [],
+    totalProjects: randNumber(),
+  };
+
+  const latestProjects = [];
+  const invitedProjects = [];
+  const numProjects = 6;
+
+  for (let i = 0; i < numProjects; i++) {
+    latestProjects.push(
+      ProjectMockFactory(false, {
+        color: workspace.color,
+        slug: workspace.slug,
+        name: workspace.name,
+        isPremium: workspace.isPremium,
+        myRole: workspace.myRole,
+      })
+    );
+  }
+
+  for (let i = 0; i < numProjects; i++) {
+    const project = ProjectMockFactory(false, {
+      color: workspace.color,
+      slug: workspace.slug,
+      name: workspace.name,
+      isPremium: workspace.isPremium,
+      myRole: workspace.myRole,
+    });
+
+    invitedProjects.push(project);
+
+    // all the invitations are also in the project list if the user is an admin
+    latestProjects.push(project);
   }
 
   return {

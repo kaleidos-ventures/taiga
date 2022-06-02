@@ -17,7 +17,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <a
         tuiLink
         [routerLink]="['/new-project']"
-        [queryParams]="{ workspace: workspaceSlug }"
+        [queryParams]="{ workspace: workspace.slug }"
         data-test="create-project-card"
         class="project-item-link">
         <ng-container *ngIf="firstProject">
@@ -29,7 +29,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </a>
     </div>
   </ng-container>
-  <ng-container *ngIf="variant === 'project'">
+  <ng-container *ngIf="variant === 'project' && project">
     <div class="project-item-card">
       <div class="project-card-title">
         <tg-ui-avatar
@@ -49,7 +49,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <p class="project-card-description">{{ project.description }}</p>
     </div>
   </ng-container>
-  <ng-container *ngIf="variant === 'invitation'">
+  <ng-container *ngIf="variant === 'invitation' && project">
     <div #invitationCardContainer>
       <button
         (click)="onRejectInvite()"

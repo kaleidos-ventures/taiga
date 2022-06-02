@@ -75,7 +75,7 @@ export const reducer = createReducer(
     state.onAcceptedInvitation = false;
     return state;
   }),
-  on(InvitationActions.acceptedInvitationSlug, (state, { username }) => {
+  on(InvitationActions.acceptInvitationSlugSuccess, (state, { username }) => {
     const acceptedUser = state.invitations.find(
       (invitation) => invitation.user?.username === username
     );

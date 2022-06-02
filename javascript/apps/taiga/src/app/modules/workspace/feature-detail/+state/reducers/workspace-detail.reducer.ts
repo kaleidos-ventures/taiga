@@ -15,32 +15,28 @@ export interface WorkspaceDetailState {
   workspace: Workspace | null;
   workspaceProjects: Project[];
   workspaceInvitedProjects: Project[];
+  loading: boolean;
 }
 
 export const initialState: WorkspaceDetailState = {
-  workspace: {
-    id: 0,
-    name: '',
-    slug: '',
-    color: 0,
-    latestProjects: [],
-    invitedProjects: [],
-    totalProjects: 0,
-    hasProjects: false,
-    myRole: 'guest',
-    isPremium: false,
-    isOwner: false,
-  },
+  workspace: null,
+  loading: false,
   workspaceProjects: [],
   workspaceInvitedProjects: [],
 };
 
 export const reducer = createReducer(
   initialState,
+  on(WorkspaceActions.fetchWorkspace, (state): WorkspaceDetailState => {
+    state.loading = true;
+
+    return state;
+  }),
   on(
     WorkspaceActions.fetchWorkspaceSuccess,
     (state, { workspace }): WorkspaceDetailState => {
       state.workspace = workspace;
+      state.loading = false;
 
       return state;
     }

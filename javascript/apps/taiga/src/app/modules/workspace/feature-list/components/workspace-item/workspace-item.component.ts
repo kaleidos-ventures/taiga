@@ -28,7 +28,7 @@ import { fetchWorkspaceProjects } from '~/app/modules/workspace/feature-list/+st
 import { selectWorkspaceProject } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { RxState } from '@rx-angular/state';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 
 interface ViewModel {
   projectsToShow: number;
@@ -59,9 +59,9 @@ interface State {
       transition(':leave', [
         style({ zIndex: 1 }),
         animate(
-          '0.3s ease',
+          '0.3s linear',
           style({
-            transform: 'translateX(-120%)',
+            transform: 'translateX(-100%)',
             opacity: 0,
           })
         ),
@@ -71,7 +71,7 @@ interface State {
       transition(':enter', [style({ display: 'none' }), animate('0.3s')]),
       transition('* => moving', [
         animate(
-          '0.3s ease',
+          '0.3s linear',
           style({
             transform: 'translateX(-100%)',
           })
@@ -126,21 +126,29 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
         let invitations = state.invitations;
         let projects = state.workspaceProjects;
 
-        const invitationProjects = projects.filter((project) => {
-          return invitations.find((invitation) => {
-            return invitation.slug === project.slug;
+        const invitationProjects = invitations.filter((invitation) => {
+          return projects.find((project) => {
+            return project.slug === invitation.slug;
           });
         });
 
         // workspace admin may have an invitation to a project that it already has access to.
-        projects = projects.filter((project) => {
-          return !invitations.find((invitation) => {
-            return invitation.slug === project.slug;
+        invitations = invitations.filter((invitation) => {
+          return !projects.find((project) => {
+            return project.slug === invitation.slug;
+          });
+        });
+
+        const rejectedInvites = this.getRejectedInvites();
+
+        invitations = invitations.filter((invitation) => {
+          return !rejectedInvites.find((rejectedInvite) => {
+            return rejectedInvite === invitation.slug;
           });
         });
 
         if (!state.showAllProjects) {
-          invitations = state.invitations.slice(0, state.projectsToShow);
+          invitations = invitations.slice(0, state.projectsToShow);
           projects = projects.slice(
             0,
             state.projectsToShow - invitations.length
@@ -181,22 +189,26 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
   public getSiblingsRow(slug: string) {
     const projectsToShow = this.state.get('projectsToShow');
+    let vm!: ViewModel;
 
-    const result = [
-      ...this.state.get('invitations'),
-      ...this.state.get('workspaceProjects'),
-    ].reduce((result, item, index) => {
-      const chunkIndex = Math.floor(index / projectsToShow);
+    this.model$.pipe(take(1)).subscribe((model) => {
+      vm = model;
+    });
 
-      if (!result[chunkIndex]) {
-        result[chunkIndex] = [];
-      }
+    const result = [...vm.invitations, ...vm.projects].reduce(
+      (result, item, index) => {
+        const chunkIndex = Math.floor(index / projectsToShow);
 
-      result[chunkIndex].push(item);
+        if (!result[chunkIndex]) {
+          result[chunkIndex] = [];
+        }
 
-      return result;
-    }, [] as Array<WorkspaceProject[]>);
+        result[chunkIndex].push(item);
 
+        return result;
+      },
+      [] as Array<WorkspaceProject[]>
+    );
     return result.find((chunk) => {
       return chunk.find((project) => project.slug === slug);
     });

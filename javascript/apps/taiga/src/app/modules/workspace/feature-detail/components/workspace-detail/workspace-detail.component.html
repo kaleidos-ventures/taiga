@@ -44,7 +44,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
       <div
         *ngIf="
-          vm.workspace.totalProjects === 0 &&
+          (loading$ | async) === false &&
+          !vm.workspace.totalProjects &&
+          !vm.invitedProjects.length &&
           vm.workspace.hasProjects &&
           vm.workspace.myRole !== 'admin'
         "
@@ -52,7 +54,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [innerHtml]="t('workspace.placehoder_no_access')"></div>
       <div
         *ngIf="
-          vm.workspace.totalProjects === 0 &&
+          (loading$ | async) === false &&
+          !vm.workspace.totalProjects &&
+          !vm.invitedProjects.length &&
           !vm.workspace.hasProjects &&
           vm.workspace.myRole !== 'admin'
         "
@@ -62,31 +66,42 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         (resized)="onResized($event)"
         [class]="gridClass"
         class="workspace-item-card-grid">
-        <tg-project-card
-          *ngIf="vm.projects.length === 0 && vm.workspace.myRole === 'admin'"
-          [workspace]="vm.workspace"
-          variant="placeholder"
-          [firstProject]="true">
-        </tg-project-card>
-        <tg-project-card
-          variant="invitation"
-          (rejectInvite)="rejectInvitedProject($event)"
+        <div
+          *ngIf="vm.projects.length === 0 && vm.workspace.myRole === 'admin'">
+          <tg-project-card
+            [workspace]="vm.workspace"
+            variant="placeholder"
+            [firstProject]="true">
+          </tg-project-card>
+        </div>
+        <div
           *ngFor="
-            let invitedProject of invitations;
+            let invitedProject of vm.invitedProjects;
             trackBy: trackByLatestProject
           "
-          [workspace]="vm.workspace"
-          [project]="invitedProject">
-        </tg-project-card>
-        <tg-project-card
+          @slideOut
+          [@reorder]="reorder[invitedProject.slug]"
+          (@reorder.done)="reorderDone($event)">
+          <tg-project-card
+            variant="invitation"
+            (rejectInvite)="rejectProjectInvite($event)"
+            [workspace]="vm.workspace"
+            [project]="invitedProject">
+          </tg-project-card>
+        </div>
+        <div
           *ngFor="let project of vm.projects; trackBy: trackByLatestProject"
-          [project]="project">
-        </tg-project-card>
-        <tg-project-card
-          *ngIf="vm.projects.length > 0"
-          [workspace]="vm.workspace"
-          variant="placeholder">
-        </tg-project-card>
+          @slideOut
+          [@reorder]="reorder[project.slug]"
+          (@reorder.done)="reorderDone($event)">
+          <tg-project-card [project]="project"> </tg-project-card>
+        </div>
+        <div *ngIf="vm.projects.length > 0">
+          <tg-project-card
+            [workspace]="vm.workspace"
+            variant="placeholder">
+          </tg-project-card>
+        </div>
       </div>
     </ng-container>
   </ng-container>

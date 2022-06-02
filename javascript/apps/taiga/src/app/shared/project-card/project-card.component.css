@@ -82,6 +82,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .card-badge-container {
   margin-block-end: var(--spacing-16);
   margin-inline: var(--spacing-4);
+  margin-inline-end: var(--spacing-24);
   overflow: hidden;
 }
 
@@ -93,6 +94,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   color: var(--color-gray80);
   display: inline-block;
   font-style: italic;
+  max-inline-size: 100%;
   padding: var(--spacing-4);
 
   & tui-svg {

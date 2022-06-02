@@ -37,6 +37,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   &.grid-items-6 {
     grid-template-columns: repeat(6, minmax(0, var(--max-width)));
   }
+
+  &.grid-items-7 {
+    grid-template-columns: repeat(7, minmax(0, var(--max-width)));
+  }
+
+  &.grid-items-8 {
+    grid-template-columns: repeat(8, minmax(0, var(--max-width)));
+  }
+
+  &.grid-items-9 {
+    grid-template-columns: repeat(9, minmax(0, var(--max-width)));
+  }
+
+  &.grid-items-10 {
+    grid-template-columns: repeat(10, minmax(0, var(--max-width)));
+  }
 }
 
 .workspace-message-placeholder {

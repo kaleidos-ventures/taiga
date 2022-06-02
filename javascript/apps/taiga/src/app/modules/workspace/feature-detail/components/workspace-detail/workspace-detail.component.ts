@@ -16,9 +16,10 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Project, Workspace } from '@taiga/data';
+import { Project, Workspace, WorkspaceProject } from '@taiga/data';
 import { ResizedEvent } from 'angular-resize-event';
 import {
+  selectLoading,
   selectWorkspace,
   selectWorkspaceInvitedProjects,
   selectWorkspaceProjects,
@@ -29,6 +30,21 @@ import {
 } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import { filterNil } from '~/app/shared/utils/operators';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { map, take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import {
+  animate,
+  style,
+  transition,
+  trigger,
+  AnimationEvent,
+} from '@angular/animations';
+
+interface ViewDetailModel {
+  projects: WorkspaceProject[];
+  workspace: Workspace | null;
+  invitedProjects: WorkspaceProject[];
+}
 
 @UntilDestroy()
 @Component({
@@ -36,14 +52,43 @@ import { LocalStorageService } from '~/app/shared/local-storage/local-storage.se
   templateUrl: './workspace-detail.component.html',
   styleUrls: ['./workspace-detail.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('slideOut', [
+      transition(':leave', [
+        style({ zIndex: 1 }),
+        animate(
+          '0.3s linear',
+          style({
+            transform: 'translateX(-100%)',
+            opacity: 0,
+          })
+        ),
+      ]),
+    ]),
+    trigger('reorder', [
+      transition(':enter', [style({ display: 'none' }), animate('0.3s')]),
+      transition('* => moving', [
+        animate(
+          '0.3s linear',
+          style({
+            transform: 'translateX(-100%)',
+          })
+        ),
+      ]),
+    ]),
+  ],
   providers: [RxState],
 })
 export class WorkspaceDetailComponent implements OnInit, OnDestroy {
-  public readonly model$ = this.state.select();
-  public amountOfProjectsToShow = 6;
+  public loading$ = this.store.select(selectLoading);
+  public model$!: Observable<ViewDetailModel>;
+
+  public amountOfProjectsToShow = 10;
 
   public wsRejectedInvites: Project['slug'][] = [];
-  public invitations: Project[] = [];
+  public invitations: WorkspaceProject[] = [];
+
+  public reorder: Record<string, string> = {};
 
   public get gridClass() {
     return `grid-items-${this.amountOfProjectsToShow}`;
@@ -62,14 +107,40 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     private store: Store,
     private localStorageService: LocalStorageService,
     private state: RxState<{
-      projectsToShow: boolean;
       workspace: Workspace | null;
-      projects: Project[];
-      invitedProjects: Project[];
+      projects: WorkspaceProject[];
+      invitedProjects: WorkspaceProject[];
     }>
   ) {}
 
   public ngOnInit(): void {
+    this.model$ = this.state.select().pipe(
+      map((state) => {
+        let invitedProjects = state.invitedProjects;
+        const projects = state.projects;
+
+        // workspace admin may have an invitation to a project that it already has access to.
+        invitedProjects = invitedProjects.filter((invitedProjects) => {
+          return !projects.find((project) => {
+            return project.slug === invitedProjects.slug;
+          });
+        });
+
+        const rejectedInvites = this.getRejectedInvites();
+        invitedProjects = invitedProjects.filter((invitedProjects) => {
+          return !rejectedInvites.find((rejectedInvite) => {
+            return rejectedInvite === invitedProjects.slug;
+          });
+        });
+
+        return {
+          ...state,
+          projects,
+          invitedProjects,
+        };
+      })
+    );
+
     this.route.paramMap.pipe(untilDestroyed(this)).subscribe((params) => {
       const slug = params.get('slug');
 
@@ -89,43 +160,87 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     );
 
     this.wsRejectedInvites = this.getWsRejectedInvites;
-
-    this.state.hold(
-      this.store.select(selectWorkspaceInvitedProjects),
-      (invitedProjects) => {
-        this.invitations = invitedProjects.filter((project) => {
-          return !this.wsRejectedInvites.includes(project.slug);
-        });
-      }
-    );
   }
 
-  public trackByLatestProject(index: number, project: Project) {
+  public trackByLatestProject(index: number, project: WorkspaceProject) {
     return project.slug;
   }
 
   public setCardAmounts(width: number) {
     const amount = Math.ceil(width / 250);
-    this.amountOfProjectsToShow = amount >= 6 ? 6 : amount;
+    this.amountOfProjectsToShow = amount >= 10 ? 10 : amount;
   }
 
   public onResized(event: ResizedEvent) {
     this.setCardAmounts(event.newRect.width);
   }
 
-  public rejectInvitedProject(slug: Project['slug']) {
-    this.wsRejectedInvites.push(slug);
-    this.localStorageService.set(
-      'workspace_rejected_invites',
-      this.wsRejectedInvites
+  public getRejectedInvites(): Project['slug'][] {
+    return (
+      this.localStorageService.get<Project['slug'][] | undefined>(
+        'workspace_rejected_invites'
+      ) ?? []
     );
-    const invitationsIndex = this.invitations.findIndex((invite, index) => {
-      if (invite.slug === slug) {
-        return index;
+  }
+
+  public rejectProjectInvite(slug: Project['slug']) {
+    const rejectedInvites = this.getRejectedInvites();
+    const workspace = this.state.get('workspace');
+    rejectedInvites.push(slug);
+    this.localStorageService.set('workspace_rejected_invites', rejectedInvites);
+    if (workspace?.myRole !== 'admin') {
+      const siblings = this.getSiblingsRow(slug);
+      if (siblings) {
+        const rejectedIndex = siblings.findIndex(
+          (project) => project.slug === slug
+        );
+        siblings.forEach((project, index) => {
+          if (index > rejectedIndex) {
+            this.reorder[project.slug] = 'moving';
+          }
+        });
       }
-      return null;
+      this.state.set({
+        invitedProjects: this.state
+          .get('invitedProjects')
+          .filter((invitation) => {
+            return invitation.slug !== slug;
+          }),
+      });
+    }
+  }
+
+  public getSiblingsRow(slug: string) {
+    const projectsToShow = this.amountOfProjectsToShow;
+    let vm!: ViewDetailModel;
+
+    this.model$.pipe(take(1)).subscribe((model) => {
+      vm = model;
     });
-    this.invitations.splice(invitationsIndex, 1);
+
+    const result = [...vm.invitedProjects, ...vm.projects].reduce(
+      (result, item, index) => {
+        const chunkIndex = Math.floor(index / projectsToShow);
+
+        if (!result[chunkIndex]) {
+          result[chunkIndex] = [];
+        }
+
+        result[chunkIndex].push(item);
+
+        return result;
+      },
+      [] as Array<WorkspaceProject[]>
+    );
+    return result.find((chunk) => {
+      return chunk.find((project) => project.slug === slug);
+    });
+  }
+
+  public reorderDone(event: AnimationEvent) {
+    if (event.fromState === null && event.toState === 'moving') {
+      this.reorder = {};
+    }
   }
 
   public ngOnDestroy() {

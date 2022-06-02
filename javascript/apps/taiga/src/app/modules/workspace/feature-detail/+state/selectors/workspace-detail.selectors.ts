@@ -9,6 +9,7 @@
 import { workspaceDetailFeature } from '../reducers/workspace-detail.reducer';
 
 export const {
+  selectLoading,
   selectWorkspace,
   selectWorkspaceProjects,
   selectWorkspaceInvitedProjects,

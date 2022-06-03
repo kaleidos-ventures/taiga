@@ -44,9 +44,11 @@ export class InvitationEffects {
                 const invitationsOrdered: Invitation[] =
                   invitationsState.slice();
                 response.forEach((inv) => {
-                  const isAlreadyInTheList = invitationsState.find(
-                    (it) => it.email === inv.email
-                  );
+                  const isAlreadyInTheList = invitationsState.find((it) => {
+                    return inv.email
+                      ? it.email === inv.email
+                      : it.user?.username === inv.user?.username;
+                  });
                   if (!isAlreadyInTheList) {
                     invitationsOrdered.splice(
                       this.invitationService.positionInvitationInArray(

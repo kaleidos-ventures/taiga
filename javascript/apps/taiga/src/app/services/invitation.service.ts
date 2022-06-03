@@ -21,9 +21,11 @@ export class InvitationService {
       ...this.getFilteredUsers(invitations, newInvitation, true),
       ...this.getFilteredUsers(invitations, newInvitation, false),
     ];
-    return usersArrayOrdered.findIndex(
-      (it) => it.email === newInvitation.email
-    );
+    return usersArrayOrdered.findIndex((it) => {
+      return newInvitation.email
+        ? it.email === newInvitation.email
+        : it.user?.username === newInvitation.user?.username;
+    });
   }
 
   public getFilteredUsers(

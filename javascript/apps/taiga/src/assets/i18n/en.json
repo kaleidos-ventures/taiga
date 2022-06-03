@@ -71,7 +71,8 @@
     "create_new_project": "Add a project",
     "card": {
       "accept_invite": "Accept invitation",
-      "pending_invitation": "Pending invitation"
+      "pending_invitation": "Pending invitation",
+      "close_card": "Close card"
     }
   },
   "errors": {

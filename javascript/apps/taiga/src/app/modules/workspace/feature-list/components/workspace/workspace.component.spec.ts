@@ -12,7 +12,6 @@ import { Project, ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import { provideMockStore } from '@ngrx/store/testing';
 import { WorkspaceComponent } from './workspace.component';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
-import { randSlug } from '@ngneat/falso';
 
 describe('Workspace List', () => {
   const workspaceItem = WorkspaceMockFactory();

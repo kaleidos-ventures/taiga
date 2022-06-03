@@ -128,6 +128,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                       (click)="includeSuggestedContact(i, $event)">
                       <tg-user-card
                         [user]="contact"
+                        [active]="suggestionSelected === i"
                         [textToHighlight]="inviteIdentifier"></tg-user-card>
                     </button>
                   </ng-container>

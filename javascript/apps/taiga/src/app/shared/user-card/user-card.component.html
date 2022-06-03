@@ -21,11 +21,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <ng-container *ngIf="user.fullName">
       <span
         class="user-name overflow"
+        [class.active]="active"
         data-test="user-fullname"
         [attr.aria-label]="user.fullName"
         [innerHtml]="fullNameHighlight || user.fullName"></span>
       <span
         class="user-alias overflow"
+        [class.active]="active"
         [attr.aria-label]="user.username"
         [innerHtml]="usernameHighlight || user.username"></span>
     </ng-container>

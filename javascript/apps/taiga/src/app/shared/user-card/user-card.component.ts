@@ -17,6 +17,7 @@ import { User } from '@taiga/data';
 export class UserCardComponent implements OnChanges {
   @Input() public user!: Partial<User>;
   @Input() public textToHighlight?: string;
+  @Input() public active?: boolean;
 
   public fullNameHighlight?: string;
   public usernameHighlight?: string;

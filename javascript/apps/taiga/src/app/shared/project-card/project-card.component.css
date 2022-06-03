@@ -81,7 +81,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .card-badge-container {
   margin-block-end: var(--spacing-16);
-  margin-inline: var(--spacing-4);
   margin-inline-end: var(--spacing-24);
   overflow: hidden;
 }
@@ -112,5 +111,4 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .project-accept-invite {
   inline-size: 100%;
-  margin-block-start: var(--spacing-16);
 }

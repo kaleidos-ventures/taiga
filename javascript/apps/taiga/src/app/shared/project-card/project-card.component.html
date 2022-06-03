@@ -9,11 +9,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <ng-container *ngIf="variant === 'placeholder'">
     <div class="project-item-card placeholder">
-      <tg-ui-avatar type="light"
+      <tg-ui-avatar
+        type="light"
         [color]="0"
         [name]="''">
       </tg-ui-avatar>
-      <a tuiLink
+      <a
+        tuiLink
         [routerLink]="['/new-project']"
         [queryParams]="{ workspace: workspace.slug }"
         data-test="create-project-card"
@@ -30,13 +32,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <ng-container *ngIf="variant === 'project' && project">
     <div class="project-item-card">
       <div class="project-card-title">
-        <tg-ui-avatar class="project-card-image"
+        <tg-ui-avatar
+          class="project-card-image"
           type="light"
           [color]="project.color"
           [url]="project.logoSmall"
           [name]="project.name">
         </tg-ui-avatar>
-        <a [routerLink]="['/project', project.slug]"
+        <a
+          [routerLink]="['/project', project.slug]"
           class="project-card-link"
           data-test="project-card">
           {{ project.name }}
@@ -46,9 +50,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
   </ng-container>
   <ng-container *ngIf="variant === 'invitation' && project">
-    <div #invitationCardContainer
+    <div
+      #invitationCardContainer
       data-animation="card-container">
-      <button (click)="onRejectInvite()"
+      <button
+        (click)="onRejectInvite()"
         class="project-reject-invite"
         tuiIconButton
         [@itemSlideOutAnimation]
@@ -59,7 +65,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         icon="close"
         type="button"></button>
       <div class="project-item-card">
-        <div class="card-badge-container"
+        <div
+          class="card-badge-container"
           [@itemSlideOutAnimation]
           *ngIf="invitationStatus !== 'accepted'">
           <span class="project-status-badge">
@@ -68,19 +75,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </span>
         </div>
         <div class="project-card-title">
-          <tg-ui-avatar class="project-card-image"
+          <tg-ui-avatar
+            class="project-card-image"
             type="light"
             [color]="project.color"
             [url]="project.logoSmall"
             [name]="project.name">
           </tg-ui-avatar>
-          <a [routerLink]="['/project', project.slug]"
+          <a
+            [routerLink]="['/project', project.slug]"
             class="project-card-link"
             data-test="project-card">
             {{ project.name }}
           </a>
         </div>
-        <button class="project-accept-invite"
+        <button
+          class="project-accept-invite"
           tuiButton
           [@itemSlideOutAnimation]
           *ngIf="invitationStatus !== 'accepted'"
@@ -89,7 +99,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           type="button">
           {{ t('project.card.accept_invite') }}
         </button>
-        <p class="project-card-description"
+        <p
+          class="project-card-description"
           [@itemSlideOutAnimation]
           *ngIf="invitationStatus === 'accepted'">
           {{ project.description }}

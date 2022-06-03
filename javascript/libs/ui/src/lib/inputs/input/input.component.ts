@@ -83,6 +83,10 @@ export class InputComponent implements AfterContentInit {
     return '';
   }
 
+  public get passwordVisibilityTabIndex() {
+    return (this.ref.el.nativeElement as HTMLInputElement).tabIndex;
+  }
+
   public isPassword = false;
   public passwordVisible = false;
 

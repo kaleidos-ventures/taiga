@@ -26,6 +26,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [src]="icon"></tui-svg>
 
   <button
+    [tabindex]="passwordVisibilityTabIndex"
     class="password-visibility"
     *ngIf="isPassword"
     [title]="

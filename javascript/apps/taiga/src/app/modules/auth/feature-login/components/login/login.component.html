@@ -16,6 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         class="input-username"
         [label]="t('login.username')">
         <input
+          tabindex="1"
           formControlName="username"
           data-test="login-username"
           inputRef />
@@ -43,6 +44,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </a>
         </ng-container>
         <input
+          tabindex="2"
           formControlName="password"
           data-test="login-password"
           type="password"

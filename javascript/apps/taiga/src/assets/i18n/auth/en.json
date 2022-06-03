@@ -113,7 +113,7 @@
       "submit": "Reset password",
       "submit_in_progress": "Resetting",
       "submit_success": "Reset",
-      "password_match": "Password do not match"
+      "password_match": "Passwords do not match"
     }
   }
 }

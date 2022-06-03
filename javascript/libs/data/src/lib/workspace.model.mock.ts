@@ -7,13 +7,13 @@
  */
 
 import { Workspace } from './workspace.model';
-import { randDepartment, randNumber, randDomainSuffix } from '@ngneat/falso';
+import { randDepartment, randNumber, randSlug } from '@ngneat/falso';
 import { ProjectMockFactory } from '../lib/project.model.mock';
 
 export const WorkspaceMockFactory = (): Workspace => {
   const workspace: Workspace = {
     id: randNumber(),
-    slug: randDomainSuffix({ length: 3 }).join('-'),
+    slug: randSlug(),
     name: randDepartment(),
     color: randNumber(),
     hasProjects: true,
@@ -64,7 +64,7 @@ export const WorkspaceMockFactory = (): Workspace => {
 export const WorkspaceAdminMockFactory = (): Workspace => {
   const workspace: Workspace = {
     id: randNumber(),
-    slug: randDomainSuffix({ length: 3 }).join('-'),
+    slug: randSlug(),
     name: randDepartment(),
     color: randNumber(),
     hasProjects: true,

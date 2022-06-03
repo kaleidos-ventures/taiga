@@ -7,7 +7,7 @@
  */
 
 import {
-  randDomainSuffix,
+  randSlug,
   randNumber,
   randWord,
   randParagraph,
@@ -39,7 +39,7 @@ export const ProjectMockFactory = (
 ): Project => {
   const project = {
     name: randWord({ length: 3, capitalize: true }).join(' '),
-    slug: randDomainSuffix({ length: 3 }).join('-'),
+    slug: randSlug(),
     milestones: milestones ? getMilestones() : [],
     color: randNumber(),
     description: randParagraph({ length: 3 }).join('\n'),
@@ -56,7 +56,7 @@ export const ProjectMockFactory = (
 
 export const ProjectCreationMockFactory = (): ProjectCreation => {
   return {
-    workspaceSlug: randDomainSuffix({ length: 3 }).join('-'),
+    workspaceSlug: randSlug(),
     name: randProductName(),
     description: randParagraph({ length: 3 }).join('\n'),
     color: randNumber(),

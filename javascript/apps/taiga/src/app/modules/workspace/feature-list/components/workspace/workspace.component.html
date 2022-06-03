@@ -88,13 +88,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [class.form-error]="vm.createFormHasError"
         (resized)="onResized($event)"
         class="workspace-item-container">
-        <tg-workspace-item
-          @fadeInOut
-          data-test="workspace-item"
-          *ngFor="let workspace of vm.workspaceList; trackBy: trackByWorkspace"
-          [projectsToShow]="amountOfProjectsToShow"
-          [workspace]="workspace">
-        </tg-workspace-item>
+        <div
+          class="workspace-item-container-inner"
+          *ngFor="let workspace of vm.workspaceList; trackBy: trackByWorkspace">
+          <tg-workspace-item
+            data-test="workspace-item"
+            *ngIf="chekWsVisibility(workspace)"
+            @workspaceInOut
+            [projectsToShow]="amountOfProjectsToShow"
+            [workspace]="workspace">
+          </tg-workspace-item>
+        </div>
       </div>
     </div>
     <ng-template #tooltip>

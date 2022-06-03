@@ -16,7 +16,7 @@ import {
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Workspace } from '@taiga/data';
+import { Project, Workspace } from '@taiga/data';
 import { ResizedEvent } from 'angular-resize-event';
 import { map } from 'rxjs/operators';
 import {
@@ -34,6 +34,7 @@ import {
   fetchWorkspaceList,
   resetWorkspace,
 } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 @Component({
   selector: 'tg-workspace',
@@ -59,6 +60,30 @@ import {
       ]),
       transition(':leave', [
         animate('200ms ease-in', style({ flex: '0 0 0' })),
+      ]),
+    ]),
+    trigger('workspaceInOut', [
+      transition(':enter', [
+        style({
+          opacity: '0',
+        }),
+        animate(
+          '300ms ease-out',
+          style({
+            opacity: '1',
+          })
+        ),
+      ]),
+      transition(':leave', [
+        style({
+          blockSize: '*',
+        }),
+        animate(
+          '300ms ease-out',
+          style({
+            blockSize: '0',
+          })
+        ),
       ]),
     ]),
   ],
@@ -87,6 +112,7 @@ export class WorkspaceComponent implements OnDestroy {
 
   constructor(
     private store: Store,
+    private localStorageService: LocalStorageService,
     private state: RxState<{
       creatingWorkspace: boolean;
       showCreate: boolean;
@@ -129,6 +155,28 @@ export class WorkspaceComponent implements OnDestroy {
   public setCardAmounts(width: number) {
     const amount = Math.ceil(width / 250);
     this.amountOfProjectsToShow = amount >= 6 ? 6 : amount;
+  }
+
+  public getRejectedInvites(): Project['slug'][] {
+    return (
+      this.localStorageService.get<Project['slug'][] | undefined>(
+        'general_rejected_invites'
+      ) ?? []
+    );
+  }
+
+  public chekWsVisibility(workspace: Workspace) {
+    const isAdmin = workspace.myRole === 'admin';
+    const rejectedInvites = this.getRejectedInvites();
+    const hasProjects = workspace.latestProjects;
+    const hasInvitedProjects = workspace.invitedProjects.filter((project) => {
+      return !rejectedInvites.includes(project.slug);
+    });
+
+    if (isAdmin || hasProjects.length || hasInvitedProjects.length) {
+      return true;
+    }
+    return false;
   }
 
   public ngOnDestroy() {

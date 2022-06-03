@@ -55,7 +55,7 @@ interface State {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
   animations: [
-    trigger('slideOut', [
+    trigger('cardSlideOut', [
       transition(':leave', [
         style({ zIndex: 1 }),
         animate(

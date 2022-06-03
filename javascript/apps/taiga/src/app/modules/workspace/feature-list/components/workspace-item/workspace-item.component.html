@@ -100,7 +100,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tg-project-card>
       <div
         *ngFor="let invitation of vm.invitations; trackBy: trackByLatestProject"
-        @slideOut
+        @cardSlideOut
         [@reorder]="reorder[invitation.slug]"
         (@reorder.done)="reorderDone($event)">
         <tg-project-card

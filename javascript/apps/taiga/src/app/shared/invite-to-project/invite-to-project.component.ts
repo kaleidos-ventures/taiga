@@ -194,6 +194,10 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     );
   }
 
+  public get parseTextToHighlight() {
+    return this.inviteIdentifier.replace(/^@/, '');
+  }
+
   public ngOnInit() {
     this.usersToInvite$ = this.validEmails$.pipe(
       switchMap((validEmails) => {
@@ -310,13 +314,13 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public searchChange(emails: string) {
     !emails && this.resetErrors();
     this.suggestionSelected = 0;
-
     if (/[^@]+@/.test(emails)) {
       // when the input contains and @ the search is disabled
       this.notInBulkMode = false;
       this.inviteIdentifier$.next(emails);
       this.handleAccessibilityAttributes(false);
     } else if (emails.trim().length > 1) {
+      this.notInBulkMode = true;
       const searchText = this.inviteIdentifier.replace(/^@/, '');
       this.store.dispatch(
         searchUser({

@@ -8,9 +8,11 @@
 
 import '@ng-web-apis/universal/mocks';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { WorkspaceMockFactory } from '@taiga/data';
+import { Project, ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import { provideMockStore } from '@ngrx/store/testing';
 import { WorkspaceComponent } from './workspace.component';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { randSlug } from '@ngneat/falso';
 
 describe('Workspace List', () => {
   const workspaceItem = WorkspaceMockFactory();
@@ -27,6 +29,7 @@ describe('Workspace List', () => {
   const createComponent = createComponentFactory({
     component: WorkspaceComponent,
     imports: [],
+    mocks: [LocalStorageService],
     providers: [provideMockStore({ initialState })],
   });
 
@@ -45,5 +48,89 @@ describe('Workspace List', () => {
 
     spectator.component.setCardAmounts(1750);
     expect(spectator.component.amountOfProjectsToShow).toEqual(6);
+  });
+
+  it('check WS visibility - admin', () => {
+    const workspaceItem = WorkspaceMockFactory();
+
+    // Mock user role
+    workspaceItem.myRole = 'admin';
+
+    // Mock latestProjects
+    workspaceItem.latestProjects = [];
+
+    // Mock localStorage rejectedProjects
+    const localStorageService =
+      spectator.inject<LocalStorageService>(LocalStorageService);
+
+    const rejectedInvited: Project['slug'][] = [];
+    localStorageService.get.mockReturnValue(rejectedInvited);
+
+    expect(spectator.component.chekWsVisibility(workspaceItem)).toBeTruthy();
+  });
+
+  it('check WS visibility - hasProjects', () => {
+    const workspaceItem = WorkspaceMockFactory();
+
+    // Mock user role
+    workspaceItem.myRole = 'guest';
+
+    // Mock latestProjects
+    const exampleProject = ProjectMockFactory();
+    workspaceItem.latestProjects = [exampleProject];
+
+    // Mock localStorage rejectedProjects
+    const localStorageService =
+      spectator.inject<LocalStorageService>(LocalStorageService);
+
+    const rejectedInvited: Project['slug'][] = [];
+    localStorageService.get.mockReturnValue(rejectedInvited);
+
+    expect(spectator.component.chekWsVisibility(workspaceItem)).toBeTruthy();
+  });
+
+  it('check WS visibility - hasInvites', () => {
+    const workspaceItem = WorkspaceMockFactory();
+
+    // Mock user role
+    workspaceItem.myRole = 'guest';
+
+    // Mock latestProjects
+    workspaceItem.latestProjects = [];
+
+    // Mock localStorage rejectedProjects
+    const localStorageService =
+      spectator.inject<LocalStorageService>(LocalStorageService);
+
+    const rejectedInvited: Project['slug'][] = [];
+    localStorageService.get.mockReturnValue(rejectedInvited);
+
+    const exampleInvite = ProjectMockFactory();
+    workspaceItem.invitedProjects = [exampleInvite];
+
+    expect(spectator.component.chekWsVisibility(workspaceItem)).toBeTruthy();
+  });
+
+  it('check WS visibility - hasInvites - rejected', () => {
+    const workspaceItem = WorkspaceMockFactory();
+
+    // Mock user role
+    workspaceItem.myRole = 'guest';
+
+    // Mock latestProjects
+    workspaceItem.latestProjects = [];
+
+    // Mock localStorage rejectedProjects
+    const exampleInvite = ProjectMockFactory();
+
+    const localStorageService =
+      spectator.inject<LocalStorageService>(LocalStorageService);
+
+    const rejectedInvited: Project['slug'][] = [exampleInvite.slug];
+    localStorageService.get.mockReturnValue(rejectedInvited);
+
+    workspaceItem.invitedProjects = [exampleInvite];
+
+    expect(spectator.component.chekWsVisibility(workspaceItem)).toBeFalsy();
   });
 });

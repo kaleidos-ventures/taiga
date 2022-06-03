@@ -85,21 +85,12 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
   public amountOfProjectsToShow = 10;
 
-  public wsRejectedInvites: Project['slug'][] = [];
   public invitations: WorkspaceProject[] = [];
 
   public reorder: Record<string, string> = {};
 
   public get gridClass() {
     return `grid-items-${this.amountOfProjectsToShow}`;
-  }
-
-  public get getWsRejectedInvites(): Project['slug'][] {
-    return (
-      this.localStorageService.get<Project['slug'][] | undefined>(
-        'workspace_rejected_invites'
-      ) ?? []
-    );
   }
 
   constructor(
@@ -110,28 +101,36 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       workspace: Workspace | null;
       projects: WorkspaceProject[];
       invitedProjects: WorkspaceProject[];
+      rejectedInvites: string[];
     }>
   ) {}
 
   public ngOnInit(): void {
+    const rejectedInvites = this.getRejectedInvites();
+
+    this.state.set({
+      rejectedInvites,
+    });
+
     this.model$ = this.state.select().pipe(
       map((state) => {
         let invitedProjects = state.invitedProjects;
         const projects = state.projects;
 
         // workspace admin may have an invitation to a project that it already has access to.
-        invitedProjects = invitedProjects.filter((invitedProjects) => {
-          return !projects.find((project) => {
-            return project.slug === invitedProjects.slug;
+        if (state.workspace?.myRole === 'admin') {
+          invitedProjects = [];
+        } else {
+          invitedProjects = invitedProjects.filter((invitedProjects) => {
+            return !projects.find((project) => {
+              return project.slug === invitedProjects.slug;
+            });
           });
-        });
 
-        const rejectedInvites = this.getRejectedInvites();
-        invitedProjects = invitedProjects.filter((invitedProjects) => {
-          return !rejectedInvites.find((rejectedInvite) => {
-            return rejectedInvite === invitedProjects.slug;
+          invitedProjects = invitedProjects.filter((invitation) => {
+            return !state.rejectedInvites.includes(invitation.slug);
           });
-        });
+        }
 
         return {
           ...state,
@@ -158,8 +157,19 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       'invitedProjects',
       this.store.select(selectWorkspaceInvitedProjects)
     );
+  }
 
-    this.wsRejectedInvites = this.getWsRejectedInvites;
+  public getRejectedInvites(): Project['slug'][] {
+    return (
+      this.localStorageService.get<Project['slug'][] | undefined>(
+        'workspace_rejected_invites'
+      ) ?? []
+    );
+  }
+
+  public setRejectedInvites(rejectedInvites: string[]) {
+    this.localStorageService.set('workspace_rejected_invites', rejectedInvites);
+    this.state.set({ rejectedInvites });
   }
 
   public trackByLatestProject(index: number, project: WorkspaceProject) {
@@ -175,39 +185,23 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     this.setCardAmounts(event.newRect.width);
   }
 
-  public getRejectedInvites(): Project['slug'][] {
-    return (
-      this.localStorageService.get<Project['slug'][] | undefined>(
-        'workspace_rejected_invites'
-      ) ?? []
-    );
-  }
-
   public rejectProjectInvite(slug: Project['slug']) {
-    const rejectedInvites = this.getRejectedInvites();
-    const workspace = this.state.get('workspace');
-    rejectedInvites.push(slug);
-    this.localStorageService.set('workspace_rejected_invites', rejectedInvites);
-    if (workspace?.myRole !== 'admin') {
-      const siblings = this.getSiblingsRow(slug);
-      if (siblings) {
-        const rejectedIndex = siblings.findIndex(
-          (project) => project.slug === slug
-        );
-        siblings.forEach((project, index) => {
-          if (index > rejectedIndex) {
-            this.reorder[project.slug] = 'moving';
-          }
-        });
-      }
-      this.state.set({
-        invitedProjects: this.state
-          .get('invitedProjects')
-          .filter((invitation) => {
-            return invitation.slug !== slug;
-          }),
+    const siblings = this.getSiblingsRow(slug);
+    if (siblings) {
+      const rejectedIndex = siblings.findIndex(
+        (project) => project.slug === slug
+      );
+      siblings.forEach((project, index) => {
+        if (index > rejectedIndex) {
+          this.reorder[project.slug] = 'moving';
+        }
       });
     }
+
+    const rejectedInvites = this.getRejectedInvites();
+    rejectedInvites.push(slug);
+
+    this.setRejectedInvites(rejectedInvites);
   }
 
   public getSiblingsRow(slug: string) {

@@ -168,31 +168,6 @@ describe('WorkspaceItem', () => {
         done();
       });
     });
-
-    it('Rejected project by admin does not remove the invitation', (done) => {
-      const localStorageService =
-        spectator.inject<LocalStorageService>(LocalStorageService);
-
-      workspaceItem.myRole = 'admin';
-      spectator.component.projectsToShow = workspaceItem.invitedProjects.length;
-
-      const slug = workspaceItem.invitedProjects.at(0)!.slug;
-
-      spectator.detectChanges();
-
-      spectator.component.rejectProjectInvite(slug);
-
-      spectator.component.model$.subscribe(({ invitations }) => {
-        expect(Object.keys(spectator.component.reorder).length).toEqual(0);
-        expect(localStorageService.set.mock.calls[0][0]).toEqual(
-          'general_rejected_invites'
-        );
-        expect(invitations.length).toEqual(
-          workspaceItem.invitedProjects.length
-        );
-        done();
-      });
-    });
   });
 
   describe('admin', () => {

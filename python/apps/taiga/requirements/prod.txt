@@ -19,7 +19,9 @@ amqp==5.1.1
     #   kombu
     #   taiga6
 anyio==3.6.1
-    # via starlette
+    # via
+    #   starlette
+    #   watchgod
 asana==0.10.13
     # via taiga6
 asgiref==3.5.2
@@ -166,6 +168,8 @@ h11==0.13.0
     # via uvicorn
 html5lib==1.1
     # via taiga6
+httptools==0.4.0
+    # via uvicorn
 idna==3.3
     # via
     #   anyio
@@ -283,7 +287,9 @@ python-dateutil==2.7.5
     #   rudder-sdk-python
     #   taiga6
 python-dotenv==0.20.0
-    # via pydantic
+    # via
+    #   pydantic
+    #   uvicorn
 python-json-logger==2.0.2
     # via -r requirements/commons.in
 python-magic==0.4.15
@@ -301,6 +307,8 @@ pywavelets==1.3.0
     # via
     #   scikit-image
     #   taiga6
+pyyaml==6.0
+    # via uvicorn
 reportlab==3.6.9
     # via
     #   easy-thumbnails
@@ -377,14 +385,18 @@ urllib3==1.26.9
     # via
     #   requests
     #   taiga6
-uvicorn==0.17.6
+uvicorn[standard]==0.17.6
     # via -r requirements/commons.in
+uvloop==0.16.0
+    # via uvicorn
 vine==5.0.0
     # via
     #   amqp
     #   celery
     #   kombu
     #   taiga6
+watchgod==0.8.2
+    # via uvicorn
 wcwidth==0.2.5
     # via
     #   prompt-toolkit
@@ -398,6 +410,8 @@ webencodings==0.5.1
     #   html5lib
     #   taiga6
     #   tinycss2
+websockets==10.3
+    # via uvicorn
 zipp==1.2.0
     # via taiga6
 

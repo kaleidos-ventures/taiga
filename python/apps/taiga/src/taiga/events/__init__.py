@@ -4,3 +4,5 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+
+from taiga.events.app import app, connect_events_manager, disconnect_events_manager  # noqa

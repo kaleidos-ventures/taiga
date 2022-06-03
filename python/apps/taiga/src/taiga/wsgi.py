@@ -14,12 +14,19 @@ from starlette.middleware.wsgi import WSGIMiddleware
 os.environ["DJANGO_SETTINGS_MODULE"] = "taiga.conf.taiga6"
 
 from taiga6.wsgi import application as taiga6_app  # noqa: E402
+from taiga.events import app as events_app  # noqa: E402
+from taiga.events import connect_events_manager, disconnect_events_manager  # noqa: E402
 from taiga.main import api  # noqa: E402
 
 app = FastAPI()
 
 # Mount the new api (v2)
 app.mount("/api/v2/", app=api)
+
+# Mount the events service
+app.mount("/events/", app=events_app)
+app.on_event("startup")(connect_events_manager)
+app.on_event("shutdown")(disconnect_events_manager)
 
 # Serve old api (v1), sitemaps, admin, static and media files urls
 app.mount("/", WSGIMiddleware(taiga6_app))

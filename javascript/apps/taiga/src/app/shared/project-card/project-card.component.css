@@ -78,18 +78,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   max-inline-size: 233px;
   position: relative;
 
-  & .project-item-card {
-    border: 1px solid var(--color-gray30);
-    box-shadow: none;
-  }
+  &:not([data-invite-status="accepted"]) {
+    & .project-item-card {
+      border: 1px solid var(--color-gray30);
+      box-shadow: none;
+    }
 
-  & .project-card-image {
-    opacity: 0.5;
-  }
+    & .project-card-image {
+      opacity: 0.5;
+    }
 
-  & .project-card-link {
-    color: var(--color-gray70);
-    font-weight: var(--font-weight-regular);
+    & .project-card-link {
+      color: var(--color-gray70);
+      font-weight: var(--font-weight-regular);
+    }
   }
 }
 

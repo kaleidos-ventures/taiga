@@ -18,6 +18,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  HostBinding,
   Input,
   OnInit,
   Output,
@@ -109,8 +110,8 @@ export class ProjectCardComponent implements OnInit {
   @Output()
   public rejectInvite = new EventEmitter<Project['slug']>();
 
-  public animationState = '';
-  public invitationStatus?: 'accepted';
+  @HostBinding('attr.data-invite-status')
+  public invitationStatus: 'accepted' | null = null;
 
   public invitationStatus$ = this.store.select(selectAcceptedInvite);
   public rejectedByAdmin = false;
@@ -127,7 +128,7 @@ export class ProjectCardComponent implements OnInit {
             return 'accepted';
           }
 
-          return undefined;
+          return null;
         }),
         distinctUntilChanged(),
         skip(1)

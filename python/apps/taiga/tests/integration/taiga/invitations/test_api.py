@@ -59,7 +59,7 @@ async def test_create_invitations_project_not_found(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_create_invitations_not_existing_username_email(client):
+async def test_create_invitations_not_existing_username(client):
     user = await f.create_user()
     project = await f.create_project(owner=user)
     data = {"invitations": [{"username": "not-a-username", "role_slug": "general"}]}
@@ -82,16 +82,18 @@ async def test_create_invitations_non_existing_role(client):
 
 
 async def test_create_invitations(client):
-    user = await f.create_user()
+    user1 = await f.create_user()
+    user2 = await f.create_user()
     await f.create_user(email="user-test@email.com")
-    project = await f.create_project(owner=user)
+    project = await f.create_project(owner=user1)
     data = {
         "invitations": [
             {"email": "user-test@email.com", "role_slug": "admin"},
             {"email": "test@email.com", "role_slug": "general"},
+            {"username": user2.username, "role_slug": "general"},
         ]
     }
-    client.login(user)
+    client.login(user1)
     response = client.post(f"/projects/{project.slug}/invitations", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
 

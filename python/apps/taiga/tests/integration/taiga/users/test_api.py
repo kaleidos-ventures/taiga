@@ -140,6 +140,28 @@ async def test_verify_user_error_used_token(client):
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
+#####################################################################
+# POST /users/search
+#####################################################################
+
+
+async def test_get_users_by_text_anonymous(client):
+    data = {"text": "text_to_search", "project": "pj-slug", "excluded_users": ["user1"], "offset": 0, "limit": 100}
+
+    response = client.post("/users/search", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_get_users_by_text(client):
+    user = await f.create_user()
+    client.login(user)
+
+    data = {"text": "text_to_search", "project": "pj-slug", "excluded_users": ["user1"], "offset": 0, "limit": 100}
+
+    response = client.post("/users/search", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
 ##########################################################
 # POST /users/reset-password
 ##########################################################

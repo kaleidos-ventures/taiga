@@ -542,3 +542,23 @@ async def test_reset_password_ok_without_user():
         ret = await services.reset_password(str(fake_token), password)
 
         assert ret is None
+
+
+#####################################################################
+# User Search
+#####################################################################
+
+
+async def test_get_users_by_text_ok():
+    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
+        fake_users_repo.get_users_by_text.return_value = []
+
+        ret = await services.get_users_by_text(
+            text="text", project_slug="slug", excluded_usernames=[], offset=9, limit=10
+        )
+
+        fake_users_repo.get_users_by_text.assert_awaited_once_with(
+            text_search="text", project_slug="slug", excluded_usernames=[], offset=9, limit=10
+        )
+
+        assert ret == []

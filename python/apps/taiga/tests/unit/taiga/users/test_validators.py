@@ -7,7 +7,7 @@
 
 import pytest
 from pydantic import ValidationError
-from taiga.users.validators import CreateUserValidator
+from taiga.users.validators import CreateUserValidator, SearchUsersByTextValidator
 from tests.unit.utils import check_validation_errors
 
 
@@ -114,4 +114,16 @@ def test_validate_create_user_invalid_short_password():
 
     expected_error_fields = ["password"]
     expected_error_messages = ["ensure this value has at least 8 characters"]
+    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
+
+
+def test_validate_get_users_by_text_invalid_usernames():
+    with pytest.raises(ValidationError) as validation_errors:
+        text = "text"
+        project = "project"
+        excluded_users = "not a list"
+        SearchUsersByTextValidator(text=text, project=project, excluded_users=excluded_users)
+
+    expected_error_fields = ["excludedUsers"]
+    expected_error_messages = ["value is not a valid list"]
     check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)

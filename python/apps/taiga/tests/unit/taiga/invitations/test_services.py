@@ -11,6 +11,7 @@ import pytest
 from taiga.invitations import exceptions as ex
 from taiga.invitations import services
 from taiga.invitations.choices import InvitationStatus
+from taiga.invitations.exceptions import UsernameDoesNotExistError
 from taiga.invitations.tokens import ProjectInvitationToken
 from tests.utils import factories as f
 
@@ -313,7 +314,7 @@ async def test_create_invitations_with_pending_invitations(tqmanager):
         assert len(tqmanager.pending_jobs) == 1
 
 
-async def test_create_invitations(tqmanager):
+async def test_create_invitations_by_emails(tqmanager):
     user1 = f.build_user()
     user2 = f.build_user(email="user-test@email.com")
     project = f.build_project()
@@ -341,6 +342,92 @@ async def test_create_invitations(tqmanager):
         fake_invitations_repo.create_invitations.assert_awaited_once()
 
         assert len(tqmanager.pending_jobs) == 2
+
+
+async def test_create_invitations_by_usernames(tqmanager):
+    user1 = f.build_user()
+    user2 = f.build_user()
+    user3 = f.build_user()
+    project = f.build_project()
+    role1 = f.build_role(project=project, slug="admin")
+    role2 = f.build_role(project=project, slug="general")
+
+    invitations = [
+        {"username": user2.username, "role_slug": role1.slug},
+        {"username": user3.username, "role_slug": role2.slug},
+    ]
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.invitations.services.users_repositories", autospec=True) as fake_users_repo,
+    ):
+        fake_roles_repo.get_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
+        fake_users_repo.get_first_user.side_effect = [user2, user3]
+        fake_users_repo.get_users_by_emails_as_dict.return_value = {user2.email: user2, user3.email: user3}
+        fake_invitations_repo.get_project_invitation_by_email.return_value = None
+
+        await services.create_invitations(project=project, invitations=invitations, invited_by=user1)
+
+        fake_roles_repo.get_project_roles_as_dict.assert_awaited_once_with(project=project)
+        fake_users_repo.get_users_by_emails_as_dict.assert_awaited_once_with(emails=[user2.email, user3.email])
+        fake_invitations_repo.create_invitations.assert_awaited_once()
+
+        assert len(tqmanager.pending_jobs) == 2
+
+
+async def test_create_invitations_duplicated_email_username(tqmanager):
+    user1 = f.build_user(email="test1@email.com", username="user1")
+    user2 = f.build_user(email="test2@email.com", username="user2")
+    user3 = f.build_user(email="test3@email.com", username="user3")
+    user4 = f.build_user(email="test4@email.com", username="user4")
+    project = f.build_project()
+    role1 = f.build_role(project=project, slug="admin")
+    role2 = f.build_role(project=project, slug="general")
+
+    invitations = [
+        {"email": "test2@email.com", "username": user2.username, "role_slug": role2.slug},
+        {"email": "test3@email.com", "role_slug": role1.slug},
+        {"username": user3.username, "role_slug": role2.slug},
+        {"username": user4.username, "role_slug": role1.slug},
+        {"email": "test4@email.com", "role_slug": role2.slug},
+    ]
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.invitations.services.users_repositories", autospec=True) as fake_users_repo,
+    ):
+        fake_roles_repo.get_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
+        fake_users_repo.get_first_user.side_effect = [user2, user3, user4]
+        fake_users_repo.get_users_by_emails_as_dict.return_value = {user2.email: user2, user3.email: user3}
+        fake_invitations_repo.get_project_invitation_by_email.return_value = None
+
+        await services.create_invitations(project=project, invitations=invitations, invited_by=user1)
+
+        fake_roles_repo.get_project_roles_as_dict.assert_awaited_once_with(project=project)
+        fake_users_repo.get_users_by_emails_as_dict.assert_awaited_once_with(
+            emails=[user2.email, user3.email, user4.email]
+        )
+        fake_invitations_repo.create_invitations.assert_awaited_once()
+
+        assert len(tqmanager.pending_jobs) == 3
+        assert list(map(lambda x: x["args"]["to"], tqmanager.pending_jobs)) == [user2.email, user3.email, user4.email]
+
+
+async def test_create_invitations_invalid_username(tqmanager):
+    user1 = f.build_user(email="test1@email.com", username="user1")
+    project = f.build_project()
+
+    invitations = [{"username": "not existing username", "role_slug": "valid_role"}]
+
+    with (
+        patch("taiga.invitations.services.users_repositories.get_first_user", autospec=True) as fake_get_first_user,
+        pytest.raises(UsernameDoesNotExistError),
+    ):
+        fake_get_first_user.return_value = None
+
+        await services.create_invitations(project=project, invitations=invitations, invited_by=user1)
 
 
 #######################################################

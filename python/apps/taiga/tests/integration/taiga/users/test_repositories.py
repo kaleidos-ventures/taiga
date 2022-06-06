@@ -160,6 +160,9 @@ async def test_get_users_by_text():
     elmarv = await f.create_user(is_active=True, username="elmary@email.com", full_name="Joanna Marinari")
     storm = await f.create_user(is_active=True, username="storm@email.com", full_name="Martina Elliott Wagner")
     inactive_user = await f.create_user(is_active=False, username="inactive@email.com", full_name="Inactive User")
+    system_user = await f.create_user(
+        is_system=True, is_active=True, username="system@email.com", full_name="System User"
+    )
 
     # elettescar is ws-member
     workspace = await f.create_workspace(is_premium=True, owner=ws_pj_admin, color=2)
@@ -173,15 +176,16 @@ async def test_get_users_by_text():
     general_member_role = await f.create_role(project=project, is_admin=False)
     await f.create_membership(user=electra, project=project, role=general_member_role)
 
-    all_active_users_result = await users_repositories.get_users_by_text(
-        text_search=None, project_slug=None, excluded_usernames=[]
-    )
-    assert len(all_active_users_result) == 6
-    assert all_active_users_result[0] == danvers
-    assert all_active_users_result[1] == elmarv
-    assert all_active_users_result[2] == elettescar
-    assert inactive_user not in all_active_users_result
+    # searching with default values (all users but inactive/system users)
+    all_active_no_sys_users_result = await users_repositories.get_users_by_text()
+    assert len(all_active_no_sys_users_result) == 6
+    assert all_active_no_sys_users_result[0] == danvers
+    assert all_active_no_sys_users_result[1] == elmarv
+    assert all_active_no_sys_users_result[2] == elettescar
+    assert inactive_user not in all_active_no_sys_users_result
+    assert system_user not in all_active_no_sys_users_result
 
+    # searching for texts, ordering by project
     search_by_text_no_pj_result = await users_repositories.get_users_by_text(
         text_search="el", project_slug=project.slug, excluded_usernames=["ws-pj-admin"]
     )
@@ -192,6 +196,16 @@ async def test_get_users_by_text():
     assert inactive_user not in search_by_text_no_pj_result
     assert ws_pj_admin not in search_by_text_no_pj_result
 
+    # searching for texts containing several words (full names)
+    search_by_text_spaces_result = await users_repositories.get_users_by_text(text_search="martina elliott wag")
+    assert len(search_by_text_spaces_result) == 1
+    assert search_by_text_spaces_result[0] == storm
+
+    # searching for texts containing special chars (cause no exception)
+    search_by_special_chars = await users_repositories.get_users_by_text(text_search="<")
+    assert len(search_by_special_chars) == 0
+
+    # search pagination
     search_by_text_no_pj_pagination_result = await users_repositories.get_users_by_text(
         text_search="el", project_slug=project.slug, excluded_usernames=["ws-pj-admin"], offset=2, limit=3
     )
@@ -203,6 +217,9 @@ async def test_get_users_by_text():
     assert ws_pj_admin not in search_by_text_no_pj_pagination_result
     assert electra not in search_by_text_no_pj_pagination_result
 
-    search_by_text_spaces_result = await users_repositories.get_users_by_text(text_search="martina elliott wag")
-    assert len(search_by_text_spaces_result) == 1
-    assert search_by_text_spaces_result[0] == storm
+    # searching for inactive and system users
+    search_by_text_inactive_system = await users_repositories.get_users_by_text(
+        exclude_inactive=False, exclude_system=False
+    )
+    assert inactive_user in search_by_text_inactive_system
+    assert system_user in search_by_text_inactive_system

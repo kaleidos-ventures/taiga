@@ -8,24 +8,24 @@
 import pytest
 from pydantic import ValidationError
 from taiga.invitations.validators import InvitationsValidator, InvitationValidator
+from tests.unit.utils import check_validation_errors
 
 
-def test_validate_invitation_with_empty_role_slug():
-    email = "test@email.com"
-    role_slug = ""
+@pytest.mark.parametrize(
+    "email, username, role_slug, error_fields, expected_errors",
+    [
+        ("email@test.com", "username", "", ["roleSlug"], "Empty field is not allowed"),
+        ("email@test.com", "username", None, ["roleSlug"], "none is not an allowed value"),
+        ("not an email", "username", "role", ["email"], "value is not a valid email address"),
+    ],
+)
+def test_email_role_slug(email, username, role_slug, error_fields, expected_errors):
+    with pytest.raises(ValidationError) as validation_errors:
+        InvitationValidator(email=email, username=username, role_slug=role_slug)
 
-    with pytest.raises(ValidationError, match=r"Empty field is not allowed"):
-        InvitationValidator(email=email, role_slug=role_slug)
-
-
-def test_validate_invitations_with_duplicated_items():
-    invitations = [
-        {"email": "test@email.com", "role_slug": "general"},
-        {"email": "test@email.com", "role_slug": "general"},
-    ]
-
-    with pytest.raises(ValidationError, match=r"value_error.list.unique_items"):
-        InvitationsValidator(invitations=invitations)
+    expected_error_fields = error_fields
+    expected_error_messages = expected_errors
+    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
 
 
 def test_validate_invitations_more_than_50():
@@ -33,5 +33,9 @@ def test_validate_invitations_more_than_50():
     for i in range(55):
         invitations.append({"email": f"test{i}@email.com", "role_slug": "general"})
 
-    with pytest.raises(ValidationError, match=r"value_error.list.max_items"):
+    with pytest.raises(ValidationError, match=r"value_error.list.max_items") as validation_errors:
         InvitationsValidator(invitations=invitations)
+
+    expected_error_fields = ["invitations"]
+    expected_error_messages = ["ensure this value has at most 50 items"]
+    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)

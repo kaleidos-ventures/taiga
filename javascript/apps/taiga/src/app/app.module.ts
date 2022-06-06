@@ -65,15 +65,14 @@ export function prefersReducedMotion(): boolean {
   return mediaQueryList.matches;
 }
 
-if (!environment.production) {
-  import('./shared/mail-testing')
-    .then((mailTesting) => {
-      mailTesting.init();
-    })
-    .catch(() => {
-      console.error('error loading mail testing');
-    });
-}
+// todo: only dev & prepro
+import('./shared/mail-testing')
+  .then((mailTesting) => {
+    mailTesting.init();
+  })
+  .catch(() => {
+    console.error('error loading mail testing');
+  });
 
 @NgModule({
   declarations: [AppComponent],

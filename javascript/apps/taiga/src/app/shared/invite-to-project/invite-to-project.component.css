@@ -147,4 +147,10 @@ tui-data-list {
     /* stylelint-disable-next-line declaration-no-important */
     text-align: center !important;
   }
+
+  /* stylelint-disable selector-max-type */
+  &::ng-deep button {
+    /* stylelint-disable-next-line declaration-no-important */
+    padding: var(--spacing-4) !important;
+  }
 }

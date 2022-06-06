@@ -8,7 +8,11 @@
 
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { WorkspaceItemComponent } from './workspace-item.component';
-import { WorkspaceAdminMockFactory, WorkspaceMockFactory } from '@taiga/data';
+import {
+  WorkspaceAdminMockFactory,
+  WorkspaceMemberMockFactory,
+  WorkspaceMockFactory,
+} from '@taiga/data';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { fetchWorkspaceProjects } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
@@ -16,12 +20,17 @@ import { LocalStorageService } from '~/app/shared/local-storage/local-storage.se
 describe('WorkspaceItem', () => {
   const workspaceItem = WorkspaceMockFactory();
   const workspaceItemAdmin = WorkspaceAdminMockFactory();
+  const workspaceItemMember = WorkspaceMemberMockFactory();
 
   const initialState = {
+    invitation: {
+      acceptedInvite: [],
+    },
     workspaceList: {
       workspaceProjects: {
         [workspaceItem.slug]: workspaceItem.latestProjects,
         [workspaceItemAdmin.slug]: workspaceItemAdmin.latestProjects,
+        [workspaceItemMember.slug]: workspaceItemMember.latestProjects,
       },
     },
   };
@@ -165,6 +174,111 @@ describe('WorkspaceItem', () => {
 
       spectator.component.model$.subscribe(({ projects }) => {
         expect(projects.length).toEqual(workspaceItem.latestProjects.length);
+        done();
+      });
+    });
+  });
+
+  describe('member', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          workspace: workspaceItemMember,
+          projectsToShow: 8,
+        },
+        detectChanges: false,
+      });
+      store = spectator.inject(MockStore);
+    });
+
+    it('Checking when the member user has the invitations also in the projects list', (done) => {
+      const projectsToShow = 18;
+
+      spectator.component.projectsToShow = projectsToShow;
+      spectator.detectChanges();
+
+      expect(workspaceItemMember.myRole).toEqual('member');
+      expect(workspaceItemMember.latestProjects.length).toEqual(12); // 6 private projects + 6 public projects with invite
+      expect(workspaceItemMember.invitedProjects.length).toEqual(12);
+      expect(workspaceItemMember.totalProjects).toEqual(12);
+
+      spectator.component.model$.subscribe(
+        ({ projects, invitations, showMoreProjects }) => {
+          expect(projects.length + invitations.length).toEqual(projectsToShow);
+
+          const slugs = [...projects, ...invitations].map(
+            (project) => project.slug
+          );
+
+          const uniqSlugs = [...new Set(slugs)];
+
+          expect(uniqSlugs.length).toEqual(projectsToShow);
+          expect(showMoreProjects).toEqual(false);
+
+          done();
+        }
+      );
+    });
+
+    it('Checking the pagination when the member user has the invitations also in the projects list', (done) => {
+      const projectsToShow = 12;
+
+      spectator.component.projectsToShow = projectsToShow;
+      spectator.detectChanges();
+
+      expect(workspaceItemMember.myRole).toEqual('member');
+      expect(workspaceItemMember.latestProjects.length).toEqual(12); // 6 private projects + 6 public projects with invite
+      expect(workspaceItemMember.invitedProjects.length).toEqual(12);
+      expect(workspaceItemMember.totalProjects).toEqual(12);
+
+      spectator.component.model$.subscribe(
+        ({ projects, invitations, showMoreProjects, remainingProjects }) => {
+          expect(projects.length + invitations.length).toEqual(12);
+
+          const slugs = [...projects, ...invitations].map(
+            (project) => project.slug
+          );
+
+          const uniqSlugs = [...new Set(slugs)];
+
+          expect(uniqSlugs.length).toEqual(projectsToShow);
+          expect(showMoreProjects).toEqual(true);
+          expect(remainingProjects).toEqual(
+            workspaceItemAdmin.totalProjects + 6 - projectsToShow // 6 = invitations to private projects
+          );
+
+          done();
+        }
+      );
+    });
+
+    it('Accept invitation does not remove the project from invitations but remove it from projects', (done) => {
+      const projectsToShow = 50;
+
+      const acceptedInvitation = workspaceItemMember.invitedProjects[0].slug;
+
+      spectator.component.projectsToShow = projectsToShow;
+
+      store.setState({
+        ...initialState,
+        invitation: {
+          acceptedInvite: [acceptedInvitation],
+        },
+      });
+
+      spectator.component.acceptProjectInvite(acceptedInvitation);
+      spectator.detectChanges();
+
+      spectator.component.model$.subscribe(({ projects, invitations }) => {
+        expect(
+          invitations.find(
+            (invitation) => invitation.slug === acceptedInvitation
+          )
+        ).toBeTruthy();
+        expect(
+          projects.find((project) => project.slug === acceptedInvitation)
+        ).toBeFalsy();
+
         done();
       });
     });

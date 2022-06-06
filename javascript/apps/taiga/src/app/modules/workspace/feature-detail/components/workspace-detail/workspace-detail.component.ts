@@ -39,6 +39,8 @@ import {
   trigger,
   AnimationEvent,
 } from '@angular/animations';
+import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 
 interface ViewDetailModel {
   projects: WorkspaceProject[];
@@ -102,6 +104,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       projects: WorkspaceProject[];
       invitedProjects: WorkspaceProject[];
       rejectedInvites: string[];
+      acceptedInvites: string[];
     }>
   ) {}
 
@@ -115,17 +118,31 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     this.model$ = this.state.select().pipe(
       map((state) => {
         let invitedProjects = state.invitedProjects;
-        const projects = state.projects;
+        let projects = state.projects;
+
+        // ignore previously accepted invitations
+        projects = projects.filter(
+          (project) => !state.acceptedInvites.includes(project.slug)
+        );
 
         // workspace admin may have an invitation to a project that it already has access to.
         if (state.workspace?.myRole === 'admin') {
           invitedProjects = [];
         } else {
-          invitedProjects = invitedProjects.filter((invitedProjects) => {
-            return !projects.find((project) => {
-              return project.slug === invitedProjects.slug;
+          if (state.workspace?.myRole === 'member') {
+            // a member can have some projects in both list because the project could have access permissions for workspace members
+            invitedProjects = invitedProjects.filter((invitation) => {
+              return !projects.find((project) => {
+                return project.slug === invitation.slug;
+              });
             });
-          });
+          } else {
+            projects = projects.filter((project) => {
+              return !invitedProjects.find((invitation) => {
+                return project.slug === invitation.slug;
+              });
+            });
+          }
 
           invitedProjects = invitedProjects.filter((invitation) => {
             return !state.rejectedInvites.includes(invitation.slug);
@@ -148,6 +165,10 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.state.connect(
+      'acceptedInvites',
+      this.store.select(selectAcceptedInvite)
+    );
     this.state.connect(
       'workspace',
       this.store.select(selectWorkspace).pipe(filterNil())
@@ -183,6 +204,14 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
   public onResized(event: ResizedEvent) {
     this.setCardAmounts(event.newRect.width);
+  }
+
+  public acceptProjectInvite(slug: Project['slug']) {
+    this.store.dispatch(
+      acceptInvitationSlug({
+        slug,
+      })
+    );
   }
 
   public rejectProjectInvite(slug: Project['slug']) {

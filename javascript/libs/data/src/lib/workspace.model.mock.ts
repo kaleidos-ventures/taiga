@@ -114,3 +114,68 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
     totalProjects: numProjects * 2,
   };
 };
+
+export const WorkspaceMemberMockFactory = (): Workspace => {
+  const workspace: Workspace = {
+    id: randNumber(),
+    slug: randSlug(),
+    name: randDepartment(),
+    color: randNumber(),
+    hasProjects: true,
+    myRole: 'member',
+    isPremium: true,
+    isOwner: true,
+    invitedProjects: [],
+    latestProjects: [],
+    totalProjects: randNumber(),
+  };
+
+  const latestProjects = [];
+  const invitedProjects = [];
+  const numProjects = 6;
+
+  for (let i = 0; i < numProjects; i++) {
+    latestProjects.push(
+      ProjectMockFactory(false, {
+        color: workspace.color,
+        slug: workspace.slug,
+        name: workspace.name,
+        isPremium: workspace.isPremium,
+        myRole: workspace.myRole,
+      })
+    );
+  }
+
+  for (let i = 0; i < numProjects; i++) {
+    const project = ProjectMockFactory(false, {
+      color: workspace.color,
+      slug: workspace.slug,
+      name: workspace.name,
+      isPremium: workspace.isPremium,
+      myRole: workspace.myRole,
+    });
+
+    invitedProjects.push(project);
+  }
+
+  // all the invitations are also in the project list if the user is a member & the project has public permissions
+  for (let i = 0; i < numProjects; i++) {
+    const project = ProjectMockFactory(false, {
+      color: workspace.color,
+      slug: workspace.slug,
+      name: workspace.name,
+      isPremium: workspace.isPremium,
+      myRole: workspace.myRole,
+    });
+
+    invitedProjects.push(project);
+    latestProjects.push(project);
+  }
+
+  return {
+    ...workspace,
+    latestProjects,
+    invitedProjects,
+    totalProjects: numProjects * 2,
+  };
+};

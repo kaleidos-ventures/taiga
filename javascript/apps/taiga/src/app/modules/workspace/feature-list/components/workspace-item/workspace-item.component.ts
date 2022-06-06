@@ -29,6 +29,8 @@ import { selectWorkspaceProject } from '~/app/modules/workspace/feature-list/+st
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { RxState } from '@rx-angular/state';
 import { map, take } from 'rxjs/operators';
+import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 
 interface ViewModel {
   projectsToShow: number;
@@ -49,6 +51,7 @@ interface State {
   workspaceProjects: WorkspaceProject[];
   rejectedInvites: string[];
   slideOutActive: boolean;
+  acceptedInvites: string[];
 }
 
 @Component({
@@ -125,6 +128,10 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
   public ngOnInit() {
     this.state.connect(
+      'acceptedInvites',
+      this.store.select(selectAcceptedInvite)
+    );
+    this.state.connect(
       'workspaceProjects',
       this.store.select(selectWorkspaceProject(this.workspace.slug))
     );
@@ -134,15 +141,29 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
         let invitations = state.invitations;
         let projects = state.workspaceProjects;
 
-        // workspace admin may have an invitation to a project that it already has access to.
+        // ignore previously accepted invitations
+        projects = projects.filter(
+          (project) => !state.acceptedInvites.includes(project.slug)
+        );
+
+        // workspace admin/member may have an invitation to a project that it already has access to.
         if (this.workspace.myRole === 'admin') {
           invitations = [];
         } else {
-          invitations = invitations.filter((invitation) => {
-            return !projects.find((project) => {
-              return project.slug === invitation.slug;
+          if (this.workspace.myRole === 'member') {
+            // a member can have some projects in both list because the project could have access permissions for workspace members
+            invitations = invitations.filter((invitation) => {
+              return !projects.find((project) => {
+                return project.slug === invitation.slug;
+              });
             });
-          });
+          } else {
+            projects = projects.filter((project) => {
+              return !invitations.find((invitation) => {
+                return project.slug === invitation.slug;
+              });
+            });
+          }
 
           invitations = invitations.filter((invitation) => {
             return !state.rejectedInvites.includes(invitation.slug);
@@ -215,6 +236,14 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
   public trackByLatestProject(index: number, project: WorkspaceProject) {
     return project.slug;
+  }
+
+  public acceptProjectInvite(slug: Project['slug']) {
+    this.store.dispatch(
+      acceptInvitationSlug({
+        slug,
+      })
+    );
   }
 
   public rejectProjectInvite(slug: Project['slug']) {

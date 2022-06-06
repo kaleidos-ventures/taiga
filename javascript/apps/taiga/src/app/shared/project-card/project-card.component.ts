@@ -27,8 +27,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Project, Workspace } from '@taiga/data';
 import { distinctUntilChanged, map, skip } from 'rxjs/operators';
-
-import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { selectAcceptedInvite } from '../invite-to-project/data-access/+state/selectors/invitation.selectors';
 
 type CardVariant = 'project' | 'placeholder' | 'invitation';
@@ -110,8 +108,13 @@ export class ProjectCardComponent implements OnInit {
   @Output()
   public rejectInvite = new EventEmitter<Project['slug']>();
 
+  @Output()
+  public acceptInvite = new EventEmitter<Project['slug']>();
+
   @HostBinding('attr.data-invite-status')
   public invitationStatus: 'accepted' | null = null;
+
+  public animationState = '';
 
   public invitationStatus$ = this.store.select(selectAcceptedInvite);
   public rejectedByAdmin = false;
@@ -137,16 +140,6 @@ export class ProjectCardComponent implements OnInit {
         this.invitationStatus = invitationStatus;
         this.cd.markForCheck();
       });
-  }
-
-  public acceptInvite() {
-    if (this.project) {
-      this.store.dispatch(
-        acceptInvitationSlug({
-          slug: this.project.slug,
-        })
-      );
-    }
   }
 
   public onRejectInvite() {

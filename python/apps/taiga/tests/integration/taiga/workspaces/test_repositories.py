@@ -169,6 +169,7 @@ async def test_get_user_workspaces_overview_latest_projects():
 async def test_get_user_workspaces_overview_invited_projects():
     user8 = await f.create_user()
     user9 = await f.create_user()
+    user10 = await f.create_user()
 
     # user8 is admin of several workspaces
     ws1 = await f.create_workspace(name="ws1 for admin", owner=user8, is_premium=True)
@@ -192,24 +193,34 @@ async def test_get_user_workspaces_overview_invited_projects():
     pj_general_role = await _get_pj_member_role(project=pj)
     await f.create_invitation(email=user9.email, user=user9, project=pj, role=pj_general_role, invited_by=user8)
 
-    # user8 invites user9 to a project in ws2
+    # user8 invites user9 to a project in ws2 (just email)
     pj = await f.create_project(name="pj3", workspace=ws2, owner=user8)
     pj_general_role = await _get_pj_member_role(project=pj)
-    await f.create_invitation(email=user9.email, user=user9, project=pj, role=pj_general_role, invited_by=user8)
+    await f.create_invitation(email=user9.email, user=None, project=pj, role=pj_general_role, invited_by=user8)
 
-    # user8 invites user9 to a project in ws3
+    # user8 invites user9 and user10 to a project in ws3
     pj = await f.create_project(name="pj4", workspace=ws3, owner=user8)
     pj_general_role = await _get_pj_member_role(project=pj)
     await f.create_invitation(email=user9.email, user=user9, project=pj, role=pj_general_role, invited_by=user8)
+    await f.create_invitation(email=user10.email, user=user10, project=pj, role=pj_general_role, invited_by=user8)
 
-    # user8 invites user9 to a project in ws4
+    # user8 invites user9 and user10 to a project in ws4 (just email)
     pj = await f.create_project(name="pj5", workspace=ws4, owner=user8)
     pj_general_role = await _get_pj_member_role(project=pj)
-    await f.create_invitation(email=user9.email, user=user9, project=pj, role=pj_general_role, invited_by=user8)
+    await f.create_invitation(email=user9.email, user=None, project=pj, role=pj_general_role, invited_by=user8)
+    await f.create_invitation(email=user10.email, user=None, project=pj, role=pj_general_role, invited_by=user8)
 
+    # user 9
     res = await repositories.get_user_workspaces_overview(user9)
 
     assert len(res) == 4  # workspaces
+    for ws in res:
+        assert len(ws.invited_projects) == 1
+
+    # user 10
+    res = await repositories.get_user_workspaces_overview(user10)
+
+    assert len(res) == 2  # workspaces
     for ws in res:
         assert len(ws.invited_projects) == 1
 

@@ -39,7 +39,10 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         is_owner = Workspace.objects.get(id=ws_id).owner.id == user.id
         invited_projects_qs = Project.objects.filter(
-            workspace_id=ws_id, invitations__user_id=user.id, invitations__status=InvitationStatus.PENDING
+            Q(invitations__user_id=user.id)
+            | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email)),
+            invitations__status=InvitationStatus.PENDING,
+            workspace_id=ws_id,
         )
         qs = (
             Workspace.objects.filter(id=ws_id)
@@ -77,7 +80,10 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
         projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         invited_projects_qs = Project.objects.filter(
-            workspace_id=ws_id, invitations__user_id=user.id, invitations__status=InvitationStatus.PENDING
+            Q(invitations__user_id=user.id)
+            | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email)),
+            invitations__status=InvitationStatus.PENDING,
+            workspace_id=ws_id,
         )
         qs = (
             Workspace.objects.filter(id=ws_id)
@@ -95,7 +101,9 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
     # workspaces where the user is ws-guest with all its visible projects
     # or is not even a guest and only have invited projects
     user_pj_member = Q(memberships__user__id=user.id)
-    user_invited_pj = Q(invitations__user_id=user.id, invitations__status=InvitationStatus.PENDING)
+    user_invited_pj = Q(invitations__status=InvitationStatus.PENDING) & (
+        Q(invitations__user_id=user.id) | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email))
+    )
     guest_ws_ids = list(
         Project.objects.filter(user_pj_member | user_invited_pj)
         .exclude(workspace__workspace_memberships__user__id=user.id)  # user_not_ws_member
@@ -118,7 +126,10 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
         projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         invited_projects_qs = Project.objects.filter(
-            workspace_id=ws_id, invitations__user_id=user.id, invitations__status=InvitationStatus.PENDING
+            Q(invitations__user_id=user.id)
+            | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email)),
+            invitations__status=InvitationStatus.PENDING,
+            workspace_id=ws_id,
         )
         qs = (
             Workspace.objects.filter(id=ws_id)

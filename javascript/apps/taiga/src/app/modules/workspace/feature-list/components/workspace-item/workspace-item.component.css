@@ -50,6 +50,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .workspace-show-all {
   margin-block-start: var(--spacing-16);
+  margin-inline-start: var(--spacing-8);
 }
 
 .workspace-item-title-active {

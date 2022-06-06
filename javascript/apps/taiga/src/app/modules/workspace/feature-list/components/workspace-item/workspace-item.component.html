@@ -123,10 +123,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <button
       *ngIf="vm.showMoreProjects"
       (click)="setShowAllProjects(true)"
-      tuiButton
+      tuiLink
       appearance="tertiary"
       class="workspace-show-all"
-      iconRight="chevron-down">
+      icon="chevron-down">
       {{
         t('workspace.more_projects', {
           projects: vm.remainingProjects
@@ -136,10 +136,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <button
       *ngIf="vm.showLessProjects"
       (click)="setShowAllProjects(false)"
-      tuiButton
+      tuiLink
       appearance="tertiary"
       class="workspace-show-all"
-      iconRight="chevron-up">
+      icon="chevron-up">
       {{ t('workspace.less_projects') }}
     </button>
   </ng-container>

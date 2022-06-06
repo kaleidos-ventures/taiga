@@ -96,7 +96,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .workspace-item-container {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-28);
 
   &.form-error {
     margin-block-start: 1rem;
@@ -105,6 +104,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .workspace-item-container-inner {
   overflow: hidden;
+  padding-block-end: var(--spacing-24);
 }
 
 .sliding-panel {

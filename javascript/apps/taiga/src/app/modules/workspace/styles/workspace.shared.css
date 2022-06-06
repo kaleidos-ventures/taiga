@@ -12,7 +12,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: grid;
   gap: 1rem;
   grid-template-columns: minmax(0, var(--max-width));
-  padding: auto var(--spacing-16) var(--spacing-16);
+  padding: 0 var(--spacing-8);
 
   &.show-all {
     max-block-size: none;

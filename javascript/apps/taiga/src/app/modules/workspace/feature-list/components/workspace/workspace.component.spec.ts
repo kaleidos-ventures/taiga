@@ -53,10 +53,35 @@ describe('Workspace List', () => {
     const workspaceItem = WorkspaceMockFactory();
 
     // Mock user role
+    workspaceItem.isOwner = false;
+
+    // Mock user role
     workspaceItem.myRole = 'admin';
 
     // Mock latestProjects
-    workspaceItem.latestProjects = [];
+    workspaceItem.hasProjects = false;
+
+    // Mock localStorage rejectedProjects
+    const localStorageService =
+      spectator.inject<LocalStorageService>(LocalStorageService);
+
+    const rejectedInvited: Project['slug'][] = [];
+    localStorageService.get.mockReturnValue(rejectedInvited);
+
+    expect(spectator.component.chekWsVisibility(workspaceItem)).toBeTruthy();
+  });
+
+  it('check WS visibility - owner', () => {
+    const workspaceItem = WorkspaceMockFactory();
+
+    // Mock user role
+    workspaceItem.isOwner = true;
+
+    // Mock user role
+    workspaceItem.myRole = 'member';
+
+    // Mock latestProjects
+    workspaceItem.hasProjects = false;
 
     // Mock localStorage rejectedProjects
     const localStorageService =
@@ -72,11 +97,13 @@ describe('Workspace List', () => {
     const workspaceItem = WorkspaceMockFactory();
 
     // Mock user role
+    workspaceItem.isOwner = false;
+
+    // Mock user role
     workspaceItem.myRole = 'guest';
 
     // Mock latestProjects
-    const exampleProject = ProjectMockFactory();
-    workspaceItem.latestProjects = [exampleProject];
+    workspaceItem.hasProjects = true;
 
     // Mock localStorage rejectedProjects
     const localStorageService =
@@ -92,10 +119,13 @@ describe('Workspace List', () => {
     const workspaceItem = WorkspaceMockFactory();
 
     // Mock user role
+    workspaceItem.isOwner = false;
+
+    // Mock user role
     workspaceItem.myRole = 'guest';
 
     // Mock latestProjects
-    workspaceItem.latestProjects = [];
+    workspaceItem.hasProjects = false;
 
     // Mock localStorage rejectedProjects
     const localStorageService =
@@ -114,10 +144,13 @@ describe('Workspace List', () => {
     const workspaceItem = WorkspaceMockFactory();
 
     // Mock user role
+    workspaceItem.isOwner = false;
+
+    // Mock user role
     workspaceItem.myRole = 'guest';
 
     // Mock latestProjects
-    workspaceItem.latestProjects = [];
+    workspaceItem.hasProjects = false;
 
     // Mock localStorage rejectedProjects
     const exampleInvite = ProjectMockFactory();

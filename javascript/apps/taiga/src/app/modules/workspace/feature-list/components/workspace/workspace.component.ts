@@ -166,14 +166,15 @@ export class WorkspaceComponent implements OnDestroy {
   }
 
   public chekWsVisibility(workspace: Workspace) {
+    const isOwner = workspace.isOwner;
     const isAdmin = workspace.myRole === 'admin';
     const rejectedInvites = this.getRejectedInvites();
-    const hasProjects = workspace.latestProjects;
+    const hasProjects = workspace.hasProjects;
     const hasInvitedProjects = workspace.invitedProjects.filter((project) => {
       return !rejectedInvites.includes(project.slug);
     });
 
-    if (isAdmin || hasProjects.length || hasInvitedProjects.length) {
+    if (isOwner || isAdmin || hasProjects || hasInvitedProjects.length) {
       return true;
     }
     return false;

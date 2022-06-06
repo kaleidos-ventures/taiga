@@ -8,7 +8,7 @@
 
 import { Membership } from './membership.model';
 export interface Invitation extends Partial<Membership> {
-  email?: string;
+  email: string;
 }
 export interface Contact {
   email?: string;

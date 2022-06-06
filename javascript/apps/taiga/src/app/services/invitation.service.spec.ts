@@ -23,6 +23,7 @@ describe('InvitationService', () => {
   it('get position to add new registered user invitation on invitation list', () => {
     const invitations = [
       {
+        email: 'user2@taiga.demo',
         user: {
           username: 'user2',
           fullName: 'Jorge Sullivan',
@@ -37,6 +38,7 @@ describe('InvitationService', () => {
     const newInvitation = {
       user: { username: 'user3', fullName: 'Jorge Sullivan' },
       role: { isAdmin: false, name: 'General', slug: 'general' },
+      email: 'user3@taiga.demo',
     };
     const index = spectator.service.positionInvitationInArray(
       invitations,
@@ -48,6 +50,7 @@ describe('InvitationService', () => {
   it('get position to add new non registered user invitation on invitation list', () => {
     const invitations = [
       {
+        email: 'user2@taiga.demo',
         user: {
           username: 'user2',
           fullName: 'Jorge Sullivan',
@@ -55,6 +58,7 @@ describe('InvitationService', () => {
         role: { isAdmin: false, name: 'General', slug: 'general' },
       },
       {
+        email: 'user3@taiga.demo',
         user: {
           username: 'user3',
           fullName: 'Jorge Sullivan',

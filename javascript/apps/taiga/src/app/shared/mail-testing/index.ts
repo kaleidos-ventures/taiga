@@ -13,8 +13,8 @@ interface TestEmailEvent {
   localPreview: string;
 }
 
-export const init = () => {
-  const ws = new WebSocket('ws://localhost:8090');
+export const init = (url?: string) => {
+  const ws = new WebSocket(url ?? 'ws://localhost:8090');
 
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data as string) as TestEmailEvent;

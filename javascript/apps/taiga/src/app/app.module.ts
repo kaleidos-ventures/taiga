@@ -65,15 +65,6 @@ export function prefersReducedMotion(): boolean {
   return mediaQueryList.matches;
 }
 
-// todo: only dev & prepro
-import('./shared/mail-testing')
-  .then((mailTesting) => {
-    mailTesting.init();
-  })
-  .catch(() => {
-    console.error('error loading mail testing');
-  });
-
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -128,6 +119,16 @@ import('./shared/mail-testing')
           if (config) {
             appConfigService._config = config;
             translocoService.setDefaultLang(config.defaultLanguage);
+
+            if (config.emailWs) {
+              import('./shared/mail-testing')
+                .then((mailTesting) => {
+                  mailTesting.init(environment.configLocal?.emailWs);
+                })
+                .catch(() => {
+                  console.error('error loading mail testing');
+                });
+            }
           } else {
             throw new Error('No config provided');
           }

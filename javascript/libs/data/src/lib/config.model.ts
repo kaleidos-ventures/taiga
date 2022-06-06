@@ -11,4 +11,5 @@ export interface Config {
   ws: string;
   defaultLanguage: 'en';
   supportEmail: string;
+  emailWs?: string;
 }

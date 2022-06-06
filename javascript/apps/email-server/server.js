@@ -48,14 +48,14 @@ module.exports.initMailServer = () => {
           }
 
           const id = v4();
-          const localPreview = `${host}:${apiPort}/emails/${id}`;
+          const localPreview = `${host}/emails/${id}`;
 
           console.log(`
 Id: ${id}
 Subject: ${parsed.subject}
 To: ${parsed.to.text}
 Preview URL: ${previewUrl}
-Local preview URL: ${host}:${apiPort}/emails/${id}`);
+Local preview URL: ${localPreview}`);
 
           emails.push({
             id,

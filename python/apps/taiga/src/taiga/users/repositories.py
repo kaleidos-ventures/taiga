@@ -45,11 +45,11 @@ def get_user_by_username_or_email(username_or_email: str) -> User | None:
 @sync_to_async
 def get_users_by_emails_as_dict(emails: list[str]) -> dict[str, User]:
     """
-    This repository returns users with these emails as a dict whose key
+    This repository returns active users with these emails as a dict whose key
     is the email and value the User object.
     """
     query = reduce(or_, (Q(email__iexact=email) for email in emails))
-    return {u.email.lower(): u for u in User.objects.filter(query)}
+    return {u.email.lower(): u for u in User.objects.filter(is_active=True).filter(query)}
 
 
 @sync_to_async

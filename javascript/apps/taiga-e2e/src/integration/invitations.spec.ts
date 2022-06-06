@@ -111,6 +111,13 @@ describe('Invite users to project after creating it', () => {
       );
   });
 
+  it('Should show autocomplete results when we write an email and after delete the @ if there is a match', () => {
+    typeEmailToInvite('use@');
+    cy.getBySel('option').should('not.exist');
+    cy.getBySel('input-add-invites').type('{backspace}');
+    cy.getBySel('option').its('length').should('eq', 6);
+  });
+
   it('Should show an error when sending invitations withouth adding', () => {
     inviteUsers();
     cy.getBySel('error-at-lest-one')

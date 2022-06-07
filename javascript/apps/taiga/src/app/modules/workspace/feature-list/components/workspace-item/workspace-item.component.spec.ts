@@ -120,7 +120,8 @@ describe('WorkspaceItem', () => {
 
       spectator.component.rejectProjectInvite(slug);
 
-      spectator.component.model$.subscribe(() => {
+      spectator.component.model$.subscribe(({ slideOutActive }) => {
+        expect(slideOutActive).toBeTruthy();
         expect(Object.keys(spectator.component.reorder).length).toEqual(2);
         expect(
           (spectator.component.reorder[
@@ -132,6 +133,15 @@ describe('WorkspaceItem', () => {
             workspaceItem.invitedProjects.at(2)!.slug
           ] = 'moving')
         );
+        done();
+      });
+    });
+
+    it('End animation and update state', (done) => {
+      spectator.component.slideOutAnimationDone();
+      spectator.detectChanges();
+      spectator.component.model$.subscribe(({ slideOutActive }) => {
+        expect(slideOutActive).toBeFalsy();
         done();
       });
     });

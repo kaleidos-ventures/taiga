@@ -38,6 +38,7 @@ interface ViewModel {
   showMoreProjects: boolean;
   showLessProjects: boolean;
   remainingProjects: number;
+  slideOutActive: boolean;
 }
 
 interface State {
@@ -47,6 +48,7 @@ interface State {
   invitations: WorkspaceProject[];
   workspaceProjects: WorkspaceProject[];
   rejectedInvites: string[];
+  slideOutActive: boolean;
 }
 
 @Component({
@@ -216,6 +218,7 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
   }
 
   public rejectProjectInvite(slug: Project['slug']) {
+    this.state.set({ slideOutActive: true });
     const siblings = this.getSiblingsRow(slug);
     if (siblings) {
       const rejectedIndex = siblings.findIndex(
@@ -238,6 +241,10 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     if (event.fromState === null && event.toState === 'moving') {
       this.reorder = {};
     }
+  }
+
+  public slideOutAnimationDone() {
+    this.state.set({ slideOutActive: false });
   }
 
   public setShowAllProjects(showAllProjects: boolean) {

@@ -228,7 +228,6 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
               ?.filter((it) => !(it as Invitation).email)
               ?.find((member) => member.user?.username === user.username);
           if (!userAlreadyExist && !isCurrentUser && !isAlreadyProjectMember) {
-            user?.username && this.updateExcludedUsers('add', user?.username);
             this.users.splice(
               this.positionInArray(user),
               0,
@@ -381,14 +380,6 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   }
 
   public deleteUser(i: number) {
-    const formValue = (
-      this.inviteProjectForm.controls['users'] as FormArray
-    ).at(i).value as InvitationForm;
-    const username = formValue?.username;
-    if (username) {
-      this.updateExcludedUsers('delete', username);
-    }
-
     (this.inviteProjectForm.controls['users'] as FormArray).removeAt(i);
     // force recalculate scroll height in Firefox
     requestAnimationFrame(() => {

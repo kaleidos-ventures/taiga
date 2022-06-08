@@ -36,7 +36,7 @@ export interface SignUpInput {
 export interface SignUpError {
   error: {
     code: string;
-    detail: SignUpErrorDetail[];
+    detail: SignUpErrorDetail[] | string;
     message?: string;
     msg?: string;
   };

@@ -72,12 +72,12 @@ export class SignupComponent implements OnInit {
         const response = action.response.error as SignUpError;
         const error = response.error;
         if (action.response.status === 400) {
-          if (error.message === 'Email already exists') {
+          if (error.detail === 'email-already-exists-error') {
             (this.signUpForm.get('email') as FormControl).setErrors({
               exists: true,
             });
           }
-        } else if (error.detail.length) {
+        } else if (Array.isArray(error.detail)) {
           error.detail.forEach((error) => {
             if (
               error.loc[1] === 'email' &&

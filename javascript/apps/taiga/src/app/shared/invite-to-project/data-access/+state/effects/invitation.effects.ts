@@ -8,11 +8,11 @@
 
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import * as InvitationActions from '../actions/invitation.action';
 import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { InvitationApiService } from '@taiga/api';
-import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
+import { optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Contact, ErrorManagementToastOptions, Invitation } from '@taiga/data';
@@ -24,6 +24,7 @@ import { ProjectApiService } from '@taiga/api';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { Store } from '@ngrx/store';
 import { filterNil } from '~/app/shared/utils/operators';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class InvitationEffects {
@@ -143,16 +144,17 @@ export class InvitationEffects {
   public searchUser$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(InvitationActions.searchUser),
-      fetch({
-        run: (action) => {
-          return this.invitationApiService.searchUser(action.searchUser).pipe(
-            map((suggestedUsers: Contact[]) => {
-              return InvitationActions.searchUserSuccess({ suggestedUsers });
-            })
-          );
-        },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.errorManagement(httpResponse),
+      debounceTime(200),
+      switchMap((action) => {
+        return this.invitationApiService.searchUser(action.searchUser).pipe(
+          map((suggestedUsers: Contact[]) => {
+            return InvitationActions.searchUserSuccess({ suggestedUsers });
+          })
+        );
+      }),
+      catchError((httpResponse: HttpErrorResponse) => {
+        this.appService.errorManagement(httpResponse);
+        return throwError(httpResponse);
       })
     );
   });

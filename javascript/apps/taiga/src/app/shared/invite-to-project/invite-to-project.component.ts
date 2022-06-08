@@ -311,7 +311,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   }
 
   public searchChange(emails: string) {
-    !emails && this.resetErrors();
+    (!emails || this.emailsHaveErrors) && this.resetErrors();
     this.suggestionSelected = 0;
     if (/[^@]+@/.test(emails)) {
       // when the input contains and @ the search is disabled
@@ -372,6 +372,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
       this.inviteIdentifierErrors.required = true;
     } else if (!emailRgx) {
       this.inviteIdentifierErrors.regex = true;
+      this.notInBulkMode = false;
     } else if (bulkErrors) {
       this.inviteIdentifierErrors.bulkError = true;
     } else {

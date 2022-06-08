@@ -36,7 +36,7 @@ export class UserCardComponent implements OnChanges {
           this.textToHighlight,
           this.user.username
         );
-        this.usernameHighlight = usernameText && `@${usernameText}`;
+        this.usernameHighlight = usernameText;
       }
     }
   }

@@ -50,6 +50,11 @@ export const reducer = createReducer(
     state.showResetPasswordConfirmation = false;
 
     return state;
+  }),
+  on(AuthActions.initLoginPage, (state): AuthState => {
+    state.loginError = false;
+
+    return state;
   })
 );
 

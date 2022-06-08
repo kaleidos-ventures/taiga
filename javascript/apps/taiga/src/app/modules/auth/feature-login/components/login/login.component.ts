@@ -16,7 +16,10 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { login } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import {
+  initLoginPage,
+  login,
+} from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { selectLoginError } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -51,6 +54,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
+    this.store.dispatch(initLoginPage());
     this.state.connect(
       'loginError',
       this.store.select(selectLoginError).pipe(filterNil())

@@ -98,3 +98,5 @@ export const newPasswordError = createAction(
 export const initResetPasswordPage = createAction(
   '[Auth] init reset password page'
 );
+
+export const initLoginPage = createAction('[Auth] init login page');

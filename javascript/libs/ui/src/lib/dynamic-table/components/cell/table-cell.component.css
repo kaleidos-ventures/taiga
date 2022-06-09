@@ -7,5 +7,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 :host {
-  display: flex;
+  white-space: nowrap;
 }

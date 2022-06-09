@@ -186,3 +186,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     padding-inline-start: var(--spacing-16);
   }
 }
+
+cdk-virtual-scroll-viewport {
+  block-size: 500px;
+
+  & .member-item {
+    padding-inline: var(--spacing-4) var(--spacing-12);
+
+    &:first-child {
+      padding-block-start: var(--spacing-4);
+    }
+  }
+}

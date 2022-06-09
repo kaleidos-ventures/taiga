@@ -19,6 +19,19 @@ import {
   Membership,
   Invitation,
 } from '@taiga/data';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export interface MembersResponse {
+  totalMemberships: number;
+  memberships: Membership[];
+}
+
+export interface InvitationsResponse {
+  totalInvitations: number;
+
+  invitations: Invitation[];
+}
 
 @Injectable({
   providedIn: 'root',
@@ -161,16 +174,50 @@ export class ProjectApiService {
     );
   }
 
-  public getMembers(slug: string) {
-    return this.http.get<Membership[]>(
-      `${this.config.apiUrl}/projects/${slug}/memberships`
-    );
+  public getMembers(
+    slug: string,
+    offset = 0,
+    limit = 10
+  ): Observable<MembersResponse> {
+    return this.http
+      .get<Membership[]>(`${this.config.apiUrl}/projects/${slug}/memberships`, {
+        observe: 'response',
+        params: {
+          offset,
+          limit,
+        },
+      })
+      .pipe(
+        map((response) => {
+          return {
+            totalMemberships: Number(response.headers.get('pagination-total')),
+            memberships: response.body ?? [],
+          };
+        })
+      );
   }
 
-  public getInvitations(slug: string) {
-    return this.http.get<Invitation[]>(
-      `${this.config.apiUrl}/projects/${slug}/invitations`
-    );
+  public getInvitations(
+    slug: string,
+    offset = 0,
+    limit = 10
+  ): Observable<InvitationsResponse> {
+    return this.http
+      .get<Invitation[]>(`${this.config.apiUrl}/projects/${slug}/invitations`, {
+        observe: 'response',
+        params: {
+          offset,
+          limit,
+        },
+      })
+      .pipe(
+        map((response) => {
+          return {
+            totalInvitations: Number(response.headers.get('pagination-total')),
+            invitations: response.body ?? [],
+          };
+        })
+      );
   }
 
   public acceptInvitationToken(token: string) {

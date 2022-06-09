@@ -23,6 +23,7 @@ import { cold, hot } from 'jest-marbles';
 import {
   fetchMembersSuccess,
   initMembers,
+  nextMembersPage,
   onAcceptedInvitation,
 } from '../actions/project-overview.actions';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -30,18 +31,31 @@ import { selectCurrentProject } from '~/app/modules/project/data-access/+state/s
 import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { randDomainSuffix } from '@ngneat/falso';
 import { TestScheduler } from 'rxjs/testing';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 
 describe('ProjectOverviewEffects', () => {
   let actions$: Observable<Action>;
   let store: MockStore;
   let spectator: SpectatorService<ProjectOverviewEffects>;
   let testScheduler: TestScheduler;
+  const initialState = {
+    overview: {
+      members: [],
+      invitations: [],
+      totalInvitations: 0,
+      totalMemberships: 0,
+      hasMoreMembers: true,
+      hasMoreInvitations: true,
+    },
+  };
 
   const createService = createServiceFactory({
     service: ProjectOverviewEffects,
     providers: [
       provideMockActions(() => actions$),
-      provideMockStore({ initialState: {} }),
+      provideMockStore({
+        initialState,
+      }),
     ],
     imports: [],
     mocks: [ProjectApiService],
@@ -65,15 +79,15 @@ describe('ProjectOverviewEffects', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectOverviewEffects);
 
-    const membershipResponse = [
-      MembershipMockFactory(),
-      MembershipMockFactory(),
-    ];
+    const membershipResponse = {
+      memberships: [MembershipMockFactory(), MembershipMockFactory()],
+      totalMemberships: 2,
+    };
 
-    const invitationsResponse = [
-      InvitationMockFactory(),
-      InvitationMockFactory(),
-    ];
+    const invitationsResponse = {
+      invitations: [InvitationMockFactory(), InvitationMockFactory()],
+      totalInvitations: 2,
+    };
 
     projectApiService.getMembers.mockReturnValue(
       cold('-b|', { b: membershipResponse })
@@ -84,19 +98,173 @@ describe('ProjectOverviewEffects', () => {
 
     actions$ = hot('-a', { a: initMembers() });
 
-    const expected = cold('--a', {
+    const expected = cold('---a', {
       a: fetchMembersSuccess({
-        members: membershipResponse,
-        invitations: invitationsResponse,
+        members: membershipResponse.memberships,
+        totalMemberships: membershipResponse.totalMemberships,
+        invitations: invitationsResponse.invitations,
+        totalInvitations: invitationsResponse.totalInvitations,
       }),
     });
 
     expect(effects.initMembers$).toBeObservable(expected);
     expect(effects.initMembers$).toSatisfyOnFlush(() => {
-      expect(projectApiService.getMembers).toHaveBeenCalledWith(project.slug);
-      expect(projectApiService.getInvitations).toHaveBeenCalledWith(
-        project.slug
+      expect(projectApiService.getMembers).toHaveBeenCalledWith(
+        project.slug,
+        0
       );
+      expect(projectApiService.getInvitations).toHaveBeenCalledWith(
+        project.slug,
+        0,
+        MEMBERS_PAGE_SIZE
+      );
+    });
+  });
+
+  it('init members with enough members first load', () => {
+    const project = ProjectMockFactory();
+
+    project.amIAdmin = true;
+
+    store.overrideSelector(selectCurrentProject, project);
+
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(ProjectOverviewEffects);
+
+    const membershipResponse = {
+      memberships: Array.from(Array(MEMBERS_PAGE_SIZE).keys()).map(() =>
+        MembershipMockFactory()
+      ),
+      totalMemberships: 20,
+    };
+
+    const invitationsResponse = {
+      invitations: undefined,
+      totalInvitations: 20,
+    };
+
+    projectApiService.getMembers.mockReturnValue(
+      cold('-b|', { b: membershipResponse })
+    );
+    projectApiService.getInvitations.mockReturnValue(
+      cold('-b|', { b: invitationsResponse })
+    );
+
+    actions$ = hot('-a', { a: initMembers() });
+
+    const expected = cold('---a', {
+      a: fetchMembersSuccess({
+        members: membershipResponse.memberships,
+        totalMemberships: membershipResponse.totalMemberships,
+        invitations: invitationsResponse.invitations,
+        totalInvitations: invitationsResponse.totalInvitations,
+      }),
+    });
+
+    expect(effects.initMembers$).toBeObservable(expected);
+    expect(effects.initMembers$).toSatisfyOnFlush(() => {
+      expect(projectApiService.getMembers).toHaveBeenCalledWith(
+        project.slug,
+        0
+      );
+      expect(projectApiService.getInvitations).toHaveBeenCalledWith(
+        project.slug,
+        0,
+        0
+      );
+    });
+  });
+
+  describe('paginate', () => {
+    it('members', () => {
+      const project = ProjectMockFactory();
+
+      project.amIAdmin = true;
+
+      store.overrideSelector(selectCurrentProject, project);
+
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(ProjectOverviewEffects);
+
+      const membershipResponse = {
+        memberships: Array(MEMBERS_PAGE_SIZE).map(() =>
+          MembershipMockFactory()
+        ),
+        totalMemberships: MEMBERS_PAGE_SIZE,
+      };
+
+      projectApiService.getMembers.mockReturnValue(
+        cold('-b|', { b: membershipResponse })
+      );
+
+      actions$ = hot('-a', { a: nextMembersPage() });
+
+      const expected = cold('--a', {
+        a: fetchMembersSuccess({
+          members: membershipResponse.memberships,
+          totalMemberships: membershipResponse.totalMemberships,
+        }),
+      });
+
+      expect(effects.nextMembersPage$).toBeObservable(expected);
+      expect(effects.nextMembersPage$).toSatisfyOnFlush(() => {
+        expect(projectApiService.getMembers).toHaveBeenCalledWith(
+          project.slug,
+          0
+        );
+      });
+    });
+
+    it('invitations', () => {
+      const project = ProjectMockFactory();
+
+      project.amIAdmin = true;
+
+      store.overrideSelector(selectCurrentProject, project);
+
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(ProjectOverviewEffects);
+
+      store.setState({
+        overview: {
+          members: [],
+          invitations: Array(MEMBERS_PAGE_SIZE).map(() =>
+            InvitationMockFactory()
+          ),
+          totalInvitations: 10,
+          totalMemberships: 0,
+          hasMoreMembers: false,
+          hasMoreInvitations: true,
+        },
+      });
+
+      const invitationsResponse = {
+        invitations: Array(MEMBERS_PAGE_SIZE).map(() =>
+          InvitationMockFactory()
+        ),
+        totalInvitations: 10,
+      };
+
+      projectApiService.getInvitations.mockReturnValue(
+        cold('-b|', { b: invitationsResponse })
+      );
+
+      actions$ = hot('-a', { a: nextMembersPage() });
+
+      const expected = cold('--a', {
+        a: fetchMembersSuccess({
+          invitations: invitationsResponse.invitations,
+          totalInvitations: invitationsResponse.totalInvitations,
+        }),
+      });
+
+      expect(effects.nextMembersPage$).toBeObservable(expected);
+      expect(effects.nextMembersPage$).toSatisfyOnFlush(() => {
+        expect(projectApiService.getInvitations).toHaveBeenCalledWith(
+          project.slug,
+          MEMBERS_PAGE_SIZE
+        );
+      });
     });
   });
 

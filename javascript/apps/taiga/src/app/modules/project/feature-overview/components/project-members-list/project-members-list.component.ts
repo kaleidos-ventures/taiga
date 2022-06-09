@@ -7,6 +7,7 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -14,11 +15,17 @@ import {
   EventEmitter,
   Input,
   Output,
+  ViewChild,
 } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Invitation, Membership, User } from '@taiga/data';
 import { of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { delay, take, tap } from 'rxjs/operators';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
+import {
+  selectCanPaginate,
+  selectLoadingMoreMembers,
+} from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 
 @Component({
   selector: 'tg-project-members-list',
@@ -83,13 +90,25 @@ export class ProjectMembersListComponent {
   @Input()
   public onAcceptedInvitation = false;
 
+  @Input()
+  public paginate = false;
+
   @Output()
   public hasAcceptedInvitation = new EventEmitter<void>();
+
+  @Output()
+  public nextPage = new EventEmitter<number>();
+
+  @ViewChild(CdkVirtualScrollViewport)
+  public virtualScroll?: CdkVirtualScrollViewport;
 
   public userAnimationProgress = false;
   public animationSecondState = false;
   public animationFirstState = false;
   public animationPendingState = false;
+
+  public loading$ = this.store.select(selectLoadingMoreMembers);
+  public canPaginate$ = this.store.select(selectCanPaginate);
 
   public trackById(_index: number, member: Membership | Invitation) {
     const user = this.getUser(member);
@@ -132,6 +151,20 @@ export class ProjectMembersListComponent {
     this.showAcceptInvitationButton = false;
   }
 
+  public onScroll() {
+    this.canPaginate$.pipe(take(1)).subscribe((canPaginate) => {
+      if (this.virtualScroll && canPaginate) {
+        const renderedRange = this.virtualScroll.getRenderedRange();
+        const end = renderedRange.end;
+        const total = this.members.length;
+
+        if (end === total) {
+          this.nextPage.next(end);
+        }
+      }
+    });
+  }
+
   public animateUser() {
     this.animationPendingState = true;
     this.cd.detectChanges();
@@ -159,5 +192,5 @@ export class ProjectMembersListComponent {
       .subscribe();
   }
 
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(private cd: ChangeDetectorRef, private store: Store) {}
 }

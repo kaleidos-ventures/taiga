@@ -51,8 +51,13 @@ export const reducer = createReducer(
   on(
     ProjectOverviewActions.fetchMembersSuccess,
     (state, { members, invitations }): InvitationState => {
-      state.members = members;
-      state.invitations = invitations;
+      if (members) {
+        state.members = members;
+      }
+
+      if (invitations) {
+        state.invitations = invitations;
+      }
 
       return state;
     }

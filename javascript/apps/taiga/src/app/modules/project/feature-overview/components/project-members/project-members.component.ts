@@ -14,8 +14,13 @@ import {
   selectInvitations,
   selectMembers,
   selectOnAcceptedInvitation,
+  selectTotalMemberships,
+  selectTotalInvitations,
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
-import { initMembers } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
+import {
+  initMembers,
+  nextMembersPage,
+} from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { filter, map, take } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { selectNotificationClosed } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
@@ -23,6 +28,7 @@ import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth
 import { filterNil } from '~/app/shared/utils/operators';
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { ProjectMembersListComponent } from '../project-members-list/project-members-list.component';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 
 @Component({
   selector: 'tg-project-members',
@@ -60,8 +66,9 @@ export class ProjectMembersComponent {
       return {
         ...state,
         loading: !state.members.length,
-        viewAllMembers: membersAndInvitations.length > 10,
-        previewMembers: membersAndInvitations.slice(0, 10),
+        viewAllMembers:
+          state.totalMemberships + state.totalInvitations > MEMBERS_PAGE_SIZE,
+        previewMembers: membersAndInvitations.slice(0, MEMBERS_PAGE_SIZE),
         members: membersAndInvitations,
         pending: state.invitations.length,
         currentMember,
@@ -81,9 +88,19 @@ export class ProjectMembersComponent {
       notificationClosed: boolean;
       user: User | null;
       onAcceptedInvitation: boolean;
+      totalMemberships: number;
+      totalInvitations: number;
     }>
   ) {
     this.store.dispatch(initMembers());
+    this.state.connect(
+      'totalMemberships',
+      this.store.select(selectTotalMemberships)
+    );
+    this.state.connect(
+      'totalInvitations',
+      this.store.select(selectTotalInvitations)
+    );
     this.state.connect('members', this.store.select(selectMembers));
     this.state.connect('invitations', this.store.select(selectInvitations));
     this.state.connect(
@@ -120,5 +137,9 @@ export class ProjectMembersComponent {
         slug: this.state.get('project').slug,
       })
     );
+  }
+
+  public nextPage() {
+    this.store.dispatch(nextMembersPage());
   }
 }

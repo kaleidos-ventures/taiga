@@ -5,6 +5,7 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
+import { createSelector } from '@ngrx/store';
 import { projectOverviewFeature } from '../reducers/project-overview.reducer';
 
 export const {
@@ -12,4 +13,17 @@ export const {
   selectInvitations,
   selectNotificationClosed,
   selectOnAcceptedInvitation,
+  selectTotalMemberships,
+  selectTotalInvitations,
+  selectHasMoreInvitations,
+  selectHasMoreMembers,
+  selectLoadingMoreMembers,
 } = projectOverviewFeature;
+
+export const selectCanPaginate = createSelector(
+  selectHasMoreInvitations,
+  selectHasMoreMembers,
+  (hasMoreInvitations, hasMoreMembers) => {
+    return hasMoreInvitations || hasMoreMembers;
+  }
+);

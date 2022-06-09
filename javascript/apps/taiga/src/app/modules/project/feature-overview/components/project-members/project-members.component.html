@@ -12,13 +12,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <tui-svg src="members"></tui-svg>
       <span class="title-inner">{{ t('project_overview.members.title') }}</span>
       <ng-container *ngIf="!vm.loading">
-        <span class="count">({{ vm.members.length - vm.pending }})</span>
+        <span class="count">({{ vm.totalMemberships }})</span>
         <span
           class="pending"
-          *ngIf="vm.pending"
+          *ngIf="vm.totalInvitations"
           >-
           {{
-            t('project_overview.members.count_pending', { number: vm.pending })
+            t('project_overview.members.count_pending', {
+              number: vm.totalInvitations
+            })
           }}</span
         >
 
@@ -63,12 +65,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     <tg-ui-modal
       [open]="showAllMembers"
+      [heightAuto]="true"
       (requestClose)="showAllMembers = false">
       <tg-project-members-modal
-        *ngIf="vm.members"
+        *ngIf="vm.members && showAllMembers"
         [members]="vm.members"
         [pending]="vm.pending"
-        (closeModal)="showAllMembers = false"></tg-project-members-modal>
+        [totalMembers]="vm.totalMemberships"
+        [totalPending]="vm.totalInvitations"
+        (closeModal)="showAllMembers = false"
+        (nextPage)="nextPage()"></tg-project-members-modal>
     </tg-ui-modal>
 
     <ng-container *ngIf="vm.currentMember && vm.currentMember.role?.isAdmin">

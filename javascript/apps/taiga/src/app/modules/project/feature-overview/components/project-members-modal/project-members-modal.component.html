@@ -13,22 +13,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       id="members-modal-title"
       class="title">
       {{ t('project_overview.members.title') }}
-      <span class="count">({{ members.length - pending }})</span>
+      <span class="count">({{ totalMembers }})</span>
       <span
         class="pending"
-        *ngIf="pending">
+        *ngIf="totalPending">
         <tui-svg src="clock"></tui-svg>
         {{
-          t('project_overview.members.count_pending', { number: pending })
+          t('project_overview.members.count_pending', { number: totalPending })
         }}</span
       >
     </h1>
 
-    <tui-scrollbar class="member-list-wrapper">
-      <tg-project-members-list
-        *ngIf="members.length"
-        [members]="members"></tg-project-members-list>
-    </tui-scrollbar>
+    <tg-project-members-list
+      *ngIf="members.length"
+      [paginate]="true"
+      [members]="members"
+      (nextPage)="nextPage.next($event)"></tg-project-members-list>
 
     <div class="modal-bottom">
       <button

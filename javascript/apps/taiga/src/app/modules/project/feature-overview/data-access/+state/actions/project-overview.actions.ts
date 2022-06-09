@@ -13,7 +13,12 @@ export const initProjectOverview = createAction('[Project overview] init');
 export const initMembers = createAction('[Project overview] init members');
 export const fetchMembersSuccess = createAction(
   '[Project overview][api] fetch members success',
-  props<{ members: Membership[]; invitations: Invitation[] }>()
+  props<{
+    members?: Membership[];
+    totalMemberships?: number;
+    totalInvitations?: number;
+    invitations?: Invitation[];
+  }>()
 );
 export const setNotificationClosed = createAction(
   '[Project overview] set notification closed',
@@ -23,6 +28,10 @@ export const setNotificationClosed = createAction(
 export const onAcceptedInvitation = createAction(
   '[Project overview] on Accepted Invitation',
   props<{ onAcceptedInvitation: boolean }>()
+);
+
+export const nextMembersPage = createAction(
+  '[Project overview] next members page'
 );
 
 export const resetOverview = createAction('[Project overview] reset overview');

@@ -1,0 +1,35 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+.user-column {
+  padding-inline-start: var(--spacing-48);
+}
+
+tg-ui-dtable {
+  grid-template-columns: 1fr 1fr min-content;
+  padding-inline-end: var(--spacing-16);
+}
+
+tg-ui-dtable-cell {
+  block-size: 41px;
+}
+
+tg-ui-user-skeleton {
+  --padding: var(--spacing-4);
+}
+
+.empty {
+  background-color: var(--color-gray10);
+  block-size: 100%;
+  border-radius: 4px;
+  color: var(--color-gray70);
+  display: block;
+  font-style: italic;
+  padding-block: var(--spacing-16);
+  text-align: center;
+}

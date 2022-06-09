@@ -48,6 +48,9 @@ export class ModalComponent implements AfterViewInit {
   public elementFocusWhenClosed?: HTMLElement;
 
   @Input()
+  public heightAuto = false;
+
+  @Input()
   public set open(value: boolean) {
     this.open$.next(value);
   }

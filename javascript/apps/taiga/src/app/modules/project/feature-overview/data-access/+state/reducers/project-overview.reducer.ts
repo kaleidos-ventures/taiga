@@ -17,6 +17,11 @@ export interface ProjectOverviewState {
   invitations: Invitation[];
   notificationClosed: boolean;
   onAcceptedInvitation: boolean;
+  totalMemberships: number;
+  totalInvitations: number;
+  hasMoreMembers: boolean;
+  hasMoreInvitations: boolean;
+  loadingMoreMembers: boolean;
 }
 
 export const initialState: ProjectOverviewState = {
@@ -24,6 +29,11 @@ export const initialState: ProjectOverviewState = {
   invitations: [],
   notificationClosed: false,
   onAcceptedInvitation: false,
+  totalMemberships: 0,
+  totalInvitations: 0,
+  hasMoreMembers: true,
+  hasMoreInvitations: true,
+  loadingMoreMembers: false,
 };
 
 export const reducer = createReducer(
@@ -33,19 +43,51 @@ export const reducer = createReducer(
     (state): ProjectOverviewState => {
       state.members = [];
       state.invitations = [];
+      state.totalInvitations = 0;
+      state.totalMemberships = 0;
+      state.hasMoreMembers = true;
+      state.hasMoreInvitations = true;
 
       return state;
     }
   ),
   on(
     ProjectOverviewActions.fetchMembersSuccess,
-    (state, { members, invitations }): ProjectOverviewState => {
-      state.members = members;
-      state.invitations = invitations;
+    (
+      state,
+      { members, totalMemberships, invitations, totalInvitations }
+    ): ProjectOverviewState => {
+      if (totalMemberships) {
+        state.totalMemberships = totalMemberships;
+      }
+
+      if (totalInvitations) {
+        state.totalInvitations = totalInvitations;
+      }
+
+      if (members) {
+        state.members.push(...members);
+
+        state.hasMoreMembers = state.members.length < state.totalMemberships;
+      }
+
+      if (invitations) {
+        state.invitations.push(...invitations);
+
+        state.hasMoreInvitations =
+          state.invitations.length < state.totalInvitations;
+      }
+
+      state.loadingMoreMembers = false;
 
       return state;
     }
   ),
+  on(ProjectOverviewActions.nextMembersPage, (state): ProjectOverviewState => {
+    state.loadingMoreMembers = true;
+
+    return state;
+  }),
   on(
     InvitationActions.inviteUsersSuccess,
     (state, action): ProjectOverviewState => {

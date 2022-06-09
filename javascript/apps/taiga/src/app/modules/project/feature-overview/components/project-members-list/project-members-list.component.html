@@ -7,15 +7,44 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t">
+  <tui-scrollbar *ngIf="paginate && members.length">
+    <cdk-virtual-scroll-viewport
+      itemSize="49"
+      tuiScrollable
+      (scrolledIndexChange)="onScroll()"
+      class="tui-zero-scrollbar">
+      <ul class="member-list">
+        <li
+          class="member-item"
+          *cdkVirtualFor="
+            let member of members;
+            trackBy: trackById.bind(this);
+            let i = index
+          ">
+          <ng-template
+            *ngTemplateOutlet="
+              memberTpl;
+              context: { member: this.member, index: i }
+            "></ng-template>
+        </li>
+      </ul>
+
+      <div *ngIf="loading$ | async">
+        <tg-ui-user-skeleton></tg-ui-user-skeleton>
+      </div>
+    </cdk-virtual-scroll-viewport>
+  </tui-scrollbar>
+
   <ul
     class="member-list"
-    *ngIf="members.length">
+    *ngIf="members.length && !paginate">
     <li
       *ngFor="
         let member of members;
         trackBy: trackById.bind(this);
         let i = index
       "
+      class="member-item"
       [class.pending-state]="
         animationPendingState && getUser(member).username === user?.username
       "
@@ -25,55 +54,66 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [class.animation-two-state]="
         animationSecondState && getUser(member).username === user?.username
       ">
-      <a
-        (click)="$event.preventDefault()"
-        class="member-link"
-        href=""
-        [class.pending-member]="isPending(member)">
-        <tg-user-card [user]="getUser(member)">
-          <div
-            member
-            class="member-info">
-            <div
-              class="admin"
-              *ngIf="member.role?.isAdmin && !isPending(member)">
-              {{ t('commons.roles.admin') }}
-            </div>
-            <div class="block-end">
-              <button
-                *ngIf="i === 0 && leaveProject && !isPending(member)"
-                [attr.aria-label]="t('project_overview.members.leave')"
-                icon="remove-user"
-                appearance="tertiary"
-                class="leave-button"
-                tuiIconButton
-                [tuiHint]="t('project_overview.members.leave')"
-                type="button"></button>
-              <div
-                class="pending-msg"
-                *ngIf="isPending(member)">
-                <tui-svg src="clock"></tui-svg>
-                {{ t('project_overview.members.pending') }}
-              </div>
-              <div
-                @fadeInRight
-                *ngIf="
-                  showAcceptInvitationButton &&
-                  getUser(member).username === user?.username
-                ">
-                <button
-                  (click)="acceptInvitationSlug()"
-                  class="create-account"
-                  data-test="invitation-accept"
-                  appearance="secondary"
-                  tuiButton>
-                  {{ t('project_overview.members.accept') }}
-                </button>
-              </div>
-            </div>
-          </div>
-        </tg-user-card>
-      </a>
+      <ng-template
+        *ngTemplateOutlet="
+          memberTpl;
+          context: { member: this.member, index: i }
+        "></ng-template>
     </li>
   </ul>
+
+  <ng-template
+    #memberTpl
+    let-member="member"
+    let-index="index">
+    <a
+      (click)="$event.preventDefault()"
+      class="member-link"
+      href=""
+      [class.pending-member]="isPending(member)">
+      <tg-user-card [user]="getUser(member)">
+        <div
+          member
+          class="member-info">
+          <div
+            class="admin"
+            *ngIf="member.role?.isAdmin && !isPending(member)">
+            {{ t('commons.roles.admin') }}
+          </div>
+          <div class="block-end">
+            <button
+              *ngIf="index === 0 && leaveProject && !isPending(member)"
+              [attr.aria-label]="t('project_overview.members.leave')"
+              icon="remove-user"
+              appearance="tertiary"
+              class="leave-button"
+              tuiIconButton
+              [tuiHint]="t('project_overview.members.leave')"
+              type="button"></button>
+            <div
+              class="pending-msg"
+              *ngIf="isPending(member)">
+              <tui-svg src="clock"></tui-svg>
+              {{ t('project_overview.members.pending') }}
+            </div>
+            <div
+              @fadeInRight
+              *ngIf="
+                showAcceptInvitationButton &&
+                getUser(member).username === user?.username
+              ">
+              <button
+                (click)="acceptInvitationSlug()"
+                class="create-account"
+                data-test="invitation-accept"
+                appearance="secondary"
+                tuiButton>
+                {{ t('project_overview.members.accept') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </tg-user-card>
+    </a>
+  </ng-template>
 </ng-container>

@@ -1,0 +1,25 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+tui-tabs {
+  margin-block-end: var(--spacing-24);
+  margin-block-start: var(--spacing-44);
+
+  --tui-text-01: var(--color-secondary);
+  --tui-base-03: var(--color-gray30);
+  --tui-primary: var(--color-secondary);
+  --tui-selection: transparent;
+
+  /* stylelint-disable selector-max-type */
+  & .tab-link._focus-visible,
+  & .tab-link:hover:not(.active) {
+    border: 1px solid var(--color-secondary);
+    box-shadow: none;
+  }
+  /* stylelint-enable selector-max-type */
+}

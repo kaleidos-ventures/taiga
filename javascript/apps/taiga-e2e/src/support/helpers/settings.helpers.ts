@@ -21,6 +21,11 @@ export const navigateToMemberPermissionsSettings = () => {
   cy.getBySel('member-permissions-settings-title').should('be.visible');
 };
 
+export const navigateToMembersSettings = () => {
+  cy.getBySel('members-settings').click();
+  cy.getBySel('members-settings-title').should('be.visible');
+};
+
 export const displayAdvancedSettingsForRole = (index: number) => {
   cy.getBySel('member-permissions-settings').within(() => {
     cy.getBySel('role-permission-row').should('be.visible');

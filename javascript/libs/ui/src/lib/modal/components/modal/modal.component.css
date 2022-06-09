@@ -15,7 +15,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .modal-content {
   --modal-max-height: 90vh;
   --modal-width: 715px;
-  --modal-padding: var(--spacing-40);
 
   background-color: var(--color-white);
   border-radius: 5px;
@@ -23,6 +22,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   max-block-size: var(--modal-max-height);
   padding: var(--spacing-40);
   position: relative;
+
+  &.height-auto {
+    max-block-size: unset;
+  }
 }
 
 .close {

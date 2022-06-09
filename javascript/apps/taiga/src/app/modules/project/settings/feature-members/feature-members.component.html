@@ -5,16 +5,57 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
+<ng-container *transloco="let t; read: 'project_settings'">
+  <ng-container *ngIf="model$ | async as vm">
+    <section class="member-settings">
+      <div class="header">
+        <h3
+          data-test="members-settings-title"
+          tabindex="-1"
+          mainFocus
+          class="settings-title">
+          {{ t('members.title') }}
+        </h3>
 
-<section class="member-settings">
-  <h3
-    tabindex="-1"
-    mainFocus
-    class="settings-title">
-    Member settings
-  </h3>
-
-  <a [routerLink]="['pending']">Pending</a>
-
-  <router-outlet></router-outlet>
-</section>
+        <button
+          icon="plus"
+          appearance="primary"
+          tuiButton
+          type="submit">
+          {{ t('members.invite') }}
+        </button>
+      </div>
+      <tui-tabs>
+        <a
+          class="tab-link"
+          tuiTab
+          data-test="members-tab"
+          [routerLink]="['./']"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }">
+          <tui-svg
+            class="tab-icon"
+            src="members"></tui-svg>
+          {{ t('members.members_tab') }}
+          <span class="count">({{ vm.totalMembers }})</span></a
+        >
+        <a
+          class="tab-link"
+          tuiTab
+          data-test="pendings-tab"
+          [routerLink]="['./pending']"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }">
+          <tui-svg
+            class="tab-icon"
+            src="clock"></tui-svg>
+          {{ t('members.pending_tab') }}
+          <span class="count">({{ vm.totalPending }})</span></a
+        >
+      </tui-tabs>
+      <div class="content">
+        <router-outlet></router-outlet>
+      </div>
+    </section>
+  </ng-container>
+</ng-container>

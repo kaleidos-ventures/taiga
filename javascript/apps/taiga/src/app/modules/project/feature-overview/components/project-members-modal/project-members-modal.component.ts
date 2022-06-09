@@ -26,8 +26,17 @@ export class ProjectMembersModalComponent {
   public members: (Membership | Invitation)[] = [];
 
   @Input()
+  public totalMembers = 0;
+
+  @Input()
   public pending = 0;
+
+  @Input()
+  public totalPending = 0;
 
   @Output()
   public closeModal = new EventEmitter();
+
+  @Output()
+  public nextPage = new EventEmitter<number>();
 }

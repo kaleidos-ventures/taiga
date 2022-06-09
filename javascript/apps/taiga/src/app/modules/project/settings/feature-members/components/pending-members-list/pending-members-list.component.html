@@ -1,0 +1,62 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<ng-container *ngIf="model$ | async as vm">
+  <ng-container *transloco="let t; read: 'project_settings'">
+    <tg-ui-dtable>
+      <tg-ui-dtable-row>
+        <tg-ui-dtable-header class="user-column">{{
+          t('members.column_user')
+        }}</tg-ui-dtable-header>
+        <tg-ui-dtable-header>{{
+          t('members.column_role')
+        }}</tg-ui-dtable-header>
+        <tg-ui-dtable-header class="action-column">{{
+          t('members.column_actions')
+        }}</tg-ui-dtable-header>
+      </tg-ui-dtable-row>
+      <ng-container *ngIf="!vm.loading">
+        <ng-container
+          *ngFor="let invitation of vm.invitations; trackBy: trackByUsername">
+          <tg-ui-dtable-row>
+            <tg-ui-dtable-cell class="user">
+              <tg-user-card [user]="getUser(invitation)"></tg-user-card>
+            </tg-ui-dtable-cell>
+            <tg-ui-dtable-cell></tg-ui-dtable-cell>
+            <tg-ui-dtable-cell></tg-ui-dtable-cell>
+          </tg-ui-dtable-row>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="vm.loading">
+        <tg-ui-dtable-row
+          *ngFor="let i of [].constructor(10); trackBy: trackByIndex">
+          <tg-ui-dtable-cell>
+            <tg-ui-user-skeleton></tg-ui-user-skeleton>
+          </tg-ui-dtable-cell>
+          <tg-ui-dtable-cell></tg-ui-dtable-cell>
+          <tg-ui-dtable-cell></tg-ui-dtable-cell>
+        </tg-ui-dtable-row>
+      </ng-container>
+    </tg-ui-dtable>
+
+    <p
+      *ngIf="!vm.loading && !vm.invitations"
+      class="empty">
+      {{ t('members.no_pending') }}
+    </p>
+
+    <tg-members-pagination
+      *ngIf="vm.total"
+      [total]="vm.total"
+      [pageStart]="vm.pageStart"
+      [pageEnd]="vm.pageEnd"
+      [hasPreviousPage]="vm.hasPreviousPage"
+      [hasNextPage]="vm.hasNextPage"
+      (next)="next()"
+      (previous)="prev()"></tg-members-pagination>
+  </ng-container>
+</ng-container>

@@ -43,5 +43,18 @@
     "cannot_delete": "Cannot delete",
     "cannot_edit": "Cannot edit",
     "close": "Close"
+  },
+  "members": {
+    "title": "Project members",
+    "invite": "Invite people",
+    "no_pending": "There are no pending invitations.",
+    "members_tab": "Members",
+    "pending_tab": "Pending",
+    "next_page": "Next page",
+    "previous_page": "Previous page",
+    "page_info": "<span class='page-range'>{pageStart} - {pageEnd}</span> of {total}",
+    "column_user": "User",
+    "column_role": "Role",
+    "column_actions": "Actions"
   }
 }

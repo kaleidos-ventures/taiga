@@ -10,6 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host {
   --white: rgb(255, 255, 255);
+  --padding: var(--spacing-12);
 
   display: block;
 }
@@ -19,7 +20,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: flex;
   gap: var(--spacing-4);
   max-inline-size: 280px;
-  padding: var(--spacing-12);
+  padding: var(--padding);
 }
 
 .row {

@@ -10,15 +10,24 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProjectsSettingsFeatureMembersComponent } from './feature-members.component';
+import { PendingMembersComponent } from './components/pending-members/pending-members.component';
+import { PendingMembersModule } from './components/pending-members/pending-members.module';
 
 @NgModule({
   declarations: [ProjectsSettingsFeatureMembersComponent],
   imports: [
     CommonModule,
+    PendingMembersModule,
     RouterModule.forChild([
       {
         path: '',
         component: ProjectsSettingsFeatureMembersComponent,
+        children: [
+          {
+            path: 'pending',
+            component: PendingMembersComponent,
+          },
+        ],
       },
     ]),
   ],

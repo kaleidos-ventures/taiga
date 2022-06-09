@@ -14,11 +14,14 @@ import typer
 from taiga.base.logging.formatters import ColourizedFormatter
 
 
-class TaskQueueDefaultFormatter(ColourizedFormatter):
+class EventsDefaultFormatter(ColourizedFormatter):
     action_colors: dict[str, Callable[[Any], str]] = {
-        "start": lambda action: typer.style(action, fg="bright_yellow"),
-        "success": lambda action: typer.style(action, fg="bright_green"),
-        "defer": lambda action: typer.style(action, fg="bright_magenta"),
+        "register": lambda action: typer.style(action, fg="green"),
+        "unregister": lambda action: typer.style(action, fg="magenta"),
+        "subscribe": lambda action: typer.style(action, fg="yellow"),
+        "unsubscribe": lambda action: typer.style(action, fg="blue"),
+        "publish": lambda action: typer.style(action, fg="bright_green"),
+        "emit": lambda action: typer.style(action, fg="bright_blue"),
         "default": lambda action: typer.style(action, fg="white"),
     }
 
@@ -27,12 +30,18 @@ class TaskQueueDefaultFormatter(ColourizedFormatter):
 
     def _color_action(self, action: str) -> str:
         def action_type(action: str) -> str:
-            if action.startswith("start_"):
-                return "start"
-            if action.endswith("_success"):
-                return "success"
-            if action.endswith("_defer"):
-                return "defer"
+            if action.endswith("unregister"):
+                return "unregister"
+            if action.endswith("register"):
+                return "register"
+            if action.endswith("unsubscribe"):
+                return "unsubscribe"
+            if action.endswith("subscribe"):
+                return "subscribe"
+            if action.endswith("publish"):
+                return "publish"
+            if action.endswith("emit"):
+                return "emit"
             return "default"
 
         func = self.action_colors.get(action_type(action), self.action_colors["default"])
@@ -47,7 +56,7 @@ class TaskQueueDefaultFormatter(ColourizedFormatter):
         if self.use_colors:
             action = self._color_action(action)
 
-        recordcopy.__dict__["action"] = f"[{typer.style('TQ', bold=True)}: {action}]:{action_seperator}"
+        recordcopy.__dict__["action"] = f"[{typer.style('EV', bold=True, fg='yellow')}: {action}]:{action_seperator}"
         return super().formatMessage(recordcopy)
 
 
@@ -56,25 +65,25 @@ LOGGING_CONFIG: dict[str, Any] = {
     "disable_existing_loggers": False,
     "formatters": {
         "default": {
-            "()": "taiga.tasksqueue.logging.TaskQueueDefaultFormatter",
+            "()": "taiga.events.logging.EventsDefaultFormatter",
             "fmt": "%(levelprefix)s%(action)s%(message)s",
             "use_colors": None,
         },
     },
     "handlers": {
-        "default": {
+        "console": {
             "formatter": "default",
             "class": "logging.StreamHandler",
             "stream": "ext://sys.stderr",
         },
     },
     "loggers": {
-        "procrastinate": {"handlers": ["default"], "level": "INFO"},
+        "taiga.events": {"handlers": ["console"], "propagate": False, "level": "INFO"},
     },
 }
 
 
 def setup_logging(level: int = logging.INFO) -> None:
     copyconfig = copy(LOGGING_CONFIG)
-    copyconfig["loggers"]["procrastinate"]["level"] = logging.getLevelName(level)
+    copyconfig["loggers"]["taiga.events"]["level"] = logging.getLevelName(level)
     logging.config.dictConfig(copyconfig)

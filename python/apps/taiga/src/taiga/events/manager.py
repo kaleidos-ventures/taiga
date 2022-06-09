@@ -41,6 +41,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+import itertools
+import logging
 from asyncio import Queue, create_task
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator, AsyncIterator, Type
@@ -49,9 +51,14 @@ from fastapi import WebSocket
 
 from .pubsub import Event, PostgresPubSubBackend, PubSubBackend
 
+logger = logging.getLogger(__name__)
+
 
 class Subscriber:
+    _id_seq = itertools.count(start=1)
+
     def __init__(self, websocket: WebSocket, queue: Queue[Event | None]) -> None:
+        self.id = next(Subscriber._id_seq)
         self.queue = queue
         self.websocket = websocket
 
@@ -61,6 +68,9 @@ class Subscriber:
                 yield await self.get()
         except Unsubscribed:
             pass
+
+    def __repr__(self) -> str:
+        return f"Sunscriber(id={self.id!r})"
 
     async def get(self) -> Event:
         event = await self.queue.get()
@@ -90,8 +100,13 @@ class EventsManager:
     async def _listener(self) -> None:
         while True:
             event = await self._backend.next_published()
-            for queue in list(self._channels.get(event.channel, [])):
+            queues = list(self._channels.get(event.channel, []))
+            for queue in queues:
                 await queue.put(event)
+            logger.info(
+                f"Emit to {len(queues)} subscriber(s): {event}.",
+                extra={"action": "manager.emit", "event": event},
+            )
 
     @property
     def is_connected(self) -> bool:
@@ -100,6 +115,10 @@ class EventsManager:
     async def connect(self) -> None:
         await self._backend.connect()
         self._listener_task = create_task(self._listener())
+        logger.info(
+            "Event manager connected.",
+            extra={"action": "manager.connect"},
+        )
 
     async def disconnect(self) -> None:
         if self._listener_task.done():
@@ -107,6 +126,10 @@ class EventsManager:
         else:
             self._listener_task.cancel()
         await self._backend.disconnect()
+        logger.info(
+            "Event manager disconnected.",
+            extra={"action": "manager.disconnect"},
+        )
 
     @asynccontextmanager
     async def register(self, websocket: WebSocket) -> AsyncIterator[Subscriber]:
@@ -115,10 +138,18 @@ class EventsManager:
         try:
             subscriber = Subscriber(websocket=websocket, queue=queue)
             self._subscribers[websocket] = subscriber
+            logger.info(
+                f"Register new WebSocket #{subscriber.id}.",
+                extra={"action": "manager.register", "subscriber": subscriber},
+            )
             yield subscriber
         finally:  # When the websocket will be disconnected
             del self._subscribers[websocket]
             await queue.put(None)
+            logger.info(
+                f"Unregister new WebSocket #{subscriber.id}.",
+                extra={"action": "manager.unregister", "subscriber": subscriber},
+            )
 
     async def subscribe(self, websocket: WebSocket, channel: str) -> bool:
         subscriber = self._subscribers.get(websocket, None)
@@ -129,6 +160,10 @@ class EventsManager:
                 self._channels[channel] = set([subscriber.queue])
             else:
                 self._channels[channel].add(subscriber.queue)
+            logger.info(
+                f"Subscribe WebSocket #{subscriber.id} to the channel '{channel}'.",
+                extra={"action": "manager.subscribe", "subscriber": subscriber, "channel": channel},
+            )
             return True  # The websocket has been subscribed to the channel
         return False  # The websocket is not registered
 
@@ -140,8 +175,16 @@ class EventsManager:
             if not self._channels.get(channel, None):
                 del self._channels[channel]
                 await self._backend.unsubscribe(channel)
+            logger.info(
+                f"Unsubscribe websocket #{subscriber.id} to the channel '{channel}'.",
+                extra={"action": "manager.unsubscribe", "subscriber": subscriber, "channel": channel},
+            )
             return True  # The websocket has been subscribed to the channel
         return False  # The websocket is not registered
 
     async def publish(self, channel: str, message: str) -> None:
+        logger.info(
+            f"Publish to '{channel}': '{message}'.",
+            extra={"action": "manager.publish", "channel": channel, "content": message},
+        )
         await self._backend.publish(channel, message)

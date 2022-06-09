@@ -8,12 +8,14 @@
 from fastapi import FastAPI, WebSocket
 from starlette.concurrency import run_until_first_complete
 from taiga.base.db import db_connection_params
+from taiga.events.logging import setup_logging
 from taiga.events.manager import EventsManager, Subscriber
 
 manager = EventsManager(**db_connection_params())
 
 
 async def connect_events_manager() -> None:
+    setup_logging()
     await manager.connect()
 
 

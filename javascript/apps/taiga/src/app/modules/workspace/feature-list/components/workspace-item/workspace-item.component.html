@@ -64,25 +64,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
     <!-- Case: User has more project but is not allowed to see them -->
     <div
-      *ngIf="
-        !workspace.totalProjects &&
-        !vm.invitations.length &&
-        !vm.slideOutActive &&
-        workspace.hasProjects &&
-        workspace.myRole !== 'admin'
-      "
+      *ngIf="userHasNoAccess()"
       class="workspace-message-placeholder"
       [innerHtml]="t('workspace.placehoder_no_access')"></div>
 
     <!-- Case: User has no more projects -->
     <div
-      *ngIf="
-        !workspace.totalProjects &&
-        !vm.invitations.length &&
-        !vm.slideOutActive &&
-        !workspace.hasProjects &&
-        workspace.myRole !== 'admin'
-      "
+      *ngIf="userHasNoProjects()"
       class="workspace-message-placeholder"
       [innerHtml]="t('workspace.placehoder_no_projects')"></div>
 

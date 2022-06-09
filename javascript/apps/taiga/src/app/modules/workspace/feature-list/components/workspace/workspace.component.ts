@@ -165,19 +165,19 @@ export class WorkspaceComponent implements OnDestroy {
     );
   }
 
-  public chekWsVisibility(workspace: Workspace) {
-    const isOwner = workspace.isOwner;
-    const isAdmin = workspace.myRole === 'admin';
+  public checkWsVisibility(workspace: Workspace) {
+    const role = workspace.myRole;
+    const latestProjects = workspace.latestProjects;
     const rejectedInvites = this.getRejectedInvites();
-    const hasProjects = workspace.hasProjects;
     const hasInvitedProjects = workspace.invitedProjects.filter((project) => {
       return !rejectedInvites.includes(project.slug);
     });
 
-    if (isOwner || isAdmin || hasProjects || hasInvitedProjects.length) {
-      return true;
-    }
-    return false;
+    return !(
+      role === 'guest' &&
+      !latestProjects.length &&
+      !hasInvitedProjects.length
+    );
   }
 
   public ngOnDestroy() {

@@ -289,6 +289,47 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     }
   }
 
+  public getActiveInvitations() {
+    const invitations = this.state.get('invitations');
+    const rejectedInvites = this.getRejectedInvites();
+
+    return invitations.filter((invitation) => {
+      return !rejectedInvites.includes(invitation.slug);
+    });
+  }
+
+  public userHasNoAccess() {
+    const hasProjects = this.workspace.hasProjects;
+    const latestProjects = this.workspace.latestProjects.length;
+    const isSlideOutAnimationActive = this.state.get('slideOutActive');
+    const isAdmin = this.workspace.myRole === 'admin';
+    const hasActiveInvitations = this.getActiveInvitations().length;
+
+    return (
+      hasProjects &&
+      !isSlideOutAnimationActive &&
+      !latestProjects &&
+      !hasActiveInvitations &&
+      !isAdmin
+    );
+  }
+
+  public userHasNoProjects() {
+    const hasProjects = this.workspace.hasProjects;
+    const latestProjects = this.workspace.latestProjects.length;
+    const isSlideOutAnimationActive = this.state.get('slideOutActive');
+    const hasActiveInvitations = this.getActiveInvitations().length;
+    const isAdmin = this.workspace.myRole === 'admin';
+
+    return (
+      !hasProjects &&
+      !isSlideOutAnimationActive &&
+      !latestProjects &&
+      !hasActiveInvitations &&
+      !isAdmin
+    );
+  }
+
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes.workspace) {
       const rejectedInvites = this.getRejectedInvites();

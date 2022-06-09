@@ -59,7 +59,7 @@ describe('Workspace List', () => {
     workspaceItem.myRole = 'admin';
 
     // Mock latestProjects
-    workspaceItem.hasProjects = false;
+    workspaceItem.latestProjects = [];
 
     // Mock localStorage rejectedProjects
     const localStorageService =
@@ -68,7 +68,7 @@ describe('Workspace List', () => {
     const rejectedInvited: Project['slug'][] = [];
     localStorageService.get.mockReturnValue(rejectedInvited);
 
-    expect(spectator.component.chekWsVisibility(workspaceItem)).toBeTruthy();
+    expect(spectator.component.checkWsVisibility(workspaceItem)).toBeTruthy();
   });
 
   it('check WS visibility - owner', () => {
@@ -81,7 +81,7 @@ describe('Workspace List', () => {
     workspaceItem.myRole = 'member';
 
     // Mock latestProjects
-    workspaceItem.hasProjects = false;
+    workspaceItem.latestProjects = [];
 
     // Mock localStorage rejectedProjects
     const localStorageService =
@@ -90,7 +90,7 @@ describe('Workspace List', () => {
     const rejectedInvited: Project['slug'][] = [];
     localStorageService.get.mockReturnValue(rejectedInvited);
 
-    expect(spectator.component.chekWsVisibility(workspaceItem)).toBeTruthy();
+    expect(spectator.component.checkWsVisibility(workspaceItem)).toBeTruthy();
   });
 
   it('check WS visibility - hasProjects', () => {
@@ -103,7 +103,8 @@ describe('Workspace List', () => {
     workspaceItem.myRole = 'guest';
 
     // Mock latestProjects
-    workspaceItem.hasProjects = true;
+    const project = ProjectMockFactory();
+    workspaceItem.latestProjects = [project];
 
     // Mock localStorage rejectedProjects
     const localStorageService =
@@ -112,7 +113,7 @@ describe('Workspace List', () => {
     const rejectedInvited: Project['slug'][] = [];
     localStorageService.get.mockReturnValue(rejectedInvited);
 
-    expect(spectator.component.chekWsVisibility(workspaceItem)).toBeTruthy();
+    expect(spectator.component.checkWsVisibility(workspaceItem)).toBeTruthy();
   });
 
   it('check WS visibility - hasInvites', () => {
@@ -125,7 +126,7 @@ describe('Workspace List', () => {
     workspaceItem.myRole = 'guest';
 
     // Mock latestProjects
-    workspaceItem.hasProjects = false;
+    workspaceItem.latestProjects = [];
 
     // Mock localStorage rejectedProjects
     const localStorageService =
@@ -137,7 +138,7 @@ describe('Workspace List', () => {
     const exampleInvite = ProjectMockFactory();
     workspaceItem.invitedProjects = [exampleInvite];
 
-    expect(spectator.component.chekWsVisibility(workspaceItem)).toBeTruthy();
+    expect(spectator.component.checkWsVisibility(workspaceItem)).toBeTruthy();
   });
 
   it('check WS visibility - hasInvites - rejected', () => {
@@ -150,7 +151,7 @@ describe('Workspace List', () => {
     workspaceItem.myRole = 'guest';
 
     // Mock latestProjects
-    workspaceItem.hasProjects = false;
+    workspaceItem.latestProjects = [];
 
     // Mock localStorage rejectedProjects
     const exampleInvite = ProjectMockFactory();
@@ -163,6 +164,6 @@ describe('Workspace List', () => {
 
     workspaceItem.invitedProjects = [exampleInvite];
 
-    expect(spectator.component.chekWsVisibility(workspaceItem)).toBeFalsy();
+    expect(spectator.component.checkWsVisibility(workspaceItem)).toBeFalsy();
   });
 });

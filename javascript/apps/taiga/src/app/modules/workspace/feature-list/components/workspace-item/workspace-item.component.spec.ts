@@ -367,4 +367,38 @@ describe('WorkspaceItem', () => {
       );
     });
   });
+
+  it('Display user has no projects message', (done) => {
+    spectator.component.workspace = WorkspaceMockFactory();
+
+    spectator.component.workspace.hasProjects = false;
+    spectator.component.workspace.latestProjects = [];
+    spectator.component.slideOutAnimationDone();
+    spectator.component.workspace.myRole = 'member';
+    spectator.component.getActiveInvitations = jest.fn().mockReturnValue([]);
+
+    spectator.component.model$.subscribe(({ slideOutActive }) => {
+      expect(slideOutActive).toBeFalsy();
+      done();
+    });
+
+    expect(spectator.component.userHasNoAccess).toBeTruthy();
+  });
+
+  it('Display user has no access message', (done) => {
+    spectator.component.workspace = WorkspaceMockFactory();
+
+    spectator.component.workspace.hasProjects = true;
+    spectator.component.workspace.latestProjects = [];
+    spectator.component.slideOutAnimationDone();
+    spectator.component.workspace.myRole = 'member';
+    spectator.component.getActiveInvitations = jest.fn().mockReturnValue([]);
+
+    spectator.component.model$.subscribe(({ slideOutActive }) => {
+      expect(slideOutActive).toBeFalsy();
+      done();
+    });
+
+    expect(spectator.component.userHasNoAccess).toBeTruthy();
+  });
 });

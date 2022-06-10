@@ -29,6 +29,7 @@ import { cold, hot } from 'jest-marbles';
 import { Contact, Invitation, UserMockFactory } from '@taiga/data';
 import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { TestScheduler } from 'rxjs/testing';
 
 describe('InvitationEffects', () => {
   let actions$: Observable<Action>;
@@ -157,19 +158,25 @@ describe('InvitationEffects', () => {
     const searchText: string = randWord();
     const suggestedUsers: Contact[] = [];
 
-    invitationApiService.searchUser.mockReturnValue(
-      cold('-b|', { b: suggestedUsers })
-    );
-
-    actions$ = hot('-a', {
-      a: searchUser({ searchUser: { text: searchText } }),
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
     });
 
-    const expected = cold('--a', {
-      a: searchUserSuccess({ suggestedUsers }),
-    });
+    testScheduler.run((helpers) => {
+      const { expectObservable, cold, hot } = helpers;
 
-    expect(effects.searchUser$).toBeObservable(expected);
+      invitationApiService.searchUser.mockReturnValue(
+        cold('-b|', { b: suggestedUsers })
+      );
+
+      actions$ = hot('-a', {
+        a: searchUser({ searchUser: { text: searchText } }),
+      });
+
+      expectObservable(effects.searchUser$).toBe('202ms a', {
+        a: searchUserSuccess({ suggestedUsers }),
+      });
+    });
   });
 
   it('Search user: results', () => {
@@ -184,18 +191,24 @@ describe('InvitationEffects', () => {
       },
     ];
 
-    invitationApiService.searchUser.mockReturnValue(
-      cold('-b|', { b: suggestedUsers })
-    );
-
-    actions$ = hot('-a', {
-      a: searchUser({ searchUser: { text: searchText } }),
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
     });
 
-    const expected = cold('--a', {
-      a: searchUserSuccess({ suggestedUsers }),
-    });
+    testScheduler.run((helpers) => {
+      const { expectObservable, cold, hot } = helpers;
 
-    expect(effects.searchUser$).toBeObservable(expected);
+      invitationApiService.searchUser.mockReturnValue(
+        cold('-b|', { b: suggestedUsers })
+      );
+
+      actions$ = hot('-a', {
+        a: searchUser({ searchUser: { text: searchText } }),
+      });
+
+      expectObservable(effects.searchUser$).toBe('202ms a', {
+        a: searchUserSuccess({ suggestedUsers }),
+      });
+    });
   });
 });

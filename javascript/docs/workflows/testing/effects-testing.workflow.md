@@ -89,3 +89,34 @@ it('testing error', () => {
   });
 });
 ```
+
+### Time progression
+
+For testing an observable with timing like `500ms a` testScheduler is needed until `jest-marbles` support  time progression https://github.com/just-jeb/jest-marbles/issues/117.
+
+```ts
+it('Test example', () => {
+  const effects = spectator.inject(ExampleEffects);
+  const exampleApiService = spectator.inject(ExampleApiService);
+
+  const testScheduler = new TestScheduler((actual, expected) => {
+    expect(actual).toEqual(expected);
+  });
+
+  testScheduler.run((helpers) => {
+    const { expectObservable, cold, hot } = helpers;
+
+    exampleApiService.test.mockReturnValue(
+      cold('-b|', { b: { success: true } })
+    );
+
+    actions$ = hot('-a', {
+      a: actionExample({ searchUser: { text: searchText } }),
+    });
+
+    expectObservable(effects.searchUser$).toBe('500ms a', {
+      a: actionExampleSuccess({ success: true }),
+    });
+  });
+});
+```

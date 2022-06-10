@@ -48,8 +48,8 @@ describe('ProjectOverviewEffects', () => {
   });
 
   beforeEach(() => {
-    testScheduler = new TestScheduler((actual) => {
-      expect(actual).toEqual(actual);
+    testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
     });
     spectator = createService();
     store = spectator.inject(MockStore);
@@ -112,8 +112,8 @@ describe('ProjectOverviewEffects', () => {
         a: acceptInvitationSlugSuccess({ projectSlug: slug, username }),
       });
 
-      expectObservable(effects.acceptedInvitation$).toBe('700ms c', {
-        c: onAcceptedInvitation({ onAcceptedInvitation: false }),
+      expectObservable(effects.acceptedInvitation$).toBe('701ms c', {
+        c: onAcceptedInvitation({ onAcceptedInvitation: true }),
       });
     });
   });

@@ -44,7 +44,13 @@ import {
 } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { map, share, startWith, switchMap, throttleTime } from 'rxjs/operators';
+import {
+  map,
+  share,
+  startWith,
+  switchMap,
+  throttleTime,
+} from 'rxjs/operators';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
@@ -140,9 +146,9 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public emailsWithoutDuplications$!: Observable<string[]>;
   public suggestedUsers: Contact[] = [];
   public suggestionSelected = 0;
+  public elegibleSuggestions: number[] | undefined = [];
   public search$: Subject<string | null> = new Subject();
   public notInBulkMode = true;
-  public excludedUsers: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -211,8 +217,6 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     this.usersToInvite$
       .pipe(concatLatestFrom(() => this.store.select(selectUser)))
       .subscribe(([userToInvite, currentUser]) => {
-        currentUser?.username &&
-          this.updateExcludedUsers('add', currentUser?.username);
         userToInvite.forEach((user) => {
           const userAlreadyExist = this.users?.find((it: FormGroup) => {
             return (it.value as Partial<User>).email
@@ -245,6 +249,13 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
 
     this.suggestedUsers$.subscribe((suggestedUsers) => {
       this.suggestedUsers = suggestedUsers;
+      this.elegibleSuggestions = [];
+      this.suggestedUsers.forEach((it, i) => {
+        if (!it.isMember) {
+          this.elegibleSuggestions?.push(i);
+        }
+      });
+      this.suggestionSelected = this.elegibleSuggestions?.[0] || 0;
     });
   }
 
@@ -300,19 +311,9 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     return !!this.pending?.find((it) => it.user?.username === username);
   }
 
-  public updateExcludedUsers(action: 'add' | 'delete', username: string) {
-    if (action === 'add' && !this.excludedUsers.includes(username)) {
-      this.excludedUsers = [...this.excludedUsers, username];
-    } else if (action === 'delete') {
-      this.excludedUsers = this.excludedUsers.filter(
-        (user) => user !== username
-      );
-    }
-  }
-
   public searchChange(emails: string) {
     (!emails || this.emailsHaveErrors) && this.resetErrors();
-    this.suggestionSelected = 0;
+    this.suggestionSelected = this.elegibleSuggestions?.[0] || 0;
     if (/[^@]+@/.test(emails)) {
       // when the input contains and @ the search is disabled
       this.notInBulkMode = false;
@@ -326,9 +327,6 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
           searchUser: {
             text: searchText,
             project: this.project.slug,
-            excludedUsers: this.excludedUsers,
-            offset: 0,
-            limit: 6,
           },
         })
       );
@@ -401,14 +399,21 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   }
 
   public handleArrow(arrow: 'up' | 'down') {
-    if (arrow === 'up') {
-      this.suggestionSelected =
-        this.suggestionSelected === 0 ? 0 : this.suggestionSelected - 1;
-    } else {
-      this.suggestionSelected =
-        this.suggestionSelected === this.suggestedUsers.length - 1
-          ? this.suggestionSelected
-          : this.suggestionSelected + 1;
+    const currentIndex =
+      this.elegibleSuggestions?.findIndex(
+        (it) => it === this.suggestionSelected
+      ) || 0;
+    if (this.elegibleSuggestions) {
+      if (arrow === 'up') {
+        const index = currentIndex === 0 ? currentIndex : currentIndex - 1;
+        this.suggestionSelected = this.elegibleSuggestions[index];
+      } else {
+        const index =
+          currentIndex === this.elegibleSuggestions.length - 1
+            ? currentIndex
+            : currentIndex + 1;
+        this.suggestionSelected = this.elegibleSuggestions[index];
+      }
     }
     this.updateActiveDescendant();
   }
@@ -480,7 +485,6 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     this.inviteProjectForm = this.fb.group({
       users: new FormArray([]),
     });
-    this.excludedUsers = [];
   }
 
   public resetField() {

@@ -137,6 +137,13 @@ tui-data-list {
       /* stylelint-disable-next-line declaration-no-important */
       border-color: transparent !important;
     }
+
+    &[disabled]:hover {
+      /* stylelint-disable-next-line declaration-no-important */
+      background-color: transparent !important;
+      /* stylelint-disable-next-line declaration-no-important */
+      cursor: not-allowed !important;
+    }
   }
 
   &::ng-deep .empty {
@@ -152,5 +159,16 @@ tui-data-list {
   &::ng-deep button {
     /* stylelint-disable-next-line declaration-no-important */
     padding: var(--spacing-4) !important;
+  }
+}
+
+.disabled-badge {
+  &::ng-deep {
+    background: var(--color-gray10);
+    border-radius: 3px;
+    color: var(--color-gray100);
+    margin-inline-end: var(--spacing-60);
+    padding: var(--spacing-4);
+    text-transform: initial;
   }
 }

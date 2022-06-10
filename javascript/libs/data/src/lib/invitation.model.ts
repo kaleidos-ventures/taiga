@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { NumberSymbol } from '@angular/common';
 import { Membership } from './membership.model';
 export interface Invitation extends Partial<Membership> {
   email: string;
@@ -14,12 +15,19 @@ export interface Contact {
   email?: string;
   username: string;
   fullName: string;
+  isMember?: boolean;
 }
 export interface InvitationRequest {
   email?: string;
   username?: string;
   roleSlug?: string;
 }
+
+export interface InvitationResponse {
+  invitations: Invitation[];
+  alreadyMembers: NumberSymbol;
+}
+
 export interface InvitationInfo {
   status: 'pending' | 'accepted' | 'cacelled';
   email: string;

@@ -7,7 +7,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Invitation } from '@taiga/data';
+import { Contact, Invitation } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
@@ -43,5 +43,27 @@ export class InvitationService {
       const secondValue = (registered ? b.user?.fullName : b.email) || '';
       return firstValue.localeCompare(secondValue);
     });
+  }
+
+  public matchUsersFromList(list: Contact[], textToMatch: string) {
+    return list.filter((it: Contact) => {
+      const rgx = new RegExp(`^${textToMatch}`, 'g');
+      const fullname = this.normalizeText(it.fullName).split(' ');
+      const username = it.username;
+      const matches =
+        fullname?.map((part) => {
+          return rgx.test(part);
+        }) || [];
+      matches?.push(rgx.test(username));
+      return matches?.includes(true);
+    });
+  }
+
+  public normalizeText(text: string) {
+    // normalize texts with uppercase/accent marks "Álava" -> 'alava'
+    return text
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
   }
 }

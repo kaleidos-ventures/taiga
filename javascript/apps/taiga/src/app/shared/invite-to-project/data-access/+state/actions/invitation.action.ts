@@ -11,7 +11,7 @@ import { Contact, Invitation, SearchUserRequest } from '@taiga/data';
 
 export const inviteUsersSuccess = createAction(
   '[Invitation] invite users success',
-  props<{ newInvitations: Invitation[]; allInvitationsOrdered: Invitation[] }>()
+  props<{ newInvitations: Invitation[]; allInvitationsOrdered: Invitation[], alreadyMembers: number }>()
 );
 
 export const acceptInvitationSlug = createAction(

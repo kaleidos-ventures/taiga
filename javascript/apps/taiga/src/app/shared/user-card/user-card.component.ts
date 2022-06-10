@@ -8,6 +8,7 @@
 
 import { Component, Input, OnChanges } from '@angular/core';
 import { User } from '@taiga/data';
+import { InvitationService } from '~/app/services/invitation.service';
 
 @Component({
   selector: 'tg-user-card',
@@ -18,9 +19,12 @@ export class UserCardComponent implements OnChanges {
   @Input() public user!: Partial<User>;
   @Input() public textToHighlight?: string;
   @Input() public active?: boolean;
+  @Input() public disabled?: boolean;
 
   public fullNameHighlight?: string;
   public usernameHighlight?: string;
+
+  constructor(private invitationService: InvitationService) {}
 
   public ngOnChanges() {
     if (this.textToHighlight) {
@@ -43,13 +47,18 @@ export class UserCardComponent implements OnChanges {
 
   public stringHighlighted(textToHighlight: string, text: string) {
     const rgx = new RegExp(
-      `(?<!<span class="strong">)${this.normalizeText(textToHighlight)}`,
+      `(?<!<span class="strong">)${this.invitationService.normalizeText(
+        textToHighlight
+      )}`,
       'g'
     );
     let result;
     let finalText = text;
 
-    while ((result = rgx.exec(this.normalizeText(finalText))) !== null) {
+    while (
+      (result = rgx.exec(this.invitationService.normalizeText(finalText))) !==
+      null
+    ) {
       const tempText = finalText.split('');
       tempText.splice(result?.index, 0, '<span class="strong">');
       tempText.splice(rgx.lastIndex + 1, 0, '</span>');
@@ -57,13 +66,5 @@ export class UserCardComponent implements OnChanges {
     }
 
     return finalText;
-  }
-
-  public normalizeText(text: string) {
-    // normalize texts with uppercase/accent marks "Álava" -> 'alava'
-    return text
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase();
   }
 }

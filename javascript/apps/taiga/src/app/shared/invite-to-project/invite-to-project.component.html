@@ -122,14 +122,26 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                       class="suggested-btn"
                       data-test="option"
                       [attr.id]="'suggestion-' + i"
-                      [class.selected]="suggestionSelected === i"
-                      [attr.aria-disabled]="suggestionSelected === i"
+                      [disabled]="!!contact.isMember"
+                      [class.selected]="suggestionSelected === i && !contact.isMember"
+                      [attr.aria-disabled]="
+                        suggestionSelected !== i || !!contact.isMember
+                      "
                       [attr.aria-selected]="suggestionSelected === i"
-                      (click)="includeSuggestedContact(i, $event)">
+                      (click)="
+                        includeSuggestedContact(suggestionSelected, $event)
+                      ">
                       <tg-user-card
                         [user]="contact"
+                        [disabled]="!!contact.isMember"
                         [active]="suggestionSelected === i"
                         [textToHighlight]="parseTextToHighlight"></tg-user-card>
+                      <tg-ui-badge
+                        *ngIf="contact.isMember"
+                        class="disabled-badge"
+                        [label]="
+                          t('invitation_modal.already_member')
+                        "></tg-ui-badge>
                     </button>
                   </ng-container>
                 </tui-data-list>

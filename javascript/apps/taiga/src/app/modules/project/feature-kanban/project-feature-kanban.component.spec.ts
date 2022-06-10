@@ -8,6 +8,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StoreModule } from '@ngrx/store';
+import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
 
 describe('KanbanPageComponent', () => {
@@ -16,7 +17,7 @@ describe('KanbanPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StoreModule.forRoot({})],
+      imports: [StoreModule.forRoot({}), ModalModule],
       declarations: [ProjectFeatureKanbanComponent],
     }).compileComponents();
   });

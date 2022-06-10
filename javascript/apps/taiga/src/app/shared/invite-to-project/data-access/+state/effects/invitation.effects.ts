@@ -15,11 +15,19 @@ import { InvitationApiService } from '@taiga/api';
 import { optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Contact, ErrorManagementToastOptions, Invitation } from '@taiga/data';
+import {
+  Contact,
+  ErrorManagementToastOptions,
+  Invitation,
+  InvitationResponse,
+} from '@taiga/data';
 import { TuiNotification } from '@taiga-ui/core';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { InvitationService } from '~/app/services/invitation.service';
-import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import {
+  selectInvitations,
+  selectMembers,
+} from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { ProjectApiService } from '@taiga/api';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { Store } from '@ngrx/store';
@@ -41,10 +49,10 @@ export class InvitationEffects {
             .inviteUsers(action.slug, action.invitation)
             .pipe(
               switchMap(this.buttonLoadingService.waitLoading()),
-              map((response: Invitation[]) => {
+              map((response: InvitationResponse) => {
                 const invitationsOrdered: Invitation[] =
                   invitationsState.slice();
-                response.forEach((inv) => {
+                response.invitations.forEach((inv) => {
                   const isAlreadyInTheList = invitationsState.find((it) => {
                     return inv.email
                       ? it.email === inv.email
@@ -62,8 +70,9 @@ export class InvitationEffects {
                   }
                 });
                 return InvitationActions.inviteUsersSuccess({
-                  newInvitations: response,
+                  newInvitations: response.invitations,
                   allInvitationsOrdered: invitationsOrdered,
+                  alreadyMembers: response.alreadyMembers,
                 });
               })
             );
@@ -95,13 +104,39 @@ export class InvitationEffects {
       return this.actions$.pipe(
         ofType(InvitationActions.inviteUsersSuccess),
         tap((action) => {
+          let labelText;
+          let messageText;
+          let paramsMessage;
+          let paramsLabel;
+          if (action.newInvitations.length && action.alreadyMembers) {
+            labelText = 'invitation_success_member';
+            messageText = 'only_members_success';
+            paramsMessage = { members: action.alreadyMembers };
+            paramsLabel = { invitations: action.newInvitations.length };
+          } else if (action.newInvitations.length && !action.alreadyMembers) {
+            labelText = 'invitation_ok';
+            messageText = 'invitation_success';
+            paramsMessage = { invitations: action.newInvitations.length };
+          } else if (!action.newInvitations.length && action.alreadyMembers) {
+            if (action.alreadyMembers === 1) {
+              messageText = 'only_member_success';
+            } else {
+              messageText = 'only_members_success';
+              paramsMessage = { members: action.alreadyMembers };
+            }
+          } else {
+            messageText = '';
+          }
           this.appService.toastNotification({
-            label: 'invitation_ok',
-            message: 'invitation_success',
-            paramsMessage: { invitations: action.newInvitations.length },
-            status: TuiNotification.Success,
+            label: labelText,
+            message: messageText,
+            paramsMessage,
+            paramsLabel,
+            status: action.newInvitations.length
+              ? TuiNotification.Success
+              : TuiNotification.Info,
             scope: 'invitation_modal',
-            autoClose: true,
+            autoClose: false,
           });
         })
       );
@@ -145,12 +180,47 @@ export class InvitationEffects {
     return this.actions$.pipe(
       ofType(InvitationActions.searchUser),
       debounceTime(200),
-      switchMap((action) => {
-        return this.invitationApiService.searchUser(action.searchUser).pipe(
-          map((suggestedUsers: Contact[]) => {
-            return InvitationActions.searchUserSuccess({ suggestedUsers });
+      concatLatestFrom(() => [
+        this.store.select(selectMembers).pipe(filterNil()),
+        this.store.select(selectUser).pipe(filterNil()),
+      ]),
+      switchMap(([action, membersState, userState]) => {
+        const membersUsername = membersState.map((it) => it.user.username);
+        return this.invitationApiService
+          .searchUser({
+            text: action.searchUser.text,
+            project: action.searchUser.project,
+            excludedUsers: [userState.username, ...membersUsername],
+            offset: 0,
+            limit: 6,
           })
-        );
+          .pipe(
+            map((suggestedUsers: Contact[]) => {
+              const membersListParsed: Contact[] = membersState
+                .map((member) => {
+                  return {
+                    username: member.user.username,
+                    fullName: member.user.fullName,
+                    isMember: true,
+                  };
+                })
+                .filter((it) => it.username !== userState.username);
+              const membersMatch = this.invitationService.matchUsersFromList(
+                membersListParsed,
+                action.searchUser.text
+              );
+              let suggestedList = suggestedUsers;
+              if (membersMatch) {
+                suggestedList = [...membersMatch, ...suggestedList].slice(
+                  0,
+                  6
+                );
+              }
+              return InvitationActions.searchUserSuccess({
+                suggestedUsers: suggestedList,
+              });
+            })
+          );
       }),
       catchError((httpResponse: HttpErrorResponse) => {
         this.appService.errorManagement(httpResponse);

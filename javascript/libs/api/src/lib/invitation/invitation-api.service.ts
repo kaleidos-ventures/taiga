@@ -13,8 +13,8 @@ import { ConfigService } from '@taiga/core';
 import {
   Contact,
   InvitationRequest,
-  Invitation,
   SearchUserRequest,
+  InvitationResponse,
 } from '@taiga/data';
 
 @Injectable({
@@ -30,7 +30,7 @@ export class InvitationApiService {
   }
 
   public inviteUsers(slug: string, invitations: InvitationRequest[]) {
-    return this.http.post<Invitation[]>(
+    return this.http.post<InvitationResponse>(
       `${this.config.apiUrl}/projects/${slug}/invitations`,
       {
         invitations,

@@ -24,11 +24,15 @@
   "error_more_than_fifty": "You can only invite 50 people at once. Remove { invitations, plural, one {1 user} other {# users} } and try again.",
   "invitation_ok": "All good!",
   "invitation_success": "Your { invitations, plural, one { invitation was } other { # invitations were } } successfully sent!",
+  "invitation_success_member": "Your { invitations, plural, one { invitation is } other { # invitations are } } on their way",
+  "only_member_success": "This person is already a member and won't receive a new invitation",
+  "only_members_success": "{ members, plural, one { 1 person is already a member } other { # people are already members } } and won't receive a new invitation",
   "invitation_error": "An error ocurred!",
   "failed_send_invite": "Failed to send { invitations, plural, one { the invitation. } other {# invitations.} } Please try again in a few minutes.",
   "pending": "Pending",
   "pending_tooltip": "This user has already been invited. You are going to resend them an invitation.",
   "invitation_accept_label": "Congratulations",
   "invitation_accept_message": "You are now a member of this project.",
-  "no_results": "There are no matching results. Use an email instead."
+  "no_results": "There are no matching results. Use an email instead.",
+  "already_member": "Already a member"
 }

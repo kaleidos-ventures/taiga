@@ -9,6 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <tg-user-avatar
     class="top"
     *ngIf="user.fullName"
+    [class.disabled]="disabled"
     [user]="user"></tg-user-avatar>
   <tui-svg
     *ngIf="!user.fullName"
@@ -17,7 +18,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     aria-hidden="true"></tui-svg>
   <div
     class="user-identifier"
-    [class.highlight]="textToHighlight">
+    [class.highlight]="textToHighlight"
+    [class.disabled]="disabled">
     <ng-container *ngIf="user.fullName">
       <span
         class="user-name overflow"

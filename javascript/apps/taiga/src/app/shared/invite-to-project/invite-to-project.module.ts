@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
+import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
 import { TranslocoModule } from '@ngneat/transloco';
 import {
   TuiButtonModule,
@@ -43,6 +44,7 @@ import { UserCardModule } from '~/app/shared/user-card/user-card-component.modul
     TuiButtonModule,
     TuiLinkModule,
     InputsModule,
+    BadgeModule,
     TuiSvgModule,
     TranslocoModule,
     TuiDataListModule,

@@ -26,8 +26,8 @@ import {
 } from '../actions/invitation.action';
 import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
-import { Contact, Invitation, UserMockFactory } from '@taiga/data';
-import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { Contact, InvitationResponse, UserMockFactory } from '@taiga/data';
+import { selectInvitations, selectMembers } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { TestScheduler } from 'rxjs/testing';
 
@@ -58,12 +58,15 @@ describe('InvitationEffects', () => {
     const invitationMockPayload = [
       { email: 'hola@hola.es', roleSlug: 'general' },
     ];
-    const invitationMockResponse: Invitation[] = [
-      {
-        role: { isAdmin: false, name: 'General', slug: 'general' },
-        email: 'hola@hola.es',
-      },
-    ];
+    const invitationMockResponse: InvitationResponse = {
+      invitations: [
+        {
+          role: { isAdmin: false, name: 'General', slug: 'general' },
+          email: 'hola@hola.es',
+        },
+      ],
+      alreadyMembers: 1,
+    };
 
     invitationApiService.inviteUsers.mockReturnValue(
       cold('-b|', { b: invitationMockResponse })
@@ -78,8 +81,9 @@ describe('InvitationEffects', () => {
 
     const expected = cold('--a', {
       a: inviteUsersSuccess({
-        newInvitations: invitationMockResponse,
-        allInvitationsOrdered: invitationMockResponse,
+        newInvitations: invitationMockResponse.invitations,
+        allInvitationsOrdered: invitationMockResponse.invitations,
+        alreadyMembers: 1,
       }),
     });
 
@@ -153,6 +157,9 @@ describe('InvitationEffects', () => {
   });
 
   it('Search user: no results', () => {
+    const user = UserMockFactory();
+    store.overrideSelector(selectMembers, []);
+    store.overrideSelector(selectUser, user);
     const effects = spectator.inject(InvitationEffects);
     const invitationApiService = spectator.inject(InvitationApiService);
     const searchText: string = randWord();
@@ -180,6 +187,9 @@ describe('InvitationEffects', () => {
   });
 
   it('Search user: results', () => {
+    const user = UserMockFactory();
+    store.overrideSelector(selectMembers, []);
+    store.overrideSelector(selectUser, user);
     const effects = spectator.inject(InvitationEffects);
     const invitationApiService = spectator.inject(InvitationApiService);
     const searchText: string = randWord();
@@ -203,7 +213,11 @@ describe('InvitationEffects', () => {
       );
 
       actions$ = hot('-a', {
-        a: searchUser({ searchUser: { text: searchText } }),
+        a: searchUser({
+          searchUser: {
+            text: searchText,
+          },
+        }),
       });
 
       expectObservable(effects.searchUser$).toBe('202ms a', {

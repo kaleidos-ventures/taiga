@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from taiga.base.api.pagination import Pagination
 from taiga.permissions import services as permissions_services
 from taiga.projects.models import Project
 from taiga.roles import exceptions as ex
@@ -39,5 +40,17 @@ async def update_role_permissions(role: Role, permissions: list[str]) -> Role:
     return await roles_repositories.update_role_permissions(role=role, permissions=permissions)
 
 
-async def get_project_memberships(project: Project) -> list[Membership]:
-    return await roles_repositories.get_project_memberships(project.slug)
+# Memberships
+
+
+async def get_paginated_project_memberships(
+    project: Project, offset: int, limit: int
+) -> tuple[Pagination, list[Membership]]:
+    memberships = await roles_repositories.get_project_memberships(
+        project_slug=project.slug, offset=offset, limit=limit
+    )
+    total_memberships = await roles_repositories.get_total_project_memberships(project_slug=project.slug)
+
+    pagination = Pagination(offset=offset, limit=limit, total=total_memberships)
+
+    return pagination, memberships

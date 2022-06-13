@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9bb83dfc-6a44-4d78-ad87-06935c98ce00",
+		"_postman_id": "b4db8089-7889-4284-b721-a1756a002292",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -1106,7 +1106,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships?offset={{offset}}&limit={{limit}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -1115,6 +1115,16 @@
 								"projects",
 								"{{pj-slug}}",
 								"memberships"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
 							]
 						}
 					},

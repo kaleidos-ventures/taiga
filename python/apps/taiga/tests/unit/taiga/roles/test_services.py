@@ -66,8 +66,14 @@ async def test_update_role_permissions_ok():
         fake_role_repository.update_role_permissions.assert_awaited_once()
 
 
-async def test_get_project_memberships():
+#######################################################
+# get_paginated_project_memberships
+#######################################################
+
+
+async def test_get_paginated_project_memberships():
     project = f.build_project()
     with patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository:
-        await services.get_project_memberships(project=project)
+        await services.get_paginated_project_memberships(project=project, offset=0, limit=10)
         fake_role_repository.get_project_memberships.assert_awaited_once()
+        fake_role_repository.get_total_project_memberships.assert_awaited_once()

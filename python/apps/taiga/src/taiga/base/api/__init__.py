@@ -6,4 +6,5 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from .middlewares import MiddlewareAPIRouteWrapper  # noqa
+from .pagination import Pagination, PaginationQuery, set_pagination  # noqa
 from .requests import Request  # noqa

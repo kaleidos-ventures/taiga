@@ -27,10 +27,20 @@ def create_membership(user: User, project: Project, role: Role) -> Membership:
 
 
 @sync_to_async
-def get_project_memberships(project_slug: str) -> list[Membership]:
-    project_memberships = Membership.objects.filter(project__slug=project_slug).select_related("user", "role")
+def get_project_memberships(project_slug: str, offset: int = 0, limit: int = 0) -> list[Membership]:
+    project_memberships_qs = (
+        Membership.objects.filter(project__slug=project_slug).select_related("user", "role").order_by("user__full_name")
+    )
 
-    return list(project_memberships.order_by("user__full_name"))
+    if limit:
+        project_memberships_qs = project_memberships_qs[offset : offset + limit]
+
+    return list(project_memberships_qs)
+
+
+@sync_to_async
+def get_total_project_memberships(project_slug: str) -> int:
+    return Membership.objects.filter(project__slug=project_slug).count()
 
 
 @sync_to_async

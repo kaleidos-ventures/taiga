@@ -126,6 +126,33 @@ async def test_get_project_memberships(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
+async def test_get_project_memberships_with_pagination(client):
+    project = await f.create_project()
+
+    general_member_role = await f.create_role(
+        project=project,
+        permissions=choices.PROJECT_PERMISSIONS,
+        is_admin=False,
+    )
+
+    pj_member = await f.create_user()
+    pj_member2 = await f.create_user()
+    await f.create_membership(user=pj_member, project=project, role=general_member_role)
+    await f.create_membership(user=pj_member2, project=project, role=general_member_role)
+
+    client.login(pj_member)
+
+    offset = 0
+    limit = 1
+
+    response = client.get(f"/projects/{project.slug}/memberships?offset={offset}&limit={limit}")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert len(response.json()) == 1
+    assert response.headers["Pagination-Offset"] == "0"
+    assert response.headers["Pagination-Limit"] == "1"
+    assert response.headers["Pagination-Total"] == "3"
+
+
 async def test_get_project_memberships_wrong_slug(client):
     project = await f.create_project()
 

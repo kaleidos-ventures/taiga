@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     DB_PORT: int = 5432
 
     # Pagination
+    DEFAULT_PAGE_SIZE: int = 10
     MAX_PAGE_SIZE: int = 100
 
     # Auth

@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "72902da5-4cf1-4e72-b5a6-72c154de6ca0",
+		"_postman_id": "6a713e10-d829-43dc-b2e6-63d0d729b2bb",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -1743,11 +1744,16 @@
 									"    var jsonRes = pm.response.json();",
 									"",
 									"    var membership = jsonRes[0];",
-									"    var membershipUser = jsonRes[0].user;",
-									"    var membershipRole = jsonRes[0].role;",
-									"    // Validate response API fields",
+									"",
+									"    pm.response.to.have.header(\"Pagination-Offset\");",
+									"    pm.response.to.have.header(\"Pagination-Limit\");",
+									"    pm.response.to.have.header(\"Pagination-Total\");",
+									"",
 									"    pm.expect(membership).to.have.property(\"user\");",
 									"    pm.expect(membership).to.have.property(\"role\");",
+									"",
+									"    var membershipUser = jsonRes[0].user;",
+									"\tvar membershipRole = jsonRes[0].role;",
 									"    ",
 									"    pm.expect(membershipUser).to.have.property(\"username\");",
 									"    pm.expect(membershipUser).to.have.property(\"fullName\");",
@@ -1759,10 +1765,10 @@
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(membership).length;",
 									"    var numOfReturnedUserFields = Object.keys(membershipUser).length;",
-									"    var numOfReturnedRoleFields = Object.keys(membershipRole).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(2);",
-									"    pm.expect(numOfReturnedUserFields).to.equal(2);",
-									"    pm.expect(numOfReturnedRoleFields).to.equal(3);",
+									"\tvar numOfReturnedRoleFields = Object.keys(membershipRole).length;",
+									"\tpm.expect(numOfReturnedFields).to.equal(2);",
+									"\tpm.expect(numOfReturnedUserFields).to.equal(2);",
+									"\tpm.expect(numOfReturnedRoleFields).to.equal(3);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1795,7 +1801,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships?offset={{offset}}&limit={{limit}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -1804,6 +1810,16 @@
 								"projects",
 								"{{pj-slug}}",
 								"memberships"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
 							]
 						}
 					},

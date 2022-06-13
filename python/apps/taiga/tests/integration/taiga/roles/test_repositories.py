@@ -69,8 +69,26 @@ async def test_get_project_memberships():
     await repositories.create_membership(user=user1, project=project, role=role)
     await repositories.create_membership(user=user2, project=project, role=role)
 
-    memberships = await repositories.get_project_memberships(project_slug=project.slug)
+    memberships = await repositories.get_project_memberships(project_slug=project.slug, offset=0, limit=100)
     assert len(memberships) == 3
+
+
+##########################################################
+# get_total_project_memberships
+##########################################################
+
+
+async def test_get_total_project_memberships():
+    owner = await f.create_user()
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    project = await f.create_project(owner=owner)
+    role = await f.create_role(project=project)
+    await repositories.create_membership(user=user1, project=project, role=role)
+    await repositories.create_membership(user=user2, project=project, role=role)
+
+    total_memberships = await repositories.get_total_project_memberships(project_slug=project.slug)
+    assert total_memberships == 3
 
 
 ##########################################################

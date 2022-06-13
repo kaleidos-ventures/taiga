@@ -9,7 +9,7 @@
 from taiga.exceptions.services import TaigaServiceException
 
 
-class UsernameDoesNotExistError(TaigaServiceException):
+class NonExistingUsernameError(TaigaServiceException):
     ...
 
 

@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "251395dc-4c0c-41a6-a06d-56085d2a4eac",
+		"_postman_id": "72902da5-4cf1-4e72-b5a6-72c154de6ca0",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -381,73 +380,6 @@
 							"path": [
 								"users",
 								"me"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "200 users.search",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response JSON is correct\", function () {",
-									"    var jsonRes = pm.response.json();",
-									"",
-									"    // Validate response API fields",
-									"    pm.expect(jsonRes[0]).to.have.property(\"username\");",
-									"    pm.expect(jsonRes[0]).to.have.property(\"fullName\");",
-									"",
-									"    // Validate we're not returning more fields than expected",
-									"    var numOfElements = Object.keys(jsonRes).length;",
-									"    var numOfReturnedFields = Object.keys(jsonRes[0]).length;",
-									"    pm.expect(numOfElements).to.be.above(10);",
-									"    pm.expect(numOfReturnedFields).to.equal(2);",
-									"",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"text\": \"user\",\n    \"project\": \"\",\n    \"excluded_users\": [],\n    \"offset\": 0,\n    \"limit\": 100\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users/search",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"users",
-								"search"
 							]
 						}
 					},
@@ -935,11 +867,6 @@
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"color\");",
 									"    pm.expect(jsonRes).to.have.property(\"isPremium\");",
-									"    pm.expect(jsonRes).to.have.property(\"totalProjects\");",
-									"    pm.expect(jsonRes).to.have.property(\"hasProjects\");",
-									"    pm.expect(jsonRes).to.have.property(\"myRole\");",
-									"    pm.expect(jsonRes).to.have.property(\"isOwner\");",
-									"",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
@@ -1897,13 +1824,17 @@
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes).to.have.property(\"invitations\");",
+									"    pm.expect(jsonRes).to.have.property(\"alreadyMembers\");",
+									"",
+									"    var invitations = jsonRes[\"invitations\"];",
 									"    ",
 									"    // Validate response API fields",
-									"    pm.expect(jsonRes.length).to.eql(3);",
+									"    pm.expect(invitations.length).to.eql(2);",
 									"",
-									"    var invitation = jsonRes[0];",
-									"    var invitationUser = jsonRes[0].user;",
-									"    var invitationRole = jsonRes[0].role;",
+									"    var invitation = invitations[0];",
+									"    var invitationUser = invitations[0].user;",
+									"    var invitationRole = invitations[0].role;",
 									"    ",
 									"    // Validate response API fields",
 									"    pm.expect(invitation).to.have.property(\"user\");",
@@ -1945,7 +1876,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user1000@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    },\n    {\n      \"username\": \"user6\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user1000@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3075,15 +3006,13 @@
 									"            pm.expect(ws.latestProjects[0]).to.have.property(\"color\");",
 									"",
 									"            // expect invitedProjects to contain the right fields",
-									"            if (ws.invitedProjects.length > 0) {",
-									"                pm.expect(ws.invitedProjects[0]).to.have.property(\"logo\");",
-									"                pm.expect(ws.invitedProjects[0]).to.have.property(\"logoSmall\");",
-									"                pm.expect(ws.invitedProjects[0]).to.have.property(\"logoLarge\");",
-									"                pm.expect(ws.invitedProjects[0]).to.have.property(\"name\");",
-									"                pm.expect(ws.invitedProjects[0]).to.have.property(\"slug\");",
-									"                pm.expect(ws.invitedProjects[0]).to.have.property(\"description\");",
-									"                pm.expect(ws.invitedProjects[0]).to.have.property(\"color\");",
-									"            }",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"logo\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"logoSmall\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"logoLarge\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"name\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"slug\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"description\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"color\");",
 									"",
 									"            // Validate we're not returning more fields than expected",
 									"            var numOfReturnedFields = Object.keys(ws).length;",

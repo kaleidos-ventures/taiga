@@ -11,7 +11,7 @@ from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.invitations import services as invitations_services
-from taiga.invitations.dataclasses import PublicInvitation
+from taiga.invitations.dataclasses import CreateInvitations, PublicInvitation
 from taiga.invitations.models import Invitation
 from taiga.invitations.permissions import IsProjectInvitationRecipient
 from taiga.invitations.serializers import CreateInvitationsSerializer, InvitationSerializer, PublicInvitationSerializer
@@ -118,12 +118,12 @@ async def accept_invitation_by_project(
     "/{slug}/invitations",
     name="project.invitations.create",
     summary="Create project invitations",
-    response_model=list[CreateInvitationsSerializer],
+    response_model=CreateInvitationsSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_invitations(
     request: Request, form: InvitationsValidator, slug: str = Query(None, description="the project slug (str)")
-) -> list[Invitation]:
+) -> CreateInvitations:
     """
     Create invitations to a project for a list of users (identified either by their username or their email, and the
     role they'll take in the project). In case of receiving several invitations for the same user, just the first

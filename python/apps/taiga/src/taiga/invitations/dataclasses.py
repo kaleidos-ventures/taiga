@@ -8,6 +8,7 @@
 from dataclasses import dataclass
 
 from taiga.invitations.choices import InvitationStatus
+from taiga.invitations.models import Invitation
 from taiga.projects.models import Project
 
 
@@ -17,3 +18,9 @@ class PublicInvitation:
     email: str
     existing_user: bool
     project: Project
+
+
+@dataclass
+class CreateInvitations:
+    invitations: list[Invitation]
+    already_members: int

@@ -24,7 +24,9 @@ def get_project_invitation(id: int) -> Invitation | None:
 @sync_to_async
 def get_project_invitation_by_email(project_slug: str, email: str, status: InvitationStatus) -> Invitation | None:
     try:
-        return Invitation.objects.get(project__slug=project_slug, email__iexact=email, status=status)
+        return Invitation.objects.select_related("user", "project", "project__workspace", "role", "invited_by").get(
+            project__slug=project_slug, email__iexact=email, status=status
+        )
     except Invitation.DoesNotExist:
         return None
 

@@ -12,8 +12,7 @@ from taiga.emails.tasks import send_email
 from taiga.invitations import exceptions as ex
 from taiga.invitations import repositories as invitations_repositories
 from taiga.invitations.choices import InvitationStatus
-from taiga.invitations.dataclasses import PublicInvitation
-from taiga.invitations.exceptions import UsernameDoesNotExistError
+from taiga.invitations.dataclasses import CreateInvitations, PublicInvitation
 from taiga.invitations.models import Invitation
 from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.projects.models import Project
@@ -97,65 +96,76 @@ async def send_project_invitation_email(invitation: Invitation) -> None:
     )
 
 
-async def create_invitations(project: Project, invitations: list[dict[str, str]], invited_by: User) -> list[Invitation]:
+async def create_invitations(
+    project: Project, invitations: list[dict[str, str]], invited_by: User
+) -> CreateInvitations:
     # create two lists with roles_slug and the emails received (either directly by the invitation's email, or by the
     # invited username's email)
-    roles_slug = []
+    already_members = 0
     emails = []
-    for invitation in invitations:
-        # it may receive different invitations referring to the same user, an email and later a username or vice versa
-        username = invitation["username"] if invitation.get("username") else None
-        email = invitation["email"].lower() if invitation.get("email") else None
-        if username:
-            user = await users_repositories.get_first_user(username=username)
-            if not user:
-                raise UsernameDoesNotExistError("Username doesn't exist")
-            if not (user.email.lower() in emails):
-                emails.append(user.email.lower())
-                roles_slug.append(invitation["role_slug"])
-        elif email and not (email in emails):
-            roles_slug.append(invitation["role_slug"])
-            emails.append(email)
+    emails_roles = []
+    usernames = []
+    usernames_roles = []
+    for i in invitations:
+        if i.get("username"):
+            usernames.append(i["username"])
+            usernames_roles.append(i["role_slug"])
 
-    # project's roles dict, whose key is the role slug and value the Role object
-    # {'admin': Role1, 'general': Role2}
+        elif i.get("email"):
+            emails.append(i["email"].lower())
+            emails_roles.append(i["role_slug"])
+    # emails =    ['user1@taiga.demo']  |  emails_roles =    ['general']
+    # usernames = ['user3']             |  usernames_roles = ['admin']
+
     project_roles_dict = await roles_repositories.get_project_roles_as_dict(project=project)
-    # set a list of roles slug {'admin', 'general'}
-    project_roles_slugs = set(project_roles_dict.keys())
+    # project_roles_dict = {'admin': <Role: Administrator>, 'general': <Role: General>}
+    project_roles_slugs = project_roles_dict.keys()
+    wrong_roles_slugs = set(emails_roles + usernames_roles) - project_roles_slugs
+    if wrong_roles_slugs:
+        raise ex.NonExistingRoleError(f"These role slugs don't exist: {wrong_roles_slugs}")
 
-    # if some role_slug doesn't exist in project's roles then raise an exception
-    if not set(roles_slug).issubset(project_roles_slugs):
-        raise ex.NonExistingRoleError("The role_slug does not exist")
+    users_emails_dict = await users_repositories.get_users_by_emails_as_dict(emails=emails)
+    # users_emails_dict = {'user1@taiga.demo': <User: Norma Fisher>,
+    users_usernames_dict = await users_repositories.get_users_by_usernames_as_dict(usernames=usernames)
+    # users_usernames_dict = {'user3': <User: Elizabeth Woods>,
+    # all usernames should belong to a user; otherwise it's an error
+    if len(users_usernames_dict) < len(usernames):
+        wrong_usernames = set(usernames) - users_usernames_dict.keys()
+        raise ex.NonExistingUsernameError(f"These usernames don't exist: {wrong_usernames}")
 
-    # users dict, whose key is the email and value the User object
-    # {'user1@taiga.demo': User1, 'user2@taiga.demo': User2}
-    users_dict = await users_repositories.get_users_by_emails_as_dict(emails=emails)
-
-    # create or update invitations and send invitations
-    invitations_to_create = []
-    invitations_to_update = []
-    invitations_to_send = []
+    invitations_to_create = {}
+    invitations_to_update = {}
+    invitations_to_send = {}
     project_members = await roles_repositories.get_project_members(project=project)
-    for email, role_slug in zip(emails, roles_slug):
-        user = users_dict.get(email, None)
-        # check if user is already member and do nothing
+
+    users_dict = users_emails_dict | users_usernames_dict
+    # users_dict = {
+    #         'user1@taiga.demo': <User: Norma Fisher>,
+    #         'user3': <User: Elizabeth Woods>,
+    #         'user1': <User: Norma Fisher>
+    # }
+
+    for key, role_slug in zip(emails + usernames, emails_roles + usernames_roles):
+        #                                 key  |  role_slug
+        # =======================================================
+        # (1st iteration)   'user1@taiga.demo' |   'general'
+        # (2nd iteration)              'user3' |     'admin'
+
+        user = users_dict.get(key)
         if user and user in project_members:
+            already_members += 1
             continue
-        # check if this email has already a pending invitation
+        email = user.email if user else key
         pending_invitation = await invitations_repositories.get_project_invitation_by_email(
             project_slug=project.slug, email=email, status=InvitationStatus.PENDING
         )
         if pending_invitation:
-            pending_invitation.project = project
-            pending_invitation.user = user
             pending_invitation.role = project_roles_dict[role_slug]
             pending_invitation.invited_by = invited_by
-            # num_emails_sent >= PROJECT_INVITATION_RESEND_LIMIT not send email
             if pending_invitation.num_emails_sent < settings.PROJECT_INVITATION_RESEND_LIMIT:
-                invitations_to_send.append(pending_invitation)
                 pending_invitation.num_emails_sent += 1
-
-            invitations_to_update.append(pending_invitation)
+                invitations_to_send[email] = pending_invitation
+            invitations_to_update[email] = pending_invitation
         else:
             new_invitation = Invitation(
                 user=user,
@@ -164,19 +174,20 @@ async def create_invitations(project: Project, invitations: list[dict[str, str]]
                 email=email,
                 invited_by=invited_by,
             )
-            invitations_to_create.append(new_invitation)
-            invitations_to_send.append(new_invitation)
+            invitations_to_create[email] = new_invitation
+            invitations_to_send[email] = new_invitation
 
     if len(invitations_to_update) > 0:
-        await invitations_repositories.update_invitations(objs=invitations_to_update)
+        await invitations_repositories.update_invitations(objs=invitations_to_update.values())
 
     if len(invitations_to_create) > 0:
-        await invitations_repositories.create_invitations(objs=invitations_to_create)
+        await invitations_repositories.create_invitations(objs=invitations_to_create.values())
 
-    for invitation in invitations_to_send:
+    invitations_to_send_list = invitations_to_send.values()
+    for invitation in invitations_to_send_list:
         await send_project_invitation_email(invitation=invitation)
 
-    return invitations_to_send
+    return CreateInvitations(invitations=list(invitations_to_send_list), already_members=already_members)
 
 
 async def accept_project_invitation(invitation: Invitation, user: User) -> Invitation:

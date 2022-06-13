@@ -48,8 +48,24 @@ def get_users_by_emails_as_dict(emails: list[str]) -> dict[str, User]:
     This repository returns active users with these emails as a dict whose key
     is the email and value the User object.
     """
+    if not emails:
+        return {}
+
     query = reduce(or_, (Q(email__iexact=email) for email in emails))
     return {u.email.lower(): u for u in User.objects.filter(is_active=True).filter(query)}
+
+
+@sync_to_async
+def get_users_by_usernames_as_dict(usernames: list[str]) -> dict[str, User]:
+    """
+    This repository returns active users with these usernames as a dict whose key
+    is the username and value the User object.
+    """
+    if not usernames:
+        return {}
+
+    query = reduce(or_, (Q(username=username) for username in usernames))
+    return {u.username: u for u in User.objects.filter(is_active=True).filter(query)}
 
 
 @sync_to_async
@@ -177,6 +193,7 @@ def get_users_by_text(
     return list(users_qs.order_by("full_name", "username"))[offset : offset + limit]
 
 
+# TODO: missing tests
 def get_users_by_fullname_or_username_sync(text_search: str, user_qs: QuerySet[User]) -> QuerySet[User]:
     parsed_text_search = _get_parsed_text_search(text_search)
     search_query = SearchQuery(f"{parsed_text_search}:*", search_type="raw")

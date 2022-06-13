@@ -33,7 +33,7 @@ class InvitationSerializer(BaseModel):
         orm_mode = True
 
 
-class CreateInvitationsSerializer(BaseModel):
+class PrivateEmailInvitationSerializer(BaseModel):
     user: UserSerializer | None
     role: BaseRoleSerializer
     email: EmailStr | None
@@ -42,9 +42,17 @@ class CreateInvitationsSerializer(BaseModel):
         orm_mode = True
 
     @validator("email")
-    def avoid_to_publish_when_username(cls, email: str, values: dict[str, Any]) -> str | None:
+    def avoid_to_publish_email_if_user(cls, email: str, values: dict[str, Any]) -> str | None:
         user = values.get("user")
         if user:
             return None
         else:
             return email
+
+
+class CreateInvitationsSerializer(BaseModel):
+    invitations: list[PrivateEmailInvitationSerializer]
+    already_members: int
+
+    class Config:
+        orm_mode = True

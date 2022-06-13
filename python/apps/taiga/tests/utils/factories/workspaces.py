@@ -46,3 +46,7 @@ def create_workspace(**kwargs):
     f.WorkspaceMembershipFactory.create(user=workspace.owner, workspace=workspace, workspace_role=admin_role)
 
     return workspace
+
+
+def build_workspace(**kwargs):
+    return WorkspaceFactory.build(**kwargs)

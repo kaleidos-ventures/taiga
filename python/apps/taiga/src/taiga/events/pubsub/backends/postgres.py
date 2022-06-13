@@ -40,13 +40,17 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 from asyncio import Queue
 from typing import Any
 
 import asyncpg
+from pydantic import ValidationError
+from taiga.events.events import Event
 
-from ..events import Event
-from .base import PubSubBackend
+from .base import PubSubBackend, connected
+
+logger = logging.getLogger(__name__)
 
 
 class PostgresPubSubBackend(PubSubBackend):
@@ -60,24 +64,36 @@ class PostgresPubSubBackend(PubSubBackend):
 
     async def connect(self) -> None:
         self._conn = await asyncpg.connect(**self._conn_args)
-        self._listen_queue: Queue[Event] = Queue()
+        self._listen_queue: Queue[tuple[str, Event]] = Queue()
 
+    @connected
     async def disconnect(self) -> None:
         await self._conn.close()
 
     def _listener(self, *args: Any) -> None:
-        connection, pid, channel, payload = args
-        event = Event(channel=channel, message=payload)
-        self._listen_queue.put_nowait(event)
+        connection, pid, channel, raw_event = args
+        try:
+            event = Event.parse_raw(raw_event)
+        except ValidationError as e:
+            logger.warning(
+                f"Error parsing a raw event '{raw_event}' from the channel '{channel}'.\n{e}",
+                extra={"action": "pubsub.listen", "channel": channel, "raw_event": raw_event, "error": e},
+            )
+        else:
+            self._listen_queue.put_nowait((channel, event))
 
+    @connected
     async def subscribe(self, channel: str) -> None:
         await self._conn.add_listener(channel, self._listener)
 
+    @connected
     async def unsubscribe(self, channel: str) -> None:
         await self._conn.remove_listener(channel, self._listener)
 
-    async def publish(self, channel: str, message: str) -> None:
-        await self._conn.execute("SELECT pg_notify($1, $2);", channel, message)
+    @connected
+    async def publish(self, channel: str, event: Event) -> None:
+        await self._conn.execute("SELECT pg_notify($1, $2);", channel, str(event))
 
-    async def next_published(self) -> Event:
+    @connected
+    async def next_published(self) -> tuple[str, Event]:
         return await self._listen_queue.get()

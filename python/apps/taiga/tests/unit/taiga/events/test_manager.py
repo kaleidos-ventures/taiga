@@ -7,34 +7,38 @@
 
 from asyncio import Task
 from typing import AsyncGenerator
-from unittest.mock import MagicMock, patch
+from unittest.mock import Mock, patch
 
 import pytest
 from fastapi.websockets import WebSocket
-from taiga.base.db import db_connection_params
 from taiga.events.manager import EventsManager
 from taiga.events.pubsub import MemoryPubSubBackend
 
 
 @pytest.fixture
 async def manager() -> AsyncGenerator[EventsManager, None]:
-    manager = EventsManager(backend_class=MemoryPubSubBackend, **db_connection_params())
+    manager = EventsManager(backend_class=MemoryPubSubBackend)
+    await manager.connect()
+
     yield manager
 
     if manager.is_connected:
         await manager.disconnect()
 
 
-async def test_connection(manager):
+async def test_connection():
+    manager = EventsManager(backend_class=MemoryPubSubBackend)
     assert not manager.is_connected
     assert getattr(manager, "_listener_task", None) is None
     await manager.connect()
     assert manager.is_connected
     assert getattr(manager, "_listener_task", None) is not None
+    await manager.disconnect()
 
 
-async def test_disconnection_with_no_pending_task(manager):
-    mock_task = MagicMock(spec=Task)
+async def test_disconnection_with_no_pending_task():
+    manager = EventsManager(backend_class=MemoryPubSubBackend)
+    mock_task = Mock(spec=Task)
 
     # To prevent error with `create_task(self._listener())`
     # (coroutine 'EventsManager._listener' was never awaited)
@@ -51,8 +55,9 @@ async def test_disconnection_with_no_pending_task(manager):
         mock_task.cancel.assert_not_called()
 
 
-async def test_disconnection_with_pending_task(manager):
-    mock_task = MagicMock(spec=Task)
+async def test_disconnection_with_pending_task():
+    manager = EventsManager(backend_class=MemoryPubSubBackend)
+    mock_task = Mock(spec=Task)
 
     # To prevent error with `create_task(self._listener())`
     # (coroutine 'EventsManager._listener' was never awaited)
@@ -70,81 +75,72 @@ async def test_disconnection_with_pending_task(manager):
 
 
 async def test_register_and_unregister_a_websocket(manager):
-    websocket = WebSocket(scope={"type": "websocket"}, receive=None, send=None)
+    websocket = Mock(spec=WebSocket)
 
     # register
-    assert websocket not in manager._subscribers
-    async with manager.register(websocket):
-        assert websocket in manager._subscribers
+    assert manager._subscribers == {}
+    async with manager.register(websocket) as subscriber:
+        assert manager._subscribers[subscriber.id] == subscriber
 
     # unregister
-    assert websocket not in manager._subscribers
+    assert manager._subscribers == {}
 
 
 async def test_subscribe(manager):
-    websocket1 = WebSocket(scope={"type": "websocket"}, receive=None, send=None)
-    websocket2 = WebSocket(scope={"type": "websocket"}, receive=None, send=None)
+    websocket1 = Mock(spec=WebSocket)
+    websocket2 = Mock(spec=WebSocket)
     channel = "channel1"
 
     async with (
-        manager.register(websocket1),
-        manager.register(websocket2),
+        manager.register(websocket1) as subscriber1,
+        manager.register(websocket2) as subscriber2,
     ):
         assert channel not in manager._channels
 
-        assert await manager.subscribe(websocket1, channel)
+        await manager.subscribe(subscriber1, channel)
 
         assert channel in manager._channels
         assert len(manager._channels[channel]) == 1
 
-        assert await manager.subscribe(websocket2, channel)
+        await manager.subscribe(subscriber2, channel)
 
         assert channel in manager._channels
         assert len(manager._channels[channel]) == 2
-
-
-async def test_subscribe_unregistered_websocket(manager):
-    websocket = WebSocket(scope={"type": "websocket"}, receive=None, send=None)
-    channel = "channel1"
-
-    assert channel not in manager._channels
-
-    assert not await manager.subscribe(websocket, channel)
-
-    assert channel not in manager._channels
 
 
 async def test_unsubscribe(manager):
-    websocket1 = WebSocket(scope={"type": "websocket"}, receive=None, send=None)
-    websocket2 = WebSocket(scope={"type": "websocket"}, receive=None, send=None)
+    websocket1 = Mock(spec=WebSocket)
+    websocket2 = Mock(spec=WebSocket)
     channel = "channel1"
 
     async with (
-        manager.register(websocket1),
-        manager.register(websocket2),
+        manager.register(websocket1) as subscriber1,
+        manager.register(websocket2) as subscriber2,
     ):
-        assert await manager.subscribe(websocket1, channel)
-        assert await manager.subscribe(websocket2, channel)
+        await manager.subscribe(subscriber1, channel)
+        await manager.subscribe(subscriber2, channel)
 
         assert channel in manager._channels
         assert len(manager._channels[channel]) == 2
 
-        assert await manager.unsubscribe(websocket1, channel)
+        assert await manager.unsubscribe(subscriber1, channel)
 
         assert channel in manager._channels
         assert len(manager._channels[channel]) == 1
 
-        assert await manager.unsubscribe(websocket2, channel)
+        assert await manager.unsubscribe(subscriber2, channel)
 
         assert channel not in manager._channels
 
 
-async def test_unsubscribe_unregistered_websocket(manager):
-    websocket = WebSocket(scope={"type": "websocket"}, receive=None, send=None)
+async def test_unsubscribe_from_a_non_subscribed_channel(manager):
+    websocket = Mock(spec=WebSocket)
     channel = "channel1"
 
-    assert channel not in manager._channels
+    async with (manager.register(websocket) as subscriber,):
 
-    assert not await manager.unsubscribe(websocket, channel)
+        assert channel not in manager._channels
 
-    assert channel not in manager._channels
+        assert not await manager.unsubscribe(subscriber, channel)
+
+        assert channel not in manager._channels

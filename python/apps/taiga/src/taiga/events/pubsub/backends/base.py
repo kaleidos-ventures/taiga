@@ -40,9 +40,36 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Any
+from typing import Any, Callable, Concatenate, Coroutine, ParamSpec, Protocol, TypeVar
 
-from ..events import Event
+from taiga.events.events import Event
+
+from .exceptions import PubSubBackendIsNotConnected
+
+
+class IsConnectedProtocol(Protocol):
+    @property
+    def is_connected(self) -> bool:
+        ...
+
+
+T = TypeVar("T", bound=IsConnectedProtocol)
+P = ParamSpec("P")
+
+
+def connected(
+    func: Callable[Concatenate[T, P], Coroutine[Any, Any, Any]]
+) -> Callable[Concatenate[T, P], Coroutine[Any, Any, Any]]:
+    """
+    Decorator for PubSubBackend class methods to raise an Exception if the backend is not connected yet.
+    """
+
+    def func_wrapper(self: T, *args: P.args, **kwargs: P.kwargs) -> Coroutine[Any, Any, Any]:
+        if self.is_connected:
+            return func(self, *args, **kwargs)
+        raise PubSubBackendIsNotConnected()
+
+    return func_wrapper
 
 
 class PubSubBackend:
@@ -56,17 +83,22 @@ class PubSubBackend:
     async def connect(self) -> None:
         raise NotImplementedError()
 
+    @connected
     async def disconnect(self) -> None:
         raise NotImplementedError()
 
+    @connected
     async def subscribe(self, channel: str) -> None:
         raise NotImplementedError()
 
+    @connected
     async def unsubscribe(self, channel: str) -> None:
         raise NotImplementedError()
 
-    async def publish(self, channel: str, message: Any) -> None:
+    @connected
+    async def publish(self, channel: str, event: Event) -> None:
         raise NotImplementedError()
 
-    async def next_published(self) -> Event:
+    @connected
+    async def next_published(self) -> tuple[str, Event]:
         raise NotImplementedError()

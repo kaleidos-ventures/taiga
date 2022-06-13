@@ -6,6 +6,6 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from .backends.base import PubSubBackend  # noqa
+from .backends.exceptions import PubSubBackendIsNotConnected  # noqa
 from .backends.memory import MemoryPubSubBackend  # noqa
 from .backends.postgres import PostgresPubSubBackend  # noqa
-from .events import Event  # noqa

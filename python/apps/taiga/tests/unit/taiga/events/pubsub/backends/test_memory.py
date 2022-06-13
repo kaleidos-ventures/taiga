@@ -6,8 +6,9 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
+from taiga.events.events import Event
+from taiga.events.pubsub.backends.exceptions import PubSubBackendIsNotConnected
 from taiga.events.pubsub.backends.memory import MemoryPubSubBackend
-from taiga.events.pubsub.events import Event
 
 
 @pytest.fixture
@@ -19,6 +20,32 @@ async def test_connect(pubsub):
     assert not pubsub.is_connected
     await pubsub.connect()
     assert pubsub.is_connected
+
+
+async def test_disconnect(pubsub):
+    assert not pubsub.is_connected
+    await pubsub.connect()
+    assert pubsub.is_connected
+    await pubsub.disconnect()
+    assert not pubsub.is_connected
+
+
+async def test_method_who_need_connection(pubsub):
+    channel = "test_ch"
+    event = Event(type="test", content={"msg": "msg"})
+
+    assert not pubsub.is_connected
+
+    with pytest.raises(PubSubBackendIsNotConnected):
+        await pubsub.disconnect()
+    with pytest.raises(PubSubBackendIsNotConnected):
+        await pubsub.subscribe(channel)
+    with pytest.raises(PubSubBackendIsNotConnected):
+        await pubsub.unsubscribe(channel)
+    with pytest.raises(PubSubBackendIsNotConnected):
+        await pubsub.publish(channel, event)
+    with pytest.raises(PubSubBackendIsNotConnected):
+        await pubsub.next_published()
 
 
 async def test_subscribe(pubsub):
@@ -47,15 +74,15 @@ async def test_publish(pubsub):
 async def test_publish_and_listen(pubsub):
     channel1 = "test_ch_1"
     channel2 = "test_ch_2"
-    ev1 = Event(channel1, "msg1")
-    ev2 = Event(channel1, "msg2")
+    event1 = Event(type="test", content={"msg": "msg1"})
+    event2 = Event(type="test", content={"msg": "msg2"})
 
     await pubsub.connect()
     await pubsub.subscribe(channel1)
     # publish
-    await pubsub.publish(ev1.channel, ev1.message)
-    await pubsub.publish(channel2, "msg")
-    await pubsub.publish(ev2.channel, ev2.message)
+    await pubsub.publish(channel1, event1)
+    await pubsub.publish(channel2, event1)
+    await pubsub.publish(channel1, event2)
     # listen
-    assert ev1 == await pubsub.next_published()
-    assert ev2 == await pubsub.next_published()
+    assert (channel1, event1) == await pubsub.next_published()
+    assert (channel1, event2) == await pubsub.next_published()

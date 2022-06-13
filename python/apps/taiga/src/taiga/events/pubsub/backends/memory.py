@@ -43,8 +43,9 @@
 from asyncio import Queue
 from typing import Any
 
-from ..events import Event
-from .base import PubSubBackend
+from taiga.events.events import Event
+
+from .base import PubSubBackend, connected
 
 
 class MemoryPubSubBackend(PubSubBackend):
@@ -56,24 +57,29 @@ class MemoryPubSubBackend(PubSubBackend):
         return getattr(self, "_published", None) is not None
 
     async def connect(self) -> None:
-        self._published: Queue[Event] = Queue()
+        self._published: Queue[tuple[str, Event]] = Queue()
 
+    @connected
     async def disconnect(self) -> None:
         delattr(self, "_published")
         self._channels = set()
 
+    @connected
     async def subscribe(self, channel: str) -> None:
         self._channels.add(channel)
 
+    @connected
     async def unsubscribe(self, channel: str) -> None:
         self._channels.remove(channel)
 
-    async def publish(self, channel: str, message: Any) -> None:
-        event = Event(channel=channel, message=message)
-        await self._published.put(event)
+    @connected
+    async def publish(self, channel: str, event: Event) -> None:
+        data = channel, event
+        await self._published.put(data)
 
-    async def next_published(self) -> Event:
+    @connected
+    async def next_published(self) -> tuple[str, Event]:
         while True:
-            event = await self._published.get()
-            if event.channel in self._channels:
-                return event
+            channel, event = await self._published.get()
+            if channel in self._channels:
+                return channel, event

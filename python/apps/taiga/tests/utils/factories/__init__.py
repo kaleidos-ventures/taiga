@@ -25,4 +25,4 @@ from .roles import (  # noqa
     create_workspace_role,
 )
 from .users import UserFactory, build_user, create_user  # noqa
-from .workspaces import WorkspaceFactory, create_workspace  # noqa
+from .workspaces import WorkspaceFactory, build_workspace, create_workspace  # noqa

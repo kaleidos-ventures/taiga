@@ -6,7 +6,5 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-from django.contrib.auth.models import AnonymousUser  # noqa
-from taiga6.users.models import AuthData, User  # noqa
-
-AnyUser = AnonymousUser | User
+class PubSubBackendIsNotConnected(Exception):
+    ...

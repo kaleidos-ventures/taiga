@@ -5,10 +5,38 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import asyncio
+
 import pytest
+import pytest_asyncio
 from django.core.management import call_command
+from taiga.events import connect_events_manager
 
 from .fixtures import *  # noqa
+
+
+#
+# Supporting async pytest fixrures for non-function scope
+#
+#     According to https://github.com/pytest-dev/pytest-asyncio#async-fixtures
+#
+#         > All scopes are supported, but if you use a non-function scope you will need to redefine the
+#         > event_loop fixture to have the same or broader scope. Async fixtures need the event loop,
+#         > and so must have the same or narrower scope than the event_loop fixture.
+#
+@pytest.fixture(scope="session")
+def event_loop():
+    """
+    Force the pytest-asyncio loop to be the main one.
+    If there is no running event loop, create one and
+    set as the current one.
+    """
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    return loop
 
 
 #
@@ -18,6 +46,16 @@ from .fixtures import *  # noqa
 def django_db_setup(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
         call_command("loaddata", "initial_project_templates.json", verbosity=0)
+
+
+#
+# Start the event manager
+#
+
+
+@pytest_asyncio.fixture(scope="session", autouse=True)
+async def connect_events_manage_on_startup():
+    await connect_events_manager()
 
 
 #

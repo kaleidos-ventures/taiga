@@ -5,10 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import logging
+
 import pytest
 from taiga.base.db import db_connection_params
+from taiga.events.events import Event
+from taiga.events.pubsub.backends.exceptions import PubSubBackendIsNotConnected
 from taiga.events.pubsub.backends.postgres import PostgresPubSubBackend
-from taiga.events.pubsub.events import Event
 
 
 @pytest.fixture
@@ -29,6 +32,24 @@ async def test_disconnect(pubsub):
     assert not pubsub.is_connected
 
 
+async def test_method_who_need_connection(pubsub):
+    channel = "test_ch"
+    event = Event(type="test", content={"msg": "msg"})
+
+    assert not pubsub.is_connected
+
+    with pytest.raises(PubSubBackendIsNotConnected):
+        await pubsub.disconnect()
+    with pytest.raises(PubSubBackendIsNotConnected):
+        await pubsub.subscribe(channel)
+    with pytest.raises(PubSubBackendIsNotConnected):
+        await pubsub.unsubscribe(channel)
+    with pytest.raises(PubSubBackendIsNotConnected):
+        await pubsub.publish(channel, event)
+    with pytest.raises(PubSubBackendIsNotConnected):
+        await pubsub.next_published()
+
+
 async def test_subscribe(pubsub):
     await pubsub.connect()
     assert "test_ch_1" not in pubsub._conn._listeners
@@ -47,15 +68,35 @@ async def test_unsubscribe(pubsub):
 async def test_publish_and_listen(pubsub):
     channel1 = "test_ch_1"
     channel2 = "test_ch_2"
-    ev1 = Event(channel1, "msg1")
-    ev2 = Event(channel1, "msg2")
+    event1 = Event(type="test", content={"msg": "msg1"})
+    event2 = Event(type="test", content={"msg": "msg2"})
 
     await pubsub.connect()
     await pubsub.subscribe(channel1)
     # publish
-    await pubsub.publish(ev1.channel, ev1.message)
-    await pubsub.publish(channel2, "msg")
-    await pubsub.publish(ev2.channel, ev2.message)
+    await pubsub.publish(channel1, event1)
+    await pubsub.publish(channel2, event1)
+    await pubsub.publish(channel1, event2)
     # listen
-    assert ev1 == await pubsub.next_published()
-    assert ev2 == await pubsub.next_published()
+    assert (channel1, event1) == await pubsub.next_published()
+    assert (channel1, event2) == await pubsub.next_published()
+    # publish invalid event
+    await pubsub.publish(channel1, "INVALID EVENT")
+    await pubsub.publish(channel1, "INVALID EVENT")
+
+
+async def test_publish_invalid_events_and_listen(pubsub, caplog):
+    with caplog.at_level(logging.NOTSET, logger="taiga.events.pubsub.backends.postgres"):
+        channel = "test_ch"
+        event1 = Event(type="test", content={"msg": "msg1"})
+        event2 = Event(type="test", content={"msg": "msg2"})
+
+        await pubsub.connect()
+        await pubsub.subscribe(channel)
+        # publish
+        await pubsub.publish(channel, event1)
+        await pubsub.publish(channel, "INVALID EVENT")
+        await pubsub.publish(channel, event2)
+        # listen
+        assert (channel, event1) == await pubsub.next_published()
+        assert (channel, event2) == await pubsub.next_published()

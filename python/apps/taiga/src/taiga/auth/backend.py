@@ -11,7 +11,7 @@ from starlette.authentication import AuthenticationError as AuthorizationError
 from starlette.responses import JSONResponse
 from taiga.auth.services.exceptions import BadAuthTokenError, UnauthorizedUserError
 from taiga.exceptions.api import codes
-from taiga.users.models import AnonymousUser, User
+from taiga.users.models import AnonymousUser, AnyUser
 
 from . import services as auth_serv
 from .security import HTTPBearer
@@ -19,7 +19,7 @@ from .security import HTTPBearer
 security = HTTPBearer()
 
 
-async def authenticate(request: Request) -> tuple[AuthCredentials, AnonymousUser | User]:
+async def authenticate(request: Request) -> tuple[AuthCredentials, AnyUser]:
     authorization = await security(request)
 
     if authorization:

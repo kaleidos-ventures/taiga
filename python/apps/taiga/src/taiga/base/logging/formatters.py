@@ -15,7 +15,7 @@ import typer
 
 class ColourizedFormatter(logging.Formatter):
     """
-    A custom log formatter class, based on uvicon.logging.ColourizedFormatter.
+    A custom log formatter class, based on uvicorn.logging.ColourizedFormatter.
     (https://github.com/encode/uvicorn/blob/master/uvicorn/logging.py)
     """
 

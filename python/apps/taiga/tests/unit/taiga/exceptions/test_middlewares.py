@@ -45,7 +45,7 @@ def test_there_is_no_error():
 
 
 def test_500_errors_has_cors_headers_with_origin_in_request(caplog):
-    with caplog.at_level(logging.CRITICAL, logger="taiga.exceptions.middlewares"):
+    with caplog.at_level(logging.CRITICAL, logger="taiga.exceptions.api.middlewares"):
         response = client.get("/error", headers={"Origin": "http://example.com"})
 
     assert response.status_code == 500, response.text
@@ -59,7 +59,7 @@ def test_500_errors_has_cors_headers_with_origin_in_request(caplog):
 
 
 def test_500_errors_has_not_cors_headers_without_origin_in_request(caplog):
-    with caplog.at_level(logging.CRITICAL, logger="taiga.exceptions.middlewares"):
+    with caplog.at_level(logging.CRITICAL, logger="taiga.exceptions.api.middlewares"):
         response = client.get("/error")
 
     assert response.status_code == 500, response.text

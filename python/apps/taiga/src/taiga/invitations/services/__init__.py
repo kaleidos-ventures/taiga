@@ -10,6 +10,7 @@ from taiga.base.utils import emails
 from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
+from taiga.invitations import events as invitations_events
 from taiga.invitations import repositories as invitations_repositories
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.dataclasses import CreateInvitations, PublicInvitation
@@ -199,6 +200,10 @@ async def create_invitations(
     invitations_to_send_list = invitations_to_send.values()
     for invitation in invitations_to_send_list:
         await send_project_invitation_email(invitation=invitation)
+
+    await invitations_events.emit_event_when_project_invitations_are_created(
+        project=project, invitations=invitations_to_send_list
+    )
 
     return CreateInvitations(invitations=list(invitations_to_send_list), already_members=already_members)
 

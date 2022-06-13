@@ -54,7 +54,7 @@ def create_project(
     template: ProjectTemplate,
     description: str | None = None,
     color: int | None = None,
-    logo: File[str] | None = None,
+    logo: File | None = None,  # type: ignore
 ) -> Project:
 
     project = Project.objects.create(

@@ -27,6 +27,7 @@ describe('WorkspaceItem', () => {
       acceptedInvite: [],
     },
     workspaceList: {
+      loadingWorkspaces: [],
       workspaceProjects: {
         [workspaceItem.slug]: workspaceItem.latestProjects,
         [workspaceItemAdmin.slug]: workspaceItemAdmin.latestProjects,
@@ -106,7 +107,7 @@ describe('WorkspaceItem', () => {
 
       spectator.component.setShowAllProjects(false);
 
-      expect(dispatchSpy).toBeCalledWith(action);
+      expect(dispatchSpy).not.toBeCalledWith(action);
 
       spectator.component.setShowAllProjects(true);
 

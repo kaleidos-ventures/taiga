@@ -20,6 +20,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   flex-direction: column;
   gap: var(--spacing-12);
   max-inline-size: 230px;
+  min-block-size: 122px;
   padding: var(--spacing-12);
 }
 

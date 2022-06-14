@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
 import { map } from 'rxjs/operators';
-import { zip } from 'rxjs';
+import { timer, zip } from 'rxjs';
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
 import { fetch } from '@nrwl/angular';
 import { WorkspaceApiService } from '@taiga/api';
@@ -43,7 +43,8 @@ export class WorkspaceDetailEffects {
         run: (action) => {
           return zip(
             this.workspaceApiService.fetchWorkspaceProjects(action.slug),
-            this.workspaceApiService.fetchWorkspaceInvitedProjects(action.slug)
+            this.workspaceApiService.fetchWorkspaceInvitedProjects(action.slug),
+            timer(1000)
           ).pipe(
             map(([projects, invitedProjects]) => {
               return WorkspaceActions.fetchWorkspaceProjectsSuccess({

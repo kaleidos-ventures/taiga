@@ -8,6 +8,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *ngIf="model$ | async as vm">
   <ng-container *transloco="let t">
+    <tg-workspace-detail-skeleton
+      *ngIf="!vm.workspace"></tg-workspace-detail-skeleton>
     <ng-container *ngIf="vm.workspace">
       <div class="workspace-detail-top">
         <div class="workspace-detail-avatar">
@@ -48,7 +50,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           !vm.workspace.totalProjects &&
           !vm.invitedProjects.length &&
           vm.workspace.hasProjects &&
-          vm.workspace.myRole !== 'admin'
+          vm.workspace.myRole !== 'admin' &&
+          !vm.creatingWorkspaceDetail
         "
         class="workspace-message-placeholder detail"
         [innerHtml]="t('workspace.placehoder_no_access')"></div>
@@ -58,16 +61,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           !vm.workspace.totalProjects &&
           !vm.invitedProjects.length &&
           !vm.workspace.hasProjects &&
-          vm.workspace.myRole !== 'admin'
+          vm.workspace.myRole !== 'admin' &&
+          !vm.creatingWorkspaceDetail
         "
         class="workspace-message-placeholder detail"
         [innerHtml]="t('workspace.placehoder_no_projects')"></div>
       <div
+        [@.disabled]="animationDisabled"
         (resized)="onResized($event)"
         [class]="gridClass"
         class="workspace-item-card-grid">
         <div
-          *ngIf="vm.projects.length === 0 && vm.workspace.myRole === 'admin'">
+          *ngIf="
+            vm.projects.length === 0 &&
+            vm.workspace.myRole === 'admin' &&
+            !vm.creatingWorkspaceDetail
+          ">
           <tg-project-card
             [workspace]="vm.workspace"
             variant="placeholder"
@@ -90,6 +99,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [project]="invitedProject">
           </tg-project-card>
         </div>
+        <ng-container *ngIf="vm.creatingWorkspaceDetail">
+          <div
+            *ngFor="
+              let _ of [].constructor(amountOfProjectsToShow);
+              trackBy: trackByIndex
+            ">
+            <tg-ui-card-skeleton></tg-ui-card-skeleton>
+          </div>
+        </ng-container>
         <div
           *ngFor="let project of vm.projects; trackBy: trackByLatestProject"
           @slideOut

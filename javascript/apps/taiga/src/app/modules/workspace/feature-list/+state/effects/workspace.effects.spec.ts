@@ -23,6 +23,7 @@ import {
   fetchWorkspaceProjectsSuccess,
 } from '../actions/workspace.actions';
 import { randDomainSuffix } from '@ngneat/falso';
+import { TestScheduler } from 'rxjs/testing';
 
 describe('WorkspaceEffects', () => {
   let actions$: Observable<Action>;
@@ -62,16 +63,22 @@ describe('WorkspaceEffects', () => {
     const workspaceApiService = spectator.inject(WorkspaceApiService);
     const effects = spectator.inject(WorkspaceEffects);
 
-    workspaceApiService.fetchWorkspaceProjects.mockReturnValue(
-      cold('-b|', { b: [project] })
-    );
-
-    actions$ = hot('-a', { a: fetchWorkspaceProjects({ slug }) });
-
-    const expected = cold('--a', {
-      a: fetchWorkspaceProjectsSuccess({ slug, projects: [project] }),
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
     });
 
-    expect(effects.fetchWorkspaceProjects$).toBeObservable(expected);
+    testScheduler.run((helpers) => {
+      const { expectObservable, cold, hot } = helpers;
+
+      workspaceApiService.fetchWorkspaceProjects.mockReturnValue(
+        cold('-b|', { b: [project] })
+      );
+
+      actions$ = hot('-a', { a: fetchWorkspaceProjects({ slug }) });
+
+      expectObservable(effects.fetchWorkspaceProjects$).toBe('300ms -a', {
+        a: fetchWorkspaceProjectsSuccess({ slug, projects: [project] }),
+      });
+    });
   });
 });

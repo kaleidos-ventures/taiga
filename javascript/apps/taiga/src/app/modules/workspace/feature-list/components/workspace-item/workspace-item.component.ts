@@ -25,7 +25,10 @@ import { Store } from '@ngrx/store';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { fetchWorkspaceProjects } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
-import { selectWorkspaceProject } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
+import {
+  selectLoadingWorkspaces,
+  selectWorkspaceProject,
+} from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { RxState } from '@rx-angular/state';
 import { map, take } from 'rxjs/operators';
@@ -41,6 +44,9 @@ interface ViewModel {
   showLessProjects: boolean;
   remainingProjects: number;
   slideOutActive: boolean;
+  skeletonToShow: number;
+  loadingWorkspaces: string[];
+  workspacesSkeletonList: string[];
 }
 
 interface State {
@@ -52,6 +58,9 @@ interface State {
   rejectedInvites: string[];
   slideOutActive: boolean;
   acceptedInvites: string[];
+  skeletonToShow: number;
+  loadingWorkspaces: string[];
+  workspacesSkeletonList: [];
 }
 
 @Component({
@@ -136,8 +145,17 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
       this.store.select(selectWorkspaceProject(this.workspace.slug))
     );
 
+    this.state.connect(
+      'loadingWorkspaces',
+      this.store.select(selectLoadingWorkspaces)
+    );
+
     this.model$ = this.state.select().pipe(
       map((state) => {
+        if (state.loadingWorkspaces.includes(this.workspace.slug)) {
+          this.animationDisabled = true;
+        }
+
         let invitations = state.invitations;
         let projects = state.workspaceProjects;
 
@@ -195,6 +213,24 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
           totalInvitations -
           state.projectsToShow;
 
+        const totalCards = invitations.length + projects.length;
+        let skeletonToShow =
+          state.projectsToShow - (totalCards % state.projectsToShow);
+        if (totalCards > 0) {
+          skeletonToShow === 0
+            ? (skeletonToShow = state.projectsToShow)
+            : skeletonToShow;
+        } else {
+          skeletonToShow = 0;
+        }
+
+        const workspacesSkeletonList = state.loadingWorkspaces;
+
+        if (!state.loadingWorkspaces.includes(this.workspace.slug)) {
+          requestAnimationFrame(() => {
+            this.animationDisabled = false;
+          });
+        }
         return {
           ...state,
           projects,
@@ -202,6 +238,8 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
           showMoreProjects,
           showLessProjects,
           remainingProjects,
+          skeletonToShow,
+          workspacesSkeletonList,
         };
       })
     );
@@ -278,14 +316,10 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
   public setShowAllProjects(showAllProjects: boolean) {
     this.state.set({ showAllProjects });
-    this.store.dispatch(fetchWorkspaceProjects({ slug: this.workspace.slug }));
-
-    if (!showAllProjects) {
-      this.animationDisabled = true;
-
-      requestAnimationFrame(() => {
-        this.animationDisabled = false;
-      });
+    if (showAllProjects === true) {
+      this.store.dispatch(
+        fetchWorkspaceProjects({ slug: this.workspace.slug })
+      );
     }
   }
 
@@ -339,5 +373,9 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
         rejectedInvites,
       });
     }
+  }
+
+  public trackByIndex(index: number) {
+    return index;
   }
 }

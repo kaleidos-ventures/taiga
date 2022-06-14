@@ -23,6 +23,7 @@ import {
   selectWorkspace,
   selectWorkspaceInvitedProjects,
   selectWorkspaceProjects,
+  selectCreatingWorkspaceDetail,
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import {
   fetchWorkspace,
@@ -46,6 +47,7 @@ interface ViewDetailModel {
   projects: WorkspaceProject[];
   workspace: Workspace | null;
   invitedProjects: WorkspaceProject[];
+  creatingWorkspaceDetail: boolean;
 }
 
 @UntilDestroy()
@@ -87,6 +89,8 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
   public amountOfProjectsToShow = 10;
 
+  public animationDisabled = true;
+
   public invitations: WorkspaceProject[] = [];
 
   public reorder: Record<string, string> = {};
@@ -105,6 +109,8 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       invitedProjects: WorkspaceProject[];
       rejectedInvites: string[];
       acceptedInvites: string[];
+      creatingWorkspaceDetail: boolean;
+      skeletonAnimation: string;
     }>
   ) {}
 
@@ -149,6 +155,11 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
           });
         }
 
+        if (!state.creatingWorkspaceDetail) {
+          requestAnimationFrame(() => {
+            this.animationDisabled = false;
+          });
+        }
         return {
           ...state,
           projects,
@@ -168,6 +179,10 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     this.state.connect(
       'acceptedInvites',
       this.store.select(selectAcceptedInvite)
+    );
+    this.state.connect(
+      'creatingWorkspaceDetail',
+      this.store.select(selectCreatingWorkspaceDetail)
     );
     this.state.connect(
       'workspace',
@@ -268,5 +283,9 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy() {
     this.store.dispatch(resetWorkspace());
+  }
+
+  public trackByIndex(index: number) {
+    return index;
   }
 }

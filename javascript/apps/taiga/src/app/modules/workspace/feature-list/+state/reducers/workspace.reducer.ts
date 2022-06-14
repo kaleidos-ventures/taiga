@@ -13,6 +13,7 @@ import * as WorkspaceActions from '../actions/workspace.actions';
 
 export interface WorkspaceState {
   workspaces: Workspace[];
+  loadingWorkspaces: string[];
   creatingWorkspace: boolean;
   loading: boolean;
   createFormHasError: boolean;
@@ -21,6 +22,7 @@ export interface WorkspaceState {
 
 export const initialState: WorkspaceState = {
   workspaces: [],
+  loadingWorkspaces: [],
   creatingWorkspace: false,
   loading: false,
   createFormHasError: false,
@@ -76,6 +78,14 @@ export const reducer = createReducer(
     }
   ),
   on(
+    WorkspaceActions.fetchWorkspaceProjects,
+    (state, { slug }): WorkspaceState => {
+      state.loadingWorkspaces.push(slug);
+
+      return state;
+    }
+  ),
+  on(
     WorkspaceActions.fetchWorkspaceProjectsSuccess,
     (state, { slug, projects }): WorkspaceState => {
       state.workspaceProjects[slug] = projects.map((project) => {
@@ -87,7 +97,7 @@ export const reducer = createReducer(
           logoSmall: project.logoSmall,
         } as WorkspaceProject;
       });
-
+      state.loadingWorkspaces = [];
       return state;
     }
   ),

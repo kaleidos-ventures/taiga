@@ -78,16 +78,17 @@ export class WorkspaceEffects {
       ofType(WorkspaceActions.fetchWorkspaceProjects),
       pessimisticUpdate({
         run: (action) => {
-          return this.workspaceApiService
-            .fetchWorkspaceProjects(action.slug)
-            .pipe(
-              map((projects) => {
-                return WorkspaceActions.fetchWorkspaceProjectsSuccess({
-                  slug: action.slug,
-                  projects,
-                });
-              })
-            );
+          return zip(
+            this.workspaceApiService.fetchWorkspaceProjects(action.slug),
+            timer(300)
+          ).pipe(
+            map(([projects]) => {
+              return WorkspaceActions.fetchWorkspaceProjectsSuccess({
+                slug: action.slug,
+                projects,
+              });
+            })
+          );
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
           this.appService.errorManagement(httpResponse),

@@ -16,6 +16,7 @@ export const {
   selectLoading: selectLoadingWorkpace,
   selectCreatingWorkspace,
   selectWorkspaceProjects,
+  selectLoadingWorkspaces,
 } = workspaceFeature;
 
 export const selectWorkspaceProject = (workspaceSlug: Workspace['slug']) => {

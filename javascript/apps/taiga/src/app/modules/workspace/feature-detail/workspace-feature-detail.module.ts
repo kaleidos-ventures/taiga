@@ -21,9 +21,11 @@ import { ProjectCardModule } from '~/app/shared/project-card/project-card.module
 import { AngularResizeEventModule } from 'angular-resize-event';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
+import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-skeleton/workspace-detail-skeleton.component';
+import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 
 @NgModule({
-  declarations: [WorkspaceDetailComponent],
+  declarations: [WorkspaceDetailComponent, WorkspaceDetailSkeletonComponent],
   imports: [
     CommonModule,
     TuiButtonModule,
@@ -37,6 +39,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     ProjectCardModule,
     AngularResizeEventModule,
     WorkspacePageRoutingModule,
+    SkeletonsModule,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

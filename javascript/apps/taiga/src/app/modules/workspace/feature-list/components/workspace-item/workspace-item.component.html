@@ -111,6 +111,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [project]="project">
         </tg-project-card>
       </div>
+      <ng-container *ngIf="vm.workspacesSkeletonList.includes(workspace.slug)">
+        <div
+          *ngFor="
+            let _ of [].constructor(vm.skeletonToShow);
+            trackBy: trackByIndex
+          ">
+          <tg-ui-card-skeleton></tg-ui-card-skeleton>
+        </div>
+      </ng-container>
     </div>
     <button
       *ngIf="vm.showMoreProjects"

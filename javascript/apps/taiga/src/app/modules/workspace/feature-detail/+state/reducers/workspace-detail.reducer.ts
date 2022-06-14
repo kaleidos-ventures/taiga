@@ -13,6 +13,7 @@ import * as WorkspaceActions from '../actions/workspace-detail.actions';
 
 export interface WorkspaceDetailState {
   workspace: Workspace | null;
+  creatingWorkspaceDetail: boolean;
   workspaceProjects: Project[];
   workspaceInvitedProjects: Project[];
   loading: boolean;
@@ -20,6 +21,7 @@ export interface WorkspaceDetailState {
 
 export const initialState: WorkspaceDetailState = {
   workspace: null,
+  creatingWorkspaceDetail: true,
   loading: false,
   workspaceProjects: [],
   workspaceInvitedProjects: [],
@@ -46,12 +48,15 @@ export const reducer = createReducer(
     (state, { projects, invitedProjects }): WorkspaceDetailState => {
       state.workspaceProjects = projects;
       state.workspaceInvitedProjects = invitedProjects;
-
+      state.creatingWorkspaceDetail = false;
       return state;
     }
   ),
   on(WorkspaceActions.resetWorkspace, (state): WorkspaceDetailState => {
     state.workspace = null;
+    state.workspaceProjects = [];
+    state.workspaceInvitedProjects = [];
+    state.creatingWorkspaceDetail = true;
 
     return state;
   })

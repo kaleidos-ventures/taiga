@@ -13,4 +13,5 @@ export const {
   selectWorkspace,
   selectWorkspaceProjects,
   selectWorkspaceInvitedProjects,
+  selectCreatingWorkspaceDetail,
 } = workspaceDetailFeature;

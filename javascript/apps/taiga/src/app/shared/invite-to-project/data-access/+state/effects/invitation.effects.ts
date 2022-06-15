@@ -104,40 +104,44 @@ export class InvitationEffects {
       return this.actions$.pipe(
         ofType(InvitationActions.inviteUsersSuccess),
         tap((action) => {
-          let labelText;
-          let messageText;
-          let paramsMessage;
-          let paramsLabel;
-          if (action.newInvitations.length && action.alreadyMembers) {
-            labelText = 'invitation_success_member';
-            messageText = 'only_members_success';
-            paramsMessage = { members: action.alreadyMembers };
-            paramsLabel = { invitations: action.newInvitations.length };
-          } else if (action.newInvitations.length && !action.alreadyMembers) {
-            labelText = 'invitation_ok';
-            messageText = 'invitation_success';
-            paramsMessage = { invitations: action.newInvitations.length };
-          } else if (!action.newInvitations.length && action.alreadyMembers) {
-            if (action.alreadyMembers === 1) {
-              messageText = 'only_member_success';
-            } else {
+          // TODO remove this timeout when the issue #2478 is resolved
+          setTimeout(() => {
+            let labelText;
+            let messageText;
+            let paramsMessage;
+            let paramsLabel;
+            if (action.newInvitations.length && action.alreadyMembers) {
+              labelText = 'invitation_success_member';
               messageText = 'only_members_success';
               paramsMessage = { members: action.alreadyMembers };
+              paramsLabel = { invitations: action.newInvitations.length };
+            } else if (action.newInvitations.length && !action.alreadyMembers) {
+              labelText = 'invitation_ok';
+              messageText = 'invitation_success';
+              paramsMessage = { invitations: action.newInvitations.length };
+            } else if (!action.newInvitations.length && action.alreadyMembers) {
+              if (action.alreadyMembers === 1) {
+                messageText = 'only_member_success';
+              } else {
+                messageText = 'only_members_success';
+                paramsMessage = { members: action.alreadyMembers };
+              }
+            } else {
+              messageText = '';
             }
-          } else {
-            messageText = '';
-          }
-          this.appService.toastNotification({
-            label: labelText,
-            message: messageText,
-            paramsMessage,
-            paramsLabel,
-            status: action.newInvitations.length
-              ? TuiNotification.Success
-              : TuiNotification.Info,
-            scope: 'invitation_modal',
-            autoClose: false,
-          });
+
+            this.appService.toastNotification({
+              label: labelText,
+              message: messageText,
+              paramsMessage,
+              paramsLabel,
+              status: action.newInvitations.length
+                ? TuiNotification.Success
+                : TuiNotification.Info,
+              scope: 'invitation_modal',
+              autoClose: true,
+            });
+          }, 100);
         })
       );
     },
@@ -211,10 +215,7 @@ export class InvitationEffects {
               );
               let suggestedList = suggestedUsers;
               if (membersMatch) {
-                suggestedList = [...membersMatch, ...suggestedList].slice(
-                  0,
-                  6
-                );
+                suggestedList = [...membersMatch, ...suggestedList].slice(0, 6);
               }
               return InvitationActions.searchUserSuccess({
                 suggestedUsers: suggestedList,

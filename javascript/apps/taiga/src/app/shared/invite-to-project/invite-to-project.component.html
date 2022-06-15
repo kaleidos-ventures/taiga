@@ -102,49 +102,56 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               >
             </ng-container>
             <ng-template #dropdownContent>
-              <ng-container
-                *ngIf="inviteIdentifier.length > 1 && notInBulkMode">
-                <tui-data-list
-                  id="suggestions"
-                  role="listbox"
-                  data-test="suggestions-list"
-                  [emptyContent]="t('invitation_modal.no_results')">
-                  <ng-container
-                    *ngIf="suggestedUsers$ | async as suggestedUsers">
-                    <button
-                      *ngFor="
-                        let contact of suggestedUsers;
-                        index as i;
-                        trackBy: trackByIndex
-                      "
-                      tuiOption
-                      role="option"
-                      class="suggested-btn"
-                      data-test="option"
-                      [attr.id]="'suggestion-' + i"
-                      [disabled]="!!contact.isMember"
-                      [class.selected]="suggestionSelected === i && !contact.isMember"
-                      [attr.aria-disabled]="
-                        suggestionSelected !== i || !!contact.isMember
-                      "
-                      [attr.aria-selected]="suggestionSelected === i"
-                      (click)="
-                        includeSuggestedContact(suggestionSelected, $event)
-                      ">
-                      <tg-user-card
-                        [user]="contact"
+              <ng-container *ngIf="searchInProgress$ | async">
+                <ng-container
+                  *ngIf="inviteIdentifier.length > 1 && notInBulkMode">
+                  <tui-data-list
+                    id="suggestions"
+                    role="listbox"
+                    data-test="suggestions-list"
+                    [emptyContent]="t('invitation_modal.no_results')">
+                    <ng-container
+                      *ngIf="suggestedUsers$ | async as suggestedUsers">
+                      <button
+                        *ngFor="
+                          let contact of suggestedUsers;
+                          index as i;
+                          trackBy: trackByIndex
+                        "
+                        tuiOption
+                        role="option"
+                        class="suggested-btn"
+                        data-test="option"
+                        [attr.id]="'suggestion-' + i"
                         [disabled]="!!contact.isMember"
-                        [active]="suggestionSelected === i"
-                        [textToHighlight]="parseTextToHighlight"></tg-user-card>
-                      <tg-ui-badge
-                        *ngIf="contact.isMember"
-                        class="disabled-badge"
-                        [label]="
-                          t('invitation_modal.already_member')
-                        "></tg-ui-badge>
-                    </button>
-                  </ng-container>
-                </tui-data-list>
+                        [class.selected]="
+                          suggestionSelected === i && !contact.isMember
+                        "
+                        [attr.aria-disabled]="
+                          suggestionSelected !== i || !!contact.isMember
+                        "
+                        [attr.aria-selected]="suggestionSelected === i"
+                        (click)="
+                          includeSuggestedContact(i, $event)
+                        ">
+                        <tg-user-card
+                          [user]="contact"
+                          [disabled]="!!contact.isMember"
+                          [active]="suggestionSelected === i"
+                          [textToHighlight]="
+                            parseTextToHighlight
+                          "></tg-user-card>
+                        <tg-ui-badge
+                          *ngIf="contact.isMember"
+                          data-test="info-user"
+                          class="disabled-badge"
+                          [label]="
+                            t('invitation_modal.already_member')
+                          "></tg-ui-badge>
+                      </button>
+                    </ng-container>
+                  </tui-data-list>
+                </ng-container>
               </ng-container>
             </ng-template>
           </div>

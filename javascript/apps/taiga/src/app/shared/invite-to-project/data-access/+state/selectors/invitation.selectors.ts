@@ -16,6 +16,7 @@ export const {
   selectInvitations,
   selectAcceptedInvite,
   selectSuggestedUsers,
+  selectSearchFinished,
 } = invitationFeature;
 
 // roles list should be shown by the order setted from 'order' the property
@@ -47,7 +48,9 @@ export const selectUsersToInvite = (inviteIdentifiers: string[]) => {
       const users: Partial<User>[] = [];
       const defaultRole = roles ? [roles[1].name] : undefined;
       inviteIdentifiers.forEach((identifier) => {
-        const myContact = contacts?.find((contact) => contact.username === identifier);
+        const myContact = contacts?.find(
+          (contact) => contact.username === identifier
+        );
         const hasPendingInvitation = invitations?.find(
           (invitation) => invitation.user?.username === identifier
         );

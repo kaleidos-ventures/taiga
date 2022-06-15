@@ -183,9 +183,14 @@ describe('Invite users to project from overview when user is admin', () => {
     });
   });
 
-  it('Should ignore invitation from a member', () => {
+  it('Should show a member in the autocomplete list and avoid to added it to the list', () => {
     openInvitationModal();
     typeEmailToInvite('jorge');
+    cy.getBySel('suggestions-list').should('exist');
+    cy.getBySel('info-user').should('exist');
+    cy.getBySel('info-user')
+      .invoke('text')
+      .should('to.have.string', 'Already a member');
     addEmailToInvite();
     cy.getBySel('tip-wrapper').should('exist');
     cy.getBySel('user-list').should('not.exist');
@@ -201,6 +206,7 @@ describe('Invite users to project from overview when user is admin', () => {
   it('Should add tag pending from an already sent invitation', () => {
     openInvitationModal();
     typeEmailToInvite('elizabeth');
+    cy.getBySel('suggestions-list').should('exist');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('exist');
     cy.getBySel('pending-tag')
@@ -211,6 +217,7 @@ describe('Invite users to project from overview when user is admin', () => {
   it('Should considered defined role from the invitation sent before', () => {
     openInvitationModal();
     typeEmailToInvite('susan wagner');
+    cy.getBySel('suggestions-list').should('exist');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('exist');
     cy.getBySel('select-value')

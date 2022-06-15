@@ -21,7 +21,7 @@ export const openInvitationModal = () => {
 
 export const logout = () => {
   cy.getBySel('user-settings').click();
-  cy.getBySel('log-out').click();
+  cy.getBySel('log-out').should('be.visible').click();
 };
 
 export const selectRoleAdministrator = () => {

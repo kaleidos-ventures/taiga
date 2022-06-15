@@ -20,6 +20,7 @@ export interface InvitationState {
   invitations: Invitation[];
   acceptedInvite: string[];
   suggestedUsers: Contact[];
+  searchFinished: boolean;
 }
 
 export const initialState: InvitationState = {
@@ -29,6 +30,7 @@ export const initialState: InvitationState = {
   invitations: [],
   acceptedInvite: [],
   suggestedUsers: [],
+  searchFinished: true,
 };
 
 export const reducer = createReducer(
@@ -50,10 +52,16 @@ export const reducer = createReducer(
       return state;
     }
   ),
+  on(InvitationActions.searchUser, (state): InvitationState => {
+    state.searchFinished = false;
+
+    return state;
+  }),
   on(
     InvitationActions.searchUserSuccess,
     (state, { suggestedUsers }): InvitationState => {
       state.suggestedUsers = [...suggestedUsers];
+      state.searchFinished = true;
 
       return state;
     }

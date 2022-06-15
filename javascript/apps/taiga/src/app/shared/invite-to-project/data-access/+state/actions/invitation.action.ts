@@ -11,7 +11,11 @@ import { Contact, Invitation, SearchUserRequest } from '@taiga/data';
 
 export const inviteUsersSuccess = createAction(
   '[Invitation] invite users success',
-  props<{ newInvitations: Invitation[]; allInvitationsOrdered: Invitation[], alreadyMembers: number }>()
+  props<{
+    newInvitations: Invitation[];
+    allInvitationsOrdered: Invitation[];
+    alreadyMembers: number;
+  }>()
 );
 
 export const acceptInvitationSlug = createAction(
@@ -32,12 +36,12 @@ export const acceptInvitationSlugError = createAction(
 export const inviteUsersError = createAction('[Invitation] invite users error');
 
 export const searchUser = createAction(
-  '[Invitation] fetch suggested contacts',
+  '[Invitation] fetch suggested users',
   props<{ searchUser: SearchUserRequest }>()
 );
 
 export const searchUserSuccess = createAction(
-  '[Invitation] fetch suggested contacts success',
+  '[Invitation] fetch suggested users success',
   props<{ suggestedUsers: Contact[] }>()
 );
 

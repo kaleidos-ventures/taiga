@@ -41,16 +41,11 @@ import {
   selectMemberRolesOrdered,
   selectSuggestedUsers,
   selectUsersToInvite,
+  selectSearchFinished,
 } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import {
-  map,
-  share,
-  startWith,
-  switchMap,
-  throttleTime,
-} from 'rxjs/operators';
+import { map, share, startWith, switchMap, throttleTime } from 'rxjs/operators';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
@@ -141,6 +136,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public memberRoles$ = this.store.select(selectMemberRolesOrdered);
   public contacts$ = this.store.select(selectContacts);
   public suggestedUsers$ = this.store.select(selectSuggestedUsers);
+  public searchInProgress$ = this.store.select(selectSearchFinished);
   public usersToInvite$!: Observable<Partial<User>[]>;
   public validInviteIdentifier$!: Observable<RegExpMatchArray>;
   public emailsWithoutDuplications$!: Observable<string[]>;

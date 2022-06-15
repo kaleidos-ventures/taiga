@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { randFullName, randWord } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { InvitationService } from './invitation.service';
 
@@ -79,5 +80,25 @@ describe('InvitationService', () => {
       newInvitation
     );
     expect(index).toEqual(2);
+  });
+
+  it('get users that match name or username with the introduced text', () => {
+    const user1 = {
+      username: randWord(),
+      fullName: randFullName(),
+    };
+    const user2 = {
+      username: randWord(),
+      fullName: randFullName(),
+    };
+    const usersList = [user1, user2];
+    const text = user1.username.substring(0, 2);
+    const usersMatch = spectator.service.matchUsersFromList(usersList, text);
+    expect(usersMatch).toEqual([user1]);
+  });
+
+  it('get text normalized', () => {
+    const normalizedText = spectator.service.normalizeText('Álava');
+    expect(normalizedText).toEqual('alava');
   });
 });

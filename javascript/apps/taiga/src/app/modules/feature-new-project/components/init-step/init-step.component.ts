@@ -86,7 +86,7 @@ export class InitStepComponent implements OnInit, OnChanges {
     },
     {
       nextStep: 'duplicate',
-      icon: 'copy',
+      icon: 'duplicate',
       title: this.translocoService.translate(
         'new_project.first_step.duplicate_project'
       ),

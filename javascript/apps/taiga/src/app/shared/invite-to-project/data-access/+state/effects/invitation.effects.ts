@@ -111,7 +111,7 @@ export class InvitationEffects {
             let paramsMessage;
             let paramsLabel;
             if (action.newInvitations.length && action.alreadyMembers) {
-              labelText = 'invitation_success_member';
+              labelText = 'invitation_success';
               messageText = 'only_members_success';
               paramsMessage = { members: action.alreadyMembers };
               paramsLabel = { invitations: action.newInvitations.length };

@@ -27,7 +27,10 @@ import {
 import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
 import { Contact, InvitationResponse, UserMockFactory } from '@taiga/data';
-import { selectInvitations, selectMembers } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import {
+  selectInvitations,
+  selectMembers,
+} from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { TestScheduler } from 'rxjs/testing';
 
@@ -177,7 +180,7 @@ describe('InvitationEffects', () => {
       );
 
       actions$ = hot('-a', {
-        a: searchUser({ searchUser: { text: searchText } }),
+        a: searchUser({ searchUser: { text: searchText }, peopleAdded: [] }),
       });
 
       expectObservable(effects.searchUser$).toBe('202ms a', {
@@ -217,6 +220,7 @@ describe('InvitationEffects', () => {
           searchUser: {
             text: searchText,
           },
+          peopleAdded: [],
         }),
       });
 

@@ -33,5 +33,6 @@
   "invitation_accept_label": "Congratulations",
   "invitation_accept_message": "You are now a member of this project.",
   "no_results": "There are no matching results. Use an email instead.",
-  "already_member": "Already a member"
+  "already_member": "Already a member",
+  "already_on_list": "Already on the list"
 }

@@ -37,7 +37,7 @@ export const inviteUsersError = createAction('[Invitation] invite users error');
 
 export const searchUser = createAction(
   '[Invitation] fetch suggested users',
-  props<{ searchUser: SearchUserRequest }>()
+  props<{ searchUser: SearchUserRequest; peopleAdded: Contact[] }>()
 );
 
 export const searchUserSuccess = createAction(

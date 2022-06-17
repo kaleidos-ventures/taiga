@@ -190,11 +190,16 @@ export class InvitationEffects {
       ]),
       switchMap(([action, membersState, userState]) => {
         const membersUsername = membersState.map((it) => it.user.username);
+        const addedUsersUsername = action.peopleAdded.map((j) => j.username);
         return this.invitationApiService
           .searchUser({
             text: action.searchUser.text,
             project: action.searchUser.project,
-            excludedUsers: [userState.username, ...membersUsername],
+            excludedUsers: [
+              userState.username,
+              ...membersUsername,
+              ...addedUsersUsername,
+            ],
             offset: 0,
             limit: 6,
           })
@@ -213,9 +218,18 @@ export class InvitationEffects {
                 membersListParsed,
                 action.searchUser.text
               );
+              const peopleAddedMatch =
+                this.invitationService.matchUsersFromList(
+                  action.peopleAdded,
+                  action.searchUser.text
+                );
               let suggestedList = suggestedUsers;
               if (membersMatch) {
-                suggestedList = [...membersMatch, ...suggestedList].slice(0, 6);
+                suggestedList = [
+                  ...membersMatch,
+                  ...peopleAddedMatch,
+                  ...suggestedList,
+                ].slice(0, 6);
               }
               return InvitationActions.searchUserSuccess({
                 suggestedUsers: suggestedList,

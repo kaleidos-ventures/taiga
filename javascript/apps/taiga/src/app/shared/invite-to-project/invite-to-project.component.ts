@@ -247,7 +247,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
       this.suggestedUsers = suggestedUsers;
       this.elegibleSuggestions = [];
       this.suggestedUsers.forEach((it, i) => {
-        if (!it.isMember) {
+        if (!it.isMember && !it.isAddedToList) {
           this.elegibleSuggestions?.push(i);
         }
       });
@@ -307,6 +307,23 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     return !!this.pending?.find((it) => it.user?.username === username);
   }
 
+  public getPeopleAdded() {
+    const registeredUsers = this.users.filter(
+      (it) => it.get('fullName')?.value
+    );
+    if (registeredUsers.length) {
+      return registeredUsers.map((user) => {
+        return {
+          fullName: user.get('fullName')?.value as string,
+          username: user.get('username')?.value as string,
+          isAddedToList: true,
+        };
+      });
+    } else {
+      return [];
+    }
+  }
+
   public searchChange(emails: string) {
     (!emails || this.emailsHaveErrors) && this.resetErrors();
     this.suggestionSelected = this.elegibleSuggestions?.[0] || 0;
@@ -324,6 +341,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
             text: searchText,
             project: this.project.slug,
           },
+          peopleAdded: this.getPeopleAdded(),
         })
       );
       this.handleAccessibilityAttributes(true);

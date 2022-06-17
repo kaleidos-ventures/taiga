@@ -123,20 +123,26 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                         class="suggested-btn"
                         data-test="option"
                         [attr.id]="'suggestion-' + i"
-                        [disabled]="!!contact.isMember"
+                        [disabled]="
+                          !!contact.isMember || !!contact.isAddedToList
+                        "
                         [class.selected]="
-                          suggestionSelected === i && !contact.isMember
+                          suggestionSelected === i &&
+                          !contact.isMember &&
+                          !contact.isAddedToList
                         "
                         [attr.aria-disabled]="
-                          suggestionSelected !== i || !!contact.isMember
+                          suggestionSelected !== i ||
+                          !!contact.isMember ||
+                          !!contact.isAddedToList
                         "
                         [attr.aria-selected]="suggestionSelected === i"
-                        (click)="
-                          includeSuggestedContact(i, $event)
-                        ">
+                        (click)="includeSuggestedContact(i, $event)">
                         <tg-user-card
                           [user]="contact"
-                          [disabled]="!!contact.isMember"
+                          [disabled]="
+                            !!contact.isMember && !!contact.isAddedToList
+                          "
                           [active]="suggestionSelected === i"
                           [textToHighlight]="
                             parseTextToHighlight
@@ -147,6 +153,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                           class="disabled-badge"
                           [label]="
                             t('invitation_modal.already_member')
+                          "></tg-ui-badge>
+                        <tg-ui-badge
+                          *ngIf="contact.isAddedToList"
+                          class="disabled-badge"
+                          [label]="
+                            t('invitation_modal.already_on_list')
                           "></tg-ui-badge>
                       </button>
                     </ng-container>

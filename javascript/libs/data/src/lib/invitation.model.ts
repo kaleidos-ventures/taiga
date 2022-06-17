@@ -16,6 +16,7 @@ export interface Contact {
   username: string;
   fullName: string;
   isMember?: boolean;
+  isAddedToList?: boolean;
 }
 export interface InvitationRequest {
   email?: string;

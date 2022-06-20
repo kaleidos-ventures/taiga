@@ -105,9 +105,9 @@ async def verify_user(token: str) -> VerificationInfo:
     await verify_token.denylist()
 
     # Get user and verify it
-    user = await users_repositories.get_first_user(**verify_token.object_data, is_active=False, is_system=False)
+    user = await users_repositories.get_first_user(**verify_token.object_data, is_system=False)
     if not user:
-        raise ex.BadVerifyUserTokenError()
+        raise ex.BadVerifyUserTokenError("The user doesn't exist.")
 
     await users_repositories.verify_user(user=user)
 

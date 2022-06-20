@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from taiga.base.serializers import BaseModel
 
-from django.contrib.auth.models import AnonymousUser  # noqa
-from taiga6.users.models import AuthData, User  # noqa
+
+class GithubLoginValidator(BaseModel):
+    code: str

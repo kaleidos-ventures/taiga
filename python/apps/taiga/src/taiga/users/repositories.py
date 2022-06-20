@@ -15,7 +15,7 @@ from django.db.models import Q, QuerySet
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.conf import settings
 from taiga.tokens.models import OutstandingToken
-from taiga.users.models import User
+from taiga.users.models import AuthData, User
 from taiga.users.tokens import VerifyUserToken
 
 
@@ -69,6 +69,14 @@ def get_users_by_usernames_as_dict(usernames: list[str]) -> dict[str, User]:
 
 
 @sync_to_async
+def get_user_from_auth_data(key: str, value: str) -> User:
+    auth_data = AuthData.objects.select_related("user").filter(key=key, value=value).first()
+    if auth_data:
+        return auth_data.user
+    return None
+
+
+@sync_to_async
 def check_password(user: User, password: str) -> bool:
     return user.check_password(password)
 
@@ -99,6 +107,11 @@ def verify_user(user: User) -> None:
     user.is_active = True
     user.date_verification = aware_utcnow()
     user.save()
+
+
+@sync_to_async
+def create_auth_data(user: User, key: str, value: str, extra: dict[str, str] = {}) -> AuthData:
+    return AuthData.objects.create(user=user, key=key, value=value, extra=extra)
 
 
 @sync_to_async

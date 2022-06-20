@@ -6,5 +6,16 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-from django.contrib.auth.models import AnonymousUser  # noqa
-from taiga6.users.models import AuthData, User  # noqa
+from taiga.exceptions.services import TaigaServiceException
+
+
+class GithubLoginError(TaigaServiceException):
+    ...
+
+
+class GithubLoginAuthenticationError(TaigaServiceException):
+    ...
+
+
+class GithubAPIError(TaigaServiceException):
+    ...

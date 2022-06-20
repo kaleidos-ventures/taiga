@@ -3,6 +3,7 @@ fastapi
 pydantic[email,dotenv]
 python-multipart
 uvicorn[standard]
+httpx
 
 # The task queue
 procrastinate

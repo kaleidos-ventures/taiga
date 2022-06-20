@@ -5,6 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from dataclasses import dataclass
 
-from django.contrib.auth.models import AnonymousUser  # noqa
-from taiga6.users.models import AuthData, User  # noqa
+
+@dataclass
+class GithubUserProfile:
+    github_id: str
+    email: str
+    full_name: str
+    bio: str

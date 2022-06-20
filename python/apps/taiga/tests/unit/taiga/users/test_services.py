@@ -124,7 +124,7 @@ async def test_verify_user_ok_no_project_invitation_token():
         assert info.project_invitation is None
 
         fake_token.denylist.assert_awaited_once()
-        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_active=False, is_system=False)
+        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_system=False)
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
         fake_token.get.assert_called_with("accept_project_invitation", False)
         fake_invitation_service.accept_project_invitation_from_token.assert_not_awaited()
@@ -159,7 +159,7 @@ async def test_verify_user_ok_with_accepting_project_invitation_token():
         assert info.project_invitation == project_invitation
 
         fake_token.denylist.assert_awaited_once()
-        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_active=False, is_system=False)
+        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_system=False)
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
         fake_token.get.assert_called_with("accept_project_invitation", False)
         fake_invitation_service.accept_project_invitation_from_token.assert_awaited_once_with(
@@ -196,7 +196,7 @@ async def test_verify_user_ok_without_accepting_project_invitation_token():
         assert info.project_invitation == project_invitation
 
         fake_token.denylist.assert_awaited_once()
-        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_active=False, is_system=False)
+        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_system=False)
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
         fake_token.get.assert_called_with("accept_project_invitation", False)
         not fake_invitation_service.accept_project_invitation_from_token.assert_awaited

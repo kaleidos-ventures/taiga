@@ -167,6 +167,7 @@ describe('Invite users to project from overview when user is admin', () => {
     typeEmailToInvite('user2@taiga.demo, user3@taiga.demo');
     addEmailToInvite();
     inviteUsers();
+    cy.getBySel('input-add-invites').should('not.exist');
 
     cy.url().then((url) => {
       const projectUrl =
@@ -201,6 +202,19 @@ describe('Invite users to project from overview when user is admin', () => {
     typeEmailToInvite('user2@taiga.demo');
     addEmailToInvite();
     cy.getBySel('user-list').should('exist');
+  });
+
+  it('Should show an added user to the list in the autocomplete list and avoid to added it again', () => {
+    openInvitationModal();
+    typeEmailToInvite('james');
+    cy.getBySel('suggestions-list').should('exist');
+    addEmailToInvite();
+    typeEmailToInvite('james');
+    cy.getBySel('suggestions-list').should('exist');
+    cy.getBySel('info-user').should('exist');
+    cy.getBySel('info-user')
+      .invoke('text')
+      .should('to.have.string', 'Already on the list');
   });
 
   it('Should add tag pending from an already sent invitation', () => {

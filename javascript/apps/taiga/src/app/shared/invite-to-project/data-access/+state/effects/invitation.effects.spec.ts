@@ -26,7 +26,13 @@ import {
 } from '../actions/invitation.action';
 import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { cold, hot } from 'jest-marbles';
-import { Contact, InvitationResponse, UserMockFactory } from '@taiga/data';
+import {
+  Contact,
+  InvitationResponse,
+  UserMockFactory,
+  MembershipMockFactory,
+  RegisteredContactMockFactory,
+} from '@taiga/data';
 import {
   selectInvitations,
   selectMembers,
@@ -221,6 +227,106 @@ describe('InvitationEffects', () => {
             text: searchText,
           },
           peopleAdded: [],
+        }),
+      });
+
+      expectObservable(effects.searchUser$).toBe('202ms a', {
+        a: searchUserSuccess({ suggestedUsers }),
+      });
+    });
+  });
+
+  it('Search user: suggested users and member', () => {
+    const user = UserMockFactory();
+    const member = MembershipMockFactory();
+    store.overrideSelector(selectMembers, [member]);
+    store.overrideSelector(selectUser, user);
+    const effects = spectator.inject(InvitationEffects);
+    const invitationApiService = spectator.inject(InvitationApiService);
+    const searchText: string = randWord();
+    const suggestedUsers: Contact[] = [
+      {
+        username: member.user.username,
+        fullName: member.user.fullName,
+        isMember: true,
+      },
+      {
+        username: `${searchText} ${randWord()}`,
+        fullName: randWord(),
+        email: randEmail(),
+      },
+    ];
+
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    testScheduler.run((helpers) => {
+      const { expectObservable, cold, hot } = helpers;
+
+      invitationApiService.searchUser.mockReturnValue(
+        cold('-b|', { b: suggestedUsers })
+      );
+
+      actions$ = hot('-a', {
+        a: searchUser({
+          searchUser: {
+            text: searchText,
+          },
+          peopleAdded: [],
+        }),
+      });
+
+      expectObservable(effects.searchUser$).toBe('202ms a', {
+        a: searchUserSuccess({ suggestedUsers }),
+      });
+    });
+  });
+
+  it('Search user: suggested users, member and already added to list', () => {
+    const user = UserMockFactory();
+    const member = MembershipMockFactory();
+    const addedToList = RegisteredContactMockFactory();
+    store.overrideSelector(selectMembers, [member]);
+    store.overrideSelector(selectUser, user);
+    const effects = spectator.inject(InvitationEffects);
+    const invitationApiService = spectator.inject(InvitationApiService);
+    const searchText: string = randWord();
+    const suggestedUsers: Contact[] = [
+      {
+        username: member.user.username,
+        fullName: member.user.fullName,
+        isMember: true,
+      },
+      {
+        username: addedToList.username,
+        fullName: addedToList.fullName,
+        isAddedToList: true,
+      },
+      {
+        username: `${searchText} ${randWord()}`,
+        fullName: randWord(),
+        email: randEmail(),
+      },
+    ];
+
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    testScheduler.run((helpers) => {
+      const { expectObservable, cold, hot } = helpers;
+
+      invitationApiService.searchUser.mockReturnValue(
+        cold('-b|', { b: suggestedUsers })
+      );
+
+      actions$ = hot('-a', {
+        a: searchUser({
+          searchUser: {
+            text: searchText,
+          },
+          peopleAdded: [addedToList],
         }),
       });
 

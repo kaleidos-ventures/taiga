@@ -6,8 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randBoolean, randEmail } from '@ngneat/falso';
-import { Invitation, InvitationInfo } from './invitation.model';
+import {
+  randBoolean,
+  randEmail,
+  randFullName,
+  randUserName,
+} from '@ngneat/falso';
+import { Contact, Invitation, InvitationInfo } from './invitation.model';
 import { MembershipMockFactory } from './membership.model.mock';
 import { ProjectMockFactory } from './project.model.mock';
 
@@ -29,5 +34,12 @@ export const InvitationInfoMockFactory = (): InvitationInfo => {
       slug: project.slug,
       isAnon: randBoolean(),
     },
+  };
+};
+
+export const RegisteredContactMockFactory = (): Contact => {
+  return {
+    fullName: randFullName(),
+    username: randUserName(),
   };
 };

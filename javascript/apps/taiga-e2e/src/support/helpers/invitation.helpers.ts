@@ -20,7 +20,7 @@ export const openInvitationModal = () => {
 };
 
 export const logout = () => {
-  cy.getBySel('user-settings').click();
+  cy.getBySel('user-settings').should('be.visible').click();
   cy.getBySel('log-out').should('be.visible').click();
 };
 

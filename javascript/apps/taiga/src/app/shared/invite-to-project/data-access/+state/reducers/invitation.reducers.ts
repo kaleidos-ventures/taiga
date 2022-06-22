@@ -35,6 +35,11 @@ export const initialState: InvitationState = {
 
 export const reducer = createReducer(
   initialState,
+  on(InvitationActions.inviteUsersSuccess, (state, action): InvitationState => {
+    state.invitations = action.allInvitationsOrdered;
+
+    return state;
+  }),
   on(
     RolesPermissionsActions.fetchMemberRolesSuccess,
     (state, { roles }): InvitationState => {

@@ -22,7 +22,6 @@ import {
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import {
-  Membership,
   Invitation,
   InvitationRequest,
   Project,
@@ -42,6 +41,7 @@ import {
   selectSuggestedUsers,
   selectUsersToInvite,
   selectSearchFinished,
+  selectInvitations,
 } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -87,13 +87,10 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public project!: Project;
 
   @Input()
-  public pending?: Invitation[];
+  public fromOverview?: boolean;
 
   @Input()
   public reset?: boolean;
-
-  @Input()
-  public members?: (Membership | Invitation)[];
 
   @Output()
   public closeModal = new EventEmitter();
@@ -136,6 +133,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public memberRoles$ = this.store.select(selectMemberRolesOrdered);
   public contacts$ = this.store.select(selectContacts);
   public suggestedUsers$ = this.store.select(selectSuggestedUsers);
+  public invitations$ = this.store.select(selectInvitations);
   public searchInProgress$ = this.store.select(selectSearchFinished);
   public usersToInvite$!: Observable<Partial<User>[]>;
   public validInviteIdentifier$!: Observable<RegExpMatchArray>;
@@ -143,6 +141,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public suggestedUsers: Contact[] = [];
   public suggestionSelected = 0;
   public elegibleSuggestions: number[] | undefined = [];
+  public pendingInvitations?: Invitation[];
   public search$: Subject<string | null> = new Subject();
   public notInBulkMode = true;
 
@@ -211,7 +210,10 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
 
     // when we add users to invite its necessary to add the result to the form
     this.usersToInvite$
-      .pipe(concatLatestFrom(() => this.store.select(selectUser)))
+      .pipe(
+        concatLatestFrom(() => this.store.select(selectUser)),
+        untilDestroyed(this)
+      )
       .subscribe(([userToInvite, currentUser]) => {
         userToInvite.forEach((user) => {
           const userAlreadyExist = this.users?.find((it: FormGroup) => {
@@ -222,12 +224,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
           const isCurrentUser = currentUser?.email
             ? currentUser?.email === user.email
             : currentUser?.username === user.username;
-          const isAlreadyProjectMember =
-            !!user.username &&
-            this.members
-              ?.filter((it) => !(it as Invitation).email)
-              ?.find((member) => member.user?.username === user.username);
-          if (!userAlreadyExist && !isCurrentUser && !isAlreadyProjectMember) {
+          if (!userAlreadyExist && !isCurrentUser) {
             this.users.splice(
               this.positionInArray(user),
               0,
@@ -239,20 +236,26 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
         this.emailInput?.nativeFocusableElement?.focus();
       });
 
-    this.memberRoles$.subscribe((memberRoles) => {
+    this.memberRoles$.pipe(untilDestroyed(this)).subscribe((memberRoles) => {
       this.orderedRoles = memberRoles;
     });
 
-    this.suggestedUsers$.subscribe((suggestedUsers) => {
-      this.suggestedUsers = suggestedUsers;
-      this.elegibleSuggestions = [];
-      this.suggestedUsers.forEach((it, i) => {
-        if (!it.isMember && !it.isAddedToList) {
-          this.elegibleSuggestions?.push(i);
-        }
-      });
-      this.suggestionSelected = this.elegibleSuggestions?.[0] || 0;
+    this.invitations$.pipe(untilDestroyed(this)).subscribe((invitations) => {
+      this.pendingInvitations = invitations;
     });
+
+    this.suggestedUsers$
+      .pipe(untilDestroyed(this))
+      .subscribe((suggestedUsers) => {
+        this.suggestedUsers = suggestedUsers;
+        this.elegibleSuggestions = [];
+        this.suggestedUsers.forEach((it, i) => {
+          if (!it.isMember && !it.isAddedToList) {
+            this.elegibleSuggestions?.push(i);
+          }
+        });
+        this.suggestionSelected = this.elegibleSuggestions?.[0] || 0;
+      });
   }
 
   public ngOnChanges(changes: SimpleChanges) {
@@ -304,7 +307,9 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   }
 
   public isPending(username: string) {
-    return !!this.pending?.find((it) => it.user?.username === username);
+    return !!this.pendingInvitations?.find(
+      (it) => it.user?.username === username
+    );
   }
 
   public getPeopleAdded() {
@@ -376,10 +381,12 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     const bulkErrors = this.inviteIdentifier
       .replace(this.regexpEmail, '')
       .replace(/[;,\s\n]/g, '');
-
     this.resetErrors();
     if (this.suggestionContactsDropdownActivate) {
-      this.includeSuggestedContact(this.suggestionSelected);
+      const user = this.suggestedUsers[this.suggestionSelected];
+      if (!user.isMember && !user.isAddedToList) {
+        this.includeSuggestedContact(this.suggestionSelected);
+      }
     } else if (this.inviteIdentifier === '') {
       this.inviteIdentifierErrors.required = true;
     } else if (!emailRgx) {

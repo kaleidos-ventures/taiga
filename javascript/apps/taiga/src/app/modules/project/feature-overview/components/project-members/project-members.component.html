@@ -80,8 +80,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           *ngIf="invitePeople"
           (closeModal)="invitePeopleModal()"
           [reset]="resetForm"
-          [members]="vm.members"
-          [pending]="vm.invitations"
+          [fromOverview]="true"
           [project]="vm.project"></tg-invite-to-project>
       </tg-ui-modal>
     </ng-container>

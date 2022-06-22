@@ -47,7 +47,7 @@ export class InvitationService {
 
   public matchUsersFromList(list: Contact[], textToMatch: string) {
     return list.filter((it: Contact) => {
-      const rgx = new RegExp(`^${textToMatch}`, 'g');
+      const rgx = new RegExp(`^${this.normalizeText(textToMatch)}`, 'g');
       const fullname = this.normalizeText(it.fullName);
       const username = it.username;
       const matches =

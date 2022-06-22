@@ -193,7 +193,7 @@ export class InvitationEffects {
         const addedUsersUsername = action.peopleAdded.map((j) => j.username);
         return this.invitationApiService
           .searchUser({
-            text: action.searchUser.text,
+            text: this.invitationService.normalizeText(action.searchUser.text),
             project: action.searchUser.project,
             excludedUsers: [
               userState.username,

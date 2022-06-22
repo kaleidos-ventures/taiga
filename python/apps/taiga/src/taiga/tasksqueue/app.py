@@ -10,6 +10,7 @@ from typing import Final
 
 from procrastinate import AiopgConnector, App, BaseConnector
 from procrastinate.testing import InMemoryConnector
+from taiga.base.utils import json
 from taiga.base.utils.tests import is_test_running
 from taiga.conf import settings
 
@@ -32,6 +33,8 @@ def initialize_app() -> App:
             password=settings.DB_PASSWORD,
             host=settings.DB_HOST,
             port=settings.DB_PORT,
+            json_dumps=json.dumps,
+            json_loads=json.loads,
         )
 
     return App(connector=connector, import_paths=autodiscover(ROOT_PACKAGE, TASKS_MODULE_NAME))

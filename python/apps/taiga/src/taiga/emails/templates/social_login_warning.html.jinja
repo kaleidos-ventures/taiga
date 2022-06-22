@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 
 <head>
-  <title> Reset your Taiga password </title>
+  <title> New log in to your Taiga account </title>
   <!--[if !mso]><!-->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!--<![endif]-->
@@ -405,8 +405,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 </head>
 
 <body style="word-spacing:normal;">
-  <div class="body" style=""> {% set reset_password_url = resolve_front_url("RESET_PASSWORD",
-      reset_password_token=reset_password_token) -%}
+  <div class="body" style="">
     <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="body-content-outlook" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     <div class="body-content" style="margin:0px auto;max-width:600px;">
       <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
@@ -418,7 +417,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
                   <tbody>
                     <tr>
-                      <td style="direction:ltr;font-size:0px;padding:0;padding-bottom:24px;text-align:center;">
+                      <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
                         <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
                         <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
                           <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
@@ -453,174 +452,88 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                           <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
                             <tbody>
                               <tr>
-                                <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">Reset your password</div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <!--[if mso | IE]></td></tr></table><![endif]-->
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!--[if mso | IE]></td></tr></table></td></tr><tr><td class="" width="600px" ><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-              <div style="margin:0px auto;max-width:600px;">
-                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-                  <tbody>
-                    <tr>
-                      <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
-                        <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
-                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                            <tbody>
-                              <tr>
-                                <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">We've received a request to reset your password. Click the button below to choose a new one:</div>
+                                <td align="left" class="dm-title" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">Hi {{ full_name }},</div>
                                 </td>
                               </tr>
                               <tr>
-                                <td align="center" vertical-align="middle" class="btn-primary" style="font-size:0px;padding:0 0 24px;padding-top:24px;word-break:break-word;">
-                                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;width:100%;line-height:100%;">
-                                    <tbody>
-                                      <tr>
-                                        <td align="center" bgcolor="#83EEDE" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px;text-align:center;background:#83EEDE;" valign="middle">
-                                          <a href="{{ reset_password_url }}" style="display:inline-block;background:#83EEDE;color:#505C74;font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:18px;font-weight:500;line-height:21px;margin:0;text-decoration:none;text-transform:none;padding:10px;mso-padding-alt:0px;border-radius:4px;" target="_blank" data-test="accept-reset-password"> Reset password </a>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
+                                <td align="left" class="tertiary-link dm-text " style="font-size:0px;padding:0;word-break:break-word;">
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">We noticed a log in to your Taiga account in a different way (<strong>{{login_method}}</strong>):</div>
                                 </td>
                               </tr>
                               <tr>
-                                <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Button not working? Copy and paste this URL into your web browser:</div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <!--[if mso | IE]></td></tr></table><![endif]-->
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!--[if mso | IE]></td></tr></table></td></tr><tr><td class="" width="600px" ><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-              <div style="margin:0px auto;max-width:600px;">
-                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-                  <tbody>
-                    <tr>
-                      <td style="direction:ltr;font-size:0px;padding:0;padding-bottom:24px;text-align:center;">
-                        <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
-                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                            <tbody>
-                              <tr>
-                                <td align="left" class="dm-text-gray primary-link" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-top:32px;padding-bottom:32px;word-break:break-word;">
                                   <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">
-                                    <table style="border-collapse:collapse;border:0;width:100%" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                    <ul class="list list-no-bullets">
+                                      <li><strong>Time:</strong> {{login_time | format_datetime}}</li>
+                                    </ul>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">If it wasn't you, please let us know here: <a class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> {{ settings.SUPPORT_EMAIL }}
+                                    </a><br></div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:16px;word-break:break-word;">
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">If this was you, you can safely ignore this email.</div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Cheers!</div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:48px;word-break:break-word;">
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Taiga team</div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td align="center" style="font-size:0px;padding:0;word-break:break-word;">
+                                  <p style="border-top:solid 1px #DADFE9;font-size:1px;margin:0px auto;width:100%;">
+                                  </p>
+                                  <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #DADFE9;font-size:1px;margin:0px auto;width:600px;" role="presentation" width="600px" ><tr><td style="height:0;line-height:0;"> &nbsp;
+</td></tr></table><![endif]-->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="font-size:0px;padding:0;word-break:break-word;">
+                                  <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+                                  <div style="margin:0px auto;max-width:600px;">
+                                    <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
                                       <tbody>
                                         <tr>
-                                          <td valign="top">
-                                            <p style="font-size:14px;line-height:21px;margin:0; text-align: left; word-break:break-all; ">
-                                              <a class="primary-link" href="{{ reset_password_url }}" style="word-wrap:break-word; word-break:break-all; font-family: Ubuntu, Arial, Helvetica, sans-serif;">{{ reset_password_url | wbr_split }}</a>
-                                            </p>
+                                          <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
+                                            <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
+                                            <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                                              <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                                                <tbody>
+                                                  <tr>
+                                                    <td style="vertical-align:top;padding-top:24px;">
+                                                      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
+                                                        <tbody>
+                                                          <tr>
+                                                            <td align="left" class="secondary-link dm-text" style="font-size:0px;padding:0;word-break:break-word;">
+                                                              <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a css-class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> Contact support </a></div>
+                                                            </td>
+                                                          </tr>
+                                                        </tbody>
+                                                      </table>
+                                                    </td>
+                                                  </tr>
+                                                </tbody>
+                                              </table>
+                                            </div>
+                                            <!--[if mso | IE]></td></tr></table><![endif]-->
                                           </td>
                                         </tr>
                                       </tbody>
                                     </table>
                                   </div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <!--[if mso | IE]></td></tr></table><![endif]-->
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!--[if mso | IE]></td></tr></table></td></tr><tr><td class="" width="600px" ><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-              <div style="margin:0px auto;max-width:600px;">
-                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-                  <tbody>
-                    <tr>
-                      <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
-                        <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
-                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                            <tbody>
-                              <tr>
-                                <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Taiga Team</div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <!--[if mso | IE]></td></tr></table><![endif]-->
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!--[if mso | IE]></td></tr></table></td></tr><tr><td class="" width="600px" ><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-              <div style="margin:0px auto;max-width:600px;">
-                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-                  <tbody>
-                    <tr>
-                      <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
-                        <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="separator-top-outlook separator-bottom-outlook" style="vertical-align:top;width:600px;" ><![endif]-->
-                        <div class="mj-column-per-100 mj-outlook-group-fix separator-top separator-bottom" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
-                            <tbody>
-                              <tr>
-                                <td style="vertical-align:top;padding:24px 0;">
-                                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
-                                    <tbody>
-                                      <tr>
-                                        <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:12px;font-weight:400;line-height:1.5;text-align:left;color:#384051;">If you didn’t request a reset, don’t worry, you can safely ignore this email.</div>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <!--[if mso | IE]></td></tr></table><![endif]-->
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!--[if mso | IE]></td></tr></table></td></tr><tr><td class="" width="600px" ><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-              <div style="margin:0px auto;max-width:600px;">
-                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-                  <tbody>
-                    <tr>
-                      <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
-                        <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
-                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
-                            <tbody>
-                              <tr>
-                                <td style="vertical-align:top;padding-top:24px;">
-                                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
-                                    <tbody>
-                                      <tr>
-                                        <td align="left" class="secondary-link dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> Contact support </a></div>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
+                                  <!--[if mso | IE]></td></tr></table><![endif]-->
                                 </td>
                               </tr>
                             </tbody>

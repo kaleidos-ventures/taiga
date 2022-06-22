@@ -4,11 +4,11 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-from enum import Enum
 
+import functools
+import json
 
-class Emails(Enum):
-    SIGN_UP = "sign_up"
-    RESET_PASSWORD = "reset_password"
-    PROJECT_INVITATION = "project_invitation"
-    SOCIAL_LOGIN_WARNING = "social_login_warning"
+from fastapi.encoders import jsonable_encoder
+
+dumps = functools.partial(json.dumps, default=jsonable_encoder)
+loads = json.loads

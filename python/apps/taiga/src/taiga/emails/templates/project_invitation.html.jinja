@@ -232,14 +232,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: #006385;
     }
 
-    .separator {
-      border-bottom: 1px solid #DADFE9;
+    .separator-top {
       border-top: 1px solid #DADFE9;
+    }
+
+    .separator-bottom {
+      border-bottom: 1px solid #DADFE9;
     }
 
     .list {
       margin: 0;
       padding: 0 16px 0 32px;
+    }
+
+    .list-no-bullets {
+      list-style-type: none;
+      padding: 0 16px;
     }
 
     strong {
@@ -591,14 +599,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
                   <tbody>
                     <tr>
-                      <td style="direction:ltr;font-size:0px;padding:0;padding-top:24px;text-align:center;">
+                      <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
                         <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
                         <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
                             <tbody>
                               <tr>
-                                <td align="left" class="secondary-link dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a css-class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> Contact support </a></div>
+                                <td style="vertical-align:top;padding-top:24px;">
+                                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
+                                    <tbody>
+                                      <tr>
+                                        <td align="left" class="secondary-link dm-text" style="font-size:0px;padding:0;word-break:break-word;">
+                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a css-class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> Contact support </a></div>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
                                 </td>
                               </tr>
                             </tbody>

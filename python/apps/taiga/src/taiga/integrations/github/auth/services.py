@@ -5,10 +5,10 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
 from taiga.auth import services as auth_services
 from taiga.auth.dataclasses import AccessWithRefreshToken
 from taiga.conf import settings
+from taiga.integrations import services as integrations_services
 from taiga.integrations.github import exceptions as ex
 from taiga.integrations.github import services as github_services
 from taiga.users import repositories as users_repositories
@@ -32,6 +32,7 @@ async def github_login(code: str) -> AccessWithRefreshToken:
     )
 
 
+# TODO: this may be a generic function `def social_login`
 async def _github_login(email: str, full_name: str, github_id: str, bio: str) -> AccessWithRefreshToken:
     # check if the user exists and already has github login
     user = await users_repositories.get_user_from_auth_data(key="github", value=github_id)
@@ -53,6 +54,12 @@ async def _github_login(email: str, full_name: str, github_id: str, bio: str) ->
                 user=user, new_values={"full_name": full_name, "password": None}
             )
             await users_repositories.verify_user(user)
+        elif user:
+            # the user existed and now is adding a new login method
+            # so we send her a warning email
+            await integrations_services.send_social_login_warning_email(
+                full_name=user.full_name, email=user.email, login_method="Github"
+            )
 
         await users_repositories.create_auth_data(user=user, key="github", value=github_id)
 

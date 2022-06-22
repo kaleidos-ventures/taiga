@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from datetime import datetime, timedelta, timezone
+
 import pytest
 from jinja2 import Environment, select_autoescape
 from taiga.emails.filters import load_filters
@@ -46,3 +48,42 @@ def test_wbr_split_with_custom_size(text, size, result):
 
     template = f"{{{{ '{text}' | wbr_split(size={size}) }}}}"
     assert env.from_string(template).render() == result
+
+
+#########################################################################################
+# format_datetime
+#########################################################################################
+
+
+@pytest.mark.parametrize(
+    "value, result",
+    [
+        ("2022-06-22T14:53:07.351464+02:00", "22/06/2022 14:53:07 (UTC+02:00)"),
+        (
+            datetime(2022, 6, 22, 14, 53, 7, 351464, tzinfo=timezone(timedelta(hours=2))),
+            "22/06/2022 14:53:07 (UTC+02:00)",
+        ),
+    ],
+)
+def test_format_datetime_with_default_format(value, result):
+    context = {"value": value}
+
+    template = "{{ value | format_datetime }}"
+    assert env.from_string(template).render(**context) == result
+
+
+@pytest.mark.parametrize(
+    "value, format, result",
+    [
+        ("2022-06-22T14:53:07.351464+02:00", "%b %d, %Y", "Jun 22, 2022"),
+        (datetime(2022, 6, 22, 14, 53, 7, 351464, tzinfo=timezone(timedelta(hours=2))), "%b %d, %Y", "Jun 22, 2022"),
+    ],
+)
+def test_format_datetime_with_custom_format(value, format, result):
+    context = {"value": value, "format": format}
+
+    template = "{{ value | format_datetime(format) }}"
+    assert env.from_string(template).render(**context) == result
+
+    template = "{{ value | format_datetime(format=format) }}"
+    assert env.from_string(template).render(**context) == result

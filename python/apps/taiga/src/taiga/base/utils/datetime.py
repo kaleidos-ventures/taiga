@@ -64,8 +64,9 @@ def epoch_to_datetime(ts: int) -> datetime:
 
 def display_lifetime(minutes: int) -> str:
     """
-    This function take minutes and rounding down to days.
-    If we don't have a full day than in hours and if we don't have a full hour then in minutes.
+    This function takes minutes and try to round them to days, hours or minutes.
+    If minutes are less than a day, then it returns hours.
+    If minutes are less than an hour, then it returns the minutes.
     """
     days = minutes // (24 * 60)
     if days > 0:

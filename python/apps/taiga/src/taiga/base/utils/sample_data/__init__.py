@@ -283,7 +283,7 @@ async def _create_project(
             color=fake.random_int(min=1, max=NUM_PROJECT_COLORS),
             owner=owner,
             workspace=workspace,
-            logo=logo_file,
+            logo=random.choice([None, logo_file]),
         )
 
     return project

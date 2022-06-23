@@ -8,8 +8,7 @@
   "social": {
     "github": {
       "authUrl": "https://github.com/login/oauth/authorize",
-      "clientId": "",
-      "redirectUri": "http://localhost:4200/signup/github"
+      "clientId": ""
     }
   }
 }

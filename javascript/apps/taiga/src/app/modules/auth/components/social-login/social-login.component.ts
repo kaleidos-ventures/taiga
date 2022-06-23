@@ -29,7 +29,7 @@ export class SocialLoginComponent implements OnInit {
     const githubConfig = this.config.social.github;
     const ghAuthUrl = githubConfig.authUrl;
     const clientId = githubConfig.clientId;
-    const redirectUri = `${githubConfig.redirectUri}?redirect=${this.router.url}`;
+    const redirectUri = `${window.location.origin}/signup/github?redirect=${this.router.url}`;
     return `${ghAuthUrl}?client_id=${clientId}&redirect_uri=${redirectUri}&state=github&scope=user:email`;
   }
 

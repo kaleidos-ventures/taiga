@@ -16,6 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           src="/assets/images/LogoTaiga.svg"
           alt="" />
         <h1 class="auth-title">{{ t('login.title') }}</h1>
+        <tg-social-login *ngIf="displaySocialNetworks"></tg-social-login>
         <ng-container *ngIf="queryParams$ | async as queryParams">
           <tg-login
             [projectInvitationToken]="queryParams.projectInvitationToken"

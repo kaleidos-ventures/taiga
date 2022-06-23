@@ -10,6 +10,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
+import { AuthService } from '../services/auth.service';
 @UntilDestroy()
 @Component({
   selector: 'tg-auth-feature-login',
@@ -20,7 +21,14 @@ import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 export class AuthFeatureLoginComponent implements OnInit {
   public queryParams$!: typeof this.route.queryParams;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {}
+
+  public get displaySocialNetworks() {
+    return this.authService.displaySocialNetworks();
+  }
 
   public ngOnInit() {
     this.queryParams$ = this.route.queryParams;

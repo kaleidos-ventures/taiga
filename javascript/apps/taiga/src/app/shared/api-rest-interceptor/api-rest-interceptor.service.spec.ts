@@ -24,7 +24,7 @@ import {
   loginSuccess,
   logout,
 } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
-import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
+import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { Router } from '@angular/router';
 import { AppService } from '~/app/services/app.service';
 

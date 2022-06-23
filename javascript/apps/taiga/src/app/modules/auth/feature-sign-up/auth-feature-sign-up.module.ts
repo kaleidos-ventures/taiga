@@ -11,7 +11,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { VerifyEmailGuard } from './verify-email.guard';
+import { VerifyEmailGuard } from '../guards/verify-email.guard';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { AuthFeatureSignUpComponent } from './auth-feature-sign-up.component';
@@ -22,6 +22,8 @@ import { AuthFeatureVerifyEmailComponent } from './components/verify-email/verif
 import { GetUrlPipeModule } from '~/app/shared/pipes/get-url.pipe.module';
 import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+import { GithubSignupGuard } from '../guards/github-signup.guard';
+import { SocialLoginModule } from '../components/social-login/social-login.module';
 
 const routes: Routes = [
   {
@@ -35,6 +37,11 @@ const routes: Routes = [
     path: 'verify/:path',
     children: [],
     canActivate: [VerifyEmailGuard],
+  },
+  {
+    path: 'github',
+    children: [],
+    canActivate: [GithubSignupGuard],
   },
 ];
 
@@ -57,6 +64,7 @@ const routes: Routes = [
     GetUrlPipeModule,
     InternalLinkModule,
     ButtonLoadingModule,
+    SocialLoginModule,
   ],
   providers: [
     {

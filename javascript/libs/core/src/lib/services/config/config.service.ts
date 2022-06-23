@@ -27,7 +27,15 @@ export class ConfigService {
     return this.config.ws;
   }
 
+  public get adminEmail(): string {
+    return this.config.adminEmail;
+  }
+
   public get supportEmail(): string {
     return this.config.supportEmail;
+  }
+
+  public get social() {
+    return this.config.social;
   }
 }

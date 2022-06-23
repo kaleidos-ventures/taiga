@@ -10,6 +10,14 @@ export interface Config {
   api: string;
   ws: string;
   defaultLanguage: 'en';
+  adminEmail: string;
   supportEmail: string;
   emailWs?: string;
+  social: {
+    github: {
+      authUrl: string;
+      clientId: string;
+      redirectUri: string;
+    };
+  };
 }

@@ -12,7 +12,7 @@ import { User } from '@taiga/data';
 import { WsService } from '@taiga/ws';
 import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { setUser } from './modules/auth/data-access/+state/actions/auth.actions';
-import { AuthService } from './modules/auth/data-access/services/auth.service';
+import { AuthService } from './modules/auth/services/auth.service';
 import { RouteHistoryService } from './shared/route-history/route-history.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, share, skip } from 'rxjs/operators';

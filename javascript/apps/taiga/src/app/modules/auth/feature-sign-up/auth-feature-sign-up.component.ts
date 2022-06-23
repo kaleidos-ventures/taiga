@@ -16,6 +16,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { InvitationParams } from '@taiga/data';
+import { AuthService } from '../services/auth.service';
 import { SignUp } from './models/sign-up.model';
 @UntilDestroy()
 @Component({
@@ -48,7 +49,15 @@ export class AuthFeatureSignUpComponent implements OnInit {
   };
   public readOnlyEmail = false;
 
-  constructor(private route: ActivatedRoute, private cd: ChangeDetectorRef) {}
+  constructor(
+    private route: ActivatedRoute,
+    private cd: ChangeDetectorRef,
+    private authService: AuthService
+  ) {}
+
+  public get displaySocialNetworks() {
+    return this.authService.displaySocialNetworks();
+  }
 
   public ngOnInit() {
     this.route.queryParams.pipe(untilDestroyed(this)).subscribe((params) => {

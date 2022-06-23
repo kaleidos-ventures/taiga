@@ -15,6 +15,7 @@ import { AppService } from '~/app/services/app.service';
 import { AuthEffects } from './auth.effects';
 import { Action } from '@ngrx/store';
 import {
+  githubSignup,
   login,
   loginSuccess,
   logout,
@@ -43,7 +44,7 @@ import {
 } from '@ngneat/falso';
 import { cold, hot } from 'jest-marbles';
 import { NavigationEnd, Router } from '@angular/router';
-import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
+import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
@@ -378,5 +379,26 @@ describe('AuthEffects', () => {
       ]);
       expect(buttonLoadingService.error).toHaveBeenCalled();
     });
+  });
+
+  it('social login - github', () => {
+    const code = randSequence({ size: 100 });
+
+    const authApiService = spectator.inject(AuthApiService);
+    const usersApiService = spectator.inject(UsersApiService);
+    const effects = spectator.inject(AuthEffects);
+    const auth = AuthMockFactory();
+    const user = UserMockFactory();
+
+    authApiService.githubSignUp.mockReturnValue(cold('-b|', { b: auth }));
+    usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
+
+    actions$ = hot('-a', { a: githubSignup({ code }) });
+
+    const expected = cold('---a', {
+      a: loginSuccess({ user, auth }),
+    });
+
+    expect(effects.githubSignUp$).toBeObservable(expected);
   });
 });

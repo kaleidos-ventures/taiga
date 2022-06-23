@@ -9,7 +9,7 @@
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
+import { AuthService } from '~/app/modules/auth/services/auth.service';
 @Component({
   selector: 'tg-navigation',
   templateUrl: './navigation.component.html',

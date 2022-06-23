@@ -72,6 +72,8 @@ Example without group scope:
 │   └── example.service.ts
 ├── models
 │   └── example.model.ts
+├── guard
+│   └── example.guard.ts
 ├── styles
 │   └── project-settings.css
 ├── services

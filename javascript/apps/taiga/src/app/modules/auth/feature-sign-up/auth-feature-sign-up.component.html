@@ -25,6 +25,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           alt="" />
         <h1 class="auth-title">{{ t('signup.title') }}</h1>
         <p class="auth-subtitle">{{ t('signup.subtitle') }}</p>
+        <tg-social-login *ngIf="displaySocialNetworks"></tg-social-login>
         <ng-container *ngIf="!displayForm">
           <button
             (click)="displaySignUpForm(true)"

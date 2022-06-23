@@ -1,0 +1,21 @@
+{#
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+#}
+
+Hi {{full_name}},
+
+We noticed a log in to your Taiga account in a different way ({{login_method}}):
+
+- Time: {{login_time | format_datetime}}
+
+If it wasn't you, please let us know here: {{ settings.SUPPORT_EMAIL }}
+If this was you, you can safely ignore this email.
+
+Cheers!
+Taiga team
+
+Need help? Contact support at {{ settings.SUPPORT_EMAIL }}

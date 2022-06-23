@@ -55,4 +55,4 @@ This are the step to generate the HTML of the final version:
 - Activate the 'Include a preview of each client with image blocking enabled'.
 
 3. Then, we'll paste our compiled html to the edit side and we'll save it.
-4. We should move to the tab 'Test' in the right section to see all the email clients previews. If we want to make changes in our html, we could but, it's necessary to saved to see every change and also, after that, click the 'Resubmit all screenshots' green button on the right side with the sync icon.
+4. We should move to the tab 'Test' in the right section to see all the email clients previews. You can make changes right in that HTML. After saving it, click the 'Resubmit all screenshots' green button on the right side with the sync icon.

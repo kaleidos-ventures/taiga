@@ -15,7 +15,7 @@ import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { Auth, ErrorManagementOptions, SignUpError } from '@taiga/data';
 import { NavigationEnd, Router } from '@angular/router';
-import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
+import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TuiNotification } from '@taiga-ui/core';
@@ -341,6 +341,68 @@ export class AuthEffects {
           }
 
           return AuthActions.newPasswordError({ status: httpResponse.status });
+        },
+      })
+    );
+  });
+
+  public githubSignUp$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.githubSignup),
+      pessimisticUpdate({
+        run: ({ code }) => {
+          return this.authApiService.githubSignUp({ code }).pipe(
+            mergeMap((auth: Auth) => {
+              this.authService.setAuth(auth);
+              return this.usersApiService.me().pipe(
+                map((user) => {
+                  this.authService.setUser(user);
+                  return { user, auth };
+                })
+              );
+            }),
+            map(({ user, auth }) => {
+              return AuthActions.loginSuccess({
+                user,
+                auth,
+              });
+            })
+          );
+        },
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          const status = httpResponse.status as keyof ErrorManagementOptions;
+          const signUpError = httpResponse.error as SignUpError;
+
+          if (
+            (status === 400 &&
+              signUpError.error.message === 'Github API is not responding.') ||
+            (status === 400 &&
+              signUpError.error.message === 'The provided code is not valid.')
+          ) {
+            void this.router.navigate([action.redirect], {
+              queryParams: { githubError: 'server' },
+            });
+          } else if (
+            status === 400 &&
+            signUpError.error.message ===
+              'Login with Github is not available. Contact with the platform administrators.'
+          ) {
+            void this.router.navigate([action.redirect], {
+              queryParams: { githubError: 'config' },
+            });
+          } else {
+            void this.router.navigate([action.redirect]);
+            this.appService.errorManagement(httpResponse, {
+              500: {
+                type: 'toast',
+                options: {
+                  label: 'errors.generic_toast_label',
+                  message: 'errors.please_refresh',
+                  status: TuiNotification.Error,
+                },
+              },
+            });
+          }
         },
       })
     );

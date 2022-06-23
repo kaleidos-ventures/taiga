@@ -43,6 +43,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
+:host-context(tg-auth-feature-login) {
+  & .auth-title {
+    margin-block-end: var(--spacing-24);
+  }
+}
+
+:host-context(tg-sign-up) {
+  & .auth-subtitle {
+    margin-block-end: var(--spacing-16);
+  }
+}
+
 .auth {
   display: grid;
   place-items: center;

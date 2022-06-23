@@ -5,8 +5,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-<mj-section mj-class="padding-top">
-  <mj-column>
+<mj-section>
+  <mj-column mj-class="padding-top-24">
     <mj-text css-class="secondary-link dm-text" mj-class="font-body color-gray70 dm-link">
       Need help?
       <a css-class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}" > Contact support </a>

@@ -17,7 +17,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <mj-column>
           <mj-text css-class="dm-title"
             mj-class="font-heading1 color-gray100">
+            {% if user.name -%}
             Hi {{ user.name }},
+            {% else %}
+            Hi there,
+            {% endif -%}
           </mj-text>
           <mj-text css-class="dm-subtitle"
             mj-class="font-heading2 color-gray90">
@@ -43,7 +47,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             consequat.
           </mj-text>
           <mj-text css-class="dm-text"
-            mj-class="padding-bottom font-body">
+            mj-class="padding-bottom-24 font-body">
             <ul class="list">
               <li>Item list very</li>
               <li>Item list very long xxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxx
@@ -61,7 +65,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             Button not working? Copy and paste this URL into your web browser:
           </mj-text>
           <mj-text css-class="dm-text-gray primary-link dm-link"
-            mj-class="font-body padding-bottom">
+            mj-class="font-body padding-bottom-24">
             <a
               href="https://taiga6.kaleidos.net/verify-email/396438bb-894a-4401-8d3b-7c0d22abaf5b">
               https://taiga6.kaleidos.net/verify-email/396438bb-894a-4401-8d3b-7c0d22abaf5b

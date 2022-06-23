@@ -9,7 +9,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
-import { AuthGuard } from './modules/auth/data-access/auth.guard';
+import { AuthGuard } from './modules/auth/guards/auth.guard';
 import { AuthFeatureLoginGuard } from './modules/auth/feature-login/auth-feature-login.guard';
 import { ProjectInvitationCTAGuard } from './modules/project/data-access/guards/project-invitation-cta.guard';
 import { ProjectInvitationGuard } from './modules/project/data-access/guards/project-invitation.guard';

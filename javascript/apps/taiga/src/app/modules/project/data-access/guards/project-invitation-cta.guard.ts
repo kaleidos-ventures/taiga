@@ -14,7 +14,7 @@ import { ConfigService } from '@taiga/core';
 import { InvitationInfo, Project } from '@taiga/data';
 import { of, throwError } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
-import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
+import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { AppService } from '~/app/services/app.service';
 
 @Injectable({

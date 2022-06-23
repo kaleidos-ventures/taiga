@@ -1,0 +1,42 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<ng-container *transloco="let t; read: 'auth'">
+  <div class="social-login">
+    <a
+      [attr.href]="githubOauthURL"
+      *ngIf="isGithubActive"
+      class="social-button">
+      <img
+        class="social-logo"
+        role="presentation"
+        src="/assets/images/social/github.svg"
+        alt="" />
+      {{ t('social.github') }}
+    </a>
+  </div>
+  <tg-ui-context-notification
+    class="social-error"
+    alertLevel="polite"
+    *ngIf="githubError"
+    status="error">
+    <span
+      *ngIf="githubError === 'config'"
+      [innerHTML]="
+        t('social.errors.github.config', {
+          admin: adminEmail
+        })
+      ">
+    </span>
+    <ng-container *ngIf="githubError === 'server'">
+      {{ t('social.errors.github.server') }}
+    </ng-container>
+  </tg-ui-context-notification>
+  <div class="login-separator">
+    <span class="login-separator-text">{{ t('social.separator') }}</span>
+  </div>
+</ng-container>

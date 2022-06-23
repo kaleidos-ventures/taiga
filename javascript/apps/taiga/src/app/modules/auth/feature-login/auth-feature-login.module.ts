@@ -18,6 +18,7 @@ import { AuthFeatureLoginComponent } from './auth-feature-login.component';
 import { LoginComponent } from './components/login/login.component';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 import { AuthForestModule } from '../components/auth-forest/auth-forest.module';
+import { SocialLoginModule } from '../components/social-login/social-login.module';
 
 const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
 
@@ -43,6 +44,7 @@ const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
     ContextNotificationModule,
     ButtonLoadingModule,
     AuthForestModule,
+    SocialLoginModule,
   ],
 })
 export class AuthFeatureLoginModule {}

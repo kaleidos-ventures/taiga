@@ -8,6 +8,7 @@
 
 import { Injectable } from '@angular/core';
 import { AuthApiService } from '@taiga/api';
+import { ConfigService } from '@taiga/core';
 import { Auth, User } from '@taiga/data';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
@@ -19,7 +20,8 @@ export class AuthService {
 
   constructor(
     private localStorageService: LocalStorageService,
-    private authApiService: AuthApiService
+    private authApiService: AuthApiService,
+    private config: ConfigService
   ) {}
 
   public isLogged() {
@@ -64,5 +66,10 @@ export class AuthService {
         });
       }
     }, 1000 * 3600 * 3);
+  }
+
+  public displaySocialNetworks() {
+    // This boolean should be updated with upcoming social networks
+    return !!this.config.social && !!this.config.social.github;
   }
 }

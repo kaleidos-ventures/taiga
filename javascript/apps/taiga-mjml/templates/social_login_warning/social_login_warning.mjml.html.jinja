@@ -1,0 +1,60 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<mjml>
+  <mj-head>
+    <mj-title>New log in to your Taiga account</mj-title>
+    <mj-include path="../../components/head.mjml" />
+  </mj-head>
+  <mj-body css-class="body">
+    <mj-wrapper css-class="body-content">
+      <mj-include path="../../components/header-logo.mjml" />
+      <mj-section mj-class="padding-section">
+        <mj-column>
+          <mj-text css-class="dm-title"
+            mj-class="font-heading1 color-gray100">
+            Hi {{ full_name }},
+          </mj-text>
+          <mj-text css-class="tertiary-link dm-text "
+            mj-class="font-body">
+            We noticed a log in to your Taiga account in a different way
+            (<strong>{{login_method}}</strong>):
+          </mj-text>
+          <mj-text css-class="dm-text"
+            mj-class="padding-top-32 padding-bottom-32 font-body">
+            <ul class="list list-no-bullets">
+              <li><strong>Time:</strong> {{login_time | format_datetime}}</li>
+            </ul>
+          </mj-text>
+          <mj-text css-class="dm-text"
+            mj-class="font-body">
+            If it wasn't you, please let us know here: <a class="secondary-link"
+              href="mailto:{{ settings.SUPPORT_EMAIL }}"> {{
+              settings.SUPPORT_EMAIL }}
+            </a><br>
+          </mj-text>
+          <mj-text css-class="dm-text"
+            mj-class="padding-paragraph font-body">
+            If this was you, you can safely ignore this email.
+          </mj-text>
+          <mj-text css-class="dm-text"
+            mj-class="font-body">
+            Cheers!
+          </mj-text>
+          <mj-text css-class="dm-text"
+            mj-class="font-body padding-bottom-48">
+            Taiga team
+          </mj-text>
+          <mj-divider border-width="1px"
+            border-color="#DADFE9"
+            padding="0" />
+          <mj-include path="../../components/footer.mjml" />
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+  </mj-body>
+</mjml>

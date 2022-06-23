@@ -2,6 +2,14 @@
   "api": "http://localhost:8000/api/v2",
   "ws": "ws://localhost:8080",
   "defaultLanguage": "en",
+  "adminEmail": "admin@taiga.io",
   "supportEmail": "support@taiga.io",
-  "emailWs": "ws://localhost:8090"
+  "emailWs": "ws://localhost:8090",
+  "social": {
+    "github": {
+      "authUrl": "https://github.com/login/oauth/authorize",
+      "clientId": "",
+      "redirectUri": "http://localhost:4200/signup/github"
+    }
+  }
 }

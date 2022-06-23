@@ -18,7 +18,7 @@ import { throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
 import { loginSuccess } from '../data-access/+state/actions/auth.actions';
-import { AuthService } from '../data-access/services/auth.service';
+import { AuthService } from '../services/auth.service';
 
 type InvitationVerification = Pick<InvitationInfo, 'project'>;
 type VerificationData = {

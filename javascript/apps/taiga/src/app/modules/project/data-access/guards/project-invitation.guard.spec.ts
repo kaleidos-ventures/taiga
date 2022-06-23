@@ -17,7 +17,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { InvitationInfoMockFactory } from '@taiga/data';
 
-import { AuthService } from '~/app/modules/auth/data-access/services/auth.service';
+import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { ProjectInvitationGuard } from './project-invitation.guard';
 import { AppService } from '~/app/services/app.service';
 

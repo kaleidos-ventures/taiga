@@ -5,7 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-<mj-column css-class="separator" mj-class="full-width padding-section">
+<mj-column css-class="separator-top separator-bottom" mj-class="full-width padding-section">
   <mj-text css-class="dm-text" mj-class="font-small color-gray90">
     This link will expire in {{ display_lifetime(settings.VERIFY_USER_TOKEN_LIFETIME) }}.
   </mj-text>

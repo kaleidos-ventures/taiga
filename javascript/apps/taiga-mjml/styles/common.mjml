@@ -141,14 +141,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     color: #006385;
   }
 
-  .separator {
-    border-bottom: 1px solid #DADFE9;
+  .separator-top {
     border-top: 1px solid #DADFE9;
+  }
+
+  .separator-bottom {
+    border-bottom: 1px solid #DADFE9;
   }
 
   .list {
     margin: 0;
     padding: 0 16px 0 32px;
+  }
+
+  .list-no-bullets {
+    list-style-type: none;
+    padding: 0 16px;
   }
 
   strong {

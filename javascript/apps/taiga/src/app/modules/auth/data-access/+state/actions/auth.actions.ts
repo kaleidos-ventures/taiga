@@ -63,6 +63,14 @@ export const signUpSuccess = createAction(
   props<{ email: User['email'] }>()
 );
 
+export const githubSignup = createAction(
+  '[Auth] Github sign up',
+  props<{
+    code: string;
+    redirect?: string;
+  }>()
+);
+
 export const resendSuccess = createAction('[Auth] resend sucess');
 
 export const signUpError = createAction(

@@ -31,8 +31,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   &::ng-deep {
     & .link {
-      margin-inline-start: var(--spacing-4);
-
       & .t-content {
         @mixin font-paragraph;
 
@@ -80,12 +78,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   &::ng-deep {
-    & .content {
-      color: var(--color-info80);
-    }
-
-    & .link .t-content {
-      color: var(--color-info80) !important;
+    & .link,
+    & .t-content {
+      color: var(--color-red80) !important;
+      font-weight: var(--font-weight-medium);
+      text-decoration: underline;
     }
 
     & .close-button tui-wrapper {
@@ -112,8 +109,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   &::ng-deep {
-    & .link .t-content {
-      color: var(--color-ok80) !important;
+    & .link,
+    & .t-content {
+      color: var(--color-red80) !important;
+      font-weight: var(--font-weight-medium);
+      text-decoration: underline;
     }
 
     & .close-button tui-wrapper {
@@ -140,8 +140,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   &::ng-deep {
-    & .link .t-content {
+    & .link,
+    & .t-content {
       color: var(--color-red80) !important;
+      font-weight: var(--font-weight-medium);
+      text-decoration: underline;
     }
 
     & .close-button tui-wrapper {
@@ -168,8 +171,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   &::ng-deep {
-    & .link .t-content {
-      color: var(--color-warning80) !important;
+    & .link,
+    & .t-content {
+      color: var(--color-red80) !important;
+      font-weight: var(--font-weight-medium);
+      text-decoration: underline;
     }
 
     & .close-button tui-wrapper {
@@ -196,8 +202,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   &::ng-deep {
-    & .link .t-content {
-      color: var(--color-notice80) !important;
+    & .link,
+    & .t-content {
+      color: var(--color-red80) !important;
+      font-weight: var(--font-weight-medium);
+      text-decoration: underline;
     }
 
     & .close-button tui-wrapper {

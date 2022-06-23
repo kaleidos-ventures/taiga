@@ -7,8 +7,9 @@
  */
 
 import { createAction, props } from '@ngrx/store';
+import { WSResponse } from './ws.model';
 
 export const wsMessage = createAction(
   '[Ws] message',
-  props<{ data: { [key in PropertyKey]: unknown } }>()
+  props<{ data: WSResponse }>()
 );

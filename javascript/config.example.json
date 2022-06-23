@@ -1,6 +1,6 @@
 {
   "api": "http://localhost:8000/api/v2",
-  "ws": "ws://localhost:8080",
+  "ws": "ws://localhost:8000/events/",
   "defaultLanguage": "en",
   "adminEmail": "admin@taiga.io",
   "supportEmail": "support@taiga.io",

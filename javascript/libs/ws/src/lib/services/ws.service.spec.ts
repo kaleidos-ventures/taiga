@@ -16,6 +16,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { cold, hot } from 'jest-marbles';
+import { WSResponseActionSuccess, WSResponseEvent } from '../ws.model';
 
 describe('WsService', () => {
   let actions$ = new Observable<Action>();
@@ -36,22 +37,53 @@ describe('WsService', () => {
     service = spectator.inject(WsService);
   });
 
-  it('filter ws events by type', () => {
+  it('filter ws events', () => {
     const event = {
       data: {
-        type: 'test-action',
-        msg: 'test',
-      },
+        type: 'event',
+        channel: 'test-action',
+        event: {
+          type: 'test',
+          content: 'content',
+        },
+      } as WSResponseEvent<string>,
     };
 
     actions$ = hot('-a', { a: wsMessage(event) });
 
     const wsEvents$ = createEffect(() => {
-      return service.events<{ type: string; msg: string }>('test-action');
+      return service.events('test-action');
     });
 
     const expected = cold('-a', {
       a: event.data,
+    });
+
+    expect(wsEvents$).toBeObservable(expected);
+  });
+
+  it('filter ws actions', () => {
+    const wsAction = {
+      data: {
+        type: 'action',
+        status: 'ok',
+        action: {
+          command: 'test-action',
+        },
+        content: {
+          channel: 'test',
+        },
+      } as WSResponseActionSuccess,
+    };
+
+    actions$ = hot('-a', { a: wsMessage(wsAction) });
+
+    const wsEvents$ = createEffect(() => {
+      return service.action('test-action', 'test');
+    });
+
+    const expected = cold('-a', {
+      a: wsAction.data,
     });
 
     expect(wsEvents$).toBeObservable(expected);

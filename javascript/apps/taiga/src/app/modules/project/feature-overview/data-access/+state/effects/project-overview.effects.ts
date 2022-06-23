@@ -24,6 +24,7 @@ import {
   selectMembers,
 } from '../selectors/project-overview.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
+import { WsService } from '@taiga/ws';
 
 @Injectable()
 export class ProjectOverviewEffects {
@@ -141,9 +142,20 @@ export class ProjectOverviewEffects {
     );
   });
 
+  public wsUpdateInvitations$ = createEffect(() => {
+    return this.wsService
+      .events<{ project: string }>({ type: 'invitations.create' })
+      .pipe(
+        map(() => {
+          return ProjectOverviewActions.eventInvitation();
+        })
+      );
+  });
+
   constructor(
     private store: Store,
     private actions$: Actions,
-    private projectApiService: ProjectApiService
+    private projectApiService: ProjectApiService,
+    private wsService: WsService
   ) {}
 }

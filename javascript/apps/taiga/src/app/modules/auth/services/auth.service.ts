@@ -10,6 +10,7 @@ import { Injectable } from '@angular/core';
 import { AuthApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 import { Auth, User } from '@taiga/data';
+import { WsService } from '@taiga/ws';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 @Injectable({
@@ -21,7 +22,8 @@ export class AuthService {
   constructor(
     private localStorageService: LocalStorageService,
     private authApiService: AuthApiService,
-    private config: ConfigService
+    private config: ConfigService,
+    private wsService: WsService
   ) {}
 
   public isLogged() {
@@ -36,6 +38,7 @@ export class AuthService {
   }
 
   public setAuth(auth: Auth) {
+    this.wsService.command('signin', { token: auth.token }).subscribe();
     return this.localStorageService.set('auth', auth);
   }
 
@@ -48,6 +51,7 @@ export class AuthService {
   }
 
   public logout() {
+    this.wsService.command('signout').subscribe();
     this.localStorageService.remove('user');
     this.localStorageService.remove('auth');
 

@@ -8,8 +8,8 @@
 
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
-import { filter, map, take, timeout } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { concatMap, filter, map, take, tap, timeout } from 'rxjs/operators';
 import { Actions, ofType } from '@ngrx/effects';
 import { wsMessage } from '../ws.actions';
 import { ConfigService } from '@taiga/core';
@@ -21,6 +21,8 @@ import { WSResponse, WSResponseAction, WSResponseEvent } from '../ws.model';
 export class WsService {
   private ws!: WebSocket;
   private messages: Subject<WSResponse> = new Subject();
+  private connected$ = new BehaviorSubject(false);
+  private token?: string;
 
   constructor(
     private config: ConfigService,
@@ -28,38 +30,53 @@ export class WsService {
     private actions$: Actions
   ) {}
 
-  public static isEvent<T>(channel: string, eventType?: string) {
+  public static isEvent<T>(eventFilter: { channel?: string; type?: string }) {
     return (source$: Observable<ReturnType<typeof wsMessage>>) =>
       source$.pipe(
         map((response) => response.data),
         filter((data): data is WSResponseEvent<T> => {
-          if (data.type === 'event' && data.channel === channel) {
-            if (eventType !== undefined) {
-              return eventType === data.event.type;
-            }
-
-            return true;
+          return data.type === 'event';
+        }),
+        filter((data) => {
+          if (eventFilter.channel !== undefined) {
+            return data.channel === eventFilter.channel;
           }
 
-          return false;
+          return true;
+        }),
+        filter((data) => {
+          if (eventFilter.type !== undefined) {
+            return eventFilter.type === data.event.type;
+          }
+
+          return true;
         })
       );
   }
 
-  public static isAction(command: string, channel?: string) {
+  public static isAction(actionFilter: { channel?: string; command?: string }) {
     return (source$: Observable<ReturnType<typeof wsMessage>>) =>
       source$.pipe(
         map((response) => response.data),
         filter((data): data is WSResponseAction => {
-          if (data.type === 'action' && data.action.command === command) {
-            if (channel !== undefined && 'channel' in data.content) {
-              return channel === data.content.channel;
-            }
-
-            return true;
+          return data.type === 'action';
+        }),
+        filter((data) => {
+          if (actionFilter.channel !== undefined) {
+            return (
+              'channel' in data.content &&
+              actionFilter.channel === data.content.channel
+            );
           }
 
-          return false;
+          return true;
+        }),
+        filter((data) => {
+          if (actionFilter.command !== undefined) {
+            return actionFilter.command === data.action.command;
+          }
+
+          return true;
         })
       );
   }
@@ -68,11 +85,21 @@ export class WsService {
     return this.messages.asObservable();
   }
 
-  public listen() {
+  public listen(token?: string) {
+    if (this.ws) {
+      this.ws.close();
+    }
+
+    this.token = token;
+
     if (!this.config.wsUrl) {
       throw new Error('Invalid ws url');
     } else {
       this.ws = new WebSocket(this.config.wsUrl);
+
+      if (token) {
+        this.command('signin', { token }).subscribe();
+      }
 
       this.ws.addEventListener('message', (event) => {
         const data = JSON.parse(event.data as string) as WSResponse;
@@ -83,23 +110,18 @@ export class WsService {
       });
 
       this.ws.addEventListener('open', () => {
+        this.connected$.next(true);
         this.pingPong();
       });
     }
   }
 
-  public events<T>(channel: string, eventType?: string) {
-    return this.actions$.pipe(
-      ofType(wsMessage),
-      WsService.isEvent<T>(channel, eventType)
-    );
+  public events<T>(filter: { channel?: string; type?: string }) {
+    return this.actions$.pipe(ofType(wsMessage), WsService.isEvent<T>(filter));
   }
 
-  public action(command: string, channel?: string) {
-    return this.actions$.pipe(
-      ofType(wsMessage),
-      WsService.isAction(command, channel)
-    );
+  public action(filter: { channel?: string; command?: string }) {
+    return this.actions$.pipe(ofType(wsMessage), WsService.isAction(filter));
   }
 
   public pingPong() {
@@ -113,24 +135,32 @@ export class WsService {
           () => {
             console.error('ping pong timeout');
             this.ws.close();
-            this.listen();
+            this.listen(this.token);
           }
         );
     }, 60000);
   }
 
-  public command(name: string) {
-    this.ws.send(
-      JSON.stringify({
-        command: name,
-      })
-    );
-
-    return this.getMessages().pipe(
-      filter(
-        (response): response is WSResponseAction =>
-          response.type === 'action' && response.action.command === name
-      ),
+  public command(name: string, extra = {}) {
+    return this.connected$.pipe(
+      filter((connected) => connected),
+      tap(() => {
+        this.ws.send(
+          JSON.stringify({
+            command: name,
+            ...extra,
+          })
+        );
+      }),
+      concatMap(() => {
+        return this.getMessages().pipe(
+          filter((response): response is WSResponseAction => {
+            return (
+              response.type === 'action' && response.action.command === name
+            );
+          })
+        );
+      }),
       take(1)
     );
   }

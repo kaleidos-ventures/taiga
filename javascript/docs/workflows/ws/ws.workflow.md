@@ -8,15 +8,17 @@ import { WsService } from '@taiga/ws';
 @Injectable()
 export class TodoListEffects {
   public wsUpdateTask$ = createEffect(() => {
-    return this.wsService.events<Task>('update-task').pipe(
-      map((response) => {
-        const task = response.event.content;
-        return TodoListActions.changeTaskSuccess({
-          taskId: task.id,
-          completed: task.completed,
-        });
-      })
-    );
+    return this.wsService
+      .events<Task>({ type: 'update-task', channel: 'user' })
+      .pipe(
+        map((response) => {
+          const task = response.event.content;
+          return TodoListActions.changeTaskSuccess({
+            taskId: task.id,
+            completed: task.completed,
+          });
+        })
+      );
   });
 
   constructor(private wsService: WsService) {}
@@ -33,11 +35,13 @@ import { WsService } from '@taiga/ws';
 @Injectable()
 export class TodoListEffects {
   public wsUpdateTask$ = createEffect(() => {
-    return this.wsService.action('update-task').pipe(
-      map(() => {
-        return TodoListActions.changeTaskSuccess();
-      })
-    );
+    return this.wsService
+      .action({ command: 'signin', channel: 'users' })
+      .pipe(
+        map(() => {
+          return AuthActions.eventsSingninSuccess();
+        })
+      );
   });
 
   constructor(private wsService: WsService) {}
@@ -48,7 +52,7 @@ export class TodoListEffects {
 
 ```ts
 this.wsService
-  .command('test-command')
+  .command('signin', { token: '1234' })
   .pipe(timeout(2000))
   .subscribe(
     (result) => {

@@ -22,6 +22,7 @@ export interface ProjectOverviewState {
   hasMoreMembers: boolean;
   hasMoreInvitations: boolean;
   loadingMoreMembers: boolean;
+  hasInvitation: boolean;
 }
 
 export const initialState: ProjectOverviewState = {
@@ -34,6 +35,7 @@ export const initialState: ProjectOverviewState = {
   hasMoreMembers: true,
   hasMoreInvitations: true,
   loadingMoreMembers: false,
+  hasInvitation: false,
 };
 
 export const reducer = createReducer(
@@ -134,6 +136,11 @@ export const reducer = createReducer(
 
       state.members = [member, ...state.members];
     }
+
+    return state;
+  }),
+  on(ProjectOverviewActions.eventInvitation, (state): ProjectOverviewState => {
+    state.hasInvitation = true;
 
     return state;
   })

@@ -48,8 +48,10 @@ export class AppComponent {
       share()
     );
 
+    const auth = this.authService.getAuth();
+
     this.routeHistoryService.listen();
-    this.wsService.listen();
+    this.wsService.listen(auth?.token);
     this.authService.autoRefresh();
 
     const user = this.localStorageService.get<User>('user');

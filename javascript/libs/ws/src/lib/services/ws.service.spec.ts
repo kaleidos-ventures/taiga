@@ -14,7 +14,7 @@ import { createEffect } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { cold, hot } from 'jest-marbles';
 import { WSResponseActionSuccess, WSResponseEvent } from '../ws.model';
 
@@ -52,7 +52,7 @@ describe('WsService', () => {
     actions$ = hot('-a', { a: wsMessage(event) });
 
     const wsEvents$ = createEffect(() => {
-      return service.events('test-action');
+      return service.events({ channel: 'test-action' });
     });
 
     const expected = cold('-a', {
@@ -79,7 +79,7 @@ describe('WsService', () => {
     actions$ = hot('-a', { a: wsMessage(wsAction) });
 
     const wsEvents$ = createEffect(() => {
-      return service.action('test-action', 'test');
+      return service.action({ command: 'test-action', channel: 'test' });
     });
 
     const expected = cold('-a', {
@@ -87,5 +87,35 @@ describe('WsService', () => {
     });
 
     expect(wsEvents$).toBeObservable(expected);
+  });
+
+  it('run command', (done) => {
+    service['ws'] = {
+      send: jest.fn(),
+    } as any;
+
+    const messages = new BehaviorSubject(null) as any;
+    const message = {
+      type: 'action',
+      action: {
+        command: 'test',
+      },
+    };
+
+    service.getMessages = () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return messages.asObservable();
+    };
+
+    service.command('test').subscribe((result) => {
+      expect(service['ws'].send).toHaveBeenCalled();
+      expect(message).toBe(result);
+      done();
+    });
+
+    expect(service['ws'].send).not.toHaveBeenCalled();
+
+    messages.next(message);
+    service['connected$'].next(true);
   });
 });

@@ -25,7 +25,10 @@ import {
 import { Invitation, Project, User } from '@taiga/data';
 import { RxState } from '@rx-angular/state';
 import { map } from 'rxjs/operators';
-import { selectInvitations } from './data-access/+state/selectors/project-overview.selectors';
+import {
+  selectHasInvitation,
+  selectInvitations,
+} from './data-access/+state/selectors/project-overview.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import {
@@ -62,8 +65,9 @@ export class ProjectFeatureOverviewComponent
 
   public readonly model$ = this.state.select().pipe(
     map((state) => {
-      let invitation = null;
-      if (state.user) {
+      let invitation = state.hasInvitation;
+      if (state.user && !state.hasInvitation) {
+        // TODO: move to api
         invitation = state.invitations.some((invitation) =>
           invitation.email
             ? invitation.email.toLowerCase() === state.user?.email.toLowerCase()
@@ -74,7 +78,7 @@ export class ProjectFeatureOverviewComponent
 
       return {
         ...state,
-        haveInvitation: invitation,
+        hasInvitation: invitation,
       };
     })
   );
@@ -87,7 +91,7 @@ export class ProjectFeatureOverviewComponent
     private cd: ChangeDetectorRef,
     private state: RxState<{
       project: Project;
-      haveInvitation: boolean;
+      hasInvitation: boolean;
       invitations: Invitation[];
       notificationClosed: boolean;
       onAcceptedInvitation: boolean;
@@ -108,6 +112,8 @@ export class ProjectFeatureOverviewComponent
       'onAcceptedInvitation',
       this.store.select(selectOnAcceptedInvitation)
     );
+
+    this.state.connect('hasInvitation', this.store.select(selectHasInvitation));
   }
 
   public ngOnInit() {

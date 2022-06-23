@@ -34,4 +34,8 @@ export const nextMembersPage = createAction(
   '[Project overview] next members page'
 );
 
+export const eventInvitation = createAction(
+  '[Project overview][ws] invitation received'
+);
+
 export const resetOverview = createAction('[Project overview] reset overview');

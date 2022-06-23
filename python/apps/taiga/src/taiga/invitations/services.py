@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from taiga.base.api.pagination import Pagination
 from taiga.base.utils import emails
 from taiga.conf import settings
 from taiga.emails.emails import Emails
@@ -47,20 +48,32 @@ async def get_public_project_invitation(token: str) -> PublicInvitation | None:
     return None
 
 
-async def get_project_invitations(project: Project, user: User) -> list[Invitation]:
+async def get_paginated_project_invitations(
+    project: Project, user: User, offset: int, limit: int
+) -> tuple[Pagination, list[Invitation]]:
+    pagination = Pagination(offset=offset, limit=limit, total=0)
+
     if user.is_anonymous:
-        return []
+        return pagination, []
 
     role = await roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
 
     if role and role.is_admin:
-        return await invitations_repositories.get_project_invitations(
+        invitations = await invitations_repositories.get_project_invitations(
+            project_slug=project.slug, status=InvitationStatus.PENDING, offset=offset, limit=limit
+        )
+        total_invitations = await invitations_repositories.get_total_project_invitations(
             project_slug=project.slug, status=InvitationStatus.PENDING
         )
     else:
-        return await invitations_repositories.get_project_invitations(
-            project_slug=project.slug, status=InvitationStatus.PENDING, user=user
+        invitations = await invitations_repositories.get_project_invitations(
+            project_slug=project.slug, status=InvitationStatus.PENDING, user=user, offset=offset, limit=limit
         )
+        total_invitations = len(invitations)
+
+    pagination.total = total_invitations
+
+    return pagination, invitations
 
 
 async def get_project_invitation_by_user(project_slug: str, user: User) -> Invitation | None:

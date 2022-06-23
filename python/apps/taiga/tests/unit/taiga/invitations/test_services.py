@@ -100,7 +100,7 @@ async def test_get_public_project_invitation_error_invitation_not_exists():
 
 
 #######################################################
-# get_project_invitations
+# get_paginated_project_invitations
 #######################################################
 
 
@@ -115,9 +115,17 @@ async def test_get_project_invitations_ok_admin():
         fake_invitations_repo.get_project_invitations.return_value = [invitation]
         fake_roles_repo.get_role_for_user.return_value = role_admin
 
-        invitations = await services.get_project_invitations(project=invitation.project, user=invitation.project.owner)
+        pagination, invitations = await services.get_paginated_project_invitations(
+            project=invitation.project, user=invitation.project.owner, offset=0, limit=10
+        )
 
         fake_invitations_repo.get_project_invitations.assert_awaited_once_with(
+            project_slug=invitation.project.slug,
+            status=InvitationStatus.PENDING,
+            offset=pagination.offset,
+            limit=pagination.limit,
+        )
+        fake_invitations_repo.get_total_project_invitations.assert_awaited_once_with(
             project_slug=invitation.project.slug, status=InvitationStatus.PENDING
         )
         assert invitations == [invitation]
@@ -134,11 +142,18 @@ async def test_get_project_invitations_ok_not_admin():
         fake_invitations_repo.get_project_invitations.return_value = [invitation]
         fake_roles_repo.get_role_for_user.return_value = not_admin_role
 
-        invitations = await services.get_project_invitations(project=invitation.project, user=invitation.user)
+        pagination, invitations = await services.get_paginated_project_invitations(
+            project=invitation.project, user=invitation.user, offset=0, limit=10
+        )
 
         fake_invitations_repo.get_project_invitations.assert_awaited_once_with(
-            project_slug=invitation.project.slug, user=invitation.user, status=InvitationStatus.PENDING
+            project_slug=invitation.project.slug,
+            user=invitation.user,
+            status=InvitationStatus.PENDING,
+            offset=pagination.offset,
+            limit=pagination.limit,
         )
+
         assert invitations == [invitation]
 
 
@@ -229,24 +244,6 @@ async def test_send_project_invitations_for_new_user(tqmanager):
         assert args["context"]["project_slug"] == invitation.project.slug
         assert args["context"]["receiver_name"] is None
         assert args["context"]["sender_name"] == invitation.invited_by.full_name
-
-
-#######################################################
-# get_project_invitations
-#######################################################
-
-
-async def test_get_project_invitations():
-    user = f.build_user()
-    project = f.build_project(owner=user)
-    with (
-        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
-    ):
-        await services.get_project_invitations(project=project, user=user)
-
-        fake_roles_repo.get_role_for_user.assert_awaited_once()
-        fake_invitations_repo.get_project_invitations.assert_awaited_once()
 
 
 #######################################################

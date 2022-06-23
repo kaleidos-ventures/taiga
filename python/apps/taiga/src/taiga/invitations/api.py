@@ -5,8 +5,9 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from fastapi import Query
+from fastapi import Depends, Query, Response
 from taiga.base.api import Request
+from taiga.base.api.pagination import PaginationQuery, set_pagination
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
@@ -55,17 +56,26 @@ async def get_public_project_invitation(
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def list_project_invitations(
-    request: Request, slug: str = Query(None, description="the project slug (str)")
+    request: Request,
+    response: Response,
+    pagination_params: PaginationQuery = Depends(),
+    slug: str = Query(None, description="the project slug (str)"),
 ) -> list[Invitation]:
     """
     List (pending) project invitations
-    If the user is a project admin: return all the pending project invitation list
+    If the user is a project admin: return the paginated pending project invitation list
     If the user is invited to the project: return a list with just her project invitation
     If the user is not invited to the project (including anonymous users): return an empty list
     """
     project = await get_project_or_404(slug)
 
-    return await invitations_services.get_project_invitations(project=project, user=request.user)
+    pagination, invitations = await invitations_services.get_paginated_project_invitations(
+        project=project, user=request.user, offset=pagination_params.offset, limit=pagination_params.limit
+    )
+
+    set_pagination(response=response, pagination=pagination)
+
+    return invitations
 
 
 @routes.projects.post(

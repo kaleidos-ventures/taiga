@@ -33,7 +33,7 @@ def get_project_invitation_by_email(project_slug: str, email: str, status: Invit
 
 @sync_to_async
 def get_project_invitations(
-    project_slug: str, user: User | None = None, status: InvitationStatus | None = None
+    project_slug: str, offset: int = 0, limit: int = 0, user: User | None = None, status: InvitationStatus | None = None
 ) -> list[Invitation]:
     project_invitees_qs = (
         Invitation.objects.select_related("user", "role").filter(project__slug=project_slug)
@@ -50,7 +50,20 @@ def get_project_invitations(
         # the invitation may be outdated, and the initially unregistered user may have (by other means) become a user
         project_invitees_qs &= project_invitees_qs.filter(same_user_id | same_user_email)
 
+    if limit:
+        project_invitees_qs = project_invitees_qs[offset : offset + limit]
+
     return list(project_invitees_qs)
+
+
+@sync_to_async
+def get_total_project_invitations(project_slug: str, status: InvitationStatus | None = None) -> int:
+    project_invitees_qs = Invitation.objects.filter(project__slug=project_slug)
+
+    if status:
+        project_invitees_qs &= project_invitees_qs.filter(status=status)
+
+    return project_invitees_qs.count()
 
 
 @sync_to_async

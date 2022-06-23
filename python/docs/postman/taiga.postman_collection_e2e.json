@@ -1930,7 +1930,13 @@
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
+									"",
 									"    var invitation = jsonRes[0];",
+									"",
+									"    pm.response.to.have.header(\"Pagination-Offset\");",
+									"    pm.response.to.have.header(\"Pagination-Limit\");",
+									"    pm.response.to.have.header(\"Pagination-Total\");",
+									"",
 									"    var invitationUser = jsonRes[0].user;",
 									"    var invitationRole = jsonRes[0].role;",
 									"",
@@ -1985,7 +1991,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations?offset={{offset}}&limit={{limit}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -1994,6 +2000,16 @@
 								"projects",
 								"{{pj-slug}}",
 								"invitations"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
 							]
 						}
 					},

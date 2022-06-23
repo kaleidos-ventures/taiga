@@ -7,6 +7,7 @@
 
 
 import pytest
+from asgiref.sync import sync_to_async
 from fastapi import status
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.tokens import ProjectInvitationToken
@@ -109,6 +110,38 @@ async def test_get_project_invitations_admin(client):
     client.login(project.owner)
     response = client.get(f"/projects/{project.slug}/invitations")
     assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_get_project_invitations_admin_with_pagination(client):
+    project = await f.create_project()
+    general_role = await sync_to_async(project.roles.get)(slug="general")
+
+    user1 = await f.create_user(full_name="AAA")
+    await f.create_invitation(
+        email=user1.email, user=user1, project=project, role=general_role, status=InvitationStatus.PENDING
+    )
+    user2 = await f.create_user(full_name="BBB")
+    await f.create_invitation(
+        email=user2.email, user=user2, project=project, role=general_role, status=InvitationStatus.PENDING
+    )
+    await f.create_invitation(
+        email="non-existing@email.com", user=None, project=project, role=general_role, status=InvitationStatus.PENDING
+    )
+    user = await f.create_user()
+    await f.create_invitation(
+        email=user.email, user=user, project=project, role=general_role, status=InvitationStatus.ACCEPTED
+    )
+
+    client.login(project.owner)
+
+    offset = 0
+    limit = 1
+    response = client.get(f"/projects/{project.slug}/invitations?offset={offset}&limit={limit}")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert len(response.json()) == 1
+    assert response.headers["Pagination-Offset"] == "0"
+    assert response.headers["Pagination-Limit"] == "1"
+    assert response.headers["Pagination-Total"] == "3"
 
 
 async def test_get_project_invitations_allowed_to_public_users(client):

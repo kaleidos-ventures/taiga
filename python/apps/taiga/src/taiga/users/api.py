@@ -4,10 +4,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+
+from fastapi import Response
 from taiga.auth import services as auth_services
 from taiga.auth.dataclasses import AccessWithRefreshToken
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.api import Request
+from taiga.base.api.pagination import set_pagination
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_422
@@ -93,7 +96,7 @@ async def verify_user(form: users_validators.VerifyTokenValidator) -> Verificati
     summary="List all users matching a full text search, ordered (when provided) by their project closeness",
     response_model=list[UserSerializer],
 )
-async def get_users_by_text(request: Request, form: SearchUsersByTextValidator) -> list[User]:
+async def get_users_by_text(request: Request, response: Response, form: SearchUsersByTextValidator) -> list[User]:
     """
     List all the users matching the full-text search criteria, ordering results by their proximity to a project :
         1st. project members of this project
@@ -102,13 +105,17 @@ async def get_users_by_text(request: Request, form: SearchUsersByTextValidator) 
     """
     await check_permissions(permissions=GET_USERS_BY_TEXT, user=request.user)
 
-    return await users_services.get_users_by_text(
+    pagination, users = await users_services.get_paginated_users_by_text(
         text=form.text,
         project_slug=form.project,
         excluded_usernames=form.excluded_users,
         offset=form.offset,
         limit=form.limit,
     )
+
+    set_pagination(response=response, pagination=pagination)
+
+    return users
 
 
 #####################################################################

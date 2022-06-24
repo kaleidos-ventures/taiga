@@ -13,7 +13,6 @@ from django.contrib.auth.models import update_last_login as django_update_last_l
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db.models import Q, QuerySet
 from taiga.base.utils.datetime import aware_utcnow
-from taiga.conf import settings
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import AuthData, User
 from taiga.users.tokens import VerifyUserToken
@@ -138,16 +137,13 @@ def clean_expired_users() -> None:
     )
 
 
-@sync_to_async
-def get_users_by_text(
+def _get_users_by_text_qs(
     text_search: str = "",
     excluded_usernames: list[str] = [],
     project_slug: str | None = None,
     exclude_inactive: bool = True,
     exclude_system: bool = True,
-    offset: int = 0,
-    limit: int = settings.MAX_PAGE_SIZE,
-) -> list[User]:
+) -> QuerySet[User]:
     """
     Get all the users that match a full text search (against their full_name and username fields), returning a
     prioritized (not filtered) list by their closeness to a given project (if any).
@@ -157,9 +153,7 @@ def get_users_by_text(
     :param project_slug: Users will be ordered by their proximity to this project excluding itself
     :param exclude_inactive: true (return just active users), false (returns all users)
     :param exclude_system: true (returns users where is_system=False), false (returns all users)
-    :param offset: number of rows which we want to skip
-    :param limit: total number of rows we want to retrieve
-    :return: a prioritized list of users
+    :return: a prioritized queryset of users
     """
     users_qs = User.objects.all()
 
@@ -201,9 +195,50 @@ def get_users_by_text(
 
         # NOTE: `Union all` are important to keep the individual ordering when combining the different search criteria.
         users_qs = project_users_qs.union(workspace_users_qs.union(other_users_qs, all=True), all=True)
-        return list(users_qs)[offset : offset + limit]
+        return users_qs
 
-    return list(users_qs.order_by("full_name", "username"))[offset : offset + limit]
+    return users_qs.order_by("full_name", "username")
+
+
+@sync_to_async
+def get_users_by_text(
+    text_search: str = "",
+    excluded_usernames: list[str] = [],
+    project_slug: str | None = None,
+    exclude_inactive: bool = True,
+    exclude_system: bool = True,
+    offset: int = 0,
+    limit: int = 0,
+) -> list[User]:
+    qs = _get_users_by_text_qs(
+        text_search=text_search,
+        project_slug=project_slug,
+        excluded_usernames=excluded_usernames,
+        exclude_inactive=exclude_inactive,
+        exclude_system=exclude_system,
+    )
+    if limit:
+        return list(qs[offset : offset + limit])
+
+    return list(qs)
+
+
+@sync_to_async
+def get_total_users_by_text(
+    text_search: str = "",
+    excluded_usernames: list[str] = [],
+    project_slug: str | None = None,
+    exclude_inactive: bool = True,
+    exclude_system: bool = True,
+) -> int:
+    qs = _get_users_by_text_qs(
+        text_search=text_search,
+        project_slug=project_slug,
+        excluded_usernames=excluded_usernames,
+        exclude_inactive=exclude_inactive,
+        exclude_system=exclude_system,
+    )
+    return qs.count()
 
 
 # TODO: missing tests

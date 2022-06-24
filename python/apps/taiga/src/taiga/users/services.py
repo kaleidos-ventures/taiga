@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.auth import services as auth_services
+from taiga.base.api.pagination import Pagination
 from taiga.base.utils.slug import generate_username_suffix, slugify
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
@@ -203,14 +204,22 @@ async def reset_password(token: str, password: str) -> User | None:
 #####################################################################
 
 
-async def get_users_by_text(
+async def get_paginated_users_by_text(
+    offset: int,
+    limit: int,
     text: str | None = None,
     project_slug: str | None = None,
     excluded_usernames: list[str] | None = [],
-    offset: int | None = None,
-    limit: int | None = None,
-) -> list[User]:
+) -> tuple[Pagination, list[User]]:
 
-    return await users_repositories.get_users_by_text(
+    total_users = await users_repositories.get_total_users_by_text(
+        text_search=text, project_slug=project_slug, excluded_usernames=excluded_usernames
+    )
+
+    users = await users_repositories.get_users_by_text(
         text_search=text, project_slug=project_slug, excluded_usernames=excluded_usernames, offset=offset, limit=limit
     )
+
+    pagination = Pagination(offset=offset, limit=limit, total=total_users)
+
+    return pagination, users

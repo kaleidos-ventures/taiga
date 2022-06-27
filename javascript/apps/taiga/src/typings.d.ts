@@ -6,9 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { zoneConfig } from '@rx-angular/cdk/zone-configurations';
-
-zoneConfig.global.disable.XHR();
-zoneConfig.global.disable.blocking();
-zoneConfig.global.disable.on_property();
-zoneConfig.events.disable.UNPATCHED_EVENTS(['scroll', 'mousemove', 'wheel']);
+declare module 'diacritic' {
+  export = { clean(input: string): string; };
+}

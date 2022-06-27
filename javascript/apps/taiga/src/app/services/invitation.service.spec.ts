@@ -6,7 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randFullName, randWord } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { InvitationService } from './invitation.service';
 
@@ -84,12 +83,12 @@ describe('InvitationService', () => {
 
   it('get users that match name or username with the introduced text', () => {
     const user1 = {
-      username: randWord(),
-      fullName: randFullName(),
+      username: 'jablonki',
+      fullName: 'Jabłoński Černý',
     };
     const user2 = {
-      username: randWord(),
-      fullName: randFullName(),
+      username: 'doroic',
+      fullName: 'Ðorðić Æbeltoft',
     };
     const usersList = [user1, user2];
     const text = user1.username.substring(0, 2);
@@ -98,7 +97,11 @@ describe('InvitationService', () => {
   });
 
   it('get text normalized', () => {
-    const normalizedText = spectator.service.normalizeText('Álava');
-    expect(normalizedText).toEqual('alava');
+    const normalizedText = spectator.service.normalizeText(
+      'Jabłoński Meißner Æbeltoft Černý Ðorðić Łapiński Iлｔèｒｎåｔïｏｎɑｌíƶａｔï߀ԉ ą ć ę ł ń ó ś ź ż ä ö ü ß'
+    );
+    expect(normalizedText).toEqual(
+      'jablonski meissner aebeltoft cerny dordic lapinski internationalization a c e l n o s z z a o u ss'
+    );
   });
 });

@@ -5,9 +5,9 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-
 import { Injectable } from '@angular/core';
 import { Contact, Invitation } from '@taiga/data';
+import Diacritics from 'diacritic';
 
 @Injectable({
   providedIn: 'root',
@@ -51,7 +51,7 @@ export class InvitationService {
       const fullname = this.normalizeText(it.fullName);
       const username = it.username;
       const matches =
-        fullname.split(' ')?.map((part) => {
+        fullname.split(' ')?.map((part: string) => {
           return rgx.test(part);
         }) || [];
       matches?.push(rgx.test(fullname));
@@ -62,9 +62,7 @@ export class InvitationService {
 
   public normalizeText(text: string) {
     // normalize texts with uppercase/accent marks "Álava" -> 'alava'
-    return text
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase();
+    const partialNormalize = Diacritics.clean(text).toLowerCase();
+    return partialNormalize.normalize('NFD').replace(/[Ð-ð]/g, 'd');
   }
 }

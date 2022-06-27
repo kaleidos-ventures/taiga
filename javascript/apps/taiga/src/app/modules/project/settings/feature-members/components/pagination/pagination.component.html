@@ -19,16 +19,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       icon="chevron-left"
       type="button"></button>
 
-    <div class="page-info">
-      <div
-        [innerHTML]="
-          t('members.page_info', {
-            pageStart: pageStart,
-            pageEnd: pageEnd,
-            total: total
-          })
-        "></div>
-    </div>
+    <div
+      class="page-info"
+      [innerHTML]="
+        t('members.page_info', {
+          pageStart: pageStart,
+          pageEnd: pageEnd,
+          total: total
+        })
+      "></div>
 
     <button
       [attr.aria-label]="t('members.next_page')"

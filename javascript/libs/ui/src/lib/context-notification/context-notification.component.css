@@ -89,6 +89,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     & .close-button tui-wrapper {
       color: var(--color-info80) !important;
+
+      &:hover {
+        background: var(--color-info30);
+      }
     }
   }
 
@@ -122,6 +126,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     & .close-button tui-wrapper {
       color: var(--color-ok80) !important;
+
+      &:hover {
+        background: var(--color-ok30);
+      }
     }
   }
 
@@ -155,6 +163,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     & .close-button tui-wrapper {
       color: var(--color-red80) !important;
+
+      &:hover {
+        background: var(--color-red30);
+      }
     }
   }
 
@@ -188,6 +200,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     & .close-button tui-wrapper {
       color: var(--color-warning80) !important;
+
+      &:hover {
+        background: var(--color-warning30);
+      }
     }
   }
 
@@ -221,6 +237,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     & .close-button tui-wrapper {
       color: var(--color-notice80) !important;
+
+      &:hover {
+        background: var(--color-notice30);
+      }
     }
   }
 

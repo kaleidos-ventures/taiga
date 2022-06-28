@@ -7,27 +7,31 @@
  */
 
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  Params,
-  Router,
-} from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Params } from '@angular/router';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { GithubSignupInput } from '@taiga/data';
-import { githubSignup } from '../data-access/+state/actions/auth.actions';
+import { take, map } from 'rxjs/operators';
 
+import {
+  githubSignup,
+  signUpSuccess,
+} from '../data-access/+state/actions/auth.actions';
 @Injectable({
   providedIn: 'root',
 })
 export class GithubSignupGuard implements CanActivate {
-  constructor(private router: Router, private store: Store) {}
+  constructor(private store: Store, private actions$: Actions) {}
 
   public canActivate(route: ActivatedRouteSnapshot) {
     const queryParams: Params = route.queryParams;
     const redirect = (queryParams as GithubSignupInput).redirect;
     const code = (queryParams as GithubSignupInput).code;
     this.store.dispatch(githubSignup({ code, redirect }));
-    return true;
+    return this.actions$.pipe(
+      ofType(signUpSuccess),
+      take(1),
+      map(() => true)
+    );
   }
 }

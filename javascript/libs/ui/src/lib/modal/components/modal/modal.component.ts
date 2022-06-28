@@ -15,12 +15,13 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { BehaviorSubject, merge, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ShortcutsService } from '@taiga/core';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 import { TuiDialogService } from '@taiga-ui/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ModalService } from '@taiga/ui/modal/services/modal.service';
+import { pairwise } from 'rxjs/operators';
 
 /*
 Usage example:
@@ -43,6 +44,9 @@ export class ModalComponent implements AfterViewInit {
 
   @Output()
   public requestClose = new EventEmitter<void>();
+
+  @Output()
+  public closed = new EventEmitter<void>();
 
   @Input()
   public elementFocusWhenClosed?: HTMLElement;
@@ -71,13 +75,15 @@ export class ModalComponent implements AfterViewInit {
   ) {}
 
   public ngAfterViewInit() {
-    this.open$.pipe(untilDestroyed(this)).subscribe((open) => {
-      if (open) {
-        this.processOpen();
-      } else {
-        this.processClose();
-      }
-    });
+    this.open$
+      .pipe(untilDestroyed(this), pairwise())
+      .subscribe(([oldOpen, open]) => {
+        if (open) {
+          this.processOpen();
+        } else if (oldOpen) {
+          this.processClose();
+        }
+      });
   }
 
   public close() {
@@ -87,18 +93,25 @@ export class ModalComponent implements AfterViewInit {
   private processOpen() {
     this.shortcutsService.setScope('modal');
 
-    this.modalSubscription$ = merge(
-      this.modalService.open(this.domPortalContent, {}),
-      this.shortcutsService.task('modal.close')
-    )
+    this.shortcutsService
+      .task('modal.close')
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.close();
       });
+
+    this.modalService
+      .open(this.domPortalContent, {})
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        complete: () => {
+          this.closed.next();
+        },
+      });
   }
 
   private processClose() {
-    this.modalSubscription$?.unsubscribe();
+    this.modalService.getContext().completeWith(null);
     this.shortcutsService.resetScope();
   }
 }

@@ -7,7 +7,11 @@
  */
 
 import { Injectable, Provider } from '@angular/core';
-import { AbstractTuiDialogService, TUI_DIALOGS } from '@taiga-ui/cdk';
+import {
+  AbstractTuiDialogService,
+  TuiDialog,
+  TUI_DIALOGS,
+} from '@taiga-ui/cdk';
 import { PolymorpheusComponent } from '@tinkoff/ng-polymorpheus';
 import { ModalWrapperComponent } from '../components/wrapper/modal-wrapper.component';
 
@@ -16,9 +20,18 @@ import { ModalWrapperComponent } from '../components/wrapper/modal-wrapper.compo
 })
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class ModalService extends AbstractTuiDialogService<any> {
+  private context!: TuiDialog<unknown, unknown>;
   public defaultOptions = {} as const;
 
   public component = new PolymorpheusComponent(ModalWrapperComponent);
+
+  public setContext(context: TuiDialog<unknown, unknown>) {
+    this.context = context;
+  }
+
+  public getContext() {
+    return this.context;
+  }
 }
 
 export const PROMPT_PROVIDER: Provider = {

@@ -9,6 +9,7 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { TuiDialog } from '@taiga-ui/cdk';
 import { POLYMORPHEUS_CONTEXT } from '@tinkoff/ng-polymorpheus';
+import { ModalService } from '@taiga/ui/modal/services/modal.service';
 
 @Component({
   selector: 'tg-ui-modal-wrapper',
@@ -24,10 +25,9 @@ import { POLYMORPHEUS_CONTEXT } from '@tinkoff/ng-polymorpheus';
 export class ModalWrapperComponent {
   constructor(
     @Inject(POLYMORPHEUS_CONTEXT)
-    public context: TuiDialog<unknown, unknown>
-  ) {}
-
-  public close() {
-    this.context.completeWith(null);
+    public context: TuiDialog<unknown, unknown>,
+    public modalService: ModalService
+  ) {
+    this.modalService.setContext(context);
   }
 }

@@ -12,6 +12,7 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  Inject,
   Input,
   OnChanges,
   OnInit,
@@ -53,6 +54,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TuiTextAreaComponent } from '@taiga-ui/kit';
 import { TuiScrollbarComponent } from '@taiga-ui/core';
 import { InvitationService } from '~/app/services/invitation.service';
+import { ModalComponent } from '@taiga/ui/modal/components';
 
 interface InvitationForm {
   fullName: string;
@@ -146,6 +148,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public notInBulkMode = true;
 
   constructor(
+    @Inject(ModalComponent) private modal: ModalComponent,
     private fb: FormBuilder,
     private store: Store,
     private actions$: Actions,

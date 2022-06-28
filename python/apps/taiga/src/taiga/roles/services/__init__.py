@@ -8,9 +8,9 @@
 from taiga.base.api.pagination import Pagination
 from taiga.permissions import services as permissions_services
 from taiga.projects.models import Project
-from taiga.roles import exceptions as ex
 from taiga.roles import repositories as roles_repositories
 from taiga.roles.models import Membership, Role
+from taiga.roles.services import exceptions as ex
 
 ###############################################################
 # PROJECTS

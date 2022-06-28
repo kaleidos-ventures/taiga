@@ -9,8 +9,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from fastapi import UploadFile
-from taiga.projects import exceptions as ex
 from taiga.projects import services
+from taiga.projects.services import exceptions as ex
 from tests.utils import factories as f
 from tests.utils.images import valid_image_upload_file
 

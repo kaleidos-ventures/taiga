@@ -10,13 +10,13 @@ from taiga.base.api.pagination import Pagination
 from taiga.base.utils.slug import generate_username_suffix, slugify
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
-from taiga.invitations import exceptions as invitations_ex
 from taiga.invitations import services as invitations_services
+from taiga.invitations.services import exceptions as invitations_ex
 from taiga.tokens import exceptions as tokens_ex
-from taiga.users import exceptions as ex
 from taiga.users import repositories as users_repositories
 from taiga.users.dataclasses import VerificationInfo
 from taiga.users.models import User
+from taiga.users.services import exceptions as ex
 from taiga.users.tokens import ResetPasswordToken, VerifyUserToken
 
 #####################################################################

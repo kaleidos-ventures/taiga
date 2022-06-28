@@ -13,10 +13,10 @@ from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_422_UNPROCESSABLE_ENTITY
+from taiga.base.services.exceptions import TaigaServiceException
 from taiga.base.utils.strings import camel_to_kebab
 from taiga.exceptions.api import HTTPException as TaigaHTTPException
 from taiga.exceptions.api import codes
-from taiga.exceptions.services import TaigaServiceException
 
 
 async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:

@@ -9,10 +9,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from taiga.auth.dataclasses import AccessWithRefreshToken
-from taiga.invitations.exceptions import BadInvitationTokenError, InvitationDoesNotExistError
+from taiga.invitations.services.exceptions import BadInvitationTokenError, InvitationDoesNotExistError
 from taiga.tokens import exceptions as tokens_ex
-from taiga.users import exceptions as ex
 from taiga.users import services
+from taiga.users.services import exceptions as ex
 from tests.utils import factories as f
 
 ##########################################################

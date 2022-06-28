@@ -8,10 +8,10 @@
 from unittest.mock import patch
 
 import pytest
-from taiga.invitations import exceptions as ex
 from taiga.invitations import services
 from taiga.invitations.choices import InvitationStatus
-from taiga.invitations.exceptions import NonExistingUsernameError
+from taiga.invitations.services import exceptions as ex
+from taiga.invitations.services.exceptions import NonExistingUsernameError
 from taiga.invitations.tokens import ProjectInvitationToken
 from tests.utils import factories as f
 

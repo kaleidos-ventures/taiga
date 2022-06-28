@@ -5,8 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth import exceptions as ex
 from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.auth.services import exceptions as ex
 from taiga.auth.tokens import AccessToken, RefreshToken
 from taiga.tokens import TokenError
 from taiga.users import repositories as users_repositories

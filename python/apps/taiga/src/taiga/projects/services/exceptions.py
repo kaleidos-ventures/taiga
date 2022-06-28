@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-from taiga.exceptions.services import TaigaServiceException
+from taiga.base.services.exceptions import TaigaServiceException
 
 
 class IncompatiblePermissionsSetError(TaigaServiceException):

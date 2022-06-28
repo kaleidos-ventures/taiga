@@ -16,10 +16,10 @@ from taiga.permissions import CanViewProject, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
 from taiga.projects.models import Project
 from taiga.projects.validators import PermissionsValidator
-from taiga.roles import exceptions as services_ex
 from taiga.roles import services as roles_services
 from taiga.roles.models import Membership, Role
 from taiga.roles.serializers import MembershipSerializer, RoleSerializer
+from taiga.roles.services import exceptions as services_ex
 from taiga.routers import routes
 
 # PERMISSIONS

@@ -4,18 +4,3 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
-
-from taiga.base.services.exceptions import TaigaServiceException
-
-
-class GithubLoginError(TaigaServiceException):
-    ...
-
-
-class GithubLoginAuthenticationError(TaigaServiceException):
-    ...
-
-
-class GithubAPIError(TaigaServiceException):
-    ...

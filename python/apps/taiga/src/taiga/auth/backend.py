@@ -9,7 +9,7 @@ from fastapi import Request, Response, status
 from starlette.authentication import AuthCredentials
 from starlette.authentication import AuthenticationError as AuthorizationError
 from starlette.responses import JSONResponse
-from taiga.auth.exceptions import BadAuthTokenError, UnauthorizedUserError
+from taiga.auth.services.exceptions import BadAuthTokenError, UnauthorizedUserError
 from taiga.exceptions.api import codes
 from taiga.users.models import AnonymousUser, User
 

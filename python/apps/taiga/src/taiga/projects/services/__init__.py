@@ -11,9 +11,9 @@ from fastapi import UploadFile
 from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
 from taiga.permissions import services as permissions_services
-from taiga.projects import exceptions as ex
 from taiga.projects import repositories as projects_repositories
 from taiga.projects.models import Project
+from taiga.projects.services import exceptions as ex
 from taiga.roles import repositories as roles_repositories
 from taiga.users.models import User
 from taiga.workspaces import repositories as workspaces_repositories

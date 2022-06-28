@@ -11,10 +11,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException
 from taiga import __description__, __title__, __version__
 from taiga.base.db.middlewares import DBConnectionMiddleware
+from taiga.base.services.exceptions import TaigaServiceException
 from taiga.conf import settings
-from taiga.exceptions import handlers
-from taiga.exceptions.middlewares import UnexpectedExceptionMiddleware
-from taiga.exceptions.services import TaigaServiceException
+from taiga.exceptions.api import handlers
+from taiga.exceptions.api.middlewares import UnexpectedExceptionMiddleware
 from taiga.routers.loader import load_routes
 from taiga.tasksqueue.middlewares import TaskQueueMiddleware
 

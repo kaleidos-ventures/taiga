@@ -6,9 +6,9 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from fastapi import Response, status
-from taiga.auth import exceptions as services_ex
 from taiga.auth import services as auth_services
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
+from taiga.auth.services import exceptions as services_ex
 from taiga.auth.validators import AccessTokenValidator, RefreshTokenValidator
 from taiga.base.api import Request
 from taiga.exceptions import api as ex

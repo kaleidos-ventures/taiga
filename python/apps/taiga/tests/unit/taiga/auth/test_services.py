@@ -8,8 +8,8 @@
 from unittest.mock import Mock, patch
 
 import pytest
-from taiga.auth import exceptions as ex
 from taiga.auth import services as auth_serv
+from taiga.auth.services import exceptions as ex
 from taiga.auth.tokens import AccessToken, RefreshToken
 from tests.utils import factories as f
 

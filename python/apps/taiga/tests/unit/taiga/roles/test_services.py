@@ -8,8 +8,8 @@
 from unittest.mock import patch
 
 import pytest
-from taiga.roles import exceptions as ex
 from taiga.roles import services
+from taiga.roles.services import exceptions as ex
 from tests.utils import factories as f
 
 #######################################################

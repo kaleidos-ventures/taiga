@@ -10,11 +10,11 @@ from taiga.base.utils import emails
 from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
-from taiga.invitations import exceptions as ex
 from taiga.invitations import repositories as invitations_repositories
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.dataclasses import CreateInvitations, PublicInvitation
 from taiga.invitations.models import Invitation
+from taiga.invitations.services import exceptions as ex
 from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.projects.models import Project
 from taiga.projects.services import get_logo_small_thumbnail_url

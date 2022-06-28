@@ -69,17 +69,28 @@ async def test_get_project_invitation_by_email_not_found() -> None:
 async def test_get_project_invitations_all_pending_users():
     project = await f.create_project()
     general_role = await sync_to_async(project.roles.get)(slug="general")
+    email_a = "a@user.com"
+    email_b = "b@user.com"
+    email_x = "x@notauser.com"
+    email_y = "y@notauser.com"
+    email_z = "z@notauser.com"
 
-    user1 = await f.create_user(full_name="AAA")
+    user_a = await f.create_user(full_name="A", email=email_b)
     await f.create_invitation(
-        email=user1.email, user=user1, project=project, role=general_role, status=InvitationStatus.PENDING
+        email=email_b, user=user_a, project=project, role=general_role, status=InvitationStatus.PENDING
     )
-    user2 = await f.create_user(full_name="BBB")
+    user_b = await f.create_user(full_name="B", email=email_a)
     await f.create_invitation(
-        email=user2.email, user=user2, project=project, role=general_role, status=InvitationStatus.PENDING
+        email=email_a, user=user_b, project=project, role=general_role, status=InvitationStatus.PENDING
     )
     await f.create_invitation(
-        email="non-existing@email.com", user=None, project=project, role=general_role, status=InvitationStatus.PENDING
+        email=email_z, user=None, project=project, role=general_role, status=InvitationStatus.PENDING
+    )
+    await f.create_invitation(
+        email=email_x, user=None, project=project, role=general_role, status=InvitationStatus.PENDING
+    )
+    await f.create_invitation(
+        email=email_y, user=None, project=project, role=general_role, status=InvitationStatus.PENDING
     )
     user = await f.create_user()
     await f.create_invitation(
@@ -89,9 +100,12 @@ async def test_get_project_invitations_all_pending_users():
     response = await repositories.get_project_invitations(
         project_slug=project.slug, status=InvitationStatus.PENDING, offset=0, limit=100
     )
-    assert len(response) == 3
-    assert response[0].email == user1.email
-    assert response[1].email == user2.email
+    assert len(response) == 5
+    assert response[0].email == user_a.email
+    assert response[1].email == user_b.email
+    assert response[2].email == email_x
+    assert response[3].email == email_y
+    assert response[4].email == email_z
 
 
 async def test_get_project_invitations_single_pending_user():

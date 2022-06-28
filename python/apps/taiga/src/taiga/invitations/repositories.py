@@ -38,7 +38,7 @@ def get_project_invitations(
     project_invitees_qs = (
         Invitation.objects.select_related("user", "role").filter(project__slug=project_slug)
         # pending invitations for NULL users will be listed after invitations for existing users (with a fullname)
-        .order_by("user__full_name")
+        .order_by("user__full_name", "email")
     )
 
     if status:

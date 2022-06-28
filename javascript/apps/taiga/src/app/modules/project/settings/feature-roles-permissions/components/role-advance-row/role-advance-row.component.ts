@@ -92,6 +92,8 @@ export class RoleAdvanceRowComponent implements OnInit, OnChanges {
     if (!this.previousPermission) {
       this.previousPermission = this.permissionRowModel;
     }
+
+    this.cd.markForCheck();
   }
 
   public trackByValue(_index: number, permission: KeyValue<string, string>) {

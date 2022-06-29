@@ -146,6 +146,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public pendingInvitations?: Invitation[];
   public search$: Subject<string | null> = new Subject();
   public notInBulkMode = true;
+  public emailInputIsFocus = false;
 
   constructor(
     @Inject(ModalComponent) private modal: ModalComponent,
@@ -265,6 +266,10 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     changes.reset && this.cleanFormBeforeClose();
   }
 
+  public onActiveZone(active: boolean): void {
+    this.updateEmailInputIsFocus(active);
+  }
+
   public positionInArray(user: Partial<User>) {
     const tempInvitations = this.users.map((it) => {
       const data = it.value as InvitationForm;
@@ -353,7 +358,12 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
         })
       );
       this.handleAccessibilityAttributes(true);
+      this.updateEmailInputIsFocus(true);
     }
+  }
+
+  public updateEmailInputIsFocus(focus: boolean) {
+    this.emailInputIsFocus = focus;
   }
 
   public onSearchChange(searchQuery: string | null): void {
@@ -412,6 +422,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
           this.scrollBar.nativeElement.scrollHeight;
       }
     });
+    this.searchChange(this.inviteIdentifier);
   }
 
   public includeSuggestedContact(index: number, event?: Event) {

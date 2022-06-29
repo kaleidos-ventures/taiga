@@ -31,7 +31,7 @@ import { rolesPermissionsFeature } from '~/app/modules/project/settings/feature-
 import { RolesPermissionsEffects } from '~/app/modules/project/settings/feature-roles-permissions/+state/effects/roles-permissions.effects';
 import { invitationFeature } from '~/app/shared/invite-to-project/data-access/+state/reducers/invitation.reducers';
 import { InvitationEffects } from '~/app/shared/invite-to-project/data-access/+state/effects/invitation.effects';
-import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { ButtonLoadingModule } from '../directives/button-loading/button-loading.module';
 import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 
@@ -50,6 +50,7 @@ import { UserCardModule } from '~/app/shared/user-card/user-card-component.modul
     TuiDataListModule,
     TuiScrollbarModule,
     TuiDropdownModule,
+    TuiActiveZoneModule,
     TuiComboBoxModule,
     TuiDataListWrapperModule,
     UserToInviteModule,

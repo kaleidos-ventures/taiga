@@ -52,6 +52,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [rows]="12"
                 [tuiDropdownContent]="dropdownContent"
                 [tuiDropdown]="inviteIdentifier.length > 1 && notInBulkMode"
+                (focusedChange)="updateEmailInputIsFocus(true)"
+                (tuiActiveZoneChange)="onActiveZone($event)"
+                (click)="$event.stopPropagation()"
                 (keydown.arrowUp)="handleArrow('up')"
                 (keydown.arrowDown)="handleArrow('down')"
                 (keydown.enter)="
@@ -104,7 +107,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             <ng-template #dropdownContent>
               <ng-container *ngIf="searchInProgress$ | async">
                 <ng-container
-                  *ngIf="inviteIdentifier.length > 1 && notInBulkMode">
+                  *ngIf="
+                    inviteIdentifier.length > 1 &&
+                    notInBulkMode &&
+                    emailInputIsFocus
+                  ">
                   <tui-data-list
                     id="suggestions"
                     role="listbox"

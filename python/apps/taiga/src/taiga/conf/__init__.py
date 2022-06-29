@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_LIFETIME: int = 8 * 24 * 60  # 8 * 24 * 60 minutes = 8 days
     GITHUB_CLIENT_ID: str | None = None
     GITHUB_CLIENT_SECRET: str | None = None
+    GITLAB_URL: str | None = None
+    GITLAB_CLIENT_ID: str | None = None
+    GITLAB_CLIENT_SECRET: str | None = None
 
     # Users
     USER_EMAIL_ALLOWED_DOMAINS: list[str] = []

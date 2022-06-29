@@ -11,6 +11,7 @@ from fastapi import FastAPI
 # before adding the routes to Fastapi
 from taiga.auth import api as auth_api  # noqa
 from taiga.integrations.github.auth import api as github_auth_api  # noqa
+from taiga.integrations.gitlab.auth import api as gitlab_auth_api  # noqa
 from taiga.invitations import api as invitations_api  # noqa
 from taiga.projects import api as projects_api  # noqa
 from taiga.roles import api as roles_api  # noqa

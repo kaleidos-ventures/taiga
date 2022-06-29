@@ -6,36 +6,23 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
-import {
-  createFullProjectInWSRequest,
-  navigateToProjectInWS,
-} from '../support/helpers/project.helpers';
 import {
   navigateToMembersSettings,
   navigateToSettings,
 } from '../support/helpers/settings.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
-
-const workspace = WorkspaceMockFactory();
-const project = ProjectMockFactory();
 
 describe('Settings > members', () => {
   before(() => {
     cy.login();
     cy.visit('/');
-    createWorkspaceRequest(workspace.name)
-      .then((request) => {
-        createFullProjectInWSRequest(request.body.slug, project.name);
-      })
-      .catch(console.error);
   });
 
   beforeEach(() => {
     cy.login();
     cy.visit('/');
     cy.initAxe();
-    navigateToProjectInWS(0, 0);
+    cy.getBySel('project-card').contains('Several Roles').click();
+
     navigateToSettings();
     navigateToMembersSettings();
     cy.tgCheckA11y();

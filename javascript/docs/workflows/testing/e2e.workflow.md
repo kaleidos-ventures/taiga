@@ -184,7 +184,6 @@ before(() => {
   // this is for using the `initEmailCommands` in the email window
   cy.origin('http://localhost:3000', initEmailCommands);
 });
-
 ```
 
 Use:
@@ -198,8 +197,7 @@ getEmailsPreviews().then((response) => {
   // visit & interact with the email
   cy.origin('http://localhost:3000', { args: email }, (email) => {
     cy.visit(email);
-    cy.getBySelEmail('example')
-      .click();
+    cy.getBySelEmail('example').click();
   });
 });
 ```

@@ -171,6 +171,39 @@ describe('taiga', () => {
 });
 ```
 
+## Intercept email
+
+The email server should be running `npm run email:serve`
+
+Setup:
+
+```ts
+import { initEmailCommands } from '../support/helpers/email-commands';
+
+before(() => {
+  // this is for using the `initEmailCommands` in the email window
+  cy.origin('http://localhost:3000', initEmailCommands);
+});
+
+```
+
+Use:
+
+```ts
+getEmailsPreviews().then((response) => {
+  // get last email
+  const email =
+    response.body.emails[response.body.emails.length - 1].localPreview;
+
+  // visit & interact with the email
+  cy.origin('http://localhost:3000', { args: email }, (email) => {
+    cy.visit(email);
+    cy.getBySelEmail('example')
+      .click();
+  });
+});
+```
+
 ## Run
 
 ```sh

@@ -135,9 +135,12 @@ async def test_get_project_detail():
     workspace = await f.create_workspace(owner=user)
     project = await f.create_project(owner=user, workspace=workspace)
 
-    with patch("taiga.projects.services.permissions_services", autospec=True) as fake_permissions_services, patch(
-        "taiga.projects.services.workspaces_repositories", autospec=True
-    ) as fake_workspaces_repositories:
+    with (
+        patch("taiga.projects.services.permissions_services", autospec=True) as fake_permissions_services,
+        patch("taiga.projects.services.invitations_repositories", autospec=True) as fake_invitation_repositories,
+        patch("taiga.projects.services.roles_repositories", autospec=True) as fake_roles_repositories,
+        patch("taiga.projects.services.workspaces_repositories", autospec=True) as fake_workspaces_repositories,
+    ):
         fake_permissions_services.get_user_project_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_workspace_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_permissions_for_project.return_value = (True, True, [])
@@ -148,6 +151,8 @@ async def test_get_project_detail():
         fake_permissions_services.get_user_workspace_role_info.assert_awaited_once()
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once()
         fake_workspaces_repositories.get_workspace_summary.assert_awaited_once()
+        fake_invitation_repositories.has_pending_project_invitation_for_user.assert_awaited_once()
+        fake_roles_repositories.user_is_project_member.assert_awaited_once()
 
 
 ##########################################################

@@ -16,9 +16,9 @@ class WorkspaceDetailSerializer(BaseModel):
     invited_projects: list[ProjectSummarySerializer]
     total_projects: int
     has_projects: bool
-    my_role: str
     is_premium: bool
-    is_owner: bool
+    user_role: str
+    user_is_owner: bool
 
     class Config:
         orm_mode = True
@@ -31,8 +31,8 @@ class WorkspaceSerializer(BaseModel):
     is_premium: bool
     total_projects: int
     has_projects: bool
-    my_role: str
-    is_owner: bool
+    user_role: str
+    user_is_owner: bool
 
     class Config:
         orm_mode = True

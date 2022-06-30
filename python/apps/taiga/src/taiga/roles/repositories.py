@@ -48,6 +48,11 @@ def get_project_members(project: Project) -> list[User]:
     return list(project.members.all())
 
 
+@sync_to_async
+def user_is_project_member(project_slug: str, user_id: int) -> bool:
+    return Membership.objects.filter(project__slug=project_slug, user__id=user_id).exists()
+
+
 # Roles
 
 

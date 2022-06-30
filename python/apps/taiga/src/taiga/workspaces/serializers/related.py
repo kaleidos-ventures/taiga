@@ -11,7 +11,7 @@ from taiga.base.serializers import BaseModel
 class WorkspaceSummarySerializer(BaseModel):
     name: str
     slug: str
-    my_role: str
+    user_role: str
     is_premium: bool
 
     class Config:

@@ -37,7 +37,7 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
         total_projects = len(projects_ids)
         projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
-        is_owner = Workspace.objects.get(id=ws_id).owner.id == user.id
+        user_is_owner = Workspace.objects.get(id=ws_id).owner.id == user.id
         invited_projects_qs = Project.objects.filter(
             Q(invitations__user_id=user.id)
             | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email)),
@@ -52,8 +52,8 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
             )
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
-            .annotate(my_role=Value("admin", output_field=CharField()))
-            .annotate(is_owner=Value(is_owner, output_field=BooleanField()))
+            .annotate(user_role=Value("admin", output_field=CharField()))
+            .annotate(user_is_owner=Value(user_is_owner, output_field=BooleanField()))
         )
         admin_ws = chain(admin_ws, qs)
 
@@ -93,8 +93,8 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
             )
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
-            .annotate(my_role=Value("member", output_field=CharField()))
-            .annotate(is_owner=Value(False, output_field=BooleanField()))
+            .annotate(user_role=Value("member", output_field=CharField()))
+            .annotate(user_is_owner=Value(False, output_field=BooleanField()))
         )
         member_ws = chain(member_ws, qs)
 
@@ -139,8 +139,8 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
             )
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
-            .annotate(my_role=Value("guest", output_field=CharField()))
-            .annotate(is_owner=Value(False, output_field=BooleanField()))
+            .annotate(user_role=Value("guest", output_field=CharField()))
+            .annotate(user_is_owner=Value(False, output_field=BooleanField()))
         )
         guest_ws = chain(guest_ws, qs)
 
@@ -190,11 +190,11 @@ def get_workspace_detail(id: int, user_id: int) -> Workspace | None:
             Workspace.objects.annotate(total_projects=Value(user_projects_count, output_field=IntegerField()))
             .annotate(has_projects=Exists(Project.objects.filter(workspace=OuterRef("pk"))))
             .annotate(
-                is_owner=Case(
+                user_is_owner=Case(
                     When(owner_id=user_id, then=Value(True)), default=Value(False), output_field=BooleanField()
                 )
             )
-            .annotate(my_role=Value(user_workspace_role_name, output_field=CharField()))
+            .annotate(user_role=Value(user_workspace_role_name, output_field=CharField()))
             .get(id=id)
         )
     except Workspace.DoesNotExist:
@@ -205,7 +205,9 @@ def get_workspace_detail(id: int, user_id: int) -> Workspace | None:
 def get_workspace_summary(id: int, user_id: int) -> Workspace | None:
     user_workspace_role_name = roles_repositories.get_user_workspace_role_name_sync(workspace_id=id, user_id=user_id)
     try:
-        return Workspace.objects.annotate(my_role=Value(user_workspace_role_name, output_field=CharField())).get(id=id)
+        return Workspace.objects.annotate(user_role=Value(user_workspace_role_name, output_field=CharField())).get(
+            id=id
+        )
     except Workspace.DoesNotExist:
         return None
 

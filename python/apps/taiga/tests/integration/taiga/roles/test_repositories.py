@@ -284,3 +284,25 @@ async def test_get_workspace_role_for_user_none():
     workspace = await f.create_workspace()
 
     assert await repositories.get_workspace_role_for_user(user_id=user.id, workspace_id=workspace.id) is None
+
+
+##########################################################
+# user_is_project_member
+##########################################################
+
+
+async def test_user_is_project_member():
+    owner = await f.create_user()
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    project = await f.create_project(owner=owner)
+    role = await f.create_role(project=project)
+    await repositories.create_membership(user=user1, project=project, role=role)
+
+    owner_is_member = await repositories.user_is_project_member(project_slug=project.slug, user_id=owner.id)
+    user1_is_member = await repositories.user_is_project_member(project_slug=project.slug, user_id=user1.id)
+    user2_is_member = await repositories.user_is_project_member(project_slug=project.slug, user_id=user2.id)
+
+    assert owner_is_member is True
+    assert user1_is_member is True
+    assert user2_is_member is False

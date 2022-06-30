@@ -10,6 +10,7 @@ from django.core.files import File
 from fastapi import UploadFile
 from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
+from taiga.invitations import repositories as invitations_repositories
 from taiga.permissions import services as permissions_services
 from taiga.projects import repositories as projects_repositories
 from taiga.projects.models import Project
@@ -85,7 +86,10 @@ async def get_project_detail(project: Project, user: User) -> Project:
     (is_workspace_admin, is_workspace_member, _) = await permissions_services.get_user_workspace_role_info(
         user=user, workspace=project.workspace
     )
-    project.my_permissions = await permissions_services.get_user_permissions_for_project(
+    project.workspace = await workspaces_repositories.get_workspace_summary(id=project.workspace.id, user_id=user.id)
+
+    # User related fields
+    project.user_permissions = await permissions_services.get_user_permissions_for_project(
         is_project_admin=is_project_admin,
         is_workspace_admin=is_workspace_admin,
         is_project_member=is_project_member,
@@ -94,8 +98,13 @@ async def get_project_detail(project: Project, user: User) -> Project:
         project_role_permissions=project_role_permissions,
         project=project,
     )
-    project.am_i_admin = is_project_admin
-    project.workspace = await workspaces_repositories.get_workspace_summary(id=project.workspace.id, user_id=user.id)
+
+    project.user_is_admin = is_project_admin
+    project.user_is_member = await roles_repositories.user_is_project_member(project.slug, user.id)
+    project.user_has_pending_invitation = await (
+        invitations_repositories.has_pending_project_invitation_for_user(user=user, project=project)
+    )
+
     return project
 
 

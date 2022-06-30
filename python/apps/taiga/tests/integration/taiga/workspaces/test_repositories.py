@@ -297,16 +297,16 @@ async def test_get_workspace_detail_premium_projects_ws_member():
     res_ws = await repositories.get_workspace_detail(id=workspace1.id, user_id=user8.id)
     assert res_ws == workspace1
     assert res_ws.total_projects == 7
-    assert res_ws.is_owner is True
+    assert res_ws.user_is_owner is True
     assert res_ws.has_projects is True
-    assert res_ws.my_role == "admin"
+    assert res_ws.user_role == "admin"
     # assert workspace1 - user9
     res_ws = await repositories.get_workspace_detail(id=workspace1.id, user_id=user9.id)
     assert res_ws == workspace1
     assert res_ws.total_projects == 5
-    assert res_ws.is_owner is False
+    assert res_ws.user_is_owner is False
     assert res_ws.has_projects is True
-    assert res_ws.my_role == "member"
+    assert res_ws.user_role == "member"
 
 
 async def test_get_workspace_detail_premium_no_projects():
@@ -322,16 +322,16 @@ async def test_get_workspace_detail_premium_no_projects():
     res_ws = await repositories.get_workspace_detail(id=workspace3.id, user_id=user10.id)
     assert res_ws == workspace3
     assert res_ws.total_projects == 0
-    assert res_ws.is_owner is True
+    assert res_ws.user_is_owner is True
     assert res_ws.has_projects is False
-    assert res_ws.my_role == "admin"
+    assert res_ws.user_role == "admin"
     # assert workspace3 - user11
     res_ws = await repositories.get_workspace_detail(id=workspace3.id, user_id=user11.id)
     assert res_ws == workspace3
     assert res_ws.total_projects == 0
-    assert res_ws.is_owner is False
+    assert res_ws.user_is_owner is False
     assert res_ws.has_projects is False
-    assert res_ws.my_role == "member"
+    assert res_ws.user_role == "member"
 
 
 async def test_get_workspace_detail_no_premium_no_projects():
@@ -342,9 +342,9 @@ async def test_get_workspace_detail_no_premium_no_projects():
     res_ws = await repositories.get_workspace_detail(id=workspace4.id, user_id=user12.id)
     assert res_ws == workspace4
     assert res_ws.total_projects == 0
-    assert res_ws.is_owner is True
+    assert res_ws.user_is_owner is True
     assert res_ws.has_projects is False
-    assert res_ws.my_role == "admin"
+    assert res_ws.user_role == "admin"
 
 
 async def test_get_workspace_detail_premium_projects_no_ws_member():
@@ -372,16 +372,16 @@ async def test_get_workspace_detail_premium_projects_no_ws_member():
     res_ws = await repositories.get_workspace_detail(id=workspace5.id, user_id=user13.id)
     assert res_ws == workspace5
     assert res_ws.total_projects == 4
-    assert res_ws.is_owner is True
+    assert res_ws.user_is_owner is True
     assert res_ws.has_projects is True
-    assert res_ws.my_role == "admin"
+    assert res_ws.user_role == "admin"
     # assert workspace5 - user14
     res_ws = await repositories.get_workspace_detail(id=workspace5.id, user_id=user14.id)
     assert res_ws == workspace5
     assert res_ws.total_projects == 3
-    assert res_ws.is_owner is False
+    assert res_ws.user_is_owner is False
     assert res_ws.has_projects is True
-    assert res_ws.my_role == "guest"
+    assert res_ws.user_role == "guest"
 
 
 async def test_get_workspace_detail_premium_no_projects_no_ws_member():
@@ -397,16 +397,16 @@ async def test_get_workspace_detail_premium_no_projects_no_ws_member():
     res_ws = await repositories.get_workspace_detail(id=workspace6.id, user_id=user15.id)
     assert res_ws == workspace6
     assert res_ws.total_projects == 1
-    assert res_ws.is_owner is True
+    assert res_ws.user_is_owner is True
     assert res_ws.has_projects is True
-    assert res_ws.my_role == "admin"
+    assert res_ws.user_role == "admin"
     # assert workspace6 - user16
     res_ws = await repositories.get_workspace_detail(id=workspace6.id, user_id=user16.id)
     assert res_ws == workspace6
     assert res_ws.total_projects == 0
-    assert res_ws.is_owner is False
+    assert res_ws.user_is_owner is False
     assert res_ws.has_projects is True
-    assert res_ws.my_role == "none"
+    assert res_ws.user_role == "none"
 
 
 async def test_get_workspace_detail_no_ws_members():
@@ -422,16 +422,16 @@ async def test_get_workspace_detail_no_ws_members():
     res_ws = await repositories.get_workspace_detail(id=workspace7.id, user_id=user17.id)
     assert res_ws == workspace7
     assert res_ws.total_projects == 0
-    assert res_ws.is_owner is False
+    assert res_ws.user_is_owner is False
     assert res_ws.has_projects is True
-    assert res_ws.my_role == "none"
+    assert res_ws.user_role == "none"
     # assert workspace7 - user18
     res_ws = await repositories.get_workspace_detail(id=workspace7.id, user_id=user18.id)
     assert res_ws == workspace7
     assert res_ws.total_projects == 0
-    assert res_ws.is_owner is False
+    assert res_ws.user_is_owner is False
     assert res_ws.has_projects is True
-    assert res_ws.my_role == "none"
+    assert res_ws.user_role == "none"
 
 
 ##########################################################
@@ -445,7 +445,7 @@ async def test_get_workspace_summary_admin():
     res = await repositories.get_workspace_summary(id=workspace.id, user_id=user.id)
 
     assert res.name == workspace.name
-    assert res.my_role == "admin"
+    assert res.user_role == "admin"
 
 
 async def test_get_workspace_summary_member():
@@ -456,7 +456,7 @@ async def test_get_workspace_summary_member():
     res = await repositories.get_workspace_summary(id=workspace.id, user_id=user.id)
 
     assert res.name == workspace.name
-    assert res.my_role == "member"
+    assert res.user_role == "member"
 
 
 async def test_get_workspace_summary_guest():
@@ -466,7 +466,7 @@ async def test_get_workspace_summary_guest():
     res = await repositories.get_workspace_summary(id=workspace.id, user_id=user.id)
 
     assert res.name == workspace.name
-    assert res.my_role == "guest"
+    assert res.user_role == "guest"
 
 
 async def test_get_workspace_summary_none():
@@ -475,7 +475,7 @@ async def test_get_workspace_summary_none():
     res = await repositories.get_workspace_summary(id=workspace.id, user_id=user.id)
 
     assert res.name == workspace.name
-    assert res.my_role == "none"
+    assert res.user_role == "none"
 
 
 async def test_get_workspace_summary_non_existing():

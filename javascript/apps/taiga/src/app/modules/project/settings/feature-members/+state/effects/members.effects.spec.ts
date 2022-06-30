@@ -92,7 +92,8 @@ describe('MembersEffects', () => {
     expect(effects.nextMembersPage$).toSatisfyOnFlush(() => {
       expect(projectApiService.getMembers).toHaveBeenCalledWith(
         project.slug,
-        0
+        0,
+        20
       );
     });
   });
@@ -128,7 +129,8 @@ describe('MembersEffects', () => {
     expect(effects.nextPendingPage$).toSatisfyOnFlush(() => {
       expect(projectApiService.getInvitations).toHaveBeenCalledWith(
         project.slug,
-        0
+        0,
+        20
       );
     });
   });

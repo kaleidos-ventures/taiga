@@ -34,7 +34,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </ng-container>
       <ng-container *ngIf="vm.loading">
         <tg-ui-dtable-row
-          *ngFor="let i of [].constructor(10); trackBy: trackByIndex">
+          *ngFor="
+            let i of [].constructor(MEMBERS_PAGE_SIZE);
+            trackBy: trackByIndex
+          ">
           <tg-ui-dtable-cell>
             <tg-ui-user-skeleton></tg-ui-user-skeleton>
           </tg-ui-dtable-cell>

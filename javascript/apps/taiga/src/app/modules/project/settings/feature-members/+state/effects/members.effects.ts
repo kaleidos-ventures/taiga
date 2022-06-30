@@ -15,6 +15,7 @@ import { ProjectApiService } from '@taiga/api';
 import { EMPTY } from 'rxjs';
 import { catchError, exhaustMap, map } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { AppService } from '~/app/services/app.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import {
@@ -36,7 +37,7 @@ export class MembersEffects {
 
       exhaustMap(([action, project]) => {
         return this.projectApiService
-          .getMembers(project.slug, action.offset)
+          .getMembers(project.slug, action.offset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((membersResponse) => {
               return fetchMembersSuccess({
@@ -62,7 +63,7 @@ export class MembersEffects {
       ),
       exhaustMap(([action, project]) => {
         return this.projectApiService
-          .getInvitations(project.slug, action.offset)
+          .getInvitations(project.slug, action.offset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((invitationsResponse) => {
               return fetchInvitationsSuccess({

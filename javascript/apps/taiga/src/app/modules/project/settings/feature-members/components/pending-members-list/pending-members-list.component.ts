@@ -18,6 +18,7 @@ import {
 import { setPendingPage } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import { RxState } from '@rx-angular/state';
 import { map } from 'rxjs/operators';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 
 @Component({
   selector: 'tg-pending-members-list',
@@ -26,6 +27,8 @@ import { map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PendingMembersListComponent {
+  public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
+
   public model$ = this.state.select().pipe(
     map((model) => {
       const pageStart = model.offset + 1;
@@ -58,13 +61,13 @@ export class PendingMembersListComponent {
 
   public next() {
     this.store.dispatch(
-      setPendingPage({ offset: this.state.get('offset') + 10 })
+      setPendingPage({ offset: this.state.get('offset') + MEMBERS_PAGE_SIZE })
     );
   }
 
   public prev() {
     this.store.dispatch(
-      setPendingPage({ offset: this.state.get('offset') - 10 })
+      setPendingPage({ offset: this.state.get('offset') - MEMBERS_PAGE_SIZE })
     );
   }
 

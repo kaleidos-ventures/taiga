@@ -39,9 +39,7 @@ export class InvitationApiService {
   }
 
   public searchUser(data: SearchUserRequest) {
-    return this.http.post<{ username: string; fullName: string }[]>(
-      `${this.config.apiUrl}/users/search`,
-      data
-    );
+    return this.http.get<Contact[]>(
+      `${this.config.apiUrl}/users/search?text=${data.text}&project=${data.project}&offset=${data.offset}&limit=${data.limit}`);
   }
 }

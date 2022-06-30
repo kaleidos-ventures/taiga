@@ -15,8 +15,9 @@ export interface Contact {
   email?: string;
   username: string;
   fullName: string;
-  isMember?: boolean;
-  isAddedToList?: boolean;
+  userIsMember?: boolean;
+  userHasPendingInvitation?: boolean;
+  userIsAddedToList?: boolean;
 }
 export interface InvitationRequest {
   email?: string;
@@ -50,8 +51,7 @@ export interface InvitationParams {
 
 export interface SearchUserRequest {
   text: string;
-  project?: string;
-  excludedUsers?: string[];
-  offset?: number;
-  limit?: number;
+  project: string;
+  offset: number;
+  limit: number;
 }

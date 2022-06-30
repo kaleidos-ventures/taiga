@@ -7,7 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { Contact, Invitation, SearchUserRequest } from '@taiga/data';
+import { Contact, Invitation } from '@taiga/data';
 
 export const inviteUsersSuccess = createAction(
   '[Invitation] invite users success',
@@ -36,7 +36,10 @@ export const inviteUsersError = createAction('[Invitation] invite users error');
 
 export const searchUser = createAction(
   '[Invitation] fetch suggested users',
-  props<{ searchUser: SearchUserRequest; peopleAdded: Contact[] }>()
+  props<{
+    searchUser: { text: string; project: string };
+    peopleAdded: Contact[];
+  }>()
 );
 
 export const searchUserSuccess = createAction(

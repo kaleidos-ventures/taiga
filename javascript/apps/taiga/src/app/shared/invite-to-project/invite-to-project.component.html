@@ -131,38 +131,38 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                         data-test="option"
                         [attr.id]="'suggestion-' + i"
                         [disabled]="
-                          !!contact.isMember || !!contact.isAddedToList
+                          !!contact.userIsMember || !!contact.userIsAddedToList
                         "
                         [class.selected]="
                           suggestionSelected === i &&
-                          !contact.isMember &&
-                          !contact.isAddedToList
+                          !contact.userIsMember &&
+                          !contact.userIsAddedToList
                         "
                         [attr.aria-disabled]="
                           suggestionSelected !== i ||
-                          !!contact.isMember ||
-                          !!contact.isAddedToList
+                          !!contact.userIsMember ||
+                          !!contact.userIsAddedToList
                         "
                         [attr.aria-selected]="suggestionSelected === i"
                         (click)="includeSuggestedContact(i, $event)">
                         <tg-user-card
                           [user]="contact"
                           [disabled]="
-                            !!contact.isMember || !!contact.isAddedToList
+                            !!contact.userIsMember || !!contact.userIsAddedToList
                           "
                           [active]="suggestionSelected === i"
                           [textToHighlight]="
                             parseTextToHighlight
                           "></tg-user-card>
                         <tg-ui-badge
-                          *ngIf="contact.isMember"
+                          *ngIf="contact.userIsMember"
                           data-test="info-user"
                           class="disabled-badge"
                           [label]="
                             t('invitation_modal.already_member')
                           "></tg-ui-badge>
                         <tg-ui-badge
-                          *ngIf="contact.isAddedToList"
+                          *ngIf="contact.userIsAddedToList"
                           data-test="info-user"
                           class="disabled-badge"
                           [label]="

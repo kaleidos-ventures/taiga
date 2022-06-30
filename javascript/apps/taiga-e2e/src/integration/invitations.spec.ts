@@ -173,10 +173,12 @@ describe('Invite users to project from overview when user is admin', () => {
       const projectUrl =
         /http:\/\/localhost:\d+\/(.*)(?:\/kanban|\/overview)/g.exec(url)?.[1] ||
         '/';
+      cy.closeToast();
       logout();
       cy.login('user2', '123123');
       cy.visit(projectUrl);
       acceptInvitationFromProjectOverview();
+      cy.closeToast();
       logout();
       cy.login();
       cy.visit('/');
@@ -254,11 +256,44 @@ describe('Invite users to project from overview when user is admin', () => {
 });
 
 describe('Invite users to project from overview when user is not admin', () => {
+  let workspace: ReturnType<typeof WorkspaceMockFactory>;
+  let project: ReturnType<typeof ProjectMockFactory>;
+
+  before(() => {
+    workspace = WorkspaceMockFactory();
+    project = ProjectMockFactory();
+  });
+
   beforeEach(() => {
     cy.login();
     cy.visit('/');
     cy.initAxe();
-    cy.contains('Synchronized context-sensitive access').click();
+
+    void createWorkspaceRequest(workspace.name);
+    launchProjectCreationInWS(0);
+    selectBlankProject();
+    typeProjectName(project.name);
+    submitProject();
+
+    typeEmailToInvite('user4@taiga.demo');
+    addEmailToInvite();
+    selectRoleAdministrator();
+    typeEmailToInvite('user2@taiga.demo, user3@taiga.demo');
+    addEmailToInvite();
+    inviteUsers();
+    cy.getBySel('input-add-invites').should('not.exist');
+
+    cy.url().then((url) => {
+      const projectUrl =
+        /http:\/\/localhost:\d+\/(.*)(?:\/kanban|\/overview)/g.exec(url)?.[1] ||
+        '/';
+      cy.closeToast();
+      logout();
+      cy.login('user2', '123123');
+      cy.visit(projectUrl);
+      acceptInvitationFromProjectOverview();
+      cy.closeToast();
+    });
   });
 
   it('Should hide invite people button', () => {

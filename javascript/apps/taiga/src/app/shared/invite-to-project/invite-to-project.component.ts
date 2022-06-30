@@ -254,7 +254,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
         this.suggestedUsers = suggestedUsers;
         this.elegibleSuggestions = [];
         this.suggestedUsers.forEach((it, i) => {
-          if (!it.isMember && !it.isAddedToList) {
+          if (!it.userIsMember && !it.userIsAddedToList) {
             this.elegibleSuggestions?.push(i);
           }
         });
@@ -329,7 +329,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
         return {
           fullName: user.get('fullName')?.value as string,
           username: user.get('username')?.value as string,
-          isAddedToList: true,
+          userIsAddedToList: true,
         };
       });
     } else {
@@ -397,7 +397,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     this.resetErrors();
     if (this.suggestionContactsDropdownActivate) {
       const user = this.suggestedUsers[this.suggestionSelected];
-      if (!user.isMember && !user.isAddedToList) {
+      if (!user.userIsMember && !user.userIsAddedToList) {
         this.includeSuggestedContact(this.suggestionSelected);
       }
     } else if (this.inviteIdentifier === '') {

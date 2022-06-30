@@ -21,7 +21,7 @@ import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 import { TuiDialogService } from '@taiga-ui/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ModalService } from '@taiga/ui/modal/services/modal.service';
-import { pairwise } from 'rxjs/operators';
+import { pairwise, startWith } from 'rxjs/operators';
 
 /*
 Usage example:
@@ -76,7 +76,7 @@ export class ModalComponent implements AfterViewInit {
 
   public ngAfterViewInit() {
     this.open$
-      .pipe(untilDestroyed(this), pairwise())
+      .pipe(startWith(false), untilDestroyed(this), pairwise())
       .subscribe(([oldOpen, open]) => {
         if (open) {
           this.processOpen();

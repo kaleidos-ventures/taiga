@@ -146,7 +146,7 @@ tui-data-list {
     }
   }
 
-  &::ng-deep .empty {
+  &::ng-deep .t-empty {
     @mixin font-paragraph;
 
     /* stylelint-disable-next-line declaration-no-important */

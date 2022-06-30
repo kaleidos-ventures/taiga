@@ -94,6 +94,13 @@ function getBySelLike(selector: string, options?: CyGetOptions[1]) {
 
 Cypress.Commands.add('getBySelLike', getBySelLike);
 
+function closeToast() {
+  cy.get('tui-notification .close').should('be.visible');
+  cy.get('tui-notification .close').click();
+}
+
+Cypress.Commands.add('closeToast', closeToast);
+
 function login(username = 'user1', password = '123123') {
   cy.session([username, password], () => {
     cy.visit('/login');
@@ -112,6 +119,7 @@ declare namespace Cypress {
   interface Chainable {
     initAxe: typeof initAxeCommand;
     tgCheckA11y: typeof checkA11y;
+    closeToast: typeof closeToast;
     login: typeof login;
     getBySel: typeof getBySel;
     getBySelLike: typeof getBySelLike;

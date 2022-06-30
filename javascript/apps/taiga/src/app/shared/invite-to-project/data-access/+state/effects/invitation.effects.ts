@@ -23,7 +23,6 @@ import {
 import { TuiNotification } from '@taiga-ui/core';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { InvitationService } from '~/app/services/invitation.service';
-import { selectMembers } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { ProjectApiService } from '@taiga/api';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { Store } from '@ngrx/store';
@@ -154,53 +153,40 @@ export class InvitationEffects {
     return this.actions$.pipe(
       ofType(InvitationActions.searchUser),
       debounceTime(200),
-      concatLatestFrom(() => [
-        this.store.select(selectMembers).pipe(filterNil()),
-        this.store.select(selectUser).pipe(filterNil()),
-      ]),
-      switchMap(([action, membersState, userState]) => {
-        const membersUsername = membersState.map((it) => it.user.username);
-        const addedUsersUsername = action.peopleAdded.map((j) => j.username);
+      concatLatestFrom(() => this.store.select(selectUser).pipe(filterNil())),
+      switchMap(([action, userState]) => {
+        const peopleAddedMatch = this.invitationService.matchUsersFromList(
+          action.peopleAdded,
+          action.searchUser.text
+        );
+        const peopleAddedUsernameList = action.peopleAdded.map(
+          (i) => i.username
+        );
         return this.invitationApiService
           .searchUser({
             text: this.invitationService.normalizeText(action.searchUser.text),
             project: action.searchUser.project,
-            excludedUsers: [
-              userState.username,
-              ...membersUsername,
-              ...addedUsersUsername,
-            ],
             offset: 0,
-            limit: 6,
+            // to show 6 results at least and being possible to get the current user in the list we always will ask for 7 + the matched users that are on the list
+            limit: peopleAddedMatch.length + 7,
           })
           .pipe(
             map((suggestedUsers: Contact[]) => {
-              const membersListParsed: Contact[] = membersState
-                .map((member) => {
-                  return {
-                    username: member.user.username,
-                    fullName: member.user.fullName,
-                    isMember: true,
-                  };
-                })
-                .filter((it) => it.username !== userState.username);
-              const membersMatch = this.invitationService.matchUsersFromList(
-                membersListParsed,
-                action.searchUser.text
+              let suggestedList = suggestedUsers.filter(
+                (suggestedUser) =>
+                  suggestedUser.username !== userState.username &&
+                  !peopleAddedUsernameList.includes(suggestedUser.username) &&
+                  !suggestedUser.userIsMember
               );
-              const peopleAddedMatch =
-                this.invitationService.matchUsersFromList(
-                  action.peopleAdded,
-                  action.searchUser.text
-                );
-              let suggestedList = suggestedUsers;
-              if (membersMatch) {
-                suggestedList = [
-                  ...membersMatch,
-                  ...peopleAddedMatch,
-                  ...suggestedList,
-                ].slice(0, 6);
-              }
+              const alreadyMembers = suggestedUsers.filter(
+                (suggestedUser) => suggestedUser.userIsMember
+              );
+              suggestedList = [
+                ...alreadyMembers,
+                ...peopleAddedMatch,
+                ...suggestedList,
+              ].slice(0, 6);
+
               return InvitationActions.searchUserSuccess({
                 suggestedUsers: suggestedList,
               });

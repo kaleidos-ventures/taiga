@@ -33,10 +33,7 @@ import {
   MembershipMockFactory,
   RegisteredContactMockFactory,
 } from '@taiga/data';
-import {
-  selectInvitations,
-  selectMembers,
-} from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { TestScheduler } from 'rxjs/testing';
 
@@ -166,7 +163,6 @@ describe('InvitationEffects', () => {
 
   it('Search user: no results', () => {
     const user = UserMockFactory();
-    store.overrideSelector(selectMembers, []);
     store.overrideSelector(selectUser, user);
     const effects = spectator.inject(InvitationEffects);
     const invitationApiService = spectator.inject(InvitationApiService);
@@ -185,7 +181,10 @@ describe('InvitationEffects', () => {
       );
 
       actions$ = hot('-a', {
-        a: searchUser({ searchUser: { text: searchText }, peopleAdded: [] }),
+        a: searchUser({
+          searchUser: { text: searchText, project: randSlug() },
+          peopleAdded: [],
+        }),
       });
 
       expectObservable(effects.searchUser$).toBe('202ms a', {
@@ -196,7 +195,6 @@ describe('InvitationEffects', () => {
 
   it('Search user: results', () => {
     const user = UserMockFactory();
-    store.overrideSelector(selectMembers, []);
     store.overrideSelector(selectUser, user);
     const effects = spectator.inject(InvitationEffects);
     const invitationApiService = spectator.inject(InvitationApiService);
@@ -224,6 +222,7 @@ describe('InvitationEffects', () => {
         a: searchUser({
           searchUser: {
             text: searchText,
+            project: randSlug(),
           },
           peopleAdded: [],
         }),
@@ -238,7 +237,6 @@ describe('InvitationEffects', () => {
   it('Search user: suggested users and member', () => {
     const user = UserMockFactory();
     const member = MembershipMockFactory();
-    store.overrideSelector(selectMembers, [member]);
     store.overrideSelector(selectUser, user);
     const effects = spectator.inject(InvitationEffects);
     const invitationApiService = spectator.inject(InvitationApiService);
@@ -247,7 +245,7 @@ describe('InvitationEffects', () => {
       {
         username: member.user.username,
         fullName: member.user.fullName,
-        isMember: true,
+        userIsMember: true,
       },
       {
         username: `${searchText} ${randWord()}`,
@@ -271,6 +269,7 @@ describe('InvitationEffects', () => {
         a: searchUser({
           searchUser: {
             text: searchText,
+            project: randSlug(),
           },
           peopleAdded: [],
         }),
@@ -286,24 +285,23 @@ describe('InvitationEffects', () => {
     const user = UserMockFactory();
     const member = MembershipMockFactory();
     const addedToList = RegisteredContactMockFactory();
-    store.overrideSelector(selectMembers, [member]);
     store.overrideSelector(selectUser, user);
     const effects = spectator.inject(InvitationEffects);
     const invitationApiService = spectator.inject(InvitationApiService);
     const searchText: string = randWord();
     const suggestedUsers: Contact[] = [
       {
-        username: member.user.username,
+        username: `${searchText}1`,
         fullName: member.user.fullName,
-        isMember: true,
+        userIsMember: true,
       },
       {
-        username: addedToList.username,
+        username: `${searchText}2`,
         fullName: addedToList.fullName,
-        isAddedToList: true,
+        userIsAddedToList: true,
       },
       {
-        username: `${searchText} ${randWord()}`,
+        username: `${searchText}3}`,
         fullName: randWord(),
         email: randEmail(),
       },
@@ -324,6 +322,7 @@ describe('InvitationEffects', () => {
         a: searchUser({
           searchUser: {
             text: searchText,
+            project: randSlug(),
           },
           peopleAdded: [addedToList],
         }),

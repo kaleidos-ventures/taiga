@@ -292,7 +292,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             (pointerleave)="out()">
             <button
               type="button"
-              *ngIf="project.amIAdmin"
+              *ngIf="project.userIsAdmin"
               #projectSettingButton
               data-test="settings-button"
               (click)="openSettings()"

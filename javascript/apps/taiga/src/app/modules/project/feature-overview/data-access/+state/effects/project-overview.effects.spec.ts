@@ -72,7 +72,7 @@ describe('ProjectOverviewEffects', () => {
   it('init members', () => {
     const project = ProjectMockFactory();
 
-    project.amIAdmin = true;
+    project.userIsAdmin = true;
 
     store.overrideSelector(selectCurrentProject, project);
 
@@ -124,7 +124,7 @@ describe('ProjectOverviewEffects', () => {
   it('init members with enough members first load', () => {
     const project = ProjectMockFactory();
 
-    project.amIAdmin = true;
+    project.userIsAdmin = true;
 
     store.overrideSelector(selectCurrentProject, project);
 
@@ -179,7 +179,7 @@ describe('ProjectOverviewEffects', () => {
     it('members', () => {
       const project = ProjectMockFactory();
 
-      project.amIAdmin = true;
+      project.userIsAdmin = true;
 
       store.overrideSelector(selectCurrentProject, project);
 
@@ -218,7 +218,7 @@ describe('ProjectOverviewEffects', () => {
     it('invitations', () => {
       const project = ProjectMockFactory();
 
-      project.amIAdmin = true;
+      project.userIsAdmin = true;
 
       store.overrideSelector(selectCurrentProject, project);
 

@@ -121,14 +121,16 @@ export class PermissionsService {
       return false;
     }
 
-    if (project.amIAdmin) {
+    if (project.userIsAdmin) {
       return true;
     }
 
     const entities = Array.isArray(entity) ? entity : [entity];
     const permissions = Array.isArray(permission) ? permission : [permission];
 
-    const projectPermissions = this.formatRawPermissions(project.myPermissions);
+    const projectPermissions = this.formatRawPermissions(
+      project.userPermissions
+    );
 
     if (operator === 'AND') {
       return entities.every((entity) => {

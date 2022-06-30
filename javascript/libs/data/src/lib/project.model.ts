@@ -22,8 +22,10 @@ export interface Project {
     'name' | 'slug' | 'color' | 'isPremium' | 'myRole'
   >;
   milestones: Milestone[];
-  myPermissions: string[];
-  amIAdmin: boolean;
+  userIsAdmin: boolean;
+  userIsMember: boolean;
+  userPermissions: string[];
+  userHasPendingInvitations: boolean;
 }
 
 export interface ProjectCreation {

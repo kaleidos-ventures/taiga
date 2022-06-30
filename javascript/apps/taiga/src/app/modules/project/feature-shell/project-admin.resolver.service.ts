@@ -22,7 +22,7 @@ export class ProjectAdminResolver implements Resolve<Observable<unknown>> {
   public resolve() {
     const project = UtilsService.getState(this.store, selectCurrentProject);
 
-    if (!project?.amIAdmin) {
+    if (!project?.userIsAdmin) {
       void this.router.navigate(['/']);
       return EMPTY;
     }

@@ -60,13 +60,13 @@ describe('PermissionsService', () => {
   it('hasPermissions', () => {
     const project = ProjectMockFactory();
 
-    project.myPermissions = [
+    project.userPermissions = [
       'view_us',
       'modify_us',
       'view_issues',
       'modify_issue',
     ];
-    project.amIAdmin = false;
+    project.userIsAdmin = false;
 
     store.setState({
       project: {

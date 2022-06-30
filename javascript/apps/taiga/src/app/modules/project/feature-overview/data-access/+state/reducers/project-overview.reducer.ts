@@ -15,27 +15,23 @@ import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+
 export interface ProjectOverviewState {
   members: Membership[];
   invitations: Invitation[];
-  notificationClosed: boolean;
-  onAcceptedInvitation: boolean;
   totalMemberships: number;
+  notificationClosed: boolean;
   totalInvitations: number;
   hasMoreMembers: boolean;
   hasMoreInvitations: boolean;
   loadingMoreMembers: boolean;
-  hasInvitation: boolean;
 }
 
 export const initialState: ProjectOverviewState = {
   members: [],
   invitations: [],
   notificationClosed: false,
-  onAcceptedInvitation: false,
   totalMemberships: 0,
   totalInvitations: 0,
   hasMoreMembers: true,
   hasMoreInvitations: true,
   loadingMoreMembers: false,
-  hasInvitation: false,
 };
 
 export const reducer = createReducer(
@@ -106,17 +102,10 @@ export const reducer = createReducer(
       return state;
     }
   ),
-  on(
-    ProjectOverviewActions.onAcceptedInvitation,
-    (state, { onAcceptedInvitation }): ProjectOverviewState => {
-      state.onAcceptedInvitation = onAcceptedInvitation;
-
-      return state;
-    }
-  ),
   on(ProjectOverviewActions.resetOverview, (state): ProjectOverviewState => {
+    state.hasMoreMembers = true;
+    state.hasMoreInvitations = true;
     state.notificationClosed = false;
-    state.onAcceptedInvitation = false;
     return state;
   }),
   on(InvitationActions.acceptInvitationSlugSuccess, (state, { username }) => {
@@ -136,11 +125,6 @@ export const reducer = createReducer(
 
       state.members = [member, ...state.members];
     }
-
-    return state;
-  }),
-  on(ProjectOverviewActions.eventInvitation, (state): ProjectOverviewState => {
-    state.hasInvitation = true;
 
     return state;
   })

@@ -11,12 +11,10 @@ import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY, of } from 'rxjs';
-import { delay, exhaustMap, map } from 'rxjs/operators';
+import { exhaustMap, map } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
-import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
 import {
   selectHasMoreInvitations,
   selectHasMoreMembers,
@@ -24,22 +22,9 @@ import {
   selectMembers,
 } from '../selectors/project-overview.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
-import { WsService } from '@taiga/ws';
 
 @Injectable()
 export class ProjectOverviewEffects {
-  public acceptedInvitation$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(InvitationActions.acceptInvitationSlugSuccess),
-      delay(WaitingForToastNotification),
-      map(() => {
-        return ProjectOverviewActions.onAcceptedInvitation({
-          onAcceptedInvitation: true,
-        });
-      })
-    );
-  });
-
   public initMembers$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(ProjectOverviewActions.initMembers),
@@ -142,20 +127,9 @@ export class ProjectOverviewEffects {
     );
   });
 
-  public wsUpdateInvitations$ = createEffect(() => {
-    return this.wsService
-      .events<{ project: string }>({ type: 'invitations.create' })
-      .pipe(
-        map(() => {
-          return ProjectOverviewActions.eventInvitation();
-        })
-      );
-  });
-
   constructor(
     private store: Store,
     private actions$: Actions,
-    private projectApiService: ProjectApiService,
-    private wsService: WsService
+    private projectApiService: ProjectApiService
   ) {}
 }

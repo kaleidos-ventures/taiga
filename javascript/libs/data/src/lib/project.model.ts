@@ -25,7 +25,7 @@ export interface Project {
   userIsAdmin: boolean;
   userIsMember: boolean;
   userPermissions: string[];
-  userHasPendingInvitations: boolean;
+  userHasPendingInvitation: boolean;
 }
 
 export interface ProjectCreation {

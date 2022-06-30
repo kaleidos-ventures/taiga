@@ -24,17 +24,10 @@ import {
 } from './data-access/+state/actions/project-overview.actions';
 import { Invitation, Project, User } from '@taiga/data';
 import { RxState } from '@rx-angular/state';
-import { map } from 'rxjs/operators';
-import {
-  selectHasInvitation,
-  selectInvitations,
-} from './data-access/+state/selectors/project-overview.selectors';
+import { selectInvitations } from './data-access/+state/selectors/project-overview.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
-import {
-  selectNotificationClosed,
-  selectOnAcceptedInvitation,
-} from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { selectNotificationClosed } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { animate, style, transition, trigger } from '@angular/animations';
 
@@ -63,25 +56,7 @@ export class ProjectFeatureOverviewComponent
   @ViewChild('descriptionOverflow')
   public descriptionOverflow?: ElementRef;
 
-  public readonly model$ = this.state.select().pipe(
-    map((state) => {
-      let invitation = state.hasInvitation;
-      if (state.user && !state.hasInvitation) {
-        // TODO: move to api
-        invitation = state.invitations.some((invitation) =>
-          invitation.email
-            ? invitation.email.toLowerCase() === state.user?.email.toLowerCase()
-            : invitation.user?.username.toLowerCase() ===
-              state.user?.username.toLowerCase()
-        );
-      }
-
-      return {
-        ...state,
-        hasInvitation: invitation,
-      };
-    })
-  );
+  public readonly model$ = this.state.select();
 
   public showDescription = false;
   public hideOverflow = false;
@@ -91,10 +66,8 @@ export class ProjectFeatureOverviewComponent
     private cd: ChangeDetectorRef,
     private state: RxState<{
       project: Project;
-      hasInvitation: boolean;
       invitations: Invitation[];
       notificationClosed: boolean;
-      onAcceptedInvitation: boolean;
       user?: User | null;
     }>
   ) {
@@ -108,12 +81,6 @@ export class ProjectFeatureOverviewComponent
       'notificationClosed',
       this.store.select(selectNotificationClosed)
     );
-    this.state.connect(
-      'onAcceptedInvitation',
-      this.store.select(selectOnAcceptedInvitation)
-    );
-
-    this.state.connect('hasInvitation', this.store.select(selectHasInvitation));
   }
 
   public ngOnInit() {

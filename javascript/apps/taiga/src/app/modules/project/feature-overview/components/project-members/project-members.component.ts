@@ -13,7 +13,6 @@ import { Invitation, Membership, Project, User } from '@taiga/data';
 import {
   selectInvitations,
   selectMembers,
-  selectOnAcceptedInvitation,
   selectTotalMemberships,
   selectTotalInvitations,
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
@@ -21,14 +20,19 @@ import {
   initMembers,
   nextMembersPage,
 } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
-import { filter, map, take } from 'rxjs/operators';
+import { delay, map, take } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { selectNotificationClosed } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
-import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import {
+  acceptInvitationSlug,
+  acceptInvitationSlugSuccess,
+} from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { ProjectMembersListComponent } from '../project-members-list/project-members-list.component';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
+import { Actions, ofType } from '@ngrx/effects';
+import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
 
 @Component({
   selector: 'tg-project-members',
@@ -80,6 +84,7 @@ export class ProjectMembersComponent {
   public resetForm = false;
 
   constructor(
+    private actions$: Actions,
     private store: Store,
     private state: RxState<{
       project: Project;
@@ -87,7 +92,6 @@ export class ProjectMembersComponent {
       invitations: Invitation[];
       notificationClosed: boolean;
       user: User | null;
-      onAcceptedInvitation: boolean;
       totalMemberships: number;
       totalInvitations: number;
     }>
@@ -113,15 +117,15 @@ export class ProjectMembersComponent {
       this.store.select(selectCurrentProject).pipe(filterNil())
     );
 
-    this.state.hold(
-      this.store.select(selectOnAcceptedInvitation).pipe(
-        filter((onAcceptedInvitation) => onAcceptedInvitation),
-        take(1)
-      ),
-      () => {
-        this.projectMembersList.animateUser();
-      }
+    const invitationAccepted = this.actions$.pipe(
+      ofType(acceptInvitationSlugSuccess),
+      delay(WaitingForToastNotification),
+      take(1)
     );
+
+    this.state.hold(invitationAccepted, () => {
+      this.projectMembersList.animateUser();
+    });
   }
 
   public project$ = this.store.select(selectCurrentProject);

@@ -18,3 +18,7 @@ export const fetchProject = createAction(
   '[Project] fetch',
   props<{ slug: Project['slug'] }>()
 );
+
+export const eventInvitation = createAction(
+  '[Project][ws] invitation received'
+);

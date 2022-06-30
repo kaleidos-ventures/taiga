@@ -23,6 +23,7 @@ import {
   WaitingForContextClosing,
   WaitingForMemberAnimation,
 } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
+import { WsService } from '@taiga/ws';
 
 @Injectable()
 export class ProjectEffects {
@@ -74,10 +75,21 @@ export class ProjectEffects {
     );
   });
 
+  public wsUpdateInvitations$ = createEffect(() => {
+    return this.wsService
+      .events<{ project: string }>({ type: 'invitations.create' })
+      .pipe(
+        map(() => {
+          return ProjectActions.eventInvitation();
+        })
+      );
+  });
+
   constructor(
     private actions$: Actions,
     private projectApiService: ProjectApiService,
     private navigationService: NavigationService,
-    private appService: AppService
+    private appService: AppService,
+    private wsService: WsService
   ) {}
 }

@@ -88,9 +88,6 @@ export class ProjectMembersListComponent {
   public showAcceptInvitationButton = false;
 
   @Input()
-  public onAcceptedInvitation = false;
-
-  @Input()
   public paginate = false;
 
   @Output()

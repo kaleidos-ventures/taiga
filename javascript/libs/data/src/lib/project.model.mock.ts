@@ -49,7 +49,7 @@ export const ProjectMockFactory = (
     logoLarge: randImg(),
     userIsAdmin: randBoolean(),
     userIsMember: true,
-    userHasPendingInvitations: randBoolean(),
+    userHasPendingInvitation: randBoolean(),
     userPermissions: [],
   };
 

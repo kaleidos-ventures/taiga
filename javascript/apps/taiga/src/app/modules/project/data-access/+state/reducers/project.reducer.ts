@@ -10,6 +10,7 @@ import { createReducer, on, createFeature } from '@ngrx/store';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/project.actions';
 import { Project } from '@taiga/data';
+import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 
 export const projectFeatureKey = 'project';
 
@@ -30,7 +31,30 @@ export const reducer = createReducer(
     state.currentProjectSlug = project.slug;
 
     return state;
-  })
+  }),
+  on(ProjectActions.eventInvitation, (state): ProjectState => {
+    if (state.currentProjectSlug) {
+      const project = state.projects[state.currentProjectSlug];
+
+      if (project) {
+        project.userHasPendingInvitation = true;
+      }
+    }
+
+    return state;
+  }),
+  on(
+    InvitationActions.acceptInvitationSlugSuccess,
+    (state, { projectSlug }): ProjectState => {
+      const project = state.projects[projectSlug];
+
+      if (project) {
+        project.userHasPendingInvitation = false;
+      }
+
+      return state;
+    }
+  )
 );
 
 export const projectFeature = createFeature({

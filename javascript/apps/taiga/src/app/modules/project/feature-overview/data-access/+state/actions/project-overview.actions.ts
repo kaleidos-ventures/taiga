@@ -25,17 +25,8 @@ export const setNotificationClosed = createAction(
   props<{ notificationClosed: boolean }>()
 );
 
-export const onAcceptedInvitation = createAction(
-  '[Project overview] on Accepted Invitation',
-  props<{ onAcceptedInvitation: boolean }>()
-);
-
 export const nextMembersPage = createAction(
   '[Project overview] next members page'
-);
-
-export const eventInvitation = createAction(
-  '[Project overview][ws] invitation received'
 );
 
 export const resetOverview = createAction('[Project overview] reset overview');

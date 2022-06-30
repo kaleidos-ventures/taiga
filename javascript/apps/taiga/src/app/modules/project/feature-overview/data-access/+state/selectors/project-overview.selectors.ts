@@ -12,13 +12,11 @@ export const {
   selectMembers,
   selectInvitations,
   selectNotificationClosed,
-  selectOnAcceptedInvitation,
   selectTotalMemberships,
   selectTotalInvitations,
   selectHasMoreInvitations,
   selectHasMoreMembers,
   selectLoadingMoreMembers,
-  selectHasInvitation,
 } = projectOverviewFeature;
 
 export const selectCanPaginate = createSelector(

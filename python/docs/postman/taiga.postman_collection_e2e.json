@@ -2334,7 +2334,7 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"bad-invitation-token-error\");",
-									"    pm.expect(jsonData.error.message).to.include(\"Invalid token\");  ",
+									"    pm.expect(jsonData.error.msg).to.include(\"Invalid token\");  ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2379,7 +2379,7 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"bad-invitation-token-error\");",
-									"    pm.expect(jsonData.error.message).to.include(\"Invalid token\");  ",
+									"    pm.expect(jsonData.error.msg).to.include(\"Invalid token\");  ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2833,7 +2833,7 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"not-premium-workspace-error\");",
-									"    pm.expect(jsonData.error.message).to.eql(\"The workspace is not a premium one, so these perms cannot be seen\");",
+									"    pm.expect(jsonData.error.msg).to.eql(\"The workspace is not a premium one, so these perms cannot be seen\");",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonData).length;",
@@ -2904,7 +2904,7 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"not-premium-workspace-error\");",
-									"    pm.expect(jsonData.error.message).to.eql(\"The workspace is not a premium one, so these perms cannot be set\");",
+									"    pm.expect(jsonData.error.msg).to.eql(\"The workspace is not a premium one, so these perms cannot be set\");",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonData).length;",

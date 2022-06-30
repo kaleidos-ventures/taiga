@@ -38,7 +38,7 @@ def on_auth_error(request: Request, exc: Exception) -> Response:
         content={
             "error": {
                 "code": codes.EX_AUTHORIZATION.code,
-                "message": codes.EX_AUTHORIZATION.message,
+                "msg": codes.EX_AUTHORIZATION.msg,
             }
         },
         headers={"WWW-Authenticate": 'Bearer realm="api"'},

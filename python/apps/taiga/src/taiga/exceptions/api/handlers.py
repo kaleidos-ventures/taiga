@@ -22,10 +22,10 @@ from taiga.exceptions.api import codes
 async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
     if isinstance(exc, TaigaHTTPException):
         http_exc_code = getattr(exc, "code", codes.EX_UNKNOWN.code)
-        http_exc_message = getattr(exc, "message", codes.EX_UNKNOWN.message)
+        http_exc_msg = getattr(exc, "msg", codes.EX_UNKNOWN.msg)
     else:  # Starlette's HTTPException
         http_exc_code = http.HTTPStatus(exc.status_code).phrase.replace(" ", "-").lower()
-        http_exc_message = http.HTTPStatus(exc.status_code).description
+        http_exc_msg = http.HTTPStatus(exc.status_code).description
 
     http_exc_detail = exc.detail
 
@@ -33,7 +33,7 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
         "error": {
             "code": http_exc_code,
             "detail": http_exc_detail,
-            "message": http_exc_message,
+            "msg": http_exc_msg,
         }
     }
 
@@ -51,7 +51,7 @@ async def taiga_service_exception_handler(request: Request, exc: TaigaServiceExc
             "error": {
                 "code": codes.EX_BAD_REQUEST.code,
                 "detail": camel_to_kebab(exc.__class__.__name__),
-                "message": str(exc),
+                "msg": str(exc),
             }
         },
     )
@@ -64,7 +64,7 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
             "error": {
                 "code": codes.EX_VALIDATION_ERROR.code,
                 "detail": jsonable_encoder(exc.errors()),
-                "message": codes.EX_VALIDATION_ERROR.message,
+                "msg": codes.EX_VALIDATION_ERROR.msg,
             }
         },
     )

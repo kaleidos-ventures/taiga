@@ -23,13 +23,13 @@ T = TypeVar("T")
 class GenericListError(BaseModel):
     code: str
     detail: list[dict[str, Any]] = [{"loc": ["string"], "msg": "string", "type": "string"}]
-    message: str
+    msg: str
 
 
 class GenericSingleError(BaseModel):
     code: str
     detail: str = "string"
-    message: str
+    msg: str
 
 
 class ErrorResponse(GenericModel, Generic[T]):
@@ -38,27 +38,27 @@ class ErrorResponse(GenericModel, Generic[T]):
 
 class NotFoundErrorModel(GenericSingleError):
     code: str = codes.EX_NOT_FOUND.code
-    message: str = codes.EX_NOT_FOUND.message
+    msg: str = codes.EX_NOT_FOUND.msg
 
 
 class UnprocessableEntityModel(GenericListError):
     code: str = codes.EX_VALIDATION_ERROR.code
-    message: str = codes.EX_VALIDATION_ERROR.message
+    msg: str = codes.EX_VALIDATION_ERROR.msg
 
 
 class UnauthorizedErrorModel(GenericSingleError):
     code: str = codes.EX_AUTHORIZATION.code
-    message: str = codes.EX_AUTHORIZATION.message
+    msg: str = codes.EX_AUTHORIZATION.msg
 
 
 class ForbiddenErrorModel(GenericSingleError):
     code: str = codes.EX_FORBIDDEN.code
-    message: str = codes.EX_FORBIDDEN.message
+    msg: str = codes.EX_FORBIDDEN.msg
 
 
 class BadRequestErrorModel(GenericSingleError):
     code: str = codes.EX_BAD_REQUEST.code
-    message: str = codes.EX_BAD_REQUEST.message
+    msg: str = codes.EX_BAD_REQUEST.msg
 
 
 ErrorsDict = dict[int | str, dict[str, type[ErrorResponse[Any]]]]

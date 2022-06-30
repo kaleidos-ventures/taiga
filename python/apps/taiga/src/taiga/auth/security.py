@@ -26,7 +26,7 @@ class HTTPBearer(HTTPBearerBase):
         elif scheme != "bearer":
             if self.auto_error:
                 raise AuthorizationError(
-                    message="Invalid authentication credentials scheme",
+                    msg="Invalid authentication credentials scheme",
                 )
             else:
                 return None

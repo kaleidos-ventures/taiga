@@ -55,7 +55,7 @@ def test_500_errors_has_cors_headers_with_origin_in_request(caplog):
     error = response.json()["error"]
     assert "code" in error
     assert "detail" in error and isinstance(error["detail"], str)
-    assert "message" in error
+    assert "msg" in error
 
 
 def test_500_errors_has_not_cors_headers_without_origin_in_request(caplog):
@@ -69,4 +69,4 @@ def test_500_errors_has_not_cors_headers_without_origin_in_request(caplog):
     error = response.json()["error"]
     assert "code" in error
     assert "detail" in error and isinstance(error["detail"], str)
-    assert "message" in error
+    assert "msg" in error

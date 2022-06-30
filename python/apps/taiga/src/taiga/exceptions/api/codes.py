@@ -12,16 +12,14 @@ from typing import Final
 @dataclass
 class Error:
     code: str
-    message: str
+    msg: str
 
 
-EX_VALIDATION_ERROR: Final = Error(
-    code="validation-error", message="Unable to fulfill the request due to semantic errors"
-)
-EX_UNKNOWN: Final = Error(code="unknown", message="Unknown error")
-EX_NOT_FOUND: Final = Error(code="not-found", message="The requested resource could not be found")
+EX_VALIDATION_ERROR: Final = Error(code="validation-error", msg="Unable to fulfill the request due to semantic errors")
+EX_UNKNOWN: Final = Error(code="unknown", msg="Unknown error")
+EX_NOT_FOUND: Final = Error(code="not-found", msg="The requested resource could not be found")
 EX_AUTHORIZATION: Final = Error(
-    code="authorization-error", message="Invalid token or no active account found with the given credentials"
+    code="authorization-error", msg="Invalid token or no active account found with the given credentials"
 )
-EX_FORBIDDEN: Final = Error(code="forbidden", message="The user doesn't have permissions to perform this action")
-EX_BAD_REQUEST: Final = Error(code="bad-request", message="The request is incorrect")
+EX_FORBIDDEN: Final = Error(code="forbidden", msg="The user doesn't have permissions to perform this action")
+EX_BAD_REQUEST: Final = Error(code="bad-request", msg="The request is incorrect")

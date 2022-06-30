@@ -21,7 +21,7 @@ HTTP_500_STATUS_CODE: Final = 500
 HTTP_500: Final = http.HTTPStatus(HTTP_500_STATUS_CODE)
 HTTP_500_CODE: Final = HTTP_500.name.replace("_", "-").lower()
 HTTP_500_DETAIL: Final = HTTP_500.description
-HTTP_500_MESSAGE: Final = HTTP_500.phrase
+HTTP_500_MSG: Final = HTTP_500.phrase
 
 
 class UnexpectedExceptionMiddleware(BaseHTTPMiddleware):
@@ -61,7 +61,7 @@ class UnexpectedExceptionMiddleware(BaseHTTPMiddleware):
                     "error": {
                         "code": HTTP_500_CODE,
                         "detail": self._generate_error_detail(exc),
-                        "message": HTTP_500_MESSAGE,
+                        "msg": HTTP_500_MSG,
                     }
                 },
             )

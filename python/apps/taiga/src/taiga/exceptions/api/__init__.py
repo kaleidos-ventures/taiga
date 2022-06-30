@@ -19,12 +19,12 @@ class HTTPException(FastAPIHTTPException):
         self,
         status_code: int,
         code: str = codes.EX_UNKNOWN.code,
-        message: str = "",
+        msg: str = "",
         detail: Any = None,
         headers: dict[str, Any] | None = None,
     ) -> None:
         self.code: str = code
-        self.message: str = message
+        self.msg: str = msg
         if not detail:
             detail = camel_to_kebab(self.__class__.__name__)
         super().__init__(status_code=status_code, detail=detail, headers=headers)
@@ -36,9 +36,9 @@ class HTTPException(FastAPIHTTPException):
 
 
 class BadRequest(HTTPException):
-    def __init__(self, message: str = codes.EX_BAD_REQUEST.message, detail: Any = None) -> None:
+    def __init__(self, msg: str = codes.EX_BAD_REQUEST.msg, detail: Any = None) -> None:
         super().__init__(
-            status_code=status.HTTP_400_BAD_REQUEST, code=codes.EX_BAD_REQUEST.code, message=message, detail=detail
+            status_code=status.HTTP_400_BAD_REQUEST, code=codes.EX_BAD_REQUEST.code, msg=msg, detail=detail
         )
 
 
@@ -48,11 +48,11 @@ class BadRequest(HTTPException):
 
 
 class AuthorizationError(HTTPException):
-    def __init__(self, message: str = codes.EX_AUTHORIZATION.message):
+    def __init__(self, msg: str = codes.EX_AUTHORIZATION.msg):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             code=codes.EX_AUTHORIZATION.code,
-            message=message,
+            msg=msg,
             headers={"WWW-Authenticate": 'Bearer realm="api"'},
         )
 
@@ -63,10 +63,8 @@ class AuthorizationError(HTTPException):
 
 
 class ForbiddenError(HTTPException):
-    def __init__(self, message: str = codes.EX_FORBIDDEN.message, detail: Any = None) -> None:
-        super().__init__(
-            status_code=status.HTTP_403_FORBIDDEN, code=codes.EX_FORBIDDEN.code, message=message, detail=detail
-        )
+    def __init__(self, msg: str = codes.EX_FORBIDDEN.msg, detail: Any = None) -> None:
+        super().__init__(status_code=status.HTTP_403_FORBIDDEN, code=codes.EX_FORBIDDEN.code, msg=msg, detail=detail)
 
 
 ##########################
@@ -75,5 +73,5 @@ class ForbiddenError(HTTPException):
 
 
 class NotFoundError(HTTPException):
-    def __init__(self, message: str = codes.EX_NOT_FOUND.message):
-        super().__init__(status_code=status.HTTP_404_NOT_FOUND, code=codes.EX_NOT_FOUND.code, message=message)
+    def __init__(self, msg: str = codes.EX_NOT_FOUND.msg):
+        super().__init__(status_code=status.HTTP_404_NOT_FOUND, code=codes.EX_NOT_FOUND.code, msg=msg)

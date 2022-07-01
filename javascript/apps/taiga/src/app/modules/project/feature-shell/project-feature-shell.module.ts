@@ -13,8 +13,10 @@ import { ProjectFeatureShellComponent } from './project-feature-shell.component'
 import { ProjectFeatureShellRoutingModule } from './project-feature-shell-routing.module';
 import { ProjectFeatureNavigationModule } from '~/app/modules/project/feature-navigation/project-feature-navigation.module';
 import { ProjectDataAccessModule } from '~/app/modules/project/data-access/project.module';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+import { TuiButtonModule } from '@taiga-ui/core';
 
 @NgModule({
   declarations: [ProjectFeatureShellComponent],
@@ -25,6 +27,14 @@ import { AvatarModule } from '@taiga/ui/avatar';
     ProjectDataAccessModule,
     TranslocoModule,
     AvatarModule,
+    ContextNotificationModule,
+    TuiButtonModule,
+  ],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'project',
+    },
   ],
 })
 export class ProjectFeatureShellModule {}

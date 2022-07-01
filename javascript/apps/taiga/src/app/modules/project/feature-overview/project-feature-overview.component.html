@@ -9,37 +9,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <ng-container *ngIf="model$ | async as vm">
     <ng-container *ngIf="vm.project">
       <div class="project-content">
-        <tg-ui-context-notification
-          @slideOut
-          *ngIf="vm.project.userHasPendingInvitation"
-          class="invitation-notification"
-          (closed)="onNotificationClosed()"
-          [hasClose]="true"
-          alertLevel="polite"
-          status="info"
-          data-test="logged-user-invitation">
-          <div class="project-invitation-wrapper">
-            <div class="project-invitation-content">
-              <h1 class="project-invitation-title">
-                {{ t('project_overview.pending_invitation') }}
-              </h1>
-              <span class="project-invitation-text">
-                {{ t('project_overview.accept_member') }}
-              </span>
-            </div>
-            <div class="project-invitation-action">
-              <button
-                (click)="acceptInvitationSlug()"
-                class="create-account"
-                data-test="signup-submit-button"
-                appearance="primary"
-                tuiButton
-                type="submit">
-                {{ t('project_overview.accept_invitation') }}
-              </button>
-            </div>
-          </div>
-        </tg-ui-context-notification>
         <div class="project-title">
           <tg-ui-avatar
             size="xxl"

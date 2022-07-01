@@ -2,9 +2,6 @@
   "show_full_description": "Show full description",
   "hide_full_description": "Hide full description",
   "about": "About",
-  "accept_invitation": "Accept your invitation",
-  "accept_member": "Accept it to became a project member.",
-  "pending_invitation": "You have a pending invitation to this project.",
   "members": {
     "title": "Members",
     "view_all": "View all members",

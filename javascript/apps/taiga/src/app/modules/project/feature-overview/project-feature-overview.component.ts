@@ -20,7 +20,6 @@ import { Store } from '@ngrx/store';
 import {
   initProjectOverview,
   resetOverview,
-  setNotificationClosed,
 } from './data-access/+state/actions/project-overview.actions';
 import { Invitation, Project, User } from '@taiga/data';
 import { RxState } from '@rx-angular/state';
@@ -105,18 +104,6 @@ export class ProjectFeatureOverviewComponent
       );
       this.cd.detectChanges();
     }
-  }
-
-  public acceptInvitationSlug() {
-    this.store.dispatch(
-      acceptInvitationSlug({
-        slug: this.state.get('project').slug,
-      })
-    );
-  }
-
-  public onNotificationClosed() {
-    this.store.dispatch(setNotificationClosed({ notificationClosed: true }));
   }
 
   public ngOnDestroy() {

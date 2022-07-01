@@ -34,7 +34,7 @@ export const ProjectMockFactory = (
   milestones = false,
   workspace?: Pick<
     Workspace,
-    'color' | 'name' | 'slug' | 'isPremium' | 'myRole'
+    'color' | 'name' | 'slug' | 'isPremium' | 'userRole'
   >
 ): Project => {
   const project = {

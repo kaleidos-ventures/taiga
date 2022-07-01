@@ -166,7 +166,7 @@ export class WorkspaceComponent implements OnDestroy {
   }
 
   public checkWsVisibility(workspace: Workspace) {
-    const role = workspace.myRole;
+    const role = workspace.userRole;
     const latestProjects = workspace.latestProjects;
     const rejectedInvites = this.getRejectedInvites();
     const hasInvitedProjects = workspace.invitedProjects.filter((project) => {

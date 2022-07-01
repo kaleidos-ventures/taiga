@@ -165,10 +165,10 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
         );
 
         // workspace admin/member may have an invitation to a project that it already has access to.
-        if (this.workspace.myRole === 'admin') {
+        if (this.workspace.userRole === 'admin') {
           invitations = [];
         } else {
-          if (this.workspace.myRole === 'member') {
+          if (this.workspace.userRole === 'member') {
             // a member can have some projects in both list because the project could have access permissions for workspace members
             invitations = invitations.filter((invitation) => {
               return !projects.find((project) => {
@@ -336,7 +336,7 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     const hasProjects = this.workspace.hasProjects;
     const latestProjects = this.workspace.latestProjects.length;
     const isSlideOutAnimationActive = this.state.get('slideOutActive');
-    const isAdmin = this.workspace.myRole === 'admin';
+    const isAdmin = this.workspace.userRole === 'admin';
     const hasActiveInvitations = this.getActiveInvitations().length;
 
     return (
@@ -353,7 +353,7 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     const latestProjects = this.workspace.latestProjects.length;
     const isSlideOutAnimationActive = this.state.get('slideOutActive');
     const hasActiveInvitations = this.getActiveInvitations().length;
-    const isAdmin = this.workspace.myRole === 'admin';
+    const isAdmin = this.workspace.userRole === 'admin';
 
     return (
       !hasProjects &&

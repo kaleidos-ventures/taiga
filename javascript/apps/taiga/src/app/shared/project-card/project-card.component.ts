@@ -144,7 +144,7 @@ export class ProjectCardComponent implements OnInit {
 
   public onRejectInvite() {
     if (this.project) {
-      if (this.workspace.myRole === 'admin') {
+      if (this.workspace.userRole === 'admin') {
         this.rejectedByAdmin = true;
         this.invitationStatus = 'accepted';
       }

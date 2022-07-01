@@ -40,8 +40,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </a>
           <a
             *ngIf="
-              project.workspace.myRole === 'admin' ||
-              project.workspace.myRole === 'member'
+              project.workspace.userRole === 'admin' ||
+              project.workspace.userRole === 'member'
             "
             class="workspace-data-workspace workspace-data-workspace-anchor"
             [routerLink]="['/workspace', project.workspace.slug]">
@@ -49,8 +49,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </a>
           <span
             *ngIf="
-              project.workspace.myRole === 'guest' ||
-              project.workspace.myRole === 'none'
+              project.workspace.userRole === 'guest' ||
+              project.workspace.userRole === 'none'
             "
             class="workspace-data-workspace">
             {{ project.workspace.name }}

@@ -132,10 +132,10 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
         );
 
         // workspace admin may have an invitation to a project that it already has access to.
-        if (state.workspace?.myRole === 'admin') {
+        if (state.workspace?.userRole === 'admin') {
           invitedProjects = [];
         } else {
-          if (state.workspace?.myRole === 'member') {
+          if (state.workspace?.userRole === 'member') {
             // a member can have some projects in both list because the project could have access permissions for workspace members
             invitedProjects = invitedProjects.filter((invitation) => {
               return !projects.find((project) => {

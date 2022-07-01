@@ -53,10 +53,10 @@ describe('Workspace List', () => {
     const workspaceItem = WorkspaceMockFactory();
 
     // Mock user role
-    workspaceItem.isOwner = false;
+    workspaceItem.userIsOwner = false;
 
     // Mock user role
-    workspaceItem.myRole = 'admin';
+    workspaceItem.userRole = 'admin';
 
     // Mock latestProjects
     workspaceItem.latestProjects = [];
@@ -75,10 +75,10 @@ describe('Workspace List', () => {
     const workspaceItem = WorkspaceMockFactory();
 
     // Mock user role
-    workspaceItem.isOwner = true;
+    workspaceItem.userIsOwner = true;
 
     // Mock user role
-    workspaceItem.myRole = 'member';
+    workspaceItem.userRole = 'member';
 
     // Mock latestProjects
     workspaceItem.latestProjects = [];
@@ -97,10 +97,10 @@ describe('Workspace List', () => {
     const workspaceItem = WorkspaceMockFactory();
 
     // Mock user role
-    workspaceItem.isOwner = false;
+    workspaceItem.userIsOwner = false;
 
     // Mock user role
-    workspaceItem.myRole = 'guest';
+    workspaceItem.userRole = 'guest';
 
     // Mock latestProjects
     const project = ProjectMockFactory();
@@ -120,10 +120,10 @@ describe('Workspace List', () => {
     const workspaceItem = WorkspaceMockFactory();
 
     // Mock user role
-    workspaceItem.isOwner = false;
+    workspaceItem.userIsOwner = false;
 
     // Mock user role
-    workspaceItem.myRole = 'guest';
+    workspaceItem.userRole = 'guest';
 
     // Mock latestProjects
     workspaceItem.latestProjects = [];
@@ -145,10 +145,10 @@ describe('Workspace List', () => {
     const workspaceItem = WorkspaceMockFactory();
 
     // Mock user role
-    workspaceItem.isOwner = false;
+    workspaceItem.userIsOwner = false;
 
     // Mock user role
-    workspaceItem.myRole = 'guest';
+    workspaceItem.userRole = 'guest';
 
     // Mock latestProjects
     workspaceItem.latestProjects = [];

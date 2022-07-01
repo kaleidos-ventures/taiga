@@ -24,9 +24,9 @@ export interface Workspace {
   invitedProjects: WorkspaceProject[];
   totalProjects: number;
   hasProjects: boolean;
-  myRole: WorkspaceRole;
+  userRole: WorkspaceRole;
   isPremium: boolean;
-  isOwner: boolean;
+  userIsOwner: boolean;
 }
 
 export interface WorkspaceCreation {

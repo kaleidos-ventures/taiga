@@ -208,7 +208,7 @@ describe('WorkspaceItem', () => {
       spectator.component.projectsToShow = projectsToShow;
       spectator.detectChanges();
 
-      expect(workspaceItemMember.myRole).toEqual('member');
+      expect(workspaceItemMember.userRole).toEqual('member');
       expect(workspaceItemMember.latestProjects.length).toEqual(12); // 6 private projects + 6 public projects with invite
       expect(workspaceItemMember.invitedProjects.length).toEqual(12);
       expect(workspaceItemMember.totalProjects).toEqual(12);
@@ -237,7 +237,7 @@ describe('WorkspaceItem', () => {
       spectator.component.projectsToShow = projectsToShow;
       spectator.detectChanges();
 
-      expect(workspaceItemMember.myRole).toEqual('member');
+      expect(workspaceItemMember.userRole).toEqual('member');
       expect(workspaceItemMember.latestProjects.length).toEqual(12); // 6 private projects + 6 public projects with invite
       expect(workspaceItemMember.invitedProjects.length).toEqual(12);
       expect(workspaceItemMember.totalProjects).toEqual(12);
@@ -313,7 +313,7 @@ describe('WorkspaceItem', () => {
       spectator.component.projectsToShow = projectsToShow;
       spectator.detectChanges();
 
-      expect(workspaceItemAdmin.myRole).toEqual('admin');
+      expect(workspaceItemAdmin.userRole).toEqual('admin');
       expect(workspaceItemAdmin.latestProjects.length).toEqual(12); // 6 regular projects + 6 invites
       expect(workspaceItemAdmin.invitedProjects.length).toEqual(6);
       expect(workspaceItemAdmin.totalProjects).toEqual(12);
@@ -342,7 +342,7 @@ describe('WorkspaceItem', () => {
       spectator.component.projectsToShow = projectsToShow;
       spectator.detectChanges();
 
-      expect(workspaceItemAdmin.myRole).toEqual('admin');
+      expect(workspaceItemAdmin.userRole).toEqual('admin');
       expect(workspaceItemAdmin.latestProjects.length).toEqual(12); // 6 regular projects + 6 invites
       expect(workspaceItemAdmin.invitedProjects.length).toEqual(6);
       expect(workspaceItemAdmin.totalProjects).toEqual(12);
@@ -375,7 +375,7 @@ describe('WorkspaceItem', () => {
     spectator.component.workspace.hasProjects = false;
     spectator.component.workspace.latestProjects = [];
     spectator.component.slideOutAnimationDone();
-    spectator.component.workspace.myRole = 'member';
+    spectator.component.workspace.userRole = 'member';
     spectator.component.getActiveInvitations = jest.fn().mockReturnValue([]);
 
     spectator.component.model$.subscribe(({ slideOutActive }) => {
@@ -392,7 +392,7 @@ describe('WorkspaceItem', () => {
     spectator.component.workspace.hasProjects = true;
     spectator.component.workspace.latestProjects = [];
     spectator.component.slideOutAnimationDone();
-    spectator.component.workspace.myRole = 'member';
+    spectator.component.workspace.userRole = 'member';
     spectator.component.getActiveInvitations = jest.fn().mockReturnValue([]);
 
     spectator.component.model$.subscribe(({ slideOutActive }) => {

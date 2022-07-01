@@ -17,9 +17,9 @@ export const WorkspaceMockFactory = (): Workspace => {
     name: randDepartment(),
     color: randNumber(),
     hasProjects: true,
-    myRole: 'guest',
+    userRole: 'guest',
     isPremium: true,
-    isOwner: true,
+    userIsOwner: true,
     invitedProjects: [],
     latestProjects: [],
     totalProjects: randNumber(),
@@ -36,7 +36,7 @@ export const WorkspaceMockFactory = (): Workspace => {
         slug: workspace.slug,
         name: workspace.name,
         isPremium: workspace.isPremium,
-        myRole: workspace.myRole,
+        userRole: workspace.userRole,
       })
     );
   }
@@ -48,7 +48,7 @@ export const WorkspaceMockFactory = (): Workspace => {
         slug: workspace.slug,
         name: workspace.name,
         isPremium: workspace.isPremium,
-        myRole: workspace.myRole,
+        userRole: workspace.userRole,
       })
     );
   }
@@ -68,9 +68,9 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
     name: randDepartment(),
     color: randNumber(),
     hasProjects: true,
-    myRole: 'admin',
+    userRole: 'admin',
     isPremium: true,
-    isOwner: true,
+    userIsOwner: true,
     invitedProjects: [],
     latestProjects: [],
     totalProjects: randNumber(),
@@ -87,7 +87,7 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
         slug: workspace.slug,
         name: workspace.name,
         isPremium: workspace.isPremium,
-        myRole: workspace.myRole,
+        userRole: workspace.userRole,
       })
     );
   }
@@ -98,7 +98,7 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
       slug: workspace.slug,
       name: workspace.name,
       isPremium: workspace.isPremium,
-      myRole: workspace.myRole,
+      userRole: workspace.userRole,
     });
 
     invitedProjects.push(project);
@@ -122,9 +122,9 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
     name: randDepartment(),
     color: randNumber(),
     hasProjects: true,
-    myRole: 'member',
+    userRole: 'member',
     isPremium: true,
-    isOwner: true,
+    userIsOwner: true,
     invitedProjects: [],
     latestProjects: [],
     totalProjects: randNumber(),
@@ -141,7 +141,7 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
         slug: workspace.slug,
         name: workspace.name,
         isPremium: workspace.isPremium,
-        myRole: workspace.myRole,
+        userRole: workspace.userRole,
       })
     );
   }
@@ -152,7 +152,7 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
       slug: workspace.slug,
       name: workspace.name,
       isPremium: workspace.isPremium,
-      myRole: workspace.myRole,
+      userRole: workspace.userRole,
     });
 
     invitedProjects.push(project);
@@ -165,7 +165,7 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
       slug: workspace.slug,
       name: workspace.name,
       isPremium: workspace.isPremium,
-      myRole: workspace.myRole,
+      userRole: workspace.userRole,
     });
 
     invitedProjects.push(project);

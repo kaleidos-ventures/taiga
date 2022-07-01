@@ -26,10 +26,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <div class="workspace-detail-title-container">
             <h3 class="workspace-detail-title">{{ vm.workspace.name }}</h3>
             <tg-ui-badge
-              *ngIf="vm.workspace.myRole"
-              [label]="t('commons.roles.' + vm.workspace.myRole)"></tg-ui-badge>
+              *ngIf="vm.workspace.userRole"
+              [label]="
+                t('commons.roles.' + vm.workspace.userRole)
+              "></tg-ui-badge>
             <tg-ui-badge
-              *ngIf="vm.workspace.isOwner"
+              *ngIf="vm.workspace.userIsOwner"
               [label]="t('commons.owner')"></tg-ui-badge>
           </div>
         </div>
@@ -50,7 +52,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           !vm.workspace.totalProjects &&
           !vm.invitedProjects.length &&
           vm.workspace.hasProjects &&
-          vm.workspace.myRole !== 'admin' &&
+          vm.workspace.userRole !== 'admin' &&
           !vm.creatingWorkspaceDetail
         "
         class="workspace-message-placeholder detail"
@@ -61,7 +63,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           !vm.workspace.totalProjects &&
           !vm.invitedProjects.length &&
           !vm.workspace.hasProjects &&
-          vm.workspace.myRole !== 'admin' &&
+          vm.workspace.userRole !== 'admin' &&
           !vm.creatingWorkspaceDetail
         "
         class="workspace-message-placeholder detail"
@@ -74,7 +76,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <div
           *ngIf="
             vm.projects.length === 0 &&
-            vm.workspace.myRole === 'admin' &&
+            vm.workspace.userRole === 'admin' &&
             !vm.creatingWorkspaceDetail
           ">
           <tg-project-card
@@ -115,7 +117,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           (@reorder.done)="reorderDone($event)">
           <tg-project-card [project]="project"> </tg-project-card>
         </div>
-        <div *ngIf="vm.projects.length > 0 && vm.workspace.myRole === 'admin'">
+        <div
+          *ngIf="vm.projects.length > 0 && vm.workspace.userRole === 'admin'">
           <tg-project-card
             [workspace]="vm.workspace"
             variant="placeholder">

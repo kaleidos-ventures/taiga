@@ -19,7 +19,7 @@ export interface Project {
   color: number;
   workspace: Pick<
     Workspace,
-    'name' | 'slug' | 'color' | 'isPremium' | 'myRole'
+    'name' | 'slug' | 'color' | 'isPremium' | 'userRole'
   >;
   milestones: Milestone[];
   userIsAdmin: boolean;

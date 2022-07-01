@@ -17,23 +17,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tg-ui-avatar>
       <div class="workspace-item-title-wrapper">
         <a
-          *ngIf="workspace.myRole === 'admin' || workspace.myRole === 'member'"
+          *ngIf="
+            workspace.userRole === 'admin' || workspace.userRole === 'member'
+          "
           data-test="workspace-item-title"
           [routerLink]="['/workspace/', workspace.slug]"
           class="workspace-item-title workspace-item-title-active">
           {{ workspace.name }}
         </a>
         <span
-          *ngIf="workspace.myRole === 'guest' || workspace.myRole === 'none'"
+          *ngIf="
+            workspace.userRole === 'guest' || workspace.userRole === 'none'
+          "
           class="workspace-item-title workspace-guest">
           {{ workspace.name }}
         </span>
       </div>
       <tg-ui-badge
-        *ngIf="workspace.myRole"
-        [label]="t('commons.roles.' + workspace.myRole)"></tg-ui-badge>
+        *ngIf="workspace.userRole"
+        [label]="t('commons.roles.' + workspace.userRole)"></tg-ui-badge>
       <tg-ui-badge
-        *ngIf="workspace.isOwner"
+        *ngIf="workspace.userIsOwner"
         [label]="t('commons.owner')"></tg-ui-badge>
       <div class="workspace-item-action">
         <button
@@ -44,14 +48,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ t('commons.members') }} (1)
         </button>
         <button
-          *ngIf="workspace.myRole === 'admin'"
+          *ngIf="workspace.userRole === 'admin'"
           appearance="secondary"
           tuiButton
           type="button">
           {{ t('commons.upgrade') }}
         </button>
         <a
-          *ngIf="workspace.myRole === 'admin'"
+          *ngIf="workspace.userRole === 'admin'"
           appearance="primary"
           [routerLink]="['/new-project']"
           [queryParams]="{ workspace: workspace.slug }"
@@ -82,7 +86,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="workspace-item-card-grid">
       <tg-project-card
         *ngIf="
-          workspace.latestProjects.length === 0 && workspace.myRole === 'admin'
+          workspace.latestProjects.length === 0 &&
+          workspace.userRole === 'admin'
         "
         [workspace]="workspace"
         variant="placeholder"

@@ -17,27 +17,23 @@ import {
   InvitationMockFactory,
   MembershipMockFactory,
   ProjectMockFactory,
-  UserMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import {
   fetchMembersSuccess,
   initMembers,
   nextMembersPage,
-  onAcceptedInvitation,
 } from '../actions/project-overview.actions';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { randDomainSuffix } from '@ngneat/falso';
-import { TestScheduler } from 'rxjs/testing';
+
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 
 describe('ProjectOverviewEffects', () => {
   let actions$: Observable<Action>;
   let store: MockStore;
   let spectator: SpectatorService<ProjectOverviewEffects>;
-  let testScheduler: TestScheduler;
+
   const initialState = {
     overview: {
       members: [],
@@ -62,9 +58,6 @@ describe('ProjectOverviewEffects', () => {
   });
 
   beforeEach(() => {
-    testScheduler = new TestScheduler((actual, expected) => {
-      expect(actual).toEqual(expected);
-    });
     spectator = createService();
     store = spectator.inject(MockStore);
   });
@@ -264,24 +257,6 @@ describe('ProjectOverviewEffects', () => {
           project.slug,
           MEMBERS_PAGE_SIZE
         );
-      });
-    });
-  });
-
-  it('Accepted Invitation', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
-    const user = UserMockFactory();
-    const username = user.username;
-    const effects = spectator.inject(ProjectOverviewEffects);
-
-    testScheduler.run((helpers) => {
-      const { hot, expectObservable } = helpers;
-      actions$ = hot('-a', {
-        a: acceptInvitationSlugSuccess({ projectSlug: slug, username }),
-      });
-
-      expectObservable(effects.acceptedInvitation$).toBe('701ms c', {
-        c: onAcceptedInvitation({ onAcceptedInvitation: true }),
       });
     });
   });

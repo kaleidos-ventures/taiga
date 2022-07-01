@@ -17,19 +17,29 @@ import { randDomainSuffix } from '@ngneat/falso';
 import { ProjectEffects } from './project.effects';
 import { fetchProject, fetchProjectSuccess } from '../actions/project.actions';
 import { cold, hot } from 'jest-marbles';
-import { ProjectMockFactory } from '@taiga/data';
+import { ProjectMockFactory, UserMockFactory } from '@taiga/data';
+import { TestScheduler } from 'rxjs/testing';
+import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { WsService, WsServiceMock } from '@taiga/ws';
 
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
   let spectator: SpectatorService<ProjectEffects>;
+  let testScheduler: TestScheduler;
 
   const createService = createServiceFactory({
     service: ProjectEffects,
-    providers: [provideMockActions(() => actions$)],
+    providers: [
+      provideMockActions(() => actions$),
+      { provide: WsService, useValue: WsServiceMock },
+    ],
     mocks: [ProjectApiService, AppService],
   });
 
   beforeEach(() => {
+    testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
     spectator = createService();
   });
 
@@ -48,5 +58,27 @@ describe('ProjectEffects', () => {
     });
 
     expect(effects.loadProject$).toBeObservable(expected);
+  });
+
+  it('Accepted Invitation', () => {
+    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const user = UserMockFactory();
+    const username = user.username;
+    const effects = spectator.inject(ProjectEffects);
+
+    actions$ = hot('-a', {
+      a: acceptInvitationSlugSuccess({ projectSlug: slug, username }),
+    });
+
+    testScheduler.run((helpers) => {
+      const { hot, expectObservable } = helpers;
+      actions$ = hot('-a', {
+        a: acceptInvitationSlugSuccess({ projectSlug: slug, username }),
+      });
+
+      expectObservable(effects.acceptedInvitation$).toBe('2201ms c', {
+        c: fetchProject({ slug }),
+      });
+    });
   });
 });

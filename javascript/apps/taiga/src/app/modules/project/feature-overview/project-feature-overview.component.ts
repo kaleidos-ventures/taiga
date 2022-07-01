@@ -27,7 +27,6 @@ import { selectInvitations } from './data-access/+state/selectors/project-overvi
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import { selectNotificationClosed } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
-import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({

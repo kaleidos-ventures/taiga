@@ -6,8 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export * from './lib/ws.module';
+import { of } from 'rxjs';
 
-export { WsService } from './lib/services/ws.service';
-export { WsServiceMock } from './lib/services/ws.service.mock';
-export * from './lib/ws.actions';
+export const WsServiceMock = {
+  events: () => {
+    return of(null);
+  },
+};

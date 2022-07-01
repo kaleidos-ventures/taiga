@@ -33,7 +33,7 @@ async def test_create_user_ok(tqmanager):
     with (
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.users.services._generate_verify_user_token", return_value="verify_token") as fake_user_token,
-        patch("taiga.users.services._generate_username", return_value=username),
+        patch("taiga.users.services.generate_username", return_value=username),
     ):
         fake_users_repo.get_user_by_username_or_email.return_value = None
         fake_users_repo.create_user.return_value = user

@@ -5,14 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth import services as auth_services
 from taiga.auth.dataclasses import AccessWithRefreshToken
 from taiga.conf import settings
-from taiga.integrations import services as integrations_services
+from taiga.integrations.auth import services as integrations_auth_services
 from taiga.integrations.github import exceptions as ex
 from taiga.integrations.github import services as github_services
-from taiga.users import repositories as users_repositories
-from taiga.users import services as users_services
 
 
 async def github_login(code: str) -> AccessWithRefreshToken:
@@ -27,40 +24,10 @@ async def github_login(code: str) -> AccessWithRefreshToken:
     if not user_info:
         raise ex.GithubAPIError("Github API is not responding.")
 
-    return await _github_login(
-        email=user_info.email, full_name=user_info.full_name, github_id=user_info.github_id, bio=user_info.bio
+    return await integrations_auth_services.social_login(
+        email=user_info.email,
+        full_name=user_info.full_name,
+        social_key="github",
+        social_id=user_info.github_id,
+        bio=user_info.bio,
     )
-
-
-# TODO: this may be a generic function `def social_login`
-async def _github_login(email: str, full_name: str, github_id: str, bio: str) -> AccessWithRefreshToken:
-    # check if the user exists and already has github login
-    user = await users_repositories.get_user_from_auth_data(key="github", value=github_id)
-    if not user:
-        # check if the user exists (doesn't have github login yet)
-        user = await users_repositories.get_first_user(email=email)
-        if not user:
-            # create a new user with github data and verify it
-            username = await users_services._generate_username(email=email)
-            user = await users_repositories.create_user(
-                email=email, username=username, full_name=full_name, password=None
-            )
-            await users_repositories.verify_user(user)
-        elif user and not user.is_active:
-            # update existing (but not verified) user with github data and verify it
-            # username and email are the same
-            # but full_name is got from github, and previous password is deleted
-            user = await users_repositories.update_user(
-                user=user, new_values={"full_name": full_name, "password": None}
-            )
-            await users_repositories.verify_user(user)
-        elif user:
-            # the user existed and now is adding a new login method
-            # so we send her a warning email
-            await integrations_services.send_social_login_warning_email(
-                full_name=user.full_name, email=user.email, login_method="Github"
-            )
-
-        await users_repositories.create_auth_data(user=user, key="github", value=github_id)
-
-    return await auth_services.create_auth_credentials(user=user)

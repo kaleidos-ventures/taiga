@@ -12,7 +12,6 @@ from taiga.conf import settings
 from taiga.integrations.gitlab import exceptions as ex
 from taiga.integrations.gitlab.auth import services
 from taiga.integrations.gitlab.dataclasses import GitlabUserProfile
-from tests.utils import factories as f
 
 ##########################################################
 # gitlab_login
@@ -25,14 +24,16 @@ async def test_gitlab_login_ok():
     settings.GITLAB_URL = "https://gitlab.com"
     with (
         patch("taiga.integrations.gitlab.auth.services.gitlab_services", autospec=True) as fake_gitlab_services,
-        patch("taiga.integrations.gitlab.auth.services._gitlab_login", autospec=True) as fake_gitlab_auth_services,
+        patch(
+            "taiga.integrations.gitlab.auth.services.integrations_auth_services", autospec=True
+        ) as fake_integrations_auth_services,
     ):
         fake_gitlab_services.get_access_to_gitlab.return_value = "access_token"
         fake_gitlab_services.get_user_info_from_gitlab.return_value = GitlabUserProfile(
             email="email@test.com", full_name="Full Name", gitlab_id="1", bio="Bio"
         )
         await services.gitlab_login(code="code", redirect_uri="https://redirect.uri")
-        fake_gitlab_auth_services.assert_awaited_once()
+        fake_integrations_auth_services.social_login.assert_awaited_once()
 
 
 async def test_gitlab_login_gitlab_not_configured():
@@ -66,56 +67,3 @@ async def test_gitlab_login_gitlab_api_not_responding():
         fake_gitlab_services.get_access_to_gitlab.return_value = "access_token"
         fake_gitlab_services.get_user_info_from_gitlab.return_value = None
         await services.gitlab_login(code="code", redirect_uri="https://redirect.uri")
-
-
-##########################################################
-# _gitlab_login
-##########################################################
-
-
-async def test_priv_gitlab_login_user_has_authdata():
-    with (
-        patch("taiga.integrations.gitlab.auth.services.users_repositories", autospec=True) as fake_users_repositories,
-        patch("taiga.integrations.gitlab.auth.services.auth_services", autospec=True) as fake_auth_services,
-    ):
-        user = f.build_user()
-        fake_users_repositories.get_user_from_auth_data.return_value = user
-
-        await services._gitlab_login(email="", full_name="", gitlab_id="", bio="")
-
-        fake_auth_services.create_auth_credentials.assert_awaited_once()
-        fake_users_repositories.get_first_user.assert_not_awaited()
-
-
-async def test_priv_gitlab_login_user_no_auth_data():
-    with (
-        patch("taiga.integrations.gitlab.auth.services.users_repositories", autospec=True) as fake_users_repositories,
-        patch("taiga.integrations.gitlab.auth.services.users_services", autospec=True) as fake_users_services,
-        patch("taiga.integrations.gitlab.auth.services.auth_services", autospec=True) as fake_auth_services,
-    ):
-        user = f.build_user()
-        fake_users_repositories.get_user_from_auth_data.return_value = None
-        fake_users_repositories.get_first_user.return_value = user
-
-        await services._gitlab_login(email="", full_name="", gitlab_id="", bio="")
-
-        fake_users_services._generate_username.assert_not_awaited()
-        fake_auth_services.create_auth_credentials.assert_awaited_once()
-        fake_users_repositories.create_auth_data.assert_awaited_once()
-
-
-async def test_priv_gitlab_login_no_user():
-    with (
-        patch("taiga.integrations.gitlab.auth.services.users_repositories", autospec=True) as fake_users_repositories,
-        patch("taiga.integrations.gitlab.auth.services.users_services", autospec=True) as fake_users_services,
-        patch("taiga.integrations.gitlab.auth.services.auth_services", autospec=True) as fake_auth_services,
-    ):
-        fake_users_repositories.get_user_from_auth_data.return_value = None
-        fake_users_repositories.get_first_user.return_value = None
-
-        await services._gitlab_login(email="", full_name="", gitlab_id="", bio="")
-
-        fake_users_services._generate_username.assert_awaited_once()
-        fake_auth_services.create_auth_credentials.assert_awaited_once()
-        fake_users_repositories.create_auth_data.assert_awaited_once()
-        fake_users_repositories.create_user.assert_awaited_once()

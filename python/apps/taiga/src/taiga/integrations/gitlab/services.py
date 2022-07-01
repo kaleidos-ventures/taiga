@@ -4,21 +4,20 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
+from typing import Final
 
 import httpx
 from taiga.conf import settings
 from taiga.integrations.gitlab.dataclasses import GitlabUserProfile
 
-ACCESS_TOKEN_URL: str = f"{settings.GITLAB_URL}/oauth/token"
-USER_API_URL: str = f"{settings.GITLAB_URL}/api/v4/user"
-HEADERS: dict[str, str] = {
+HEADERS: Final[dict[str, str]] = {
     "Accept": "application/json",
 }
 
 
 async def get_access_to_gitlab(code: str, redirect_uri: str) -> str | None:
-    url = ACCESS_TOKEN_URL
+    ACCESS_TOKEN_URL: Final[str] = f"{settings.GITLAB_URL}/oauth/token"
+
     headers = HEADERS.copy()
     params = {
         "code": code,
@@ -29,7 +28,7 @@ async def get_access_to_gitlab(code: str, redirect_uri: str) -> str | None:
     }
 
     async with httpx.AsyncClient() as client:
-        response = await client.post(url, params=params, headers=headers)
+        response = await client.post(ACCESS_TOKEN_URL, params=params, headers=headers)
 
     data = response.json()
     if response.status_code != 200 or "error" in data:
@@ -39,6 +38,8 @@ async def get_access_to_gitlab(code: str, redirect_uri: str) -> str | None:
 
 
 async def get_user_info_from_gitlab(access_token: str) -> GitlabUserProfile | None:
+    USER_API_URL: Final[str] = f"{settings.GITLAB_URL}/api/v4/user"
+
     headers = HEADERS.copy()
     headers["Authorization"] = f"Bearer {access_token}"
 

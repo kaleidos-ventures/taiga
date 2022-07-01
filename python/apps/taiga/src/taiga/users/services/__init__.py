@@ -38,7 +38,7 @@ async def create_user(
 
     if not user:
         # new user
-        username = await _generate_username(email=email)
+        username = await generate_username(email=email)
         user = await users_repositories.create_user(
             email=email, username=username, full_name=full_name, password=password
         )
@@ -57,7 +57,7 @@ async def create_user(
     return user
 
 
-async def _generate_username(email: str) -> str:
+async def generate_username(email: str) -> str:
     username = slugify(email.split("@")[0])
     suffix = ""
     while True:

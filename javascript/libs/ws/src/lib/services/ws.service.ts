@@ -15,6 +15,10 @@ import { wsMessage } from '../ws.actions';
 import { ConfigService } from '@taiga/core';
 import { WSResponse, WSResponseAction, WSResponseEvent } from '../ws.model';
 
+const MAX_RETRY = 5;
+const RETRY_TIME = 5000;
+const PING_PONG_INTERVAL = 60000;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -23,6 +27,8 @@ export class WsService {
   private messages: Subject<WSResponse> = new Subject();
   private connected$ = new BehaviorSubject(false);
   private token?: string;
+  private pingPongInterval?: ReturnType<typeof setInterval>;
+  private retry = 0;
 
   constructor(
     private config: ConfigService,
@@ -113,6 +119,20 @@ export class WsService {
         this.connected$.next(true);
         this.pingPong();
       });
+
+      this.ws.addEventListener('close', () => {
+        this.connected$.next(false);
+        if (this.pingPongInterval) {
+          clearInterval(this.pingPongInterval);
+        }
+
+        setTimeout(() => {
+          if (this.retry < MAX_RETRY) {
+            this.listen(this.token);
+            this.retry++;
+          }
+        }, RETRY_TIME);
+      });
     }
   }
 
@@ -125,7 +145,7 @@ export class WsService {
   }
 
   public pingPong() {
-    setInterval(() => {
+    this.pingPongInterval = setInterval(() => {
       this.command('ping')
         .pipe(timeout(2000))
         .subscribe(
@@ -135,10 +155,9 @@ export class WsService {
           () => {
             console.error('ping pong timeout');
             this.ws.close();
-            this.listen(this.token);
           }
         );
-    }, 60000);
+    }, PING_PONG_INTERVAL);
   }
 
   public command(name: string, extra = {}) {

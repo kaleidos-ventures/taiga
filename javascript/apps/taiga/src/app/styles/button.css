@@ -17,14 +17,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   /* stylelint-disable-next-line declaration-no-important */
   transition-duration: 100ms !important;
 
-  & tui-wrapper {
+  & tui-wrapper.t-wrapper {
     border-radius: 4px;
     font-weight: var(--font-weight-medium);
     /* stylelint-disable-next-line declaration-no-important */
     padding: 0 var(--spacing-12) !important;
   }
 
-  &.large tui-wrapper {
+  &.large tui-wrapper.t-wrapper {
     /* stylelint-disable-next-line declaration-no-important */
     padding: 0 var(--spacing-16) !important;
   }
@@ -74,7 +74,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 [data-appearance="tertiary"]:is(button, a) {
-  & tui-wrapper {
+  & tui-wrapper.t-wrapper {
     background: var(--color-gray10);
     color: var(--color-secondary);
 
@@ -120,7 +120,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 [data-appearance="main-nav"]:is(button, a) {
-  & tui-wrapper {
+  & tui-wrapper.t-wrapper {
     background: var(--color-gray10);
     color: var(--color-secondary);
 
@@ -175,13 +175,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 [data-appearance="destructive"]:is(button, a) {
-  & tui-wrapper {
-    background: var(--color-warning);
+  & tui-wrapper.t-wrapper {
+    background: var(--color-red);
     color: var(--color-white);
 
     &[data-state="hovered"],
     &[data-state="pressed"] {
-      background: var(--color-warning80);
+      background: var(--color-red80);
       color: var(--color-white);
     }
 
@@ -203,7 +203,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 [data-appearance="secondary"]:is(button, a) {
-  & tui-wrapper {
+  & tui-wrapper.t-wrapper {
     background-color: var(--color-gray30);
     color: var(--color-gray80);
 
@@ -231,7 +231,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 [data-appearance="primary"]:is(button, a) {
-  & tui-wrapper {
+  & tui-wrapper.t-wrapper {
     color: var(--color-gray80);
 
     &[data-state="hovered"],
@@ -263,7 +263,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   &[loading] {
     &.loading-start,
     &.loading-in-progress {
-      & tui-wrapper {
+      & tui-wrapper.t-wrapper {
         background-color: var(--color-primary40);
       }
     }
@@ -282,7 +282,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   &.large[data-tui-host-size="l"] {
     block-size: 44px;
 
-    & tui-wrapper {
+    & tui-wrapper.t-wrapper {
       line-height: 1rem;
       /* stylelint-disable-next-line declaration-no-important */
       padding: var(--spacing-12) var(--spacing-16) !important;
@@ -291,7 +291,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 [data-appearance="us-header-button"][blocked]:is(button, a) {
-  & tui-wrapper[data-state="hovered"] {
+  & tui-wrapper.t-wrapper[data-state="hovered"] {
     background: var(--color-warning20);
     color: var(--color-warning80);
   }
@@ -301,7 +301,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   /* stylelint-disable-next-line declaration-no-important */
   transition-duration: 100ms !important;
 
-  & tui-wrapper {
+  & tui-wrapper.t-wrapper {
     background: none;
     color: var(--color-gray100);
 
@@ -329,7 +329,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   /* stylelint-disable-next-line declaration-no-important */
   transition-duration: 100ms !important;
 
-  & tui-wrapper {
+  & tui-wrapper.t-wrapper {
     background: none;
     color: var(--color-secondary);
     font-weight: var(--font-weight-medium);
@@ -354,7 +354,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   /* stylelint-disable-next-line declaration-no-important */
   transition-duration: 100ms !important;
 
-  & tui-wrapper {
+  & tui-wrapper.t-wrapper {
     background: none;
     color: var(--color-gray60);
     font-weight: var(--font-weight-medium);
@@ -384,7 +384,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   /* stylelint-disable-next-line declaration-no-important */
   transition-duration: 100ms !important;
 
-  & tui-wrapper {
+  & tui-wrapper.t-wrapper {
     background: none;
     color: var(--color-gray60);
     font-weight: var(--font-weight-medium);
@@ -414,7 +414,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   /* stylelint-disable-next-line declaration-no-important */
   transition-duration: 100ms !important;
 
-  & tui-wrapper {
+  & tui-wrapper.t-wrapper {
     background: none;
     color: var(--color-secondary);
     font-weight: var(--font-weight-medium);

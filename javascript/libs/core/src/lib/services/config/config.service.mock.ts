@@ -6,8 +6,21 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export const apiUrl = 'https://fake-url';
+import { randAlphaNumeric, randUrl } from '@ngneat/falso';
+
+export const apiUrl = randUrl();
+
+export const social = {
+  github: {
+    clientId: randAlphaNumeric(),
+  },
+  gitlab: {
+    serverUrl: randUrl(),
+    clientId: randAlphaNumeric(),
+  },
+};
 
 export const ConfigServiceMock = {
   apiUrl,
+  social,
 };

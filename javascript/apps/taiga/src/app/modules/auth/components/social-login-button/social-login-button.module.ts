@@ -9,19 +9,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { SocialLoginButtonModule } from '../social-login-button/social-login-button.module';
-import { SocialLoginComponent } from './social-login.component';
+import { SocialLoginButtonComponent } from './social-login-button.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    TranslocoModule,
-    ContextNotificationModule,
-    SocialLoginButtonModule,
-  ],
-  declarations: [SocialLoginComponent],
-  exports: [SocialLoginComponent],
+  imports: [CommonModule, TranslocoModule],
+  declarations: [SocialLoginButtonComponent],
+  exports: [SocialLoginButtonComponent],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -32,4 +25,4 @@ import { SocialLoginComponent } from './social-login.component';
     },
   ],
 })
-export class SocialLoginModule {}
+export class SocialLoginButtonModule {}

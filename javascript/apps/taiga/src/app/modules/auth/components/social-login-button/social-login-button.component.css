@@ -1,0 +1,30 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+:host {
+  display: block;
+}
+
+.social-button {
+  @mixin font-inline;
+
+  align-items: center;
+  background: var(--color-gray10);
+  border-radius: 4px;
+  box-shadow: 0 4px 0 -1px rgba(46, 52, 64, 0.1);
+  color: rgba(var(--color-black) 0.54);
+  display: flex;
+  justify-content: center;
+  padding-block: var(--spacing-8);
+}
+
+.social-logo {
+  margin-inline-end: var(--spacing-24);
+}

@@ -15,7 +15,6 @@ import { AppService } from '~/app/services/app.service';
 import { AuthEffects } from './auth.effects';
 import { Action } from '@ngrx/store';
 import {
-  githubSignup,
   login,
   loginSuccess,
   logout,
@@ -27,6 +26,7 @@ import {
   signup,
   signUpError,
   signUpSuccess,
+  socialSignup,
 } from '../actions/auth.actions';
 import {
   AuthMockFactory,
@@ -41,6 +41,7 @@ import {
   randSequence,
   randUrl,
   randBoolean,
+  randWord,
 } from '@ngneat/falso';
 import { cold, hot } from 'jest-marbles';
 import { NavigationEnd, Router } from '@angular/router';
@@ -381,24 +382,73 @@ describe('AuthEffects', () => {
     });
   });
 
-  it('social login - github', () => {
+  it('social login', () => {
     const code = randSequence({ size: 100 });
+    const social = randWord();
 
     const authApiService = spectator.inject(AuthApiService);
+    const authService = spectator.inject(AuthService);
     const usersApiService = spectator.inject(UsersApiService);
     const effects = spectator.inject(AuthEffects);
     const auth = AuthMockFactory();
     const user = UserMockFactory();
 
-    authApiService.githubSignUp.mockReturnValue(cold('-b|', { b: auth }));
+    authApiService.socialSignUp.mockReturnValue(cold('-b|', { b: auth }));
     usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
 
-    actions$ = hot('-a', { a: githubSignup({ code }) });
+    actions$ = hot('-a', { a: socialSignup({ code, social }) });
 
     const expected = cold('---a', {
       a: loginSuccess({ user, auth }),
     });
+    expect(effects.socialSignUp$).toBeObservable(expected);
+    expect(effects.socialSignUp$).toSatisfyOnFlush(() => {
+      expect(authService.setAuth).toHaveBeenCalledWith(auth);
+      expect(authService.setUser).toHaveBeenCalledWith(user);
+    });
+  });
 
-    expect(effects.githubSignUp$).toBeObservable(expected);
+  it('social login - errors', () => {
+    const code = randSequence({ size: 100 });
+    const social = randWord();
+
+    const authApiService = spectator.inject(AuthApiService);
+    const router = spectator.inject(Router);
+    const effects = spectator.inject(AuthEffects);
+
+    const errors = [
+      'github-api-error',
+      'gitlab-api-error',
+      'github-login-authentication-error',
+      'gitlab-login-authentication-error',
+      'github-login-error',
+      'gitlab-login-error',
+    ];
+
+    const errorMsg = errors[Math.floor(Math.random() * errors.length)];
+
+    const httpError = new HttpErrorResponse({
+      status: 400,
+      error: {
+        error: {
+          detail: errorMsg,
+        },
+      },
+    });
+
+    authApiService.socialSignUp.mockImplementation(() => {
+      return throwError(httpError);
+    });
+
+    actions$ = hot('-a', { a: socialSignup({ code, social }) });
+
+    const expected = cold('-a', {
+      a: signUpError({ response: httpError }),
+    });
+
+    expect(effects.socialSignUp$).toBeObservable(expected);
+    expect(effects.socialSignUp$).toSatisfyOnFlush(() => {
+      expect(router.navigate).toHaveBeenCalled();
+    });
   });
 });

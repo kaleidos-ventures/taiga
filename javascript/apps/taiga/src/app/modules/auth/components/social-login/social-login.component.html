@@ -7,33 +7,30 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t; read: 'auth'">
   <div class="social-login">
-    <a
-      [attr.href]="githubOauthURL"
+    <tg-social-login-button
       *ngIf="isGithubActive"
-      class="social-button">
-      <img
-        class="social-logo"
-        role="presentation"
-        src="/assets/images/social/github.svg"
-        alt="" />
-      {{ t('social.github') }}
-    </a>
+      social="github"></tg-social-login-button>
+    <tg-social-login-button
+      *ngIf="isGitlabActive"
+      social="gitlab"></tg-social-login-button>
   </div>
   <tg-ui-context-notification
     class="social-error"
     alertLevel="polite"
-    *ngIf="githubError"
+    *ngIf="socialError"
     status="error">
     <span
-      *ngIf="githubError === 'config'"
+      *ngIf="socialError === 'config'"
       [innerHTML]="
-        t('social.errors.github.config', {
+        t('social.errors.config', {
           admin: adminEmail
         })
       ">
     </span>
-    <ng-container *ngIf="githubError === 'server'">
-      {{ t('social.errors.github.server') }}
+    <ng-container *ngIf="socialError === 'server'">
+      {{ t('social.errors.server', {
+      social
+      }) }}
     </ng-container>
   </tg-ui-context-notification>
   <div class="login-separator">

@@ -1,0 +1,19 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+<ng-container *transloco="let t; read: 'auth'">
+  <a
+    [attr.href]="socialURL"
+    class="social-button">
+    <img
+      class="social-logo"
+      role="presentation"
+      [attr.src]="socialImage"
+      alt="" />
+    {{ socialText }}
+  </a>
+</ng-container>

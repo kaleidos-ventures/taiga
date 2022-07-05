@@ -22,22 +22,20 @@ export class SocialLoginComponent implements OnInit {
     private router: Router
   ) {}
 
-  public githubError: string | null = null;
+  public socialError: string | null = null;
+  public social: string | null = null;
   public adminEmail: string = this.config.adminEmail;
-
-  public get githubOauthURL() {
-    const githubConfig = this.config.social.github;
-    const ghAuthUrl = githubConfig.authUrl;
-    const clientId = githubConfig.clientId;
-    const redirectUri = `${window.location.origin}/signup/github?redirect=${this.router.url}`;
-    return `${ghAuthUrl}?client_id=${clientId}&redirect_uri=${redirectUri}&state=github&scope=user:email`;
-  }
 
   public get isGithubActive() {
     return !!this.config.social.github.clientId;
   }
 
+  public get isGitlabActive() {
+    return !!this.config.social.gitlab.clientId;
+  }
+
   public ngOnInit(): void {
-    this.githubError = this.route.snapshot.queryParamMap.get('githubError');
+    this.social = this.route.snapshot.queryParamMap.get('social');
+    this.socialError = this.route.snapshot.queryParamMap.get('socialError');
   }
 }

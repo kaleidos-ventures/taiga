@@ -5,10 +5,8 @@
     "gitlab": "Continue with Gitlab",
     "separator": "or",
     "errors": {
-      "github": {
-        "config": "Something went wrong with your authentication, contact with <a class='link' href='mailto:{{adminEmail}}'>the admin.</a>",
-        "server": "We can't connect with Github, try again in a few minutes."
-      }
+      "config": "Something went wrong with your authentication, contact with <a class='link' href='mailto:{{adminEmail}}'>the admin.</a>",
+      "server": "We can't connect with {{social}}, try again in a few minutes."
     }
   },
   "signup": {

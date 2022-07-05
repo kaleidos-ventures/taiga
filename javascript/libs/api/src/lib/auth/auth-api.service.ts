@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
 
-import { Auth, GithubSignupInput, LoginInput, SignUpInput } from '@taiga/data';
+import { Auth, LoginInput, SignUpInput } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
@@ -26,8 +26,16 @@ export class AuthApiService {
     return this.http.post<Auth>(`${this.config.apiUrl}/users`, data);
   }
 
-  public githubSignUp(code: GithubSignupInput) {
-    return this.http.post<Auth>(`${this.config.apiUrl}/auth/github`, code);
+  public socialSignUp(code: string, social: string) {
+    const params = {
+      code,
+      redirectUri:
+        social === 'gitlab'
+          ? `${window.location.origin}/signup/${social}`
+          : null,
+    };
+
+    return this.http.post<Auth>(`${this.config.apiUrl}/auth/${social}`, params);
   }
 
   public refreshToken(refresh: Auth['refresh']) {

@@ -346,12 +346,12 @@ export class AuthEffects {
     );
   });
 
-  public githubSignUp$ = createEffect(() => {
+  public socialSignUp$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(AuthActions.githubSignup),
+      ofType(AuthActions.socialSignup),
       pessimisticUpdate({
-        run: ({ code }) => {
-          return this.authApiService.githubSignUp({ code }).pipe(
+        run: ({ code, social }) => {
+          return this.authApiService.socialSignUp(code, social).pipe(
             mergeMap((auth: Auth) => {
               this.authService.setAuth(auth);
               return this.usersApiService.me().pipe(
@@ -373,23 +373,31 @@ export class AuthEffects {
           const status = httpResponse.status as keyof ErrorManagementOptions;
           const signUpError = httpResponse.error as SignUpError;
 
-          if (
-            (status === 400 &&
-              signUpError.error.message === 'Github API is not responding.') ||
-            (status === 400 &&
-              signUpError.error.message === 'The provided code is not valid.')
-          ) {
-            void this.router.navigate([action.redirect], {
-              queryParams: { githubError: 'server' },
-            });
-          } else if (
-            status === 400 &&
-            signUpError.error.message ===
-              'Login with Github is not available. Contact with the platform administrators.'
-          ) {
-            void this.router.navigate([action.redirect], {
-              queryParams: { githubError: 'config' },
-            });
+          if (status == 400 && signUpError.error.detail) {
+            const serverErrorMessages = [
+              'github-api-error',
+              'gitlab-api-error',
+              'github-login-authentication-error',
+              'gitlab-login-authentication-error',
+            ];
+            const configErrorMessages = [
+              'github-login-error',
+              'gitlab-login-error',
+            ];
+
+            if (
+              serverErrorMessages.includes(signUpError.error.detail as string)
+            ) {
+              void this.router.navigate([action.redirect], {
+                queryParams: { socialError: 'server', social: action.social },
+              });
+            } else if (
+              configErrorMessages.includes(signUpError.error.detail as string)
+            ) {
+              void this.router.navigate([action.redirect], {
+                queryParams: { socialError: 'config', social: action.social },
+              });
+            }
           } else {
             void this.router.navigate([action.redirect]);
             this.appService.errorManagement(httpResponse, {
@@ -403,6 +411,7 @@ export class AuthEffects {
               },
             });
           }
+          return AuthActions.signUpError({ response: httpResponse });
         },
       })
     );

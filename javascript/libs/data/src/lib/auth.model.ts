@@ -48,7 +48,7 @@ export interface SignUpErrorDetail {
   type: string;
 }
 
-export interface GithubSignupInput {
+export interface SocialSignupInput {
   code: string;
   redirect?: string;
   state?: string;

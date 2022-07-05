@@ -6,6 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+export type SocialLogins = 'github' | 'gitlab' | 'google';
+
 export interface Config {
   api: string;
   ws: string;
@@ -14,10 +16,9 @@ export interface Config {
   supportEmail: string;
   emailWs?: string;
   social: {
-    github: {
-      authUrl: string;
+    [key in SocialLogins]: {
+      serverUrl?: string;
       clientId: string;
-      redirectUri: string;
     };
   };
 }

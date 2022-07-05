@@ -22,8 +22,8 @@ import { AuthFeatureVerifyEmailComponent } from './components/verify-email/verif
 import { GetUrlPipeModule } from '~/app/shared/pipes/get-url.pipe.module';
 import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
-import { GithubSignupGuard } from '../guards/github-signup.guard';
 import { SocialLoginModule } from '../components/social-login/social-login.module';
+import { SocialSignupGuard } from '../guards/social-signup.guard';
 
 const routes: Routes = [
   {
@@ -41,7 +41,12 @@ const routes: Routes = [
   {
     path: 'github',
     children: [],
-    canActivate: [GithubSignupGuard],
+    canActivate: [SocialSignupGuard],
+  },
+  {
+    path: 'gitlab',
+    children: [],
+    canActivate: [SocialSignupGuard],
   },
 ];
 

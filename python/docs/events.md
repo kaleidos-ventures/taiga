@@ -229,18 +229,23 @@ For example:
 
 ```
 projects.create
-invitations.update
+projectinvitations.update
 userstories.delete
 ```
 
 
-#### `invitations.create`
+#### `projectinvitations.create`
 
 It happens when a new project invitation is created.
 
-- Content for user channel:
+Content for:
+- user channel:
   ```
   {
       "project": "project_slug"
   }
+  ```
+- project channel:
+  ```
+  null
   ```

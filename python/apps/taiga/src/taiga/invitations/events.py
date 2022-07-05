@@ -25,10 +25,10 @@ async def emit_event_when_project_invitations_are_created(
             content={"project": invitation.project.slug},
         )
 
-    # TODO: for future events in the project
     # # Publish on the project channel
-    # if invitations:
-    #     await events_manager.publish_on_project_channel(
-    #         project=project,
-    #         type=CREATE_INVITATION
-    #     )
+    if invitations:
+        await events_manager.publish_on_project_channel(
+            project=project,
+            type=CREATE_PROJECT_INVITATION,
+            sender=invited_by,
+        )

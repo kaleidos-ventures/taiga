@@ -114,60 +114,6 @@ describe('ProjectOverviewEffects', () => {
     });
   });
 
-  it('init members with enough members first load', () => {
-    const project = ProjectMockFactory();
-
-    project.userIsAdmin = true;
-
-    store.overrideSelector(selectCurrentProject, project);
-
-    const projectApiService = spectator.inject(ProjectApiService);
-    const effects = spectator.inject(ProjectOverviewEffects);
-
-    const membershipResponse = {
-      memberships: Array.from(Array(MEMBERS_PAGE_SIZE).keys()).map(() =>
-        MembershipMockFactory()
-      ),
-      totalMemberships: 20,
-    };
-
-    const invitationsResponse = {
-      invitations: undefined,
-      totalInvitations: 20,
-    };
-
-    projectApiService.getMembers.mockReturnValue(
-      cold('-b|', { b: membershipResponse })
-    );
-    projectApiService.getInvitations.mockReturnValue(
-      cold('-b|', { b: invitationsResponse })
-    );
-
-    actions$ = hot('-a', { a: initMembers() });
-
-    const expected = cold('---a', {
-      a: fetchMembersSuccess({
-        members: membershipResponse.memberships,
-        totalMemberships: membershipResponse.totalMemberships,
-        invitations: invitationsResponse.invitations,
-        totalInvitations: invitationsResponse.totalInvitations,
-      }),
-    });
-
-    expect(effects.initMembers$).toBeObservable(expected);
-    expect(effects.initMembers$).toSatisfyOnFlush(() => {
-      expect(projectApiService.getMembers).toHaveBeenCalledWith(
-        project.slug,
-        0
-      );
-      expect(projectApiService.getInvitations).toHaveBeenCalledWith(
-        project.slug,
-        0,
-        0
-      );
-    });
-  });
-
   describe('paginate', () => {
     it('members', () => {
       const project = ProjectMockFactory();

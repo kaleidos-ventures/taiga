@@ -15,6 +15,7 @@ import {
   selectMembers,
   selectTotalMemberships,
   selectTotalInvitations,
+  selectHasMoreMembers,
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import {
   initMembers,
@@ -47,25 +48,24 @@ export class ProjectMembersComponent {
 
   public readonly model$ = this.state.select().pipe(
     map((state) => {
-      const user = [...state.members, ...state.invitations].find(
-        (member) => member?.user?.username === state.user?.username
-      );
-      const currentMember = state.members.find(
-        (member) => member?.user?.username === state.user?.username
-      );
-      const members = state.members.filter(
-        (member) => member.user.username !== state.user?.username
-      );
-
-      const invitations = state.invitations.filter(
-        (member) => member?.user?.username !== state.user?.username
-      );
+      if (state.hasMoreMembers) {
+        state.invitations = [];
+      }
 
       const membersAndInvitations = [
-        ...(user ? [user] : []),
-        ...members,
-        ...invitations,
-      ];
+        ...state.members,
+        ...state.invitations.filter(
+          (invitation) => invitation.email !== state.user?.email
+        ),
+      ].filter((member) => {
+        return member?.user?.username !== state.user?.username;
+      });
+
+      const currentMember = this.getCurrentUserMembership();
+
+      if (currentMember) {
+        membersAndInvitations.unshift(currentMember);
+      }
 
       return {
         ...state,
@@ -94,9 +94,16 @@ export class ProjectMembersComponent {
       user: User | null;
       totalMemberships: number;
       totalInvitations: number;
+      hasMoreMembers: boolean;
     }>
   ) {
     this.store.dispatch(initMembers());
+
+    this.state.connect(
+      'hasMoreMembers',
+      this.store.select(selectHasMoreMembers)
+    );
+
     this.state.connect(
       'totalMemberships',
       this.store.select(selectTotalMemberships)
@@ -133,6 +140,30 @@ export class ProjectMembersComponent {
   public invitePeopleModal() {
     this.resetForm = this.invitePeople;
     this.invitePeople = !this.invitePeople;
+  }
+
+  public getCurrentUserMembership(): Invitation | Membership | undefined {
+    const user = this.state.get('user');
+    const project = this.state.get('project');
+    let currentMember: Invitation | Membership | undefined;
+
+    if (user && (project.userIsMember || project.userHasPendingInvitation)) {
+      currentMember = {
+        user: {
+          username: user.username,
+          fullName: user.fullName,
+        },
+        role: {
+          isAdmin: project.userIsAdmin,
+        },
+      };
+
+      if (project.userHasPendingInvitation) {
+        (currentMember as Invitation).email = user.email;
+      }
+    }
+
+    return currentMember;
   }
 
   public acceptInvitationSlug() {

@@ -34,14 +34,8 @@ export class ProjectOverviewEffects {
       exhaustMap(([, project]) => {
         return this.projectApiService.getMembers(project.slug, 0).pipe(
           exhaustMap((membersResponse) => {
-            // only request invitations if there are not enough members
-            const invitations =
-              membersResponse.totalMemberships > MEMBERS_PAGE_SIZE
-                ? 0
-                : MEMBERS_PAGE_SIZE;
-
             return this.projectApiService
-              .getInvitations(project.slug, 0, invitations)
+              .getInvitations(project.slug, 0, MEMBERS_PAGE_SIZE)
               .pipe(
                 map((invitationsResponse) => {
                   return ProjectOverviewActions.fetchMembersSuccess({

@@ -39,11 +39,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     class="member-list"
     *ngIf="members.length && !paginate">
     <li
-      *ngFor="
-        let member of members;
-        trackBy: trackById.bind(this);
-        let i = index
-      "
+      *ngFor="let member of members; trackBy: trackById.bind(this)"
       class="member-item"
       [class.pending-state]="
         animationPendingState && getUser(member).username === user?.username
@@ -57,15 +53,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <ng-template
         *ngTemplateOutlet="
           memberTpl;
-          context: { member: this.member, index: i }
+          context: { member: this.member }
         "></ng-template>
     </li>
   </ul>
 
   <ng-template
     #memberTpl
-    let-member="member"
-    let-index="index">
+    let-member="member">
     <a
       (click)="$event.preventDefault()"
       class="member-link"
@@ -84,7 +79,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </div>
           <div class="block-end">
             <button
-              *ngIf="index === 0 && leaveProject && !isPending(member)"
+              *ngIf="
+                member?.user?.username === user?.username &&
+                leaveProject &&
+                !isPending(member)
+              "
               [attr.aria-label]="t('project_overview.members.leave')"
               icon="remove-user"
               appearance="tertiary"

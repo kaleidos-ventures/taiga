@@ -15,12 +15,26 @@ import { setNotificationClosed } from '../feature-overview/data-access/+state/ac
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'tg-project-feature-shell',
   templateUrl: './project-feature-shell.component.html',
   styleUrls: ['./project-feature-shell.component.css'],
   providers: [RxState],
+  animations: [
+    trigger('slideOut', [
+      transition(':leave', [
+        animate(
+          '300ms ease-in',
+          style({
+            blockSize: '0',
+            opacity: '0',
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class ProjectFeatureShellComponent implements OnDestroy {
   public model$ = this.state.select();

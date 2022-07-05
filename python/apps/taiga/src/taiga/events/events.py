@@ -12,13 +12,19 @@ from taiga.base.serializers import BaseModel
 
 class Event(BaseModel):
     type: str
+    sender: str | None = None
     content: dict[str, Any] | None = None
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, Event) and self.type == other.type and self.content == other.content
+        return (
+            isinstance(other, Event)
+            and self.type == other.type
+            and self.sender == other.sender
+            and self.content == other.content
+        )
 
     def __repr__(self) -> str:
-        return f"Event(type={self.type!r}, content={self.content!r})"
+        return f"Event(type={self.type!r}, sender={self.sender!r}, content={self.content!r})"
 
     def __str__(self) -> str:
         return self.json()

@@ -98,18 +98,19 @@ async def test_pubsub_manager_publish_on_system_channel():
 
 
 async def test_pubsub_manager_publish_on_user_channel():
+    sender = f.build_user()
     user = f.build_user()
     channel = channels.user_channel(user)
     t = "event"
     c = {"msg": "msg"}
-    event = Event(type=t, content=c)
+    event = Event(type=t, sender=sender.username, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})
     async with EventsManager(**db_connection_params()) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)
 
-            await manager.publish_on_user_channel(user=user, type=t, content=c)
+            await manager.publish_on_user_channel(user=user, type=t, sender=sender, content=c)
             res = await subscriber.get()
             assert res.type == "event"
             assert res.channel == channel
@@ -117,18 +118,19 @@ async def test_pubsub_manager_publish_on_user_channel():
 
 
 async def test_pubsub_manager_publish_on_project_channel():
+    sender = f.build_user()
     project = f.build_project()
     channel = channels.project_channel(project)
     t = "event"
     c = {"msg": "msg"}
-    event = Event(type=t, content=c)
+    event = Event(type=t, sender=sender.username, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})
     async with EventsManager(**db_connection_params()) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)
 
-            await manager.publish_on_project_channel(project=project, type=t, content=c)
+            await manager.publish_on_project_channel(project=project, type=t, sender=sender, content=c)
             res = await subscriber.get()
             assert res.type == "event"
             assert res.channel == channel
@@ -136,19 +138,64 @@ async def test_pubsub_manager_publish_on_project_channel():
 
 
 async def test_pubsub_manager_publish_on_workspace_channel():
+    sender = f.build_user()
     workspace = f.build_workspace()
     channel = channels.workspace_channel(workspace)
     t = "event"
     c = {"msg": "msg"}
-    event = Event(type=t, content=c)
+    event = Event(type=t, sender=sender.username, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})
     async with EventsManager(**db_connection_params()) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)
 
-            await manager.publish_on_workspace_channel(workspace=workspace, type=t, content=c)
+            await manager.publish_on_workspace_channel(workspace=workspace, type=t, sender=sender, content=c)
             res = await subscriber.get()
             assert res.type == "event"
             assert res.channel == channel
             assert res.event == event
+
+
+async def test_pubsub_manager_prevent_send_events_to_the_sender():
+    user1 = f.build_user(username="us1")
+    user2 = f.build_user(username="us2")
+    user3 = f.build_user(username="us3")
+    project = f.build_project()
+    channel = channels.project_channel(project)
+    t = "event"
+    c = {"msg": "msg"}
+    event1 = Event(type=t, sender=user1.username, content=c)
+    event2 = Event(type=t, sender=user2.username, content=c)
+    event3 = Event(type=t, sender=user3.username, content=c)
+
+    websocket1 = Mock(spec=WebSocket, scope={}, user=user1)
+    websocket2 = Mock(spec=WebSocket, scope={}, user=user2)
+    async with EventsManager(**db_connection_params()) as manager:
+        async with (manager.register(websocket1) as subscriber1, manager.register(websocket2) as subscriber2):
+            await manager.subscribe(subscriber1, channel)
+            await manager.subscribe(subscriber2, channel)
+
+            await manager.publish_on_project_channel(project=project, type=t, sender=user1, content=c)
+            await manager.publish_on_project_channel(project=project, type=t, sender=user2, content=c)
+            await manager.publish_on_project_channel(project=project, type=t, sender=user3, content=c)
+
+            # subscriber1 received ev2 and ev3
+            res = await subscriber1.get()
+            assert res.type == "event"
+            assert res.channel == channel
+            assert res.event == event2
+            res = await subscriber1.get()
+            assert res.type == "event"
+            assert res.channel == channel
+            assert res.event == event3
+
+            # subscriber2 received ev1 and ev3
+            res = await subscriber2.get()
+            assert res.type == "event"
+            assert res.channel == channel
+            assert res.event == event1
+            res = await subscriber2.get()
+            assert res.type == "event"
+            assert res.channel == channel
+            assert res.event == event3

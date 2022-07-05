@@ -9,7 +9,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Membership } from '@taiga/data';
+import { Membership, User } from '@taiga/data';
 import { map } from 'rxjs/operators';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { setMembersPage } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
@@ -19,6 +19,7 @@ import {
   selectMembersOffset,
   selectTotalMemberships,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 
 @Component({
   selector: 'tg-members-list',
@@ -52,12 +53,14 @@ export class MembersListComponent {
       loading: boolean;
       total: number;
       offset: number;
+      user: User | null;
     }>
   ) {
     this.state.connect('members', this.store.select(selectMembers));
     this.state.connect('loading', this.store.select(selectMembersLoading));
     this.state.connect('total', this.store.select(selectTotalMemberships));
     this.state.connect('offset', this.store.select(selectMembersOffset));
+    this.state.connect('user', this.store.select(selectUser));
   }
 
   public next() {

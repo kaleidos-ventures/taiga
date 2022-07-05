@@ -33,7 +33,8 @@
     },
     "userstories": "User stories",
     "tasks": "Tasks",
-    "sprints": "Sprints"
+    "sprints": "Sprints",
+    "you": "(You)"
   },
   "navigation": {
     "go_home": "Go to home",

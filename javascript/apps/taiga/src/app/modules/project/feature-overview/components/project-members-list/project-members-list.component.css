@@ -159,6 +159,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & tg-user-card {
     --color-user-name: var(--color-gray70);
+    --color-user-name-is-self: var(--color-gray70);
   }
 
   &::ng-deep img,

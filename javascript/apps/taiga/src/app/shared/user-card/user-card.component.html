@@ -8,11 +8,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <div class="user-card">
   <tg-user-avatar
     class="top"
-    *ngIf="user.fullName"
+    *ngIf="fullName"
     [class.disabled]="disabled"
     [user]="user"></tg-user-avatar>
   <tui-svg
-    *ngIf="!user.fullName"
+    *ngIf="!fullName"
     class="avatar top"
     src="/assets/images/avatar.svg"
     aria-hidden="true"></tui-svg>
@@ -20,20 +20,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     class="user-identifier"
     [class.highlight]="textToHighlight"
     [class.disabled]="disabled">
-    <ng-container *ngIf="user.fullName">
+    <ng-container *ngIf="fullName">
       <span
         class="user-name overflow"
         [class.active]="active"
         data-test="user-fullname"
-        [attr.aria-label]="user.fullName"
-        [innerHtml]="fullNameHighlight || user.fullName"></span>
+        [attr.aria-label]="fullName"
+        [innerHtml]="fullNameHighlight || fullName"></span>
       <span
         class="user-alias overflow"
         [class.active]="active"
         [attr.aria-label]="user.username"
         [innerHtml]="'@' + (usernameHighlight || user.username)"></span>
     </ng-container>
-    <ng-container *ngIf="!user.fullName">
+    <ng-container *ngIf="!fullName">
       <span
         class="user-email overflow"
         data-test="user-email"

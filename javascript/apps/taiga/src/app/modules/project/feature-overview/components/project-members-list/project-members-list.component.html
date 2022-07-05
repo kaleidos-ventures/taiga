@@ -71,7 +71,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="member-link"
       href=""
       [class.pending-member]="isPending(member)">
-      <tg-user-card [user]="getUser(member)">
+      <tg-user-card
+        [user]="getUser(member)"
+        [isSelf]="getUser(member).username === user?.username">
         <div
           member
           class="member-info">

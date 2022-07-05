@@ -25,7 +25,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           *ngFor="let member of vm.members; trackBy: trackByUsername">
           <tg-ui-dtable-row>
             <tg-ui-dtable-cell class="user">
-              <tg-user-card [user]="member.user"></tg-user-card>
+              <tg-user-card
+                [user]="member.user"
+                [isSelf]="
+                  member.user.username === vm.user?.username
+                "></tg-user-card>
             </tg-ui-dtable-cell>
             <tg-ui-dtable-cell></tg-ui-dtable-cell>
             <tg-ui-dtable-cell></tg-ui-dtable-cell>

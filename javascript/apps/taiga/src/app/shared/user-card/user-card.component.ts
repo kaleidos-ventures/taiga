@@ -6,7 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { TranslocoService } from '@ngneat/transloco';
 import { User } from '@taiga/data';
 import { InvitationService } from '~/app/services/invitation.service';
 
@@ -15,23 +16,52 @@ import { InvitationService } from '~/app/services/invitation.service';
   templateUrl: './user-card.component.html',
   styleUrls: ['./user-card.component.css'],
 })
-export class UserCardComponent implements OnChanges {
+export class UserCardComponent implements OnChanges, OnInit {
   @Input() public user!: Partial<User>;
   @Input() public textToHighlight?: string;
   @Input() public active?: boolean;
   @Input() public disabled?: boolean;
+  @Input() public isSelf?: boolean;
 
   public fullNameHighlight?: string;
   public usernameHighlight?: string;
 
-  constructor(private invitationService: InvitationService) {}
+  public fullName?: string;
+
+  constructor(
+    private invitationService: InvitationService,
+    private translocoService: TranslocoService
+  ) {}
+
+  public ngOnInit() {
+    if (this.isSelf && this.user.fullName) {
+      this.fullName =
+        this.user.fullName +
+        ' <strong class="is-self">' +
+        this.translocoService.translate('commons.you') +
+        '</strong>';
+    } else {
+      this.fullName = this.user.fullName;
+    }
+  }
 
   public ngOnChanges() {
     if (this.textToHighlight) {
       if (this.user.fullName) {
+        let userFullName;
+        if (this.isSelf) {
+          userFullName =
+            this.user.fullName +
+            ' <strong class="is-self">' +
+            this.translocoService.translate('commons.you') +
+            '</strong>';
+        } else {
+          userFullName = this.user.fullName;
+        }
+
         this.fullNameHighlight = this.stringHighlighted(
           this.textToHighlight,
-          this.user.fullName
+          userFullName
         );
       }
 

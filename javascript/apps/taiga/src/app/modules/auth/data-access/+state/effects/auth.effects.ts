@@ -194,7 +194,7 @@ export class AuthEffects {
           const signUpError = httpResponse.error as SignUpError;
           if (
             status === 400 &&
-            signUpError.error.message !== 'Email already exists'
+            signUpError.error.msg !== 'Email already exists'
           ) {
             this.appService.errorManagement(httpResponse, {
               400: {

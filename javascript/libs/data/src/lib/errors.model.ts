@@ -34,6 +34,6 @@ export interface genericResponseError {
   error: {
     code: string;
     detail: string;
-    message: string;
+    msg: string;
   };
 }

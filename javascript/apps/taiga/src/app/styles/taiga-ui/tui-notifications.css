@@ -7,16 +7,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 /* stylelint-disable declaration-no-important */
 
-tui-notifications-host {
+tui-alert-host {
   --tui-height-xs: var(--spacing-16);
   --tui-radius-m: 8px;
   --tui-width-xs: var(--tui-height-xs);
-
-  & > .t-wrapper {
-    inline-size: calc(410px + var(--spacing-48)) !important;
-    padding-block-start: var(--spacing-64) !important;
-    padding-inline-end: var(--spacing-16) !important;
-  }
 
   & .alert {
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1) !important;

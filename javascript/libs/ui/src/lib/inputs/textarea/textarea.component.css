@@ -42,9 +42,10 @@ tui-text-area {
 
     &.invalid {
       & tui-wrapper[data-appearance="textfield"] {
+        background: var(--color-red10);
+
         /* stylelint-disable-next-line max-nesting-depth */
         &::after {
-          background: var(--color-red10);
           border: 2px solid var(--color-red60);
           border-radius: 3px;
         }

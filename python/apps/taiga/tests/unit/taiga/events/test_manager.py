@@ -75,7 +75,7 @@ async def test_disconnection_with_pending_task():
 
 
 async def test_register_and_unregister_a_websocket(manager):
-    websocket = Mock(spec=WebSocket)
+    websocket = Mock(spec=WebSocket, scope={})
 
     # register
     assert manager._subscribers == {}
@@ -87,8 +87,8 @@ async def test_register_and_unregister_a_websocket(manager):
 
 
 async def test_subscribe(manager):
-    websocket1 = Mock(spec=WebSocket)
-    websocket2 = Mock(spec=WebSocket)
+    websocket1 = Mock(spec=WebSocket, scope={})
+    websocket2 = Mock(spec=WebSocket, scope={})
     channel = "channel1"
 
     async with (
@@ -109,8 +109,8 @@ async def test_subscribe(manager):
 
 
 async def test_unsubscribe(manager):
-    websocket1 = Mock(spec=WebSocket)
-    websocket2 = Mock(spec=WebSocket)
+    websocket1 = Mock(spec=WebSocket, scope={})
+    websocket2 = Mock(spec=WebSocket, scope={})
     channel = "channel1"
 
     async with (
@@ -134,7 +134,7 @@ async def test_unsubscribe(manager):
 
 
 async def test_unsubscribe_from_a_non_subscribed_channel(manager):
-    websocket = Mock(spec=WebSocket)
+    websocket = Mock(spec=WebSocket, scope={})
     channel = "channel1"
 
     async with (manager.register(websocket) as subscriber,):

@@ -22,7 +22,7 @@ async def test_pubsub_manager_publish_and_listen():
     event21 = Event(type="ev-21")
     event22 = Event(type="ev-22")
 
-    websocket = Mock(spec=WebSocket)
+    websocket = Mock(spec=WebSocket, scope={})
     async with EventsManager(**db_connection_params()) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel1)
@@ -85,7 +85,7 @@ async def test_pubsub_manager_publish_on_system_channel():
     c = {"msg": "msg"}
     event = Event(type=t, content=c)
 
-    websocket = Mock(spec=WebSocket)
+    websocket = Mock(spec=WebSocket, scope={})
     async with EventsManager(**db_connection_params()) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)
@@ -104,7 +104,7 @@ async def test_pubsub_manager_publish_on_user_channel():
     c = {"msg": "msg"}
     event = Event(type=t, content=c)
 
-    websocket = Mock(spec=WebSocket)
+    websocket = Mock(spec=WebSocket, scope={})
     async with EventsManager(**db_connection_params()) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)
@@ -123,7 +123,7 @@ async def test_pubsub_manager_publish_on_project_channel():
     c = {"msg": "msg"}
     event = Event(type=t, content=c)
 
-    websocket = Mock(spec=WebSocket)
+    websocket = Mock(spec=WebSocket, scope={})
     async with EventsManager(**db_connection_params()) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)
@@ -142,7 +142,7 @@ async def test_pubsub_manager_publish_on_workspace_channel():
     c = {"msg": "msg"}
     event = Event(type=t, content=c)
 
-    websocket = Mock(spec=WebSocket)
+    websocket = Mock(spec=WebSocket, scope={})
     async with EventsManager(**db_connection_params()) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)

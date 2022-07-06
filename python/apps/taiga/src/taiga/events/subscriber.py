@@ -34,6 +34,7 @@ class Subscriber:
         self._websocket = websocket
         self._queue: Queue[Response | None] = Queue()
         self.id: Final = next(Subscriber._id_seq)
+        self._set_anonymous_user()
 
     async def __aiter__(self) -> AsyncGenerator[Response, None]:
         try:
@@ -62,6 +63,10 @@ class Subscriber:
     async def close(self) -> None:
         await self.put(None)
 
+    def _set_anonymous_user(self) -> None:
+        self._websocket.scope["auth"] = AuthCredentials([])
+        self._websocket.scope["user"] = AnonymousUser()
+
     async def signin(self, token: str) -> bool:
         try:
             scope, user = await authenticate(token=token)
@@ -69,13 +74,11 @@ class Subscriber:
             self._websocket.scope["user"] = user
             return True
         except (BadAuthTokenError, UnauthorizedUserError):
-            self._websocket.scope["auth"] = AuthCredentials([])
-            self._websocket.scope["user"] = AnonymousUser()
+            self._set_anonymous_user()
             return False
 
     async def signout(self) -> None:
-        self._websocket.scope["auth"] = AuthCredentials([])
-        self._websocket.scope["user"] = AnonymousUser()
+        self._set_anonymous_user()
 
     async def subscribe(self, channel: str) -> None:
         await self._manager.subscribe(subscriber=self, channel=channel)

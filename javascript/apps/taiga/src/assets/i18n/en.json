@@ -34,7 +34,7 @@
     "userstories": "User stories",
     "tasks": "Tasks",
     "sprints": "Sprints",
-    "you": "(You)"
+    "your_user": "{{ name }} <strong class='is-self'>(You)</strong>"
   },
   "navigation": {
     "go_home": "Go to home",

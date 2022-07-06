@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { User } from '@taiga/data';
 import { InvitationService } from '~/app/services/invitation.service';
@@ -16,7 +16,7 @@ import { InvitationService } from '~/app/services/invitation.service';
   templateUrl: './user-card.component.html',
   styleUrls: ['./user-card.component.css'],
 })
-export class UserCardComponent implements OnChanges, OnInit {
+export class UserCardComponent implements OnChanges {
   @Input() public user!: Partial<User>;
   @Input() public textToHighlight?: string;
   @Input() public active?: boolean;
@@ -33,36 +33,25 @@ export class UserCardComponent implements OnChanges, OnInit {
     private translocoService: TranslocoService
   ) {}
 
-  public ngOnInit() {
-    if (this.isSelf && this.user.fullName) {
-      this.fullName =
-        this.user.fullName +
-        ' <strong class="is-self">' +
-        this.translocoService.translate('commons.you') +
-        '</strong>';
-    } else {
-      this.fullName = this.user.fullName;
+  public ngOnChanges(changes: SimpleChanges) {
+    if (changes.user || changes.isSelf) {
+      if (this.isSelf && this.user.fullName) {
+        this.fullName = this.translocoService.translate('commons.your_user', {
+          name: this.user.fullName,
+        });
+      } else {
+        this.fullName = this.user.fullName;
+      }
     }
-  }
 
-  public ngOnChanges() {
     if (this.textToHighlight) {
-      if (this.user.fullName) {
-        let userFullName;
-        if (this.isSelf) {
-          userFullName =
-            this.user.fullName +
-            ' <strong class="is-self">' +
-            this.translocoService.translate('commons.you') +
-            '</strong>';
-        } else {
-          userFullName = this.user.fullName;
-        }
-
+      if (this.fullName) {
         this.fullNameHighlight = this.stringHighlighted(
           this.textToHighlight,
-          userFullName
+          this.fullName
         );
+      } else {
+        this.fullNameHighlight = '';
       }
 
       if (this.user.username) {
@@ -71,6 +60,8 @@ export class UserCardComponent implements OnChanges, OnInit {
           this.user.username
         );
         this.usernameHighlight = usernameText;
+      } else {
+        this.usernameHighlight = '';
       }
     }
   }

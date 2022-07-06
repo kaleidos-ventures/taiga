@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b4db8089-7889-4284-b721-a1756a002292",
+		"_postman_id": "789edccc-b0a9-4b9e-8345-9ca7c18b5f90",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "9835734"
@@ -243,6 +243,9 @@
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -254,11 +257,11 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"text\": \"su\",\n    \"project\": \"right-sized-3rdgeneration-infrastructure-qwQktb\",\n    \"excluded_users\": [\"user4\", \"user10\"],\n    \"offset\": 0,\n    \"limit\": 100\n}",
+							"raw": "{\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -266,7 +269,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users/search",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users/search?text={{search-text}}&project={{pj-slug}}&offset={{offset}}&limit={{limit}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -274,6 +277,24 @@
 							"path": [
 								"users",
 								"search"
+							],
+							"query": [
+								{
+									"key": "text",
+									"value": "{{search-text}}"
+								},
+								{
+									"key": "project",
+									"value": "{{pj-slug}}"
+								},
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
 							]
 						}
 					},

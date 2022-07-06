@@ -554,11 +554,11 @@ async def test_get_paginated_users_by_text_ok():
         fake_users_repo.get_users_by_text.return_value = []
 
         pagination, users = await services.get_paginated_users_by_text(
-            text="text", project_slug="slug", excluded_usernames=[], offset=9, limit=10
+            text="text", project_slug="slug", offset=9, limit=10
         )
 
         fake_users_repo.get_users_by_text.assert_awaited_with(
-            text_search="text", project_slug="slug", excluded_usernames=[], offset=9, limit=10
+            text_search="text", project_slug="slug", offset=9, limit=10
         )
 
         assert users == []

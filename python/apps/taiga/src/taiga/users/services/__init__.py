@@ -209,15 +209,12 @@ async def get_paginated_users_by_text(
     limit: int,
     text: str | None = None,
     project_slug: str | None = None,
-    excluded_usernames: list[str] | None = [],
 ) -> tuple[Pagination, list[User]]:
 
-    total_users = await users_repositories.get_total_users_by_text(
-        text_search=text, project_slug=project_slug, excluded_usernames=excluded_usernames
-    )
+    total_users = await users_repositories.get_total_users_by_text(text_search=text, project_slug=project_slug)
 
     users = await users_repositories.get_users_by_text(
-        text_search=text, project_slug=project_slug, excluded_usernames=excluded_usernames, offset=offset, limit=limit
+        text_search=text, project_slug=project_slug, offset=offset, limit=limit
     )
 
     pagination = Pagination(offset=offset, limit=limit, total=total_users)

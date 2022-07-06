@@ -12,6 +12,14 @@ from taiga.invitations.models import Invitation
 
 
 @dataclass
+class UserSearch:
+    username: str
+    full_name: str
+    user_is_member: bool | None
+    user_has_pending_invitation: bool | None
+
+
+@dataclass
 class VerificationInfo:
     auth: AccessWithRefreshToken
     project_invitation: Invitation | None

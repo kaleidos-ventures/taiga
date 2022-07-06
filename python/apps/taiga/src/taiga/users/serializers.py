@@ -35,6 +35,11 @@ class UserMeSerializer(UserBaseSerializer):
         orm_mode = True
 
 
+class UserSearchSerializer(UserSerializer):
+    user_is_member: bool | None
+    user_has_pending_invitation: bool | None
+
+
 class VerificationInfoSerializer(BaseModel):
     auth: AccessTokenWithRefreshSerializer
     project_invitation: InvitationSummaryVerifyUserSerializer | None

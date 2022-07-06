@@ -5,12 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from fastapi import Response
+from fastapi import Depends, Query, Response
 from taiga.auth import services as auth_services
 from taiga.auth.dataclasses import AccessWithRefreshToken
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.api import Request
-from taiga.base.api.pagination import set_pagination
+from taiga.base.api.pagination import PaginationQuery, set_pagination
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_422
@@ -18,10 +18,9 @@ from taiga.permissions import IsAuthenticated
 from taiga.routers import routes
 from taiga.users import services as users_services
 from taiga.users import validators as users_validators
-from taiga.users.dataclasses import VerificationInfo
+from taiga.users.dataclasses import UserSearch, VerificationInfo
 from taiga.users.models import User
-from taiga.users.serializers import UserMeSerializer, UserSerializer, VerificationInfoSerializer
-from taiga.users.validators import SearchUsersByTextValidator
+from taiga.users.serializers import UserMeSerializer, UserSearchSerializer, UserSerializer, VerificationInfoSerializer
 
 # PERMISSIONS
 LIST_USERS = IsAuthenticated()
@@ -90,13 +89,19 @@ async def verify_user(form: users_validators.VerifyTokenValidator) -> Verificati
 #####################################################################
 
 
-@routes.users.post(
+@routes.users.get(
     "/search",
     name="users",
     summary="List all users matching a full text search, ordered (when provided) by their project closeness",
-    response_model=list[UserSerializer],
+    response_model=list[UserSearchSerializer],
 )
-async def get_users_by_text(request: Request, response: Response, form: SearchUsersByTextValidator) -> list[User]:
+async def get_users_by_text(
+    request: Request,
+    response: Response,
+    pagination_params: PaginationQuery = Depends(),
+    text: str = Query(None, description="search text (str)"),
+    project: str = Query(None, description="the project slug (str)"),
+) -> list[UserSearch]:
     """
     List all the users matching the full-text search criteria, ordering results by their proximity to a project :
         1st. project members of this project
@@ -106,11 +111,10 @@ async def get_users_by_text(request: Request, response: Response, form: SearchUs
     await check_permissions(permissions=GET_USERS_BY_TEXT, user=request.user)
 
     pagination, users = await users_services.get_paginated_users_by_text(
-        text=form.text,
-        project_slug=form.project,
-        excluded_usernames=form.excluded_users,
-        offset=form.offset,
-        limit=form.limit,
+        text=text,
+        project_slug=project,
+        offset=pagination_params.offset,
+        limit=pagination_params.limit,
     )
 
     set_pagination(response=response, pagination=pagination)

@@ -7,6 +7,7 @@
 
 import pytest
 from asgiref.sync import sync_to_async
+from taiga.invitations.choices import InvitationStatus
 from taiga.permissions import choices
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
@@ -154,14 +155,26 @@ async def test_clean_expired_users():
 
 async def test_get_users_by_text():
     ws_pj_admin = await f.create_user(full_name="ws-pj-admin")
-    elettescar = await f.create_user(is_active=True, username="elettescar", full_name="Martina Eaton")
-    electra = await f.create_user(is_active=True, username="electra@email.com", full_name="Sonia Moreno")
-    danvers = await f.create_user(is_active=True, username="danvers@email.com", full_name="Elena Riego")
-    elmarv = await f.create_user(is_active=True, username="elmary@email.com", full_name="Joanna Marinari")
-    storm = await f.create_user(is_active=True, username="storm@email.com", full_name="Martina Elliott Wagner")
-    inactive_user = await f.create_user(is_active=False, username="inactive@email.com", full_name="Inactive User")
+    elettescar = await f.create_user(
+        is_active=True, username="elettescar", email="elettescar@email.com", full_name="Martina Eaton"
+    )
+    electra = await f.create_user(
+        is_active=True, username="electra", email="electra@email.com", full_name="Sonia Moreno"
+    )
+    danvers = await f.create_user(
+        is_active=True, username="danvers", email="danvers@email.com", full_name="Elena Riego"
+    )
+    elmarv = await f.create_user(
+        is_active=True, username="elmary", email="elmary@email.com", full_name="Joanna Marinari"
+    )
+    storm = await f.create_user(
+        is_active=True, username="storm", email="storm@email.com", full_name="Martina Elliott Wagner"
+    )
+    inactive_user = await f.create_user(
+        is_active=False, username="inactive", email="inactive@email.com", full_name="Inactive User"
+    )
     system_user = await f.create_user(
-        is_system=True, is_active=True, username="system@email.com", full_name="System User"
+        is_system=True, is_active=True, username="system", email="system@email.com", full_name="System User"
     )
 
     # elettescar is ws-member
@@ -173,8 +186,18 @@ async def test_get_users_by_text():
 
     # electra is a pj-member (from the previous workspace)
     project = await f.create_project(workspace=workspace, owner=ws_pj_admin)
-    general_member_role = await f.create_role(project=project, is_admin=False)
-    await f.create_membership(user=electra, project=project, role=general_member_role)
+    general_role = await f.create_role(project=project, is_admin=False)
+    await f.create_membership(user=electra, project=project, role=general_role)
+
+    # danvers has a pending invitation
+    await f.create_invitation(
+        email="danvers@email.com",
+        user=danvers,
+        project=project,
+        role=general_role,
+        status=InvitationStatus.PENDING,
+        invited_by=ws_pj_admin,
+    )
 
     # searching with default values (all users but inactive/system users)
     all_active_no_sys_users_result = await users_repositories.get_users_by_text()
@@ -187,12 +210,18 @@ async def test_get_users_by_text():
 
     # searching for texts, ordering by project
     search_by_text_no_pj_result = await users_repositories.get_users_by_text(
-        text_search="el", project_slug=project.slug, excluded_usernames=["ws-pj-admin"]
+        text_search="el", project_slug=project.slug
     )
     assert len(search_by_text_no_pj_result) == 5
     assert search_by_text_no_pj_result[0] == electra
+    assert search_by_text_no_pj_result[0].user_is_member is True
+    assert search_by_text_no_pj_result[0].user_has_pending_invitation is False
     assert search_by_text_no_pj_result[1] == elettescar
+    assert search_by_text_no_pj_result[1].user_is_member is False
+    assert search_by_text_no_pj_result[1].user_has_pending_invitation is False
     assert search_by_text_no_pj_result[2] == danvers
+    assert search_by_text_no_pj_result[2].user_is_member is False
+    assert search_by_text_no_pj_result[2].user_has_pending_invitation is True
     assert inactive_user not in search_by_text_no_pj_result
     assert ws_pj_admin not in search_by_text_no_pj_result
 
@@ -207,7 +236,7 @@ async def test_get_users_by_text():
 
     # search pagination
     search_by_text_no_pj_pagination_result = await users_repositories.get_users_by_text(
-        text_search="el", project_slug=project.slug, excluded_usernames=["ws-pj-admin"], offset=2, limit=3
+        text_search="el", project_slug=project.slug, offset=2, limit=3
     )
     assert len(search_by_text_no_pj_pagination_result) == 3
     assert search_by_text_no_pj_pagination_result[0] == danvers

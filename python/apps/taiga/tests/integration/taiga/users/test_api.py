@@ -141,14 +141,17 @@ async def test_verify_user_error_used_token(client):
 
 
 #####################################################################
-# POST /users/search
+# GET /users/search
 #####################################################################
 
 
 async def test_get_users_by_text_anonymous(client):
-    data = {"text": "text_to_search", "project": "pj-slug", "excluded_users": ["user1"], "offset": 0, "limit": 100}
+    text = "text_to_search"
+    project_slug = "pj-slug"
+    offset = 0
+    limit = 1
 
-    response = client.post("/users/search", json=data)
+    response = client.get(f"/users/search?text={text}&project={project_slug}&offset={offset}&limit={limit}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
@@ -156,10 +159,17 @@ async def test_get_users_by_text(client):
     user = await f.create_user()
     client.login(user)
 
-    data = {"text": "text_to_search", "project": "pj-slug", "excluded_users": ["user1"], "offset": 0, "limit": 100}
+    text = "text_to_search"
+    project_slug = "pj-slug"
+    offset = 0
+    limit = 1
 
-    response = client.post("/users/search", json=data)
+    response = client.get(f"/users/search?text={text}&project={project_slug}&offset={offset}&limit={limit}")
     assert response.status_code == status.HTTP_200_OK, response.text
+    assert len(response.json()) == 0
+    assert response.headers["Pagination-Offset"] == "0"
+    assert response.headers["Pagination-Limit"] == "1"
+    assert response.headers["Pagination-Total"] == "0"
 
 
 ##########################################################

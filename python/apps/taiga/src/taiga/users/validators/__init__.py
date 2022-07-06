@@ -6,7 +6,6 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from pydantic import EmailStr, StrictBool, constr, validator
-from taiga.base.api.pagination import PaginationQuery
 from taiga.base.serializers import BaseModel
 from taiga.conf import settings
 from taiga.users.validators.mixins import PasswordMixin
@@ -45,12 +44,6 @@ class CreateUserValidator(PasswordMixin, BaseModel):
 
 class VerifyTokenValidator(BaseModel):
     token: str
-
-
-class SearchUsersByTextValidator(PaginationQuery):
-    text: str | None
-    project: str | None
-    excluded_users: list[str] | None
 
 
 #####################################################################

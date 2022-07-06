@@ -11,8 +11,11 @@ from typing import Any
 from asgiref.sync import sync_to_async
 from django.contrib.auth.models import update_last_login as django_update_last_login
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
-from django.db.models import Q, QuerySet
+from django.db.models import BooleanField, Exists, OuterRef, Q, QuerySet, Value
 from taiga.base.utils.datetime import aware_utcnow
+from taiga.invitations.choices import InvitationStatus
+from taiga.invitations.models import Invitation
+from taiga.roles.models import Membership
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import AuthData, User
 from taiga.users.tokens import VerifyUserToken
@@ -139,7 +142,6 @@ def clean_expired_users() -> None:
 
 def _get_users_by_text_qs(
     text_search: str = "",
-    excluded_usernames: list[str] = [],
     project_slug: str | None = None,
     exclude_inactive: bool = True,
     exclude_system: bool = True,
@@ -148,7 +150,6 @@ def _get_users_by_text_qs(
     Get all the users that match a full text search (against their full_name and username fields), returning a
     prioritized (not filtered) list by their closeness to a given project (if any).
 
-    :param excluded_usernames: Users matching any of the usernames won't be considered
     :param text_search: The text the users should match in either their full names or usernames to be considered
     :param project_slug: Users will be ordered by their proximity to this project excluding itself
     :param exclude_inactive: true (return just active users), false (returns all users)
@@ -167,9 +168,6 @@ def _get_users_by_text_qs(
         users_matching_full_text_search = get_users_by_fullname_or_username_sync(text_search, users_qs)
         users_qs = users_matching_full_text_search
 
-    if excluded_usernames:
-        users_qs &= users_qs.exclude(username__in=excluded_usernames)
-
     if project_slug:
         # List all the users matching the full-text search criteria, ordering results by their proximity to a project :
         #     1st. project members of this project
@@ -177,11 +175,22 @@ def _get_users_by_text_qs(
         #     3rd. rest of users (the priority for this group is not too important)
 
         # 1st: Users that share the same project
-        project_users_qs = users_qs.filter(projects__slug=project_slug).order_by("full_name", "username")
+        memberships = Membership.objects.filter(user__id=OuterRef("pk"), project__slug=project_slug)
+        pending_invitations = Invitation.objects.filter(
+            user__id=OuterRef("pk"), project__slug=project_slug, status=InvitationStatus.PENDING
+        )
+        project_users_qs = (
+            users_qs.filter(projects__slug=project_slug)
+            .annotate(user_is_member=Exists(memberships))
+            .annotate(user_has_pending_invitation=Exists(pending_invitations))
+            .order_by("full_name", "username")
+        )
 
         # 2nd: Users that are members of the project's workspace but are NOT project members
         workspace_users_qs = (
             users_qs.filter(workspaces__projects__slug=project_slug)
+            .annotate(user_is_member=Value(False, output_field=BooleanField()))
+            .annotate(user_has_pending_invitation=Exists(pending_invitations))
             .exclude(projects__slug=project_slug)
             .order_by("full_name", "username")
         )
@@ -189,6 +198,8 @@ def _get_users_by_text_qs(
         # 3rd: Users that are neither a project member nor a member of its workspace
         other_users_qs = (
             users_qs.exclude(workspaces__projects__slug=project_slug)
+            .annotate(user_is_member=Value(False, output_field=BooleanField()))
+            .annotate(user_has_pending_invitation=Exists(pending_invitations))
             .exclude(projects__slug=project_slug)
             .order_by("full_name", "username")
         )
@@ -203,7 +214,6 @@ def _get_users_by_text_qs(
 @sync_to_async
 def get_users_by_text(
     text_search: str = "",
-    excluded_usernames: list[str] = [],
     project_slug: str | None = None,
     exclude_inactive: bool = True,
     exclude_system: bool = True,
@@ -213,7 +223,6 @@ def get_users_by_text(
     qs = _get_users_by_text_qs(
         text_search=text_search,
         project_slug=project_slug,
-        excluded_usernames=excluded_usernames,
         exclude_inactive=exclude_inactive,
         exclude_system=exclude_system,
     )
@@ -226,7 +235,6 @@ def get_users_by_text(
 @sync_to_async
 def get_total_users_by_text(
     text_search: str = "",
-    excluded_usernames: list[str] = [],
     project_slug: str | None = None,
     exclude_inactive: bool = True,
     exclude_system: bool = True,
@@ -234,7 +242,6 @@ def get_total_users_by_text(
     qs = _get_users_by_text_qs(
         text_search=text_search,
         project_slug=project_slug,
-        excluded_usernames=excluded_usernames,
         exclude_inactive=exclude_inactive,
         exclude_system=exclude_system,
     )

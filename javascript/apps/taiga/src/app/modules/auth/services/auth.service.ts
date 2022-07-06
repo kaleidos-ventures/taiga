@@ -73,7 +73,9 @@ export class AuthService {
   }
 
   public displaySocialNetworks() {
-    // This boolean should be updated with upcoming social networks
-    return !!this.config.social && !!this.config.social.github;
+    const social = this.config.social;
+    const isGithubConfigured = !!social.github.clientId;
+    const isGitlabConfigured = !!social.gitlab.clientId;
+    return isGithubConfigured || isGitlabConfigured;
   }
 }

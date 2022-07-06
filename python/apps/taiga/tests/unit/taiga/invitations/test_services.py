@@ -468,6 +468,7 @@ async def tests_accept_project_invitation() -> None:
     with (
         patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
         fake_invitations_repo.accept_project_invitation.return_value = invitation
 
@@ -475,6 +476,9 @@ async def tests_accept_project_invitation() -> None:
 
         fake_invitations_repo.accept_project_invitation.assert_awaited_once_with(invitation=invitation, user=user)
         fake_roles_repo.create_membership.assert_awaited_once_with(project=project, role=role, user=user)
+        fake_invitations_events.emit_event_when_project_invitations_is_accepted.assert_awaited_once_with(
+            invitation=invitation
+        )
 
 
 async def tests_accept_project_invitation_error_invitation_has_already_been_accepted() -> None:
@@ -486,12 +490,14 @@ async def tests_accept_project_invitation_error_invitation_has_already_been_acce
     with (
         patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         pytest.raises(ex.InvitationAlreadyAcceptedError),
     ):
         await services.accept_project_invitation(invitation=invitation, user=user)
 
         fake_invitations_repo.accept_project_invitation.assert_not_awaited()
         fake_roles_repo.create_membership.assert_not_awaited()
+        fake_invitations_events.emit_event_when_project_invitations_is_accepted.assert_not_awaited()
 
 
 #######################################################

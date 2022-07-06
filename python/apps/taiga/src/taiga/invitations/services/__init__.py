@@ -49,6 +49,10 @@ async def get_public_project_invitation(token: str) -> PublicInvitation | None:
     return None
 
 
+async def get_project_invitation_by_user(project_slug: str, user: User) -> Invitation | None:
+    return await invitations_repositories.get_project_invitation_by_user(project_slug=project_slug, user=user)
+
+
 async def get_paginated_project_invitations(
     project: Project, user: User, offset: int, limit: int
 ) -> tuple[Pagination, list[Invitation]]:
@@ -75,10 +79,6 @@ async def get_paginated_project_invitations(
     pagination.total = total_invitations
 
     return pagination, invitations
-
-
-async def get_project_invitation_by_user(project_slug: str, user: User) -> Invitation | None:
-    return await invitations_repositories.get_project_invitation_by_user(project_slug=project_slug, user=user)
 
 
 async def _generate_project_invitation_token(invitation: Invitation) -> str:
@@ -214,8 +214,8 @@ async def accept_project_invitation(invitation: Invitation, user: User) -> Invit
         raise ex.InvitationAlreadyAcceptedError("The invitation has already been accepted")
 
     accepted_invitation = await invitations_repositories.accept_project_invitation(invitation=invitation, user=user)
-
     await roles_repositories.create_membership(project=invitation.project, role=invitation.role, user=invitation.user)
+    await invitations_events.emit_event_when_project_invitations_is_accepted(invitation=invitation)
 
     return accepted_invitation
 

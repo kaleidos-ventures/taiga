@@ -11,6 +11,7 @@ from taiga.projects.models import Project
 from taiga.users.models import User
 
 CREATE_PROJECT_INVITATION = "projectinvitations.create"
+ACCEPT_PROJECT_INVITATION = "projectmemberships.create"
 
 
 async def emit_event_when_project_invitations_are_created(
@@ -32,3 +33,11 @@ async def emit_event_when_project_invitations_are_created(
             type=CREATE_PROJECT_INVITATION,
             sender=invited_by,
         )
+
+
+async def emit_event_when_project_invitations_is_accepted(invitation: Invitation) -> None:
+    await events_manager.publish_on_project_channel(
+        project=invitation.project,
+        type=ACCEPT_PROJECT_INVITATION,
+        sender=invitation.user,
+    )

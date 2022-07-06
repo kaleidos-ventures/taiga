@@ -249,3 +249,13 @@ Content for:
   ```
   null
   ```
+
+#### `projectmemberships.create`
+
+It happens when a project invitation is accepted. Because a new project membership is created.
+
+Content for:
+- project channel:
+  ```
+  null
+  ```

@@ -19,6 +19,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Project } from '@taiga/data';
 import { filter, take } from 'rxjs/operators';
@@ -31,6 +32,15 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
   templateUrl: './project-navigation-settings.component.html',
   styleUrls: ['./project-navigation-settings.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'project_settings',
+        alias: 'project_settings',
+      },
+    },
+  ],
 })
 export class ProjectNavigationSettingsComponent implements OnInit {
   @Input()

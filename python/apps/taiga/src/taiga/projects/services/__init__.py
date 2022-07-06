@@ -16,7 +16,7 @@ from taiga.projects import repositories as projects_repositories
 from taiga.projects.models import Project
 from taiga.projects.services import exceptions as ex
 from taiga.roles import repositories as roles_repositories
-from taiga.users.models import User
+from taiga.users.models import AnyUser, User
 from taiga.workspaces import repositories as workspaces_repositories
 from taiga.workspaces.models import Workspace
 
@@ -77,7 +77,7 @@ async def get_project(slug: str) -> Project | None:
     return await projects_repositories.get_project(slug=slug)
 
 
-async def get_project_detail(project: Project, user: User) -> Project:
+async def get_project_detail(project: Project, user: AnyUser) -> Project:
     (
         is_project_admin,
         is_project_member,
@@ -101,8 +101,10 @@ async def get_project_detail(project: Project, user: User) -> Project:
 
     project.user_is_admin = is_project_admin
     project.user_is_member = await roles_repositories.user_is_project_member(project.slug, user.id)
-    project.user_has_pending_invitation = await (
-        invitations_repositories.has_pending_project_invitation_for_user(user=user, project=project)
+    project.user_has_pending_invitation = (
+        False
+        if user.is_anonymous
+        else await (invitations_repositories.has_pending_project_invitation_for_user(user=user, project=project))
     )
 
     return project

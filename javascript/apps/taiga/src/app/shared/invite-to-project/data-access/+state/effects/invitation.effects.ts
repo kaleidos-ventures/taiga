@@ -18,16 +18,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import {
   Contact,
   ErrorManagementToastOptions,
-  Invitation,
   InvitationResponse,
 } from '@taiga/data';
 import { TuiNotification } from '@taiga-ui/core';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { InvitationService } from '~/app/services/invitation.service';
-import {
-  selectInvitations,
-  selectMembers,
-} from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { selectMembers } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { ProjectApiService } from '@taiga/api';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { Store } from '@ngrx/store';
@@ -39,39 +35,16 @@ export class InvitationEffects {
   public sendInvitations$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(NewProjectActions.inviteUsersToProject),
-      concatLatestFrom(() =>
-        this.store.select(selectInvitations).pipe(filterNil())
-      ),
       pessimisticUpdate({
-        run: (action, invitationsState) => {
+        run: (action) => {
           this.buttonLoadingService.start();
           return this.invitationApiService
             .inviteUsers(action.slug, action.invitation)
             .pipe(
               switchMap(this.buttonLoadingService.waitLoading()),
               map((response: InvitationResponse) => {
-                const invitationsOrdered: Invitation[] =
-                  invitationsState.slice();
-                response.invitations.forEach((inv) => {
-                  const isAlreadyInTheList = invitationsState.find((it) => {
-                    return inv.email
-                      ? it.email === inv.email
-                      : it.user?.username === inv.user?.username;
-                  });
-                  if (!isAlreadyInTheList) {
-                    invitationsOrdered.splice(
-                      this.invitationService.positionInvitationInArray(
-                        invitationsOrdered,
-                        inv
-                      ),
-                      0,
-                      inv
-                    );
-                  }
-                });
                 return InvitationActions.inviteUsersSuccess({
                   newInvitations: response.invitations,
-                  allInvitationsOrdered: invitationsOrdered,
                   alreadyMembers: response.alreadyMembers,
                 });
               })

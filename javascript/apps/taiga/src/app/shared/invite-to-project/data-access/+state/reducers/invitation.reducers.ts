@@ -36,7 +36,7 @@ export const initialState: InvitationState = {
 export const reducer = createReducer(
   initialState,
   on(InvitationActions.inviteUsersSuccess, (state, action): InvitationState => {
-    state.invitations = action.allInvitationsOrdered;
+    state.invitations.push(...action.newInvitations);
 
     return state;
   }),

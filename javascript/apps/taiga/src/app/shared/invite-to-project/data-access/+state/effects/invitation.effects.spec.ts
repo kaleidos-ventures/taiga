@@ -91,7 +91,6 @@ describe('InvitationEffects', () => {
     const expected = cold('--a', {
       a: inviteUsersSuccess({
         newInvitations: invitationMockResponse.invitations,
-        allInvitationsOrdered: invitationMockResponse.invitations,
         alreadyMembers: 1,
       }),
     });

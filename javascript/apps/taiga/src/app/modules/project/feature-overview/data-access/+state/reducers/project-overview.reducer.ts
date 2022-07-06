@@ -89,7 +89,29 @@ export const reducer = createReducer(
   on(
     InvitationActions.inviteUsersSuccess,
     (state, action): ProjectOverviewState => {
-      state.invitations = action.allInvitationsOrdered;
+      state.totalInvitations += action.newInvitations.length;
+
+      // add the new invitations to the list is there is no pagination (!state.hasMoreInvitations).
+      if (!state.hasMoreInvitations) {
+        state.invitations.push(...action.newInvitations);
+
+        const registeredUser = state.invitations.filter(
+          (it) => !!it.user?.fullName
+        );
+        const newUsers = state.invitations.filter((it) => !it.user?.fullName);
+
+        registeredUser.sort((a, b) => {
+          const firstValue = a.user?.fullName ?? '';
+          const secondValue = b.user?.fullName ?? '';
+          return firstValue.localeCompare(secondValue);
+        });
+
+        newUsers.sort((a, b) => {
+          return a.email.localeCompare(b.email);
+        });
+
+        state.invitations = [...registeredUser, ...newUsers];
+      }
 
       return state;
     }
@@ -109,6 +131,9 @@ export const reducer = createReducer(
     return state;
   }),
   on(InvitationActions.acceptInvitationSlugSuccess, (state, { username }) => {
+    state.totalInvitations -= 1;
+    state.totalMemberships += 1;
+
     const acceptedUser = state.invitations.find(
       (invitation) => invitation.user?.username === username
     );

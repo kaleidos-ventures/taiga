@@ -13,7 +13,6 @@ export const inviteUsersSuccess = createAction(
   '[Invitation] invite users success',
   props<{
     newInvitations: Invitation[];
-    allInvitationsOrdered: Invitation[];
     alreadyMembers: number;
   }>()
 );

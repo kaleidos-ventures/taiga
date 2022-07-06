@@ -37,7 +37,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   <ul
     class="member-list"
-    *ngIf="members.length && !paginate">
+    *ngIf="members.length && !paginate"
+    [attr.aria-label]="t('project_overview.members.title')">
     <li
       *ngFor="let member of members; trackBy: trackById.bind(this)"
       class="member-item"
@@ -61,14 +62,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <ng-template
     #memberTpl
     let-member="member">
-    <a
+    <div
       (click)="$event.preventDefault()"
       class="member-link"
-      href=""
       [class.pending-member]="isPending(member)">
       <tg-user-card
         [user]="getUser(member)"
-        [isSelf]="getUser(member).username === user?.username">
+        [isSelf]="getUser(member).username === user?.username"
+        [navigateToUser]="true">
         <div
           member
           class="member-info">
@@ -108,13 +109,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 class="create-account"
                 data-test="invitation-accept"
                 appearance="secondary"
-                tuiButton>
+                tuiButton
+                [attr.aria-label]="
+                  t('project_overview.members.accept_invitation')
+                ">
                 {{ t('project_overview.members.accept') }}
               </button>
             </div>
           </div>
         </div>
       </tg-user-card>
-    </a>
+    </div>
   </ng-template>
 </ng-container>

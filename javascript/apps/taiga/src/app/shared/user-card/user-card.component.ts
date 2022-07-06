@@ -22,6 +22,7 @@ export class UserCardComponent implements OnChanges {
   @Input() public active?: boolean;
   @Input() public disabled?: boolean;
   @Input() public isSelf?: boolean;
+  @Input() public navigateToUser?: boolean;
 
   public fullNameHighlight?: string;
   public usernameHighlight?: string;

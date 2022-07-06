@@ -9,6 +9,7 @@
     "count_pending": "{{number}} pending",
     "leave": "Leave this project",
     "invite": "Invite people",
-    "accept": "Accept"
+    "accept": "Accept",
+    "accept_invitation": "Accept invitation"
   }
 }

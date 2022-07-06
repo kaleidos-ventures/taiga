@@ -21,12 +21,25 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [class.highlight]="textToHighlight"
     [class.disabled]="disabled">
     <ng-container *ngIf="fullName">
-      <span
-        class="user-name overflow"
-        [class.active]="active"
-        data-test="user-fullname"
-        [attr.aria-label]="fullName"
-        [innerHtml]="fullNameHighlight || fullName"></span>
+      <ng-container *ngIf="navigateToUser">
+        <a
+          href=""
+          [attr.aria-label]="user.fullName && user.fullName + user.username">
+          <span
+            class="user-name overflow"
+            [class.active]="active"
+            data-test="user-fullname"
+            [innerHtml]="fullNameHighlight || fullName"></span>
+        </a>
+      </ng-container>
+      <ng-container *ngIf="!navigateToUser">
+        <span
+          class="user-name overflow"
+          [class.active]="active"
+          data-test="user-fullname"
+          [attr.aria-label]="fullName"
+          [innerHtml]="fullNameHighlight || fullName"></span>
+      </ng-container>
       <span
         class="user-alias overflow"
         [class.active]="active"
@@ -42,6 +55,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </ng-container>
     <ng-content select="[invitation]"></ng-content>
   </div>
-
   <ng-content select="[member]"></ng-content>
 </div>

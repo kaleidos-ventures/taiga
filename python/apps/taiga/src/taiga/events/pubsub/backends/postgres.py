@@ -41,7 +41,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-from asyncio import Queue
+from asyncio import Lock, Queue
 from typing import Any
 
 import asyncpg
@@ -64,6 +64,7 @@ class PostgresPubSubBackend(PubSubBackend):
 
     async def connect(self) -> None:
         self._conn = await asyncpg.connect(**self._conn_args)
+        self._lock = Lock()
         self._listen_queue: Queue[tuple[str, Event]] = Queue()
 
     @connected
@@ -84,15 +85,18 @@ class PostgresPubSubBackend(PubSubBackend):
 
     @connected
     async def subscribe(self, channel: str) -> None:
-        await self._conn.add_listener(channel, self._listener)
+        async with self._lock:
+            await self._conn.add_listener(channel, self._listener)
 
     @connected
     async def unsubscribe(self, channel: str) -> None:
-        await self._conn.remove_listener(channel, self._listener)
+        async with self._lock:
+            await self._conn.remove_listener(channel, self._listener)
 
     @connected
     async def publish(self, channel: str, event: Event) -> None:
-        await self._conn.execute("SELECT pg_notify($1, $2);", channel, str(event))
+        async with self._lock:
+            await self._conn.execute("SELECT pg_notify($1, $2);", channel, str(event))
 
     @connected
     async def next_published(self) -> tuple[str, Event]:

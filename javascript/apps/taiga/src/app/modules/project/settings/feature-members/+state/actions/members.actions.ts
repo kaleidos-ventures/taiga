@@ -15,7 +15,11 @@ export const initMembersPage = createAction(
 
 export const fetchMembersSuccess = createAction(
   '[Settings][Members] fetch members success',
-  props<{ members: Membership[]; totalMemberships: number; offset: number }>()
+  props<{
+    members: Membership[];
+    totalMemberships: number;
+    offset: number;
+  }>()
 );
 
 export const fetchInvitationsSuccess = createAction(

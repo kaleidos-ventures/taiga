@@ -21,17 +21,20 @@ import { ProjectMockFactory, UserMockFactory } from '@taiga/data';
 import { TestScheduler } from 'rxjs/testing';
 import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { WsService, WsServiceMock } from '@taiga/ws';
-
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
   let spectator: SpectatorService<ProjectEffects>;
   let testScheduler: TestScheduler;
+  let store: MockStore;
 
   const createService = createServiceFactory({
     service: ProjectEffects,
     providers: [
       provideMockActions(() => actions$),
       { provide: WsService, useValue: WsServiceMock },
+      provideMockStore({ initialState: {} }),
     ],
     mocks: [ProjectApiService, AppService],
   });
@@ -41,6 +44,9 @@ describe('ProjectEffects', () => {
       expect(actual).toEqual(expected);
     });
     spectator = createService();
+    store = spectator.inject(MockStore);
+    const user = UserMockFactory();
+    store.overrideSelector(selectUser, user);
   });
 
   it('load project', () => {

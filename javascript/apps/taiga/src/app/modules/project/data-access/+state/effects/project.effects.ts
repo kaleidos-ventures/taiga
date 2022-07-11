@@ -7,9 +7,9 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType, concatLatestFrom } from '@ngrx/effects';
 
-import { delay, map, tap } from 'rxjs/operators';
+import { delay, filter, map, switchMap, tap } from 'rxjs/operators';
 
 import * as ProjectActions from '../actions/project.actions';
 import { ProjectApiService } from '@taiga/api';
@@ -24,6 +24,11 @@ import {
   WaitingForMemberAnimation,
 } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
 import { WsService } from '@taiga/ws';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { Store } from '@ngrx/store';
+import { filterNil } from '~/app/shared/utils/operators';
+
+import { selectCurrentProject } from '../selectors/project.selectors';
 
 @Injectable()
 export class ProjectEffects {
@@ -76,13 +81,28 @@ export class ProjectEffects {
   });
 
   public wsUpdateInvitations$ = createEffect(() => {
-    return this.wsService
-      .events<{ project: string }>({ type: 'invitations.create' })
-      .pipe(
-        map(() => {
-          return ProjectActions.eventInvitation();
-        })
-      );
+    return this.store.select(selectUser).pipe(
+      filterNil(),
+      switchMap((user) => {
+        return this.wsService
+          .events<{ project: string }>({
+            channel: `users.${user.username}`,
+            type: 'projectinvitations.create',
+          })
+          .pipe(
+            concatLatestFrom(() =>
+              this.store.select(selectCurrentProject).pipe(filterNil())
+            ),
+            filter(
+              ([eventResponse, project]) =>
+                eventResponse.event.content.project === project.slug
+            ),
+            map(() => {
+              return ProjectActions.eventInvitation();
+            })
+          );
+      })
+    );
   });
 
   constructor(
@@ -90,6 +110,7 @@ export class ProjectEffects {
     private projectApiService: ProjectApiService,
     private navigationService: NavigationService,
     private appService: AppService,
-    private wsService: WsService
+    private wsService: WsService,
+    private store: Store
   ) {}
 }

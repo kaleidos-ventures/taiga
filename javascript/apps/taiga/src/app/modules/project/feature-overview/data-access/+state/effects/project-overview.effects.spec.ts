@@ -26,8 +26,10 @@ import {
 } from '../actions/project-overview.actions';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
+import { Router } from '@angular/router';
 
 describe('ProjectOverviewEffects', () => {
   let actions$: Observable<Action>;
@@ -42,6 +44,7 @@ describe('ProjectOverviewEffects', () => {
       totalMemberships: 0,
       hasMoreMembers: true,
       hasMoreInvitations: true,
+      showAllMembers: false,
     },
   };
 
@@ -53,8 +56,8 @@ describe('ProjectOverviewEffects', () => {
         initialState,
       }),
     ],
-    imports: [],
-    mocks: [ProjectApiService],
+    imports: [getTranslocoModule()],
+    mocks: [ProjectApiService, Router],
   });
 
   beforeEach(() => {
@@ -97,6 +100,7 @@ describe('ProjectOverviewEffects', () => {
         totalMemberships: membershipResponse.totalMemberships,
         invitations: invitationsResponse.invitations,
         totalInvitations: invitationsResponse.totalInvitations,
+        showAllMembers: false,
       }),
     });
 
@@ -130,6 +134,7 @@ describe('ProjectOverviewEffects', () => {
           MembershipMockFactory()
         ),
         totalMemberships: MEMBERS_PAGE_SIZE,
+        showAllMembers: false,
       };
 
       projectApiService.getMembers.mockReturnValue(
@@ -142,6 +147,7 @@ describe('ProjectOverviewEffects', () => {
         a: fetchMembersSuccess({
           members: membershipResponse.memberships,
           totalMemberships: membershipResponse.totalMemberships,
+          showAllMembers: false,
         }),
       });
 
@@ -174,6 +180,7 @@ describe('ProjectOverviewEffects', () => {
           totalMemberships: 0,
           hasMoreMembers: false,
           hasMoreInvitations: true,
+          showAllMembers: true,
         },
       });
 
@@ -194,6 +201,7 @@ describe('ProjectOverviewEffects', () => {
         a: fetchMembersSuccess({
           invitations: invitationsResponse.invitations,
           totalInvitations: invitationsResponse.totalInvitations,
+          showAllMembers: true,
         }),
       });
 

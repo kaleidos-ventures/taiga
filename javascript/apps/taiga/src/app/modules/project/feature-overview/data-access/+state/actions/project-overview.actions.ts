@@ -18,6 +18,7 @@ export const fetchMembersSuccess = createAction(
     totalMemberships?: number;
     totalInvitations?: number;
     invitations?: Invitation[];
+    showAllMembers?: boolean;
   }>()
 );
 export const setNotificationClosed = createAction(
@@ -30,3 +31,17 @@ export const nextMembersPage = createAction(
 );
 
 export const resetOverview = createAction('[Project overview] reset overview');
+
+export const updateMemberList = createAction(
+  '[Project overview][ws] update member list'
+);
+export const updateShowAllMembers = createAction(
+  '[Project overview][api] show all member updated',
+  props<{
+    showAllMembers: boolean;
+  }>()
+);
+
+export const updateMemberModalList = createAction(
+  '[Project overview][api] update member list modal'
+);

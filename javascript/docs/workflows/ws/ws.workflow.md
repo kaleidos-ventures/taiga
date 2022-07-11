@@ -35,13 +35,11 @@ import { WsService } from '@taiga/ws';
 @Injectable()
 export class TodoListEffects {
   public wsUpdateTask$ = createEffect(() => {
-    return this.wsService
-      .action({ command: 'signin', channel: 'users' })
-      .pipe(
-        map(() => {
-          return AuthActions.eventsSingninSuccess();
-        })
-      );
+    return this.wsService.action({ command: 'signin', channel: 'users' }).pipe(
+      map(() => {
+        return AuthActions.eventsSingninSuccess();
+      })
+    );
   });
 
   constructor(private wsService: WsService) {}

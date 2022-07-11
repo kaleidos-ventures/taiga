@@ -16,10 +16,12 @@ import {
   selectTotalMemberships,
   selectTotalInvitations,
   selectHasMoreMembers,
+  selectShowAllMembers,
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import {
   initMembers,
   nextMembersPage,
+  updateShowAllMembers,
 } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { delay, map, take } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -95,6 +97,7 @@ export class ProjectMembersComponent {
       totalMemberships: number;
       totalInvitations: number;
       hasMoreMembers: boolean;
+      showAllMembers: boolean;
     }>
   ) {
     this.store.dispatch(initMembers());
@@ -102,6 +105,11 @@ export class ProjectMembersComponent {
     this.state.connect(
       'hasMoreMembers',
       this.store.select(selectHasMoreMembers)
+    );
+
+    this.state.connect(
+      'showAllMembers',
+      this.store.select(selectShowAllMembers)
     );
 
     this.state.connect(
@@ -164,6 +172,14 @@ export class ProjectMembersComponent {
     }
 
     return currentMember;
+  }
+
+  public setShowAllMembers(showAllMembers: boolean) {
+    this.store.dispatch(
+      updateShowAllMembers({
+        showAllMembers: showAllMembers,
+      })
+    );
   }
 
   public acceptInvitationSlug() {

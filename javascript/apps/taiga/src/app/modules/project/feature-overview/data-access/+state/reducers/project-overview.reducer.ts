@@ -21,6 +21,7 @@ export interface ProjectOverviewState {
   hasMoreMembers: boolean;
   hasMoreInvitations: boolean;
   loadingMoreMembers: boolean;
+  showAllMembers: boolean;
 }
 
 export const initialState: ProjectOverviewState = {
@@ -32,6 +33,7 @@ export const initialState: ProjectOverviewState = {
   hasMoreMembers: true,
   hasMoreInvitations: true,
   loadingMoreMembers: false,
+  showAllMembers: false,
 };
 
 export const reducer = createReducer(
@@ -53,7 +55,13 @@ export const reducer = createReducer(
     ProjectOverviewActions.fetchMembersSuccess,
     (
       state,
-      { members, totalMemberships, invitations, totalInvitations }
+      {
+        members,
+        totalMemberships,
+        invitations,
+        totalInvitations,
+        showAllMembers,
+      }
     ): ProjectOverviewState => {
       if (totalMemberships) {
         state.totalMemberships = totalMemberships;
@@ -64,13 +72,20 @@ export const reducer = createReducer(
       }
 
       if (members) {
-        state.members.push(...members);
+        if (!showAllMembers) {
+          state.members = members;
+        } else {
+          state.members.push(...members);
+        }
 
         state.hasMoreMembers = state.members.length < state.totalMemberships;
       }
-
       if (invitations) {
-        state.invitations.push(...invitations);
+        if (!showAllMembers) {
+          state.invitations = invitations;
+        } else {
+          state.invitations.push(...invitations);
+        }
 
         state.hasMoreInvitations =
           state.invitations.length < state.totalInvitations;
@@ -152,7 +167,14 @@ export const reducer = createReducer(
     }
 
     return state;
-  })
+  }),
+  on(
+    ProjectOverviewActions.updateShowAllMembers,
+    (state, action): ProjectOverviewState => {
+      state.showAllMembers = action.showAllMembers;
+      return state;
+    }
+  )
 );
 
 export const projectOverviewFeature = createFeature({

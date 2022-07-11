@@ -55,7 +55,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     <button
       *ngIf="vm.viewAllMembers"
-      (click)="showAllMembers = true"
+      (click)="setShowAllMembers(true)"
       class="view-all-button"
       appearance="tertiary"
       tuiButton
@@ -64,16 +64,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </button>
 
     <tg-ui-modal
-      [open]="showAllMembers"
+      [open]="vm.showAllMembers"
       [heightAuto]="true"
-      (requestClose)="showAllMembers = false">
+      (requestClose)="setShowAllMembers(false)">
       <tg-project-members-modal
-        *ngIf="vm.members && showAllMembers"
+        *ngIf="vm.members && vm.showAllMembers"
         [members]="vm.members"
         [pending]="vm.pending"
         [totalMembers]="vm.totalMemberships"
         [totalPending]="vm.totalInvitations"
-        (closeModal)="showAllMembers = false"
+        (closeModal)="setShowAllMembers(false)"
         (nextPage)="nextPage()"></tg-project-members-modal>
     </tg-ui-modal>
 

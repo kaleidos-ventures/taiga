@@ -67,7 +67,7 @@ export const reducer = createReducer(
         state.totalMemberships = totalMemberships;
       }
 
-      if (totalInvitations) {
+      if (totalInvitations !== undefined && totalInvitations >= 0) {
         state.totalInvitations = totalInvitations;
       }
 

@@ -11,7 +11,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <main class="project-main">
       <tg-ui-context-notification
         @slideOut
-        *ngIf="vm.project.userHasPendingInvitation"
+        *ngIf="
+          vm.project.userHasPendingInvitation &&
+          showPendingInvitationNotification
+        "
         class="invitation-notification"
         (closed)="onNotificationClosed()"
         [hasClose]="true"

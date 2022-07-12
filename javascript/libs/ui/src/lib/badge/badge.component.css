@@ -8,13 +8,51 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "tools/typography.css";
 
 :host {
+  @mixin font-inline;
+
+  background-color: var(--badge-background, --color-gray10);
+  border-radius: 3px;
+  color: var(--badge-color, --color-gray80);
+  display: block;
+  font-style: italic;
+  text-transform: lowercase;
+}
+
+.badge {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-4);
+  line-height: 1.25;
+  padding-inline: var(--spacing-8);
+}
+
+/* Sizes */
+
+.badge[data-size="s"] {
   @mixin font-small;
 
-  align-items: center;
-  background: var(--color-ok10);
-  block-size: var(--spacing-20);
-  color: var(--color-ok80);
-  display: flex;
-  padding: 0 var(--spacing-8);
-  text-transform: lowercase;
+  font-style: normal;
+  padding-block: var(--spacing-2);
+}
+
+.badge[data-size="m"] {
+  padding-block: var(--spacing-4);
+}
+
+.badge[data-size="l"] {
+  padding-block: var(--spacing-8);
+}
+
+.badge-label {
+  @mixin text-overflow;
+
+  display: block;
+  min-inline-size: 0;
+}
+
+.badge-icon {
+  block-size: var(--spacing-16);
+  color: var(--badge-icon, --color-gray80);
+  fill: var(--badge-icon, --color-gray80);
+  inline-size: var(--spacing-16);
 }

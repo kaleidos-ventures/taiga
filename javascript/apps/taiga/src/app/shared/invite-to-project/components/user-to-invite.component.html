@@ -13,16 +13,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <tg-user-card [user]="userObj">
       <div
         invitation
-        class="pending-msg"
+        class="invitation"
         data-test="pending-tag"
+        [tuiHint]="tooltip"
+        tuiHintDirection="bottom-right"
         *ngIf="isPending">
-        <tui-svg src="clock"></tui-svg>
-        <span
-          [tuiHint]="tooltip"
-          tuiHintDirection="bottom-right"
-          class="pending-text"
-          >{{ t('invitation_modal.pending') }}</span
-        >
+        <tg-ui-badge
+          [label]="t('invitation_modal.pending')"
+          icon="clock"
+          color="yellow"></tg-ui-badge>
       </div>
       <ng-template #tooltip>
         <p>{{ t('invitation_modal.pending_tooltip') }}</p>

@@ -148,7 +148,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                         <tg-user-card
                           [user]="contact"
                           [disabled]="
-                            !!contact.userIsMember || !!contact.userIsAddedToList
+                            !!contact.userIsMember ||
+                            !!contact.userIsAddedToList
                           "
                           [active]="suggestionSelected === i"
                           [textToHighlight]="

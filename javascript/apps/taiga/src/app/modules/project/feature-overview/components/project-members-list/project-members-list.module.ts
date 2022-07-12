@@ -18,6 +18,7 @@ import {
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 import { ProjectMembersListComponent } from './project-members-list.component';
@@ -35,6 +36,7 @@ import { ProjectMembersListComponent } from './project-members-list.component';
     UserCardModule,
     TuiHintModule,
     ScrollingModule,
+    BadgeModule,
   ],
   declarations: [ProjectMembersListComponent],
   exports: [ProjectMembersListComponent],

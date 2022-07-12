@@ -8,8 +8,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *ngIf="model$ | async as vm">
   <ng-container *transloco="let t">
-    <tg-workspace-detail-skeleton
-      *ngIf="!vm.workspace"></tg-workspace-detail-skeleton>
+    <tg-workspace-detail-skeleton *ngIf="!vm.workspace">
+    </tg-workspace-detail-skeleton>
     <ng-container *ngIf="vm.workspace">
       <div class="workspace-detail-top">
         <div class="workspace-detail-avatar">
@@ -27,12 +27,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             <h3 class="workspace-detail-title">{{ vm.workspace.name }}</h3>
             <tg-ui-badge
               *ngIf="vm.workspace.userRole"
-              [label]="
-                t('commons.roles.' + vm.workspace.userRole)
-              "></tg-ui-badge>
+              [label]="t('commons.roles.' + vm.workspace.userRole)"
+              size="s"
+              [color]="vm.workspace.userRole === 'guest' ? 'gray' : 'info'">
+            </tg-ui-badge>
             <tg-ui-badge
               *ngIf="vm.workspace.userIsOwner"
-              [label]="t('commons.owner')"></tg-ui-badge>
+              [label]="t('commons.owner')"
+              size="s"
+              color="primary"></tg-ui-badge>
           </div>
         </div>
         <div class="workspace-detail-actions">

@@ -19,6 +19,7 @@ import {
 } from '@taiga-ui/core';
 import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 import { UserToInviteComponent } from './user-to-invite.component';
+import { BadgeModule } from '@taiga/ui/badge/badge.module';
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import { UserToInviteComponent } from './user-to-invite.component';
     TuiHintModule,
     TranslocoModule,
     UserCardModule,
+    BadgeModule,
   ],
   providers: [
     {

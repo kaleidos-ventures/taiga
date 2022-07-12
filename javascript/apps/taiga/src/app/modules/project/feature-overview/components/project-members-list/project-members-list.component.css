@@ -126,33 +126,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
-.admin {
-  @mixin font-small;
-
-  background-color: var(--color-info20);
-  border-radius: 8px;
-  color: var(--color-info60);
-  margin-inline-start: var(--spacing-8);
-  padding-inline: var(--spacing-8);
-  white-space: nowrap;
-}
-
-.pending-msg {
-  align-items: center;
-  color: var(--color-gray70);
-  display: flex;
-  font-style: italic;
-  padding-inline-end: var(--spacing-16);
-  white-space: nowrap;
-
-  & tui-svg {
-    block-size: var(--spacing-16);
-    fill: var(--color-gray40);
-    inline-size: var(--spacing-16);
-    margin-inline-end: var(--spacing-4);
-  }
-}
-
 .pending-member {
   background-color: var(--color-gray10);
   pointer-events: none;

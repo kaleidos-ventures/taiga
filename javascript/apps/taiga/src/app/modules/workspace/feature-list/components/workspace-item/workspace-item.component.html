@@ -33,12 +33,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {{ workspace.name }}
         </span>
       </div>
+
       <tg-ui-badge
         *ngIf="workspace.userRole"
-        [label]="t('commons.roles.' + workspace.userRole)"></tg-ui-badge>
+        [label]="t('commons.roles.' + workspace.userRole)"
+        size="s"
+        [color]="workspace.userRole === 'guest' ? 'gray' : 'info'">
+      </tg-ui-badge>
       <tg-ui-badge
         *ngIf="workspace.userIsOwner"
-        [label]="t('commons.owner')"></tg-ui-badge>
+        [label]="t('commons.owner')"
+        size="s"
+        color="primary">
+      </tg-ui-badge>
+
       <div class="workspace-item-action">
         <button
           appearance="tertiary"

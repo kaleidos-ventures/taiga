@@ -69,10 +69,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           class="card-badge-container"
           [@itemSlideOutAnimation]
           *ngIf="invitationStatus !== 'accepted'">
-          <span class="project-status-badge">
-            <tui-svg src="clock"></tui-svg>
-            {{ t('project.card.pending_invitation') }}
-          </span>
+          <tg-ui-badge
+            [label]="t('project.card.pending_invitation')"
+            icon="clock"
+            color="gray"></tg-ui-badge>
         </div>
         <div class="project-card-title">
           <tg-ui-avatar

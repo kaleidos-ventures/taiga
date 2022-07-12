@@ -8,10 +8,12 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { TuiSvgModule } from '@taiga-ui/core';
+import { TuiBadgeModule } from '@taiga-ui/kit';
 import { BadgeComponent } from './badge.component';
 
 @NgModule({
-  imports: [CommonModule],
+  imports: [CommonModule, TuiBadgeModule, TuiSvgModule],
   declarations: [BadgeComponent],
   providers: [],
   exports: [BadgeComponent],

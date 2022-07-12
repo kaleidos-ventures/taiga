@@ -73,11 +73,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <div
           member
           class="member-info">
-          <div
-            class="admin"
-            *ngIf="member.role?.isAdmin && !isPending(member)">
-            {{ t('commons.roles.admin') }}
-          </div>
+          <tg-ui-badge
+            *ngIf="member.role?.isAdmin && !isPending(member)"
+            [label]="t('commons.roles.admin')"
+            size="s"
+            color="primary"></tg-ui-badge>
           <div class="block-end">
             <button
               *ngIf="
@@ -92,12 +92,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               tuiIconButton
               [tuiHint]="t('project_overview.members.leave')"
               type="button"></button>
-            <div
-              class="pending-msg"
-              *ngIf="isPending(member)">
-              <tui-svg src="clock"></tui-svg>
-              {{ t('project_overview.members.pending') }}
-            </div>
+
+            <tg-ui-badge
+              *ngIf="isPending(member)"
+              [label]="t('project_overview.members.pending')"
+              size="l"
+              icon="clock"
+              color="gray"></tg-ui-badge>
+
             <div
               @fadeInRight
               *ngIf="

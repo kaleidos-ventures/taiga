@@ -6,4 +6,15 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<span>{{ label }}</span>
+<div
+  class="badge"
+  [attr.data-size]="size">
+  <tui-svg
+    class="badge-icon"
+    *ngIf="icon"
+    aria-hidden="true"
+    [src]="icon"></tui-svg>
+  <span class="badge-label">
+    {{ label }}
+  </span>
+</div>

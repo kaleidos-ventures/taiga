@@ -12,27 +12,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   margin-block: var(--spacing-4);
 }
 
-.pending-msg {
-  background-color: var(--color-yellow10);
-  border-radius: 3px;
-  cursor: pointer;
-  padding: var(--spacing-4);
-
-  & tui-svg {
-    block-size: var(--spacing-16);
-    fill: var(--color-yellow50);
-    inline-size: var(--spacing-16);
-  }
-
-  & .pending-text {
-    @mixin font-small;
-
-    color: var(--color-yellow80);
-    font-style: italic;
-    margin-inline: var(--spacing-4);
-  }
-}
-
 .delete-btn {
   margin-block-start: var(--spacing-4);
 }

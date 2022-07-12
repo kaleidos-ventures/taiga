@@ -23,3 +23,4 @@ EX_AUTHORIZATION: Final = Error(
 )
 EX_FORBIDDEN: Final = Error(code="forbidden", msg="The user doesn't have permissions to perform this action")
 EX_BAD_REQUEST: Final = Error(code="bad-request", msg="The request is incorrect")
+EX_INTERNAL_SERVER_ERROR: Final = Error(code="internal-server-error", msg="Server error")

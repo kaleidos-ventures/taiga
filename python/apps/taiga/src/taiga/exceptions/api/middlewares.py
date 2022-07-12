@@ -5,23 +5,18 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-import http
 import logging
 import traceback
-from typing import Awaitable, Callable, Final
+from typing import Awaitable, Callable
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
+from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from starlette.types import ASGIApp
+from taiga.exceptions.api import codes
 
 logger = logging.getLogger(__name__)
-
-HTTP_500_STATUS_CODE: Final = 500
-HTTP_500: Final = http.HTTPStatus(HTTP_500_STATUS_CODE)
-HTTP_500_CODE: Final = HTTP_500.name.replace("_", "-").lower()
-HTTP_500_DETAIL: Final = HTTP_500.description
-HTTP_500_MSG: Final = HTTP_500.phrase
 
 
 class UnexpectedExceptionMiddleware(BaseHTTPMiddleware):
@@ -47,7 +42,7 @@ class UnexpectedExceptionMiddleware(BaseHTTPMiddleware):
                 "exception": repr(exc),
                 "traceback": "".join(traceback.format_exception(type(exc), exc, exc.__traceback__)),
             }
-        return HTTP_500_DETAIL
+        return "internal-server-error"
 
     async def dispatch(self, request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
         try:
@@ -56,12 +51,12 @@ class UnexpectedExceptionMiddleware(BaseHTTPMiddleware):
             logger.exception(exc)
 
             return JSONResponse(
-                status_code=HTTP_500_STATUS_CODE,
+                status_code=HTTP_500_INTERNAL_SERVER_ERROR,
                 content={
                     "error": {
-                        "code": HTTP_500_CODE,
+                        "code": codes.EX_INTERNAL_SERVER_ERROR.code,
                         "detail": self._generate_error_detail(exc),
-                        "msg": HTTP_500_MSG,
+                        "msg": codes.EX_INTERNAL_SERVER_ERROR.msg,
                     }
                 },
             )

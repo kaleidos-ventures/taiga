@@ -214,7 +214,7 @@ async def accept_project_invitation(invitation: Invitation, user: User) -> Invit
 
     accepted_invitation = await invitations_repositories.accept_project_invitation(invitation=invitation, user=user)
     await roles_repositories.create_membership(project=invitation.project, role=invitation.role, user=invitation.user)
-    await invitations_events.emit_event_when_project_invitations_is_accepted(invitation=invitation)
+    await invitations_events.emit_event_when_project_invitation_is_accepted(invitation=invitation)
 
     return accepted_invitation
 
@@ -245,3 +245,5 @@ async def has_pending_project_invitation_for_user(project: Project, user: User) 
 
 async def update_user_invitations(user: User) -> None:
     await invitations_repositories.update_user_invitations(user=user)
+    invitations = await invitations_repositories.get_user_pending_invitations(user=user)
+    await invitations_events.emit_event_when_user_invitations_are_updated(invitations=invitations)

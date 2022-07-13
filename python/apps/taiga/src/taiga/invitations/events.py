@@ -12,6 +12,7 @@ from taiga.users.models import User
 
 CREATE_PROJECT_INVITATION = "projectinvitations.create"
 ACCEPT_PROJECT_INVITATION = "projectmemberships.create"
+UPDATE_PROJECT_INVITATION = "projectinvitations.update"
 
 
 async def emit_event_when_project_invitations_are_created(
@@ -26,7 +27,7 @@ async def emit_event_when_project_invitations_are_created(
             content={"project": invitation.project.slug},
         )
 
-    # # Publish on the project channel
+    # Publish on the project channel
     if invitations:
         await events_manager.publish_on_project_channel(
             project=project,
@@ -35,9 +36,18 @@ async def emit_event_when_project_invitations_are_created(
         )
 
 
-async def emit_event_when_project_invitations_is_accepted(invitation: Invitation) -> None:
+async def emit_event_when_project_invitation_is_accepted(invitation: Invitation) -> None:
     await events_manager.publish_on_project_channel(
         project=invitation.project,
         type=ACCEPT_PROJECT_INVITATION,
         sender=invitation.user,
     )
+
+
+async def emit_event_when_user_invitations_are_updated(invitations: list[Invitation]) -> None:
+    for invitation in invitations:
+        await events_manager.publish_on_project_channel(
+            project=invitation.project,
+            type=UPDATE_PROJECT_INVITATION,
+            sender=invitation.user,
+        )

@@ -468,7 +468,7 @@ async def tests_accept_project_invitation() -> None:
 
         fake_invitations_repo.accept_project_invitation.assert_awaited_once_with(invitation=invitation, user=user)
         fake_roles_repo.create_membership.assert_awaited_once_with(project=project, role=role, user=user)
-        fake_invitations_events.emit_event_when_project_invitations_is_accepted.assert_awaited_once_with(
+        fake_invitations_events.emit_event_when_project_invitation_is_accepted.assert_awaited_once_with(
             invitation=invitation
         )
 
@@ -489,7 +489,7 @@ async def tests_accept_project_invitation_error_invitation_has_already_been_acce
 
         fake_invitations_repo.accept_project_invitation.assert_not_awaited()
         fake_roles_repo.create_membership.assert_not_awaited()
-        fake_invitations_events.emit_event_when_project_invitations_is_accepted.assert_not_awaited()
+        fake_invitations_events.emit_event_when_project_invitation_is_accepted.assert_not_awaited()
 
 
 #######################################################
@@ -583,3 +583,20 @@ def test_is_project_invitation_for_this_user_ok_different_email() -> None:
     invitation = f.build_invitation(email=other_user.email, user=None)
 
     assert not services.is_project_invitation_for_this_user(invitation=invitation, user=user)
+
+
+#######################################################
+# update_user_invitations
+#######################################################
+
+
+async def test_update_user_invitations() -> None:
+    user = f.build_user()
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repositories,
+        patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+    ):
+        await services.update_user_invitations(user=user)
+        fake_invitations_repositories.update_user_invitations.assert_awaited_once_with(user=user)
+        fake_invitations_repositories.get_user_pending_invitations.assert_awaited_once_with(user=user)
+        fake_invitations_events.emit_event_when_user_invitations_are_updated.assert_awaited_once()

@@ -83,6 +83,11 @@ def get_project_invitation_by_user(project_slug: str, user: User) -> Invitation 
 
 
 @sync_to_async
+def get_user_pending_invitations(user: User) -> list[Invitation]:
+    return list(Invitation.objects.select_related("user", "project").filter(user=user, status=InvitationStatus.PENDING))
+
+
+@sync_to_async
 def accept_project_invitation(invitation: Invitation, user: User) -> Invitation:
     invitation.user = user
     invitation.status = InvitationStatus.ACCEPTED

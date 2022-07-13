@@ -10,7 +10,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <tg-project-navigation [project]="vm.project"></tg-project-navigation>
     <main class="project-main">
       <tg-ui-context-notification
-        @slideOut
+        [@slideInOut]
+        [@.disabled]="animationDisabled"
         *ngIf="
           vm.project.userHasPendingInvitation &&
           showPendingInvitationNotification

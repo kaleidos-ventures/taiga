@@ -9,9 +9,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "tools/typography.css";
 
 :host {
+  block-size: 110px;
   display: grid;
   grid-template-columns: min-content 1fr;
   min-block-size: 100%;
+  overflow: hidden;
 }
 
 .invitation-notification {

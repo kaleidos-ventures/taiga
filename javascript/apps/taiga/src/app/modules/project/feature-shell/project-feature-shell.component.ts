@@ -7,7 +7,7 @@
  */
 
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { WsService } from '@taiga/ws';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -24,22 +24,40 @@ import { LocalStorageService } from '~/app/shared/local-storage/local-storage.se
   styleUrls: ['./project-feature-shell.component.css'],
   providers: [RxState],
   animations: [
-    trigger('slideOut', [
-      transition(':leave', [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({
+          blockSize: '0',
+          opacity: 0,
+        }),
         animate(
-          '300ms ease-in',
+          '300ms',
+          style({
+            blockSize: '110',
+            opacity: 1,
+          })
+        ),
+      ]),
+      transition(':leave', [
+        style({
+          blockSize: '110',
+          opacity: 1,
+        }),
+        animate(
+          '300ms',
           style({
             blockSize: '0',
-            opacity: '0',
+            opacity: 0,
           })
         ),
       ]),
     ]),
   ],
 })
-export class ProjectFeatureShellComponent implements OnDestroy {
+export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
   public model$ = this.state.select();
   public subscribedProject?: string;
+  public animationDisabled = true;
 
   constructor(
     private store: Store,
@@ -88,6 +106,12 @@ export class ProjectFeatureShellComponent implements OnDestroy {
         })
         .subscribe();
     }
+  }
+
+  public ngAfterViewInit() {
+    setTimeout(() => {
+      this.animationDisabled = false;
+    }, 1000);
   }
 
   public onNotificationClosed() {

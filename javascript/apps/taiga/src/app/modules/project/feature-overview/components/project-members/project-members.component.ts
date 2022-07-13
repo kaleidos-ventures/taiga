@@ -17,11 +17,14 @@ import {
   selectTotalInvitations,
   selectHasMoreMembers,
   selectShowAllMembers,
+  selectInvitationsToAnimate,
+  selectMembersToAnimate,
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import {
   initMembers,
   nextMembersPage,
   updateShowAllMembers,
+  updateMemberList,
 } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { delay, map, take } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -36,6 +39,8 @@ import { ProjectMembersListComponent } from '../project-members-list/project-mem
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { Actions, ofType } from '@ngrx/effects';
 import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
+import { inviteUsersSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'tg-project-members',
@@ -84,6 +89,7 @@ export class ProjectMembersComponent {
   public showAllMembers = false;
   public invitePeople = false;
   public resetForm = false;
+  public unsubscribe$ = new Subject<void>();
 
   constructor(
     private actions$: Actions,
@@ -98,6 +104,8 @@ export class ProjectMembersComponent {
       totalInvitations: number;
       hasMoreMembers: boolean;
       showAllMembers: boolean;
+      invitationsToAnimate: string[];
+      membersToAnimate: string[];
     }>
   ) {
     this.store.dispatch(initMembers());
@@ -110,6 +118,16 @@ export class ProjectMembersComponent {
     this.state.connect(
       'showAllMembers',
       this.store.select(selectShowAllMembers)
+    );
+
+    this.state.connect(
+      'invitationsToAnimate',
+      this.store.select(selectInvitationsToAnimate)
+    );
+
+    this.state.connect(
+      'membersToAnimate',
+      this.store.select(selectMembersToAnimate)
     );
 
     this.state.connect(
@@ -139,6 +157,16 @@ export class ProjectMembersComponent {
     );
 
     this.state.hold(invitationAccepted, () => {
+      this.projectMembersList.animateUser();
+    });
+
+    const updateList = this.actions$.pipe(ofType(updateMemberList));
+
+    this.state.hold(updateList, () => {
+      this.projectMembersList.animateUser();
+    });
+
+    this.actions$.pipe(ofType(inviteUsersSuccess)).subscribe(() => {
       this.projectMembersList.animateUser();
     });
   }

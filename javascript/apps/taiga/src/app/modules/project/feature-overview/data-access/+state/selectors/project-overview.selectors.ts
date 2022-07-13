@@ -18,6 +18,8 @@ export const {
   selectHasMoreMembers,
   selectLoadingMoreMembers,
   selectShowAllMembers,
+  selectInvitationsToAnimate,
+  selectMembersToAnimate,
 } = projectOverviewFeature;
 
 export const selectCanPaginate = createSelector(

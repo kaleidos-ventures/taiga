@@ -88,6 +88,12 @@ export class ProjectMembersListComponent {
   public showAcceptInvitationButton = false;
 
   @Input()
+  public membersToAnimate: string[] = [];
+
+  @Input()
+  public invitationsToAnimate: string[] = [];
+
+  @Input()
   public paginate = false;
 
   @Output()
@@ -165,7 +171,6 @@ export class ProjectMembersListComponent {
   public animateUser() {
     this.animationPendingState = true;
     this.cd.detectChanges();
-
     of(true)
       .pipe(
         delay(100 + 300), // DelayTime + AnimationTime
@@ -187,6 +192,22 @@ export class ProjectMembersListComponent {
         })
       )
       .subscribe();
+  }
+
+  public checkAnimation(member: Membership | Invitation) {
+    const newMemberToProject =
+      member.user && this.membersToAnimate.includes(member.user.username);
+    const newInvitationToMember =
+      member.user && this.invitationsToAnimate.includes(member.user.username);
+    const newInvitationToNonMember =
+      (member as Invitation).email &&
+      this.invitationsToAnimate.includes((member as Invitation).email);
+
+    return (
+      !!newMemberToProject ||
+      !!newInvitationToMember ||
+      !!newInvitationToNonMember
+    );
   }
 
   constructor(private cd: ChangeDetectorRef, private store: Store) {}

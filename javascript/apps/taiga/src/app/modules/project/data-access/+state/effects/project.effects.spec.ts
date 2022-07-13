@@ -82,7 +82,7 @@ describe('ProjectEffects', () => {
         a: acceptInvitationSlugSuccess({ projectSlug: slug, username }),
       });
 
-      expectObservable(effects.acceptedInvitation$).toBe('2201ms c', {
+      expectObservable(effects.acceptedInvitation$).toBe('-c', {
         c: fetchProject({ slug }),
       });
     });

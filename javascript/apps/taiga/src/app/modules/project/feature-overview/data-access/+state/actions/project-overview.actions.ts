@@ -19,6 +19,7 @@ export const fetchMembersSuccess = createAction(
     totalInvitations?: number;
     invitations?: Invitation[];
     showAllMembers?: boolean;
+    updateMemberList?: boolean;
   }>()
 );
 export const setNotificationClosed = createAction(

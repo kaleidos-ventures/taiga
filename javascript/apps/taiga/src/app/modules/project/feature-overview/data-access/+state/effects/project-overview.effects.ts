@@ -191,6 +191,7 @@ export class ProjectOverviewEffects {
                 invitations: invitationsResponse.invitations,
                 totalInvitations: invitationsResponse.totalInvitations,
                 showAllMembers: showAllMembers,
+                updateMemberList: true,
               });
             }
             return ProjectOverviewActions.updateMemberModalList();

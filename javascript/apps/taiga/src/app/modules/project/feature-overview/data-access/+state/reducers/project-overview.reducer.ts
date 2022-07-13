@@ -11,7 +11,6 @@ import { immerReducer } from '~/app/shared/utils/store';
 import { Invitation, Membership } from '@taiga/data';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-
 export interface ProjectOverviewState {
   members: Membership[];
   invitations: Invitation[];
@@ -22,6 +21,9 @@ export interface ProjectOverviewState {
   hasMoreInvitations: boolean;
   loadingMoreMembers: boolean;
   showAllMembers: boolean;
+  updateMemberList: boolean;
+  membersToAnimate: string[];
+  invitationsToAnimate: string[];
 }
 
 export const initialState: ProjectOverviewState = {
@@ -34,6 +36,9 @@ export const initialState: ProjectOverviewState = {
   hasMoreInvitations: true,
   loadingMoreMembers: false,
   showAllMembers: false,
+  updateMemberList: false,
+  membersToAnimate: [],
+  invitationsToAnimate: [],
 };
 
 export const reducer = createReducer(
@@ -61,6 +66,7 @@ export const reducer = createReducer(
         invitations,
         totalInvitations,
         showAllMembers,
+        updateMemberList,
       }
     ): ProjectOverviewState => {
       if (totalMemberships) {
@@ -73,6 +79,18 @@ export const reducer = createReducer(
 
       if (members) {
         if (!showAllMembers) {
+          if (updateMemberList) {
+            const alreadyMembers = state.members.map((it) => {
+              return it.user.username;
+            });
+            const newMembers = members.filter((it) => {
+              return !alreadyMembers.includes(it.user.username);
+            });
+
+            state.membersToAnimate = newMembers.map((it) => {
+              return it.user.username;
+            });
+          }
           state.members = members;
         } else {
           state.members.push(...members);
@@ -82,6 +100,22 @@ export const reducer = createReducer(
       }
       if (invitations) {
         if (!showAllMembers) {
+          if (updateMemberList) {
+            const existingInvitations = state.invitations.map((invitation) => {
+              return invitation?.user?.username ?? invitation.email;
+            });
+
+            const newInvitations = invitations.filter((it) => {
+              return it.user
+                ? !existingInvitations.includes(it.user?.username)
+                : !existingInvitations.includes(it.email);
+            });
+
+            state.invitationsToAnimate = newInvitations.map((invitation) => {
+              return invitation?.user?.username ?? invitation.email;
+            });
+          }
+
           state.invitations = invitations;
         } else {
           state.invitations.push(...invitations);
@@ -105,6 +139,10 @@ export const reducer = createReducer(
     InvitationActions.inviteUsersSuccess,
     (state, action): ProjectOverviewState => {
       state.totalInvitations += action.newInvitations.length;
+
+      state.invitationsToAnimate = action.newInvitations.map((invitation) => {
+        return invitation?.user?.username ?? invitation.email;
+      });
 
       // add the new invitations to the list is there is no pagination (!state.hasMoreInvitations).
       if (!state.hasMoreInvitations) {
@@ -148,6 +186,7 @@ export const reducer = createReducer(
   on(InvitationActions.acceptInvitationSlugSuccess, (state, { username }) => {
     state.totalInvitations -= 1;
     state.totalMemberships += 1;
+    state.membersToAnimate.push(username);
 
     const acceptedUser = state.invitations.find(
       (invitation) => invitation.user?.username === username

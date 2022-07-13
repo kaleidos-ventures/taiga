@@ -179,7 +179,9 @@ export class InvitationEffects {
                   !suggestedUser.userIsMember
               );
               const alreadyMembers = suggestedUsers.filter(
-                (suggestedUser) => suggestedUser.userIsMember
+                (suggestedUser) =>
+                  suggestedUser.username !== userState.username &&
+                  suggestedUser.userIsMember
               );
               suggestedList = [
                 ...alreadyMembers,

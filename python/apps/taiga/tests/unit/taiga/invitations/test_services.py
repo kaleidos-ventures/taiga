@@ -56,12 +56,8 @@ async def test_get_public_project_invitation_ok():
     invitation = f.build_invitation(id=123)
     token = str(await ProjectInvitationToken.create_for_object(invitation))
 
-    with (
-        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.invitations.services.users_repositories", autospec=True) as fake_users_repo,
-    ):
+    with (patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,):
         fake_invitations_repo.get_project_invitation.return_value = invitation
-        fake_users_repo.get_user_by_username_or_email.return_value = invitation.user
         pub_invitation = await services.get_public_project_invitation(token=token)
         fake_invitations_repo.get_project_invitation.assert_awaited_once_with(id=invitation.id)
         assert pub_invitation.status == invitation.status
@@ -74,12 +70,8 @@ async def test_get_public_project_invitation_ok_without_user():
     invitation = f.build_invitation(id=123, user=None)
     token = str(await ProjectInvitationToken.create_for_object(invitation))
 
-    with (
-        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.invitations.services.users_repositories", autospec=True) as fake_users_repo,
-    ):
+    with (patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,):
         fake_invitations_repo.get_project_invitation.return_value = invitation
-        fake_users_repo.get_user_by_username_or_email.return_value = None
         pub_invitation = await services.get_public_project_invitation(token)
         fake_invitations_repo.get_project_invitation.assert_awaited_once_with(id=invitation.id)
         assert pub_invitation.status == invitation.status

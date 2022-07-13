@@ -37,12 +37,11 @@ async def get_project_invitation(token: str) -> Invitation | None:
 
 async def get_public_project_invitation(token: str) -> PublicInvitation | None:
     if invitation := await get_project_invitation(token=token):
-        invited_user = invitation.user or await users_repositories.get_user_by_username_or_email(invitation.email)
 
         return PublicInvitation(
             status=invitation.status,
             email=invitation.email,
-            existing_user=invited_user is not None,
+            existing_user=invitation.user is not None,
             project=invitation.project,
         )
 
@@ -242,3 +241,7 @@ def is_project_invitation_for_this_user(invitation: Invitation, user: User) -> b
 
 async def has_pending_project_invitation_for_user(project: Project, user: User) -> bool:
     return await invitations_repositories.has_pending_project_invitation_for_user(user=user, project=project)
+
+
+async def update_user_invitations(user: User) -> None:
+    await invitations_repositories.update_user_invitations(user=user)

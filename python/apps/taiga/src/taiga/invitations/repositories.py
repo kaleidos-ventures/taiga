@@ -110,3 +110,8 @@ def has_pending_project_invitation_for_user(user: User, project: Project) -> boo
         .filter(Q(user_id=user.id) | Q(user__isnull=True, email__iexact=user.email))
         .exists()
     )
+
+
+@sync_to_async
+def update_user_invitations(user: User) -> None:
+    Invitation.objects.filter(email=user.email).update(user=user)

@@ -108,8 +108,8 @@ async def test_verify_user_ok_no_project_invitation_token():
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
-        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitation_service,
         patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
+        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitations_services,
     ):
         fake_token = FakeVerifyUserToken()
         fake_token.object_data = object_data
@@ -126,8 +126,9 @@ async def test_verify_user_ok_no_project_invitation_token():
         fake_token.denylist.assert_awaited_once()
         fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_system=False)
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
+        fake_invitations_services.update_user_invitations.assert_awaited_once_with(user=user)
         fake_token.get.assert_called_with("accept_project_invitation", False)
-        fake_invitation_service.accept_project_invitation_from_token.assert_not_awaited()
+        fake_invitations_services.accept_project_invitation_from_token.assert_not_awaited()
         fake_auth_services.create_auth_credentials.assert_awaited_once_with(user=user)
 
 
@@ -142,15 +143,15 @@ async def test_verify_user_ok_with_accepting_project_invitation_token():
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
-        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitation_service,
         patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
+        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitations_services,
     ):
         fake_token = FakeVerifyUserToken()
         fake_token.object_data = object_data
         fake_token.get.side_effect = [project_invitation_token, accept_project_invitation]
         fake_auth_services.create_auth_credentials.return_value = auth_credentials
         FakeVerifyUserToken.create.return_value = fake_token
-        fake_invitation_service.accept_project_invitation_from_token.return_value = project_invitation
+        fake_invitations_services.accept_project_invitation_from_token.return_value = project_invitation
         fake_users_repo.get_first_user.return_value = user
 
         info = await services.verify_user("some_token")
@@ -161,8 +162,9 @@ async def test_verify_user_ok_with_accepting_project_invitation_token():
         fake_token.denylist.assert_awaited_once()
         fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_system=False)
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
+        fake_invitations_services.update_user_invitations.assert_awaited_once_with(user=user)
         fake_token.get.assert_called_with("accept_project_invitation", False)
-        fake_invitation_service.accept_project_invitation_from_token.assert_awaited_once_with(
+        fake_invitations_services.accept_project_invitation_from_token.assert_awaited_once_with(
             token=project_invitation_token, user=user
         )
         fake_auth_services.create_auth_credentials.assert_awaited_once_with(user=user)
@@ -179,15 +181,15 @@ async def test_verify_user_ok_without_accepting_project_invitation_token():
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
-        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitation_service,
         patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
+        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitations_services,
     ):
         fake_token = FakeVerifyUserToken()
         fake_token.object_data = object_data
         fake_token.get.side_effect = [project_invitation_token, accept_project_invitation]
         fake_auth_services.create_auth_credentials.return_value = auth_credentials
         FakeVerifyUserToken.create.return_value = fake_token
-        fake_invitation_service.get_project_invitation.return_value = project_invitation
+        fake_invitations_services.get_project_invitation.return_value = project_invitation
         fake_users_repo.get_first_user.return_value = user
 
         info = await services.verify_user("some_token")
@@ -198,8 +200,9 @@ async def test_verify_user_ok_without_accepting_project_invitation_token():
         fake_token.denylist.assert_awaited_once()
         fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_system=False)
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
+        fake_invitations_services.update_user_invitations.assert_awaited_once_with(user=user)
         fake_token.get.assert_called_with("accept_project_invitation", False)
-        not fake_invitation_service.accept_project_invitation_from_token.assert_awaited
+        not fake_invitations_services.accept_project_invitation_from_token.assert_awaited
         fake_auth_services.create_auth_credentials.assert_awaited_once_with(user=user)
 
 
@@ -267,7 +270,7 @@ async def test_verify_user_error_project_invitation_token(exception):
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
-        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitation_service,
+        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitations_services,
         patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
     ):
         fake_token = FakeVerifyUserToken()
@@ -275,11 +278,11 @@ async def test_verify_user_error_project_invitation_token(exception):
         fake_token.get.side_effect = [project_invitation_token, accept_project_invitation]
         fake_auth_services.create_auth_credentials.return_value = auth_credentials
         FakeVerifyUserToken.create.return_value = fake_token
-        fake_invitation_service.get_project_invitation.return_value = project_invitation
+        fake_invitations_services.get_project_invitation.return_value = project_invitation
         fake_users_repo.get_first_user.return_value = user
 
         #  exception when recovering the project invitation
-        fake_invitation_service.get_project_invitation.side_effect = exception
+        fake_invitations_services.get_project_invitation.side_effect = exception
 
         info = await services.verify_user("some_token")
 

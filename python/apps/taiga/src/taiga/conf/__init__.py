@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     GITLAB_URL: str | None = None
     GITLAB_CLIENT_ID: str | None = None
     GITLAB_CLIENT_SECRET: str | None = None
+    GOOGLE_CLIENT_ID: str | None = None
+    GOOGLE_CLIENT_SECRET: str | None = None
 
     # Users
     USER_EMAIL_ALLOWED_DOMAINS: list[str] = []

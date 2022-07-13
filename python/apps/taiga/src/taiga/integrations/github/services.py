@@ -4,22 +4,21 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
+from typing import Final
 
 import httpx
 from taiga.conf import settings
 from taiga.integrations.github.dataclasses import GithubUserProfile
 
-ACCESS_TOKEN_URL: str = "https://github.com/login/oauth/access_token"
-EMAILS_API_URL: str = "https://api.github.com/user/emails"
-USER_API_URL: str = "https://api.github.com/user"
-HEADERS: dict[str, str] = {
+ACCESS_TOKEN_URL: Final[str] = "https://github.com/login/oauth/access_token"
+EMAILS_API_URL: Final[str] = "https://api.github.com/user/emails"
+USER_API_URL: Final[str] = "https://api.github.com/user"
+HEADERS: Final[dict[str, str]] = {
     "Accept": "application/json",
 }
 
 
 async def get_access_to_github(code: str) -> str | None:
-    url = ACCESS_TOKEN_URL
     headers = HEADERS.copy()
     params = {
         "code": code,
@@ -27,8 +26,8 @@ async def get_access_to_github(code: str) -> str | None:
         "client_secret": settings.GITHUB_CLIENT_SECRET,
         "scope": "user:emails",
     }
-    async with httpx.AsyncClient() as client:
-        response = await client.post(url, params=params, headers=headers)
+    async with httpx.AsyncClient() as async_client:
+        response = await async_client.post(ACCESS_TOKEN_URL, params=params, headers=headers)
 
     data = response.json()
     if response.status_code != 200 or "error" in data:
@@ -41,9 +40,9 @@ async def get_user_info_from_github(access_token: str) -> GithubUserProfile | No
     headers = HEADERS.copy()
     headers["Authorization"] = f"token {access_token}"
 
-    async with httpx.AsyncClient() as client:
-        response_user = await client.get(USER_API_URL, headers=headers)
-        response_emails = await client.get(EMAILS_API_URL, headers=headers)
+    async with httpx.AsyncClient() as async_client:
+        response_user = await async_client.get(USER_API_URL, headers=headers)
+        response_emails = await async_client.get(EMAILS_API_URL, headers=headers)
 
     if response_user.status_code != 200 or response_emails.status_code != 200:
         return None

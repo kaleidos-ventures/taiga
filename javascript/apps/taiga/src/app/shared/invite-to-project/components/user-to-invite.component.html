@@ -17,7 +17,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         data-test="pending-tag"
         [tuiHint]="tooltip"
         tuiHintDirection="bottom-right"
-        *ngIf="isPending">
+        *ngIf="user.value.userHasPendingInvitation">
         <tg-ui-badge
           [label]="t('invitation_modal.pending')"
           icon="clock"

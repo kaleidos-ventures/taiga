@@ -22,14 +22,7 @@ import {
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import {
-  Invitation,
-  InvitationRequest,
-  Project,
-  Role,
-  User,
-  Contact,
-} from '@taiga/data';
+import { InvitationRequest, Project, Role, User, Contact } from '@taiga/data';
 import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import {
   inviteUsersSuccess,
@@ -143,7 +136,6 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public suggestedUsers: Contact[] = [];
   public suggestionSelected = 0;
   public elegibleSuggestions: number[] | undefined = [];
-  public pendingInvitations?: Invitation[];
   public search$: Subject<string | null> = new Subject();
   public notInBulkMode = true;
   public emailInputIsFocus = false;
@@ -244,10 +236,6 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
       this.orderedRoles = memberRoles;
     });
 
-    this.invitations$.pipe(untilDestroyed(this)).subscribe((invitations) => {
-      this.pendingInvitations = invitations;
-    });
-
     this.suggestedUsers$
       .pipe(untilDestroyed(this))
       .subscribe((suggestedUsers) => {
@@ -312,12 +300,6 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
 
   public trackByIndex(index: number) {
     return index;
-  }
-
-  public isPending(username: string) {
-    return !!this.pendingInvitations?.find(
-      (it) => it.user?.username === username
-    );
   }
 
   public getPeopleAdded() {

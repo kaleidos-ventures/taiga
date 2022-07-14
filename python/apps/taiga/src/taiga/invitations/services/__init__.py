@@ -243,7 +243,9 @@ async def has_pending_project_invitation_for_user(project: Project, user: User) 
     return await invitations_repositories.has_pending_project_invitation_for_user(user=user, project=project)
 
 
-async def update_user_invitations(user: User) -> None:
-    await invitations_repositories.update_user_invitations(user=user)
-    invitations = await invitations_repositories.get_user_pending_invitations(user=user)
+async def update_user_projects_invitations(user: User) -> None:
+    await invitations_repositories.update_user_projects_invitations(user=user)
+    invitations = await invitations_repositories.get_user_projects_invitations(
+        user=user, status=InvitationStatus.PENDING
+    )
     await invitations_events.emit_event_when_user_invitations_are_updated(invitations=invitations)

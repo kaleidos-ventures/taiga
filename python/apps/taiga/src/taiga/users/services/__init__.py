@@ -111,7 +111,7 @@ async def verify_user(token: str) -> VerificationInfo:
         raise ex.BadVerifyUserTokenError("The user doesn't exist.")
 
     await users_repositories.verify_user(user=user)
-    await invitations_services.update_user_invitations(user=user)
+    await invitations_services.update_user_projects_invitations(user=user)
 
     # Accept project invitation, if it exists and the user comes from the email's CTA. Errors will be ignored
     project_invitation = None

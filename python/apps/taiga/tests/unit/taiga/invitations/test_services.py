@@ -586,17 +586,19 @@ def test_is_project_invitation_for_this_user_ok_different_email() -> None:
 
 
 #######################################################
-# update_user_invitations
+# update_user_projects_invitations
 #######################################################
 
 
-async def test_update_user_invitations() -> None:
+async def test_update_user_projects_invitations() -> None:
     user = f.build_user()
     with (
         patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repositories,
         patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
-        await services.update_user_invitations(user=user)
-        fake_invitations_repositories.update_user_invitations.assert_awaited_once_with(user=user)
-        fake_invitations_repositories.get_user_pending_invitations.assert_awaited_once_with(user=user)
+        await services.update_user_projects_invitations(user=user)
+        fake_invitations_repositories.update_user_projects_invitations.assert_awaited_once_with(user=user)
+        fake_invitations_repositories.get_user_projects_invitations.assert_awaited_once_with(
+            user=user, status=InvitationStatus.PENDING
+        )
         fake_invitations_events.emit_event_when_user_invitations_are_updated.assert_awaited_once()

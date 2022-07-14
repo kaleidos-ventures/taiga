@@ -29,7 +29,7 @@ async def social_login(email: str, full_name: str, social_key: str, social_id: s
                 email=email, username=username, full_name=full_name, password=None
             )
             await users_repositories.verify_user(user)
-            await invitations_services.update_user_invitations(user=user)
+            await invitations_services.update_user_projects_invitations(user=user)
         elif user and not user.is_active:
             # update existing (but not verified) user with social login data and verify it
             # username and email are the same
@@ -38,7 +38,7 @@ async def social_login(email: str, full_name: str, social_key: str, social_id: s
                 user=user, new_values={"full_name": full_name, "password": None}
             )
             await users_repositories.verify_user(user)
-            await invitations_services.update_user_invitations(user=user)
+            await invitations_services.update_user_projects_invitations(user=user)
         elif user:
             # the user existed and now is adding a new login method
             # so we send her a warning email

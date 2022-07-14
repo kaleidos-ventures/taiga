@@ -83,8 +83,15 @@ def get_project_invitation_by_user(project_slug: str, user: User) -> Invitation 
 
 
 @sync_to_async
-def get_user_pending_invitations(user: User) -> list[Invitation]:
-    return list(Invitation.objects.select_related("user", "project").filter(user=user, status=InvitationStatus.PENDING))
+def get_user_projects_invitations(user: User, status: InvitationStatus | None = None) -> list[Invitation]:
+    """
+    All project invitations of a given user, in an optional given status
+    """
+    qs = Invitation.objects.select_related("user", "project").filter(user=user)
+    if status:
+        qs &= qs.filter(status=status)
+
+    return list(qs)
 
 
 @sync_to_async
@@ -118,5 +125,5 @@ def has_pending_project_invitation_for_user(user: User, project: Project) -> boo
 
 
 @sync_to_async
-def update_user_invitations(user: User) -> None:
+def update_user_projects_invitations(user: User) -> None:
     Invitation.objects.filter(email=user.email).update(user=user)

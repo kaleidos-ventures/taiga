@@ -62,4 +62,4 @@ async def test_social_login_no_user():
         fake_auth_services.create_auth_credentials.assert_awaited_once()
         fake_users_repositories.create_auth_data.assert_awaited_once()
         fake_users_repositories.create_user.assert_awaited_once()
-        fake_invitations_services.update_user_invitations.assert_awaited_once()
+        fake_invitations_services.update_user_projects_invitations.assert_awaited_once()

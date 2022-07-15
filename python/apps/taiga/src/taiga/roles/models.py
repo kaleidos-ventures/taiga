@@ -6,7 +6,5 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-from taiga6.projects.models import Membership  # noqa
-from taiga6.users.models import Role  # noqa
-from taiga6.users.models import WorkspaceRole  # noqa
-from taiga6.workspaces.models import WorkspaceMembership  # noqa
+from taiga.projects.models import ProjectMembership, ProjectRole  # noqa
+from taiga.workspaces.models import WorkspaceMembership, WorkspaceRole  # noqa

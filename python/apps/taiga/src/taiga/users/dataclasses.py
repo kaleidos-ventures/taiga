@@ -8,18 +8,10 @@
 from dataclasses import dataclass
 
 from taiga.auth.dataclasses import AccessWithRefreshToken
-from taiga.invitations.models import Invitation
-
-
-@dataclass
-class UserSearch:
-    username: str
-    full_name: str
-    user_is_member: bool | None
-    user_has_pending_invitation: bool | None
+from taiga.invitations.models import ProjectInvitation
 
 
 @dataclass
 class VerificationInfo:
     auth: AccessWithRefreshToken
-    project_invitation: Invitation | None
+    project_invitation: ProjectInvitation | None

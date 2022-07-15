@@ -7,7 +7,7 @@
 
 from datetime import datetime
 
-from taiga.base.db import Model
+from taiga.base.db.models import Model
 from taiga.tokens import repositories as tokens_repositories
 from taiga.tokens.models import DenylistedToken, OutstandingToken
 

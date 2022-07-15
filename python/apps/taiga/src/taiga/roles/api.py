@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from fastapi import Depends, Query, Response
-from taiga.base.api import Request
+from taiga.base.api import AuthRequest
 from taiga.base.api.pagination import PaginationQuery, set_pagination
 from taiga.base.api.permissions import Or, check_permissions
 from taiga.exceptions import api as ex
@@ -17,8 +17,8 @@ from taiga.projects.api import get_project_or_404
 from taiga.projects.models import Project
 from taiga.projects.validators import PermissionsValidator
 from taiga.roles import services as roles_services
-from taiga.roles.models import Membership, Role
-from taiga.roles.serializers import MembershipSerializer, RoleSerializer
+from taiga.roles.models import ProjectMembership, ProjectRole
+from taiga.roles.serializers import ProjectMembershipSerializer, ProjectRoleSerializer
 from taiga.roles.services import exceptions as services_ex
 from taiga.roles.validators import ProjectMembershipRoleValidator
 from taiga.routers import routes
@@ -39,12 +39,12 @@ UPDATE_PROJECT_MEMBERSHIP_ROLE = IsProjectAdmin()
     "/{slug}/roles",
     name="project.permissions.get",
     summary="Get project roles permissions",
-    response_model=list[RoleSerializer],
+    response_model=list[ProjectRoleSerializer],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def get_project_roles(
-    request: Request, slug: str = Query(None, description="the project slug (str)")
-) -> list[Role]:
+    request: AuthRequest, slug: str = Query(None, description="the project slug (str)")
+) -> list[ProjectRole]:
     """
     Get project roles and permissions
     """
@@ -58,15 +58,15 @@ async def get_project_roles(
     "/{slug}/roles/{role_slug}/permissions",
     name="project.permissions.put",
     summary="Edit project roles permissions",
-    response_model=RoleSerializer,
+    response_model=ProjectRoleSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def update_project_role_permissions(
-    request: Request,
+    request: AuthRequest,
     form: PermissionsValidator,
     slug: str = Query(None, description="the project slug (str)"),
     role_slug: str = Query(None, description="the role slug (str)"),
-) -> Role:
+) -> ProjectRole:
     """
     Edit project roles permissions
     """
@@ -76,7 +76,7 @@ async def update_project_role_permissions(
     role = await get_project_role_or_404(project=project, slug=role_slug)
 
     try:
-        await roles_services.update_role_permissions(role, form.permissions)
+        await roles_services.update_project_role_permissions(role, form.permissions)
     except services_ex.NonEditableRoleError as exc:
         raise ex.ForbiddenError(str(exc))
 
@@ -92,15 +92,15 @@ async def update_project_role_permissions(
     "/{slug}/memberships",
     name="project.memberships.get",
     summary="Get project memberships",
-    response_model=list[MembershipSerializer],
+    response_model=list[ProjectMembershipSerializer],
     responses=ERROR_404 | ERROR_422,
 )
 async def get_project_memberships(
-    request: Request,
+    request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
     slug: str = Query(None, description="the project slug (str)"),
-) -> list[Membership]:
+) -> list[ProjectMembership]:
     """
     Get project memberships
     """
@@ -121,14 +121,14 @@ async def get_project_memberships(
     "/{slug}/memberships/change-role",
     name="project.memberships.change-role",
     summary="Update project membership role",
-    response_model=MembershipSerializer,
+    response_model=ProjectMembershipSerializer,
     responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
 )
 async def update_project_membership_role(
-    request: Request,
+    request: AuthRequest,
     form: ProjectMembershipRoleValidator,
     slug: str = Query(None, description="the project slug (str)"),
-) -> Membership:
+) -> ProjectMembership:
     """
     Update project membership role
     """
@@ -144,7 +144,7 @@ async def update_project_membership_role(
 ################################################
 
 
-async def get_project_role_or_404(project: Project, slug: str) -> Role:
+async def get_project_role_or_404(project: Project, slug: str) -> ProjectRole:
     role = await roles_services.get_project_role(project=project, slug=slug)
     if role is None:
         raise ex.NotFoundError(f"Role {slug} does not exist")
@@ -152,7 +152,7 @@ async def get_project_role_or_404(project: Project, slug: str) -> Role:
     return role
 
 
-async def get_project_membership_or_404(project_slug: str, username: str) -> Membership:
+async def get_project_membership_or_404(project_slug: str, username: str) -> ProjectMembership:
     membership = await roles_services.get_project_membership(project_slug=project_slug, username=username)
     if not membership:
         raise ex.NotFoundError("Membership not found")

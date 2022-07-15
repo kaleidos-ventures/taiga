@@ -25,7 +25,7 @@ export enum Permissions {
   commentUserstory = 'comment_us',
   deleteUserstory = 'delete_us',
   // Task
-  viewTasks = 'view_tasks',
+  viewTask = 'view_task',
   addTask = 'add_task',
   commentTask = 'comment_task',
   modifyTask = 'modify_task',

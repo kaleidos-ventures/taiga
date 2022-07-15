@@ -82,14 +82,14 @@ async def test_create_project():
         fake_project_repository.create_project.assert_awaited_once()
         fake_project_repository.get_template.assert_awaited_once()
         fake_role_repository.get_project_role.assert_awaited_once()
-        fake_role_repository.create_membership.assert_awaited_once()
+        fake_role_repository.create_project_membership.assert_awaited_once()
 
 
 async def test_create_project_with_logo():
     template = await f.create_project_template()
     workspace = await f.create_workspace()
     project = await f.create_project(workspace=workspace)
-    role = await f.create_role(project=project)
+    role = await f.create_project_role(project=project)
 
     logo: UploadFile = valid_image_upload_file
 
@@ -160,8 +160,8 @@ async def test_get_project_detail_anonymous():
     anonymous_user = AnonymousUser()
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
-    permissions = ["add_us", "view_us", "modify_task", "view_tasks"]
-    anon_permissions = ["view_us", "view_tasks"]
+    permissions = ["add_us", "view_us", "modify_task", "view_task"]
+    anon_permissions = ["view_us", "view_task"]
     project = await (
         f.create_project(
             owner=user, workspace=workspace, public_permissions=permissions, anon_permissions=anon_permissions
@@ -195,8 +195,8 @@ async def test_get_project_detail_anonymous():
 
 async def test_update_project_public_permissions_ok():
     project = await f.create_project()
-    permissions = ["add_us", "view_us", "modify_task", "view_tasks"]
-    anon_permissions = ["view_us", "view_tasks"]
+    permissions = ["add_us", "view_us", "modify_task", "view_task"]
+    anon_permissions = ["view_us", "view_task"]
 
     with patch("taiga.projects.services.projects_repositories", autospec=True) as fake_project_repository:
         await services.update_project_public_permissions(project=project, permissions=permissions)
@@ -215,7 +215,7 @@ async def test_update_project_public_permissions_not_valid():
 
 async def test_update_project_public_permissions_incompatible():
     project = await f.create_project()
-    incompatible_permissions = ["view_tasks"]
+    incompatible_permissions = ["view_task"]
 
     with pytest.raises(ex.IncompatiblePermissionsSetError):
         await services.update_project_public_permissions(project=project, permissions=incompatible_permissions)
@@ -229,7 +229,7 @@ async def test_update_project_public_permissions_incompatible():
 async def test_update_project_workspace_member_permissions_ok():
     workspace = await f.create_workspace(is_premium=True)
     project = await f.create_project(workspace=workspace)
-    permissions = ["add_us", "view_us", "modify_task", "view_tasks"]
+    permissions = ["add_us", "view_us", "modify_task", "view_task"]
 
     with patch("taiga.projects.services.projects_repositories", autospec=True) as fake_project_repository:
         await services.update_project_workspace_member_permissions(project=project, permissions=permissions)
@@ -250,7 +250,7 @@ async def test_update_project_workspace_member_permissions_not_valid():
 async def test_update_project_workspace_member_permissions_incompatible():
     workspace = await f.create_workspace(is_premium=True)
     project = await f.create_project(workspace=workspace)
-    incompatible_permissions = ["view_tasks"]
+    incompatible_permissions = ["view_task"]
 
     with pytest.raises(ex.IncompatiblePermissionsSetError):
         await services.update_project_workspace_member_permissions(

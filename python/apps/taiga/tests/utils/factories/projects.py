@@ -19,23 +19,8 @@ class ProjectTemplateFactory(Factory):
     slug = settings.DEFAULT_PROJECT_TEMPLATE
     description = factory.Sequence(lambda n: f"Description {n}")
 
-    epic_statuses = []
-    us_statuses = []
-    us_duedates = []
-    points = []
-    task_statuses = []
-    task_duedates = []
-    issue_statuses = []
-    issue_types = []
-    issue_duedates = []
-    priorities = []
-    severities = []
-    roles = []
-    epic_custom_attributes = []
-    us_custom_attributes = []
-    task_custom_attributes = []
-    issue_custom_attributes = []
     default_owner_role = "tester"
+    roles = []
 
     class Meta:
         model = "projects.ProjectTemplate"
@@ -71,22 +56,22 @@ def create_project(**kwargs):
     ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
 
     project = ProjectFactory.create(**defaults)
-    admin_role = f.RoleFactory.create(
+    admin_role = f.ProjectRoleFactory.create(
         name="Administrator",
         slug="admin",
-        permissions=choices.PROJECT_PERMISSIONS,
+        permissions=choices.ProjectPermissions.values,
         is_admin=True,
         project=project,
     )
-    f.RoleFactory.create(
+    f.ProjectRoleFactory.create(
         name="General",
         slug="general",
-        permissions=choices.PROJECT_PERMISSIONS,
+        permissions=choices.ProjectPermissions.values,
         is_admin=False,
         project=project,
     )
 
-    f.MembershipFactory.create(user=project.owner, project=project, role=admin_role)
+    f.ProjectMembershipFactory.create(user=project.owner, project=project, role=admin_role)
 
     return project
 

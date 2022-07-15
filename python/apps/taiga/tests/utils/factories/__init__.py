@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from .invitations import InvitationFactory, build_invitation, create_invitation  # noqa
+from .invitations import ProjectInvitationFactory, build_project_invitation, create_project_invitation  # noqa
 from .projects import (  # noqa
     ProjectFactory,
     ProjectTemplateFactory,
@@ -14,14 +14,14 @@ from .projects import (  # noqa
     create_project_template,
 )
 from .roles import (  # noqa
-    MembershipFactory,
-    RoleFactory,
+    ProjectMembershipFactory,
+    ProjectRoleFactory,
     WorkspaceMembershipFactory,
     WorkspaceRoleFactory,
-    build_membership,
-    build_role,
-    create_membership,
-    create_role,
+    build_project_membership,
+    build_project_role,
+    create_project_membership,
+    create_project_role,
     create_workspace_membership,
     create_workspace_role,
 )

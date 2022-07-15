@@ -7,7 +7,7 @@
 
 from fastapi import Query
 from fastapi.params import Depends
-from taiga.base.api import Request
+from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import Or, check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
@@ -39,7 +39,7 @@ UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
     responses=ERROR_403 | ERROR_404,
 )
 async def list_workspace_projects(
-    request: Request, workspace_slug: str = Query("", description="the workspace slug (str)")
+    request: AuthRequest, workspace_slug: str = Query("", description="the workspace slug (str)")
 ) -> list[Project]:
     """
     List projects of a workspace visible by the user.
@@ -59,7 +59,7 @@ async def list_workspace_projects(
     responses=ERROR_403 | ERROR_404,
 )
 async def list_workspace_invited_projects(
-    request: Request, workspace_slug: str = Query(None, description="the workspace slug (str)")
+    request: AuthRequest, workspace_slug: str = Query(None, description="the workspace slug (str)")
 ) -> list[Project]:
     """
     Get all the invitations to projects that  a user has in a workspace
@@ -79,7 +79,7 @@ async def list_workspace_invited_projects(
     responses=ERROR_422 | ERROR_403,
 )
 async def create_project(
-    request: Request,
+    request: AuthRequest,
     form: ProjectValidator = Depends(ProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
 ) -> Project:
     """
@@ -105,7 +105,7 @@ async def create_project(
     response_model=ProjectSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def get_project(request: Request, slug: str = Query("", description="the project slug (str)")) -> Project:
+async def get_project(request: AuthRequest, slug: str = Query("", description="the project slug (str)")) -> Project:
     """
     Get project detail by slug.
     """
@@ -123,7 +123,7 @@ async def get_project(request: Request, slug: str = Query("", description="the p
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def get_project_public_permissions(
-    request: Request, slug: str = Query(None, description="the project slug (str)")
+    request: AuthRequest, slug: str = Query(None, description="the project slug (str)")
 ) -> list[str]:
     """
     Get project public permissions
@@ -131,7 +131,7 @@ async def get_project_public_permissions(
 
     project = await get_project_or_404(slug)
     await check_permissions(permissions=GET_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
-    return project.public_permissions
+    return project.public_permissions or []
 
 
 @routes.projects.put(
@@ -142,7 +142,7 @@ async def get_project_public_permissions(
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def update_project_public_permissions(
-    request: Request, form: PermissionsValidator, slug: str = Query(None, description="the project slug (str)")
+    request: AuthRequest, form: PermissionsValidator, slug: str = Query(None, description="the project slug (str)")
 ) -> list[str]:
     """
     Edit project public permissions
@@ -162,7 +162,7 @@ async def update_project_public_permissions(
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def get_project_workspace_member_permissions(
-    request: Request, slug: str = Query(None, description="the project slug (str)")
+    request: AuthRequest, slug: str = Query(None, description="the project slug (str)")
 ) -> list[str]:
     """
     Get project workspace member permissions
@@ -182,7 +182,7 @@ async def get_project_workspace_member_permissions(
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def update_project_workspace_member_permissions(
-    request: Request, form: PermissionsValidator, slug: str = Query(None, description="the project slug (str)")
+    request: AuthRequest, form: PermissionsValidator, slug: str = Query(None, description="the project slug (str)")
 ) -> list[str]:
     """
     Edit project workspace member permissions

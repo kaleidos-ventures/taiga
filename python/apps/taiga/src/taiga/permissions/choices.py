@@ -5,15 +5,53 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
-from taiga6.permissions import choices
-
-PROJECT_PERMISSIONS = [x for x, _ in choices.PROJECT_PERMISSIONS]
-WORKSPACE_PERMISSIONS = [x for x, _ in choices.WORKSPACE_PERMISSIONS]
-ANON_PERMISSIONS = [x for x, _ in choices.ANON_PERMISSIONS]
+from taiga.base.db.models import TextChoices
 
 
-VALID_PROJECT_CHOICES = set(PROJECT_PERMISSIONS)
+class EditUSPermissions(TextChoices):
+    ADD_US = "add_us", "Add US"
+    COMMENT_US = "comment_us", "Comment US"
+    DELETE_US = "delete_us", "Delete US"
+    MODIFY_US = "modify_us", "Modify US"
 
-EDIT_US_PERMISSIONS = [x for x, _ in choices.EDIT_US_PERMISSIONS]
-EDIT_TASK_PERMISSIONS = [x for x, _ in choices.EDIT_TASK_PERMISSIONS]
+
+class EditTaskPermissions(TextChoices):
+    ADD_TASK = "add_task", "Add task"
+    COMMENT_TASK = "comment_task", "Comment task"
+    DELETE_TASK = "delete_task", "Delete task"
+    MODIFY_TASK = "modify_task", "Modify task"
+
+
+# possible permissions for members or public members
+# directly applied to default "general" project role
+# these may be changed by a project admin
+# also, permissions for ws-admins
+class ProjectPermissions(TextChoices):
+    # US permissions
+    ADD_US = "add_us", "Add US"
+    COMMENT_US = "comment_us", "Comment US"
+    DELETE_US = "delete_us", "Delete US"
+    MODIFY_US = "modify_us", "Modify US"
+    VIEW_US = "view_us", "View US"
+    # Task permissions
+    ADD_TASK = "add_task", "Add task"
+    COMMENT_TASK = "comment_task", "Comment task"
+    DELETE_TASK = "delete_task", "Delete task"
+    MODIFY_TASK = "modify_task", "Modify task"
+    VIEW_TASK = "view_task", "View task"
+
+
+# possible permissions for workspace members
+# these may be changed by a workspace admin
+class WorkspacePermissions(TextChoices):
+    VIEW_WORKSPACE = "view_workspace", "View workspace"
+
+
+# possible permissions for anonymous users
+# only "view" permissions at most
+# these may be changed by a project admin when changing public-permissions
+class AnonPermissions(TextChoices):
+    # US permissions
+    VIEW_US = "view_us", "View US"
+    # Task permissions
+    VIEW_TASK = "view_task", "View task"

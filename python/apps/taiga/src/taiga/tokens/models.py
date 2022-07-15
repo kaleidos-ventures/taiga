@@ -30,4 +30,44 @@
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
 
-from taiga6.auth.token_denylist.models import DenylistedToken, OutstandingToken  # noqa
+from taiga.base.db import models
+
+
+class OutstandingToken(models.BaseModel):
+    content_type = models.ForeignKey(models.ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    object_id = models.UUIDField(null=True, blank=True)
+    content_object = models.GenericForeignKey("content_type", "object_id")
+
+    jti = models.CharField(unique=True, max_length=255)
+    token_type = models.TextField()
+    token = models.TextField()
+
+    created_at = models.DateTimeField(null=True, blank=True)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        verbose_name = "outstanding token"
+        verbose_name_plural = "outstanding tokens"
+        ordering = ("content_type", "object_id", "token_type")
+
+    def __str__(self) -> str:
+        return f"Token for {self.content_object} ({type(self.content_object)}) [{self.jti}]"
+
+    def __repr__(self) -> str:
+        return f"<OutstandingToken {type(self.content_object)} [{self.jti}]>"
+
+
+class DenylistedToken(models.BaseModel):
+    token = models.OneToOneField(OutstandingToken, on_delete=models.CASCADE)
+
+    denylisted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "denylisted token"
+        verbose_name_plural = "denylisted tokens"
+
+    def __str__(self) -> str:
+        return f"Denylisted token for {self.token.content_object} ({type(self.token.content_object)})"
+
+    def __repr__(self) -> str:
+        return f"<DenylistedToken {self.token}>"

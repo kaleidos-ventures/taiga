@@ -8,7 +8,7 @@
 from datetime import timedelta
 
 from taiga.conf import settings
-from taiga.tokens import Token
+from taiga.tokens.base import Token
 
 
 class ProjectInvitationToken(Token):

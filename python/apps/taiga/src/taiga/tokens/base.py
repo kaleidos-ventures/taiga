@@ -271,11 +271,11 @@ class DenylistMixin(_BaseMixin):
         expires_at = epoch_to_datetime(self.payload["exp"])
 
         # Ensure outstanding token exists with given jti. just for non unique tokens
-        token, _ = await tokens_services.get_or_create_outstanding_token(
+        outstanding_token, _ = await tokens_services.get_or_create_outstanding_token(
             jti=jti, token_type=self.token_type, token=token, expires_at=expires_at
         )
 
-        await tokens_services.deny_token(token=token)
+        await tokens_services.deny_token(token=outstanding_token)
 
     @classmethod
     async def create_for_object(cls: type["TokenModel"], obj: Any) -> "TokenModel":

@@ -11,7 +11,7 @@ from taiga.base.utils.emails import is_email
 from taiga.conf import settings
 
 
-class InvitationValidator(BaseModel):
+class ProjectInvitationValidator(BaseModel):
     email: EmailStr | None
     username: str | None
     role_slug: str
@@ -40,15 +40,15 @@ class InvitationValidator(BaseModel):
         return v
 
 
-class InvitationsValidator(BaseModel):
+class ProjectInvitationsValidator(BaseModel):
     # Max items 50 and duplicated items not allowed
-    invitations: conlist(InvitationValidator, max_items=50, unique_items=True)  # type: ignore[valid-type]
+    invitations: conlist(ProjectInvitationValidator, max_items=50, unique_items=True)  # type: ignore[valid-type]
 
     def get_invitations_dict(self) -> list[dict[str, str]]:
         return self.dict()["invitations"]
 
 
-class RevokeInvitationValidator(BaseModel):
+class RevokeProjectInvitationValidator(BaseModel):
     username_or_email: str
 
     @validator("username_or_email")
@@ -67,7 +67,7 @@ class RevokeInvitationValidator(BaseModel):
         return v
 
 
-class ResendInvitationValidator(BaseModel):
+class ResendProjectInvitationValidator(BaseModel):
     username_or_email: str
 
     @validator("username_or_email")

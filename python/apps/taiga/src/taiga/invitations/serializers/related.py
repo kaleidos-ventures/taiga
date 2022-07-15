@@ -6,12 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import BaseModel
-from taiga.invitations.choices import InvitationStatus
+from taiga.invitations.choices import ProjectInvitationStatus
 from taiga.projects.serializers.related import ProjectSmallSummarySerializer
 
 
-class InvitationSummaryVerifyUserSerializer(BaseModel):
-    status: InvitationStatus
+class ProjectInvitationSummaryVerifyUserSerializer(BaseModel):
+    status: ProjectInvitationStatus
     project: ProjectSmallSummarySerializer
 
     class Config:

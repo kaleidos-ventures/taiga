@@ -8,7 +8,7 @@
 from datetime import timedelta
 
 from taiga.conf import settings
-from taiga.tokens import DenylistMixin, Token
+from taiga.tokens.base import DenylistMixin, Token
 
 
 class VerifyUserToken(DenylistMixin, Token):

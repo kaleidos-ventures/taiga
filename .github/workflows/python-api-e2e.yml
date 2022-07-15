@@ -66,10 +66,10 @@ jobs:
       - name: Running Postgres migrations
         working-directory: ./python/apps/taiga
         run: |
-          python -m taiga6.manage migrate
+          python -m taiga migrate
           python -m taiga tasksqueue init
         env:
-          DJANGO_SETTINGS_MODULE: taiga.conf.taiga6
+          DJANGO_SETTINGS_MODULE: taiga.base.django.settings
           TAIGA_DB_NAME: taiga
           TAIGA_DB_USER: postgres
           TAIGA_DB_PASSWORD: postgres

@@ -9,7 +9,7 @@ import abc
 from typing import Any
 
 from taiga.exceptions import api as ex
-from taiga.users.models import User
+from taiga.users.models import AnyUser
 
 ######################################################################
 # Permission components - basic class
@@ -18,7 +18,7 @@ from taiga.users.models import User
 
 class PermissionComponent(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    async def is_authorized(self, user: User, obj: Any = None) -> bool:
+    async def is_authorized(self, user: AnyUser, obj: Any = None) -> bool:
         pass
 
     def __invert__(self) -> "Not":
@@ -38,7 +38,7 @@ class PermissionComponent(metaclass=abc.ABCMeta):
 
 async def check_permissions(
     permissions: PermissionComponent,
-    user: User,
+    user: AnyUser,
     obj: object = None,
     global_perms: PermissionComponent | None = None,
     enough_perms: PermissionComponent | None = None,
@@ -82,7 +82,7 @@ class Not(PermissionOperator):
     def __init__(self, component: "PermissionComponent") -> None:
         super().__init__(component)
 
-    async def is_authorized(self, user: User, obj: Any = None) -> bool:
+    async def is_authorized(self, user: AnyUser, obj: Any = None) -> bool:
         component = self.components[0]
         return not await component.is_authorized(user, obj)
 
@@ -92,7 +92,7 @@ class Or(PermissionOperator):
     Or logical operator as permission component.
     """
 
-    async def is_authorized(self, user: User, obj: Any = None) -> bool:
+    async def is_authorized(self, user: AnyUser, obj: Any = None) -> bool:
         valid = False
 
         for component in self.components:
@@ -108,7 +108,7 @@ class And(PermissionOperator):
     And logical operator as permission component.
     """
 
-    async def is_authorized(self, user: User, obj: Any = None) -> bool:
+    async def is_authorized(self, user: AnyUser, obj: Any = None) -> bool:
         valid = True
 
         for component in self.components:

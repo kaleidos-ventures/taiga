@@ -6,8 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from functools import partial
 
-from django.core.files import File
 from fastapi import UploadFile
+from taiga.base.db.models import File
 from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
 from taiga.invitations import repositories as invitations_repositories
@@ -68,7 +68,7 @@ async def create_project(
     if not owner_role:
         owner_role = await roles_repositories.get_first_role(project=project)
 
-    await roles_repositories.create_membership(user=owner, project=project, role=owner_role)
+    await roles_repositories.create_project_membership(user=owner, project=project, role=owner_role)
 
     return project
 
@@ -78,6 +78,8 @@ async def get_project(slug: str) -> Project | None:
 
 
 async def get_project_detail(project: Project, user: AnyUser) -> Project:
+    # TODO: This function needs to be refactored. A Project model object is modified by adding new attributes.
+    #       This should be done with a dataclass (for example) that clearly defines and types the content.
     (
         is_project_admin,
         is_project_member,
@@ -89,19 +91,23 @@ async def get_project_detail(project: Project, user: AnyUser) -> Project:
     project.workspace = await workspaces_repositories.get_workspace_summary(id=project.workspace.id, user_id=user.id)
 
     # User related fields
-    project.user_permissions = await permissions_services.get_user_permissions_for_project(
-        is_project_admin=is_project_admin,
-        is_workspace_admin=is_workspace_admin,
-        is_project_member=is_project_member,
-        is_workspace_member=is_workspace_member,
-        is_authenticated=user.is_authenticated,
-        project_role_permissions=project_role_permissions,
-        project=project,
+    project.user_permissions = (  # type: ignore[attr-defined]
+        await permissions_services.get_user_permissions_for_project(
+            is_project_admin=is_project_admin,
+            is_workspace_admin=is_workspace_admin,
+            is_project_member=is_project_member,
+            is_workspace_member=is_workspace_member,
+            is_authenticated=user.is_authenticated,
+            project_role_permissions=project_role_permissions,
+            project=project,
+        )
     )
 
-    project.user_is_admin = is_project_admin
-    project.user_is_member = await roles_repositories.user_is_project_member(project.slug, user.id)
-    project.user_has_pending_invitation = (
+    project.user_is_admin = is_project_admin  # type: ignore[attr-defined]
+    project.user_is_member = await roles_repositories.user_is_project_member(  # type: ignore[attr-defined]
+        project.slug, user.id
+    )
+    project.user_has_pending_invitation = (  # type: ignore[attr-defined]
         False
         if user.is_anonymous
         else await (invitations_repositories.has_pending_project_invitation_for_user(user=user, project=project))
@@ -153,4 +159,4 @@ async def get_workspace_member_permissions(project: Project) -> list[str]:
     if not await projects_repositories.project_is_in_premium_workspace(project):
         raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be seen")
 
-    return project.workspace_member_permissions
+    return project.workspace_member_permissions or []

@@ -10,7 +10,7 @@ from asgiref.sync import sync_to_async
 from fastapi import status
 from taiga.permissions import choices
 from taiga.projects.models import Project
-from taiga.roles.models import Role
+from taiga.roles.models import ProjectRole
 from tests.utils import factories as f
 from tests.utils.images import create_valid_testing_image
 
@@ -36,12 +36,12 @@ async def test_create_project_being_workspace_admin(client):
 async def test_create_project_being_workspace_member(client):
     workspace = await f.create_workspace()
     general_member_role = await f.create_workspace_role(
-        permissions=choices.WORKSPACE_PERMISSIONS,
+        permissions=choices.WorkspacePermissions.values,
         is_admin=False,
         workspace=workspace,
     )
     user2 = await f.create_user()
-    await f.create_workspace_membership(user=user2, workspace=workspace, workspace_role=general_member_role)
+    await f.create_workspace_membership(user=user2, workspace=workspace, role=general_member_role)
     data = {"name": "Project test", "color": 1, "workspaceSlug": workspace.slug}
     files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
 
@@ -114,7 +114,7 @@ async def test_list_workspace_invited_projects_success(client):
     project = await f.create_project(workspace=workspace, owner=user1)
     user2 = await f.create_user()
     await f.create_workspace_membership(user=user2, workspace=workspace)
-    await f.create_invitation(email=user2.email, user=user2, project=project, invited_by=user1)
+    await f.create_project_invitation(email=user2.email, user=user2, project=project, invited_by=user1)
 
     client.login(user2)
     response = client.get(f"/workspaces/{workspace.slug}/invited-projects")
@@ -145,14 +145,14 @@ async def test_get_project_being_project_admin(client):
 
 async def test_get_project_being_project_member(client):
     project = await f.create_project()
-    general_member_role = await f.create_role(
-        permissions=choices.PROJECT_PERMISSIONS,
+    general_member_role = await f.create_project_role(
+        permissions=choices.ProjectPermissions.values,
         is_admin=False,
         project=project,
     )
 
     user2 = await f.create_user()
-    await f.create_membership(user=user2, project=project, role=general_member_role)
+    await f.create_project_membership(user=user2, project=project, role=general_member_role)
 
     client.login(user2)
     response = client.get(f"/projects/{project.slug}")
@@ -161,14 +161,14 @@ async def test_get_project_being_project_member(client):
 
 async def test_get_project_being_invited_user(client):
     project = await f.create_project()
-    general_member_role = await f.create_role(
-        permissions=choices.PROJECT_PERMISSIONS,
+    general_member_role = await f.create_project_role(
+        permissions=choices.ProjectPermissions.values,
         is_admin=False,
         project=project,
     )
 
     user2 = await f.create_user()
-    await f.create_invitation(user=user2, project=project, role=general_member_role)
+    await f.create_project_invitation(user=user2, project=project, role=general_member_role)
 
     client.login(user2)
     response = client.get(f"/projects/{project.slug}")
@@ -222,13 +222,13 @@ async def test_get_project_roles_being_project_admin(client):
 
 async def test_get_project_roles_being_general_member(client):
     project = await f.create_project()
-    general_member_role = await f.create_role(
-        permissions=choices.PROJECT_PERMISSIONS,
+    general_member_role = await f.create_project_role(
+        permissions=choices.ProjectPermissions.values,
         is_admin=False,
         project=project,
     )
     user2 = await f.create_user()
-    await f.create_membership(user=user2, project=project, role=general_member_role)
+    await f.create_project_membership(user=user2, project=project, role=general_member_role)
 
     client.login(user2)
     response = client.get(f"/projects/{project.slug}/roles")
@@ -313,7 +313,7 @@ async def test_get_project_workspace_member_permissions_no_premium(client):
 
 
 @sync_to_async
-def _get_role(project: Project) -> Role:
+def _get_role(project: Project) -> ProjectRole:
     return project.roles.get(slug="general")
 
 
@@ -322,7 +322,7 @@ async def test_get_project_workspace_member_permissions_no_admin(client):
     user2 = await f.create_user()
     role = await _get_role(project=project)
 
-    await f.create_membership(user=user2, project=project, role=role)
+    await f.create_project_membership(user=user2, project=project, role=role)
     client.login(user2)
     response = client.get(f"/projects/{project.slug}/workspace-member-permissions")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
@@ -352,8 +352,8 @@ async def test_get_project_workspace_member_permissions_anonymous_user(client):
 @pytest.mark.parametrize(
     "permissions",
     [
-        (["view_us", "view_tasks"]),
-        (["view_us", "view_tasks", "comment_task"]),
+        (["view_us", "view_task"]),
+        (["view_us", "view_task", "comment_task"]),
         (["view_us", "comment_us"]),
     ],
 )
@@ -378,7 +378,7 @@ async def test_update_project_public_permissions_project_not_found(client):
 @pytest.mark.parametrize(
     "permissions",
     [
-        (["view_tasks"]),
+        (["view_task"]),
         (["comment_task"]),
         (["comment_us"]),
     ],
@@ -437,7 +437,7 @@ async def test_update_project_public_permissions_anonymous_user(client):
 async def test_update_project_workspace_member_permissions_ok(client):
     workspace = await f.create_workspace(is_premium=True)
     project = await f.create_project(workspace=workspace)
-    data = {"permissions": ["view_us", "view_tasks"]}
+    data = {"permissions": ["view_us", "view_task"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.slug}/workspace-member-permissions", json=data)
@@ -465,7 +465,7 @@ async def test_update_project_workspace_member_permissions_project_not_found(cli
 
 async def test_update_project_workspace_member_permissions_incompatible(client):
     project = await f.create_project()
-    data = {"permissions": ["view_tasks"]}
+    data = {"permissions": ["view_task"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.slug}/workspace-member-permissions", json=data)

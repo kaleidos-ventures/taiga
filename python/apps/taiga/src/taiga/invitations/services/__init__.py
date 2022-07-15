@@ -13,20 +13,20 @@ from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
 from taiga.invitations import events as invitations_events
 from taiga.invitations import repositories as invitations_repositories
-from taiga.invitations.choices import InvitationStatus
-from taiga.invitations.dataclasses import CreateInvitations, PublicInvitation
-from taiga.invitations.models import Invitation
+from taiga.invitations.choices import ProjectInvitationStatus
+from taiga.invitations.dataclasses import CreateProjectInvitations, PublicProjectInvitation
+from taiga.invitations.models import ProjectInvitation
 from taiga.invitations.services import exceptions as ex
 from taiga.invitations.tokens import ProjectInvitationToken
 from taiga.projects.models import Project
 from taiga.projects.services import get_logo_small_thumbnail_url
 from taiga.roles import repositories as roles_repositories
-from taiga.tokens import TokenError
+from taiga.tokens.exceptions import TokenError
 from taiga.users import repositories as users_repositories
-from taiga.users.models import User
+from taiga.users.models import AnyUser, User
 
 
-async def get_project_invitation(token: str) -> Invitation | None:
+async def get_project_invitation(token: str) -> ProjectInvitation | None:
     try:
         invitation_token = await ProjectInvitationToken.create(token=token)
     except TokenError:
@@ -35,10 +35,10 @@ async def get_project_invitation(token: str) -> Invitation | None:
     return await invitations_repositories.get_project_invitation(**invitation_token.object_data)
 
 
-async def get_public_project_invitation(token: str) -> PublicInvitation | None:
+async def get_public_project_invitation(token: str) -> PublicProjectInvitation | None:
     if invitation := await get_project_invitation(token=token):
 
-        return PublicInvitation(
+        return PublicProjectInvitation(
             email=invitation.email,
             existing_user=invitation.user is not None,
             project=invitation.project,
@@ -47,15 +47,17 @@ async def get_public_project_invitation(token: str) -> PublicInvitation | None:
     return None
 
 
-async def get_project_invitation_by_username_or_email(project_slug: str, username_or_email: str) -> Invitation | None:
+async def get_project_invitation_by_username_or_email(
+    project_slug: str, username_or_email: str
+) -> ProjectInvitation | None:
     return await invitations_repositories.get_project_invitation_by_username_or_email(
         project_slug=project_slug, username_or_email=username_or_email
     )
 
 
-async def get_paginated_project_pending_invitations(
-    project: Project, user: User, offset: int, limit: int
-) -> tuple[Pagination, list[Invitation]]:
+async def get_paginated_pending_project_invitations(
+    project: Project, user: AnyUser, offset: int, limit: int
+) -> tuple[Pagination, list[ProjectInvitation]]:
     pagination = Pagination(offset=offset, limit=limit, total=0)
 
     if user.is_anonymous:
@@ -65,14 +67,14 @@ async def get_paginated_project_pending_invitations(
 
     if role and role.is_admin:
         invitations = await invitations_repositories.get_project_invitations(
-            project_slug=project.slug, status=InvitationStatus.PENDING, offset=offset, limit=limit
+            project_slug=project.slug, status=ProjectInvitationStatus.PENDING, offset=offset, limit=limit
         )
         total_invitations = await invitations_repositories.get_total_project_invitations(
-            project_slug=project.slug, status=InvitationStatus.PENDING
+            project_slug=project.slug, status=ProjectInvitationStatus.PENDING
         )
     else:
         invitations = await invitations_repositories.get_project_invitations(
-            project_slug=project.slug, status=InvitationStatus.PENDING, user=user, offset=offset, limit=limit
+            project_slug=project.slug, status=ProjectInvitationStatus.PENDING, user=user, offset=offset, limit=limit
         )
         total_invitations = len(invitations)
 
@@ -81,11 +83,11 @@ async def get_paginated_project_pending_invitations(
     return pagination, invitations
 
 
-async def _generate_project_invitation_token(invitation: Invitation) -> str:
+async def _generate_project_invitation_token(invitation: ProjectInvitation) -> str:
     return str(await ProjectInvitationToken.create_for_object(invitation))
 
 
-async def send_project_invitation_email(invitation: Invitation, is_resend: bool | None = False) -> None:
+async def send_project_invitation_email(invitation: ProjectInvitation, is_resend: bool | None = False) -> None:
     project = invitation.project
     sender = invitation.resent_by if is_resend else invitation.invited_by
     receiver = invitation.user
@@ -99,7 +101,7 @@ async def send_project_invitation_email(invitation: Invitation, is_resend: bool 
         "project_color": project.color,
         "project_image_url": await get_logo_small_thumbnail_url(project.logo),
         "project_workspace": project.workspace.name,
-        "sender_name": sender.full_name,
+        "sender_name": sender.full_name if sender else None,
         "receiver_name": receiver.full_name if receiver else None,
     }
 
@@ -110,16 +112,16 @@ async def send_project_invitation_email(invitation: Invitation, is_resend: bool 
     )
 
 
-async def create_invitations(
+async def create_project_invitations(
     project: Project, invitations: list[dict[str, str]], invited_by: User
-) -> CreateInvitations:
+) -> CreateProjectInvitations:
     # create two lists with roles_slug and the emails received (either directly by the invitation's email, or by the
     # invited username's email)
     already_members = 0
-    emails = []
-    emails_roles = []
-    usernames = []
-    usernames_roles = []
+    emails: list[str] = []
+    emails_roles: list[str] = []
+    usernames: list[str] = []
+    usernames_roles: list[str] = []
     for i in invitations:
         if i.get("username"):
             usernames.append(i["username"])
@@ -147,9 +149,9 @@ async def create_invitations(
         wrong_usernames = set(usernames) - users_usernames_dict.keys()
         raise ex.NonExistingUsernameError(f"These usernames don't exist: {wrong_usernames}")
 
-    invitations_to_create = {}
-    invitations_to_update = {}
-    invitations_to_send = {}
+    invitations_to_create: dict[str, ProjectInvitation] = {}
+    invitations_to_update: dict[str, ProjectInvitation] = {}
+    invitations_to_send: dict[str, ProjectInvitation] = {}
     project_members = await roles_repositories.get_project_members(project=project)
 
     users_dict = users_emails_dict | users_usernames_dict
@@ -171,7 +173,7 @@ async def create_invitations(
             continue
         email = user.email if user else key
         pending_invitation = await invitations_repositories.get_project_invitation_by_email(
-            project_slug=project.slug, email=email, status=InvitationStatus.PENDING
+            project_slug=project.slug, email=email, status=ProjectInvitationStatus.PENDING
         )
         if pending_invitation:
             pending_invitation.role = project_roles_dict[role_slug]
@@ -181,7 +183,7 @@ async def create_invitations(
                 invitations_to_send[email] = pending_invitation
             invitations_to_update[email] = pending_invitation
         else:
-            new_invitation = Invitation(
+            new_invitation = ProjectInvitation(
                 user=user,
                 project=project,
                 role=project_roles_dict[role_slug],
@@ -192,10 +194,10 @@ async def create_invitations(
             invitations_to_send[email] = new_invitation
 
     if len(invitations_to_update) > 0:
-        await invitations_repositories.update_invitations(objs=invitations_to_update.values())
+        await invitations_repositories.update_project_invitations(objs=invitations_to_update.values())
 
     if len(invitations_to_create) > 0:
-        await invitations_repositories.create_invitations(objs=invitations_to_create.values())
+        await invitations_repositories.create_project_invitations(objs=invitations_to_create.values())
 
     invitations_to_send_list = invitations_to_send.values()
     for invitation in invitations_to_send_list:
@@ -206,24 +208,27 @@ async def create_invitations(
             project=project, invitations=invitations_to_send_list, invited_by=invited_by
         )
 
-    return CreateInvitations(invitations=list(invitations_to_send_list), already_members=already_members)
+    return CreateProjectInvitations(invitations=list(invitations_to_send_list), already_members=already_members)
 
 
-async def accept_project_invitation(invitation: Invitation) -> Invitation:
-    if invitation.status == InvitationStatus.ACCEPTED:
+async def accept_project_invitation(invitation: ProjectInvitation) -> ProjectInvitation:
+    if invitation.status == ProjectInvitationStatus.ACCEPTED:
         raise ex.InvitationAlreadyAcceptedError("The invitation has already been accepted")
 
-    if invitation.status == InvitationStatus.REVOKED:
+    if invitation.status == ProjectInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation is revoked")
 
     accepted_invitation = await invitations_repositories.accept_project_invitation(invitation=invitation)
-    await roles_repositories.create_membership(project=invitation.project, role=invitation.role, user=invitation.user)
+
+    await roles_repositories.create_project_membership(
+        project=invitation.project, role=invitation.role, user=invitation.user
+    )
     await invitations_events.emit_event_when_project_invitation_is_accepted(invitation=invitation)
 
     return accepted_invitation
 
 
-async def accept_project_invitation_from_token(token: str, user: User) -> Invitation:
+async def accept_project_invitation_from_token(token: str, user: User) -> ProjectInvitation:
     invitation = await get_project_invitation(token=token)
 
     if not invitation:
@@ -232,16 +237,16 @@ async def accept_project_invitation_from_token(token: str, user: User) -> Invita
     if not is_project_invitation_for_this_user(invitation=invitation, user=user):
         raise ex.InvitationIsNotForThisUserError("Invitation is not for this user")
 
-    if invitation.status == InvitationStatus.ACCEPTED:
+    if invitation.status == ProjectInvitationStatus.ACCEPTED:
         raise ex.InvitationAlreadyAcceptedError("The invitation has already been accepted")
 
-    if invitation.status == InvitationStatus.REVOKED:
+    if invitation.status == ProjectInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation is revoked")
 
     return await accept_project_invitation(invitation=invitation)
 
 
-def is_project_invitation_for_this_user(invitation: Invitation, user: User) -> bool:
+def is_project_invitation_for_this_user(invitation: ProjectInvitation, user: User) -> bool:
     """
     Check if a project invitation if for an specific user
     """
@@ -255,16 +260,16 @@ async def has_pending_project_invitation_for_user(project: Project, user: User) 
 async def update_user_projects_invitations(user: User) -> None:
     await invitations_repositories.update_user_projects_invitations(user=user)
     invitations = await invitations_repositories.get_user_projects_invitations(
-        user=user, status=InvitationStatus.PENDING
+        user=user, status=ProjectInvitationStatus.PENDING
     )
     await invitations_events.emit_event_when_user_invitations_are_updated(invitations=invitations)
 
 
-async def resend_project_invitation(invitation: Invitation, resent_by: User) -> None:
-    if invitation.status == InvitationStatus.ACCEPTED:
+async def resend_project_invitation(invitation: ProjectInvitation, resent_by: User) -> None:
+    if invitation.status == ProjectInvitationStatus.ACCEPTED:
         raise ex.InvitationAlreadyAcceptedError("Cannot resend an accepted invitation")
 
-    if invitation.status == InvitationStatus.REVOKED:
+    if invitation.status == ProjectInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation has already been revoked")
 
     time_since_last_resend = (
@@ -283,11 +288,11 @@ async def resend_project_invitation(invitation: Invitation, resent_by: User) -> 
         await send_project_invitation_email(invitation=invitation, is_resend=True)
 
 
-async def revoke_project_invitation(invitation: Invitation, revoked_by: User) -> None:
-    if invitation.status == InvitationStatus.ACCEPTED:
+async def revoke_project_invitation(invitation: ProjectInvitation, revoked_by: User) -> None:
+    if invitation.status == ProjectInvitationStatus.ACCEPTED:
         raise ex.InvitationAlreadyAcceptedError("Cannot revoke an accepted invitation")
 
-    if invitation.status == InvitationStatus.REVOKED:
+    if invitation.status == ProjectInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation has already been revoked")
 
     await invitations_repositories.revoke_project_invitation(invitation=invitation, revoked_by=revoked_by)

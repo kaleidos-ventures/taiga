@@ -5,10 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 from asgiref.sync import sync_to_async
-from django.core.files import File
-from django.db.models import Q
-from taiga.invitations.choices import InvitationStatus
+from taiga.base.db.models import File, Q
+from taiga.invitations.choices import ProjectInvitationStatus
 from taiga.projects.models import Project, ProjectTemplate
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
@@ -17,12 +18,12 @@ from taiga.workspaces.models import Workspace
 @sync_to_async
 def get_projects(workspace_slug: str) -> list[Project]:
     return list(
-        Project.objects.prefetch_related("workspace").filter(workspace__slug=workspace_slug).order_by("-created_date")
+        Project.objects.prefetch_related("workspace").filter(workspace__slug=workspace_slug).order_by("-created_at")
     )
 
 
 @sync_to_async
-def get_workspace_projects_for_user(workspace_id: int, user_id: int) -> list[Project]:
+def get_workspace_projects_for_user(workspace_id: UUID, user_id: UUID) -> list[Project]:
     # projects of a workspace where:
     # - the user is not pj-member but the project allows to ws-members
     # - the user is pj-member
@@ -32,16 +33,16 @@ def get_workspace_projects_for_user(workspace_id: int, user_id: int) -> list[Pro
     return list(
         Project.objects.prefetch_related("workspace")
         .filter(pj_in_workspace & (ws_allowed | pj_allowed))
-        .order_by("-created_date")
+        .order_by("-created_at")
         .distinct()
     )
 
 
 @sync_to_async
-def get_workspace_invited_projects_for_user(workspace_id: int, user_id: int) -> list[Project]:
+def get_workspace_invited_projects_for_user(workspace_id: UUID, user_id: UUID) -> list[Project]:
     return list(
         Project.objects.filter(
-            workspace_id=workspace_id, invitations__user_id=user_id, invitations__status=InvitationStatus.PENDING
+            workspace_id=workspace_id, invitations__user_id=user_id, invitations__status=ProjectInvitationStatus.PENDING
         )
     )
 
@@ -53,7 +54,7 @@ def create_project(
     owner: User,
     template: ProjectTemplate,
     description: str | None = None,
-    color: int | None = None,
+    color: int = 1,
     logo: File | None = None,  # type: ignore
 ) -> Project:
 

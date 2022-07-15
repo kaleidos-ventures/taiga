@@ -22,7 +22,7 @@ async def test_get_project_role():
     slug = "general"
 
     with patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository:
-        fake_role_repository.get_project_role.return_value = f.build_role()
+        fake_role_repository.get_project_role.return_value = f.build_project_role()
         await services.get_project_role(project=project, slug=slug)
         fake_role_repository.get_project_role.assert_awaited_once()
 
@@ -32,38 +32,38 @@ async def test_get_project_role():
 #######################################################
 
 
-async def test_update_role_permissions_is_admin():
-    role = f.build_role(is_admin=True)
+async def test_update_project_role_permissions_is_admin():
+    role = f.build_project_role(is_admin=True)
     permissions = []
 
     with pytest.raises(ex.NonEditableRoleError):
-        await services.update_role_permissions(role=role, permissions=permissions)
+        await services.update_project_role_permissions(role=role, permissions=permissions)
 
 
-async def test_update_role_permissions_incompatible_permissions():
-    role = f.build_role(is_admin=False)
-    permissions = ["view_tasks"]
+async def test_update_project_role_permissions_incompatible_permissions():
+    role = f.build_project_role(is_admin=False)
+    permissions = ["view_task"]
 
     with pytest.raises(ex.IncompatiblePermissionsSetError):
-        await services.update_role_permissions(role=role, permissions=permissions)
+        await services.update_project_role_permissions(role=role, permissions=permissions)
 
 
-async def test_update_role_permissions_not_valid_permissions():
-    role = f.build_role(is_admin=False)
+async def test_update_project_role_permissions_not_valid_permissions():
+    role = f.build_project_role(is_admin=False)
     permissions = ["not_valid", "foo", "bar"]
 
     with pytest.raises(ex.NotValidPermissionsSetError):
-        await services.update_role_permissions(role=role, permissions=permissions)
+        await services.update_project_role_permissions(role=role, permissions=permissions)
 
 
-async def test_update_role_permissions_ok():
-    role = f.build_role()
+async def test_update_project_role_permissions_ok():
+    role = f.build_project_role()
     permissions = ["view_us"]
 
     with patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository:
-        fake_role_repository.update_role_permissions.return_value = role
-        await services.update_role_permissions(role=role, permissions=permissions)
-        fake_role_repository.update_role_permissions.assert_awaited_once()
+        fake_role_repository.update_project_role_permissions.return_value = role
+        await services.update_project_role_permissions(role=role, permissions=permissions)
+        fake_role_repository.update_project_role_permissions.assert_awaited_once()
 
 
 #######################################################
@@ -87,8 +87,8 @@ async def test_get_paginated_project_memberships():
 async def test_update_project_membership_role_non_existing_role():
     project = f.build_project()
     user = f.build_user()
-    general_role = f.build_role(project=project, is_admin=False)
-    membership = f.build_membership(user=user, project=project, role=general_role)
+    general_role = f.build_project_role(project=project, is_admin=False)
+    membership = f.build_project_membership(user=user, project=project, role=general_role)
     non_existing_role_slug = "non_existing_role_slug"
     with (
         patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository,
@@ -105,9 +105,9 @@ async def test_update_project_membership_role_non_existing_role():
 
 async def test_update_project_membership_role_only_one_admin():
     project = f.build_project()
-    admin_role = f.build_role(project=project, is_admin=True)
-    membership = f.build_membership(user=project.owner, project=project, role=admin_role)
-    general_role = f.build_role(project=project, is_admin=False)
+    admin_role = f.build_project_role(project=project, is_admin=True)
+    membership = f.build_project_membership(user=project.owner, project=project, role=admin_role)
+    general_role = f.build_project_role(project=project, is_admin=False)
     with (
         patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository,
         patch("taiga.roles.services.roles_events", autospec=True) as fake_roles_events,
@@ -126,9 +126,9 @@ async def test_update_project_membership_role_only_one_admin():
 async def test_update_project_membership_role_ok():
     project = f.build_project()
     user = f.build_user()
-    general_role = f.build_role(project=project, is_admin=False)
-    membership = f.build_membership(user=user, project=project, role=general_role)
-    admin_role = f.build_role(project=project, is_admin=True)
+    general_role = f.build_project_role(project=project, is_admin=False)
+    membership = f.build_project_membership(user=user, project=project, role=general_role)
+    admin_role = f.build_project_role(project=project, is_admin=True)
     with (
         patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository,
         patch("taiga.roles.services.roles_events", autospec=True) as fake_roles_events,

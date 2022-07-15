@@ -6,7 +6,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-export DJANGO_SETTINGS_MODULE=taiga.conf.taiga6
+export DJANGO_SETTINGS_MODULE=taiga.base.django.settings
 
 show_answer=true
 while [ $# -gt 0 ]; do
@@ -46,13 +46,12 @@ if [ "$?" -ne "0" ]; then
   echo && echo "Error accessing the database, aborting."
 else
   echo "-> Load migrations"
-  python -m taiga6.manage migrate
+  python -m taiga migrate
   python -m taiga tasksqueue init
-  python -m taiga6.manage createcachetable
   echo "-> Load initial user (admin/123123)"
-  python -m taiga6.manage loaddata initial_user --traceback
+  python -m taiga loadfixtures initial_user
   echo "-> Load initial project_templates (scrum/kanban)"
-  python -m taiga6.manage loaddata initial_project_templates --traceback
+  python -m taiga loadfixtures initial_project_templates
   echo "-> Generate sample data"
   python -m taiga sampledata
 fi

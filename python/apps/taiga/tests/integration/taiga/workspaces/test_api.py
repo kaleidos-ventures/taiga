@@ -60,12 +60,12 @@ async def test_get_workspace_being_workspace_admin(client):
 async def test_get_workspace_being_workspace_member(client):
     workspace = await f.create_workspace()
     general_member_role = await f.create_workspace_role(
-        permissions=choices.WORKSPACE_PERMISSIONS,
+        permissions=choices.WorkspacePermissions.values,
         is_admin=False,
         workspace=workspace,
     )
     user2 = await f.create_user()
-    await f.create_workspace_membership(user=user2, workspace=workspace, workspace_role=general_member_role)
+    await f.create_workspace_membership(user=user2, workspace=workspace, role=general_member_role)
 
     client.login(user2)
     response = client.get(f"/workspaces/{workspace.slug}")

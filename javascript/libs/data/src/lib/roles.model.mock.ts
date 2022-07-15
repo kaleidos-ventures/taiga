@@ -46,7 +46,7 @@ const getPermissions = () => {
     Permissions.commentUserstory,
     Permissions.deleteUserstory,
 
-    Permissions.viewTasks,
+    Permissions.viewTask,
     Permissions.addTask,
     Permissions.commentTask,
     Permissions.modifyTask,

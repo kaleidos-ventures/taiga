@@ -9,7 +9,7 @@ import asyncio
 
 import pytest
 import pytest_asyncio
-from django.core.management import call_command
+from taiga.base.django.commands import call_django_command
 from taiga.events import connect_events_manager
 
 from .fixtures import *  # noqa
@@ -45,7 +45,7 @@ def event_loop():
 @pytest.fixture(scope="function")
 def django_db_setup(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
-        call_command("loaddata", "initial_project_templates.json", verbosity=0)
+        call_django_command("loaddata", "initial_project_templates.json", verbosity=0)
 
 
 #

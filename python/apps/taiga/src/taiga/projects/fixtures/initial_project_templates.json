@@ -1,0 +1,55 @@
+[
+{
+    "model": "projects.projecttemplate",
+    "pk": 1,
+    "fields": {
+        "name": "Kanban",
+        "slug": "kanban",
+        "description": "Kanban is a method for managing knowledge work with an emphasis on just-in-time delivery while not overloading the team members. In this approach, the process, from definition of a task to its delivery to the customer, is displayed for participants to see and team members pull work from a queue.",
+        "order": 2,
+        "created_at": "2014-04-22T14:50:19.738Z",
+        "modified_at": "2016-08-24T16:26:45.365Z",
+        "default_owner_role": "admin",
+        "roles": [
+            {
+                "slug": "admin",
+                "computable": true,
+                "name": "Administrator",
+                "order": 1,
+                "is_admin": true,
+                "permissions": [
+                  "add_us",
+                  "comment_us",
+                  "delete_us",
+                  "modify_us",
+                  "view_us",
+                  "add_task",
+                  "comment_task",
+                  "delete_task",
+                  "modify_task",
+                  "view_task"
+                ]
+            },
+            {
+                "slug": "general",
+                "computable": true,
+                "name": "General",
+                "order": 2,
+                "is_admin": false,
+                "permissions": [
+                  "add_us",
+                  "comment_us",
+                  "delete_us",
+                  "modify_us",
+                  "view_us",
+                  "add_task",
+                  "comment_task",
+                  "delete_task",
+                  "modify_task",
+                  "view_task"
+                ]
+            }
+        ]
+    }
+}
+]

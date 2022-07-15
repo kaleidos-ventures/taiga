@@ -10,7 +10,7 @@ import os
 import secrets
 from functools import lru_cache
 
-from pydantic import AnyHttpUrl, BaseSettings, EmailStr
+from pydantic import AnyHttpUrl, BaseSettings, EmailStr, validator
 from taiga.conf.emails import EmailSettings
 from taiga.conf.images import ImageSettings
 from taiga.conf.logs import LOGGING_CONFIG
@@ -20,6 +20,7 @@ from taiga.conf.tokens import TokensSettings
 class Settings(BaseSettings):
     # Commons
     SECRET_KEY: str = secrets.token_urlsafe(32)
+    UUID_NODE: int | None = None
     DEBUG: bool = False
 
     # Taiga URLS
@@ -32,6 +33,10 @@ class Settings(BaseSettings):
     DB_PASSWORD: str = "taiga"
     DB_HOST: str = "localhost"
     DB_PORT: int = 5432
+
+    # Media and Static files
+    MEDIA_ROOT: str = "media"  # A related or absolute directory path
+    STATIC_ROOT: str = "static"  # A related or absolute directory path
 
     # Pagination
     DEFAULT_PAGE_SIZE: int = 10
@@ -70,6 +75,12 @@ class Settings(BaseSettings):
     TOKENS: TokensSettings = TokensSettings()
     IMAGES: ImageSettings = ImageSettings()
     EMAIL: EmailSettings = EmailSettings()
+
+    @validator("UUID_NODE", pre=False)
+    def validate_uuid_node(cls, v: int | None) -> int | None:
+        if v is not None and not 0 <= v < 1 << 48:
+            raise ValueError("out of range (need a 48-bit value)")
+        return v
 
     class Config:
         env_prefix = "TAIGA_"

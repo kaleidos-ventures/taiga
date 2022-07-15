@@ -73,7 +73,7 @@ async def test_update_project_role_permissions_role_admin(client):
 async def test_update_project_role_permissions_incompatible_permissions(client):
     project = await f.create_project()
     role_slug = "general"
-    data = {"permissions": ["view_tasks"]}
+    data = {"permissions": ["view_task"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
@@ -112,14 +112,14 @@ async def test_update_project_role_permissions_ok(client):
 async def test_get_project_memberships(client):
     project = await f.create_project()
 
-    general_member_role = await f.create_role(
+    general_member_role = await f.create_project_role(
         project=project,
-        permissions=choices.PROJECT_PERMISSIONS,
+        permissions=choices.ProjectPermissions.values,
         is_admin=False,
     )
 
     pj_member = await f.create_user()
-    await f.create_membership(user=pj_member, project=project, role=general_member_role)
+    await f.create_project_membership(user=pj_member, project=project, role=general_member_role)
 
     client.login(pj_member)
     response = client.get(f"/projects/{project.slug}/memberships")
@@ -129,16 +129,16 @@ async def test_get_project_memberships(client):
 async def test_get_project_memberships_with_pagination(client):
     project = await f.create_project()
 
-    general_member_role = await f.create_role(
+    general_member_role = await f.create_project_role(
         project=project,
-        permissions=choices.PROJECT_PERMISSIONS,
+        permissions=choices.ProjectPermissions.values,
         is_admin=False,
     )
 
     pj_member = await f.create_user()
     pj_member2 = await f.create_user()
-    await f.create_membership(user=pj_member, project=project, role=general_member_role)
-    await f.create_membership(user=pj_member2, project=project, role=general_member_role)
+    await f.create_project_membership(user=pj_member, project=project, role=general_member_role)
+    await f.create_project_membership(user=pj_member2, project=project, role=general_member_role)
 
     client.login(pj_member)
 
@@ -189,12 +189,12 @@ async def test_update_project_membership_role_user_without_permission(client):
     owner = await f.create_user()
     project = await f.create_project(owner=owner)
     user = await f.create_user()
-    general_member_role = await f.create_role(
+    general_member_role = await f.create_project_role(
         project=project,
-        permissions=choices.PROJECT_PERMISSIONS,
+        permissions=choices.ProjectPermissions.values,
         is_admin=False,
     )
-    await f.create_membership(user=user, project=project, role=general_member_role)
+    await f.create_project_membership(user=user, project=project, role=general_member_role)
 
     client.login(user)
     data = {"username": owner.username, "role_slug": "general"}
@@ -206,12 +206,12 @@ async def test_update_project_membership_role_non_existing_role(client):
     owner = await f.create_user()
     project = await f.create_project(owner=owner)
     user = await f.create_user()
-    general_member_role = await f.create_role(
+    general_member_role = await f.create_project_role(
         project=project,
-        permissions=choices.PROJECT_PERMISSIONS,
+        permissions=choices.ProjectPermissions.values,
         is_admin=False,
     )
-    await f.create_membership(user=user, project=project, role=general_member_role)
+    await f.create_project_membership(user=user, project=project, role=general_member_role)
 
     client.login(owner)
     data = {"username": user.username, "role_slug": "non_existing_role"}
@@ -223,12 +223,12 @@ async def test_update_project_membership_role_only_one_admin(client):
     owner = await f.create_user()
     project = await f.create_project(owner=owner)
     user = await f.create_user()
-    general_member_role = await f.create_role(
+    general_member_role = await f.create_project_role(
         project=project,
-        permissions=choices.PROJECT_PERMISSIONS,
+        permissions=choices.ProjectPermissions.values,
         is_admin=False,
     )
-    await f.create_membership(user=user, project=project, role=general_member_role)
+    await f.create_project_membership(user=user, project=project, role=general_member_role)
 
     client.login(owner)
     data = {"username": owner.username, "role_slug": "general"}
@@ -240,12 +240,12 @@ async def test_update_project_membership_role_ok(client):
     owner = await f.create_user()
     project = await f.create_project(owner=owner)
     user = await f.create_user()
-    general_member_role = await f.create_role(
+    general_member_role = await f.create_project_role(
         project=project,
-        permissions=choices.PROJECT_PERMISSIONS,
+        permissions=choices.ProjectPermissions.values,
         is_admin=False,
     )
-    await f.create_membership(user=user, project=project, role=general_member_role)
+    await f.create_project_membership(user=user, project=project, role=general_member_role)
 
     client.login(owner)
     data = {"username": user.username, "role_slug": "admin"}

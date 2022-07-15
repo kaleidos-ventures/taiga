@@ -7,7 +7,6 @@
 
 from typing import Any
 
-from django.db.models.fields.files import FieldFile
 from pydantic import AnyHttpUrl, BaseModel, validator
 from taiga.base.utils.asyncio import run_async_as_sync
 from taiga.projects.services import get_logo_large_thumbnail_url, get_logo_small_thumbnail_url
@@ -19,7 +18,7 @@ class ProjectLogoMixin(BaseModel):
     logo_large: AnyHttpUrl | None = None
 
     @validator("logo", always=True)
-    def logo_serializer(cls, v: FieldFile | str | None) -> str | None:
+    def logo_serializer(cls, v: Any | str | None) -> str | None:
         if not v:
             return None
 

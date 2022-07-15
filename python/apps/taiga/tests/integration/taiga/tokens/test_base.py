@@ -34,10 +34,10 @@ from unittest.mock import patch
 
 import pytest
 from asgiref.sync import sync_to_async
-from django.core.management import call_command
 from taiga.base.utils.datetime import epoch_to_datetime
 from taiga.conf import settings
-from taiga.tokens import DenylistMixin, Token
+from taiga.tokens import commands
+from taiga.tokens.base import DenylistMixin, Token
 from taiga.tokens.exceptions import DeniedTokenError, TokenError
 from taiga.tokens.models import DenylistedToken, OutstandingToken
 from tests.utils import factories as f
@@ -194,7 +194,7 @@ async def test_flush_expired_tokens_should_delete_any_expired_tokens():
     assert await ot_count() == 6
     assert await dt_count() == 4
 
-    await sync_to_async(call_command)("flushexpiredtokens")
+    commands.clean()
 
     # Expired outstanding *and* denylisted tokens should be gone
     assert await ot_count() == 4

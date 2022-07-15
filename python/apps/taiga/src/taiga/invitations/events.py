@@ -5,8 +5,10 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import Iterable
+
 from taiga.events import events_manager
-from taiga.invitations.models import Invitation
+from taiga.invitations.models import ProjectInvitation
 from taiga.projects.models import Project
 from taiga.users.models import User
 
@@ -17,12 +19,12 @@ REVOKE_PROJECT_INVITATION = "projectinvitations.update"
 
 
 async def emit_event_when_project_invitations_are_created(
-    project: Project, invitations: Invitation, invited_by: User
+    project: Project, invitations: Iterable[ProjectInvitation], invited_by: User
 ) -> None:
     # Publish event on every user channel
     for invitation in filter(lambda i: i.user, invitations):
         await events_manager.publish_on_user_channel(
-            user=invitation.user,
+            user=invitation.user,  # type: ignore[arg-type]
             type=CREATE_PROJECT_INVITATION,
             sender=invited_by,
             content={"project": invitation.project.slug},
@@ -37,40 +39,36 @@ async def emit_event_when_project_invitations_are_created(
         )
 
 
-async def emit_event_when_project_invitation_is_accepted(invitation: Invitation) -> None:
+async def emit_event_when_project_invitation_is_accepted(invitation: ProjectInvitation) -> None:
     await events_manager.publish_on_project_channel(
         project=invitation.project,
         type=ACCEPT_PROJECT_INVITATION,
-        sender=invitation.user,
+        sender=invitation.user or None,
     )
 
 
-async def emit_event_when_user_invitations_are_updated(invitations: list[Invitation]) -> None:
+async def emit_event_when_user_invitations_are_updated(invitations: list[ProjectInvitation]) -> None:
     for invitation in invitations:
         await events_manager.publish_on_project_channel(
             project=invitation.project,
             type=UPDATE_PROJECT_INVITATION,
-            sender=None,
         )
         if invitation.user:
             await events_manager.publish_on_user_channel(
                 user=invitation.user,
                 type=UPDATE_PROJECT_INVITATION,
                 content={"project": invitation.project.slug},
-                sender=None,
             )
 
 
-async def emit_event_when_project_invitation_is_revoked(invitation: Invitation) -> None:
+async def emit_event_when_project_invitation_is_revoked(invitation: ProjectInvitation) -> None:
     await events_manager.publish_on_project_channel(
         project=invitation.project,
         type=REVOKE_PROJECT_INVITATION,
-        sender=None,
     )
     if invitation.user:
         await events_manager.publish_on_user_channel(
             user=invitation.user,
             type=REVOKE_PROJECT_INVITATION,
             content={"project": invitation.project.slug},
-            sender=None,
         )

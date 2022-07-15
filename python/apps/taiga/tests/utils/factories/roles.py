@@ -11,35 +11,35 @@ from taiga.permissions import choices
 from .base import Factory, factory
 
 
-class RoleFactory(Factory):
+class ProjectRoleFactory(Factory):
     name = factory.Sequence(lambda n: f"Role {n}")
     slug = factory.Sequence(lambda n: f"test-role-{n}")
-    permissions = choices.PROJECT_PERMISSIONS
+    permissions = choices.ProjectPermissions.values
     is_admin = False
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
 
     class Meta:
-        model = "users.Role"
+        model = "projects.ProjectRole"
 
 
 @sync_to_async
-def create_role(**kwargs):
-    return RoleFactory.create(**kwargs)
+def create_project_role(**kwargs):
+    return ProjectRoleFactory.create(**kwargs)
 
 
-def build_role(**kwargs):
-    return RoleFactory.build(**kwargs)
+def build_project_role(**kwargs):
+    return ProjectRoleFactory.build(**kwargs)
 
 
 class WorkspaceRoleFactory(Factory):
     name = factory.Sequence(lambda n: f"WS Role {n}")
     slug = factory.Sequence(lambda n: f"test-ws-role-{n}")
-    permissions = choices.WORKSPACE_PERMISSIONS
+    permissions = choices.WorkspacePermissions.values
     is_admin = False
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
 
     class Meta:
-        model = "users.WorkspaceRole"
+        model = "workspaces.WorkspaceRole"
 
 
 @sync_to_async
@@ -47,28 +47,28 @@ def create_workspace_role(**kwargs):
     return WorkspaceRoleFactory.create(**kwargs)
 
 
-class MembershipFactory(Factory):
+class ProjectMembershipFactory(Factory):
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
-    role = factory.SubFactory("tests.utils.factories.RoleFactory")
+    role = factory.SubFactory("tests.utils.factories.ProjectRoleFactory")
 
     class Meta:
-        model = "projects.Membership"
+        model = "projects.ProjectMembership"
 
 
 @sync_to_async
-def create_membership(**kwargs):
-    return MembershipFactory.create(**kwargs)
+def create_project_membership(**kwargs):
+    return ProjectMembershipFactory.create(**kwargs)
 
 
-def build_membership(**kwargs):
-    return MembershipFactory.build(**kwargs)
+def build_project_membership(**kwargs):
+    return ProjectMembershipFactory.build(**kwargs)
 
 
 class WorkspaceMembershipFactory(Factory):
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
-    workspace_role = factory.SubFactory("tests.utils.factories.WorkspaceRoleFactory")
+    role = factory.SubFactory("tests.utils.factories.WorkspaceRoleFactory")
 
     class Meta:
         model = "workspaces.WorkspaceMembership"

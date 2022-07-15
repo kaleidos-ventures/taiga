@@ -181,7 +181,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
     it('userstory no access', () => {
       const role = RoleMockFactory();
 
-      role.permissions = ['view_tasks', 'view_sprints'] as Permissions[];
+      role.permissions = ['view_task', 'view_sprints'] as Permissions[];
 
       permissionsService.formatRawPermissions.andReturn({
         task: {

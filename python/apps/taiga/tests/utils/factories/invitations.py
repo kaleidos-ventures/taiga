@@ -6,30 +6,30 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from asgiref.sync import sync_to_async
-from taiga.invitations.choices import InvitationStatus
+from taiga.invitations.choices import ProjectInvitationStatus
 
 from .base import Factory, factory
 
 
-class InvitationFactory(Factory):
-    status = InvitationStatus.PENDING
+class ProjectInvitationFactory(Factory):
+    status = ProjectInvitationStatus.PENDING
     email = factory.Sequence(lambda n: f"user{n}@email.com")
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
-    role = factory.SubFactory("tests.utils.factories.RoleFactory")
+    role = factory.SubFactory("tests.utils.factories.ProjectRoleFactory")
     invited_by = factory.SubFactory("tests.utils.factories.UserFactory")
     num_emails_sent = 1
     resent_at = None
     resent_by = None
 
     class Meta:
-        model = "projects.Invitation"
+        model = "invitations.ProjectInvitation"
 
 
 @sync_to_async
-def create_invitation(**kwargs):
-    return InvitationFactory.create(**kwargs)
+def create_project_invitation(**kwargs):
+    return ProjectInvitationFactory.create(**kwargs)
 
 
-def build_invitation(**kwargs):
-    return InvitationFactory.build(**kwargs)
+def build_project_invitation(**kwargs):
+    return ProjectInvitationFactory.build(**kwargs)

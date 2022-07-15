@@ -9,11 +9,11 @@ from typing import Any
 from pydantic import EmailStr, validator
 from taiga.base.serializers import BaseModel
 from taiga.projects.serializers.related import ProjectSmallSummarySerializer
-from taiga.roles.serializers import BaseRoleSerializer
+from taiga.roles.serializers import BaseProjectRoleSerializer
 from taiga.users.serializers import UserSerializer
 
 
-class PublicInvitationSerializer(BaseModel):
+class PublicProjectInvitationSerializer(BaseModel):
     email: EmailStr
     existing_user: bool
     project: ProjectSmallSummarySerializer
@@ -22,18 +22,18 @@ class PublicInvitationSerializer(BaseModel):
         orm_mode = True
 
 
-class InvitationSerializer(BaseModel):
+class ProjectInvitationSerializer(BaseModel):
     user: UserSerializer | None
-    role: BaseRoleSerializer
+    role: BaseProjectRoleSerializer
     email: EmailStr
 
     class Config:
         orm_mode = True
 
 
-class PrivateEmailInvitationSerializer(BaseModel):
+class PrivateEmailProjectInvitationSerializer(BaseModel):
     user: UserSerializer | None
-    role: BaseRoleSerializer
+    role: BaseProjectRoleSerializer
     email: EmailStr | None
 
     class Config:
@@ -48,8 +48,8 @@ class PrivateEmailInvitationSerializer(BaseModel):
             return email
 
 
-class CreateInvitationsSerializer(BaseModel):
-    invitations: list[PrivateEmailInvitationSerializer]
+class CreateProjectInvitationsSerializer(BaseModel):
+    invitations: list[PrivateEmailProjectInvitationSerializer]
     already_members: int
 
     class Config:

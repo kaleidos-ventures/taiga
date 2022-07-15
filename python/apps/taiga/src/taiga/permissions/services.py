@@ -11,13 +11,13 @@ from asgiref.sync import sync_to_async
 from taiga.permissions import choices
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories
-from taiga.users.models import User
+from taiga.users.models import AnyUser
 from taiga.workspaces.models import Workspace
 
 AuthorizableObj = Project | Workspace
 
 
-async def is_project_admin(user: User, obj: Any) -> bool:
+async def is_project_admin(user: AnyUser, obj: Any) -> bool:
     project = await _get_object_project(obj)
     if project is None:
         return False
@@ -29,7 +29,7 @@ async def is_project_admin(user: User, obj: Any) -> bool:
     return role.is_admin if role else False
 
 
-async def is_workspace_admin(user: User, obj: Any) -> bool:
+async def is_workspace_admin(user: AnyUser, obj: Any) -> bool:
     workspace = await _get_object_workspace(obj)
     if workspace is None:
         return False
@@ -42,12 +42,7 @@ async def is_workspace_admin(user: User, obj: Any) -> bool:
 
 
 # TODO: improve tests
-async def user_has_perm(user: User, perm: str, obj: Any, cache: str = "user") -> bool:
-    """
-    cache param determines how memberships are calculated
-    trying to reuse the existing data in cache
-    """
-
+async def user_has_perm(user: AnyUser, perm: str | None, obj: Any) -> bool:
     project = await _get_object_project(obj)
     workspace = await _get_object_workspace(obj)
 
@@ -79,7 +74,7 @@ async def user_has_perm(user: User, perm: str, obj: Any, cache: str = "user") ->
 
 
 # TODO: improve tests
-async def user_can_view_project(user: User, obj: Any, cache: str = "user") -> bool:
+async def user_can_view_project(user: AnyUser, obj: Any) -> bool:
     project = await _get_object_project(obj)
     if not project:
         return False
@@ -125,7 +120,7 @@ def _get_object_project(obj: Any) -> Project | None:
     return None
 
 
-async def get_user_project_role_info(user: User, project: Project) -> tuple[bool, bool, list[str]]:
+async def get_user_project_role_info(user: AnyUser, project: Project) -> tuple[bool, bool, list[str]]:
     role = await roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
     if role:
         return role.is_admin, True, role.permissions
@@ -133,7 +128,7 @@ async def get_user_project_role_info(user: User, project: Project) -> tuple[bool
     return False, False, []
 
 
-async def get_user_workspace_role_info(user: User, workspace: Workspace) -> tuple[bool, bool, list[str]]:
+async def get_user_workspace_role_info(user: AnyUser, workspace: Workspace) -> tuple[bool, bool, list[str]]:
     role = await roles_repositories.get_workspace_role_for_user(user_id=user.id, workspace_id=workspace.id)
     if role:
         return role.is_admin, True, role.permissions
@@ -163,17 +158,17 @@ async def get_user_permissions_for_project(
     # no-role			no-role			pj.public-permissions
     # no-logged			no-logged		pj.public-permissions [only view]
     if is_project_admin:
-        return choices.PROJECT_PERMISSIONS
+        return choices.ProjectPermissions.values
     elif is_workspace_admin:
-        return choices.PROJECT_PERMISSIONS
+        return choices.ProjectPermissions.values
     elif is_project_member:
         return project_role_permissions
     elif is_workspace_member:
-        return project.workspace_member_permissions
+        return project.workspace_member_permissions or []
     elif is_authenticated:
-        return project.public_permissions
+        return project.public_permissions or []
 
-    return project.anon_permissions
+    return project.anon_permissions or []
 
 
 async def get_user_permissions_for_workspace(workspace_role_permissions: list[str]) -> list[str]:
@@ -182,21 +177,20 @@ async def get_user_permissions_for_workspace(workspace_role_permissions: list[st
 
 
 def permissions_are_valid(permissions: list[str]) -> bool:
-    return set.issubset(set(permissions), choices.VALID_PROJECT_CHOICES)
+    return set.issubset(set(permissions), set(choices.ProjectPermissions))
 
 
 def permissions_are_compatible(permissions: list[str]) -> bool:
     # a user cannot see tasks if she has no access to user stories
-    incompatible_permissions = set(["view_tasks"])
-    if "view_us" not in permissions and set.intersection(set(permissions), incompatible_permissions):
+    if "view_us" not in permissions and set.intersection(set(permissions), set(["view_task"])):
         return False
 
     # a user cannot edit a user story if she has no view permission
-    if "view_us" not in permissions and set.intersection(set(permissions), choices.EDIT_US_PERMISSIONS):
+    if "view_us" not in permissions and set.intersection(set(permissions), choices.EditUSPermissions):
         return False
 
     # a user cannot edit a task if she has no view permission
-    if "view_tasks" not in permissions and set.intersection(set(permissions), choices.EDIT_TASK_PERMISSIONS):
+    if "view_task" not in permissions and set.intersection(set(permissions), choices.EditTaskPermissions):
         return False
 
     return True

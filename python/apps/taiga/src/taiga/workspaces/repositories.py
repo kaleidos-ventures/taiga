@@ -6,10 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from itertools import chain
+from typing import Iterable
+from uuid import UUID
 
 from asgiref.sync import sync_to_async
-from django.db.models import BooleanField, Case, CharField, Exists, IntegerField, OuterRef, Prefetch, Q, Value, When
-from taiga.invitations.choices import InvitationStatus
+from taiga.base.db.models import BooleanField, Case, CharField, Exists, IntegerField, OuterRef, Prefetch, Q, Value, When
+from taiga.invitations.choices import ProjectInvitationStatus
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories
 from taiga.users.models import User
@@ -21,27 +23,27 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
     # workspaces where the user is ws-admin with all its projects
     admin_ws_ids = list(
         Workspace.objects.filter(
-            workspace_memberships__user__id=user.id,  # user_is_ws_member
-            workspace_memberships__workspace_role__is_admin=True,  # user_ws_role_is_admin
+            memberships__user__id=user.id,  # user_is_ws_member
+            memberships__role__is_admin=True,  # user_ws_role_is_admin
         )
-        .order_by("-created_date")
+        .order_by("-created_at")
         .values_list("id", flat=True)
     )
-    admin_ws = Workspace.objects.none()
+    admin_ws: Iterable[Workspace] = Workspace.objects.none()
     for ws_id in admin_ws_ids:
         projects_ids = list(
             Project.objects.filter(workspace_id=ws_id)  # pj_in_workspace
-            .order_by("-created_date")
+            .order_by("-created_at")
             .values_list("id", flat=True)
         )
         total_projects = len(projects_ids)
-        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
+        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_at")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         user_is_owner = Workspace.objects.get(id=ws_id).owner.id == user.id
         invited_projects_qs = Project.objects.filter(
             Q(invitations__user_id=user.id)
             | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email)),
-            invitations__status=InvitationStatus.PENDING,
+            invitations__status=ProjectInvitationStatus.PENDING,
             workspace_id=ws_id,
         )
         qs = (
@@ -60,29 +62,29 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
     # workspaces where the user is ws-member with all its visible projects
     member_ws_ids = list(
         Workspace.objects.filter(
-            workspace_memberships__user__id=user.id,  # user_is_ws_member
-            workspace_memberships__workspace_role__is_admin=False,  # user_ws_role_is_member
+            memberships__user__id=user.id,  # user_is_ws_member
+            memberships__role__is_admin=False,  # user_ws_role_is_member
         )
-        .order_by("-created_date")
+        .order_by("-created_at")
         .values_list("id", flat=True)
     )
-    member_ws = Workspace.objects.none()
+    member_ws: Iterable[Workspace] = Workspace.objects.none()
     for ws_id in member_ws_ids:
         pj_in_workspace = Q(workspace_id=ws_id)
         ws_allowed = ~Q(memberships__user__id=user.id) & Q(workspace_member_permissions__len__gt=0)
         pj_allowed = Q(memberships__user__id=user.id)
         projects_ids = list(
             Project.objects.filter(pj_in_workspace, (ws_allowed | pj_allowed))
-            .order_by("-created_date")
+            .order_by("-created_at")
             .values_list("id", flat=True)
         )
         total_projects = len(projects_ids)
-        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
+        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_at")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         invited_projects_qs = Project.objects.filter(
             Q(invitations__user_id=user.id)
             | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email)),
-            invitations__status=InvitationStatus.PENDING,
+            invitations__status=ProjectInvitationStatus.PENDING,
             workspace_id=ws_id,
         )
         qs = (
@@ -101,34 +103,34 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
     # workspaces where the user is ws-guest with all its visible projects
     # or is not even a guest and only have invited projects
     user_pj_member = Q(memberships__user__id=user.id)
-    user_invited_pj = Q(invitations__status=InvitationStatus.PENDING) & (
+    user_invited_pj = Q(invitations__status=ProjectInvitationStatus.PENDING) & (
         Q(invitations__user_id=user.id) | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email))
     )
     guest_ws_ids = list(
         Project.objects.filter(user_pj_member | user_invited_pj)
-        .exclude(workspace__workspace_memberships__user__id=user.id)  # user_not_ws_member
+        .exclude(workspace__memberships__user__id=user.id)  # user_not_ws_member
         .order_by("workspace_id")
         .distinct("workspace_id")
         .values_list("workspace_id", flat=True)
     )
 
-    guest_ws = Workspace.objects.none()
+    guest_ws: Iterable[Workspace] = Workspace.objects.none()
     for ws_id in guest_ws_ids:
         projects_ids = list(
             Project.objects.filter(
                 workspace_id=ws_id,  # pj_in_workspace,
                 memberships__user__id=user.id,  # user_pj_member
             )
-            .order_by("-created_date")
+            .order_by("-created_at")
             .values_list("id", flat=True)
         )
         total_projects = len(projects_ids)
-        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_date")
+        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_at")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         invited_projects_qs = Project.objects.filter(
             Q(invitations__user_id=user.id)
             | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email)),
-            invitations__status=InvitationStatus.PENDING,
+            invitations__status=ProjectInvitationStatus.PENDING,
             workspace_id=ws_id,
         )
         qs = (
@@ -161,12 +163,10 @@ def get_workspace(slug: str) -> Workspace | None:
         return None
 
 
-def _get_total_user_projects_sync(workspace_id: int, user_id: int) -> int:
-    ws_admin = Q(workspace__workspace_memberships__user_id=user_id) & Q(
-        workspace__workspace_memberships__workspace_role__is_admin=True
-    )
+def _get_total_user_projects_sync(workspace_id: UUID, user_id: UUID) -> int:
+    ws_admin = Q(workspace__memberships__user_id=user_id) & Q(workspace__memberships__role__is_admin=True)
     ws_member_allowed = (
-        Q(workspace__workspace_memberships__user_id=user_id)
+        Q(workspace__memberships__user_id=user_id)
         & ~Q(memberships__user_id=user_id)
         & Q(workspace_member_permissions__len__gt=0)
     )
@@ -181,7 +181,7 @@ def _get_total_user_projects_sync(workspace_id: int, user_id: int) -> int:
 
 
 @sync_to_async
-def get_workspace_detail(id: int, user_id: int) -> Workspace | None:
+def get_workspace_detail(id: UUID, user_id: UUID) -> Workspace | None:
     user_workspace_role_name = roles_repositories.get_user_workspace_role_name_sync(workspace_id=id, user_id=user_id)
     user_projects_count = _get_total_user_projects_sync(workspace_id=id, user_id=user_id)
 
@@ -202,7 +202,7 @@ def get_workspace_detail(id: int, user_id: int) -> Workspace | None:
 
 
 @sync_to_async
-def get_workspace_summary(id: int, user_id: int) -> Workspace | None:
+def get_workspace_summary(id: UUID, user_id: UUID) -> Workspace | None:
     user_workspace_role_name = roles_repositories.get_user_workspace_role_name_sync(workspace_id=id, user_id=user_id)
     try:
         return Workspace.objects.annotate(user_role=Value(user_workspace_role_name, output_field=CharField())).get(
@@ -214,7 +214,7 @@ def get_workspace_summary(id: int, user_id: int) -> Workspace | None:
 
 # # DRAFT: This is a not-working attempt to solve the problematic using just one query
 #
-# from django.db.models import Count, OuterRef, Subquery
+# from taiga.base.db.models import Count, OuterRef, Subquery
 #
 # def get_user_workspaces_overview(user: User) -> list[Workspace]:
 #     # return the user"s workspaces including those projects viewable by the user:
@@ -227,7 +227,7 @@ def get_workspace_summary(id: int, user_id: int) -> Workspace | None:
 #     projects_that_belongs_to_a_ws = Q(workspace_id=OuterRef("workspace_id"))
 #     projects_with_member_and_permissions = objects_with_member & Q(memberships__role__permissions__len__gt=0)
 #     projects_with_ws_member = Q(workspace__members__id=user.id)
-#     projects_with_ws_role_admin = Q(workspace__workspace_memberships__workspace_role__is_admin=True)
+#     projects_with_ws_role_admin = Q(workspace__memberships__role__is_admin=True)
 #
 #     project_workspaces_ids = Project.objects.filter(objects_with_member).values_list("workspace", flat=True)
 #     user_is_workspace_member = projects_that_belongs_to_a_ws & projects_with_ws_member
@@ -240,14 +240,14 @@ def get_workspace_summary(id: int, user_id: int) -> Workspace | None:
 #                 # workspaces the user is a ws-admin (all its projects
 #                 Q(workspace_id=OuterRef("workspace_id")) &
 #                 Q(workspace__members__id=user.id) &
-#                 Q(workspace__workspace_memberships__workspace_role__is_admin=True)
+#                 Q(workspace__memberships__role__is_admin=True)
 #             ).filter(
 #                 # workspaces the user is a ws-member (not-pj-member) (just if user has ws-permissions)
 #                 Q(workspace_id=OuterRef("workspace_id")) &
 #                 Q(workspace__members__id=user.id) &
-#                 Q(workspace__workspace_memberships__workspace_role__is_admin=False) &
+#                 Q(workspace__memberships__role__is_admin=False) &
 #                 ((Q(members__id=user.id) &
-#                   Q(workspace__workspace_memberships__workspace_role__permissions__len__gt=0))
+#                   Q(workspace__memberships__role__permissions__len__gt=0))
 #                  |( ~Q(members__id=user.id) & Q(workspace_member_permissions__len__gt=0)))
 #             ).filter(  # workspaces the user is not ws-member but a pj-member (just if user has pj-permissions)
 #                 Q(workspace_id=OuterRef("workspace_id")) &
@@ -256,10 +256,10 @@ def get_workspace_summary(id: int, user_id: int) -> Workspace | None:
 #                 Q(memberships__role__permissions__len__gt=0))
 #         )
 #             .values_list("id", flat=True)
-#             .order_by("-created_date")[:6]
+#             .order_by("-created_at")[:6]
 #     )
 #
-#     latest_user_projects = Project.objects.filter(id__in=latest_user_projects_ids).order_by("-created_date")
+#     latest_user_projects = Project.objects.filter(id__in=latest_user_projects_ids).order_by("-created_at")
 #
 #     all_user_projects = Subquery(
 #         Project.objects.filter(
@@ -278,7 +278,7 @@ def get_workspace_summary(id: int, user_id: int) -> Workspace | None:
 #
 #     workspace_user_rol_id = Subquery(
 #         WorkspaceMembership.objects.filter(Q(user_id=user.id) & Q(workspace_id=OuterRef("id")))
-#             .values_list("workspace_role__id", flat=True)
+#             .values_list("role__id", flat=True)
 #             .order_by("-id")[:1]
 #     )
 #     # role = WorkspaceRole.objects.filter(id__in=workspace_user_rol_id)
@@ -293,5 +293,5 @@ def get_workspace_summary(id: int, user_id: int) -> Workspace | None:
 #             .annotate(has_projects=Exists(projects))
 #             .annotate(my_role=workspace_user_rol_id)
 #         # TODO: add "myRol" object, not the id
-#         # .order_by("-created_date")
+#         # .order_by("-created_at")
 #     )

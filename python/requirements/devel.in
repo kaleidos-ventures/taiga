@@ -5,9 +5,7 @@ mypy
 # requirements tooling
 pip-tools
 
-# Typing stubs for django (needed for mypy plugin)
-django<4.0,>=2.2        # like in taiga6
-django-stubs            # For Django >= 3.2
-
-# slugify
-types-python-slugify
+# Typing stubs
+django-stubs  # django
+types-python-slugify  # python-slugify
+asyncpg-stubs  # asyncpg

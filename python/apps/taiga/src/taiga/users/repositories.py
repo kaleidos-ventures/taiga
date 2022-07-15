@@ -9,15 +9,25 @@ from operator import or_
 from typing import Any
 
 from asgiref.sync import sync_to_async
-from django.contrib.auth.models import update_last_login as django_update_last_login
-from django.contrib.postgres.lookups import Unaccent
-from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
-from django.db.models import BooleanField, Exists, OuterRef, Q, QuerySet, Value
-from django.db.models.functions import Lower, StrIndex
+from taiga.base.db.models import (
+    BooleanField,
+    Exists,
+    Lower,
+    OuterRef,
+    Q,
+    QuerySet,
+    SearchQuery,
+    SearchRank,
+    SearchVector,
+    StrIndex,
+    Unaccent,
+    Value,
+)
+from taiga.base.db.users import django_update_last_login
 from taiga.base.utils.datetime import aware_utcnow
-from taiga.invitations.choices import InvitationStatus
-from taiga.invitations.models import Invitation
-from taiga.roles.models import Membership
+from taiga.invitations.choices import ProjectInvitationStatus
+from taiga.invitations.models import ProjectInvitation
+from taiga.roles.models import ProjectMembership
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import AuthData, User
 from taiga.users.tokens import VerifyUserToken
@@ -36,14 +46,10 @@ def user_exists(**kwargs: Any) -> bool:
 @sync_to_async
 def get_user_by_username_or_email(username_or_email: str) -> User | None:
     # first search is case insensitive
-    qs = User.objects.filter(Q(username__iexact=username_or_email) | Q(email__iexact=username_or_email))
-
-    if len(qs) > 1:
-        # there are some users with thr same email or username,
-        # the search should be case sensitive
-        qs = qs.filter(Q(username=username_or_email) | Q(email=username_or_email))
-
-    return qs[0] if len(qs) > 0 else None
+    try:
+        return User.objects.get(Q(username__iexact=username_or_email) | Q(email__iexact=username_or_email))
+    except User.DoesNotExist:
+        return None
 
 
 @sync_to_async
@@ -56,7 +62,7 @@ def get_users_by_emails_as_dict(emails: list[str]) -> dict[str, User]:
         return {}
 
     query = reduce(or_, (Q(email__iexact=email) for email in emails))
-    return {u.email.lower(): u for u in User.objects.filter(is_active=True).filter(query)}
+    return {u.email: u for u in User.objects.filter(is_active=True).filter(query)}
 
 
 @sync_to_async
@@ -73,7 +79,7 @@ def get_users_by_usernames_as_dict(usernames: list[str]) -> dict[str, User]:
 
 
 @sync_to_async
-def get_user_from_auth_data(key: str, value: str) -> User:
+def get_user_from_auth_data(key: str, value: str) -> User | None:
     auth_data = AuthData.objects.select_related("user").filter(key=key, value=value).first()
     if auth_data:
         return auth_data.user
@@ -136,17 +142,14 @@ def clean_expired_users() -> None:
     # and have never verified the account (date_verification=None)
     # and don't have an outstanding token associated (exclude)
     (
-        User.objects.filter(is_system=False, is_active=False, date_verification=None)
+        User.objects.filter(is_active=False, date_verification=None)
         .exclude(id__in=OutstandingToken.objects.filter(token_type=VerifyUserToken.token_type).values_list("object_id"))
         .delete()
     )
 
 
 def _get_users_by_text_qs(
-    text_search: str = "",
-    project_slug: str | None = None,
-    exclude_inactive: bool = True,
-    exclude_system: bool = True,
+    text_search: str = "", project_slug: str | None = None, exclude_inactive: bool = True
 ) -> QuerySet[User]:
     """
     Get all the users that match a full text search (against their full_name and username fields), returning a
@@ -155,16 +158,12 @@ def _get_users_by_text_qs(
     :param text_search: The text the users should match in either their full names or usernames to be considered
     :param project_slug: Users will be ordered by their proximity to this project excluding itself
     :param exclude_inactive: true (return just active users), false (returns all users)
-    :param exclude_system: true (returns users where is_system=False), false (returns all users)
     :return: a prioritized queryset of users
     """
     users_qs = User.objects.all()
 
     if exclude_inactive:
         users_qs &= users_qs.exclude(is_active=False)
-
-    if exclude_system:
-        users_qs &= users_qs.exclude(is_system=True)
 
     if text_search:
         users_matching_full_text_search = get_users_by_fullname_or_username_sync(text_search, users_qs)
@@ -177,9 +176,9 @@ def _get_users_by_text_qs(
         #     3rd. rest of users (the priority for this group is not too important)
 
         # 1st: Users that share the same project
-        memberships = Membership.objects.filter(user__id=OuterRef("pk"), project__slug=project_slug)
-        pending_invitations = Invitation.objects.filter(
-            user__id=OuterRef("pk"), project__slug=project_slug, status=InvitationStatus.PENDING
+        memberships = ProjectMembership.objects.filter(user__id=OuterRef("pk"), project__slug=project_slug)
+        pending_invitations = ProjectInvitation.objects.filter(
+            user__id=OuterRef("pk"), project__slug=project_slug, status=ProjectInvitationStatus.PENDING
         )
         project_users_qs = (
             users_qs.filter(projects__slug=project_slug)
@@ -220,16 +219,10 @@ def get_users_by_text(
     text_search: str = "",
     project_slug: str | None = None,
     exclude_inactive: bool = True,
-    exclude_system: bool = True,
     offset: int = 0,
     limit: int = 0,
 ) -> list[User]:
-    qs = _get_users_by_text_qs(
-        text_search=text_search,
-        project_slug=project_slug,
-        exclude_inactive=exclude_inactive,
-        exclude_system=exclude_system,
-    )
+    qs = _get_users_by_text_qs(text_search=text_search, project_slug=project_slug, exclude_inactive=exclude_inactive)
     if limit:
         return list(qs[offset : offset + limit])
 
@@ -238,17 +231,9 @@ def get_users_by_text(
 
 @sync_to_async
 def get_total_users_by_text(
-    text_search: str = "",
-    project_slug: str | None = None,
-    exclude_inactive: bool = True,
-    exclude_system: bool = True,
+    text_search: str = "", project_slug: str | None = None, exclude_inactive: bool = True
 ) -> int:
-    qs = _get_users_by_text_qs(
-        text_search=text_search,
-        project_slug=project_slug,
-        exclude_inactive=exclude_inactive,
-        exclude_system=exclude_system,
-    )
+    qs = _get_users_by_text_qs(text_search=text_search, project_slug=project_slug, exclude_inactive=exclude_inactive)
     return qs.count()
 
 

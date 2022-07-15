@@ -9,10 +9,13 @@
 # (https://github.com/jazzband/djangorestframework-simplejwt/tree/5997c1aee8ad5182833d6b6759e44ff0a704edb4)
 # that is licensed under the following terms:
 
+import time
 from calendar import timegm
-from datetime import datetime, time, timezone
+from datetime import datetime
+from datetime import time as datetime_time
+from datetime import timedelta, timezone
 
-_AnyTime = time | datetime
+_AnyTime = datetime | datetime_time
 
 
 def is_aware(value: _AnyTime) -> bool:
@@ -62,6 +65,13 @@ def epoch_to_datetime(ts: int) -> datetime:
     return datetime.fromtimestamp(ts, tz=timezone.utc)
 
 
+def timestamp_mics() -> int:
+    """
+    Return timestamp in microseconds.
+    """
+    return int(time.time() * 1000000)
+
+
 def display_lifetime(minutes: int) -> str:
     """
     This function takes minutes and try to round them to days, hours or minutes.
@@ -77,3 +87,38 @@ def display_lifetime(minutes: int) -> str:
             return f"{hours} hours" if hours > 1 else f"{hours} hour"
         else:
             return f"{minutes} minutes" if minutes <= 0 or minutes > 1 else f"{minutes} minute"
+
+
+def duration_iso_string(duration: timedelta) -> str:
+    """
+    Convert a timedelta objet to its ISO string representation.
+
+    .. sourcecode:: python
+        In: duration_iso_string(timedelta(days=2, seconds=4))
+        Out: 'P2DT00H00M04S'
+
+    Based on django code https://github.com/django/django/tree/stable/4.0.x/django/utils/duration.py#L31
+    """
+
+    def _get_duration_components(duration: timedelta) -> tuple[int, int, int, int, int]:
+        days = duration.days
+        seconds = duration.seconds
+        microseconds = duration.microseconds
+
+        minutes = seconds // 60
+        seconds = seconds % 60
+
+        hours = minutes // 60
+        minutes = minutes % 60
+
+        return days, hours, minutes, seconds, microseconds
+
+    if duration < timedelta(0):
+        sign = "-"
+        duration *= -1
+    else:
+        sign = ""
+
+    days, hours, minutes, seconds, microseconds = _get_duration_components(duration)
+    ms = ".{:06d}".format(microseconds) if microseconds else ""
+    return "{}P{}DT{:02d}H{:02d}M{:02d}{}S".format(sign, days, hours, minutes, seconds, ms)

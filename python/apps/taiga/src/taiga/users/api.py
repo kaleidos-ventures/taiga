@@ -18,7 +18,7 @@ from taiga.permissions import IsAuthenticated
 from taiga.routers import routes
 from taiga.users import services as users_services
 from taiga.users import validators as users_validators
-from taiga.users.dataclasses import UserSearch, VerificationInfo
+from taiga.users.dataclasses import VerificationInfo
 from taiga.users.models import User
 from taiga.users.serializers import UserMeSerializer, UserSearchSerializer, UserSerializer, VerificationInfoSerializer
 
@@ -101,7 +101,7 @@ async def get_users_by_text(
     pagination_params: PaginationQuery = Depends(),
     text: str = Query(None, description="search text (str)"),
     project: str = Query(None, description="the project slug (str)"),
-) -> list[UserSearch]:
+) -> list[User]:
     """
     List all the users matching the full-text search criteria, ordering results by their proximity to a project :
         1st. project members of this project

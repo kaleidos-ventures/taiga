@@ -9,16 +9,16 @@ from taiga.base.serializers import BaseModel
 from taiga.users.serializers import UserSerializer
 
 
-class BaseRoleSerializer(BaseModel):
-    is_admin: bool
+class BaseProjectRoleSerializer(BaseModel):
     name: str
     slug: str
+    is_admin: bool
 
     class Config:
         orm_mode = True
 
 
-class RoleSerializer(BaseRoleSerializer):
+class ProjectRoleSerializer(BaseProjectRoleSerializer):
     order: int
     num_members: int = 0
     permissions: list[str]
@@ -27,9 +27,9 @@ class RoleSerializer(BaseRoleSerializer):
         orm_mode = True
 
 
-class MembershipSerializer(BaseModel):
+class ProjectMembershipSerializer(BaseModel):
     user: UserSerializer
-    role: BaseRoleSerializer
+    role: BaseProjectRoleSerializer
 
     class Config:
         orm_mode = True

@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from fastapi import Query
-from taiga.base.api import Request
+from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
@@ -27,7 +27,7 @@ GET_WORKSPACE = HasPerm("view_workspace")
     summary="List my workspaces's projects",
     response_model=list[WorkspaceDetailSerializer],
 )
-async def list_my_workspaces(request: Request) -> list[Workspace]:
+async def list_my_workspaces(request: AuthRequest) -> list[Workspace]:
     """
     List the workspaces of the logged user.
     """
@@ -41,12 +41,14 @@ async def list_my_workspaces(request: Request) -> list[Workspace]:
     response_model=WorkspaceSerializer,
     responses=ERROR_422 | ERROR_403,
 )
-async def create_workspace(form: WorkspaceValidator, request: Request) -> Workspace:
+async def create_workspace(form: WorkspaceValidator, request: AuthRequest) -> Workspace:
     """
     Create a new workspace for the logged user.
     """
     workspace = await workspaces_services.create_workspace(name=form.name, color=form.color, owner=request.user)
-    return await workspaces_services.get_workspace_detail(id=workspace.id, user_id=request.user.id)
+    return await workspaces_services.get_workspace_detail(
+        id=workspace.id, user_id=request.user.id  # type: ignore[return-value]
+    )
 
 
 @routes.workspaces.get(
@@ -56,13 +58,17 @@ async def create_workspace(form: WorkspaceValidator, request: Request) -> Worksp
     response_model=WorkspaceSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def get_workspace(request: Request, slug: str = Query("", description="the workspace slug(str)")) -> Workspace:
+async def get_workspace(
+    request: AuthRequest, slug: str = Query("", description="the workspace slug(str)")
+) -> Workspace:
     """
     Get workspace detail by slug.
     """
     workspace = await get_workspace_or_404(slug=slug)
     await check_permissions(permissions=GET_WORKSPACE, user=request.user, obj=workspace)
-    return await workspaces_services.get_workspace_detail(id=workspace.id, user_id=request.user.id)
+    return await workspaces_services.get_workspace_detail(
+        id=workspace.id, user_id=request.user.id  # type: ignore[return-value]
+    )
 
 
 async def get_workspace_or_404(slug: str) -> Workspace:

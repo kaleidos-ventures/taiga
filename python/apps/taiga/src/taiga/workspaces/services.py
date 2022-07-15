@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 from taiga.permissions import choices
 from taiga.roles import repositories as roles_repositories
 from taiga.users.models import User
@@ -20,18 +22,18 @@ async def get_workspace(slug: str) -> Workspace | None:
     return await workspaces_repositories.get_workspace(slug=slug)
 
 
-async def get_workspace_detail(id: int, user_id: int) -> Workspace | None:
+async def get_workspace_detail(id: UUID, user_id: UUID) -> Workspace | None:
     return await workspaces_repositories.get_workspace_detail(id=id, user_id=user_id)
 
 
 async def create_workspace(name: str, color: int, owner: User) -> Workspace:
     workspace = await workspaces_repositories.create_workspace(name=name, color=color, owner=owner)
-    workspace_role = await roles_repositories.create_workspace_role(
+    role = await roles_repositories.create_workspace_role(
         name="Administrator",
         slug="admin",
-        permissions=choices.WORKSPACE_PERMISSIONS,
+        permissions=choices.WorkspacePermissions.values,
         workspace=workspace,
         is_admin=True,
     )
-    await roles_repositories.create_workspace_membership(user=owner, workspace=workspace, workspace_role=workspace_role)
+    await roles_repositories.create_workspace_membership(user=owner, workspace=workspace, role=role)
     return workspace

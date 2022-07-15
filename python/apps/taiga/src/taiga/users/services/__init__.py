@@ -7,7 +7,7 @@
 
 from taiga.auth import services as auth_services
 from taiga.base.api.pagination import Pagination
-from taiga.base.utils.slug import generate_username_suffix, slugify
+from taiga.base.utils.slug import generate_int_suffix, slugify
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
 from taiga.invitations import services as invitations_services
@@ -64,7 +64,7 @@ async def generate_username(email: str) -> str:
         potential = f"{username}{suffix}"
         if not await users_repositories.user_exists(username=potential):
             return potential
-        suffix = f"{generate_username_suffix()}"
+        suffix = generate_int_suffix()
 
 
 async def _send_verify_user_email(
@@ -106,7 +106,7 @@ async def verify_user(token: str) -> VerificationInfo:
     await verify_token.denylist()
 
     # Get user and verify it
-    user = await users_repositories.get_first_user(**verify_token.object_data, is_system=False)
+    user = await users_repositories.get_first_user(**verify_token.object_data)
     if not user:
         raise ex.BadVerifyUserTokenError("The user doesn't exist.")
 
@@ -162,7 +162,7 @@ async def _get_user_and_reset_password_token(token: str) -> tuple[ResetPasswordT
         raise ex.BadResetPasswordTokenError("Invalid or malformed token.")
 
     # Get user
-    user = await users_repositories.get_first_user(**reset_token.object_data, is_active=True, is_system=False)
+    user = await users_repositories.get_first_user(**reset_token.object_data, is_active=True)
     if not user:
         await reset_token.denylist()
         raise ex.BadResetPasswordTokenError("Invalid or malformed token.")
@@ -181,7 +181,7 @@ async def _send_reset_password_email(user: User) -> None:
 
 async def request_reset_password(email: str) -> None:
     user = await users_repositories.get_user_by_username_or_email(username_or_email=email)
-    if user and user.is_active and not user.is_system:
+    if user and user.is_active:
         await _send_reset_password_email(user)
 
 

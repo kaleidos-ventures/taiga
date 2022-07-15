@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import uuid
 from unittest.mock import Mock, patch
 
 import pytest
@@ -21,7 +22,7 @@ from tests.utils import factories as f
 async def test_login_success():
     username = "test_user"
     password = "test_password"
-    user = f.build_user(username=username, password=password, is_active=True, is_system=False)
+    user = f.build_user(username=username, password=password, is_active=True)
 
     with (
         patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo,
@@ -63,7 +64,7 @@ async def test_login_error_invalid_password():
     username = "test_user"
     password = "test_password"
     invalid_password = "invalid_password"
-    user = f.build_user(username=username, password=password, is_active=True, is_system=False)
+    user = f.build_user(username=username, password=password, is_active=True)
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
         fake_users_repo.get_user_by_username_or_email.return_value = user
@@ -81,25 +82,7 @@ async def test_login_error_invalid_password():
 async def test_login_error_inactive_user():
     username = "test_user"
     password = "test_password"
-    user = f.build_user(username=username, password=password, is_active=False, is_system=False)
-
-    with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
-        fake_users_repo.get_user_by_username_or_email.return_value = user
-        fake_users_repo.check_password.return_value = True
-
-        data = await auth_serv.login(username=username, password=password)
-
-        assert not data
-
-        fake_users_repo.get_user_by_username_or_email.assert_awaited_once_with(username_or_email=username)
-        fake_users_repo.check_password.assert_awaited_once_with(user=user, password=password)
-        fake_users_repo.update_last_login.assert_not_awaited()
-
-
-async def test_login_error_system_user():
-    username = "test_user"
-    password = "test_password"
-    user = f.build_user(username=username, password=password, is_active=True, is_system=True)
+    user = f.build_user(username=username, password=password, is_active=False)
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
         fake_users_repo.get_user_by_username_or_email.return_value = user
@@ -120,7 +103,7 @@ async def test_login_error_system_user():
 
 
 async def test_refresh_success():
-    user = f.build_user(is_active=True, is_system=False)
+    user = f.build_user(is_active=True)
     token = Mock()  # this is the code of the future refresh_token
 
     with patch("taiga.tokens.base.tokens_services", autospec=True) as fake_tokens_services:
@@ -150,7 +133,7 @@ async def test_refresh_error_invalid_token():
 
 
 async def test_authenticate_success():
-    user = f.build_user(id=1, is_active=False, is_system=False)
+    user = f.build_user(id=1, is_active=False)
     token = await AccessToken.create_for_object(user)
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
@@ -168,18 +151,7 @@ async def test_authenticate_error_bad_auth_token():
 
 
 async def test_authenticate_error_inactive_user():
-    user = f.build_user(id=1, is_active=False, is_system=False)
-    token = await AccessToken.create_for_object(user)
-
-    with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
-        fake_users_repo.get_first_user.return_value = None
-
-        with pytest.raises(ex.UnauthorizedUserError):
-            await auth_serv.authenticate(token=str(token))
-
-
-async def test_authenticate_system_user():
-    user = f.build_user(id=1, is_active=True, is_system=True)
+    user = f.build_user(id=1, is_active=False)
     token = await AccessToken.create_for_object(user)
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
@@ -195,7 +167,7 @@ async def test_authenticate_system_user():
 
 
 async def test_deny_refresh_token_success():
-    user1 = f.build_user(id=1, is_active=True, is_system=False)
+    user1 = f.build_user(id=uuid.uuid1(), is_active=True)
     token = Mock()  # this is the code of the future refresh_token
 
     with patch("taiga.tokens.base.tokens_services", autospec=True) as fake_tokens_services:
@@ -212,7 +184,7 @@ async def test_deny_refresh_token_success():
 
 
 async def test_deny_refresh_token_error_bad_refresh_token():
-    user1 = f.build_user(id=1, is_active=True, is_system=False)
+    user1 = f.build_user(id=uuid.uuid1(), is_active=True)
     invalid_token = "invalid_token"
 
     with patch("taiga.tokens.base.tokens_services", autospec=True) as fake_tokens_services:
@@ -223,8 +195,8 @@ async def test_deny_refresh_token_error_bad_refresh_token():
 
 
 async def test_deny_refresh_token_error_unauthorized_user():
-    user1 = f.build_user(id=1, is_active=True, is_system=False)
-    user2 = f.build_user(id=2, is_active=True, is_system=False)
+    user1 = f.build_user(id=uuid.uuid1(), is_active=True)
+    user2 = f.build_user(id=uuid.uuid1(), is_active=True)
 
     with patch("taiga.tokens.base.tokens_services", autospec=True) as fake_tokens_services:
         fake_tokens_services.token_is_denied.return_value = False

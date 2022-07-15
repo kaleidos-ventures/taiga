@@ -124,7 +124,7 @@ async def test_verify_user_ok_no_project_invitation_token():
         assert info.project_invitation is None
 
         fake_token.denylist.assert_awaited_once()
-        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_system=False)
+        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data)
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
         fake_invitations_services.update_user_projects_invitations.assert_awaited_once_with(user=user)
         fake_token.get.assert_called_with("accept_project_invitation", False)
@@ -134,7 +134,7 @@ async def test_verify_user_ok_no_project_invitation_token():
 
 async def test_verify_user_ok_with_accepting_project_invitation_token():
     user = f.build_user(is_active=False)
-    project_invitation = f.build_invitation()
+    project_invitation = f.build_project_invitation()
     object_data = {"id": 1}
     project_invitation_token = "invitation_token"
     accept_project_invitation = True
@@ -160,7 +160,7 @@ async def test_verify_user_ok_with_accepting_project_invitation_token():
         assert info.project_invitation == project_invitation
 
         fake_token.denylist.assert_awaited_once()
-        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_system=False)
+        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data)
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
         fake_invitations_services.update_user_projects_invitations.assert_awaited_once_with(user=user)
         fake_token.get.assert_called_with("accept_project_invitation", False)
@@ -172,7 +172,7 @@ async def test_verify_user_ok_with_accepting_project_invitation_token():
 
 async def test_verify_user_ok_without_accepting_project_invitation_token():
     user = f.build_user(is_active=False)
-    project_invitation = f.build_invitation()
+    project_invitation = f.build_project_invitation()
     object_data = {"id": 1}
     project_invitation_token = "invitation_token"
     accept_project_invitation = False
@@ -198,7 +198,7 @@ async def test_verify_user_ok_without_accepting_project_invitation_token():
         assert info.project_invitation == project_invitation
 
         fake_token.denylist.assert_awaited_once()
-        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data, is_system=False)
+        fake_users_repo.get_first_user.assert_awaited_once_with(**object_data)
         fake_users_repo.verify_user.assert_awaited_once_with(user=user)
         fake_invitations_services.update_user_projects_invitations.assert_awaited_once_with(user=user)
         fake_token.get.assert_called_with("accept_project_invitation", False)
@@ -261,7 +261,7 @@ async def test_verify_user_error_with_invalid_data():
 )
 async def test_verify_user_error_project_invitation_token(exception):
     user = f.build_user(is_active=False)
-    project_invitation = f.build_invitation()
+    project_invitation = f.build_project_invitation()
     object_data = {"id": 1}
     project_invitation_token = "invitation_token"
     accept_project_invitation = False
@@ -357,9 +357,7 @@ async def test_password_reset_ok():
         fake_users_repositories.get_first_user.return_value = user
 
         ret = await services._get_user_and_reset_password_token(fake_token)
-        fake_users_repositories.get_first_user.assert_awaited_once_with(
-            **fake_token.object_data, is_active=True, is_system=False
-        )
+        fake_users_repositories.get_first_user.assert_awaited_once_with(**fake_token.object_data, is_active=True)
         assert ret == (fake_token, user)
 
 
@@ -399,7 +397,7 @@ async def test_password_reset_error_no_user_token():
 
 
 async def test_request_reset_password_ok():
-    user = f.build_user(is_active=True, is_system=False)
+    user = f.build_user(is_active=True)
 
     with (
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repositories,
@@ -418,8 +416,7 @@ async def test_request_reset_password_ok():
     "user",
     [
         (None),
-        (f.build_user(is_active=False, is_system=False)),
-        (f.build_user(is_active=True, is_system=True)),
+        (f.build_user(is_active=False)),
     ],
 )
 async def test_request_reset_password_error_user(user):

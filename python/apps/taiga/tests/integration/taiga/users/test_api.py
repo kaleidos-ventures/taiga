@@ -88,8 +88,8 @@ async def test_verify_user_ok(client):
 async def test_verify_user_ok_with_invitation(client):
     user = await f.create_user(is_active=False)
     project = await f.create_project()
-    role = await f.create_role(project=project)
-    project_invitation = await f.create_invitation(project=project, role=role, email=user.email)
+    role = await f.create_project_role(project=project)
+    project_invitation = await f.create_project_invitation(project=project, role=role, email=user.email)
 
     project_invitation_token = await _generate_project_invitation_token(project_invitation)
     data = {"token": await _generate_verify_user_token(user, project_invitation_token)}

@@ -6,39 +6,47 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from fastapi import Depends, Query, Response, status
-from taiga.base.api import Request
+from taiga.base.api import AuthRequest
 from taiga.base.api.pagination import PaginationQuery, set_pagination
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.invitations import services as invitations_services
-from taiga.invitations.dataclasses import CreateInvitations, PublicInvitation
-from taiga.invitations.models import Invitation
+from taiga.invitations.dataclasses import CreateProjectInvitations, PublicProjectInvitation
+from taiga.invitations.models import ProjectInvitation
 from taiga.invitations.permissions import IsProjectInvitationRecipient
-from taiga.invitations.serializers import CreateInvitationsSerializer, InvitationSerializer, PublicInvitationSerializer
-from taiga.invitations.validators import InvitationsValidator, ResendInvitationValidator, RevokeInvitationValidator
+from taiga.invitations.serializers import (
+    CreateProjectInvitationsSerializer,
+    ProjectInvitationSerializer,
+    PublicProjectInvitationSerializer,
+)
+from taiga.invitations.validators import (
+    ProjectInvitationsValidator,
+    ResendProjectInvitationValidator,
+    RevokeProjectInvitationValidator,
+)
 from taiga.permissions import IsAuthenticated, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
 from taiga.routers import routes
 
 # PERMISSIONS
-ACCEPT_INVITATION = IsAuthenticated()
-ACCEPT_TOKEN_INVITATION = IsProjectInvitationRecipient()
-CREATE_INVITATIONS = IsProjectAdmin()
-RESEND_INVITATION = IsProjectAdmin()
-REVOKE_INVITATION = IsProjectAdmin()
+ACCEPT_PROJECT_INVITATION = IsAuthenticated()
+ACCEPT_PROJECT_INVITATION_BY_TOKEN = IsProjectInvitationRecipient()
+CREATE_PROJECT_INVITATIONS = IsProjectAdmin()
+RESEND_PROJECT_INVITATION = IsProjectAdmin()
+REVOKE_PROJECT_INVITATION = IsProjectAdmin()
 
 
 @routes.unauth_projects.get(
     "/invitations/{token}",
     name="project.invitations.get",
     summary="Get public information about a project invitation",
-    response_model=PublicInvitationSerializer,
+    response_model=PublicProjectInvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_422,
 )
 async def get_public_project_invitation(
     token: str = Query(None, description="the project invitation token (str)")
-) -> PublicInvitation:
+) -> PublicProjectInvitation:
     """
     Get public information about a project invitation
     """
@@ -53,15 +61,15 @@ async def get_public_project_invitation(
     "/{slug}/invitations",
     name="project.invitations.get",
     summary="List project pending invitations",
-    response_model=list[InvitationSerializer],
+    response_model=list[ProjectInvitationSerializer],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def list_project_invitations(
-    request: Request,
+    request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
     slug: str = Query(None, description="the project slug (str)"),
-) -> list[Invitation]:
+) -> list[ProjectInvitation]:
     """
     List (pending) project invitations
     If the user is a project admin: return the paginated pending project invitation list
@@ -70,7 +78,7 @@ async def list_project_invitations(
     """
     project = await get_project_or_404(slug)
 
-    pagination, invitations = await invitations_services.get_paginated_project_pending_invitations(
+    pagination, invitations = await invitations_services.get_paginated_pending_project_invitations(
         project=project, user=request.user, offset=pagination_params.offset, limit=pagination_params.limit
     )
 
@@ -82,17 +90,17 @@ async def list_project_invitations(
     "/invitations/{token}/accept",
     name="project.invitations.accept",
     summary="Accept a project invitation using a token",
-    response_model=InvitationSerializer,
+    response_model=ProjectInvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def accept_invitation_by_token(
-    request: Request, token: str = Query(None, description="the project invitation token (str)")
-) -> Invitation:
+async def accept_project_invitation_by_token(
+    request: AuthRequest, token: str = Query(None, description="the project invitation token (str)")
+) -> ProjectInvitation:
     """
     A user accepts a project invitation using an invitation token
     """
     invitation = await get_project_invitation_by_token_or_404(token=token)
-    await check_permissions(permissions=ACCEPT_TOKEN_INVITATION, user=request.user, obj=invitation)
+    await check_permissions(permissions=ACCEPT_PROJECT_INVITATION_BY_TOKEN, user=request.user, obj=invitation)
     return await invitations_services.accept_project_invitation(invitation=invitation)
 
 
@@ -100,16 +108,16 @@ async def accept_invitation_by_token(
     "/{slug}/invitations/accept",
     name="project.my.invitations.accept",
     summary="Accept a project invitation for authenticated users",
-    response_model=InvitationSerializer,
+    response_model=ProjectInvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def accept_invitation_by_project(
-    request: Request, slug: str = Query(None, description="the project slug (str)")
-) -> Invitation:
+async def accept_project_invitation_by_project(
+    request: AuthRequest, slug: str = Query(None, description="the project slug (str)")
+) -> ProjectInvitation:
     """
     An authenticated user accepts a project invitation
     """
-    await check_permissions(permissions=ACCEPT_INVITATION, user=request.user, obj=None)
+    await check_permissions(permissions=ACCEPT_PROJECT_INVITATION, user=request.user, obj=None)
     invitation = await get_project_invitation_by_username_or_email_or_404(
         project_slug=slug, username_or_email=request.user.username
     )
@@ -120,21 +128,23 @@ async def accept_invitation_by_project(
     "/{slug}/invitations",
     name="project.invitations.create",
     summary="Create project invitations",
-    response_model=CreateInvitationsSerializer,
+    response_model=CreateProjectInvitationsSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def create_invitations(
-    request: Request, form: InvitationsValidator, slug: str = Query(None, description="the project slug (str)")
-) -> CreateInvitations:
+async def create_project_invitations(
+    request: AuthRequest,
+    form: ProjectInvitationsValidator,
+    slug: str = Query(None, description="the project slug (str)"),
+) -> CreateProjectInvitations:
     """
     Create invitations to a project for a list of users (identified either by their username or their email, and the
     role they'll take in the project). In case of receiving several invitations for the same user, just the first
     role will be considered.
     """
     project = await get_project_or_404(slug=slug)
-    await check_permissions(permissions=CREATE_INVITATIONS, user=request.user, obj=project)
+    await check_permissions(permissions=CREATE_PROJECT_INVITATIONS, user=request.user, obj=project)
 
-    return await invitations_services.create_invitations(
+    return await invitations_services.create_project_invitations(
         project=project, invitations=form.get_invitations_dict(), invited_by=request.user
     )
 
@@ -148,7 +158,9 @@ async def create_invitations(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def resend_project_invitation(
-    request: Request, form: ResendInvitationValidator, slug: str = Query(None, description="the project slug (str)")
+    request: AuthRequest,
+    form: ResendProjectInvitationValidator,
+    slug: str = Query(None, description="the project slug (str)"),
 ) -> None:
     """
     Resend invitation to a project
@@ -156,7 +168,7 @@ async def resend_project_invitation(
     invitation = await get_project_invitation_by_username_or_email_or_404(
         project_slug=slug, username_or_email=form.username_or_email
     )
-    await check_permissions(permissions=RESEND_INVITATION, user=request.user, obj=invitation)
+    await check_permissions(permissions=RESEND_PROJECT_INVITATION, user=request.user, obj=invitation)
     await invitations_services.resend_project_invitation(invitation=invitation, resent_by=request.user)
 
 
@@ -169,7 +181,9 @@ async def resend_project_invitation(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def revoke_project_invitation(
-    request: Request, form: RevokeInvitationValidator, slug: str = Query(None, description="the project slug (str)")
+    request: AuthRequest,
+    form: RevokeProjectInvitationValidator,
+    slug: str = Query(None, description="the project slug (str)"),
 ) -> None:
     """
     Revoke invitation in a project.
@@ -177,11 +191,13 @@ async def revoke_project_invitation(
     invitation = await get_project_invitation_by_username_or_email_or_404(
         project_slug=slug, username_or_email=form.username_or_email
     )
-    await check_permissions(permissions=REVOKE_INVITATION, user=request.user, obj=invitation)
+    await check_permissions(permissions=REVOKE_PROJECT_INVITATION, user=request.user, obj=invitation)
     await invitations_services.revoke_project_invitation(invitation=invitation, revoked_by=request.user)
 
 
-async def get_project_invitation_by_username_or_email_or_404(project_slug: str, username_or_email: str) -> Invitation:
+async def get_project_invitation_by_username_or_email_or_404(
+    project_slug: str, username_or_email: str
+) -> ProjectInvitation:
     invitation = await invitations_services.get_project_invitation_by_username_or_email(
         project_slug=project_slug, username_or_email=username_or_email
     )
@@ -191,7 +207,7 @@ async def get_project_invitation_by_username_or_email_or_404(project_slug: str, 
     return invitation
 
 
-async def get_project_invitation_by_token_or_404(token: str) -> Invitation:
+async def get_project_invitation_by_token_or_404(token: str) -> ProjectInvitation:
     invitation = await invitations_services.get_project_invitation(token=token)
     if not invitation:
         raise ex.NotFoundError("Invitation does not exist")

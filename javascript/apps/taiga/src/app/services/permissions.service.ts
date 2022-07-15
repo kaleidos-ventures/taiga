@@ -26,7 +26,7 @@ const mapFormEntitiesPermissions: Record<
     comment: ['comment_us'],
   },
   task: {
-    view: ['view_tasks'],
+    view: ['view_task'],
     create: ['add_task'],
     modify: ['modify_task'],
     delete: ['delete_task'],

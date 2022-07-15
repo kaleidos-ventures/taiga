@@ -6,10 +6,18 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from fastapi.requests import Request as RequestBase
-from taiga.users.models import AnonymousUser, AnyUser
+from taiga.users.models import AnonymousUser, AnyUser, User
 
 
 class Request(RequestBase):
     @property
     def user(self) -> AnyUser:
         return self.scope.get("user", AnonymousUser)
+
+
+class AuthRequest(RequestBase):
+    @property
+    def user(self) -> User:
+        assert self.scope.get("user") is not None, "You can only use AuthRequest in autenticathed routes."
+
+        return self.scope["user"]

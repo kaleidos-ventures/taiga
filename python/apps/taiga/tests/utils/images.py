@@ -7,9 +7,9 @@
 
 from io import BytesIO, StringIO
 
-from django.core.files import File
 from fastapi import UploadFile
 from PIL import Image
+from taiga.base.db.models import File
 
 
 def create_valid_testing_image():

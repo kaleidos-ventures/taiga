@@ -31,19 +31,19 @@ def create_workspace(**kwargs):
     admin_role = f.WorkspaceRoleFactory.create(
         name="Administrator",
         slug="admin",
-        permissions=choices.WORKSPACE_PERMISSIONS,
+        permissions=choices.WorkspacePermissions.values,
         is_admin=True,
         workspace=workspace,
     )
     f.WorkspaceRoleFactory.create(
         name="Members",
         slug="member",
-        permissions=choices.WORKSPACE_PERMISSIONS,
+        permissions=choices.WorkspacePermissions.values,
         is_admin=False,
         workspace=workspace,
     )
 
-    f.WorkspaceMembershipFactory.create(user=workspace.owner, workspace=workspace, workspace_role=admin_role)
+    f.WorkspaceMembershipFactory.create(user=workspace.owner, workspace=workspace, role=admin_role)
 
     return workspace
 

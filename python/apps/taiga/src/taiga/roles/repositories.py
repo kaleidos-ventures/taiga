@@ -6,11 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from typing import Final
+from uuid import UUID
 
 from asgiref.sync import sync_to_async
-from django.db.models import Count
+from taiga.base.db.models import Count
 from taiga.projects.models import Project
-from taiga.roles.models import Membership, Role, WorkspaceMembership, WorkspaceRole
+from taiga.roles.models import ProjectMembership, ProjectRole, WorkspaceMembership, WorkspaceRole
 from taiga.users.models import User
 from taiga.workspaces.models import Workspace
 
@@ -18,18 +19,20 @@ from taiga.workspaces.models import Workspace
 # Project
 ####################################
 
-# Memberships
+# ProjectMemberships
 
 
 @sync_to_async
-def create_membership(user: User, project: Project, role: Role) -> Membership:
-    return Membership.objects.create(user=user, project=project, role=role)
+def create_project_membership(user: User, project: Project, role: ProjectRole) -> ProjectMembership:
+    return ProjectMembership.objects.create(user=user, project=project, role=role)
 
 
 @sync_to_async
-def get_project_memberships(project_slug: str, offset: int = 0, limit: int = 0) -> list[Membership]:
+def get_project_memberships(project_slug: str, offset: int = 0, limit: int = 0) -> list[ProjectMembership]:
     project_memberships_qs = (
-        Membership.objects.filter(project__slug=project_slug).select_related("user", "role").order_by("user__full_name")
+        ProjectMembership.objects.filter(project__slug=project_slug)
+        .select_related("user", "role")
+        .order_by("user__full_name")
     )
 
     if limit:
@@ -39,16 +42,18 @@ def get_project_memberships(project_slug: str, offset: int = 0, limit: int = 0) 
 
 
 @sync_to_async
-def get_project_membership(project_slug: str, username: str) -> Membership:
+def get_project_membership(project_slug: str, username: str) -> ProjectMembership | None:
     try:
-        return Membership.objects.select_related("role").get(project__slug=project_slug, user__username=username)
-    except Membership.DoesNotExist:
+        return ProjectMembership.objects.select_related("user", "project", "role").get(
+            project__slug=project_slug, user__username=username
+        )
+    except ProjectMembership.DoesNotExist:
         return None
 
 
 @sync_to_async
 def get_total_project_memberships(project_slug: str) -> int:
-    return Membership.objects.filter(project__slug=project_slug).count()
+    return ProjectMembership.objects.filter(project__slug=project_slug).count()
 
 
 @sync_to_async
@@ -57,12 +62,12 @@ def get_project_members(project: Project) -> list[User]:
 
 
 @sync_to_async
-def user_is_project_member(project_slug: str, user_id: int) -> bool:
-    return Membership.objects.filter(project__slug=project_slug, user__id=user_id).exists()
+def user_is_project_member(project_slug: str, user_id: UUID) -> bool:
+    return ProjectMembership.objects.filter(project__slug=project_slug, user__id=user_id).exists()
 
 
 @sync_to_async
-def update_project_membership_role(membership: Membership, role: Role) -> Membership:
+def update_project_membership_role(membership: ProjectMembership, role: ProjectRole) -> ProjectMembership:
     membership.role = role
     membership.save()
 
@@ -73,12 +78,12 @@ def update_project_membership_role(membership: Membership, role: Role) -> Member
 
 
 @sync_to_async
-def get_project_roles(project: Project) -> list[Role]:
+def get_project_roles(project: Project) -> list[ProjectRole]:
     return list(project.roles.annotate(num_members=Count("memberships")).all())
 
 
 @sync_to_async
-def get_project_roles_as_dict(project: Project) -> dict[str, Role]:
+def get_project_roles_as_dict(project: Project) -> dict[str, ProjectRole]:
     """
     This repository returns a dict whose key is the role slug and value the Role object
     """
@@ -86,33 +91,33 @@ def get_project_roles_as_dict(project: Project) -> dict[str, Role]:
 
 
 @sync_to_async
-def get_project_role(project: Project, slug: str) -> Role | None:
+def get_project_role(project: Project, slug: str) -> ProjectRole | None:
     try:
         return project.roles.annotate(num_members=Count("memberships")).get(slug=slug)
-    except Role.DoesNotExist:
+    except ProjectRole.DoesNotExist:
         return None
 
 
 @sync_to_async
-def get_first_role(project: Project) -> Role | None:
+def get_first_role(project: Project) -> ProjectRole | None:
     return project.roles.first()
 
 
 @sync_to_async
-def get_num_members_by_role_id(role_id: int) -> int:
-    return Membership.objects.filter(role_id=role_id).count()
+def get_num_members_by_role_id(role_id: UUID) -> int:
+    return ProjectMembership.objects.filter(role_id=role_id).count()
 
 
 @sync_to_async
-def get_role_for_user(user_id: int, project_id: int) -> Role:
+def get_role_for_user(user_id: UUID, project_id: UUID) -> ProjectRole | None:
     try:
-        return Role.objects.get(memberships__user__id=user_id, memberships__project__id=project_id)
-    except Role.DoesNotExist:
+        return ProjectRole.objects.get(memberships__user__id=user_id, memberships__project__id=project_id)
+    except ProjectRole.DoesNotExist:
         return None
 
 
 @sync_to_async
-def update_role_permissions(role: Role, permissions: list[str]) -> Role:
+def update_project_role_permissions(role: ProjectRole, permissions: list[str]) -> ProjectRole:
     role.permissions = permissions
     role.save()
     return role
@@ -122,12 +127,12 @@ def update_role_permissions(role: Role, permissions: list[str]) -> Role:
 # Workspace
 ####################################
 
-# Membership
+# WorkscpaceMembership
 
 
 @sync_to_async
-def create_workspace_membership(user: User, workspace: Workspace, workspace_role: WorkspaceRole) -> WorkspaceMembership:
-    return WorkspaceMembership.objects.create(user=user, workspace=workspace, workspace_role=workspace_role)
+def create_workspace_membership(user: User, workspace: Workspace, role: WorkspaceRole) -> WorkspaceMembership:
+    return WorkspaceMembership.objects.create(user=user, workspace=workspace, role=role)
 
 
 # Roles
@@ -138,18 +143,16 @@ WS_ROLE_NAME_GUEST: Final = "guest"
 WS_ROLE_NAME_NONE: Final = "none"
 
 
-def get_user_workspace_role_name_sync(workspace_id: int, user_id: int) -> str:
+def get_user_workspace_role_name_sync(workspace_id: UUID, user_id: UUID) -> str:
     try:
-        membership = WorkspaceMembership.objects.select_related("workspace_role").get(
-            workspace_id=workspace_id, user_id=user_id
-        )
+        membership = WorkspaceMembership.objects.select_related("role").get(workspace_id=workspace_id, user_id=user_id)
 
-        if membership.workspace_role.is_admin:
+        if membership.role.is_admin:
             return WS_ROLE_NAME_ADMIN
         else:
             return WS_ROLE_NAME_MEMBER
     except WorkspaceMembership.DoesNotExist:
-        if Membership.objects.filter(user_id=user_id, project__workspace_id=workspace_id).exists():
+        if ProjectMembership.objects.filter(user_id=user_id, project__workspace_id=workspace_id).exists():
             return WS_ROLE_NAME_GUEST
         else:
             return WS_ROLE_NAME_NONE
@@ -159,11 +162,9 @@ get_user_workspace_role_name = sync_to_async(get_user_workspace_role_name_sync)
 
 
 @sync_to_async
-def get_workspace_role_for_user(user_id: int, workspace_id: int) -> Role:
+def get_workspace_role_for_user(user_id: UUID, workspace_id: UUID) -> WorkspaceRole | None:
     try:
-        return WorkspaceRole.objects.get(
-            workspace_memberships__user__id=user_id, workspace_memberships__workspace__id=workspace_id
-        )
+        return WorkspaceRole.objects.get(memberships__user__id=user_id, memberships__workspace__id=workspace_id)
     except WorkspaceRole.DoesNotExist:
         return None
 
@@ -171,7 +172,7 @@ def get_workspace_role_for_user(user_id: int, workspace_id: int) -> Role:
 @sync_to_async
 def create_workspace_role(
     name: str, slug: str, workspace: Workspace, permissions: list[str] = [], is_admin: bool = False
-) -> Workspace:
+) -> WorkspaceRole:
     return WorkspaceRole.objects.create(
         workspace=workspace,
         name=name,

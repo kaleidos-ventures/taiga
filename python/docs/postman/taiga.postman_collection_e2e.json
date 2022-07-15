@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "06800baa-5cfd-426a-b450-ad12bc8b3105",
+		"_postman_id": "732a1a2b-cf1b-4cce-9f3f-f2f52caef975",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"_exporter_id": "15018493"
 	},
 	"item": [
 		{
@@ -348,11 +348,9 @@
 									"    pm.expect(jsonRes).to.have.property(\"username\");",
 									"    pm.expect(jsonRes).to.have.property(\"fullName\");",
 									"    pm.expect(jsonRes).to.have.property(\"email\");",
-									"    pm.expect(jsonRes).to.have.property(\"lang\");",
-									"    pm.expect(jsonRes).to.have.property(\"theme\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
 									"});"
 								],
 								"type": "text/javascript"

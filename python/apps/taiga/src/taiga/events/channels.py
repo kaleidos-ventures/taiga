@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.projects.models import Project
-from taiga.users.models import User
+from taiga.users.models import AnyUser, User
 from taiga.workspaces.models import Workspace
 
 _SYSTEM_CHANNEL_PATTERN = "system"
@@ -19,7 +19,7 @@ def system_channel() -> str:
     return _SYSTEM_CHANNEL_PATTERN
 
 
-def user_channel(user: User | str) -> str:
+def user_channel(user: AnyUser | str) -> str:
     username = user.username if isinstance(user, User) else user
     return _USER_CHANNEL_PATTERN.format(username=username)
 

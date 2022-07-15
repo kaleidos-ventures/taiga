@@ -5,4 +5,10 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga6.projects.choices import InvitationStatus  # noqa
+from taiga.base.db.models import TextChoices
+
+
+class ProjectInvitationStatus(TextChoices):
+    PENDING = "pending", "Pending"
+    ACCEPTED = "accepted", "Accepted"
+    REVOKED = "revoked", "Revoked"

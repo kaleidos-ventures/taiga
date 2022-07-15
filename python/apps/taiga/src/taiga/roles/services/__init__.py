@@ -10,7 +10,7 @@ from taiga.permissions import services as permissions_services
 from taiga.projects.models import Project
 from taiga.roles import events as roles_events
 from taiga.roles import repositories as roles_repositories
-from taiga.roles.models import Membership, Role
+from taiga.roles.models import ProjectMembership, ProjectRole
 from taiga.roles.services import exceptions as ex
 
 ###############################################################
@@ -20,15 +20,15 @@ from taiga.roles.services import exceptions as ex
 # Roles
 
 
-async def get_project_roles(project: Project) -> list[Role]:
+async def get_project_roles(project: Project) -> list[ProjectRole]:
     return await roles_repositories.get_project_roles(project)
 
 
-async def get_project_role(project: Project, slug: str) -> Role | None:
+async def get_project_role(project: Project, slug: str) -> ProjectRole | None:
     return await roles_repositories.get_project_role(project=project, slug=slug)
 
 
-async def update_role_permissions(role: Role, permissions: list[str]) -> Role:
+async def update_project_role_permissions(role: ProjectRole, permissions: list[str]) -> ProjectRole:
     if role.is_admin:
         raise ex.NonEditableRoleError("Cannot edit permissions in an admin role")
 
@@ -38,15 +38,15 @@ async def update_role_permissions(role: Role, permissions: list[str]) -> Role:
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
-    return await roles_repositories.update_role_permissions(role=role, permissions=permissions)
+    return await roles_repositories.update_project_role_permissions(role=role, permissions=permissions)
 
 
-# Memberships
+# ProjectMemberships
 
 
 async def get_paginated_project_memberships(
     project: Project, offset: int, limit: int
-) -> tuple[Pagination, list[Membership]]:
+) -> tuple[Pagination, list[ProjectMembership]]:
     memberships = await roles_repositories.get_project_memberships(
         project_slug=project.slug, offset=offset, limit=limit
     )
@@ -57,11 +57,11 @@ async def get_paginated_project_memberships(
     return pagination, memberships
 
 
-async def get_project_membership(project_slug: str, username: str) -> Membership:
+async def get_project_membership(project_slug: str, username: str) -> ProjectMembership:
     return await roles_repositories.get_project_membership(project_slug=project_slug, username=username)
 
 
-async def update_project_membership_role(membership: Membership, role_slug: str) -> Membership:
+async def update_project_membership_role(membership: ProjectMembership, role_slug: str) -> ProjectMembership:
     project_role = await roles_repositories.get_project_role(project=membership.project, slug=role_slug)
 
     if not project_role:

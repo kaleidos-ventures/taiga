@@ -6,8 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
-from django.contrib.auth.models import AnonymousUser
 from taiga.base.api.permissions import And, Not, Or, check_permissions
+from taiga.base.db.users import AnonymousUser
 from taiga.exceptions import api as ex
 from taiga.permissions import (
     AllowAny,

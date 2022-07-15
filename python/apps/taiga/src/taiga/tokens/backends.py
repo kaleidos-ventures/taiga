@@ -34,6 +34,7 @@ from typing import Any
 
 import jwt
 from jwt import ExpiredSignatureError, InvalidAlgorithmError, InvalidTokenError, algorithms
+from taiga.base.utils import json
 from taiga.conf import settings
 from taiga.conf.tokens import ALLOWED_ALGORITHMS
 from taiga.tokens import exceptions as ex
@@ -80,7 +81,7 @@ class TokenBackend:
         if self.issuer is not None:
             jwt_payload["iss"] = self.issuer
 
-        return jwt.encode(jwt_payload, self.signing_key, algorithm=self.algorithm)
+        return jwt.encode(jwt_payload, self.signing_key, algorithm=self.algorithm, json_encoder=json.JSONEncoder)
 
     def decode(self, token: str, verify: bool = True) -> dict[str, Any]:
         """

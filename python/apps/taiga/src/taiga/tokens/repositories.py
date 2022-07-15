@@ -33,7 +33,7 @@
 from datetime import datetime
 
 from asgiref.sync import sync_to_async
-from taiga.base.db import ContentType, Model
+from taiga.base.db.models import ContentType, Model
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.tokens.models import DenylistedToken, OutstandingToken
 

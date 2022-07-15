@@ -79,8 +79,8 @@ To add a local package with name <package_name> in `<relative_path>` use this
 file:<relative_path>#egg=<package_name>
 ```
 
-For example for package `taiga6` placed in `../../taiga6/taiga-back`
+For example for package `taiga_new_app` placed in `../../libs/taiga_new_app`
 
 ```
-file:../../taiga6/taiga-back#egg=taiga6
+file:../../libs/taiga_new_app#egg=taiga_new_app
 ```

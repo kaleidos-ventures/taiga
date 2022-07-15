@@ -7,7 +7,8 @@
 
 import pytest
 from asgiref.sync import sync_to_async
-from taiga.invitations.choices import InvitationStatus
+from taiga.base.db.exceptions import IntegrityError
+from taiga.invitations.choices import ProjectInvitationStatus
 from taiga.permissions import choices
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
@@ -28,24 +29,13 @@ pytestmark = pytest.mark.django_db(transaction=True)
 async def test_get_user_by_username_or_email_success_username_case_insensitive():
     user = await f.create_user(username="test_user_1")
     await f.create_user(username="test_user_2")
+    assert user == await users_repositories.get_user_by_username_or_email(username_or_email="test_user_1")
     assert user == await users_repositories.get_user_by_username_or_email(username_or_email="TEST_user_1")
-
-
-async def test_get_user_by_username_or_email_success_username_case_sensitive():
-    await f.create_user(username="test_user")
-    user = await f.create_user(username="TEST_user")
-    assert user == await users_repositories.get_user_by_username_or_email(username_or_email="TEST_user")
 
 
 async def test_get_user_by_username_or_email_error_invalid_username_case_insensitive():
     await f.create_user(username="test_user")
-    assert await users_repositories.get_user_by_username_or_email(username_or_email="TEST_other_user") is None
-
-
-async def test_get_user_by_username_or_email_error_invalid_username_case_sensitive():
-    await f.create_user(username="test_user")
-    await f.create_user(username="TEST_user")
-    assert await users_repositories.get_user_by_username_or_email(username_or_email="test_USER") is None
+    assert await users_repositories.get_user_by_username_or_email(username_or_email="test_other_user") is None
 
 
 # email
@@ -54,24 +44,13 @@ async def test_get_user_by_username_or_email_error_invalid_username_case_sensiti
 async def test_get_user_by_username_or_email_success_email_case_insensitive():
     user = await f.create_user(email="test_user_1@email.com")
     await f.create_user(email="test_user_2@email.com")
+    assert user == await users_repositories.get_user_by_username_or_email(username_or_email="test_user_1@email.com")
     assert user == await users_repositories.get_user_by_username_or_email(username_or_email="TEST_user_1@email.com")
-
-
-async def test_get_user_by_username_or_email_success_email_case_sensitive():
-    await f.create_user(email="test_user@email.com")
-    user = await f.create_user(email="TEST_user@email.com")
-    assert user == await users_repositories.get_user_by_username_or_email(username_or_email="TEST_user@email.com")
 
 
 async def test_get_user_by_username_or_email_error_invalid_email_case_insensitive():
     await f.create_user(email="test_user@email.com")
     assert await users_repositories.get_user_by_username_or_email(username_or_email="test_other_user@email.com") is None
-
-
-async def test_get_user_by_username_or_email_error_invalid_email_case_sensitive():
-    await f.create_user(email="test_user@email.com")
-    await f.create_user(email="TEST_user@email.com")
-    assert await users_repositories.get_user_by_username_or_email(username_or_email="test_USER@email.com") is None
 
 
 ##########################################################
@@ -98,15 +77,38 @@ async def test_change_password_and_check_password():
 ##########################################################
 
 
-async def test_create_user():
-    email = "email@email.com"
-    username = "username"
+async def test_create_user_success():
+    email = "EMAIL@email.com"
+    username = "userNAME"
     full_name = "Full Name"
     password = "password"
     user = await users_repositories.create_user(email=email, username=username, full_name=full_name, password=password)
     await db.refresh_model_from_db(user)
-    assert user.username == username
+    assert user.email == email.lower()
+    assert user.username == username.lower()
     assert user.password
+
+
+async def test_create_user_error_emaili_or_username_case_insensitive():
+    email = "EMAIL@email.com"
+    username = "userNAME"
+    full_name = "Full Name"
+    password = "password"
+
+    email2 = "OTHER_EMAIL@email.com"
+    username2 = "other_userNAME"
+
+    await users_repositories.create_user(email=email, username=username, full_name=full_name, password=password)
+
+    with pytest.raises(IntegrityError):
+        await users_repositories.create_user(
+            email=email.upper(), username=username2, full_name=full_name, password=password
+        )
+
+    with pytest.raises(IntegrityError):
+        await users_repositories.create_user(
+            email=email2, username=username.upper(), full_name=full_name, password=password
+        )
 
 
 ##########################################################
@@ -162,27 +164,26 @@ async def test_get_users_by_text():
     await f.create_user(is_active=True, username="elmary", full_name="Él Marinari")
     storm = await f.create_user(is_active=True, username="storm", full_name="Storm Smith")
     inactive_user = await f.create_user(is_active=False, username="inactive", full_name="Inactive User")
-    system_user = await f.create_user(is_system=True, is_active=True, username="system", full_name="System User")
 
     # elettescar is ws-member
     workspace = await f.create_workspace(is_premium=True, owner=ws_pj_admin, color=2)
     general_member_role = await f.create_workspace_role(
-        permissions=choices.WORKSPACE_PERMISSIONS, is_admin=False, workspace=workspace
+        permissions=choices.WorkspacePermissions.choices, is_admin=False, workspace=workspace
     )
-    await f.create_workspace_membership(user=elettescar, workspace=workspace, workspace_role=general_member_role)
+    await f.create_workspace_membership(user=elettescar, workspace=workspace, role=general_member_role)
 
     # electra is a pj-member (from the previous workspace)
     project = await f.create_project(workspace=workspace, owner=ws_pj_admin)
-    general_role = await f.create_role(project=project, is_admin=False)
-    await f.create_membership(user=electra, project=project, role=general_role)
+    general_role = await f.create_project_role(project=project, is_admin=False)
+    await f.create_project_membership(user=electra, project=project, role=general_role)
 
     # danvers has a pending invitation
-    await f.create_invitation(
+    await f.create_project_invitation(
         email="danvers@email.com",
         user=danvers,
         project=project,
         role=general_role,
-        status=InvitationStatus.PENDING,
+        status=ProjectInvitationStatus.PENDING,
         invited_by=ws_pj_admin,
     )
 
@@ -193,7 +194,6 @@ async def test_get_users_by_text():
     assert all_active_no_sys_users_result[1].full_name == "Electra - pj member"
     assert all_active_no_sys_users_result[2].full_name == "Elena Danvers"
     assert inactive_user not in all_active_no_sys_users_result
-    assert system_user not in all_active_no_sys_users_result
 
     # searching for project, no text search. Ordering by project closeness and alphabetically (full_name/username)
     search_by_text_no_pj_result = await users_repositories.get_users_by_text(project_slug=project.slug)
@@ -218,7 +218,6 @@ async def test_get_users_by_text():
     assert search_by_text_no_pj_result[6].full_name == "Storm Smith"
 
     assert inactive_user not in search_by_text_no_pj_result
-    assert system_user not in search_by_text_no_pj_result
 
     # searching for a text containing several words in lower case
     search_by_text_spaces_result = await users_repositories.get_users_by_text(text_search="storm smith")
@@ -250,11 +249,3 @@ async def test_get_users_by_text():
     assert inactive_user not in search_by_text_no_pj_pagination_result
     assert ws_pj_admin not in search_by_text_no_pj_pagination_result
     assert storm not in search_by_text_no_pj_pagination_result
-
-    # searching for inactive and system users
-    search_by_text_inactive_system = await users_repositories.get_users_by_text(
-        exclude_inactive=False, exclude_system=False
-    )
-    assert inactive_user in search_by_text_inactive_system
-    assert system_user in search_by_text_inactive_system
-    len(search_by_text_inactive_system) == 9

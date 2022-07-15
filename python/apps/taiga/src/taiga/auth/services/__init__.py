@@ -8,7 +8,7 @@
 from taiga.auth.dataclasses import AccessWithRefreshToken
 from taiga.auth.services import exceptions as ex
 from taiga.auth.tokens import AccessToken, RefreshToken
-from taiga.tokens import TokenError
+from taiga.tokens.exceptions import TokenError
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
 
@@ -16,12 +16,7 @@ from taiga.users.models import User
 async def login(username: str, password: str) -> AccessWithRefreshToken | None:
     user = await users_repositories.get_user_by_username_or_email(username_or_email=username)
 
-    if (
-        not user
-        or not await users_repositories.check_password(user=user, password=password)
-        or not user.is_active
-        or user.is_system
-    ):
+    if not user or not await users_repositories.check_password(user=user, password=password) or not user.is_active:
         return None
 
     return await create_auth_credentials(user=user)
@@ -49,7 +44,7 @@ async def authenticate(token: str) -> tuple[list[str], User]:
         raise ex.BadAuthTokenError()
 
     # Check user authorization permissions
-    if user := await users_repositories.get_first_user(**access_token.object_data, is_active=True, is_system=False):
+    if user := await users_repositories.get_first_user(**access_token.object_data, is_active=True):
         return ["auth"], user
 
     raise ex.UnauthorizedUserError("Error authenticating the user")
@@ -64,7 +59,7 @@ async def deny_refresh_token(user: User, token: str) -> None:
 
     # Check if the user who wants to deny the token is the owner (stored in the token).
     owner_id = refresh_token.object_data.get(refresh_token.object_id_field, None)
-    if not owner_id or owner_id != getattr(user, refresh_token.object_id_field):
+    if not owner_id or owner_id != str(getattr(user, refresh_token.object_id_field)):
         raise ex.UnauthorizedUserError("You don't have permmission to deny this token")
 
     # Deny the token

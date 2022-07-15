@@ -6,12 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.events import events_manager
-from taiga.roles.models import Membership
+from taiga.projects.models import ProjectMembership
 
 UPDATE_PROJECT_MEMBERSHIP_ROLE = "projectmemberships.update"
 
 
-async def emit_event_when_project_membership_role_is_updated(membership: Membership) -> None:
+async def emit_event_when_project_membership_role_is_updated(membership: ProjectMembership) -> None:
     await events_manager.publish_on_user_channel(
         user=membership.user,
         type=UPDATE_PROJECT_MEMBERSHIP_ROLE,

@@ -5,41 +5,37 @@ python-multipart
 uvicorn[standard]
 httpx
 
-# The task queue
+# ORM + Django
+Django
+psycopg2
+easy-thumbnails # Images and thumbnails
+
+# Mailing module
+Fastapi-Mailman # Email sender
+jinja2 # Templates system
+
+# Task Queue Module
 procrastinate
 
-# For pubsub postgres backend
-asyncpg
+# Events Module
+asyncpg<0.26.0 # For pubsub postgresql backend (<0.26 because there is no stub yet)
 
-# For manage CLI
-typer
+# Utils & tools
+PyJWT # For auth
+cryptography # For auth
+faker # For sample_data
+pyhumps # For transform texts: camelCase/snake_case
+python-json-logger # JSON logger
+python-slugify # To generate slugs
+requests # As http client
+svglib # Needed by easy-thumbnails
+typer # For manage CLI
 
-# camelCase/snake_case
-pyhumps
-
-# For auth
-PyJWT
-
-# JSON logs
-python-json-logger
-
-# Images and thumbnails
-easy-thumbnails
-
-# for sample_data
-faker
-
-# Fastapi-Mailman
-Fastapi-Mailman
-
-# Templates
-jinja2
-
-# Slug
-python-slugify
-
-# Do NOT add any dependencies below this line
-# Taiga 6
-#   we use -e for dev and prod because relative path in pip-compile only works with -e
-#   https://github.com/jazzband/pip-tools/issues/204#issuecomment-564597799)
--e file:./../../taiga6/taiga-back#egg=taiga6
+# TODO [FIXME]: there is an error if django-stubs-ext is not installed:
+#
+#     File "/home/bameda/kaleidos-ventures/projects/taiga/python/apps/taiga/src/taiga/base/db/models/__init__.py", line 24, in <module>
+#      from taiga.base.db.models.fields import *  # noqa
+#     File "/home/bameda/kaleidos-ventures/projects/taiga/python/apps/taiga/src/taiga/base/db/models/fields.py", line 15, in <module>
+#      class SaveAsLowerCaseMixin(Field[StrOrNone, str]):
+#   TypeError: 'type' object is not subscriptable
+django-stubs

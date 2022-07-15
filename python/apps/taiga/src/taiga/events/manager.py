@@ -186,21 +186,25 @@ class EventsManager:
         await self.publish(channel=channel, event=event)
 
     async def publish_on_user_channel(
-        self, user: User | str, type: str, sender: User | str, content: dict[str, Any] | None = None
+        self, user: User | str, type: str, sender: User | str | None = None, content: dict[str, Any] | None = None
     ) -> None:
         channel = channels.user_channel(user)
         event = self._generate_event(type=type, sender=sender, content=content)
         await self.publish(channel=channel, event=event)
 
     async def publish_on_project_channel(
-        self, project: Project | str, type: str, sender: User | str, content: dict[str, Any] | None = None
+        self, project: Project | str, type: str, sender: User | str | None = None, content: dict[str, Any] | None = None
     ) -> None:
         channel = channels.project_channel(project)
         event = self._generate_event(type=type, sender=sender, content=content)
         await self.publish(channel=channel, event=event)
 
     async def publish_on_workspace_channel(
-        self, workspace: Workspace | str, type: str, sender: User | str, content: dict[str, Any] | None = None
+        self,
+        workspace: Workspace | str,
+        type: str,
+        sender: User | str | None = None,
+        content: dict[str, Any] | None = None,
     ) -> None:
         channel = channels.workspace_channel(workspace)
         event = self._generate_event(type=type, sender=sender, content=content)

@@ -4,19 +4,14 @@ repos:
     hooks:
       - id: trailing-whitespace
         files: 'python/apps/taiga/'
-        exclude: 'python/taiga6/'
       - id: end-of-file-fixer
         files: 'python/apps/taiga/'
-        exclude: 'python/taiga6/'
       - id: check-docstring-first
         files: 'python/apps/taiga/'
-        exclude: 'python/taiga6/'
       - id: debug-statements
         files: 'python/apps/taiga/'
-        exclude: 'python/taiga6/'
       - id: check-yaml
         files: 'python/'
-        exclude: 'python/taiga6/'
 
   - repo: https://github.com/PyCQA/flake8
     rev: 4.0.1
@@ -24,7 +19,6 @@ repos:
       - id: flake8
         additional_dependencies: [flake8-typing-imports==1.12.0]
         files: 'python/apps/taiga/'
-        exclude: 'python/taiga6/'
         args: [--config=python/.flake8]
 
   - repo: https://github.com/psf/black
@@ -32,7 +26,6 @@ repos:
     hooks:
       - id: black
         files: 'python/apps/taiga/'
-        exclude: 'python/taiga6/'
         args: [--config=python/.black]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
@@ -41,7 +34,7 @@ repos:
       - id: mypy
         language: system
         files: 'python/apps/taiga/'
-        exclude: 'python/taiga6/|/tests/'
+        exclude: '/tests/|/migrations/'
         args: [--config-file=python/.mypy.ini]
 
   - repo: https://github.com/PyCQA/isort
@@ -49,7 +42,6 @@ repos:
     hooks:
       - id: isort
         files: 'python/apps/taiga/'
-        exclude: 'python/taiga6/'
         args: [--settings-path=python/.isort.cfg]
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks
@@ -57,7 +49,6 @@ repos:
     hooks:
       - id: insert-license
         files: '(python/apps/taiga/).*\.py$'
-        exclude: 'python/taiga6/'
         args:
           - --license-filepath
           - python/.license_header_template_python.txt          # defaults to: LICENSE.txt

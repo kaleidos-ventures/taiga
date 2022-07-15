@@ -7,18 +7,18 @@
 
 from dataclasses import dataclass
 
-from taiga.invitations.models import Invitation
+from taiga.invitations.models import ProjectInvitation
 from taiga.projects.models import Project
 
 
 @dataclass
-class PublicInvitation:
+class PublicProjectInvitation:
     email: str
     existing_user: bool
     project: Project
 
 
 @dataclass
-class CreateInvitations:
-    invitations: list[Invitation]
+class CreateProjectInvitations:
+    invitations: list[ProjectInvitation]
     already_members: int

@@ -20,6 +20,7 @@ import {
 import { AvatarModule } from '@taiga/ui/avatar';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
+import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 import { ProjectMembersListComponent } from './project-members-list.component';
 
@@ -37,6 +38,7 @@ import { ProjectMembersListComponent } from './project-members-list.component';
     TuiHintModule,
     ScrollingModule,
     BadgeModule,
+    CapitalizePipeModule,
   ],
   declarations: [ProjectMembersListComponent],
   exports: [ProjectMembersListComponent],

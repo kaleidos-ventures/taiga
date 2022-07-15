@@ -159,15 +159,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                           *ngIf="contact.userIsMember"
                           data-test="info-user"
                           class="disabled-badge"
+                          size="s"
                           [label]="
-                            t('invitation_modal.already_member')
+                            t('invitation_modal.already_member') | capitalize
                           "></tg-ui-badge>
                         <tg-ui-badge
                           *ngIf="contact.userIsAddedToList"
                           data-test="info-user"
                           class="disabled-badge"
+                          size="s"
                           [label]="
-                            t('invitation_modal.already_on_list')
+                            t('invitation_modal.already_on_list') | capitalize
                           "></tg-ui-badge>
                       </button>
                     </ng-container>

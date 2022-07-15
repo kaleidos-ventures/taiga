@@ -23,6 +23,7 @@ import { AvatarModule } from '@taiga/ui/avatar';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
 import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-skeleton/workspace-detail-skeleton.component';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
+import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 
 @NgModule({
   declarations: [WorkspaceDetailComponent, WorkspaceDetailSkeletonComponent],
@@ -40,6 +41,7 @@ import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
     AngularResizeEventModule,
     WorkspacePageRoutingModule,
     SkeletonsModule,
+    CapitalizePipeModule,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

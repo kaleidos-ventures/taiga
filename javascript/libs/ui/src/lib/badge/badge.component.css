@@ -15,11 +15,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   color: var(--badge-color, --color-gray80);
   display: block;
   font-style: italic;
-  text-transform: lowercase;
 }
 
 .badge {
   align-items: center;
+  block-size: min-content;
   display: flex;
   gap: var(--spacing-4);
   line-height: 1.25;

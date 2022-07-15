@@ -19,7 +19,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         tuiHintDirection="bottom-right"
         *ngIf="user.value.userHasPendingInvitation">
         <tg-ui-badge
-          [label]="t('invitation_modal.pending')"
+          [label]="t('invitation_modal.pending') | capitalize"
           icon="clock"
           color="yellow"></tg-ui-badge>
       </div>

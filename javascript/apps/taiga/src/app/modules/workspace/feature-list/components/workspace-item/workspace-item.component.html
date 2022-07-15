@@ -42,7 +42,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tg-ui-badge>
       <tg-ui-badge
         *ngIf="workspace.userIsOwner"
-        [label]="t('commons.owner')"
+        [label]="t('commons.owner') | capitalize"
         size="s"
         color="primary">
       </tg-ui-badge>

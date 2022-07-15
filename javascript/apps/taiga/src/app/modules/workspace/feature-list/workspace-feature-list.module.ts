@@ -36,6 +36,7 @@ import { AngularResizeEventModule } from 'angular-resize-event';
 import { ProjectCardModule } from '~/app/shared/project-card/project-card.module';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-routing.module';
+import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-rout
     AngularResizeEventModule,
     ProjectCardModule,
     WorkspaceFeatureListRoutingModule,
+    CapitalizePipeModule,
   ],
   providers: [
     {

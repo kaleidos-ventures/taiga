@@ -20,6 +20,7 @@ import {
 import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 import { UserToInviteComponent } from './user-to-invite.component';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
+import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 
 @NgModule({
   imports: [
@@ -34,6 +35,7 @@ import { BadgeModule } from '@taiga/ui/badge/badge.module';
     TranslocoModule,
     UserCardModule,
     BadgeModule,
+    CapitalizePipeModule,
   ],
   providers: [
     {

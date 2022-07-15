@@ -15,6 +15,7 @@ import { AvatarModule } from '@taiga/ui/avatar';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { DataAccessInvitationToProjectModule } from '../invite-to-project/data-access/+state/invite-to-project-data-access.module';
 import { InviteToProjectModule } from '../invite-to-project/invite-to-project.module';
+import { CapitalizePipeModule } from '../pipes/capitalize/capitalize.pipe.module';
 import { ProjectCardComponent } from './project-card.component';
 
 @NgModule({
@@ -29,6 +30,7 @@ import { ProjectCardComponent } from './project-card.component';
     TuiHintModule,
     DataAccessInvitationToProjectModule,
     BadgeModule,
+    CapitalizePipeModule,
   ],
   declarations: [ProjectCardComponent],
   providers: [],

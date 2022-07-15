@@ -34,6 +34,7 @@ import { InvitationEffects } from '~/app/shared/invite-to-project/data-access/+s
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { ButtonLoadingModule } from '../directives/button-loading/button-loading.module';
 import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
+import { CapitalizePipeModule } from '../pipes/capitalize/capitalize.pipe.module';
 
 @NgModule({
   imports: [
@@ -61,6 +62,7 @@ import { UserCardModule } from '~/app/shared/user-card/user-card-component.modul
     TuiAutoFocusModule,
     ButtonLoadingModule,
     UserCardModule,
+    CapitalizePipeModule,
   ],
   declarations: [InviteToProjectComponent],
   exports: [InviteToProjectComponent],

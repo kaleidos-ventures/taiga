@@ -7,12 +7,10 @@
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
-import { UtilsService } from '../utils/utils-service.service';
 
-@Pipe({ name: 'getUrl' })
-export class getUrlPipe implements PipeTransform {
-  constructor(private utilsService: UtilsService) {}
-  public transform(commands: number[] | string[] | string) {
-    return this.utilsService.getUrl(commands);
+@Pipe({ name: 'capitalize' })
+export class capitalizePipe implements PipeTransform {
+  public transform(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
 }

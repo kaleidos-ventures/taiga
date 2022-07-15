@@ -15,7 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { AuthForestModule } from '../components/auth-forest/auth-forest.module';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
-import { GetUrlPipeModule } from '~/app/shared/pipes/get-url.pipe.module';
+import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
 import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 import { RouterModule, Routes } from '@angular/router';

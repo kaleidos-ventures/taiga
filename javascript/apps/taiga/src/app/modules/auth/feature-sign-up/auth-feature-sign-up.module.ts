@@ -19,7 +19,7 @@ import { SignupComponent } from './components/signup/signup.component';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { ExternalLinkModule } from '~/app/shared/directives/external-link/external-link.module';
 import { AuthFeatureVerifyEmailComponent } from './components/verify-email/verify-email.component';
-import { GetUrlPipeModule } from '~/app/shared/pipes/get-url.pipe.module';
+import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
 import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 import { SocialLoginModule } from '../components/social-login/social-login.module';

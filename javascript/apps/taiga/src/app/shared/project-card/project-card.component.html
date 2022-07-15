@@ -70,7 +70,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [@itemSlideOutAnimation]
           *ngIf="invitationStatus !== 'accepted'">
           <tg-ui-badge
-            [label]="t('project.card.pending_invitation')"
+            [label]="t('project.card.pending_invitation') | capitalize"
             icon="clock"
             color="gray"></tg-ui-badge>
         </div>

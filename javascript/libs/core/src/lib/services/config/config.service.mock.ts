@@ -18,6 +18,9 @@ export const social = {
     serverUrl: randUrl(),
     clientId: randAlphaNumeric(),
   },
+  google: {
+    clientId: randUrl(),
+  },
 };
 
 export const ConfigServiceMock = {

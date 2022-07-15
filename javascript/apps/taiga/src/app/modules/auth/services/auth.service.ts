@@ -76,6 +76,7 @@ export class AuthService {
     const social = this.config.social;
     const isGithubConfigured = !!social.github.clientId;
     const isGitlabConfigured = !!social.gitlab.clientId;
-    return isGithubConfigured || isGitlabConfigured;
+    const isGoogleConfigured = !!social.google.clientId;
+    return isGithubConfigured || isGitlabConfigured || isGoogleConfigured;
   }
 }

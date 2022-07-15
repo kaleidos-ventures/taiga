@@ -12,6 +12,9 @@
     "gitlab": {
       "serverUrl": "https://gitlab.com",
       "clientId": ""
+    },
+    "google": {
+      "clientId": ""
     }
   }
 }

@@ -49,6 +49,9 @@ export class SocialLoginButtonComponent {
     } else if (this.social === 'gitlab') {
       socialAuthUrl = `${socialConfig.serverUrl as string}/oauth/authorize`;
       scope = 'read_user';
+    } else if (this.social === 'google') {
+      socialAuthUrl = 'https://accounts.google.com/o/oauth2/auth';
+      scope = 'email+profile';
     }
     const clientId = socialConfig.clientId;
     const redirectUri = `${window.location.origin}/signup/${this.social}`;

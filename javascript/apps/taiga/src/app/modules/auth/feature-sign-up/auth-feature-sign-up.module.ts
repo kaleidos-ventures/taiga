@@ -48,6 +48,11 @@ const routes: Routes = [
     children: [],
     canActivate: [SocialSignupGuard],
   },
+  {
+    path: 'google',
+    children: [],
+    canActivate: [SocialSignupGuard],
+  },
 ];
 
 @NgModule({

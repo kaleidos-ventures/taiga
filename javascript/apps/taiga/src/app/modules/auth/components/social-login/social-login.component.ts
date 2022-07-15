@@ -34,6 +34,10 @@ export class SocialLoginComponent implements OnInit {
     return !!this.config.social.gitlab.clientId;
   }
 
+  public get isGoogleActive() {
+    return !!this.config.social.google.clientId;
+  }
+
   public ngOnInit(): void {
     this.social = this.route.snapshot.queryParamMap.get('social');
     this.socialError = this.route.snapshot.queryParamMap.get('socialError');

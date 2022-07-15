@@ -41,7 +41,7 @@ import {
   randSequence,
   randUrl,
   randBoolean,
-  randWord,
+  rand,
 } from '@ngneat/falso';
 import { cold, hot } from 'jest-marbles';
 import { NavigationEnd, Router } from '@angular/router';
@@ -384,7 +384,7 @@ describe('AuthEffects', () => {
 
   it('social login', () => {
     const code = randSequence({ size: 100 });
-    const social = randWord();
+    const social = rand(['github', 'gitlab', 'google']);
 
     const authApiService = spectator.inject(AuthApiService);
     const authService = spectator.inject(AuthService);
@@ -410,22 +410,19 @@ describe('AuthEffects', () => {
 
   it('social login - errors', () => {
     const code = randSequence({ size: 100 });
-    const social = randWord();
+    const social = rand(['github', 'gitlab', 'google']);
 
     const authApiService = spectator.inject(AuthApiService);
     const router = spectator.inject(Router);
     const effects = spectator.inject(AuthEffects);
 
     const errors = [
-      'github-api-error',
-      'gitlab-api-error',
-      'github-login-authentication-error',
-      'gitlab-login-authentication-error',
-      'github-login-error',
-      'gitlab-login-error',
+      `${social}-api-error`,
+      `${social}-login-authentication-error`,
+      `${social}-login-error`,
     ];
 
-    const errorMsg = errors[Math.floor(Math.random() * errors.length)];
+    const errorMsg = rand(errors);
 
     const httpError = new HttpErrorResponse({
       status: 400,

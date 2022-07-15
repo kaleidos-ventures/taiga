@@ -377,12 +377,15 @@ export class AuthEffects {
             const serverErrorMessages = [
               'github-api-error',
               'gitlab-api-error',
+              'google-api-error',
               'github-login-authentication-error',
               'gitlab-login-authentication-error',
+              'google-login-authentication-error',
             ];
             const configErrorMessages = [
               'github-login-error',
               'gitlab-login-error',
+              'google-login-error',
             ];
 
             if (

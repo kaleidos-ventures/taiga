@@ -15,7 +15,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <span class="count">({{ vm.totalMemberships }})</span>
         <span
           class="pending"
-          *ngIf="vm.totalInvitations"
+          *ngIf="vm.project.userIsAdmin && vm.totalInvitations"
           >-
           {{
             t('project_overview.members.count_pending', {

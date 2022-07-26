@@ -6,20 +6,20 @@ To find the main example please refer to the file `/src/app/services/app.service
 
 In case you want to use it for other endeavours:
 
-1. Inject `TuiNotificationsService` in your constructor
+1. Inject `TuiAlertService` in your constructor
 
 ```ts
   constructor(
     ...
-    @Inject(TuiNotificationsService)
-    private readonly notificationsService: TuiNotificationsService
+    @Inject(TuiAlertService)
+    private readonly notificationsService: TuiAlertService
   ) {}
 ```
 
-2. Launch `show()` and edit the options (TuiNotificationOptions):
+2. Launch `open()` and edit the options (TuiNotificationOptions):
 
 ```ts
-this.notificationsService.show('text', options).subscribe();
+this.notificationsService.open('text', options).subscribe();
 ```
 
-The TaigaUI notification service accepts not only text, but also other components. Read more at: [https://taiga-ui.dev/services/notifications-service](https://taiga-ui.dev/services/notifications-service)
+The TaigaUI notification service accepts not only text, but also other components. Read more at: [https://taiga-ui.dev/services/alert-service](https://taiga-ui.dev/services/alert-service)

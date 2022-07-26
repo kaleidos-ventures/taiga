@@ -8,11 +8,7 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import {
-  TuiNotification,
-  TuiNotificationOptions,
-  TuiNotificationsService,
-} from '@taiga-ui/core';
+import { TuiNotification, TuiAlertService } from '@taiga-ui/core';
 import {
   unexpectedError,
   forbidenError,
@@ -32,8 +28,8 @@ export class AppService {
     private store: Store,
     private translocoService: TranslocoService,
     private router: Router,
-    @Inject(TuiNotificationsService)
-    private readonly notificationsService: TuiNotificationsService
+    @Inject(TuiAlertService)
+    private readonly notificationsService: TuiAlertService
   ) {}
 
   public formatHttpErrorResponse(error: HttpErrorResponse): UnexpectedError {
@@ -105,7 +101,7 @@ export class AppService {
         data.paramsMessage,
         data.scope
       );
-      const toastOptions: TuiNotificationOptions = {
+      const toastOptions = {
         hasIcon: true,
         hasCloseButton: true,
         autoClose: data.autoClose ? autoCloseTimer : false,
@@ -114,7 +110,7 @@ export class AppService {
       };
 
       this.notificationsService
-        .show(message, toastOptions)
+        .open(message, toastOptions)
         .pipe(
           takeUntil(
             this.router.events.pipe(

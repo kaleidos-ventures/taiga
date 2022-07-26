@@ -284,3 +284,66 @@ async def test_accept_my_already_accepted_project_invitation(client):
     client.login(invited_user)
     response = client.post(f"projects/{project.slug}/invitations/accept")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+#########################################################################
+# POST /projects/<slug>/invitations/resend
+#########################################################################
+
+
+async def test_resend_project_invitation_by_username_ok(client):
+    owner = await f.create_user()
+    project = await f.create_project(owner=owner)
+    user = await f.create_user()
+    await f.create_invitation(user=user, email=user.email, project=project)
+
+    client.login(owner)
+    data = {"username_or_email": user.username}
+    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+async def test_resend_project_invitation_by_user_email_ok(client):
+    owner = await f.create_user()
+    project = await f.create_project(owner=owner)
+    user = await f.create_user()
+    await f.create_invitation(user=user, email=user.email, project=project)
+
+    client.login(owner)
+    data = {"username_or_email": user.email}
+    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+async def test_resend_project_invitation_by_email_ok(client):
+    owner = await f.create_user()
+    project = await f.create_project(owner=owner)
+    email = "user-test@email.com"
+    await f.create_invitation(user=None, email=email, project=project)
+
+    client.login(owner)
+    data = {"username_or_email": email}
+    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+async def test_resend_project_invitation_user_without_permission(client):
+    project = await f.create_project()
+    user = await f.create_user()
+    email = "user-test@email.com"
+    await f.create_invitation(user=None, email=email, project=project)
+
+    client.login(user)
+    data = {"username_or_email": email}
+    response = client.post(f"/projects/{project.slug}/invitations/resend", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_resend_project_invitation_not_exist(client):
+    owner = await f.create_user()
+    project = await f.create_project(owner=owner)
+
+    client.login(owner)
+    data = {"username_or_email": "not_exist"}
+    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

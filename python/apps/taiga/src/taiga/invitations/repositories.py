@@ -7,6 +7,7 @@
 
 from asgiref.sync import sync_to_async
 from django.db.models import Q
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.models import Invitation
 from taiga.projects.models import Project
@@ -141,3 +142,13 @@ def has_pending_project_invitation_for_user(user: User, project: Project) -> boo
 @sync_to_async
 def update_user_projects_invitations(user: User) -> None:
     Invitation.objects.filter(email=user.email).update(user=user)
+
+
+@sync_to_async
+def resend_project_invitation(invitation: Invitation, resent_by: User) -> Invitation:
+    invitation.num_emails_sent += 1
+    invitation.resent_at = aware_utcnow()
+    invitation.resent_by = resent_by
+    invitation.save()
+
+    return invitation

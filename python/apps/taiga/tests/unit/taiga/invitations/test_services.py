@@ -8,6 +8,7 @@
 from unittest.mock import patch
 
 import pytest
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.invitations import services
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.services import exceptions as ex
@@ -602,3 +603,104 @@ async def test_update_user_projects_invitations() -> None:
             user=user, status=InvitationStatus.PENDING
         )
         fake_invitations_events.emit_event_when_user_invitations_are_updated.assert_awaited_once()
+
+
+#######################################################
+# resend_project_invitation
+#######################################################
+
+
+async def test_resend_project_invitation_by_username_ok() -> None:
+    owner = f.build_user()
+    project = f.build_project(owner=owner)
+    user = f.build_user()
+    invitation = f.build_invitation(project=project, user=user, email=user.email)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch(
+            "taiga.invitations.services.send_project_invitation_email", autospec=True
+        ) as fake_send_project_invitation_email,
+    ):
+        fake_send_project_invitation_email.return_value = None
+
+        await services.resend_project_invitation(invitation=invitation, resent_by=owner)
+
+        fake_invitations_repo.resend_project_invitation.assert_awaited_once_with(invitation=invitation, resent_by=owner)
+        fake_send_project_invitation_email.assert_awaited_once_with(invitation=invitation, is_resend=True)
+
+
+async def test_resend_project_invitation_by_user_email_ok() -> None:
+    owner = f.build_user()
+    project = f.build_project(owner=owner)
+    user = f.build_user()
+    invitation = f.build_invitation(project=project, user=user, email=user.email)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch(
+            "taiga.invitations.services.send_project_invitation_email", autospec=True
+        ) as fake_send_project_invitation_email,
+    ):
+        fake_send_project_invitation_email.return_value = None
+
+        await services.resend_project_invitation(invitation=invitation, resent_by=owner)
+
+        fake_invitations_repo.resend_project_invitation.assert_awaited_once_with(invitation=invitation, resent_by=owner)
+        fake_send_project_invitation_email.assert_awaited_once_with(invitation=invitation, is_resend=True)
+
+
+async def test_resend_project_invitation_by_email_ok() -> None:
+    owner = f.build_user()
+    project = f.build_project(owner=owner)
+    email = "user-test@email.com"
+    invitation = f.build_invitation(project=project, user=None, email=email)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch(
+            "taiga.invitations.services.send_project_invitation_email", autospec=True
+        ) as fake_send_project_invitation_email,
+    ):
+        fake_send_project_invitation_email.return_value = None
+
+        await services.resend_project_invitation(invitation=invitation, resent_by=owner)
+
+        fake_invitations_repo.resend_project_invitation.assert_awaited_once_with(invitation=invitation, resent_by=owner)
+        fake_send_project_invitation_email.assert_awaited_once_with(invitation=invitation, is_resend=True)
+
+
+async def test_resend_project_invitation_num_emails_sent_in_limit() -> None:
+    owner = f.build_user()
+    project = f.build_project(owner=owner)
+    email = "user-test@email.com"
+    invitation = f.build_invitation(project=project, user=None, email=email, num_emails_sent=10)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch(
+            "taiga.invitations.services.send_project_invitation_email", autospec=True
+        ) as fake_send_project_invitation_email,
+    ):
+        await services.resend_project_invitation(invitation=invitation, resent_by=owner)
+
+        fake_invitations_repo.resend_project_invitation.assert_not_awaited()
+        fake_send_project_invitation_email.assert_not_awaited()
+
+
+async def test_resend_project_invitation_resent_at_in_limit() -> None:
+    owner = f.build_user()
+    project = f.build_project(owner=owner)
+    email = "user-test@email.com"
+    invitation = f.build_invitation(project=project, user=None, email=email, resent_at=aware_utcnow())
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch(
+            "taiga.invitations.services.send_project_invitation_email", autospec=True
+        ) as fake_send_project_invitation_email,
+    ):
+        await services.resend_project_invitation(invitation=invitation, resent_by=owner)
+
+        fake_invitations_repo.resend_project_invitation.assert_not_awaited()
+        fake_send_project_invitation_email.assert_not_awaited()

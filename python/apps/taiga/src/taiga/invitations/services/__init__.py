@@ -7,6 +7,7 @@
 
 from taiga.base.api.pagination import Pagination
 from taiga.base.utils import emails
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
@@ -52,6 +53,12 @@ async def get_project_invitation_by_user(project_slug: str, user: User) -> Invit
     return await invitations_repositories.get_project_invitation_by_user(project_slug=project_slug, user=user)
 
 
+async def get_project_invitation_by_username_or_email(project_slug: str, username_or_email: str) -> Invitation | None:
+    return await invitations_repositories.get_project_invitation_by_username_or_email(
+        project_slug=project_slug, username_or_email=username_or_email, status=InvitationStatus.PENDING
+    )
+
+
 async def get_paginated_project_invitations(
     project: Project, user: User, offset: int, limit: int
 ) -> tuple[Pagination, list[Invitation]]:
@@ -84,9 +91,9 @@ async def _generate_project_invitation_token(invitation: Invitation) -> str:
     return str(await ProjectInvitationToken.create_for_object(invitation))
 
 
-async def send_project_invitation_email(invitation: Invitation) -> None:
+async def send_project_invitation_email(invitation: Invitation, is_resend: bool | None = False) -> None:
     project = invitation.project
-    sender = invitation.invited_by
+    sender = invitation.resent_by if is_resend else invitation.invited_by
     receiver = invitation.user
     email = receiver.email if receiver else invitation.email
     invitation_token = await _generate_project_invitation_token(invitation)
@@ -249,3 +256,20 @@ async def update_user_projects_invitations(user: User) -> None:
         user=user, status=InvitationStatus.PENDING
     )
     await invitations_events.emit_event_when_user_invitations_are_updated(invitations=invitations)
+
+
+async def resend_project_invitation(invitation: Invitation, resent_by: User) -> None:
+    time_since_last_resend = (
+        (aware_utcnow() - invitation.resent_at).seconds
+        if invitation.resent_at
+        else settings.PROJECT_INVITATION_RESEND_TIME
+    )
+
+    # To avoid spam
+    if (
+        invitation.num_emails_sent < settings.PROJECT_INVITATION_RESEND_LIMIT
+        and time_since_last_resend >= settings.PROJECT_INVITATION_RESEND_TIME
+    ):
+        await invitations_repositories.resend_project_invitation(invitation=invitation, resent_by=resent_by)
+
+        await send_project_invitation_email(invitation=invitation, is_resend=True)

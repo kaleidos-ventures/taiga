@@ -10,6 +10,8 @@ from asgiref.sync import sync_to_async
 from taiga.invitations import repositories
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.models import Invitation
+from taiga.projects.models import Project
+from taiga.roles.models import Role
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -380,3 +382,30 @@ async def test_has_pending_project_invitation_for_user_does_not_exists_because_i
     await f.create_invitation(status=InvitationStatus.ACCEPTED, project=project, user=user)
 
     assert not await repositories.has_pending_project_invitation_for_user(user=user, project=project)
+
+
+##########################################################
+# resend_project_invitation
+##########################################################
+
+
+@sync_to_async
+def _get_admin_role(project: Project) -> Role:
+    return project.roles.get(slug="admin")
+
+
+async def test_resend_project_invitation():
+    project = await f.create_project()
+    user = await f.create_user()
+    invitation = await f.create_invitation(user=user, email=user.email, project=project, invited_by=project.owner)
+
+    other_admin = await f.create_user()
+    admin_role = await _get_admin_role(project=project)
+    await f.create_membership(user=other_admin, project=project, role=admin_role)
+
+    resend_invitation = await repositories.resend_project_invitation(invitation=invitation, resent_by=other_admin)
+
+    assert resend_invitation.user == user
+    assert resend_invitation.invited_by == project.owner
+    assert resend_invitation.resent_by == other_admin
+    assert resend_invitation.resent_at is not None

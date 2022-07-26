@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from fastapi import Depends, Query, Response
+from fastapi import Depends, Query, Response, status
 from taiga.base.api import Request
 from taiga.base.api.pagination import PaginationQuery, set_pagination
 from taiga.base.api.permissions import check_permissions
@@ -16,7 +16,7 @@ from taiga.invitations.dataclasses import CreateInvitations, PublicInvitation
 from taiga.invitations.models import Invitation
 from taiga.invitations.permissions import IsProjectInvitationRecipient
 from taiga.invitations.serializers import CreateInvitationsSerializer, InvitationSerializer, PublicInvitationSerializer
-from taiga.invitations.validators import InvitationsValidator
+from taiga.invitations.validators import InvitationsValidator, ResendInvitationValidator
 from taiga.permissions import IsAuthenticated, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
 from taiga.routers import routes
@@ -25,6 +25,7 @@ from taiga.routers import routes
 ACCEPT_INVITATION = IsAuthenticated()
 ACCEPT_TOKEN_INVITATION = IsProjectInvitationRecipient()
 CREATE_INVITATIONS = IsProjectAdmin()
+RESEND_INVITATION = IsProjectAdmin()
 
 
 @routes.unauth_projects.get(
@@ -145,3 +146,29 @@ async def create_invitations(
     return await invitations_services.create_invitations(
         project=project, invitations=form.get_invitations_dict(), invited_by=request.user
     )
+
+
+@routes.projects.post(
+    "/{slug}/invitations/resend",
+    name="project.invitations.resend",
+    summary="Resend project invitation",
+    response_class=Response,
+    responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def resend_project_invitation(
+    request: Request, form: ResendInvitationValidator, slug: str = Query(None, description="the project slug (str)")
+) -> None:
+    """
+    Resend invitation to a project
+    """
+    invitation = await invitations_services.get_project_invitation_by_username_or_email(
+        project_slug=slug, username_or_email=form.username_or_email
+    )
+
+    if not invitation:
+        raise ex.NotFoundError("Invitation not found")
+
+    await check_permissions(permissions=RESEND_INVITATION, user=request.user, obj=invitation)
+
+    await invitations_services.resend_project_invitation(invitation=invitation, resent_by=request.user)

@@ -55,6 +55,7 @@
     "page_info": "<span class='page-range'>{pageStart} - {pageEnd}</span> of {total}",
     "column_user": "User",
     "column_role": "Role",
-    "column_actions": "Actions"
+    "column_actions": "Actions",
+    "resend": "Resend"
   }
 }

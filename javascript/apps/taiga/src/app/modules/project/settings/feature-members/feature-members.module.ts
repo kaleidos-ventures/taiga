@@ -18,7 +18,7 @@ import { MembersEffects } from './+state/effects/members.effects';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
-import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 import { TuiTabsModule } from '@taiga-ui/kit';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
@@ -44,6 +44,7 @@ import { PaginationComponent } from './components/pagination/pagination.componen
     SkeletonsModule,
     TuiTabsModule,
     TuiButtonModule,
+    TuiLinkModule,
     UserCardModule,
     TuiSvgModule,
     CommonModule,

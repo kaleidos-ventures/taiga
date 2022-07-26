@@ -85,4 +85,8 @@ export class PendingMembersListComponent {
     }
     return { email: member.email };
   }
+
+  public resend() {
+    // todo
+  }
 }

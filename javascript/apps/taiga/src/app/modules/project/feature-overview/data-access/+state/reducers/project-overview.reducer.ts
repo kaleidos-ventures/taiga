@@ -88,6 +88,7 @@ export const reducer = createReducer(
               return !alreadyMembers.includes(it.user.username);
             });
 
+            state.invitationsToAnimate = [];
             state.membersToAnimate = newMembers.map((it) => {
               return it.user.username;
             });
@@ -141,6 +142,7 @@ export const reducer = createReducer(
     (state, action): ProjectOverviewState => {
       state.totalInvitations += action.newInvitations.length;
 
+      state.membersToAnimate = [];
       state.invitationsToAnimate = action.newInvitations.map((invitation) => {
         return invitation?.user?.username ?? invitation.email;
       });
@@ -194,6 +196,7 @@ export const reducer = createReducer(
   on(InvitationActions.acceptInvitationSlugSuccess, (state, { username }) => {
     state.totalInvitations -= 1;
     state.totalMemberships += 1;
+    state.invitationsToAnimate = [];
     state.membersToAnimate.push(username);
 
     const acceptedUser = state.invitations.find(

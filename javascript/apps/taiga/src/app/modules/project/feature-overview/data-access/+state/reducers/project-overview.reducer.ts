@@ -11,6 +11,7 @@ import { immerReducer } from '~/app/shared/utils/store';
 import { Invitation, Membership } from '@taiga/data';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { InvitationService } from '~/app/services/invitation.service';
 export interface ProjectOverviewState {
   members: Membership[];
   invitations: Invitation[];
@@ -146,24 +147,31 @@ export const reducer = createReducer(
 
       // add the new invitations to the list is there is no pagination (!state.hasMoreInvitations).
       if (!state.hasMoreInvitations) {
-        state.invitations.push(...action.newInvitations);
-
-        const registeredUser = state.invitations.filter(
-          (it) => !!it.user?.fullName
+        const currentInvitations = state.invitations.map((invitation) =>
+          invitation.user ? invitation.user?.username : invitation.email
         );
-        const newUsers = state.invitations.filter((it) => !it.user?.fullName);
-
-        registeredUser.sort((a, b) => {
-          const firstValue = a.user?.fullName ?? '';
-          const secondValue = b.user?.fullName ?? '';
-          return firstValue.localeCompare(secondValue);
+        action.newInvitations.forEach((newInvitation) => {
+          if (
+            !currentInvitations.includes(newInvitation.email) &&
+            !(
+              newInvitation.user &&
+              currentInvitations.includes(newInvitation.user?.username)
+            )
+          ) {
+            state.invitations = [
+              ...InvitationService.getFilteredUsers(
+                state.invitations,
+                action.newInvitations,
+                true
+              ),
+              ...InvitationService.getFilteredUsers(
+                state.invitations,
+                action.newInvitations,
+                false
+              ),
+            ];
+          }
         });
-
-        newUsers.sort((a, b) => {
-          return a.email.localeCompare(b.email);
-        });
-
-        state.invitations = [...registeredUser, ...newUsers];
       }
 
       return state;

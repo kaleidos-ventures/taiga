@@ -18,8 +18,12 @@ export class InvitationService {
     newInvitation: Invitation
   ): number {
     const usersArrayOrdered = [
-      ...this.getFilteredUsers(invitations, newInvitation, true),
-      ...this.getFilteredUsers(invitations, newInvitation, false),
+      ...InvitationService.getFilteredUsers(invitations, [newInvitation], true),
+      ...InvitationService.getFilteredUsers(
+        invitations,
+        [newInvitation],
+        false
+      ),
     ];
     return usersArrayOrdered.findIndex((it) => {
       return newInvitation.email
@@ -28,13 +32,13 @@ export class InvitationService {
     });
   }
 
-  public getFilteredUsers(
+  public static getFilteredUsers(
     invitations: Invitation[],
-    newInvitation: Invitation,
+    newInvitation: Invitation[],
     registered: boolean
   ): Invitation[] {
     const newUsersArray = invitations.slice();
-    newUsersArray.push(newInvitation);
+    newUsersArray.push(...newInvitation);
     const filteredArray = registered
       ? newUsersArray.filter((it) => it.user?.fullName)
       : newUsersArray.filter((it) => !it.user);

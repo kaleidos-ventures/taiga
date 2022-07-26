@@ -36,7 +36,20 @@ export const initialState: InvitationState = {
 export const reducer = createReducer(
   initialState,
   on(InvitationActions.inviteUsersSuccess, (state, action): InvitationState => {
-    state.invitations.push(...action.newInvitations);
+    const currentInvitations = state.invitations.map((invitation) =>
+      invitation.user ? invitation.user?.username : invitation.email
+    );
+    action.newInvitations.forEach((newInvitation) => {
+      if (
+        !currentInvitations.includes(newInvitation.email) &&
+        !(
+          newInvitation.user &&
+          currentInvitations.includes(newInvitation.user?.username)
+        )
+      ) {
+        state.invitations.push(...action.newInvitations);
+      }
+    });
 
     return state;
   }),

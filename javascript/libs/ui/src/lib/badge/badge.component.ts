@@ -51,8 +51,6 @@ export class BadgeComponent implements OnInit {
   constructor(private elementRef: ElementRef) {}
 
   public ngOnInit(): void {
-    console.log(this.color);
-
     const element = this.elementRef.nativeElement as HTMLElement;
     element.style.setProperty('--badge-color', `var(--color-${this.color}80)`);
     element.style.setProperty(

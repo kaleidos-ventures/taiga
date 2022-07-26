@@ -11,7 +11,7 @@ import { ServerModule } from '@angular/platform-server';
 
 import { AppModule } from './app.module';
 import { AppComponent } from './app.component';
-import { WsService } from '@taiga/ws';
+import { WsService } from '~/app/services/ws';
 
 @NgModule({
   imports: [AppModule, ServerModule],

@@ -88,6 +88,9 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   @Output()
   public closeModal = new EventEmitter();
 
+  @Output()
+  public inviteSuccess = new EventEmitter();
+
   @ViewChild('emailInput', { static: false })
   public emailInput!: TuiTextAreaComponent;
 
@@ -147,6 +150,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     this.actions$
       .pipe(ofType(inviteUsersSuccess), untilDestroyed(this))
       .subscribe(() => {
+        this.inviteSuccess.emit();
         this.close();
       });
 

@@ -7,8 +7,7 @@
     "email-server": "apps/email-server",
     "taiga": "apps/taiga",
     "taiga-e2e": "apps/taiga-e2e",
-    "ui": "libs/ui",
-    "ws": "libs/ws"
+    "ui": "libs/ui"
   },
   "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

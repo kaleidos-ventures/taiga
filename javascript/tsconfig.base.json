@@ -22,7 +22,6 @@
       "@taiga/core": ["libs/core/src/index.ts"],
       "@taiga/data": ["libs/data/src/index.ts"],
       "@taiga/ui/*": ["libs/ui/src/lib/*"],
-      "@taiga/ws": ["libs/ws/src/index.ts"],
       "~/*": ["apps/taiga/src/*"]
     }
   },

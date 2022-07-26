@@ -11,7 +11,7 @@ import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
-import { WsService } from '@taiga/ws';
+import { WsService } from '~/app/services/ws';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';

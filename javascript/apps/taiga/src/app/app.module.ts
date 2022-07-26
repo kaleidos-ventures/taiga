@@ -15,13 +15,13 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
-import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { AppRoutingModule } from './app-routing.module';
 import { ConfigService } from '@taiga/core';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiRestInterceptorModule } from './shared/api-rest-interceptor/api-rest-interceptor.module';
 import { ApiModule } from '@taiga/api';
-import { WsModule } from '@taiga/ws';
+import { WsModule } from '~/app/services/ws';
 import { CoreModule } from '@taiga/core';
 import { EnvironmentService } from './services/environment.service';
 import {
@@ -84,7 +84,9 @@ export function prefersReducedMotion(): boolean {
     }),
     StoreRouterConnectingModule.forRoot(),
     StoreModule.forRoot(
-      {},
+      {
+        router: routerReducer,
+      },
       {
         metaReducers: !environment.production ? [] : [],
         runtimeChecks: {

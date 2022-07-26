@@ -39,8 +39,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             class="tab-icon"
             src="members"></tui-svg>
           {{ t('members.members_tab') }}
-          <span class="count">({{ vm.totalMembers }})</span></a
-        >
+          <span class="count">({{ vm.totalMembers }})</span>
+        </a>
         <a
           class="tab-link"
           tuiTab
@@ -52,8 +52,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             class="tab-icon"
             src="clock"></tui-svg>
           {{ t('members.pending_tab') }}
-          <span class="count">({{ vm.totalPending }})</span></a
-        >
+          <span
+            class="count"
+            *ngIf="vm.totalPending"
+            >({{ vm.totalPending }})</span
+          >
+        </a>
       </tui-tabs>
       <div class="content">
         <router-outlet></router-outlet>
@@ -66,6 +70,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <ng-container *ngIf="vm.project">
         <tg-invite-to-project
           *ngIf="invitePeopleModal && vm.project.userIsAdmin"
+          (inviteSuccess)="onInviteSuccess()"
           (closeModal)="closeModal()"
           [project]="vm.project"></tg-invite-to-project>
       </ng-container>

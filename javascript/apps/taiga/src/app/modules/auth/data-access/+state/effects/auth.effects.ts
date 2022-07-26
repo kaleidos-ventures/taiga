@@ -127,26 +127,31 @@ export class AuthEffects {
     { dispatch: false }
   );
 
-  public logout$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(AuthActions.logout),
-      map(() => {
-        const refresh = this.authService.getAuth()?.refresh;
-        this.authApiService.denyRefreshToken(refresh).subscribe();
-        void this.authService.logout();
-        void this.router.navigate(['/login']);
-        const data = {
-          label: 'logout.logged_out',
-          message: 'logout.see_you_soon',
-          status: TuiNotification.Success,
-          scope: 'auth',
-          autoClose: true,
-        };
-        void this.appService.toastNotification(data);
-        return AuthActions.setUser({ user: null });
-      })
-    );
-  });
+  public logout$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(AuthActions.logout),
+        tap(() => {
+          const refresh = this.authService.getAuth()?.refresh;
+          this.authApiService.denyRefreshToken(refresh).subscribe();
+          void this.authService.logout();
+
+          const data = {
+            label: 'logout.logged_out',
+            message: 'logout.see_you_soon',
+            status: TuiNotification.Success,
+            scope: 'auth',
+            autoClose: true,
+          };
+
+          void this.appService.toastNotification(data);
+
+          void this.router.navigate(['/login']);
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   public signUp$ = createEffect(() => {
     return this.actions$.pipe(

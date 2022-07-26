@@ -6,38 +6,137 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { animate, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+  AnimationEvent,
+} from '@angular/animations';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Invitation, Project, User } from '@taiga/data';
 import { map } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import {
-  resendInvitation,
-  setPendingPage,
-} from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
+import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
   selectAnimationDisabled,
+  selectCancelledInvitations,
+  selectInvitationCancelAnimation,
   selectInvitations,
   selectInvitationsLoading,
   selectInvitationsOffset,
   selectInvitationUpdateAnimation,
+  selectOpenRevokeInvitationDialog,
   selectTotalInvitations,
+  selectUndoDoneAnimation,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { filterNil } from '~/app/shared/utils/operators';
 const cssValue = getComputedStyle(document.documentElement);
+interface InvitationData {
+  data: Invitation;
+  cancelled: string;
+  undo: boolean;
+  undoTabIndex: string;
+  cancelledTabIndex: string;
+}
+
+const revokeConfirmationDialogClose = '0.5s';
 
 @Component({
   selector: 'tg-pending-members-list',
   templateUrl: './pending-members-list.component.html',
   styleUrls: ['./pending-members-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [RxState],
   animations: [
+    trigger('revokeAnimationCell', [
+      state(
+        'inactive',
+        style({
+          opacity: 1,
+          transform: 'translateY(0%)',
+        })
+      ),
+      state(
+        'active',
+        style({
+          opacity: 0,
+          transform: 'translateY(-100%)',
+        })
+      ),
+      transition('inactive => active', [
+        style({ opacity: 0.7 }),
+        animate(`0.3s ${revokeConfirmationDialogClose}`),
+      ]),
+      transition('active => inactive', [animate('0.3s')]),
+    ]),
+    trigger('revokeAnimationUndo', [
+      transition(
+        'void => *', // ---> Entering --->
+        [
+          style({
+            opacity: 0,
+            transform: 'translateY(0%)',
+          }),
+          animate(
+            `400ms ${revokeConfirmationDialogClose} ease-out`,
+            style({
+              opacity: 1,
+              transform: 'translateY(-100%)',
+            })
+          ),
+        ]
+      ),
+      transition(
+        '* => void', // ---> Leaving --->
+        [
+          animate(
+            '400ms ease-out',
+            style({
+              opacity: 0,
+              transform: 'translateX(0%)',
+            })
+          ),
+        ]
+      ),
+    ]),
+    trigger('revokeUndoDone', [
+      transition(
+        'void => *', // ---> Entering --->
+        [
+          style({
+            opacity: 0,
+            transform: 'translateX(100%)',
+          }),
+          animate(
+            '400ms ease-out',
+            style({
+              opacity: 1,
+              transform: 'translateX(0%)',
+            })
+          ),
+        ]
+      ),
+      transition(
+        '* => void', // ---> Leaving --->
+        [
+          animate(
+            '400ms ease-out',
+            style({
+              opacity: 0,
+              transform: 'translateX(100%)',
+            })
+          ),
+        ]
+      ),
+    ]),
     trigger('settingInvitationAnimation', [
       transition(
-        'void => false', // ---> Entering --->
+        'void => create', // ---> Entering --->
         [
           style({
             blockSize: '0',
@@ -53,7 +152,7 @@ const cssValue = getComputedStyle(document.documentElement);
         ]
       ),
       transition(
-        'false => void', // ---> Leaving --->
+        ':leave', // ---> Leaving --->
         [
           animate(
             '400ms ease-out',
@@ -65,7 +164,7 @@ const cssValue = getComputedStyle(document.documentElement);
         ]
       ),
       transition(
-        'void => true', // <--- Entering <---
+        'void => update', // <--- Entering <---
         [
           style({
             opacity: '0',
@@ -102,6 +201,7 @@ const cssValue = getComputedStyle(document.documentElement);
 })
 export class PendingMembersListComponent {
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
+  public invitationToCancel: Invitation | null = null;
 
   public model$ = this.state.select().pipe(
     map((model) => {
@@ -110,6 +210,17 @@ export class PendingMembersListComponent {
 
       return {
         ...model,
+        invitations: model.invitations.map((invitation) => {
+          const cancelledId = model.cancelled.includes(invitation.email);
+          const undoDoneActive = model.undo.includes(invitation.email);
+          return {
+            data: invitation,
+            cancelled: cancelledId ? 'active' : 'inactive',
+            cancelledTabIndex: cancelledId ? '0' : '-1',
+            undo: undoDoneActive,
+            undoTabIndex: undoDoneActive ? '0' : '-1',
+          } as InvitationData;
+        }),
         pageStart,
         pageEnd,
         hasNextPage: pageEnd < model.total,
@@ -117,6 +228,11 @@ export class PendingMembersListComponent {
       };
     })
   );
+
+  private revokePendingConfirmTimeouts = new Map<
+    Invitation,
+    ReturnType<typeof setTimeout>
+  >();
 
   constructor(
     private store: Store,
@@ -126,8 +242,12 @@ export class PendingMembersListComponent {
       total: number;
       offset: number;
       animationDisabled: boolean;
-      invitationUpdateAnimation: boolean;
+      invitationUpdateAnimation: string | null;
+      invitationCancelAnimation: string | null;
       project: Project;
+      revokeDialogDisplay: Invitation['email'] | null;
+      cancelled: string[];
+      undo: string[];
     }>
   ) {
     this.state.connect('invitations', this.store.select(selectInvitations));
@@ -143,25 +263,51 @@ export class PendingMembersListComponent {
       this.store.select(selectInvitationUpdateAnimation)
     );
     this.state.connect(
+      'invitationCancelAnimation',
+      this.store.select(selectInvitationCancelAnimation)
+    );
+    this.state.connect(
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())
     );
+
+    this.state.connect(
+      'cancelled',
+      this.store.select(selectCancelledInvitations)
+    );
+
+    this.state.connect(
+      'revokeDialogDisplay',
+      this.store.select(selectOpenRevokeInvitationDialog)
+    );
+
+    this.state.connect('undo', this.store.select(selectUndoDoneAnimation));
+
+    this.store.dispatch(membersActions.selectTab({ tab: 'pending' }));
   }
 
   public next() {
     this.store.dispatch(
-      setPendingPage({ offset: this.state.get('offset') + MEMBERS_PAGE_SIZE })
+      membersActions.setPendingPage({
+        offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
+      })
     );
   }
 
   public prev() {
     this.store.dispatch(
-      setPendingPage({ offset: this.state.get('offset') - MEMBERS_PAGE_SIZE })
+      membersActions.setPendingPage({
+        offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
+      })
     );
   }
 
-  public trackByUsername(_index: number, invitation: Invitation) {
-    return invitation.user?.username;
+  public trackByInvitation(_index: number, invitation: InvitationData) {
+    if (invitation.data.user?.username) {
+      return invitation.data.email + invitation.data.user.username;
+    }
+
+    return invitation.data.email;
   }
 
   public trackByIndex(index: number) {
@@ -177,10 +323,69 @@ export class PendingMembersListComponent {
 
   public resend(member: Invitation) {
     this.store.dispatch(
-      resendInvitation({
+      membersActions.resendInvitation({
         slug: this.state.get('project').slug,
         usernameOrEmail: member.user?.username || member.email,
       })
     );
+  }
+
+  public onOpenRevokeInvitation(invitation: Invitation) {
+    this.store.dispatch(membersActions.openRevokeInvitation({ invitation }));
+  }
+
+  public onClosedRevokeInvitation() {
+    this.store.dispatch(
+      membersActions.openRevokeInvitation({ invitation: null })
+    );
+  }
+
+  public onConfirmCancelInvitation(invitation: Invitation) {
+    this.store.dispatch(membersActions.cancelInvitationUi({ invitation }));
+
+    this.revokePendingConfirmTimeouts.set(
+      invitation,
+      setTimeout(() => {
+        this.execCancelInvitation(invitation);
+      }, 5000)
+    );
+  }
+
+  public undoRevoke(invitation: Invitation) {
+    this.store.dispatch(membersActions.undoCancelInvitationUi({ invitation }));
+    this.clearInvitationToCancel(invitation);
+  }
+
+  public removeUndoneDoneAnimation(invitation: Invitation) {
+    this.store.dispatch(membersActions.removeUndoDoneAnimation({ invitation }));
+  }
+
+  public getUsername(invitation: Invitation) {
+    if (invitation.user && invitation.user.username) {
+      return invitation.user.username;
+    } else {
+      return invitation.email;
+    }
+  }
+
+  public invitationAnimationUpdateDone(event: AnimationEvent) {
+    if (event.fromState == 'void') {
+      if (event.toState === 'create' || event.toState === 'update') {
+        this.store.dispatch(membersActions.animationUpdateDone());
+      }
+    }
+  }
+
+  private clearInvitationToCancel(invitation: Invitation) {
+    const timeout = this.revokePendingConfirmTimeouts.get(invitation);
+    if (timeout) {
+      clearTimeout(timeout);
+      this.revokePendingConfirmTimeouts.delete(invitation);
+    }
+  }
+
+  private execCancelInvitation(invitation: Invitation) {
+    this.store.dispatch(membersActions.revokeInvitation({ invitation }));
+    this.clearInvitationToCancel(invitation);
   }
 }

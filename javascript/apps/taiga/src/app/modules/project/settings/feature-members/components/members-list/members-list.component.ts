@@ -7,21 +7,21 @@
  */
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Membership, User } from '@taiga/data';
 import { map } from 'rxjs/operators';
-import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
-import { setMembersPage } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
+  selectAnimationDisabled,
   selectMembers,
   selectMembersLoading,
   selectMembersOffset,
   selectTotalMemberships,
-  selectAnimationDisabled,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { slideInOut400 } from '~/app/shared/utils/animations';
 
 @UntilDestroy()
@@ -71,17 +71,23 @@ export class MembersListComponent {
       'animationDisabled',
       this.store.select(selectAnimationDisabled)
     );
+
+    this.store.dispatch(membersActions.selectTab({ tab: 'members' }));
   }
 
   public next() {
     this.store.dispatch(
-      setMembersPage({ offset: this.state.get('offset') + MEMBERS_PAGE_SIZE })
+      membersActions.setMembersPage({
+        offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
+      })
     );
   }
 
   public prev() {
     this.store.dispatch(
-      setMembersPage({ offset: this.state.get('offset') - MEMBERS_PAGE_SIZE })
+      membersActions.setMembersPage({
+        offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
+      })
     );
   }
 

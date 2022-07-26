@@ -1,0 +1,54 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t; read: 'project_settings'">
+  <tui-hosted-dropdown
+    [tuiDropdownAlign]="'right'"
+    [content]="confirmRevokeDialog"
+    [(open)]="dropdownState">
+    <button
+      #cancel
+      data-test="revoke-invitation"
+      class="revoke-invitation-btn row-action"
+      tuiLink
+      appearance="tertiary">
+      {{ t('members.cancel_invitation') }}
+    </button>
+  </tui-hosted-dropdown>
+
+  <ng-template #confirmRevokeDialog>
+    <div
+      class="revoke-dialog"
+      cdkTrapFocus>
+      <p class="revoke-dialog-title">
+        {{
+          t('members.revoke.question', {
+            user: invitation.user?.username ?? invitation.email
+          })
+        }}
+      </p>
+      <p class="revoke-dialog-description">
+        {{ t('members.revoke.description') }}
+      </p>
+      <div class="revoke-dialog-actions">
+        <button
+          tuiLink
+          appearance="tertiary"
+          (click)="keep()">
+          {{ t('members.revoke.keep_invitation') }}
+        </button>
+        <button
+          data-test="confirm-cancel"
+          tuiButton
+          appearance="secondary"
+          (click)="confirm()">
+          {{ t('members.revoke.confirm_cancel_invitation') }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</ng-container>

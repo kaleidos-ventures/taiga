@@ -20,7 +20,7 @@ import { cold, hot } from 'jest-marbles';
 import { ProjectMockFactory, UserMockFactory } from '@taiga/data';
 import { TestScheduler } from 'rxjs/testing';
 import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { WsService, WsServiceMock } from '@taiga/ws';
+import { WsService, WsServiceMock } from '~/app/services/ws';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 describe('ProjectEffects', () => {

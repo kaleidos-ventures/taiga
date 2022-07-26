@@ -10,51 +10,48 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { pessimisticUpdate } from '@nrwl/angular';
+import { optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import { ErrorManagementToastOptions } from '@taiga/data';
+import { WsService } from '~/app/services/ws';
 import { EMPTY } from 'rxjs';
-import { catchError, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import {
-  fetchInvitationsSuccess,
-  fetchMembersSuccess,
-  initMembersPage,
-  setMembersPage,
-  setPendingPage,
-  updateMembersList,
-} from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
+  catchError,
+  delay,
+  exhaustMap,
+  filter,
+  map,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
   selectInvitationsOffset,
   selectMembersOffset,
+  selectOpenRevokeInvitationDialog,
+  selectUndoDoneAnimation,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { AppService } from '~/app/services/app.service';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
-import { inviteUsersSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { filterNil } from '~/app/shared/utils/operators';
-import {
-  resendInvitation,
-  resendInvitationError,
-  resendInvitationSuccess,
-} from '../actions/members.actions';
 
 @Injectable()
 export class MembersEffects {
   public nextMembersPage$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(setMembersPage),
+      ofType(membersActions.setMembersPage),
       concatLatestFrom(() =>
         this.store.select(selectCurrentProject).pipe(filterNil())
       ),
-
       exhaustMap(([action, project]) => {
         return this.projectApiService
           .getMembers(project.slug, action.offset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((membersResponse) => {
-              return fetchMembersSuccess({
+              return membersActions.fetchMembersSuccess({
                 members: membersResponse.memberships,
                 totalMemberships: membersResponse.totalMemberships,
                 offset: action.offset,
@@ -71,7 +68,7 @@ export class MembersEffects {
 
   public nextPendingPage$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(setPendingPage),
+      ofType(membersActions.setPendingPage),
       concatLatestFrom(() =>
         this.store.select(selectCurrentProject).pipe(filterNil())
       ),
@@ -80,7 +77,7 @@ export class MembersEffects {
           .getInvitations(project.slug, action.offset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((invitationsResponse) => {
-              return fetchInvitationsSuccess({
+              return membersActions.fetchInvitationsSuccess({
                 invitations: invitationsResponse.invitations,
                 totalInvitations: invitationsResponse.totalInvitations,
                 offset: action.offset,
@@ -97,7 +94,7 @@ export class MembersEffects {
 
   public updateMembersList$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(updateMembersList),
+      ofType(membersActions.updateMembersList),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
         this.store.select(selectMembersOffset).pipe(filterNil()),
@@ -107,11 +104,10 @@ export class MembersEffects {
           .getMembers(project.slug, membersOffset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((membersResponse) => {
-              return fetchMembersSuccess({
+              return membersActions.fetchMembersSuccess({
                 members: membersResponse.memberships,
                 totalMemberships: membersResponse.totalMemberships,
                 offset: membersOffset,
-                animateList: true,
               });
             }),
             catchError((httpResponse: HttpErrorResponse) => {
@@ -125,7 +121,7 @@ export class MembersEffects {
 
   public updateInvitationsList$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(updateMembersList, inviteUsersSuccess),
+      ofType(membersActions.updateMembersList),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
         this.store.select(selectInvitationsOffset).pipe(filterNil()),
@@ -135,11 +131,10 @@ export class MembersEffects {
           .getInvitations(project.slug, invitationsOffset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((invitationsResponse) => {
-              return fetchInvitationsSuccess({
+              return membersActions.fetchInvitationsSuccess({
                 invitations: invitationsResponse.invitations,
                 totalInvitations: invitationsResponse.totalInvitations,
                 offset: invitationsOffset,
-                animateList: true,
               });
             }),
             catchError((httpResponse: HttpErrorResponse) => {
@@ -151,27 +146,52 @@ export class MembersEffects {
     );
   });
 
+  public revokeInvitation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.revokeInvitation),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      optimisticUpdate({
+        run: (action, project) => {
+          return this.projectApiService
+            .revokeInvitation(project.slug, action.invitation.email)
+            .pipe(map(() => membersActions.revokeInvitationSuccess()));
+        },
+        undoAction: () => {
+          this.appService.toastNotification({
+            label: 'errors.save_changes',
+            message: 'errors.please_refresh',
+            status: TuiNotification.Error,
+          });
+
+          return membersActions.revokeInvitationError();
+        },
+      })
+    );
+  });
+
   public initMembersTabPending$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(initMembersPage),
+      ofType(membersActions.initProjectMembers),
       map(() => {
-        return setPendingPage({ offset: 0 });
+        return membersActions.setPendingPage({ offset: 0 });
       })
     );
   });
 
   public initMembersTabMembers$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(initMembersPage),
+      ofType(membersActions.initProjectMembers),
       map(() => {
-        return setMembersPage({ offset: 0 });
+        return membersActions.setMembersPage({ offset: 0 });
       })
     );
   });
 
   public resendInvitation$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(resendInvitation),
+      ofType(membersActions.resendInvitation),
       pessimisticUpdate({
         run: (action) => {
           this.buttonLoadingService.start();
@@ -180,7 +200,7 @@ export class MembersEffects {
             .pipe(
               switchMap(this.buttonLoadingService.waitLoading()),
               map(() => {
-                return resendInvitationSuccess();
+                return membersActions.resendInvitationSuccess();
               })
             );
         },
@@ -201,7 +221,7 @@ export class MembersEffects {
             404: options,
             500: options,
           });
-          return resendInvitationError();
+          return membersActions.resendInvitationError();
         },
       })
     );
@@ -210,7 +230,7 @@ export class MembersEffects {
   public resendInvitationsSuccess$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(resendInvitationSuccess),
+        ofType(membersActions.resendInvitationSuccess),
         tap(() => {
           this.appService.toastNotification({
             label: 'invitation_ok',
@@ -226,12 +246,75 @@ export class MembersEffects {
     { dispatch: false }
   );
 
+  public wsRevoke$ = createEffect(() => {
+    return this.wsService.projectEvents<void>('projectinvitations.revoke').pipe(
+      map(() => {
+        return membersActions.updateMembersList({ eventType: 'update' });
+      })
+    );
+  });
+
+  public wsMembershipCreate$ = createEffect(() => {
+    return this.wsService.projectEvents<void>('projectmemberships.create').pipe(
+      map(() => {
+        return membersActions.updateMembersList({ eventType: 'create' });
+      })
+    );
+  });
+
+  public wsInvitationCreate$ = createEffect(() => {
+    return this.wsService.projectEvents<void>('projectinvitations.create').pipe(
+      map(() => {
+        return membersActions.updateMembersList({ eventType: 'create' });
+      })
+    );
+  });
+
+  public wsUpdate$ = createEffect(() => {
+    return this.wsService.projectEvents<void>('projectinvitations.update').pipe(
+      map(() => {
+        return membersActions.updateMembersList({ eventType: 'update' });
+      })
+    );
+  });
+
+  public showUndoConfirmation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.undoCancelInvitationUi),
+      delay(1000),
+      concatLatestFrom(() =>
+        this.store.select(selectOpenRevokeInvitationDialog)
+      ),
+      filter(([action, openRevokeInvitation]) => {
+        return openRevokeInvitation !== action.invitation.email;
+      }),
+      map(([{ invitation }]) => {
+        return membersActions.undoDoneAnimation({ invitation });
+      })
+    );
+  });
+
+  public undoDoneAnimation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.undoDoneAnimation),
+      delay(3000),
+      concatLatestFrom(() => this.store.select(selectUndoDoneAnimation)),
+      filter(([action, undoDoneActive]) => {
+        return undoDoneActive.includes(action.invitation.email);
+      }),
+      map(([{ invitation }]) => {
+        return membersActions.removeUndoDoneAnimation({ invitation });
+      })
+    );
+  });
+
   constructor(
     private appService: AppService,
     private actions$: Actions,
     private projectApiService: ProjectApiService,
     private store: Store,
     private buttonLoadingService: ButtonLoadingService,
-    private invitationApiService: InvitationApiService
+    private invitationApiService: InvitationApiService,
+    private wsService: WsService
   ) {}
 }

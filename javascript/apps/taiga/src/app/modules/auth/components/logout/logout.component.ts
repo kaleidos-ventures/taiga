@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { logout } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 
@@ -17,8 +17,10 @@ import { logout } from '~/app/modules/auth/data-access/+state/actions/auth.actio
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LogoutComponent {
-  constructor(private store: Store) {
+export class LogoutComponent implements OnInit {
+  constructor(private store: Store) {}
+
+  public ngOnInit(): void {
     this.store.dispatch(logout());
   }
 }

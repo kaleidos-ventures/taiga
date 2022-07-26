@@ -16,16 +16,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tg-ui-dtable-header>{{
           t('members.column_role')
         }}</tg-ui-dtable-header>
-        <tg-ui-dtable-header class="action-column">{{
-          t('members.column_actions')
-        }}</tg-ui-dtable-header>
+        <tg-ui-dtable-header class="column-actions">
+          <span class="header-row-action">
+            {{ t('members.column_actions') }}
+          </span>
+        </tg-ui-dtable-header>
       </tg-ui-dtable-row>
       <ng-container *ngIf="!vm.loading">
         <ng-container
           *ngFor="let member of vm.members; trackBy: trackByUsername">
-          <tg-ui-dtable-row
-            [@.disabled]="vm.animationDisabled"
-            [@slideInOut]>
+          <tg-ui-dtable-row [@.disabled]="vm.animationDisabled">
             <tg-ui-dtable-cell class="user">
               <tg-user-card
                 [user]="member.user"
@@ -60,6 +60,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [hasPreviousPage]="vm.hasPreviousPage"
       [hasNextPage]="vm.hasNextPage"
       (next)="next()"
-      (previous)="prev()"></tg-members-pagination>
+      (previous)="prev()">
+    </tg-members-pagination>
   </ng-container>
 </ng-container>

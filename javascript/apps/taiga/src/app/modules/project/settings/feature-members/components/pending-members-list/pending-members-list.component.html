@@ -16,31 +16,101 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tg-ui-dtable-header>{{
           t('members.column_role')
         }}</tg-ui-dtable-header>
-        <tg-ui-dtable-header class="action-column">{{
-          t('members.column_actions')
-        }}</tg-ui-dtable-header>
+        <tg-ui-dtable-header class="column-actions">
+          <span class="header-row-action">
+            {{ t('members.column_actions') }}
+          </span>
+        </tg-ui-dtable-header>
       </tg-ui-dtable-row>
       <ng-container *ngIf="!vm.loading">
         <ng-container
-          *ngFor="let invitation of vm.invitations; trackBy: trackByUsername">
+          *ngFor="let invitation of vm.invitations; trackBy: trackByInvitation">
           <tg-ui-dtable-row
+            [class.highlighted]="
+              vm.revokeDialogDisplay === invitation.data.email
+            "
             [@.disabled]="vm.animationDisabled"
-            [@settingInvitationAnimation]="
-              vm.invitationUpdateAnimation.toString()
+            [@settingInvitationAnimation]="vm.invitationUpdateAnimation"
+            (@settingInvitationAnimation.done)="
+              invitationAnimationUpdateDone($event)
             ">
-            <tg-ui-dtable-cell class="user">
-              <tg-user-card [user]="getUser(invitation)"></tg-user-card>
+            <tg-ui-dtable-cell
+              class="user"
+              [@revokeAnimationCell]="invitation.cancelled">
+              <tg-user-card [user]="getUser(invitation.data)"></tg-user-card>
             </tg-ui-dtable-cell>
-            <tg-ui-dtable-cell></tg-ui-dtable-cell>
-            <tg-ui-dtable-cell class="column-actions">
+            <tg-ui-dtable-cell
+              [@revokeAnimationCell]="invitation.cancelled"></tg-ui-dtable-cell>
+            <tg-ui-dtable-cell
+              [@revokeAnimationCell]="invitation.cancelled"
+              class="column-actions invitation-actions">
               <button
                 class="row-action"
                 tuiLink
-                (click)="resend(invitation)"
+                (click)="resend(invitation.data)"
                 appearance="tertiary">
                 {{ t('members.resend') }}
               </button>
+
+              <tg-revoke-invitation
+                [@revokeAnimationCell]="invitation.cancelled"
+                [invitation]="invitation.data"
+                (confirmed)="onConfirmCancelInvitation(invitation.data)"
+                (opened)="onOpenRevokeInvitation(invitation.data)"
+                (closed)="onClosedRevokeInvitation()">
+              </tg-revoke-invitation>
             </tg-ui-dtable-cell>
+            <div
+              *ngIf="invitation.cancelled === 'active'"
+              [@revokeAnimationUndo]
+              class="revoke-countdown">
+              <tg-ui-context-notification
+                alertLevel="none"
+                status="info">
+                <div class="revoke-countdown-wrapper">
+                  <span>
+                    {{
+                      t('members.revoke.revoked_invitation', {
+                        member: getUsername(invitation.data)
+                      })
+                    }}
+                  </span>
+                  <button
+                    tuiAutoFocus
+                    class="undo-invitation"
+                    data-test="undo-invitation"
+                    tuiLink
+                    (click)="undoRevoke(invitation.data)"
+                    appearance="tertiary">
+                    {{ t('members.revoke.undo') }}
+                  </button>
+                </div>
+              </tg-ui-context-notification>
+            </div>
+            <div
+              *ngIf="invitation.undo"
+              [@revokeUndoDone]
+              class="revoke-action-undo">
+              <tg-ui-context-notification
+                alertLevel="none"
+                status="info">
+                <div class="revoke-countdown-wrapper">
+                  <span>
+                    {{ t('members.revoke.action_undone') }}
+                  </span>
+                  <button
+                    class="close-button no-padding"
+                    size="m"
+                    appearance="us-header-button"
+                    [attr.aria-label]="t('members.revoke.close_undone')"
+                    tuiIconButton
+                    icon="close"
+                    (click)="
+                      removeUndoneDoneAnimation(invitation.data)
+                    "></button>
+                </div>
+              </tg-ui-context-notification>
+            </div>
           </tg-ui-dtable-row>
         </ng-container>
       </ng-container>
@@ -60,7 +130,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </tg-ui-dtable>
 
     <p
-      *ngIf="!vm.loading && !vm.invitations"
+      *ngIf="!vm.loading && !vm.invitations.length"
       class="empty">
       {{ t('members.no_pending') }}
     </p>
@@ -73,6 +143,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [hasPreviousPage]="vm.hasPreviousPage"
       [hasNextPage]="vm.hasNextPage"
       (next)="next()"
-      (previous)="prev()"></tg-members-pagination>
+      (previous)="prev()">
+    </tg-members-pagination>
   </ng-container>
 </ng-container>

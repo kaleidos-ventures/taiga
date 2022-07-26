@@ -12,7 +12,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Invitation, Membership, Project, User } from '@taiga/data';
-import { WsService } from 'libs/ws/src/lib/services/ws.service';
+import { WsService } from '~/app/services/ws';
 import { Subject } from 'rxjs';
 import { delay, map, take } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
@@ -260,5 +260,9 @@ export class ProjectMembersComponent {
 
   public nextPage() {
     this.store.dispatch(nextMembersPage());
+  }
+
+  public onInviteSuccess() {
+    this.store.dispatch(ProjectOverviewActions.initMembers());
   }
 }

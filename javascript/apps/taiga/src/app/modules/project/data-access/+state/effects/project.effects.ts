@@ -19,7 +19,7 @@ import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { TuiNotification } from '@taiga-ui/core';
-import { WsService } from '@taiga/ws';
+import { WsService } from '~/app/services/ws';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { Store } from '@ngrx/store';
 import { filterNil } from '~/app/shared/utils/operators';

@@ -8,5 +8,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 /* stylelint-disable declaration-no-important */
 
 tui-dropdown-box {
+  --tui-radius-m: 3px;
+
   margin-block-start: -4px;
 }

@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 import { AuthApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 import { Auth, User } from '@taiga/data';
-import { WsService } from '@taiga/ws';
+import { WsService } from '~/app/services/ws';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 

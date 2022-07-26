@@ -88,6 +88,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tg-invite-to-project
           *ngIf="invitePeople"
           (closeModal)="invitePeopleModal()"
+          (inviteSuccess)="onInviteSuccess()"
           [reset]="resetForm"
           [fromOverview]="true"
           [project]="vm.project"></tg-invite-to-project>

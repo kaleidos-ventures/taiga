@@ -9,6 +9,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 :host {
   color: var(--gray-90);
   font-weight: var(--font-weight-medium);
-  padding-block-end: var(--spacing-12);
   white-space: nowrap;
 }

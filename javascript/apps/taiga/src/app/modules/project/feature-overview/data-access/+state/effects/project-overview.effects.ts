@@ -25,13 +25,12 @@ import {
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { inviteUsersSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 
 @Injectable()
 export class ProjectOverviewEffects {
   public initMembers$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(ProjectOverviewActions.initMembers, inviteUsersSuccess),
+      ofType(ProjectOverviewActions.initMembers),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),

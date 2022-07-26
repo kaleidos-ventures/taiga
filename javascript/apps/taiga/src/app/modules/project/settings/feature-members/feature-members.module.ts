@@ -6,26 +6,36 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
+import {
+  TuiButtonModule,
+  TuiDropdownControllerModule,
+  TuiHostedDropdownModule,
+  TuiLinkModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { TuiTabsModule } from '@taiga-ui/kit';
+import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
+import { TitleDirective } from '~/app/shared/title/title.directive';
 import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 import { MembersEffects } from './+state/effects/members.effects';
 import { membersFeature } from './+state/reducers/members.reducer';
 import { MembersListComponent } from './components/members-list/members-list.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
 import { PendingMembersListComponent } from './components/pending-members-list/pending-members-list.component';
+import { RevokeInvitationComponent } from './components/revoke-invitation/revoke-invitation.component';
 import { ProjectsSettingsFeatureMembersComponent } from './feature-members.component';
-import { TitleDirective } from '~/app/shared/title/title.directive';
 
 @NgModule({
   declarations: [
@@ -33,6 +43,7 @@ import { TitleDirective } from '~/app/shared/title/title.directive';
     MembersListComponent,
     PendingMembersListComponent,
     PaginationComponent,
+    RevokeInvitationComponent,
   ],
   providers: [
     {
@@ -44,12 +55,18 @@ import { TitleDirective } from '~/app/shared/title/title.directive';
     },
   ],
   imports: [
+    TuiDropdownControllerModule,
     SkeletonsModule,
     TuiTabsModule,
     TuiButtonModule,
     TuiLinkModule,
     UserCardModule,
     TuiSvgModule,
+    TuiHostedDropdownModule,
+    TuiAutoFocusModule,
+    A11yModule,
+    TuiActiveZoneModule,
+    ContextNotificationModule,
     CommonModule,
     TranslocoModule,
     DynamicTableModule,

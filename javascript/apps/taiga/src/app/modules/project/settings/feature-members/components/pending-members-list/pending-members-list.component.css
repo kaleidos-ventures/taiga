@@ -8,6 +8,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 /* stylelint-disable selector-max-compound-selectors */
 
 @import "../../members-common";
+@import "tools/typography.css";
+
+.revoke-invitation-btn {
+  block-size: 100%;
+}
+
+.highlighted {
+  background-color: var(--color-primary10);
+
+  &::ng-deep .revoke-invitation-btn .t-content {
+    color: var(--color-secondary90);
+  }
+}
 
 tg-ui-dtable {
   display: flex;
@@ -18,21 +31,68 @@ tg-ui-dtable {
 tg-ui-dtable-row {
   --cells-layout: 1fr 1fr 140px;
 
-  overflow: hidden;
+  /* stylelint-disable-next-line selector-max-type */
+  & > tg-ui-dtable-cell {
+    transform: translateY(0%);
+  }
+
+  & > .revoke-countdown {
+    transform: translateY(-100%);
+  }
 }
 
-.column-actions {
-  align-items: stretch;
+.revoke-countdown-row {
+  --cells-layout: 1fr;
+}
+
+.revoke-countdown-cell {
+  display: flex;
+  inline-size: 100%;
+  justify-content: flex-end;
+}
+
+.revoke-countdown-wrapper {
+  align-items: center;
   display: flex;
   gap: var(--spacing-24);
+}
 
-  & > .row-action {
-    &:focus-visible {
-      outline: 0;
-    }
+.revoke-countdown {
+  background: var(--color-white);
+  display: flex;
+  inline-size: 100%;
+  inset-block-start: 100%;
+  inset-inline-end: 0;
+  justify-content: flex-end;
+  position: absolute;
 
-    &::ng-deep .t-content {
-      padding-inline: var(--spacing-4);
-    }
+  & button {
+    text-decoration: underline;
   }
+}
+
+.revoke-action-undo {
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  position: absolute;
+}
+
+:host::ng-deep .no-padding[tuiIconButton] {
+  block-size: var(--spacing-16);
+  inline-size: var(--spacing-16);
+
+  & tui-wrapper.t-wrapper {
+    /* stylelint-disable-next-line declaration-no-important */
+    padding: 0 !important;
+  }
+}
+
+.invitation-actions {
+  justify-content: end;
+}
+
+.undo-invitation {
+  color: var(--color-info80);
+
+  --color-secondary: currentcolor;
 }

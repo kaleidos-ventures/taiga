@@ -43,4 +43,27 @@ describe('Settings > members', () => {
       expect($members).to.have.length.greaterThan(0);
     });
   });
+
+  describe('cancel invitation', () => {
+    it('cancel', () => {
+      cy.getBySel('pendings-tab').click();
+
+      cy.get('tg-user-card').its('length').as('invitationsCount');
+
+      cy.getBySel('revoke-invitation').eq(0).click();
+
+      cy.getBySel('confirm-cancel').click();
+
+      cy.getBySel('undo-invitation').should('be.visible');
+
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(5000);
+
+      cy.getBySel('undo-invitation').should('not.exist');
+
+      cy.get<number>('@invitationsCount').then((previousCount) => {
+        cy.get('tg-user-card').should('have.length', previousCount - 1);
+      });
+    });
+  });
 });

@@ -47,7 +47,7 @@
   "members": {
     "title": "Project members",
     "invite": "Invite people",
-    "no_pending": "There are no pending invitations.",
+    "no_pending": "There are no pending invitations to accept.",
     "members_tab": "Members",
     "pending_tab": "Pending",
     "next_page": "Next page",
@@ -56,6 +56,17 @@
     "column_user": "User",
     "column_role": "Role",
     "column_actions": "Actions",
-    "resend": "Resend"
+    "resend": "Resend",
+    "cancel_invitation": "Cancel",
+    "revoke": {
+      "question": "Cancel invitation to {user}",
+      "description": "The invitation will be no longer valid. You can invite them again if you want.",
+      "keep_invitation": "No, keep the invitation",
+      "confirm_cancel_invitation": "Yes, cancel the invitation",
+      "revoked_invitation": "Invitation to {member} canceled.",
+      "undo": "Undo",
+      "action_undone": "Action undone",
+      "close_undone": "Action undone"
+    }
   }
 }

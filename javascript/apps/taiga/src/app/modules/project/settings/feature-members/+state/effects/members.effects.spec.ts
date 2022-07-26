@@ -20,16 +20,16 @@ import {
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
+import { TestScheduler } from 'rxjs/testing';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
+import { membersActions } from '../actions/members.actions';
 import {
-  fetchInvitationsSuccess,
-  fetchMembersSuccess,
-  resendInvitation,
-  resendInvitationSuccess,
-  setMembersPage,
-  setPendingPage,
-} from '../actions/members.actions';
+  selectInvitationsOffset,
+  selectMembersOffset,
+  selectOpenRevokeInvitationDialog,
+  selectUndoDoneAnimation,
+} from '../selectors/members.selectors';
 import { MembersEffects } from './members.effects';
 
 describe('MembersEffects', () => {
@@ -82,10 +82,10 @@ describe('MembersEffects', () => {
       cold('-b|', { b: membershipResponse })
     );
 
-    actions$ = hot('-a', { a: setMembersPage({ offset: 0 }) });
+    actions$ = hot('-a', { a: membersActions.setMembersPage({ offset: 0 }) });
 
     const expected = cold('--a', {
-      a: fetchMembersSuccess({
+      a: membersActions.fetchMembersSuccess({
         members: membershipResponse.memberships,
         totalMemberships: membershipResponse.totalMemberships,
         offset: 0,
@@ -119,10 +119,10 @@ describe('MembersEffects', () => {
       cold('-b|', { b: invitationsResponse })
     );
 
-    actions$ = hot('-a', { a: setPendingPage({ offset: 0 }) });
+    actions$ = hot('-a', { a: membersActions.setPendingPage({ offset: 0 }) });
 
     const expected = cold('--a', {
-      a: fetchInvitationsSuccess({
+      a: membersActions.fetchInvitationsSuccess({
         invitations: invitationsResponse.invitations,
         totalInvitations: invitationsResponse.totalInvitations,
         offset: 0,
@@ -146,16 +146,172 @@ describe('MembersEffects', () => {
     invitationApiService.resendInvitation.mockReturnValue(cold('-b|', {}));
 
     actions$ = hot('-a', {
-      a: resendInvitation({
+      a: membersActions.resendInvitation({
         slug: randSlug(),
         usernameOrEmail: randEmail(),
       }),
     });
 
     const expected = cold('--a', {
-      a: resendInvitationSuccess(),
+      a: membersActions.resendInvitationSuccess(),
     });
 
     expect(effects.resendInvitation$).toBeObservable(expected);
+  });
+
+  it('update members list', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(MembersEffects);
+    const project = ProjectMockFactory();
+    const offset = 0;
+
+    const membersResponse = {
+      memberships: [MembershipMockFactory()],
+      totalMemberships: 1,
+      offset,
+    };
+
+    projectApiService.getMembers.mockReturnValue(
+      cold('-b|', { b: membersResponse })
+    );
+
+    store.overrideSelector(selectCurrentProject, project);
+    store.overrideSelector(selectMembersOffset, offset);
+
+    actions$ = hot('-a', {
+      a: membersActions.updateMembersList({ eventType: 'create' }),
+    });
+
+    const expected = cold('--a', {
+      a: membersActions.fetchMembersSuccess({
+        members: membersResponse.memberships,
+        totalMemberships: membersResponse.totalMemberships,
+        offset: offset,
+      }),
+    });
+
+    expect(effects.updateMembersList$).toBeObservable(expected);
+  });
+
+  it('update invitations list', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(MembersEffects);
+    const project = ProjectMockFactory();
+    const offset = 0;
+
+    const invitationsResponse = {
+      invitations: [InvitationMockFactory()],
+      totalInvitations: 1,
+      offset,
+    };
+
+    projectApiService.getInvitations.mockReturnValue(
+      cold('-b|', { b: invitationsResponse })
+    );
+
+    store.overrideSelector(selectCurrentProject, project);
+    store.overrideSelector(selectInvitationsOffset, offset);
+
+    actions$ = hot('-a', {
+      a: membersActions.updateMembersList({ eventType: 'create' }),
+    });
+
+    const expected = cold('--a', {
+      a: membersActions.fetchInvitationsSuccess({
+        invitations: invitationsResponse.invitations,
+        totalInvitations: invitationsResponse.totalInvitations,
+        offset: offset,
+      }),
+    });
+
+    expect(effects.updateInvitationsList$).toBeObservable(expected);
+  });
+
+  it('revoke invitation', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(MembersEffects);
+    const project = ProjectMockFactory();
+    const invitation = InvitationMockFactory();
+
+    projectApiService.revokeInvitation.mockReturnValue(
+      cold('-b|', { b: null })
+    );
+
+    store.overrideSelector(selectCurrentProject, project);
+
+    actions$ = hot('-a', {
+      a: membersActions.revokeInvitation({ invitation }),
+    });
+
+    const expected = cold('--a', {
+      a: membersActions.revokeInvitationSuccess(),
+    });
+
+    expect(effects.revokeInvitation$).toBeObservable(expected);
+  });
+
+  it('show undo confirmation', () => {
+    const effects = spectator.inject(MembersEffects);
+    const invitation = InvitationMockFactory();
+
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    testScheduler.run((helpers) => {
+      const { expectObservable, hot } = helpers;
+
+      actions$ = hot('-a', {
+        a: membersActions.undoCancelInvitationUi({ invitation }),
+      });
+
+      expectObservable(effects.showUndoConfirmation$).toBe('1001ms a', {
+        a: membersActions.undoDoneAnimation({ invitation }),
+      });
+    });
+  });
+
+  it('prevent show undo if revoke dialog is open', () => {
+    const effects = spectator.inject(MembersEffects);
+    const invitation = InvitationMockFactory();
+
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    store.overrideSelector(selectOpenRevokeInvitationDialog, invitation.email);
+
+    testScheduler.run((helpers) => {
+      const { expectObservable, hot } = helpers;
+
+      actions$ = hot('-a', {
+        a: membersActions.undoCancelInvitationUi({ invitation }),
+      });
+
+      expectObservable(effects.showUndoConfirmation$).toBe('');
+    });
+  });
+
+  it('undo done animation', () => {
+    const effects = spectator.inject(MembersEffects);
+    const invitation = InvitationMockFactory();
+
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    store.overrideSelector(selectUndoDoneAnimation, [invitation.email]);
+
+    testScheduler.run((helpers) => {
+      const { expectObservable, hot } = helpers;
+
+      actions$ = hot('-a', {
+        a: membersActions.undoDoneAnimation({ invitation }),
+      });
+
+      expectObservable(effects.undoDoneAnimation$).toBe('3001ms a', {
+        a: membersActions.removeUndoDoneAnimation({ invitation }),
+      });
+    });
   });
 });

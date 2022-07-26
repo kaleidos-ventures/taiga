@@ -10,10 +10,12 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { concatMap, filter, map, take, tap, timeout } from 'rxjs/operators';
-import { Actions, ofType } from '@ngrx/effects';
+import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { wsMessage } from '../ws.actions';
 import { ConfigService } from '@taiga/core';
 import { WSResponse, WSResponseAction, WSResponseEvent } from '../ws.model';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { filterNil } from '~/app/shared/utils/operators';
 
 const MAX_RETRY = 5;
 const RETRY_TIME = 5000;
@@ -134,6 +136,17 @@ export class WsService {
         }, RETRY_TIME);
       });
     }
+  }
+
+  public projectEvents<T>(type?: string) {
+    return this.events<T>({ type }).pipe(
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      filter(([response, project]) => {
+        return response.channel === `projects.${project.slug}`;
+      })
+    );
   }
 
   public events<T>(filter: { channel?: string; type?: string }) {

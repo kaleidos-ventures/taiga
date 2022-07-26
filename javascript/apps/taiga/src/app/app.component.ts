@@ -9,7 +9,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { User } from '@taiga/data';
-import { WsService } from '@taiga/ws';
+import { WsService } from '~/app/services/ws';
 import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { setUser } from './modules/auth/data-access/+state/actions/auth.actions';
 import { AuthService } from './modules/auth/services/auth.service';

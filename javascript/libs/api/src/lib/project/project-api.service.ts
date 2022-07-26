@@ -233,4 +233,13 @@ export class ProjectApiService {
       {}
     );
   }
+
+  public revokeInvitation(project: string, usernameOrEmail: string) {
+    return this.http.post(
+      `${this.config.apiUrl}/projects/${project}/invitations/revoke`,
+      {
+        usernameOrEmail,
+      }
+    );
+  }
 }

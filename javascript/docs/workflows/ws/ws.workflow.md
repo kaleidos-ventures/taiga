@@ -3,7 +3,7 @@
 To watch for a specific ws event you have use the `events` method like in the following example. We're listening for an event with the name `update-task`.
 
 ```ts
-import { WsService } from '@taiga/ws';
+import { WsService } from '~/app/services/ws';
 
 @Injectable()
 export class TodoListEffects {
@@ -30,7 +30,7 @@ In this example we're using the service in an `ngrx` effect but can be use in co
 # Watch an specific websocket action
 
 ```ts
-import { WsService } from '@taiga/ws';
+import { WsService } from '~/app/services/ws';
 
 @Injectable()
 export class TodoListEffects {

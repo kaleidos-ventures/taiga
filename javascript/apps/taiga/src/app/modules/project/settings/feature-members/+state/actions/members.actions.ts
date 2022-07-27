@@ -49,3 +49,16 @@ export const updateMembersList = createAction(
     invitationUpdateAnimation?: boolean;
   }>()
 );
+
+export const resendInvitation = createAction(
+  '[Settings][Members] resend invitation',
+  props<{ slug: string; usernameOrEmail: string }>()
+);
+
+export const resendInvitationSuccess = createAction(
+  '[Settings][Members] resend invitation success'
+);
+
+export const resendInvitationError = createAction(
+  '[Settings][Members] resend invitation error'
+);

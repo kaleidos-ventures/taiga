@@ -10,12 +10,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-
-import { Router } from '@angular/router';
-import { ProjectApiService } from '@taiga/api';
-import { WsService } from '@taiga/ws';
+import { pessimisticUpdate } from '@nrwl/angular';
+import { TuiNotification } from '@taiga-ui/core';
+import { InvitationApiService, ProjectApiService } from '@taiga/api';
+import { ErrorManagementToastOptions } from '@taiga/data';
 import { EMPTY } from 'rxjs';
-import { catchError, exhaustMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import {
   fetchInvitationsSuccess,
@@ -23,16 +23,22 @@ import {
   initMembersPage,
   setMembersPage,
   setPendingPage,
-  updateMembersList,
+  updateMembersList
 } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
   selectInvitationsOffset,
-  selectMembersOffset,
+  selectMembersOffset
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { AppService } from '~/app/services/app.service';
+import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { inviteUsersSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { filterNil } from '~/app/shared/utils/operators';
+import {
+  resendInvitation,
+  resendInvitationError,
+  resendInvitationSuccess
+} from '../actions/members.actions';
 
 @Injectable()
 export class MembersEffects {
@@ -163,12 +169,68 @@ export class MembersEffects {
     );
   });
 
+  public resendInvitation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(resendInvitation),
+      pessimisticUpdate({
+        run: (action) => {
+          this.buttonLoadingService.start();
+          return this.invitationApiService
+            .resendInvitation(action.slug, action.usernameOrEmail)
+            .pipe(
+              switchMap(this.buttonLoadingService.waitLoading()),
+              map(() => {
+                return resendInvitationSuccess();
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.buttonLoadingService.error();
+          const options: ErrorManagementToastOptions = {
+            type: 'toast',
+            options: {
+              label: 'invitation_error',
+              message: 'failed_send_invite',
+              paramsMessage: { invitations: 1 },
+              status: TuiNotification.Error,
+              scope: 'invitation_modal',
+            },
+          };
+          this.appService.errorManagement(httpResponse, {
+            400: options,
+            500: options,
+          });
+          return resendInvitationError();
+        },
+      })
+    );
+  });
+
+  public resendInvitationsSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(resendInvitationSuccess),
+        tap(() => {
+          this.appService.toastNotification({
+            label: 'invitation_ok',
+            message: 'invitation_success',
+            paramsMessage: { invitations: 1 },
+            status: TuiNotification.Success,
+            scope: 'invitation_modal',
+            autoClose: true,
+          });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(
     private appService: AppService,
     private actions$: Actions,
     private projectApiService: ProjectApiService,
-    private wsService: WsService,
     private store: Store,
-    private router: Router
+    private buttonLoadingService: ButtonLoadingService,
+    private invitationApiService: InvitationApiService
   ) {}
 }

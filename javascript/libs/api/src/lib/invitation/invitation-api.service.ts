@@ -9,12 +9,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
-
 import {
   Contact,
   InvitationRequest,
-  SearchUserRequest,
   InvitationResponse,
+  SearchUserRequest,
 } from '@taiga/data';
 
 @Injectable({
@@ -41,6 +40,15 @@ export class InvitationApiService {
   public searchUser(data: SearchUserRequest) {
     return this.http.get<Contact[]>(
       `${this.config.apiUrl}/users/search?text=${data.text}&project=${data.project}&offset=${data.offset}&limit=${data.limit}`
+    );
+  }
+
+  public resendInvitation(slug: string, usernameOrEmail: string) {
+    return this.http.post(
+      `${this.config.apiUrl}/projects/${slug}/invitations/resend`,
+      {
+        usernameOrEmail,
+      }
     );
   }
 }

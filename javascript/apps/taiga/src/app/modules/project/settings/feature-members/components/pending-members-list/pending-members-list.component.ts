@@ -10,9 +10,13 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Invitation, User } from '@taiga/data';
+import { Invitation, Project, User } from '@taiga/data';
 import { map } from 'rxjs/operators';
-import { setPendingPage } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import {
+  resendInvitation,
+  setPendingPage,
+} from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
   selectAnimationDisabled,
   selectInvitations,
@@ -22,6 +26,7 @@ import {
   selectTotalInvitations,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
+import { filterNil } from '~/app/shared/utils/operators';
 const cssValue = getComputedStyle(document.documentElement);
 
 @Component({
@@ -122,6 +127,7 @@ export class PendingMembersListComponent {
       offset: number;
       animationDisabled: boolean;
       invitationUpdateAnimation: boolean;
+      project: Project;
     }>
   ) {
     this.state.connect('invitations', this.store.select(selectInvitations));
@@ -135,6 +141,10 @@ export class PendingMembersListComponent {
     this.state.connect(
       'invitationUpdateAnimation',
       this.store.select(selectInvitationUpdateAnimation)
+    );
+    this.state.connect(
+      'project',
+      this.store.select(selectCurrentProject).pipe(filterNil())
     );
   }
 
@@ -165,7 +175,12 @@ export class PendingMembersListComponent {
     return { email: member.email };
   }
 
-  public resend() {
-    // todo
+  public resend(member: Invitation) {
+    this.store.dispatch(
+      resendInvitation({
+        slug: this.state.get('project').slug,
+        usernameOrEmail: member.user?.username || member.email,
+      })
+    );
   }
 }

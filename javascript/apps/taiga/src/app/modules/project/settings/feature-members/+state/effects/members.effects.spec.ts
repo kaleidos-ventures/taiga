@@ -6,29 +6,29 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { ProjectApiService } from '@taiga/api';
-import { Observable } from 'rxjs';
-
-import { Router } from '@angular/router';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import {
   InvitationMockFactory,
   MembershipMockFactory,
-  ProjectMockFactory,
+  ProjectMockFactory
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
+import { Observable } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
 import {
   fetchInvitationsSuccess,
   fetchMembersSuccess,
   setMembersPage,
-  setPendingPage,
+  setPendingPage
 } from '../actions/members.actions';
 import { MembersEffects } from './members.effects';
+
 describe('MembersEffects', () => {
   let actions$: Observable<Action>;
   let store: MockStore;
@@ -54,7 +54,7 @@ describe('MembersEffects', () => {
       }),
     ],
     imports: [],
-    mocks: [ProjectApiService, AppService, Router],
+    mocks: [ProjectApiService, AppService, Router, InvitationApiService],
   });
 
   beforeEach(() => {

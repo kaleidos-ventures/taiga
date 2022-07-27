@@ -11,20 +11,27 @@ import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 
+import { Router } from '@angular/router';
 import { ProjectApiService } from '@taiga/api';
+import { WsService } from '@taiga/ws';
 import { EMPTY } from 'rxjs';
 import { catchError, exhaustMap, map } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import {
+  fetchInvitationsSuccess,
+  fetchMembersSuccess,
+  initMembersPage,
+  setMembersPage,
+  setPendingPage,
+  updateMembersList,
+} from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
+import {
+  selectInvitationsOffset,
+  selectMembersOffset,
+} from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { AppService } from '~/app/services/app.service';
 import { filterNil } from '~/app/shared/utils/operators';
-import {
-  initMembersPage,
-  fetchMembersSuccess,
-  fetchInvitationsSuccess,
-  setPendingPage,
-  setMembersPage,
-} from '../actions/members.actions';
 
 @Injectable()
 export class MembersEffects {
@@ -81,6 +88,62 @@ export class MembersEffects {
     );
   });
 
+  public updateMembersList$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(updateMembersList),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+        this.store.select(selectMembersOffset).pipe(filterNil()),
+      ]),
+      exhaustMap(([, project, membersOffset]) => {
+        return this.projectApiService
+          .getMembers(project.slug, membersOffset, MEMBERS_PAGE_SIZE)
+          .pipe(
+            map((membersResponse) => {
+              return fetchMembersSuccess({
+                members: membersResponse.memberships,
+                totalMemberships: membersResponse.totalMemberships,
+                offset: membersOffset,
+                animateList: true,
+              });
+            }),
+            catchError((httpResponse: HttpErrorResponse) => {
+              this.appService.errorManagement(httpResponse);
+              return EMPTY;
+            })
+          );
+      })
+    );
+  });
+
+  public updateInvitationsList$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(updateMembersList),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+        this.store.select(selectInvitationsOffset).pipe(filterNil()),
+      ]),
+      exhaustMap(([, project, invitationsOffset]) => {
+        return this.projectApiService
+          .getInvitations(project.slug, invitationsOffset, MEMBERS_PAGE_SIZE)
+          .pipe(
+            map((invitationsResponse) => {
+              return fetchInvitationsSuccess({
+                invitations: invitationsResponse.invitations,
+                totalInvitations: invitationsResponse.totalInvitations,
+                offset: invitationsOffset,
+                animateList: true,
+              });
+            }),
+            catchError((httpResponse: HttpErrorResponse) => {
+              this.appService.errorManagement(httpResponse);
+              return EMPTY;
+            })
+          );
+      })
+    );
+  });
+
   public initMembersTabPending$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(initMembersPage),
@@ -103,6 +166,8 @@ export class MembersEffects {
     private appService: AppService,
     private actions$: Actions,
     private projectApiService: ProjectApiService,
-    private store: Store
+    private wsService: WsService,
+    private store: Store,
+    private router: Router
   ) {}
 }

@@ -22,7 +22,7 @@ export interface ProjectOverviewState {
   hasMoreInvitations: boolean;
   loadingMoreMembers: boolean;
   showAllMembers: boolean;
-  updateMemberList: boolean;
+  updateMembersList: boolean;
   membersToAnimate: string[];
   invitationsToAnimate: string[];
 }
@@ -37,7 +37,7 @@ export const initialState: ProjectOverviewState = {
   hasMoreInvitations: true,
   loadingMoreMembers: false,
   showAllMembers: false,
-  updateMemberList: false,
+  updateMembersList: false,
   membersToAnimate: [],
   invitationsToAnimate: [],
 };
@@ -67,7 +67,7 @@ export const reducer = createReducer(
         invitations,
         totalInvitations,
         showAllMembers,
-        updateMemberList,
+        updateMembersList,
       }
     ): ProjectOverviewState => {
       if (totalMemberships) {
@@ -80,7 +80,7 @@ export const reducer = createReducer(
 
       if (members) {
         if (!showAllMembers) {
-          if (updateMemberList) {
+          if (updateMembersList) {
             const alreadyMembers = state.members.map((it) => {
               return it.user.username;
             });
@@ -102,7 +102,7 @@ export const reducer = createReducer(
       }
       if (invitations) {
         if (!showAllMembers) {
-          if (updateMemberList) {
+          if (updateMembersList) {
             const existingInvitations = state.invitations.map((invitation) => {
               return invitation?.user?.username ?? invitation.email;
             });

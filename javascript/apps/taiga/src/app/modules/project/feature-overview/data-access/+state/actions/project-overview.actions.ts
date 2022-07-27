@@ -19,7 +19,7 @@ export const fetchMembersSuccess = createAction(
     totalInvitations?: number;
     invitations?: Invitation[];
     showAllMembers?: boolean;
-    updateMemberList?: boolean;
+    updateMembersList?: boolean;
   }>()
 );
 export const setNotificationClosed = createAction(
@@ -33,7 +33,7 @@ export const nextMembersPage = createAction(
 
 export const resetOverview = createAction('[Project overview] reset overview');
 
-export const updateMemberList = createAction(
+export const updateMembersList = createAction(
   '[Project overview][ws] update member list'
 );
 export const updateShowAllMembers = createAction(

@@ -10,13 +10,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   padding-inline-start: var(--spacing-48);
 }
 
-tg-ui-dtable {
-  grid-template-columns: 1fr 1fr min-content;
-  padding-inline-end: var(--spacing-16);
+tg-ui-dtable-row {
+  --cells-layout: 1fr 1fr min-content;
+  --row-gap: var(--spacing-16);
+
+  padding-inline-end: var(--spacing-12);
 }
 
-tg-ui-dtable-cell {
-  block-size: 41px;
+.action-column {
+  min-inline-size: 64px;
 }
 
 tg-ui-user-skeleton {

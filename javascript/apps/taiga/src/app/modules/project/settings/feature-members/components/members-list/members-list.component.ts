@@ -18,15 +18,20 @@ import {
   selectMembersLoading,
   selectMembersOffset,
   selectTotalMemberships,
+  selectAnimationDisabled,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { slideInOut400 } from '~/app/shared/utils/animations';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-members-list',
   templateUrl: './members-list.component.html',
   styleUrls: ['./members-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  animations: [slideInOut400],
 })
 export class MembersListComponent {
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
@@ -54,6 +59,7 @@ export class MembersListComponent {
       total: number;
       offset: number;
       user: User | null;
+      animationDisabled: boolean;
     }>
   ) {
     this.state.connect('members', this.store.select(selectMembers));
@@ -61,6 +67,10 @@ export class MembersListComponent {
     this.state.connect('total', this.store.select(selectTotalMemberships));
     this.state.connect('offset', this.store.select(selectMembersOffset));
     this.state.connect('user', this.store.select(selectUser));
+    this.state.connect(
+      'animationDisabled',
+      this.store.select(selectAnimationDisabled)
+    );
   }
 
   public next() {

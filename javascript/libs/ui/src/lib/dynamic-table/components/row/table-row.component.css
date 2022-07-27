@@ -7,5 +7,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 :host {
-  display: contents;
+  display: grid;
+  grid-gap: var(--row-gap, var(--spacing-16));
+  grid-template-columns: var(--cells-layout);
+}
+
+:host([data-highlighted="true"]) {
+  background-color: var(--color-primary10);
 }

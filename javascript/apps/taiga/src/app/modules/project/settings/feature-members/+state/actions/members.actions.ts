@@ -19,6 +19,7 @@ export const fetchMembersSuccess = createAction(
     members: Membership[];
     totalMemberships: number;
     offset: number;
+    animateList?: boolean;
   }>()
 );
 
@@ -28,6 +29,7 @@ export const fetchInvitationsSuccess = createAction(
     invitations: Invitation[];
     totalInvitations: number;
     offset: number;
+    animateList?: boolean;
   }>()
 );
 
@@ -39,4 +41,8 @@ export const setMembersPage = createAction(
 export const setPendingPage = createAction(
   '[Settings][Members] set pending page',
   props<{ offset: number }>()
+);
+
+export const updateMembersList = createAction(
+  '[Settings][Members] update member list settings'
 );

@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Project } from '@taiga/data';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -17,6 +17,9 @@ import {
   selectTotalInvitations,
   selectTotalMemberships,
 } from './+state/selectors/members.selectors';
+import { WsService } from '@taiga/ws';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as membersActions from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 
 interface ComponentState {
   project: Project;
@@ -24,6 +27,7 @@ interface ComponentState {
   totalPending: number;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'tg-projects-settings-feature-members',
   templateUrl: './feature-members.component.html',
@@ -34,10 +38,14 @@ interface ComponentState {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
 })
-export class ProjectsSettingsFeatureMembersComponent {
+export class ProjectsSettingsFeatureMembersComponent implements OnInit {
   public model$ = this.state.select();
 
-  constructor(private store: Store, private state: RxState<ComponentState>) {
+  constructor(
+    private store: Store,
+    private wsService: WsService,
+    private state: RxState<ComponentState>
+  ) {
     this.state.connect(
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())
@@ -54,5 +62,37 @@ export class ProjectsSettingsFeatureMembersComponent {
     );
 
     this.store.dispatch(initMembersPage());
+  }
+
+  public ngOnInit(): void {
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectinvitations.create',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(membersActions.updateMembersList());
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectmemberships.create',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(membersActions.updateMembersList());
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectmemberships.update',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(membersActions.updateMembersList());
+      });
   }
 }

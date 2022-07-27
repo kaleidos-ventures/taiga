@@ -7,24 +7,29 @@
  */
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
 import { Invitation, User } from '@taiga/data';
+import { map } from 'rxjs/operators';
+import { setPendingPage } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
+  selectAnimationDisabled,
   selectInvitations,
   selectInvitationsLoading,
   selectInvitationsOffset,
   selectTotalInvitations,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
-import { setPendingPage } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
-import { RxState } from '@rx-angular/state';
-import { map } from 'rxjs/operators';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
+import { slideInOut400 } from '~/app/shared/utils/animations';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-pending-members-list',
   templateUrl: './pending-members-list.component.html',
   styleUrls: ['./pending-members-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [slideInOut400],
 })
 export class PendingMembersListComponent {
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
@@ -51,12 +56,17 @@ export class PendingMembersListComponent {
       loading: boolean;
       total: number;
       offset: number;
+      animationDisabled: boolean;
     }>
   ) {
     this.state.connect('invitations', this.store.select(selectInvitations));
     this.state.connect('loading', this.store.select(selectInvitationsLoading));
     this.state.connect('total', this.store.select(selectTotalInvitations));
     this.state.connect('offset', this.store.select(selectInvitationsOffset));
+    this.state.connect(
+      'animationDisabled',
+      this.store.select(selectAnimationDisabled)
+    );
   }
 
   public next() {

@@ -20,6 +20,7 @@ export interface MembersState {
   totalInvitations: number;
   membersOffset: number;
   invitationsOffset: number;
+  animationDisabled: boolean;
 }
 
 export const initialState: MembersState = {
@@ -31,6 +32,7 @@ export const initialState: MembersState = {
   totalInvitations: 0,
   membersOffset: 0,
   invitationsOffset: 0,
+  animationDisabled: true,
 };
 
 export const reducer = createReducer(
@@ -57,7 +59,11 @@ export const reducer = createReducer(
   }),
   on(
     MembersActions.fetchMembersSuccess,
-    (state, { members, totalMemberships, offset }): MembersState => {
+    (
+      state,
+      { members, totalMemberships, offset, animateList }
+    ): MembersState => {
+      state.animationDisabled = !animateList;
       state.members = members;
       state.totalMemberships = totalMemberships;
       state.membersLoading = false;
@@ -68,7 +74,11 @@ export const reducer = createReducer(
   ),
   on(
     MembersActions.fetchInvitationsSuccess,
-    (state, { invitations, totalInvitations, offset }): MembersState => {
+    (
+      state,
+      { invitations, totalInvitations, offset, animateList }
+    ): MembersState => {
+      state.animationDisabled = !animateList;
       state.invitations = invitations;
       state.totalInvitations = totalInvitations;
       state.invitationsLoading = false;

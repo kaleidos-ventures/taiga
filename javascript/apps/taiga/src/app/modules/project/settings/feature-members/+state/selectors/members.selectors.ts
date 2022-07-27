@@ -17,4 +17,5 @@ export const {
   selectTotalInvitations,
   selectMembersOffset,
   selectInvitationsOffset,
+  selectAnimationDisabled,
 } = membersFeature;

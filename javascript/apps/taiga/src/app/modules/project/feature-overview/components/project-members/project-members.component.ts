@@ -24,7 +24,7 @@ import {
   initMembers,
   nextMembersPage,
   updateShowAllMembers,
-  updateMemberList,
+  updateMembersList,
 } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { delay, map, take } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -41,7 +41,11 @@ import { Actions, ofType } from '@ngrx/effects';
 import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
 import { inviteUsersSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { Subject } from 'rxjs';
+import { WsService } from 'libs/ws/src/lib/services/ws.service';
+import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-project-members',
   templateUrl: './project-members.component.html',
@@ -106,7 +110,8 @@ export class ProjectMembersComponent {
       showAllMembers: boolean;
       invitationsToAnimate: string[];
       membersToAnimate: string[];
-    }>
+    }>,
+    private wsService: WsService
   ) {
     this.store.dispatch(initMembers());
 
@@ -160,15 +165,48 @@ export class ProjectMembersComponent {
       this.projectMembersList.animateUser();
     });
 
-    const updateList = this.actions$.pipe(ofType(updateMemberList));
+    const updateList = this.actions$.pipe(ofType(updateMembersList));
 
     this.state.hold(updateList, () => {
       this.projectMembersList.animateUser();
     });
 
-    this.actions$.pipe(ofType(inviteUsersSuccess)).subscribe(() => {
-      this.projectMembersList.animateUser();
-    });
+    this.actions$
+      .pipe(ofType(inviteUsersSuccess))
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.projectMembersList.animateUser();
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectinvitations.create',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(ProjectOverviewActions.updateMembersList());
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectmemberships.create',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(ProjectOverviewActions.updateMembersList());
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectmemberships.update',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(ProjectOverviewActions.updateMembersList());
+      });
   }
 
   public project$ = this.store.select(selectCurrentProject);

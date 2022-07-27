@@ -11,7 +11,7 @@ import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY, of, zip } from 'rxjs';
-import { catchError, exhaustMap, map, switchMap } from 'rxjs/operators';
+import { catchError, exhaustMap, map } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
@@ -23,7 +23,6 @@ import {
   selectShowAllMembers,
 } from '../selectors/project-overview.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
-import { WsService } from '@taiga/ws';
 import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -135,45 +134,9 @@ export class ProjectOverviewEffects {
     );
   });
 
-  public wsUpdateMemberListOnInvitation$ = createEffect(() => {
-    return this.store.select(selectCurrentProject).pipe(
-      filterNil(),
-      switchMap((project) => {
-        return this.wsService
-          .events<{ project: string }>({
-            channel: `projects.${project.slug}`,
-            type: 'projectinvitations.create',
-          })
-          .pipe(
-            map(() => {
-              return ProjectOverviewActions.updateMemberList();
-            })
-          );
-      })
-    );
-  });
-
-  public wsUpdateMemberListOnAccept$ = createEffect(() => {
-    return this.store.select(selectCurrentProject).pipe(
-      filterNil(),
-      switchMap((project) => {
-        return this.wsService
-          .events<{ project: string }>({
-            channel: `projects.${project.slug}`,
-            type: 'projectmemberships.create',
-          })
-          .pipe(
-            map(() => {
-              return ProjectOverviewActions.updateMemberList();
-            })
-          );
-      })
-    );
-  });
-
-  public updateMemberList$ = createEffect(() => {
+  public updateMembersList$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(ProjectOverviewActions.updateMemberList),
+      ofType(ProjectOverviewActions.updateMembersList),
       concatLatestFrom(() =>
         this.store.select(selectCurrentProject).pipe(filterNil())
       ),
@@ -191,7 +154,7 @@ export class ProjectOverviewEffects {
                 invitations: invitationsResponse.invitations,
                 totalInvitations: invitationsResponse.totalInvitations,
                 showAllMembers: showAllMembers,
-                updateMemberList: true,
+                updateMembersList: true,
               });
             }
             return ProjectOverviewActions.updateMemberModalList();
@@ -238,7 +201,6 @@ export class ProjectOverviewEffects {
     private store: Store,
     private actions$: Actions,
     private projectApiService: ProjectApiService,
-    private wsService: WsService,
     private appService: AppService
   ) {}
 }

@@ -23,15 +23,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <ng-container *ngIf="!vm.loading">
         <ng-container
           *ngFor="let member of vm.members; trackBy: trackByUsername">
-          <tg-ui-dtable-row>
+          <tg-ui-dtable-row
+            [@.disabled]="vm.animationDisabled"
+            [@slideInOut]>
             <tg-ui-dtable-cell class="user">
               <tg-user-card
                 [user]="member.user"
                 [isSelf]="member.user.username === vm.user?.username"
                 [navigateToUser]="true"></tg-user-card>
             </tg-ui-dtable-cell>
-            <tg-ui-dtable-cell></tg-ui-dtable-cell>
-            <tg-ui-dtable-cell></tg-ui-dtable-cell>
+            <tg-ui-dtable-cell> </tg-ui-dtable-cell>
+            <tg-ui-dtable-cell class="action-column"> </tg-ui-dtable-cell>
           </tg-ui-dtable-row>
         </ng-container>
       </ng-container>

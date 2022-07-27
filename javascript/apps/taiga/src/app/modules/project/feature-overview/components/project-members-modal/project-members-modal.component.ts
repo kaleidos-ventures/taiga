@@ -13,7 +13,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { Invitation, Membership } from '@taiga/data';
+import { Invitation, Membership, User } from '@taiga/data';
 
 @Component({
   selector: 'tg-project-members-modal',
@@ -22,6 +22,9 @@ import { Invitation, Membership } from '@taiga/data';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectMembersModalComponent {
+  @Input()
+  public user: User | null = null;
+
   @Input()
   public members: (Membership | Invitation)[] = [];
 

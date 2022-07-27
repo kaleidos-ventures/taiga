@@ -71,6 +71,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       (requestClose)="setShowAllMembers(false)">
       <tg-project-members-modal
         *ngIf="vm.members && vm.showAllMembers"
+        [user]="vm.user"
         [members]="vm.members"
         [pending]="vm.pending"
         [totalMembers]="vm.totalMemberships"

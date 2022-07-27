@@ -18,6 +18,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Permissions, ProjectMockFactory, RoleMockFactory } from '@taiga/data';
+import { hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
@@ -39,11 +40,16 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
     component: ProjectSettingsFeatureRolesPermissionsComponent,
     imports: [ReactiveFormsModule, RouterTestingModule, getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
-    providers: [provideMockStore({}), provideMockActions(() => actions$)],
+    providers: [
+      provideMockActions(() => actions$),
+      provideMockStore({ initialState: {} }),
+    ],
     mocks: [ProjectsSettingsFeatureRolesPermissionsService, PermissionsService],
   });
 
   beforeEach(() => {
+    actions$ = hot('-');
+
     spectator = createComponent({
       props: {},
       providers: [],

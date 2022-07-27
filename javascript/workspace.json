@@ -9,5 +9,6 @@
     "taiga-e2e": "apps/taiga-e2e",
     "ui": "libs/ui",
     "ws": "libs/ws"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

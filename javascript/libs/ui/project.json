@@ -1,6 +1,6 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "libs/ui",
   "sourceRoot": "libs/ui/src",
   "prefix": "tg-ui",
   "targets": {
@@ -14,19 +14,23 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/ui"],
       "options": {
-        "jestConfig": "libs/ui/jest.config.js",
+        "jestConfig": "libs/ui/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "storybook": {
-      "executor": "@nrwl/storybook:storybook",
+      "executor": "@storybook/angular:start-storybook",
       "options": {
-        "uiFramework": "@storybook/angular",
         "port": 4400,
-        "config": {
-          "configFolder": "libs/ui/.storybook"
-        },
-        "projectBuildConfig": "ui:build-storybook"
+        "configDir": "libs/ui/.storybook",
+        "browserTarget": "ui:storybook",
+        "compodoc": false,
+        "styles": [
+          "node_modules/@taiga-ui/core/styles/taiga-ui-global.less",
+          "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less",
+          "apps/taiga/src/styles.css",
+          "libs/ui/.storybook/styles-stories.css"
+        ]
       },
       "configurations": {
         "ci": {
@@ -35,22 +39,13 @@
       }
     },
     "build-storybook": {
-      "executor": "@nrwl/storybook:build",
+      "executor": "@storybook/angular:build-storybook",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "uiFramework": "@storybook/angular",
-        "outputPath": "dist/storybook/ui",
-        "config": {
-          "configFolder": "libs/ui/.storybook"
-        },
-        "projectBuildConfig": "ui:build-storybook",
-        "assets": [
-          {
-            "glob": "**/*",
-            "input": "apps/taiga/src/assets",
-            "output": "/assets/"
-          }
-        ],
+        "outputDir": "dist/storybook/taiga",
+        "configDir": "libs/ui/.storybook",
+        "browserTarget": "ui:storybook",
+        "compodoc": false,
         "styles": [
           "node_modules/@taiga-ui/core/styles/taiga-ui-global.less",
           "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less",

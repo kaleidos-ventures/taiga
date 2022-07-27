@@ -1,4 +1,4 @@
-const { getJestProjects } = require('@nrwl/jest');
+import { getJestProjects } from '@nrwl/jest';
 
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,4 +8,6 @@ const { getJestProjects } = require('@nrwl/jest');
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-module.exports = { projects: getJestProjects() };
+export default {
+  projects: getJestProjects(),
+};

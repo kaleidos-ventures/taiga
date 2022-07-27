@@ -20,8 +20,7 @@ import {
   passwordStrength,
   Result,
 } from 'check-password-strength';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Observable, map, startWith } from 'rxjs';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -116,7 +115,7 @@ export class PasswordStrengthComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     if (this.control) {
-      this.strength$ = this.control.valueChanges.pipe(
+      const strength$ = this.control.valueChanges.pipe(
         map((value: string) => {
           if (value.length < this.characters) {
             return undefined;
@@ -126,6 +125,8 @@ export class PasswordStrengthComponent implements AfterViewInit {
         }),
         startWith(undefined)
       );
+
+      this.strength$ = strength$;
 
       this.cd.detectChanges();
 

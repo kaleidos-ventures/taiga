@@ -1,6 +1,6 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "libs/ws",
   "sourceRoot": "libs/ws/src",
   "prefix": "tg",
   "targets": {
@@ -14,7 +14,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/ws"],
       "options": {
-        "jestConfig": "libs/ws/jest.config.js",
+        "jestConfig": "libs/ws/jest.config.ts",
         "passWithNoTests": true
       }
     }

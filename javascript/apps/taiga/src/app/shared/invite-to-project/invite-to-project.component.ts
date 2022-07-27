@@ -512,6 +512,6 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
 
   public close() {
     this.cleanFormBeforeClose();
-    this.closeModal.next();
+    this.closeModal.emit();
   }
 }

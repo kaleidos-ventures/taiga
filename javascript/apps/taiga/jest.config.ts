@@ -5,9 +5,8 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-
-module.exports = {
-  displayName: 'api',
+export default {
+  displayName: 'taiga',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -17,7 +16,7 @@ module.exports = {
       tsconfig: '<rootDir>/tsconfig.spec.json',
     },
   },
-  coverageDirectory: '../../coverage/libs/api',
+  coverageDirectory: '../../coverage/apps/taiga',
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

@@ -34,6 +34,6 @@ export class ModalPermissionComparisonComponent {
   }
 
   public close() {
-    this.closeModal.next();
+    this.closeModal.emit();
   }
 }

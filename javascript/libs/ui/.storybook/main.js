@@ -8,12 +8,23 @@
 
 const rootMain = require('../../../.storybook/main');
 
-// Use the following syntax to add addons!
-// rootMain.addons.push('');
-rootMain.stories.push(
-  ...['../src/lib/**/*.stories.mdx', '../src/lib/**/*.stories.@(js|jsx|ts|tsx)']
-);
+module.exports = {
+  ...rootMain,
 
-module.exports = rootMain;
+  core: { ...rootMain.core, builder: 'webpack5' },
 
-module.exports.core = { ...module.exports.core, builder: 'webpack5' };
+  stories: [
+    '../src/lib/**/*.stories.mdx',
+    '../src/lib/**/*.stories.@(js|jsx|ts|tsx)',
+  ],
+  staticDirs: [{ from: '../../../apps/taiga/src/assets', to: '/assets' }],
+  addons: [...rootMain.addons],
+  webpackFinal: async (config, { configType }) => {
+    // apply any global webpack configs that might have been specified in .storybook/main.js
+    if (rootMain.webpackFinal) {
+      config = await rootMain.webpackFinal(config, { configType });
+    }
+
+    return config;
+  },
+};

@@ -24,17 +24,7 @@
       "@taiga/ui/*": ["libs/ui/src/lib/*"],
       "@taiga/ws": ["libs/ws/src/index.ts"],
       "~/*": ["apps/taiga/src/*"]
-    },
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    }
   },
-  "exclude": ["node_modules", "tmp"],
-  "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
-  }
+  "exclude": ["node_modules", "tmp"]
 }

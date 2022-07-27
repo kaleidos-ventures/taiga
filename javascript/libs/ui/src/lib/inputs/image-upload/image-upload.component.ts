@@ -120,7 +120,7 @@ export class ImageUploadComponent implements OnChanges {
     const target = event.target as HTMLInputElement;
     if (target && target.files?.length) {
       const img: File = target.files[0];
-      this.imageSelected.next(img);
+      this.imageSelected.emit(img);
 
       // Read the contents of the file;
       const reader = new FileReader();
@@ -152,7 +152,7 @@ export class ImageUploadComponent implements OnChanges {
   }
 
   public removeImage() {
-    this.imageSelected.next();
+    this.imageSelected.emit();
     this.imageUpload.nativeElement.value = '';
     this.control.setValue('');
   }

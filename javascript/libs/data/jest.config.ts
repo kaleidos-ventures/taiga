@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-module.exports = {
+export default {
   displayName: 'data',
   preset: '../../jest.preset.js',
   globals: {

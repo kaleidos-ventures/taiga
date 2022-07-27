@@ -17,7 +17,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
-import { ResizedEvent } from 'angular-resize-event';
+import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import {
   selectLoading,
   selectWorkspace,

@@ -96,11 +96,15 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   }
 
   public getPublicPermissionsForm() {
-    return this.publicForm.get('public') as FormGroup;
+    const fg = this.publicForm.get('public') as unknown;
+
+    return fg as FormGroup;
   }
 
   public getworkspacePermissionsForm() {
-    return this.workspaceForm.get('workspace') as FormGroup;
+    const fg = this.workspaceForm.get('workspace') as unknown;
+
+    return fg as FormGroup;
   }
 
   constructor(

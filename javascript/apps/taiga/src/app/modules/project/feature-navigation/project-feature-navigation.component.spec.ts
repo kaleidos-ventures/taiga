@@ -48,7 +48,7 @@ describe('ProjectNavigationComponent', () => {
     localStorageService.get.mockReturnValue(true);
 
     spectator.detectChanges();
-    events$.next();
+    events$.next(undefined);
 
     expect(spectator.component.collapsed).toEqual(true);
   });

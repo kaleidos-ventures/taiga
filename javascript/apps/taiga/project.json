@@ -1,6 +1,6 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "root": "apps/taiga",
   "sourceRoot": "apps/taiga/src",
   "prefix": "tg",
   "targets": {
@@ -102,7 +102,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/apps/taiga"],
       "options": {
-        "jestConfig": "apps/taiga/jest.config.js",
+        "jestConfig": "apps/taiga/jest.config.ts",
         "passWithNoTests": true
       }
     },

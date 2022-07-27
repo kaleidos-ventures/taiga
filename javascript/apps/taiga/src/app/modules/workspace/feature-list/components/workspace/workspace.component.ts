@@ -17,7 +17,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Workspace } from '@taiga/data';
-import { ResizedEvent } from 'angular-resize-event';
+import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { map } from 'rxjs/operators';
 import {
   fadeIntOutAnimation,

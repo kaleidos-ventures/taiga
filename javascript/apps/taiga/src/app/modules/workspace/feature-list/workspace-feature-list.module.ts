@@ -32,11 +32,11 @@ import { WorkspaceEffects } from './+state/effects/workspace.effects';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AngularResizeEventModule } from 'angular-resize-event';
 import { ProjectCardModule } from '~/app/shared/project-card/project-card.module';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-routing.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
+import { ResizeEventModule } from '~/app/shared/resize/resize.module';
 
 @NgModule({
   declarations: [
@@ -64,7 +64,7 @@ import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.p
     A11yModule,
     TuiTooltipModule,
     TuiHintModule,
-    AngularResizeEventModule,
+    ResizeEventModule,
     ProjectCardModule,
     WorkspaceFeatureListRoutingModule,
     CapitalizePipeModule,

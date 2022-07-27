@@ -6,7 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import './styles-stories.css';
 export const parameters = {
   layout: 'centered',
 };

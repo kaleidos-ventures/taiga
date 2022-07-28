@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "789edccc-b0a9-4b9e-8345-9ca7c18b5f90",
+		"_postman_id": "9d7642b3-83a3-4287-a0af-556b6abab0b2",
 		"name": "taiga-next",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -1150,7 +1149,12 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "project invitations",
+			"item": [
 				{
 					"name": "new project invitation",
 					"event": [

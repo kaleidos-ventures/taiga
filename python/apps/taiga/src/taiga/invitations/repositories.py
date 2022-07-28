@@ -32,6 +32,20 @@ def get_project_invitation_by_email(project_slug: str, email: str, status: Invit
 
 
 @sync_to_async
+def get_project_invitation_by_username_or_email(
+    project_slug: str, username_or_email: str, status: InvitationStatus
+) -> Invitation | None:
+    by_user = Q(user__username__iexact=username_or_email) | Q(user__email__iexact=username_or_email)
+    by_email = Q(user__isnull=True, email__iexact=username_or_email)
+    try:
+        return Invitation.objects.select_related("user", "project", "project__workspace", "role", "invited_by").get(
+            by_user | by_email, project__slug=project_slug, status=status
+        )
+    except Invitation.DoesNotExist:
+        return None
+
+
+@sync_to_async
 def get_project_invitations(
     project_slug: str, offset: int = 0, limit: int = 0, user: User | None = None, status: InvitationStatus | None = None
 ) -> list[Invitation]:

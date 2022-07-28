@@ -62,6 +62,56 @@ async def test_get_project_invitation_by_email_not_found() -> None:
 
 
 ##########################################################
+# get_project_invitation_by_username_or_email
+##########################################################
+
+
+async def test_get_project_invitation_by_user_username() -> None:
+    invitation = await f.create_invitation()
+
+    new_invitation = await repositories.get_project_invitation_by_username_or_email(
+        project_slug=invitation.project.slug,
+        username_or_email=invitation.user.username,
+        status=InvitationStatus.PENDING,
+    )
+
+    assert new_invitation is not None
+    assert new_invitation == invitation
+
+
+async def test_get_project_invitation_by_user_email() -> None:
+    invitation = await f.create_invitation()
+
+    new_invitation = await repositories.get_project_invitation_by_username_or_email(
+        project_slug=invitation.project.slug, username_or_email=invitation.user.email, status=InvitationStatus.PENDING
+    )
+
+    assert new_invitation is not None
+    assert new_invitation == invitation
+
+
+async def test_get_project_invitation_by_email() -> None:
+    invitation = await f.create_invitation(user=None)
+
+    new_invitation = await repositories.get_project_invitation_by_username_or_email(
+        project_slug=invitation.project.slug, username_or_email=invitation.email, status=InvitationStatus.PENDING
+    )
+
+    assert new_invitation is not None
+    assert new_invitation == invitation
+
+
+async def get_project_invitation_by_username_or_email_not_found() -> None:
+    invitation = await f.create_invitation()
+
+    new_invitation = await repositories.get_project_invitation_by_email(
+        project_slug=invitation.project.slug, username_or_email="email@email.com", status=InvitationStatus.PENDING
+    )
+
+    assert new_invitation is None
+
+
+##########################################################
 # get_project_invitations
 ##########################################################
 

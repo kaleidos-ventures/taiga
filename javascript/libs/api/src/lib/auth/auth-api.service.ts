@@ -30,7 +30,7 @@ export class AuthApiService {
     const params = {
       code,
       redirectUri:
-        social === 'gitlab' || social == 'google'
+        social === 'gitlab' || social === 'google'
           ? `${window.location.origin}/signup/${social}`
           : null,
     };

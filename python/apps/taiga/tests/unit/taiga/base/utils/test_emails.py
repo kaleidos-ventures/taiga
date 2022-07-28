@@ -30,3 +30,25 @@ from taiga.base.utils import emails
 )
 async def test_emails_are_the_same(first_email, second_email, expected):
     assert emails.are_the_same(first_email, second_email) == expected
+
+
+@pytest.mark.parametrize(
+    "value, expected",
+    [
+        # True
+        ("test@email.com", True),
+        ("test+something@email.com", True),
+        ("test.123@email.com", True),
+        ("test@emaIL.comm", True),
+        ("test@subdomain.email.com", True),
+        # False
+        ("test1@com", False),
+        ("test@", False),
+        ("test", False),
+        ("test@.com", False),
+        ("test@email.", False),
+        ("@email.", False),
+    ],
+)
+async def test_is_email(value, expected):
+    assert emails.is_email(value) == expected

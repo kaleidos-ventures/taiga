@@ -7,6 +7,7 @@
 
 from pydantic import EmailStr, conlist, root_validator, validator
 from taiga.base.serializers import BaseModel
+from taiga.base.utils.emails import is_email
 from taiga.conf import settings
 
 
@@ -45,3 +46,22 @@ class InvitationsValidator(BaseModel):
 
     def get_invitations_dict(self) -> list[dict[str, str]]:
         return self.dict()["invitations"]
+
+
+class RevokeInvitationValidator(BaseModel):
+    username_or_email: str
+
+    @validator("username_or_email")
+    def check_not_empty(cls, v: str) -> str:
+        assert v != "", "Empty field is not allowed"
+        return v
+
+    @validator("username_or_email")
+    def check_email_in_domain(cls, v: str) -> str:
+        if is_email(value=v):
+            if not settings.USER_EMAIL_ALLOWED_DOMAINS:
+                return v
+
+            domain = v.split("@")[1]
+            assert domain in settings.USER_EMAIL_ALLOWED_DOMAINS, "Email domain not allowed"
+        return v

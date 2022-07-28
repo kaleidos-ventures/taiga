@@ -52,7 +52,7 @@ async def refresh(form: RefreshTokenValidator) -> AccessTokenWithRefreshSerializ
 
 @routes.auth.post(
     "/token/deny",
-    name="auth.token.denu",
+    name="auth.token.deny",
     summary="Deny a refresh token",
     responses=ERROR_422 | ERROR_400 | ERROR_403,
     response_class=Response,

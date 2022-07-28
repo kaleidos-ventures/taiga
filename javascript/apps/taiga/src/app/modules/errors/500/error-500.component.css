@@ -19,7 +19,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .error-wrapper {
   block-size: 100%;
   inline-size: 100%;
-  margin: 0 auto;
+  margin-block: o;
+  margin-inline: auto;
   max-block-size: 627px;
   max-inline-size: 978px;
   position: relative;

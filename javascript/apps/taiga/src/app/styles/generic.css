@@ -154,7 +154,8 @@ pre {
   font-size: 1rem;
   hyphens: none;
   line-height: 1.375;
-  margin: 0.5rem 0;
+  margin-block: 0.5rem;
+  margin-inline: 0;
   padding: 1rem;
   tab-size: 2;
   text-align: start;

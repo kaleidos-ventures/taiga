@@ -14,7 +14,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .new-step-wrapper {
   inline-size: 480px;
-  margin: 0 auto;
+  margin-block: 0;
+  margin-inline: auto;
 }
 
 .new-step-title {
@@ -34,5 +35,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: flex;
   flex-direction: column;
   inline-size: 480px;
-  margin: 25% auto;
+  margin-block: 25%;
+  margin-inline: auto;
 }

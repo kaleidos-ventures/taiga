@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 tui-dialog-host {
   & .overlay {
-    /* stylelint-disable-next-line declaration-no-important */
+    /* stylelint-disable-next-line declaration-no-important, function-no-unknown */
     background-color: color-mod(var(--color-gray60) a(50%)) !important;
   }
 }

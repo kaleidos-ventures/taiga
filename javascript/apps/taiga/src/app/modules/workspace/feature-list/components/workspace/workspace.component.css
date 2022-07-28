@@ -33,7 +33,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .workspace-wrapper {
-  margin: 0 auto;
+  margin-block: 0;
+  margin-inline: auto;
   max-inline-size: 1440px;
 }
 
@@ -67,7 +68,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   background: var(--color-white);
   inset-block-start: 50px;
   inset-inline-start: calc(50% - 200px);
-  margin: 0 auto;
+  margin-block: 0;
+  margin-inline: auto;
   max-inline-size: 400px;
   padding: var(--spacing-24);
   position: absolute;

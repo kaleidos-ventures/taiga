@@ -14,7 +14,8 @@ td,
   border: 1px solid var(--color-gray20);
   inline-size: calc(100% / 3);
   overflow: hidden;
-  padding: var(--spacing-8) var(--spacing-12);
+  padding-block: var(--spacing-8);
+  padding-inline: var(--spacing-12);
   vertical-align: top;
   word-break: break-word;
 }

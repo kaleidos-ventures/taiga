@@ -475,16 +475,16 @@ ul {
     color: var(--color-white);
     cursor: pointer;
     display: flex;
-    padding: 0 var(--spacing-2);
-    padding-inline-start: var(--spacing-12);
+    padding-block: 0;
+    padding-inline: var(--spacing-12) var(--spacing-2);
   }
 
   & .main-link {
     align-items: center;
     color: var(--color-white);
     display: flex;
-    padding: 0 var(--spacing-2);
-    padding-inline-start: var(--spacing-12);
+    padding-block: 0;
+    padding-inline: var(--spacing-12) var(--spacing-2);
 
     & .dialog-text {
       font-size: var(--font-size-medium);

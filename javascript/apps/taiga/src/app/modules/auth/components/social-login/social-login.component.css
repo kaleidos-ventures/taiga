@@ -49,6 +49,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .login-separator-text {
   background-color: var(--color-white);
-  padding: var(--spacing-8) var(--spacing-28);
+  padding-block: var(--spacing-8);
+  padding-inline: var(--spacing-28);
   z-index: var(--first-layer);
 }

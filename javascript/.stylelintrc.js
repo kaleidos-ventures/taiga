@@ -9,13 +9,8 @@
 module.exports = {
   root: true,
   extends: ['stylelint-config-standard', 'stylelint-config-prettier'],
-  plugins: [
-    'stylelint-order',
-    'stylelint-use-logical-spec',
-    './linters/no-margin-padding-shorthand.js',
-  ],
+  plugins: ['stylelint-order', 'stylelint-use-logical-spec'],
   rules: {
-    'taiga-plugin/no-margin-padding-shorthand': true,
     'at-rule-no-unknown': [
       true,
       {

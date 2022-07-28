@@ -26,7 +26,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .permission-row {
   border-block-end: solid 1px var(--color-gray20);
   max-inline-size: var(--setting-size);
-  padding: var(--spacing-12) 0;
+  padding-block: var(--spacing-12);
+  padding-inline: 0;
 
   & .restricted {
     color: var(--color-gray80);
@@ -43,7 +44,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     background: var(--color-gray10);
     margin-block-start: var(--spacing-8);
     margin-inline-end: var(--spacing-40);
-    padding: var(--spacing-8) var(--spacing-16);
+    padding-block: var(--spacing-8);
+    padding-inline: var(--spacing-16);
   }
 
   & tg-role-advance-row {

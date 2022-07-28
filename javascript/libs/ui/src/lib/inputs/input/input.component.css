@@ -102,7 +102,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     flex-basis: 100%;
     margin-block-end: var(--spacing-4);
     min-inline-size: 0;
-    padding: var(--spacing-8) var(--spacing-12);
+    padding-block: var(--spacing-8);
+    padding-inline: var(--spacing-12);
 
     &:focus {
       border-color: var(--color-secondary);

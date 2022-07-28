@@ -18,4 +18,5 @@ export const {
   selectMembersOffset,
   selectInvitationsOffset,
   selectAnimationDisabled,
+  selectInvitationUpdateAnimation,
 } = membersFeature;

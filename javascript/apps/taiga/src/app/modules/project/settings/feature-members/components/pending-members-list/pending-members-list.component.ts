@@ -6,8 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { animate, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Invitation, User } from '@taiga/data';
@@ -18,18 +18,82 @@ import {
   selectInvitations,
   selectInvitationsLoading,
   selectInvitationsOffset,
+  selectInvitationUpdateAnimation,
   selectTotalInvitations,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
-import { slideInOut400 } from '~/app/shared/utils/animations';
+const cssValue = getComputedStyle(document.documentElement);
 
-@UntilDestroy()
 @Component({
   selector: 'tg-pending-members-list',
   templateUrl: './pending-members-list.component.html',
   styleUrls: ['./pending-members-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [slideInOut400],
+  animations: [
+    trigger('settingInvitationAnimation', [
+      transition(
+        'void => false', // ---> Entering --->
+        [
+          style({
+            blockSize: '0',
+            opacity: '0',
+          }),
+          animate(
+            '400ms ease-out',
+            style({
+              blockSize: '*',
+              opacity: '1',
+            })
+          ),
+        ]
+      ),
+      transition(
+        'false => void', // ---> Leaving --->
+        [
+          animate(
+            '400ms ease-out',
+            style({
+              blockSize: '0',
+              opacity: '0',
+            })
+          ),
+        ]
+      ),
+      transition(
+        'void => true', // <--- Entering <---
+        [
+          style({
+            opacity: '0',
+            background: 'none',
+            outline: 'solid 2px transparent',
+          }),
+          animate(
+            '400ms ease-in',
+            style({
+              opacity: '1',
+              background: `${cssValue.getPropertyValue('--color-gray10')}`,
+              outline: `solid 2px ${cssValue.getPropertyValue(
+                '--color-secondary80'
+              )}`,
+            })
+          ),
+          animate(
+            '500ms ease-in',
+            style({
+              background: `${cssValue.getPropertyValue('--color-white')}`,
+            })
+          ),
+          animate(
+            '300ms ease-in',
+            style({
+              background: `${cssValue.getPropertyValue('--color-white')}`,
+              outline: 'solid 2px transparent',
+            })
+          ),
+        ]
+      ),
+    ]),
+  ],
 })
 export class PendingMembersListComponent {
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
@@ -57,6 +121,7 @@ export class PendingMembersListComponent {
       total: number;
       offset: number;
       animationDisabled: boolean;
+      invitationUpdateAnimation: boolean;
     }>
   ) {
     this.state.connect('invitations', this.store.select(selectInvitations));
@@ -66,6 +131,10 @@ export class PendingMembersListComponent {
     this.state.connect(
       'animationDisabled',
       this.store.select(selectAnimationDisabled)
+    );
+    this.state.connect(
+      'invitationUpdateAnimation',
+      this.store.select(selectInvitationUpdateAnimation)
     );
   }
 

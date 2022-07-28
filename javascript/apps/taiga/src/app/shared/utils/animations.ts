@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { style, animate, trigger, transition } from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 export const fadeIntOutAnimation = trigger('fadeInOut', [
   transition(':enter', [

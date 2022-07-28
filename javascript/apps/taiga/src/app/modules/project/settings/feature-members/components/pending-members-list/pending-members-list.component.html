@@ -25,7 +25,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           *ngFor="let invitation of vm.invitations; trackBy: trackByUsername">
           <tg-ui-dtable-row
             [@.disabled]="vm.animationDisabled"
-            [@slideInOut]>
+            [@settingInvitationAnimation]="
+              vm.invitationUpdateAnimation.toString()
+            ">
             <tg-ui-dtable-cell class="user">
               <tg-user-card [user]="getUser(invitation)"></tg-user-card>
             </tg-ui-dtable-cell>

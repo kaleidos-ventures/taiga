@@ -7,43 +7,43 @@
  */
 
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Invitation, Membership, Project, User } from '@taiga/data';
-import {
-  selectInvitations,
-  selectMembers,
-  selectTotalMemberships,
-  selectTotalInvitations,
-  selectHasMoreMembers,
-  selectShowAllMembers,
-  selectInvitationsToAnimate,
-  selectMembersToAnimate,
-} from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { WsService } from 'libs/ws/src/lib/services/ws.service';
+import { Subject } from 'rxjs';
+import { delay, map, take } from 'rxjs/operators';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import {
   initMembers,
   nextMembersPage,
-  updateShowAllMembers,
   updateMembersList,
+  updateShowAllMembers,
 } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
-import { delay, map, take } from 'rxjs/operators';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { selectNotificationClosed } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { filterNil } from '~/app/shared/utils/operators';
+import {
+  selectHasMoreMembers,
+  selectInvitations,
+  selectInvitationsToAnimate,
+  selectMembers,
+  selectMembersToAnimate,
+  selectNotificationClosed,
+  selectShowAllMembers,
+  selectTotalInvitations,
+  selectTotalMemberships,
+} from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
+import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
 import {
   acceptInvitationSlug,
   acceptInvitationSlugSuccess,
+  inviteUsersSuccess,
 } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectMembersListComponent } from '../project-members-list/project-members-list.component';
-import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
-import { Actions, ofType } from '@ngrx/effects';
-import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
-import { inviteUsersSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { Subject } from 'rxjs';
-import { WsService } from 'libs/ws/src/lib/services/ws.service';
-import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -201,7 +201,7 @@ export class ProjectMembersComponent {
     this.wsService
       .events<{ project: string }>({
         channel: `projects.${this.state.get('project').slug}`,
-        type: 'projectmemberships.update',
+        type: 'projectinvitations.update',
       })
       .pipe(untilDestroyed(this))
       .subscribe(() => {

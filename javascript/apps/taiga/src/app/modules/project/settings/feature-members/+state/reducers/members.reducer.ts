@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createReducer, on, createFeature } from '@ngrx/store';
+import { createFeature, createReducer, on } from '@ngrx/store';
 import { Invitation, Membership } from '@taiga/data';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as MembersActions from '../actions/members.actions';
@@ -21,6 +21,7 @@ export interface MembersState {
   membersOffset: number;
   invitationsOffset: number;
   animationDisabled: boolean;
+  invitationUpdateAnimation: boolean;
 }
 
 export const initialState: MembersState = {
@@ -33,6 +34,7 @@ export const initialState: MembersState = {
   membersOffset: 0,
   invitationsOffset: 0,
   animationDisabled: true,
+  invitationUpdateAnimation: false,
 };
 
 export const reducer = createReducer(
@@ -83,6 +85,14 @@ export const reducer = createReducer(
       state.totalInvitations = totalInvitations;
       state.invitationsLoading = false;
       state.invitationsOffset = offset;
+
+      return state;
+    }
+  ),
+  on(
+    MembersActions.updateMembersList,
+    (state, { invitationUpdateAnimation }): MembersState => {
+      state.invitationUpdateAnimation = !!invitationUpdateAnimation;
 
       return state;
     }

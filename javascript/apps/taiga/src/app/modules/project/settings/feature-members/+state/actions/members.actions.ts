@@ -44,5 +44,8 @@ export const setPendingPage = createAction(
 );
 
 export const updateMembersList = createAction(
-  '[Settings][Members] update member list settings'
+  '[Settings][Members] update member list settings',
+  props<{
+    invitationUpdateAnimation?: boolean;
+  }>()
 );

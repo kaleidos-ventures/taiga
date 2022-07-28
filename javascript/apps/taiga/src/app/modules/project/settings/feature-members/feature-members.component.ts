@@ -7,19 +7,19 @@
  */
 
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { Project } from '@taiga/data';
-import { filterNil } from '~/app/shared/utils/operators';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { initMembersPage } from './+state/actions/members.actions';
 import { RxState } from '@rx-angular/state';
+import { Project } from '@taiga/data';
+import { WsService } from '@taiga/ws';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import * as membersActions from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
+import { filterNil } from '~/app/shared/utils/operators';
+import { initMembersPage } from './+state/actions/members.actions';
 import {
   selectTotalInvitations,
   selectTotalMemberships,
 } from './+state/selectors/members.selectors';
-import { WsService } from '@taiga/ws';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as membersActions from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 
 interface ComponentState {
   project: Project;
@@ -72,7 +72,7 @@ export class ProjectsSettingsFeatureMembersComponent implements OnInit {
       })
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.store.dispatch(membersActions.updateMembersList());
+        this.store.dispatch(membersActions.updateMembersList({}));
       });
 
     this.wsService
@@ -82,17 +82,19 @@ export class ProjectsSettingsFeatureMembersComponent implements OnInit {
       })
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.store.dispatch(membersActions.updateMembersList());
+        this.store.dispatch(membersActions.updateMembersList({}));
       });
 
     this.wsService
       .events<{ project: string }>({
         channel: `projects.${this.state.get('project').slug}`,
-        type: 'projectmemberships.update',
+        type: 'projectinvitations.update',
       })
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.store.dispatch(membersActions.updateMembersList());
+        this.store.dispatch(
+          membersActions.updateMembersList({ invitationUpdateAnimation: true })
+        );
       });
   }
 }

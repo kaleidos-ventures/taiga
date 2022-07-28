@@ -69,6 +69,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <a
                 (focus)="popup($event, 'overview')"
                 (focusout)="out()"
+                data-test="navigate-overview"
                 [attr.data-text]="t('commons.overview')"
                 [attr.aria-label]="collapsed ? t('commons.overview') : null"
                 class="menu-option-item"

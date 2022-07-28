@@ -7,11 +7,11 @@
  */
 
 import { createFeature, createReducer, on } from '@ngrx/store';
-import { immerReducer } from '~/app/shared/utils/store';
 import { Invitation, Membership } from '@taiga/data';
-import * as ProjectOverviewActions from '../actions/project-overview.actions';
-import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { InvitationService } from '~/app/services/invitation.service';
+import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { immerReducer } from '~/app/shared/utils/store';
+import * as ProjectOverviewActions from '../actions/project-overview.actions';
 export interface ProjectOverviewState {
   members: Membership[];
   invitations: Invitation[];
@@ -149,10 +149,10 @@ export const reducer = createReducer(
 
       // add the new invitations to the list is there is no pagination (!state.hasMoreInvitations).
       if (!state.hasMoreInvitations) {
-        const currentInvitations = state.invitations.map((invitation) =>
-          invitation.user ? invitation.user?.username : invitation.email
-        );
         action.newInvitations.forEach((newInvitation) => {
+          const currentInvitations = state.invitations.map((invitation) =>
+            invitation.user ? invitation.user?.username : invitation.email
+          );
           if (
             !currentInvitations.includes(newInvitation.email) &&
             !(

@@ -7,13 +7,6 @@
  */
 
 import { randEmail, randWord } from '@ngneat/falso';
-import {
-  launchProjectCreationInWS,
-  selectBlankProject,
-  submitProject,
-  typeProjectName,
-} from '../support/helpers/project.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import {
   acceptInvitationFromProjectOverview,
@@ -24,6 +17,13 @@ import {
   selectRoleAdministrator,
   typeEmailToInvite,
 } from '../support/helpers/invitation.helpers';
+import {
+  launchProjectCreationInWS,
+  selectBlankProject,
+  submitProject,
+  typeProjectName,
+} from '../support/helpers/project.helpers';
+import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 
 describe('Invite users to project after creating it', () => {
   let workspace: ReturnType<typeof WorkspaceMockFactory>;
@@ -123,6 +123,22 @@ describe('Invite users to project after creating it', () => {
     cy.getBySel('error-at-lest-one')
       .invoke('text')
       .should('to.have.string', 'Add at least one person to the list');
+  });
+
+  it('Should add to overview list bulk invitations', () => {
+    const emailToInvite = 'a@email.com, b@email.com';
+    typeEmailToInvite(emailToInvite);
+    addEmailToInvite();
+    inviteUsers();
+    cy.getBySel('navigate-overview').click();
+    cy.getBySel('member-item').should('exist');
+    cy.getBySel('user-email')
+      .each((element, index) => {
+        expect(element[0]).to.have.text(emailToInvite.split(',')[index].trim());
+      })
+      .then(($list) => {
+        expect($list).to.have.length(2);
+      });
   });
 
   it('Should show results from autocomplete when there is a match', () => {

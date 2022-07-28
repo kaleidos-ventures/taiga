@@ -41,6 +41,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <li
       *ngFor="let member of members; trackBy: trackById.bind(this)"
       class="member-item"
+      data-test="member-item"
       [class.pending-state]="animationPendingState && checkAnimation(member)"
       [class.animation-first-state]="
         animationFirstState && checkAnimation(member)

@@ -43,6 +43,7 @@ export class InvitationEffects {
               switchMap(this.buttonLoadingService.waitLoading()),
               map((response: InvitationResponse) => {
                 return InvitationActions.inviteUsersSuccess({
+                  totalInvitations: action.invitation.length,
                   newInvitations: response.invitations,
                   alreadyMembers: response.alreadyMembers,
                 });
@@ -80,16 +81,16 @@ export class InvitationEffects {
           let messageText;
           let paramsMessage;
           let paramsLabel;
-          if (action.newInvitations.length && action.alreadyMembers) {
+          if (action.totalInvitations && action.alreadyMembers) {
             labelText = 'invitation_success';
             messageText = 'only_members_success';
             paramsMessage = { members: action.alreadyMembers };
-            paramsLabel = { invitations: action.newInvitations.length };
-          } else if (action.newInvitations.length && !action.alreadyMembers) {
+            paramsLabel = { invitations: action.totalInvitations };
+          } else if (action.totalInvitations && !action.alreadyMembers) {
             labelText = 'invitation_ok';
             messageText = 'invitation_success';
-            paramsMessage = { invitations: action.newInvitations.length };
-          } else if (!action.newInvitations.length && action.alreadyMembers) {
+            paramsMessage = { invitations: action.totalInvitations };
+          } else if (!action.totalInvitations && action.alreadyMembers) {
             if (action.alreadyMembers === 1) {
               messageText = 'only_member_success';
             } else {
@@ -105,7 +106,7 @@ export class InvitationEffects {
             message: messageText,
             paramsMessage,
             paramsLabel,
-            status: action.newInvitations.length
+            status: action.totalInvitations
               ? TuiNotification.Success
               : TuiNotification.Info,
             scope: 'invitation_modal',

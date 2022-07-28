@@ -89,6 +89,7 @@ describe('InvitationEffects', () => {
       a: inviteUsersSuccess({
         newInvitations: invitationMockResponse.invitations,
         alreadyMembers: 1,
+        totalInvitations: 1,
       }),
     });
 

@@ -14,6 +14,7 @@ export const inviteUsersSuccess = createAction(
   props<{
     newInvitations: Invitation[];
     alreadyMembers: number;
+    totalInvitations: number;
   }>()
 );
 

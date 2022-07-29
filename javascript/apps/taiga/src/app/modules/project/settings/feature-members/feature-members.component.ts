@@ -40,6 +40,7 @@ interface ComponentState {
 })
 export class ProjectsSettingsFeatureMembersComponent implements OnInit {
   public model$ = this.state.select();
+  public invitePeopleModal = false;
 
   constructor(
     private store: Store,
@@ -96,5 +97,13 @@ export class ProjectsSettingsFeatureMembersComponent implements OnInit {
           membersActions.updateMembersList({ invitationUpdateAnimation: true })
         );
       });
+  }
+
+  public openModal() {
+    this.invitePeopleModal = true;
+  }
+
+  public closeModal() {
+    this.invitePeopleModal = false;
   }
 }

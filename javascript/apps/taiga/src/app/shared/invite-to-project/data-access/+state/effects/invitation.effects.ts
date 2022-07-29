@@ -6,28 +6,27 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
-import * as InvitationActions from '../actions/invitation.action';
-import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
-import { InvitationApiService } from '@taiga/api';
+import { Store } from '@ngrx/store';
 import { optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
-import { AppService } from '~/app/services/app.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { TuiNotification } from '@taiga-ui/core';
+import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import {
   Contact,
   ErrorManagementToastOptions,
   InvitationResponse,
 } from '@taiga/data';
-import { TuiNotification } from '@taiga-ui/core';
-import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
-import { InvitationService } from '~/app/services/invitation.service';
-import { ProjectApiService } from '@taiga/api';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { Store } from '@ngrx/store';
-import { filterNil } from '~/app/shared/utils/operators';
 import { throwError } from 'rxjs';
+import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
+import { AppService } from '~/app/services/app.service';
+import { InvitationService } from '~/app/services/invitation.service';
+import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
+import { filterNil } from '~/app/shared/utils/operators';
+import * as InvitationActions from '../actions/invitation.action';
 
 @Injectable()
 export class InvitationEffects {

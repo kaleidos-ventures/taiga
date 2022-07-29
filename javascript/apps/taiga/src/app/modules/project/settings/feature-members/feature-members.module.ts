@@ -6,23 +6,25 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ProjectsSettingsFeatureMembersComponent } from './feature-members.component';
-import { PendingMembersListComponent } from './components/pending-members-list/pending-members-list.component';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { MembersListComponent } from './components/members-list/members-list.component';
-import { membersFeature } from './+state/reducers/members.reducer';
-import { MembersEffects } from './+state/effects/members.effects';
-import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
+import { StoreModule } from '@ngrx/store';
 import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
-import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 import { TuiTabsModule } from '@taiga-ui/kit';
+import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
+import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
+import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
+import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
+import { MembersEffects } from './+state/effects/members.effects';
+import { membersFeature } from './+state/reducers/members.reducer';
+import { MembersListComponent } from './components/members-list/members-list.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
+import { PendingMembersListComponent } from './components/pending-members-list/pending-members-list.component';
+import { ProjectsSettingsFeatureMembersComponent } from './feature-members.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +52,8 @@ import { PaginationComponent } from './components/pagination/pagination.componen
     CommonModule,
     TranslocoModule,
     DynamicTableModule,
+    ModalModule,
+    InviteToProjectModule,
     StoreModule.forFeature(membersFeature),
     EffectsModule.forFeature([MembersEffects]),
     RouterModule.forChild([

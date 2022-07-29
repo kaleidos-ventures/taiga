@@ -31,6 +31,7 @@ import {
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { AppService } from '~/app/services/app.service';
+import { inviteUsersSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { filterNil } from '~/app/shared/utils/operators';
 
 @Injectable()
@@ -118,7 +119,7 @@ export class MembersEffects {
 
   public updateInvitationsList$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(updateMembersList),
+      ofType(updateMembersList, inviteUsersSuccess),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
         this.store.select(selectInvitationsOffset).pipe(filterNil()),

@@ -21,33 +21,33 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { InvitationRequest, Project, Role, User, Contact } from '@taiga/data';
+import { TuiScrollbarComponent } from '@taiga-ui/core';
+import { TuiTextAreaComponent } from '@taiga-ui/kit';
+import { Contact, InvitationRequest, Project, Role, User } from '@taiga/data';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map, share, startWith, switchMap, throttleTime } from 'rxjs/operators';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
+import { InvitationService } from '~/app/services/invitation.service';
 import {
-  inviteUsersSuccess,
   addSuggestedContact,
+  inviteUsersSuccess,
   searchUser,
 } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import {
   selectContacts,
+  selectInvitations,
   selectMemberRolesOrdered,
+  selectSearchFinished,
   selectSuggestedUsers,
   selectUsersToInvite,
-  selectSearchFinished,
-  selectInvitations,
 } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { map, share, startWith, switchMap, throttleTime } from 'rxjs/operators';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
-import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TuiTextAreaComponent } from '@taiga-ui/kit';
-import { TuiScrollbarComponent } from '@taiga-ui/core';
-import { InvitationService } from '~/app/services/invitation.service';
-import { ModalComponent } from '@taiga/ui/modal/components';
 
 interface InvitationForm {
   fullName: string;

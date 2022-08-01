@@ -16,8 +16,11 @@ tui-tabs {
   --tui-selection: transparent;
 
   /* stylelint-disable selector-max-type */
-  & .tab-link._focus-visible,
   & .tab-link:hover:not(.active) {
+    box-shadow: none;
+  }
+
+  & .tab-link._focus-visible {
     border: 1px solid var(--color-secondary);
     box-shadow: none;
   }

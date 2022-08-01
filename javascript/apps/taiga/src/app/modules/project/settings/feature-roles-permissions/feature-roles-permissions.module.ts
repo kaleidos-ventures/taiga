@@ -25,6 +25,7 @@ import { rolesPermissionsFeature } from './+state/reducers/roles-permissions.red
 import { RolesPermissionsEffects } from './+state/effects/roles-permissions.effects';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { TitleDirective } from '~/app/shared/title/title.directive';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { EffectsModule } from '@ngrx/effects';
     InputsModule,
     StoreModule.forFeature(rolesPermissionsFeature),
     EffectsModule.forFeature([RolesPermissionsEffects]),
+    TitleDirective,
   ],
   providers: [
     {

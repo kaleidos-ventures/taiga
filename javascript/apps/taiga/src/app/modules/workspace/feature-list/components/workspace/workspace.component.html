@@ -9,7 +9,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <ng-container *transloco="let t">
     <div class="workspace-wrapper">
       <div class="workspace-title-container">
-        <h2 class="workspace-title">{{ t('commons.projects') }}</h2>
+        <h2
+          class="workspace-title"
+          tgTitle>
+          {{ t('commons.projects') }}
+        </h2>
         <div class="workspace-title-actions">
           <button
             data-test="add-workspace-button"

@@ -1,4 +1,5 @@
 {
+  "title": "{{ projectName }} - Overview",
   "show_full_description": "Show full description",
   "hide_full_description": "Hide full description",
   "about": "About",

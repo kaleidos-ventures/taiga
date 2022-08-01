@@ -11,6 +11,7 @@ import { NgModule } from '@angular/core';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { TitleComponent } from '~/app/shared/title/title.component';
 import { ProjectMembersModule } from './components/project-members/project-members.module';
 import { DataAccessProjectOverviewModule } from './data-access/project-overview-data-access.module';
 import { ProjectOverviewRoutingModule } from './project-feature-overview-routing.module';
@@ -27,6 +28,7 @@ import { ProjectFeatureOverviewComponent } from './project-feature-overview.comp
     TuiLinkModule,
     DataAccessProjectOverviewModule,
     ProjectMembersModule,
+    TitleComponent,
   ],
   declarations: [ProjectFeatureOverviewComponent],
   providers: [

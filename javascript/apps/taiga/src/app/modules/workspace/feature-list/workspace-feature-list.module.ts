@@ -37,6 +37,7 @@ import { AvatarModule } from '@taiga/ui/avatar';
 import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-routing.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { ResizeEventModule } from '~/app/shared/resize/resize.module';
+import { TitleDirective } from '~/app/shared/title/title.directive';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { ResizeEventModule } from '~/app/shared/resize/resize.module';
     WorkspaceSkeletonComponent,
   ],
   imports: [
+    TitleDirective,
     ReactiveFormsModule,
     CommonModule,
     TuiButtonModule,

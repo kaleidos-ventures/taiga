@@ -25,6 +25,7 @@ import { MembersListComponent } from './components/members-list/members-list.com
 import { PaginationComponent } from './components/pagination/pagination.component';
 import { PendingMembersListComponent } from './components/pending-members-list/pending-members-list.component';
 import { ProjectsSettingsFeatureMembersComponent } from './feature-members.component';
+import { TitleDirective } from '~/app/shared/title/title.directive';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
         ],
       },
     ]),
+    TitleDirective,
   ],
 })
 export class ProjectsSettingsFeatureMembersModule {}

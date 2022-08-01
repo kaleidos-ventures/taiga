@@ -26,6 +26,7 @@ import { ModalModule } from '@taiga/ui/modal';
 import { TemplateStepComponent } from './components/template-step/template-step.component';
 import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+import { TitleDirective } from '~/app/shared/title/title.directive';
 
 @NgModule({
   declarations: [NewProjectComponent, InitStepComponent, TemplateStepComponent],
@@ -47,6 +48,7 @@ import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/butt
     ModalModule,
     FeatureNewProjectRoutingModule,
     ButtonLoadingModule,
+    TitleDirective,
   ],
   providers: [
     {

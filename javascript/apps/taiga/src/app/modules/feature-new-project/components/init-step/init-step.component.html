@@ -18,7 +18,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </a>
   </div>
   <div class="new-step-wrapper">
-    <h1 class="new-step-title">{{ t('new_project.new_project') }}</h1>
+    <h1
+      class="new-step-title"
+      tgTitle>
+      {{ t('new_project.new_project') }}
+    </h1>
 
     <form [formGroup]="createProjectForm">
       <tg-ui-select

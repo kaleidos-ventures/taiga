@@ -101,9 +101,14 @@ export class WorkspaceComponent implements OnDestroy {
         }
       }
 
+      const workspaceList = model.workspaceList.filter((workspace) => {
+        return this.checkWsVisibility(workspace);
+      });
+
       return {
         ...model,
         skeletonAnimation,
+        workspaceList,
       };
     })
   );

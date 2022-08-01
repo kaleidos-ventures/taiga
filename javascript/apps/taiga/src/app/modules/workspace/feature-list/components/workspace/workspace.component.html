@@ -96,8 +96,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           *ngFor="let workspace of vm.workspaceList; trackBy: trackByWorkspace">
           <div
             class="workspace-item-container-inner"
-            @workspaceInOut
-            *ngIf="checkWsVisibility(workspace)">
+            @workspaceInOut>
             <tg-workspace-item
               data-test="workspace-item"
               [projectsToShow]="amountOfProjectsToShow"

@@ -7,6 +7,7 @@
  */
 
 import { Router } from '@angular/router';
+import { randEmail, randSlug } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -15,7 +16,7 @@ import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import {
   InvitationMockFactory,
   MembershipMockFactory,
-  ProjectMockFactory
+  ProjectMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
@@ -24,8 +25,10 @@ import { AppService } from '~/app/services/app.service';
 import {
   fetchInvitationsSuccess,
   fetchMembersSuccess,
+  resendInvitation,
+  resendInvitationSuccess,
   setMembersPage,
-  setPendingPage
+  setPendingPage,
 } from '../actions/members.actions';
 import { MembersEffects } from './members.effects';
 
@@ -134,5 +137,25 @@ describe('MembersEffects', () => {
         20
       );
     });
+  });
+
+  it('resend invitations', () => {
+    const invitationApiService = spectator.inject(InvitationApiService);
+    const effects = spectator.inject(MembersEffects);
+
+    invitationApiService.resendInvitation.mockReturnValue(cold('-b|', {}));
+
+    actions$ = hot('-a', {
+      a: resendInvitation({
+        slug: randSlug(),
+        usernameOrEmail: randEmail(),
+      }),
+    });
+
+    const expected = cold('--a', {
+      a: resendInvitationSuccess(),
+    });
+
+    expect(effects.resendInvitation$).toBeObservable(expected);
   });
 });

@@ -154,28 +154,15 @@ async def test_clean_expired_users():
 
 
 async def test_get_users_by_text():
-    ws_pj_admin = await f.create_user(full_name="ws-pj-admin")
-    elettescar = await f.create_user(
-        is_active=True, username="elettescar", email="elettescar@email.com", full_name="Martina Eaton"
-    )
-    electra = await f.create_user(
-        is_active=True, username="electra", email="electra@email.com", full_name="Sonia Moreno"
-    )
-    danvers = await f.create_user(
-        is_active=True, username="danvers", email="danvers@email.com", full_name="Elena Riego"
-    )
-    elmarv = await f.create_user(
-        is_active=True, username="elmary", email="elmary@email.com", full_name="Joanna Marinari"
-    )
-    storm = await f.create_user(
-        is_active=True, username="storm", email="storm@email.com", full_name="Martina Elliott Wagner"
-    )
-    inactive_user = await f.create_user(
-        is_active=False, username="inactive", email="inactive@email.com", full_name="Inactive User"
-    )
-    system_user = await f.create_user(
-        is_system=True, is_active=True, username="system", email="system@email.com", full_name="System User"
-    )
+    ws_pj_admin = await f.create_user(is_active=True, username="wsadmin", full_name="ws-pj-admin")
+    elettescar = await f.create_user(is_active=True, username="elettescar", full_name="Elettescar - ws member")
+    electra = await f.create_user(is_active=True, username="electra", full_name="Electra - pj member")
+    danvers = await f.create_user(is_active=True, username="danvers", full_name="Danvers elena")
+    await f.create_user(is_active=True, username="edanvers", full_name="Elena Danvers")
+    await f.create_user(is_active=True, username="elmary", full_name="Él Marinari")
+    storm = await f.create_user(is_active=True, username="storm", full_name="Storm Smith")
+    inactive_user = await f.create_user(is_active=False, username="inactive", full_name="Inactive User")
+    system_user = await f.create_user(is_system=True, is_active=True, username="system", full_name="System User")
 
     # elettescar is ws-member
     workspace = await f.create_workspace(is_premium=True, owner=ws_pj_admin, color=2)
@@ -199,52 +186,70 @@ async def test_get_users_by_text():
         invited_by=ws_pj_admin,
     )
 
-    # searching with default values (all users but inactive/system users)
+    # searching all but inactive or system users (no text or project specified). Alphabetical order (full_name/username)
     all_active_no_sys_users_result = await users_repositories.get_users_by_text()
-    assert len(all_active_no_sys_users_result) == 6
-    assert all_active_no_sys_users_result[0] == danvers
-    assert all_active_no_sys_users_result[1] == elmarv
-    assert all_active_no_sys_users_result[2] == elettescar
+    assert len(all_active_no_sys_users_result) == 7
+    assert all_active_no_sys_users_result[0].full_name == "Danvers elena"
+    assert all_active_no_sys_users_result[1].full_name == "Electra - pj member"
+    assert all_active_no_sys_users_result[2].full_name == "Elena Danvers"
     assert inactive_user not in all_active_no_sys_users_result
     assert system_user not in all_active_no_sys_users_result
 
-    # searching for texts, ordering by project
-    search_by_text_no_pj_result = await users_repositories.get_users_by_text(
-        text_search="el", project_slug=project.slug
-    )
-    assert len(search_by_text_no_pj_result) == 5
-    assert search_by_text_no_pj_result[0] == electra
+    # searching for project, no text search. Ordering by project closeness and alphabetically (full_name/username)
+    search_by_text_no_pj_result = await users_repositories.get_users_by_text(project_slug=project.slug)
+    assert len(search_by_text_no_pj_result) == 7
+    # pj members should be returned first (project closeness criteria)
+    assert search_by_text_no_pj_result[0].full_name == "Electra - pj member"
     assert search_by_text_no_pj_result[0].user_is_member is True
     assert search_by_text_no_pj_result[0].user_has_pending_invitation is False
-    assert search_by_text_no_pj_result[1] == elettescar
-    assert search_by_text_no_pj_result[1].user_is_member is False
+    assert search_by_text_no_pj_result[1].full_name == "ws-pj-admin"
+    assert search_by_text_no_pj_result[1].user_is_member is True
     assert search_by_text_no_pj_result[1].user_has_pending_invitation is False
-    assert search_by_text_no_pj_result[2] == danvers
+    # ws members should be returned secondly
+    assert search_by_text_no_pj_result[2].full_name == "Elettescar - ws member"
     assert search_by_text_no_pj_result[2].user_is_member is False
-    assert search_by_text_no_pj_result[2].user_has_pending_invitation is True
+    assert search_by_text_no_pj_result[2].user_has_pending_invitation is False
+    # then the rest of users alphabetically
+    assert search_by_text_no_pj_result[3].full_name == "Danvers elena"
+    assert search_by_text_no_pj_result[3].user_is_member is False
+    assert search_by_text_no_pj_result[3].user_has_pending_invitation is True
+    assert search_by_text_no_pj_result[4].full_name == "Elena Danvers"
+    assert search_by_text_no_pj_result[5].full_name == "Él Marinari"
+    assert search_by_text_no_pj_result[6].full_name == "Storm Smith"
+
     assert inactive_user not in search_by_text_no_pj_result
-    assert ws_pj_admin not in search_by_text_no_pj_result
+    assert system_user not in search_by_text_no_pj_result
 
-    # searching for texts containing several words (full names)
-    search_by_text_spaces_result = await users_repositories.get_users_by_text(text_search="martina elliott wag")
+    # searching for a text containing several words in lower case
+    search_by_text_spaces_result = await users_repositories.get_users_by_text(text_search="storm smith")
     assert len(search_by_text_spaces_result) == 1
-    assert search_by_text_spaces_result[0] == storm
+    assert search_by_text_spaces_result[0].full_name == "Storm Smith"
 
-    # searching for texts containing special chars (cause no exception)
+    # searching for texts containing special chars (and cause no exception)
     search_by_special_chars = await users_repositories.get_users_by_text(text_search="<")
     assert len(search_by_special_chars) == 0
 
-    # search pagination
+    # Paginated search. Order first by project closeness (pj, ws, others), then by text search order (rank, left match)
     search_by_text_no_pj_pagination_result = await users_repositories.get_users_by_text(
-        text_search="el", project_slug=project.slug, offset=2, limit=3
+        text_search="EL", project_slug=project.slug, offset=0, limit=4
     )
-    assert len(search_by_text_no_pj_pagination_result) == 3
-    assert search_by_text_no_pj_pagination_result[0] == danvers
-    assert search_by_text_no_pj_pagination_result[1] == elmarv
-    assert search_by_text_no_pj_pagination_result[2] == storm
+
+    assert len(search_by_text_no_pj_pagination_result) == 4
+    # first result must be `electra` as a pj-member (no matter how low her rank is against other farther pj users)
+    assert search_by_text_no_pj_pagination_result[0].full_name == "Electra - pj member"
+    # second result should be `elettescar` as a ws-member (no matter how low her rank is against other farther-pj users)
+    assert search_by_text_no_pj_pagination_result[1].full_name == "Elettescar - ws member"
+    # then the rest of users alphabetically ordered by rank and alphabetically.
+    # first would be *Él* Marinari/*el*mary with the highest rank (0.6079)
+    assert search_by_text_no_pj_pagination_result[2].full_name == "Él Marinari"
+    # then goes `Elena Danvers` with a tied second rank (0.3039) but her name starts with the searched text ('el')
+    assert search_by_text_no_pj_pagination_result[3].full_name == "Elena Danvers"
+    # `Danvers Elena` has the same rank (0.3039) but his name doesn't start with 'el', so he's left outside from the
+    # results due to the pagination limit (4)
+    assert danvers not in search_by_text_no_pj_pagination_result
     assert inactive_user not in search_by_text_no_pj_pagination_result
     assert ws_pj_admin not in search_by_text_no_pj_pagination_result
-    assert electra not in search_by_text_no_pj_pagination_result
+    assert storm not in search_by_text_no_pj_pagination_result
 
     # searching for inactive and system users
     search_by_text_inactive_system = await users_repositories.get_users_by_text(
@@ -252,3 +257,4 @@ async def test_get_users_by_text():
     )
     assert inactive_user in search_by_text_inactive_system
     assert system_user in search_by_text_inactive_system
+    len(search_by_text_inactive_system) == 9

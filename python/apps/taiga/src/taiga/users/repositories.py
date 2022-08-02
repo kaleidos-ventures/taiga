@@ -10,8 +10,10 @@ from typing import Any
 
 from asgiref.sync import sync_to_async
 from django.contrib.auth.models import update_last_login as django_update_last_login
+from django.contrib.postgres.lookups import Unaccent
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db.models import BooleanField, Exists, OuterRef, Q, QuerySet, Value
+from django.db.models.functions import Lower, StrIndex
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.models import Invitation
@@ -183,8 +185,8 @@ def _get_users_by_text_qs(
             users_qs.filter(projects__slug=project_slug)
             .annotate(user_is_member=Exists(memberships))
             .annotate(user_has_pending_invitation=Exists(pending_invitations))
-            .order_by("full_name", "username")
         )
+        sorted_project_users_qs = _sort_queryset_if_unsorted(project_users_qs, text_search)
 
         # 2nd: Users that are members of the project's workspace but are NOT project members
         workspace_users_qs = (
@@ -192,23 +194,25 @@ def _get_users_by_text_qs(
             .annotate(user_is_member=Value(False, output_field=BooleanField()))
             .annotate(user_has_pending_invitation=Exists(pending_invitations))
             .exclude(projects__slug=project_slug)
-            .order_by("full_name", "username")
         )
+        sorted_workspace_users_qs = _sort_queryset_if_unsorted(workspace_users_qs, text_search)
 
         # 3rd: Users that are neither a project member nor a member of its workspace
         other_users_qs = (
-            users_qs.exclude(workspaces__projects__slug=project_slug)
+            users_qs.exclude(projects__slug=project_slug)
+            .exclude(workspaces__projects__slug=project_slug)
             .annotate(user_is_member=Value(False, output_field=BooleanField()))
             .annotate(user_has_pending_invitation=Exists(pending_invitations))
-            .exclude(projects__slug=project_slug)
-            .order_by("full_name", "username")
         )
+        sorted_other_users_qs = _sort_queryset_if_unsorted(other_users_qs, text_search)
 
         # NOTE: `Union all` are important to keep the individual ordering when combining the different search criteria.
-        users_qs = project_users_qs.union(workspace_users_qs.union(other_users_qs, all=True), all=True)
+        users_qs = sorted_project_users_qs.union(
+            sorted_workspace_users_qs.union(sorted_other_users_qs, all=True), all=True
+        )
         return users_qs
 
-    return users_qs.order_by("full_name", "username")
+    return _sort_queryset_if_unsorted(users_qs, text_search)
 
 
 @sync_to_async
@@ -248,19 +252,33 @@ def get_total_users_by_text(
     return qs.count()
 
 
-# TODO: missing tests
 def get_users_by_fullname_or_username_sync(text_search: str, user_qs: QuerySet[User]) -> QuerySet[User]:
+    """
+    This method searches for users matching a text in their full names and usernames (being accent and case
+    insensitive) and order the results according to:
+        1st. Order by full text search rank according to the specified matrix weights (0.5 to both full_name/username)
+        2nd. Order by literal matches in full names detected closer to the left, or close to start with that text
+        3rd. Order by full name alphabetically
+        4th. Order by username alphabetically
+    :param text_search: The text to search for (in user full names and usernames)
+    :param user_qs: The base user queryset to which apply the filters to
+    :return: A filtered queryset that will return an ordered list of users matching the text when executed
+    """
+
     parsed_text_search = _get_parsed_text_search(text_search)
-    search_query = SearchQuery(f"{parsed_text_search}:*", search_type="raw")
-    search_vector = SearchVector("full_name", weight="A") + SearchVector("username", weight="B")
+    search_query = SearchQuery(f"{parsed_text_search}:*", search_type="raw", config="simple_unaccent")
+    search_vector = SearchVector("full_name", weight="A", config="simple_unaccent") + SearchVector(
+        "username", weight="B", config="simple_unaccent"
+    )
     # By default values: [0.1, 0.2, 0.4, 1.0]
     # [D-weight, C-weight, B-weight, A-weight]
-    rank_weights = [0.1, 0.2, 0.4, 1.0]
+    rank_weights = [0.0, 0.0, 0.5, 0.5]
 
     full_text_matching_users = (
         user_qs.annotate(rank=SearchRank(search_vector, search_query, weights=rank_weights))
+        .annotate(first_match=StrIndex(Unaccent(Lower("full_name")), Unaccent(Lower(Value(text_search)))))
         .filter(rank__gte=0.2)
-        .order_by("-rank", "full_name")
+        .order_by("-rank", "first_match", "full_name", "username")
     )
 
     return full_text_matching_users
@@ -271,8 +289,13 @@ get_users_by_fullname_or_username = sync_to_async(get_users_by_fullname_or_usern
 
 def _get_parsed_text_search(text_search: str) -> str:
     # Prepares the SearchQuery text by escaping it and fixing spaces for searches over several words
-    parsed_text_search = repr(text_search.strip())
-    if len(parsed_text_search) > 1 and parsed_text_search.rfind(" ") != -1:
-        return parsed_text_search.replace(" ", " & ")
 
-    return parsed_text_search
+    return repr(text_search.strip()).replace(" ", " & ")
+
+
+def _sort_queryset_if_unsorted(users_qs: QuerySet[User], text_search: str) -> QuerySet[User]:
+    if not text_search:
+        return users_qs.order_by("full_name", "username")
+
+    # the queryset has already been sorted by the "Full Text Search" and its annotated 'rank' field
+    return users_qs

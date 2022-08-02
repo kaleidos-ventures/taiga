@@ -6,17 +6,17 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { WsService } from '@taiga/ws';
-import { filterNil } from '~/app/shared/utils/operators';
-import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
-import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
-import { animate, style, transition, trigger } from '@angular/animations';
+import { WsService } from '@taiga/ws';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
+import { filterNil } from '~/app/shared/utils/operators';
+import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
 
 @Component({
   selector: 'tg-project-feature-shell',
@@ -73,17 +73,19 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     );
 
     this.state.hold(this.state.select('project'), (project) => {
-      this.unsubscribeFromProjectEvents();
-      this.subscribedProject = project.slug;
-      this.wsService
-        .command('subscribe_to_project_events', { project: project.slug })
-        .subscribe();
+      if (project.userIsMember) {
+        this.unsubscribeFromProjectEvents();
+        this.subscribedProject = project.slug;
+        this.wsService
+          .command('subscribe_to_project_events', { project: project.slug })
+          .subscribe();
 
-      this.store.dispatch(
-        setNotificationClosed({
-          notificationClosed: !this.showPendingInvitationNotification,
-        })
-      );
+        this.store.dispatch(
+          setNotificationClosed({
+            notificationClosed: !this.showPendingInvitationNotification,
+          })
+        );
+      }
     });
   }
 

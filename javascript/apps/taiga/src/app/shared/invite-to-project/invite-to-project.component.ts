@@ -12,7 +12,6 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
-  Inject,
   Input,
   OnChanges,
   OnInit,
@@ -28,7 +27,6 @@ import { Store } from '@ngrx/store';
 import { TuiScrollbarComponent } from '@taiga-ui/core';
 import { TuiTextAreaComponent } from '@taiga-ui/kit';
 import { Contact, InvitationRequest, Project, Role, User } from '@taiga/data';
-import { ModalComponent } from '@taiga/ui/modal/components';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map, share, startWith, switchMap, throttleTime } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
@@ -141,7 +139,6 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public emailInputIsFocus = false;
 
   constructor(
-    @Inject(ModalComponent) private modal: ModalComponent,
     private fb: FormBuilder,
     private store: Store,
     private actions$: Actions,

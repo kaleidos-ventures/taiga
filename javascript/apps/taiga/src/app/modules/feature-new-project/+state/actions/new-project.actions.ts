@@ -26,5 +26,8 @@ export const createProjectError = createAction(
 
 export const inviteUsersToProject = createAction(
   '[NewProject] invite users',
-  props<{ slug: string; invitation: InvitationRequest[] }>()
+  props<{
+    slug: string;
+    invitation: InvitationRequest[];
+  }>()
 );

@@ -140,8 +140,6 @@ export const reducer = createReducer(
   on(
     InvitationActions.inviteUsersSuccess,
     (state, action): ProjectOverviewState => {
-      state.totalInvitations += action.newInvitations.length;
-
       state.membersToAnimate = [];
       state.invitationsToAnimate = action.newInvitations.map((invitation) => {
         return invitation?.user?.username ?? invitation.email;

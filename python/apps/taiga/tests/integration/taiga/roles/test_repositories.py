@@ -74,6 +74,21 @@ async def test_get_project_memberships():
 
 
 ##########################################################
+# get_project_membership
+##########################################################
+
+
+async def test_get_project_membership():
+    owner = await f.create_user()
+    user = await f.create_user()
+    project = await f.create_project(owner=owner)
+    role = await f.create_role(project=project)
+    membership = await repositories.create_membership(user=user, project=project, role=role)
+
+    assert await repositories.get_project_membership(project_slug=project.slug, username=user.username) == membership
+
+
+##########################################################
 # get_total_project_memberships
 ##########################################################
 
@@ -89,6 +104,23 @@ async def test_get_total_project_memberships():
 
     total_memberships = await repositories.get_total_project_memberships(project_slug=project.slug)
     assert total_memberships == 3
+
+
+##########################################################
+# update_project_membership_role
+##########################################################
+
+
+async def test_update_project_membership_role():
+    owner = await f.create_user()
+    user = await f.create_user()
+    project = await f.create_project(owner=owner)
+    role = await f.create_role(project=project)
+    membership = await repositories.create_membership(user=user, project=project, role=role)
+
+    new_role = await f.create_role(project=project)
+    updated_membership = await repositories.update_project_membership_role(membership=membership, role=new_role)
+    assert updated_membership.role == new_role
 
 
 ##########################################################

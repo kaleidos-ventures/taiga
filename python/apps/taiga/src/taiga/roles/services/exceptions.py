@@ -19,3 +19,11 @@ class NotValidPermissionsSetError(TaigaServiceException):
 
 class IncompatiblePermissionsSetError(TaigaServiceException):
     ...
+
+
+class NonExistingRoleError(TaigaServiceException):
+    ...
+
+
+class MembershipIsTheOnlyAdminError(TaigaServiceException):
+    ...

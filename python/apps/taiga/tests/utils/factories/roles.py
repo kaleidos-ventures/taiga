@@ -61,6 +61,10 @@ def create_membership(**kwargs):
     return MembershipFactory.create(**kwargs)
 
 
+def build_membership(**kwargs):
+    return MembershipFactory.build(**kwargs)
+
+
 class WorkspaceMembershipFactory(Factory):
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")

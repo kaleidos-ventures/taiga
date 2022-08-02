@@ -18,6 +18,7 @@ from .roles import (  # noqa
     RoleFactory,
     WorkspaceMembershipFactory,
     WorkspaceRoleFactory,
+    build_membership,
     build_role,
     create_membership,
     create_role,

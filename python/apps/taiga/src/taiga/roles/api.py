@@ -20,12 +20,14 @@ from taiga.roles import services as roles_services
 from taiga.roles.models import Membership, Role
 from taiga.roles.serializers import MembershipSerializer, RoleSerializer
 from taiga.roles.services import exceptions as services_ex
+from taiga.roles.validators import ProjectMembershipRoleValidator
 from taiga.routers import routes
 
 # PERMISSIONS
 GET_PROJECT_ROLES = IsProjectAdmin()
 UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
 GET_PROJECT_MEMBERSHIPS = Or(CanViewProject(), HasPendingProjectInvitation())
+UPDATE_PROJECT_MEMBERSHIP_ROLE = IsProjectAdmin()
 
 
 ################################################
@@ -115,6 +117,28 @@ async def get_project_memberships(
     return memberships
 
 
+@routes.projects.post(
+    "/{slug}/memberships/change-role",
+    name="project.memberships.change-role",
+    summary="Update project membership role",
+    response_model=MembershipSerializer,
+    responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
+)
+async def update_project_membership_role(
+    request: Request,
+    form: ProjectMembershipRoleValidator,
+    slug: str = Query(None, description="the project slug (str)"),
+) -> Membership:
+    """
+    Update project membership role
+    """
+    membership = await get_project_membership_or_404(project_slug=slug, username=form.username)
+
+    await check_permissions(permissions=UPDATE_PROJECT_MEMBERSHIP_ROLE, user=request.user, obj=membership)
+
+    return await roles_services.update_project_membership_role(membership=membership, role_slug=form.role_slug)
+
+
 ################################################
 # COMMONS
 ################################################
@@ -126,3 +150,11 @@ async def get_project_role_or_404(project: Project, slug: str) -> Role:
         raise ex.NotFoundError(f"Role {slug} does not exist")
 
     return role
+
+
+async def get_project_membership_or_404(project_slug: str, username: str) -> Membership:
+    membership = await roles_services.get_project_membership(project_slug=project_slug, username=username)
+    if not membership:
+        raise ex.NotFoundError("Membership not found")
+
+    return membership

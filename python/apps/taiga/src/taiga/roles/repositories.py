@@ -39,6 +39,14 @@ def get_project_memberships(project_slug: str, offset: int = 0, limit: int = 0) 
 
 
 @sync_to_async
+def get_project_membership(project_slug: str, username: str) -> Membership:
+    try:
+        return Membership.objects.select_related("role").get(project__slug=project_slug, user__username=username)
+    except Membership.DoesNotExist:
+        return None
+
+
+@sync_to_async
 def get_total_project_memberships(project_slug: str) -> int:
     return Membership.objects.filter(project__slug=project_slug).count()
 
@@ -51,6 +59,14 @@ def get_project_members(project: Project) -> list[User]:
 @sync_to_async
 def user_is_project_member(project_slug: str, user_id: int) -> bool:
     return Membership.objects.filter(project__slug=project_slug, user__id=user_id).exists()
+
+
+@sync_to_async
+def update_project_membership_role(membership: Membership, role: Role) -> Membership:
+    membership.role = role
+    membership.save()
+
+    return membership
 
 
 # Roles

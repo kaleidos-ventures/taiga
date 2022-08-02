@@ -8,6 +8,7 @@
 from taiga.base.api.pagination import Pagination
 from taiga.permissions import services as permissions_services
 from taiga.projects.models import Project
+from taiga.roles import events as roles_events
 from taiga.roles import repositories as roles_repositories
 from taiga.roles.models import Membership, Role
 from taiga.roles.services import exceptions as ex
@@ -54,3 +55,29 @@ async def get_paginated_project_memberships(
     pagination = Pagination(offset=offset, limit=limit, total=total_memberships)
 
     return pagination, memberships
+
+
+async def get_project_membership(project_slug: str, username: str) -> Membership:
+    return await roles_repositories.get_project_membership(project_slug=project_slug, username=username)
+
+
+async def update_project_membership_role(membership: Membership, role_slug: str) -> Membership:
+    project_role = await roles_repositories.get_project_role(project=membership.project, slug=role_slug)
+
+    if not project_role:
+        raise ex.NonExistingRoleError("Role does not exist")
+
+    membership_role = membership.role
+
+    if membership_role.is_admin and not project_role.is_admin:
+        num_admins = await roles_repositories.get_num_members_by_role_id(role_id=membership_role.id)
+
+        if num_admins == 1:
+            raise ex.MembershipIsTheOnlyAdminError("Membership is the only admin")
+
+    updated_membership = await roles_repositories.update_project_membership_role(
+        membership=membership, role=project_role
+    )
+    await roles_events.emit_event_when_project_membership_role_is_updated(membership=membership)
+
+    return updated_membership

@@ -259,3 +259,19 @@ Content for:
   ```
   null
   ```
+
+#### `projectmemberships.update`
+
+It happens when a project membership role is updated.
+
+Content for:
+- user channel:
+  ```
+  {
+      "project": "project_slug"
+  }
+  ```
+- project channel:
+  ```
+  null
+  ```

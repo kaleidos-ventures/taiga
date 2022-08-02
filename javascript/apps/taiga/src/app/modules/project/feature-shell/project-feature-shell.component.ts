@@ -17,6 +17,7 @@ import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'tg-project-feature-shell',
@@ -60,6 +61,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
   public animationDisabled = true;
 
   constructor(
+    private router: Router,
     private store: Store,
     private wsService: WsService,
     private state: RxState<{
@@ -67,6 +69,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     }>,
     private userStorageService: UserStorageService
   ) {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.state.connect(
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())

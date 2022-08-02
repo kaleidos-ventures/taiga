@@ -23,11 +23,11 @@ import {
   initMembersPage,
   setMembersPage,
   setPendingPage,
-  updateMembersList
+  updateMembersList,
 } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
   selectInvitationsOffset,
-  selectMembersOffset
+  selectMembersOffset,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { AppService } from '~/app/services/app.service';
@@ -37,7 +37,7 @@ import { filterNil } from '~/app/shared/utils/operators';
 import {
   resendInvitation,
   resendInvitationError,
-  resendInvitationSuccess
+  resendInvitationSuccess,
 } from '../actions/members.actions';
 
 @Injectable()
@@ -190,7 +190,7 @@ export class MembersEffects {
             type: 'toast',
             options: {
               label: 'invitation_error',
-              message: 'failed_send_invite',
+              message: 'failed_resend_invite',
               paramsMessage: { invitations: 1 },
               status: TuiNotification.Error,
               scope: 'invitation_modal',
@@ -198,6 +198,7 @@ export class MembersEffects {
           };
           this.appService.errorManagement(httpResponse, {
             400: options,
+            404: options,
             500: options,
           });
           return resendInvitationError();

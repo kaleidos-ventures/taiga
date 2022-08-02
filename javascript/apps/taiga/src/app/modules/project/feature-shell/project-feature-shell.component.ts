@@ -16,7 +16,7 @@ import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 
 @Component({
   selector: 'tg-project-feature-shell',
@@ -65,7 +65,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     private state: RxState<{
       project: Project;
     }>,
-    private localStorageService: LocalStorageService
+    private userStorageService: UserStorageService
   ) {
     this.state.connect(
       'project',
@@ -93,7 +93,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
 
   public getRejectedOverviewInvites() {
     return (
-      this.localStorageService.get<Project['slug'][] | undefined>(
+      this.userStorageService.get<Project['slug'][] | undefined>(
         'overview_rejected_invites'
       ) || []
     );
@@ -122,7 +122,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
   public onNotificationClosed() {
     const rejectedInvites = this.getRejectedOverviewInvites();
     rejectedInvites.push(this.subscribedProject!);
-    this.localStorageService.set('overview_rejected_invites', rejectedInvites);
+    this.userStorageService.set('overview_rejected_invites', rejectedInvites);
     this.store.dispatch(setNotificationClosed({ notificationClosed: true }));
   }
 

@@ -30,7 +30,6 @@ import {
   resetWorkspace,
 } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import { filterNil } from '~/app/shared/utils/operators';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import {
@@ -42,6 +41,7 @@ import {
 } from '@angular/animations';
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
+import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 
 interface ViewDetailModel {
   projects: WorkspaceProject[];
@@ -102,7 +102,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private store: Store,
-    private localStorageService: LocalStorageService,
+    private userStorageService: UserStorageService,
     private state: RxState<{
       workspace: Workspace | null;
       projects: WorkspaceProject[];
@@ -197,14 +197,14 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
   public getRejectedInvites(): Project['slug'][] {
     return (
-      this.localStorageService.get<Project['slug'][] | undefined>(
+      this.userStorageService.get<Project['slug'][] | undefined>(
         'workspace_rejected_invites'
       ) ?? []
     );
   }
 
   public setRejectedInvites(rejectedInvites: string[]) {
-    this.localStorageService.set('workspace_rejected_invites', rejectedInvites);
+    this.userStorageService.set('workspace_rejected_invites', rejectedInvites);
     this.state.set({ rejectedInvites });
   }
 

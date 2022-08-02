@@ -29,11 +29,11 @@ import {
   selectLoadingWorkspaces,
   selectWorkspaceProject,
 } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { RxState } from '@rx-angular/state';
 import { map, take } from 'rxjs/operators';
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
+import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 
 interface ViewModel {
   projectsToShow: number;
@@ -115,7 +115,7 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
   constructor(
     private store: Store,
     private state: RxState<State>,
-    private localStorageService: LocalStorageService
+    private userStorageService: UserStorageService
   ) {}
 
   public get gridClass() {
@@ -124,14 +124,14 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
   public getRejectedInvites(): Project['slug'][] {
     return (
-      this.localStorageService.get<Project['slug'][] | undefined>(
+      this.userStorageService.get<Project['slug'][] | undefined>(
         'general_rejected_invites'
       ) ?? []
     );
   }
 
   public setRejectedInvites(rejectedInvites: string[]) {
-    this.localStorageService.set('general_rejected_invites', rejectedInvites);
+    this.userStorageService.set('general_rejected_invites', rejectedInvites);
     this.state.set({ rejectedInvites });
   }
 

@@ -7,9 +7,9 @@
  */
 
 import { Injectable } from '@angular/core';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Project } from '@taiga/data';
+import { UserStorageService } from '../user-storage/user-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,11 +18,11 @@ export class NavigationService {
   public readonly latestProjects!: Observable<Project[]>;
   private _latestProjects = new BehaviorSubject<Project[]>([]);
 
-  constructor(private localStorageService: LocalStorageService) {
+  constructor(private userStorageService: UserStorageService) {
     this.latestProjects = this._latestProjects.asObservable();
 
     const projects =
-      this.localStorageService.get<Project[] | undefined>('recent_projects') ??
+      this.userStorageService.get<Project[] | undefined>('recent_projects') ??
       [];
     this._latestProjects.next(projects.slice(0, 6));
   }
@@ -36,6 +36,6 @@ export class NavigationService {
     const newProjects = projects.slice(0, 6);
 
     this._latestProjects.next(newProjects);
-    this.localStorageService.set('recent_projects', newProjects);
+    this.userStorageService.set('recent_projects', newProjects);
   }
 }

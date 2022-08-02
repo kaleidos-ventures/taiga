@@ -12,6 +12,7 @@ import { ConfigService } from '@taiga/core';
 import { Auth, User } from '@taiga/data';
 import { WsService } from '@taiga/ws';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,8 @@ export class AuthService {
     private localStorageService: LocalStorageService,
     private authApiService: AuthApiService,
     private config: ConfigService,
-    private wsService: WsService
+    private wsService: WsService,
+    private userStorageService: UserStorageService
   ) {}
 
   public isLogged() {
@@ -47,13 +49,15 @@ export class AuthService {
   }
 
   public setUser(user: User) {
-    return this.localStorageService.set('user', user);
+    this.localStorageService.set('user', user);
+    this.userStorageService.refreshPrefix();
   }
 
   public logout() {
     this.wsService.command('signout').subscribe();
     this.localStorageService.remove('user');
     this.localStorageService.remove('auth');
+    this.userStorageService.refreshPrefix();
 
     if (this.refreshTokenInterval) {
       clearInterval(this.refreshTokenInterval);

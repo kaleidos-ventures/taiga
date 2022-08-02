@@ -62,6 +62,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <mj-class name="padding-bottom-24" padding-bottom="24px" />
   <mj-class name="padding-bottom-32" padding-bottom="32px" />
   <mj-class name="padding-bottom-48" padding-bottom="48px" />
+  <mj-class name="padding-section" padding-top="24px" padding-bottom="24px" />
 
   <!-- width -->
   <mj-class name="full-width" width="100%" />

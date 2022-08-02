@@ -5,7 +5,7 @@
 npm run test
 
 # Run especific file test
-npm run test -- --test-file input.component.spec.ts
+npx nx test --test-file input.component.spec.ts --watch
 ```
 
 # Component Testing

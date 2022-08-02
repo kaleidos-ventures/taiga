@@ -57,3 +57,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     min-inline-size: 180px;
   }
 }
+
+.project-main {
+  display: flex;
+  flex-direction: column;
+}

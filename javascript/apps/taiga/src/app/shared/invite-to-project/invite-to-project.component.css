@@ -130,7 +130,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 tui-data-list {
+  max-inline-size: 463px;
+
   & .suggested-btn {
+    justify-content: flex-start;
+
     &:focus-visible {
       /* stylelint-disable-next-line declaration-no-important */
       background-color: var(--color-gray20) !important;
@@ -162,12 +166,26 @@ tui-data-list {
   }
 }
 
+tg-user-card {
+  &::ng-deep .user-card:not(.disabled) {
+    grid-template-columns: 32px minmax(0, auto);
+  }
+
+  &::ng-deep .user-identifier {
+    max-inline-size: 395px;
+
+    &.disabled {
+      max-inline-size: 230px;
+      min-inline-size: 230px;
+    }
+  }
+}
+
 .disabled-badge {
   &::ng-deep {
     background: var(--color-gray10);
     border-radius: 3px;
     color: var(--color-gray100);
-    margin-inline-end: var(--spacing-60);
     padding: var(--spacing-4);
     text-transform: initial;
   }

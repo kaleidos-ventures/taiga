@@ -5,7 +5,9 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-<div class="user-card">
+<div
+  class="user-card"
+  [class.disabled]="disabled">
   <tg-user-avatar
     class="top"
     *ngIf="fullName"

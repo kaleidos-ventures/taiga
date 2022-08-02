@@ -91,40 +91,35 @@ export class AuthEffects {
         ofType(AuthActions.loginSuccess),
         switchMap(
           ({ next, projectInvitationToken, acceptProjectInvitation }) => {
-            return this.store
-              .select(selectUser)
-              .pipe(filterNil())
-              .pipe(
-                mergeMap(() => {
-                  if (
-                    projectInvitationToken &&
-                    next &&
-                    acceptProjectInvitation
-                  ) {
-                    return this.projectApiService
-                      .acceptInvitationSlug(projectInvitationToken)
-                      .pipe(
-                        tap(() => {
-                          void this.router.navigateByUrl(next);
-                          return EMPTY;
-                        })
-                      );
-                  } else if (
-                    projectInvitationToken &&
-                    next &&
-                    !acceptProjectInvitation
-                  ) {
-                    void this.router.navigateByUrl(next);
-                    return EMPTY;
-                  } else if (!projectInvitationToken && next) {
-                    void this.router.navigateByUrl(next);
-                    return EMPTY;
-                  } else {
-                    void this.router.navigate(['/']);
-                    return EMPTY;
-                  }
-                })
-              );
+            return this.store.select(selectUser).pipe(
+              filterNil(),
+              take(1),
+              mergeMap(() => {
+                if (projectInvitationToken && next && acceptProjectInvitation) {
+                  return this.projectApiService
+                    .acceptInvitationSlug(projectInvitationToken)
+                    .pipe(
+                      tap(() => {
+                        void this.router.navigateByUrl(next);
+                        return EMPTY;
+                      })
+                    );
+                } else if (
+                  projectInvitationToken &&
+                  next &&
+                  !acceptProjectInvitation
+                ) {
+                  void this.router.navigateByUrl(next);
+                  return EMPTY;
+                } else if (!projectInvitationToken && next) {
+                  void this.router.navigateByUrl(next);
+                  return EMPTY;
+                } else {
+                  void this.router.navigate(['/']);
+                  return EMPTY;
+                }
+              })
+            );
           }
         )
       );

@@ -34,13 +34,18 @@ def get_project_invitation_by_email(project_slug: str, email: str, status: Invit
 
 @sync_to_async
 def get_project_invitation_by_username_or_email(
-    project_slug: str, username_or_email: str, status: InvitationStatus
+    project_slug: str, username_or_email: str, status: InvitationStatus | None = None
 ) -> Invitation | None:
     by_user = Q(user__username__iexact=username_or_email) | Q(user__email__iexact=username_or_email)
     by_email = Q(user__isnull=True, email__iexact=username_or_email)
+    by_project = Q(project__slug=project_slug)
+    qs_filter = by_project & (by_user | by_email)
+    if status:
+        qs_filter = Q(status=status) & qs_filter
+
     try:
         return Invitation.objects.select_related("user", "project", "project__workspace", "role", "invited_by").get(
-            by_user | by_email, project__slug=project_slug, status=status
+            qs_filter
         )
     except Invitation.DoesNotExist:
         return None
@@ -150,5 +155,13 @@ def resend_project_invitation(invitation: Invitation, resent_by: User) -> Invita
     invitation.resent_at = aware_utcnow()
     invitation.resent_by = resent_by
     invitation.save()
+    return invitation
 
+
+@sync_to_async
+def revoke_project_invitation(invitation: Invitation, revoked_by: User) -> Invitation:
+    invitation.status = InvitationStatus.REVOKED
+    invitation.revoked_at = aware_utcnow()
+    invitation.revoked_by = revoked_by
+    invitation.save()
     return invitation

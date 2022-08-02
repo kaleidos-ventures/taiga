@@ -16,7 +16,7 @@ from taiga.invitations.dataclasses import CreateInvitations, PublicInvitation
 from taiga.invitations.models import Invitation
 from taiga.invitations.permissions import IsProjectInvitationRecipient
 from taiga.invitations.serializers import CreateInvitationsSerializer, InvitationSerializer, PublicInvitationSerializer
-from taiga.invitations.validators import InvitationsValidator, ResendInvitationValidator
+from taiga.invitations.validators import InvitationsValidator, ResendInvitationValidator, RevokeInvitationValidator
 from taiga.permissions import IsAuthenticated, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
 from taiga.routers import routes
@@ -26,6 +26,7 @@ ACCEPT_INVITATION = IsAuthenticated()
 ACCEPT_TOKEN_INVITATION = IsProjectInvitationRecipient()
 CREATE_INVITATIONS = IsProjectAdmin()
 RESEND_INVITATION = IsProjectAdmin()
+REVOKE_INVITATION = IsProjectAdmin()
 
 
 @routes.unauth_projects.get(
@@ -165,10 +166,34 @@ async def resend_project_invitation(
     invitation = await invitations_services.get_project_invitation_by_username_or_email(
         project_slug=slug, username_or_email=form.username_or_email
     )
-
     if not invitation:
         raise ex.NotFoundError("Invitation not found")
 
     await check_permissions(permissions=RESEND_INVITATION, user=request.user, obj=invitation)
 
     await invitations_services.resend_project_invitation(invitation=invitation, resent_by=request.user)
+
+
+@routes.projects.post(
+    "/{slug}/invitations/revoke",
+    name="project.invitations.revoke",
+    summary="Revoke project invitation",
+    responses=ERROR_422 | ERROR_400 | ERROR_403,
+    response_class=Response,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def revoke_project_invitation(
+    request: Request, form: RevokeInvitationValidator, slug: str = Query(None, description="the project slug (str)")
+) -> None:
+    """
+    Revoke invitation in a project.
+    """
+    invitation = await invitations_services.get_project_invitation_by_username_or_email(
+        project_slug=slug, username_or_email=form.username_or_email
+    )
+    if not invitation:
+        raise ex.NotFoundError("Invitation not found")
+
+    await check_permissions(permissions=REVOKE_INVITATION, user=request.user, obj=invitation)
+
+    await invitations_services.revoke_project_invitation(invitation=invitation, revoked_by=request.user)

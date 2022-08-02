@@ -93,7 +93,7 @@ class Invitation(models.Model):
         on_delete=models.SET_NULL,
     )
     num_emails_sent = models.IntegerField(default=1, null=False,
-                                blank=False, verbose_name=_("num emails sent"))                                
+                                blank=False, verbose_name=_("num emails sent"))
     resent_at = models.DateTimeField(null=True, blank=True,
                                       verbose_name=_("resent at"))
     resent_by = models.ForeignKey(
@@ -102,7 +102,16 @@ class Invitation(models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-    )                                      
+    )
+
+    revoked_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="ihaverevoked+",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    revoked_at = models.DateTimeField(null=True, blank=True, verbose_name=_("revoked at"))
 
     class Meta:
         verbose_name = "invitation"

@@ -103,6 +103,17 @@ async def test_get_project_invitation_by_email() -> None:
     assert new_invitation == invitation
 
 
+async def test_get_project_invitation_by_email_no_status() -> None:
+    invitation = await f.create_invitation(user=None)
+
+    new_invitation = await repositories.get_project_invitation_by_username_or_email(
+        project_slug=invitation.project.slug, username_or_email=invitation.email
+    )
+
+    assert new_invitation is not None
+    assert new_invitation == invitation
+
+
 async def get_project_invitation_by_username_or_email_not_found() -> None:
     invitation = await f.create_invitation()
 
@@ -409,3 +420,22 @@ async def test_resend_project_invitation():
     assert resend_invitation.invited_by == project.owner
     assert resend_invitation.resent_by == other_admin
     assert resend_invitation.resent_at is not None
+
+
+##########################################################
+# revoke_project_invitation
+##########################################################
+
+
+async def test_revoke_project_invitation() -> None:
+    user = await f.create_user()
+    project = await f.create_project()
+    invitation = await f.create_invitation(
+        user=user, email=user.email, project=project, status=InvitationStatus.PENDING
+    )
+
+    revoked_invitation = await repositories.revoke_project_invitation(invitation=invitation, revoked_by=project.owner)
+
+    assert revoked_invitation.user == user
+    assert revoked_invitation.status == InvitationStatus.REVOKED
+    assert revoked_invitation.revoked_by == project.owner

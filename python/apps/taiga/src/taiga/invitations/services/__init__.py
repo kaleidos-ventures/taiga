@@ -55,7 +55,7 @@ async def get_project_invitation_by_user(project_slug: str, user: User) -> Invit
 
 async def get_project_invitation_by_username_or_email(project_slug: str, username_or_email: str) -> Invitation | None:
     return await invitations_repositories.get_project_invitation_by_username_or_email(
-        project_slug=project_slug, username_or_email=username_or_email, status=InvitationStatus.PENDING
+        project_slug=project_slug, username_or_email=username_or_email
     )
 
 
@@ -230,10 +230,10 @@ async def accept_project_invitation_from_token(token: str, user: User) -> Invita
     invitation = await get_project_invitation(token=token)
 
     if not invitation:
-        raise ex.InvitationDoesNotExistError()
+        raise ex.InvitationDoesNotExistError("Invitation does not exist")
 
     if not is_project_invitation_for_this_user(invitation=invitation, user=user):
-        raise ex.InvitationIsNotForThisUserError()
+        raise ex.InvitationIsNotForThisUserError("Invitation is not for this user")
 
     return await accept_project_invitation(invitation=invitation, user=user)
 
@@ -259,6 +259,9 @@ async def update_user_projects_invitations(user: User) -> None:
 
 
 async def resend_project_invitation(invitation: Invitation, resent_by: User) -> None:
+    if invitation.status != InvitationStatus.PENDING:
+        raise ex.InvitationDoesNotExistError("Invitation does not exist")
+
     time_since_last_resend = (
         (aware_utcnow() - invitation.resent_at).seconds
         if invitation.resent_at
@@ -273,3 +276,12 @@ async def resend_project_invitation(invitation: Invitation, resent_by: User) -> 
         await invitations_repositories.resend_project_invitation(invitation=invitation, resent_by=resent_by)
 
         await send_project_invitation_email(invitation=invitation, is_resend=True)
+
+
+async def revoke_project_invitation(invitation: Invitation, revoked_by: User) -> None:
+    if invitation.status != InvitationStatus.PENDING:
+        raise ex.InvitationDoesNotExistError("Invitation does not exist")
+
+    await invitations_repositories.revoke_project_invitation(invitation=invitation, revoked_by=revoked_by)
+
+    await invitations_events.emit_event_when_project_invitation_is_revoked(invitation=invitation)

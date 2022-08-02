@@ -32,3 +32,4 @@ BLOCKING_CODES = [
 class InvitationStatus(TextChoices):
     PENDING = "pending", _("Pending")
     ACCEPTED = "accepted", _("Accepted")
+    REVOKED = "revoked", _("Revoked")

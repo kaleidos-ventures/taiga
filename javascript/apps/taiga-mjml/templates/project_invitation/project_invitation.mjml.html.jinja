@@ -56,9 +56,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 <td style="vertical-align:top; width: 32px; height: 32px;">
                   <table>
                     <tr>
-                      <td class="color-1"
+                      <td class="color-{{ project_color }}"
                         style="height: 32px; width: 32px; text-align: center; font-size: 14px; text-transform: uppercase; border-radius: 3px;">
-                        EA</td>
+                        {{ project_name.replace(" ", "")[:2].upper() }}</td>
                     </tr>
                   </table>
                 </td>

@@ -7,14 +7,12 @@
 
 from dataclasses import dataclass
 
-from taiga.invitations.choices import InvitationStatus
 from taiga.invitations.models import Invitation
 from taiga.projects.models import Project
 
 
 @dataclass
 class PublicInvitation:
-    status: InvitationStatus
     email: str
     existing_user: bool
     project: Project

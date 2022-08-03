@@ -25,6 +25,10 @@ class InvitationAlreadyAcceptedError(TaigaServiceException):
     ...
 
 
+class InvitationRevokedError(TaigaServiceException):
+    ...
+
+
 class InvitationIsNotForThisUserError(TaigaServiceException):
     ...
 

@@ -32,7 +32,7 @@ async def test_is_project_invitation_recipient_permission_with_different_emails(
 ):
     perm = permissions.IsProjectInvitationRecipient()
     user = f.build_user(email=invitation_email, is_active=user_is_active)
-    invitation = f.build_invitation(email=user_email)
+    invitation = f.build_invitation(user=user, email=user_email)
 
     assert await perm.is_authorized(user, invitation) == expected
 

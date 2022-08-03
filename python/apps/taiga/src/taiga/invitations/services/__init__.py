@@ -32,7 +32,6 @@ async def get_project_invitation(token: str) -> Invitation | None:
     except TokenError:
         raise ex.BadInvitationTokenError("Invalid token")
 
-    # Get invitation
     return await invitations_repositories.get_project_invitation(**invitation_token.object_data)
 
 
@@ -40,7 +39,6 @@ async def get_public_project_invitation(token: str) -> PublicInvitation | None:
     if invitation := await get_project_invitation(token=token):
 
         return PublicInvitation(
-            status=invitation.status,
             email=invitation.email,
             existing_user=invitation.user is not None,
             project=invitation.project,
@@ -49,17 +47,13 @@ async def get_public_project_invitation(token: str) -> PublicInvitation | None:
     return None
 
 
-async def get_project_invitation_by_user(project_slug: str, user: User) -> Invitation | None:
-    return await invitations_repositories.get_project_invitation_by_user(project_slug=project_slug, user=user)
-
-
 async def get_project_invitation_by_username_or_email(project_slug: str, username_or_email: str) -> Invitation | None:
     return await invitations_repositories.get_project_invitation_by_username_or_email(
         project_slug=project_slug, username_or_email=username_or_email
     )
 
 
-async def get_paginated_project_invitations(
+async def get_paginated_project_pending_invitations(
     project: Project, user: User, offset: int, limit: int
 ) -> tuple[Pagination, list[Invitation]]:
     pagination = Pagination(offset=offset, limit=limit, total=0)
@@ -215,11 +209,14 @@ async def create_invitations(
     return CreateInvitations(invitations=list(invitations_to_send_list), already_members=already_members)
 
 
-async def accept_project_invitation(invitation: Invitation, user: User) -> Invitation:
+async def accept_project_invitation(invitation: Invitation) -> Invitation:
     if invitation.status == InvitationStatus.ACCEPTED:
         raise ex.InvitationAlreadyAcceptedError("The invitation has already been accepted")
 
-    accepted_invitation = await invitations_repositories.accept_project_invitation(invitation=invitation, user=user)
+    if invitation.status == InvitationStatus.REVOKED:
+        raise ex.InvitationRevokedError("The invitation is revoked")
+
+    accepted_invitation = await invitations_repositories.accept_project_invitation(invitation=invitation)
     await roles_repositories.create_membership(project=invitation.project, role=invitation.role, user=invitation.user)
     await invitations_events.emit_event_when_project_invitation_is_accepted(invitation=invitation)
 
@@ -235,15 +232,20 @@ async def accept_project_invitation_from_token(token: str, user: User) -> Invita
     if not is_project_invitation_for_this_user(invitation=invitation, user=user):
         raise ex.InvitationIsNotForThisUserError("Invitation is not for this user")
 
-    return await accept_project_invitation(invitation=invitation, user=user)
+    if invitation.status == InvitationStatus.ACCEPTED:
+        raise ex.InvitationAlreadyAcceptedError("The invitation has already been accepted")
+
+    if invitation.status == InvitationStatus.REVOKED:
+        raise ex.InvitationRevokedError("The invitation is revoked")
+
+    return await accept_project_invitation(invitation=invitation)
 
 
 def is_project_invitation_for_this_user(invitation: Invitation, user: User) -> bool:
     """
-    Check if a project invitation if for an specific user. First try to compare the user associated and, if
-    there is no one, compare the email.
+    Check if a project invitation if for an specific user
     """
-    return (user.id == invitation.user_id is not None) or emails.are_the_same(user.email, invitation.email)
+    return emails.are_the_same(user.email, invitation.email)
 
 
 async def has_pending_project_invitation_for_user(project: Project, user: User) -> bool:
@@ -259,8 +261,11 @@ async def update_user_projects_invitations(user: User) -> None:
 
 
 async def resend_project_invitation(invitation: Invitation, resent_by: User) -> None:
-    if invitation.status != InvitationStatus.PENDING:
-        raise ex.InvitationDoesNotExistError("Invitation does not exist")
+    if invitation.status == InvitationStatus.ACCEPTED:
+        raise ex.InvitationAlreadyAcceptedError("Cannot revoke an accepted invitation")
+
+    if invitation.status == InvitationStatus.REVOKED:
+        raise ex.InvitationRevokedError("The invitation has already been revoked")
 
     time_since_last_resend = (
         (aware_utcnow() - invitation.resent_at).seconds
@@ -279,8 +284,11 @@ async def resend_project_invitation(invitation: Invitation, resent_by: User) -> 
 
 
 async def revoke_project_invitation(invitation: Invitation, revoked_by: User) -> None:
-    if invitation.status != InvitationStatus.PENDING:
-        raise ex.InvitationDoesNotExistError("Invitation does not exist")
+    if invitation.status == InvitationStatus.ACCEPTED:
+        raise ex.InvitationAlreadyAcceptedError("Cannot revoke an accepted invitation")
+
+    if invitation.status == InvitationStatus.REVOKED:
+        raise ex.InvitationRevokedError("The invitation has already been revoked")
 
     await invitations_repositories.revoke_project_invitation(invitation=invitation, revoked_by=revoked_by)
 

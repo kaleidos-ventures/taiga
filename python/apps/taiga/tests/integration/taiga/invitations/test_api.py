@@ -245,6 +245,16 @@ async def test_accept_project_invitation_error_invitation_already_accepted(clien
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
+async def test_accept_project_invitation_error_invitation_revoked(client):
+    user = await f.create_user()
+    invitation = await f.create_invitation(email=user.email, status=InvitationStatus.REVOKED)
+    token = await ProjectInvitationToken.create_for_object(invitation)
+
+    client.login(user)
+    response = client.post(f"/projects/invitations/{str(token)}/accept")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
 #########################################################################
 # POST /projects/<slug>/invitations/accept authenticated user accepts a project invitation
 #########################################################################
@@ -265,7 +275,7 @@ async def test_accept_user_project_invitation(client):
     assert response.json()["email"] == invited_user.email
 
 
-async def test_accept_user_project_not_invited(client):
+async def test_accept_user_project_not_found(client):
     project = await f.create_project()
     uninvited_user = await f.create_user()
 
@@ -284,7 +294,20 @@ async def test_accept_user_already_accepted_project_invitation(client):
 
     client.login(invited_user)
     response = client.post(f"projects/{project.slug}/invitations/accept")
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+async def test_accept_user_revoked_project_invitation(client):
+    project = await f.create_project()
+    invited_user = await f.create_user()
+    invitation = await f.create_invitation(
+        email=invited_user.email, user=invited_user, status=InvitationStatus.REVOKED, project=project
+    )
+    await ProjectInvitationToken.create_for_object(invitation)
+
+    client.login(invited_user)
+    response = client.post(f"projects/{project.slug}/invitations/accept")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
 #########################################################################
@@ -348,6 +371,30 @@ async def test_resend_project_invitation_not_exist(client):
     data = {"username_or_email": "not_exist"}
     response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_resend_project_invitation_already_accepted(client):
+    owner = await f.create_user()
+    project = await f.create_project(owner=owner)
+    user = await f.create_user()
+    await f.create_invitation(user=user, email=user.email, project=project, status=InvitationStatus.ACCEPTED)
+
+    client.login(owner)
+    data = {"username_or_email": user.username}
+    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+async def test_resend_project_invitation_revoked(client):
+    owner = await f.create_user()
+    project = await f.create_project(owner=owner)
+    user = await f.create_user()
+    await f.create_invitation(user=user, email=user.email, project=project, status=InvitationStatus.REVOKED)
+
+    client.login(owner)
+    data = {"username_or_email": user.username}
+    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
 #########################################################################
@@ -423,6 +470,24 @@ async def test_revoke_project_invitation_already_member_invalid(client):
     user = await f.create_user()
     await f.create_membership(user=user, project=project, role=general_member_role)
     await f.create_invitation(user=user, email=user.email, project=project, status=InvitationStatus.ACCEPTED)
+
+    client.login(admin)
+    data = {"username_or_email": user.email}
+    response = client.post(f"projects/{project.slug}/invitations/revoke", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+async def test_revoke_project_invitation_revoked(client):
+    admin = await f.create_user()
+    project = await f.create_project(owner=admin)
+    general_member_role = await f.create_role(
+        permissions=choices.PROJECT_PERMISSIONS,
+        is_admin=False,
+        project=project,
+    )
+    user = await f.create_user()
+    await f.create_membership(user=user, project=project, role=general_member_role)
+    await f.create_invitation(user=user, email=user.email, project=project, status=InvitationStatus.REVOKED)
 
     client.login(admin)
     data = {"username_or_email": user.email}

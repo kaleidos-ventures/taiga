@@ -270,11 +270,10 @@ async def test_get_total_project_invitations():
 
 async def tests_accept_project_invitation() -> None:
     user = await f.create_user()
-    invitation = await f.create_invitation(user=None)
+    invitation = await f.create_invitation(user=user)
 
-    accepted_invitation = await repositories.accept_project_invitation(invitation=invitation, user=user)
+    accepted_invitation = await repositories.accept_project_invitation(invitation=invitation)
 
-    assert accepted_invitation.user == user
     assert accepted_invitation.status == InvitationStatus.ACCEPTED
 
 

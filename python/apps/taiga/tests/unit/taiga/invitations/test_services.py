@@ -22,7 +22,7 @@ from tests.utils import factories as f
 
 
 async def test_get_project_invitation_ok():
-    invitation = f.build_invitation(id=123)
+    invitation = f.build_invitation()
     token = str(await ProjectInvitationToken.create_for_object(invitation))
 
     with (patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,):
@@ -38,7 +38,7 @@ async def test_get_project_invitation_error_invalid_token():
 
 
 async def test_get_project_invitation_error_not_found():
-    invitation = f.build_invitation(id=123)
+    invitation = f.build_invitation()
     token = str(await ProjectInvitationToken.create_for_object(invitation))
 
     with (patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,):
@@ -54,35 +54,33 @@ async def test_get_project_invitation_error_not_found():
 
 
 async def test_get_public_project_invitation_ok():
-    invitation = f.build_invitation(id=123)
+    invitation = f.build_invitation()
     token = str(await ProjectInvitationToken.create_for_object(invitation))
 
     with (patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,):
         fake_invitations_repo.get_project_invitation.return_value = invitation
         pub_invitation = await services.get_public_project_invitation(token=token)
         fake_invitations_repo.get_project_invitation.assert_awaited_once_with(id=invitation.id)
-        assert pub_invitation.status == invitation.status
         assert pub_invitation.email == invitation.email
         assert pub_invitation.existing_user is True
         assert pub_invitation.project == invitation.project
 
 
 async def test_get_public_project_invitation_ok_without_user():
-    invitation = f.build_invitation(id=123, user=None)
+    invitation = f.build_invitation(user=None)
     token = str(await ProjectInvitationToken.create_for_object(invitation))
 
     with (patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,):
         fake_invitations_repo.get_project_invitation.return_value = invitation
         pub_invitation = await services.get_public_project_invitation(token)
         fake_invitations_repo.get_project_invitation.assert_awaited_once_with(id=invitation.id)
-        assert pub_invitation.status == invitation.status
         assert pub_invitation.email == invitation.email
         assert pub_invitation.existing_user is False
         assert pub_invitation.project == invitation.project
 
 
 async def test_get_public_project_invitation_error_invitation_not_exists():
-    invitation = f.build_invitation(id=123, user=None)
+    invitation = f.build_invitation(user=None)
     token = str(await ProjectInvitationToken.create_for_object(invitation))
 
     with patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo:
@@ -93,7 +91,7 @@ async def test_get_public_project_invitation_error_invitation_not_exists():
 
 
 #######################################################
-# get_paginated_project_invitations
+# get_paginated_project_pending_invitations
 #######################################################
 
 
@@ -108,7 +106,7 @@ async def test_get_project_invitations_ok_admin():
         fake_invitations_repo.get_project_invitations.return_value = [invitation]
         fake_roles_repo.get_role_for_user.return_value = role_admin
 
-        pagination, invitations = await services.get_paginated_project_invitations(
+        pagination, invitations = await services.get_paginated_project_pending_invitations(
             project=invitation.project, user=invitation.project.owner, offset=0, limit=10
         )
 
@@ -125,7 +123,7 @@ async def test_get_project_invitations_ok_admin():
 
 
 async def test_get_project_invitations_ok_not_admin():
-    invitation = f.build_invitation(id=123)
+    invitation = f.build_invitation()
     not_admin_role = f.build_role(is_admin=False)
 
     with (
@@ -135,7 +133,7 @@ async def test_get_project_invitations_ok_not_admin():
         fake_invitations_repo.get_project_invitations.return_value = [invitation]
         fake_roles_repo.get_role_for_user.return_value = not_admin_role
 
-        pagination, invitations = await services.get_paginated_project_invitations(
+        pagination, invitations = await services.get_paginated_project_pending_invitations(
             project=invitation.project, user=invitation.user, offset=0, limit=10
         )
 
@@ -151,27 +149,6 @@ async def test_get_project_invitations_ok_not_admin():
 
 
 #######################################################
-# get_project_invitation_by_user
-#######################################################
-
-
-async def get_project_invitation_by_user_ok():
-    invitation = f.build_invitation()
-
-    with (patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo):
-        fake_invitations_repo.get_project_invitation_by_user.return_value = invitation
-
-        ret_invitation = await services.get_project_invitation_by_user(
-            project_slug=invitation.project.slug, user=invitation.user
-        )
-
-        fake_invitations_repo.get_project_invitation_by_user.assert_awaited_once_with(
-            project_slug=invitation.project.slug, user=invitation.user
-        )
-        assert ret_invitation == invitation
-
-
-#######################################################
 # send_project_invitation_email
 #######################################################
 
@@ -182,7 +159,7 @@ async def test_send_project_invitations_for_existing_user(tqmanager):
     project = f.build_project(owner=user1)
     role = f.build_role(project=project, slug="admin")
 
-    invitation = f.build_invitation(id=101, user=user2, project=project, role=role, email=user2.email, invited_by=user1)
+    invitation = f.build_invitation(user=user2, project=project, role=role, email=user2.email, invited_by=user1)
 
     with patch("taiga.invitations.services.ProjectInvitationToken", autospec=True) as FakeProjectInvitationToken:
         FakeProjectInvitationToken.create_for_object.return_value = "invitation-token"
@@ -212,9 +189,7 @@ async def test_send_project_invitations_for_new_user(tqmanager):
     project = f.build_project(owner=user)
     role = f.build_role(project=project, slug="general")
 
-    invitation = f.build_invitation(
-        id=102, user=None, project=project, role=role, email="test@email.com", invited_by=user
-    )
+    invitation = f.build_invitation(user=None, project=project, role=role, email="test@email.com", invited_by=user)
 
     with patch("taiga.invitations.services.ProjectInvitationToken", autospec=True) as FakeProjectInvitationToken:
         FakeProjectInvitationToken.create_for_object.return_value = "invitation-token"
@@ -456,18 +431,16 @@ async def tests_accept_project_invitation() -> None:
     user = f.build_user()
     project = f.build_project()
     role = f.build_role(project=project)
-    invitation = f.build_invitation(project=project, role=role, user=user)
+    invitation = f.build_invitation(project=project, role=role, user=user, email=user.email)
 
     with (
         patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
         patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
-        fake_invitations_repo.accept_project_invitation.return_value = invitation
+        await services.accept_project_invitation(invitation=invitation)
 
-        await services.accept_project_invitation(invitation=invitation, user=user)
-
-        fake_invitations_repo.accept_project_invitation.assert_awaited_once_with(invitation=invitation, user=user)
+        fake_invitations_repo.accept_project_invitation.assert_awaited_once_with(invitation=invitation)
         fake_roles_repo.create_membership.assert_awaited_once_with(project=project, role=role, user=user)
         fake_invitations_events.emit_event_when_project_invitation_is_accepted.assert_awaited_once_with(
             invitation=invitation
@@ -478,7 +451,9 @@ async def tests_accept_project_invitation_error_invitation_has_already_been_acce
     user = f.build_user()
     project = f.build_project()
     role = f.build_role(project=project)
-    invitation = f.build_invitation(project=project, role=role, user=user, status=InvitationStatus.ACCEPTED)
+    invitation = f.build_invitation(
+        project=project, role=role, user=user, status=InvitationStatus.ACCEPTED, email=user.email
+    )
 
     with (
         patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
@@ -486,7 +461,28 @@ async def tests_accept_project_invitation_error_invitation_has_already_been_acce
         patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         pytest.raises(ex.InvitationAlreadyAcceptedError),
     ):
-        await services.accept_project_invitation(invitation=invitation, user=user)
+        await services.accept_project_invitation(invitation=invitation)
+
+        fake_invitations_repo.accept_project_invitation.assert_not_awaited()
+        fake_roles_repo.create_membership.assert_not_awaited()
+        fake_invitations_events.emit_event_when_project_invitation_is_accepted.assert_not_awaited()
+
+
+async def tests_accept_project_invitation_error_invitation_has_been_revoked() -> None:
+    user = f.build_user()
+    project = f.build_project()
+    role = f.build_role(project=project)
+    invitation = f.build_invitation(
+        project=project, role=role, user=user, status=InvitationStatus.REVOKED, email=user.email
+    )
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+        pytest.raises(ex.InvitationRevokedError),
+    ):
+        await services.accept_project_invitation(invitation=invitation)
 
         fake_invitations_repo.accept_project_invitation.assert_not_awaited()
         fake_roles_repo.create_membership.assert_not_awaited()
@@ -499,8 +495,8 @@ async def tests_accept_project_invitation_error_invitation_has_already_been_acce
 
 
 async def tests_accept_project_invitation_from_token_ok() -> None:
-    user = f.build_user(id=2)
-    invitation = f.build_invitation(user=user)
+    user = f.build_user()
+    invitation = f.build_invitation(user=user, email=user.email)
     token = str(await ProjectInvitationToken.create_for_object(invitation))
 
     with (
@@ -508,12 +504,11 @@ async def tests_accept_project_invitation_from_token_ok() -> None:
         patch("taiga.invitations.services.accept_project_invitation", autospec=True) as fake_accept_project_invitation,
     ):
         fake_get_project_invitation.return_value = invitation
-        fake_accept_project_invitation.return_value = invitation
 
         await services.accept_project_invitation_from_token(token=token, user=user)
 
         fake_get_project_invitation.assert_awaited_once_with(token=token)
-        fake_accept_project_invitation.assert_awaited_once_with(invitation=invitation, user=user)
+        fake_accept_project_invitation.assert_awaited_once_with(invitation=invitation)
 
 
 async def tests_accept_project_invitation_from_token_error_no_invitation_found() -> None:
@@ -535,7 +530,7 @@ async def tests_accept_project_invitation_from_token_error_no_invitation_found()
 async def tests_accept_project_invitation_from_token_error_invitation_is_for_other_user() -> None:
     user = f.build_user(id=2)
     other_user = f.build_user(id=3)
-    invitation = f.build_invitation(user=other_user)
+    invitation = f.build_invitation(user=other_user, email=other_user.email)
     token = str(await ProjectInvitationToken.create_for_object(invitation))
 
     with (
@@ -551,37 +546,58 @@ async def tests_accept_project_invitation_from_token_error_invitation_is_for_oth
         fake_accept_project_invitation.assert_not_awaited()
 
 
+async def tests_accept_project_invitation_from_token_error_already_accepted() -> None:
+    user = f.build_user()
+    invitation = f.build_invitation(user=user, email=user.email, status=InvitationStatus.ACCEPTED)
+    token = str(await ProjectInvitationToken.create_for_object(invitation))
+
+    with (
+        patch("taiga.invitations.services.get_project_invitation", autospec=True) as fake_get_project_invitation,
+        patch("taiga.invitations.services.accept_project_invitation", autospec=True) as fake_accept_project_invitation,
+        pytest.raises(ex.InvitationAlreadyAcceptedError),
+    ):
+        fake_get_project_invitation.return_value = invitation
+
+        await services.accept_project_invitation_from_token(token=token, user=user)
+
+        fake_get_project_invitation.assert_awaited_once_with(token=token)
+        fake_accept_project_invitation.assert_not_awaited()
+
+
+async def tests_accept_project_invitation_from_token_error_revoked() -> None:
+    user = f.build_user()
+    invitation = f.build_invitation(user=user, email=user.email, status=InvitationStatus.REVOKED)
+    token = str(await ProjectInvitationToken.create_for_object(invitation))
+
+    with (
+        patch("taiga.invitations.services.get_project_invitation", autospec=True) as fake_get_project_invitation,
+        patch("taiga.invitations.services.accept_project_invitation", autospec=True) as fake_accept_project_invitation,
+        pytest.raises(ex.InvitationRevokedError),
+    ):
+        fake_get_project_invitation.return_value = invitation
+
+        await services.accept_project_invitation_from_token(token=token, user=user)
+
+        fake_get_project_invitation.assert_awaited_once_with(token=token)
+        fake_accept_project_invitation.assert_not_awaited()
+
+
 #######################################################
 # is_project_invitation_for_this_user
 #######################################################
 
 
-def test_is_project_invitation_for_this_user_ok_same_user() -> None:
-    user = f.build_user(id=2)
-    invitation = f.build_invitation(user=user)
-
-    assert services.is_project_invitation_for_this_user(invitation=invitation, user=user)
-
-
 def test_is_project_invitation_for_this_user_ok_same_email() -> None:
-    user = f.build_user(id=2)
-    invitation = f.build_invitation(email=user.email, user=None)
+    user = f.build_user()
+    invitation = f.build_invitation(user=user, email=user.email)
 
     assert services.is_project_invitation_for_this_user(invitation=invitation, user=user)
 
 
-def test_is_project_invitation_for_this_user_error_different_user() -> None:
-    user = f.build_user(id=2)
-    other_user = f.build_user(id=3)
-    invitation = f.build_invitation(user=other_user)
-
-    assert not services.is_project_invitation_for_this_user(invitation=invitation, user=user)
-
-
-def test_is_project_invitation_for_this_user_ok_different_email() -> None:
-    user = f.build_user(id=2)
-    other_user = f.build_user(id=3)
-    invitation = f.build_invitation(email=other_user.email, user=None)
+def test_is_project_invitation_for_this_user_error_different_email() -> None:
+    user = f.build_user()
+    other_user = f.build_user()
+    invitation = f.build_invitation(user=other_user, email=other_user.email)
 
     assert not services.is_project_invitation_for_this_user(invitation=invitation, user=user)
 
@@ -670,7 +686,7 @@ async def test_resend_project_invitation_by_email_ok() -> None:
         fake_send_project_invitation_email.assert_awaited_once_with(invitation=invitation, is_resend=True)
 
 
-async def test_resend_project_invitation_invalid() -> None:
+async def test_resend_project_invitation_already_accepted() -> None:
     owner = f.build_user()
     project = f.build_project(owner=owner)
     email = "user-test@email.com"
@@ -681,7 +697,28 @@ async def test_resend_project_invitation_invalid() -> None:
         patch(
             "taiga.invitations.services.send_project_invitation_email", autospec=True
         ) as fake_send_project_invitation_email,
-        pytest.raises(ex.InvitationDoesNotExistError),
+        pytest.raises(ex.InvitationAlreadyAcceptedError),
+    ):
+        fake_send_project_invitation_email.return_value = None
+
+        await services.resend_project_invitation(invitation=invitation, resent_by=owner)
+
+        fake_invitations_repo.resend_project_invitation.assert_awaited_once_with(invitation=invitation, resent_by=owner)
+        fake_send_project_invitation_email.assert_awaited_once_with(invitation=invitation, is_resend=True)
+
+
+async def test_resend_project_invitation_revoked() -> None:
+    owner = f.build_user()
+    project = f.build_project(owner=owner)
+    email = "user-test@email.com"
+    invitation = f.build_invitation(project=project, user=None, email=email, status=InvitationStatus.REVOKED)
+
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch(
+            "taiga.invitations.services.send_project_invitation_email", autospec=True
+        ) as fake_send_project_invitation_email,
+        pytest.raises(ex.InvitationRevokedError),
     ):
         fake_send_project_invitation_email.return_value = None
 
@@ -751,14 +788,30 @@ async def test_revoke_project_invitation_ok() -> None:
         )
 
 
-async def test_revoke_project_invitation_not_pending() -> None:
+async def test_revoke_project_invitation_already_accepted() -> None:
     user = f.build_user()
     project = f.build_project()
     invitation = f.build_invitation(project=project, user=user, email=user.email, status=InvitationStatus.ACCEPTED)
     with (
         patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
-        pytest.raises(ex.InvitationDoesNotExistError),
+        pytest.raises(ex.InvitationAlreadyAcceptedError),
+    ):
+
+        await services.revoke_project_invitation(invitation=invitation, revoked_by=project.owner)
+
+        fake_invitations_repo.revoke_project_invitation.assert_not_awaited()
+        fake_invitations_events.emit_event_when_project_invitation_is_revoked.assert_not_awaited()
+
+
+async def test_revoke_project_invitation_revoked() -> None:
+    user = f.build_user()
+    project = f.build_project()
+    invitation = f.build_invitation(project=project, user=user, email=user.email, status=InvitationStatus.REVOKED)
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+        pytest.raises(ex.InvitationRevokedError),
     ):
 
         await services.revoke_project_invitation(invitation=invitation, revoked_by=project.owner)

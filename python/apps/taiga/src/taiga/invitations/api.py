@@ -43,7 +43,6 @@ async def get_public_project_invitation(
     Get public information about a project invitation
     """
     invitation = await invitations_services.get_public_project_invitation(token=token)
-
     if not invitation:
         raise ex.NotFoundError("Invitation not found")
 
@@ -53,7 +52,7 @@ async def get_public_project_invitation(
 @routes.projects.get(
     "/{slug}/invitations",
     name="project.invitations.get",
-    summary="Get project invitations",
+    summary="List project pending invitations",
     response_model=list[InvitationSerializer],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
@@ -71,19 +70,18 @@ async def list_project_invitations(
     """
     project = await get_project_or_404(slug)
 
-    pagination, invitations = await invitations_services.get_paginated_project_invitations(
+    pagination, invitations = await invitations_services.get_paginated_project_pending_invitations(
         project=project, user=request.user, offset=pagination_params.offset, limit=pagination_params.limit
     )
 
     set_pagination(response=response, pagination=pagination)
-
     return invitations
 
 
 @routes.projects.post(
     "/invitations/{token}/accept",
     name="project.invitations.accept",
-    summary="Accept a project invitation",
+    summary="Accept a project invitation using a token",
     response_model=InvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
@@ -93,20 +91,15 @@ async def accept_invitation_by_token(
     """
     A user accepts a project invitation using an invitation token
     """
-    invitation = await invitations_services.get_project_invitation(token=token)
-
-    if not invitation:
-        raise ex.NotFoundError("Invitation not found")
-
+    invitation = await get_project_invitation_by_token_or_404(token=token)
     await check_permissions(permissions=ACCEPT_TOKEN_INVITATION, user=request.user, obj=invitation)
-
-    return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
+    return await invitations_services.accept_project_invitation(invitation=invitation)
 
 
 @routes.projects.post(
     "/{slug}/invitations/accept",
     name="project.my.invitations.accept",
-    summary="Accept my project invitation",
+    summary="Accept a project invitation for authenticated users",
     response_model=InvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
@@ -117,13 +110,10 @@ async def accept_invitation_by_project(
     An authenticated user accepts a project invitation
     """
     await check_permissions(permissions=ACCEPT_INVITATION, user=request.user, obj=None)
-
-    invitation = await invitations_services.get_project_invitation_by_user(project_slug=slug, user=request.user)
-
-    if not invitation:
-        raise ex.NotFoundError("Invitation not found")
-
-    return await invitations_services.accept_project_invitation(invitation=invitation, user=request.user)
+    invitation = await get_project_invitation_by_username_or_email_or_404(
+        project_slug=slug, username_or_email=request.user.username
+    )
+    return await invitations_services.accept_project_invitation(invitation=invitation)
 
 
 @routes.projects.post(
@@ -163,14 +153,10 @@ async def resend_project_invitation(
     """
     Resend invitation to a project
     """
-    invitation = await invitations_services.get_project_invitation_by_username_or_email(
+    invitation = await get_project_invitation_by_username_or_email_or_404(
         project_slug=slug, username_or_email=form.username_or_email
     )
-    if not invitation:
-        raise ex.NotFoundError("Invitation not found")
-
     await check_permissions(permissions=RESEND_INVITATION, user=request.user, obj=invitation)
-
     await invitations_services.resend_project_invitation(invitation=invitation, resent_by=request.user)
 
 
@@ -188,12 +174,26 @@ async def revoke_project_invitation(
     """
     Revoke invitation in a project.
     """
-    invitation = await invitations_services.get_project_invitation_by_username_or_email(
+    invitation = await get_project_invitation_by_username_or_email_or_404(
         project_slug=slug, username_or_email=form.username_or_email
     )
-    if not invitation:
-        raise ex.NotFoundError("Invitation not found")
-
     await check_permissions(permissions=REVOKE_INVITATION, user=request.user, obj=invitation)
-
     await invitations_services.revoke_project_invitation(invitation=invitation, revoked_by=request.user)
+
+
+async def get_project_invitation_by_username_or_email_or_404(project_slug: str, username_or_email: str) -> Invitation:
+    invitation = await invitations_services.get_project_invitation_by_username_or_email(
+        project_slug=project_slug, username_or_email=username_or_email
+    )
+    if not invitation:
+        raise ex.NotFoundError("Invitation does not exist")
+
+    return invitation
+
+
+async def get_project_invitation_by_token_or_404(token: str) -> Invitation:
+    invitation = await invitations_services.get_project_invitation(token=token)
+    if not invitation:
+        raise ex.NotFoundError("Invitation does not exist")
+
+    return invitation

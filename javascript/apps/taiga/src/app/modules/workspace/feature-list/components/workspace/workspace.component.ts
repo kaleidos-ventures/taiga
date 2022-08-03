@@ -28,13 +28,13 @@ import {
   selectCreateFormHasError,
   selectCreatingWorkspace,
   selectLoadingWorkpace,
+  selectRejectedInvites,
   selectWorkspaces,
 } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import {
-  fetchWorkspaceList,
+  initWorkspaceList,
   resetWorkspace,
 } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 @Component({
   selector: 'tg-workspace',
@@ -117,7 +117,6 @@ export class WorkspaceComponent implements OnDestroy {
 
   constructor(
     private store: Store,
-    private localStorageService: LocalStorageService,
     private state: RxState<{
       creatingWorkspace: boolean;
       showCreate: boolean;
@@ -125,9 +124,10 @@ export class WorkspaceComponent implements OnDestroy {
       workspaceList: Workspace[];
       showActivity: boolean;
       createFormHasError: boolean;
+      rejectedInvites: Project['slug'][];
     }>
   ) {
-    this.store.dispatch(fetchWorkspaceList());
+    this.store.dispatch(initWorkspaceList());
 
     this.state.connect('workspaceList', this.store.select(selectWorkspaces));
     this.state.connect(
@@ -138,6 +138,11 @@ export class WorkspaceComponent implements OnDestroy {
     this.state.connect(
       'createFormHasError',
       this.store.select(selectCreateFormHasError)
+    );
+
+    this.state.connect(
+      'rejectedInvites',
+      this.store.select(selectRejectedInvites)
     );
   }
 
@@ -162,18 +167,10 @@ export class WorkspaceComponent implements OnDestroy {
     this.amountOfProjectsToShow = amount >= 6 ? 6 : amount;
   }
 
-  public getRejectedInvites(): Project['slug'][] {
-    return (
-      this.localStorageService.get<Project['slug'][] | undefined>(
-        'general_rejected_invites'
-      ) ?? []
-    );
-  }
-
   public checkWsVisibility(workspace: Workspace) {
     const role = workspace.userRole;
     const latestProjects = workspace.latestProjects;
-    const rejectedInvites = this.getRejectedInvites();
+    const rejectedInvites = this.state.get('rejectedInvites');
     const hasInvitedProjects = workspace.invitedProjects.filter((project) => {
       return !rejectedInvites.includes(project.slug);
     });

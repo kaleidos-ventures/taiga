@@ -9,6 +9,15 @@
 import { createAction, props } from '@ngrx/store';
 import { Project, User, Workspace } from '@taiga/data';
 
+export const initWorkspaceList = createAction(
+  '[WorkspaceList] init workspace list'
+);
+
+export const setWorkspaceListRejectedInvites = createAction(
+  '[WorkspaceList] set rejected invites',
+  props<{ projects: Project['slug'][] }>()
+);
+
 export const setWorkspaceList = createAction(
   '[WorkspaceList] set',
   props<{ workspaces: Workspace[] }>()

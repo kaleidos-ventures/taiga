@@ -7,7 +7,7 @@
  */
 
 import { createReducer, on, createFeature } from '@ngrx/store';
-import { WorkspaceProject, Workspace } from '@taiga/data';
+import { WorkspaceProject, Workspace, Project } from '@taiga/data';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace.actions';
 
@@ -18,6 +18,7 @@ export interface WorkspaceState {
   loading: boolean;
   createFormHasError: boolean;
   workspaceProjects: Record<Workspace['slug'], WorkspaceProject[]>;
+  rejectedInvites: Project['slug'][];
 }
 
 export const initialState: WorkspaceState = {
@@ -27,6 +28,7 @@ export const initialState: WorkspaceState = {
   loading: false,
   createFormHasError: false,
   workspaceProjects: {},
+  rejectedInvites: [],
 };
 
 export const reducer = createReducer(
@@ -107,7 +109,15 @@ export const reducer = createReducer(
     };
 
     return state;
-  })
+  }),
+  on(
+    WorkspaceActions.setWorkspaceListRejectedInvites,
+    (state, { projects }): WorkspaceState => {
+      state.rejectedInvites = projects;
+
+      return state;
+    }
+  )
 );
 
 export const workspaceFeature = createFeature({

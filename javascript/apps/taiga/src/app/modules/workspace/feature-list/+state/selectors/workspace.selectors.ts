@@ -17,6 +17,7 @@ export const {
   selectCreatingWorkspace,
   selectWorkspaceProjects,
   selectLoadingWorkspaces,
+  selectRejectedInvites,
 } = workspaceFeature;
 
 export const selectWorkspaceProject = (workspaceSlug: Workspace['slug']) => {

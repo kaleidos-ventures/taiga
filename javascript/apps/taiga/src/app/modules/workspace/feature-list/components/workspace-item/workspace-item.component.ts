@@ -24,9 +24,13 @@ import {
 import { Store } from '@ngrx/store';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
-import { fetchWorkspaceProjects } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
+import {
+  fetchWorkspaceProjects,
+  setWorkspaceListRejectedInvites,
+} from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import {
   selectLoadingWorkspaces,
+  selectRejectedInvites,
   selectWorkspaceProject,
 } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import { RxState } from '@rx-angular/state';
@@ -122,20 +126,19 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     return `grid-items-${this.state.get('projectsToShow')}`;
   }
 
-  public getRejectedInvites(): Project['slug'][] {
-    return (
-      this.userStorageService.get<Project['slug'][] | undefined>(
-        'general_rejected_invites'
-      ) ?? []
+  public setRejectedInvites(rejectedInvites: string[]) {
+    this.userStorageService.set('general_rejected_invites', rejectedInvites);
+    this.store.dispatch(
+      setWorkspaceListRejectedInvites({ projects: rejectedInvites })
     );
   }
 
-  public setRejectedInvites(rejectedInvites: string[]) {
-    this.userStorageService.set('general_rejected_invites', rejectedInvites);
-    this.state.set({ rejectedInvites });
-  }
-
   public ngOnInit() {
+    this.state.connect(
+      'rejectedInvites',
+      this.store.select(selectRejectedInvites)
+    );
+
     this.state.connect(
       'acceptedInvites',
       this.store.select(selectAcceptedInvite)
@@ -298,7 +301,8 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
       });
     }
 
-    const rejectedInvites = this.getRejectedInvites();
+    const rejectedInvites = [...this.state.get('rejectedInvites')];
+
     rejectedInvites.push(slug);
 
     this.setRejectedInvites(rejectedInvites);
@@ -325,7 +329,7 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
   public getActiveInvitations() {
     const invitations = this.state.get('invitations');
-    const rejectedInvites = this.getRejectedInvites();
+    const rejectedInvites = this.state.get('rejectedInvites');
 
     return invitations.filter((invitation) => {
       return !rejectedInvites.includes(invitation.slug);
@@ -366,7 +370,7 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes.workspace) {
-      const rejectedInvites = this.getRejectedInvites();
+      const rejectedInvites = this.state.get('rejectedInvites');
 
       this.state.set({
         invitations: this.workspace.invitedProjects,

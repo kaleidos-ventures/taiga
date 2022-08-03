@@ -9,13 +9,20 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { WorkspaceItemComponent } from './workspace-item.component';
 import {
+  Project,
   WorkspaceAdminMockFactory,
   WorkspaceMemberMockFactory,
   WorkspaceMockFactory,
 } from '@taiga/data';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { fetchWorkspaceProjects } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import {
+  fetchWorkspaceProjects,
+  setWorkspaceListRejectedInvites,
+} from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
+import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
+import { selectRejectedInvites } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
+import { MemoizedSelector } from '@ngrx/store';
+import { WorkspaceState } from '~/app/modules/workspace/feature-list/+state/reducers/workspace.reducer';
 
 describe('WorkspaceItem', () => {
   const workspaceItem = WorkspaceMockFactory();
@@ -41,11 +48,16 @@ describe('WorkspaceItem', () => {
     component: WorkspaceItemComponent,
     imports: [],
     providers: [provideMockStore({ initialState })],
-    mocks: [LocalStorageService],
+    mocks: [UserStorageService],
   });
   let store: MockStore;
 
   describe('guest', () => {
+    let mockRejectInviteSelect: MemoizedSelector<
+      WorkspaceState,
+      Project['slug'][]
+    >;
+
     beforeEach(() => {
       spectator = createComponent({
         props: {
@@ -55,14 +67,16 @@ describe('WorkspaceItem', () => {
         detectChanges: false,
       });
       store = spectator.inject(MockStore);
+
+      mockRejectInviteSelect = store.overrideSelector(
+        selectRejectedInvites,
+        []
+      );
     });
 
     it('on init', (done) => {
-      const localStorageService =
-        spectator.inject<LocalStorageService>(LocalStorageService);
-
-      const rejectedInvites = [workspaceItem.invitedProjects.at(0)?.slug];
-      localStorageService.get.mockReturnValue(rejectedInvites);
+      const rejectedInvites = [workspaceItem.invitedProjects.at(0)!.slug];
+      store.overrideSelector(selectRejectedInvites, rejectedInvites);
 
       const availableInvites = workspaceItem.invitedProjects.slice(1);
 
@@ -77,8 +91,9 @@ describe('WorkspaceItem', () => {
     });
 
     it('reject project invite', (done) => {
-      const localStorageService =
-        spectator.inject<LocalStorageService>(LocalStorageService);
+      const userStorageService =
+        spectator.inject<UserStorageService>(UserStorageService);
+      const dispatchSpy = jest.spyOn(store, 'dispatch');
 
       const slug = workspaceItem.invitedProjects.at(0)!.slug;
       spectator.component.projectsToShow = workspaceItem.invitedProjects.length;
@@ -87,8 +102,15 @@ describe('WorkspaceItem', () => {
 
       spectator.component.rejectProjectInvite(slug);
 
+      mockRejectInviteSelect.setResult([slug]);
+      store.refreshState();
+
+      expect(dispatchSpy).toBeCalledWith(
+        setWorkspaceListRejectedInvites({ projects: [slug] })
+      );
+
       spectator.component.model$.subscribe(({ invitations }) => {
-        expect(localStorageService.set.mock.calls[0][0]).toEqual(
+        expect(userStorageService.set.mock.calls[0][0]).toEqual(
           'general_rejected_invites'
         );
         expect(invitations.length).toEqual(

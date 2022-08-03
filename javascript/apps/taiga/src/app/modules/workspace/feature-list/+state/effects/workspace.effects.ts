@@ -13,15 +13,41 @@ import { map } from 'rxjs/operators';
 
 import * as WorkspaceActions from '../actions/workspace.actions';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
-import { Workspace } from '@taiga/data';
+import { Project, Workspace } from '@taiga/data';
 import { WorkspaceApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 import { timer, zip } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TuiNotification } from '@taiga-ui/core';
+import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 
 @Injectable()
 export class WorkspaceEffects {
+  public initWorkspaceFetchList$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceActions.initWorkspaceList),
+      map(() => {
+        return WorkspaceActions.fetchWorkspaceList();
+      })
+    );
+  });
+
+  public setRejectedInvites$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceActions.initWorkspaceList),
+      map(() => {
+        const rejectedInvites =
+          this.userStorageService.get<Project['slug'][] | undefined>(
+            'general_rejected_invites'
+          ) ?? [];
+
+        return WorkspaceActions.setWorkspaceListRejectedInvites({
+          projects: rejectedInvites,
+        });
+      })
+    );
+  });
+
   public listWorkspaces$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(WorkspaceActions.fetchWorkspaceList),
@@ -97,6 +123,7 @@ export class WorkspaceEffects {
   });
 
   constructor(
+    private userStorageService: UserStorageService,
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService,
     private appService: AppService

@@ -9,9 +9,11 @@
 import '@ng-web-apis/universal/mocks';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { Project, ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { WorkspaceComponent } from './workspace.component';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { selectRejectedInvites } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
+import { MemoizedSelector } from '@ngrx/store';
+import { WorkspaceState } from '~/app/modules/workspace/feature-list/+state/reducers/workspace.reducer';
 
 describe('Workspace List', () => {
   const workspaceItem = WorkspaceMockFactory();
@@ -28,14 +30,24 @@ describe('Workspace List', () => {
   const createComponent = createComponentFactory({
     component: WorkspaceComponent,
     imports: [],
-    mocks: [LocalStorageService],
+    mocks: [],
     providers: [provideMockStore({ initialState })],
   });
+
+  let store: MockStore;
+  let mockRejectInviteSelect: MemoizedSelector<
+    WorkspaceState,
+    Project['slug'][]
+  >;
 
   beforeEach(() => {
     spectator = createComponent({
       detectChanges: false,
     });
+
+    store = spectator.inject(MockStore);
+
+    mockRejectInviteSelect = store.overrideSelector(selectRejectedInvites, []);
   });
 
   it('setCardAmounts should give new amount of project to show', () => {
@@ -61,12 +73,10 @@ describe('Workspace List', () => {
     // Mock latestProjects
     workspaceItem.latestProjects = [];
 
-    // Mock localStorage rejectedProjects
-    const localStorageService =
-      spectator.inject<LocalStorageService>(LocalStorageService);
-
     const rejectedInvited: Project['slug'][] = [];
-    localStorageService.get.mockReturnValue(rejectedInvited);
+
+    mockRejectInviteSelect.setResult(rejectedInvited);
+    store.refreshState();
 
     expect(spectator.component.checkWsVisibility(workspaceItem)).toBeTruthy();
   });
@@ -83,12 +93,10 @@ describe('Workspace List', () => {
     // Mock latestProjects
     workspaceItem.latestProjects = [];
 
-    // Mock localStorage rejectedProjects
-    const localStorageService =
-      spectator.inject<LocalStorageService>(LocalStorageService);
-
+    // Mock rejectedProjects
     const rejectedInvited: Project['slug'][] = [];
-    localStorageService.get.mockReturnValue(rejectedInvited);
+    mockRejectInviteSelect.setResult(rejectedInvited);
+    store.refreshState();
 
     expect(spectator.component.checkWsVisibility(workspaceItem)).toBeTruthy();
   });
@@ -106,12 +114,10 @@ describe('Workspace List', () => {
     const project = ProjectMockFactory();
     workspaceItem.latestProjects = [project];
 
-    // Mock localStorage rejectedProjects
-    const localStorageService =
-      spectator.inject<LocalStorageService>(LocalStorageService);
-
+    // Mock rejectedProjects
     const rejectedInvited: Project['slug'][] = [];
-    localStorageService.get.mockReturnValue(rejectedInvited);
+    mockRejectInviteSelect.setResult(rejectedInvited);
+    store.refreshState();
 
     expect(spectator.component.checkWsVisibility(workspaceItem)).toBeTruthy();
   });
@@ -128,12 +134,10 @@ describe('Workspace List', () => {
     // Mock latestProjects
     workspaceItem.latestProjects = [];
 
-    // Mock localStorage rejectedProjects
-    const localStorageService =
-      spectator.inject<LocalStorageService>(LocalStorageService);
-
+    // Mock rejectedProjects
     const rejectedInvited: Project['slug'][] = [];
-    localStorageService.get.mockReturnValue(rejectedInvited);
+    mockRejectInviteSelect.setResult(rejectedInvited);
+    store.refreshState();
 
     const exampleInvite = ProjectMockFactory();
     workspaceItem.invitedProjects = [exampleInvite];
@@ -153,14 +157,12 @@ describe('Workspace List', () => {
     // Mock latestProjects
     workspaceItem.latestProjects = [];
 
-    // Mock localStorage rejectedProjects
+    // Mock rejectedProjects
     const exampleInvite = ProjectMockFactory();
 
-    const localStorageService =
-      spectator.inject<LocalStorageService>(LocalStorageService);
-
     const rejectedInvited: Project['slug'][] = [exampleInvite.slug];
-    localStorageService.get.mockReturnValue(rejectedInvited);
+    mockRejectInviteSelect.setResult(rejectedInvited);
+    store.refreshState();
 
     workspaceItem.invitedProjects = [exampleInvite];
 

@@ -113,7 +113,9 @@ export class ProjectMembersComponent {
     }>,
     private wsService: WsService
   ) {
-    this.store.dispatch(initMembers());
+    this.state.hold(this.state.select('project'), () => {
+      this.store.dispatch(initMembers());
+    });
 
     this.state.connect(
       'hasMoreMembers',

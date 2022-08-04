@@ -69,7 +69,6 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     }>,
     private userStorageService: UserStorageService
   ) {
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.state.connect(
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())

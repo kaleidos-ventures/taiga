@@ -13,7 +13,6 @@ import {
   Component,
   ElementRef,
   OnDestroy,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -49,7 +48,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ],
 })
 export class ProjectFeatureOverviewComponent
-  implements OnInit, AfterViewChecked, OnDestroy
+  implements AfterViewChecked, OnDestroy
 {
   @ViewChild('descriptionOverflow')
   public descriptionOverflow?: ElementRef;
@@ -79,12 +78,14 @@ export class ProjectFeatureOverviewComponent
       'notificationClosed',
       this.store.select(selectNotificationClosed)
     );
-  }
 
-  public ngOnInit() {
-    this.showDescription = false;
-    this.hideOverflow = false;
-    this.store.dispatch(initProjectOverview());
+    this.state.hold(this.state.select('project'), () => {
+      this.showDescription = false;
+      this.hideOverflow = false;
+      this.store.dispatch(initProjectOverview());
+
+      this.cd.markForCheck();
+    });
   }
 
   public hasClamping(el: HTMLElement) {

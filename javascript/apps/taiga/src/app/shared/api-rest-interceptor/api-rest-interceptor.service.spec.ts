@@ -20,10 +20,7 @@ import { forkJoin, of, throwError } from 'rxjs';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AuthApiService } from '@taiga/api';
-import {
-  loginSuccess,
-  logout,
-} from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import { loginSuccess } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { Router } from '@angular/router';
 import { AppService } from '~/app/services/app.service';
@@ -123,6 +120,7 @@ describe('ApiRestInterceptor', () => {
     jest.spyOn(store, 'dispatch');
 
     const authApiService = spectator.inject(AuthApiService);
+    const router = spectator.inject(Router);
 
     const authService = spectator.inject(AuthService);
     authService.getAuth.mockReturnValue({ token, refresh });
@@ -142,7 +140,7 @@ describe('ApiRestInterceptor', () => {
     authInterceptorService.intercept(apiRequest, next).subscribe({
       error: () => {
         expect(authApiService.refreshToken).toHaveBeenCalledWith(refresh);
-        expect(store.dispatch).toHaveBeenCalledWith(logout());
+        expect(router.navigate).toHaveBeenCalledWith([`/logout`]);
 
         done();
       },

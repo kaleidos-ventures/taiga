@@ -22,14 +22,10 @@ import { Store } from '@ngrx/store';
 import { selectGlobalLoading, globalLoading } from '@taiga/core';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Auth } from '@taiga/data';
-import {
-  loginSuccess,
-  logout,
-} from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import { loginSuccess } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { AuthApiService } from '@taiga/api';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { Router } from '@angular/router';
-import { AppService } from '~/app/services/app.service';
 
 @Injectable()
 export class ApiRestInterceptorService implements HttpInterceptor {
@@ -38,7 +34,6 @@ export class ApiRestInterceptorService implements HttpInterceptor {
   private refreshTokenSubject = new BehaviorSubject<null | Auth['token']>(null);
 
   constructor(
-    private readonly appService: AppService,
     private readonly authApiService: AuthApiService,
     private readonly configService: ConfigService,
     private readonly store: Store,
@@ -98,7 +93,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
             (!auth?.token || !auth?.refresh) &&
             !request.url.includes('/auth/token')
           ) {
-            this.store.dispatch(logout());
+            void this.router.navigate(['/logout']);
             return EMPTY;
           }
         }
@@ -153,7 +148,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
           catchError((err) => {
             this.refreshTokenInProgress = false;
 
-            this.store.dispatch(logout());
+            void this.router.navigate(['/logout']);
 
             return throwError(err);
           })

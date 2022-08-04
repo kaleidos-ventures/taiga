@@ -13,6 +13,7 @@ import { AuthGuard } from './modules/auth/guards/auth.guard';
 import { AuthFeatureLoginGuard } from './modules/auth/feature-login/auth-feature-login.guard';
 import { ProjectInvitationCTAGuard } from './modules/project/data-access/guards/project-invitation-cta.guard';
 import { ProjectInvitationGuard } from './modules/project/data-access/guards/project-invitation.guard';
+import { LogoutComponent } from './modules/auth/components/logout/logout.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,10 @@ const routes: Routes = [
     data: {
       noHeader: true,
     },
+  },
+  {
+    path: 'logout',
+    component: LogoutComponent,
   },
   {
     path: 'signup',

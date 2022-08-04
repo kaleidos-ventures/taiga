@@ -69,24 +69,24 @@ export class UserCardComponent implements OnChanges {
 
   public stringHighlighted(textToHighlight: string, text: string) {
     const rgx = new RegExp(
-      `(?<!<span class="strong">)${this.invitationService.normalizeText(
-        textToHighlight
-      )}`,
+      `^${this.invitationService.normalizeText(textToHighlight)}`,
       'g'
     );
-    let result;
-    let finalText = text;
 
-    while (
-      (result = rgx.exec(this.invitationService.normalizeText(finalText))) !==
-      null
-    ) {
-      const tempText = finalText.split('');
-      tempText.splice(result?.index, 0, '<span class="strong">');
-      tempText.splice(rgx.lastIndex + 1, 0, '</span>');
-      finalText = tempText.join('');
-    }
+    const finalText: string[] = [];
+    text.split(' ').forEach((part) => {
+      if (this.invitationService.normalizeText(part).match(rgx)) {
+        finalText.push(
+          `<span class="strong">${part.substring(
+            0,
+            textToHighlight.length
+          )}</span>${part.substring(textToHighlight.length, part.length)}`
+        );
+      } else {
+        finalText.push(part);
+      }
+    });
 
-    return finalText;
+    return finalText.join(' ');
   }
 }

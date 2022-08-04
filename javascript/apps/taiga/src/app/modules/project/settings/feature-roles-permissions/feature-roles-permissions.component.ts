@@ -28,6 +28,7 @@ import {
   auditTime,
   filter,
   map,
+  pairwise,
   switchMap,
   take,
   withLatestFrom,
@@ -361,9 +362,13 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       .pipe(
         untilDestroyed(this),
         withLatestFrom(this.route.fragment),
-        auditTime(200)
+        auditTime(200),
+        map(([, fragment]): [string | null, number] => {
+          return [fragment, window.scrollY];
+        }),
+        pairwise()
       )
-      .subscribe(([, fragment]) => {
+      .subscribe(([[, oldPosition], [fragment, newPosition]]) => {
         const fragments: HTMLElement[] = Array.from(
           document.querySelectorAll('[data-fragment]')
         );
@@ -372,7 +377,11 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
           return this.isElementInViewport(el);
         });
 
-        const lastFragment = viewPortFragments[viewPortFragments.length - 1];
+        const isUp = oldPosition > newPosition;
+
+        const lastFragment = isUp
+          ? viewPortFragments[0]
+          : viewPortFragments[viewPortFragments.length - 1];
 
         if (
           lastFragment?.dataset.fragment &&

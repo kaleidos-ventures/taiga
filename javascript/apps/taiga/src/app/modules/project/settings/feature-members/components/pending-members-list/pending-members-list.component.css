@@ -8,3 +8,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 /* stylelint-disable selector-max-compound-selectors */
 
 @import "../../members-common";
+
+tg-ui-dtable {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+tg-ui-dtable-row {
+  --cells-layout: 1fr 1fr 140px;
+
+  overflow: hidden;
+}
+
+.column-actions {
+  align-items: stretch;
+  display: flex;
+  gap: var(--spacing-24);
+
+  & > .row-action {
+    &::ng-deep .t-content {
+      padding-inline: var(--spacing-4);
+    }
+  }
+}

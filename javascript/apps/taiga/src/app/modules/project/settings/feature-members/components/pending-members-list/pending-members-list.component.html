@@ -32,8 +32,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <tg-user-card [user]="getUser(invitation)"></tg-user-card>
             </tg-ui-dtable-cell>
             <tg-ui-dtable-cell></tg-ui-dtable-cell>
-            <tg-ui-dtable-cell>
+            <tg-ui-dtable-cell class="column-actions">
               <button
+                class="row-action"
                 tuiLink
                 (click)="resend(invitation)"
                 appearance="tertiary">

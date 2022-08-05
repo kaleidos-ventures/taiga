@@ -19,6 +19,7 @@ tg-ui-dtable-row {
 
 .action-column {
   min-inline-size: 64px;
+  padding-inline: var(--spacing-4);
 }
 
 tg-ui-user-skeleton {

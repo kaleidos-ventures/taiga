@@ -262,7 +262,7 @@ async def update_user_projects_invitations(user: User) -> None:
 
 async def resend_project_invitation(invitation: Invitation, resent_by: User) -> None:
     if invitation.status == InvitationStatus.ACCEPTED:
-        raise ex.InvitationAlreadyAcceptedError("Cannot revoke an accepted invitation")
+        raise ex.InvitationAlreadyAcceptedError("Cannot resend an accepted invitation")
 
     if invitation.status == InvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation has already been revoked")

@@ -13,7 +13,7 @@ from taiga.users.models import User
 CREATE_PROJECT_INVITATION = "projectinvitations.create"
 ACCEPT_PROJECT_INVITATION = "projectmemberships.create"
 UPDATE_PROJECT_INVITATION = "projectinvitations.update"
-REVOKE_PROJECT_INVITATION = "projectinvitations.revoke"
+REVOKE_PROJECT_INVITATION = "projectinvitations.update"
 
 
 async def emit_event_when_project_invitations_are_created(
@@ -50,13 +50,22 @@ async def emit_event_when_user_invitations_are_updated(invitations: list[Invitat
         await events_manager.publish_on_project_channel(
             project=invitation.project,
             type=UPDATE_PROJECT_INVITATION,
-            sender=invitation.user,
+            sender=None,
         )
+        if invitation.user:
+            await events_manager.publish_on_user_channel(
+                user=invitation.user,
+                type=UPDATE_PROJECT_INVITATION,
+                content={"project": invitation.project.slug},
+                sender=None,
+            )
 
 
 async def emit_event_when_project_invitation_is_revoked(invitation: Invitation) -> None:
     await events_manager.publish_on_project_channel(
-        project=invitation.project, type=REVOKE_PROJECT_INVITATION, sender=None
+        project=invitation.project,
+        type=REVOKE_PROJECT_INVITATION,
+        sender=None,
     )
     if invitation.user:
         await events_manager.publish_on_user_channel(

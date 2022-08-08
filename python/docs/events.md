@@ -250,6 +250,22 @@ Content for:
   null
   ```
 
+#### `projectinvitations.update`
+
+It happens when one or more invitations are updated
+
+Content for:
+- user channel:
+  ```
+  {
+      "project": "project_slug"
+  }
+  ```
+- project channel:
+  ```
+  null
+  ```
+
 #### `projectmemberships.create`
 
 It happens when a project invitation is accepted. Because a new project membership is created.

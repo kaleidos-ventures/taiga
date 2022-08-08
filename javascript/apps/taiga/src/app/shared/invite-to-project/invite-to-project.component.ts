@@ -406,10 +406,10 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
 
   public includeSuggestedContact(index: number, event?: Event) {
     event?.preventDefault();
-    this.validEmails$.next([this.suggestedUsers[index].username]);
     this.store.dispatch(
       addSuggestedContact({ contact: this.suggestedUsers[index] })
     );
+    this.validEmails$.next([this.suggestedUsers[index].username]);
   }
 
   public handleArrow(arrow: 'up' | 'down') {

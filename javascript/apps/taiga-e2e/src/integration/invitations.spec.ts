@@ -259,6 +259,23 @@ describe('Invite users to project from overview when user is admin', () => {
       .should('to.have.string', 'Pending');
   });
 
+  it('Should add tag pending when inviting same person 2 times in a row', () => {
+    openInvitationModal();
+    typeEmailToInvite('susan');
+    cy.getBySel('suggestions-list').should('exist');
+    addEmailToInvite();
+    cy.getBySel('pending-tag').should('not.exist');
+    inviteUsers();
+    openInvitationModal();
+    typeEmailToInvite('susan');
+    cy.getBySel('suggestions-list').should('exist');
+    addEmailToInvite();
+    cy.getBySel('pending-tag').should('exist');
+    cy.getBySel('pending-tag')
+      .invoke('text')
+      .should('to.have.string', 'Pending');
+  });
+
   it('Should considered defined role from the invitation sent before', () => {
     openInvitationModal();
     typeEmailToInvite('susan wagner');

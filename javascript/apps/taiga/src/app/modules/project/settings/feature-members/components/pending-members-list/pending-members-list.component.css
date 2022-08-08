@@ -27,6 +27,10 @@ tg-ui-dtable-row {
   gap: var(--spacing-24);
 
   & > .row-action {
+    &:focus-visible {
+      outline: 0;
+    }
+
     &::ng-deep .t-content {
       padding-inline: var(--spacing-4);
     }

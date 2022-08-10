@@ -25,7 +25,7 @@ SECRET_KEY = settings.SECRET_KEY
 DEBUG = settings.DEBUG
 
 ALLOWED_HOSTS = ["*"]
-
+CSRF_TRUSTED_ORIGINS = [settings.BACKEND_URL]
 
 # Application definition
 

@@ -110,11 +110,24 @@ class Verbosity(str, Enum):
     v3 = 3
 
 
+class FixtureFormat(str, Enum):
+    json = "json"
+    jsonl = "jsonl"
+    yaml = "yaml"
+    xml = "xml"
+
+
 @cli.command(
-    help="Run a python shell, initializing the database and the rest of the environment. Tries to use IPython or bpython, if one of them is available."
+    help="Run a python shell, initializing the database and the rest of the environment. Tries to use IPython or "
+    "bpython, if one of them is available."
 )
 def shell() -> None:
     call_django_command("shell")
+
+
+@cli.command(help="Runs the command-line client for specified database, or the default database if none is provided.")
+def dbshell() -> None:
+    call_django_command("dbshell")
 
 
 @cli.command(help="Updates database schema. Manages both apps with migrations and those without.")
@@ -123,7 +136,7 @@ def migrate(
     plan: bool = typer.Option(False, "--plan/ ", help="Shows a list of the migration actions that will be performed."),
     interactive: bool = typer.Option(True, " /--no-input", help="Tells to NOT prompt the user for input of any kind."),
     verbosity: Verbosity = typer.Option(
-        Verbosity.v1,
+        1,
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -157,7 +170,7 @@ def makemigrations(
     ),
     interactive: bool = typer.Option(True, " /--no-input", help="Tells to NOT prompt the user for input of any kind."),
     verbosity: Verbosity = typer.Option(
-        Verbosity.v1,
+        1,
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -184,7 +197,7 @@ def squashmigrations(
         True, " /--no-header", help="Do not add header comments to new migration file(s)."
     ),
     verbosity: Verbosity = typer.Option(
-        Verbosity.v1,
+        1,
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -214,17 +227,18 @@ def showmigrations(
         True,
         "--list / ",
         "-l",
-        help="Shows a list of all migrations and which are applied. With a verbosity level of 2 or above, the applied datetimes will be included.",
+        help="Shows a list of all migrations and which are applied. With a verbosity level of 2 or above, the applied "
+        "datetimes will be included.",
     ),
     plan: bool = typer.Option(
         False,
         "--plan / ",
         "-p",
-        help="Shows all migrations in the order they will be applied. With a verbosity level of 2 or above all direct migration dependencies and"
-        "reverse dependencies (run_before) will be included.",
+        help="Shows all migrations in the order they will be applied. With a verbosity level of 2 or above all direct "
+        "migration dependencies and reverse dependencies (run_before) will be included.",
     ),
     verbosity: Verbosity = typer.Option(
-        Verbosity.v1,
+        1,
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -241,7 +255,7 @@ def showmigrations(
 @cli.command(help="Installs the named fixture(s) in the database.")
 def loadfixtures(
     verbosity: Verbosity = typer.Option(
-        Verbosity.v1,
+        1,
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -250,6 +264,71 @@ def loadfixtures(
     call_django_command(
         "loaddata",
         fixture,
+        verbosity=int(verbosity.value),
+    )
+
+
+@cli.command(help="Output the contents of the database as a fixture of the given format.")
+def dumpfixtures(
+    format: FixtureFormat = typer.Option(
+        "json",
+        "--format",
+        help="Specifies the output serialization format for fixtures.",
+    ),
+    indent: int = typer.Option(
+        2,
+        "--indent",
+        help="Specifies the indent level to use when pretty-printing output.",
+    ),
+    primary_keys: Optional[str] = typer.Option(
+        None,
+        "--pks",
+        help="Only dump objects with given primary keys. accepts a comma-separated list of keys. this option only "
+        "works when you specify one model.",
+    ),
+    verbosity: Verbosity = typer.Option(
+        1,
+        "--verbosity",
+        help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
+    ),
+    app_label: Optional[list[str]] = typer.Argument(
+        None,
+        help="Restricts dumped data to the specified 'app_label' or 'app_label.ModelName'. "
+        "Empty means 'all models'.",
+    ),
+) -> None:
+    call_django_command(
+        "dumpdata",
+        app_label,
+        format=format,
+        indent=indent,
+        primary_keys=primary_keys,
+        verbosity=int(verbosity.value),
+    )
+
+
+@cli.command(help="Copies or symlinks static files from different locations to the STATIC_ROOT directory.")
+def collectstatic(
+    dry_run: bool = typer.Option(False, "--dry-run/ ", help="Do everything except modify the filesystem."),
+    clear: bool = typer.Option(
+        False,
+        "--clear/ ",
+        help="Clear the existing files using the storage before trying to copy or link the original file.",
+    ),
+    link: bool = typer.Option(False, "--link/ ", help="Create a symbolic link to each file instead of copying."),
+    interactive: bool = typer.Option(True, " /--no-input", help="Tells to NOT prompt the user for input of any kind."),
+    verbosity: Verbosity = typer.Option(
+        1,
+        "--verbosity",
+        help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
+    ),
+) -> None:
+    call_django_command(
+        "collectstatic",
+        dry_run=dry_run,
+        clear=clear,
+        link=link,
+        interactive=interactive,
         verbosity=int(verbosity.value),
     )
 

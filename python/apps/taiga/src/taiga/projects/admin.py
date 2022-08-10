@@ -12,7 +12,7 @@ from taiga.base.db.admin.forms import ModelChoiceField
 from taiga.base.db.admin.http import HttpRequest
 from taiga.base.db.models import ForeignKey
 from taiga.invitations.models import ProjectInvitation
-from taiga.projects.models import Project, ProjectMembership, ProjectRole
+from taiga.projects.models import Project, ProjectMembership, ProjectRole, ProjectTemplate
 
 
 class ProjectRoleInline(admin.TabularInline[ProjectRole, Project]):
@@ -87,3 +87,8 @@ class ProjectAdmin(admin.ModelAdmin[Project]):
     @admin.display(description="allow annonymous users", boolean=True)
     def is_anon(self, obj: Project) -> bool:
         return obj.is_anon
+
+
+@admin.register(ProjectTemplate)
+class ProjectTemplateAdmin(admin.ModelAdmin[ProjectTemplate]):
+    ...

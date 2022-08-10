@@ -67,7 +67,7 @@ class UserAdmin(DjangoUserAdmin):
     add_fieldsets = (
         (None, {"classes": ("wide",), "fields": ("username", "email", "full_name", "password1", "password2")}),
     )
-    list_display = ("username", "email", "full_name", "is_verified", "is_superuser")
+    list_display = ("username", "email", "full_name", "is_active", "is_superuser")
     list_filter = ("is_superuser", "is_active")
     search_fields = ("username", "full_name", "email")
     ordering = ("username",)
@@ -78,7 +78,3 @@ class UserAdmin(DjangoUserAdmin):
         ProjectMembershipsInline,
         ProjectInvitationInline,
     ]
-
-    @admin.display(description="is verified", boolean=True)
-    def is_verified(self, obj: User) -> bool:
-        return bool(obj.date_verification)

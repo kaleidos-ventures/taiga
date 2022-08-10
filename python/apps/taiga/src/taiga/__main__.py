@@ -136,7 +136,7 @@ def migrate(
     plan: bool = typer.Option(False, "--plan/ ", help="Shows a list of the migration actions that will be performed."),
     interactive: bool = typer.Option(True, " /--no-input", help="Tells to NOT prompt the user for input of any kind."),
     verbosity: Verbosity = typer.Option(
-        1,
+        "1",
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -170,7 +170,7 @@ def makemigrations(
     ),
     interactive: bool = typer.Option(True, " /--no-input", help="Tells to NOT prompt the user for input of any kind."),
     verbosity: Verbosity = typer.Option(
-        1,
+        "1",
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -197,7 +197,7 @@ def squashmigrations(
         True, " /--no-header", help="Do not add header comments to new migration file(s)."
     ),
     verbosity: Verbosity = typer.Option(
-        1,
+        "1",
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -238,7 +238,7 @@ def showmigrations(
         "migration dependencies and reverse dependencies (run_before) will be included.",
     ),
     verbosity: Verbosity = typer.Option(
-        1,
+        "1",
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -255,7 +255,7 @@ def showmigrations(
 @cli.command(help="Installs the named fixture(s) in the database.")
 def loadfixtures(
     verbosity: Verbosity = typer.Option(
-        1,
+        "1",
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -287,7 +287,7 @@ def dumpfixtures(
         "works when you specify one model.",
     ),
     verbosity: Verbosity = typer.Option(
-        1,
+        "1",
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
@@ -318,7 +318,7 @@ def collectstatic(
     link: bool = typer.Option(False, "--link/ ", help="Create a symbolic link to each file instead of copying."),
     interactive: bool = typer.Option(True, " /--no-input", help="Tells to NOT prompt the user for input of any kind."),
     verbosity: Verbosity = typer.Option(
-        1,
+        "1",
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),

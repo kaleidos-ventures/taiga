@@ -6,15 +6,33 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<p>kanban-page works!</p>
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <h1 tgTitle>{{ t('kanban.title') }}</h1>
+    <div>
+      <ng-container *ngIf="!vm.isEmpty">
+        <ng-container
+          *ngFor="let workflow of vm.workflows; trackBy: trackBySlug">
+          <tg-kanban-workflow [workflow]="workflow"></tg-kanban-workflow>
+        </ng-container>
+      </ng-container>
 
-<tg-ui-modal
-  [open]="invitePeopleModal"
-  (requestClose)="closeModal()">
-  <ng-container *ngIf="project$ | async as project">
-    <tg-invite-to-project
-      *ngIf="invitePeopleModal && project.userIsAdmin"
-      (closeModal)="closeModal()"
-      [project]="project"></tg-invite-to-project>
+      <div
+        *ngIf="vm.isEmpty"
+        class="empty">
+        {{ t('kanban.empty') }}
+      </div>
+    </div>
+
+    <tg-ui-modal
+      [open]="vm.invitePeopleModal"
+      (requestClose)="closeModal()">
+      <ng-container *ngIf="project$ | async as project">
+        <tg-invite-to-project
+          *ngIf="invitePeopleModal && project.userIsAdmin"
+          (closeModal)="closeModal()"
+          [project]="project"></tg-invite-to-project>
+      </ng-container>
+    </tg-ui-modal>
   </ng-container>
-</tg-ui-modal>
+</ng-container>

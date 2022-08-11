@@ -25,3 +25,7 @@ export * from './lib/membership.model';
 export * from './lib/membership.model.mock';
 export * from './lib/invitation.model';
 export * from './lib/invitation.model.mock';
+export * from './lib/status.model';
+export * from './lib/status.model.mock';
+export * from './lib/workflow.model';
+export * from './lib/workflow.model.mock';

@@ -10,7 +10,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
-import { inViewportDirective } from '~/app/shared/directives/intersection-observer.directive';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
@@ -28,10 +27,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { TitleDirective } from '~/app/shared/title/title.directive';
 
 @NgModule({
-  declarations: [
-    ProjectSettingsFeatureRolesPermissionsComponent,
-    inViewportDirective,
-  ],
+  declarations: [ProjectSettingsFeatureRolesPermissionsComponent],
   imports: [
     CommonModule,
     TuiButtonModule,

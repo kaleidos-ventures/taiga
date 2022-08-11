@@ -23,11 +23,15 @@ import { skip } from 'rxjs/operators';
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[inViewport]',
+  standalone: true,
 })
-export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
+export class InViewportDirective implements OnInit, AfterViewInit, OnDestroy {
   @Input() public threshold = 1;
+  @Input() public root?: string;
   @Output() public visible = new EventEmitter<HTMLElement>();
+  @Output() public notVisible = new EventEmitter<HTMLElement>();
   @Input() public skip = 0;
+  @Input() public rootMargin = 0;
 
   private observer: IntersectionObserver | undefined;
   private subject$: Subject<{
@@ -50,9 +54,10 @@ export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private createObserver() {
-    const options = {
-      rootMargin: '0px',
+    const options: IntersectionObserverInit = {
+      rootMargin: `${this.rootMargin}px`,
       threshold: this.threshold,
+      root: this.root ? document.querySelector(this.root) : undefined,
     };
 
     const isIntersecting = (entry: IntersectionObserverEntry) =>
@@ -62,6 +67,8 @@ export class inViewportDirective implements OnInit, AfterViewInit, OnDestroy {
       entries.forEach((entry) => {
         if (isIntersecting(entry)) {
           this.subject$.next({ entry, observer });
+        } else {
+          this.notVisible.emit(entry.target as HTMLElement);
         }
       });
     }, options);

@@ -1,0 +1,21 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<tui-scrollbar>
+  <cdk-virtual-scroll-viewport
+    appendOnly
+    orientation="horizontal"
+    [itemSize]="statusColumnSize"
+    tuiScrollable
+    class="tui-zero-scrollbar">
+    <ng-container
+      *cdkVirtualFor="let status of workflow.statuses; trackBy: trackBySlug">
+      <tg-kanban-status [status]="status"></tg-kanban-status>
+    </ng-container>
+  </cdk-virtual-scroll-viewport>
+</tui-scrollbar>

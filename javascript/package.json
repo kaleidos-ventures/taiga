@@ -61,15 +61,15 @@
   "dependencies": {
     "@angular-devkit/schematics-cli": "~14.0.0",
     "@angular/animations": "14.1.0",
+    "@angular/cdk": "~14.0.0",
     "@angular/common": "14.1.0",
     "@angular/compiler": "14.1.0",
     "@angular/core": "14.1.0",
     "@angular/forms": "14.1.0",
     "@angular/platform-browser": "14.1.0",
     "@angular/platform-browser-dynamic": "14.1.0",
-    "@angular/router": "14.1.0",
-    "@angular/cdk": "~14.0.0",
     "@angular/platform-server": "14.1.0",
+    "@angular/router": "14.1.0",
     "@ngneat/transloco": "^4.1.1",
     "@ngneat/transloco-messageformat": "^4.0.0",
     "@ngneat/until-destroy": "^9.2.1",
@@ -104,6 +104,7 @@
     "zone.js": "0.11.7"
   },
   "devDependencies": {
+    "@angular-builders/custom-webpack": "~14.0.0",
     "@angular-devkit/build-angular": "14.1.0",
     "@angular-eslint/eslint-plugin": "~14.0.0",
     "@angular-eslint/eslint-plugin-template": "~14.0.0",
@@ -111,7 +112,6 @@
     "@angular/cli": "14.1.0",
     "@angular/compiler-cli": "14.1.0",
     "@angular/language-service": "14.1.0",
-    "@angular-builders/custom-webpack": "~14.0.0",
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
     "@ng-web-apis/universal": "^1.12.0",
@@ -136,8 +136,8 @@
     "@storybook/addon-links": "^6.5.9",
     "@storybook/addon-notes": "^5.3.21",
     "@storybook/angular": "6.5.9",
-    "@storybook/core-server": "6.5.9",
     "@storybook/builder-webpack5": "6.5.9",
+    "@storybook/core-server": "6.5.9",
     "@storybook/manager-webpack5": "6.5.9",
     "@testing-library/jest-dom": "^5.16.4",
     "@types/express": "^4.17.13",
@@ -170,6 +170,7 @@
     "ng-mocks": "^14.1.0",
     "ng-packagr": "14.1.0",
     "nodemailer": "^6.7.7",
+    "nx": "14.5.1",
     "postcss": "^8.4.14",
     "postcss-color-mod-function": "^3.0.3",
     "postcss-import": "14.1.0",
@@ -188,8 +189,7 @@
     "ts-node": "10.9.1",
     "type-fest": "^2.17.0",
     "typescript": "4.7.4",
-    "ws": "^8.8.1",
-    "nx": "14.5.1"
+    "ws": "^8.8.1"
   },
   "overrides": {
     "@nrwl/angular": {

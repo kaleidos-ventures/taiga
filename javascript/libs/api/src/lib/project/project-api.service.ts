@@ -16,7 +16,8 @@ import {
   Membership,
   Project,
   ProjectCreation,
-  Role
+  Role,
+  Workflow,
 } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -251,6 +252,12 @@ export class ProjectApiService {
       {
         roleSlug: userData.roleSlug,
       }
+    );
+  }
+
+  public getWorkflows(slug: string): Observable<Workflow[]> {
+    return this.http.get<Workflow[]>(
+      `${this.config.apiUrl}/projects/${slug}/workflows`
     );
   }
 }

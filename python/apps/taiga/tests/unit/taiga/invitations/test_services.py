@@ -17,6 +17,8 @@ from taiga.invitations.services.exceptions import NonExistingUsernameError
 from taiga.invitations.tokens import ProjectInvitationToken
 from tests.utils import factories as f
 
+pytestmark = pytest.mark.django_db
+
 #######################################################
 # get_project_invitation
 #######################################################
@@ -898,3 +900,91 @@ async def test_revoke_project_invitation_revoked() -> None:
 
         fake_invitations_repo.revoke_project_invitation.assert_not_awaited()
         fake_invitations_events.emit_event_when_project_invitation_is_revoked.assert_not_awaited()
+
+
+#######################################################
+# update_project_invitation
+#######################################################
+
+
+async def test_update_project_invitation_role_invitation_accepted() -> None:
+    user = f.build_user()
+    project = f.build_project()
+    general_role = f.build_project_role(project=project, is_admin=False)
+    invitation = f.build_project_invitation(
+        project=project, user=user, email=user.email, status=ProjectInvitationStatus.ACCEPTED
+    )
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+        pytest.raises(ex.InvitationAlreadyAcceptedError),
+    ):
+
+        await services.update_project_invitation(invitation=invitation, role_slug=general_role)
+
+        fake_invitations_repo.update_project_invitation.assert_not_awaited()
+        fake_invitations_events.emit_event_when_project_invitation_is_updated.assert_not_awaited()
+
+
+async def test_update_project_invitation_role_invitation_revoked() -> None:
+    user = f.build_user()
+    project = f.build_project()
+    general_role = f.build_project_role(project=project, is_admin=False)
+    invitation = f.build_project_invitation(
+        project=project, user=user, email=user.email, status=ProjectInvitationStatus.REVOKED
+    )
+    with (
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+        pytest.raises(ex.InvitationRevokedError),
+    ):
+
+        await services.update_project_invitation(invitation=invitation, role_slug=general_role)
+
+        fake_invitations_repo.update_project_invitation.assert_not_awaited()
+        fake_invitations_events.emit_event_when_project_invitation_is_updated.assert_not_awaited()
+
+
+async def test_update_project_invitation_role_non_existing_role():
+    project = f.build_project()
+    user = f.build_user()
+    general_role = f.build_project_role(project=project, is_admin=False)
+    invitation = f.build_project_invitation(
+        project=project, user=user, email=user.email, role=general_role, status=ProjectInvitationStatus.PENDING
+    )
+    non_existing_role_slug = "non_existing_role_slug"
+    with (
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+        pytest.raises(ex.NonExistingRoleError),
+    ):
+        fake_roles_repo.get_project_role.return_value = None
+
+        await services.update_project_invitation(invitation=invitation, role_slug=non_existing_role_slug)
+        fake_roles_repo.get_project_role.assert_awaited_once_with(project=project, slug=non_existing_role_slug)
+        fake_invitations_repo.update_project_invitation.assert_not_awaited()
+        fake_invitations_events.emit_event_when_project_invitation_is_updated.assert_not_awaited()
+
+
+async def test_update_project_invitation_role_ok():
+    project = f.build_project()
+    user = f.build_user()
+    general_role = f.build_project_role(project=project, is_admin=False)
+    invitation = f.build_project_invitation(
+        project=project, user=user, email=user.email, role=general_role, status=ProjectInvitationStatus.PENDING
+    )
+    admin_role = f.build_project_role(project=project, is_admin=True)
+    with (
+        patch("taiga.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+    ):
+        fake_roles_repo.get_project_role.return_value = admin_role
+
+        updated_invitation = await services.update_project_invitation(invitation=invitation, role_slug=admin_role.slug)
+        fake_roles_repo.get_project_role.assert_awaited_once_with(project=project, slug=admin_role.slug)
+        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(invitation=invitation, role=admin_role)
+        fake_invitations_events.emit_event_when_project_invitation_is_updated.assert_awaited_once_with(
+            invitation=updated_invitation
+        )

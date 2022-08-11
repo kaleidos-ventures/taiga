@@ -72,3 +72,10 @@ async def emit_event_when_project_invitation_is_revoked(invitation: ProjectInvit
             type=REVOKE_PROJECT_INVITATION,
             content={"project": invitation.project.slug},
         )
+
+
+async def emit_event_when_project_invitation_is_updated(invitation: ProjectInvitation) -> None:
+    await events_manager.publish_on_project_channel(
+        project=invitation.project,
+        type=UPDATE_PROJECT_INVITATION,
+    )

@@ -13,6 +13,7 @@ from taiga.base.utils.datetime import aware_utcnow
 from taiga.invitations.choices import ProjectInvitationStatus
 from taiga.invitations.models import ProjectInvitation
 from taiga.projects.models import Project
+from taiga.roles.models import ProjectRole
 from taiga.users.models import User
 
 
@@ -51,6 +52,16 @@ def get_project_invitation_by_username_or_email(
         return ProjectInvitation.objects.select_related(
             "user", "project", "project__workspace", "role", "invited_by"
         ).get(qs_filter)
+    except ProjectInvitation.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def get_project_invitation_by_id(project_slug: str, id: UUID) -> ProjectInvitation | None:
+    try:
+        return ProjectInvitation.objects.select_related(
+            "user", "project", "project__workspace", "role", "invited_by"
+        ).get(id=id, project__slug=project_slug)
     except ProjectInvitation.DoesNotExist:
         return None
 
@@ -171,4 +182,12 @@ def revoke_project_invitation(invitation: ProjectInvitation, revoked_by: User) -
     invitation.revoked_at = aware_utcnow()
     invitation.revoked_by = revoked_by
     invitation.save()
+    return invitation
+
+
+@sync_to_async
+def update_project_invitation(invitation: ProjectInvitation, role: ProjectRole) -> ProjectInvitation:
+    invitation.role = role
+    invitation.save()
+
     return invitation

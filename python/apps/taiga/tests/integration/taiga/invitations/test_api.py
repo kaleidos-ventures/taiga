@@ -6,6 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
+import uuid
+
 import pytest
 from asgiref.sync import sync_to_async
 from fastapi import status
@@ -509,3 +511,60 @@ async def test_revoke_project_invitation_revoked(client):
     data = {"username_or_email": user.email}
     response = client.post(f"projects/{project.slug}/invitations/revoke", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+##########################################################
+# PATCH /projects/<slug>/invitations/<id>
+##########################################################
+
+
+async def test_update_project_invitation_role_invitation_not_exist(client):
+    owner = await f.create_user()
+    project = await f.create_project(owner=owner)
+
+    client.login(owner)
+    id = uuid.uuid1()
+    data = {"role_slug": "admin"}
+    response = client.patch(f"projects/{project.slug}/invitations/{id}", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_update_project_invitation_role_user_without_permission(client):
+    owner = await f.create_user()
+    project = await f.create_project(owner=owner)
+    user = await f.create_user()
+    general_member_role = await f.create_project_role(
+        project=project,
+        permissions=choices.ProjectPermissions.values,
+        is_admin=False,
+    )
+    await f.create_project_membership(user=user, project=project, role=general_member_role)
+
+    invited_user = await f.create_user()
+    invitation = await f.create_project_invitation(
+        user=invited_user, project=project, role=general_member_role, email=invited_user.email
+    )
+
+    client.login(user)
+    data = {"role_slug": "admin"}
+    response = client.patch(f"/projects/{project.slug}/invitations/{invitation.id}", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_update_project_invitation_role_ok(client):
+    owner = await f.create_user()
+    project = await f.create_project(owner=owner)
+    user = await f.create_user()
+    general_member_role = await f.create_project_role(
+        project=project,
+        permissions=choices.ProjectPermissions.values,
+        is_admin=False,
+    )
+    invitation = await f.create_project_invitation(
+        user=user, project=project, role=general_member_role, email=user.email
+    )
+
+    client.login(owner)
+    data = {"role_slug": "admin"}
+    response = client.patch(f"projects/{project.slug}/invitations/{invitation.id}", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text

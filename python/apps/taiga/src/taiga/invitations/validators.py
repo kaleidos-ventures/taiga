@@ -84,3 +84,12 @@ class ResendProjectInvitationValidator(BaseModel):
             domain = v.split("@")[1]
             assert domain in settings.USER_EMAIL_ALLOWED_DOMAINS, "Email domain not allowed"
         return v
+
+
+class UpdateProjectInvitationValidator(BaseModel):
+    role_slug: str
+
+    @validator("role_slug")
+    def check_not_empty(cls, v: str) -> str:
+        assert v != "", "Empty field is not allowed"
+        return v

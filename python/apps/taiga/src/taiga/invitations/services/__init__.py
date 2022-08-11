@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 from taiga.base.api.pagination import Pagination
 from taiga.base.utils import emails
 from taiga.base.utils.datetime import aware_utcnow
@@ -54,6 +56,10 @@ async def get_project_invitation_by_username_or_email(
     return await invitations_repositories.get_project_invitation_by_username_or_email(
         project_slug=project_slug, username_or_email=username_or_email
     )
+
+
+async def get_project_invitation_by_id(project_slug: str, id: UUID) -> ProjectInvitation | None:
+    return await invitations_repositories.get_project_invitation_by_id(project_slug=project_slug, id=id)
 
 
 async def get_paginated_pending_project_invitations(
@@ -307,3 +313,23 @@ async def revoke_project_invitation(invitation: ProjectInvitation, revoked_by: U
     await invitations_repositories.revoke_project_invitation(invitation=invitation, revoked_by=revoked_by)
 
     await invitations_events.emit_event_when_project_invitation_is_revoked(invitation=invitation)
+
+
+async def update_project_invitation(invitation: ProjectInvitation, role_slug: str) -> ProjectInvitation:
+    if invitation.status == ProjectInvitationStatus.ACCEPTED:
+        raise ex.InvitationAlreadyAcceptedError("Cannot change role in an accepted invitation")
+
+    if invitation.status == ProjectInvitationStatus.REVOKED:
+        raise ex.InvitationRevokedError("The invitation has already been revoked")
+
+    project_role = await roles_repositories.get_project_role(project=invitation.project, slug=role_slug)
+
+    if not project_role:
+        raise ex.NonExistingRoleError("Role does not exist")
+
+    updated_invitation = await invitations_repositories.update_project_invitation(
+        invitation=invitation, role=project_role
+    )
+    await invitations_events.emit_event_when_project_invitation_is_updated(invitation=updated_invitation)
+
+    return updated_invitation

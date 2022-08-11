@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from typing import Any
+from uuid import UUID
 
 from pydantic import EmailStr, validator
 from taiga.base.serializers import BaseModel
@@ -25,6 +26,7 @@ class PublicProjectInvitationSerializer(BaseModel):
 
 
 class ProjectInvitationSerializer(BaseModel):
+    id: UUID
     user: UserSerializer | None
     role: BaseProjectRoleSerializer
     email: EmailStr
@@ -34,6 +36,7 @@ class ProjectInvitationSerializer(BaseModel):
 
 
 class PrivateEmailProjectInvitationSerializer(BaseModel):
+    id: UUID
     user: UserSerializer | None
     role: BaseProjectRoleSerializer
     email: EmailStr | None

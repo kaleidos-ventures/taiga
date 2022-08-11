@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 from fastapi import Depends, Query, Response, status
 from taiga.base.api import AuthRequest
 from taiga.base.api.pagination import PaginationQuery, set_pagination
@@ -24,6 +26,7 @@ from taiga.invitations.validators import (
     ProjectInvitationsValidator,
     ResendProjectInvitationValidator,
     RevokeProjectInvitationValidator,
+    UpdateProjectInvitationValidator,
 )
 from taiga.permissions import IsAuthenticated, IsProjectAdmin
 from taiga.projects.api import get_project_or_404
@@ -35,6 +38,7 @@ ACCEPT_PROJECT_INVITATION_BY_TOKEN = IsProjectInvitationRecipient()
 CREATE_PROJECT_INVITATIONS = IsProjectAdmin()
 RESEND_PROJECT_INVITATION = IsProjectAdmin()
 REVOKE_PROJECT_INVITATION = IsProjectAdmin()
+UPDATE_PROJECT_INVITATION = IsProjectAdmin()
 
 
 @routes.unauth_projects.get(
@@ -195,12 +199,42 @@ async def revoke_project_invitation(
     await invitations_services.revoke_project_invitation(invitation=invitation, revoked_by=request.user)
 
 
+@routes.projects.patch(
+    "/{slug}/invitations/{id}",
+    name="project.invitations.update",
+    summary="Update project invitation",
+    response_model=ProjectInvitationSerializer,
+    responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
+)
+async def update_project_invitation(
+    request: AuthRequest,
+    form: UpdateProjectInvitationValidator,
+    slug: str = Query(None, description="the project slug (str)"),
+    id: UUID = Query(None, description="the invitation id (int)"),
+) -> ProjectInvitation:
+    """
+    Update project invitation
+    """
+    invitation = await get_project_invitation_by_id_or_404(project_slug=slug, id=id)
+    await check_permissions(permissions=UPDATE_PROJECT_INVITATION, user=request.user, obj=invitation)
+
+    return await invitations_services.update_project_invitation(invitation=invitation, role_slug=form.role_slug)
+
+
 async def get_project_invitation_by_username_or_email_or_404(
     project_slug: str, username_or_email: str
 ) -> ProjectInvitation:
     invitation = await invitations_services.get_project_invitation_by_username_or_email(
         project_slug=project_slug, username_or_email=username_or_email
     )
+    if not invitation:
+        raise ex.NotFoundError("Invitation does not exist")
+
+    return invitation
+
+
+async def get_project_invitation_by_id_or_404(project_slug: str, id: UUID) -> ProjectInvitation:
+    invitation = await invitations_services.get_project_invitation_by_id(project_slug=project_slug, id=id)
     if not invitation:
         raise ex.NotFoundError("Invitation does not exist")
 

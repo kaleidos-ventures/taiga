@@ -204,42 +204,6 @@ async def test_update_project_membership_role_user_without_permission(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_update_project_membership_role_non_existing_role(client):
-    owner = await f.create_user()
-    project = await f.create_project(owner=owner)
-    user = await f.create_user()
-    general_member_role = await f.create_project_role(
-        project=project,
-        permissions=choices.ProjectPermissions.values,
-        is_admin=False,
-    )
-    await f.create_project_membership(user=user, project=project, role=general_member_role)
-
-    client.login(owner)
-    username = user.username
-    data = {"role_slug": "non_existing_role"}
-    response = client.patch(f"projects/{project.slug}/memberships/{username}", json=data)
-    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
-
-
-async def test_update_project_membership_role_only_one_admin(client):
-    owner = await f.create_user()
-    project = await f.create_project(owner=owner)
-    user = await f.create_user()
-    general_member_role = await f.create_project_role(
-        project=project,
-        permissions=choices.ProjectPermissions.values,
-        is_admin=False,
-    )
-    await f.create_project_membership(user=user, project=project, role=general_member_role)
-
-    client.login(owner)
-    username = owner.username
-    data = {"role_slug": "general"}
-    response = client.patch(f"projects/{project.slug}/memberships/{username}", json=data)
-    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
-
-
 async def test_update_project_membership_role_ok(client):
     owner = await f.create_user()
     project = await f.create_project(owner=owner)

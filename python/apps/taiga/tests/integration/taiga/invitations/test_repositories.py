@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import uuid
+
 import pytest
 from asgiref.sync import sync_to_async
 from taiga.invitations import repositories
@@ -120,6 +122,32 @@ async def get_project_invitation_by_username_or_email_not_found() -> None:
         project_slug=invitation.project.slug,
         username_or_email="email@email.com",
         status=ProjectInvitationStatus.PENDING,
+    )
+
+    assert new_invitation is None
+
+
+##########################################################
+# get_project_invitation_by_id
+##########################################################
+
+
+async def test_get_project_invitation_by_id() -> None:
+    invitation = await f.create_project_invitation()
+
+    new_invitation = await repositories.get_project_invitation_by_id(
+        project_slug=invitation.project.slug, id=invitation.id
+    )
+
+    assert new_invitation is not None
+    assert new_invitation == invitation
+
+
+async def get_project_invitation_by_id_not_found() -> None:
+    invitation = await f.create_project_invitation()
+
+    new_invitation = await repositories.get_project_invitation_by_id(
+        project_slug=invitation.project.slug, id=uuid.uuid1()
     )
 
     assert new_invitation is None
@@ -453,3 +481,21 @@ async def test_revoke_project_invitation() -> None:
     assert revoked_invitation.user == user
     assert revoked_invitation.status == ProjectInvitationStatus.REVOKED
     assert revoked_invitation.revoked_by == project.owner
+
+
+##########################################################
+# update_project_invitation
+##########################################################
+
+
+async def test_update_project_invitation_role():
+    owner = await f.create_user()
+    project = await f.create_project(owner=owner)
+    user = await f.create_user()
+    invitation = await f.create_project_invitation(
+        user=user, email=user.email, project=project, status=ProjectInvitationStatus.PENDING
+    )
+
+    new_role = await f.create_project_role(project=project)
+    updated_invitation = await repositories.update_project_invitation(invitation=invitation, role=new_role)
+    assert updated_invitation.role == new_role

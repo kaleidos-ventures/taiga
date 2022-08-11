@@ -120,7 +120,7 @@ async def get_project_memberships(
 @routes.projects.patch(
     "/{slug}/memberships/{username}",
     name="project.memberships.update",
-    summary="Update project membership role",
+    summary="Update project membership",
     response_model=ProjectMembershipSerializer,
     responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
 )

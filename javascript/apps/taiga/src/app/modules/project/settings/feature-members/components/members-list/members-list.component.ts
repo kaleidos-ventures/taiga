@@ -10,9 +10,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Membership, User } from '@taiga/data';
+import { Membership, Project, Role, User } from '@taiga/data';
 import { map } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
   selectAnimationDisabled,
@@ -22,7 +23,9 @@ import {
   selectTotalMemberships,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
+import { selectMemberRolesOrdered } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { slideInOut400 } from '~/app/shared/utils/animations';
+import { filterNil } from '~/app/shared/utils/operators';
 
 @UntilDestroy()
 @Component({
@@ -60,6 +63,8 @@ export class MembersListComponent {
       offset: number;
       user: User | null;
       animationDisabled: boolean;
+      project: Project;
+      roles: Role[];
     }>
   ) {
     this.state.connect('members', this.store.select(selectMembers));
@@ -70,6 +75,14 @@ export class MembersListComponent {
     this.state.connect(
       'animationDisabled',
       this.store.select(selectAnimationDisabled)
+    );
+    this.state.connect(
+      'project',
+      this.store.select(selectCurrentProject).pipe(filterNil())
+    );
+    this.state.connect(
+      'roles',
+      this.store.select(selectMemberRolesOrdered).pipe(filterNil())
     );
 
     this.store.dispatch(membersActions.selectTab({ tab: 'members' }));

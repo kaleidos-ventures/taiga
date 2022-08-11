@@ -8,16 +8,16 @@
 
 import {
   animate,
+  AnimationEvent,
   state,
   style,
   transition,
   trigger,
-  AnimationEvent,
 } from '@angular/animations';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Invitation, Project, User } from '@taiga/data';
+import { Invitation, Project, Role, User } from '@taiga/data';
 import { map } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
@@ -34,6 +34,7 @@ import {
   selectUndoDoneAnimation,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
+import { selectMemberRolesOrdered } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 const cssValue = getComputedStyle(document.documentElement);
 interface InvitationData {
@@ -248,6 +249,7 @@ export class PendingMembersListComponent {
       revokeDialogDisplay: Invitation['email'] | null;
       cancelled: string[];
       undo: string[];
+      roles: Role[];
     }>
   ) {
     this.state.connect('invitations', this.store.select(selectInvitations));
@@ -282,6 +284,11 @@ export class PendingMembersListComponent {
     );
 
     this.state.connect('undo', this.store.select(selectUndoDoneAnimation));
+
+    this.state.connect(
+      'roles',
+      this.store.select(selectMemberRolesOrdered).pipe(filterNil())
+    );
 
     this.store.dispatch(membersActions.selectTab({ tab: 'pending' }));
   }

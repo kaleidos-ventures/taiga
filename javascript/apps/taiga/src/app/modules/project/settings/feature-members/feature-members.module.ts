@@ -9,16 +9,28 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
-import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
-import { TuiTabsModule } from '@taiga-ui/kit';
+import {
+  TuiButtonModule,
+  TuiDataListModule,
+  TuiDropdownControllerModule,
+  TuiLinkModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
+import {
+  TuiDataListWrapperModule,
+  TuiSelectModule,
+  TuiTabsModule,
+} from '@taiga-ui/kit';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
+import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
@@ -30,6 +42,7 @@ import { MembersListComponent } from './components/members-list/members-list.com
 import { PaginationComponent } from './components/pagination/pagination.component';
 import { PendingMembersListComponent } from './components/pending-members-list/pending-members-list.component';
 import { RevokeInvitationComponent } from './components/revoke-invitation/revoke-invitation.component';
+import { RoleSelectComponent } from './components/role-select/role-select.component';
 import { ProjectsSettingsFeatureMembersComponent } from './feature-members.component';
 
 @NgModule({
@@ -39,6 +52,7 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     PendingMembersListComponent,
     PaginationComponent,
     RevokeInvitationComponent,
+    RoleSelectComponent,
   ],
   providers: [
     {
@@ -51,8 +65,14 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
   ],
   imports: [
     DropdownModule,
+    TuiDropdownControllerModule,
+    FormsModule,
+    ReactiveFormsModule,
     SkeletonsModule,
     TuiTabsModule,
+    TuiSelectModule,
+    TuiDataListWrapperModule,
+    InputsModule,
     TuiButtonModule,
     TuiLinkModule,
     UserCardModule,
@@ -61,6 +81,7 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     A11yModule,
     TuiActiveZoneModule,
     ContextNotificationModule,
+    TuiDataListModule,
     CommonModule,
     TranslocoModule,
     DynamicTableModule,

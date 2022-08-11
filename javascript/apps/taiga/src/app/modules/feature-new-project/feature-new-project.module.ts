@@ -6,27 +6,26 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EffectsModule } from '@ngrx/effects';
-import { NewProjectEffects } from './+state/effects/new-project.effects';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TuiSvgModule, TuiButtonModule } from '@taiga-ui/core';
-import { TuiSelectModule, TuiDataListWrapperModule } from '@taiga-ui/kit';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-
-import { NewProjectComponent } from './components/new-project/new-project.component';
-import { InitStepComponent } from './components/init-step/init-step.component';
 import { RouterModule } from '@angular/router';
-import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
-import { ImageUploadModule } from 'libs/ui/src/lib/inputs/image-upload/image-upload.module';
-import { AvatarModule } from '@taiga/ui/avatar';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { EffectsModule } from '@ngrx/effects';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiDataListWrapperModule, TuiSelectModule } from '@taiga-ui/kit';
+import { AvatarModule } from '@taiga/ui/avatar';
 import { ModalModule } from '@taiga/ui/modal';
-import { TemplateStepComponent } from './components/template-step/template-step.component';
-import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.module';
+import { ImageUploadModule } from 'libs/ui/src/lib/inputs/image-upload/image-upload.module';
+import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 import { TitleDirective } from '~/app/shared/title/title.directive';
+import { NewProjectEffects } from './+state/effects/new-project.effects';
+import { InitStepComponent } from './components/init-step/init-step.component';
+import { NewProjectComponent } from './components/new-project/new-project.component';
+import { TemplateStepComponent } from './components/template-step/template-step.component';
+import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.module';
 
 @NgModule({
   declarations: [NewProjectComponent, InitStepComponent, TemplateStepComponent],

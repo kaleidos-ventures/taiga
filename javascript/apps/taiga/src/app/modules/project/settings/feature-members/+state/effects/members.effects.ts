@@ -14,7 +14,6 @@ import { optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import { ErrorManagementToastOptions } from '@taiga/data';
-import { WsService } from '~/app/services/ws';
 import { EMPTY } from 'rxjs';
 import {
   catchError,
@@ -34,7 +33,9 @@ import {
   selectUndoDoneAnimation,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
+import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import { AppService } from '~/app/services/app.service';
+import { WsService } from '~/app/services/ws';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { filterNil } from '~/app/shared/utils/operators';
 
@@ -185,6 +186,18 @@ export class MembersEffects {
       ofType(membersActions.initProjectMembers),
       map(() => {
         return membersActions.setMembersPage({ offset: 0 });
+      })
+    );
+  });
+
+  public loadRoles$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.initProjectMembers),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      map(([, project]) => {
+        return initRolesPermissions({ project });
       })
     );
   });

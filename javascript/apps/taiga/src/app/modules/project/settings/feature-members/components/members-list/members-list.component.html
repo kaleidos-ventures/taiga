@@ -32,7 +32,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [isSelf]="member.user.username === vm.user?.username"
                 [navigateToUser]="true"></tg-user-card>
             </tg-ui-dtable-cell>
-            <tg-ui-dtable-cell> </tg-ui-dtable-cell>
+            <tg-ui-dtable-cell>
+              <tg-members-role-select
+                [member]="member"
+                [roles]="vm.roles"></tg-members-role-select>
+            </tg-ui-dtable-cell>
             <tg-ui-dtable-cell class="action-column"> </tg-ui-dtable-cell>
           </tg-ui-dtable-row>
         </ng-container>

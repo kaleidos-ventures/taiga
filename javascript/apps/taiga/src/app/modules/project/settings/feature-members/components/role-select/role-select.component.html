@@ -1,0 +1,35 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t; read: 'project_settings'">
+  <form
+    [formGroup]="roleForm"
+    class="select-container">
+    <tg-ui-select
+      [label]="t('members.role_label')"
+      labelVisuallyHidden>
+      <tui-select
+        class="select-rol"
+        tuiTextfieldSize="l"
+        formControlName="roleName"
+        [valueContent]="roleForm.get('roleName')?.value"
+        (ngModelChange)="roleChange($event)"
+        (keydown.enter)="$event.preventDefault()">
+        <tui-data-list *tuiDataList>
+          <button
+            *ngFor="let role of roles; trackBy: trackByIndex"
+            tuiOption
+            size="s"
+            [value]="role.name">
+            {{ role.name }}
+          </button>
+        </tui-data-list>
+      </tui-select>
+    </tg-ui-select>
+  </form>
+</ng-container>

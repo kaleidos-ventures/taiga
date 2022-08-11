@@ -67,6 +67,7 @@
       "undo": "Undo",
       "action_undone": "Action undone",
       "close_undone": "Action undone"
-    }
+    },
+    "role_label": "Role"
   }
 }

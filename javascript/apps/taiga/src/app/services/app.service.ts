@@ -16,9 +16,9 @@ import {
 import { ErrorManagementOptions, UnexpectedError } from '@taiga/data';
 import { Store } from '@ngrx/store';
 import { HashMap, TranslocoService } from '@ngneat/transloco';
-import { filter, take, takeUntil } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
-import { NavigationStart, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -109,19 +109,7 @@ export class AppService {
         status: data.status,
       };
 
-      this.notificationsService
-        .open(message, toastOptions)
-        .pipe(
-          takeUntil(
-            this.router.events.pipe(
-              filter(
-                (evt: unknown): evt is NavigationStart =>
-                  evt instanceof NavigationStart
-              )
-            )
-          )
-        )
-        .subscribe();
+      this.notificationsService.open(message, toastOptions).subscribe();
     });
   }
 }

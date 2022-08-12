@@ -87,3 +87,22 @@ def test_format_datetime_with_custom_format(value, format, result):
 
     template = "{{ value | format_datetime(format=format) }}"
     assert env.from_string(template).render(**context) == result
+
+
+#########################################################################################
+# static_url
+#########################################################################################
+
+
+def test_static_url(override_settings):
+    with override_settings({"STATIC_URL": "http://localhost:8000/static/"}):
+        context = {"file": "example/test1.png"}
+        template = "{{ file | static_url }}"
+
+        assert env.from_string(template).render(**context) == "http://localhost:8000/static/example/test1.png"
+
+    with override_settings({"STATIC_URL": "https://taiga.company.com/static/"}):
+        context = {"file": "example/test2.png"}
+        template = "{{ file | static_url }}"
+
+        assert env.from_string(template).render(**context) == "https://taiga.company.com/static/example/test2.png"

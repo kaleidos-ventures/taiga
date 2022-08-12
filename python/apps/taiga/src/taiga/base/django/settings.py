@@ -18,7 +18,7 @@ except ImportError:
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent  # is 'src'
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent  # is 'src'
 
 SECRET_KEY = settings.SECRET_KEY
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # taiga
     "taiga.base.db",
+    "taiga.emails",
     "taiga.workspaces",
     "taiga.projects",
     "taiga.invitations",
@@ -123,15 +124,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = f"{ settings.BACKEND_URL }/static/"
 STATIC_ROOT = settings.STATIC_ROOT
+STATIC_URL = settings.STATIC_URL
 
 
 # Media files
 # https://docs.djangoproject.com/en/4.0/topics/files/#file-storage
 
-MEDIA_URL = f"{ settings.BACKEND_URL }/media/"
 MEDIA_ROOT = settings.MEDIA_ROOT
+MEDIA_URL = settings.MEDIA_URL
 
 
 # Default primary key field type
@@ -143,8 +144,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # URLs are defined here
 
 ROOT_URLCONF = "taiga.base.django.urls"
-
-urlpatterns: list[str] = []
 
 
 ###############################################################################

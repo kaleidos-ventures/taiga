@@ -6,9 +6,11 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from datetime import datetime
+from urllib.parse import urljoin
 
 from jinja2 import Environment
 from markupsafe import Markup
+from taiga.conf import settings
 
 
 def _do_wbr_split(text: str, size: int = 70) -> Markup:
@@ -57,6 +59,21 @@ def _format_datetime(value: str | datetime, format: str = "%d/%m/%G %H:%M:%S (%Z
     return dt.strftime(format)
 
 
+def _static_url(file_path: str) -> str:
+    """
+    This filter generate a complete URL -- e.g, http://localhost:8000/static/emails/taiga.png --
+    based on the static files configuration in the settings module and the relative file path.
+
+    .. sourcecode:: jinja
+        <img src="{{ 'emails/logo.png' | static_url }}" alt="" />
+
+    .. sourcecode:: html
+        <img src="http://localhost:8000/static/emails/logo.png" alt="" />
+    """
+    return urljoin(settings.STATIC_URL, file_path)
+
+
 def load_filters(env: Environment) -> None:
     env.filters["wbr_split"] = _do_wbr_split
     env.filters["format_datetime"] = _format_datetime
+    env.filters["static_url"] = _static_url

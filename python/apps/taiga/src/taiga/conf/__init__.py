@@ -9,12 +9,20 @@ import logging.config
 import os
 import secrets
 from functools import lru_cache
+from pathlib import Path
+from urllib.parse import urljoin
 
 from pydantic import AnyHttpUrl, BaseSettings, EmailStr, validator
 from taiga.conf.emails import EmailSettings
 from taiga.conf.images import ImageSettings
 from taiga.conf.logs import LOGGING_CONFIG
 from taiga.conf.tokens import TokensSettings
+
+_BASE_DIR = Path(__file__).resolve().parent.parent.parent  # is 'src'
+_DEFAULT_BACKEND_URL = AnyHttpUrl.build(scheme="http", host="localhost", port="8000")
+_DEFAULT_FRONTEND_URL = AnyHttpUrl.build(scheme="http", host="localhost", port="4200")
+_DEFAULT_STATIC_URL = AnyHttpUrl.build(scheme="http", host="localhost", port="8000", path="/static/")
+_DEFAULT_MEDIA_URL = AnyHttpUrl.build(scheme="http", host="localhost", port="8000", path="/media/")
 
 
 class Settings(BaseSettings):
@@ -24,8 +32,8 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # Taiga URLS
-    BACKEND_URL: AnyHttpUrl = AnyHttpUrl.build(scheme="http", host="localhost", port="8000")
-    FRONTEND_URL: AnyHttpUrl = AnyHttpUrl.build(scheme="http", host="localhost", port="4200")
+    BACKEND_URL: AnyHttpUrl = _DEFAULT_BACKEND_URL
+    FRONTEND_URL: AnyHttpUrl = _DEFAULT_FRONTEND_URL
 
     # Database
     DB_NAME: str = "taiga"
@@ -35,8 +43,10 @@ class Settings(BaseSettings):
     DB_PORT: int = 5432
 
     # Media and Static files
-    MEDIA_ROOT: str = "media"  # A related or absolute directory path
-    STATIC_ROOT: str = "static"  # A related or absolute directory path
+    STATIC_URL: AnyHttpUrl = _DEFAULT_STATIC_URL
+    STATIC_ROOT: Path = _BASE_DIR.parent.joinpath("static/")
+    MEDIA_URL: AnyHttpUrl = _DEFAULT_MEDIA_URL
+    MEDIA_ROOT: Path = _BASE_DIR.parent.joinpath("media/")
 
     # Pagination
     DEFAULT_PAGE_SIZE: int = 10
@@ -81,6 +91,14 @@ class Settings(BaseSettings):
         if v is not None and not 0 <= v < 1 << 48:
             raise ValueError("out of range (need a 48-bit value)")
         return v
+
+    @validator("STATIC_URL", always=True)
+    def set_static_url(cls, v: AnyHttpUrl, values: dict[str, AnyHttpUrl]) -> str:
+        return v if v != _DEFAULT_STATIC_URL else urljoin(values["BACKEND_URL"], "/static/")
+
+    @validator("MEDIA_URL", always=True)
+    def set_media_url(cls, v: AnyHttpUrl, values: dict[str, AnyHttpUrl]) -> str:
+        return v if v != _DEFAULT_MEDIA_URL else urljoin(values["BACKEND_URL"], "/media/")
 
     class Config:
         env_prefix = "TAIGA_"

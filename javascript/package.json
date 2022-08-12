@@ -49,7 +49,8 @@
     "emails:compile-html": "npx mjml --config.keepComments=0 ./apps/taiga-mjml/templates/**/*.mjml.html.jinja -o ../python/apps/taiga/src/taiga/emails/templates",
     "emails:copy-text": "npx copyfiles -f ./apps/taiga-mjml/templates/**/*.txt.jinja ../python/apps/taiga/src/taiga/emails/templates",
     "emails:copy-subject": "npx copyfiles -f ./apps/taiga-mjml/templates/**/*.subject.jinja ../python/apps/taiga/src/taiga/emails/templates",
-    "emails": "npm run emails:compile-html && npm run emails:copy-text && npm run emails:copy-subject && node ./scripts/append-license.js",
+    "emails:copy-static": "npx copyfiles -f ./apps/taiga-mjml/static/emails/**/*.* ../python/apps/taiga/src/taiga/emails/static/emails",
+    "emails": "npm run emails:compile-html && npm run emails:copy-text && npm run emails:copy-subject && npm run emails:copy-static  && node ./scripts/append-license.js",
     "email:serve": "node apps/email-server/index.js"
   },
   "lint-staged": {

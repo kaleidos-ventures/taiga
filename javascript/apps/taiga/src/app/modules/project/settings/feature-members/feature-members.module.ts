@@ -14,18 +14,13 @@ import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
-import {
-  TuiButtonModule,
-  TuiDropdownControllerModule,
-  TuiHostedDropdownModule,
-  TuiLinkModule,
-  TuiSvgModule,
-} from '@taiga-ui/core';
+import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiTabsModule } from '@taiga-ui/kit';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
+import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
 import { TitleDirective } from '~/app/shared/title/title.directive';
 import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
@@ -55,14 +50,13 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     },
   ],
   imports: [
-    TuiDropdownControllerModule,
+    DropdownModule,
     SkeletonsModule,
     TuiTabsModule,
     TuiButtonModule,
     TuiLinkModule,
     UserCardModule,
     TuiSvgModule,
-    TuiHostedDropdownModule,
     TuiAutoFocusModule,
     A11yModule,
     TuiActiveZoneModule,

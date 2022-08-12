@@ -9,7 +9,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "tools/dropdown.css";
 
 :host {
-  @mixin dropdown;
+  display: block;
+  inline-size: 300px;
+  padding: var(--spacing-16);
 }
 
 ul {

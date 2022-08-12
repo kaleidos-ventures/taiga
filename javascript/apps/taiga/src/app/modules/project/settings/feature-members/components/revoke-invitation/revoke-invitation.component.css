@@ -16,9 +16,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .revoke-dialog {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-gray40);
-  border-radius: 3px;
   inline-size: 416px;
   padding: var(--spacing-20);
 }

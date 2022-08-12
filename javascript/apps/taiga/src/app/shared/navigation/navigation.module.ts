@@ -11,15 +11,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
-import {
-  TuiButtonModule,
-  TuiDropdownControllerModule,
-  TuiHostedDropdownModule,
-  TuiLinkModule,
-  TuiSvgModule,
-} from '@taiga-ui/core';
+import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiAvatarModule, TuiBadgedContentModule } from '@taiga-ui/kit';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { DropdownModule } from '../dropdown/dropdown.module';
 import { UserAvatarModule } from '../user-avatar/user-avatar.component.module';
 import { NavigationProjectsComponent } from './navigation-projects/navigation-projects.component';
 import { NavigationUserDropdownComponent } from './navigation-user-dropdown/navigation-user-dropdown.component';
@@ -33,12 +28,11 @@ import { NavigationComponent } from './navigation.component';
     TuiLinkModule,
     TuiSvgModule,
     TranslocoModule,
-    TuiHostedDropdownModule,
     UserAvatarModule,
     TuiAutoFocusModule,
     RouterModule,
     AvatarModule,
-    TuiDropdownControllerModule,
+    DropdownModule,
     TuiBadgedContentModule,
   ],
   declarations: [

@@ -10,5 +10,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 tui-dropdown-box {
   --tui-radius-m: 3px;
 
+  border: 1px solid var(--color-gray40) !important;
+  box-shadow: 0.25rem 0.25rem 0.5rem 0 rgba(46, 52, 64, 0.1) !important;
   margin-block-start: -4px;
+  transition: none !important;
 }

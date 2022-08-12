@@ -130,6 +130,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 tui-data-list {
+  border: none;
   max-inline-size: 463px;
 
   & .suggested-btn {

@@ -10,14 +10,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiUtilsService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
-
 import {
   Contact,
+  Invitation,
+  Membership,
   Project,
   ProjectCreation,
-  Role,
-  Membership,
-  Invitation,
+  Role
 } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -239,6 +238,18 @@ export class ProjectApiService {
       `${this.config.apiUrl}/projects/${project}/invitations/revoke`,
       {
         usernameOrEmail,
+      }
+    );
+  }
+
+  public updateMemberRole(
+    slug: string,
+    userData: { username: string; roleSlug: string }
+  ) {
+    return this.http.patch(
+      `${this.config.apiUrl}/projects/${slug}/memberships/${userData.username}`,
+      {
+        roleSlug: userData.roleSlug,
       }
     );
   }

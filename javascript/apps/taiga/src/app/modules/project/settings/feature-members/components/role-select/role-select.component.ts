@@ -8,7 +8,10 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { Invitation, Membership, Role } from '@taiga/data';
+import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 
 @Component({
   selector: 'tg-members-role-select',
@@ -17,24 +20,40 @@ import { Invitation, Membership, Role } from '@taiga/data';
 })
 export class RoleSelectComponent implements OnInit {
   @Input()
-  public invitation?: Invitation;
-
-  @Input()
-  public member?: Membership;
+  public invitationOrMember!: Invitation | Membership;
 
   @Input()
   public roles!: Role[];
 
-  public roleForm!: FormGroup;
+  @Input()
+  public isMember!: boolean;
 
-  constructor(private fb: FormBuilder) {}
+  @Input()
+  public isSelf!: boolean;
+
+  public roleForm!: FormGroup;
+  public hasSingleAdmin!: boolean;
+  public dropdownState = false;
+
+  constructor(
+    private store: Store,
+    private actions$: Actions,
+    private fb: FormBuilder
+  ) {
+    this.actions$.pipe(ofType(membersActions.resetRoleForm)).subscribe((data) => {
+      if (data.userIdentification === (this.invitationOrMember as Membership).user.username || data.userIdentification === (this.invitationOrMember as Invitation).email) {
+        this.roleForm = this.fb.group({
+          roleName: data.oldRole?.name,
+        });
+      }
+    });
+  }
 
   public ngOnInit() {
     this.roleForm = this.fb.group({
-      roleName: this.invitation
-        ? this.invitation.role?.name
-        : this.member?.role.name,
+      roleName: this.invitationOrMember.role?.name,
     });
+    this.hasSingleAdmin = this.roles.find(it => it.isAdmin)?.numMembers === 1 || false;
   }
 
   public trackByIndex(index: number) {
@@ -42,7 +61,17 @@ export class RoleSelectComponent implements OnInit {
   }
 
   public roleChange(role: string) {
-    // TODO update new role invitation
-    console.log(role);
+    const roleSlug = this.roles.find((it) => it.name === role)?.slug;
+    if (this.isMember && roleSlug) {
+      this.store.dispatch(
+        membersActions.updateMemberRole({
+          username: this.invitationOrMember.user?.username || '',
+          roleSlug: roleSlug,
+          oldRole: this.invitationOrMember.role
+        })
+      );
+    } else {
+      // TODO invitation role
+    }
   }
 }

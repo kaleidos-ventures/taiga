@@ -41,8 +41,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </tg-ui-dtable-cell>
             <tg-ui-dtable-cell [@revokeAnimationCell]="invitation.cancelled">
               <tg-members-role-select
-                [invitation]="invitation.data"
-                [roles]="vm.roles"></tg-members-role-select>
+                [invitationOrMember]="invitation.data"
+                [roles]="vm.roles"
+                [isMember]="false"
+                [isSelf]="false"></tg-members-role-select>
             </tg-ui-dtable-cell>
             <tg-ui-dtable-cell
               [@revokeAnimationCell]="invitation.cancelled"

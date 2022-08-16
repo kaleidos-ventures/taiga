@@ -8,6 +8,7 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
@@ -24,6 +25,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
@@ -321,6 +323,63 @@ export class MembersEffects {
     );
   });
 
+  public updateMemberRole$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.updateMemberRole),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      pessimisticUpdate({
+        run: (action, project) => {
+          return this.projectApiService
+            .updateMemberRole(project.slug, {
+              username: action.username,
+              roleSlug: action.roleSlug,
+            })
+            .pipe(
+              map(() => {
+                return membersActions.updateMemberRoleSuccess({
+                  userWasAdmin: !!action.oldRole?.isAdmin,
+                  username: action.username
+                });
+              })
+            );
+        },
+        onError: (action) => {
+          membersActions.updateMemberRoleError();
+          return membersActions.resetRoleForm({
+            userIdentification: action.username,
+            oldRole: action.oldRole,
+          });
+        },
+      })
+    );
+  });
+
+  public updateMemberRoleSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(membersActions.updateMemberRoleSuccess),
+        concatLatestFrom(() => [
+          this.store.select(selectCurrentProject).pipe(filterNil()),
+          this.store.select(selectUser).pipe(filterNil())
+        ]),
+        map(([action, project, userState]) => {
+          if (action.userWasAdmin && (userState.username === action.username)) {
+            this.appService.toastNotification({
+              message: 'members.no_longer_admin',
+              status: TuiNotification.Warning,
+              scope: 'project_settings',
+              closeOnNavigation: false
+            });
+            void this.router.navigate(['/project/', project.slug]);
+          }
+          return membersActions.updateMembersList({ eventType: 'update' });
+        })
+      );
+    }
+  );
+
   constructor(
     private appService: AppService,
     private actions$: Actions,
@@ -328,6 +387,7 @@ export class MembersEffects {
     private store: Store,
     private buttonLoadingService: ButtonLoadingService,
     private invitationApiService: InvitationApiService,
-    private wsService: WsService
+    private wsService: WsService,
+    private router: Router
   ) {}
 }

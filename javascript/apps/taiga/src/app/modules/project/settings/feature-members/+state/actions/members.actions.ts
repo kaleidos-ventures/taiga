@@ -65,5 +65,27 @@ export const membersActions = createActionGroup({
     'Select Tab': props<{
       tab: 'members' | 'pending';
     }>(),
+    'Update member role': props<{
+      username: string;
+      roleSlug: string;
+      oldRole?: {
+        isAdmin: boolean;
+        name?: string;
+        slug?: string;
+      };
+    }>(),
+    'Update member role success': props<{
+      userWasAdmin: boolean;
+      username: string;
+    }>(),
+    'Update member role error': emptyProps(),
+    'Reset role form': props<{
+      oldRole?: {
+        isAdmin: boolean;
+        name?: string;
+        slug?: string;
+      };
+      userIdentification: string;
+    }>(),
   },
 });

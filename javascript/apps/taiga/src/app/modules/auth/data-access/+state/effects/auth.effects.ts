@@ -144,7 +144,16 @@ export class AuthEffects {
             autoClose: true,
           };
 
-          void this.appService.toastNotification(data);
+          this.router.events
+            .pipe(
+              filter(
+                (evt): evt is NavigationEnd => evt instanceof NavigationEnd
+              ),
+              take(1)
+            )
+            .subscribe(() => {
+              void this.appService.toastNotification(data);
+            });
 
           void this.router.navigate(['/login']);
         })

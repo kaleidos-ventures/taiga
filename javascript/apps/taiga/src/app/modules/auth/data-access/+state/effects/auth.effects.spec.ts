@@ -195,6 +195,9 @@ describe('AuthEffects', () => {
     const appService = spectator.inject(AppService);
     const authApiService = spectator.inject(AuthApiService);
 
+    const routerEvents = new BehaviorSubject(new NavigationEnd(0, '/', '/'));
+    (routerService as any).events = routerEvents;
+
     authApiService.denyRefreshToken.mockReturnValue(cold('-b|'));
 
     actions$ = hot('-a', { a: logout() });

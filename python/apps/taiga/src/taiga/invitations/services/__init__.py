@@ -39,6 +39,7 @@ async def get_public_project_invitation(token: str) -> PublicProjectInvitation |
     if invitation := await get_project_invitation(token=token):
 
         return PublicProjectInvitation(
+            status=invitation.status,
             email=invitation.email,
             existing_user=invitation.user is not None,
             project=invitation.project,

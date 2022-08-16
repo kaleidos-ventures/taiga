@@ -8,12 +8,14 @@ from typing import Any
 
 from pydantic import EmailStr, validator
 from taiga.base.serializers import BaseModel
+from taiga.invitations.choices import ProjectInvitationStatus
 from taiga.projects.serializers.related import ProjectSmallSummarySerializer
 from taiga.roles.serializers import BaseProjectRoleSerializer
 from taiga.users.serializers import UserSerializer
 
 
 class PublicProjectInvitationSerializer(BaseModel):
+    status: ProjectInvitationStatus
     email: EmailStr
     existing_user: bool
     project: ProjectSmallSummarySerializer

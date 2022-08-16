@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import pytest
 from procrastinate.testing import JobRow
 from taiga.tasksqueue.manager import TasksQueueManager, app
 
@@ -39,3 +40,8 @@ class TestTasksQueueManager(TasksQueueManager):
 
     def reset(self) -> None:
         self._app.connector.reset()  # type: ignore[attr-defined]
+
+
+@pytest.fixture
+def tqmanager() -> TestTasksQueueManager:
+    return TestTasksQueueManager()

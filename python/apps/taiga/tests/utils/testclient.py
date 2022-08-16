@@ -5,9 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import pytest
 from fastapi.testclient import TestClient as TestClientBase
 from taiga.auth.tokens import AccessToken
 from taiga.base.utils.asyncio import run_async_as_sync
+from taiga.main import api
 from taiga.users.models import User
 
 
@@ -18,3 +20,8 @@ class TestClient(TestClientBase):
 
     def logout(self) -> None:
         self.headers.pop("Authorization", None)
+
+
+@pytest.fixture
+def client() -> TestClient:
+    return TestClient(api)

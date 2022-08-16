@@ -77,6 +77,7 @@ export class AppService {
     autoClose?: boolean;
     paramsLabel?: HashMap<unknown>;
     paramsMessage?: HashMap<unknown>;
+    closeOnNavigation?: boolean;
   }) {
     const autoCloseTimer = 7000;
     forkJoin([
@@ -109,9 +110,14 @@ export class AppService {
         status: data.status,
       };
 
-      this.notificationsService
-        .open(message, toastOptions)
-        .pipe(
+      const closeOnNavigation = data.closeOnNavigation ?? true;
+      let notificationOpen = this.notificationsService.open(
+        message,
+        toastOptions
+      );
+
+      if (closeOnNavigation) {
+        notificationOpen = notificationOpen.pipe(
           takeUntil(
             this.router.events.pipe(
               filter(
@@ -119,8 +125,10 @@ export class AppService {
               )
             )
           )
-        )
-        .subscribe();
+        );
+      }
+
+      notificationOpen.subscribe();
     });
   }
 }

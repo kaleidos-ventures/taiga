@@ -18,8 +18,8 @@ import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { InvitationInfoMockFactory } from '@taiga/data';
 
 import { AuthService } from '~/app/modules/auth/services/auth.service';
-import { ProjectInvitationGuard } from './project-invitation.guard';
 import { AppService } from '~/app/services/app.service';
+import { ProjectInvitationGuard } from './project-invitation.guard';
 
 describe('Project Invitation Guard', () => {
   let spectator: SpectatorService<ProjectInvitationGuard>;
@@ -95,6 +95,7 @@ describe('Project Invitation Guard', () => {
       next: `/project/${invitation.project.slug}`,
       acceptProjectInvitation: false,
       projectInvitationToken: token,
+      isNextAnonProject: false,
     };
 
     invitation.existingUser = true;
@@ -162,6 +163,7 @@ describe('Project Invitation Guard', () => {
       email: invitation.email,
       acceptProjectInvitation: false,
       projectInvitationToken: token,
+      isNextAnonProject: false,
     };
 
     invitation.project.isAnon = false;

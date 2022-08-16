@@ -11,7 +11,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { TuiNotification } from '@taiga-ui/core';
 import { ConfigService } from '@taiga/core';
-import { InvitationInfo, Project } from '@taiga/data';
+import { genericResponseError, InvitationInfo, Project } from '@taiga/data';
 import { of, throwError } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
@@ -52,6 +52,24 @@ export class ProjectInvitationCTAGuard implements CanActivate {
                   return of(true);
                 }),
                 catchError((httpResponse: HttpErrorResponse) => {
+                  if (
+                    httpResponse.status === 400 &&
+                    (httpResponse.error as genericResponseError).error
+                      .detail === 'invitation-revoked-error'
+                  ) {
+                    this.appService.toastNotification({
+                      message: 'errors.invitation_no_longer_valid',
+                      status: TuiNotification.Error,
+                      autoClose: false,
+                      closeOnNavigation: false,
+                    });
+                    if (invitation.project.isAnon) {
+                      void this.router.navigate([
+                        `/project/${invitation.project.slug}`,
+                      ]);
+                    }
+                    return throwError(httpResponse);
+                  }
                   void this.router.navigate(['/']);
                   return throwError(httpResponse);
                 })
@@ -63,6 +81,7 @@ export class ProjectInvitationCTAGuard implements CanActivate {
                   next: `/project/${invitation.project.slug}`,
                   acceptProjectInvitation: true,
                   projectInvitationToken: token,
+                  isNextAnonProject: invitation.project.isAnon,
                 },
               });
             } else {
@@ -72,6 +91,7 @@ export class ProjectInvitationCTAGuard implements CanActivate {
                   email: invitation.email,
                   acceptProjectInvitation: true,
                   projectInvitationToken: token,
+                  isNextAnonProject: invitation.project.isAnon,
                 },
               });
             }
@@ -87,6 +107,8 @@ export class ProjectInvitationCTAGuard implements CanActivate {
           this.appService.toastNotification({
             message: 'errors.invalid_token_toast_message',
             status: TuiNotification.Error,
+            autoClose: false,
+            closeOnNavigation: false,
           });
           return throwError(httpResponse);
         })

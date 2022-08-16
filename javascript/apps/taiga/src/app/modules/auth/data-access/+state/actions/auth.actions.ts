@@ -24,6 +24,7 @@ export const login = createAction(
     projectInvitationToken: string;
     next: string;
     acceptProjectInvitation?: boolean;
+    isNextAnonProject?: boolean;
   }>()
 );
 
@@ -37,6 +38,7 @@ export const loginSuccess = createAction(
     projectInvitationToken?: string;
     next?: string;
     acceptProjectInvitation?: boolean;
+    isNextAnonProject?: boolean;
   }>()
 );
 

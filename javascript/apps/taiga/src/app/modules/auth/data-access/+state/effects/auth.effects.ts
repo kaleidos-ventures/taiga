@@ -9,21 +9,34 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
-import * as AuthActions from '../actions/auth.actions';
-import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
-import { pessimisticUpdate } from '@nrwl/angular';
-import { Auth, ErrorManagementOptions, SignUpError } from '@taiga/data';
+import { HttpErrorResponse } from '@angular/common/http';
 import { NavigationEnd, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { pessimisticUpdate } from '@nrwl/angular';
+import { TuiNotification } from '@taiga-ui/core';
+import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
+import {
+  Auth,
+  ErrorManagementOptions,
+  genericResponseError,
+  SignUpError,
+} from '@taiga/data';
+import { EMPTY } from 'rxjs';
+import {
+  catchError,
+  filter,
+  map,
+  mergeMap,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { AppService } from '~/app/services/app.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { TuiNotification } from '@taiga-ui/core';
-import { Store } from '@ngrx/store';
-import { selectUser } from '../selectors/auth.selectors';
-import { filterNil } from '~/app/shared/utils/operators';
-import { EMPTY } from 'rxjs';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
+import { filterNil } from '~/app/shared/utils/operators';
+import * as AuthActions from '../actions/auth.actions';
+import { selectUser } from '../selectors/auth.selectors';
 
 @Injectable()
 export class AuthEffects {
@@ -37,6 +50,7 @@ export class AuthEffects {
           projectInvitationToken,
           next,
           acceptProjectInvitation,
+          isNextAnonProject,
         }) => {
           this.buttonLoadingService.start();
           return this.authApiService
@@ -62,6 +76,7 @@ export class AuthEffects {
                   projectInvitationToken,
                   next,
                   acceptProjectInvitation,
+                  isNextAnonProject,
                 });
               })
             );
@@ -90,17 +105,44 @@ export class AuthEffects {
       return this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
         switchMap(
-          ({ next, projectInvitationToken, acceptProjectInvitation }) => {
+          ({
+            next,
+            projectInvitationToken,
+            acceptProjectInvitation,
+            isNextAnonProject,
+          }) => {
             return this.store.select(selectUser).pipe(
               filterNil(),
               take(1),
               mergeMap(() => {
                 if (projectInvitationToken && next && acceptProjectInvitation) {
                   return this.projectApiService
-                    .acceptInvitationSlug(projectInvitationToken)
+                    .acceptInvitationToken(projectInvitationToken)
                     .pipe(
-                      tap(() => {
+                      map(() => {
                         void this.router.navigateByUrl(next);
+                        return EMPTY;
+                      }),
+                      catchError((httpResponse: HttpErrorResponse) => {
+                        if (
+                          httpResponse.status === 400 &&
+                          (httpResponse.error as genericResponseError).error
+                            .detail === 'invitation-revoked-error'
+                        ) {
+                          this.appService.toastNotification({
+                            message: 'errors.invitation_no_longer_valid',
+                            status: TuiNotification.Error,
+                            autoClose: false,
+                            closeOnNavigation: false,
+                          });
+                          if (isNextAnonProject) {
+                            void this.router.navigateByUrl(next);
+                          } else {
+                            void this.router.navigate(['/']);
+                          }
+                          return EMPTY;
+                        }
+                        this.appService.errorManagement(httpResponse);
                         return EMPTY;
                       })
                     );

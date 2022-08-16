@@ -49,6 +49,7 @@ export class ProjectInvitationGuard implements CanActivate {
                   next: `/project/${invitation.project.slug}`,
                   projectInvitationToken: token,
                   acceptProjectInvitation: false,
+                  isNextAnonProject: invitation.project.isAnon,
                 },
               });
             }
@@ -65,6 +66,7 @@ export class ProjectInvitationGuard implements CanActivate {
                   email: invitation.email,
                   acceptProjectInvitation: false,
                   projectInvitationToken: token,
+                  isNextAnonProject: invitation.project.isAnon,
                 },
               });
             }
@@ -80,6 +82,7 @@ export class ProjectInvitationGuard implements CanActivate {
           this.appService.toastNotification({
             message: 'errors.invalid_token_toast_message',
             status: TuiNotification.Error,
+            closeOnNavigation: false,
           });
           return throwError(httpResponse);
         })

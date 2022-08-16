@@ -6,13 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -40,6 +34,7 @@ export class LoginComponent implements OnInit {
   @Input() public projectInvitationToken = '';
   @Input() public acceptProjectInvitation = undefined;
   @Input() public next = '';
+  @Input() public isNextAnonProject = '';
 
   public readonly model$ = this.state.select();
 
@@ -49,8 +44,7 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private store: Store,
     private state: RxState<{ loginError: boolean }>,
-    private cd: ChangeDetectorRef,
-    private el: ElementRef
+    private cd: ChangeDetectorRef
   ) {}
 
   public ngOnInit(): void {
@@ -70,7 +64,6 @@ export class LoginComponent implements OnInit {
 
   public onSubmit() {
     const { username, password } = this.loginForm.value as Login;
-
     if (this.loginForm.valid) {
       this.store.dispatch(
         login({
@@ -79,6 +72,9 @@ export class LoginComponent implements OnInit {
           projectInvitationToken: this.projectInvitationToken,
           next: this.next,
           acceptProjectInvitation: this.acceptProjectInvitation === 'true',
+          isNextAnonProject: this.isNextAnonProject
+            ? this.isNextAnonProject.toLocaleLowerCase() === 'true'
+            : false,
         })
       );
     } else {

@@ -130,7 +130,7 @@ export class AuthEffects {
                             .detail === 'invitation-revoked-error'
                         ) {
                           this.appService.toastNotification({
-                            message: 'errors.invitation_no_longer_valid',
+                            message: 'errors.no_permission_to_see',
                             status: TuiNotification.Error,
                             autoClose: false,
                             closeOnNavigation: false,

@@ -11,16 +11,16 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
-import { UsersApiService } from '@taiga/api';
+import { ProjectApiService, UsersApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 import { Auth, InvitationInfo, User } from '@taiga/data';
-import { throwError } from 'rxjs';
+import { forkJoin, throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
 import { loginSuccess } from '../data-access/+state/actions/auth.actions';
 import { AuthService } from '../services/auth.service';
 
-type InvitationVerification = Pick<InvitationInfo, 'project'>;
+type InvitationVerification = Pick<InvitationInfo, 'project' | 'status'>;
 type VerificationData = {
   auth: Auth;
   projectInvitation: InvitationVerification;
@@ -37,7 +37,8 @@ export class VerifyEmailGuard implements CanActivate {
     private router: Router,
     private store: Store,
     private authService: AuthService,
-    private usersApiService: UsersApiService
+    private usersApiService: UsersApiService,
+    private projectApiService: ProjectApiService
   ) {}
   public canActivate(route: ActivatedRouteSnapshot) {
     const verifyParam = route.params.path as string;
@@ -51,14 +52,30 @@ export class VerifyEmailGuard implements CanActivate {
       .pipe(
         mergeMap((verification: VerificationData) => {
           this.authService.setAuth(verification.auth);
-          return this.usersApiService.me().pipe(
-            map((user: User) => {
-              this.authService.setUser(user);
-              return { user, verification };
-            })
+          return forkJoin(
+            this.usersApiService.me().pipe(
+              map((user: User) => {
+                this.authService.setUser(user);
+                return { user, verification };
+              })
+            ),
+            this.projectApiService
+              .getProject(verification.projectInvitation?.project?.slug)
+              .pipe(
+                catchError((httpResponse: HttpErrorResponse) => {
+                  this.appService.toastNotification({
+                    message: 'errors.no_permission_to_see',
+                    status: TuiNotification.Error,
+                    autoClose: false,
+                    closeOnNavigation: false,
+                  });
+                  void this.router.navigate(['/signup']);
+                  return throwError(httpResponse);
+                })
+              )
           );
         }),
-        map(({ user, verification }) => {
+        map(([{ user, verification }]) => {
           const slug = verification.projectInvitation?.project?.slug;
           const data = {
             user,

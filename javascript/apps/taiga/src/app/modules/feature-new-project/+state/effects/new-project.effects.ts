@@ -11,14 +11,14 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 
 import { map, switchMap } from 'rxjs/operators';
 
-import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
-import { ProjectApiService } from '@taiga/api';
-import { pessimisticUpdate } from '@nrwl/angular';
-import { Project } from '@taiga/data';
-import { Router } from '@angular/router';
-import { AppService } from '~/app/services/app.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
+import { ProjectApiService } from '@taiga/api';
+import { Project } from '@taiga/data';
+import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
+import { AppService } from '~/app/services/app.service';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 
 @Injectable()

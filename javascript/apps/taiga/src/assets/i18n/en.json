@@ -89,6 +89,7 @@
     "generic_toast_label": "Something went wrong!",
     "generic_toast_message": "Try again in a few minutes.",
     "invalid_token_toast_message": "Invalid token.",
-    "invitation_no_longer_valid": "The invitation is no longer valid."
+    "invitation_no_longer_valid": "The invitation is no longer valid.",
+    "no_permission_to_see": "No permissions to see the project."
   }
 }

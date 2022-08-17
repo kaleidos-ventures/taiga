@@ -40,9 +40,12 @@ export class ProjectInvitationGuard implements CanActivate {
         mergeMap((invitation: InvitationInfo) => {
           if (invitation.existingUser) {
             if (this.authService.isLogged()) {
-              void this.router.navigate([
-                `/project/${invitation.project.slug}`,
-              ]);
+              void this.router.navigate(
+                ['/project/', invitation.project.slug],
+                {
+                  state: { invite: invitation.status },
+                }
+              );
             } else {
               void this.router.navigate(['/login'], {
                 queryParams: {
@@ -55,20 +58,40 @@ export class ProjectInvitationGuard implements CanActivate {
             }
           } else {
             if (invitation.project.isAnon) {
-              void this.router.navigate([
-                `/project/${invitation.project.slug}`,
-              ]);
+              void this.router.navigate(
+                ['/project/', invitation.project.slug],
+                {
+                  state: { invite: invitation.status },
+                }
+              );
               return of(true);
             } else {
-              void this.router.navigate(['/signup'], {
-                queryParams: {
-                  project: invitation.project.name,
-                  email: invitation.email,
-                  acceptProjectInvitation: false,
-                  projectInvitationToken: token,
-                  isNextAnonProject: invitation.project.isAnon,
-                },
-              });
+              if (invitation.status === 'revoked') {
+                this.appService.toastNotification({
+                  message: 'errors.no_permission_to_see',
+                  status: TuiNotification.Error,
+                  autoClose: false,
+                  closeOnNavigation: false,
+                });
+                void this.router.navigate(['/signup'], {
+                  queryParams: {
+                    email: invitation.email,
+                    acceptProjectInvitation: false,
+                    projectInvitationToken: token,
+                    isNextAnonProject: invitation.project.isAnon,
+                  },
+                });
+              } else {
+                void this.router.navigate(['/signup'], {
+                  queryParams: {
+                    project: invitation.project.name,
+                    email: invitation.email,
+                    acceptProjectInvitation: false,
+                    projectInvitationToken: token,
+                    isNextAnonProject: invitation.project.isAnon,
+                  },
+                });
+              }
             }
           }
           return of(true);

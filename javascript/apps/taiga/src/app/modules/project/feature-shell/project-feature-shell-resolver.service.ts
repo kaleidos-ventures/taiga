@@ -6,15 +6,16 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { TuiNotification } from '@taiga-ui/core';
+import { ProjectApiService } from '@taiga/api';
+import { of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
-import { ProjectApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { of } from 'rxjs';
-import { Store } from '@ngrx/store';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,8 @@ export class ProjectFeatureShellResolverService {
   constructor(
     private store: Store,
     private appService: AppService,
-    private projectApiService: ProjectApiService
+    private projectApiService: ProjectApiService,
+    private router: Router
   ) {}
 
   public resolve(route: ActivatedRouteSnapshot) {
@@ -35,7 +37,18 @@ export class ProjectFeatureShellResolverService {
       }),
       catchError((httpResponse: HttpErrorResponse) => {
         requestAnimationFrame(() => {
-          this.appService.errorManagement(httpResponse);
+          const status = window.history.state as { invite: string } | undefined;
+          if (status?.invite === 'revoked') {
+            this.appService.toastNotification({
+              message: 'errors.no_permission_to_see',
+              status: TuiNotification.Error,
+              autoClose: false,
+              closeOnNavigation: false,
+            });
+            void this.router.navigate(['/']);
+          } else {
+            this.appService.errorManagement(httpResponse);
+          }
         });
 
         return of(null);

@@ -61,9 +61,10 @@ describe('Project Invitation Guard', () => {
     invitation.existingUser = true;
     req.flush(invitation);
 
-    expect(router.navigate).toHaveBeenCalledWith([
-      `/project/${invitation.project.slug}`,
-    ]);
+    expect(router.navigate).toHaveBeenCalledWith(
+      [`/project/`, invitation.project.slug],
+      { state: { invite: 'pending' } }
+    );
   });
 
   it('Unlogged Existing User: Navigate to login', (done) => {
@@ -131,9 +132,10 @@ describe('Project Invitation Guard', () => {
     invitation.existingUser = false;
     req.flush(invitation);
 
-    expect(router.navigate).toHaveBeenCalledWith([
-      `/project/${invitation.project.slug}`,
-    ]);
+    expect(router.navigate).toHaveBeenCalledWith(
+      [`/project/`, invitation.project.slug],
+      { state: { invite: 'pending' } }
+    );
   });
 
   it('Non Existing User in Private Project: Navigate to Signup', (done) => {

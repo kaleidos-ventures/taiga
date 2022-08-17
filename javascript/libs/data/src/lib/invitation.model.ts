@@ -31,7 +31,7 @@ export interface InvitationResponse {
 }
 
 export interface InvitationInfo {
-  status: 'pending' | 'accepted' | 'cacelled';
+  status: 'pending' | 'accepted' | 'revoked';
   email: string;
   existingUser: boolean;
   project: {

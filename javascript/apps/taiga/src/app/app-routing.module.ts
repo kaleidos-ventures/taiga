@@ -7,13 +7,13 @@
  */
 
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
-import { AuthGuard } from './modules/auth/guards/auth.guard';
+import { LogoutComponent } from './modules/auth/components/logout/logout.component';
 import { AuthFeatureLoginGuard } from './modules/auth/feature-login/auth-feature-login.guard';
+import { AuthGuard } from './modules/auth/guards/auth.guard';
 import { ProjectInvitationCTAGuard } from './modules/project/data-access/guards/project-invitation-cta.guard';
 import { ProjectInvitationGuard } from './modules/project/data-access/guards/project-invitation.guard';
-import { LogoutComponent } from './modules/auth/components/logout/logout.component';
 
 const routes: Routes = [
   {

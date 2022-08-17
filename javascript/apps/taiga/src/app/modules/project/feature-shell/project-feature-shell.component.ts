@@ -7,17 +7,21 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
-import { WsService } from '~/app/services/ws';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { WsService } from '~/app/services/ws';
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'tg-project-feature-shell',
@@ -61,9 +65,9 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
   public animationDisabled = true;
 
   constructor(
-    private router: Router,
     private store: Store,
     private wsService: WsService,
+    private cd: ChangeDetectorRef,
     private state: RxState<{
       project: Project;
     }>,
@@ -120,6 +124,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
   public ngAfterViewInit() {
     setTimeout(() => {
       this.animationDisabled = false;
+      this.cd.detectChanges();
     }, 1000);
   }
 

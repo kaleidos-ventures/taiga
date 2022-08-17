@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { animate, style, transition, trigger } from '@angular/animations';
 import {
   AfterViewChecked,
   ChangeDetectorRef,
@@ -16,17 +16,18 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
+import { Invitation, Project, User } from '@taiga/data';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+
+import { selectNotificationClosed } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { filterNil } from '~/app/shared/utils/operators';
 import {
   initProjectOverview,
   resetOverview,
 } from './data-access/+state/actions/project-overview.actions';
-import { Invitation, Project, User } from '@taiga/data';
-import { RxState } from '@rx-angular/state';
 import { selectInvitations } from './data-access/+state/selectors/project-overview.selectors';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { filterNil } from '~/app/shared/utils/operators';
-import { selectNotificationClosed } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
-import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'tg-project-feature-overview',

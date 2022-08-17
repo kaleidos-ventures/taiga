@@ -6,11 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createReducer, on, createFeature } from '@ngrx/store';
-import { immerReducer } from '~/app/shared/utils/store';
-import * as ProjectActions from '../actions/project.actions';
+import { createFeature, createReducer, on } from '@ngrx/store';
 import { Project } from '@taiga/data';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { immerReducer } from '~/app/shared/utils/store';
+import * as ProjectActions from '../actions/project.actions';
 
 export const projectFeatureKey = 'project';
 
@@ -29,6 +29,17 @@ export const reducer = createReducer(
   on(ProjectActions.fetchProjectSuccess, (state, { project }): ProjectState => {
     state.projects[project.slug] = project;
     state.currentProjectSlug = project.slug;
+
+    return state;
+  }),
+  on(ProjectActions.revokedInvitation, (state): ProjectState => {
+    if (state.currentProjectSlug) {
+      const project = state.projects[state.currentProjectSlug];
+
+      if (project) {
+        project.userHasPendingInvitation = false;
+      }
+    }
 
     return state;
   }),

@@ -12,6 +12,7 @@ import { InvitationService } from '~/app/services/invitation.service';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
+
 export interface ProjectOverviewState {
   members: Membership[];
   invitations: Invitation[];

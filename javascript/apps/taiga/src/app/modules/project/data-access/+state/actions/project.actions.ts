@@ -22,3 +22,7 @@ export const fetchProject = createAction(
 export const eventInvitation = createAction(
   '[Project][ws] invitation received'
 );
+
+export const revokedInvitation = createAction(
+  '[Project][ws] invitation revoked'
+);

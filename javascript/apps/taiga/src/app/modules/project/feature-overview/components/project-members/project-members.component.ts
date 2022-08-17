@@ -12,7 +12,6 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Invitation, Membership, Project, User } from '@taiga/data';
-import { WsService } from '~/app/services/ws';
 import { Subject } from 'rxjs';
 import { delay, map, take } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
@@ -37,6 +36,7 @@ import {
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
+import { WsService } from '~/app/services/ws';
 import {
   acceptInvitationSlug,
   acceptInvitationSlugSuccess,

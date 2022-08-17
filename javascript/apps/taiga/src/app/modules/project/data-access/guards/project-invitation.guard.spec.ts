@@ -96,7 +96,7 @@ describe('Project Invitation Guard', () => {
       next: `/project/${invitation.project.slug}`,
       acceptProjectInvitation: false,
       projectInvitationToken: token,
-      isNextAnonProject: false,
+      isNextAnonProject: invitation.project.isAnon,
     };
 
     invitation.existingUser = true;

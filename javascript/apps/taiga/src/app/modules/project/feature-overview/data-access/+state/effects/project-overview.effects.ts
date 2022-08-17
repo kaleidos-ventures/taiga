@@ -6,13 +6,21 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY, of, zip } from 'rxjs';
-import { catchError, exhaustMap, map } from 'rxjs/operators';
+import { catchError, exhaustMap, filter, map, switchMap } from 'rxjs/operators';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
+import { AppService } from '~/app/services/app.service';
+import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
 import {
@@ -22,9 +30,6 @@ import {
   selectMembers,
   selectShowAllMembers,
 } from '../selectors/project-overview.selectors';
-import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
-import { AppService } from '~/app/services/app.service';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class ProjectOverviewEffects {
@@ -197,10 +202,50 @@ export class ProjectOverviewEffects {
     );
   });
 
+  public wsRevokeInvitations$ = createEffect(() => {
+    return this.store.select(selectUser).pipe(
+      filterNil(),
+      switchMap((user) => {
+        return this.wsService
+          .events<{ project: string }>({
+            channel: `users.${user.username}`,
+            type: 'projectinvitations.revoke',
+          })
+          .pipe(
+            concatLatestFrom(() =>
+              this.store.select(selectCurrentProject).pipe(filterNil())
+            ),
+            filter(
+              ([eventResponse, project]) =>
+                eventResponse.event.content.project === project.slug
+            ),
+            map(([, project]) => {
+              let errorMessage;
+              if (!project.userPermissions.length) {
+                void this.router.navigate(['/']);
+                errorMessage = 'errors.no_permission_to_see';
+              } else {
+                errorMessage = 'errors.invitation_no_longer_valid';
+              }
+              this.appService.toastNotification({
+                message: errorMessage,
+                status: TuiNotification.Error,
+                autoClose: false,
+                closeOnNavigation: false,
+              });
+              return ProjectActions.revokedInvitation();
+            })
+          );
+      })
+    );
+  });
+
   constructor(
     private store: Store,
     private actions$: Actions,
     private projectApiService: ProjectApiService,
-    private appService: AppService
+    private appService: AppService,
+    private wsService: WsService,
+    private router: Router
   ) {}
 }

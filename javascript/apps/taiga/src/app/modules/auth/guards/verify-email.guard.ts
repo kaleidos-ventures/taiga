@@ -62,7 +62,7 @@ export class VerifyEmailGuard implements CanActivate {
             this.projectApiService
               .getProject(verification.projectInvitation?.project?.slug)
               .pipe(
-                catchError((httpResponse: HttpErrorResponse) => {
+                catchError(() => {
                   this.appService.toastNotification({
                     message: 'errors.no_permission_to_see',
                     status: TuiNotification.Error,
@@ -70,7 +70,7 @@ export class VerifyEmailGuard implements CanActivate {
                     closeOnNavigation: false,
                   });
                   void this.router.navigate(['/signup']);
-                  return throwError(httpResponse);
+                  return throwError(() => new Error('No permission to see'));
                 })
               )
           );
@@ -103,7 +103,7 @@ export class VerifyEmailGuard implements CanActivate {
           } else if (httpResponse.status === 400) {
             void this.router.navigate(['/login']);
           }
-          return throwError(httpResponse);
+          return throwError(() => new Error('Invalid token'));
         })
       );
   }

@@ -17,13 +17,13 @@ import { fetch } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import { AppService } from '~/app/services/app.service';
 import { WsService } from '~/app/services/ws';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectActions from '../actions/project.actions';
-
 import { selectCurrentProject } from '../selectors/project.selectors';
 
 @Injectable()
@@ -56,6 +56,15 @@ export class ProjectEffects {
     },
     { dispatch: false }
   );
+
+  public revokedInvitation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.revokedInvitation),
+      map(() => {
+        return membersActions.updateMembersList({ eventType: 'update' });
+      })
+    );
+  });
 
   public acceptedInvitation$ = createEffect(() => {
     return this.actions$.pipe(

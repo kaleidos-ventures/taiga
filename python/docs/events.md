@@ -233,6 +233,8 @@ projectinvitations.update
 userstories.delete
 ```
 
+We may also have other actions if required; for example: `projectinvitations.revoke`
+
 
 #### `projectinvitations.create`
 
@@ -253,6 +255,22 @@ Content for:
 #### `projectinvitations.update`
 
 It happens when one or more invitations are updated
+
+Content for:
+- user channel:
+  ```
+  {
+      "project": "project_slug"
+  }
+  ```
+- project channel:
+  ```
+  null
+  ```
+
+#### `projectinvitations.revoke`
+
+It happens when one invitation is revoked
 
 Content for:
 - user channel:

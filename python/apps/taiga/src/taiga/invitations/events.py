@@ -15,7 +15,7 @@ from taiga.users.models import User
 CREATE_PROJECT_INVITATION = "projectinvitations.create"
 ACCEPT_PROJECT_INVITATION = "projectmemberships.create"
 UPDATE_PROJECT_INVITATION = "projectinvitations.update"
-REVOKE_PROJECT_INVITATION = "projectinvitations.update"
+REVOKE_PROJECT_INVITATION = "projectinvitations.revoke"
 
 
 async def emit_event_when_project_invitations_are_created(

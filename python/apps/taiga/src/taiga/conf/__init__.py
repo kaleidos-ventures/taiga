@@ -71,7 +71,7 @@ class Settings(BaseSettings):
     # Projects
     PROJECT_INVITATION_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
     PROJECT_INVITATION_RESEND_LIMIT: int = 10
-    PROJECT_INVITATION_RESEND_TIME: int = 10 * 60  # 10 minutes * 60 seconds = 600 seconds
+    PROJECT_INVITATION_RESEND_TIME: int = 10  # 10 minutes
     DEFAULT_PROJECT_TEMPLATE: str = "kanban"
 
     # Tasks (linux crontab style)

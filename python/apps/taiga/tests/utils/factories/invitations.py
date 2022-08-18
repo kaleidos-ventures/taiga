@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from asgiref.sync import sync_to_async
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.invitations.choices import ProjectInvitationStatus
 
 from .base import Factory, factory
@@ -18,6 +19,7 @@ class ProjectInvitationFactory(Factory):
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
     role = factory.SubFactory("tests.utils.factories.ProjectRoleFactory")
     invited_by = factory.SubFactory("tests.utils.factories.UserFactory")
+    created_at = aware_utcnow()
     num_emails_sent = 1
     resent_at = None
     resent_by = None

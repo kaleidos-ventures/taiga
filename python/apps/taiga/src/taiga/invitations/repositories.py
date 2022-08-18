@@ -137,7 +137,7 @@ def create_project_invitations(objs: list[ProjectInvitation]) -> list[ProjectInv
 @sync_to_async
 def update_project_invitations(objs: list[ProjectInvitation]) -> int:
     return ProjectInvitation.objects.select_related("user", "project").bulk_update(
-        objs=objs, fields=["role", "invited_by", "num_emails_sent"]
+        objs=objs, fields=["role", "invited_by", "num_emails_sent", "resent_at", "resent_by"]
     )
 
 

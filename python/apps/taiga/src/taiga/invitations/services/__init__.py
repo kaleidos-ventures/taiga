@@ -113,6 +113,11 @@ async def send_project_invitation_email(invitation: ProjectInvitation, is_resend
     )
 
 
+async def _get_time_since_last_send(invitation: ProjectInvitation) -> int:
+    last_send_at = invitation.resent_at if invitation.resent_at else invitation.created_at
+    return int((aware_utcnow() - last_send_at).total_seconds() / 60)  # in minutes
+
+
 async def create_project_invitations(
     project: Project, invitations: list[dict[str, str]], invited_by: User
 ) -> CreateProjectInvitations:
@@ -179,8 +184,16 @@ async def create_project_invitations(
         if pending_invitation:
             pending_invitation.role = project_roles_dict[role_slug]
             pending_invitation.invited_by = invited_by
-            if pending_invitation.num_emails_sent < settings.PROJECT_INVITATION_RESEND_LIMIT:
+
+            # To avoid spam
+            time_since_last_send = await _get_time_since_last_send(pending_invitation)
+            if (
+                pending_invitation.num_emails_sent < settings.PROJECT_INVITATION_RESEND_LIMIT
+                and time_since_last_send >= settings.PROJECT_INVITATION_RESEND_TIME
+            ):
                 pending_invitation.num_emails_sent += 1
+                pending_invitation.resent_at = aware_utcnow()
+                pending_invitation.resent_by = invited_by
                 invitations_to_send[email] = pending_invitation
             invitations_to_update[email] = pending_invitation
         else:
@@ -273,16 +286,11 @@ async def resend_project_invitation(invitation: ProjectInvitation, resent_by: Us
     if invitation.status == ProjectInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation has already been revoked")
 
-    time_since_last_resend = (
-        (aware_utcnow() - invitation.resent_at).seconds
-        if invitation.resent_at
-        else settings.PROJECT_INVITATION_RESEND_TIME
-    )
-
     # To avoid spam
+    time_since_last_send = await _get_time_since_last_send(invitation)
     if (
         invitation.num_emails_sent < settings.PROJECT_INVITATION_RESEND_LIMIT
-        and time_since_last_resend >= settings.PROJECT_INVITATION_RESEND_TIME
+        and time_since_last_send >= settings.PROJECT_INVITATION_RESEND_TIME
     ):
         await invitations_repositories.resend_project_invitation(invitation=invitation, resent_by=resent_by)
 

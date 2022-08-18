@@ -110,7 +110,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tg-project-card
           variant="invitation"
           (rejectInvite)="rejectProjectInvite($event)"
-          (acceptInvite)="acceptProjectInvite($event)"
+          (acceptInvite)="acceptProjectInvite($event.slug, $event.name)"
           [workspace]="workspace"
           [project]="invitation">
         </tg-project-card>

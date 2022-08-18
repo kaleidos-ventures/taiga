@@ -6,36 +6,37 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { randEmail, randSlug, randUserName, randWord } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { InvitationApiService, ProjectApiService } from '@taiga/api';
-import { AppService } from '~/app/services/app.service';
-import { Observable } from 'rxjs';
-import { randEmail, randSlug, randUserName, randWord } from '@ngneat/falso';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { InvitationApiService, ProjectApiService } from '@taiga/api';
+import { Observable } from 'rxjs';
+import { AppService } from '~/app/services/app.service';
 
-import { InvitationEffects } from './invitation.effects';
-import {
-  acceptInvitationSlugSuccess,
-  acceptInvitationSlug,
-  searchUser,
-  searchUserSuccess,
-  inviteUsersSuccess,
-  acceptInvitationSlugError,
-} from '../actions/invitation.action';
-import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
-import { cold, hot } from 'jest-marbles';
 import {
   Contact,
   InvitationResponse,
-  UserMockFactory,
   MembershipMockFactory,
   RegisteredContactMockFactory,
+  UserMockFactory,
 } from '@taiga/data';
-import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { cold, hot } from 'jest-marbles';
 import { TestScheduler } from 'rxjs/testing';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
+import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import {
+  acceptInvitationSlug,
+  acceptInvitationSlugError,
+  acceptInvitationSlugSuccess,
+  inviteUsersSuccess,
+  revokeInvitation,
+  searchUser,
+  searchUserSuccess,
+} from '../actions/invitation.action';
+import { InvitationEffects } from './invitation.effects';
 
 describe('InvitationEffects', () => {
   let actions$: Observable<Action>;
@@ -143,6 +144,11 @@ describe('InvitationEffects', () => {
         {},
         {
           status: 400,
+          error: {
+            error: {
+              detail: 'bad-request',
+            },
+          },
         }
       )
     );
@@ -153,6 +159,41 @@ describe('InvitationEffects', () => {
 
     const expected = cold('--a', {
       a: acceptInvitationSlugError({ projectSlug: slug }),
+    });
+
+    expect(effects.acceptInvitationSlug$).toBeObservable(expected);
+
+    expect(effects.acceptInvitationSlug$).toSatisfyOnFlush(() => {
+      expect(appService.toastNotification).toHaveBeenCalled();
+    });
+  });
+
+  it('Accept invitation revoke error', () => {
+    const slug = randSlug();
+    const effects = spectator.inject(InvitationEffects);
+    const appService = spectator.inject(AppService);
+    const projectApiService = spectator.inject(ProjectApiService);
+    projectApiService.acceptInvitationSlug.mockReturnValue(
+      cold(
+        '-#|',
+        {},
+        {
+          status: 400,
+          error: {
+            error: {
+              detail: 'invitation-revoked-error',
+            },
+          },
+        }
+      )
+    );
+
+    actions$ = hot('-a', {
+      a: acceptInvitationSlug({ slug }),
+    });
+
+    const expected = cold('--a', {
+      a: revokeInvitation({ projectSlug: slug }),
     });
 
     expect(effects.acceptInvitationSlug$).toBeObservable(expected);

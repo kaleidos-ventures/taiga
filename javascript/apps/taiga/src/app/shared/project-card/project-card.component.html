@@ -94,7 +94,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           tuiButton
           [@itemSlideOutAnimation]
           *ngIf="invitationStatus !== 'accepted'"
-          (click)="acceptInvite.next(project.slug)"
+          (click)="
+            acceptInvite.next({ slug: project.slug, name: project.name })
+          "
           appearance="primary"
           type="button">
           {{ t('project.card.accept_invite') }}

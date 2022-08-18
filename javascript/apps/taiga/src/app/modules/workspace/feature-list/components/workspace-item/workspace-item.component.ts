@@ -7,6 +7,13 @@
  */
 
 import {
+  animate,
+  AnimationEvent,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+import {
   ChangeDetectionStrategy,
   Component,
   Input,
@@ -14,16 +21,11 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import {
-  animate,
-  style,
-  transition,
-  trigger,
-  AnimationEvent,
-} from '@angular/animations';
 import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 import {
   fetchWorkspaceProjects,
   setWorkspaceListRejectedInvites,
@@ -33,8 +35,6 @@ import {
   selectRejectedInvites,
   selectWorkspaceProject,
 } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
-import { RxState } from '@rx-angular/state';
-import { map, take } from 'rxjs/operators';
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
@@ -279,10 +279,11 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     return project.slug;
   }
 
-  public acceptProjectInvite(slug: Project['slug']) {
+  public acceptProjectInvite(slug: Project['slug'], name: Project['name']) {
     this.store.dispatch(
       acceptInvitationSlug({
         slug,
+        name,
       })
     );
   }

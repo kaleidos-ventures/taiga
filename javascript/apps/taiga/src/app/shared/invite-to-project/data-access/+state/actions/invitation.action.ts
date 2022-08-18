@@ -7,7 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { Contact, Invitation } from '@taiga/data';
+import { Contact, Invitation, Project } from '@taiga/data';
 
 export const inviteUsersSuccess = createAction(
   '[Invitation] invite users success',
@@ -20,7 +20,7 @@ export const inviteUsersSuccess = createAction(
 
 export const acceptInvitationSlug = createAction(
   '[Invitation] Accept your invitation via Slug',
-  props<{ slug: string }>()
+  props<{ slug: string; name?: string }>()
 );
 
 export const acceptInvitationSlugSuccess = createAction(
@@ -31,6 +31,11 @@ export const acceptInvitationSlugSuccess = createAction(
 export const acceptInvitationSlugError = createAction(
   '[Invitation] Error accept your invitation via Slug',
   props<{ projectSlug: string }>()
+);
+
+export const revokeInvitation = createAction(
+  '[WorkspaceList] revoke invitation',
+  props<{ projectSlug: Project['slug'] }>()
 );
 
 export const inviteUsersError = createAction('[Invitation] invite users error');

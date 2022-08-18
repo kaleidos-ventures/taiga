@@ -8,17 +8,17 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { TuiNotification, TuiAlertService } from '@taiga-ui/core';
-import {
-  unexpectedError,
-  forbidenError,
-} from '../modules/errors/+state/actions/errors.actions';
-import { ErrorManagementOptions, UnexpectedError } from '@taiga/data';
-import { Store } from '@ngrx/store';
-import { HashMap, TranslocoService } from '@ngneat/transloco';
-import { filter, take, takeUntil } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
 import { NavigationStart, Router } from '@angular/router';
+import { HashMap, TranslocoService } from '@ngneat/transloco';
+import { Store } from '@ngrx/store';
+import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
+import { ErrorManagementOptions, UnexpectedError } from '@taiga/data';
+import { forkJoin, of } from 'rxjs';
+import { filter, take, takeUntil } from 'rxjs/operators';
+import {
+  forbidenError,
+  unexpectedError,
+} from '../modules/errors/+state/actions/errors.actions';
 
 @Injectable({
   providedIn: 'root',

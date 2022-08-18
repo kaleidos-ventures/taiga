@@ -90,6 +90,8 @@
     "generic_toast_message": "Try again in a few minutes.",
     "invalid_token_toast_message": "Invalid token.",
     "invitation_no_longer_valid": "The invitation is no longer valid.",
+    "project_invitation_no_longer_valid": "The invitation to {{ name }} is no longer valid.",
+
     "no_permission_to_see": "No permissions to see the project."
   }
 }

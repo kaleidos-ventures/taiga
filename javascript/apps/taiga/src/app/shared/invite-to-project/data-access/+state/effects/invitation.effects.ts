@@ -16,6 +16,7 @@ import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import {
   Contact,
   ErrorManagementToastOptions,
+  genericResponseError,
   InvitationResponse,
 } from '@taiga/data';
 import { throwError } from 'rxjs';
@@ -30,6 +31,17 @@ import * as InvitationActions from '../actions/invitation.action';
 
 @Injectable()
 export class InvitationEffects {
+  public revokeInvitation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(InvitationActions.revokeInvitation),
+      map((action) => {
+        return InvitationActions.acceptInvitationSlugError({
+          projectSlug: action.projectSlug,
+        });
+      })
+    );
+  });
+
   public sendInvitations$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(NewProjectActions.inviteUsersToProject),
@@ -134,7 +146,26 @@ export class InvitationEffects {
             })
           );
         },
-        undoAction: (action) => {
+        undoAction: (action, httpResponse: HttpErrorResponse) => {
+          console.log(httpResponse);
+          if (
+            httpResponse.status === 400 &&
+            (httpResponse.error as genericResponseError).error.detail ===
+              'invitation-revoked-error'
+          ) {
+            this.appService.toastNotification({
+              message: 'errors.project_invitation_no_longer_valid',
+              paramsMessage: {
+                name: action.name,
+              },
+              status: TuiNotification.Error,
+              autoClose: false,
+              closeOnNavigation: false,
+            });
+            return InvitationActions.revokeInvitation({
+              projectSlug: action.slug,
+            });
+          }
           this.appService.toastNotification({
             label: 'errors.generic_toast_label',
             message: 'errors.generic_toast_message',

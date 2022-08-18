@@ -6,8 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createReducer, on, createFeature } from '@ngrx/store';
-import { WorkspaceProject, Workspace, Project } from '@taiga/data';
+import { createFeature, createReducer, on } from '@ngrx/store';
+import { Project, Workspace, WorkspaceProject } from '@taiga/data';
+import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state//actions/invitation.action';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace.actions';
 
@@ -114,6 +115,14 @@ export const reducer = createReducer(
     WorkspaceActions.setWorkspaceListRejectedInvites,
     (state, { projects }): WorkspaceState => {
       state.rejectedInvites = projects;
+
+      return state;
+    }
+  ),
+  on(
+    InvitationActions.revokeInvitation,
+    (state, { projectSlug }): WorkspaceState => {
+      state.rejectedInvites.push(projectSlug);
 
       return state;
     }

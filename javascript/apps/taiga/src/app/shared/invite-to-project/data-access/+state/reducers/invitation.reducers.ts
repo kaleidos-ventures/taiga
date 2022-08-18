@@ -6,12 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createReducer, on, createFeature } from '@ngrx/store';
-import { immerReducer } from '~/app/shared/utils/store';
-import * as InvitationActions from '../actions/invitation.action';
-import * as RolesPermissionsActions from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
+import { createFeature, createReducer, on } from '@ngrx/store';
 import { Contact, Invitation, Membership, Role } from '@taiga/data';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
+import * as RolesPermissionsActions from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
+import { immerReducer } from '~/app/shared/utils/store';
+import * as InvitationActions from '../actions/invitation.action';
 
 export interface InvitationState {
   memberRoles: Role[] | null;

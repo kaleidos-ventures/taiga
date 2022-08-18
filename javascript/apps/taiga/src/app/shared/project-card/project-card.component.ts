@@ -109,7 +109,10 @@ export class ProjectCardComponent implements OnInit {
   public rejectInvite = new EventEmitter<Project['slug']>();
 
   @Output()
-  public acceptInvite = new EventEmitter<Project['slug']>();
+  public acceptInvite = new EventEmitter<{
+    name: Project['name'];
+    slug: Project['slug'];
+  }>();
 
   @HostBinding('attr.data-invite-status')
   public invitationStatus: 'accepted' | null = null;

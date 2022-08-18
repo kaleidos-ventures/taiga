@@ -6,23 +6,23 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { WorkspaceItemComponent } from './workspace-item.component';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MemoizedSelector } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   Project,
   WorkspaceAdminMockFactory,
   WorkspaceMemberMockFactory,
   WorkspaceMockFactory,
 } from '@taiga/data';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   fetchWorkspaceProjects,
   setWorkspaceListRejectedInvites,
 } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
-import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
-import { selectRejectedInvites } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
-import { MemoizedSelector } from '@ngrx/store';
 import { WorkspaceState } from '~/app/modules/workspace/feature-list/+state/reducers/workspace.reducer';
+import { selectRejectedInvites } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
+import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
+import { WorkspaceItemComponent } from './workspace-item.component';
 
 describe('WorkspaceItem', () => {
   const workspaceItem = WorkspaceMockFactory();
@@ -288,28 +288,34 @@ describe('WorkspaceItem', () => {
     it('Accept invitation does not remove the project from invitations but remove it from projects', (done) => {
       const projectsToShow = 50;
 
-      const acceptedInvitation = workspaceItemMember.invitedProjects[0].slug;
+      const acceptedInvitationSlug =
+        workspaceItemMember.invitedProjects[0].slug;
+      const acceptedInvitationName =
+        workspaceItemMember.invitedProjects[0].name;
 
       spectator.component.projectsToShow = projectsToShow;
 
       store.setState({
         ...initialState,
         invitation: {
-          acceptedInvite: [acceptedInvitation],
+          acceptedInvite: [acceptedInvitationSlug],
         },
       });
 
-      spectator.component.acceptProjectInvite(acceptedInvitation);
+      spectator.component.acceptProjectInvite(
+        acceptedInvitationSlug,
+        acceptedInvitationName
+      );
       spectator.detectChanges();
 
       spectator.component.model$.subscribe(({ projects, invitations }) => {
         expect(
           invitations.find(
-            (invitation) => invitation.slug === acceptedInvitation
+            (invitation) => invitation.slug === acceptedInvitationSlug
           )
         ).toBeTruthy();
         expect(
-          projects.find((project) => project.slug === acceptedInvitation)
+          projects.find((project) => project.slug === acceptedInvitationSlug)
         ).toBeFalsy();
 
         done();

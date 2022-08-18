@@ -7,6 +7,13 @@
  */
 
 import {
+  animate,
+  AnimationEvent,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+import {
   ChangeDetectionStrategy,
   Component,
   OnDestroy,
@@ -17,31 +24,24 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
-import { ResizedEvent } from '~/app/shared/resize/resize.model';
-import {
-  selectLoading,
-  selectWorkspace,
-  selectWorkspaceInvitedProjects,
-  selectWorkspaceProjects,
-  selectCreatingWorkspaceDetail,
-} from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
+import { Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 import {
   fetchWorkspace,
   resetWorkspace,
 } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
-import { filterNil } from '~/app/shared/utils/operators';
-import { map, take } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import {
-  animate,
-  style,
-  transition,
-  trigger,
-  AnimationEvent,
-} from '@angular/animations';
+  selectCreatingWorkspaceDetail,
+  selectLoading,
+  selectWorkspace,
+  selectWorkspaceInvitedProjects,
+  selectWorkspaceProjects,
+} from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
+import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
+import { filterNil } from '~/app/shared/utils/operators';
 
 interface ViewDetailModel {
   projects: WorkspaceProject[];
@@ -221,10 +221,11 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     this.setCardAmounts(event.newRect.width);
   }
 
-  public acceptProjectInvite(slug: Project['slug']) {
+  public acceptProjectInvite(slug: string, name?: string) {
     this.store.dispatch(
       acceptInvitationSlug({
         slug,
+        name,
       })
     );
   }

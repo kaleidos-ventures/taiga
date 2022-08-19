@@ -1,6 +1,10 @@
 # Get started (for developers)
 
-> **NOTE:** You need python >= 3.10. You can use [pyenv](https://github.com/pyenv/pyenv) tool to manage different python versions or install it in your OS.
+> **NOTE:** You need:
+>
+> - python >= 3.10. You can use [pyenv](https://github.com/pyenv/pyenv) tool to manage different python versions or install it in your OS.
+> - postgresql >= 13.x.
+> - [Optional] redis >= 6.2. You can use `memory` PubSub backend instead.
 
 Create a virtualenv in `python/` directory and activate it
 

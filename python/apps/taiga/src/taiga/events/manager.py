@@ -42,16 +42,17 @@
 
 
 import logging
+import sys
 from asyncio import create_task
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator, Type
+from typing import Any, AsyncIterator
 
 from fastapi import WebSocket
-from taiga.base.db import db_connection_params
 from taiga.base.utils.tests import is_test_running
-from taiga.events import channels
+from taiga.conf import settings
+from taiga.conf.events import PubSubBackendChoices
+from taiga.events import channels, pubsub
 from taiga.events.events import Event
-from taiga.events.pubsub import MemoryPubSubBackend, PostgresPubSubBackend, PubSubBackend
 from taiga.events.responses import EventResponse
 from taiga.events.subscriber import Subscriber
 from taiga.projects.models import Project
@@ -62,8 +63,8 @@ logger = logging.getLogger(__name__)
 
 
 class EventsManager:
-    def __init__(self, backend_class: Type[PubSubBackend] = PostgresPubSubBackend, **conn_kwargs: Any):
-        self._backend = backend_class(**conn_kwargs)
+    def __init__(self, backend: pubsub.PubSubBackend, **conn_kwargs: Any):
+        self._backend = backend
         self._subscribers: dict[int, Subscriber] = {}
         self._channels: dict[str, set[Subscriber]] = {}
 
@@ -72,7 +73,10 @@ class EventsManager:
         return self
 
     async def __aexit__(self, *args: Any, **kwargs: Any) -> None:
-        await self.disconnect()
+        try:
+            await self.disconnect()
+        except pubsub.PubSubBackendIsNotConnected:
+            pass
 
     async def _listener(self) -> None:
         while True:
@@ -101,7 +105,7 @@ class EventsManager:
         self._listener_task = create_task(self._listener())
 
         logger.info(
-            "Event manager connected.",
+            f"Event manager connected: {self._backend.__class__.__name__}",
             extra={"action": "manager.connect"},
         )
 
@@ -110,6 +114,7 @@ class EventsManager:
             self._listener_task.result()
         else:
             self._listener_task.cancel()
+
         await self._backend.disconnect()
 
         logger.info(
@@ -154,7 +159,11 @@ class EventsManager:
 
     async def unsubscribe(self, subscriber: Subscriber, channel: str) -> bool:
         if channel in self._channels:
-            self._channels[channel].remove(subscriber)
+            try:
+                self._channels[channel].remove(subscriber)
+            except KeyError:
+                # The subscriber is not subscribed
+                return False
 
             if not self._channels.get(channel, None):
                 del self._channels[channel]
@@ -212,10 +221,29 @@ class EventsManager:
 
 
 def initialize_manager() -> EventsManager:
-    if is_test_running():
-        return EventsManager(backend_class=MemoryPubSubBackend)
+    def _setup_pubsub_backend() -> pubsub.PubSubBackend:
+        match settings.EVENTS.PUBSUB_BACKEND:
+            case PubSubBackendChoices.REDIS:
+                return pubsub.RedisPubSubBackend(
+                    host=settings.EVENTS.REDIS_HOST,
+                    port=settings.EVENTS.REDIS_PORT,
+                    username=settings.EVENTS.REDIS_USERNAME,
+                    password=settings.EVENTS.REDIS_PASSWORD,
+                    db=settings.EVENTS.REDIS_DATABASE,
+                )
+            case _:  # PubSubBackendChoices..MEMORY
+                return pubsub.MemoryPubSubBackend()
 
-    return EventsManager(**db_connection_params())
+    try:
+        if is_test_running():
+            backend: pubsub.PubSubBackend = pubsub.MemoryPubSubBackend()
+        else:
+            backend = _setup_pubsub_backend()
+    except pubsub.PubSubBackendIsNotConnected as e:
+        logger.error(f"Error initializing the PubSub backend: {e}")
+        sys.exit(-1)
+
+    return EventsManager(backend=backend)
 
 
 manager = initialize_manager()

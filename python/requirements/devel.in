@@ -8,4 +8,4 @@ pip-tools
 # Typing stubs
 django-stubs  # django
 types-python-slugify  # python-slugify
-asyncpg-stubs  # asyncpg
+types-redis  # redis

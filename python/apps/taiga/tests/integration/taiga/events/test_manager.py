@@ -6,15 +6,26 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from unittest.mock import Mock
 
+import pytest
 from fastapi.websockets import WebSocket
-from taiga.base.db import db_connection_params
 from taiga.events import channels
 from taiga.events.events import Event
 from taiga.events.manager import EventsManager
+from taiga.events.pubsub import RedisPubSubBackend
 from tests.utils import factories as f
 
 
-async def test_pubsub_manager_publish_and_listen():
+@pytest.fixture
+async def pubsub() -> RedisPubSubBackend:
+    pubsub = RedisPubSubBackend(host="localhost", port=6379, db=0)
+    # pubsub = MemoryPubSubBackend()
+    yield pubsub
+
+    if pubsub.is_connected:
+        await pubsub.disconnect()
+
+
+async def test_pubsub_manager_publish_and_listen(pubsub):
     channel1 = "channel-1"
     channel2 = "channel-2"
     event11 = Event(type="ev-11")
@@ -23,7 +34,7 @@ async def test_pubsub_manager_publish_and_listen():
     event22 = Event(type="ev-22")
 
     websocket = Mock(spec=WebSocket, scope={})
-    async with EventsManager(**db_connection_params()) as manager:
+    async with EventsManager(backend=pubsub) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel1)
 
@@ -79,14 +90,14 @@ async def test_pubsub_manager_publish_and_listen():
             assert res.event == event22
 
 
-async def test_pubsub_manager_publish_on_system_channel():
+async def test_pubsub_manager_publish_on_system_channel(pubsub):
     channel = channels.system_channel()
     t = "event"
     c = {"msg": "msg"}
     event = Event(type=t, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})
-    async with EventsManager(**db_connection_params()) as manager:
+    async with EventsManager(backend=pubsub) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)
 
@@ -97,7 +108,7 @@ async def test_pubsub_manager_publish_on_system_channel():
             assert res.event == event
 
 
-async def test_pubsub_manager_publish_on_user_channel():
+async def test_pubsub_manager_publish_on_user_channel(pubsub):
     sender = f.build_user()
     user = f.build_user()
     channel = channels.user_channel(user)
@@ -106,7 +117,7 @@ async def test_pubsub_manager_publish_on_user_channel():
     event = Event(type=t, sender=sender.username, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})
-    async with EventsManager(**db_connection_params()) as manager:
+    async with EventsManager(backend=pubsub) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)
 
@@ -117,7 +128,7 @@ async def test_pubsub_manager_publish_on_user_channel():
             assert res.event == event
 
 
-async def test_pubsub_manager_publish_on_project_channel():
+async def test_pubsub_manager_publish_on_project_channel(pubsub):
     sender = f.build_user()
     project = f.build_project()
     channel = channels.project_channel(project)
@@ -126,7 +137,7 @@ async def test_pubsub_manager_publish_on_project_channel():
     event = Event(type=t, sender=sender.username, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})
-    async with EventsManager(**db_connection_params()) as manager:
+    async with EventsManager(backend=pubsub) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)
 
@@ -137,7 +148,7 @@ async def test_pubsub_manager_publish_on_project_channel():
             assert res.event == event
 
 
-async def test_pubsub_manager_publish_on_workspace_channel():
+async def test_pubsub_manager_publish_on_workspace_channel(pubsub):
     sender = f.build_user()
     workspace = f.build_workspace()
     channel = channels.workspace_channel(workspace)
@@ -146,7 +157,7 @@ async def test_pubsub_manager_publish_on_workspace_channel():
     event = Event(type=t, sender=sender.username, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})
-    async with EventsManager(**db_connection_params()) as manager:
+    async with EventsManager(backend=pubsub) as manager:
         async with manager.register(websocket) as subscriber:
             await manager.subscribe(subscriber, channel)
 
@@ -157,7 +168,7 @@ async def test_pubsub_manager_publish_on_workspace_channel():
             assert res.event == event
 
 
-async def test_pubsub_manager_prevent_send_events_to_the_sender():
+async def test_pubsub_manager_prevent_send_events_to_the_sender(pubsub):
     user1 = f.build_user(username="us1")
     user2 = f.build_user(username="us2")
     user3 = f.build_user(username="us3")
@@ -171,7 +182,7 @@ async def test_pubsub_manager_prevent_send_events_to_the_sender():
 
     websocket1 = Mock(spec=WebSocket, scope={}, user=user1)
     websocket2 = Mock(spec=WebSocket, scope={}, user=user2)
-    async with EventsManager(**db_connection_params()) as manager:
+    async with EventsManager(backend=pubsub) as manager:
         async with (manager.register(websocket1) as subscriber1, manager.register(websocket2) as subscriber2):
             await manager.subscribe(subscriber1, channel)
             await manager.subscribe(subscriber2, channel)

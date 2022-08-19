@@ -6,10 +6,6 @@
 #
 asgiref==3.5.2
     # via django
-asyncpg==0.25.0
-    # via asyncpg-stubs
-asyncpg-stubs==0.25.4
-    # via -r requirements/devel.in
 build==0.8.0
     # via pip-tools
 cfgv==3.3.1
@@ -18,7 +14,7 @@ click==8.1.3
     # via pip-tools
 distlib==0.3.5
     # via virtualenv
-django==4.0.6
+django==4.1
     # via
     #   django-stubs
     #   django-stubs-ext
@@ -26,11 +22,11 @@ django-stubs==1.12.0
     # via -r requirements/devel.in
 django-stubs-ext==0.5.0
     # via django-stubs
-filelock==3.7.1
+filelock==3.8.0
     # via virtualenv
-identify==2.5.1
+identify==2.5.3
     # via pre-commit
-mypy==0.961
+mypy==0.971
     # via
     #   -r requirements/devel.in
     #   django-stubs
@@ -40,7 +36,7 @@ nodeenv==1.7.0
     # via pre-commit
 packaging==21.3
     # via build
-pep517==0.12.0
+pep517==0.13.0
     # via build
 pip-tools==6.8.0
     # via -r requirements/devel.in
@@ -52,8 +48,6 @@ pyparsing==3.0.9
     # via packaging
 pyyaml==6.0
     # via pre-commit
-six==1.16.0
-    # via virtualenv
 sqlparse==0.4.2
     # via django
 toml==0.10.2
@@ -66,17 +60,18 @@ tomli==2.0.1
     #   pep517
 types-python-slugify==6.1.0
     # via -r requirements/devel.in
-types-pytz==2022.1.1
+types-pytz==2022.2.1.0
     # via django-stubs
-types-pyyaml==6.0.10
+types-pyyaml==6.0.11
     # via django-stubs
+types-redis==4.3.17
+    # via -r requirements/devel.in
 typing-extensions==4.3.0
     # via
-    #   asyncpg-stubs
     #   django-stubs
     #   django-stubs-ext
     #   mypy
-virtualenv==20.15.1
+virtualenv==20.16.3
     # via pre-commit
 wheel==0.37.1
     # via pip-tools

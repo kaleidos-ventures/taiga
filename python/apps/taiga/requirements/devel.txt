@@ -16,9 +16,9 @@ anyio==3.6.1
 asgiref==3.5.2
     # via django
 async-timeout==4.0.2
-    # via aiopg
-asyncpg==0.25.0
-    # via -r requirements/commons.in
+    # via
+    #   aiopg
+    #   redis
 attrs==22.1.0
     # via
     #   procrastinate
@@ -37,7 +37,7 @@ click==8.1.3
     #   procrastinate
     #   typer
     #   uvicorn
-coverage[toml]==6.4.3
+coverage[toml]==6.4.4
     # via pytest-cov
 croniter==1.3.5
     # via procrastinate
@@ -47,6 +47,8 @@ cssselect2==0.6.0
     # via svglib
 decorator==5.1.1
     # via validators
+deprecated==1.2.13
+    # via redis
 django==4.1
     # via
     #   -r requirements/commons.in
@@ -71,11 +73,11 @@ factory-boy @ git+https://github.com/FactoryBoy/factory_boy@master
     # via
     #   -r requirements/devel.in
     #   pytest-factoryboy
-faker==13.15.1
+faker==14.1.0
     # via
     #   -r requirements/commons.in
     #   factory-boy
-fastapi==0.79.0
+fastapi==0.79.1
     # via
     #   -r requirements/commons.in
     #   fastapi-mailman
@@ -85,6 +87,8 @@ h11==0.12.0
     # via
     #   httpcore
     #   uvicorn
+hiredis==2.0.0
+    # via redis
 httpcore==0.15.0
     # via httpx
 httptools==0.4.0
@@ -116,7 +120,9 @@ mypy==0.971
 mypy-extensions==0.4.3
     # via mypy
 packaging==21.3
-    # via pytest
+    # via
+    #   pytest
+    #   redis
 pillow==9.2.0
     # via
     #   easy-thumbnails
@@ -135,7 +141,7 @@ py==1.11.0
     # via pytest
 pycparser==2.21
     # via cffi
-pydantic[dotenv,email]==1.9.1
+pydantic[dotenv,email]==1.9.2
     # via
     #   -r requirements/commons.in
     #   fastapi
@@ -181,6 +187,8 @@ python-slugify==6.1.2
     # via -r requirements/commons.in
 pyyaml==6.0
     # via uvicorn
+redis[hiredis]==4.3.4
+    # via -r requirements/commons.in
 reportlab==3.6.11
     # via svglib
 requests==2.28.1
@@ -216,7 +224,7 @@ tomli==2.0.1
     #   pytest
 typer==0.6.1
     # via -r requirements/commons.in
-types-pytz==2022.1.2
+types-pytz==2022.2.1.0
     # via django-stubs
 types-pyyaml==6.0.11
     # via django-stubs
@@ -243,3 +251,5 @@ webencodings==0.5.1
     #   tinycss2
 websockets==10.3
     # via uvicorn
+wrapt==1.14.1
+    # via deprecated

@@ -8,15 +8,18 @@
 import logging
 
 import pytest
-from taiga.base.db import db_connection_params
 from taiga.events.events import Event
 from taiga.events.pubsub.backends.exceptions import PubSubBackendIsNotConnected
-from taiga.events.pubsub.backends.postgres import PostgresPubSubBackend
+from taiga.events.pubsub.backends.redis import RedisPubSubBackend
 
 
 @pytest.fixture
-def pubsub() -> PostgresPubSubBackend:
-    return PostgresPubSubBackend(**db_connection_params())
+async def pubsub() -> RedisPubSubBackend:
+    pubsub = RedisPubSubBackend(host="localhost", port=6379, db=0)
+    yield pubsub
+
+    if pubsub.is_connected:
+        await pubsub.disconnect()
 
 
 async def test_connect(pubsub):
@@ -51,18 +54,28 @@ async def test_method_who_need_connection(pubsub):
 
 
 async def test_subscribe(pubsub):
+    channel = "test_ch_1"
     await pubsub.connect()
-    assert "test_ch_1" not in pubsub._conn._listeners
-    await pubsub.subscribe("test_ch_1")
-    assert "test_ch_1" in pubsub._conn._listeners
+    assert channel.encode() not in pubsub._pubsub.channels
+    await pubsub.subscribe(channel)
+    assert channel.encode() in pubsub._pubsub.channels
+
+
+async def test_subscribe_to_channel_with_a_long_name(pubsub):
+    channel = "test_ch_1" * 255
+    await pubsub.connect()
+    assert channel.encode() not in pubsub._pubsub.channels
+    await pubsub.subscribe(channel)
+    assert channel.encode() in pubsub._pubsub.channels
 
 
 async def test_unsubscribe(pubsub):
+    channel = "test_ch_1"
     await pubsub.connect()
-    await pubsub.subscribe("test_ch_1")
-    assert "test_ch_1" in pubsub._conn._listeners
-    await pubsub.unsubscribe("test_ch_1")
-    assert "test_ch_1" not in pubsub._conn._listeners
+    await pubsub.subscribe(channel)
+    assert channel.encode() not in pubsub._pubsub.pending_unsubscribe_channels
+    await pubsub.unsubscribe(channel)
+    assert channel.encode() in pubsub._pubsub.pending_unsubscribe_channels
 
 
 async def test_publish_and_listen(pubsub):
@@ -95,7 +108,7 @@ async def test_publish_invalid_events_and_listen(pubsub, caplog):
         await pubsub.subscribe(channel)
         # publish
         await pubsub.publish(channel, event1)
-        await pubsub.publish(channel, "INVALID EVENT")
+        # await pubsub.publish(channel, "INVALID EVENT")
         await pubsub.publish(channel, event2)
         # listen
         assert (channel, event1) == await pubsub.next_published()

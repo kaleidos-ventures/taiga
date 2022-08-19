@@ -14,6 +14,7 @@ from urllib.parse import urljoin
 
 from pydantic import AnyHttpUrl, BaseSettings, EmailStr, validator
 from taiga.conf.emails import EmailSettings
+from taiga.conf.events import EventsSettings
 from taiga.conf.images import ImageSettings
 from taiga.conf.logs import LOGGING_CONFIG
 from taiga.conf.tokens import TokensSettings
@@ -82,9 +83,10 @@ class Settings(BaseSettings):
     SUPPORT_EMAIL: EmailStr = EmailStr("support@example.com")
 
     # Sub settings modules
-    TOKENS: TokensSettings = TokensSettings()
-    IMAGES: ImageSettings = ImageSettings()
     EMAIL: EmailSettings = EmailSettings()
+    EVENTS: EventsSettings = EventsSettings()
+    IMAGES: ImageSettings = ImageSettings()
+    TOKENS: TokensSettings = TokensSettings()
 
     @validator("UUID_NODE", pre=False)
     def validate_uuid_node(cls, v: int | None) -> int | None:

@@ -18,7 +18,7 @@ jinja2 # Templates system
 procrastinate
 
 # Events Module
-asyncpg<0.26.0 # For pubsub postgresql backend (<0.26 because there is no stub yet)
+redis[hiredis]
 
 # Utils & tools
 PyJWT # For auth

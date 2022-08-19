@@ -8,4 +8,4 @@
 from .backends.base import PubSubBackend  # noqa
 from .backends.exceptions import PubSubBackendIsNotConnected  # noqa
 from .backends.memory import MemoryPubSubBackend  # noqa
-from .backends.postgres import PostgresPubSubBackend  # noqa
+from .backends.redis import RedisPubSubBackend  # noqa

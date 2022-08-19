@@ -6,30 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from asgiref.sync import sync_to_async
-from taiga.conf import settings
-from taiga.permissions import choices
+from taiga.projects import repositories as projects_repositories
+from taiga.projects.models import ProjectTemplate
 from tests.utils import factories as f
 from tests.utils.images import valid_image_f
 
 from .base import Factory, factory
-
-
-class ProjectTemplateFactory(Factory):
-    name = "Template name"
-    slug = settings.DEFAULT_PROJECT_TEMPLATE
-    description = factory.Sequence(lambda n: f"Description {n}")
-
-    default_owner_role = "tester"
-    roles = []
-
-    class Meta:
-        model = "projects.ProjectTemplate"
-        django_get_or_create = ("slug",)
-
-
-@sync_to_async
-def create_project_template(**kwargs):
-    return ProjectTemplateFactory.create(**kwargs)
 
 
 class ProjectFactory(Factory):
@@ -38,11 +20,15 @@ class ProjectFactory(Factory):
     description = factory.Sequence(lambda n: f"Description {n}")
     owner = factory.SubFactory("tests.utils.factories.UserFactory")
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
-    creation_template = factory.SubFactory("tests.utils.factories.ProjectTemplateFactory")
     logo = valid_image_f
 
     class Meta:
         model = "projects.Project"
+
+
+@sync_to_async
+def create_simple_project(**kwargs):
+    return ProjectFactory.create(**kwargs)
 
 
 @sync_to_async
@@ -53,24 +39,12 @@ def create_project(**kwargs):
     workspace = defaults.pop("workspace", None) or f.WorkspaceFactory.create(**defaults)
     defaults["workspace"] = workspace
     defaults["owner"] = defaults.pop("owner", None) or workspace.owner
-    ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
 
     project = ProjectFactory.create(**defaults)
-    admin_role = f.ProjectRoleFactory.create(
-        name="Administrator",
-        slug="admin",
-        permissions=choices.ProjectPermissions.values,
-        is_admin=True,
-        project=project,
-    )
-    f.ProjectRoleFactory.create(
-        name="General",
-        slug="general",
-        permissions=choices.ProjectPermissions.values,
-        is_admin=False,
-        project=project,
-    )
+    template = ProjectTemplate.objects.first()
+    projects_repositories.apply_template_to_project_sync(project=project, template=template)
 
+    admin_role = project.roles.get(is_admin=True)
     f.ProjectMembershipFactory.create(user=project.owner, project=project, role=admin_role)
 
     return project

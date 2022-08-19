@@ -5,4 +5,27 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from django.contrib.admin import *  # noqa
+from typing import TypeVar
+
+from django.contrib.admin import ModelAdmin as DjangoModelAdmin
+from django.contrib.admin import StackedInline as DjangoStackedInline
+from django.contrib.admin import TabularInline as DjangoTabularInline
+from django.contrib.admin import display, register, site  # noqa
+from taiga.base.db.admin.forms import PrettyJSONWidget
+from taiga.base.db.models import JSONField, Model
+
+_ModelT = TypeVar("_ModelT", bound=Model)
+_ChildModelT = TypeVar("_ChildModelT", bound=Model)
+_ParentModelT = TypeVar("_ParentModelT", bound=Model)
+
+
+class ModelAdmin(DjangoModelAdmin[_ModelT]):
+    formfield_overrides = {JSONField: {"widget": PrettyJSONWidget}}
+
+
+class StackedInline(DjangoStackedInline[_ChildModelT, _ParentModelT]):
+    formfield_overrides = {JSONField: {"widget": PrettyJSONWidget}}
+
+
+class TabularInline(DjangoTabularInline[_ChildModelT, _ParentModelT]):
+    formfield_overrides = {JSONField: {"widget": PrettyJSONWidget}}

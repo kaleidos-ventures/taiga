@@ -51,17 +51,12 @@ async def create_project(
     if logo:
         logo_file = File(file=logo.file, name=logo.filename)
 
-    template = await projects_repositories.get_template(slug=settings.DEFAULT_PROJECT_TEMPLATE)
-
     project = await projects_repositories.create_project(
-        workspace=workspace,
-        name=name,
-        description=description,
-        color=color,
-        owner=owner,
-        logo=logo_file,
-        template=template,
+        workspace=workspace, name=name, description=description, color=color, owner=owner, logo=logo_file
     )
+
+    template = await projects_repositories.get_template(slug=settings.DEFAULT_PROJECT_TEMPLATE)
+    await projects_repositories.apply_template_to_project(template=template, project=project)
 
     # assign the owner to the project as the default owner role (should be 'admin')
     owner_role = await roles_repositories.get_project_role(project=project, slug=template.default_owner_role)

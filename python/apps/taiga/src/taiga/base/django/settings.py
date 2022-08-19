@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "taiga.emails",
     "taiga.workspaces",
     "taiga.projects",
+    "taiga.workflows",
     "taiga.invitations",
     "taiga.users",
     "taiga.tokens",

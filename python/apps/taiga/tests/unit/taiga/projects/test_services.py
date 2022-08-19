@@ -86,7 +86,6 @@ async def test_create_project():
 
 
 async def test_create_project_with_logo():
-    template = await f.create_project_template()
     workspace = await f.create_workspace()
     project = await f.create_project(workspace=workspace)
     role = await f.create_project_role(project=project)
@@ -97,7 +96,6 @@ async def test_create_project_with_logo():
         patch("taiga.projects.services.projects_repositories", autospec=True) as fake_project_repository,
         patch("taiga.projects.services.roles_repositories", autospec=True) as fake_roles_repository,
     ):
-        fake_project_repository.get_template.return_value = template
         fake_project_repository.create_project.return_value = project
         fake_roles_repository.get_project_role.return_value = role
 
@@ -117,12 +115,10 @@ async def test_create_project_with_no_logo():
         "taiga.projects.services.roles_repositories", autospec=True
     ):
         fake_project_repository.create_project.return_value = await f.create_project()
-        template = await f.create_project_template()
-        fake_project_repository.get_template.return_value = template
         await services.create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
 
         fake_project_repository.create_project.assert_awaited_once_with(
-            workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=None, template=template
+            workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=None
         )
 
 

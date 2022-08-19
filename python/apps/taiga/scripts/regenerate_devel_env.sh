@@ -50,7 +50,7 @@ else
   python -m taiga tasksqueue init
   echo "-> Load initial user (admin/123123)"
   python -m taiga loadfixtures initial_user
-  echo "-> Load initial project_templates (scrum/kanban)"
+  echo "-> Load initial project_templates (kanban)"
   python -m taiga loadfixtures initial_project_templates
   echo "-> Generate sample data"
   python -m taiga sampledata

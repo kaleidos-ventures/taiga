@@ -137,15 +137,6 @@ class Project(models.BaseModel):
         through_fields=("project", "user"),
         verbose_name="members",
     )
-    creation_template = models.ForeignKey(
-        "projects.ProjectTemplate",
-        related_name="projects",
-        null=True,
-        blank=True,
-        default=None,
-        on_delete=models.SET_NULL,
-        verbose_name="creation template",
-    )
 
     anon_permissions = models.ArrayField(
         models.TextField(null=False, blank=False, choices=AnonPermissions.choices),
@@ -208,45 +199,24 @@ class Project(models.BaseModel):
 class ProjectTemplate(models.BaseModel):
     name = models.CharField(max_length=250, null=False, blank=False, verbose_name="name")
     slug = models.LowerSlugField(max_length=250, null=False, blank=True, unique=True, verbose_name="slug")
-    description = models.TextField(null=False, blank=False, verbose_name="description")
-    order = models.BigIntegerField(default=timestamp_mics, null=False, blank=False, verbose_name="user order")
     created_at = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="created at")
     modified_at = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="modified at")
-
     default_owner_role = models.CharField(max_length=50, null=False, blank=False, verbose_name="default owner's role")
     roles = models.JSONField(null=True, blank=True, verbose_name="roles")
+    workflows = models.JSONField(null=True, blank=True, verbose_name="workflows")
 
     class Meta:
         verbose_name = "project template"
         verbose_name_plural = "project templates"
-        ordering = ["order", "name"]
+        ordering = ["name"]
 
     def __str__(self) -> str:
         return self.name
 
     def __repr__(self) -> str:
-        return f"<Project Template {self.slug}>"
+        return f"<Project Template: {self.name}>"
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.slug:
             self.slug = slugify_uniquely(self.name, self.__class__)
         super().save(*args, **kwargs)
-
-    def apply_to_project(self, project: Project) -> Project:
-        if project.id is None:
-            raise Exception("Project need an id (must be a saved project)")
-
-        project.creation_template = self
-
-        # Create initial Roles
-        for role in self.roles:
-            ProjectRole.objects.create(
-                name=role["name"],
-                slug=role["slug"],
-                order=role["order"],
-                project=project,
-                permissions=role["permissions"],
-                is_admin=role["is_admin"],
-            )
-
-        return project

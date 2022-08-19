@@ -1,19 +1,16 @@
 [
 {
     "model": "projects.projecttemplate",
-    "pk": 1,
+    "pk": "00000000-0000-0000-0000-000000000001",
     "fields": {
         "name": "Kanban",
         "slug": "kanban",
-        "description": "Kanban is a method for managing knowledge work with an emphasis on just-in-time delivery while not overloading the team members. In this approach, the process, from definition of a task to its delivery to the customer, is displayed for participants to see and team members pull work from a queue.",
-        "order": 2,
-        "created_at": "2014-04-22T14:50:19.738Z",
-        "modified_at": "2016-08-24T16:26:45.365Z",
+        "created_at": "2022-01-01T10:00:00.000Z",
+        "modified_at": "2022-01-01T10:00:00.000Z",
         "default_owner_role": "admin",
         "roles": [
             {
                 "slug": "admin",
-                "computable": true,
                 "name": "Administrator",
                 "order": 1,
                 "is_admin": true,
@@ -32,7 +29,6 @@
             },
             {
                 "slug": "general",
-                "computable": true,
                 "name": "General",
                 "order": 2,
                 "is_admin": false,
@@ -47,6 +43,19 @@
                   "delete_task",
                   "modify_task",
                   "view_task"
+                ]
+            }
+        ],
+        "workflows": [
+            {
+                "slug": "main",
+                "name": "Main",
+                "order": 1,
+                "statuses": [
+                  {"name": "New", "slug": "new", "order": 1, "color": 1},
+                  {"name": "Ready", "slug": "ready", "order": 2, "color": 2},
+                  {"name": "In progress", "slug": "in-progress", "order": 3, "color": 3},
+                  {"name": "Done", "slug": "done", "order": 4, "color": 4}
                 ]
             }
         ]

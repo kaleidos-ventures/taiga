@@ -10,8 +10,9 @@ from uuid import UUID
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import File, Q
 from taiga.invitations.choices import ProjectInvitationStatus
-from taiga.projects.models import Project, ProjectTemplate
+from taiga.projects.models import Project, ProjectRole, ProjectTemplate
 from taiga.users.models import User
+from taiga.workflows.models import Workflow, WorkflowStatus
 from taiga.workspaces.models import Workspace
 
 
@@ -52,7 +53,6 @@ def create_project(
     workspace: Workspace,
     name: str,
     owner: User,
-    template: ProjectTemplate,
     description: str | None = None,
     color: int = 1,
     logo: File | None = None,  # type: ignore
@@ -61,9 +61,38 @@ def create_project(
     project = Project.objects.create(
         name=name, description=description, workspace=workspace, color=color, owner=owner, logo=logo
     )
-    # populate new project with default data
-    template.apply_to_project(project)
     return project
+
+
+def apply_template_to_project_sync(template: ProjectTemplate, project: Project) -> None:
+    for role in template.roles:
+        ProjectRole.objects.create(
+            name=role["name"],
+            slug=role["slug"],
+            order=role["order"],
+            project=project,
+            permissions=role["permissions"],
+            is_admin=role["is_admin"],
+        )
+
+    for workflow in template.workflows:
+        wf = Workflow.objects.create(
+            name=workflow["name"],
+            slug=workflow["slug"],
+            order=workflow["order"],
+            project=project,
+        )
+        for status in workflow["statuses"]:
+            WorkflowStatus.objects.create(
+                name=status["name"],
+                slug=status["slug"],
+                color=status["color"],
+                order=status["order"],
+                workflow=wf,
+            )
+
+
+apply_template_to_project = sync_to_async(apply_template_to_project_sync)
 
 
 @sync_to_async

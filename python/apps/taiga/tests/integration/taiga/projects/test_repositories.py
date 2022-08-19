@@ -8,10 +8,10 @@
 import pytest
 from asgiref.sync import sync_to_async
 from django.core.files import File
-from taiga.conf import settings
 from taiga.projects import repositories
-from taiga.projects.models import Project
+from taiga.projects.models import Project, ProjectTemplate
 from taiga.roles.models import ProjectRole, WorkspaceRole
+from taiga.workflows.models import Workflow
 from taiga.workspaces.models import Workspace
 from tests.utils import factories as f
 from tests.utils.images import valid_image_f
@@ -66,16 +66,14 @@ async def test_get_projects():
 
 async def test_create_project_with_non_ASCI_chars():
     workspace = await f.create_workspace()
-    template = await repositories.get_template(slug=settings.DEFAULT_PROJECT_TEMPLATE)
     project = await repositories.create_project(
-        name="My proj#%&乕شect", description="", color=3, owner=workspace.owner, workspace=workspace, template=template
+        name="My proj#%&乕شect", description="", color=3, owner=workspace.owner, workspace=workspace
     )
     assert project.slug.startswith("my-proj-hu-shect")
 
 
 async def test_create_project_with_logo():
     workspace = await f.create_workspace()
-    template = await repositories.get_template(slug=settings.DEFAULT_PROJECT_TEMPLATE)
     project = await repositories.create_project(
         name="My proj#%&乕شect",
         description="",
@@ -83,14 +81,12 @@ async def test_create_project_with_logo():
         owner=workspace.owner,
         workspace=workspace,
         logo=valid_image_f,
-        template=template,
     )
     assert valid_image_f.name in project.logo.name
 
 
 async def test_create_project_with_no_logo():
     workspace = await f.create_workspace()
-    template = await repositories.get_template(slug=settings.DEFAULT_PROJECT_TEMPLATE)
     project = await repositories.create_project(
         name="My proj#%&乕شect",
         description="",
@@ -98,9 +94,26 @@ async def test_create_project_with_no_logo():
         owner=workspace.owner,
         workspace=workspace,
         logo=None,
-        template=template,
     )
     assert project.logo == File(None)
+
+
+##########################################################
+# apply_template_to_project
+##########################################################
+
+
+async def test_apply_template_to_project():
+    project = await f.create_simple_project()
+    template = await sync_to_async(ProjectTemplate.objects.first)()
+
+    roles_before = await sync_to_async(ProjectRole.objects.count)()
+    workflows_before = await sync_to_async(Workflow.objects.count)()
+
+    await repositories.apply_template_to_project(template=template, project=project)
+
+    assert await sync_to_async(ProjectRole.objects.count)() == roles_before + 2
+    assert await sync_to_async(Workflow.objects.count)() == workflows_before + 1
 
 
 ##########################################################
@@ -123,8 +136,7 @@ async def test_get_project_return_none():
 
 
 async def test_get_template_return_template():
-    template = await f.create_project_template()
-    assert await repositories.get_template(slug=template.slug) == template
+    assert await repositories.get_template(slug="kanban") is not None
 
 
 ##########################################################

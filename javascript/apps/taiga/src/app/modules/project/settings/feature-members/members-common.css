@@ -21,6 +21,10 @@ tg-ui-dtable-row {
 
   overflow: hidden;
   position: relative;
+
+  &:hover {
+    background-color: var(--color-gray10);
+  }
 }
 
 tg-ui-user-skeleton {

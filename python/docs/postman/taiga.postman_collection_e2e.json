@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9380fec2-a940-4c45-823b-fc6595056486",
+		"_postman_id": "6ed6e6c3-21f5-40e1-a631-ec5d40226a53",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -3576,7 +3577,7 @@
 					"response": []
 				},
 				{
-					"name": "404 projects.{p}.memberships.change-role membership not exist",
+					"name": "404 projects.{p}.memberships.{u} membership not exist",
 					"event": [
 						{
 							"listen": "test",
@@ -3605,11 +3606,11 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user-not-exist\",\n    \"roleSlug\": \"general\"\n}",
+							"raw": "{\n    \"roleSlug\": \"general\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3617,7 +3618,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/change-role",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/not-exist",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -3626,14 +3627,14 @@
 								"projects",
 								"{{pj-slug}}",
 								"memberships",
-								"change-role"
+								"not-exist"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "400 projects.{p}.memberships.change-role role error",
+					"name": "400 projects.{p}.memberships.{u} role error",
 					"event": [
 						{
 							"listen": "test",
@@ -3667,11 +3668,11 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user3\",\n    \"roleSlug\": \"not-exist-role\"\n}",
+							"raw": "{\n    \"roleSlug\": \"not-exist-role\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3679,7 +3680,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/change-role",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/user4",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -3688,14 +3689,14 @@
 								"projects",
 								"{{pj-slug}}",
 								"memberships",
-								"change-role"
+								"user4"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "400 projects.{p}.memberships.change-role only one admin",
+					"name": "400 projects.{p}.memberships.{u} only one admin",
 					"event": [
 						{
 							"listen": "test",
@@ -3729,11 +3730,11 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user3\",\n    \"roleSlug\": \"general\"\n}",
+							"raw": "{\n    \"roleSlug\": \"general\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3741,7 +3742,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/change-role",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/{{username}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -3750,14 +3751,14 @@
 								"projects",
 								"{{pj-slug}}",
 								"memberships",
-								"change-role"
+								"{{username}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.memberships.change-role",
+					"name": "200 projects.{p}.memberships.{u}",
 					"event": [
 						{
 							"listen": "test",
@@ -3814,11 +3815,11 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user4\",\n    \"roleSlug\": \"admin\"\n}",
+							"raw": "{\n    \"roleSlug\": \"admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3826,7 +3827,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/change-role",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/user4",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -3835,14 +3836,14 @@
 								"projects",
 								"{{pj-slug}}",
 								"memberships",
-								"change-role"
+								"user4"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.memberships.change-role",
+					"name": "200 projects.{p}.memberships.{u}",
 					"event": [
 						{
 							"listen": "test",
@@ -3899,11 +3900,11 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user3\",\n    \"roleSlug\": \"general\"\n}",
+							"raw": "{\n    \"roleSlug\": \"general\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3911,7 +3912,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/change-role",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/{{username}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -3920,7 +3921,7 @@
 								"projects",
 								"{{pj-slug}}",
 								"memberships",
-								"change-role"
+								"{{username}}"
 							]
 						}
 					},

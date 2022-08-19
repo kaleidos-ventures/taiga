@@ -61,23 +61,25 @@ async def get_project_membership(project_slug: str, username: str) -> ProjectMem
     return await roles_repositories.get_project_membership(project_slug=project_slug, username=username)
 
 
-async def update_project_membership_role(membership: ProjectMembership, role_slug: str) -> ProjectMembership:
+async def _is_membership_the_only_admin(membership_role: ProjectRole, project_role: ProjectRole) -> bool:
+    if membership_role.is_admin and not project_role.is_admin:
+        num_admins = await roles_repositories.get_num_members_by_role_id(role_id=membership_role.id)
+        return True if num_admins == 1 else False
+    else:
+        return False
+
+
+async def update_project_membership(membership: ProjectMembership, role_slug: str) -> ProjectMembership:
     project_role = await roles_repositories.get_project_role(project=membership.project, slug=role_slug)
 
     if not project_role:
         raise ex.NonExistingRoleError("Role does not exist")
 
-    membership_role = membership.role
+    if await _is_membership_the_only_admin(membership_role=membership.role, project_role=project_role):
+        raise ex.MembershipIsTheOnlyAdminError("Membership is the only admin")
 
-    if membership_role.is_admin and not project_role.is_admin:
-        num_admins = await roles_repositories.get_num_members_by_role_id(role_id=membership_role.id)
+    updated_membership = await roles_repositories.update_project_membership(membership=membership, role=project_role)
 
-        if num_admins == 1:
-            raise ex.MembershipIsTheOnlyAdminError("Membership is the only admin")
-
-    updated_membership = await roles_repositories.update_project_membership_role(
-        membership=membership, role=project_role
-    )
-    await roles_events.emit_event_when_project_membership_role_is_updated(membership=membership)
+    await roles_events.emit_event_when_project_membership_is_updated(membership=updated_membership)
 
     return updated_membership

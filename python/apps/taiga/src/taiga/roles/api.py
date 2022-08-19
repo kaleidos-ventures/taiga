@@ -20,14 +20,14 @@ from taiga.roles import services as roles_services
 from taiga.roles.models import ProjectMembership, ProjectRole
 from taiga.roles.serializers import ProjectMembershipSerializer, ProjectRoleSerializer
 from taiga.roles.services import exceptions as services_ex
-from taiga.roles.validators import ProjectMembershipRoleValidator
+from taiga.roles.validators import ProjectMembershipValidator
 from taiga.routers import routes
 
 # PERMISSIONS
 GET_PROJECT_ROLES = IsProjectAdmin()
 UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
 GET_PROJECT_MEMBERSHIPS = Or(CanViewProject(), HasPendingProjectInvitation())
-UPDATE_PROJECT_MEMBERSHIP_ROLE = IsProjectAdmin()
+UPDATE_PROJECT_MEMBERSHIP = IsProjectAdmin()
 
 
 ################################################
@@ -117,26 +117,27 @@ async def get_project_memberships(
     return memberships
 
 
-@routes.projects.post(
-    "/{slug}/memberships/change-role",
-    name="project.memberships.change-role",
+@routes.projects.patch(
+    "/{slug}/memberships/{username}",
+    name="project.memberships.update",
     summary="Update project membership role",
     response_model=ProjectMembershipSerializer,
     responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def update_project_membership_role(
+async def update_project_membership(
     request: AuthRequest,
-    form: ProjectMembershipRoleValidator,
+    form: ProjectMembershipValidator,
     slug: str = Query(None, description="the project slug (str)"),
+    username: str = Query(None, description="the membership username (str)"),
 ) -> ProjectMembership:
     """
-    Update project membership role
+    Update project membership
     """
-    membership = await get_project_membership_or_404(project_slug=slug, username=form.username)
+    membership = await get_project_membership_or_404(project_slug=slug, username=username)
 
-    await check_permissions(permissions=UPDATE_PROJECT_MEMBERSHIP_ROLE, user=request.user, obj=membership)
+    await check_permissions(permissions=UPDATE_PROJECT_MEMBERSHIP, user=request.user, obj=membership)
 
-    return await roles_services.update_project_membership_role(membership=membership, role_slug=form.role_slug)
+    return await roles_services.update_project_membership(membership=membership, role_slug=form.role_slug)
 
 
 ################################################

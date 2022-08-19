@@ -9,11 +9,10 @@ from pydantic import validator
 from taiga.base.serializers import BaseModel
 
 
-class ProjectMembershipRoleValidator(BaseModel):
-    username: str
+class ProjectMembershipValidator(BaseModel):
     role_slug: str
 
-    @validator("username", "role_slug")
+    @validator("role_slug")
     def check_not_empty(cls, v: str) -> str:
         assert v != "", "Empty field is not allowed"
         return v

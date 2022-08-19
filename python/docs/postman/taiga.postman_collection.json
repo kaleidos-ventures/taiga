@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0880d44b-0931-4e47-893f-f125c119f597",
+		"_postman_id": "f049c8e5-b7d6-43f8-99a9-f03f89dee026",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1175,11 +1175,11 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n      \"username\": \"user1000\",\n      \"roleSlug\": \"admin\"\n}",
+							"raw": "{\n      \"roleSlug\": \"admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1187,7 +1187,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/change-role",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/{{username}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -1196,7 +1196,7 @@
 								"projects",
 								"{{pj-slug}}",
 								"memberships",
-								"change-role"
+								"{{username}}"
 							]
 						}
 					},

@@ -67,7 +67,7 @@ def user_is_project_member(project_slug: str, user_id: UUID) -> bool:
 
 
 @sync_to_async
-def update_project_membership_role(membership: ProjectMembership, role: ProjectRole) -> ProjectMembership:
+def update_project_membership(membership: ProjectMembership, role: ProjectRole) -> ProjectMembership:
     membership.role = role
     membership.save()
 

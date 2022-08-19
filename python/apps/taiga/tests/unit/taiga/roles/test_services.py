@@ -80,7 +80,7 @@ async def test_get_paginated_project_memberships():
 
 
 #######################################################
-# update_project_membership_role
+# update_project_membership
 #######################################################
 
 
@@ -97,10 +97,10 @@ async def test_update_project_membership_role_non_existing_role():
     ):
         fake_role_repository.get_project_role.return_value = None
 
-        await services.update_project_membership_role(membership=membership, role_slug=non_existing_role_slug)
+        await services.update_project_membership(membership=membership, role_slug=non_existing_role_slug)
         fake_role_repository.get_project_role.assert_awaited_once_with(project=project, slug=non_existing_role_slug)
-        fake_role_repository.update_project_membership_role.assert_not_awaited()
-        fake_roles_events.emit_event_when_project_membership_role_is_updated.assert_not_awaited()
+        fake_role_repository.update_project_membership.assert_not_awaited()
+        fake_roles_events.emit_event_when_project_membership_is_updated.assert_not_awaited()
 
 
 async def test_update_project_membership_role_only_one_admin():
@@ -116,11 +116,11 @@ async def test_update_project_membership_role_only_one_admin():
         fake_role_repository.get_project_role.return_value = general_role
         fake_role_repository.get_num_members_by_role_id.return_value = 1
 
-        await services.update_project_membership_role(membership=membership, role_slug=general_role.slug)
+        await services.update_project_membership(membership=membership, role_slug=general_role.slug)
         fake_role_repository.get_project_role.assert_awaited_once_with(project=project, slug=general_role.slug)
         fake_role_repository.get_num_members_by_role_id.assert_awaited_once_with(role_id=admin_role.id)
-        fake_role_repository.update_project_membership_role.assert_not_awaited()
-        fake_roles_events.emit_event_when_project_membership_role_is_updated.assert_not_awaited()
+        fake_role_repository.update_project_membership.assert_not_awaited()
+        fake_roles_events.emit_event_when_project_membership_is_updated.assert_not_awaited()
 
 
 async def test_update_project_membership_role_ok():
@@ -135,12 +135,10 @@ async def test_update_project_membership_role_ok():
     ):
         fake_role_repository.get_project_role.return_value = admin_role
 
-        await services.update_project_membership_role(membership=membership, role_slug=admin_role.slug)
+        updated_membership = await services.update_project_membership(membership=membership, role_slug=admin_role.slug)
         fake_role_repository.get_project_role.assert_awaited_once_with(project=project, slug=admin_role.slug)
         fake_role_repository.get_num_members_by_role_id.assert_not_awaited()
-        fake_role_repository.update_project_membership_role.assert_awaited_once_with(
-            membership=membership, role=admin_role
-        )
-        fake_roles_events.emit_event_when_project_membership_role_is_updated.assert_awaited_once_with(
-            membership=membership
+        fake_role_repository.update_project_membership.assert_awaited_once_with(membership=membership, role=admin_role)
+        fake_roles_events.emit_event_when_project_membership_is_updated.assert_awaited_once_with(
+            membership=updated_membership
         )

@@ -97,6 +97,7 @@ describe('Project Invitation Guard', () => {
       acceptProjectInvitation: false,
       projectInvitationToken: token,
       isNextAnonProject: invitation.project.isAnon,
+      invitationStatus: 'pending',
     };
 
     invitation.existingUser = true;

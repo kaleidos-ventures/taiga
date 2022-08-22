@@ -11,11 +11,12 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { TuiNotification } from '@taiga-ui/core';
 import { ConfigService } from '@taiga/core';
-import { genericResponseError, InvitationInfo, Project } from '@taiga/data';
-import { of, throwError } from 'rxjs';
+import { InvitationInfo, Project } from '@taiga/data';
+import { EMPTY, of, throwError } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { AppService } from '~/app/services/app.service';
+import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +27,8 @@ export class ProjectInvitationCTAGuard implements CanActivate {
     private router: Router,
     private http: HttpClient,
     private config: ConfigService,
-    private appService: AppService
+    private appService: AppService,
+    private revokeInvitationService: RevokeInvitationService
   ) {}
 
   public canActivate(route: ActivatedRouteSnapshot) {
@@ -52,26 +54,12 @@ export class ProjectInvitationCTAGuard implements CanActivate {
                   return of(true);
                 }),
                 catchError((httpResponse: HttpErrorResponse) => {
-                  if (
-                    httpResponse.status === 400 &&
-                    (httpResponse.error as genericResponseError).error
-                      .detail === 'invitation-revoked-error'
-                  ) {
-                    this.appService.toastNotification({
-                      message: 'errors.invitation_no_longer_valid',
-                      status: TuiNotification.Error,
-                      autoClose: false,
-                      closeOnNavigation: false,
-                    });
-                    if (invitation.project.isAnon) {
-                      void this.router.navigate([
-                        `/project/${invitation.project.slug}`,
-                      ]);
-                    }
-                    return throwError(httpResponse);
-                  }
-                  void this.router.navigate(['/']);
-                  return throwError(httpResponse);
+                  this.revokeInvitationService.invitationCtaRevokeError(
+                    invitation,
+                    httpResponse
+                  );
+
+                  return EMPTY;
                 })
               );
           } else {

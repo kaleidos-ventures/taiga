@@ -53,6 +53,7 @@ export class ProjectInvitationGuard implements CanActivate {
                   projectInvitationToken: token,
                   acceptProjectInvitation: false,
                   isNextAnonProject: invitation.project.isAnon,
+                  invitationStatus: invitation.status,
                 },
               });
             }

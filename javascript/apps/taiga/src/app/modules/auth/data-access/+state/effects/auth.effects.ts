@@ -15,12 +15,7 @@ import { Store } from '@ngrx/store';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
-import {
-  Auth,
-  ErrorManagementOptions,
-  genericResponseError,
-  SignUpError,
-} from '@taiga/data';
+import { Auth, ErrorManagementOptions, SignUpError } from '@taiga/data';
 import { EMPTY } from 'rxjs';
 import {
   catchError,
@@ -33,6 +28,7 @@ import {
 } from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { AppService } from '~/app/services/app.service';
+import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as AuthActions from '../actions/auth.actions';
@@ -51,6 +47,7 @@ export class AuthEffects {
           next,
           acceptProjectInvitation,
           isNextAnonProject,
+          invitationStatus,
         }) => {
           this.buttonLoadingService.start();
           return this.authApiService
@@ -77,6 +74,7 @@ export class AuthEffects {
                   next,
                   acceptProjectInvitation,
                   isNextAnonProject,
+                  invitationStatus,
                 });
               })
             );
@@ -110,6 +108,7 @@ export class AuthEffects {
             projectInvitationToken,
             acceptProjectInvitation,
             isNextAnonProject,
+            invitationStatus,
           }) => {
             return this.store.select(selectUser).pipe(
               filterNil(),
@@ -120,29 +119,17 @@ export class AuthEffects {
                     .acceptInvitationToken(projectInvitationToken)
                     .pipe(
                       map(() => {
-                        void this.router.navigateByUrl(next);
+                        void this.router.navigate([next], {
+                          state: { invite: invitationStatus },
+                        });
                         return EMPTY;
                       }),
                       catchError((httpResponse: HttpErrorResponse) => {
-                        if (
-                          httpResponse.status === 400 &&
-                          (httpResponse.error as genericResponseError).error
-                            .detail === 'invitation-revoked-error'
-                        ) {
-                          this.appService.toastNotification({
-                            message: 'errors.no_permission_to_see',
-                            status: TuiNotification.Error,
-                            autoClose: false,
-                            closeOnNavigation: false,
-                          });
-                          if (isNextAnonProject) {
-                            void this.router.navigateByUrl(next);
-                          } else {
-                            void this.router.navigate(['/']);
-                          }
-                          return EMPTY;
-                        }
-                        this.appService.errorManagement(httpResponse);
+                        this.revokeInvitationService.acceptInvitationTokenRevokeError(
+                          httpResponse,
+                          next,
+                          isNextAnonProject
+                        );
                         return EMPTY;
                       })
                     );
@@ -151,13 +138,19 @@ export class AuthEffects {
                   next &&
                   !acceptProjectInvitation
                 ) {
-                  void this.router.navigateByUrl(next);
+                  void this.router.navigate([next], {
+                    state: { invite: invitationStatus },
+                  });
                   return EMPTY;
                 } else if (!projectInvitationToken && next) {
-                  void this.router.navigateByUrl(next);
+                  void this.router.navigate([next], {
+                    state: { invite: invitationStatus },
+                  });
                   return EMPTY;
                 } else {
-                  void this.router.navigate(['/']);
+                  void this.router.navigate(['/'], {
+                    state: { invite: invitationStatus },
+                  });
                   return EMPTY;
                 }
               })
@@ -480,6 +473,7 @@ export class AuthEffects {
     private usersApiService: UsersApiService,
     private projectApiService: ProjectApiService,
     private appService: AppService,
-    private store: Store
+    private store: Store,
+    private revokeInvitationService: RevokeInvitationService
   ) {}
 }

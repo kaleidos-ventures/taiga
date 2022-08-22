@@ -6,26 +6,25 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Injectable } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
   HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
   HttpInterceptor,
+  HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { concatLatestFrom } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { AuthApiService } from '@taiga/api';
+import { ConfigService, globalLoading, selectGlobalLoading } from '@taiga/core';
+import { Auth } from '@taiga/data';
 import { BehaviorSubject, EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
-import { ConfigService } from '@taiga/core';
-import { Store } from '@ngrx/store';
-import { selectGlobalLoading, globalLoading } from '@taiga/core';
-import { concatLatestFrom } from '@ngrx/effects';
-import { Auth } from '@taiga/data';
 import { loginSuccess } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
-import { AuthApiService } from '@taiga/api';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
-import { Router } from '@angular/router';
 
 @Injectable()
 export class ApiRestInterceptorService implements HttpInterceptor {
@@ -76,13 +75,12 @@ export class ApiRestInterceptorService implements HttpInterceptor {
           response instanceof HttpErrorResponse ||
           response instanceof HttpResponse
         ) {
-          this.remvoveRequest(request);
+          this.removeRequest(request);
         }
       }),
       catchError((err: HttpErrorResponse) => {
         if (err.status === 401) {
           const auth = this.authService.getAuth();
-
           if (
             auth?.token &&
             auth.refresh &&
@@ -97,8 +95,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
             return EMPTY;
           }
         }
-
-        return throwError(err);
+        return throwError(() => err);
       })
     );
   }
@@ -109,7 +106,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public remvoveRequest(request: HttpRequest<any>) {
+  public removeRequest(request: HttpRequest<any>) {
     this.requests.next(this.requests.value.filter((it) => it !== request));
   }
 

@@ -15,6 +15,7 @@ import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import { Observable } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
 
+import { Router } from '@angular/router';
 import {
   Contact,
   InvitationResponse,
@@ -49,7 +50,7 @@ describe('InvitationEffects', () => {
       provideMockActions(() => actions$),
       provideMockStore({ initialState: {} }),
     ],
-    mocks: [InvitationApiService, AppService, ProjectApiService],
+    mocks: [InvitationApiService, AppService, ProjectApiService, Router],
   });
 
   beforeEach(() => {

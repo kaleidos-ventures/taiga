@@ -13,8 +13,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [@slideInOut]
         [@.disabled]="animationDisabled"
         *ngIf="
-          vm.project.userHasPendingInvitation &&
-          showPendingInvitationNotification
+          (vm.project.userHasPendingInvitation &&
+            showPendingInvitationNotification) ||
+          vm.showBannerOnRevoke
         "
         class="invitation-notification"
         (closed)="onNotificationClosed()"

@@ -8,14 +8,13 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
-import { AppService } from '~/app/services/app.service';
+import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,9 +22,8 @@ import { AppService } from '~/app/services/app.service';
 export class ProjectFeatureShellResolverService {
   constructor(
     private store: Store,
-    private appService: AppService,
     private projectApiService: ProjectApiService,
-    private router: Router
+    private revokeInvitationService: RevokeInvitationService
   ) {}
 
   public resolve(route: ActivatedRouteSnapshot) {
@@ -36,20 +34,7 @@ export class ProjectFeatureShellResolverService {
         this.store.dispatch(ProjectActions.fetchProjectSuccess({ project }));
       }),
       catchError((httpResponse: HttpErrorResponse) => {
-        requestAnimationFrame(() => {
-          const status = window.history.state as { invite: string } | undefined;
-          if (status?.invite === 'revoked') {
-            this.appService.toastNotification({
-              message: 'errors.no_permission_to_see',
-              status: TuiNotification.Error,
-              autoClose: false,
-              closeOnNavigation: false,
-            });
-            void this.router.navigate(['/']);
-          } else {
-            this.appService.errorManagement(httpResponse);
-          }
-        });
+        this.revokeInvitationService.shellResolverRevokeError(httpResponse);
 
         return of(null);
       })

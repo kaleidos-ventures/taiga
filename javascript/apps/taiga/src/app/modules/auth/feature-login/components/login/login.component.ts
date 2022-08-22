@@ -35,6 +35,7 @@ export class LoginComponent implements OnInit {
   @Input() public acceptProjectInvitation = undefined;
   @Input() public next = '';
   @Input() public isNextAnonProject = '';
+  @Input() public invitationStatus = '';
 
   public readonly model$ = this.state.select();
 
@@ -75,6 +76,7 @@ export class LoginComponent implements OnInit {
           isNextAnonProject: this.isNextAnonProject
             ? this.isNextAnonProject.toLocaleLowerCase() === 'true'
             : false,
+          invitationStatus: this.invitationStatus,
         })
       );
     } else {

@@ -17,9 +17,9 @@ import { Auth, InvitationInfo, User } from '@taiga/data';
 import { forkJoin, throwError } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
+import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { loginSuccess } from '../data-access/+state/actions/auth.actions';
 import { AuthService } from '../services/auth.service';
-
 type InvitationVerification = Pick<InvitationInfo, 'project' | 'status'>;
 type VerificationData = {
   auth: Auth;
@@ -38,7 +38,8 @@ export class VerifyEmailGuard implements CanActivate {
     private store: Store,
     private authService: AuthService,
     private usersApiService: UsersApiService,
-    private projectApiService: ProjectApiService
+    private projectApiService: ProjectApiService,
+    private revokeInvitationService: RevokeInvitationService
   ) {}
   public canActivate(route: ActivatedRouteSnapshot) {
     const verifyParam = route.params.path as string;
@@ -62,15 +63,11 @@ export class VerifyEmailGuard implements CanActivate {
             this.projectApiService
               .getProject(verification.projectInvitation?.project?.slug)
               .pipe(
-                catchError(() => {
-                  this.appService.toastNotification({
-                    message: 'errors.no_permission_to_see',
-                    status: TuiNotification.Error,
-                    autoClose: false,
-                    closeOnNavigation: false,
-                  });
-                  void this.router.navigate(['/signup']);
-                  return throwError(() => new Error('No permission to see'));
+                catchError((httpResponse: HttpErrorResponse) => {
+                  this.revokeInvitationService.verifyEmailRevokeError(
+                    httpResponse
+                  );
+                  return throwError(() => httpResponse);
                 })
               )
           );

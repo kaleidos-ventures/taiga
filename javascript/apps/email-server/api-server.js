@@ -28,6 +28,8 @@ app.get('/emails', function (req, res) {
 app.get('/emails-previews', function (req, res) {
   const emails = getEmails().map((it) => {
     return {
+      to: it.to,
+      subject: it.subject,
       preview: it.preview,
       localPreview: it.localPreview,
     };

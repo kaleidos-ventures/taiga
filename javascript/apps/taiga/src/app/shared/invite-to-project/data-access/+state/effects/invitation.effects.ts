@@ -16,7 +16,6 @@ import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import {
   Contact,
   ErrorManagementToastOptions,
-  genericResponseError,
   InvitationResponse,
 } from '@taiga/data';
 import { throwError } from 'rxjs';
@@ -25,6 +24,7 @@ import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth
 import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { AppService } from '~/app/services/app.service';
 import { InvitationService } from '~/app/services/invitation.service';
+import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as InvitationActions from '../actions/invitation.action';
@@ -147,24 +147,11 @@ export class InvitationEffects {
           );
         },
         undoAction: (action, httpResponse: HttpErrorResponse) => {
-          console.log(httpResponse);
-          if (
-            httpResponse.status === 400 &&
-            (httpResponse.error as genericResponseError).error.detail ===
-              'invitation-revoked-error'
-          ) {
-            this.appService.toastNotification({
-              message: 'errors.project_invitation_no_longer_valid',
-              paramsMessage: {
-                name: action.name,
-              },
-              status: TuiNotification.Error,
-              autoClose: false,
-              closeOnNavigation: false,
-            });
-            return InvitationActions.revokeInvitation({
-              projectSlug: action.slug,
-            });
+          if (this.revokeInvitationService.isRevokeError(httpResponse)) {
+            return this.revokeInvitationService.acceptInvitationSlugRevokeError(
+              action.slug,
+              action.name
+            );
           }
           this.appService.toastNotification({
             label: 'errors.generic_toast_label',
@@ -240,6 +227,7 @@ export class InvitationEffects {
     private invitationService: InvitationService,
     private appService: AppService,
     private buttonLoadingService: ButtonLoadingService,
-    private projectApiService: ProjectApiService
+    private projectApiService: ProjectApiService,
+    private revokeInvitationService: RevokeInvitationService
   ) {}
 }

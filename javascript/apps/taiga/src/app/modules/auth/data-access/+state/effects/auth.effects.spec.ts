@@ -8,12 +8,34 @@
 
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
 
-import { AuthEffects } from './auth.effects';
+import { HttpErrorResponse } from '@angular/common/http';
+import { NavigationEnd, Router } from '@angular/router';
+import {
+  rand,
+  randBoolean,
+  randEmail,
+  randFullName,
+  randPassword,
+  randSequence,
+  randUrl,
+  randUserName,
+} from '@ngneat/falso';
 import { Action } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import {
+  AuthMockFactory,
+  InviteMockFactory,
+  UserMockFactory,
+} from '@taiga/data';
+import { cold, hot } from 'jest-marbles';
+import { AuthService } from '~/app/modules/auth/services/auth.service';
+import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
+import { ButtonLoadingServiceMock } from '~/app/shared/directives/button-loading/button-loading.service.mock';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
   login,
   loginSuccess,
@@ -28,30 +50,8 @@ import {
   signUpSuccess,
   socialSignup,
 } from '../actions/auth.actions';
-import {
-  AuthMockFactory,
-  InviteMockFactory,
-  UserMockFactory,
-} from '@taiga/data';
-import {
-  randUserName,
-  randPassword,
-  randFullName,
-  randEmail,
-  randSequence,
-  randUrl,
-  randBoolean,
-  rand,
-} from '@ngneat/falso';
-import { cold, hot } from 'jest-marbles';
-import { NavigationEnd, Router } from '@angular/router';
-import { AuthService } from '~/app/modules/auth/services/auth.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { selectUser } from '../selectors/auth.selectors';
-import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
-import { ButtonLoadingServiceMock } from '~/app/shared/directives/button-loading/button-loading.service.mock';
+import { AuthEffects } from './auth.effects';
 
 const signupData = {
   email: randEmail(),
@@ -158,7 +158,9 @@ describe('AuthEffects', () => {
     });
 
     expect(effects.loginRedirect$).toSatisfyOnFlush(() => {
-      expect(router.navigateByUrl).toHaveBeenCalledWith(invite.next);
+      expect(router.navigate).toHaveBeenCalledWith([invite.next], {
+        state: { invite: undefined },
+      });
     });
   });
 
@@ -184,7 +186,9 @@ describe('AuthEffects', () => {
     });
 
     expect(effects.loginRedirect$).toSatisfyOnFlush(() => {
-      expect(router.navigate).toHaveBeenCalledWith(['/']);
+      expect(router.navigate).toHaveBeenCalledWith(['/'], {
+        state: { invite: undefined },
+      });
     });
   });
 

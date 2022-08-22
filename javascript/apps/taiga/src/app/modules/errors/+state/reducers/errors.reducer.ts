@@ -39,6 +39,11 @@ export const reducer = createReducer(
     state.forbidenError.message = error.message;
 
     return state;
+  }),
+  on(ErrorsActions.revokedError, (state, { error }): ErrorsState => {
+    state.unexpectedError.message = error.message;
+
+    return state;
   })
 );
 

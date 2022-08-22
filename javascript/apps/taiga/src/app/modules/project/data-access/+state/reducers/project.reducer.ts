@@ -17,11 +17,13 @@ export const projectFeatureKey = 'project';
 export interface ProjectState {
   currentProjectSlug: Project['slug'] | null;
   projects: Record<Project['slug'], Project>;
+  showBannerOnRevoke: boolean;
 }
 
 export const initialState: ProjectState = {
   currentProjectSlug: null,
   projects: {},
+  showBannerOnRevoke: false,
 };
 
 export const reducer = createReducer(
@@ -38,6 +40,7 @@ export const reducer = createReducer(
 
       if (project) {
         project.userHasPendingInvitation = false;
+        state.showBannerOnRevoke = true;
       }
     }
 
@@ -61,6 +64,18 @@ export const reducer = createReducer(
 
       if (project) {
         project.userHasPendingInvitation = false;
+      }
+
+      return state;
+    }
+  ),
+  on(
+    InvitationActions.acceptInvitationSlugError,
+    (state, { projectSlug }): ProjectState => {
+      const project = state.projects[projectSlug];
+
+      if (project) {
+        state.showBannerOnRevoke = false;
       }
 
       return state;

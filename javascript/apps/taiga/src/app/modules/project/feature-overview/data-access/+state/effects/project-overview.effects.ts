@@ -8,10 +8,8 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY, of, zip } from 'rxjs';
 import { catchError, exhaustMap, filter, map, switchMap } from 'rxjs/operators';
@@ -20,6 +18,7 @@ import * as ProjectActions from '~/app/modules/project/data-access/+state/action
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { AppService } from '~/app/services/app.service';
+import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
@@ -220,19 +219,7 @@ export class ProjectOverviewEffects {
                 eventResponse.event.content.project === project.slug
             ),
             map(([, project]) => {
-              let errorMessage;
-              if (!project.userPermissions.length) {
-                void this.router.navigate(['/']);
-                errorMessage = 'errors.no_permission_to_see';
-              } else {
-                errorMessage = 'errors.invitation_no_longer_valid';
-              }
-              this.appService.toastNotification({
-                message: errorMessage,
-                status: TuiNotification.Error,
-                autoClose: false,
-                closeOnNavigation: false,
-              });
+              this.revokeInvitationService.wsRevokedInvitationError(project);
               return ProjectActions.revokedInvitation();
             })
           );
@@ -246,6 +233,6 @@ export class ProjectOverviewEffects {
     private projectApiService: ProjectApiService,
     private appService: AppService,
     private wsService: WsService,
-    private router: Router
+    private revokeInvitationService: RevokeInvitationService
   ) {}
 }

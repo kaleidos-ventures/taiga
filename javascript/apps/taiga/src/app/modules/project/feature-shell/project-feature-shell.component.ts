@@ -16,7 +16,10 @@ import {
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import {
+  selectCurrentProject,
+  selectShowBannerOnRevoke,
+} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { WsService } from '~/app/services/ws';
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
@@ -70,12 +73,18 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     private cd: ChangeDetectorRef,
     private state: RxState<{
       project: Project;
+      showBannerOnRevoke: boolean;
     }>,
     private userStorageService: UserStorageService
   ) {
     this.state.connect(
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())
+    );
+
+    this.state.connect(
+      'showBannerOnRevoke',
+      this.store.select(selectShowBannerOnRevoke).pipe(filterNil())
     );
 
     this.state.hold(this.state.select('project'), (project) => {

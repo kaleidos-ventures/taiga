@@ -79,9 +79,9 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     );
 
     this.state.hold(this.state.select('project'), (project) => {
+      this.subscribedProject = project.slug;
       if (project.userIsMember) {
         this.unsubscribeFromProjectEvents();
-        this.subscribedProject = project.slug;
         this.wsService
           .command('subscribe_to_project_events', { project: project.slug })
           .subscribe();

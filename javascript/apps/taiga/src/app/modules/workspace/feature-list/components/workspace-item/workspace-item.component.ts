@@ -161,7 +161,6 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
         let invitations = state.invitations;
         let projects = state.workspaceProjects;
-
         // ignore previously accepted invitations
         projects = projects.filter(
           (project) => !state.acceptedInvites.includes(project.slug)

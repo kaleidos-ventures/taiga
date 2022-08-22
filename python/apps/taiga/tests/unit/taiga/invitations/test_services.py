@@ -296,7 +296,7 @@ async def test_create_project_invitations_with_pending_invitations(tqmanager):
         fake_invitations_events.emit_event_when_project_invitations_are_created.assert_awaited_once()
 
 
-async def test_create_project_invitations_with_pending_invitations_time_spam(tqmanager):
+async def test_create_project_invitations_with_pending_invitations_time_spam(tqmanager, override_settings):
     project = f.build_project()
     user = project.owner
     role = f.build_project_role(project=project, slug="admin")
@@ -311,6 +311,7 @@ async def test_create_project_invitations_with_pending_invitations_time_spam(tqm
         patch("taiga.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.invitations.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+        override_settings({"PROJECT_INVITATION_RESEND_TIME": 10}),
     ):
         fake_roles_repo.get_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation_by_email.return_value = invitation
@@ -820,7 +821,7 @@ async def test_resend_project_invitation_resent_at_in_limit() -> None:
         fake_send_project_invitation_email.assert_not_awaited()
 
 
-async def test_resend_project_invitation_resent_after_create() -> None:
+async def test_resend_project_invitation_resent_after_create(override_settings) -> None:
     owner = f.build_user()
     project = f.build_project(owner=owner)
     email = "user-test@email.com"
@@ -831,6 +832,7 @@ async def test_resend_project_invitation_resent_after_create() -> None:
         patch(
             "taiga.invitations.services.send_project_invitation_email", autospec=True
         ) as fake_send_project_invitation_email,
+        override_settings({"PROJECT_INVITATION_RESEND_TIME": 10}),
     ):
         await services.resend_project_invitation(invitation=invitation, resent_by=owner)
 

@@ -29,7 +29,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       (requestClose)="closeModal()">
       <ng-container *ngIf="project$ | async as project">
         <tg-invite-to-project
-          *ngIf="invitePeopleModal && project.userIsAdmin"
+          *ngIf="vm.invitePeopleModal && project.userIsAdmin"
           (closeModal)="closeModal()"
           [project]="project"></tg-invite-to-project>
       </ng-container>

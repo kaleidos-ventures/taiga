@@ -128,6 +128,7 @@ async def verify_user(token: str) -> VerificationInfo:
             invitations_ex.InvitationDoesNotExistError,
             invitations_ex.InvitationIsNotForThisUserError,
             invitations_ex.InvitationAlreadyAcceptedError,
+            invitations_ex.InvitationRevokedError,
         ):
             pass  # TODO: Logging invitation is invalid
 

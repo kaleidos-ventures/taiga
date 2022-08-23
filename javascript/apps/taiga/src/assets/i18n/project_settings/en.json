@@ -71,6 +71,7 @@
     "role_label": "Role",
     "admin_dialog_title": "Projects must have at least one admin.",
     "admin_dialog_description": "Assign another admin first and try again.",
-    "no_longer_admin": "You are no longer admin on this project."
+    "no_longer_admin": "You are no longer admin on this project.",
+    "warning_change_role": "Changing your role will remove your permissions as admin"
   }
 }

@@ -25,7 +25,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
@@ -272,7 +272,7 @@ export class MembersEffects {
   public wsMembershipCreate$ = createEffect(() => {
     return this.wsService.projectEvents<void>('projectmemberships.create').pipe(
       map(() => {
-        return membersActions.updateMembersList({ eventType: 'create' });
+        return membersActions.updateMemberInfo();
       })
     );
   });
@@ -285,10 +285,18 @@ export class MembersEffects {
     );
   });
 
-  public wsUpdate$ = createEffect(() => {
+  public wsInvitationUpdate$ = createEffect(() => {
     return this.wsService.projectEvents<void>('projectinvitations.update').pipe(
       map(() => {
         return membersActions.updateMembersList({ eventType: 'update' });
+      })
+    );
+  });
+
+  public wsProjectMembershipUpdate$ = createEffect(() => {
+    return this.wsService.projectEvents<void>('projectmemberships.update').pipe(
+      map(() => {
+        return membersActions.updateMemberInfo();
       })
     );
   });
@@ -340,7 +348,7 @@ export class MembersEffects {
               map(() => {
                 return membersActions.updateMemberRoleSuccess({
                   userWasAdmin: !!action.oldRole?.isAdmin,
-                  username: action.username
+                  username: action.username,
                 });
               })
             );
@@ -356,29 +364,60 @@ export class MembersEffects {
     );
   });
 
-  public updateMemberRoleSuccess$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(membersActions.updateMemberRoleSuccess),
-        concatLatestFrom(() => [
-          this.store.select(selectCurrentProject).pipe(filterNil()),
-          this.store.select(selectUser).pipe(filterNil())
-        ]),
-        map(([action, project, userState]) => {
-          if (action.userWasAdmin && (userState.username === action.username)) {
-            this.appService.toastNotification({
-              message: 'members.no_longer_admin',
-              status: TuiNotification.Warning,
-              scope: 'project_settings',
-              closeOnNavigation: false
-            });
-            void this.router.navigate(['/project/', project.slug]);
-          }
-          return membersActions.updateMembersList({ eventType: 'update' });
-        })
-      );
-    }
-  );
+  public updateInvitationRole$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.updateInvitationRole),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      pessimisticUpdate({
+        run: (action, project) => {
+          return this.projectApiService
+            .updateInvitationRole(project.slug, {
+              id: action.id,
+              roleSlug: action.roleSlug,
+            })
+            .pipe(
+              map(() => {
+                return membersActions.updateInvitationRoleSuccess();
+              })
+            );
+        },
+        onError: (action) => {
+          membersActions.updateInvitationRoleError();
+          return membersActions.resetRoleForm({
+            userIdentification: action.id,
+            oldRole: action.oldRole,
+          });
+        },
+      })
+    );
+  });
+
+  public updateProject$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.updateMemberInfo),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      map(([, project]) => {
+        return fetchProject({ slug: project.slug });
+      })
+    );
+  });
+
+  public udpateMembersList$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.updateMemberInfo),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      filter(([, project]) => project.userIsAdmin),
+      map(() => {
+        return membersActions.updateMembersList({ eventType: 'update' });
+      })
+    );
+  });
 
   constructor(
     private appService: AppService,

@@ -6,19 +6,21 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Invitation, Membership, Role } from '@taiga/data';
 import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-members-role-select',
   templateUrl: './role-select.component.html',
   styleUrls: ['./role-select.component.css'],
 })
-export class RoleSelectComponent implements OnInit {
+export class RoleSelectComponent implements OnChanges {
   @Input()
   public invitationOrMember!: Invitation | Membership;
 
@@ -40,20 +42,27 @@ export class RoleSelectComponent implements OnInit {
     private actions$: Actions,
     private fb: FormBuilder
   ) {
-    this.actions$.pipe(ofType(membersActions.resetRoleForm)).subscribe((data) => {
-      if (data.userIdentification === (this.invitationOrMember as Membership).user.username || data.userIdentification === (this.invitationOrMember as Invitation).email) {
-        this.roleForm = this.fb.group({
-          roleName: data.oldRole?.name,
-        });
-      }
-    });
+    this.actions$
+      .pipe(ofType(membersActions.resetRoleForm), untilDestroyed(this))
+      .subscribe((data) => {
+        if (
+          data.userIdentification ===
+            (this.invitationOrMember as Membership).user.username ||
+          data.userIdentification === (this.invitationOrMember as Invitation).id
+        ) {
+          this.roleForm = this.fb.group({
+            roleName: data.oldRole?.name,
+          });
+        }
+      });
   }
 
-  public ngOnInit() {
+  public ngOnChanges() {
     this.roleForm = this.fb.group({
       roleName: this.invitationOrMember.role?.name,
     });
-    this.hasSingleAdmin = this.roles.find(it => it.isAdmin)?.numMembers === 1 || false;
+    this.hasSingleAdmin =
+      this.roles?.find((it) => it.isAdmin)?.numMembers === 1 || false;
   }
 
   public trackByIndex(index: number) {
@@ -67,11 +76,17 @@ export class RoleSelectComponent implements OnInit {
         membersActions.updateMemberRole({
           username: this.invitationOrMember.user?.username || '',
           roleSlug: roleSlug,
-          oldRole: this.invitationOrMember.role
+          oldRole: this.invitationOrMember.role,
         })
       );
-    } else {
-      // TODO invitation role
+    } else if (this.invitationOrMember.id && roleSlug) {
+      this.store.dispatch(
+        membersActions.updateInvitationRole({
+          id: this.invitationOrMember.id,
+          roleSlug: roleSlug,
+          oldRole: this.invitationOrMember.role,
+        })
+      );
     }
   }
 }

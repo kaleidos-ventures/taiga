@@ -260,4 +260,16 @@ export class ProjectApiService {
       `${this.config.apiUrl}/projects/${slug}/workflows`
     );
   }
+
+  public updateInvitationRole(
+    slug: string,
+    userData: { id: string; roleSlug: string }
+  ) {
+    return this.http.patch(
+      `${this.config.apiUrl}/projects/${slug}/invitations/${userData.id}`,
+      {
+        roleSlug: userData.roleSlug,
+      }
+    );
+  }
 }

@@ -6,16 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-
-import { filter, map, switchMap, tap } from 'rxjs/operators';
-
-import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { fetch } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import { AppService } from '~/app/services/app.service';

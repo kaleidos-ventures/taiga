@@ -7,59 +7,72 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t; read: 'project_settings'">
-    <form
-      *ngIf="!hasSingleAdmin || invitationOrMember.role?.slug !== 'admin'"
-      [formGroup]="roleForm"
-      class="select-container">
-      <tg-ui-select
-        [label]="t('members.role_label')"
-        labelVisuallyHidden>
-        <tui-select
-          class="select-rol"
-          tuiTextfieldSize="l"
-          formControlName="roleName"
-          [valueContent]="roleForm.get('roleName')?.value"
-          (ngModelChange)="roleChange($event)"
-          (keydown.enter)="$event.preventDefault()">
-          <tui-data-list *tuiDataList>
-            <ng-container *ngFor="let role of roles; trackBy: trackByIndex">
-              <div><button
+  <form
+    *ngIf="
+      (isMember && !hasSingleAdmin) ||
+      invitationOrMember.role?.slug !== 'admin' ||
+      !isMember
+    "
+    [formGroup]="roleForm"
+    class="select-container">
+    <tg-ui-select
+      [label]="t('members.role_label')"
+      labelVisuallyHidden>
+      <tui-select
+        class="select-rol"
+        tuiTextfieldSize="l"
+        formControlName="roleName"
+        [valueContent]="roleForm.get('roleName')?.value"
+        (ngModelChange)="roleChange($event)"
+        (keydown.enter)="$event.preventDefault()">
+        <tui-data-list *tuiDataList>
+          <ng-container *ngFor="let role of roles; trackBy: trackByIndex">
+            <div>
+              <button
                 tuiOption
                 size="s"
                 [value]="role.name">
                 {{ role.name }}
               </button>
               <tg-ui-context-notification
-              *ngIf="isSelf && invitationOrMember.role?.slug === 'admin' && role.slug === 'admin'"
+                *ngIf="
+                  isSelf &&
+                  invitationOrMember.role?.slug === 'admin' &&
+                  role.slug === 'admin'
+                "
                 class="permissions-warning"
                 alertLevel="polite"
                 status="info">
-                Changing your role will remove your permissions as admin
+                {{ t('members.warning_change_role') }}
               </tg-ui-context-notification>
             </div>
-            </ng-container>
-          </tui-data-list>
-        </tui-select>
-      </tg-ui-select>
-    </form>
-    <tui-hosted-dropdown
-      *ngIf="hasSingleAdmin && isMember && invitationOrMember.role?.slug === 'admin'"
-      [tuiDropdownAlign]="'right'"
-      [content]="adminInformation"
-      [(open)]="dropdownState">
-      <button
-        class="disabled-select"
-        tuiButton
-        iconRight="help"
-        type="button"
-        (click)="!dropdownState">
-        {{ roleForm.get('roleName')?.value }}
-      </button>
-    </tui-hosted-dropdown>
-    <ng-template #adminInformation>
-      <div class="admin-dialog">
-        <p class="admin-dialog-title">{{ t('members.admin_dialog_title') }}</p>
-        <p class="admin-dialog-description">{{ t('members.admin_dialog_description') }}</p>
-      </div>
-    </ng-template>
+          </ng-container>
+        </tui-data-list>
+      </tui-select>
+    </tg-ui-select>
+  </form>
+  <tui-hosted-dropdown
+    *ngIf="
+      hasSingleAdmin && isMember && invitationOrMember.role?.slug === 'admin'
+    "
+    [tuiDropdownAlign]="'right'"
+    [content]="adminInformation"
+    [(open)]="dropdownState">
+    <button
+      class="disabled-select"
+      tuiButton
+      iconRight="help"
+      type="button"
+      (click)="(!dropdownState)">
+      {{ roleForm.get('roleName')?.value }}
+    </button>
+  </tui-hosted-dropdown>
+  <ng-template #adminInformation>
+    <div class="admin-dialog">
+      <p class="admin-dialog-title">{{ t('members.admin_dialog_title') }}</p>
+      <p class="admin-dialog-description">
+        {{ t('members.admin_dialog_description') }}
+      </p>
+    </div>
+  </ng-template>
 </ng-container>

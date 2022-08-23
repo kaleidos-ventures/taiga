@@ -7,6 +7,7 @@
  */
 
 export interface Membership {
+  id?: string;
   user: {
     username: string;
     fullName: string;

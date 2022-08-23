@@ -1,5 +1,15 @@
 {
   "title": "Kanban",
   "empty": "The project administrator has not set any status yet.",
-  "status_label": "Status {{ statusName }}, Tap left and right arrows to move between statuses."
+  "status_label": "Status {{ statusName }}, Tap left and right arrows to move between statuses.",
+  "empty_status": "There are no tasks.",
+  "add_task": "Add task",
+  "create_task_permission": "You no longer have permissions to create tasks",
+  "create_task_form": {
+    "task_title_label": "Task title",
+    "title_task_required": "Task title can’t be empty.",
+    "create_task_button": "Create Task",
+    "max_length": "Character limit has been reached.",
+    "task_title_placeholder": "Start writing a Task title..."
+  }
 }

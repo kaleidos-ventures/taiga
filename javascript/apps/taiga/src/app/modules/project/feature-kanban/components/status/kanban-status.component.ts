@@ -13,24 +13,62 @@ import {
   HostBinding,
   Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
-import { Status } from '@taiga/data';
-import { KanbanWorkflowStatusKeyboardNavigation } from '../workflow/kanban-workflow-keyboard-navigation';
+import { Status, Workflow } from '@taiga/data';
+import { KanbanWorkflowStatusKeyboardNavigation } from '../workflow/kanban-workflow-keyboard-navigation.directive';
 import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
+import { RxState } from '@rx-angular/state';
+import { Store } from '@ngrx/store';
+import {
+  selectLoadingTasks,
+  selectStatusFormOpen,
+  selectStatusNewTasks,
+  selectTasks,
+} from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { distinctUntilChanged, map, takeUntil, timer } from 'rxjs';
+import { KanbanState } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
+import { KanbanTask } from '~/app/modules/project/feature-kanban/kanban.model';
+import { StatusScrollDynamicHeight } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
+import { filterNil } from '~/app/shared/utils/operators';
+import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
+
+export interface KanbanComponentState {
+  tasks: KanbanTask[];
+  visible: boolean;
+  loadingTasks: KanbanState['loadingTasks'];
+  canEdit: boolean;
+  showAddForm: boolean;
+  emptyKanban: boolean | null;
+  formAutoFocus: boolean;
+}
 
 @Component({
   selector: 'tg-kanban-status',
   templateUrl: './kanban-status.component.html',
   styleUrls: ['./kanban-status.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [RxState],
 })
 export class KanbanStatusComponent
-  implements KanbanWorkflowStatusKeyboardNavigation, OnChanges
+  implements
+    KanbanWorkflowStatusKeyboardNavigation,
+    StatusScrollDynamicHeight,
+    OnChanges,
+    OnInit
 {
+  @ViewChild(KanbanVirtualScrollDirective)
+  public kanbanVirtualScroll!: KanbanVirtualScrollDirective;
+
   @Input()
   public status!: Status;
+
+  @Input()
+  public workflow!: Workflow;
 
   @HostBinding('attr.aria-label') public get ariaLabel() {
     return this.transloco.translate('kanban.status_label', {
@@ -42,9 +80,20 @@ export class KanbanStatusComponent
     return 0;
   }
 
-  public color = '';
+  public model$ = this.state.select().pipe(
+    map((state) => {
+      return {
+        // TODO: when design card is ready, calculate task height
+        itemHeights: state.tasks.map((task) => {
+          return 35 + (Math.ceil(task.title.length / 23) - 1) * 14;
+        }),
+        empty: state.loadingTasks ? false : !state.tasks.length,
+        ...state,
+      };
+    })
+  );
 
-  public visible = false;
+  public color = '';
 
   private colors: Record<Status['color'], string> = {
     1: 'var(--color-gray60)',
@@ -53,11 +102,9 @@ export class KanbanStatusComponent
     4: 'var(--color-info60)',
   };
 
-  constructor(
-    private el: ElementRef,
-    private kanbanWorkflowComponent: KanbanWorkflowComponent,
-    private transloco: TranslocoService
-  ) {}
+  public get cdkScrollable() {
+    return this.kanbanVirtualScroll.scrollStrategy.viewport;
+  }
 
   public get columnSize() {
     return this.kanbanWorkflowComponent.statusColumnSize;
@@ -67,12 +114,63 @@ export class KanbanStatusComponent
     return this.el.nativeElement as HTMLElement;
   }
 
+  constructor(
+    private el: ElementRef,
+    private kanbanWorkflowComponent: KanbanWorkflowComponent,
+    private transloco: TranslocoService,
+    private store: Store,
+    private state: RxState<KanbanComponentState>
+  ) {
+    this.state.set({ visible: false });
+  }
+
+  public ngOnInit(): void {
+    this.state.connect(
+      'tasks',
+      this.store.select(selectTasks).pipe(
+        map((tasks) => {
+          return tasks[this.status.slug];
+        }),
+        distinctUntilChanged()
+      )
+    );
+
+    this.state.connect('loadingTasks', this.store.select(selectLoadingTasks));
+
+    this.state.connect(
+      'showAddForm',
+      this.store.select(selectStatusFormOpen(this.status.slug))
+    );
+
+    this.watchNewTasks();
+  }
+
   public onVisible() {
-    this.visible = true;
+    this.state.set({ visible: true });
   }
 
   public onNotVisible() {
-    this.visible = false;
+    this.state.set({ visible: false });
+  }
+
+  public addTask() {
+    this.state.set({ formAutoFocus: true });
+
+    this.store.dispatch(
+      KanbanActions.openCreateTaskForm({ status: this.status.slug })
+    );
+  }
+
+  public cancelTaskCreate() {
+    this.store.dispatch(KanbanActions.closeCreateTaskForm());
+  }
+
+  public trackBySlug(_index: number, task: KanbanTask) {
+    if ('tmpId' in task) {
+      return task.tmpId;
+    }
+
+    return task.slug;
   }
 
   public ngOnChanges(changes: SimpleChanges) {
@@ -85,5 +183,42 @@ export class KanbanStatusComponent
     if (this.colors[this.status.color]) {
       this.color = this.colors[this.status.color];
     }
+  }
+
+  private watchNewTasks() {
+    this.state.hold(
+      this.store
+        .select(selectStatusNewTasks(this.status.slug))
+        .pipe(filterNil()),
+      (newTask) => {
+        this.scrollToTask(newTask.tmpId);
+      }
+    );
+  }
+
+  private scrollToTask(tmpId: string) {
+    if (!this.kanbanVirtualScroll) {
+      return;
+    }
+
+    this.kanbanVirtualScroll.scrollStrategy.scrollTo({ bottom: 0 });
+
+    // #hack
+    // listen for 500ms for changes in the viewport height to scroll bottom
+    // and make the new task visible
+    this.kanbanVirtualScroll.scrollStrategy.updatedItemHeights$
+      .pipe(takeUntil(timer(500)))
+      .subscribe(() => {
+        const el = this.nativeElement.querySelector<HTMLElement>(
+          `tg-kanban-task[data-tmp-id="${tmpId}"]`
+        );
+
+        if (el) {
+          requestAnimationFrame(() => {
+            this.kanbanVirtualScroll.scrollStrategy.scrollTo({ bottom: 0 });
+            this.store.dispatch(KanbanActions.scrolledToNewTask({ tmpId }));
+          });
+        }
+      });
   }
 }

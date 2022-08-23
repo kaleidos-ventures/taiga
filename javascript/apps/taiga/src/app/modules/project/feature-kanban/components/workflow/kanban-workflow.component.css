@@ -9,11 +9,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 :host {
   block-size: 100%;
   display: block;
-
-  &::ng-deep .cdk-virtual-scroll-content-wrapper {
-    align-items: flex-start;
-    display: flex;
-  }
 }
 
 tg-kanban-status {
@@ -26,6 +21,12 @@ tg-kanban-status {
 
 cdk-virtual-scroll-viewport {
   block-size: 100%;
+
+  &::ng-deep > .cdk-virtual-scroll-content-wrapper {
+    align-items: flex-start;
+    display: flex;
+    max-block-size: 100%;
+  }
 }
 
 tui-scrollbar {

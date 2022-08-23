@@ -6,20 +6,78 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<div
-  inViewport
-  [rootMargin]="columnSize"
-  [threshold]="0"
-  root="cdk-virtual-scroll-viewport"
-  (visible)="onVisible()"
-  (notVisible)="onNotVisible()">
-  <div class="header">
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
     <div
-      class="color"
-      [style.border-color]="color"></div>
-    <div class="name">{{ status.name }}</div>
-  </div>
-  <div
-    class="content"
-    *ngIf="visible"></div>
-</div>
+      class="wrapper"
+      inViewport
+      [rootMargin]="columnSize"
+      [threshold]="0"
+      root="cdk-virtual-scroll-viewport"
+      (visible)="onVisible()"
+      (notVisible)="onNotVisible()">
+      <div class="header">
+        <div
+          class="color"
+          [style.border-color]="color"></div>
+        <div class="name">{{ status.name }}</div>
+      </div>
+      <ng-container *ngIf="vm.visible && !vm.loadingTasks">
+        <div
+          *ngIf="vm.tasks.length"
+          class="tasks"
+          tgScrollDynamicHeight>
+          <tui-scrollbar>
+            <cdk-virtual-scroll-viewport
+              tuiScrollable
+              kanbanVirtualScrollStrategy
+              [itemHeights]="vm.itemHeights"
+              class="tui-zero-scrollbar">
+              <ng-container
+                *cdkVirtualFor="let task of vm.tasks; trackBy: trackBySlug">
+                <tg-kanban-task
+                  [task]="task"
+                  [attr.data-tmp-id]="task.tmpId"></tg-kanban-task>
+              </ng-container>
+            </cdk-virtual-scroll-viewport>
+          </tui-scrollbar>
+        </div>
+        <div
+          class="create-task"
+          *hasPermission="
+            ['create'];
+            entity: 'us';
+            else: noCreationPermissionsTpl
+          ">
+          <ng-container *ngIf="vm.showAddForm; else addTaskTpl">
+            <tg-create-task-inline
+              [autoFocus]="vm.formAutoFocus"
+              [status]="status"
+              [workflow]="workflow"
+              (cancel)="cancelTaskCreate()"></tg-create-task-inline>
+          </ng-container>
+          <ng-template #addTaskTpl>
+            <button
+              class="open-create-task-form"
+              data-test="open-create-task-form"
+              tuiLink
+              icon="plus"
+              type="button"
+              (click)="addTask()"
+              iconAlign="left">
+              {{ t('kanban.add_task') }}
+            </button>
+          </ng-template>
+        </div>
+
+        <ng-template #noCreationPermissionsTpl>
+          <div
+            class="empty"
+            *ngIf="vm.empty">
+            <p>{{ t('kanban.empty_status') }}</p>
+          </div>
+        </ng-template>
+      </ng-container>
+    </div>
+  </ng-container>
+</ng-container>

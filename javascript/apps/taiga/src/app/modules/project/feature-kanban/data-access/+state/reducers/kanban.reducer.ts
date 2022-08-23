@@ -7,24 +7,60 @@
  */
 
 import { createFeature, createReducer, on } from '@ngrx/store';
-import { Workflow } from '@taiga/data';
+import { Workflow, Status } from '@taiga/data';
 import { immerReducer } from '~/app/shared/utils/store';
 import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';
+import {
+  KanbanTask,
+  PartialTask,
+} from '~/app/modules/project/feature-kanban/kanban.model';
 
 export interface KanbanState {
   loadingWorkflows: boolean;
+  loadingTasks: boolean;
   workflows: null | Workflow[];
+  tasks: Record<Status['slug'], KanbanTask[]>;
+  createTaskForm: Status['slug'];
+  scrollToTask: PartialTask['tmpId'][];
+  empty: boolean | null;
 }
 
 export const initialKanbanState: KanbanState = {
   loadingWorkflows: false,
+  loadingTasks: false,
   workflows: null,
+  tasks: {},
+  createTaskForm: '',
+  scrollToTask: [],
+  empty: null,
 };
 
 export const reducer = createReducer(
   initialKanbanState,
   on(KanbanActions.initKanban, (state): KanbanState => {
+    state.workflows = null;
+    state.tasks = {};
     state.loadingWorkflows = true;
+    state.loadingTasks = true;
+
+    return state;
+  }),
+  on(KanbanActions.openCreateTaskForm, (state, { status }): KanbanState => {
+    state.createTaskForm = status;
+
+    return state;
+  }),
+  on(KanbanActions.closeCreateTaskForm, (state): KanbanState => {
+    state.createTaskForm = '';
+
+    return state;
+  }),
+  on(KanbanActions.createTask, (state, { task }): KanbanState => {
+    if ('tmpId' in task) {
+      state.scrollToTask.push(task.tmpId);
+    }
+
+    state.tasks[task.status].push(task);
 
     return state;
   }),
@@ -34,9 +70,63 @@ export const reducer = createReducer(
       state.workflows = workflows;
       state.loadingWorkflows = false;
 
+      workflows.forEach((workflow) => {
+        workflow.statuses.forEach((status) => {
+          state.tasks[status.slug] = [];
+        });
+      });
+
+      if (state.empty !== null) {
+        if (state.empty) {
+          state.createTaskForm = state.workflows[0].statuses[0].slug;
+        }
+      }
+
       return state;
     }
-  )
+  ),
+  on(KanbanApiActions.fetchTasksSuccess, (state, { tasks }): KanbanState => {
+    tasks.forEach((task) => {
+      state.tasks[task.status].push(task);
+    });
+
+    state.loadingTasks = false;
+    state.empty = !tasks.length;
+
+    if (state.empty && state.workflows) {
+      state.createTaskForm = state.workflows[0].statuses[0].slug;
+    } else {
+      state.createTaskForm = '';
+    }
+
+    return state;
+  }),
+  on(KanbanApiActions.createTasksSuccess, (state, { task }): KanbanState => {
+    // todo: title bad idea, waiting for back id
+    state.tasks[task.status] = state.tasks[task.status].map((it) => {
+      return it.title === task.title ? task : it;
+    });
+
+    return state;
+  }),
+  on(KanbanApiActions.createTasksError, (state, { task }): KanbanState => {
+    if ('tmpId' in task) {
+      state.tasks[task.status] = state.tasks[task.status].filter((it) => {
+        if ('tmpId' in it && it.tmpId === task.tmpId) {
+          return false;
+        }
+
+        return true;
+      });
+    }
+
+    return state;
+  }),
+  on(KanbanActions.scrolledToNewTask, (state, { tmpId }): KanbanState => {
+    state.scrollToTask = state.scrollToTask.filter((it) => it !== tmpId);
+
+    return state;
+  })
 );
 
 export const kanbanFeature = createFeature({

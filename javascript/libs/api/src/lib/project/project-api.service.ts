@@ -18,9 +18,12 @@ import {
   ProjectCreation,
   Role,
   Workflow,
+  Task,
+  TaskMockFactory,
+  Status,
 } from '@taiga/data';
-import { Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, delay, map } from 'rxjs/operators';
 
 export interface MembersResponse {
   totalMemberships: number;
@@ -282,5 +285,27 @@ export class ProjectApiService {
         roleSlug: userData.roleSlug,
       }
     );
+  }
+
+  public getTasks(slug: string, workflow: string): Observable<Task[]> {
+    const tasks = Array.from({ length: 200 }).map(() => TaskMockFactory());
+    return of(tasks).pipe(delay(1500));
+  }
+
+  public createTask(
+    task: Partial<Task>,
+    status: Status['slug'],
+    workflow: Workflow['slug']
+  ): Observable<Task> {
+    // return throwError(() => {
+    //   return {
+    //     status: 401,
+    //   };
+    // }).pipe(delay(2000));
+
+    return of({
+      ...TaskMockFactory(),
+      ...task,
+    }).pipe(delay(2000));
   }
 }

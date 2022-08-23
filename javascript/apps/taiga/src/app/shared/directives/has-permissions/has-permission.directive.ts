@@ -16,6 +16,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Entity, EntityPermission } from '@taiga/data';
+import { distinctUntilChanged } from 'rxjs';
 import { PermissionsService } from '~/app/services/permissions.service';
 
 // How to use
@@ -34,7 +35,7 @@ export type Operation = 'AND' | 'OR';
 
 @UntilDestroy()
 // eslint-disable-next-line @angular-eslint/directive-selector
-@Directive({ selector: '[hasPermission]' })
+@Directive({ selector: '[hasPermission]', standalone: true })
 export class HasPermissionDirective implements OnInit {
   @Input()
   public set hasPermission(permission: EntityPermission[]) {
@@ -51,10 +52,16 @@ export class HasPermissionDirective implements OnInit {
     this.operation = operation;
   }
 
+  @Input()
+  public set hasPermissionElse(templateRef: TemplateRef<unknown>) {
+    this.elseTemplateRef = templateRef;
+  }
+
   private hasView = false;
   private operation: 'AND' | 'OR' = 'AND';
   private permissions: EntityPermission[] = [];
   private entities!: Entity[];
+  private elseTemplateRef: TemplateRef<unknown> | null = null;
 
   constructor(
     private permissionsService: PermissionsService,
@@ -66,7 +73,7 @@ export class HasPermissionDirective implements OnInit {
   public ngOnInit() {
     this.permissionsService
       .hasPermissions$(this.entities, this.permissions, this.operation)
-      .pipe(untilDestroyed(this))
+      .pipe(untilDestroyed(this), distinctUntilChanged())
       .subscribe((view) => {
         this.updateView(view);
       });
@@ -78,8 +85,13 @@ export class HasPermissionDirective implements OnInit {
       this.viewContainer.createEmbeddedView(this.templateRef);
       this.cd.markForCheck();
     } else if (!view) {
-      this.viewContainer.clear();
-      this.hasView = false;
+      if (this.elseTemplateRef) {
+        this.viewContainer.createEmbeddedView(this.elseTemplateRef);
+        this.cd.markForCheck();
+      } else {
+        this.viewContainer.clear();
+        this.hasView = false;
+      }
     }
   }
 }

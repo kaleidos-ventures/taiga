@@ -20,7 +20,7 @@ import {
 import { Workflow } from '@taiga/data';
 import { KineticScrollService } from '~/app/shared/scroll/kinetic-scroll.service';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
-import { KanbanWorkflowKeyboardNavigation } from './kanban-workflow-keyboard-navigation';
+import { KanbanWorkflowKeyboardNavigation } from './kanban-workflow-keyboard-navigation.directive';
 
 @Component({
   selector: 'tg-kanban-workflow',

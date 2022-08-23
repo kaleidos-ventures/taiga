@@ -17,7 +17,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   @mixin font-paragraph;
 
   max-inline-size: 209px;
-  padding-block:  var(--spacing-8);
+  padding-block: var(--spacing-8);
   padding-inline: var(--spacing-8);
 
   & .admin-dialog-title {
@@ -50,7 +50,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
 
     /* stylelint-disable-next-line selector-max-type */
-    & .t-right svg{
+    & .t-right svg {
       fill: var(--color-gray50);
     }
   }

@@ -23,8 +23,9 @@ import { ProjectNavigationMenuComponent } from './project-navigation-menu.compon
     TranslocoModule,
     AvatarModule,
     RouterModule,
+    HasPermissionDirective,
   ],
-  declarations: [ProjectNavigationMenuComponent, HasPermissionDirective],
+  declarations: [ProjectNavigationMenuComponent],
   exports: [ProjectNavigationMenuComponent],
 })
 export class ProjectNavigationMenuModule {}

@@ -25,7 +25,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [valueContent]="roleForm.get('roleName')?.value"
         (ngModelChange)="roleChange($event)"
         (keydown.enter)="$event.preventDefault()"
-        [attr.data-test]="invitationOrMember.id || invitationOrMember.user?.username">
+        [attr.data-test]="
+          invitationOrMember.id || invitationOrMember.user?.username
+        ">
         <tui-data-list *tuiDataList>
           <ng-container *ngFor="let role of roles; trackBy: trackByIndex">
             <div>
@@ -73,7 +75,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </button>
   </tui-hosted-dropdown>
   <ng-template #adminInformation>
-    <div class="admin-dialog" data-test="admin-dialog">
+    <div
+      class="admin-dialog"
+      data-test="admin-dialog">
       <p class="admin-dialog-title">{{ t('members.admin_dialog_title') }}</p>
       <p class="admin-dialog-description">
         {{ t('members.admin_dialog_description') }}

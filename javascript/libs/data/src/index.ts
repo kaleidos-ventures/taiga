@@ -29,3 +29,5 @@ export * from './lib/status.model';
 export * from './lib/status.model.mock';
 export * from './lib/workflow.model';
 export * from './lib/workflow.model.mock';
+export * from './lib/task.model';
+export * from './lib/task.model.mock';

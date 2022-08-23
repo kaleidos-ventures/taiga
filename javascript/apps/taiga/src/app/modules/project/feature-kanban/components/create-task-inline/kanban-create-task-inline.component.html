@@ -1,0 +1,58 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <form
+    (tuiActiveZoneChange)="leaveForm($event)"
+    [showFormErrors]="submitted"
+    [formGroup]="form"
+    (submit)="submit()"
+    #createTaskForm="ngForm">
+    <tg-ui-input
+      [accessibleLabel]="t('kanban.create_task_form.task_title_label')">
+      <input
+        formControlName="title"
+        data-test="task-title"
+        #title
+        inputRef
+        [maxlength]="maxLength"
+        [placeholder]="t('kanban.create_task_form.task_title_placeholder')" />
+      <ng-container inputError>
+        <tg-ui-error error="required">{{
+          t('kanban.create_task_form.title_task_required')
+        }}</tg-ui-error>
+        <tg-ui-error error="pattern">{{
+          t('kanban.create_task_form.title_task_required')
+        }}</tg-ui-error>
+      </ng-container>
+    </tg-ui-input>
+    <div
+      *ngIf="form.get('title')!.value?.length === maxLength"
+      aria-live="assertive"
+      class="max-length">
+      {{ t('kanban.create_task_form.max_length') }}
+    </div>
+    <div class="actions">
+      <button
+        tuiButton
+        data-test="task-create"
+        appearance="primary"
+        type="submit">
+        {{ t('kanban.create_task_form.create_task_button') }}
+      </button>
+
+      <button
+        class="cancel"
+        data-test="task-cancel"
+        tuiLink
+        (click)="cancelSubmit()">
+        {{ t('commons.cancel') }}
+      </button>
+    </div>
+  </form>
+</ng-container>

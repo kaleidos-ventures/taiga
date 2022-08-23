@@ -7,6 +7,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
 :host {
+  --wrapper-padding-inline-end: var(--spacing-12);
+
   border: solid 2px transparent;
 
   &:focus-visible {
@@ -19,7 +21,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .header {
   align-items: center;
   display: flex;
-  padding: var(--spacing-16);
+  margin-block-end: var(--spacing-16);
+  padding: var(--spacing-8);
 }
 
 .color {
@@ -36,8 +39,38 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   font-weight: var(--font-weight-medium);
 }
 
-.content a {
-  display: block;
+tg-kanban-task {
+  margin-block-end: var(--spacing-8);
+}
+
+.empty {
+  background-color: var(--color-gray20);
+  border-radius: 4px;
+  color: var(--color-gray80);
+  font-style: italic;
   inline-size: 100%;
   padding: var(--spacing-8);
+  text-align: center;
+}
+
+.tasks {
+  max-block-size: 100%;
+
+  &::ng-deep .cdk-virtual-scroll-content-wrapper {
+    padding-inline-end: var(--wrapper-padding-inline-end);
+  }
+}
+
+.wrapper {
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.open-create-task-form {
+  margin-block-start: var(--spacing-8);
+}
+
+.create-task {
+  padding-block-end: var(--spacing-8);
 }

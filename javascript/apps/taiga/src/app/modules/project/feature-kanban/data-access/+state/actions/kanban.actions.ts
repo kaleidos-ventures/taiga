@@ -7,12 +7,23 @@
  */
 
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Workflow } from '@taiga/data';
+import { Workflow, Task, Status } from '@taiga/data';
+import {
+  KanbanTask,
+  PartialTask,
+} from '~/app/modules/project/feature-kanban/kanban.model';
 
 export const KanbanActions = createActionGroup({
   source: 'Kanban',
   events: {
     'Init Kanban': emptyProps(),
+    'Open Create Task form': props<{ status: Status['slug'] }>(),
+    'Close Create Task form': emptyProps(),
+    'Create Task': props<{
+      task: KanbanTask;
+      workflow: Workflow['slug'];
+    }>(),
+    'Scrolled To New Task': props<{ tmpId: PartialTask['tmpId'] }>(),
   },
 });
 
@@ -20,5 +31,8 @@ export const KanbanApiActions = createActionGroup({
   source: 'Kanban Api',
   events: {
     'Fetch Workflows Success': props<{ workflows: Workflow[] }>(),
+    'Fetch Tasks Success': props<{ tasks: Task[] }>(),
+    'Create Tasks Success': props<{ task: Task }>(),
+    'Create Tasks Error': props<{ status: number; task: KanbanTask }>(),
   },
 });

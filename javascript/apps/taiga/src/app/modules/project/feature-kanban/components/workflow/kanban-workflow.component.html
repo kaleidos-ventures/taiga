@@ -15,7 +15,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     class="tui-zero-scrollbar">
     <ng-container
       *cdkVirtualFor="let status of workflow.statuses; trackBy: trackBySlug">
-      <tg-kanban-status [status]="status"></tg-kanban-status>
+      <tg-kanban-status
+        [status]="status"
+        [workflow]="workflow"></tg-kanban-status>
     </ng-container>
   </cdk-virtual-scroll-viewport>
 </tui-scrollbar>

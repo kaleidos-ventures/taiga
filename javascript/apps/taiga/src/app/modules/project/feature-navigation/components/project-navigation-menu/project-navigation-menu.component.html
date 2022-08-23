@@ -162,6 +162,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 operation: 'OR'
               "
               [class.active]="kanbanActive.isActive"
+              data-test="kanban-button"
               [attr.data-text]="t('commons.kanban')"
               (pointerenter)="popup($event, 'kanban')"
               (pointerleave)="out()">

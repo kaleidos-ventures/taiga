@@ -138,6 +138,7 @@ class EventsManager:
             yield subscriber
         finally:  # When the websocket will be disconnected
             del self._subscribers[subscriber.id]
+            # TODO: FIXME: Clean self._channels, remove Subscriber instance from every subscribed channel.
             await subscriber.close()
 
             logger.info(

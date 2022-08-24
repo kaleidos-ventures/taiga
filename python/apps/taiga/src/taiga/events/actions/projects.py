@@ -7,10 +7,11 @@
 
 from typing import TYPE_CHECKING, Literal
 
-from taiga.base.api.permissions import check_permissions
+from taiga.base.api.permissions import Or, check_permissions
 from taiga.events import channels
 from taiga.events.responses import ActionResponse
 from taiga.exceptions.api import ForbiddenError
+from taiga.invitations.permissions import HasPendingProjectInvitation
 from taiga.permissions import CanViewProject
 from taiga.projects import services as projects_services
 
@@ -23,7 +24,7 @@ if TYPE_CHECKING:
 __all__ = ["SubscribeToProjectEventsAction", "UnsubscribeFromProjectEventsAction"]
 
 
-PROJECT_PERMISSIONS = CanViewProject()
+PROJECT_PERMISSIONS = Or(CanViewProject(), HasPendingProjectInvitation())
 
 
 class SubscribeToProjectEventsAction(Action, type="subscribe_to_project_events"):

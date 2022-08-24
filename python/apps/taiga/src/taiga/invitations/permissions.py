@@ -8,13 +8,14 @@
 from typing import Any
 
 from taiga.base.api.permissions import PermissionComponent
-from taiga.invitations import services as invitations_services
 from taiga.permissions import services as permissions_services
 from taiga.users.models import AnyUser
 
 
 class IsProjectInvitationRecipient(PermissionComponent):
     async def is_authorized(self, user: AnyUser, obj: Any = None) -> bool:
+        from taiga.invitations import services as invitations_services
+
         if not obj or user.is_anonymous or not user.is_active:
             return False
 
@@ -23,6 +24,9 @@ class IsProjectInvitationRecipient(PermissionComponent):
 
 class HasPendingProjectInvitation(PermissionComponent):
     async def is_authorized(self, user: AnyUser, obj: Any = None) -> bool:
+        # TODO: FIXME: import here ro precent circular import (taskqueue autodiscover())
+        from taiga.invitations import services as invitations_services
+
         if not obj or user.is_anonymous or not user.is_active:
             return False
 

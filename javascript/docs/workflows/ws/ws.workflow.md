@@ -62,3 +62,31 @@ this.wsService
     }
   );
 ```
+
+# Project events
+
+This effect will trigger when there is an event in the current project channel
+
+```ts
+public wsUpdate$ = createEffect(() => {
+  return this.wsService.projectEvents<void>('project.update').pipe(
+    map(() => {
+      return exampleAction.run();
+    })
+  );
+});
+```
+
+# User events
+
+This effect will trigger when there is an event in the current user channel
+
+```ts
+public wsUpdate$ = createEffect(() => {
+  return this.wsService.userEvents<void>('user.update').pipe(
+    map(() => {
+      return exampleAction.run();
+    })
+  );
+});
+```

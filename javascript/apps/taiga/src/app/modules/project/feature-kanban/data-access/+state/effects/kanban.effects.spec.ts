@@ -12,7 +12,6 @@ import { Action } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 import { Observable } from 'rxjs';
-import { randDomainSuffix } from '@ngneat/falso';
 
 import { KanbanEffects } from './kanban.effects';
 import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';

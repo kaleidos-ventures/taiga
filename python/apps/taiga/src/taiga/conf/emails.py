@@ -16,6 +16,7 @@ class EmailBackends(Enum):
     FILE = "file"
     LOC_MEM = "locmem"
     DUMMY = "dummy"
+    CONSOLE_TEXT = "console_text"
 
 
 class EmailSettings(BaseSettings):

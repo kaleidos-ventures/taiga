@@ -9,6 +9,7 @@
 from fastapi_mailman import EmailMultiAlternatives, Mail  # type: ignore
 from fastapi_mailman.config import ConnectionConfig  # type: ignore
 from taiga.conf import settings
+from taiga.conf.emails import EmailBackends
 
 
 async def send_email_message(
@@ -43,10 +44,16 @@ async def send_email_message(
     await message.send()
 
 
+def _get_email_backend() -> str:
+    if settings.EMAIL.BACKEND == EmailBackends.CONSOLE_TEXT:
+        return "taiga.emails.backends.console_text"
+    return settings.EMAIL.BACKEND.value
+
+
 def _get_mail_connection() -> Mail:
     connection_config = ConnectionConfig(
         # common email settings
-        MAIL_BACKEND=settings.EMAIL.BACKEND.value,
+        MAIL_BACKEND=_get_email_backend(),
         MAIL_DEFAULT_SENDER=settings.EMAIL.DEFAULT_SENDER,
         # smtp backend settings
         MAIL_SERVER=settings.EMAIL.SERVER,

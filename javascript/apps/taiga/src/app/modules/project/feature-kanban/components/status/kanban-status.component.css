@@ -19,7 +19,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .header {
   align-items: center;
   display: flex;
-  padding: var(--spacing-8);
+  padding: var(--spacing-16);
 }
 
 .color {

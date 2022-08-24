@@ -1,4 +1,5 @@
 {
   "title": "Kanban",
-  "empty": "The project administrator has not set any status yet."
+  "empty": "The project administrator has not set any status yet.",
+  "status_label": "Status {{ statusName }}"
 }

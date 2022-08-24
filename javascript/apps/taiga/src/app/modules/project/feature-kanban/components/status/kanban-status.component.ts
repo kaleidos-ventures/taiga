@@ -15,6 +15,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
+import { TranslocoService } from '@ngneat/transloco';
 import { Status } from '@taiga/data';
 import { KanbanWorkflowStatusKeyboardNavigation } from '../workflow/kanban-workflow-keyboard-navigation';
 import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
@@ -32,7 +33,9 @@ export class KanbanStatusComponent
   public status!: Status;
 
   @HostBinding('attr.aria-label') public get ariaLabel() {
-    return this.status.name;
+    return this.transloco.translate('kanban.status_label', {
+      statusName: this.status.name,
+    });
   }
 
   @HostBinding('attr.tabindex') public get tabIndex() {
@@ -52,7 +55,8 @@ export class KanbanStatusComponent
 
   constructor(
     private el: ElementRef,
-    private kanbanWorkflowComponent: KanbanWorkflowComponent
+    private kanbanWorkflowComponent: KanbanWorkflowComponent,
+    private transloco: TranslocoService
   ) {}
 
   public get columnSize() {

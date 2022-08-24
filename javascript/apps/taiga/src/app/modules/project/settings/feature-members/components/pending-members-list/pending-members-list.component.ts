@@ -14,7 +14,11 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Invitation, Project, Role, User } from '@taiga/data';
@@ -201,6 +205,19 @@ const revokeConfirmationDialogClose = '0.5s';
   ],
 })
 export class PendingMembersListComponent {
+  @HostListener('window:beforeunload')
+  public revokePendingInvitations() {
+    if (this.revokePendingConfirmTimeouts.size) {
+      for (const invitation of this.revokePendingConfirmTimeouts.keys()) {
+        this.execCancelInvitation(invitation);
+      }
+
+      return false;
+    }
+
+    return true;
+  }
+
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
   public invitationToCancel: Invitation | null = null;
 

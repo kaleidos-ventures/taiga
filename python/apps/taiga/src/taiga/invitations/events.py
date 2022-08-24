@@ -10,7 +10,6 @@ from typing import Iterable
 from taiga.events import events_manager
 from taiga.invitations.models import ProjectInvitation
 from taiga.projects.models import Project
-from taiga.users.models import User
 
 CREATE_PROJECT_INVITATION = "projectinvitations.create"
 ACCEPT_PROJECT_INVITATION = "projectmemberships.create"
@@ -19,14 +18,13 @@ REVOKE_PROJECT_INVITATION = "projectinvitations.revoke"
 
 
 async def emit_event_when_project_invitations_are_created(
-    project: Project, invitations: Iterable[ProjectInvitation], invited_by: User
+    project: Project, invitations: Iterable[ProjectInvitation]
 ) -> None:
     # Publish event on every user channel
     for invitation in filter(lambda i: i.user, invitations):
         await events_manager.publish_on_user_channel(
             user=invitation.user,  # type: ignore[arg-type]
             type=CREATE_PROJECT_INVITATION,
-            sender=invited_by,
             content={"project": invitation.project.slug},
         )
 
@@ -35,7 +33,6 @@ async def emit_event_when_project_invitations_are_created(
         await events_manager.publish_on_project_channel(
             project=project,
             type=CREATE_PROJECT_INVITATION,
-            sender=invited_by,
         )
 
 
@@ -43,7 +40,6 @@ async def emit_event_when_project_invitation_is_accepted(invitation: ProjectInvi
     await events_manager.publish_on_project_channel(
         project=invitation.project,
         type=ACCEPT_PROJECT_INVITATION,
-        sender=invitation.user or None,
     )
 
 

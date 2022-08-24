@@ -99,4 +99,4 @@ class Subscriber:
 
     async def sending_handler(self) -> None:
         async for response in self:
-            await self._websocket.send_text(response.json())
+            await self._websocket.send_text(response.json(by_alias=True))

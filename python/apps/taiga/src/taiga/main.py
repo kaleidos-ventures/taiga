@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException
 from taiga import __description__, __title__, __version__
 from taiga.base.db.middlewares import DBConnectionMiddleware
+from taiga.base.logging.middlewares import CorrelationIdMiddleware
 from taiga.base.services.exceptions import TaigaServiceException
 from taiga.conf import settings
 from taiga.exceptions.api import handlers
@@ -44,10 +45,24 @@ api.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["Pagination-Offset", "Pagination-Limit", "Pagination-Total"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
+    allow_headers=[
+        "accept-encoding",
+        "authorization",
+        "content-type",
+        CorrelationIdMiddleware.CORRELATION_ID_HEADER_NAME,
+    ],
+    expose_headers=[
+        "pagination-offset",
+        "pagination-limit",
+        "pagination-total",
+        CorrelationIdMiddleware.CORRELATION_ID_HEADER_NAME,
+    ],
+    max_age=1800,
 )
+
+# Logging Correlation ID middleware
+api.add_middleware(CorrelationIdMiddleware)
 
 
 ##############################################

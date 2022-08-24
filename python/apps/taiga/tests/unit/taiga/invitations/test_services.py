@@ -156,7 +156,7 @@ async def test_get_project_invitations_ok_not_admin():
 #######################################################
 
 
-async def test_send_project_invitations_for_existing_user(tqmanager):
+async def test_send_project_invitations_for_existing_user(tqmanager, correlation_id):
     user1 = f.build_user()
     user2 = f.build_user(email="user-test@email.com")
     project = f.build_project(owner=user1)

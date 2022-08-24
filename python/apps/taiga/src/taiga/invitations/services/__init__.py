@@ -225,7 +225,7 @@ async def create_project_invitations(
 
     if invitations_to_send_list:
         await invitations_events.emit_event_when_project_invitations_are_created(
-            project=project, invitations=invitations_to_send_list, invited_by=invited_by
+            project=project, invitations=invitations_to_send_list
         )
 
     return CreateProjectInvitations(invitations=list(invitations_to_send_list), already_members=already_members)

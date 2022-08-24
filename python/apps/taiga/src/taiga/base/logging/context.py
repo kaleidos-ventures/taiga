@@ -5,7 +5,10 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from tests.utils.conf import override_settings  # noqa
-from tests.utils.logging import correlation_id  # noqa
-from tests.utils.tasksqueue import tqmanager  # noqa
-from tests.utils.testclient import client  # noqa
+from contextvars import ContextVar
+
+correlation_id: ContextVar[str | None] = ContextVar("correlation_id", default=None)
+
+
+def get_current_correlation_id() -> str | None:
+    return correlation_id.get()

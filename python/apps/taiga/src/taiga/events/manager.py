@@ -84,16 +84,12 @@ class EventsManager:
             response = EventResponse(channel=channel, event=event)
 
             subscribers = list(self._channels.get(channel, []))
-            count = 0
             for subscriber in subscribers:
-                # Prevent sending an event to the user who emited it.
-                if not subscriber.user.is_authenticated or event.sender != subscriber.user.username:
-                    count += 1
-                    await subscriber.put(response)
+                await subscriber.put(response)
 
             logger.info(
-                f"Emit to {count} subscriber(s): {event}.",
-                extra={"action": "manager.emit", "event": event, "total_shipments": count},
+                f"Emit to {len(subscribers)} subscriber(s): {event}.",
+                extra={"action": "manager.emit", "event": event, "total_shipments": len(subscribers)},
             )
 
     @property
@@ -185,39 +181,34 @@ class EventsManager:
             extra={"action": "manager.publish", "channel": channel, "event": event},
         )
 
-    def _generate_event(
-        self, type: str, sender: User | str | None = None, content: dict[str, Any] | None = None
-    ) -> Event:
-        return Event(type=type, sender=sender.username if isinstance(sender, User) else sender, content=content)
+    def _generate_event(self, type: str, content: dict[str, Any] | None = None) -> Event:
+        return Event(type=type, content=content)
 
     async def publish_on_system_channel(self, type: str, content: dict[str, Any]) -> None:
         channel = channels.system_channel()
         event = self._generate_event(type=type, content=content)
         await self.publish(channel=channel, event=event)
 
-    async def publish_on_user_channel(
-        self, user: User | str, type: str, sender: User | str | None = None, content: dict[str, Any] | None = None
-    ) -> None:
+    async def publish_on_user_channel(self, user: User | str, type: str, content: dict[str, Any] | None = None) -> None:
         channel = channels.user_channel(user)
-        event = self._generate_event(type=type, sender=sender, content=content)
+        event = self._generate_event(type=type, content=content)
         await self.publish(channel=channel, event=event)
 
     async def publish_on_project_channel(
-        self, project: Project | str, type: str, sender: User | str | None = None, content: dict[str, Any] | None = None
+        self, project: Project | str, type: str, content: dict[str, Any] | None = None
     ) -> None:
         channel = channels.project_channel(project)
-        event = self._generate_event(type=type, sender=sender, content=content)
+        event = self._generate_event(type=type, content=content)
         await self.publish(channel=channel, event=event)
 
     async def publish_on_workspace_channel(
         self,
         workspace: Workspace | str,
         type: str,
-        sender: User | str | None = None,
         content: dict[str, Any] | None = None,
     ) -> None:
         channel = channels.workspace_channel(workspace)
-        event = self._generate_event(type=type, sender=sender, content=content)
+        event = self._generate_event(type=type, content=content)
         await self.publish(channel=channel, event=event)
 
 

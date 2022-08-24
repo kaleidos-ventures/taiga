@@ -202,9 +202,9 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
     "type": "event",
     "channel": "<channel-name>",
     "event": {
-        "type": "<event-type>"
-        "sender": "<sender.username>"
-        "content": {...}
+        "type": "<event-type>",
+        "content": {...},
+        "correlationId": "<correlation-id value>"
     }
 }
 ```

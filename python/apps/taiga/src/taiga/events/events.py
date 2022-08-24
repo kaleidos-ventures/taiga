@@ -7,24 +7,26 @@
 
 from typing import Any
 
+from pydantic import Field
+from taiga.base.logging.context import get_current_correlation_id
 from taiga.base.serializers import BaseModel
 
 
 class Event(BaseModel):
     type: str
-    sender: str | None = None
     content: dict[str, Any] | None = None
+    correlation_id: str | None = Field(default_factory=get_current_correlation_id)
 
     def __eq__(self, other: object) -> bool:
         return (
             isinstance(other, Event)
             and self.type == other.type
-            and self.sender == other.sender
+            and self.correlation_id == other.correlation_id
             and self.content == other.content
         )
 
     def __repr__(self) -> str:
-        return f"Event(type={self.type!r}, sender={self.sender!r}, content={self.content!r})"
+        return f"Event(type={self.type!r}, correlation_id={self.correlation_id}, content={self.content!r})"
 
     def __str__(self) -> str:
         return self.json()

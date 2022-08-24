@@ -114,15 +114,12 @@ async def verify_user(token: str) -> VerificationInfo:
     await invitations_services.update_user_projects_invitations(user=user)
 
     # Accept project invitation, if it exists and the user comes from the email's CTA. Errors will be ignored
-    project_invitation = None
     project_invitation_token = verify_token.get("project_invitation_token", None)
     accept_project_invitation = verify_token.get("accept_project_invitation", False)
 
     if accept_project_invitation and project_invitation_token:
         try:
-            project_invitation = await invitations_services.accept_project_invitation_from_token(
-                token=project_invitation_token, user=user
-            )
+            await invitations_services.accept_project_invitation_from_token(token=project_invitation_token, user=user)
         except (
             invitations_ex.BadInvitationTokenError,
             invitations_ex.InvitationDoesNotExistError,
@@ -132,7 +129,8 @@ async def verify_user(token: str) -> VerificationInfo:
         ):
             pass  # TODO: Logging invitation is invalid
 
-    elif project_invitation_token:
+    project_invitation = None
+    if project_invitation_token:
         try:
             project_invitation = await invitations_services.get_project_invitation(token=project_invitation_token)
         except (invitations_ex.BadInvitationTokenError, invitations_ex.InvitationDoesNotExistError):

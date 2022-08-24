@@ -151,7 +151,7 @@ async def test_verify_user_ok_with_accepting_project_invitation_token():
         fake_token.get.side_effect = [project_invitation_token, accept_project_invitation]
         fake_auth_services.create_auth_credentials.return_value = auth_credentials
         FakeVerifyUserToken.create.return_value = fake_token
-        fake_invitations_services.accept_project_invitation_from_token.return_value = project_invitation
+        fake_invitations_services.get_project_invitation.return_value = project_invitation
         fake_users_repo.get_first_user.return_value = user
 
         info = await services.verify_user("some_token")

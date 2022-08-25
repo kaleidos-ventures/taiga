@@ -84,7 +84,7 @@ class AuthData(models.BaseModel):
     user = models.ForeignKey("users.User", null=False, blank=False, related_name="auth_data", on_delete=models.CASCADE)
     key = models.LowerSlugField(max_length=50, null=False, blank=False, verbose_name="key")
     value = models.CharField(max_length=300, null=False, blank=False, verbose_name="value")
-    extra = models.JSONField(verbose_name="extra")
+    extra = models.JSONField(null=True, blank=True, verbose_name="extra")
 
     class Meta:
         unique_together = ["key", "value"]

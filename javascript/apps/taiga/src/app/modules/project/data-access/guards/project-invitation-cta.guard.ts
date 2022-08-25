@@ -73,15 +73,42 @@ export class ProjectInvitationCTAGuard implements CanActivate {
                 },
               });
             } else {
-              void this.router.navigate(['/signup'], {
-                queryParams: {
-                  project: invitation.project.name,
-                  email: invitation.email,
-                  acceptProjectInvitation: true,
-                  projectInvitationToken: token,
-                  isNextAnonProject: invitation.project.isAnon,
-                },
-              });
+              if (invitation.status === 'revoked') {
+                if (invitation.project.isAnon) {
+                  this.appService.toastNotification({
+                    message: 'errors.invitation_no_longer_valid',
+                    status: TuiNotification.Error,
+                    autoClose: false,
+                    closeOnNavigation: false,
+                  });
+                  void this.router.navigate([
+                    '/project/',
+                    invitation.project.slug,
+                  ]);
+                } else {
+                  this.appService.toastNotification({
+                    message: 'errors.invitation_no_longer_valid',
+                    status: TuiNotification.Error,
+                    autoClose: false,
+                    closeOnNavigation: false,
+                  });
+                  void this.router.navigate(['/signup'], {
+                    queryParams: {
+                      email: invitation.email,
+                    },
+                  });
+                }
+              } else {
+                void this.router.navigate(['/signup'], {
+                  queryParams: {
+                    project: invitation.project.name,
+                    email: invitation.email,
+                    acceptProjectInvitation: true,
+                    projectInvitationToken: token,
+                    isNextAnonProject: invitation.project.isAnon,
+                  },
+                });
+              }
             }
             return of(true);
           }

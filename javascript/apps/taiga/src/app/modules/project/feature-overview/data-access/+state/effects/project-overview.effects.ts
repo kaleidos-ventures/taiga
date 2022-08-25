@@ -12,13 +12,11 @@ import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY, of, zip } from 'rxjs';
-import { catchError, exhaustMap, filter, map, switchMap } from 'rxjs/operators';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { catchError, exhaustMap, filter, map } from 'rxjs/operators';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { AppService } from '~/app/services/app.service';
-import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
@@ -201,30 +199,51 @@ export class ProjectOverviewEffects {
     );
   });
 
-  public wsRevokeInvitations$ = createEffect(() => {
-    return this.store.select(selectUser).pipe(
-      filterNil(),
-      switchMap((user) => {
-        return this.wsService
-          .events<{ project: string }>({
-            channel: `users.${user.username}`,
-            type: 'projectinvitations.revoke',
+  public wsUserRevokeInvitations$ = createEffect(
+    () => {
+      return this.wsService
+        .userEvents<{ project: string }>('projectinvitations.revoke')
+        .pipe(
+          concatLatestFrom(() =>
+            this.store.select(selectCurrentProject).pipe(filterNil())
+          ),
+          filter(
+            ([eventResponse, project]) =>
+              eventResponse.event.content.project === project.slug
+          ),
+          map(([, project]) => {
+            this.wsService
+              .command('unsubscribe_from_project_events', {
+                project: project.slug,
+              })
+              .subscribe();
+            this.wsService
+              .command('subscribe_to_project_events', { project: project.slug })
+              .subscribe();
           })
-          .pipe(
-            concatLatestFrom(() =>
-              this.store.select(selectCurrentProject).pipe(filterNil())
-            ),
-            filter(
-              ([eventResponse, project]) =>
-                eventResponse.event.content.project === project.slug
-            ),
-            map(([, project]) => {
-              this.revokeInvitationService.wsRevokedInvitationError(project);
-              return ProjectActions.revokedInvitation();
-            })
-          );
-      })
-    );
+        );
+    },
+    {
+      dispatch: false,
+    }
+  );
+
+  public wsProjectRevokeInvitations$ = createEffect(() => {
+    return this.wsService
+      .projectEvents<{ project: string }>('projectinvitations.revoke')
+      .pipe(
+        concatLatestFrom(() =>
+          this.store.select(selectCurrentProject).pipe(filterNil())
+        ),
+        filter(
+          ([eventResponse, project]) =>
+            eventResponse.channel === 'projects.' + project.slug
+        ),
+        filter(([, project]) => project.userIsAdmin),
+        map(() => {
+          return ProjectActions.revokedInvitation();
+        })
+      );
   });
 
   constructor(
@@ -232,7 +251,6 @@ export class ProjectOverviewEffects {
     private actions$: Actions,
     private projectApiService: ProjectApiService,
     private appService: AppService,
-    private wsService: WsService,
-    private revokeInvitationService: RevokeInvitationService
+    private wsService: WsService
   ) {}
 }

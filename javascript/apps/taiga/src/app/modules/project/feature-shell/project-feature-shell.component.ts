@@ -89,18 +89,16 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
 
     this.state.hold(this.state.select('project'), (project) => {
       this.subscribedProject = project.slug;
-      if (project.userIsMember) {
-        this.unsubscribeFromProjectEvents();
-        this.wsService
-          .command('subscribe_to_project_events', { project: project.slug })
-          .subscribe();
+      this.unsubscribeFromProjectEvents();
+      this.wsService
+        .command('subscribe_to_project_events', { project: project.slug })
+        .subscribe();
 
-        this.store.dispatch(
-          setNotificationClosed({
-            notificationClosed: !this.showPendingInvitationNotification,
-          })
-        );
-      }
+      this.store.dispatch(
+        setNotificationClosed({
+          notificationClosed: !this.showPendingInvitationNotification,
+        })
+      );
     });
   }
 

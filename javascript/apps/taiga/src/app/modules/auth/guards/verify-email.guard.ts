@@ -78,6 +78,7 @@ export class VerifyEmailGuard implements CanActivate {
             user,
             auth: verification.auth,
             next: slug ? `/project/${slug}` : undefined,
+            invitationStatus: verification.projectInvitation.status,
           };
 
           this.store.dispatch(loginSuccess(data));

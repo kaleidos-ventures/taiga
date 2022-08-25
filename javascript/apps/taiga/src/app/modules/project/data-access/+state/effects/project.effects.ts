@@ -15,7 +15,7 @@ import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
+import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
 import { WsService } from '~/app/services/ws';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
@@ -59,7 +59,7 @@ export class ProjectEffects {
     return this.actions$.pipe(
       ofType(ProjectActions.revokedInvitation),
       map(() => {
-        return membersActions.updateMembersList({ eventType: 'update' });
+        return ProjectOverviewActions.updateMembersList();
       })
     );
   });
@@ -75,6 +75,15 @@ export class ProjectEffects {
           autoClose: true,
         });
       }),
+      map(({ projectSlug }) => {
+        return ProjectActions.fetchProject({ slug: projectSlug });
+      })
+    );
+  });
+
+  public acceptedInvitationError$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(InvitationActions.acceptInvitationSlugError),
       map(({ projectSlug }) => {
         return ProjectActions.fetchProject({ slug: projectSlug });
       })

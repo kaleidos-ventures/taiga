@@ -130,6 +130,7 @@ export class MembersEffects {
         this.store.select(selectInvitationsOffset).pipe(filterNil()),
       ]),
       exhaustMap(([, project, invitationsOffset]) => {
+        console.log('updateInvitationList');
         return this.projectApiService
           .getInvitations(project.slug, invitationsOffset, MEMBERS_PAGE_SIZE)
           .pipe(

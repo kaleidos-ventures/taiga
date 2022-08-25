@@ -7,7 +7,9 @@
  */
 
 import { Injectable } from '@angular/core';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { ConfigService } from '@taiga/core';
 import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
 import {
   concatMap,
@@ -18,12 +20,10 @@ import {
   tap,
   timeout,
 } from 'rxjs/operators';
-import { Actions, ofType } from '@ngrx/effects';
-import { wsMessage } from '../ws.actions';
-import { ConfigService } from '@taiga/core';
-import { WSResponse, WSResponseAction, WSResponseEvent } from '../ws.model';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { wsMessage } from '../ws.actions';
+import { WSResponse, WSResponseAction, WSResponseEvent } from '../ws.model';
 
 const MAX_RETRY = 5;
 const RETRY_TIME = 5000;
@@ -152,7 +152,6 @@ export class WsService {
         if (!project) {
           return EMPTY;
         }
-
         return this.events<T>({
           channel: `projects.${project.slug}`,
           type,

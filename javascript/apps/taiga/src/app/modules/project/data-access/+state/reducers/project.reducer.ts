@@ -34,18 +34,6 @@ export const reducer = createReducer(
 
     return state;
   }),
-  on(ProjectActions.revokedInvitation, (state): ProjectState => {
-    if (state.currentProjectSlug) {
-      const project = state.projects[state.currentProjectSlug];
-
-      if (project) {
-        project.userHasPendingInvitation = false;
-        state.showBannerOnRevoke = true;
-      }
-    }
-
-    return state;
-  }),
   on(ProjectActions.eventInvitation, (state): ProjectState => {
     if (state.currentProjectSlug) {
       const project = state.projects[state.currentProjectSlug];

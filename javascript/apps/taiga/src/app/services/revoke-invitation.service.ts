@@ -11,7 +11,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
-import { genericResponseError, InvitationInfo, Project } from '@taiga/data';
+import { genericResponseError, InvitationInfo } from '@taiga/data';
 import { EMPTY } from 'rxjs';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { revokedError } from '../modules/errors/+state/actions/errors.actions';
@@ -40,7 +40,7 @@ export class RevokeInvitationService {
         })
       );
       this.appService.toastNotification({
-        message: 'errors.you_dont_have_permission_to_see',
+        message: 'errors.invitation_no_longer_valid',
         status: TuiNotification.Error,
         autoClose: false,
         closeOnNavigation: false,
@@ -67,7 +67,7 @@ export class RevokeInvitationService {
         })
       );
       this.appService.toastNotification({
-        message: 'errors.you_dont_have_permission_to_see',
+        message: 'errors.invitation_no_longer_valid',
         status: TuiNotification.Error,
         autoClose: false,
         closeOnNavigation: false,
@@ -94,7 +94,7 @@ export class RevokeInvitationService {
           })
         );
         this.appService.toastNotification({
-          message: 'errors.no_permission_to_see',
+          message: 'errors.you_dont_have_permission_to_see',
           status: TuiNotification.Error,
           autoClose: false,
           closeOnNavigation: false,
@@ -105,18 +105,6 @@ export class RevokeInvitationService {
         this.appService.errorManagement(httpResponse);
       }
     });
-  }
-
-  public wsRevokedInvitationError(project: Project) {
-    if (!project.userPermissions.length) {
-      this.appService.toastNotification({
-        message: 'errors.no_permission_to_see',
-        status: TuiNotification.Error,
-        autoClose: false,
-        closeOnNavigation: false,
-      });
-      void this.router.navigate(['/']);
-    }
   }
 
   public verifyEmailRevokeError(httpResponse: HttpErrorResponse) {

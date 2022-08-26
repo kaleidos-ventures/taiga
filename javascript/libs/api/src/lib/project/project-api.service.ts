@@ -20,7 +20,7 @@ import {
   Workflow,
 } from '@taiga/data';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 export interface MembersResponse {
   totalMemberships: number;
@@ -62,6 +62,17 @@ export class ProjectApiService {
   public getMemberRoles(slug: Project['slug']) {
     return this.http.get<Role[]>(
       `${this.config.apiUrl}/projects/${slug}/roles`
+    );
+  }
+
+  public getPermissions(slug: Project['slug']) {
+    return this.getProject(slug).pipe(
+      map((project: Project) => {
+        return project.userPermissions;
+      }),
+      catchError(() => {
+        return [];
+      })
     );
   }
 

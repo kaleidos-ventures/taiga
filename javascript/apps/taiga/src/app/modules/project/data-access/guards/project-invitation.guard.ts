@@ -10,6 +10,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { TuiNotification } from '@taiga-ui/core';
+import { ProjectApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 import { InvitationInfo } from '@taiga/data';
 import { of, throwError } from 'rxjs';
@@ -26,7 +27,8 @@ export class ProjectInvitationGuard implements CanActivate {
     private router: Router,
     private http: HttpClient,
     private config: ConfigService,
-    private appService: AppService
+    private appService: AppService,
+    private projectApiService: ProjectApiService
   ) {}
 
   public canActivate(route: ActivatedRouteSnapshot) {
@@ -38,64 +40,76 @@ export class ProjectInvitationGuard implements CanActivate {
       )
       .pipe(
         mergeMap((invitation: InvitationInfo) => {
-          if (invitation.existingUser) {
-            if (this.authService.isLogged()) {
-              void this.router.navigate(
-                ['/project/', invitation.project.slug],
-                {
-                  state: { invite: invitation.status },
+          return this.projectApiService
+            .getProject(invitation.project.slug)
+            .pipe(
+              catchError(() => {
+                return of(null);
+              }),
+              mergeMap((project) => {
+                if (invitation.existingUser) {
+                  if (this.authService.isLogged()) {
+                    void this.router.navigate(
+                      ['/project/', invitation.project.slug],
+                      {
+                        state: { invite: invitation.status },
+                      }
+                    );
+                  } else {
+                    void this.router.navigate(['/login'], {
+                      queryParams: {
+                        next: `/project/${invitation.project.slug}`,
+                        projectInvitationToken: token,
+                        acceptProjectInvitation: false,
+                        nextHasPermission:
+                          project && project.userPermissions.length > 0,
+                        invitationStatus: invitation.status,
+                      },
+                    });
+                  }
+                } else {
+                  if (project && project.userPermissions.length > 0) {
+                    void this.router.navigate(
+                      ['/project/', invitation.project.slug],
+                      {
+                        state: { invite: invitation.status },
+                      }
+                    );
+                    return of(true);
+                  } else {
+                    if (invitation.status === 'revoked') {
+                      this.appService.toastNotification({
+                        message: 'errors.you_dont_have_permission_to_see',
+                        status: TuiNotification.Error,
+                        autoClose: false,
+                        closeOnNavigation: false,
+                      });
+                      void this.router.navigate(['/signup'], {
+                        queryParams: {
+                          email: invitation.email,
+                          acceptProjectInvitation: false,
+                          projectInvitationToken: token,
+                          nextHasPermission:
+                            project && project.userPermissions.length > 0,
+                        },
+                      });
+                    } else {
+                      void this.router.navigate(['/signup'], {
+                        queryParams: {
+                          project: invitation.project.name,
+                          email: invitation.email,
+                          acceptProjectInvitation: false,
+                          projectInvitationToken: token,
+                          nextHasPermission:
+                            project && project.userPermissions.length > 0,
+                        },
+                      });
+                    }
+                  }
                 }
-              );
-            } else {
-              void this.router.navigate(['/login'], {
-                queryParams: {
-                  next: `/project/${invitation.project.slug}`,
-                  projectInvitationToken: token,
-                  acceptProjectInvitation: false,
-                  isNextAnonProject: invitation.project.isAnon,
-                  invitationStatus: invitation.status,
-                },
-              });
-            }
-          } else {
-            if (invitation.project.isAnon) {
-              void this.router.navigate(
-                ['/project/', invitation.project.slug],
-                {
-                  state: { invite: invitation.status },
-                }
-              );
-              return of(true);
-            } else {
-              if (invitation.status === 'revoked') {
-                this.appService.toastNotification({
-                  message: 'errors.no_permission_to_see',
-                  status: TuiNotification.Error,
-                  autoClose: false,
-                  closeOnNavigation: false,
-                });
-                void this.router.navigate(['/signup'], {
-                  queryParams: {
-                    email: invitation.email,
-                    acceptProjectInvitation: false,
-                    projectInvitationToken: token,
-                    isNextAnonProject: invitation.project.isAnon,
-                  },
-                });
-              } else {
-                void this.router.navigate(['/signup'], {
-                  queryParams: {
-                    project: invitation.project.name,
-                    email: invitation.email,
-                    acceptProjectInvitation: false,
-                    projectInvitationToken: token,
-                    isNextAnonProject: invitation.project.isAnon,
-                  },
-                });
-              }
-            }
-          }
-          return of(true);
+                return of(true);
+              })
+            );
         }),
         catchError((httpResponse: HttpErrorResponse) => {
           if (this.authService.isLogged()) {

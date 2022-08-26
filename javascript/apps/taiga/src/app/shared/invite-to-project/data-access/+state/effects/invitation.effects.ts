@@ -150,7 +150,8 @@ export class InvitationEffects {
           if (this.revokeInvitationService.isRevokeError(httpResponse)) {
             return this.revokeInvitationService.acceptInvitationSlugRevokeError(
               action.slug,
-              action.name
+              action.name,
+              action.isBanner
             );
           }
           this.appService.toastNotification({

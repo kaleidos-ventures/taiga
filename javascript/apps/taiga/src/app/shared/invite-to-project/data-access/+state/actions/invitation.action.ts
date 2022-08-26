@@ -20,7 +20,7 @@ export const inviteUsersSuccess = createAction(
 
 export const acceptInvitationSlug = createAction(
   '[Invitation] Accept your invitation via Slug',
-  props<{ slug: string; name?: string }>()
+  props<{ slug: string; name?: string; isBanner?: boolean }>()
 );
 
 export const acceptInvitationSlugSuccess = createAction(
@@ -30,6 +30,11 @@ export const acceptInvitationSlugSuccess = createAction(
 
 export const acceptInvitationSlugError = createAction(
   '[Invitation] Error accept your invitation via Slug',
+  props<{ projectSlug: string }>()
+);
+
+export const revokeInvitationBannerSlugError = createAction(
+  '[Invitation] Error accept your invitation via Slug using Project Overview Banner',
   props<{ projectSlug: string }>()
 );
 

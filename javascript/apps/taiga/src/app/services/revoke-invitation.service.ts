@@ -11,12 +11,12 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
+import { ProjectApiService } from '@taiga/api';
 import { genericResponseError, InvitationInfo } from '@taiga/data';
-import { EMPTY } from 'rxjs';
+import { catchError, EMPTY, map, of } from 'rxjs';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { revokedError } from '../modules/errors/+state/actions/errors.actions';
 import { AppService } from './app.service';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -24,39 +24,49 @@ export class RevokeInvitationService {
   constructor(
     private store: Store,
     private appService: AppService,
-    private router: Router
+    private router: Router,
+    private projectApiService: ProjectApiService
   ) {}
 
   public invitationCtaRevokeError(
     invitation: InvitationInfo,
     httpResponse: HttpErrorResponse
   ) {
-    if (this.isRevokeError(httpResponse)) {
-      this.store.dispatch(
-        revokedError({
-          error: {
-            message: httpResponse.message,
-          },
-        })
-      );
-      this.appService.toastNotification({
-        message: 'errors.invitation_no_longer_valid',
-        status: TuiNotification.Error,
-        autoClose: false,
-        closeOnNavigation: false,
-      });
-      if (invitation.project.isAnon) {
-        void this.router.navigate([`/project/${invitation.project.slug}`]);
-      } else {
-        void this.router.navigate(['/']);
-      }
-    }
+    return this.projectApiService.getProject(invitation.project.slug).pipe(
+      catchError(() => {
+        return of(null);
+      }),
+      map((project) => {
+        if (this.isRevokeError(httpResponse)) {
+          this.appService.toastNotification({
+            message: 'errors.invitation_no_longer_valid',
+            status: TuiNotification.Error,
+            autoClose: false,
+            closeOnNavigation: false,
+          });
+
+          this.store.dispatch(
+            revokedError({
+              error: {
+                message: httpResponse.message,
+              },
+            })
+          );
+
+          if (project && project.userPermissions.length > 0) {
+            return this.router.parseUrl(`/project/${invitation.project.slug}`);
+          }
+        }
+
+        return this.router.parseUrl('/');
+      })
+    );
   }
 
   public acceptInvitationTokenRevokeError(
     httpResponse: HttpErrorResponse,
     next: string,
-    isNextAnonProject?: boolean
+    nextHasPermission?: boolean
   ) {
     if (this.isRevokeError(httpResponse)) {
       this.store.dispatch(
@@ -72,7 +82,7 @@ export class RevokeInvitationService {
         autoClose: false,
         closeOnNavigation: false,
       });
-      if (isNextAnonProject) {
+      if (nextHasPermission) {
         void this.router.navigateByUrl(next);
       } else {
         void this.router.navigate(['/']);
@@ -116,7 +126,7 @@ export class RevokeInvitationService {
       })
     );
     this.appService.toastNotification({
-      message: 'errors.no_permission_to_see',
+      message: 'errors.you_dont_have_permission_to_see',
       status: TuiNotification.Error,
       autoClose: false,
       closeOnNavigation: false,
@@ -124,7 +134,11 @@ export class RevokeInvitationService {
     void this.router.navigate(['/signup']);
   }
 
-  public acceptInvitationSlugRevokeError(slug: string, name?: string) {
+  public acceptInvitationSlugRevokeError(
+    slug: string,
+    name?: string,
+    isBanner?: boolean
+  ) {
     let param;
     let message;
     if (name) {
@@ -143,6 +157,11 @@ export class RevokeInvitationService {
       autoClose: false,
       closeOnNavigation: false,
     });
+    if (isBanner) {
+      return InvitationActions.revokeInvitationBannerSlugError({
+        projectSlug: slug,
+      });
+    }
     return InvitationActions.revokeInvitation({
       projectSlug: slug,
     });

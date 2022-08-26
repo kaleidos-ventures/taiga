@@ -14,8 +14,10 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { randUuid } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { ProjectApiService } from '@taiga/api';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
-import { InvitationInfoMockFactory } from '@taiga/data';
+import { InvitationInfoMockFactory, ProjectMockFactory } from '@taiga/data';
+import { of } from 'rxjs';
 
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { AppService } from '~/app/services/app.service';
@@ -28,7 +30,7 @@ describe('Project Invitation Guard', () => {
     service: ProjectInvitationGuard,
     providers: [{ provide: ConfigService, useValue: ConfigServiceMock }],
     imports: [RouterTestingModule, HttpClientTestingModule],
-    mocks: [AuthService, Router, AppService],
+    mocks: [AuthService, Router, AppService, ProjectApiService],
   });
 
   beforeEach(() => (spectator = createService()));
@@ -37,6 +39,11 @@ describe('Project Invitation Guard', () => {
     const token = randUuid();
     const host = ConfigServiceMock.apiUrl;
     const httpTestingController = spectator.inject(HttpTestingController);
+
+    const projectApiService = spectator.inject(ProjectApiService);
+    const project = ProjectMockFactory();
+    project.userPermissions.push('view_task');
+    projectApiService.getProject.mockReturnValue(of(project));
 
     const authService = spectator.inject(AuthService);
     const router = spectator.inject(Router);
@@ -72,6 +79,10 @@ describe('Project Invitation Guard', () => {
     const host = ConfigServiceMock.apiUrl;
     const httpTestingController = spectator.inject(HttpTestingController);
 
+    const projectApiService = spectator.inject(ProjectApiService);
+    const project = ProjectMockFactory();
+    projectApiService.getProject.mockReturnValue(of(project));
+
     const authService = spectator.inject(AuthService);
     const router = spectator.inject(Router);
     authService.isLogged.mockReturnValue(false);
@@ -96,7 +107,7 @@ describe('Project Invitation Guard', () => {
       next: `/project/${invitation.project.slug}`,
       acceptProjectInvitation: false,
       projectInvitationToken: token,
-      isNextAnonProject: invitation.project.isAnon,
+      nextHasPermission: !!project.userPermissions.length,
       invitationStatus: 'pending',
     };
 
@@ -111,6 +122,11 @@ describe('Project Invitation Guard', () => {
     const host = ConfigServiceMock.apiUrl;
     const httpTestingController = spectator.inject(HttpTestingController);
     const router = spectator.inject(Router);
+
+    const projectApiService = spectator.inject(ProjectApiService);
+    const project = ProjectMockFactory();
+    project.userPermissions.push('view_task');
+    projectApiService.getProject.mockReturnValue(of(project));
 
     spectator.service
       .canActivate({
@@ -129,7 +145,6 @@ describe('Project Invitation Guard', () => {
 
     const invitation = InvitationInfoMockFactory();
 
-    invitation.project.isAnon = true;
     invitation.existingUser = false;
     req.flush(invitation);
 
@@ -144,6 +159,10 @@ describe('Project Invitation Guard', () => {
     const host = ConfigServiceMock.apiUrl;
     const httpTestingController = spectator.inject(HttpTestingController);
     const router = spectator.inject(Router);
+
+    const projectApiService = spectator.inject(ProjectApiService);
+    const project = ProjectMockFactory();
+    projectApiService.getProject.mockReturnValue(of(project));
 
     spectator.service
       .canActivate({
@@ -166,7 +185,7 @@ describe('Project Invitation Guard', () => {
       email: invitation.email,
       acceptProjectInvitation: false,
       projectInvitationToken: token,
-      isNextAnonProject: false,
+      nextHasPermission: false,
     };
 
     invitation.project.isAnon = false;

@@ -92,7 +92,6 @@
     "invitation_no_longer_valid": "The invitation is no longer valid.",
     "project_invitation_no_longer_valid": "The invitation to {{ name }} is no longer valid.",
 
-    "no_permission_to_see": "No permissions to see the project.",
     "you_dont_have_permission_to_see": "You don't have permission to see the project."
   }
 }

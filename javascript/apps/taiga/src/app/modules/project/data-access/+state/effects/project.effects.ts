@@ -9,11 +9,15 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
+
+import { filter, map, switchMap, tap } from 'rxjs/operators';
+
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { fetch } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
@@ -90,6 +94,25 @@ export class ProjectEffects {
     );
   });
 
+  public revokeInvitationBannerSlugError$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(InvitationActions.revokeInvitationBannerSlugError),
+      fetch({
+        run: ({ projectSlug }) => {
+          return this.projectApiService.getProject(projectSlug).pipe(
+            map((project) => {
+              return ProjectActions.fetchProject({ slug: project.slug });
+            })
+          );
+        },
+        onError: () => {
+          void this.router.navigate(['/']);
+          return EMPTY;
+        },
+      })
+    );
+  });
+
   public wsUpdateInvitations$ = createEffect(() => {
     return this.store.select(selectUser).pipe(
       filterNil(),
@@ -121,6 +144,7 @@ export class ProjectEffects {
     private navigationService: NavigationService,
     private appService: AppService,
     private wsService: WsService,
-    private store: Store
+    private store: Store,
+    private router: Router
   ) {}
 }

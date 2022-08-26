@@ -46,7 +46,7 @@ export class AuthEffects {
           projectInvitationToken,
           next,
           acceptProjectInvitation,
-          isNextAnonProject,
+          nextHasPermission,
           invitationStatus,
         }) => {
           this.buttonLoadingService.start();
@@ -73,7 +73,7 @@ export class AuthEffects {
                   projectInvitationToken,
                   next,
                   acceptProjectInvitation,
-                  isNextAnonProject,
+                  nextHasPermission,
                   invitationStatus,
                 });
               })
@@ -107,7 +107,7 @@ export class AuthEffects {
             next,
             projectInvitationToken,
             acceptProjectInvitation,
-            isNextAnonProject,
+            nextHasPermission,
             invitationStatus,
           }) => {
             return this.store.select(selectUser).pipe(
@@ -128,7 +128,7 @@ export class AuthEffects {
                         this.revokeInvitationService.acceptInvitationTokenRevokeError(
                           httpResponse,
                           next,
-                          isNextAnonProject
+                          nextHasPermission
                         );
                         return EMPTY;
                       })

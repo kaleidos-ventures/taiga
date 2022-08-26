@@ -146,6 +146,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     this.store.dispatch(
       acceptInvitationSlug({
         slug: this.state.get('project').slug,
+        isBanner: true,
       })
     );
   }

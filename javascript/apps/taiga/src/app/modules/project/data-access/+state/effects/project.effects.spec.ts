@@ -6,23 +6,24 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { randDomainSuffix } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
-import { AppService } from '~/app/services/app.service';
 import { Observable } from 'rxjs';
-import { randDomainSuffix } from '@ngneat/falso';
+import { AppService } from '~/app/services/app.service';
 
-import { ProjectEffects } from './project.effects';
-import { fetchProject, fetchProjectSuccess } from '../actions/project.actions';
-import { cold, hot } from 'jest-marbles';
-import { ProjectMockFactory, UserMockFactory } from '@taiga/data';
-import { TestScheduler } from 'rxjs/testing';
-import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { WsService, WsServiceMock } from '~/app/services/ws';
+import { Router } from '@angular/router';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { ProjectMockFactory, UserMockFactory } from '@taiga/data';
+import { cold, hot } from 'jest-marbles';
+import { TestScheduler } from 'rxjs/testing';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { WsService, WsServiceMock } from '~/app/services/ws';
+import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { fetchProject, fetchProjectSuccess } from '../actions/project.actions';
+import { ProjectEffects } from './project.effects';
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
   let spectator: SpectatorService<ProjectEffects>;
@@ -36,7 +37,7 @@ describe('ProjectEffects', () => {
       { provide: WsService, useValue: WsServiceMock },
       provideMockStore({ initialState: {} }),
     ],
-    mocks: [ProjectApiService, AppService],
+    mocks: [ProjectApiService, AppService, Router],
   });
 
   beforeEach(() => {

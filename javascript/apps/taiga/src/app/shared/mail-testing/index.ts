@@ -23,8 +23,7 @@ export const init = (url?: string) => {
       console.log(`
 Subject: ${data.subject}
 To: ${data.to}
-Preview URL: ${data.previewUrl}
-Local preview URL: ${data.localPreview}`);
+Preview URL: ${data.previewUrl}`);
     }
   };
 };

@@ -14,7 +14,6 @@ let apiPort = 3000;
 let user = '';
 let pass = '';
 let host = `http://localhost:${apiPort}`;
-let ethereal = true;
 
 configArguments.forEach((arg) => {
   if (arg.startsWith('--ws=')) {
@@ -27,8 +26,6 @@ configArguments.forEach((arg) => {
     user = arg.split('=')[1];
   } else if (arg.startsWith('--pass=')) {
     pass = arg.split('=')[1];
-  } else if (arg.startsWith('--ethereal=')) {
-    ethereal = arg.split('=')[1] === 'true';
   } else if (arg.startsWith('--host=')) {
     host = arg.split('=')[1];
   }
@@ -41,5 +38,4 @@ module.exports = {
   user,
   pass,
   host,
-  ethereal,
 };

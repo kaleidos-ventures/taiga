@@ -30,8 +30,7 @@ app.get('/emails-previews', function (req, res) {
     return {
       to: it.to,
       subject: it.subject,
-      preview: it.preview,
-      localPreview: it.localPreview,
+      previewUrl: it.previewUrl,
     };
   });
 

@@ -47,6 +47,7 @@ export interface InvitationParams {
   projectInvitationToken: string;
   slug: string;
   acceptProjectInvitation: boolean;
+  nextProjectSlug?: string;
 }
 
 export interface SearchUserRequest {

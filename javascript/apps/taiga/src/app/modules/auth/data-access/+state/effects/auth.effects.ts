@@ -16,7 +16,7 @@ import { pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
 import { Auth, ErrorManagementOptions, SignUpError } from '@taiga/data';
-import { EMPTY } from 'rxjs';
+import { EMPTY, throwError } from 'rxjs';
 import {
   catchError,
   filter,
@@ -46,8 +46,8 @@ export class AuthEffects {
           projectInvitationToken,
           next,
           acceptProjectInvitation,
-          nextHasPermission,
           invitationStatus,
+          nextProjectSlug,
         }) => {
           this.buttonLoadingService.start();
           return this.authApiService
@@ -73,8 +73,8 @@ export class AuthEffects {
                   projectInvitationToken,
                   next,
                   acceptProjectInvitation,
-                  nextHasPermission,
                   invitationStatus,
+                  nextProjectSlug,
                 });
               })
             );
@@ -107,8 +107,8 @@ export class AuthEffects {
             next,
             projectInvitationToken,
             acceptProjectInvitation,
-            nextHasPermission,
             invitationStatus,
+            nextProjectSlug,
           }) => {
             return this.store.select(selectUser).pipe(
               filterNil(),
@@ -125,11 +125,29 @@ export class AuthEffects {
                         return EMPTY;
                       }),
                       catchError((httpResponse: HttpErrorResponse) => {
-                        this.revokeInvitationService.acceptInvitationTokenRevokeError(
-                          httpResponse,
-                          next,
-                          nextHasPermission
-                        );
+                        const error = httpResponse;
+                        if (nextProjectSlug) {
+                          return this.projectApiService
+                            .getProject(nextProjectSlug)
+                            .pipe(
+                              tap((project) => {
+                                this.revokeInvitationService.acceptInvitationTokenRevokeError(
+                                  error,
+                                  next,
+                                  !!project.userPermissions.length
+                                );
+                                return EMPTY;
+                              }),
+                              catchError((httpResponse: HttpErrorResponse) => {
+                                this.revokeInvitationService.acceptInvitationTokenRevokeError(
+                                  error,
+                                  next,
+                                  false
+                                );
+                                return throwError(() => httpResponse);
+                              })
+                            );
+                        }
                         return EMPTY;
                       })
                     );

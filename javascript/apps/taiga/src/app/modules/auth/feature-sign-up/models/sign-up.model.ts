@@ -12,4 +12,5 @@ export interface SignUp {
   fullName: string;
   acceptProjectInvitation: boolean;
   projectInvitationToken?: string;
+  nextProjectSlug?: string;
 }

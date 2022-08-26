@@ -73,10 +73,9 @@ export class ProjectInvitationCTAGuard implements CanActivate {
                     const urlTree = this.router.parseUrl('/login');
                     urlTree.queryParams = {
                       next: `/project/${invitation.project.slug}`,
-                      acceptProjectInvitation: true,
+                      acceptProjectInvitation: 'true',
                       projectInvitationToken: token,
-                      nextHasPermission:
-                        project && project.userPermissions.length > 0,
+                      nextProjectSlug: invitation.project.slug,
                     };
 
                     return of(urlTree);
@@ -101,11 +100,7 @@ export class ProjectInvitationCTAGuard implements CanActivate {
                           autoClose: false,
                           closeOnNavigation: false,
                         });
-
                         const urlTree = this.router.parseUrl('/signup');
-                        urlTree.queryParams = {
-                          email: invitation.email,
-                        };
 
                         return of(urlTree);
                       }
@@ -114,10 +109,8 @@ export class ProjectInvitationCTAGuard implements CanActivate {
                       urlTree.queryParams = {
                         project: invitation.project.name,
                         email: invitation.email,
-                        acceptProjectInvitation: true,
+                        acceptProjectInvitation: 'true',
                         projectInvitationToken: token,
-                        nextHasPermission:
-                          project && project.userPermissions.length > 0,
                       };
 
                       return of(urlTree);

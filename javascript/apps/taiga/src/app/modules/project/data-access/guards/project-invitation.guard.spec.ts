@@ -107,7 +107,7 @@ describe('Project Invitation Guard', () => {
       next: `/project/${invitation.project.slug}`,
       acceptProjectInvitation: false,
       projectInvitationToken: token,
-      nextHasPermission: !!project.userPermissions.length,
+      nextProjectSlug: invitation.project.slug,
       invitationStatus: 'pending',
     };
 
@@ -145,6 +145,7 @@ describe('Project Invitation Guard', () => {
 
     const invitation = InvitationInfoMockFactory();
 
+    invitation.project.isAnon = true;
     invitation.existingUser = false;
     req.flush(invitation);
 
@@ -185,7 +186,6 @@ describe('Project Invitation Guard', () => {
       email: invitation.email,
       acceptProjectInvitation: false,
       projectInvitationToken: token,
-      nextHasPermission: false,
     };
 
     invitation.project.isAnon = false;

@@ -40,76 +40,62 @@ export class ProjectInvitationGuard implements CanActivate {
       )
       .pipe(
         mergeMap((invitation: InvitationInfo) => {
-          return this.projectApiService
-            .getProject(invitation.project.slug)
-            .pipe(
-              catchError(() => {
-                return of(null);
-              }),
-              mergeMap((project) => {
-                if (invitation.existingUser) {
-                  if (this.authService.isLogged()) {
-                    void this.router.navigate(
-                      ['/project/', invitation.project.slug],
-                      {
-                        state: { invite: invitation.status },
-                      }
-                    );
-                  } else {
-                    void this.router.navigate(['/login'], {
-                      queryParams: {
-                        next: `/project/${invitation.project.slug}`,
-                        projectInvitationToken: token,
-                        acceptProjectInvitation: false,
-                        nextHasPermission:
-                          project && project.userPermissions.length > 0,
-                        invitationStatus: invitation.status,
-                      },
-                    });
-                  }
-                } else {
-                  if (project && project.userPermissions.length > 0) {
-                    void this.router.navigate(
-                      ['/project/', invitation.project.slug],
-                      {
-                        state: { invite: invitation.status },
-                      }
-                    );
-                    return of(true);
-                  } else {
-                    if (invitation.status === 'revoked') {
-                      this.appService.toastNotification({
-                        message: 'errors.you_dont_have_permission_to_see',
-                        status: TuiNotification.Error,
-                        autoClose: false,
-                        closeOnNavigation: false,
-                      });
-                      void this.router.navigate(['/signup'], {
-                        queryParams: {
-                          email: invitation.email,
-                          acceptProjectInvitation: false,
-                          projectInvitationToken: token,
-                          nextHasPermission:
-                            project && project.userPermissions.length > 0,
-                        },
-                      });
-                    } else {
-                      void this.router.navigate(['/signup'], {
-                        queryParams: {
-                          project: invitation.project.name,
-                          email: invitation.email,
-                          acceptProjectInvitation: false,
-                          projectInvitationToken: token,
-                          nextHasPermission:
-                            project && project.userPermissions.length > 0,
-                        },
-                      });
-                    }
-                  }
+          if (invitation.existingUser) {
+            if (this.authService.isLogged()) {
+              void this.router.navigate(
+                ['/project/', invitation.project.slug],
+                {
+                  state: { invite: invitation.status },
                 }
-                return of(true);
-              })
-            );
+              );
+            } else {
+              void this.router.navigate(['/login'], {
+                queryParams: {
+                  next: `/project/${invitation.project.slug}`,
+                  projectInvitationToken: token,
+                  acceptProjectInvitation: false,
+                  invitationStatus: invitation.status,
+                  nextProjectSlug: invitation.project.slug,
+                },
+              });
+            }
+          } else {
+            if (invitation.project.isAnon) {
+              void this.router.navigate(
+                ['/project/', invitation.project.slug],
+                {
+                  state: { invite: invitation.status },
+                }
+              );
+              return of(true);
+            } else {
+              if (invitation.status === 'revoked') {
+                this.appService.toastNotification({
+                  message: 'errors.you_dont_have_permission_to_see',
+                  status: TuiNotification.Error,
+                  autoClose: false,
+                  closeOnNavigation: false,
+                });
+                void this.router.navigate(['/signup'], {
+                  queryParams: {
+                    email: invitation.email,
+                    acceptProjectInvitation: false,
+                    projectInvitationToken: token,
+                  },
+                });
+              } else {
+                void this.router.navigate(['/signup'], {
+                  queryParams: {
+                    project: invitation.project.name,
+                    email: invitation.email,
+                    acceptProjectInvitation: false,
+                    projectInvitationToken: token,
+                  },
+                });
+              }
+            }
+          }
+          return of(true);
         }),
         catchError((httpResponse: HttpErrorResponse) => {
           if (this.authService.isLogged()) {

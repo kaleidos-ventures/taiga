@@ -7,11 +7,11 @@
  */
 
 import {
-  Component,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
   HostBinding,
   OnInit,
-  ChangeDetectorRef,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -77,6 +77,7 @@ export class AuthFeatureSignUpComponent implements OnInit {
       if ('acceptProjectInvitation' in this.params) {
         this.signUpFormData.acceptProjectInvitation =
           this.params?.acceptProjectInvitation;
+        this.cd.detectChanges();
       }
     });
   }

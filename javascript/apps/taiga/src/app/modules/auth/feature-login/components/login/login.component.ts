@@ -34,8 +34,8 @@ export class LoginComponent implements OnInit {
   @Input() public projectInvitationToken = '';
   @Input() public acceptProjectInvitation = undefined;
   @Input() public next = '';
-  @Input() public nextHasPermission = '';
   @Input() public invitationStatus = '';
+  @Input() public nextProjectSlug = '';
 
   public readonly model$ = this.state.select();
 
@@ -73,10 +73,10 @@ export class LoginComponent implements OnInit {
           projectInvitationToken: this.projectInvitationToken,
           next: this.next,
           acceptProjectInvitation: this.acceptProjectInvitation === 'true',
-          nextHasPermission: this.nextHasPermission
-            ? this.nextHasPermission.toLocaleLowerCase() === 'true'
-            : false,
           invitationStatus: this.invitationStatus,
+          nextProjectSlug: this.nextProjectSlug
+            ? this.nextProjectSlug
+            : undefined,
         })
       );
     } else {

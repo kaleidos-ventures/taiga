@@ -24,8 +24,8 @@ export const login = createAction(
     projectInvitationToken: string;
     next: string;
     acceptProjectInvitation?: boolean;
-    nextHasPermission?: boolean;
     invitationStatus?: string;
+    nextProjectSlug?: string;
   }>()
 );
 
@@ -39,8 +39,8 @@ export const loginSuccess = createAction(
     projectInvitationToken?: string;
     next?: string;
     acceptProjectInvitation?: boolean;
-    nextHasPermission?: boolean;
     invitationStatus?: string;
+    nextProjectSlug?: string;
   }>()
 );
 

@@ -269,14 +269,6 @@ export class MembersEffects {
     );
   });
 
-  public wsMembershipCreate$ = createEffect(() => {
-    return this.wsService.projectEvents<void>('projectmemberships.create').pipe(
-      map(() => {
-        return membersActions.updateMemberInfo();
-      })
-    );
-  });
-
   public wsInvitationCreate$ = createEffect(() => {
     return this.wsService.projectEvents<void>('projectinvitations.create').pipe(
       map(() => {
@@ -289,14 +281,6 @@ export class MembersEffects {
     return this.wsService.projectEvents<void>('projectinvitations.update').pipe(
       map(() => {
         return membersActions.updateMembersList({ eventType: 'update' });
-      })
-    );
-  });
-
-  public wsProjectMembershipUpdate$ = createEffect(() => {
-    return this.wsService.projectEvents<void>('projectmemberships.update').pipe(
-      map(() => {
-        return membersActions.updateMemberInfo();
       })
     );
   });

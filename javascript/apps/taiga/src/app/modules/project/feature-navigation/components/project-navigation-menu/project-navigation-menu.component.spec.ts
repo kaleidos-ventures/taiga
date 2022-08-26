@@ -6,28 +6,42 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { ProjectMockFactory } from '@taiga/data';
-import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
-
-import { randWord } from '@ngneat/falso';
-import { ProjectNavigationMenuComponent } from './project-navigation-menu.component';
 import { CommonModule } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { randWord } from '@ngneat/falso';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { provideMockActions } from '@ngrx/effects/testing';
+import { Action } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { ProjectMockFactory, UserMockFactory } from '@taiga/data';
+import { Observable } from 'rxjs';
+import { WsService, WsServiceMock } from '~/app/services/ws';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
+import { ProjectNavigationMenuComponent } from './project-navigation-menu.component';
 
 describe('ProjectNavigationComponent', () => {
+  const initialState = { user: UserMockFactory() };
+
+  let actions$: Observable<Action>;
   let spectator: Spectator<ProjectNavigationMenuComponent>;
   const createComponent = createComponentFactory({
     component: ProjectNavigationMenuComponent,
     imports: [getTranslocoModule(), CommonModule],
     schemas: [NO_ERRORS_SCHEMA],
+    providers: [
+      provideMockActions(() => actions$),
+      { provide: WsService, useValue: WsServiceMock },
+      provideMockStore({ initialState }),
+    ],
   });
+
+  let store: MockStore;
 
   beforeEach(() => {
     spectator = createComponent({
       detectChanges: false,
     });
-
+    store = spectator.inject(MockStore);
     spectator.component.project = ProjectMockFactory(true);
   });
 

@@ -16,7 +16,13 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { Project } from '@taiga/data';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { WsService } from '~/app/services/ws';
+import { filterNil } from '~/app/shared/utils/operators';
 
 interface ProjectMenuDialog {
   hover: boolean;
@@ -35,6 +41,7 @@ interface ProjectMenuDialog {
 }
 const cssValue = getComputedStyle(document.documentElement);
 
+@UntilDestroy()
 @Component({
   selector: 'tg-project-navigation-menu',
   templateUrl: './project-navigation-menu.component.html',
@@ -98,7 +105,28 @@ export class ProjectNavigationMenuComponent {
 
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
 
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(
+    private cd: ChangeDetectorRef,
+    private store: Store,
+    private wsService: WsService
+  ) {
+    this.store
+      .select(selectUser)
+      .pipe(filterNil(), untilDestroyed(this))
+      .subscribe((user) => {
+        this.wsService
+          .events<{ project: string }>({
+            channel: `users.${user.username}`,
+            type: 'projectmemberships.update',
+          })
+          .pipe(untilDestroyed(this))
+          .subscribe((data) => {
+            if (data.event.content.project === this.project.slug) {
+              this.store.dispatch(fetchProject({ slug: this.project.slug }));
+            }
+          });
+      });
+  }
 
   public initDialog(
     el: HTMLElement,

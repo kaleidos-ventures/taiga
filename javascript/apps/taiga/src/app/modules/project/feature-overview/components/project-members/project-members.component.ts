@@ -36,6 +36,7 @@ import {
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
+import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import { WsService } from '~/app/services/ws';
 import {
   acceptInvitationSlug,
@@ -208,6 +209,16 @@ export class ProjectMembersComponent {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.store.dispatch(ProjectOverviewActions.updateMembersList());
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectmemberships.update',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(membersActions.updateMemberInfo());
       });
   }
 

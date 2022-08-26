@@ -29,6 +29,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <ng-container *ngFor="let role of roles; trackBy: trackByIndex">
             <div>
               <button
+                [class.selected]="invitationOrMember.role?.slug === role.slug"
                 tuiOption
                 size="s"
                 [value]="role.name">

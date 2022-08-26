@@ -19,6 +19,13 @@ tui-alert-host {
       margin-block-start: var(--spacing-16) !important;
     }
   }
+
+  /* stylelint-disable-next-line selector-max-type */
+  & .t-notifications-wrapper tui-alert {
+    inline-size: 410px;
+    margin-block-start: var(--spacing-60);
+    margin-inline-end: var(--spacing-76);
+  }
 }
 
 tui-notification {

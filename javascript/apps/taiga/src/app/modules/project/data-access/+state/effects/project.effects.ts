@@ -21,6 +21,7 @@ import { EMPTY } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
+import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { WsService } from '~/app/services/ws';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
@@ -138,6 +139,18 @@ export class ProjectEffects {
     );
   });
 
+  public revokedNoPermissionInvitation$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(ProjectActions.revokedNoPermissionInvitation),
+        tap(() => {
+          this.revokeInvitationService.wsRevokedInvitationError();
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(
     private actions$: Actions,
     private projectApiService: ProjectApiService,
@@ -145,6 +158,7 @@ export class ProjectEffects {
     private appService: AppService,
     private wsService: WsService,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private revokeInvitationService: RevokeInvitationService
   ) {}
 }

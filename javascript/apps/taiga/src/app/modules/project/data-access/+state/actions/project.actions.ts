@@ -26,3 +26,7 @@ export const eventInvitation = createAction(
 export const revokedInvitation = createAction(
   '[Project][ws] invitation revoked'
 );
+
+export const revokedNoPermissionInvitation = createAction(
+  '[Project][ws] invitation revoked and you have no permission'
+);

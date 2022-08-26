@@ -92,6 +92,16 @@ export class RevokeInvitationService {
     return null;
   }
 
+  public wsRevokedInvitationError() {
+    this.appService.toastNotification({
+      message: 'errors.invitation_no_longer_valid',
+      status: TuiNotification.Error,
+      autoClose: false,
+      closeOnNavigation: false,
+    });
+    void this.router.navigate(['/']);
+  }
+
   public shellResolverRevokeError(httpResponse: HttpErrorResponse) {
     requestAnimationFrame(() => {
       const status = window.history.state as { invite: string } | undefined;

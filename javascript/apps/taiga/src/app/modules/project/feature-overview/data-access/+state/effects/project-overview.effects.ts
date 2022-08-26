@@ -17,6 +17,7 @@ import * as ProjectActions from '~/app/modules/project/data-access/+state/action
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { AppService } from '~/app/services/app.service';
+import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
@@ -246,11 +247,31 @@ export class ProjectOverviewEffects {
       );
   });
 
+  public wsProjectRevokeNoPermissionInvitations$ = createEffect(() => {
+    return this.wsService
+      .projectEvents<{ project: string }>('projectinvitations.revoke')
+      .pipe(
+        concatLatestFrom(() =>
+          this.store.select(selectCurrentProject).pipe(filterNil())
+        ),
+        filter(
+          ([eventResponse, project]) =>
+            eventResponse.channel === 'projects.' + project.slug
+        ),
+        filter(([, project]) => !project.userIsAdmin),
+        filter(([, project]) => project.userPermissions.length === 0),
+        map(() => {
+          return ProjectActions.revokedNoPermissionInvitation();
+        })
+      );
+  });
+
   constructor(
     private store: Store,
     private actions$: Actions,
     private projectApiService: ProjectApiService,
     private appService: AppService,
-    private wsService: WsService
+    private wsService: WsService,
+    private revokeInvitationService: RevokeInvitationService
   ) {}
 }

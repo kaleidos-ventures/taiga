@@ -36,6 +36,7 @@ export interface WSResponseEvent<T> {
   event: {
     type: string;
     content: T;
+    correlationId: string;
   };
 }
 

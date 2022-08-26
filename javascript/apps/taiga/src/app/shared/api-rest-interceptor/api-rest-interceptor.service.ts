@@ -66,6 +66,7 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     }
 
     request = this.authInterceptor(request);
+    request = this.correlationInterceptor(request);
 
     this.addRequest(request);
 
@@ -122,6 +123,16 @@ export class ApiRestInterceptorService implements HttpInterceptor {
     }
 
     return request;
+  }
+
+  private correlationInterceptor(
+    request: HttpRequest<unknown>
+  ): HttpRequest<unknown> {
+    return request.clone({
+      setHeaders: {
+        'correlation-id': this.configService.correlationId,
+      },
+    });
   }
 
   private handle401Error(request: HttpRequest<unknown>, next: HttpHandler) {

@@ -8,11 +8,16 @@
 
 import { Injectable } from '@angular/core';
 import { Config } from '@taiga/data';
+import { v4 } from 'uuid';
+
+export const CORRELATION_ID = v4();
 
 @Injectable({
   providedIn: 'root',
 })
 export class ConfigService {
+  public readonly correlationId = CORRELATION_ID;
+
   public get config(): Config {
     return this._config;
   }

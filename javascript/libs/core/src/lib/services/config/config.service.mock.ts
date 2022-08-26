@@ -26,4 +26,5 @@ export const social = {
 export const ConfigServiceMock = {
   apiUrl,
   social,
+  correlationId: '11-22',
 };

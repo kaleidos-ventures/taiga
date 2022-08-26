@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException
 from taiga import __description__, __title__, __version__
 from taiga.base.db.middlewares import DBConnectionMiddleware
+from taiga.base.i18n import i18n
 from taiga.base.logging.middlewares import CorrelationIdMiddleware
 from taiga.base.services.exceptions import TaigaServiceException
 from taiga.conf import settings
@@ -81,3 +82,9 @@ api.exception_handler(TaigaServiceException)(handlers.taiga_service_exception_ha
 
 # Add routers
 load_routes(api)
+
+##############################################
+# I18N
+##############################################
+
+i18n.initialize()

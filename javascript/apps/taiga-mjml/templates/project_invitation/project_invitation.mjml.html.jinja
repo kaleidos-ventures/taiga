@@ -7,7 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <mjml>
   <mj-head>
-    <mj-title>Taiga invitation</mj-title>
+      <mj-title>{% trans %}emails.project_invitation.title{% endtrans %}</mj-title>
     <mj-include path="../../components/head.mjml" />
   </mj-head>
   <mj-body css-class="body">
@@ -25,14 +25,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <mj-text css-class="dm-text"
             mj-class="font-heading1 color-gray100">
             {% if receiver_name -%}
-            Hi {{ receiver_name }},
+            {% trans name=receive_name %}emails.project_invitation.hi_name{% endtrans %}
             {% else %}
-            Hi there,
+            {% trans %}emails.project_invitation.hi_there{% endtrans %}
             {% endif -%}
           </mj-text>
           <mj-text css-class="dm-text"
             mj-class="font-heading2 color-gray100">
-            <strong>{{ sender_name }}</strong> sent you an invitation to join:
+            {% trans name=sender_name %}emails.project_invitation.sender{% endtrans %}
           </mj-text>
         </mj-column>
       </mj-section>
@@ -81,18 +81,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           {% if not receiver_name -%}
           <mj-text css-class="dm-text"
             mj-class="font-body color-gray80">
-            Taiga is an Open Source Agile Project Management Tool. There is no
-            cost for you to be a Taiga user.
+            {% trans %}emails.project_invitation.taiga_description{% endtrans %}
           </mj-text>
           {% endif -%}
           <mj-button css-class="btn-primary"
             mj-class="btn-primary padding-top-24"
             href="{{ invitation_url }}">
-            Accept your invitation
+            {% trans %}emails.project_invitation.accept{% endtrans %}
           </mj-button>
           <mj-text css-class="dm-text"
             mj-class="font-body color-gray70">
-            Button not working? Copy and paste this URL into your web browser:
+            {% trans %}emails.project_invitation.button_not_working{% endtrans %}
           </mj-text>
         </mj-column>
       </mj-section>

@@ -28,6 +28,7 @@ import typer
 import uvicorn
 from taiga import __version__
 from taiga.base.django.commands import call_django_command
+from taiga.base.i18n.commands import cli as i18n_cli
 from taiga.emails.commands import cli as emails_cli
 from taiga.tasksqueue.commands import cli as tasksqueue_cli
 from taiga.tasksqueue.commands import run_worker
@@ -62,6 +63,7 @@ def main(
 
 # Load module commands
 cli.add_typer(emails_cli, name="emails")
+cli.add_typer(i18n_cli, name="i18n")
 cli.add_typer(tasksqueue_cli, name="tasksqueue")
 cli.add_typer(tokens_cli, name="tokens")
 cli.add_typer(users_cli, name="users")

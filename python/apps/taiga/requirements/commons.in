@@ -20,16 +20,22 @@ procrastinate
 # Events Module
 redis[hiredis]
 
-# Utils & tools
+# I18n & l10n
+babel
+
+# Auth
 PyJWT # For auth
 cryptography # For auth
+
+# Utils & tools
 faker # For sample_data
 pyhumps # For transform texts: camelCase/snake_case
 python-json-logger # JSON logger
 python-slugify # To generate slugs
 requests # As http client
 svglib # Needed by easy-thumbnails
-typer # For manage CLI
+typer[all] # For manage CLI
+
 
 # TODO [FIXME]: there is an error if django-stubs-ext is not installed:
 #

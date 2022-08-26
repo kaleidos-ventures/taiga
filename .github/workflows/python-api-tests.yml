@@ -65,6 +65,11 @@ jobs:
         python -m pip install -r requirements/devel.txt
         python -m pip install -e .
 
+    - name: Compiling locales
+      working-directory: ./python/apps/taiga
+      run: |
+        python -m taiga i18n compile-catalog
+
     - name: Test with pytest
       working-directory: ./python/apps/taiga
       run: |

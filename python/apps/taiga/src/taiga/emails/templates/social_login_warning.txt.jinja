@@ -6,16 +6,18 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 #}
 
-Hi {{full_name}},
+{% trans name=full_name %}emails.social_warning_login.hi{% endtrans %}
 
-We noticed a log in to your Taiga account in a different way ({{login_method}}):
+{% trans method=login_method %}emails.social_login_warning.method{% endtrans %}
 
-- Time: {{login_time | format_datetime}}
+{% trans %}emails.social_login_warning.time{% endtrans %}: {{login_time | format_datetime}}
 
-If it wasn't you, please let us know here: {{ settings.SUPPORT_EMAIL }}
-If this was you, you can safely ignore this email.
+{% trans support_email=settings.SUPPORT_EMAIL %}emails.social_login_warning.not_you{% endtrans %}
 
-Cheers!
-Taiga team
+{% trans %}emails.social_login_warning.ignore{% endtrans %}
 
-Need help? Contact support at {{ settings.SUPPORT_EMAIL }}
+{% trans %}emails.social_login_warning.cheers{% endtrans %}
+
+{% trans %}emails.commons.team{% endtrans %}
+
+{% trans support_email=settings.SUPPORT_EMAIL %}emails.commons.support_txt{% endtrans %}

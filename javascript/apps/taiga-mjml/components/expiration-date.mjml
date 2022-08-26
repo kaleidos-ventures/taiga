@@ -7,9 +7,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <mj-column css-class="separator-top separator-bottom" mj-class="full-width padding-section">
   <mj-text css-class="dm-text" mj-class="font-small color-gray90">
-    This link will expire in {{ display_lifetime(settings.VERIFY_USER_TOKEN_LIFETIME) }}.
+    {% trans expiration=display_lifetime(settings.VERIFY_USER_TOKEN_LIFETIME) %}emails.expiration_date.expiration{% endtrans %}
   </mj-text>
   <mj-text css-class="dm-text" mj-class="font-small color-gray90">
-    If you did not create an account using this address, please ignore this email.
+    {% trans %}emails.expiration_date.ignore{% endtrans %}
   </mj-text>
 </mj-column>

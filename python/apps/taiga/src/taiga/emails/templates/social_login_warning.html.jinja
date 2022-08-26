@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 
 <head>
-  <title> New log in to your Taiga account </title>
+  <title> {% trans %}emails.social_login_warning.title{% endtrans %} </title>
   <!--[if !mso]><!-->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!--<![endif]-->
@@ -453,42 +453,41 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                             <tbody>
                               <tr>
                                 <td align="left" class="dm-title" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">Hi {{ full_name }},</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">{% trans name=full_name %}emails.social_warning_login.hi{% endtrans %}</div>
                                 </td>
                               </tr>
                               <tr>
                                 <td align="left" class="tertiary-link dm-text " style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">We noticed a log in to your Taiga account in a different way (<strong>{{login_method}}</strong>):</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">{% trans method=login_method %}emails.social_login_warning.method{% endtrans %}</div>
                                 </td>
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-top:32px;padding-bottom:32px;word-break:break-word;">
                                   <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">
                                     <ul class="list list-no-bullets">
-                                      <li><strong>Time:</strong> {{login_time | format_datetime}}</li>
+                                      <li><strong>{% trans %}emails.social_login_warning.time{% endtrans %}</strong> {{login_time | format_datetime}}</li>
                                     </ul>
                                   </div>
                                 </td>
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">If it wasn't you, please let us know here: <a class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> {{ settings.SUPPORT_EMAIL }}
-                                    </a><br></div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">{% trans support_email=settings.SUPPORT_EMAIL %}emails.social_login_warning.not_you{% endtrans %} </a><br></div>
                                 </td>
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:16px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">If this was you, you can safely ignore this email.</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">{% trans %}emails.social_login_warning.ignore{% endtrans %}</div>
                                 </td>
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Cheers!</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">{% trans %}emails.social_login_warning.cheers{% endtrans %}</div>
                                 </td>
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:48px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Taiga team</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">{% trans %}emails.commons.team{% endtrans %}</div>
                                 </td>
                               </tr>
                               <tr>
@@ -517,7 +516,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                                                         <tbody>
                                                           <tr>
                                                             <td align="left" class="secondary-link dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                                              <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a css-class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> Contact support </a></div>
+                                                              <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">{% trans email=settings.SUPPORT_EMAIL %}emails.footer.help_support{% endtrans %}</div>
                                                             </td>
                                                           </tr>
                                                         </tbody>

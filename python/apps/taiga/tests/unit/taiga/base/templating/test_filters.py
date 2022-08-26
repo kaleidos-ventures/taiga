@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 from jinja2 import Environment, select_autoescape
-from taiga.emails.filters import load_filters
+from taiga.base.templating.filters import load_filters
 
 env = Environment(autoescape=select_autoescape())
 load_filters(env)

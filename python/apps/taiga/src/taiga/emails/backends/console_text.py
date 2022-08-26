@@ -8,13 +8,31 @@
 """
 Email backend that writes text messages to console instead of sending them.
 """
+from typing import Protocol
 
-from fastapi_mailman.backends.console import EmailBackend as BaseEmailBackend
+from fastapi_mailman.backends.console import EmailBackend as BaseEmailBackend  # type: ignore[import]
+
+
+class Message(Protocol):
+    from_email: str
+    to: str
+    subject: str
+    body: str
 
 
 class EmailBackend(BaseEmailBackend):
-    def write_message(self, message):
-        msg_data = message.body
-        self.stream.write("%s\n" % msg_data)
-        self.stream.write("-" * 79)
+    def _write_separator(self, separator: str) -> None:
+        self.stream.write(separator * 79)
         self.stream.write("\n")
+
+    def write_message(self, message: Message) -> None:
+        self._write_separator("=")
+        self.stream.write("FROM: %s, TO: %s\n" % (message.from_email, message.to))
+
+        self._write_separator("-")
+        self.stream.write("SUBJECT: %s\n" % message.subject)
+
+        self._write_separator("-")
+        self.stream.write("%s\n" % message.body)
+
+        self._write_separator("=")

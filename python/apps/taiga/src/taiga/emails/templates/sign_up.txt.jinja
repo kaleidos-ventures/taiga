@@ -7,15 +7,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 #}
 
 {% set verify_url = resolve_front_url("VERIFY_SIGNUP", verification_token=verification_token) -%}
-Taiga sign up
 
-Verify your email
-Copy and paste this URL into your web browser:
+{% trans %}emails.sign_up.title{% endtrans %}
+
+{% trans %}emails.sign_up.verify{% endtrans %}
+
+{% trans %}emails.sign_up.copy_link{% endtrans %}
 {{ verify_url }}
 
-Welcome,
-Taiga Team
+{% trans %}emails.sign_up.welcome{% endtrans %}
 
-This link will expire in {{ display_lifetime(settings.VERIFY_USER_TOKEN_LIFETIME) }}.
-If you did not create an account using this address, please ignore this email.
-Need help? Contact us at {{ settings.SUPPORT_EMAIL }}
+{% trans %}emails.commons.team{% endtrans %}
+
+{% trans expiration=display_lifetime(settings.VERIFY_USER_TOKEN_LIFETIME) %}emails.expiration_date.expiration{% endtrans %}
+
+{% trans %}emails.expiration_date.ignore{% endtrans %}
+
+{% trans support_email=settings.SUPPORT_EMAIL %}emails.commons.support_txt{% endtrans %}

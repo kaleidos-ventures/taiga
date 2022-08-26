@@ -12,3 +12,9 @@ class Emails(Enum):
     RESET_PASSWORD = "reset_password"
     PROJECT_INVITATION = "project_invitation"
     SOCIAL_LOGIN_WARNING = "social_login_warning"
+
+
+class EmailPart(Enum):
+    TXT = "txt"
+    HTML = "html"
+    SUBJECT = "subject"

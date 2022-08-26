@@ -7,7 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <mjml>
   <mj-head>
-    <mj-title>New log in to your Taiga account</mj-title>
+      <mj-title>{% trans %}emails.social_login_warning.title{% endtrans %}</mj-title>
     <mj-include path="../../components/head.mjml" />
   </mj-head>
   <mj-body css-class="body">
@@ -17,37 +17,34 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <mj-column>
           <mj-text css-class="dm-title"
             mj-class="font-heading1 color-gray100">
-            Hi {{ full_name }},
+            {% trans name=full_name %}emails.social_warning_login.hi{% endtrans %}
           </mj-text>
           <mj-text css-class="tertiary-link dm-text "
             mj-class="font-body">
-            We noticed a log in to your Taiga account in a different way
-            (<strong>{{login_method}}</strong>):
+            {% trans method=login_method %}emails.social_login_warning.method{% endtrans %}
           </mj-text>
           <mj-text css-class="dm-text"
             mj-class="padding-top-32 padding-bottom-32 font-body">
             <ul class="list list-no-bullets">
-              <li><strong>Time:</strong> {{login_time | format_datetime}}</li>
+                <li><strong>{% trans %}emails.social_login_warning.time{% endtrans %}</strong> {{login_time | format_datetime}}</li>
             </ul>
           </mj-text>
           <mj-text css-class="dm-text"
             mj-class="font-body">
-            If it wasn't you, please let us know here: <a class="secondary-link"
-              href="mailto:{{ settings.SUPPORT_EMAIL }}"> {{
-              settings.SUPPORT_EMAIL }}
+            {% trans support_email=settings.SUPPORT_EMAIL %}emails.social_login_warning.not_you{% endtrans %}
             </a><br>
           </mj-text>
           <mj-text css-class="dm-text"
             mj-class="padding-paragraph font-body">
-            If this was you, you can safely ignore this email.
+            {% trans %}emails.social_login_warning.ignore{% endtrans %}
           </mj-text>
           <mj-text css-class="dm-text"
             mj-class="font-body">
-            Cheers!
+            {% trans %}emails.social_login_warning.cheers{% endtrans %}
           </mj-text>
           <mj-text css-class="dm-text"
             mj-class="font-body padding-bottom-48">
-            Taiga team
+            {% trans %}emails.commons.team{% endtrans %}
           </mj-text>
           <mj-divider border-width="1px"
             border-color="#DADFE9"

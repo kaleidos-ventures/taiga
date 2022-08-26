@@ -15,6 +15,8 @@ from datetime import datetime
 from datetime import time as datetime_time
 from datetime import timedelta, timezone
 
+from taiga.base.i18n import ngettext
+
 _AnyTime = datetime | datetime_time
 
 
@@ -80,13 +82,13 @@ def display_lifetime(minutes: int) -> str:
     """
     days = minutes // (24 * 60)
     if days > 0:
-        return f"{days} days" if days > 1 else f"{days} day"
+        return ngettext("datetime.lifetime.day", "datetime.lifetime.days", days) % days
     else:
         hours = minutes // 60
         if hours > 0:
-            return f"{hours} hours" if hours > 1 else f"{hours} hour"
+            return ngettext("datetime.lifetime.hour", "datetime.lifetime.hours", hours) % hours
         else:
-            return f"{minutes} minutes" if minutes <= 0 or minutes > 1 else f"{minutes} minute"
+            return ngettext("datetime.lifetime.minute", "datetime.lifetime.minutes", minutes) % minutes
 
 
 def duration_iso_string(duration: timedelta) -> str:

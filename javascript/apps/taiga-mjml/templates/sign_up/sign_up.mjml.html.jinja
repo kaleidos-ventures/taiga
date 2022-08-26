@@ -7,7 +7,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <mjml>
   <mj-head>
-    <mj-title>Taiga sign up</mj-title>
+      <mj-title>{% trans %}emails.sign_up.title{% endtrans %}</mj-title>
     <mj-include path="../../components/head.mjml" />
   </mj-head>
   <mj-body css-class="body">
@@ -21,20 +21,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <mj-column>
           <mj-text css-class="dm-text"
             mj-class="font-heading1 color-gray100">
-            Verify your email
+            {% trans %}emails.sign_up.verify{% endtrans %}
           </mj-text>
           <mj-text css-class="dm-text"
             mj-class="font-heading2 color-gray90">
-            To start using Taiga just click on the button below
+            {% trans %}emails.sign_up.click_button{% endtrans %}
           </mj-text>
           <mj-button css-class="btn-primary"
             mj-class="btn-primary"
             href="{{ verify_url }}">
-            Verify your email
+            {% trans %}emails.sign_up.verify{% endtrans %}
           </mj-button>
           <mj-text css-class="dm-text"
             mj-class="font-body color-gray70">
-            Button not working? Copy and paste this URL into your web browser:
+            {% trans %}emails.sign_up.button_not_working{% endtrans %}
           </mj-text>
           <mj-text css-class="dm-text-gray primary-link"
             mj-class="font-body padding-bottom-24">
@@ -42,10 +42,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               href="{{ verify_url }}">{{ verify_url | wbr_split }}</a>
           </mj-text>
           <mj-text css-class="dm-text"
-            mj-class="font-body"> Welcome, </mj-text>
+            mj-class="font-body">
+            {% trans %}emails.sign_up.welcome{% endtrans %}
+          </mj-text>
           <mj-text css-class="dm-text"
             mj-class="font-body padding-bottom-24">
-            Taiga Team
+            {% trans %}emails.commons.team{% endtrans %}
           </mj-text>
         </mj-column>
       </mj-section>

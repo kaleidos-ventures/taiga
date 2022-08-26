@@ -5,13 +5,20 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-import logging
+
+from pathlib import Path
+from typing import Final
 
 import typer
-from taiga.emails.emails import Emails
-from taiga.emails.render import test_render_html
+from rich.console import Console
+from rich.syntax import Syntax
+from taiga.base.i18n import i18n
+from taiga.base.utils import json
+from taiga.conf import settings
+from taiga.emails import render as email_render
+from taiga.emails.emails import EmailPart, Emails
 
-logger = logging.getLogger(__name__)
+TEMPLATES_PATH: Final[Path] = Path(__file__).resolve().parent.joinpath("templates")  # src/taiga/emails/templates
 
 
 cli = typer.Typer(
@@ -21,12 +28,43 @@ cli = typer.Typer(
 )
 
 
-@cli.command(help="Render one email to test it")
-def render(email: Emails = typer.Argument(..., case_sensitive=False, help="Name of the email")) -> None:
-    test_render_html(email.value)
-
-
 @cli.command(help="Show available emails")
 def list() -> None:
     for email in Emails:
         typer.echo(f"\t{ email.value }")
+
+
+@cli.command(help="Render one email part to test it")
+def render(
+    part: EmailPart = typer.Option(EmailPart.HTML.value, "--part", "-p", help="Part of the email to render."),
+    lang: str = typer.Option(
+        settings.LANG,
+        "--lang",
+        "-l",
+        help=f"Language used to render. Availables are: {', '.join(i18n.available_languages)}.",
+    ),
+    email: Emails = typer.Argument(..., case_sensitive=False, help="Name of the email"),
+) -> None:
+    email_name = email.value
+
+    # Get context
+    context_json = TEMPLATES_PATH.joinpath(f"{email_name}.json")
+    try:
+        with open(context_json) as context_file:
+            context = json.loads(context_file.read())
+    except FileNotFoundError:
+        context = {}
+
+    # Print email parti
+    console = Console()
+    with i18n.use(lang):
+        match part:
+            case EmailPart.SUBJECT:
+                syntax = Syntax(email_render.render_subject(email_name, context), "txt")
+                console.print(syntax)
+            case EmailPart.TXT:
+                syntax = Syntax(email_render.render_email_txt(email_name, context), "txt")
+                console.print(syntax)
+            case EmailPart.HTML:
+                syntax = Syntax(email_render.render_email_html(email_name, context), "html")
+                console.print(syntax)

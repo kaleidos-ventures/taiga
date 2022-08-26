@@ -49,6 +49,9 @@ class Settings(BaseSettings):
     MEDIA_URL: AnyHttpUrl = _DEFAULT_MEDIA_URL
     MEDIA_ROOT: Path = _BASE_DIR.parent.joinpath("media/")
 
+    # I18N
+    LANG: str = "en_US"
+
     # Pagination
     DEFAULT_PAGE_SIZE: int = 10
     MAX_PAGE_SIZE: int = 100
@@ -101,6 +104,15 @@ class Settings(BaseSettings):
     @validator("MEDIA_URL", always=True)
     def set_media_url(cls, v: AnyHttpUrl, values: dict[str, AnyHttpUrl]) -> str:
         return v if v != _DEFAULT_MEDIA_URL else urljoin(values["BACKEND_URL"], "/media/")
+
+    @validator("LANG", always=True)
+    def validate_lang(cls, v: str) -> str:
+        from taiga.base.i18n import i18n
+
+        if not i18n.is_language_available(v):
+            available_languages_for_display = "\n".join(i18n.available_languages)
+            raise ValueError(f"LANG should be one of \n{ available_languages_for_display }\n")
+        return v
 
     class Config:
         env_prefix = "TAIGA_"

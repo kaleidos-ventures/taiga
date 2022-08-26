@@ -7,5 +7,6 @@ pip-tools
 
 # Typing stubs
 django-stubs  # django
+types-babel  # babel
 types-python-slugify  # python-slugify
 types-redis  # redis

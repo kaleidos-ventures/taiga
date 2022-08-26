@@ -7,6 +7,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <mj-column css-class="separator-top separator-bottom" mj-class="full-width padding-section">
   <mj-text css-class="dm-text" mj-class="font-small color-gray90">
-    If you didn’t request a reset, don’t worry, you can safely ignore this email.
+    {% trans %}emails.ignore_email.ignore{% endtrans %}
   </mj-text>
 </mj-column>

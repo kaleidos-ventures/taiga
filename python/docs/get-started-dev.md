@@ -60,6 +60,11 @@ Generate the database, load the initial fixtures and create the sample data:
 (taiga)$ ./scripts/regenerate_devel_env.sh
 ```
 
+Compile the available translations:
+```bash
+(taiga)$ python -m taiga i18n compile-catalog
+```
+
 Start the backend in dev mode
 
 ```

@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 
 <head>
-  <title> Taiga sign up </title>
+  <title> {% trans %}emails.sign_up.title{% endtrans %} </title>
   <!--[if !mso]><!-->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!--<![endif]-->
@@ -454,12 +454,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                             <tbody>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">Verify your email</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">{% trans %}emails.sign_up.verify{% endtrans %}</div>
                                 </td>
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:18px;font-weight:400;line-height:150%;text-align:left;color:#384051;">To start using Taiga just click on the button below</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:18px;font-weight:400;line-height:150%;text-align:left;color:#384051;">{% trans %}emails.sign_up.click_button{% endtrans %}</div>
                                 </td>
                               </tr>
                               <tr>
@@ -468,7 +468,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                                     <tbody>
                                       <tr>
                                         <td align="center" bgcolor="#83EEDE" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px;text-align:center;background:#83EEDE;" valign="middle">
-                                          <a href="{{ verify_url }}" style="display:inline-block;background:#83EEDE;color:#505C74;font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:18px;font-weight:500;line-height:21px;margin:0;text-decoration:none;text-transform:none;padding:10px;mso-padding-alt:0px;border-radius:4px;" target="_blank"> Verify your email </a>
+                                          <a href="{{ verify_url }}" style="display:inline-block;background:#83EEDE;color:#505C74;font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:18px;font-weight:500;line-height:21px;margin:0;text-decoration:none;text-transform:none;padding:10px;mso-padding-alt:0px;border-radius:4px;" target="_blank"> {% trans %}emails.sign_up.verify{% endtrans %} </a>
                                         </td>
                                       </tr>
                                     </tbody>
@@ -477,7 +477,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Button not working? Copy and paste this URL into your web browser:</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">{% trans %}emails.sign_up.button_not_working{% endtrans %}</div>
                                 </td>
                               </tr>
                               <tr>
@@ -487,12 +487,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Welcome,</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">{% trans %}emails.sign_up.welcome{% endtrans %}</div>
                                 </td>
                               </tr>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">Taiga Team</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">{% trans %}emails.commons.team{% endtrans %}</div>
                                 </td>
                               </tr>
                             </tbody>
@@ -520,12 +520,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                                     <tbody>
                                       <tr>
                                         <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:12px;font-weight:400;line-height:1.5;text-align:left;color:#384051;">This link will expire in {{ display_lifetime(settings.VERIFY_USER_TOKEN_LIFETIME) }}.</div>
+                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:12px;font-weight:400;line-height:1.5;text-align:left;color:#384051;">{% trans expiration=display_lifetime(settings.VERIFY_USER_TOKEN_LIFETIME) %}emails.expiration_date.expiration{% endtrans %}</div>
                                         </td>
                                       </tr>
                                       <tr>
                                         <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:12px;font-weight:400;line-height:1.5;text-align:left;color:#384051;">If you did not create an account using this address, please ignore this email.</div>
+                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:12px;font-weight:400;line-height:1.5;text-align:left;color:#384051;">{% trans %}emails.expiration_date.ignore{% endtrans %}</div>
                                         </td>
                                       </tr>
                                     </tbody>
@@ -557,7 +557,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                                     <tbody>
                                       <tr>
                                         <td align="left" class="secondary-link dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">Need help? <a class="secondary-link" href="mailto:{{ settings.SUPPORT_EMAIL }}"> Contact support </a></div>
+                                          <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#63738F;">{% trans email=settings.SUPPORT_EMAIL %}emails.footer.help_support{% endtrans %}</div>
                                         </td>
                                       </tr>
                                     </tbody>

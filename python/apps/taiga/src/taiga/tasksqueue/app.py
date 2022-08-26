@@ -10,6 +10,7 @@ from typing import Final
 
 from procrastinate import AiopgConnector, App, BaseConnector
 from procrastinate.testing import InMemoryConnector
+from taiga.base.i18n import i18n
 from taiga.base.utils import json
 from taiga.base.utils.tests import is_test_running
 from taiga.conf import settings
@@ -41,3 +42,4 @@ def initialize_app() -> App:
 
 
 app = initialize_app()
+i18n.initialize()

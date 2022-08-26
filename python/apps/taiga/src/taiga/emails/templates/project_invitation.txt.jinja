@@ -7,24 +7,24 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 #}
 
 {% set invitation_url = resolve_front_url("PROJECT_INVITATION", invitation_token=invitation_token) -%}
-Taiga invitation
+{% set project_url = resolve_front_url("PROJECT_INVITATION_PREVIEW", project_slug=project_slug, invitation_token=invitation_token) -%}
+
+{% trans %}emails.project_invitation.title{% endtrans %}
 
 {% if receiver_name -%}
-Hi {{ receiver_name }},
+{% trans name=receiver_name %}emails.project_invitation.hi_name{% endtrans %}
 {% else -%}
-Hi there,
+{% trans %}emails.project_invitation.hi_there{% endtrans %}
 {% endif -%}
-{{ sender_name }} sent you an invitation to join:
 
-{{ project_name }}
+{% trans name=sender_name %}emails.project_invitation.sender{% endtrans %}
+
+{{ project_name }}: {{ project_url }}
 {{ project_workspace }}
 
 {% if not receiver_name -%}
-Taiga is an Open Source Agile Project Management Tool. There is no cost for you to be a Taiga user.
+{% trans %}emails.project_invitation.taiga_description{% endtrans %}
 {% endif -%}
 {{ invitation_url }}
 
-Welcome,
-Taiga Team
-
-Need help? Contact us at {{ settings.SUPPORT_EMAIL }}
+{% trans support_email=settings.SUPPORT_EMAIL %}emails.commons.support_txt{% endtrans %}

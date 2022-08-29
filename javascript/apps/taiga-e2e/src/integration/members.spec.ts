@@ -67,3 +67,36 @@ describe('Settings > members', () => {
     });
   });
 });
+
+describe('change role', () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit('/');
+    cy.initAxe();
+  });
+
+  it('cannot change role when it is just one admin', () => {
+    cy.getBySel('project-card').contains('Empty project').click();
+
+    navigateToSettings();
+    navigateToMembersSettings();
+    cy.tgCheckA11y();
+
+    cy.getBySel('disabled-change-role').should('exist');
+    cy.getBySel('disabled-change-role').click();
+    cy.getBySel('admin-dialog').should('exist');
+  });
+
+  it('change own admin role', () => {
+    cy.getBySel('project-card').contains('Several Roles').click();
+
+    navigateToSettings();
+    navigateToMembersSettings();
+    cy.tgCheckA11y();
+
+    cy.get(`[data-test=user1]`).should('be.visible');
+    cy.getBySel('disabled-change-role').should('not.exist');
+    cy.get(`[data-test=user1]`).find('input').click();
+    cy.getBySel('permissions-warning').should('be.visible');
+  });
+});

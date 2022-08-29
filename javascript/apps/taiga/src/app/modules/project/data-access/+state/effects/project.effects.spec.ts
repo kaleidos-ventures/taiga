@@ -6,24 +6,24 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Router } from '@angular/router';
 import { randDomainSuffix } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { ProjectApiService } from '@taiga/api';
-import { Observable } from 'rxjs';
-import { AppService } from '~/app/services/app.service';
-
-import { Router } from '@angular/router';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { ProjectApiService } from '@taiga/api';
 import { ProjectMockFactory, UserMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
+import { Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { AppService } from '~/app/services/app.service';
 import { WsService, WsServiceMock } from '~/app/services/ws';
 import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { fetchProject, fetchProjectSuccess } from '../actions/project.actions';
 import { ProjectEffects } from './project.effects';
+
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
   let spectator: SpectatorService<ProjectEffects>;

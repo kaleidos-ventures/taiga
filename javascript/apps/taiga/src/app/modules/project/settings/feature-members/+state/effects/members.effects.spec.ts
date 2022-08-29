@@ -7,7 +7,7 @@
  */
 
 import { Router } from '@angular/router';
-import { randEmail, randSlug } from '@ngneat/falso';
+import { randEmail, randFullName, randRole, randSlug, randUserName } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -16,8 +16,9 @@ import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import {
   InvitationMockFactory,
   MembershipMockFactory,
-  ProjectMockFactory,
+  ProjectMockFactory
 } from '@taiga/data';
+import { randomUUID } from 'crypto';
 import { cold, hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
@@ -28,7 +29,7 @@ import {
   selectInvitationsOffset,
   selectMembersOffset,
   selectOpenRevokeInvitationDialog,
-  selectUndoDoneAnimation,
+  selectUndoDoneAnimation
 } from '../selectors/members.selectors';
 import { MembersEffects } from './members.effects';
 
@@ -313,5 +314,86 @@ describe('MembersEffects', () => {
         a: membersActions.removeUndoDoneAnimation({ invitation }),
       });
     });
+  });
+
+  it('change member role', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(MembersEffects);
+    const memberRole = {
+      roleSlug: randSlug(),
+      username: randUserName(),
+      oldRole: {
+        isAdmin: false,
+        name: randRole(),
+        slug: randSlug(),
+      },
+    };
+    const memberRoleResponse = {
+      user: {
+        username: memberRole.username,
+        fullName: randFullName()
+      },
+      role: {
+        isAdmin: false,
+        name: memberRole.oldRole.name,
+        slug: memberRole.roleSlug,
+      },
+    };
+
+    projectApiService.updateMemberRole.mockReturnValue(
+      cold('-b|', memberRoleResponse)
+    );
+
+    actions$ = hot('a', {
+      a: membersActions.updateMemberRole(memberRole),
+    });
+
+    const expected = cold('-a', {
+      a: membersActions.updateMemberRoleSuccess({
+        userWasAdmin: false,
+        username: memberRole.username,
+      }),
+    });
+
+    expect(effects.updateMemberRole$).toBeObservable(expected);
+  });
+
+  it('change invitation role', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(MembersEffects);
+    const invitationRole = {
+      roleSlug: randSlug(),
+      id: randomUUID(),
+      oldRole: {
+        isAdmin: false,
+        name: randRole(),
+        slug: randSlug(),
+      },
+    };
+    const invitationRoleResponse = {
+      user: {
+        id: invitationRole.id,
+        fullName: randFullName()
+      },
+      role: {
+        isAdmin: false,
+        name: invitationRole.oldRole.name,
+        slug: invitationRole.roleSlug,
+      },
+    };
+
+    projectApiService.updateInvitationRole.mockReturnValue(
+      cold('-b|', invitationRoleResponse)
+    );
+
+    actions$ = hot('a', {
+      a: membersActions.updateInvitationRole(invitationRole),
+    });
+
+    const expected = cold('-a', {
+      a: membersActions.updateInvitationRoleSuccess(),
+    });
+
+    expect(effects.updateInvitationRole$).toBeObservable(expected);
   });
 });

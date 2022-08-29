@@ -12,7 +12,7 @@ import { randWord } from '@ngneat/falso';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { ProjectMockFactory, UserMockFactory } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { WsService, WsServiceMock } from '~/app/services/ws';
@@ -35,13 +35,10 @@ describe('ProjectNavigationComponent', () => {
     ],
   });
 
-  let store: MockStore;
-
   beforeEach(() => {
     spectator = createComponent({
       detectChanges: false,
     });
-    store = spectator.inject(MockStore);
     spectator.component.project = ProjectMockFactory(true);
   });
 

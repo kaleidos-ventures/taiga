@@ -266,6 +266,31 @@ export class ProjectOverviewEffects {
       );
   });
 
+  public updateProject$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectOverviewActions.updateMembersInfo),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      map(([, project]) => {
+        return ProjectActions.fetchProject({ slug: project.slug });
+      })
+    );
+  });
+
+  public udpateMembersList$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectOverviewActions.updateMembersInfo),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      filter(([, project]) => project.userIsAdmin),
+      map(() => {
+        return ProjectOverviewActions.updateMembersList();
+      })
+    );
+  });
+
   constructor(
     private store: Store,
     private actions$: Actions,

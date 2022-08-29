@@ -46,3 +46,7 @@ export const updateShowAllMembers = createAction(
 export const updateMemberModalList = createAction(
   '[Project overview][api] update member list modal'
 );
+
+export const updateMembersInfo = createAction(
+  '[Project overview][ws] update members info'
+);

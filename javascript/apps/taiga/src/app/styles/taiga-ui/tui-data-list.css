@@ -27,14 +27,13 @@ tui-data-list {
 
     /* stylelint-disable-next-line selector-max-type */
     &:focus-visible {
-      background: var(--color-white) !important;
-      border-color: var(--color-secondary80) !important;
+      border-color: var(--color-secondary) !important;
     }
   }
 
   & .selected {
     background: var(--color-gray20) !important;
-    color: var(--color-secondary) !important;
+    color: var(--color-secondary80) !important;
   }
 
   & [data-size="s"] {

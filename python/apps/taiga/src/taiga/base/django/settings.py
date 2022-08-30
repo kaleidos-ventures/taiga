@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "taiga.invitations",
     "taiga.users",
     "taiga.tokens",
+    "taiga.tasks",
     # 3-party
     "easy_thumbnails",
 ]

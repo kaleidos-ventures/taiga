@@ -1,0 +1,50 @@
+# -*- coding: utf-8 -*-
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (c) 2021-present Kaleidos Ventures SL
+
+
+from taiga.base.db import admin
+from taiga.tasks.models import Task
+
+
+@admin.register(Task)
+class TaskAdmin(admin.ModelAdmin[Task]):
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "id",
+                    "name",
+                    "order",
+                    "reference",
+                    "created_by",
+                    "created_at",
+                    "project",
+                    "workflow",
+                    "status",
+                )
+            },
+        ),
+    )
+    readonly_fields = ("id", "reference", "created_at")
+    list_display = ["name", "order", "reference", "project", "workflow", "status"]
+    list_filter = ("project", "created_by", "workflow", "status")
+    search_fields = [
+        "id",
+        "name",
+        "reference",
+        "project__name",
+        "project__slug",
+        "workflow__name",
+        "workflow__slug",
+        "status__name",
+        "status__slug",
+        "created_by__username",
+        "created_by__email",
+        "created_by__full_name",
+    ]
+    ordering = ("project__name", "workflow__order", "status__order", "order")

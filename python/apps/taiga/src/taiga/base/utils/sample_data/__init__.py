@@ -84,6 +84,7 @@ async def load_sample_data() -> None:
     # CUSTOM SCENARIOS
     await _create_scenario_with_invitations()
     await _create_scenario_for_searches()
+    await _create_scenario_for_revoke()
 
     print("Sample data loaded.")
 
@@ -113,8 +114,9 @@ def _create_user(index: int) -> User:
 
 
 @sync_to_async
-def _create_user_with_kwargs(username: str, full_name: str) -> User:
-    email = f"{username}@taiga.demo"
+def _create_user_with_kwargs(username: str, full_name: str, email: str | None = None) -> User:
+    if not email:
+        email = f"{username}@taiga.demo"
     user = User.objects.create(username=username, email=email, full_name=full_name, is_active=True)
     user.set_password("123123")
     user.save()
@@ -730,3 +732,33 @@ async def _create_scenario_for_searches() -> None:
     pj1 = await _create_project(workspace=ws1, owner=user800)
     pj_member_role = (await _get_project_other_roles(project=pj1))[0]
     await roles_repositories.create_project_membership(user=electra, project=pj1, role=pj_member_role)
+
+
+async def _create_scenario_for_revoke() -> None:
+    # some users
+    user1 = await _create_user_with_kwargs(
+        username="pruebastaiga1", full_name="Pruebas Taiga 1", email="pruebastaiga+1@gmail.com"
+    )
+    user2 = await _create_user_with_kwargs(
+        username="pruebastaiga2", full_name="Pruebas Taiga 2", email="pruebastaiga+2@gmail.com"
+    )
+    user3 = await _create_user_with_kwargs(
+        username="pruebastaiga3", full_name="Pruebas Taiga 3", email="pruebastaiga+3@gmail.com"
+    )
+    user4 = await _create_user_with_kwargs(
+        username="pruebastaiga4", full_name="Pruebas Taiga 4", email="pruebastaiga+4@gmail.com"
+    )
+
+    ws = await workspaces_services.create_workspace(name="ws for revoking(p)", owner=user1, color=2)
+    ws.is_premium = True
+    await sync_to_async(ws.save)()
+
+    ws_admin_role = await _get_workspace_admin_role(workspace=ws)
+    await roles_repositories.create_workspace_membership(user=user4, workspace=ws, role=ws_admin_role)
+
+    members_role = await _create_workspace_role(workspace=ws)
+    await roles_repositories.create_workspace_membership(user=user2, workspace=ws, role=members_role)
+
+    pj = await _create_project(workspace=ws, owner=user1)
+    pj_member_role = (await _get_project_other_roles(project=pj))[0]
+    await roles_repositories.create_project_membership(user=user3, project=pj, role=pj_member_role)

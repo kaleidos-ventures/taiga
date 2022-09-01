@@ -14,8 +14,8 @@ import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService, UsersApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 import { Auth, InvitationInfo, User } from '@taiga/data';
-import { forkJoin, throwError } from 'rxjs';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { loginSuccess } from '../data-access/+state/actions/auth.actions';
@@ -53,32 +53,31 @@ export class VerifyEmailGuard implements CanActivate {
       .pipe(
         mergeMap((verification: VerificationData) => {
           this.authService.setAuth(verification.auth);
-          return forkJoin(
-            this.usersApiService.me().pipe(
-              map((user: User) => {
-                this.authService.setUser(user);
-                return { user, verification };
-              })
-            ),
-            this.projectApiService
-              .getProject(verification.projectInvitation?.project?.slug)
-              .pipe(
-                catchError((httpResponse: HttpErrorResponse) => {
-                  this.revokeInvitationService.verifyEmailRevokeError(
-                    httpResponse
-                  );
-                  return throwError(() => httpResponse);
-                })
-              )
+          return this.usersApiService.me().pipe(
+            map((user: User) => {
+              this.authService.setUser(user);
+              return { user, verification };
+            })
           );
         }),
-        map(([{ user, verification }]) => {
+        tap(({ verification }) => {
+          this.projectApiService
+            .getProject(verification.projectInvitation?.project?.slug)
+            .pipe(
+              catchError((httpResponse: HttpErrorResponse) => {
+                this.revokeInvitationService.verifyEmailRevokeError(
+                  httpResponse
+                );
+                return throwError(() => httpResponse);
+              })
+            );
+        }),
+        map(({ user, verification }) => {
           const slug = verification.projectInvitation?.project?.slug;
           const data = {
             user,
             auth: verification.auth,
             next: slug ? `/project/${slug}` : undefined,
-            invitationStatus: verification.projectInvitation.status,
           };
 
           this.store.dispatch(loginSuccess(data));
@@ -101,7 +100,7 @@ export class VerifyEmailGuard implements CanActivate {
           } else if (httpResponse.status === 400) {
             void this.router.navigate(['/login']);
           }
-          return throwError(() => new Error('Invalid token'));
+          return throwError(() => httpResponse);
         })
       );
   }

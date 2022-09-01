@@ -128,20 +128,22 @@ export class RevokeInvitationService {
   }
 
   public verifyEmailRevokeError(httpResponse: HttpErrorResponse) {
-    this.store.dispatch(
-      revokedError({
-        error: {
-          message: httpResponse.message,
-        },
-      })
-    );
-    this.appService.toastNotification({
-      message: 'errors.you_dont_have_permission_to_see',
-      status: TuiNotification.Error,
-      autoClose: false,
-      closeOnNavigation: false,
-    });
-    void this.router.navigate(['/signup']);
+    if (this.isRevokeError(httpResponse)) {
+      this.store.dispatch(
+        revokedError({
+          error: {
+            message: httpResponse.message,
+          },
+        })
+      );
+      this.appService.toastNotification({
+        message: 'errors.you_dont_have_permission_to_see',
+        status: TuiNotification.Error,
+        autoClose: false,
+        closeOnNavigation: false,
+      });
+      void this.router.navigate(['/signup']);
+    }
   }
 
   public acceptInvitationSlugRevokeError(

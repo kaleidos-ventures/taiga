@@ -12,8 +12,8 @@ from taiga.invitations.models import ProjectInvitation
 from taiga.projects.models import Project
 
 CREATE_PROJECT_INVITATION = "projectinvitations.create"
-ACCEPT_PROJECT_INVITATION = "projectmemberships.create"
 UPDATE_PROJECT_INVITATION = "projectinvitations.update"
+ACCEPT_PROJECT_INVITATION = "projectmemberships.create"
 REVOKE_PROJECT_INVITATION = "projectinvitations.revoke"
 
 
@@ -25,7 +25,7 @@ async def emit_event_when_project_invitations_are_created(
         await events_manager.publish_on_user_channel(
             user=invitation.user,  # type: ignore[arg-type]
             type=CREATE_PROJECT_INVITATION,
-            content={"project": invitation.project.slug},
+            content={"workspace": invitation.project.workspace.slug, "project": invitation.project.slug},
         )
 
     # Publish on the project channel
@@ -36,25 +36,35 @@ async def emit_event_when_project_invitations_are_created(
         )
 
 
+async def emit_event_when_project_invitation_is_updated(invitation: ProjectInvitation) -> None:
+    await events_manager.publish_on_project_channel(
+        project=invitation.project,
+        type=UPDATE_PROJECT_INVITATION,
+    )
+    if invitation.user:
+        await events_manager.publish_on_user_channel(
+            user=invitation.user,
+            type=UPDATE_PROJECT_INVITATION,
+            content={"workspace": invitation.project.workspace.slug, "project": invitation.project.slug},
+        )
+
+
+async def emit_event_when_project_invitations_are_updated(invitations: list[ProjectInvitation]) -> None:
+    for invitation in invitations:
+        await emit_event_when_project_invitation_is_updated(invitation)
+
+
 async def emit_event_when_project_invitation_is_accepted(invitation: ProjectInvitation) -> None:
     await events_manager.publish_on_project_channel(
         project=invitation.project,
         type=ACCEPT_PROJECT_INVITATION,
     )
-
-
-async def emit_event_when_user_invitations_are_updated(invitations: list[ProjectInvitation]) -> None:
-    for invitation in invitations:
-        await events_manager.publish_on_project_channel(
-            project=invitation.project,
-            type=UPDATE_PROJECT_INVITATION,
+    if invitation.user:
+        await events_manager.publish_on_user_channel(
+            user=invitation.user,
+            type=ACCEPT_PROJECT_INVITATION,
+            content={"workspace": invitation.project.workspace.slug, "project": invitation.project.slug},
         )
-        if invitation.user:
-            await events_manager.publish_on_user_channel(
-                user=invitation.user,
-                type=UPDATE_PROJECT_INVITATION,
-                content={"project": invitation.project.slug},
-            )
 
 
 async def emit_event_when_project_invitation_is_revoked(invitation: ProjectInvitation) -> None:
@@ -66,12 +76,5 @@ async def emit_event_when_project_invitation_is_revoked(invitation: ProjectInvit
         await events_manager.publish_on_user_channel(
             user=invitation.user,
             type=REVOKE_PROJECT_INVITATION,
-            content={"project": invitation.project.slug},
+            content={"workspace": invitation.project.workspace.slug, "project": invitation.project.slug},
         )
-
-
-async def emit_event_when_project_invitation_is_updated(invitation: ProjectInvitation) -> None:
-    await events_manager.publish_on_project_channel(
-        project=invitation.project,
-        type=UPDATE_PROJECT_INVITATION,
-    )

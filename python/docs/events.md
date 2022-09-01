@@ -244,6 +244,7 @@ Content for:
 - user channel:
   ```
   {
+      "workspace": "workspace_slug",
       "project": "project_slug"
   }
   ```
@@ -254,12 +255,16 @@ Content for:
 
 #### `projectinvitations.update`
 
-It happens when one or more invitations are updated
+It happens when one or more invitations are updated:
+- the role has been changed.
+- a user has verified her account.
+
 
 Content for:
 - user channel:
   ```
   {
+      "workspace": "workspace_slug",
       "project": "project_slug"
   }
   ```
@@ -276,6 +281,7 @@ Content for:
 - user channel:
   ```
   {
+      "workspace": "workspace_slug",
       "project": "project_slug"
   }
   ```
@@ -289,6 +295,13 @@ Content for:
 It happens when a project invitation is accepted. Because a new project membership is created.
 
 Content for:
+- user channel:
+  ```
+  {
+      "workspace": "workspace_slug",
+      "project": "project_slug"
+  }
+  ```
 - project channel:
   ```
   null
@@ -302,6 +315,7 @@ Content for:
 - user channel:
   ```
   {
+      "workspace": "workspace_slug",
       "project": "project_slug"
   }
   ```

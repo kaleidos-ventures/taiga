@@ -20,7 +20,7 @@ from taiga.users.models import User
 @sync_to_async
 def get_project_invitation(id: str | UUID) -> ProjectInvitation | None:
     try:
-        return ProjectInvitation.objects.select_related("user", "project", "role").get(id=id)
+        return ProjectInvitation.objects.select_related("user", "project", "project__workspace", "role").get(id=id)
     except ProjectInvitation.DoesNotExist:
         return None
 
@@ -126,7 +126,7 @@ def get_user_projects_invitations(user: User, status: ProjectInvitationStatus | 
     """
     All project invitations of a given user, in an optional given status
     """
-    qs = ProjectInvitation.objects.select_related("user", "project").filter(user=user)
+    qs = ProjectInvitation.objects.select_related("user", "project", "project__workspace").filter(user=user)
     if status:
         qs &= qs.filter(status=status)
 
@@ -142,12 +142,12 @@ def accept_project_invitation(invitation: ProjectInvitation) -> ProjectInvitatio
 
 @sync_to_async
 def create_project_invitations(objs: list[ProjectInvitation]) -> list[ProjectInvitation]:
-    return ProjectInvitation.objects.select_related("user", "project").bulk_create(objs=objs)
+    return ProjectInvitation.objects.select_related("user", "project", "project__workspace").bulk_create(objs=objs)
 
 
 @sync_to_async
 def update_project_invitations(objs: list[ProjectInvitation]) -> int:
-    return ProjectInvitation.objects.select_related("user", "project").bulk_update(
+    return ProjectInvitation.objects.select_related("user", "project", "project__workspace").bulk_update(
         objs=objs, fields=["role", "invited_by", "num_emails_sent", "resent_at", "resent_by"]
     )
 

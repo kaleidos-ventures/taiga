@@ -282,7 +282,7 @@ async def update_user_projects_invitations(user: User) -> None:
     invitations = await invitations_repositories.get_user_projects_invitations(
         user=user, status=ProjectInvitationStatus.PENDING
     )
-    await invitations_events.emit_event_when_user_invitations_are_updated(invitations=invitations)
+    await invitations_events.emit_event_when_project_invitations_are_updated(invitations=invitations)
 
 
 async def resend_project_invitation(invitation: ProjectInvitation, resent_by: User) -> None:

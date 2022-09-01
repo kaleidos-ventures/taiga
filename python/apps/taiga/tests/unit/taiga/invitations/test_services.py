@@ -670,7 +670,7 @@ async def test_update_user_projects_invitations() -> None:
         fake_invitations_repositories.get_user_projects_invitations.assert_awaited_once_with(
             user=user, status=ProjectInvitationStatus.PENDING
         )
-        fake_invitations_events.emit_event_when_user_invitations_are_updated.assert_awaited_once()
+        fake_invitations_events.emit_event_when_project_invitations_are_updated.assert_awaited_once()
 
 
 #######################################################

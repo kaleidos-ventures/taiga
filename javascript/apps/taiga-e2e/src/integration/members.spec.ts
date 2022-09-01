@@ -6,6 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { randEmail } from '@ngneat/falso';
+import {
+  addEmailToInvite,
+  inviteUsers,
+  typeEmailToInvite,
+} from '../support/helpers/invitation.helpers';
 import {
   navigateToMembersSettings,
   navigateToSettings,
@@ -26,6 +32,11 @@ describe('Settings > members', () => {
     navigateToSettings();
     navigateToMembersSettings();
     cy.tgCheckA11y();
+
+    cy.getBySel('settings-invite-btn').click();
+    typeEmailToInvite(randEmail());
+    addEmailToInvite();
+    inviteUsers();
   });
 
   it('Tab navigation', () => {

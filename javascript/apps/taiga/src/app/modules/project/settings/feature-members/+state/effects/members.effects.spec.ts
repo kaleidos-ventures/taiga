@@ -7,7 +7,13 @@
  */
 
 import { Router } from '@angular/router';
-import { randEmail, randFullName, randRole, randSlug, randUserName } from '@ngneat/falso';
+import {
+  randEmail,
+  randFullName,
+  randRole,
+  randSlug,
+  randUserName,
+} from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -16,7 +22,7 @@ import { InvitationApiService, ProjectApiService } from '@taiga/api';
 import {
   InvitationMockFactory,
   MembershipMockFactory,
-  ProjectMockFactory
+  ProjectMockFactory,
 } from '@taiga/data';
 import { randomUUID } from 'crypto';
 import { cold, hot } from 'jest-marbles';
@@ -29,7 +35,7 @@ import {
   selectInvitationsOffset,
   selectMembersOffset,
   selectOpenRevokeInvitationDialog,
-  selectUndoDoneAnimation
+  selectUndoDoneAnimation,
 } from '../selectors/members.selectors';
 import { MembersEffects } from './members.effects';
 
@@ -331,7 +337,7 @@ describe('MembersEffects', () => {
     const memberRoleResponse = {
       user: {
         username: memberRole.username,
-        fullName: randFullName()
+        fullName: randFullName(),
       },
       role: {
         isAdmin: false,
@@ -349,10 +355,7 @@ describe('MembersEffects', () => {
     });
 
     const expected = cold('-a', {
-      a: membersActions.updateMemberRoleSuccess({
-        userWasAdmin: false,
-        username: memberRole.username,
-      }),
+      a: membersActions.updateMemberRoleSuccess(),
     });
 
     expect(effects.updateMemberRole$).toBeObservable(expected);
@@ -373,7 +376,7 @@ describe('MembersEffects', () => {
     const invitationRoleResponse = {
       user: {
         id: invitationRole.id,
-        fullName: randFullName()
+        fullName: randFullName(),
       },
       role: {
         isAdmin: false,

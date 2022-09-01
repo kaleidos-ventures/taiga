@@ -74,10 +74,7 @@ export const membersActions = createActionGroup({
         slug?: string;
       };
     }>(),
-    'Update member role success': props<{
-      userWasAdmin: boolean;
-      username: string;
-    }>(),
+    'Update member role success': emptyProps(),
     'Update member role error': emptyProps(),
     'Reset role form': props<{
       oldRole?: {

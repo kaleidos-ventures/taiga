@@ -330,10 +330,7 @@ export class MembersEffects {
             })
             .pipe(
               map(() => {
-                return membersActions.updateMemberRoleSuccess({
-                  userWasAdmin: !!action.oldRole?.isAdmin,
-                  username: action.username,
-                });
+                return membersActions.updateMemberRoleSuccess();
               })
             );
         },
@@ -344,6 +341,15 @@ export class MembersEffects {
             oldRole: action.oldRole,
           });
         },
+      })
+    );
+  });
+
+  public updateMemberListInfo$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.updateMemberRoleSuccess),
+      map(() => {
+        return membersActions.updateMemberInfo();
       })
     );
   });

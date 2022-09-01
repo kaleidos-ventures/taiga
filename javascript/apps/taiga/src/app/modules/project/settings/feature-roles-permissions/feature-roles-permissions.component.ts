@@ -20,6 +20,7 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState, selectSlice } from '@rx-angular/state';
 import { Project, Role } from '@taiga/data';
@@ -33,25 +34,24 @@ import {
   take,
   withLatestFrom,
 } from 'rxjs/operators';
-import {
-  updateRolePermissions,
-  updatePublicPermissions,
-  updateWorkspacePermissions,
-  resetPermissions,
-  initRolesPermissions,
-} from './+state/actions/roles-permissions.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { PermissionsService } from '~/app/services/permissions.service';
+import { filterFalsy, filterNil } from '~/app/shared/utils/operators';
+import * as ProjectActions from './+state/actions/roles-permissions.actions';
+import {
+  initRolesPermissions,
+  resetPermissions,
+  updatePublicPermissions,
+  updateRolePermissions,
+  updateWorkspacePermissions,
+} from './+state/actions/roles-permissions.actions';
 import {
   selectMemberRoles,
   selectPublicPermissions,
   selectWorkspacePermissions,
 } from './+state/selectors/roles-permissions.selectors';
-import { filterNil, filterFalsy } from '~/app/shared/utils/operators';
 import { EntityConflictPermission } from './models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
-import { Actions, ofType } from '@ngrx/effects';
-import * as ProjectActions from './+state/actions/roles-permissions.actions';
-import { PermissionsService } from '~/app/services/permissions.service';
 
 @UntilDestroy()
 @Component({
@@ -170,7 +170,8 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     );
 
     this.state.hold(this.state.select('project'), (project) => {
-      this.store.dispatch(initRolesPermissions({ project }));
+      project.userIsAdmin &&
+        this.store.dispatch(initRolesPermissions({ project }));
     });
   }
 

@@ -46,7 +46,7 @@ class Task(models.BaseModel, CreatedMetaInfoMixin):
             "reference",
             "project",
         )
-        ordering = ["project__name", "workflow__order", "status__order", "order"]
+        ordering = ["project", "workflow", "status", "order"]
 
     def __str__(self) -> str:
         return self.name

@@ -37,7 +37,7 @@ class WorkspaceRole(models.BaseModel):
     class Meta:
         verbose_name = "workspace role"
         verbose_name_plural = "workspace roles"
-        ordering = ["order", "slug"]
+        ordering = ["workspace", "order", "slug"]
         unique_together = (("slug", "workspace"),)
 
     def __str__(self) -> str:
@@ -126,7 +126,7 @@ class Workspace(models.BaseModel):
     class Meta:
         verbose_name = "workspace"
         verbose_name_plural = "workspaces"
-        ordering = ["name", "id"]
+        ordering = ["slug"]
         index_together = [
             ["name", "id"],
         ]

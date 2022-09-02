@@ -41,7 +41,7 @@ class ProjectRole(models.BaseModel):
     class Meta:
         verbose_name = "project role"
         verbose_name_plural = "project roles"
-        ordering = ["order", "slug"]
+        ordering = ["project", "order", "slug"]
         unique_together = (("slug", "project"),)
 
     def __str__(self) -> str:
@@ -163,7 +163,7 @@ class Project(models.BaseModel):
     class Meta:
         verbose_name = "project"
         verbose_name_plural = "projects"
-        ordering = ["name", "id"]
+        ordering = ["workspace", "slug"]
         # TODO refacxtor https://docs.djangoproject.com/en/4.0/ref/models/options/#indexes
         index_together = [
             ["name", "id"],

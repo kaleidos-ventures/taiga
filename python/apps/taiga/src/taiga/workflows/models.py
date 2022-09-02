@@ -29,7 +29,7 @@ class Workflow(models.BaseModel):
             "slug",
             "project",
         )
-        ordering = ["order", "name"]
+        ordering = ["project", "order", "slug"]
 
     def __str__(self) -> str:
         return self.name
@@ -59,7 +59,7 @@ class WorkflowStatus(models.BaseModel):
             "slug",
             "workflow",
         )
-        ordering = ["order", "name"]
+        ordering = ["workflow", "order", "slug"]
 
     def __str__(self) -> str:
         return self.name

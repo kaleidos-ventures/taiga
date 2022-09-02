@@ -37,7 +37,6 @@ import {
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import { AppService } from '~/app/services/app.service';
-import { WsService } from '~/app/services/ws';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { filterNil } from '~/app/shared/utils/operators';
 
@@ -261,30 +260,6 @@ export class MembersEffects {
     { dispatch: false }
   );
 
-  public wsRevoke$ = createEffect(() => {
-    return this.wsService.projectEvents<void>('projectinvitations.revoke').pipe(
-      map(() => {
-        return membersActions.updateMembersList({ eventType: 'update' });
-      })
-    );
-  });
-
-  public wsInvitationCreate$ = createEffect(() => {
-    return this.wsService.projectEvents<void>('projectinvitations.create').pipe(
-      map(() => {
-        return membersActions.updateMembersList({ eventType: 'create' });
-      })
-    );
-  });
-
-  public wsInvitationUpdate$ = createEffect(() => {
-    return this.wsService.projectEvents<void>('projectinvitations.update').pipe(
-      map(() => {
-        return membersActions.updateMembersList({ eventType: 'update' });
-      })
-    );
-  });
-
   public showUndoConfirmation$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(membersActions.undoCancelInvitationUi),
@@ -416,7 +391,6 @@ export class MembersEffects {
     private store: Store,
     private buttonLoadingService: ButtonLoadingService,
     private invitationApiService: InvitationApiService,
-    private wsService: WsService,
     private router: Router
   ) {}
 }

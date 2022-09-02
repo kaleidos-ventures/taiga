@@ -37,7 +37,6 @@ export const reducer = createReducer(
   on(ProjectActions.eventInvitation, (state): ProjectState => {
     if (state.currentProjectSlug) {
       const project = state.projects[state.currentProjectSlug];
-
       if (project) {
         project.userHasPendingInvitation = true;
       }

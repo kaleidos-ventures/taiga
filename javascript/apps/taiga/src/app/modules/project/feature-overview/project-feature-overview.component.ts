@@ -15,13 +15,16 @@ import {
   OnDestroy,
   ViewChild,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Invitation, Project, User } from '@taiga/data';
+import { filter } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-
 import { selectNotificationClosed } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
 import {
   initProjectOverview,
@@ -29,6 +32,7 @@ import {
 } from './data-access/+state/actions/project-overview.actions';
 import { selectInvitations } from './data-access/+state/selectors/project-overview.selectors';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-project-feature-overview',
   templateUrl: './project-feature-overview.component.html',
@@ -62,6 +66,7 @@ export class ProjectFeatureOverviewComponent
   constructor(
     private store: Store,
     private cd: ChangeDetectorRef,
+    private wsService: WsService,
     private state: RxState<{
       project: Project;
       invitations: Invitation[];
@@ -87,6 +92,69 @@ export class ProjectFeatureOverviewComponent
 
       this.cd.markForCheck();
     });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `users.${this.state.get('user')!.username}`,
+        type: 'projectinvitations.create',
+      })
+      .pipe(
+        untilDestroyed(this),
+        filter(
+          (eventResponse) =>
+            eventResponse.event.content.project ===
+            this.state.get('project').slug
+        )
+      )
+      .subscribe(() => {
+        this.store.dispatch(ProjectActions.eventInvitation());
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectinvitations.revoke',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.wsService
+          .command('unsubscribe_from_project_events', {
+            project: this.state.get('project').slug,
+          })
+          .subscribe();
+        this.wsService
+          .command('subscribe_to_project_events', {
+            project: this.state.get('project').slug,
+          })
+          .subscribe();
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectinvitations.revoke',
+      })
+      .pipe(
+        untilDestroyed(this),
+        filter(() => this.state.get('project').userIsAdmin)
+      )
+      .subscribe(() => {
+        this.store.dispatch(ProjectActions.revokedInvitation());
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectinvitations.revoke',
+      })
+      .pipe(
+        untilDestroyed(this),
+        filter(() => !this.state.get('project').userIsAdmin),
+        filter(() => this.state.get('project').userPermissions.length === 0)
+      )
+      .subscribe(() => {
+        this.store.dispatch(ProjectActions.revokedNoPermissionInvitation());
+      });
   }
 
   public hasClamping(el: HTMLElement) {

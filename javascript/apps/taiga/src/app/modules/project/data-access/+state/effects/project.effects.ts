@@ -8,26 +8,21 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-
-import { filter, map, switchMap, tap } from 'rxjs/operators';
-
 import { Router } from '@angular/router';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fetch } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY } from 'rxjs';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { map, tap } from 'rxjs/operators';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { WsService } from '~/app/services/ws';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
-import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectActions from '../actions/project.actions';
-import { selectCurrentProject } from '../selectors/project.selectors';
 
 @Injectable()
 export class ProjectEffects {
@@ -110,31 +105,6 @@ export class ProjectEffects {
           void this.router.navigate(['/']);
           return EMPTY;
         },
-      })
-    );
-  });
-
-  public wsUpdateInvitations$ = createEffect(() => {
-    return this.store.select(selectUser).pipe(
-      filterNil(),
-      switchMap((user) => {
-        return this.wsService
-          .events<{ project: string }>({
-            channel: `users.${user.username}`,
-            type: 'projectinvitations.create',
-          })
-          .pipe(
-            concatLatestFrom(() =>
-              this.store.select(selectCurrentProject).pipe(filterNil())
-            ),
-            filter(
-              ([eventResponse, project]) =>
-                eventResponse.event.content.project === project.slug
-            ),
-            map(() => {
-              return ProjectActions.eventInvitation();
-            })
-          );
       })
     );
   });

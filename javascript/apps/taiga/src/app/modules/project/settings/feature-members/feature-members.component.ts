@@ -7,11 +7,12 @@
  */
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
 import { membersActions } from './+state/actions/members.actions';
 import {
@@ -40,7 +41,11 @@ export class ProjectsSettingsFeatureMembersComponent {
   public model$ = this.state.select();
   public invitePeopleModal = false;
 
-  constructor(private store: Store, private state: RxState<ComponentState>) {
+  constructor(
+    private store: Store,
+    private state: RxState<ComponentState>,
+    private wsService: WsService
+  ) {
     this.state.connect(
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())
@@ -57,6 +62,8 @@ export class ProjectsSettingsFeatureMembersComponent {
     );
 
     this.store.dispatch(membersActions.initProjectMembers());
+
+    this.initWSsubscriptions();
   }
 
   public openModal() {
@@ -71,5 +78,43 @@ export class ProjectsSettingsFeatureMembersComponent {
     this.store.dispatch(
       membersActions.updateMembersList({ eventType: 'create' })
     );
+  }
+
+  public initWSsubscriptions() {
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectinvitations.revoke',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(
+          membersActions.updateMembersList({ eventType: 'update' })
+        );
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectinvitations.create',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(
+          membersActions.updateMembersList({ eventType: 'create' })
+        );
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').slug}`,
+        type: 'projectinvitations.update',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(
+          membersActions.updateMembersList({ eventType: 'update' })
+        );
+      });
   }
 }

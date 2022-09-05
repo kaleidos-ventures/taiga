@@ -13,7 +13,7 @@ from taiga.base.utils.datetime import timestamp_mics
 class Task(models.BaseModel, CreatedMetaInfoMixin):
     name = models.CharField(max_length=500, null=False, blank=False, verbose_name="name")
     order = models.BigIntegerField(default=timestamp_mics, null=False, blank=False, verbose_name="order")
-    reference = models.BigIntegerField(null=True, blank=True, default=None, verbose_name="reference")
+    reference = models.BigIntegerField(null=True, blank=True, default=timestamp_mics, verbose_name="reference")
     project = models.ForeignKey(
         "projects.Project",
         null=False,

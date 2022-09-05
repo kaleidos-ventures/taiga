@@ -5,23 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from dataclasses import dataclass
-from uuid import UUID
+from taiga.base.serializers import BaseModel
 
 
-@dataclass
-class WorkflowStatus:
-    id: UUID
+class WorkflowStatusNestedSerializer(BaseModel):
     name: str
     slug: str
     color: int
-    order: int
 
-
-@dataclass
-class Workflow:
-    id: UUID
-    name: str
-    slug: str
-    order: int
-    statuses: list[WorkflowStatus]
+    class Config:
+        orm_mode = True

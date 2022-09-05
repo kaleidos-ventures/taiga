@@ -5,16 +5,19 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+
 from typing import Any
 
 from pydantic import Field
 from taiga.base.logging.context import get_current_correlation_id
 from taiga.base.serializers import BaseModel
 
+EventContent = dict[str, Any] | BaseModel | None
+
 
 class Event(BaseModel):
     type: str
-    content: dict[str, Any] | None = None
+    content: EventContent = None
     correlation_id: str | None = Field(default_factory=get_current_correlation_id)
 
     def __eq__(self, other: object) -> bool:

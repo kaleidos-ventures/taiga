@@ -52,7 +52,7 @@ from taiga.base.utils.tests import is_test_running
 from taiga.conf import settings
 from taiga.conf.events import PubSubBackendChoices
 from taiga.events import channels, pubsub
-from taiga.events.events import Event
+from taiga.events.events import Event, EventContent
 from taiga.events.responses import EventResponse
 from taiga.events.subscriber import Subscriber
 from taiga.projects.models import Project
@@ -181,7 +181,7 @@ class EventsManager:
             extra={"action": "manager.publish", "channel": channel, "event": event},
         )
 
-    def _generate_event(self, type: str, content: dict[str, Any] | None = None) -> Event:
+    def _generate_event(self, type: str, content: EventContent = None) -> Event:
         return Event(type=type, content=content)
 
     async def publish_on_system_channel(self, type: str, content: dict[str, Any]) -> None:
@@ -189,14 +189,12 @@ class EventsManager:
         event = self._generate_event(type=type, content=content)
         await self.publish(channel=channel, event=event)
 
-    async def publish_on_user_channel(self, user: User | str, type: str, content: dict[str, Any] | None = None) -> None:
+    async def publish_on_user_channel(self, user: User | str, type: str, content: EventContent = None) -> None:
         channel = channels.user_channel(user)
         event = self._generate_event(type=type, content=content)
         await self.publish(channel=channel, event=event)
 
-    async def publish_on_project_channel(
-        self, project: Project | str, type: str, content: dict[str, Any] | None = None
-    ) -> None:
+    async def publish_on_project_channel(self, project: Project | str, type: str, content: EventContent = None) -> None:
         channel = channels.project_channel(project)
         event = self._generate_event(type=type, content=content)
         await self.publish(channel=channel, event=event)
@@ -205,7 +203,7 @@ class EventsManager:
         self,
         workspace: Workspace | str,
         type: str,
-        content: dict[str, Any] | None = None,
+        content: EventContent = None,
     ) -> None:
         channel = channels.workspace_channel(workspace)
         event = self._generate_event(type=type, content=content)

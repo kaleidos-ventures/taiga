@@ -8,6 +8,7 @@
 from fastapi import Query
 from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
+from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404
 from taiga.permissions import HasPerm
 from taiga.projects.api import get_project_or_404
@@ -37,3 +38,11 @@ async def get_project_workflows(
     project = await get_project_or_404(slug)
     await check_permissions(permissions=GET_PROJECT_WORKFLOWS, user=request.user, obj=project)
     return await workflows_services.get_project_workflows(project_slug=slug)
+
+
+async def get_workflow_or_404(project_slug: str, workflow_slug: str) -> Workflow:
+    workflow = await workflows_services.get_project_workflow(project_slug=project_slug, workflow_slug=workflow_slug)
+    if workflow is None:
+        raise ex.NotFoundError(f"Workflow {workflow_slug} does not exist")
+
+    return workflow

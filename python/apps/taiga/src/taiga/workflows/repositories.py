@@ -9,22 +9,44 @@
 from asgiref.sync import sync_to_async
 from taiga.workflows import dataclasses as dt
 from taiga.workflows import models
+from taiga.workflows.models import Workflow, WorkflowStatus
 
 
 @sync_to_async
 def get_project_workflows(project_slug: str) -> list[dt.Workflow]:
-    wfs_qs = models.Workflow.objects.prefetch_related("statuses").filter(project__slug=project_slug).order_by("order")
-    workflows = []
-    for wf in wfs_qs:
-        workflows.append(
-            dt.Workflow(
-                name=wf.name,
-                slug=wf.slug,
-                order=wf.order,
-                statuses=[
-                    dt.WorkflowStatus(name=status.name, slug=status.slug, order=status.order, color=status.color)
-                    for status in wf.statuses.all()
-                ],
-            )
-        )
-    return workflows
+    project_workflows = (
+        models.Workflow.objects.prefetch_related("statuses").filter(project__slug=project_slug).order_by("order")
+    )
+    dt_workflows = []
+    for workflow in project_workflows:
+        dt_workflows.append(_get_workflow_dt(workflow))
+    return dt_workflows
+
+
+@sync_to_async
+def get_project_workflow(project_slug: str, workflow_slug: str) -> dt.Workflow | None:
+    try:
+        workflow = Workflow.objects.prefetch_related("statuses").get(slug=workflow_slug, project__slug=project_slug)
+        return _get_workflow_dt(workflow)
+    except Workflow.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def get_status(project_slug: str, workflow_slug: str, status_slug: str) -> WorkflowStatus | None:
+    return WorkflowStatus.objects.get(
+        slug=status_slug, workflow__slug=workflow_slug, workflow__project__slug=project_slug
+    )
+
+
+def _get_workflow_dt(workflow: Workflow) -> dt.Workflow:
+    return dt.Workflow(
+        id=workflow.id,
+        name=workflow.name,
+        slug=workflow.slug,
+        order=workflow.order,
+        statuses=[
+            dt.WorkflowStatus(id=status.id, name=status.name, slug=status.slug, order=status.order, color=status.color)
+            for status in workflow.statuses.all()
+        ],
+    )

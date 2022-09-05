@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
+from asgiref.sync import sync_to_async
 
 from .base import Factory, factory
 
@@ -18,6 +18,7 @@ class WorkflowFactory(Factory):
 
     class Meta:
         model = "workflows.Workflow"
+        skip_postgeneration_save = True
 
 
 class WorkflowStatusFactory(Factory):
@@ -33,3 +34,13 @@ class WorkflowStatusFactory(Factory):
 
 def build_workflow(**kwargs):
     return WorkflowFactory.build(**kwargs)
+
+
+@sync_to_async
+def create_workflow(**kwargs):
+    return WorkflowFactory.create(**kwargs)
+
+
+@sync_to_async
+def create_workflow_status(**kwargs):
+    return WorkflowStatusFactory.create(**kwargs)

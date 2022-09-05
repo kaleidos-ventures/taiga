@@ -76,7 +76,7 @@ async def list_workspace_invited_projects(
     name="projects.create",
     summary="Create project",
     response_model=ProjectSerializer,
-    responses=ERROR_422 | ERROR_403,
+    responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_project(
     request: AuthRequest,

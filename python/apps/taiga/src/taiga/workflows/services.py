@@ -12,3 +12,7 @@ from taiga.workflows import repositories as workflows_repositories
 
 async def get_project_workflows(project_slug: str) -> list[dt.Workflow]:
     return await workflows_repositories.get_project_workflows(project_slug=project_slug)
+
+
+async def get_project_workflow(project_slug: str, workflow_slug: str) -> dt.Workflow | None:
+    return await workflows_repositories.get_project_workflow(project_slug=project_slug, workflow_slug=workflow_slug)

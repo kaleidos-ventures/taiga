@@ -78,4 +78,20 @@ describe('Signup (basic)', () => {
     sendSignUpForm();
     cy.getBySel('signup-email-exists').should('be.visible');
   });
+
+  it('Signup: case insensitive', () => {
+    typeSignUpEmail('USER1@taiga.demo');
+    typeSignUpPassword();
+    typeSignUpFullName();
+    sendSignUpForm();
+    cy.getBySel('signup-email-exists').should('be.visible');
+  });
+
+  it('Signup: external link', () => {
+    cy.getBySel('terms-and-privacy').within(($el) => {
+      cy.wrap($el.find('svg'))
+        .invoke('attr', 'aria-label')
+        .should('eq', 'Opens in a new tab');
+    });
+  });
 });

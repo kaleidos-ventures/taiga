@@ -137,6 +137,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <button
       *ngIf="vm.showMoreProjects"
       (click)="setShowAllProjects(true)"
+      data-test="show-more-projects"
       tuiLink
       appearance="tertiary"
       class="workspace-show-all"
@@ -150,6 +151,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <button
       *ngIf="vm.showLessProjects"
       (click)="setShowAllProjects(false)"
+      data-test="show-less-projects"
       tuiLink
       appearance="tertiary"
       class="workspace-show-all"

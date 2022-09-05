@@ -14,7 +14,7 @@ import { filter, pairwise } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class RouteHistoryService {
-  private previousUrl!: string;
+  public previousUrl!: string;
 
   constructor(private router: Router) {}
 

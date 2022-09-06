@@ -13,6 +13,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 :host {
   --menu-size: 200px;
 
+  align-self: flex-start;
   inline-size: var(--menu-size);
   inset-block-start: 0;
   position: sticky;

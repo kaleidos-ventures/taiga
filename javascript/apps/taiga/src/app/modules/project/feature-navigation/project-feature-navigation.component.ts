@@ -8,18 +8,18 @@
 
 import {
   animate,
+  AnimationEvent,
+  group,
   query,
   state,
   style,
   transition,
   trigger,
-  group,
-  AnimationEvent,
 } from '@angular/animations';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  ElementRef,
   HostBinding,
   HostListener,
   Input,
@@ -177,15 +177,30 @@ export class ProjectNavigationComponent implements OnInit {
     this.settingsAnimationInProgress = false;
   }
 
+  @HostListener('window:scroll', [])
+  public onWindowScroll() {
+    if (window.scrollY > 48) {
+      this.updateBlockSize('100vh');
+    } else {
+      this.updateBlockSize(
+        `calc(100vh - ${
+          (this.el.nativeElement as HTMLElement).getBoundingClientRect().top
+        }px)`
+      );
+    }
+  }
+
   public showProjectSettings = false;
   public settingsAnimationInProgress = false;
   public animationEvents$ = new Subject<AnimationEvent>();
 
   constructor(
+    private el: ElementRef,
     private localStorage: LocalStorageService,
-    private readonly cd: ChangeDetectorRef,
     private router: Router
-  ) {}
+  ) {
+    this.updateBlockSize('calc(100vh - 48px)');
+  }
 
   public ngOnInit() {
     this.collapsed = !!this.localStorage.get('projectnav-collapsed');
@@ -203,6 +218,10 @@ export class ProjectNavigationComponent implements OnInit {
         matrixParams: 'ignored',
       }
     );
+  }
+
+  public updateBlockSize(value: string) {
+    (this.el.nativeElement as HTMLElement).style.blockSize = value;
   }
 
   public toggleCollapse() {

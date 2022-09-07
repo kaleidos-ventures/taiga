@@ -34,9 +34,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               [itemHeights]="vm.itemHeights"
               class="tui-zero-scrollbar">
               <ng-container
-                *cdkVirtualFor="let task of vm.tasks; trackBy: trackBySlug">
+                *cdkVirtualFor="
+                  let task of vm.tasks;
+                  let i = index;
+                  trackBy: trackBySlug
+                ">
                 <tg-kanban-task
                   [task]="task"
+                  [index]="i"
+                  [total]="vm.tasks.length"
                   [attr.data-tmp-id]="task.tmpId"></tg-kanban-task>
               </ng-container>
             </cdk-virtual-scroll-viewport>

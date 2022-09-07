@@ -5,6 +5,8 @@
   "empty_status": "There are no tasks.",
   "add_task": "Add task",
   "create_task_permission": "You no longer have permissions to create tasks",
+  "task_title": "{{ref}} {{title}}. Position {{position}} of {{total}}",
+  "status_live_announce": "Status {{ status }}",
   "create_task_form": {
     "task_title_label": "Task title",
     "title_task_required": "Task title can’t be empty.",

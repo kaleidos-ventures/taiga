@@ -18,4 +18,10 @@ import { KanbanTask } from '~/app/modules/project/feature-kanban/kanban.model';
 export class KanbanTaskComponent {
   @Input()
   public task!: KanbanTask;
+
+  @Input()
+  public index!: number;
+
+  @Input()
+  public total!: number;
 }

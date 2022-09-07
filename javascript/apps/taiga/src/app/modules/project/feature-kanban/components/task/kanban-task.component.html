@@ -5,7 +5,18 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
-<a href="">
-  <div class="ref">{{ task.ref }}</div>
-  <div class="text">{{ task.title }}</div>
-</a>
+<ng-container *transloco="let t">
+  <a
+    [attr.title]="
+      t('kanban.task_title', {
+        ref: task.ref,
+        title: task.title,
+        position: index + 1,
+        total: total
+      })
+    "
+    href="">
+    <div class="ref">{{ task.ref }}</div>
+    <div class="text">{{ task.title }}</div>
+  </a>
+</ng-container>

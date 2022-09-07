@@ -26,11 +26,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </p>
     <p class="verify-footer">
       <span>{{ t('verify.footer_text') }}</span>
-      <a
+      <button
+        tuiLink
         class="verify-footer-sign-up"
-        [routerLink]="['/signup']">
+        (click)="handleSignUpView()"
+        data-test="sign-up">
         {{ t('verify.footer_button') }}
-      </a>
+      </button>
     </p>
   </div>
 </ng-container>

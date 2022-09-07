@@ -97,4 +97,16 @@ export class AuthFeatureSignUpComponent implements OnInit {
   public displaySignUpForm(value: boolean) {
     this.displayForm = value;
   }
+
+  public showSignUp() {
+    this.displayVerifyEmail = false;
+    this.signUpFormData = {
+      email: '',
+      fullName: '',
+      password: '',
+      acceptProjectInvitation: true,
+      projectInvitationToken: '',
+    };
+    this.displayForm = false;
+  }
 }

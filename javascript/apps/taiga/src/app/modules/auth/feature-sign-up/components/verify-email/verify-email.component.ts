@@ -7,23 +7,25 @@
  */
 
 import {
-  Component,
   ChangeDetectionStrategy,
-  OnInit,
-  Input,
   ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
 } from '@angular/core';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { SignUp } from '~/app/modules/auth/feature-sign-up/models/sign-up.model';
+import { TuiNotification } from '@taiga-ui/core';
 import {
   resendSuccess,
   signup,
 } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import { SignUp } from '~/app/modules/auth/feature-sign-up/models/sign-up.model';
 import { AppService } from '~/app/services/app.service';
-import { TuiNotification } from '@taiga-ui/core';
-import { Actions, ofType } from '@ngrx/effects';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Router } from '@angular/router';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +37,9 @@ import { Router } from '@angular/router';
 export class AuthFeatureVerifyEmailComponent implements OnInit {
   @Input()
   public formData!: SignUp;
+
+  @Output()
+  public showSignUp = new EventEmitter<File | undefined>();
 
   public emailAddress = '';
   public resendCooldown = false;
@@ -88,5 +93,9 @@ export class AuthFeatureVerifyEmailComponent implements OnInit {
         autoClose: true,
       });
     }
+  }
+
+  public handleSignUpView() {
+    this.showSignUp.emit();
   }
 }

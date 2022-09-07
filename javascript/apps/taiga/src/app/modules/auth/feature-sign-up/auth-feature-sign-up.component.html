@@ -7,7 +7,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t; read: 'auth'">
   <ng-container *ngIf="!displayVerifyEmail">
-    <main class="signup">
+    <main
+      class="signup"
+      data-test="sign-up-page">
       <tg-ui-context-notification
         *ngIf="params.project"
         class="notification"
@@ -74,6 +76,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </footer>
   </ng-container>
   <ng-container *ngIf="displayVerifyEmail && signUpFormData">
-    <tg-verify-email [formData]="signUpFormData"></tg-verify-email>
+    <tg-verify-email
+      [formData]="signUpFormData"
+      (showSignUp)="showSignUp()"></tg-verify-email>
   </ng-container>
 </ng-container>

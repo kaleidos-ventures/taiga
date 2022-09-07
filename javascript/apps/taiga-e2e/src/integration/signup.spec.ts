@@ -11,7 +11,7 @@ import {
   sendSignUpForm,
   typeSignUpEmail,
   typeSignUpFullName,
-  typeSignUpPassword,
+  typeSignUpPassword
 } from '../support/helpers/signup.helper';
 
 describe('Signup (basic)', () => {
@@ -93,5 +93,15 @@ describe('Signup (basic)', () => {
         .invoke('attr', 'aria-label')
         .should('eq', 'Opens in a new tab');
     });
+  });
+
+  it('Signup: back to signup from verify email page', () => {
+    typeSignUpEmail();
+    typeSignUpPassword();
+    typeSignUpFullName();
+    sendSignUpForm();
+    cy.getBySel('verify-email-page').should('be.visible');
+    cy.getBySel('sign-up').click();
+    cy.getBySel('sign-up-page').should('be.visible');
   });
 });

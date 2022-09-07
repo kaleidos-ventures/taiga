@@ -101,10 +101,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   overflow: hidden;
 }
 
-.project-reject-invite {
+.project-reject-invite[tuiIconButton] {
   inset-block-start: var(--spacing-8);
   inset-inline-end: var(--spacing-8);
   position: absolute;
+
+  &::ng-deep .t-icon {
+    block-size: var(--spacing-16);
+    inline-size: var(--spacing-16);
+  }
 }
 
 .project-accept-invite {

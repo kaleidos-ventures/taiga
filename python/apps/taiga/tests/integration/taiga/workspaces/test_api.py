@@ -14,6 +14,11 @@ from tests.utils import factories as f
 pytestmark = pytest.mark.django_db
 
 
+#############################################################
+#  POST /my/workspaces/
+#############################################################
+
+
 async def test_create_workspace_success(client):
     user = await f.create_user()
     data = {
@@ -38,6 +43,16 @@ async def test_create_workspace_validation_error(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
+#############################################################
+#  GET /my/workspaces/
+#############################################################
+
+
+async def test_my_workspaces_being_anonymous(client):
+    response = client.get("/my/workspaces")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
 async def test_my_workspaces_success(client):
     user = await f.create_user()
     await f.create_workspace(owner=user)
@@ -46,6 +61,50 @@ async def test_my_workspaces_success(client):
     response = client.get("/my/workspaces")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
+
+
+#############################################################
+#  GET /my/workspaces/<slug>
+#############################################################
+
+
+async def test_my_workspace_being_anonymous(client):
+    workspace = await f.create_workspace()
+
+    response = client.get(f"/my/workspaces/{workspace.slug}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_my_workspace_success(client):
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+
+    client.login(user)
+    response = client.get(f"/my/workspaces/{workspace.slug}")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["name"] == workspace.name
+
+
+async def test_my_workspace_not_found_error_because_invalid_sulg(client):
+    user = await f.create_user()
+
+    client.login(user)
+    response = client.get("/my/workspaces/invalid-slug")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_my_workspace_not_found_error_because_there_is_no_relation(client):
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+
+    client.login(user)
+    response = client.get(f"/my/workspaces/{workspace.slug}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+#############################################################
+#  GET /workspaces/<slug>
+#############################################################
 
 
 async def test_get_workspace_being_workspace_admin(client):

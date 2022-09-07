@@ -6,11 +6,25 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from itertools import chain
-from typing import Iterable
+from typing import Callable, Iterable
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
-from taiga.base.db.models import BooleanField, Case, CharField, Exists, IntegerField, OuterRef, Prefetch, Q, Value, When
+from taiga.base.db.models import (
+    BooleanField,
+    Case,
+    CharField,
+    Coalesce,
+    Count,
+    Exists,
+    IntegerField,
+    OuterRef,
+    Prefetch,
+    Q,
+    Subquery,
+    Value,
+    When,
+)
 from taiga.invitations.choices import ProjectInvitationStatus
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories
@@ -21,7 +35,7 @@ from taiga.workspaces.models import Workspace
 @sync_to_async
 def get_user_workspaces_overview(user: User) -> list[Workspace]:
     # workspaces where the user is ws-admin with all its projects
-    admin_ws_ids = list(
+    admin_ws_ids = (
         Workspace.objects.filter(
             memberships__user__id=user.id,  # user_is_ws_member
             memberships__role__is_admin=True,  # user_ws_role_is_admin
@@ -60,7 +74,7 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
         admin_ws = chain(admin_ws, qs)
 
     # workspaces where the user is ws-member with all its visible projects
-    member_ws_ids = list(
+    member_ws_ids = (
         Workspace.objects.filter(
             memberships__user__id=user.id,  # user_is_ws_member
             memberships__role__is_admin=False,  # user_ws_role_is_member
@@ -106,7 +120,7 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
     user_invited_pj = Q(invitations__status=ProjectInvitationStatus.PENDING) & (
         Q(invitations__user_id=user.id) | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email))
     )
-    guest_ws_ids = list(
+    guest_ws_ids = (
         Project.objects.filter(user_pj_member | user_invited_pj)
         .exclude(workspace__memberships__user__id=user.id)  # user_not_ws_member
         .order_by("workspace_id")
@@ -148,6 +162,126 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
 
     result = list(chain(admin_ws, member_ws, guest_ws))
     return result
+
+
+@sync_to_async
+def get_user_workspace_overview(user: User, slug: str) -> Workspace | None:
+    # Generic annotations:
+    has_projects = Exists(Project.objects.filter(workspace=OuterRef("pk")))
+    user_is_owner = Case(When(owner_id=user.id, then=Value(True)), default=Value(False), output_field=BooleanField())
+    user_role: Callable[[str], Value] = lambda role_name: Value(role_name, output_field=CharField())
+
+    # Generic prefetch
+    invited_projects_qs = Project.objects.filter(
+        invitations__user_id=user.id, invitations__status=ProjectInvitationStatus.PENDING
+    )
+
+    # workspaces where the user is admin with all its projects
+    try:
+        total_projects: Subquery | Count = Count("projects")
+        visible_project_ids_qs = (
+            Project.objects.filter(workspace=OuterRef("workspace")).values_list("id", flat=True).order_by("-created_at")
+        )
+        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:6])).order_by("-created_at")
+        return (
+            Workspace.objects.filter(
+                slug=slug,
+                memberships__user_id=user.id,  # user_is_ws_member
+                memberships__role__is_admin=True,  # user_ws_role_is_admin
+            )
+            .prefetch_related(
+                Prefetch("projects", queryset=latest_projects_qs, to_attr="latest_projects"),
+                Prefetch("projects", queryset=invited_projects_qs, to_attr="invited_projects"),
+            )
+            .annotate(total_projects=Coalesce(total_projects, 0))
+            .annotate(has_projects=has_projects)
+            .annotate(user_role=user_role("admin"))
+            .annotate(user_is_owner=user_is_owner)
+            .get()
+        )
+    except Workspace.DoesNotExist:
+        pass  # The workspace selected is not of this kind
+
+    # workspaces where the user is ws-member with all its visible projects
+    try:
+        ws_allowed = ~Q(members__id=user.id) & Q(workspace_member_permissions__len__gt=0)
+        pj_allowed = Q(members__id=user.id)
+        total_projects = Subquery(
+            Project.objects.filter(Q(workspace_id=OuterRef("id")))
+            .filter((ws_allowed | pj_allowed))
+            .values("workspace")
+            .annotate(count=Count("*"))
+            .values("count"),
+            output_field=IntegerField(),
+        )
+        visible_project_ids_qs = (
+            Project.objects.filter(Q(workspace=OuterRef("workspace")))
+            .filter(ws_allowed | pj_allowed)
+            .values_list("id", flat=True)
+            .order_by("-created_at")
+        )
+        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:6])).order_by("-created_at")
+        return (
+            Workspace.objects.filter(
+                slug=slug,
+                memberships__user__id=user.id,  # user_is_ws_member
+                memberships__role__is_admin=False,  # user_ws_role_is_member
+            )
+            .prefetch_related(
+                Prefetch("projects", queryset=latest_projects_qs, to_attr="latest_projects"),
+                Prefetch("projects", queryset=invited_projects_qs, to_attr="invited_projects"),
+            )
+            .annotate(total_projects=Coalesce(total_projects, 0))
+            .annotate(has_projects=has_projects)
+            .annotate(user_role=user_role("member"))
+            .annotate(user_is_owner=user_is_owner)
+            .get()
+        )
+    except Workspace.DoesNotExist:
+        pass  # The workspace selected is not of this kind
+
+    # workspaces where the user is ws-guest with all its visible projects
+    # or is not even a guest and only have invited projects
+    try:
+        user_not_ws_member = ~Q(members__id=user.id)
+        user_pj_member = Q(projects__members__id=user.id)
+        user_invited_pj = Q(
+            projects__invitations__status=ProjectInvitationStatus.PENDING, projects__invitations__user_id=user.id
+        )
+        total_projects = Subquery(
+            Project.objects.filter(
+                Q(workspace_id=OuterRef("id")),
+                members__id=user.id,
+            )
+            .values("workspace")
+            .annotate(count=Count("*"))
+            .values("count"),
+            output_field=IntegerField(),
+        )
+        visible_project_ids_qs = (
+            Project.objects.filter(
+                Q(workspace=OuterRef("workspace")),
+                members__id=user.id,
+            )
+            .order_by("-created_at")
+            .values_list("id", flat=True)
+        )
+        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:6])).order_by("-created_at")
+        return (
+            Workspace.objects.filter(user_not_ws_member & (user_pj_member | user_invited_pj), slug=slug)
+            .distinct()
+            .prefetch_related(
+                Prefetch("projects", queryset=latest_projects_qs, to_attr="latest_projects"),
+                Prefetch("projects", queryset=invited_projects_qs, to_attr="invited_projects"),
+            )
+            .annotate(total_projects=Coalesce(total_projects, 0))
+            .annotate(has_projects=has_projects)
+            .annotate(user_role=user_role("guest"))
+            .annotate(user_is_owner=user_is_owner)
+            .get()
+        )
+    except Workspace.DoesNotExist:
+        return None  # There is no workspace with this slug for this user
 
 
 @sync_to_async

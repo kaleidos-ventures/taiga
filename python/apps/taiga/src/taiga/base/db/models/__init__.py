@@ -20,7 +20,7 @@ from django.contrib.postgres.lookups import Unaccent  # noqa
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector  # noqa
 from django.core.files import File  # noqa
 from django.db.models import Model, UUIDField
-from django.db.models.functions import Lower, StrIndex  # noqa
+from django.db.models.functions import Coalesce, Lower, StrIndex  # noqa
 from taiga.base.db.models.fields import *  # noqa
 from taiga.conf import settings
 

@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "57d8238d-1067-495a-863d-962077463f59",
+		"_postman_id": "35f0b0b9-800b-42da-9faf-a55a8d3f0410",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"_exporter_id": "15018493"
 	},
 	"item": [
 		{
@@ -1712,6 +1712,48 @@
 							"path": [
 								"my",
 								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "my workspaces by slug",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces/{{ws-slug}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"workspaces",
+								"{{ws-slug}}"
 							]
 						}
 					},

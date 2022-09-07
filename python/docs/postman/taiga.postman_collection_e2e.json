@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7fd0fd05-bf8f-4842-8efb-e03112c7e4c3",
+		"_postman_id": "2e2391fa-34f1-41c7-bd77-967734b316b8",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "15018493"
@@ -5759,6 +5759,74 @@
 							"path": [
 								"my",
 								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 my.workspaces.{w}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    pm.expect(jsonRes).to.have.property(\"name\");",
+									"    pm.expect(jsonRes).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes).to.have.property(\"color\");",
+									"    pm.expect(jsonRes).to.have.property(\"latestProjects\");",
+									"    pm.expect(jsonRes).to.have.property(\"invitedProjects\");",
+									"    pm.expect(jsonRes).to.have.property(\"totalProjects\");",
+									"    pm.expect(jsonRes).to.have.property(\"hasProjects\");",
+									"    pm.expect(jsonRes).to.have.property(\"isPremium\");",
+									"    pm.expect(jsonRes).to.have.property(\"userRole\");",
+									"    pm.expect(jsonRes).to.have.property(\"userIsOwner\");",
+									"    ",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(10);        ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces/{{ws-slug}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"workspaces",
+								"{{ws-slug}}"
 							]
 						}
 					},

@@ -18,6 +18,10 @@ async def get_user_workspaces_overview(user: User) -> list[Workspace]:
     return await workspaces_repositories.get_user_workspaces_overview(user=user)
 
 
+async def get_user_workspace_overview(user: User, slug: str) -> Workspace | None:
+    return await workspaces_repositories.get_user_workspace_overview(user=user, slug=slug)
+
+
 async def get_workspace(slug: str) -> Workspace | None:
     return await workspaces_repositories.get_workspace(slug=slug)
 

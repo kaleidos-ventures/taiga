@@ -76,13 +76,7 @@ export class ProjectInvitationGuard implements CanActivate {
                   autoClose: false,
                   closeOnNavigation: false,
                 });
-                void this.router.navigate(['/signup'], {
-                  queryParams: {
-                    email: invitation.email,
-                    acceptProjectInvitation: false,
-                    projectInvitationToken: token,
-                  },
-                });
+                void this.router.navigate(['/signup']);
               } else {
                 void this.router.navigate(['/signup'], {
                   queryParams: {

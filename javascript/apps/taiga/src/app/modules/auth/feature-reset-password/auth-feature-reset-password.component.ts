@@ -8,10 +8,10 @@
 
 import { Component, OnInit } from '@angular/core';
 import {
-  FormGroup,
-  Validators,
   FormBuilder,
   FormControl,
+  FormGroup,
+  Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -43,6 +43,8 @@ export class AuthFeatureResetPasswordComponent implements OnInit {
     const state = this.router.getCurrentNavigation()!.extras.state;
 
     this.loginEmail(state?.usernameInput as string);
+
+    document.querySelector('tui-alert-host')?.classList.add('no-menu');
   }
 
   public ngOnInit(): void {

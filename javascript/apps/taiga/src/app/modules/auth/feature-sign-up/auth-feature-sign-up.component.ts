@@ -53,7 +53,9 @@ export class AuthFeatureSignUpComponent implements OnInit {
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private authService: AuthService
-  ) {}
+  ) {
+    document.querySelector('tui-alert-host')?.classList.add('no-menu');
+  }
 
   public get displaySocialNetworks() {
     return this.authService.displaySocialNetworks();

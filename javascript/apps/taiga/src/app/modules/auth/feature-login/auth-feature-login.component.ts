@@ -21,10 +21,9 @@ import { AuthService } from '../services/auth.service';
 export class AuthFeatureLoginComponent implements OnInit {
   public queryParams$!: typeof this.route.queryParams;
 
-  constructor(
-    private route: ActivatedRoute,
-    private authService: AuthService
-  ) {}
+  constructor(private route: ActivatedRoute, private authService: AuthService) {
+    document.querySelector('tui-alert-host')?.classList.add('no-menu');
+  }
 
   public get displaySocialNetworks() {
     return this.authService.displaySocialNetworks();

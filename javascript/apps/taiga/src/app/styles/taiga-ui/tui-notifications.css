@@ -23,8 +23,15 @@ tui-alert-host {
   /* stylelint-disable-next-line selector-max-type */
   & .t-notifications-wrapper tui-alert {
     inline-size: 410px;
-    margin-block-start: var(--spacing-60);
-    margin-inline-end: var(--spacing-76);
+    margin-block-start: var(--spacing-64);
+    margin-inline-end: var(--spacing-16);
+  }
+
+  &.no-menu {
+    /* stylelint-disable-next-line selector-max-type */
+    & .t-notifications-wrapper tui-alert {
+      margin-block-start: var(--spacing-16);
+    }
   }
 }
 
@@ -133,7 +140,7 @@ tui-notification {
     --tui-base-06: var(--tui-text-01);
     --tui-focus: var(--color-secondary);
 
-    background: var(--color-ok20) !important;
+    background: var(--color-ok10) !important;
     color: var(--color-ok80) !important;
 
     & .close {

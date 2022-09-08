@@ -476,10 +476,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   &._focus-visible {
+    border-radius: 0;
+    outline: none;
+
     & .t-content {
       /* stylelint-disable-next-line declaration-no-important */
       background: none !important;
       outline: solid 1px var(--color-secondary);
+    }
+  }
+
+  &[icon] {
+    padding-block: var(--spacing-8);
+    padding-inline: var(--spacing-8);
+
+    &._focus-visible {
+      border-radius: 4px;
+      outline: solid 1px var(--color-secondary);
+
+      & .t-content {
+        outline: none;
+      }
     }
   }
 

@@ -101,6 +101,23 @@ function closeToast() {
 
 Cypress.Commands.add('closeToast', closeToast);
 
+function isInViewport(el: string) {
+  cy.getBySel(el).then(($el) => {
+    cy.window().then((window) => {
+      const { documentElement } = window.document;
+      const bottom = documentElement.clientHeight;
+      const right = documentElement.clientWidth;
+      const rect = $el[0].getBoundingClientRect();
+      expect(rect.top).to.be.lessThan(bottom);
+      expect(rect.bottom).to.be.greaterThan(0);
+      expect(rect.right).to.be.greaterThan(0);
+      expect(rect.left).to.be.lessThan(right);
+    });
+  });
+}
+
+Cypress.Commands.add('isInViewport', isInViewport);
+
 function login(username = 'user1', password = '123123') {
   cy.session([username, password], () => {
     cy.visit('/login');
@@ -123,6 +140,7 @@ declare namespace Cypress {
     login: typeof login;
     getBySel: typeof getBySel;
     getBySelLike: typeof getBySelLike;
+    isInViewport: typeof isInViewport;
     // only available on email preview domain
     getBySelEmail: (
       selector: string,

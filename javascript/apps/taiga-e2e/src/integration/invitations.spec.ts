@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randEmail, randWord } from '@ngneat/falso';
+import { randEmail, randNumber, randWord } from '@ngneat/falso';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import {
   acceptInvitationFromProjectOverview,
@@ -233,6 +233,38 @@ describe('Invite users to project from overview when user is admin', () => {
     typeEmailToInvite('user2@taiga.demo');
     addEmailToInvite();
     cy.getBySel('user-list').should('exist');
+  });
+
+  it('Should display a error message if user invite more than fifty emails', () => {
+    openInvitationModal();
+
+    const emailLenght = randNumber({ min: 51, max: 60 });
+    const emailRemainder = Math.abs(50 - emailLenght);
+    const emailList = [];
+    for (let i = 0; i < emailLenght; i++) {
+      emailList.push(randEmail());
+    }
+    typeEmailToInvite(emailList.join(','));
+    addEmailToInvite();
+    inviteUsers();
+    cy.getBySel('notification-over-fifty').should('exist');
+    cy.getBySel('notification-over-fifty')
+      .invoke('text')
+      .should('contain', `Remove ${emailRemainder} users and try again.`);
+  });
+
+  it('Should display a error message if user invite more than fifty emails', () => {
+    openInvitationModal();
+
+    const emailLenght = randNumber({ min: 12, max: 20 });
+    const emailList = [];
+    for (let i = 0; i < emailLenght; i++) {
+      emailList.push(randEmail());
+    }
+    typeEmailToInvite(emailList.join(','));
+    addEmailToInvite();
+    inviteUsers();
+    cy.isInViewport('submit-invite-users');
   });
 
   it('Should show an added user to the list in the autocomplete list and avoid to added it again', () => {

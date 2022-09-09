@@ -7,7 +7,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t">
-  <nav class="main-project-nav">
+  <nav
+    class="main-project-nav"
+    data-test="main-project-nav">
     <div class="main-project-nav-inner">
       <div
         (pointerenter)="popup($event, 'project')"

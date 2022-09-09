@@ -222,7 +222,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [user]="user"
                 [userIndex]="i"
                 [roles]="memberRoles"
-                (delete)="deleteUser($event)"></tg-user-to-invite>
+                (delete)="deleteUser($event)">
+              </tg-user-to-invite>
             </ng-container>
           </ng-container>
         </div>
@@ -240,6 +241,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           *ngIf="inviteIdentifierErrors.moreThanFifty && users.length > 50"
           class="notification"
           status="error"
+          data-test="notification-over-fifty"
           [hasIcon]="true">
           {{
             t('invitation_modal.error_more_than_fifty', {

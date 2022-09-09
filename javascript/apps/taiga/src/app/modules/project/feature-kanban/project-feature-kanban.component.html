@@ -8,7 +8,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
-    <h1 tgTitle>{{ t('kanban.title') }}</h1>
+    <h1
+      tgTitle
+      data-test="kanban-title">
+      {{ t('kanban.title') }}
+    </h1>
     <div>
       <ng-container *ngIf="!vm.isEmpty">
         <ng-container

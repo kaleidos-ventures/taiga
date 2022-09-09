@@ -64,6 +64,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </button>
         <a
           *ngIf="workspace.userRole === 'admin'"
+          data-test="new-project-btn"
           appearance="primary"
           [routerLink]="['/new-project']"
           [queryParams]="{ workspace: workspace.slug }"
@@ -109,6 +110,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         (@reorder.done)="reorderDone($event)">
         <tg-project-card
           variant="invitation"
+          data-test="project-card-invitation"
           (rejectInvite)="rejectProjectInvite($event)"
           (acceptInvite)="acceptProjectInvite($event.slug, $event.name)"
           [workspace]="workspace"
@@ -120,6 +122,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [@reorder]="reorder[project.slug]"
         (@reorder.done)="reorderDone($event)">
         <tg-project-card
+          data-test="project-card"
           [workspace]="workspace"
           [project]="project">
         </tg-project-card>

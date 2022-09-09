@@ -19,7 +19,7 @@ describe('Overview', () => {
       .then((request) => {
         for (let i = 0; i < 10; i++) {
           const project = ProjectMockFactory();
-          createFullProjectInWSRequest(request.body.slug, project.name);
+          void createFullProjectInWSRequest(request.body.slug, project.name);
         }
       })
       .catch(console.error);

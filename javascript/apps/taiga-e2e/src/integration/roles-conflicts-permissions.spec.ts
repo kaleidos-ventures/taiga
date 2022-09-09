@@ -12,19 +12,19 @@ import {
   navigateToProjectInWS,
 } from '../support/helpers/project.helpers';
 import {
+  checkConflictTableText,
+  closeConflictsModal,
   displayAdvancedSettingsForRole,
+  displayCustomizePermissions,
   displayPublicAdvancedSettingsForRole,
   hideAdvancedSettingsForRole,
   hidePublicAdvancedSettingsForRole,
-  displayCustomizePermissions,
-  toggleCustomPermission,
   navigateToMemberPermissionsSettings,
   navigateToSettings,
-  setModulePermissions,
   openConflictsModal,
-  closeConflictsModal,
+  setModulePermissions,
   toggleCanCommentPermission,
-  checkConflictTableText,
+  toggleCustomPermission,
 } from '../support/helpers/settings.helpers';
 import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 
@@ -37,7 +37,7 @@ describe('Permission conflicts', () => {
 
     createWorkspaceRequest(workspace.name)
       .then((request) => {
-        createFullProjectInWSRequest(request.body.slug, project.name);
+        void createFullProjectInWSRequest(request.body.slug, project.name);
       })
       .catch(console.error);
   });

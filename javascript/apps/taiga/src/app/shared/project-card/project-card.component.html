@@ -55,6 +55,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       data-animation="card-container">
       <button
         (click)="onRejectInvite()"
+        data-test="project-reject-invite"
         class="project-reject-invite"
         tuiIconButton
         [@itemSlideOutAnimation]
@@ -93,6 +94,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           class="project-accept-invite"
           tuiButton
           [@itemSlideOutAnimation]
+          data-test="project-accept-invite"
           *ngIf="invitationStatus !== 'accepted'"
           (click)="
             acceptInvite.next({ slug: project.slug, name: project.name })

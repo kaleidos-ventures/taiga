@@ -53,7 +53,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </tg-ui-error>
       </tg-ui-select>
 
-      <div class="templates-wrapper">
+      <div
+        class="templates-wrapper"
+        data-test="templates-wrapper">
         <ng-container *ngFor="let template of templates; trackBy: trackByIndex">
           <button
             type="button"

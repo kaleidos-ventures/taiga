@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randEmail, randNumber, randWord } from '@ngneat/falso';
+import { randEmail, randNumber } from '@ngneat/falso';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import {
   acceptInvitationFromProjectOverview,
@@ -25,148 +25,13 @@ import {
 } from '../support/helpers/project.helpers';
 import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 
-describe('Invite users to project after creating it', () => {
-  let workspace: ReturnType<typeof WorkspaceMockFactory>;
-  let project: ReturnType<typeof ProjectMockFactory>;
-
-  before(() => {
-    workspace = WorkspaceMockFactory();
-    project = ProjectMockFactory();
-  });
-
-  beforeEach(() => {
-    cy.login();
-    cy.visit('/');
-    cy.initAxe();
-
-    void createWorkspaceRequest(workspace.name);
-    launchProjectCreationInWS(0);
-    selectBlankProject();
-    typeProjectName(project.name);
-    submitProject();
-
-    cy.getBySel('submit-create-project', { timeout: 100000 }).should(
-      'not.exist'
-    );
-    cy.getBySel('submit-invite-users', { timeout: 100000 }).should(
-      'be.visible'
-    );
-  });
-
-  it('Should add registered user by email', () => {
-    const emailToInvite = 'user1001@taiga.demo';
-    typeEmailToInvite(emailToInvite);
-    addEmailToInvite();
-    cy.getBySel('user-email', { timeout: 100000 })
-      .invoke('text')
-      .should('to.have.string', emailToInvite);
-    cy.getBySel('user-fullname', { timeout: 100000 }).should('not.exist');
-  });
-
-  it('Should add not registered user by email', () => {
-    const emailToInvite = randEmail();
-    typeEmailToInvite(emailToInvite);
-    addEmailToInvite();
-    cy.getBySel('user-email', { timeout: 100000 })
-      .invoke('text')
-      .should('to.have.string', emailToInvite);
-    cy.getBySel('user-fullname', { timeout: 100000 }).should('not.exist');
-  });
-
-  it('Should introduce wrong email', () => {
-    typeEmailToInvite(randWord());
-    addEmailToInvite();
-    cy.getBySel('error-regex')
-      .invoke('text')
-      .should('to.have.string', 'Invalid email address');
-  });
-
-  it('Should introduce repeated emails', () => {
-    const emailToInvite = randEmail();
-    typeEmailToInvite(`${emailToInvite}, ${emailToInvite}`);
-    cy.getBySel('email-count').should('not.exist');
-    addEmailToInvite();
-    cy.getBySel('user-email', { timeout: 100000 }).should('exist');
-    cy.getBySel('user-email').should('have.length', 1);
-  });
-
-  it('Should show an error when trying to add user without typing an email', () => {
-    addEmailToInvite();
-    cy.getBySel('error-add-email')
-      .invoke('text')
-      .should('to.have.string', 'Add at least an email or username');
-  });
-
-  it('Should show an error when trying to send invitations with a user on the list and other not added', () => {
-    typeEmailToInvite(randEmail());
-    addEmailToInvite();
-    cy.getBySel('user-email', { timeout: 100000 }).should('exist');
-    typeEmailToInvite(randEmail());
-    inviteUsers();
-    cy.getBySel('error-missing-people')
-      .invoke('text')
-      .should(
-        'to.have.string',
-        'There are people not added to the list. Add them and try again.'
-      );
-  });
-
-  it('Should show autocomplete results when we write an email and after delete the @ if there is a match', () => {
-    typeEmailToInvite('use@');
-    cy.getBySel('option').should('not.exist');
-    cy.getBySel('input-add-invites').type('{backspace}');
-    cy.getBySel('option').its('length').should('eq', 6);
-  });
-
-  it('Should show an error when sending invitations withouth adding', () => {
-    inviteUsers();
-    cy.getBySel('error-at-lest-one')
-      .invoke('text')
-      .should('to.have.string', 'Add at least one person to the list');
-  });
-
-  it('Should add to overview list bulk invitations', () => {
-    const emailToInvite = 'a@email.com, b@email.com';
-    typeEmailToInvite(emailToInvite);
-    addEmailToInvite();
-    inviteUsers();
-    cy.getBySel('navigate-overview').click();
-    cy.getBySel('member-item').should('exist');
-    cy.getBySel('user-email')
-      .each((element, index) => {
-        expect(element[0]).to.have.text(emailToInvite.split(',')[index].trim());
-      })
-      .then(($list) => {
-        expect($list).to.have.length(2);
-      });
-  });
-
-  it('Should show results from autocomplete when there is a match', () => {
-    typeEmailToInvite('use');
-    cy.getBySel('option').its('length').should('eq', 6);
-  });
-
-  it('Should show empty message when there are not results on the autocomplete', () => {
-    typeEmailToInvite('ose');
-    cy.getBySel('suggestions-list')
-      .invoke('text')
-      .should(
-        'to.have.string',
-        'There are no matching results. Use an email instead.'
-      );
-  });
-});
-
 describe('Invite users to project from overview when user is admin', () => {
   let workspace: ReturnType<typeof WorkspaceMockFactory>;
   let project: ReturnType<typeof ProjectMockFactory>;
 
-  before(() => {
+  beforeEach(() => {
     workspace = WorkspaceMockFactory();
     project = ProjectMockFactory();
-  });
-
-  beforeEach(() => {
     cy.login();
     cy.visit('/');
     cy.initAxe();
@@ -193,8 +58,10 @@ describe('Invite users to project from overview when user is admin', () => {
       logout();
       cy.login('user2', '123123');
       cy.visit(projectUrl);
+      cy.getBySel('project-name').should('be.visible');
       acceptInvitationFromProjectOverview();
       cy.closeToast();
+      cy.getBySel('project-name').should('be.visible');
       logout();
       cy.login();
       cy.visit('/');
@@ -269,10 +136,10 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should show an added user to the list in the autocomplete list and avoid to added it again', () => {
     openInvitationModal();
-    typeEmailToInvite('james');
+    typeEmailToInvite('jason');
     cy.getBySel('suggestions-list').should('exist');
     addEmailToInvite();
-    typeEmailToInvite('james');
+    typeEmailToInvite('jason');
     cy.getBySel('suggestions-list').should('exist');
     cy.getBySel('info-user').should('exist');
     cy.getBySel('info-user')
@@ -282,7 +149,7 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should add tag pending from an already sent invitation', () => {
     openInvitationModal();
-    typeEmailToInvite('elizabeth');
+    typeEmailToInvite('elizabeth woods');
     cy.getBySel('suggestions-list').should('exist');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('exist');
@@ -356,6 +223,7 @@ describe('Invite users to project from overview when user is not admin', () => {
       logout();
       cy.login('user2', '123123');
       cy.visit(projectUrl);
+      cy.getBySel('project-name').should('be.visible');
       acceptInvitationFromProjectOverview();
       cy.closeToast();
     });
@@ -363,5 +231,64 @@ describe('Invite users to project from overview when user is not admin', () => {
 
   it('Should hide invite people button', () => {
     cy.getBySel('open-invite-modal').should('not.exist');
+  });
+});
+
+describe('Invitations banner', () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit('/');
+    cy.initAxe();
+    const wksp = WorkspaceMockFactory();
+    const project = ProjectMockFactory();
+    void createWorkspaceRequest(wksp.name);
+
+    launchProjectCreationInWS(0);
+    selectBlankProject();
+    typeProjectName(project.name);
+    submitProject();
+
+    typeEmailToInvite('user2@taiga.demo');
+    addEmailToInvite();
+    inviteUsers();
+    cy.getBySel('input-add-invites').should('not.exist');
+    cy.closeToast();
+    logout();
+    cy.getBySel('login-username').should('exist');
+    cy.login('user2', '123123');
+    cy.visit('/');
+  });
+
+  it('Accept invitation from banner', () => {
+    cy.getBySel('project-card-invitation').find('a').eq(0).click();
+    cy.getBySel('logged-user-invitation').should('exist');
+    cy.getBySel('member-item').eq(0).should('contain.text', 'Pending');
+    cy.getBySel('accept-invitation-slug').click();
+    cy.getBySel('logged-user-invitation').should('not.exist');
+    cy.getBySel('member-item').eq(0).should('not.contain.text', 'Pending');
+  });
+
+  it('Accept invitation from button members list', () => {
+    cy.getBySel('project-card-invitation').find('a').eq(0).click();
+    cy.getBySel('logged-user-invitation').should('exist');
+    cy.getBySel('member-item').eq(0).should('contain.text', 'Pending');
+    cy.getBySel('invitation-accept').should('not.exist');
+    cy.get('.close-button').click();
+    cy.getBySel('logged-user-invitation').should('not.exist');
+    cy.getBySel('member-item').eq(0).should('contain.text', 'Pending');
+    cy.getBySel('invitation-accept').should('exist').click();
+    cy.getBySel('invitation-accept').should('not.exist');
+    cy.getBySel('member-item').eq(0).should('not.contain.text', 'Pending');
+  });
+
+  it('Reject invitation', () => {
+    cy.getBySel('project-card-invitation').find('a').eq(0).click();
+    cy.getBySel('logged-user-invitation').should('exist');
+    cy.getBySel('member-item').eq(0).should('contain.text', 'Pending');
+    cy.getBySel('invitation-accept').should('not.exist');
+    cy.get('.close-button').click();
+    cy.getBySel('logged-user-invitation').should('not.exist');
+    cy.getBySel('member-item').eq(0).should('contain.text', 'Pending');
+    cy.getBySel('invitation-accept').should('exist');
   });
 });

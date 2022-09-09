@@ -9,7 +9,7 @@
 export const typeEmailToInvite = (email: string) =>
   cy.getBySel('input-add-invites').type(email);
 export const addEmailToInvite = () => {
-  cy.getBySel('add-invites', { timeout: 100000 }).click();
+  cy.getBySel('add-invites').click();
 };
 export const deleteUserFromList = () => cy.getBySel('delete-user').click();
 export const inviteUsers = () => cy.getBySel('submit-invite-users').click();
@@ -21,7 +21,9 @@ export const openInvitationModal = () => {
 
 export const logout = () => {
   cy.getBySel('user-settings').should('be.visible').click();
-  cy.getBySel('log-out').should('be.visible').click();
+  cy.getBySel('log-out').should('be.visible');
+  // necessary to avoid random detach element from DOM
+  cy.getBySel('log-out').click({ force: true });
 };
 
 export const selectRoleAdministrator = () => {
@@ -30,5 +32,5 @@ export const selectRoleAdministrator = () => {
 };
 
 export const acceptInvitationFromProjectOverview = () => {
-  cy.getBySel('signup-submit-button').click();
+  cy.getBySel('accept-invitation-slug').should('be.visible').click();
 };

@@ -32,6 +32,9 @@ export class StatusScrollDynamicHeightDirective
   @Input()
   public cdkScrollable!: CdkVirtualScrollViewport;
 
+  @Input()
+  public tgScrollDynamicHeight!: unknown[];
+
   @HostListener('window:resize')
   public onResize() {
     this.calculateHeight();
@@ -82,6 +85,11 @@ export class StatusScrollDynamicHeightDirective
     }, 0);
 
     if (maxHeight && blockSize > maxHeight) {
+      blockSize = maxHeight;
+    }
+
+    // the content is ready but not rendered
+    if (this.tgScrollDynamicHeight.length && !blockSize) {
       blockSize = maxHeight;
     }
 
@@ -141,7 +149,6 @@ export class StatusScrollDynamicHeightDirective
       if (Math.round(this.currentBlockSize) !== Math.round(blockSize)) {
         this.currentBlockSize = blockSize;
         this.virtualScrollViewPort.style.blockSize = `${blockSize}px`;
-
         requestAnimationFrame(() => {
           this.kanbanStatusComponent.cdkScrollable?.checkViewportSize();
         });

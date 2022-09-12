@@ -35,9 +35,10 @@ export class ProjectFeatureKanbanComponent {
   public invitePeopleModal = false;
   public model$ = this.state.select().pipe(
     map((state) => {
-      const hasStatuses = state.workflows?.find((workflow) => {
-        return workflow.statuses.length;
-      });
+      const hasStatuses =
+        state.workflows?.find((workflow) => {
+          return workflow.statuses.length;
+        }) ?? true;
 
       return {
         ...state,

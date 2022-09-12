@@ -114,19 +114,17 @@ export class KanbanVirtualScrollStrategy implements VirtualScrollStrategy {
         );
       });
 
-      if (!tasksHeight.length) {
-        return;
-      }
-
       const itemHeights = this.itemHeights.map((height, index) => {
         if (index >= range.start && index < range.end) {
           const renderHeight = tasksHeight[index - range.start];
 
-          if (height !== renderHeight) {
+          if (renderHeight && height !== renderHeight) {
             dirty = true;
           }
 
-          return renderHeight;
+          if (renderHeight) {
+            return renderHeight;
+          }
         }
 
         return height;

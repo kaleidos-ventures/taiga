@@ -42,6 +42,9 @@ export const reducer = createReducer(
     state.tasks = {};
     state.loadingWorkflows = true;
     state.loadingTasks = true;
+    state.scrollToTask = [];
+    state.createTaskForm = '';
+    state.empty = null;
 
     return state;
   }),

@@ -99,6 +99,14 @@ export const reducer = createReducer(
     }
   ),
   on(
+    WorkspaceActions.acceptInvitationEvent,
+    (state, { projectSlug }): InvitationState => {
+      state.acceptedInvite.push(projectSlug);
+
+      return state;
+    }
+  ),
+  on(
     InvitationActions.acceptInvitationSlugError,
     (state, { projectSlug }): InvitationState => {
       state.acceptedInvite = state.acceptedInvite.filter((invitation) => {

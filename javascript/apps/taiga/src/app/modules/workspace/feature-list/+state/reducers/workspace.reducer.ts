@@ -104,6 +104,75 @@ export const reducer = createReducer(
       return state;
     }
   ),
+  on(
+    WorkspaceActions.fetchWorkspaceInvitationsSuccess,
+    (
+      state,
+      {
+        projectSlug,
+        workspaceSlug,
+        invitations,
+        project,
+        role,
+        rejectedInvites,
+      }
+    ): WorkspaceState => {
+      const currentWorkspaceIndex = state.workspaces.findIndex((workspace) => {
+        return workspace.slug === workspaceSlug;
+      });
+
+      // Add invitation if you are not admin, if you are admin transform the invitation in a project inside the workspace.
+      if (role !== 'admin') {
+        const invitationToAdd = invitations.filter((project) => {
+          return project.slug === projectSlug;
+        });
+
+        state.workspaces[currentWorkspaceIndex].invitedProjects.unshift(
+          invitationToAdd[0]
+        );
+      } else {
+        const projectToAdd = project.filter((project) => {
+          return project.slug === projectSlug;
+        });
+        state.workspaces[currentWorkspaceIndex].totalProjects++;
+        state.workspaceProjects[workspaceSlug].unshift(projectToAdd[0]);
+      }
+
+      if (role === 'guest') {
+        // This is only done on guest because is not to be done on empty state workspaces and only guest can get hidden workspaces.
+        // Get a list of current workspace rejected invites
+        const workspaceRejectedInvites = state.workspaces[
+          currentWorkspaceIndex
+        ].invitedProjects.filter((project) => {
+          return rejectedInvites.includes(project.slug);
+        });
+
+        // Put the workspace in the first place if there is nothing visually inside the workspace when called to emulate a new workspace creation until refresh, only if you are not admin.
+        // -1 on the length is to remove the current invitation from the equation
+        if (
+          workspaceRejectedInvites.length ===
+            state.workspaces[currentWorkspaceIndex].invitedProjects.length -
+              1 &&
+          !state.workspaceProjects[workspaceSlug].length
+        ) {
+          state.workspaces.splice(
+            0,
+            0,
+            state.workspaces.splice(currentWorkspaceIndex, 1)[0]
+          );
+        }
+      }
+
+      return state;
+    }
+  ),
+  on(
+    WorkspaceActions.fetchWorkspaceSuccess,
+    (state, { workspace }): WorkspaceState => {
+      state.workspaces.unshift(workspace);
+      return state;
+    }
+  ),
   on(WorkspaceActions.resetWorkspace, (state): WorkspaceState => {
     state = {
       ...initialState,
@@ -115,7 +184,6 @@ export const reducer = createReducer(
     WorkspaceActions.setWorkspaceListRejectedInvites,
     (state, { projects }): WorkspaceState => {
       state.rejectedInvites = projects;
-
       return state;
     }
   ),
@@ -123,6 +191,17 @@ export const reducer = createReducer(
     InvitationActions.revokeInvitation,
     (state, { projectSlug }): WorkspaceState => {
       state.rejectedInvites.push(projectSlug);
+
+      return state;
+    }
+  ),
+  on(
+    WorkspaceActions.invitationRevokedEvent,
+    (state, { slug, workspace }): WorkspaceState => {
+      const indexWorkspace = state.workspaces.findIndex((currentWorkspace) => {
+        return currentWorkspace.slug === slug;
+      });
+      state.workspaces[indexWorkspace] = workspace;
 
       return state;
     }

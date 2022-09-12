@@ -30,6 +30,16 @@ export const fetchWorkspaceListSuccess = createAction(
   props<{ workspaces: Workspace[] }>()
 );
 
+export const fetchWorkspace = createAction(
+  '[WorkspaceList] Fetch workspace',
+  props<{ workspaceSlug: Workspace['slug'] }>()
+);
+
+export const fetchWorkspaceSuccess = createAction(
+  '[WorkspaceList] Fetch workspace Success',
+  props<{ workspace: Workspace }>()
+);
+
 export const createWorkspace = createAction(
   '[WorkspaceList] Create new workspace',
   props<{
@@ -61,6 +71,38 @@ export const fetchWorkspaceProjects = createAction(
 export const fetchWorkspaceProjectsSuccess = createAction(
   '[WorkspaceList] Fetch workspace projects success',
   props<{ slug: Workspace['slug']; projects: Project[] }>()
+);
+
+export const invitationRevokedEvent = createAction(
+  '[Workspace] revoked invitation event, update workspace',
+  props<{ slug: Workspace['slug']; workspace: Workspace }>()
+);
+
+export const invitationCreateEvent = createAction(
+  '[Workspace] new invitation event, fetch invitations',
+  props<{
+    projectSlug: Project['slug'];
+    workspaceSlug: Workspace['slug'];
+    role: string;
+    rejectedInvites: string[];
+  }>()
+);
+
+export const fetchWorkspaceInvitationsSuccess = createAction(
+  '[Workspace API] Fetch workspace Invitations success',
+  props<{
+    projectSlug: Project['slug'];
+    workspaceSlug: Workspace['slug'];
+    invitations: Project[];
+    project: Project[];
+    role: string;
+    rejectedInvites: string[];
+  }>()
+);
+
+export const acceptInvitationEvent = createAction(
+  '[Workspace] accept invitation event',
+  props<{ projectSlug: Project['slug'] }>()
 );
 
 export const resetWorkspace = createAction('[WorkspaceList] reset');

@@ -9,13 +9,13 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { map } from 'rxjs/operators';
-import { timer, zip } from 'rxjs';
-import * as WorkspaceActions from '../actions/workspace-detail.actions';
+import { HttpErrorResponse } from '@angular/common/http';
 import { fetch } from '@nrwl/angular';
 import { WorkspaceApiService } from '@taiga/api';
-import { HttpErrorResponse } from '@angular/common/http';
+import { timer, zip } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
+import * as WorkspaceActions from '../actions/workspace-detail.actions';
 
 @Injectable()
 export class WorkspaceDetailEffects {
@@ -24,11 +24,13 @@ export class WorkspaceDetailEffects {
       ofType(WorkspaceActions.fetchWorkspace),
       fetch({
         run: (action) => {
-          return this.workspaceApiService.fetchWorkspace(action.slug).pipe(
-            map((workspace) => {
-              return WorkspaceActions.fetchWorkspaceSuccess({ workspace });
-            })
-          );
+          return this.workspaceApiService
+            .fetchWorkspaceDetail(action.slug)
+            .pipe(
+              map((workspace) => {
+                return WorkspaceActions.fetchWorkspaceSuccess({ workspace });
+              })
+            );
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
           this.appService.errorManagement(httpResponse),

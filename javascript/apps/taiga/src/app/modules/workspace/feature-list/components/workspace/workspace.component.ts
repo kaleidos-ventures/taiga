@@ -14,16 +14,17 @@ import {
   trigger,
 } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Workspace } from '@taiga/data';
-import { ResizedEvent } from '~/app/shared/resize/resize.model';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
-  fadeIntOutAnimation,
-  slideIn,
-  slideInOut,
-} from '~/app/shared/utils/animations';
+  fetchWorkspace,
+  initWorkspaceList,
+  resetWorkspace,
+} from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import {
   selectCreateFormHasError,
   selectCreatingWorkspace,
@@ -31,11 +32,15 @@ import {
   selectRejectedInvites,
   selectWorkspaces,
 } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
+import { WsService } from '~/app/services/ws';
+import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import {
-  initWorkspaceList,
-  resetWorkspace,
-} from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
+  fadeIntOutAnimation,
+  slideIn,
+  slideInOut,
+} from '~/app/shared/utils/animations';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-workspace',
   templateUrl: './workspace.component.html',
@@ -89,6 +94,16 @@ import {
   ],
 })
 export class WorkspaceComponent implements OnDestroy {
+  public eventsSubject: Subject<{
+    event: string;
+    project: string;
+    workspace: string;
+  }> = new Subject<{
+    event: string;
+    project: string;
+    workspace: string;
+  }>();
+
   public readonly model$ = this.state.select().pipe(
     map((model) => {
       let skeletonAnimation = 'nothing';
@@ -116,6 +131,7 @@ export class WorkspaceComponent implements OnDestroy {
   public amountOfProjectsToShow = 4;
 
   constructor(
+    private wsService: WsService,
     private store: Store,
     private state: RxState<{
       creatingWorkspace: boolean;
@@ -144,6 +160,58 @@ export class WorkspaceComponent implements OnDestroy {
       'rejectedInvites',
       this.store.select(selectRejectedInvites)
     );
+
+    this.wsService
+      .userEvents<{ project: string; workspace: string }>(
+        'projectmemberships.create'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.eventsSubject.next({
+          event: 'projectmemberships.create',
+          project: eventResponse.event.content.project,
+          workspace: eventResponse.event.content.workspace,
+        });
+      });
+
+    this.wsService
+      .userEvents<{ project: string; workspace: string }>(
+        'projectinvitations.create'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        if (
+          this.state.get('workspaceList').some((workspace) => {
+            return workspace.slug === eventResponse.event.content.workspace;
+          })
+        ) {
+          this.eventsSubject.next({
+            event: 'projectinvitations.create',
+            project: eventResponse.event.content.project,
+            workspace: eventResponse.event.content.workspace,
+          });
+        } else {
+          // If the workspace of the invitation does not exist we fetch the workspace, adding it to the top of the list.
+          this.store.dispatch(
+            fetchWorkspace({
+              workspaceSlug: eventResponse.event.content.workspace,
+            })
+          );
+        }
+      });
+
+    this.wsService
+      .userEvents<{ project: string; workspace: string }>(
+        'projectinvitations.revoke'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.eventsSubject.next({
+          event: 'projectinvitations.revoke',
+          project: eventResponse.event.content.project,
+          workspace: eventResponse.event.content.workspace,
+        });
+      });
   }
 
   public toggleActivity(showActivity: boolean) {
@@ -184,5 +252,13 @@ export class WorkspaceComponent implements OnDestroy {
 
   public ngOnDestroy() {
     this.store.dispatch(resetWorkspace());
+  }
+
+  public workspaceItemVisibility(workspace: Workspace) {
+    if (workspace.latestProjects.length || workspace.invitedProjects.length) {
+      return true;
+    } else {
+      return workspace.userRole !== 'guest';
+    }
   }
 }

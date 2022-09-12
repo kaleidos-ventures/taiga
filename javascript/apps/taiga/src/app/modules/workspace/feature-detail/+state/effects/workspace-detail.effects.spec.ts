@@ -6,15 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { randDomainSuffix } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { randDomainSuffix } from '@ngneat/falso';
 
+import { WorkspaceApiService } from '@taiga/api';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
-import { WorkspaceApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
 import {
   fetchWorkspace,
@@ -42,7 +42,7 @@ describe('WorkspaceEffects', () => {
     const workspaceApiService = spectator.inject(WorkspaceApiService);
     const effects = spectator.inject(WorkspaceDetailEffects);
 
-    workspaceApiService.fetchWorkspace.mockReturnValue(
+    workspaceApiService.fetchWorkspaceDetail.mockReturnValue(
       cold('-b|', { b: workspace })
     );
 

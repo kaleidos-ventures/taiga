@@ -7,6 +7,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *ngIf="model$ | async as vm">
   <ng-container *transloco="let t">
+    <button (click)="justRevoked()">Revoke</button>
+    <button (click)="justInvited()">Invited</button>
+    <button (click)="justAccept()">Accept</button>
     <div class="workspace-item-top">
       <tg-ui-avatar
         class="workspace-avatar"
@@ -99,13 +102,24 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           workspace.userRole === 'admin'
         "
         [workspace]="workspace"
+        [acceptedInvites]="vm.acceptedInvites"
         variant="placeholder"
         [firstProject]="true">
       </tg-project-card>
       <div
         *ngFor="let invitation of vm.invitations; trackBy: trackByLatestProject"
-        @cardSlideOut
-        (@cardSlideOut.done)="slideOutAnimationDone()"
+        [@cardSlideOut]="vm.slideOutActive ? 'on' : 'off'"
+        (@cardSlideOut.done)="slideOutAnimationDone($event)"
+        [@newProject]="
+          vm.newInvitations.includes(invitation.slug) ? 'inprogress' : 'idle'
+        "
+        (@newProject.start)="newProjectAnimationStart($event, invitation)"
+        (@newProject.done)="newProjectAnimationDone($event)"
+        [@newInvitationSibling]="
+          vm.projectSiblingToAnimate.includes(invitation.slug)
+            ? 'inprogress'
+            : 'idle'
+        "
         [@reorder]="reorder[invitation.slug]"
         (@reorder.done)="reorderDone($event)">
         <tg-project-card
@@ -113,18 +127,30 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           data-test="project-card-invitation"
           (rejectInvite)="rejectProjectInvite($event)"
           (acceptInvite)="acceptProjectInvite($event.slug, $event.name)"
+          [acceptedInvites]="vm.acceptedInvites"
           [workspace]="workspace"
           [project]="invitation">
         </tg-project-card>
       </div>
       <div
         *ngFor="let project of vm.projects; trackBy: trackByLatestProject"
-        [@reorder]="reorder[project.slug]"
-        (@reorder.done)="reorderDone($event)">
+        [@newProject]="
+          newProjectsToAnimate.includes(project.slug) ? 'inprogress' : 'idle'
+        "
+        (@newProject.start)="newProjectAnimationStart($event, project)"
+        (@newProject.done)="newProjectAnimationDone($event)"
+        [@newInvitationSibling]="
+          vm.projectSiblingToAnimate.includes(project.slug)
+            ? 'inprogress'
+            : 'idle'
+        ">
         <tg-project-card
           data-test="project-card"
           [workspace]="workspace"
-          [project]="project">
+          [project]="project"
+          [acceptedInvites]="vm.acceptedInvites"
+          [@reorder]="reorder[project.slug]"
+          (@reorder.done)="reorderDone($event)">
         </tg-project-card>
       </div>
       <ng-container *ngIf="vm.workspacesSkeletonList.includes(workspace.slug)">

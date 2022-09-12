@@ -11,7 +11,7 @@ import {
   sendSignUpForm,
   typeSignUpEmail,
   typeSignUpFullName,
-  typeSignUpPassword
+  typeSignUpPassword,
 } from '../support/helpers/signup.helper';
 
 describe('Signup (basic)', () => {

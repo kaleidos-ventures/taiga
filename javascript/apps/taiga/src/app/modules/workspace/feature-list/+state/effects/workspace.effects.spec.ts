@@ -11,10 +11,11 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
+import { randDomainSuffix } from '@ngneat/falso';
+import { WorkspaceApiService } from '@taiga/api';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
-import { WorkspaceEffects } from './workspace.effects';
-import { WorkspaceApiService } from '@taiga/api';
+import { TestScheduler } from 'rxjs/testing';
 import { AppService } from '~/app/services/app.service';
 import {
   fetchWorkspaceList,
@@ -22,8 +23,7 @@ import {
   fetchWorkspaceProjects,
   fetchWorkspaceProjectsSuccess,
 } from '../actions/workspace.actions';
-import { randDomainSuffix } from '@ngneat/falso';
-import { TestScheduler } from 'rxjs/testing';
+import { WorkspaceEffects } from './workspace.effects';
 
 describe('WorkspaceEffects', () => {
   let actions$: Observable<Action>;

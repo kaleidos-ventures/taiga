@@ -27,7 +27,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Project, Workspace } from '@taiga/data';
 import { distinctUntilChanged, map, skip } from 'rxjs/operators';
-import { selectAcceptedInvite } from '../invite-to-project/data-access/+state/selectors/invitation.selectors';
+import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 
 type CardVariant = 'project' | 'placeholder' | 'invitation';
 @UntilDestroy()
@@ -105,6 +105,9 @@ export class ProjectCardComponent implements OnInit {
     'name' | 'slug' | 'description' | 'color' | 'logoSmall'
   >;
 
+  @Input()
+  public acceptedInvites: string[] = [];
+
   @Output()
   public rejectInvite = new EventEmitter<Project['slug']>();
 
@@ -123,6 +126,14 @@ export class ProjectCardComponent implements OnInit {
   public rejectedByAdmin = false;
 
   public ngOnInit(): void {
+    if (
+      this.project &&
+      this.acceptedInvites.length &&
+      this.acceptedInvites.includes(this.project?.slug)
+    ) {
+      this.invitationStatus = 'accepted';
+      this.cd.markForCheck();
+    }
     this.invitationStatus$
       .pipe(
         untilDestroyed(this),

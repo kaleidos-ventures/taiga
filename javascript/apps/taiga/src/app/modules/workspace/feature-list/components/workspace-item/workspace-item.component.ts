@@ -15,19 +15,26 @@ import {
 } from '@angular/animations';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { randUserName } from '@ngneat/falso';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import {
+  acceptInvitationEvent,
+  fetchWorkspaceInvitationsSuccess,
   fetchWorkspaceProjects,
+  invitationCreateEvent,
+  invitationRevokedEvent,
   setWorkspaceListRejectedInvites,
 } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import {
@@ -49,8 +56,13 @@ interface ViewModel {
   remainingProjects: number;
   slideOutActive: boolean;
   skeletonToShow: number;
+  acceptedInvites: string[];
   loadingWorkspaces: string[];
   workspacesSkeletonList: string[];
+  projectSiblingToAnimate: string[];
+  newInvitations: string[];
+  newProjects: string[];
+  allVisibleProjects: WorkspaceProject[];
 }
 
 interface State {
@@ -65,8 +77,12 @@ interface State {
   skeletonToShow: number;
   loadingWorkspaces: string[];
   workspacesSkeletonList: [];
+  projectSiblingToAnimate: string[];
+  newInvitations: string[];
+  newProjects: string[];
 }
 
+@UntilDestroy()
 @Component({
   selector: 'tg-workspace-item',
   templateUrl: './workspace-item.component.html',
@@ -75,7 +91,7 @@ interface State {
   providers: [RxState],
   animations: [
     trigger('cardSlideOut', [
-      transition(':leave', [
+      transition('on => void', [
         style({ zIndex: 1 }),
         animate(
           '0.3s linear',
@@ -86,8 +102,30 @@ interface State {
         ),
       ]),
     ]),
+    trigger('newProject', [
+      transition('* => inprogress', [
+        style({ transform: 'translateX(-100%)', opacity: 0 }),
+        animate(
+          '0.3s linear',
+          style({
+            transform: 'translateX(0)',
+            opacity: 1,
+          })
+        ),
+      ]),
+    ]),
+    trigger('newInvitationSibling', [
+      transition('* => inprogress', [
+        style({ transform: 'translateX(-100%)' }),
+        animate(
+          '0.3s linear',
+          style({
+            transform: 'translateX(0)',
+          })
+        ),
+      ]),
+    ]),
     trigger('reorder', [
-      transition(':enter', [style({ display: 'none' }), animate('0.3s')]),
       transition('* => moving', [
         animate(
           '0.3s linear',
@@ -96,12 +134,22 @@ interface State {
           })
         ),
       ]),
+      transition('* => entering', [
+        style({ display: 'none' }),
+        animate('0.3s'),
+      ]),
     ]),
   ],
 })
 export class WorkspaceItemComponent implements OnInit, OnChanges {
   @Input()
   public workspace!: Workspace;
+
+  @Input() public wsEvents!: Observable<{
+    event: string;
+    project: string;
+    workspace: string;
+  }>;
 
   @Input()
   public set projectsToShow(projectsToShow: number) {
@@ -110,17 +158,28 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     });
   }
 
+  public newProjectsToAnimate: string[] = [];
+
   public model$!: Observable<ViewModel>;
 
   public reorder: Record<string, string> = {};
 
   public animationDisabled = false;
 
+  private eventsSubscription$!: Subscription;
+
   constructor(
     private store: Store,
     private state: RxState<State>,
-    private userStorageService: UserStorageService
-  ) {}
+    private userStorageService: UserStorageService,
+    private cd: ChangeDetectorRef
+  ) {
+    this.state.set({
+      rejectedInvites: [],
+      invitations: [],
+      projectSiblingToAnimate: [],
+    });
+  }
 
   public get gridClass() {
     return `grid-items-${this.state.get('projectsToShow')}`;
@@ -152,6 +211,14 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
       'loadingWorkspaces',
       this.store.select(selectLoadingWorkspaces)
     );
+
+    this.eventsSubscription$ = this.wsEvents.subscribe((eventResponse) => {
+      this.wsEvent(
+        eventResponse.event,
+        eventResponse.project,
+        eventResponse.workspace
+      );
+    });
 
     this.model$ = this.state.select().pipe(
       map((state) => {
@@ -191,6 +258,7 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
         }
 
         const totalInvitations = invitations.length;
+        const allVisibleProjects = [...invitations, ...projects];
 
         if (!state.showAllProjects) {
           invitations = invitations.slice(0, state.projectsToShow);
@@ -233,6 +301,7 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
             this.animationDisabled = false;
           });
         }
+
         return {
           ...state,
           projects,
@@ -242,7 +311,142 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
           remainingProjects,
           skeletonToShow,
           workspacesSkeletonList,
+          allVisibleProjects,
+          acceptedInvites: state.acceptedInvites,
         };
+      })
+    );
+  }
+
+  public newProjectAnimationStart(
+    event: AnimationEvent,
+    project: WorkspaceProject
+  ) {
+    if (event.fromState !== 'void' || this.state.get('slideOutActive')) {
+      return;
+    }
+
+    const siblings = this.getSiblingsRow(project.slug);
+
+    if (siblings) {
+      this.state.set({
+        projectSiblingToAnimate: siblings
+          .filter((it) => it.slug !== project.slug)
+          .map((it) => it.slug),
+      });
+    }
+  }
+
+  public newProjectAnimationDone(event: AnimationEvent) {
+    if (event.fromState !== 'void') {
+      return;
+    }
+
+    this.state.set({
+      projectSiblingToAnimate: [],
+    });
+  }
+
+  public wsEvent(event: string, projectSlug: string, workspaceSlug: string) {
+    if (this.workspace.slug === workspaceSlug) {
+      if (event === 'projectinvitations.create') {
+        this.invitationCreateEvent(projectSlug, workspaceSlug);
+      } else if (event === 'projectmemberships.create') {
+        this.membershipCreateEvent(projectSlug);
+      } else if (event === 'projectinvitations.revoke') {
+        this.invitationRevokedEvent(projectSlug, workspaceSlug);
+      }
+    }
+    this.cd.detectChanges();
+  }
+
+  public justRevoked() {
+    const invitations = [...this.state.get('invitations')];
+    const rndInt = Math.floor(Math.random() * (invitations.length - 1));
+    if (invitations.length) {
+      this.invitationRevokedEvent(
+        invitations[rndInt].slug,
+        this.workspace.slug
+      );
+    }
+  }
+
+  public justInvited() {
+    this.invitationCreateEvent(randUserName(), this.workspace.slug, true);
+  }
+
+  public justAccept() {
+    const invitations = [...this.state.get('invitations')];
+    const rndInt = Math.floor(Math.random() * (invitations.length - 1));
+    if (invitations.length) {
+      this.membershipCreateEvent(invitations[rndInt].slug);
+    }
+  }
+
+  public invitationRevokedEvent(project: string, workspaceSlug: string) {
+    const invitations = [...this.state.get('invitations')];
+    const workspaceInvitations = invitations.filter(
+      (workspaceInvitation) => workspaceInvitation.slug !== project
+    );
+    const newWorkspace = { ...this.workspace };
+    newWorkspace.invitedProjects = workspaceInvitations;
+    this.store.dispatch(
+      invitationRevokedEvent({
+        slug: workspaceSlug,
+        workspace: newWorkspace,
+      })
+    );
+  }
+
+  public invitationCreateEvent(
+    projectSlug: string,
+    workspaceSlug: string,
+    fake?: boolean
+  ) {
+    if (fake) {
+      const projectName = randUserName();
+      const fakeInvitation: WorkspaceProject = {
+        logoSmall: '',
+        name: projectName,
+        slug: projectName,
+        description: 'asd',
+        color: 1,
+      };
+
+      const invitations = [...this.state.get('invitations')];
+      invitations.unshift(fakeInvitation);
+      if (this.workspace.userRole === 'admin') {
+        this.newProjectsToAnimate.push(projectName);
+      }
+      this.store.dispatch(
+        fetchWorkspaceInvitationsSuccess({
+          projectSlug: projectName,
+          workspaceSlug: workspaceSlug,
+          project: [fakeInvitation as Project],
+          invitations: [fakeInvitation as Project],
+          role: this.workspace.userRole,
+          rejectedInvites: this.state.get('rejectedInvites'),
+        })
+      );
+    } else {
+      if (this.workspace.userRole === 'admin') {
+        this.newProjectsToAnimate.push(projectSlug);
+      }
+      this.store.dispatch(
+        invitationCreateEvent({
+          projectSlug: projectSlug,
+          workspaceSlug: workspaceSlug,
+          role: this.workspace.userRole,
+          rejectedInvites: this.state.get('rejectedInvites'),
+        })
+      );
+    }
+  }
+
+  public membershipCreateEvent(projectSlug: string) {
+    this.store.dispatch(
+      acceptInvitationEvent({
+        projectSlug,
       })
     );
   }
@@ -287,8 +491,7 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     );
   }
 
-  public rejectProjectInvite(slug: Project['slug']) {
-    this.state.set({ slideOutActive: true });
+  public animateLeavingInvitationSiblings(slug: string) {
     const siblings = this.getSiblingsRow(slug);
     if (siblings) {
       const rejectedIndex = siblings.findIndex(
@@ -299,13 +502,31 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
           this.reorder[project.slug] = 'moving';
         }
       });
+
+      let vm!: ViewModel;
+
+      this.model$.pipe(take(1)).subscribe((model) => {
+        vm = model;
+      });
+
+      const projectsToShow = this.state.get('projectsToShow');
+      const newProjectInTopLine = vm.allVisibleProjects[projectsToShow];
+
+      if (newProjectInTopLine) {
+        this.reorder[newProjectInTopLine.slug] = 'entering';
+      }
     }
+  }
 
-    const rejectedInvites = [...this.state.get('rejectedInvites')];
+  public rejectProjectInvite(slug: Project['slug']) {
+    this.state.set({ slideOutActive: true });
 
-    rejectedInvites.push(slug);
-
-    this.setRejectedInvites(rejectedInvites);
+    requestAnimationFrame(() => {
+      this.animateLeavingInvitationSiblings(slug);
+      const rejectedInvites = [...this.state.get('rejectedInvites')];
+      rejectedInvites.push(slug);
+      this.setRejectedInvites(rejectedInvites);
+    });
   }
 
   public reorderDone(event: AnimationEvent) {
@@ -314,7 +535,11 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     }
   }
 
-  public slideOutAnimationDone() {
+  public slideOutAnimationDone(event: AnimationEvent) {
+    if (event.toState !== 'void') {
+      return;
+    }
+
     this.state.set({ slideOutActive: false });
   }
 
@@ -370,11 +595,46 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes.workspace) {
-      const rejectedInvites = this.state.get('rejectedInvites');
+      this.refreshInvitations();
+    }
+  }
 
+  public refreshInvitations() {
+    const oldInvitations = this.state.get('invitations');
+    const newInvitations = this.workspace.invitedProjects
+      .filter((invitation) => {
+        return !oldInvitations.find((oldInvitation) => {
+          return oldInvitation.slug === invitation.slug;
+        });
+      })
+      .map((invitation) => invitation.slug);
+
+    const removedInvitations = oldInvitations
+      .filter((invitation) => {
+        return !this.workspace.invitedProjects.find((oldInvitation) => {
+          return oldInvitation.slug === invitation.slug;
+        });
+      })
+      .map((invitation) => invitation.slug);
+
+    if (removedInvitations.length) {
+      // activate slideOut & then re-render template (requestAnimationFrame) to start the :leave animation
+      this.state.set({ slideOutActive: true });
+
+      requestAnimationFrame(() => {
+        if (removedInvitations.length) {
+          this.animateLeavingInvitationSiblings(removedInvitations[0]);
+        }
+
+        this.state.set({
+          newInvitations,
+          invitations: this.workspace.invitedProjects,
+        });
+      });
+    } else {
       this.state.set({
+        newInvitations,
         invitations: this.workspace.invitedProjects,
-        rejectedInvites,
       });
     }
   }

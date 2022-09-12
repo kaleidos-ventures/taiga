@@ -6,25 +6,45 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MemoizedSelector } from '@ngrx/store';
+import {
+  createComponentFactory,
+  createServiceFactory,
+  Spectator,
+  SpectatorService,
+} from '@ngneat/spectator/jest';
+import { provideMockActions } from '@ngrx/effects/testing';
+import { Action, MemoizedSelector } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { ConfigService } from '@taiga/core';
 import {
   Project,
   WorkspaceAdminMockFactory,
   WorkspaceMemberMockFactory,
   WorkspaceMockFactory,
 } from '@taiga/data';
+import { Observable, of } from 'rxjs';
 import {
   fetchWorkspaceProjects,
   setWorkspaceListRejectedInvites,
 } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { WorkspaceState } from '~/app/modules/workspace/feature-list/+state/reducers/workspace.reducer';
 import { selectRejectedInvites } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
+import { WsService } from '~/app/services/ws';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { WorkspaceItemComponent } from './workspace-item.component';
 
 describe('WorkspaceItem', () => {
+  let actions$: Observable<Action>;
+  let spectatorWs: SpectatorService<WsService>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let service: WsService;
+
+  const wsEvent$ = {
+    event: '',
+    project: '',
+    workspace: '',
+  };
+
   const workspaceItem = WorkspaceMockFactory();
   const workspaceItemAdmin = WorkspaceAdminMockFactory();
   const workspaceItemMember = WorkspaceMemberMockFactory();
@@ -44,6 +64,16 @@ describe('WorkspaceItem', () => {
   };
 
   let spectator: Spectator<WorkspaceItemComponent>;
+
+  const createService = createServiceFactory({
+    service: WsService,
+    providers: [
+      provideMockActions(() => actions$),
+      provideMockStore({}),
+      { provide: ConfigService, useValue: {} },
+    ],
+  });
+
   const createComponent = createComponentFactory({
     component: WorkspaceItemComponent,
     imports: [],
@@ -51,6 +81,11 @@ describe('WorkspaceItem', () => {
     mocks: [UserStorageService],
   });
   let store: MockStore;
+
+  beforeEach(() => {
+    spectatorWs = createService();
+    service = spectatorWs.inject(WsService);
+  });
 
   describe('guest', () => {
     let mockRejectInviteSelect: MemoizedSelector<
@@ -61,6 +96,7 @@ describe('WorkspaceItem', () => {
     beforeEach(() => {
       spectator = createComponent({
         props: {
+          wsEvents: of(wsEvent$),
           workspace: workspaceItem,
           projectsToShow: 3,
         },
@@ -102,21 +138,23 @@ describe('WorkspaceItem', () => {
 
       spectator.component.rejectProjectInvite(slug);
 
-      mockRejectInviteSelect.setResult([slug]);
-      store.refreshState();
+      requestAnimationFrame(() => {
+        mockRejectInviteSelect.setResult([slug]);
+        store.refreshState();
 
-      expect(dispatchSpy).toBeCalledWith(
-        setWorkspaceListRejectedInvites({ projects: [slug] })
-      );
+        expect(dispatchSpy).toBeCalledWith(
+          setWorkspaceListRejectedInvites({ projects: [slug] })
+        );
 
-      spectator.component.model$.subscribe(({ invitations }) => {
-        expect(userStorageService.set.mock.calls[0][0]).toEqual(
-          'general_rejected_invites'
-        );
-        expect(invitations.length).toEqual(
-          workspaceItem.invitedProjects.length - 1
-        );
-        done();
+        spectator.component.model$.subscribe(({ invitations }) => {
+          expect(userStorageService.set.mock.calls[0][0]).toEqual(
+            'general_rejected_invites'
+          );
+          expect(invitations.length).toEqual(
+            workspaceItem.invitedProjects.length - 1
+          );
+          done();
+        });
       });
     });
 
@@ -143,25 +181,29 @@ describe('WorkspaceItem', () => {
 
       spectator.component.rejectProjectInvite(slug);
 
-      spectator.component.model$.subscribe(({ slideOutActive }) => {
-        expect(slideOutActive).toBeTruthy();
-        expect(Object.keys(spectator.component.reorder).length).toEqual(2);
-        expect(
-          (spectator.component.reorder[
-            workspaceItem.invitedProjects.at(1)!.slug
-          ] = 'moving')
-        );
-        expect(
-          (spectator.component.reorder[
-            workspaceItem.invitedProjects.at(2)!.slug
-          ] = 'moving')
-        );
-        done();
+      requestAnimationFrame(() => {
+        spectator.component.model$.subscribe(({ slideOutActive }) => {
+          expect(slideOutActive).toBeTruthy();
+          expect(Object.keys(spectator.component.reorder).length).toEqual(3);
+          expect(
+            (spectator.component.reorder[
+              workspaceItem.invitedProjects.at(1)!.slug
+            ] = 'moving')
+          );
+          expect(
+            (spectator.component.reorder[
+              workspaceItem.invitedProjects.at(2)!.slug
+            ] = 'moving')
+          );
+          done();
+        });
       });
     });
 
     it('End animation and update state', (done) => {
-      spectator.component.slideOutAnimationDone();
+      const eventObj: any = { event: { toState: 'void' } };
+
+      spectator.component.slideOutAnimationDone(eventObj);
       spectator.detectChanges();
       spectator.component.model$.subscribe(({ slideOutActive }) => {
         expect(slideOutActive).toBeFalsy();
@@ -216,6 +258,7 @@ describe('WorkspaceItem', () => {
     beforeEach(() => {
       spectator = createComponent({
         props: {
+          wsEvents: of(wsEvent$),
           workspace: workspaceItemMember,
           projectsToShow: 8,
         },
@@ -327,6 +370,7 @@ describe('WorkspaceItem', () => {
     beforeEach(() => {
       spectator = createComponent({
         props: {
+          wsEvents: of(wsEvent$),
           workspace: workspaceItemAdmin,
           projectsToShow: 8,
         },
@@ -398,11 +442,12 @@ describe('WorkspaceItem', () => {
   });
 
   it('Display user has no projects message', (done) => {
-    spectator.component.workspace = WorkspaceMockFactory();
+    const eventObj: any = { event: { toState: 'void' } };
 
+    spectator.component.workspace = WorkspaceMockFactory();
     spectator.component.workspace.hasProjects = false;
     spectator.component.workspace.latestProjects = [];
-    spectator.component.slideOutAnimationDone();
+    spectator.component.slideOutAnimationDone(eventObj);
     spectator.component.workspace.userRole = 'member';
     spectator.component.getActiveInvitations = jest.fn().mockReturnValue([]);
 
@@ -415,11 +460,12 @@ describe('WorkspaceItem', () => {
   });
 
   it('Display user has no access message', (done) => {
-    spectator.component.workspace = WorkspaceMockFactory();
+    const eventObj: any = { event: { toState: 'void' } };
 
+    spectator.component.workspace = WorkspaceMockFactory();
     spectator.component.workspace.hasProjects = true;
     spectator.component.workspace.latestProjects = [];
-    spectator.component.slideOutAnimationDone();
+    spectator.component.slideOutAnimationDone(eventObj);
     spectator.component.workspace.userRole = 'member';
     spectator.component.getActiveInvitations = jest.fn().mockReturnValue([]);
 

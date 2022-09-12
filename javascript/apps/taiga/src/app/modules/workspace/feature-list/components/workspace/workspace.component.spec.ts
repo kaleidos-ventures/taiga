@@ -7,15 +7,19 @@
  */
 
 import '@ng-web-apis/universal/mocks';
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { Project, ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { provideMockActions } from '@ngrx/effects/testing';
+import { Action, MemoizedSelector } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { WorkspaceComponent } from './workspace.component';
-import { selectRejectedInvites } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
-import { MemoizedSelector } from '@ngrx/store';
+import { Project, ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
+import { Observable } from 'rxjs';
 import { WorkspaceState } from '~/app/modules/workspace/feature-list/+state/reducers/workspace.reducer';
+import { selectRejectedInvites } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
+import { WorkspaceComponent } from './workspace.component';
 
 describe('Workspace List', () => {
+  let actions$: Observable<Action>;
+
   const workspaceItem = WorkspaceMockFactory();
 
   const initialState = {
@@ -31,7 +35,10 @@ describe('Workspace List', () => {
     component: WorkspaceComponent,
     imports: [],
     mocks: [],
-    providers: [provideMockStore({ initialState })],
+    providers: [
+      provideMockStore({ initialState }),
+      provideMockActions(() => actions$),
+    ],
   });
 
   let store: MockStore;

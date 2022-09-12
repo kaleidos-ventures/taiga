@@ -23,6 +23,12 @@ export class WorkspaceApiService {
   }
 
   public fetchWorkspace(slug: Workspace['slug']) {
+    return this.http.get<Workspace>(
+      `${this.config.apiUrl}/my/workspaces/${slug}`
+    );
+  }
+
+  public fetchWorkspaceDetail(slug: Workspace['slug']) {
     return this.http.get<Workspace>(`${this.config.apiUrl}/workspaces/${slug}`);
   }
 

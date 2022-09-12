@@ -31,19 +31,23 @@ describe('WorkspaceApiService', () => {
 
   it('list Workspaces', () => {
     const base = `${ConfigServiceMock.apiUrl}/my/workspaces`;
-
     spectator.service.fetchWorkspaceList().subscribe();
-
     const req = spectator.expectOne(base, HttpMethod.GET);
     expect(req.request.url).toEqual(base);
   });
 
   it('get Workspace', () => {
     const slug = randDomainSuffix({ length: 3 }).join('-');
-    const url = `${ConfigServiceMock.apiUrl}/workspaces/${slug}`;
-
+    const url = `${ConfigServiceMock.apiUrl}/my/workspaces/${slug}`;
     spectator.service.fetchWorkspace(slug).subscribe();
+    const req = spectator.expectOne(url, HttpMethod.GET);
+    expect(req.request.url).toEqual(url);
+  });
 
+  it('get Workspace detail', () => {
+    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const url = `${ConfigServiceMock.apiUrl}/workspaces/${slug}`;
+    spectator.service.fetchWorkspaceDetail(slug).subscribe();
     const req = spectator.expectOne(url, HttpMethod.GET);
     expect(req.request.url).toEqual(url);
   });

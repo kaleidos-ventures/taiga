@@ -11,15 +11,15 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 
 import { map } from 'rxjs/operators';
 
-import * as WorkspaceActions from '../actions/workspace.actions';
-import { fetch, pessimisticUpdate } from '@nrwl/angular';
-import { Project, Workspace } from '@taiga/data';
-import { WorkspaceApiService } from '@taiga/api';
-import { AppService } from '~/app/services/app.service';
-import { timer, zip } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
+import { WorkspaceApiService } from '@taiga/api';
+import { Project, Workspace } from '@taiga/data';
+import { timer, zip } from 'rxjs';
+import { AppService } from '~/app/services/app.service';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
+import * as WorkspaceActions from '../actions/workspace.actions';
 
 @Injectable()
 export class WorkspaceEffects {
@@ -112,6 +112,60 @@ export class WorkspaceEffects {
               return WorkspaceActions.fetchWorkspaceProjectsSuccess({
                 slug: action.slug,
                 projects,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
+  public invitationCreateEvent$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceActions.invitationCreateEvent),
+      pessimisticUpdate({
+        run: (action) => {
+          return zip(
+            this.workspaceApiService.fetchWorkspaceProjects(
+              action.workspaceSlug
+            ),
+            this.workspaceApiService.fetchWorkspaceInvitedProjects(
+              action.workspaceSlug
+            ),
+            timer(300)
+          ).pipe(
+            map(([project, invitations]) => {
+              return WorkspaceActions.fetchWorkspaceInvitationsSuccess({
+                projectSlug: action.projectSlug,
+                workspaceSlug: action.workspaceSlug,
+                project,
+                invitations,
+                role: action.role,
+                rejectedInvites: action.rejectedInvites,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
+  public fetchWorkspace$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceActions.fetchWorkspace),
+      pessimisticUpdate({
+        run: (action) => {
+          return zip(
+            this.workspaceApiService.fetchWorkspace(action.workspaceSlug),
+            timer(300)
+          ).pipe(
+            map(([workspace]) => {
+              return WorkspaceActions.fetchWorkspaceSuccess({
+                workspace: workspace,
               });
             })
           );

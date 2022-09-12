@@ -4,12 +4,3 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
-from typing import Any
-
-from django.db import connection
-
-
-def db_connection_params() -> dict[str, Any]:
-    """Return the current django connection params"""
-    return connection.get_connection_params()

@@ -95,8 +95,8 @@ function getBySelLike(selector: string, options?: CyGetOptions[1]) {
 Cypress.Commands.add('getBySelLike', getBySelLike);
 
 function closeToast() {
-  cy.get('tui-notification .close').should('be.visible');
-  cy.get('tui-notification .close').click();
+  cy.get('tui-notification .t-close').should('be.visible');
+  cy.get('tui-notification .t-close').click();
 }
 
 Cypress.Commands.add('closeToast', closeToast);

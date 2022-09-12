@@ -81,7 +81,8 @@ tg-ui-dtable-row {
   block-size: var(--spacing-16);
   inline-size: var(--spacing-16);
 
-  & tui-wrapper.t-wrapper {
+  & .t-wrapper {
+    color: var(--color-info80);
     /* stylelint-disable-next-line declaration-no-important */
     padding: 0 !important;
   }

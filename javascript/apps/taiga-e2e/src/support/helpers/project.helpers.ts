@@ -19,7 +19,11 @@ export const navigateToProjectInWS = (
   cy.getBySel('workspace-item')
     .eq(workspaceIndex)
     .within(() => {
-      cy.getBySel('project-card').eq(projectIndex).click();
+      cy.getBySel('project-card')
+        .eq(projectIndex)
+        .within(() => {
+          cy.getBySel('project-card-name').click();
+        });
     });
 };
 

@@ -41,7 +41,7 @@ tui-text-area {
     @mixin font-paragraph;
 
     &.invalid {
-      & tui-wrapper[data-appearance="textfield"] {
+      & [data-appearance="textfield"] {
         background: var(--color-red10);
 
         /* stylelint-disable-next-line max-nesting-depth */
@@ -103,7 +103,7 @@ tui-text-area {
   }
 
   & .general-textarea {
-    & tui-wrapper[data-appearance="textfield"] {
+    & [data-appearance="textfield"] {
       background: var(--color-white);
 
       &::after {

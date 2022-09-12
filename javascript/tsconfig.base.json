@@ -12,36 +12,18 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2019",
-      "dom"
-    ],
+    "lib": ["es2019", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@storybook-helper": [
-        "libs/ui/stories-helper.ts"
-      ],
-      "@taiga/api": [
-        "libs/api/src/index.ts"
-      ],
-      "@taiga/core": [
-        "libs/core/src/index.ts"
-      ],
-      "@taiga/data": [
-        "libs/data/src/index.ts"
-      ],
-      "@taiga/ui/*": [
-        "libs/ui/src/lib/*"
-      ],
-      "~/*": [
-        "apps/taiga/src/*"
-      ]
+      "@storybook-helper": ["libs/ui/stories-helper.ts"],
+      "@taiga/api": ["libs/api/src/index.ts"],
+      "@taiga/core": ["libs/core/src/index.ts"],
+      "@taiga/data": ["libs/data/src/index.ts"],
+      "@taiga/ui/*": ["libs/ui/src/lib/*"],
+      "~/*": ["apps/taiga/src/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

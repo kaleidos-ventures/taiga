@@ -56,7 +56,7 @@ export class ButtonLoadingDirective implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    this.backgroundHtmlElement = this.element().querySelector('tui-wrapper')!;
+    this.backgroundHtmlElement = this.element().querySelector('.t-wrapper')!;
   }
 
   public doneState() {

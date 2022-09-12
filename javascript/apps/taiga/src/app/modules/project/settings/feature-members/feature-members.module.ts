@@ -18,7 +18,6 @@ import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import {
   TuiButtonModule,
   TuiDataListModule,
-  TuiDropdownControllerModule,
   TuiLinkModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
@@ -65,7 +64,6 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
   ],
   imports: [
     DropdownModule,
-    TuiDropdownControllerModule,
     FormsModule,
     ReactiveFormsModule,
     SkeletonsModule,

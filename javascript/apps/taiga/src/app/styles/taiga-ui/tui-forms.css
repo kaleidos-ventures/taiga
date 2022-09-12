@@ -6,15 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
-tui-hint-box {
-  @mixin font-inline;
-  /* stylelint-disable-next-line declaration-no-important */
-  background: var(--color-gray100) !important;
-  /* stylelint-disable-next-line declaration-no-important */
-  border-radius: 4px !important;
-}
-
-tui-wrapper[data-appearance="textfield"] {
+[tuiwrapper][data-appearance="textfield"] {
   --tui-base-03: var(--color-gray40);
   --tui-primary: var(--color-secondary);
 

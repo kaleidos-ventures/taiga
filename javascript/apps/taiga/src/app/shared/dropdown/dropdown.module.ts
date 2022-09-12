@@ -8,21 +8,14 @@
 
 import { NgModule } from '@angular/core';
 import {
-  TuiDropdownBoxModule,
-  TuiDropdownControllerModule,
+  TuiDropdownModule,
   TuiHostedDropdownModule,
   TUI_ANIMATION_OPTIONS,
-  TuiDropdownModule,
 } from '@taiga-ui/core';
 
 @NgModule({
   declarations: [],
-  imports: [
-    TuiDropdownControllerModule,
-    TuiHostedDropdownModule,
-    TuiDropdownBoxModule,
-    TuiDropdownModule,
-  ],
+  imports: [TuiHostedDropdownModule, TuiDropdownModule],
   providers: [
     {
       provide: TUI_ANIMATION_OPTIONS,
@@ -35,11 +28,6 @@ import {
       },
     },
   ],
-  exports: [
-    TuiDropdownControllerModule,
-    TuiHostedDropdownModule,
-    TuiDropdownBoxModule,
-    TuiDropdownModule,
-  ],
+  exports: [TuiHostedDropdownModule, TuiDropdownModule],
 })
 export class DropdownModule {}

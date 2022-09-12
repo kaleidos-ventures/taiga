@@ -10,39 +10,38 @@ import { APP_INITIALIZER, inject, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AppComponent } from './app.component';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { environment } from '../environments/environment';
-import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
-import { AppRoutingModule } from './app-routing.module';
-import { ConfigService } from '@taiga/core';
 import { HttpClientModule } from '@angular/common/http';
-import { ApiRestInterceptorModule } from './shared/api-rest-interceptor/api-rest-interceptor.module';
-import { ApiModule } from '@taiga/api';
-import { WsModule } from '~/app/services/ws';
-import { CoreModule } from '@taiga/core';
-import { EnvironmentService } from './services/environment.service';
-import {
-  TuiRootModule,
-  TUI_ICONS_PATH,
-  TUI_ANIMATIONS_DURATION,
-  TuiNotificationsModule,
-} from '@taiga-ui/core';
-import { TUI_LANGUAGE, TUI_ENGLISH_LANGUAGE } from '@taiga-ui/i18n';
-import { of } from 'rxjs';
-import { TranslocoRootModule } from './transloco/transloco-root.module';
 import { TranslocoService } from '@ngneat/transloco';
-import { paramCase } from 'change-case';
-import { NavigationModule } from './shared/navigation/navigation.module';
-import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
-import { TUI_IS_CYPRESS, TUI_SANITIZER } from '@taiga-ui/cdk';
-import { ErrorsModule } from './modules/errors/errors.module';
-import { SvgSpriteModule } from '@taiga/ui/svg-sprite';
-import { NgDompurifySanitizer } from '@tinkoff/ng-dompurify';
+import { EffectsModule } from '@ngrx/effects';
+import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { TUI_IS_CYPRESS } from '@taiga-ui/cdk';
+import {
+  TuiAlertModule,
+  TuiNotificationModule,
+  TuiRootModule,
+  TUI_ANIMATIONS_DURATION,
+  TUI_SVG_SRC_PROCESSOR,
+} from '@taiga-ui/core';
+import { TUI_ENGLISH_LANGUAGE, TUI_LANGUAGE } from '@taiga-ui/i18n';
 import { tuiToggleOptionsProvider } from '@taiga-ui/kit';
+import { ApiModule } from '@taiga/api';
+import { ConfigService, CoreModule } from '@taiga/core';
 import { PROMPT_PROVIDER } from '@taiga/ui/modal/services/modal.service';
+import { SvgSpriteModule } from '@taiga/ui/svg-sprite';
+import { paramCase } from 'change-case';
+import { of } from 'rxjs';
+import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
+import { WsModule } from '~/app/services/ws';
+import { environment } from '../environments/environment';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { ErrorsModule } from './modules/errors/errors.module';
+import { EnvironmentService } from './services/environment.service';
+import { ApiRestInterceptorModule } from './shared/api-rest-interceptor/api-rest-interceptor.module';
+import { NavigationModule } from './shared/navigation/navigation.module';
+import { TranslocoRootModule } from './transloco/transloco-root.module';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -53,11 +52,6 @@ const altIconName: Record<string, string> = {
   tuiIconAttention: 'alert',
   tuiIconCheckCircle: 'check',
 };
-
-export function iconsPath(name: string): string {
-  name = altIconName[name] ?? name;
-  return `#${paramCase(name)}`;
-}
 
 export function prefersReducedMotion(): boolean {
   const mediaQueryList = window.matchMedia('(prefers-reduced-motion)');
@@ -77,6 +71,7 @@ export function prefersReducedMotion(): boolean {
     HttpClientModule,
     ApiRestInterceptorModule,
     NavigationModule,
+    TuiAlertModule,
     AppRoutingModule,
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     BrowserAnimationsModule.withConfig({
@@ -101,7 +96,7 @@ export function prefersReducedMotion(): boolean {
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     TuiRootModule,
-    TuiNotificationsModule,
+    TuiNotificationModule,
     TranslocoRootModule,
   ],
   bootstrap: [AppComponent],
@@ -138,12 +133,15 @@ export function prefersReducedMotion(): boolean {
       },
     },
     {
-      provide: TUI_ICONS_PATH,
-      useValue: iconsPath,
-    },
-    {
-      provide: TUI_SANITIZER,
-      useClass: NgDompurifySanitizer,
+      provide: TUI_SVG_SRC_PROCESSOR,
+      useFactory: () => {
+        return (src: string): string => {
+          const name = altIconName[src] ?? src;
+          const fileName = paramCase(name);
+
+          return `assets/icons/sprite.svg#${fileName}`;
+        };
+      },
     },
     {
       provide: TUI_LANGUAGE,

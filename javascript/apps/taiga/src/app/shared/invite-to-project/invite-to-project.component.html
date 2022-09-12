@@ -50,8 +50,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [ngModelOptions]="{ standalone: true }"
                 [expandable]="true"
                 [rows]="12"
-                [tuiDropdownContent]="dropdownContent"
-                [tuiDropdown]="inviteIdentifier.length > 1 && notInBulkMode"
+                [tuiDropdown]="dropdownContent"
+                [tuiDropdownManual]="
+                  inviteIdentifier.length > 1 && notInBulkMode
+                "
+                [tuiDropdownLimitWidth]="'fixed'"
                 (focusedChange)="updateEmailInputIsFocus(true)"
                 (tuiActiveZoneChange)="onActiveZone($event)"
                 (click)="$event.stopPropagation()"
@@ -194,10 +197,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <div
             class="tip-wrapper"
             data-test="tip-wrapper">
-            <tui-svg
+            <img
               class="tip-icon"
+              role="presentation"
               src="/assets/images/curved-arrow.svg"
-              aria-hidden="true"></tui-svg>
+              alt="" />
             <p class="tip">{{ t('invitation_modal.add_people') }}</p>
           </div>
         </ng-container>

@@ -13,11 +13,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     *ngIf="fullName"
     [class.disabled]="disabled"
     [user]="user"></tg-user-avatar>
-  <tui-svg
+  <img
     *ngIf="!fullName"
+    src="assets/images/avatar.svg"
     class="avatar top"
-    src="/assets/images/avatar.svg"
-    aria-hidden="true"></tui-svg>
+    alt="" />
   <div
     class="user-identifier"
     [class.highlight]="textToHighlight"

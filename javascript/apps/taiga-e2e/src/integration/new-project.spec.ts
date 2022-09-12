@@ -6,7 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randText, randEmail } from '@ngneat/falso';
+import { randEmail, randText } from '@ngneat/falso';
+import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
+import {
+  addEmailToInvite,
+  inviteUsers,
+  typeEmailToInvite,
+} from '../support/helpers/invitation.helpers';
 import {
   cancelProject,
   launchProjectCreationInWS,
@@ -16,13 +22,7 @@ import {
   typeProjectDescription,
   typeProjectName,
 } from '../support/helpers/project.helpers';
-import {
-  typeEmailToInvite,
-  addEmailToInvite,
-  inviteUsers,
-} from '../support/helpers/invitation.helpers';
 import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
-import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 
 describe('Workspace Create from Overview', () => {
   let workspace: ReturnType<typeof WorkspaceMockFactory>;
@@ -86,7 +86,7 @@ describe('Workspace Create from Overview', () => {
 
     // expect
     cy.getBySel('upload-image-preview').within(() => {
-      cy.get('.text').invoke('text').should('have.length', 2);
+      cy.get('.t-text').invoke('text').should('have.length', 2);
     });
   });
 

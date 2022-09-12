@@ -12,8 +12,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 :root {
   --tui-autofill: #fff; /* color for native browser autofill */
   --tui-disabled-opacity: 1; /* amount of transparency for disabled elements  */
-  --tui-heading-font: "Ubuntu", sans-serif; /* font for headings */
-  --tui-text-font: "Ubuntu", sans-serif; /* font for text */
   --tui-height-l: 2rem; /* large elements height (i.e. inputs, buttons); */
   --tui-height-m: 1.5rem;
   --tui-height-s: 4px;
@@ -22,6 +20,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   --tui-radius-m: 0; /* default border radius  */
   --tui-radius-s: 0; /* border radius for small elements (i.e. tags)  */
   --tui-radius-xs: 0; /* br for smallest items (i.e. small checkbox)  */
+
+  /* Fonts */
+  --tui-font-text: "Ubuntu", sans-serif; /* font for text */
+  --tui-text-font: "Ubuntu", sans-serif; /* font for text */
+  --tui-font-text-m: normal 0.875rem var(--tui-font-text);
+  --tui-font-text-s: normal 0.875rem var(--tui-font-text);
+  --tui-font-text-l: normal 1.0625rem/1.5rem var(--tui-font-text);
 
   /* Colors */
   --tui-text-01: #2e3440; /* Primary text and hedings */
@@ -71,7 +76,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   --tui-accent-hover: #ea7b4b;
   --tui-accent-active: #e44057;
   --tui-selection: #83eede;
-  --tui-focus: #83eede;
+  --tui-focus: var(--color-secondary);
   --tui-clear: #f9f9fb;
   --tui-clear-hover: #f9f9fb;
   --tui-clear-active: #eceff4;

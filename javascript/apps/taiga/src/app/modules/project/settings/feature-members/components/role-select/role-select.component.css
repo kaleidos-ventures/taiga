@@ -35,7 +35,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   min-inline-size: 209px;
   opacity: 1;
 
-  &::ng-deep tui-wrapper.t-wrapper {
+  &::ng-deep .t-wrapper {
     @mixin font-inline;
 
     background-color: var(--color-gray10);

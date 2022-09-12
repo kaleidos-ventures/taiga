@@ -132,6 +132,7 @@ video {
 /* LISTS */
 
 ul {
+  list-style: none;
   margin-block: 0 2.5rem;
   padding-inline-start: 1.4rem;
 }
@@ -183,6 +184,11 @@ legend,
 fieldset {
   display: block;
   margin-block-end: var(--spacing-4);
+}
+
+input,
+textarea {
+  @mixin font-inline;
 }
 
 textarea {

@@ -13,6 +13,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "./tui-config.css";
 @import "./tui-avatar.css";
 @import "./tui-forms.css";
+@import "./tui-hint.css";
 @import "./tui-data-list.css";
 @import "./tui-toggle.css";
 @import "./tui-notifications.css";
@@ -20,5 +21,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "./tui-scrollbar.css";
 @import "./shame.css";
 @import "./tui-arrow.css";
-@import "./tui-dropdown-box.css";
+@import "./tui-dropdown.css";
 @import "./tui-tabs.css";

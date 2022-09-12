@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'tg-projects-settings-feature-project',
@@ -17,8 +17,4 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectsSettingsFeatureProjectComponent implements OnInit {
-  public ngOnInit(): void {
-    console.log('project settings feature');
-  }
-}
+export class ProjectsSettingsFeatureProjectComponent {}

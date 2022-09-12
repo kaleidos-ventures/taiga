@@ -82,7 +82,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   padding-block: var(--spacing-32);
 
   & .tip-icon {
-    fill: var(--color-gray30);
+    block-size: var(--spacing-24);
+    inline-size: var(--spacing-24);
   }
 
   & .tip {

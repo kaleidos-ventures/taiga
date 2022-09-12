@@ -33,7 +33,7 @@ tui-scrollbar {
   block-size: 100%;
   user-select: none;
 
-  &::ng-deep .content {
+  &::ng-deep .t-content {
     block-size: 100%;
   }
 }

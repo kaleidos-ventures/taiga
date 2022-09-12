@@ -193,7 +193,7 @@ export class AuthEffects {
             message: 'logout.see_you_soon',
             status: TuiNotification.Success,
             scope: 'auth',
-            autoClose: true,
+            autoClose: false,
           };
 
           this.router.events

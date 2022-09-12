@@ -7,12 +7,17 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": ["libs/ui/src/**/*.ts", "libs/ui/src/**/*.html"]
+        "lintFilePatterns": [
+          "libs/ui/src/**/*.ts",
+          "libs/ui/src/**/*.html"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/ui"],
+      "outputs": [
+        "coverage/libs/ui"
+      ],
       "options": {
         "jestConfig": "libs/ui/jest.config.ts",
         "passWithNoTests": true
@@ -26,9 +31,10 @@
         "browserTarget": "ui:storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/@taiga-ui/core/styles/taiga-ui-global.less",
           "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less",
-          "apps/taiga/src/styles.css",
+          "node_modules/@taiga-ui/core/styles/taiga-ui-fonts.less",
+          "node_modules/@taiga-ui/styles/taiga-ui-global.less",
+          "src/styles.css",
           "libs/ui/.storybook/styles-stories.css"
         ]
       },
@@ -40,15 +46,18 @@
     },
     "build-storybook": {
       "executor": "@storybook/angular:build-storybook",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputDir": "dist/storybook/taiga",
         "configDir": "libs/ui/.storybook",
         "browserTarget": "ui:storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/@taiga-ui/core/styles/taiga-ui-global.less",
           "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less",
+          "node_modules/@taiga-ui/core/styles/taiga-ui-fonts.less",
+          "node_modules/@taiga-ui/styles/taiga-ui-global.less",
           "apps/taiga/src/styles.css",
           "libs/ui/.storybook/styles-stories.css"
         ]
@@ -60,5 +69,7 @@
       }
     }
   },
-  "tags": ["scope:ui"]
+  "tags": [
+    "scope:ui"
+  ]
 }

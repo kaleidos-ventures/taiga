@@ -129,6 +129,7 @@ ul {
   align-items: center;
   block-size: var(--spacing-32);
   border-radius: 3px;
+  color: var(--color-gray40);
   display: flex;
   font-weight: var(--font-weight-regular);
   padding: var(--spacing-4);

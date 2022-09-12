@@ -42,7 +42,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <a
           [routerLink]="['/project', project.slug]"
           class="project-card-link"
-          data-test="project-card">
+          data-test="project-card-name">
           {{ project.name }}
         </a>
       </div>
@@ -75,7 +75,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <tg-ui-badge
             [label]="t('project.card.pending_invitation') | capitalize"
             icon="clock"
-            color="gray"></tg-ui-badge>
+            color="gray">
+          </tg-ui-badge>
         </div>
         <div class="project-card-title">
           <tg-ui-avatar

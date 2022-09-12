@@ -22,6 +22,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .template-item {
+  @mixin font-paragraph;
+
   appearance: none;
   background-color: var(--color-gray10);
   border: none;

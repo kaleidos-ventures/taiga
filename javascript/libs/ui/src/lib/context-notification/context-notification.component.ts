@@ -8,18 +8,18 @@
 
 import {
   animate,
+  AnimationEvent,
   style,
   transition,
   trigger,
-  AnimationEvent,
 } from '@angular/animations';
 import {
-  Component,
   ChangeDetectionStrategy,
-  Input,
-  HostBinding,
-  Output,
+  Component,
   EventEmitter,
+  HostBinding,
+  Input,
+  Output,
 } from '@angular/core';
 
 type NotificationStatus = 'info' | 'notice' | 'error' | 'success' | 'warning';

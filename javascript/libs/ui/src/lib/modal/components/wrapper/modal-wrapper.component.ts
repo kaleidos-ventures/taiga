@@ -8,17 +8,15 @@
 
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { TuiDialog } from '@taiga-ui/cdk';
-import { POLYMORPHEUS_CONTEXT } from '@tinkoff/ng-polymorpheus';
 import { ModalService } from '@taiga/ui/modal/services/modal.service';
+import { POLYMORPHEUS_CONTEXT } from '@tinkoff/ng-polymorpheus';
 
 @Component({
   selector: 'tg-ui-modal-wrapper',
-  template: `
-    <section
-      polymorpheus-outlet
-      [content]="context.content"
-      [context]="context"></section>
-  `,
+  template: `<ng-container
+    *polymorpheusOutlet="$any(context.content) as text; context: context">
+    {{ text }}
+  </ng-container>`,
   styleUrls: ['./modal-wrapper.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

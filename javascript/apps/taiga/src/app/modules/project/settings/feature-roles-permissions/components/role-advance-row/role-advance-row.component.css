@@ -62,7 +62,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     margin-inline-start: var(--spacing-8);
   }
 
-  & .customizing::ng-deep tui-wrapper {
+  & .customizing::ng-deep .t-wrapper {
     background: var(--color-gray30);
     color: var(--color-secondary);
   }

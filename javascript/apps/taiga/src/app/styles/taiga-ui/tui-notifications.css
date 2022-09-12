@@ -47,11 +47,11 @@ tui-notification {
     padding-inline-end: var(--spacing-40) !important;
   }
 
-  & .close {
+  & .t-close {
     inset-block-start: calc(var(--spacing-16) + 2px) !important;
     inset-inline-end: var(--spacing-16) !important;
 
-    & .icon {
+    & .t-icon {
       margin-block-start: 0;
     }
   }
@@ -66,15 +66,15 @@ tui-notification {
     margin-block-start: calc(var(--spacing-16) + 2px);
   }
 
-  & .content {
+  & .t-content {
     font-size: var(--font-size-medium);
     font-weight: var(--font-weight-medium);
 
-    & .heading {
+    & .t-heading {
       margin-block-end: var(--spacing-8);
 
       /* stylelint-disable-next-line selector-max-compound-selectors */
-      & + .content {
+      & + .t-content {
         font-size: var(--font-size-small);
         font-weight: var(--font-weight-regular);
         line-height: 1rem;
@@ -91,19 +91,19 @@ tui-notification {
     background: var(--color-info20) !important;
     color: var(--color-info80) !important;
 
-    & .close {
+    & .t-close {
       --tui-radius-m: 0;
 
-      &._hovered {
+      &:hover {
         background-color: var(--color-info30);
         color: var(--color-info90);
       }
     }
 
-    & .icon {
+    & .t-icon {
       color: var(--color-info50);
 
-      @nest .close & {
+      @nest .t-close & {
         color: var(--color-info80);
       }
     }
@@ -117,19 +117,19 @@ tui-notification {
     background: var(--color-red20) !important;
     color: var(--color-red80) !important;
 
-    & .close {
+    & .t-close {
       --tui-radius-m: 0;
 
-      &._hovered {
+      &:hover {
         background-color: var(--color-red30);
         color: var(--color-red90);
       }
     }
 
-    & .icon {
+    & .t-icon {
       color: var(--color-red50);
 
-      @nest .close & {
+      @nest .t-close & {
         color: var(--color-red80);
       }
     }
@@ -143,19 +143,19 @@ tui-notification {
     background: var(--color-ok10) !important;
     color: var(--color-ok80) !important;
 
-    & .close {
+    & .t-close {
       --tui-radius-m: 0;
 
-      &._hovered {
+      &:hover {
         background-color: var(--color-ok30);
         color: var(--color-ok90);
       }
     }
 
-    & .icon {
+    & .t-icon {
       color: var(--color-ok50);
 
-      @nest .close & {
+      @nest .t-close & {
         color: var(--color-ok80);
       }
     }
@@ -169,19 +169,19 @@ tui-notification {
     background: var(--color-warning20) !important;
     color: var(--color-warning80) !important;
 
-    & .close {
+    & .t-close {
       --tui-radius-m: 0;
 
-      &._hovered {
+      &:hover {
         background-color: var(--color-warning30);
         color: var(--color-warning90);
       }
     }
 
-    & .icon {
+    & .t-icon {
       color: var(--color-warning50);
 
-      @nest .close & {
+      @nest .t-close & {
         color: var(--color-warning80);
       }
     }

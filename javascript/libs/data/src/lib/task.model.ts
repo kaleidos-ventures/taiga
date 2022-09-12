@@ -6,11 +6,16 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Project } from './project.model';
 import { Status } from './status.model';
+import { Workflow } from './workflow.model';
 
 export interface Task {
-  ref: number;
-  title: string;
+  reference: number;
+  name: string;
   slug: string;
+  order: number;
+  workflow: Workflow['slug'];
   status: Status['slug'];
+  project: Project['slug'];
 }

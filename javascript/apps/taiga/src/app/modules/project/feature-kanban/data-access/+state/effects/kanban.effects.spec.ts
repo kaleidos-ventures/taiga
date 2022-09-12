@@ -74,12 +74,14 @@ describe('ProjectEffects', () => {
     const effects = spectator.inject(KanbanEffects);
     const tasks = [TaskMockFactory()];
 
-    projectApiService.getTasks.mockReturnValue(cold('-b|', { b: tasks }));
+    projectApiService.getAllTasks.mockReturnValue(
+      cold('-b|', { b: { tasks, offset: 0 } })
+    );
 
     actions$ = hot('-a', { a: KanbanActions.initKanban() });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.fetchTasksSuccess({ tasks }),
+      a: KanbanApiActions.fetchTasksSuccess({ tasks, offset: 0 }),
     });
 
     expect(effects.loadKanbanTasks$).toBeObservable(expected);

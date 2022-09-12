@@ -9,14 +9,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <a
     [attr.title]="
       t('kanban.task_title', {
-        ref: task.ref,
-        title: task.title,
+        ref: task.reference,
+        title: task.name,
         position: index + 1,
         total: total
       })
     "
     href="">
-    <div class="ref">{{ task.ref }}</div>
-    <div class="text">{{ task.title }}</div>
+    <div class="ref">{{ task.reference }}</div>
+    <div class="text">{{ task.name }}</div>
   </a>
 </ng-container>

@@ -74,8 +74,9 @@ export class KanbanCreateTaskInlineComponent implements AfterViewInit {
         KanbanActions.createTask({
           task: {
             tmpId: v4(),
-            title: this.form.get('title')!.value,
+            name: this.form.get('title')!.value,
             status: this.status.slug,
+            workflow: this.workflow.slug,
           },
           workflow: this.workflow.slug,
         })

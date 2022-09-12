@@ -19,6 +19,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AppService } from '~/app/services/app.service';
 import { TuiNotification } from '@taiga-ui/core';
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { selectWorkflows } from '../selectors/kanban.selectors';
 
 @Injectable()
 export class KanbanEffects {
@@ -48,12 +49,13 @@ export class KanbanEffects {
       ofType(KanbanActions.initKanban),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
+        this.store.select(selectWorkflows),
       ]),
       fetch({
         run: (action, project) => {
-          return this.projectApiService.getTasks(project.slug, 'main').pipe(
-            map((tasks) => {
-              return KanbanApiActions.fetchTasksSuccess({ tasks });
+          return this.projectApiService.getAllTasks(project.slug, 'main').pipe(
+            map(({ tasks, offset }) => {
+              return KanbanApiActions.fetchTasksSuccess({ tasks, offset });
             })
           );
         },
@@ -67,10 +69,13 @@ export class KanbanEffects {
   public createTask$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(KanbanActions.createTask),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
       pessimisticUpdate({
-        run: ({ task, workflow }) => {
+        run: ({ task, workflow }, project) => {
           return this.projectApiService
-            .createTask(task, task.status, workflow)
+            .createTask(task, project.slug, workflow)
             .pipe(
               map((task) => {
                 return KanbanApiActions.createTasksSuccess({ task });

@@ -20,8 +20,11 @@ export const TaskMockFactory = (
   }
 
   return {
-    ref: randNumber({ min: 1, max: 999 }),
-    title: randText({ charCount: titleCount }),
+    reference: randNumber({ min: 1, max: 999 }),
+    name: randText({ charCount: titleCount }),
+    order: randNumber(),
+    workflow: randSlug(),
+    project: randSlug(),
     slug: randSlug(),
     status: statuses[Math.floor(Math.random() * statuses.length)],
   };

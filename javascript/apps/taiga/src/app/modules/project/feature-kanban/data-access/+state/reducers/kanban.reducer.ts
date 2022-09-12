@@ -72,39 +72,51 @@ export const reducer = createReducer(
 
       workflows.forEach((workflow) => {
         workflow.statuses.forEach((status) => {
-          state.tasks[status.slug] = [];
+          if (!state.tasks[status.slug]) {
+            state.tasks[status.slug] = [];
+          }
         });
       });
 
-      if (state.empty !== null) {
-        if (state.empty) {
-          state.createTaskForm = state.workflows[0].statuses[0].slug;
-        }
+      if (state.empty !== null && state.empty) {
+        // open the first form if the kanban is empty
+        state.createTaskForm = state.workflows[0].statuses[0].slug;
       }
 
       return state;
     }
   ),
-  on(KanbanApiActions.fetchTasksSuccess, (state, { tasks }): KanbanState => {
-    tasks.forEach((task) => {
-      state.tasks[task.status].push(task);
-    });
+  on(
+    KanbanApiActions.fetchTasksSuccess,
+    (state, { tasks, offset }): KanbanState => {
+      tasks.forEach((task) => {
+        if (!state.tasks[task.status]) {
+          state.tasks[task.status] = [];
+        }
 
-    state.loadingTasks = false;
-    state.empty = !tasks.length;
+        state.tasks[task.status].push(task);
+      });
 
-    if (state.empty && state.workflows) {
-      state.createTaskForm = state.workflows[0].statuses[0].slug;
-    } else {
-      state.createTaskForm = '';
+      state.loadingTasks = false;
+
+      if (!offset) {
+        state.empty = !tasks.length;
+      }
+
+      if (state.empty && state.workflows) {
+        // open the first form if the kanban is empty
+        state.createTaskForm = state.workflows[0].statuses[0].slug;
+      } else {
+        state.createTaskForm = '';
+      }
+
+      return state;
     }
-
-    return state;
-  }),
+  ),
   on(KanbanApiActions.createTasksSuccess, (state, { task }): KanbanState => {
     // todo: title bad idea, waiting for back id
     state.tasks[task.status] = state.tasks[task.status].map((it) => {
-      return it.title === task.title ? task : it;
+      return it.name === task.name ? task : it;
     });
 
     return state;

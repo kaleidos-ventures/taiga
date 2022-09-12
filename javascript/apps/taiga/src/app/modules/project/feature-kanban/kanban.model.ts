@@ -9,7 +9,8 @@
 import { SetOptional } from 'type-fest';
 import { Task } from '@taiga/data';
 
-export interface PartialTask extends SetOptional<Task, 'ref' | 'slug'> {
+export interface PartialTask
+  extends SetOptional<Task, 'reference' | 'slug' | 'project' | 'order'> {
   tmpId: string;
 }
 

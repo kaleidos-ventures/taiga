@@ -31,7 +31,7 @@ export const KanbanApiActions = createActionGroup({
   source: 'Kanban Api',
   events: {
     'Fetch Workflows Success': props<{ workflows: Workflow[] }>(),
-    'Fetch Tasks Success': props<{ tasks: Task[] }>(),
+    'Fetch Tasks Success': props<{ tasks: Task[]; offset: number }>(),
     'Create Tasks Success': props<{ task: Task }>(),
     'Create Tasks Error': props<{ status: number; task: KanbanTask }>(),
   },

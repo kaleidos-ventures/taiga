@@ -85,7 +85,7 @@ export class KanbanStatusComponent
       return {
         // TODO: when design card is ready, calculate task height
         itemHeights: state.tasks.map((task) => {
-          return 35 + (Math.ceil(task.title.length / 23) - 1) * 14;
+          return 35 + (Math.ceil(task.name.length / 23) - 1) * 14;
         }),
         empty: state.loadingTasks ? false : !state.tasks.length,
         ...state,

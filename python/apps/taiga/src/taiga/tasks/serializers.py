@@ -10,9 +10,9 @@ from taiga.workflows.serializers.nested import WorkflowStatusNestedSerializer
 
 
 class TaskSerializer(BaseModel):
+    ref: int
     name: str
     order: int
-    reference: int | None
     status: WorkflowStatusNestedSerializer
 
     class Config:

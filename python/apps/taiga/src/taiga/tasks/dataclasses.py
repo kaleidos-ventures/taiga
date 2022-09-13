@@ -13,9 +13,9 @@ from taiga.workflows.models import WorkflowStatus
 
 @dataclass
 class Task:
+    ref: int
     name: str
     order: int
-    reference: int
     created_at: str
     created_by: User
     status: WorkflowStatus

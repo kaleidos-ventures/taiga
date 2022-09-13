@@ -8,12 +8,12 @@
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin
 from taiga.base.utils.datetime import timestamp_mics
+from taiga.projects.references.mixins import ProjectReferenceMixin
 
 
-class Task(models.BaseModel, CreatedMetaInfoMixin):
+class Task(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
     name = models.CharField(max_length=500, null=False, blank=False, verbose_name="name")
     order = models.BigIntegerField(default=timestamp_mics, null=False, blank=False, verbose_name="order")
-    reference = models.BigIntegerField(null=True, blank=True, default=timestamp_mics, verbose_name="reference")
     project = models.ForeignKey(
         "projects.Project",
         null=False,
@@ -43,13 +43,14 @@ class Task(models.BaseModel, CreatedMetaInfoMixin):
         verbose_name = "task"
         verbose_name_plural = "tasks"
         unique_together = (
-            "reference",
+            "ref",
             "project",
         )
         ordering = ["project", "workflow", "status", "order"]
+        indexes = ProjectReferenceMixin.Meta.indexes
 
     def __str__(self) -> str:
-        return self.name
+        return f"#{self.ref} {self.name}"
 
     def __repr__(self) -> str:
-        return f"<Task {self.name}>"
+        return f"<Task {self.project} #{self.ref}>"

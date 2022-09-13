@@ -11,8 +11,6 @@ from .base import Factory, factory
 
 class TaskFactory(Factory):
     name = factory.Sequence(lambda n: f"Task {n}")
-    order = factory.Sequence(lambda n: n)
-    reference = factory.Sequence(lambda n: n)
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
     workflow = factory.SubFactory("tests.utils.factories.WorkflowFactory")
     status = factory.SubFactory("tests.utils.factories.WorkflowStatusFactory")

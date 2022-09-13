@@ -8,7 +8,8 @@
 import pytest
 from asgiref.sync import sync_to_async
 from django.core.files import File
-from taiga.projects import repositories
+from taiga.base.db import sequences as seq
+from taiga.projects import references, repositories
 from taiga.projects.models import Project, ProjectTemplate
 from taiga.roles.models import ProjectRole, WorkspaceRole
 from taiga.workflows.models import Workflow
@@ -40,8 +41,16 @@ def _save_project(project: Project) -> Project:
 
 
 @sync_to_async
+def _delete_project(project: Project) -> Project:
+    return project.delete()
+
+
+@sync_to_async
 def _save_role(role: ProjectRole) -> ProjectRole:
     return role.save()
+
+
+_seq_exists = sync_to_async(seq.exists)
 
 
 ##########################################################
@@ -64,12 +73,22 @@ async def test_get_projects():
 ##########################################################
 
 
+async def test_create_project():
+    workspace = await f.create_workspace()
+    project = await repositories.create_project(
+        name="My test project", description="", color=3, owner=workspace.owner, workspace=workspace
+    )
+    assert project.slug.startswith("my-test-project")
+    assert await _seq_exists(references.get_project_references_seqname(project.id))
+
+
 async def test_create_project_with_non_ASCI_chars():
     workspace = await f.create_workspace()
     project = await repositories.create_project(
         name="My proj#%&乕شect", description="", color=3, owner=workspace.owner, workspace=workspace
     )
     assert project.slug.startswith("my-proj-hu-shect")
+    assert await _seq_exists(references.get_project_references_seqname(project.id))
 
 
 async def test_create_project_with_logo():
@@ -83,6 +102,7 @@ async def test_create_project_with_logo():
         logo=valid_image_f,
     )
     assert valid_image_f.name in project.logo.name
+    assert await _seq_exists(references.get_project_references_seqname(project.id))
 
 
 async def test_create_project_with_no_logo():
@@ -96,6 +116,7 @@ async def test_create_project_with_no_logo():
         logo=None,
     )
     assert project.logo == File(None)
+    assert await _seq_exists(references.get_project_references_seqname(project.id))
 
 
 ##########################################################
@@ -114,6 +135,25 @@ async def test_apply_template_to_project():
 
     assert await sync_to_async(ProjectRole.objects.count)() == roles_before + 2
     assert await sync_to_async(Workflow.objects.count)() == workflows_before + 1
+
+
+##########################################################
+# delete_project
+##########################################################
+
+# NOTE: this functiomn does not yet exist, but we need to tests sequencie deletions
+
+
+async def test_delete_project():
+    workspace = await f.create_workspace()
+    project = await repositories.create_project(
+        name="My test project", description="", color=3, owner=workspace.owner, workspace=workspace
+    )
+    seqname = references.get_project_references_seqname(project.id)
+
+    assert await _seq_exists(seqname)
+    await _delete_project(project)
+    assert not await _seq_exists(seqname)
 
 
 ##########################################################

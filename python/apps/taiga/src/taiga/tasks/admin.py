@@ -18,9 +18,9 @@ class TaskAdmin(admin.ModelAdmin[Task]):
             {
                 "fields": (
                     "id",
+                    "ref",
                     "name",
                     "order",
-                    "reference",
                     "created_by",
                     "created_at",
                     "project",
@@ -30,13 +30,13 @@ class TaskAdmin(admin.ModelAdmin[Task]):
             },
         ),
     )
-    readonly_fields = ("id", "reference", "created_at")
-    list_display = ["name", "order", "reference", "project", "workflow", "status"]
+    readonly_fields = ("id", "ref", "created_at", "created_by")
+    list_display = ["ref", "name", "project", "workflow", "status", "order"]
     list_filter = ("project", "created_by", "workflow", "status")
     search_fields = [
         "id",
+        "ref",
         "name",
-        "reference",
         "project__name",
         "project__slug",
         "workflow__name",

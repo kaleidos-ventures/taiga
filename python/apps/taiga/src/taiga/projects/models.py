@@ -13,6 +13,7 @@ from taiga.base.utils.datetime import timestamp_mics
 from taiga.base.utils.files import get_file_path
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.permissions.choices import ProjectPermissions
+from taiga.projects import references
 
 get_project_logo_file_path = functools.partial(get_file_path, base_path="project")
 
@@ -192,6 +193,13 @@ class Project(models.BaseModel):
             self.slug = slugify_uniquely(self.name, self.__class__)
 
         super().save(*args, **kwargs)
+
+        references.create_project_references_sequence(project_id=self.id)
+
+    def delete(self, *args: Any, **kwargs: Any) -> tuple[int, dict[str, int]]:
+        references.delete_project_references_sequence(project_id=self.id)
+
+        return super().delete(*args, **kwargs)
 
 
 class ProjectTemplate(models.BaseModel):

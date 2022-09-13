@@ -11,15 +11,20 @@ import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { filterNil } from '~/app/shared/utils/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';
+import {
+  KanbanActions,
+  KanbanApiActions,
+  KanbanEventsActions,
+} from '../actions/kanban.actions';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { ProjectApiService } from '@taiga/api';
-import { filter, map } from 'rxjs';
+import { delay, filter, map } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AppService } from '~/app/services/app.service';
 import { TuiNotification } from '@taiga-ui/core';
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectWorkflows } from '../selectors/kanban.selectors';
+import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
 
 @Injectable()
 export class KanbanEffects {
@@ -77,8 +82,11 @@ export class KanbanEffects {
           return this.projectApiService
             .createTask(task, project.slug, workflow)
             .pipe(
-              map((task) => {
-                return KanbanApiActions.createTasksSuccess({ task });
+              map((newTask) => {
+                return KanbanApiActions.createTaskSuccess({
+                  task: newTask,
+                  tmpId: task.tmpId,
+                });
               })
             );
         },
@@ -87,7 +95,7 @@ export class KanbanEffects {
             this.appService.errorManagement(httpResponse);
           }
 
-          return KanbanApiActions.createTasksError({
+          return KanbanApiActions.createTaskError({
             status: httpResponse.status,
             task: action.task,
           });
@@ -98,7 +106,7 @@ export class KanbanEffects {
 
   public createTaskError$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(KanbanApiActions.createTasksError),
+      ofType(KanbanApiActions.createTaskError),
       filter((error) => error.status === 401),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
@@ -111,6 +119,21 @@ export class KanbanEffects {
         });
 
         return fetchProject({ slug: project.slug });
+      })
+    );
+  });
+
+  // Remove the task from the global state after a while to prevent animate old tasks.
+  // Example: the new task is in the scroll bottom, if the reference is not deleted is going
+  // to be animate when it appears on the screen.
+  public newTaskByEventAnimation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanEventsActions.newTask),
+      delay(KanbanStatusComponent.slideInTime + 1),
+      map((action) => {
+        return KanbanActions.timeoutAnimationEventNewTask({
+          reference: action.task.reference,
+        });
       })
     );
   });

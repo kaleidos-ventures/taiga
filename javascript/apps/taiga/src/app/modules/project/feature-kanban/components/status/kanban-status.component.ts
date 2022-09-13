@@ -25,6 +25,7 @@ import { RxState } from '@rx-angular/state';
 import { Store } from '@ngrx/store';
 import {
   selectLoadingTasks,
+  selectNewEventTasks,
   selectStatusFormOpen,
   selectStatusNewTasks,
   selectTasks,
@@ -36,6 +37,7 @@ import { KanbanTask } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StatusScrollDynamicHeight } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
 import { filterNil } from '~/app/shared/utils/operators';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 export interface KanbanComponentState {
   tasks: KanbanTask[];
@@ -45,6 +47,7 @@ export interface KanbanComponentState {
   showAddForm: boolean;
   emptyKanban: boolean | null;
   formAutoFocus: boolean;
+  newEventTasks: KanbanState['newEventTasks'];
 }
 
 @Component({
@@ -53,6 +56,23 @@ export interface KanbanComponentState {
   styleUrls: ['./kanban-status.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  animations: [
+    trigger('slideIn', [
+      transition('* => on', [
+        style({
+          opacity: 0,
+          transform: 'translateY(100%)',
+        }),
+        animate(
+          `${KanbanStatusComponent.slideInTime}ms ease-out`,
+          style({
+            opacity: 1,
+            transform: 'translateY(0%)',
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class KanbanStatusComponent
   implements
@@ -93,6 +113,7 @@ export class KanbanStatusComponent
     })
   );
 
+  public static slideInTime = 300;
   public color = '';
 
   private colors: Record<Status['color'], string> = {
@@ -121,10 +142,12 @@ export class KanbanStatusComponent
     private store: Store,
     private state: RxState<KanbanComponentState>
   ) {
-    this.state.set({ visible: false });
+    this.state.set({ visible: false, tasks: [] });
   }
 
   public ngOnInit(): void {
+    this.state.connect('newEventTasks', this.store.select(selectNewEventTasks));
+
     this.state.connect(
       'tasks',
       this.store.select(selectTasks).pipe(

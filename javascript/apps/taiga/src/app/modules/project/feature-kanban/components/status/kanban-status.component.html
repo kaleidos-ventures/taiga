@@ -40,6 +40,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   trackBy: trackBySlug
                 ">
                 <tg-kanban-task
+                  [@slideIn]="
+                    vm.newEventTasks.includes(task.reference) ? 'on' : 'off'
+                  "
                   [task]="task"
                   [index]="i"
                   [total]="vm.tasks.length"

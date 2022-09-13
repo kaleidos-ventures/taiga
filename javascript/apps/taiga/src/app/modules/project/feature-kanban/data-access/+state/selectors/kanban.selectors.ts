@@ -18,6 +18,7 @@ export const {
   selectCreateTaskForm,
   selectScrollToTask,
   selectEmpty,
+  selectNewEventTasks,
 } = kanbanFeature;
 
 export const selectStatusFormOpen = (statusSlug: Status['slug']) => {

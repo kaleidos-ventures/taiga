@@ -94,12 +94,20 @@ describe('ProjectEffects', () => {
 
     projectApiService.createTask.mockReturnValue(cold('-b|', { b: task }));
 
+    const tmpTask = {
+      tmpId: '1',
+      ...task,
+    };
+
     actions$ = hot('-a', {
-      a: KanbanActions.createTask({ task, workflow: 'main' }),
+      a: KanbanActions.createTask({
+        task: tmpTask,
+        workflow: 'main',
+      }),
     });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.createTasksSuccess({ task }),
+      a: KanbanApiActions.createTaskSuccess({ task, tmpId: '1' }),
     });
 
     expect(effects.createTask$).toBeObservable(expected);
@@ -115,14 +123,22 @@ describe('ProjectEffects', () => {
       status: 401,
     };
 
+    const tmpTask = {
+      tmpId: '1',
+      ...task,
+    };
+
     projectApiService.createTask.mockReturnValue(cold('-#|', {}, error));
 
     actions$ = hot('-a', {
-      a: KanbanActions.createTask({ task, workflow: 'main' }),
+      a: KanbanActions.createTask({ task: tmpTask, workflow: 'main' }),
     });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.createTasksError({ status: error.status, task }),
+      a: KanbanApiActions.createTaskError({
+        status: error.status,
+        task: tmpTask,
+      }),
     });
 
     expect(effects.createTask$).toBeObservable(expected);
@@ -141,7 +157,7 @@ describe('ProjectEffects', () => {
     store.overrideSelector(selectCurrentProject, project);
 
     actions$ = hot('-a', {
-      a: KanbanApiActions.createTasksError({ status: 401, task }),
+      a: KanbanApiActions.createTaskError({ status: 401, task }),
     });
 
     const expected = cold('-a', {

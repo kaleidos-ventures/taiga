@@ -6,17 +6,23 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { map } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { KanbanActions } from './data-access/+state/actions/kanban.actions';
+import { WsService } from '~/app/services/ws';
+import {
+  KanbanActions,
+  KanbanEventsActions,
+} from './data-access/+state/actions/kanban.actions';
 import { KanbanState } from './data-access/+state/reducers/kanban.reducer';
 import {
   selectLoadingWorkflows,
   selectWorkflows,
 } from './data-access/+state/selectors/kanban.selectors';
+import { Task } from '@taiga/data';
 
 interface ComponentState {
   loadingWorkflows: KanbanState['loadingWorkflows'];
@@ -24,6 +30,7 @@ interface ComponentState {
   invitePeopleModal: boolean;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'tg-project-feature-kanban',
   templateUrl: './project-feature-kanban.component.html',
@@ -50,7 +57,7 @@ export class ProjectFeatureKanbanComponent {
   constructor(
     private store: Store,
     private state: RxState<ComponentState>,
-    private el: ElementRef
+    private wsService: WsService
   ) {
     this.store.dispatch(KanbanActions.initKanban());
     this.checkInviteModalStatus();
@@ -59,6 +66,7 @@ export class ProjectFeatureKanbanComponent {
       this.store.select(selectLoadingWorkflows)
     );
     this.state.connect('workflows', this.store.select(selectWorkflows));
+    this.events();
   }
 
   public project$ = this.store.select(selectCurrentProject);
@@ -69,6 +77,17 @@ export class ProjectFeatureKanbanComponent {
 
   public trackBySlug(_index: number, obj: { slug: string }) {
     return obj.slug;
+  }
+
+  private events() {
+    this.wsService
+      .projectEvents<Task>('projecttasks.create')
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => {
+        this.store.dispatch(
+          KanbanEventsActions.newTask({ task: msg.event.content })
+        );
+      });
   }
 
   private checkInviteModalStatus() {

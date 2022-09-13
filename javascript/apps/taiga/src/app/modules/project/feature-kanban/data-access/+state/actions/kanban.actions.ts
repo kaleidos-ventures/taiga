@@ -20,10 +20,13 @@ export const KanbanActions = createActionGroup({
     'Open Create Task form': props<{ status: Status['slug'] }>(),
     'Close Create Task form': emptyProps(),
     'Create Task': props<{
-      task: KanbanTask;
+      task: PartialTask;
       workflow: Workflow['slug'];
     }>(),
     'Scrolled To New Task': props<{ tmpId: PartialTask['tmpId'] }>(),
+    'Timeout Animation Event New Task': props<{
+      reference: Task['reference'];
+    }>(),
   },
 });
 
@@ -32,7 +35,17 @@ export const KanbanApiActions = createActionGroup({
   events: {
     'Fetch Workflows Success': props<{ workflows: Workflow[] }>(),
     'Fetch Tasks Success': props<{ tasks: Task[]; offset: number }>(),
-    'Create Tasks Success': props<{ task: Task }>(),
-    'Create Tasks Error': props<{ status: number; task: KanbanTask }>(),
+    'Create Task Success': props<{
+      task: Task;
+      tmpId: PartialTask['tmpId'];
+    }>(),
+    'Create Task Error': props<{ status: number; task: KanbanTask }>(),
+  },
+});
+
+export const KanbanEventsActions = createActionGroup({
+  source: 'Kanban Event',
+  events: {
+    'New Task': props<{ task: Task }>(),
   },
 });

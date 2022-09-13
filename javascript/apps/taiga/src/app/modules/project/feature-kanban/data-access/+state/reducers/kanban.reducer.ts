@@ -9,7 +9,14 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { Workflow, Status } from '@taiga/data';
 import { immerReducer } from '~/app/shared/utils/store';
-import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';
+import {
+  KanbanActions,
+  KanbanApiActions,
+  KanbanEventsActions,
+} from '../actions/kanban.actions';
+
+import { Task } from '@taiga/data';
+
 import {
   KanbanTask,
   PartialTask,
@@ -23,6 +30,7 @@ export interface KanbanState {
   createTaskForm: Status['slug'];
   scrollToTask: PartialTask['tmpId'][];
   empty: boolean | null;
+  newEventTasks: Task['reference'][];
 }
 
 export const initialKanbanState: KanbanState = {
@@ -33,6 +41,7 @@ export const initialKanbanState: KanbanState = {
   createTaskForm: '',
   scrollToTask: [],
   empty: null,
+  newEventTasks: [],
 };
 
 export const reducer = createReducer(
@@ -116,22 +125,24 @@ export const reducer = createReducer(
       return state;
     }
   ),
-  on(KanbanApiActions.createTasksSuccess, (state, { task }): KanbanState => {
-    // todo: title bad idea, waiting for back id
-    state.tasks[task.status] = state.tasks[task.status].map((it) => {
-      return it.name === task.name ? task : it;
-    });
-
-    return state;
-  }),
-  on(KanbanApiActions.createTasksError, (state, { task }): KanbanState => {
-    if ('tmpId' in task) {
-      state.tasks[task.status] = state.tasks[task.status].filter((it) => {
-        if ('tmpId' in it && it.tmpId === task.tmpId) {
-          return false;
+  on(
+    KanbanApiActions.createTaskSuccess,
+    (state, { task, tmpId }): KanbanState => {
+      state.tasks[task.status] = state.tasks[task.status].map((it) => {
+        if ('tmpId' in it) {
+          return it.tmpId === tmpId ? task : it;
         }
 
-        return true;
+        return it;
+      });
+
+      return state;
+    }
+  ),
+  on(KanbanApiActions.createTaskError, (state, { task }): KanbanState => {
+    if ('tmpId' in task) {
+      state.tasks[task.status] = state.tasks[task.status].filter((it) => {
+        return !('tmpId' in it && it.tmpId === task.tmpId);
       });
     }
 
@@ -141,7 +152,24 @@ export const reducer = createReducer(
     state.scrollToTask = state.scrollToTask.filter((it) => it !== tmpId);
 
     return state;
-  })
+  }),
+  on(KanbanEventsActions.newTask, (state, { task }): KanbanState => {
+    state.tasks[task.status].push(task);
+
+    state.newEventTasks.push(task.reference);
+
+    return state;
+  }),
+  on(
+    KanbanActions.timeoutAnimationEventNewTask,
+    (state, { reference }): KanbanState => {
+      state.newEventTasks = state.newEventTasks.filter((it) => {
+        return it !== reference;
+      });
+
+      return state;
+    }
+  )
 );
 
 export const kanbanFeature = createFeature({

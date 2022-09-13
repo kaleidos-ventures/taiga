@@ -6,9 +6,11 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.events import events_manager
-from taiga.projects.models import ProjectMembership
+from taiga.projects.models import ProjectMembership, ProjectRole
+from taiga.roles.serializers import BaseProjectRoleSerializer
 
 UPDATE_PROJECT_MEMBERSHIP = "projectmemberships.update"
+UPDATE_PROJECT_ROLE_PERMISSIONS = "projectroles.update"
 
 
 async def emit_event_when_project_membership_is_updated(membership: ProjectMembership) -> None:
@@ -17,3 +19,15 @@ async def emit_event_when_project_membership_is_updated(membership: ProjectMembe
     )
 
     await events_manager.publish_on_project_channel(project=membership.project, type=UPDATE_PROJECT_MEMBERSHIP)
+
+
+async def emit_event_when_project_role_permissions_are_updated(role: ProjectRole) -> None:
+    """
+    This event is emitted whenever the permissions list changes for a role
+    :param role: The project role affected by the permission change
+    """
+    await events_manager.publish_on_project_channel(
+        project=role.project,
+        type=UPDATE_PROJECT_ROLE_PERMISSIONS,
+        content=BaseProjectRoleSerializer(name=role.name, slug=role.slug, is_admin=role.is_admin).dict(),
+    )

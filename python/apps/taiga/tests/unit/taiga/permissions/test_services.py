@@ -75,52 +75,86 @@ async def test_is_workspace_admin_being_workspace_member():
 
 
 #####################################################
-# user_has_perm
+# get_user_permissions
 #####################################################
 
 
-async def test_user_has_perm_without_perm():
+async def test_get_user_permissions_without_object():
     user = await f.create_user()
-    project = await f.create_project(owner=user)
 
-    assert await services.user_has_perm(user=user, perm=None, obj=project) is False
+    assert await services.get_user_permissions(user=user, obj=None) == []
 
 
-async def test_user_has_perm_being_project_admin():
+async def test_get_user_permissions_with_project():
     user = await f.create_user()
-    project = await f.create_project(owner=user)
-    perm = "view_story"
-
-    assert await services.user_has_perm(user=user, perm=perm, obj=project) is True
-
-
-async def test_user_has_perm_being_project_member():
     project = await f.create_project()
-    general_member_role = await f.create_project_role(
-        project=project,
-        permissions=choices.ProjectPermissions.values,
-        is_admin=False,
-    )
+    perms = choices.ProjectPermissions.values
+
+    with (
+        patch("taiga.permissions.services.get_user_permissions_for_project", return_value=perms),
+        patch("taiga.permissions.services.get_user_permissions_for_workspace"),
+    ):
+        assert await services.get_user_permissions(user=user, obj=project) == perms
+        services.get_user_permissions_for_project.assert_awaited()
+        services.get_user_permissions_for_workspace.assert_not_awaited()
+
+
+async def test_get_user_permissions_with_workspace():
     user = await f.create_user()
-    view_perm = "view_story"
-    await f.create_project_membership(user=user, project=project, role=general_member_role)
+    workspace = await f.create_workspace(owner=user)
+    perms = choices.WorkspacePermissions.values
 
-    assert await services.user_has_perm(user=user, perm=view_perm, obj=project) is True
+    with (
+        patch("taiga.permissions.services.get_user_permissions_for_workspace", return_value=perms),
+        patch("taiga.permissions.services.get_user_permissions_for_project"),
+    ):
+        assert await services.get_user_permissions(user=user, obj=workspace) == perms
+        services.get_user_permissions_for_workspace.assert_awaited()
+        services.get_user_permissions_for_project.assert_not_awaited()
 
 
-async def test_user_has_perm_not_being_project_member():
-    project = await f.create_project()
-    user = await f.create_user()
-    perm = "view_story"
-
-    assert await services.user_has_perm(user=user, perm=perm, obj=project) is False
+#####################################################
+# user_has_perm
+#####################################################
 
 
 async def test_user_has_perm_without_workspace_and_project():
     user = await f.create_user()
     perm = "view_story"
 
-    assert await services.user_has_perm(user=user, perm=perm, obj=None) is False
+    with patch("taiga.permissions.services.get_user_permissions", return_value=[]):
+        assert await services.user_has_perm(user=user, perm=perm, obj=None) is False
+        services.get_user_permissions.assert_awaited_once_with(user=user, obj=None)
+
+
+async def test_user_has_perm_without_perm():
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+    perm = []
+
+    with patch("taiga.permissions.services.get_user_permissions", return_value=[]):
+        assert await services.user_has_perm(user=user, perm=perm, obj=project) is False
+        services.get_user_permissions.assert_awaited_once_with(user=user, obj=project)
+
+
+async def test_user_has_perm_with_project_ok():
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+    perm = "view_story"
+
+    with patch("taiga.permissions.services.get_user_permissions", return_value=[perm]):
+        assert await services.user_has_perm(user=user, perm=perm, obj=project) is True
+        services.get_user_permissions.assert_awaited_once_with(user=user, obj=project)
+
+
+async def test_user_has_perm_with_workspace_ok():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+    perm = "view_story"
+
+    with patch("taiga.permissions.services.get_user_permissions", return_value=[perm]):
+        assert await services.user_has_perm(user=user, perm=perm, obj=workspace) is True
+        services.get_user_permissions.assert_awaited_once_with(user=user, obj=workspace)
 
 
 #####################################################
@@ -128,21 +162,33 @@ async def test_user_has_perm_without_workspace_and_project():
 #####################################################
 
 
+async def test_user_can_view_project_ok():
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+    perms = ["view_story"]
+
+    with patch("taiga.permissions.services.get_user_permissions", return_value=perms):
+        assert await services.user_can_view_project(user=user, obj=project) is True
+        services.get_user_permissions.assert_awaited_once_with(user=user, obj=project)
+
+
 async def test_user_can_view_project_without_project():
     user = await f.create_user()
-    project = await f.create_project()
-    with patch.object(services, "_get_object_project", return_value=None):
-        # no project to verify permissions with (permission denied)
-        assert await services.user_can_view_project(user=user, obj=project) is False
+    no_perms = []
+
+    with patch("taiga.permissions.services.get_user_permissions", return_value=no_perms):
+        assert await services.user_can_view_project(user=user, obj=None) is False
+        services.get_user_permissions.assert_awaited_once_with(user=user, obj=None)
 
 
 async def test_user_can_view_project_being_a_team_member():
     user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
-    project = await f.create_project(workspace=workspace, owner=user)
+    project = await f.create_project(owner=user)
+    perms = choices.EditStoryPermissions.values
 
-    # the user is a project member (permission granted)
-    assert await services.user_can_view_project(user=user, obj=project) is True
+    with patch("taiga.permissions.services.get_user_permissions", return_value=perms):
+        assert await services.user_can_view_project(user=user, obj=project) is True
+        services.get_user_permissions.assert_awaited_once_with(user=user, obj=project)
 
 
 #####################################################
@@ -196,6 +242,16 @@ async def test_get_user_permissions_for_project():
 
     params = [False, False, False, False, False, [], project]
     assert await services.get_user_permissions_for_project(*params) == project.anon_permissions
+
+
+#####################################################
+# get_user_permissions_for_workspace
+#####################################################
+
+
+async def test_get_user_permissions_for_workspace():
+    workspace_role_permissions = choices.WorkspacePermissions.values
+    assert await services.get_user_permissions_for_workspace(workspace_role_permissions) == workspace_role_permissions
 
 
 #####################################################

@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9b773a81-3dcd-43c7-b882-75b766eea80c",
+		"_postman_id": "019a9b6c-b306-4bad-9922-960dce176345",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "15018493"
+		"_exporter_id": "3299216"
 	},
 	"item": [
 		{
@@ -1876,6 +1876,49 @@
 								"my",
 								"workspaces",
 								"{{ws-slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "my project permissions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/projects/{{pj-slug}}/permissions",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"projects",
+								"{{pj-slug}}",
+								"permissions"
 							]
 						}
 					},

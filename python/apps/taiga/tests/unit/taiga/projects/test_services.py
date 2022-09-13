@@ -188,27 +188,39 @@ async def test_update_project_public_permissions_ok():
     project = await f.create_project()
     permissions = ["add_task", "view_task", "modify_story", "view_story"]
 
-    with patch("taiga.projects.services.projects_repositories", autospec=True) as fake_project_repository:
+    with (
+        patch("taiga.projects.services.projects_events", autospec=True) as fake_projects_events,
+        patch("taiga.projects.services.projects_repositories", autospec=True) as fake_project_repository,
+    ):
         await services.update_project_public_permissions(project=project, permissions=permissions)
         fake_project_repository.update_project_public_permissions.assert_awaited_once_with(
             project=project, permissions=permissions
         )
+        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_awaited_with(project=project)
 
 
 async def test_update_project_public_permissions_not_valid():
     project = await f.create_project()
     not_valid_permissions = ["invalid_permission", "other_not_valid", "add_story"]
 
-    with pytest.raises(ex.NotValidPermissionsSetError):
+    with (
+        patch("taiga.projects.services.projects_events", autospec=True) as fake_projects_events,
+        pytest.raises(ex.NotValidPermissionsSetError),
+    ):
         await services.update_project_public_permissions(project=project, permissions=not_valid_permissions)
+        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
 
 
 async def test_update_project_public_permissions_incompatible():
     project = await f.create_project()
     incompatible_permissions = ["view_task"]
 
-    with pytest.raises(ex.IncompatiblePermissionsSetError):
+    with (
+        patch("taiga.projects.services.projects_events", autospec=True) as fake_projects_events,
+        pytest.raises(ex.IncompatiblePermissionsSetError),
+    ):
         await services.update_project_public_permissions(project=project, permissions=incompatible_permissions)
+        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
 
 
 ##########################################################
@@ -221,11 +233,15 @@ async def test_update_project_workspace_member_permissions_ok():
     project = await f.create_project(workspace=workspace)
     permissions = ["add_task", "view_task", "modify_story", "view_story"]
 
-    with patch("taiga.projects.services.projects_repositories", autospec=True) as fake_project_repository:
+    with (
+        patch("taiga.projects.services.projects_events", autospec=True) as fake_projects_events,
+        patch("taiga.projects.services.projects_repositories", autospec=True) as fake_project_repository,
+    ):
         await services.update_project_workspace_member_permissions(project=project, permissions=permissions)
         fake_project_repository.update_project_workspace_member_permissions.assert_awaited_once_with(
             project=project, permissions=permissions
         )
+        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_awaited_with(project=project)
 
 
 async def test_update_project_workspace_member_permissions_not_valid():
@@ -233,8 +249,12 @@ async def test_update_project_workspace_member_permissions_not_valid():
     project = await f.create_project(workspace=workspace)
     not_valid_permissions = ["invalid_permission", "other_not_valid", "add_story"]
 
-    with pytest.raises(ex.NotValidPermissionsSetError):
+    with (
+        patch("taiga.projects.services.projects_events", autospec=True) as fake_projects_events,
+        pytest.raises(ex.NotValidPermissionsSetError),
+    ):
         await services.update_project_workspace_member_permissions(project=project, permissions=not_valid_permissions)
+        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
 
 
 async def test_update_project_workspace_member_permissions_incompatible():
@@ -242,10 +262,14 @@ async def test_update_project_workspace_member_permissions_incompatible():
     project = await f.create_project(workspace=workspace)
     incompatible_permissions = ["view_task"]
 
-    with pytest.raises(ex.IncompatiblePermissionsSetError):
+    with (
+        patch("taiga.projects.services.projects_events", autospec=True) as fake_projects_events,
+        pytest.raises(ex.IncompatiblePermissionsSetError),
+    ):
         await services.update_project_workspace_member_permissions(
             project=project, permissions=incompatible_permissions
         )
+        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
 
 
 async def test_update_project_workspace_member_permissions_not_premium():
@@ -253,10 +277,14 @@ async def test_update_project_workspace_member_permissions_not_premium():
     project = await f.create_project(workspace=workspace)
     incompatible_permissions = ["view_story"]
 
-    with pytest.raises(ex.NotPremiumWorkspaceError):
+    with (
+        patch("taiga.projects.services.projects_events", autospec=True) as fake_projects_events,
+        pytest.raises(ex.NotPremiumWorkspaceError),
+    ):
         await services.update_project_workspace_member_permissions(
             project=project, permissions=incompatible_permissions
         )
+        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
 
 
 ##########################################################

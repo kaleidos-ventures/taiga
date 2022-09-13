@@ -42,13 +42,21 @@ async def is_workspace_admin(user: AnyUser, obj: Any) -> bool:
     return role.is_admin if role else False
 
 
-# TODO: improve tests
 async def user_has_perm(user: AnyUser, perm: str | None, obj: Any) -> bool:
+    return perm in await get_user_permissions(user=user, obj=obj)
+
+
+async def user_can_view_project(user: AnyUser, obj: Any) -> bool:
+    # TODO: this method it's NOT considering users with a pending invitation (this scenario should be included here)
+    return len(await get_user_permissions(user=user, obj=obj)) > 0
+
+
+async def get_user_permissions(user: AnyUser, obj: Any) -> list[str]:
     project = await _get_object_project(obj)
     workspace = await _get_object_workspace(obj)
 
     if not project and not workspace:
-        return False
+        return []
 
     is_workspace_admin, is_workspace_member, workspace_role_permissions = await get_user_workspace_role_info(
         user=user, workspace=workspace
@@ -71,34 +79,7 @@ async def user_has_perm(user: AnyUser, perm: str | None, obj: Any) -> bool:
             workspace_role_permissions=workspace_role_permissions
         )
 
-    return perm in user_permissions
-
-
-# TODO: improve tests
-async def user_can_view_project(user: AnyUser, obj: Any) -> bool:
-    project = await _get_object_project(obj)
-    if not project:
-        return False
-
-    is_project_admin, is_project_member, project_role_permissions = await get_user_project_role_info(
-        user=user, project=project
-    )
-    if is_project_member:
-        return True
-
-    is_workspace_admin, is_workspace_member, _ = await get_user_workspace_role_info(
-        user=user, workspace=project.workspace
-    )
-    user_permissions = await get_user_permissions_for_project(
-        is_project_admin=is_project_admin,
-        is_workspace_admin=is_workspace_admin,
-        is_project_member=is_project_member,
-        is_workspace_member=is_workspace_member,
-        is_authenticated=user.is_authenticated,
-        project_role_permissions=project_role_permissions,
-        project=project,
-    )
-    return len(user_permissions) > 0
+    return user_permissions
 
 
 @sync_to_async

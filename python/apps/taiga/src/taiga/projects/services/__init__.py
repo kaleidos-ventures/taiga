@@ -12,6 +12,7 @@ from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
 from taiga.invitations import repositories as invitations_repositories
 from taiga.permissions import services as permissions_services
+from taiga.projects import events as projects_events
 from taiga.projects import repositories as projects_repositories
 from taiga.projects.models import Project
 from taiga.projects.services import exceptions as ex
@@ -129,7 +130,14 @@ async def update_project_public_permissions(project: Project, permissions: list[
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
-    return await projects_repositories.update_project_public_permissions(project=project, permissions=permissions)
+    project_public_permissions = await projects_repositories.update_project_public_permissions(
+        project=project, permissions=permissions
+    )
+
+    # TODO: emit an event to users/project with the new permissions when a change happens?
+    await projects_events.emit_event_when_project_permissions_are_updated(project=project)
+
+    return project_public_permissions
 
 
 async def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:
@@ -142,9 +150,13 @@ async def update_project_workspace_member_permissions(project: Project, permissi
     if not await projects_repositories.project_is_in_premium_workspace(project):
         raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be set")
 
-    return await projects_repositories.update_project_workspace_member_permissions(
+    workspace_permissions = await projects_repositories.update_project_workspace_member_permissions(
         project=project, permissions=permissions
     )
+
+    await projects_events.emit_event_when_project_permissions_are_updated(project=project)
+
+    return workspace_permissions
 
 
 async def get_workspace_member_permissions(project: Project) -> list[str]:

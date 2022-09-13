@@ -10,9 +10,10 @@ from fastapi.params import Depends
 from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import Or, check_permissions
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
+from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422, ERROR_401
 from taiga.invitations.permissions import HasPendingProjectInvitation
 from taiga.permissions import CanViewProject, HasPerm, IsAuthenticated, IsProjectAdmin
+from taiga.permissions import services as permissions_services
 from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
@@ -200,3 +201,20 @@ async def get_project_or_404(slug: str) -> Project:
         raise ex.NotFoundError(f"Project {slug} does not exist")
 
     return project
+
+
+@routes.my.get(
+    "/projects/{slug}/permissions",
+    name="my.projects.permissions",
+    summary="List my project permissions",
+    response_model=list[str],
+    responses=ERROR_404,
+)
+async def list_my_project_permissions(
+    request: AuthRequest, slug: str = Query(None, description="the project slug (str)")
+) -> list[str]:
+    """
+    List the computed permissions a user has over a project.
+    """
+    project = await get_project_or_404(slug)
+    return await permissions_services.get_user_permissions(user=request.user, obj=project)

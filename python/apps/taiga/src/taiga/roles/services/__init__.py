@@ -38,7 +38,13 @@ async def update_project_role_permissions(role: ProjectRole, permissions: list[s
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
-    return await roles_repositories.update_project_role_permissions(role=role, permissions=permissions)
+    project_role_permissions = await (
+        roles_repositories.update_project_role_permissions(role=role, permissions=permissions)
+    )
+
+    await roles_events.emit_event_when_project_role_permissions_are_updated(role=role)
+
+    return project_role_permissions
 
 
 # ProjectMemberships

@@ -507,3 +507,25 @@ async def test_update_project_workspace_member_permissions_anonymous_user(client
 
     response = client.put(f"/projects/{project.slug}/workspace-member-permissions", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+##########################################################
+# GET /my/projects/<slug>/permissions
+##########################################################
+
+
+async def test_get_my_project_permissions_ok(client):
+    project = await f.create_project()
+
+    client.login(project.owner)
+    response = client.get(f"/my/projects/{project.slug}/permissions")
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_get_my_project_permissions_no_project(client):
+    user = await f.create_user()
+    wrong_pj_slug = "wrong_slug"
+
+    client.login(user)
+    response = client.get(f"/my/projects/{wrong_pj_slug}/permissions")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

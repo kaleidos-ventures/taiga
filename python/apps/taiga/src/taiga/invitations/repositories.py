@@ -26,27 +26,15 @@ def get_project_invitation(id: str | UUID) -> ProjectInvitation | None:
 
 
 @sync_to_async
-def get_project_invitation_by_email(
-    project_slug: str, email: str, status: ProjectInvitationStatus
-) -> ProjectInvitation | None:
-    try:
-        return ProjectInvitation.objects.select_related(
-            "user", "project", "project__workspace", "role", "invited_by"
-        ).get(project__slug=project_slug, email__iexact=email, status=status)
-    except ProjectInvitation.DoesNotExist:
-        return None
-
-
-@sync_to_async
 def get_project_invitation_by_username_or_email(
-    project_slug: str, username_or_email: str, status: ProjectInvitationStatus | None = None
+    project_slug: str, username_or_email: str, statuses: list[ProjectInvitationStatus] = []
 ) -> ProjectInvitation | None:
     by_user = Q(user__username__iexact=username_or_email) | Q(user__email__iexact=username_or_email)
     by_email = Q(user__isnull=True, email__iexact=username_or_email)
     by_project = Q(project__slug=project_slug)
     qs_filter = by_project & (by_user | by_email)
-    if status:
-        qs_filter = Q(status=status) & qs_filter
+    if statuses:
+        qs_filter = Q(status__in=statuses) & qs_filter
 
     try:
         return ProjectInvitation.objects.select_related(
@@ -148,7 +136,7 @@ def create_project_invitations(objs: list[ProjectInvitation]) -> list[ProjectInv
 @sync_to_async
 def update_project_invitations(objs: list[ProjectInvitation]) -> int:
     return ProjectInvitation.objects.select_related("user", "project", "project__workspace").bulk_update(
-        objs=objs, fields=["role", "invited_by", "num_emails_sent", "resent_at", "resent_by"]
+        objs=objs, fields=["role", "invited_by", "num_emails_sent", "resent_at", "resent_by", "status"]
     )
 
 

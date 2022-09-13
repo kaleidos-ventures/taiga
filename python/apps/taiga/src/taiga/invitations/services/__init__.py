@@ -124,6 +124,17 @@ async def _get_time_since_last_send(invitation: ProjectInvitation) -> int:
     return int((aware_utcnow() - last_send_at).total_seconds() / 60)  # in minutes
 
 
+async def _is_spam(invitation: ProjectInvitation) -> bool:
+    time_since_last_send = await _get_time_since_last_send(invitation)
+    if (
+        invitation.num_emails_sent < settings.PROJECT_INVITATION_RESEND_LIMIT
+        and time_since_last_send >= settings.PROJECT_INVITATION_RESEND_TIME
+    ):
+        return False
+
+    return True
+
+
 async def create_project_invitations(
     project: Project, invitations: list[dict[str, str]], invited_by: User
 ) -> CreateProjectInvitations:
@@ -184,24 +195,22 @@ async def create_project_invitations(
             already_members += 1
             continue
         email = user.email if user else key
-        pending_invitation = await invitations_repositories.get_project_invitation_by_email(
-            project_slug=project.slug, email=email, status=ProjectInvitationStatus.PENDING
-        )
-        if pending_invitation:
-            pending_invitation.role = project_roles_dict[role_slug]
-            pending_invitation.invited_by = invited_by
 
-            # To avoid spam
-            time_since_last_send = await _get_time_since_last_send(pending_invitation)
-            if (
-                pending_invitation.num_emails_sent < settings.PROJECT_INVITATION_RESEND_LIMIT
-                and time_since_last_send >= settings.PROJECT_INVITATION_RESEND_TIME
-            ):
-                pending_invitation.num_emails_sent += 1
-                pending_invitation.resent_at = aware_utcnow()
-                pending_invitation.resent_by = invited_by
-                invitations_to_send[email] = pending_invitation
-            invitations_to_update[email] = pending_invitation
+        invitation = await invitations_repositories.get_project_invitation_by_username_or_email(
+            project_slug=project.slug,
+            username_or_email=email,
+            statuses=[ProjectInvitationStatus.PENDING, ProjectInvitationStatus.REVOKED],
+        )
+
+        if invitation:
+            invitation.role = project_roles_dict[role_slug]
+            invitation.status = ProjectInvitationStatus.PENDING
+            if not await _is_spam(invitation):
+                invitation.num_emails_sent += 1
+                invitation.resent_at = aware_utcnow()
+                invitation.resent_by = invited_by
+                invitations_to_send[email] = invitation
+            invitations_to_update[email] = invitation
         else:
             new_invitation = ProjectInvitation(
                 user=user,
@@ -292,12 +301,7 @@ async def resend_project_invitation(invitation: ProjectInvitation, resent_by: Us
     if invitation.status == ProjectInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation has already been revoked")
 
-    # To avoid spam
-    time_since_last_send = await _get_time_since_last_send(invitation)
-    if (
-        invitation.num_emails_sent < settings.PROJECT_INVITATION_RESEND_LIMIT
-        and time_since_last_send >= settings.PROJECT_INVITATION_RESEND_TIME
-    ):
+    if not await _is_spam(invitation):
         await invitations_repositories.resend_project_invitation(invitation=invitation, resent_by=resent_by)
 
         await send_project_invitation_email(invitation=invitation, is_resend=True)

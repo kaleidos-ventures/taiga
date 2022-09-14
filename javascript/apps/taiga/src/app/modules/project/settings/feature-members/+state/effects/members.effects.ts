@@ -158,7 +158,13 @@ export class MembersEffects {
         run: (action, project) => {
           return this.projectApiService
             .revokeInvitation(project.slug, action.invitation.email)
-            .pipe(map(() => membersActions.revokeInvitationSuccess()));
+            .pipe(
+              map(() =>
+                membersActions.revokeInvitationSuccess({
+                  invitation: action.invitation,
+                })
+              )
+            );
         },
         undoAction: () => {
           this.appService.toastNotification({

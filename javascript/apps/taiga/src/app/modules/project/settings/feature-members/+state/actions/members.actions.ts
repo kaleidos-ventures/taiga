@@ -41,7 +41,9 @@ export const membersActions = createActionGroup({
     'Revoke invitation': props<{
       invitation: Invitation;
     }>(),
-    'Revoke invitation success': emptyProps(),
+    'Revoke invitation success': props<{
+      invitation: Invitation;
+    }>(),
     'Revoke invitation error': emptyProps(),
     'Cancel invitation UI': props<{
       invitation: Invitation;

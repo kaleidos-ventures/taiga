@@ -251,7 +251,9 @@ describe('MembersEffects', () => {
     });
 
     const expected = cold('--a', {
-      a: membersActions.revokeInvitationSuccess(),
+      a: membersActions.revokeInvitationSuccess({
+        invitation,
+      }),
     });
 
     expect(effects.revokeInvitation$).toBeObservable(expected);

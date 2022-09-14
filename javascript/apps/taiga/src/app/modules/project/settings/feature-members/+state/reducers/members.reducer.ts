@@ -167,7 +167,17 @@ export const reducer = createReducer(
   on(membersActions.animationUpdateDone, (state): MembersState => {
     state.invitationUpdateAnimation = null;
     return state;
-  })
+  }),
+  on(
+    membersActions.revokeInvitationSuccess,
+    (state, { invitation }): MembersState => {
+      state.cancelledInvitations = state.cancelledInvitations.filter(
+        (cancelled) => cancelled !== invitation.email
+      );
+
+      return state;
+    }
+  )
 );
 
 export const membersFeature = createFeature({

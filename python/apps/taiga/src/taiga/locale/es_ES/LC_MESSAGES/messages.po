@@ -61,7 +61,7 @@ msgstr "<strong>%(name)s</strong> te ha enviado una invitación para unirte a:"
 msgid "emails.project_invitation.taiga_description"
 msgstr ""
 "Taiga es una herramienta de Gestión Agile de Proyectos de Código Abierto."
-" No hay coste associados para ti ser un usuario de Taiga."
+" Ser usuario de Taiga no tiene ningún coste asociado para ti."
 
 #: taiga/emails/templates/project_invitation.html.jinja:542
 msgid "emails.project_invitation.accept"
@@ -104,7 +104,7 @@ msgstr "Reestablece tu contraseña"
 msgid "emails.reset_password.click_button"
 msgstr ""
 "Hemos recibido una petición para reestablecer tu contraseña. Haz click en"
-" el botón de abajopara elegir una nueva:"
+" el botón de abajo para elegir una nueva:"
 
 #: taiga/emails/templates/reset_password.html.jinja:490
 msgid "emails.reset_password.reset"
@@ -134,7 +134,7 @@ msgstr ""
 msgid "emails.reset_password.visit_link"
 msgstr ""
 "Hemos recibido una solicitud para restablecer tu contraseña. Visita esta "
-"url para elegir una nuevo:"
+"url para elegir una nueva:"
 
 #: taiga/emails/templates/sign_up.html.jinja:13
 #: taiga/emails/templates/sign_up.txt.jinja:11

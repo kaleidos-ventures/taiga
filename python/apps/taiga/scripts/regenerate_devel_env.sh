@@ -54,4 +54,6 @@ else
   python -m taiga loadfixtures initial_project_templates
   echo "-> Generate sample data"
   python -m taiga sampledata
+  echo "-> Compile translations"
+  python -m taiga i18n compile-catalog
 fi

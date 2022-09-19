@@ -24,30 +24,30 @@ import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
 import { RxState } from '@rx-angular/state';
 import { Store } from '@ngrx/store';
 import {
-  selectLoadingTasks,
-  selectNewEventTasks,
+  selectLoadingStories,
+  selectNewEventStories,
   selectStatusFormOpen,
-  selectStatusNewTasks,
-  selectTasks,
+  selectStatusNewStories,
+  selectStories,
 } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { distinctUntilChanged, map, takeUntil, timer } from 'rxjs';
 import { KanbanState } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
-import { KanbanTask } from '~/app/modules/project/feature-kanban/kanban.model';
+import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StatusScrollDynamicHeight } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
 import { filterNil } from '~/app/shared/utils/operators';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
 import { animate, style, transition, trigger } from '@angular/animations';
 
 export interface KanbanComponentState {
-  tasks: KanbanTask[];
+  stories: KanbanStory[];
   visible: boolean;
-  loadingTasks: KanbanState['loadingTasks'];
+  loadingStories: KanbanState['loadingStories'];
   canEdit: boolean;
   showAddForm: boolean;
   emptyKanban: boolean | null;
   formAutoFocus: boolean;
-  newEventTasks: KanbanState['newEventTasks'];
+  newEventStories: KanbanState['newEventStories'];
 }
 
 @Component({
@@ -103,11 +103,11 @@ export class KanbanStatusComponent
   public model$ = this.state.select().pipe(
     map((state) => {
       return {
-        // TODO: when design card is ready, calculate task height
-        itemHeights: state.tasks.map((task) => {
-          return 42 + (Math.ceil(task.name.length / 23) - 1) * 14;
+        // TODO: when design card is ready, calculate story height
+        itemHeights: state.stories.map((story) => {
+          return 42 + (Math.ceil(story.name.length / 23) - 1) * 14;
         }),
-        empty: state.loadingTasks ? false : !state.tasks.length,
+        empty: state.loadingStories ? false : !state.stories.length,
         ...state,
       };
     })
@@ -142,30 +142,36 @@ export class KanbanStatusComponent
     private store: Store,
     private state: RxState<KanbanComponentState>
   ) {
-    this.state.set({ visible: false, tasks: [] });
+    this.state.set({ visible: false, stories: [] });
   }
 
   public ngOnInit(): void {
-    this.state.connect('newEventTasks', this.store.select(selectNewEventTasks));
+    this.state.connect(
+      'newEventStories',
+      this.store.select(selectNewEventStories)
+    );
 
     this.state.connect(
-      'tasks',
-      this.store.select(selectTasks).pipe(
-        map((tasks) => {
-          return tasks[this.status.slug];
+      'stories',
+      this.store.select(selectStories).pipe(
+        map((stories) => {
+          return stories[this.status.slug];
         }),
         distinctUntilChanged()
       )
     );
 
-    this.state.connect('loadingTasks', this.store.select(selectLoadingTasks));
+    this.state.connect(
+      'loadingStories',
+      this.store.select(selectLoadingStories)
+    );
 
     this.state.connect(
       'showAddForm',
       this.store.select(selectStatusFormOpen(this.status.slug))
     );
 
-    this.watchNewTasks();
+    this.watchNewStories();
   }
 
   public onVisible() {
@@ -176,24 +182,24 @@ export class KanbanStatusComponent
     this.state.set({ visible: false });
   }
 
-  public addTask() {
+  public addStory() {
     this.state.set({ formAutoFocus: true });
 
     this.store.dispatch(
-      KanbanActions.openCreateTaskForm({ status: this.status.slug })
+      KanbanActions.openCreateStoryForm({ status: this.status.slug })
     );
   }
 
-  public cancelTaskCreate() {
-    this.store.dispatch(KanbanActions.closeCreateTaskForm());
+  public cancelStoryCreate() {
+    this.store.dispatch(KanbanActions.closeCreateStoryForm());
   }
 
-  public trackBySlug(_index: number, task: KanbanTask) {
-    if ('tmpId' in task) {
-      return task.tmpId;
+  public trackBySlug(_index: number, story: KanbanStory) {
+    if ('tmpId' in story) {
+      return story.tmpId;
     }
 
-    return task.slug;
+    return story.slug;
   }
 
   public ngOnChanges(changes: SimpleChanges) {
@@ -208,18 +214,18 @@ export class KanbanStatusComponent
     }
   }
 
-  private watchNewTasks() {
+  private watchNewStories() {
     this.state.hold(
       this.store
-        .select(selectStatusNewTasks(this.status.slug))
+        .select(selectStatusNewStories(this.status.slug))
         .pipe(filterNil()),
-      (newTask) => {
-        this.scrollToTask(newTask.tmpId);
+      (newStory) => {
+        this.scrollToStory(newStory.tmpId);
       }
     );
   }
 
-  private scrollToTask(tmpId: string) {
+  private scrollToStory(tmpId: string) {
     if (!this.kanbanVirtualScroll) {
       return;
     }
@@ -228,18 +234,18 @@ export class KanbanStatusComponent
 
     // #hack
     // listen for 500ms for changes in the viewport height to scroll bottom
-    // and make the new task visible
+    // and make the new story visible
     this.kanbanVirtualScroll.scrollStrategy.updatedItemHeights$
       .pipe(takeUntil(timer(500)))
       .subscribe(() => {
         const el = this.nativeElement.querySelector<HTMLElement>(
-          `tg-kanban-task[data-tmp-id="${tmpId}"]`
+          `tg-kanban-story[data-tmp-id="${tmpId}"]`
         );
 
         if (el) {
           requestAnimationFrame(() => {
             this.kanbanVirtualScroll.scrollStrategy.scrollTo({ bottom: 0 });
-            this.store.dispatch(KanbanActions.scrolledToNewTask({ tmpId }));
+            this.store.dispatch(KanbanActions.scrolledToNewStory({ tmpId }));
           });
         }
       });

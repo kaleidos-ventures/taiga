@@ -18,7 +18,7 @@ import {
   ProjectCreation,
   Role,
   Workflow,
-  Task,
+  Story,
 } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -285,39 +285,41 @@ export class ProjectApiService {
     );
   }
 
-  public getAllTasks(
+  public getAllStories(
     project: Project['slug'],
     workflow: Workflow['slug']
-  ): Observable<{ tasks: Task[]; offset: number }> {
+  ): Observable<{ stories: Story[]; offset: number }> {
     return new Observable((subscriber) => {
       const limit = 50;
       let offset = 0;
 
       const nextPage = () => {
-        this.getTasks(project, workflow, offset, limit).subscribe((tasks) => {
-          offset += tasks.length;
+        this.getStories(project, workflow, offset, limit).subscribe(
+          (stories) => {
+            offset += stories.length;
 
-          subscriber.next({ tasks, offset });
+            subscriber.next({ stories, offset });
 
-          if (tasks.length < limit) {
-            subscriber.complete();
-          } else {
-            nextPage();
+            if (stories.length < limit) {
+              subscriber.complete();
+            } else {
+              nextPage();
+            }
           }
-        });
+        );
       };
 
       nextPage();
     });
   }
 
-  public getTasks(
+  public getStories(
     project: Project['slug'],
     workflow: Workflow['slug'],
     offset: number,
     limit: number
-  ): Observable<Task[]> {
-    return this.http.get<Task[]>(
+  ): Observable<Story[]> {
+    return this.http.get<Story[]>(
       `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/tasks`,
       {
         params: {
@@ -328,12 +330,12 @@ export class ProjectApiService {
     );
   }
 
-  public createTask(
-    task: Partial<Task>,
+  public createStory(
+    task: Partial<Story>,
     project: Project['slug'],
     workflow: Workflow['slug']
-  ): Observable<Task> {
-    return this.http.post<Task>(
+  ): Observable<Story> {
+    return this.http.post<Story>(
       `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/tasks`,
       {
         name: task.name,

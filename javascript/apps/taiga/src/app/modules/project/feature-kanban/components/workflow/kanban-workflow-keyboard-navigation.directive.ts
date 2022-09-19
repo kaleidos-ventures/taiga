@@ -41,7 +41,7 @@ export class KanbanWorkflowKeyboardNavigationDirective {
     if (current.tagName === 'TG-KANBAN-STATUS') {
       this.statatusNavigation(current, key);
     } else if (current.tagName === 'A') {
-      this.taskNavigationHorizontal(current, key);
+      this.storyNavigationHorizontal(current, key);
     }
   }
 
@@ -52,7 +52,7 @@ export class KanbanWorkflowKeyboardNavigationDirective {
     key: 'ArrowUp' | 'ArrowDown'
   ): void {
     if (current.tagName === 'A') {
-      this.taskNavigationVertical(current, key);
+      this.storyNavigationVertical(current, key);
     }
   }
 
@@ -62,24 +62,24 @@ export class KanbanWorkflowKeyboardNavigationDirective {
     private translocoService: TranslocoService
   ) {}
 
-  private taskNavigationVertical(
+  private storyNavigationVertical(
     el: HTMLElement,
     key: 'ArrowUp' | 'ArrowDown'
   ) {
-    let nextTask;
+    let nextStory;
 
     if (key === 'ArrowDown') {
-      nextTask = el.parentElement?.nextElementSibling;
+      nextStory = el.parentElement?.nextElementSibling;
     } else {
-      nextTask = el.parentElement?.previousElementSibling;
+      nextStory = el.parentElement?.previousElementSibling;
     }
 
-    if (nextTask) {
-      nextTask.querySelector<HTMLElement>('a')!.focus();
+    if (nextStory) {
+      nextStory.querySelector<HTMLElement>('a')!.focus();
     }
   }
 
-  private taskNavigationHorizontal(
+  private storyNavigationHorizontal(
     el: HTMLElement,
     key: 'ArrowRight' | 'ArrowLeft'
   ) {
@@ -97,26 +97,26 @@ export class KanbanWorkflowKeyboardNavigationDirective {
 
     const nextStatus = statuses.find((it, index) => {
       if (index > currentStatusIndex) {
-        return it.querySelector('tg-kanban-task');
+        return it.querySelector('tg-kanban-story');
       }
 
       return false;
     });
 
-    const taskTop = el.getBoundingClientRect().top;
-    const taskBottom = el.getBoundingClientRect().bottom;
+    const storyTop = el.getBoundingClientRect().top;
+    const storyBottom = el.getBoundingClientRect().bottom;
 
     if (nextStatus) {
-      const tasks = Array.from(
-        nextStatus.querySelectorAll<HTMLElement>('tg-kanban-task')
+      const stories = Array.from(
+        nextStatus.querySelectorAll<HTMLElement>('tg-kanban-story')
       );
 
-      const nextTask = tasks.reduce<{
+      const nextStory = stories.reduce<{
         diff: number;
-        task: HTMLElement;
-      } | null>((taskCandidate, task) => {
-        let diffTop = task.getBoundingClientRect().top - taskTop;
-        let diffBotton = task.getBoundingClientRect().bottom - taskBottom;
+        story: HTMLElement;
+      } | null>((storyCandidate, story) => {
+        let diffTop = story.getBoundingClientRect().top - storyTop;
+        let diffBotton = story.getBoundingClientRect().bottom - storyBottom;
 
         if (diffTop < 0) {
           diffTop = -diffTop;
@@ -128,22 +128,22 @@ export class KanbanWorkflowKeyboardNavigationDirective {
 
         const diff = diffBotton + diffTop;
 
-        if (!taskCandidate) {
+        if (!storyCandidate) {
           return {
-            task,
+            story,
             diff,
           };
-        } else if (diff < taskCandidate.diff) {
+        } else if (diff < storyCandidate.diff) {
           return {
-            task,
+            story,
             diff,
           };
         }
 
-        return taskCandidate;
+        return storyCandidate;
       }, null);
 
-      if (nextTask) {
+      if (nextStory) {
         const nextStatusName =
           nextStatus.querySelector<HTMLElement>('.name')!.innerText;
 
@@ -156,9 +156,9 @@ export class KanbanWorkflowKeyboardNavigationDirective {
           )
           .then(
             () => {
-              // #hack, force the announcement to be made before the task title
+              // #hack, force the announcement to be made before the story title
               setTimeout(() => {
-                nextTask.task.querySelector<HTMLElement>('a')!.focus();
+                nextStory.story.querySelector<HTMLElement>('a')!.focus();
                 this.liveAnnouncer.clear();
               }, 50);
             },
@@ -210,6 +210,7 @@ export class KanbanWorkflowKeyboardNavigationDirective {
     if (component) {
       if (!inViewport(component.nativeElement)) {
         if (key === 'ArrowRight') {
+          // scroll only the enough to the status to be visible
           cdkScrollable.scrollTo({
             left: statusColumnSize - (viewportSize - position),
           });

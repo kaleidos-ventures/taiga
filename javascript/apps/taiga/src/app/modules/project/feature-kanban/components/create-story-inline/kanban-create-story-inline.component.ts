@@ -24,12 +24,12 @@ import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/
 import { v4 } from 'uuid';
 
 @Component({
-  selector: 'tg-create-task-inline',
-  templateUrl: './kanban-create-task-inline.component.html',
-  styleUrls: ['./kanban-create-task-inline.component.css'],
+  selector: 'tg-create-story-inline',
+  templateUrl: './kanban-create-story-inline.component.html',
+  styleUrls: ['./kanban-create-story-inline.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KanbanCreateTaskInlineComponent implements AfterViewInit {
+export class KanbanCreateStoryInlineComponent implements AfterViewInit {
   @Input()
   public status!: Status;
 
@@ -71,8 +71,8 @@ export class KanbanCreateTaskInlineComponent implements AfterViewInit {
 
     if (this.form.valid) {
       this.store.dispatch(
-        KanbanActions.createTask({
-          task: {
+        KanbanActions.createStory({
+          story: {
             tmpId: v4(),
             name: this.form.get('title')!.value,
             status: this.status.slug,

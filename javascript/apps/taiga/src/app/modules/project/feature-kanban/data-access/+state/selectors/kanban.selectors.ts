@@ -12,35 +12,39 @@ import { kanbanFeature } from '../reducers/kanban.reducer';
 
 export const {
   selectLoadingWorkflows,
-  selectLoadingTasks,
+  selectLoadingStories,
   selectWorkflows,
-  selectTasks,
-  selectCreateTaskForm,
-  selectScrollToTask,
+  selectStories,
+  selectCreateStoryForm,
+  selectScrollToStory,
   selectEmpty,
-  selectNewEventTasks,
+  selectNewEventStories,
 } = kanbanFeature;
 
 export const selectStatusFormOpen = (statusSlug: Status['slug']) => {
-  return createSelector(selectCreateTaskForm, (openForm) => {
+  return createSelector(selectCreateStoryForm, (openForm) => {
     return statusSlug === openForm;
   });
 };
 
-export const selectStatusNewTasks = (statusSlug: Status['slug']) => {
-  return createSelector(selectScrollToTask, selectTasks, (newTasks, tasks) => {
-    const task = tasks[statusSlug].find((task) => {
-      if ('tmpId' in task) {
-        return newTasks.includes(task.tmpId);
+export const selectStatusNewStories = (statusSlug: Status['slug']) => {
+  return createSelector(
+    selectScrollToStory,
+    selectStories,
+    (newStories, stories) => {
+      const story = stories[statusSlug].find((story) => {
+        if ('tmpId' in story) {
+          return newStories.includes(story.tmpId);
+        }
+
+        return false;
+      });
+
+      if (story && 'tmpId' in story) {
+        return story;
       }
 
-      return false;
-    });
-
-    if (task && 'tmpId' in task) {
-      return task;
+      return null;
     }
-
-    return null;
-  });
+  );
 };

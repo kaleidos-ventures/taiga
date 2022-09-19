@@ -7,17 +7,17 @@
  */
 
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { KanbanTask } from '~/app/modules/project/feature-kanban/kanban.model';
+import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 
 @Component({
-  selector: 'tg-kanban-task',
-  templateUrl: './kanban-task.component.html',
-  styleUrls: ['./kanban-task.component.css'],
+  selector: 'tg-kanban-story',
+  templateUrl: './kanban-story.component.html',
+  styleUrls: ['./kanban-story.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KanbanTaskComponent {
+export class KanbanStoryComponent {
   @Input()
-  public task!: KanbanTask;
+  public story!: KanbanStory;
 
   @Input()
   public index!: number;

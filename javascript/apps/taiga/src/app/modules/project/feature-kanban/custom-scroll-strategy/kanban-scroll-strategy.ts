@@ -77,7 +77,7 @@ export class KanbanVirtualScrollStrategy implements VirtualScrollStrategy {
     this.viewport?.scrollTo(options);
   }
 
-  // replace the estimate itemHeights by the rendered task height
+  // replace the estimate itemHeights by the rendered story height
   public checkRenderedContentSize() {
     if (this.viewport) {
       let dirty = false;
@@ -104,19 +104,19 @@ export class KanbanVirtualScrollStrategy implements VirtualScrollStrategy {
 
       const range = this.viewport.getRenderedRange();
 
-      const tasksHeight = Array.from(
+      const storiesHeight = Array.from(
         this.viewport.elementRef.nativeElement.querySelectorAll<HTMLElement>(
-          'tg-kanban-task'
+          'tg-kanban-story'
         )
-      ).map((task) => {
+      ).map((story) => {
         return (
-          task.getBoundingClientRect().height + this.getElementMargins(task)
+          story.getBoundingClientRect().height + this.getElementMargins(story)
         );
       });
 
       const itemHeights = this.itemHeights.map((height, index) => {
         if (index >= range.start && index < range.end) {
-          const renderHeight = tasksHeight[index - range.start];
+          const renderHeight = storiesHeight[index - range.start];
 
           if (renderHeight && height !== renderHeight) {
             dirty = true;

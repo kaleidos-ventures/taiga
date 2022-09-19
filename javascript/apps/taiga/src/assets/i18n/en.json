@@ -32,7 +32,7 @@
       "guest": "Guest"
     },
     "userstories": "User stories",
-    "tasks": "Tasks",
+    "stories": "Stories",
     "sprints": "Sprints",
     "your_user": "{{ name }} <strong class='is-self'>(You)</strong>"
   },

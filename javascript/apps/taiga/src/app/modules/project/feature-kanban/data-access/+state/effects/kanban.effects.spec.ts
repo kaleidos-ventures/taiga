@@ -18,7 +18,7 @@ import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';
 import { cold, hot } from 'jest-marbles';
 import {
   ProjectMockFactory,
-  TaskMockFactory,
+  StoryMockFactory,
   UserMockFactory,
   WorkflowMockFactory,
 } from '@taiga/data';
@@ -69,104 +69,104 @@ describe('ProjectEffects', () => {
     expect(effects.loadKanbanWorkflows$).toBeObservable(expected);
   });
 
-  it('load tasks', () => {
+  it('load stories', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(KanbanEffects);
-    const tasks = [TaskMockFactory()];
+    const stories = [StoryMockFactory()];
 
-    projectApiService.getAllTasks.mockReturnValue(
-      cold('-b|', { b: { tasks, offset: 0 } })
+    projectApiService.getAllStories.mockReturnValue(
+      cold('-b|', { b: { stories, offset: 0 } })
     );
 
     actions$ = hot('-a', { a: KanbanActions.initKanban() });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.fetchTasksSuccess({ tasks, offset: 0 }),
+      a: KanbanApiActions.fetchStoriesSuccess({ stories, offset: 0 }),
     });
 
-    expect(effects.loadKanbanTasks$).toBeObservable(expected);
+    expect(effects.loadKanbanStories$).toBeObservable(expected);
   });
 
-  it('create task', () => {
+  it('create story', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(KanbanEffects);
-    const task = TaskMockFactory();
+    const story = StoryMockFactory();
 
-    projectApiService.createTask.mockReturnValue(cold('-b|', { b: task }));
+    projectApiService.createStory.mockReturnValue(cold('-b|', { b: story }));
 
-    const tmpTask = {
+    const tmpStory = {
       tmpId: '1',
-      ...task,
+      ...story,
     };
 
     actions$ = hot('-a', {
-      a: KanbanActions.createTask({
-        task: tmpTask,
+      a: KanbanActions.createStory({
+        story: tmpStory,
         workflow: 'main',
       }),
     });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.createTaskSuccess({ task, tmpId: '1' }),
+      a: KanbanApiActions.createStorySuccess({ story, tmpId: '1' }),
     });
 
-    expect(effects.createTask$).toBeObservable(expected);
+    expect(effects.createStory$).toBeObservable(expected);
   });
 
-  it('create task error', () => {
+  it('create story error', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(KanbanEffects);
     const appService = spectator.inject(AppService);
-    const task = TaskMockFactory();
+    const story = StoryMockFactory();
 
     const error = {
       status: 401,
     };
 
-    const tmpTask = {
+    const tmpStory = {
       tmpId: '1',
-      ...task,
+      ...story,
     };
 
-    projectApiService.createTask.mockReturnValue(cold('-#|', {}, error));
+    projectApiService.createStory.mockReturnValue(cold('-#|', {}, error));
 
     actions$ = hot('-a', {
-      a: KanbanActions.createTask({ task: tmpTask, workflow: 'main' }),
+      a: KanbanActions.createStory({ story: tmpStory, workflow: 'main' }),
     });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.createTaskError({
+      a: KanbanApiActions.createStoryError({
         status: error.status,
-        task: tmpTask,
+        story: tmpStory,
       }),
     });
 
-    expect(effects.createTask$).toBeObservable(expected);
+    expect(effects.createStory$).toBeObservable(expected);
 
-    expect(effects.createTask$).toSatisfyOnFlush(() => {
+    expect(effects.createStory$).toSatisfyOnFlush(() => {
       expect(appService.toastNotification).not.toHaveBeenCalled();
     });
   });
 
-  it('create task error notification', () => {
+  it('create story error notification', () => {
     const project = ProjectMockFactory();
     const effects = spectator.inject(KanbanEffects);
     const appService = spectator.inject(AppService);
-    const task = TaskMockFactory();
+    const story = StoryMockFactory();
 
     store.overrideSelector(selectCurrentProject, project);
 
     actions$ = hot('-a', {
-      a: KanbanApiActions.createTaskError({ status: 401, task }),
+      a: KanbanApiActions.createStoryError({ status: 401, story }),
     });
 
     const expected = cold('-a', {
       a: fetchProject({ slug: project.slug }),
     });
 
-    expect(effects.createTaskError$).toBeObservable(expected);
+    expect(effects.createStoryError$).toBeObservable(expected);
 
-    expect(effects.createTaskError$).toSatisfyOnFlush(() => {
+    expect(effects.createStoryError$).toSatisfyOnFlush(() => {
       expect(appService.toastNotification).toHaveBeenCalled();
     });
   });

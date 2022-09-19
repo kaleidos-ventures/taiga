@@ -10,7 +10,7 @@ import { Project } from './project.model';
 import { Status } from './status.model';
 import { Workflow } from './workflow.model';
 
-export interface Task {
+export interface Story {
   reference: number;
   name: string;
   slug: string;

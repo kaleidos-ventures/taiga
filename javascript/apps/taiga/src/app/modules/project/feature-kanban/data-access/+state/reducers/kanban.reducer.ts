@@ -15,64 +15,64 @@ import {
   KanbanEventsActions,
 } from '../actions/kanban.actions';
 
-import { Task } from '@taiga/data';
+import { Story } from '@taiga/data';
 
 import {
-  KanbanTask,
-  PartialTask,
+  KanbanStory,
+  PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
 
 export interface KanbanState {
   loadingWorkflows: boolean;
-  loadingTasks: boolean;
+  loadingStories: boolean;
   workflows: null | Workflow[];
-  tasks: Record<Status['slug'], KanbanTask[]>;
-  createTaskForm: Status['slug'];
-  scrollToTask: PartialTask['tmpId'][];
+  stories: Record<Status['slug'], KanbanStory[]>;
+  createStoryForm: Status['slug'];
+  scrollToStory: PartialStory['tmpId'][];
   empty: boolean | null;
-  newEventTasks: Task['reference'][];
+  newEventStories: Story['reference'][];
 }
 
 export const initialKanbanState: KanbanState = {
   loadingWorkflows: false,
-  loadingTasks: false,
+  loadingStories: false,
   workflows: null,
-  tasks: {},
-  createTaskForm: '',
-  scrollToTask: [],
+  stories: {},
+  createStoryForm: '',
+  scrollToStory: [],
   empty: null,
-  newEventTasks: [],
+  newEventStories: [],
 };
 
 export const reducer = createReducer(
   initialKanbanState,
   on(KanbanActions.initKanban, (state): KanbanState => {
     state.workflows = null;
-    state.tasks = {};
+    state.stories = {};
     state.loadingWorkflows = true;
-    state.loadingTasks = true;
-    state.scrollToTask = [];
-    state.createTaskForm = '';
+    state.loadingStories = true;
+    state.scrollToStory = [];
+    state.createStoryForm = '';
     state.empty = null;
 
     return state;
   }),
-  on(KanbanActions.openCreateTaskForm, (state, { status }): KanbanState => {
-    state.createTaskForm = status;
+  on(KanbanActions.openCreateStoryForm, (state, { status }): KanbanState => {
+    state.createStoryForm = status;
 
     return state;
   }),
-  on(KanbanActions.closeCreateTaskForm, (state): KanbanState => {
-    state.createTaskForm = '';
+  on(KanbanActions.closeCreateStoryForm, (state): KanbanState => {
+    state.createStoryForm = '';
 
     return state;
   }),
-  on(KanbanActions.createTask, (state, { task }): KanbanState => {
-    if ('tmpId' in task) {
-      state.scrollToTask.push(task.tmpId);
+  on(KanbanActions.createStory, (state, { story }): KanbanState => {
+    if ('tmpId' in story) {
+      state.scrollToStory.push(story.tmpId);
     }
 
-    state.tasks[task.status].push(task);
+    state.stories[story.status].push(story);
 
     return state;
   }),
@@ -84,53 +84,53 @@ export const reducer = createReducer(
 
       workflows.forEach((workflow) => {
         workflow.statuses.forEach((status) => {
-          if (!state.tasks[status.slug]) {
-            state.tasks[status.slug] = [];
+          if (!state.stories[status.slug]) {
+            state.stories[status.slug] = [];
           }
         });
       });
 
       if (state.empty !== null && state.empty) {
         // open the first form if the kanban is empty
-        state.createTaskForm = state.workflows[0].statuses[0].slug;
+        state.createStoryForm = state.workflows[0].statuses[0].slug;
       }
 
       return state;
     }
   ),
   on(
-    KanbanApiActions.fetchTasksSuccess,
-    (state, { tasks, offset }): KanbanState => {
-      tasks.forEach((task) => {
-        if (!state.tasks[task.status]) {
-          state.tasks[task.status] = [];
+    KanbanApiActions.fetchStoriesSuccess,
+    (state, { stories, offset }): KanbanState => {
+      stories.forEach((story) => {
+        if (!state.stories[story.status]) {
+          state.stories[story.status] = [];
         }
 
-        state.tasks[task.status].push(task);
+        state.stories[story.status].push(story);
       });
 
-      state.loadingTasks = false;
+      state.loadingStories = false;
 
       if (!offset) {
-        state.empty = !tasks.length;
+        state.empty = !stories.length;
       }
 
       if (state.empty && state.workflows) {
         // open the first form if the kanban is empty
-        state.createTaskForm = state.workflows[0].statuses[0].slug;
+        state.createStoryForm = state.workflows[0].statuses[0].slug;
       } else {
-        state.createTaskForm = '';
+        state.createStoryForm = '';
       }
 
       return state;
     }
   ),
   on(
-    KanbanApiActions.createTaskSuccess,
-    (state, { task, tmpId }): KanbanState => {
-      state.tasks[task.status] = state.tasks[task.status].map((it) => {
+    KanbanApiActions.createStorySuccess,
+    (state, { story, tmpId }): KanbanState => {
+      state.stories[story.status] = state.stories[story.status].map((it) => {
         if ('tmpId' in it) {
-          return it.tmpId === tmpId ? task : it;
+          return it.tmpId === tmpId ? story : it;
         }
 
         return it;
@@ -139,31 +139,31 @@ export const reducer = createReducer(
       return state;
     }
   ),
-  on(KanbanApiActions.createTaskError, (state, { task }): KanbanState => {
-    if ('tmpId' in task) {
-      state.tasks[task.status] = state.tasks[task.status].filter((it) => {
-        return !('tmpId' in it && it.tmpId === task.tmpId);
+  on(KanbanApiActions.createStoryError, (state, { story }): KanbanState => {
+    if ('tmpId' in story) {
+      state.stories[story.status] = state.stories[story.status].filter((it) => {
+        return !('tmpId' in it && it.tmpId === story.tmpId);
       });
     }
 
     return state;
   }),
-  on(KanbanActions.scrolledToNewTask, (state, { tmpId }): KanbanState => {
-    state.scrollToTask = state.scrollToTask.filter((it) => it !== tmpId);
+  on(KanbanActions.scrolledToNewStory, (state, { tmpId }): KanbanState => {
+    state.scrollToStory = state.scrollToStory.filter((it) => it !== tmpId);
 
     return state;
   }),
-  on(KanbanEventsActions.newTask, (state, { task }): KanbanState => {
-    state.tasks[task.status].push(task);
+  on(KanbanEventsActions.newStory, (state, { story }): KanbanState => {
+    state.stories[story.status].push(story);
 
-    state.newEventTasks.push(task.reference);
+    state.newEventStories.push(story.reference);
 
     return state;
   }),
   on(
-    KanbanActions.timeoutAnimationEventNewTask,
+    KanbanActions.timeoutAnimationEventNewStory,
     (state, { reference }): KanbanState => {
-      state.newEventTasks = state.newEventTasks.filter((it) => {
+      state.newEventStories = state.newEventStories.filter((it) => {
         return it !== reference;
       });
 

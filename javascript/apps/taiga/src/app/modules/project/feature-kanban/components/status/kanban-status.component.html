@@ -22,11 +22,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [style.border-color]="color"></div>
         <div class="name">{{ status.name }}</div>
       </div>
-      <ng-container *ngIf="vm.visible && !vm.loadingTasks">
+      <ng-container *ngIf="vm.visible && !vm.loadingStories">
         <div
-          *ngIf="vm.tasks.length"
-          class="tasks"
-          [tgScrollDynamicHeight]="vm.tasks">
+          *ngIf="vm.stories.length"
+          class="stories"
+          [tgScrollDynamicHeight]="vm.stories">
           <tui-scrollbar>
             <cdk-virtual-scroll-viewport
               tuiScrollable
@@ -35,46 +35,46 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               class="tui-zero-scrollbar">
               <ng-container
                 *cdkVirtualFor="
-                  let task of vm.tasks;
+                  let story of vm.stories;
                   let i = index;
                   trackBy: trackBySlug
                 ">
-                <tg-kanban-task
+                <tg-kanban-story
                   [@slideIn]="
-                    vm.newEventTasks.includes(task.reference) ? 'on' : 'off'
+                    vm.newEventStories.includes(story.reference) ? 'on' : 'off'
                   "
-                  [task]="task"
+                  [story]="story"
                   [index]="i"
-                  [total]="vm.tasks.length"
-                  [attr.data-tmp-id]="task.tmpId"></tg-kanban-task>
+                  [total]="vm.stories.length"
+                  [attr.data-tmp-id]="story.tmpId"></tg-kanban-story>
               </ng-container>
             </cdk-virtual-scroll-viewport>
           </tui-scrollbar>
         </div>
         <div
-          class="create-task"
+          class="create-story"
           *hasPermission="
             ['create'];
             entity: 'us';
             else: noCreationPermissionsTpl
           ">
-          <ng-container *ngIf="vm.showAddForm; else addTaskTpl">
-            <tg-create-task-inline
+          <ng-container *ngIf="vm.showAddForm; else addStoryTpl">
+            <tg-create-story-inline
               [autoFocus]="vm.formAutoFocus"
               [status]="status"
               [workflow]="workflow"
-              (cancel)="cancelTaskCreate()"></tg-create-task-inline>
+              (cancel)="cancelStoryCreate()"></tg-create-story-inline>
           </ng-container>
-          <ng-template #addTaskTpl>
+          <ng-template #addStoryTpl>
             <button
-              class="open-create-task-form"
-              data-test="open-create-task-form"
+              class="open-create-story-form"
+              data-test="open-create-story-form"
               tuiLink
               icon="plus"
               type="button"
-              (click)="addTask()"
+              (click)="addStory()"
               iconAlign="left">
-              {{ t('kanban.add_task') }}
+              {{ t('kanban.add_story') }}
             </button>
           </ng-template>
         </div>

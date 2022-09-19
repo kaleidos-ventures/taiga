@@ -39,7 +39,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   font-weight: var(--font-weight-medium);
 }
 
-tg-kanban-task {
+tg-kanban-story {
   margin-block-end: var(--spacing-8);
 }
 
@@ -53,7 +53,7 @@ tg-kanban-task {
   text-align: center;
 }
 
-.tasks {
+.stories {
   max-block-size: 100%;
 
   &::ng-deep .cdk-virtual-scroll-content-wrapper {
@@ -67,10 +67,10 @@ tg-kanban-task {
   flex-direction: column;
 }
 
-.open-create-task-form {
+.open-create-story-form {
   margin-block-start: var(--spacing-8);
 }
 
-.create-task {
+.create-story {
   padding-block-end: var(--spacing-8);
 }

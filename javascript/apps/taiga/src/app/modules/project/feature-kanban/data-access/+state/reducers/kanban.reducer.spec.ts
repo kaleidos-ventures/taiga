@@ -6,12 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { TaskMockFactory, WorkflowMockFactory } from '@taiga/data';
+import { StoryMockFactory, WorkflowMockFactory } from '@taiga/data';
 import { KanbanApiActions } from '../actions/kanban.actions';
 import * as kanbanReducer from './kanban.reducer';
 
 describe('Kanban reducer', () => {
-  it('load a workflow with no tasks', () => {
+  it('load a workflow with no stories', () => {
     const { initialKanbanState } = kanbanReducer;
     const workflow = WorkflowMockFactory();
 
@@ -27,28 +27,28 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.tasks[workflow.statuses[0].slug]).toEqual([]);
-    expect(state.createTaskForm).toEqual(workflow.statuses[0].slug);
+    expect(state.stories[workflow.statuses[0].slug]).toEqual([]);
+    expect(state.createStoryForm).toEqual(workflow.statuses[0].slug);
     expect(state.loadingWorkflows).toEqual(false);
   });
 
-  it('load tasks', () => {
+  it('load stories', () => {
     const { initialKanbanState } = kanbanReducer;
-    const task = TaskMockFactory();
+    const story = StoryMockFactory();
 
     const state = kanbanReducer.kanbanFeature.reducer(
       {
         ...initialKanbanState,
-        loadingTasks: true,
+        loadingStories: true,
       },
-      KanbanApiActions.fetchTasksSuccess({
-        tasks: [task],
+      KanbanApiActions.fetchStoriesSuccess({
+        stories: [story],
         offset: 0,
       })
     );
 
-    expect(state.tasks[task.status]).toEqual([task]);
-    expect(state.loadingTasks).toEqual(false);
+    expect(state.stories[story.status]).toEqual([story]);
+    expect(state.loadingStories).toEqual(false);
     expect(state.empty).toEqual(false);
   });
 
@@ -59,17 +59,17 @@ describe('Kanban reducer', () => {
     const state = kanbanReducer.kanbanFeature.reducer(
       {
         ...initialKanbanState,
-        loadingTasks: true,
+        loadingStories: true,
         workflows: [workflow],
       },
-      KanbanApiActions.fetchTasksSuccess({
-        tasks: [],
+      KanbanApiActions.fetchStoriesSuccess({
+        stories: [],
         offset: 0,
       })
     );
 
-    expect(state.createTaskForm).toEqual(workflow.statuses[0].slug);
-    expect(state.loadingTasks).toEqual(false);
+    expect(state.createStoryForm).toEqual(workflow.statuses[0].slug);
+    expect(state.loadingStories).toEqual(false);
     expect(state.empty).toEqual(true);
   });
 });

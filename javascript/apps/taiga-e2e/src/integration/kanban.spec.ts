@@ -23,13 +23,13 @@ describe('Kanban', () => {
     cy.tgCheckA11y();
   });
 
-  it('create task', () => {
+  it('create story', () => {
     const title = randProductName();
     console.log(title);
 
-    cy.getBySel('open-create-task-form').first().click();
-    cy.getBySel('task-title').type(title);
-    cy.getBySel('task-create').click();
+    cy.getBySel('open-create-story-form').first().click();
+    cy.getBySel('story-title').type(title);
+    cy.getBySel('story-create').click();
 
     cy.get('tg-kanban-status')
       .first()

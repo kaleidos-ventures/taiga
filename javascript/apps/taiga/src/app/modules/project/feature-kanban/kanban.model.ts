@@ -7,11 +7,11 @@
  */
 
 import { SetOptional } from 'type-fest';
-import { Task } from '@taiga/data';
+import { Story } from '@taiga/data';
 
-export interface PartialTask
-  extends SetOptional<Task, 'reference' | 'slug' | 'project' | 'order'> {
+export interface PartialStory
+  extends SetOptional<Story, 'reference' | 'slug' | 'project' | 'order'> {
   tmpId: string;
 }
 
-export type KanbanTask = PartialTask | Task;
+export type KanbanStory = PartialStory | Story;

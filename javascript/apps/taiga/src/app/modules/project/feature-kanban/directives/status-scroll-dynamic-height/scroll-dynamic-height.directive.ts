@@ -76,11 +76,11 @@ export class StatusScrollDynamicHeightDirective
 
     let blockSize = 0;
 
-    const tasks = Array.from(
-      this.nativeElement.querySelectorAll<HTMLElement>('tg-kanban-task')
+    const stories = Array.from(
+      this.nativeElement.querySelectorAll<HTMLElement>('tg-kanban-story')
     );
 
-    blockSize = tasks.reduce((prev, el) => {
+    blockSize = stories.reduce((prev, el) => {
       return prev + this.getElementFullSize(el);
     }, 0);
 

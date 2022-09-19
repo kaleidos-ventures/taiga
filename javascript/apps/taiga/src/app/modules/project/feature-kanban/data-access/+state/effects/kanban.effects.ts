@@ -49,7 +49,7 @@ export class KanbanEffects {
     );
   });
 
-  public loadKanbanTasks$ = createEffect(() => {
+  public loadKanbanStories$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(KanbanActions.initKanban),
       concatLatestFrom(() => [
@@ -58,11 +58,16 @@ export class KanbanEffects {
       ]),
       fetch({
         run: (action, project) => {
-          return this.projectApiService.getAllTasks(project.slug, 'main').pipe(
-            map(({ tasks, offset }) => {
-              return KanbanApiActions.fetchTasksSuccess({ tasks, offset });
-            })
-          );
+          return this.projectApiService
+            .getAllStories(project.slug, 'main')
+            .pipe(
+              map(({ stories, offset }) => {
+                return KanbanApiActions.fetchStoriesSuccess({
+                  stories,
+                  offset,
+                });
+              })
+            );
         },
         onError: (action, error: HttpErrorResponse) => {
           return this.appService.errorManagement(error);
@@ -71,21 +76,21 @@ export class KanbanEffects {
     );
   });
 
-  public createTask$ = createEffect(() => {
+  public createStory$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(KanbanActions.createTask),
+      ofType(KanbanActions.createStory),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),
       pessimisticUpdate({
-        run: ({ task, workflow }, project) => {
+        run: ({ story, workflow }, project) => {
           return this.projectApiService
-            .createTask(task, project.slug, workflow)
+            .createStory(story, project.slug, workflow)
             .pipe(
-              map((newTask) => {
-                return KanbanApiActions.createTaskSuccess({
-                  task: newTask,
-                  tmpId: task.tmpId,
+              map((newStory) => {
+                return KanbanApiActions.createStorySuccess({
+                  story: newStory,
+                  tmpId: story.tmpId,
                 });
               })
             );
@@ -95,25 +100,25 @@ export class KanbanEffects {
             this.appService.errorManagement(httpResponse);
           }
 
-          return KanbanApiActions.createTaskError({
+          return KanbanApiActions.createStoryError({
             status: httpResponse.status,
-            task: action.task,
+            story: action.story,
           });
         },
       })
     );
   });
 
-  public createTaskError$ = createEffect(() => {
+  public createStoryError$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(KanbanApiActions.createTaskError),
+      ofType(KanbanApiActions.createStoryError),
       filter((error) => error.status === 401),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),
       map(([, project]) => {
         this.appService.toastNotification({
-          message: 'create_task_permission',
+          message: 'create_story_permission',
           status: TuiNotification.Error,
           scope: 'kanban',
         });
@@ -123,16 +128,16 @@ export class KanbanEffects {
     );
   });
 
-  // Remove the task from the global state after a while to prevent animate old tasks.
-  // Example: the new task is in the scroll bottom, if the reference is not deleted is going
+  // Remove the story from the global state after a while to prevent animate old stories.
+  // Example: the new story is in the scroll bottom, if the reference is not deleted is going
   // to be animate when it appears on the screen.
-  public newTaskByEventAnimation$ = createEffect(() => {
+  public newStoryByEventAnimation$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(KanbanEventsActions.newTask),
+      ofType(KanbanEventsActions.newStory),
       delay(KanbanStatusComponent.slideInTime + 1),
       map((action) => {
-        return KanbanActions.timeoutAnimationEventNewTask({
-          reference: action.task.reference,
+        return KanbanActions.timeoutAnimationEventNewStory({
+          reference: action.story.reference,
         });
       })
     );

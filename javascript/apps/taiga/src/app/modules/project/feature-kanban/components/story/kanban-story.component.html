@@ -8,15 +8,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <a
     [attr.title]="
-      t('kanban.task_title', {
-        ref: task.reference,
-        title: task.name,
+      t('kanban.story_title', {
+        ref: story.reference,
+        title: story.name,
         position: index + 1,
         total: total
       })
     "
     href="">
-    <div class="ref">{{ task.reference }}</div>
-    <div class="text">{{ task.name }}</div>
+    <div class="ref">{{ story.reference }}</div>
+    <div class="text">{{ story.name }}</div>
   </a>
 </ng-container>

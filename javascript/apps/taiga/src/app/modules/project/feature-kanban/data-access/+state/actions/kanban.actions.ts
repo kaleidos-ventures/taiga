@@ -7,25 +7,25 @@
  */
 
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Workflow, Task, Status } from '@taiga/data';
+import { Workflow, Story, Status } from '@taiga/data';
 import {
-  KanbanTask,
-  PartialTask,
+  KanbanStory,
+  PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
 
 export const KanbanActions = createActionGroup({
   source: 'Kanban',
   events: {
     'Init Kanban': emptyProps(),
-    'Open Create Task form': props<{ status: Status['slug'] }>(),
-    'Close Create Task form': emptyProps(),
-    'Create Task': props<{
-      task: PartialTask;
+    'Open Create Story form': props<{ status: Status['slug'] }>(),
+    'Close Create Story form': emptyProps(),
+    'Create Story': props<{
+      story: PartialStory;
       workflow: Workflow['slug'];
     }>(),
-    'Scrolled To New Task': props<{ tmpId: PartialTask['tmpId'] }>(),
-    'Timeout Animation Event New Task': props<{
-      reference: Task['reference'];
+    'Scrolled To New Story': props<{ tmpId: PartialStory['tmpId'] }>(),
+    'Timeout Animation Event New Story': props<{
+      reference: Story['reference'];
     }>(),
   },
 });
@@ -34,18 +34,18 @@ export const KanbanApiActions = createActionGroup({
   source: 'Kanban Api',
   events: {
     'Fetch Workflows Success': props<{ workflows: Workflow[] }>(),
-    'Fetch Tasks Success': props<{ tasks: Task[]; offset: number }>(),
-    'Create Task Success': props<{
-      task: Task;
-      tmpId: PartialTask['tmpId'];
+    'Fetch Stories Success': props<{ stories: Story[]; offset: number }>(),
+    'Create Story Success': props<{
+      story: Story;
+      tmpId: PartialStory['tmpId'];
     }>(),
-    'Create Task Error': props<{ status: number; task: KanbanTask }>(),
+    'Create Story Error': props<{ status: number; story: KanbanStory }>(),
   },
 });
 
 export const KanbanEventsActions = createActionGroup({
   source: 'Kanban Event',
   events: {
-    'New Task': props<{ task: Task }>(),
+    'New Story': props<{ story: Story }>(),
   },
 });

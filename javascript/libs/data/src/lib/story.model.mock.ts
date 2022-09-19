@@ -8,11 +8,11 @@
 
 import { randNumber, randSlug, randText } from '@ngneat/falso';
 import { Status } from '..';
-import { Task } from './task.model';
+import { Story } from './story.model';
 
-export const TaskMockFactory = (
+export const StoryMockFactory = (
   statuses: Status['slug'][] = ['new', 'in-progress', 'done']
-): Task => {
+): Story => {
   let titleCount = Math.floor(Math.random() * 200);
 
   if (titleCount < 10) {

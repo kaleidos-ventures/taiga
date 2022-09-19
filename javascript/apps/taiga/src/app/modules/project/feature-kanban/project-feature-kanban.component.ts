@@ -22,7 +22,7 @@ import {
   selectLoadingWorkflows,
   selectWorkflows,
 } from './data-access/+state/selectors/kanban.selectors';
-import { Task } from '@taiga/data';
+import { Story } from '@taiga/data';
 
 interface ComponentState {
   loadingWorkflows: KanbanState['loadingWorkflows'];
@@ -81,11 +81,11 @@ export class ProjectFeatureKanbanComponent {
 
   private events() {
     this.wsService
-      .projectEvents<Task>('projecttasks.create')
+      .projectEvents<Story>('projectstories.create')
       .pipe(untilDestroyed(this))
       .subscribe((msg) => {
         this.store.dispatch(
-          KanbanEventsActions.newTask({ task: msg.event.content })
+          KanbanEventsActions.newStory({ story: msg.event.content })
         );
       });
   }

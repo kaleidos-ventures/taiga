@@ -93,22 +93,24 @@ export class ProjectFeatureOverviewComponent
       this.cd.markForCheck();
     });
 
-    this.wsService
-      .events<{ project: string }>({
-        channel: `users.${this.state.get('user')!.username}`,
-        type: 'projectinvitations.create',
-      })
-      .pipe(
-        untilDestroyed(this),
-        filter(
-          (eventResponse) =>
-            eventResponse.event.content.project ===
-            this.state.get('project').slug
+    if (this.state.get('user')) {
+      this.wsService
+        .events<{ project: string }>({
+          channel: `users.${this.state.get('user')!.username}`,
+          type: 'projectinvitations.create',
+        })
+        .pipe(
+          untilDestroyed(this),
+          filter(
+            (eventResponse) =>
+              eventResponse.event.content.project ===
+              this.state.get('project').slug
+          )
         )
-      )
-      .subscribe(() => {
-        this.store.dispatch(ProjectActions.eventInvitation());
-      });
+        .subscribe(() => {
+          this.store.dispatch(ProjectActions.eventInvitation());
+        });
+    }
 
     this.wsService
       .events<{ project: string }>({

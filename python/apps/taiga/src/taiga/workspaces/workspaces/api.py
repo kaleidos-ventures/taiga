@@ -12,10 +12,10 @@ from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm, IsAuthenticated
 from taiga.routers import routes
-from taiga.workspaces import services as workspaces_services
-from taiga.workspaces.models import Workspace
-from taiga.workspaces.serializers import WorkspaceDetailSerializer, WorkspaceSerializer
-from taiga.workspaces.validators import WorkspaceValidator
+from taiga.workspaces.workspaces import services as workspaces_services
+from taiga.workspaces.workspaces.models import Workspace
+from taiga.workspaces.workspaces.serializers import WorkspaceDetailSerializer, WorkspaceSerializer
+from taiga.workspaces.workspaces.validators import WorkspaceValidator
 
 # PERMISSIONS
 LIST_MY_WORKSPACES = IsAuthenticated()

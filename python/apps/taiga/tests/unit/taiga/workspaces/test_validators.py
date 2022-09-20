@@ -8,7 +8,7 @@
 
 import pytest
 from pydantic import ValidationError
-from taiga.workspaces.validators import WorkspaceValidator
+from taiga.workspaces.workspaces.validators import WorkspaceValidator
 
 
 def test_validate_workspace_with_empty_name(client):

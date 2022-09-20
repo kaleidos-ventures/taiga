@@ -27,9 +27,9 @@ from taiga.base.db.models import (
 )
 from taiga.invitations.choices import ProjectInvitationStatus
 from taiga.projects.models import Project
-from taiga.roles import repositories as roles_repositories
 from taiga.users.models import User
-from taiga.workspaces.models import Workspace
+from taiga.workspaces.roles import repositories as roles_repositories
+from taiga.workspaces.workspaces.models import Workspace
 
 
 @sync_to_async

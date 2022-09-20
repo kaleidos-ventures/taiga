@@ -11,7 +11,9 @@ from taiga.base.db import admin
 from taiga.base.db.admin.forms import ModelChoiceField
 from taiga.base.db.admin.http import HttpRequest
 from taiga.base.db.models import ForeignKey
-from taiga.workspaces.models import Workspace, WorkspaceMembership, WorkspaceRole
+from taiga.workspaces.memberships.models import WorkspaceMembership
+from taiga.workspaces.roles.models import WorkspaceRole
+from taiga.workspaces.workspaces.models import Workspace
 
 
 class WorkspaceRoleInline(admin.TabularInline[WorkspaceRole, Workspace]):

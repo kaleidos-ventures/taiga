@@ -20,11 +20,12 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ("memberships", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="ProjectInvitation",
+            name="Workspace",
             fields=[
                 (
                     "id",
@@ -37,36 +38,41 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("email", taiga.base.db.models.fields.LowerEmailField(max_length=255, verbose_name="email")),
+                ("name", models.CharField(max_length=40, verbose_name="name")),
                 (
-                    "status",
-                    models.CharField(
-                        choices=[("pending", "Pending"), ("accepted", "Accepted"), ("revoked", "Revoked")],
-                        default="pending",
-                        max_length=50,
-                        verbose_name="status",
+                    "slug",
+                    taiga.base.db.models.fields.LowerSlugField(
+                        blank=True, max_length=250, unique=True, verbose_name="slug"
                     ),
                 ),
+                ("color", models.IntegerField(default=1, verbose_name="color")),
                 ("created_at", models.DateTimeField(auto_now_add=True, verbose_name="created at")),
-                ("num_emails_sent", models.IntegerField(default=1, verbose_name="num emails sent")),
-                ("resent_at", models.DateTimeField(blank=True, null=True, verbose_name="resent at")),
-                ("revoked_at", models.DateTimeField(blank=True, null=True, verbose_name="revoked at")),
+                ("modified_at", models.DateTimeField(auto_now=True, verbose_name="modified at")),
+                ("is_premium", models.BooleanField(blank=True, default=False, verbose_name="is premium")),
                 (
-                    "invited_by",
-                    models.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="ihaveinvited+",
+                    "members",
+                    models.ManyToManyField(
+                        related_name="workspaces",
+                        through="memberships.WorkspaceMembership",
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="inviited by",
+                        verbose_name="members",
+                    ),
+                ),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="owned_workspaces",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="owner",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "project invitation",
-                "verbose_name_plural": "project invitations",
-                "ordering": ["project", "user", "email"],
+                "verbose_name": "workspace",
+                "verbose_name_plural": "workspaces",
+                "ordering": ["slug"],
+                "index_together": {("name", "id")},
             },
         ),
     ]

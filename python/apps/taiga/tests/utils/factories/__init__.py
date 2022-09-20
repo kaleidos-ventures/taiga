@@ -10,14 +10,10 @@ from .projects import ProjectFactory, build_project, create_project, create_simp
 from .roles import (  # noqa
     ProjectMembershipFactory,
     ProjectRoleFactory,
-    WorkspaceMembershipFactory,
-    WorkspaceRoleFactory,
     build_project_membership,
     build_project_role,
     create_project_membership,
     create_project_role,
-    create_workspace_membership,
-    create_workspace_role,
 )
 from .stories import StoryFactory, build_story, create_story  # noqa
 from .users import UserFactory, build_user, create_user  # noqa
@@ -28,4 +24,12 @@ from .workflows import (  # noqa
     create_workflow,
     create_workflow_status,
 )
-from .workspaces import WorkspaceFactory, build_workspace, create_workspace  # noqa
+from .workspaces import (  # noqa
+    WorkspaceFactory,
+    WorkspaceMembershipFactory,
+    WorkspaceRoleFactory,
+    build_workspace,
+    create_workspace,
+    create_workspace_membership,
+    create_workspace_role,
+)

@@ -7,7 +7,7 @@
 
 from taiga.projects.models import Project
 from taiga.users.models import AnyUser, User
-from taiga.workspaces.models import Workspace
+from taiga.workspaces.workspaces.models import Workspace
 
 _SYSTEM_CHANNEL_PATTERN = "system"
 _USER_CHANNEL_PATTERN = "users.{username}"

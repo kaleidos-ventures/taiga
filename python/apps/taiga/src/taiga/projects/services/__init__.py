@@ -17,8 +17,9 @@ from taiga.projects.models import Project
 from taiga.projects.services import exceptions as ex
 from taiga.roles import repositories as roles_repositories
 from taiga.users.models import AnyUser, User
-from taiga.workspaces import repositories as workspaces_repositories
-from taiga.workspaces.models import Workspace
+from taiga.workspaces.roles import repositories as ws_roles_repositories
+from taiga.workspaces.workspaces import repositories as workspaces_repositories
+from taiga.workspaces.workspaces.models import Workspace
 
 
 async def get_projects(workspace_slug: str) -> list[Project]:
@@ -26,7 +27,7 @@ async def get_projects(workspace_slug: str) -> list[Project]:
 
 
 async def get_workspace_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
-    role = await roles_repositories.get_workspace_role_for_user(user_id=user.id, workspace_id=workspace.id)
+    role = await ws_roles_repositories.get_workspace_role_for_user(user_id=user.id, workspace_id=workspace.id)
     if role and role.is_admin:
         return await get_projects(workspace_slug=workspace.slug)
 

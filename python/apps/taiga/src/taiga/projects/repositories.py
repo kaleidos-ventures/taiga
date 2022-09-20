@@ -13,7 +13,7 @@ from taiga.invitations.choices import ProjectInvitationStatus
 from taiga.projects.models import Project, ProjectRole, ProjectTemplate
 from taiga.users.models import User
 from taiga.workflows.models import Workflow, WorkflowStatus
-from taiga.workspaces.models import Workspace
+from taiga.workspaces.workspaces.models import Workspace
 
 
 @sync_to_async

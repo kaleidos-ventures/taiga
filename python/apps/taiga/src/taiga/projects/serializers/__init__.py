@@ -7,7 +7,7 @@
 
 from taiga.base.serializers import BaseModel
 from taiga.projects.serializers.mixins import ProjectLogoMixin
-from taiga.workspaces.serializers.related import WorkspaceSummarySerializer
+from taiga.workspaces.workspaces.serializers.related import WorkspaceSummarySerializer
 
 
 class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):

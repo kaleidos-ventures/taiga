@@ -18,7 +18,7 @@ from taiga.projects.models import Project
 from taiga.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.projects.validators import PermissionsValidator, ProjectValidator
 from taiga.routers import routes
-from taiga.workspaces.api import get_workspace_or_404
+from taiga.workspaces.workspaces.api import get_workspace_or_404
 
 # PERMISSIONS
 LIST_WORKSPACE_PROJECTS = IsAuthenticated()  # HasPerm("view_workspace")

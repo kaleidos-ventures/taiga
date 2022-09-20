@@ -31,22 +31,6 @@ def build_project_role(**kwargs):
     return ProjectRoleFactory.build(**kwargs)
 
 
-class WorkspaceRoleFactory(Factory):
-    name = factory.Sequence(lambda n: f"WS Role {n}")
-    slug = factory.Sequence(lambda n: f"test-ws-role-{n}")
-    permissions = choices.WorkspacePermissions.values
-    is_admin = False
-    workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
-
-    class Meta:
-        model = "workspaces.WorkspaceRole"
-
-
-@sync_to_async
-def create_workspace_role(**kwargs):
-    return WorkspaceRoleFactory.create(**kwargs)
-
-
 class ProjectMembershipFactory(Factory):
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
@@ -63,17 +47,3 @@ def create_project_membership(**kwargs):
 
 def build_project_membership(**kwargs):
     return ProjectMembershipFactory.build(**kwargs)
-
-
-class WorkspaceMembershipFactory(Factory):
-    user = factory.SubFactory("tests.utils.factories.UserFactory")
-    workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
-    role = factory.SubFactory("tests.utils.factories.WorkspaceRoleFactory")
-
-    class Meta:
-        model = "workspaces.WorkspaceMembership"
-
-
-@sync_to_async
-def create_workspace_membership(**kwargs):
-    return WorkspaceMembershipFactory.create(**kwargs)

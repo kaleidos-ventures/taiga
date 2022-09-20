@@ -166,7 +166,7 @@ async def get_user_project_role_info():
 async def get_user_workspace_role_info():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
-    with patch("taiga.permissions.services.roles_repositories", autospec=True) as fake_repository:
+    with patch("taiga.permissions.services.ws_roles_repositories", autospec=True) as fake_repository:
         await get_user_workspace_role_info(user=user, workspace=workspace)
         fake_repository.get_workspace_role_for_user.assert_awaited_once()
 

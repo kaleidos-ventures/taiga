@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     # taiga
     "taiga.base.db",
     "taiga.emails",
-    "taiga.workspaces",
+    "taiga.workspaces.memberships",
+    "taiga.workspaces.roles",
+    "taiga.workspaces.workspaces",
     "taiga.projects",
     "taiga.workflows",
     "taiga.invitations",

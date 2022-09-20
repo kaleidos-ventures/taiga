@@ -14,7 +14,7 @@ from taiga.base.db.users import Group
 from taiga.invitations.models import ProjectInvitation
 from taiga.projects.models import ProjectMembership
 from taiga.users.models import AuthData, User
-from taiga.workspaces.models import WorkspaceMembership
+from taiga.workspaces.memberships.models import WorkspaceMembership
 
 admin.site.unregister(Group)
 

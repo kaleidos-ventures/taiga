@@ -57,7 +57,7 @@ from taiga.events.responses import EventResponse
 from taiga.events.subscriber import Subscriber
 from taiga.projects.models import Project
 from taiga.users.models import User
-from taiga.workspaces.models import Workspace
+from taiga.workspaces.workspaces.models import Workspace
 
 logger = logging.getLogger(__name__)
 

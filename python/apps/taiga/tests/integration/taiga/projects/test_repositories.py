@@ -11,9 +11,10 @@ from django.core.files import File
 from taiga.base.db import sequences as seq
 from taiga.projects import references, repositories
 from taiga.projects.models import Project, ProjectTemplate
-from taiga.roles.models import ProjectRole, WorkspaceRole
+from taiga.roles.models import ProjectRole
 from taiga.workflows.models import Workflow
-from taiga.workspaces.models import Workspace
+from taiga.workspaces.roles.models import WorkspaceRole
+from taiga.workspaces.workspaces.models import Workspace
 from tests.utils import factories as f
 from tests.utils.images import valid_image_f
 

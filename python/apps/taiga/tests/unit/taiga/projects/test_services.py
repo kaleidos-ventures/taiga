@@ -37,7 +37,7 @@ async def test_get_workspace_projects_for_user_member():
     workspace = await f.create_workspace(owner=user)
 
     with (
-        patch("taiga.projects.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.services.ws_roles_repositories", autospec=True) as fake_roles_repo,
         patch("taiga.projects.services.projects_repositories", autospec=True) as fake_projects_repo,
     ):
         fake_roles_repo.get_workspace_role_for_user.return_value = MagicMock(is_admin=False)

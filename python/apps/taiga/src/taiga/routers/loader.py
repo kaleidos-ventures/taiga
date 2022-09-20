@@ -21,7 +21,7 @@ from taiga.routers.routes import tags_metadata
 from taiga.stories import api as stories_api  # noqa
 from taiga.users import api as users_api  # noqa
 from taiga.workflows import api as workflows_api  # noqa
-from taiga.workspaces import api as workspaces_api  # noqa
+from taiga.workspaces.workspaces import api as workspaces_api  # noqa
 
 
 def load_routes(api: FastAPI) -> None:

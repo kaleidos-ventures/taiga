@@ -8,7 +8,7 @@
 from unittest.mock import patch
 
 import pytest
-from taiga.workspaces import services
+from taiga.workspaces.workspaces import services
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -22,7 +22,7 @@ pytestmark = pytest.mark.django_db
 async def test_get_my_workspaces_projects():
     user = await f.create_user()
 
-    with patch("taiga.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo:
+    with patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo:
         await services.get_user_workspaces_overview(user=user)
         fake_workspaces_repo.get_user_workspaces_overview.assert_awaited_once_with(user=user)
 
@@ -34,7 +34,7 @@ async def test_get_my_workspaces_projects():
 
 async def test_get_workspace():
     slug = "slug"
-    with patch("taiga.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo:
+    with patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo:
         await services.get_workspace(slug=slug)
         fake_workspaces_repo.get_workspace.assert_awaited_with(slug=slug)
 
@@ -48,7 +48,9 @@ async def test_get_workspaces_detail_for_admin():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
 
-    with (patch("taiga.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,):
+    with (
+        patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
+    ):
         await services.get_workspace_detail(id=workspace.id, user_id=user.id)
         fake_workspaces_repo.get_workspace_detail.assert_awaited_with(id=workspace.id, user_id=user.id)
 
@@ -57,7 +59,9 @@ async def test_get_workspaces_detail_for_member():
     user = await f.create_user()
     workspace = await f.create_workspace()
 
-    with (patch("taiga.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,):
+    with (
+        patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
+    ):
         await services.get_workspace_detail(id=workspace.id, user_id=user.id)
         fake_workspaces_repo.get_workspace_detail.assert_awaited_with(id=workspace.id, user_id=user.id)
 
@@ -71,10 +75,14 @@ async def test_create_workspace():
     user = await f.create_user()
     name = "workspace1"
     color = 5
-    with patch("taiga.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo, patch(
-        "taiga.workspaces.services.roles_repositories", autospec=True
-    ) as fake_roles_repo:
+    with (
+        patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
+        patch("taiga.workspaces.workspaces.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
+        patch(
+            "taiga.workspaces.workspaces.services.ws_memberships_repositories", autospec=True
+        ) as fake_ws_memberships_repo,
+    ):
         await services.create_workspace(name=name, color=color, owner=user)
         fake_workspaces_repo.create_workspace.assert_awaited_once()
-        fake_roles_repo.create_workspace_role.assert_awaited_once()
-        fake_roles_repo.create_workspace_membership.assert_awaited_once()
+        fake_ws_roles_repo.create_workspace_role.assert_awaited_once()
+        fake_ws_memberships_repo.create_workspace_membership.assert_awaited_once()

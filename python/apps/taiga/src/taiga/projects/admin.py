@@ -65,7 +65,7 @@ class ProjectAdmin(admin.ModelAdmin[Project]):
         ("Permissions", {"fields": ("workspace_member_permissions", "public_permissions")}),
     )
     readonly_fields = ("id", "created_at", "modified_at")
-    list_display = ["name", "slug", "workspace", "owner", "is_public", "is_anon"]
+    list_display = ["name", "slug", "workspace", "owner", "public_user_can_view", "anon_user_can_view"]
     list_filter = ("workspace", "owner")
     search_fields = [
         "id",
@@ -81,12 +81,12 @@ class ProjectAdmin(admin.ModelAdmin[Project]):
     inlines = [ProjectRoleInline, ProjectMembershipInline, ProjectInvitationInline]
 
     @admin.display(description="allow public users", boolean=True)
-    def is_public(self, obj: Project) -> bool:
-        return obj.is_public
+    def public_user_can_view(self, obj: Project) -> bool:
+        return obj.public_user_can_view
 
-    @admin.display(description="allow annonymous users", boolean=True)
-    def is_anon(self, obj: Project) -> bool:
-        return obj.is_anon
+    @admin.display(description="allow anonymous users", boolean=True)
+    def anon_user_can_view(self, obj: Project) -> bool:
+        return obj.anon_user_can_view
 
 
 @admin.register(ProjectTemplate)

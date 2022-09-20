@@ -170,14 +170,14 @@ class Project(models.BaseModel):
         return f"<Project {self.slug}>"
 
     @property
-    def is_public(self) -> bool:
+    def public_user_can_view(self) -> bool:
         """
         Any registered user can view the project
         """
         return bool(self.public_permissions)
 
     @property
-    def is_anon(self) -> bool:
+    def anon_user_can_view(self) -> bool:
         """
         Any unregistered/anonymous user can view the project
         """

@@ -12,7 +12,7 @@ from taiga.base.db import models
 from taiga.base.utils.datetime import timestamp_mics
 from taiga.base.utils.files import get_file_path
 from taiga.base.utils.slug import slugify_uniquely
-from taiga.permissions.choices import AnonPermissions, ProjectPermissions
+from taiga.permissions.choices import ProjectPermissions
 
 get_project_logo_file_path = functools.partial(get_file_path, base_path="project")
 
@@ -138,13 +138,6 @@ class Project(models.BaseModel):
         verbose_name="members",
     )
 
-    anon_permissions = models.ArrayField(
-        models.TextField(null=False, blank=False, choices=AnonPermissions.choices),
-        null=True,
-        blank=True,
-        default=list,
-        verbose_name="anonymous permissions",
-    )
     public_permissions = models.ArrayField(
         models.TextField(null=False, blank=False, choices=ProjectPermissions.choices),
         null=True,
@@ -152,6 +145,7 @@ class Project(models.BaseModel):
         default=list,
         verbose_name="public permissions",
     )
+
     workspace_member_permissions = models.ArrayField(
         models.TextField(null=False, blank=False, choices=ProjectPermissions.choices),
         null=True,
@@ -188,6 +182,10 @@ class Project(models.BaseModel):
         Any unregistered/anonymous user can view the project
         """
         return bool(self.anon_permissions)
+
+    @property
+    def anon_permissions(self) -> list[str]:
+        return list(filter(lambda x: x.startswith("view_"), self.public_permissions))
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.slug:

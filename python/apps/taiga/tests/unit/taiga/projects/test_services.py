@@ -157,12 +157,7 @@ async def test_get_project_detail_anonymous():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
     permissions = ["add_us", "view_us", "modify_task", "view_task"]
-    anon_permissions = ["view_us", "view_task"]
-    project = await (
-        f.create_project(
-            owner=user, workspace=workspace, public_permissions=permissions, anon_permissions=anon_permissions
-        )
-    )
+    project = await (f.create_project(owner=user, workspace=workspace, public_permissions=permissions))
 
     with (
         patch("taiga.projects.services.permissions_services", autospec=True) as fake_permissions_services,
@@ -192,12 +187,11 @@ async def test_get_project_detail_anonymous():
 async def test_update_project_public_permissions_ok():
     project = await f.create_project()
     permissions = ["add_us", "view_us", "modify_task", "view_task"]
-    anon_permissions = ["view_us", "view_task"]
 
     with patch("taiga.projects.services.projects_repositories", autospec=True) as fake_project_repository:
         await services.update_project_public_permissions(project=project, permissions=permissions)
         fake_project_repository.update_project_public_permissions.assert_awaited_once_with(
-            project=project, permissions=permissions, anon_permissions=anon_permissions
+            project=project, permissions=permissions
         )
 
 

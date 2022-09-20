@@ -45,13 +45,3 @@ class ProjectPermissions(TextChoices):
 # these may be changed by a workspace admin
 class WorkspacePermissions(TextChoices):
     VIEW_WORKSPACE = "view_workspace", "View workspace"
-
-
-# possible permissions for anonymous users
-# only "view" permissions at most
-# these may be changed by a project admin when changing public-permissions
-class AnonPermissions(TextChoices):
-    # US permissions
-    VIEW_US = "view_us", "View US"
-    # Task permissions
-    VIEW_TASK = "view_task", "View task"

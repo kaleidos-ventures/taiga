@@ -147,8 +147,7 @@ async def test_get_template_return_template():
 async def test_update_project_public_permissions():
     project = await f.create_project(name="Project 1")
     permissions = ["add_task", "view_task", "add_us", "view_us"]
-    anon_permissions = ["view_task", "view_us"]
-    await repositories.update_project_public_permissions(project, permissions, anon_permissions)
+    await repositories.update_project_public_permissions(project, permissions)
     assert len(project.public_permissions) == 4
     assert len(project.anon_permissions) == 2
 

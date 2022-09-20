@@ -128,11 +128,7 @@ async def update_project_public_permissions(project: Project, permissions: list[
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
-    # anon_permissions are the "view_" subset of the public_permissions
-    anon_permissions = list(filter(lambda x: x.startswith("view_"), permissions))
-    return await projects_repositories.update_project_public_permissions(
-        project=project, permissions=permissions, anon_permissions=anon_permissions
-    )
+    return await projects_repositories.update_project_public_permissions(project=project, permissions=permissions)
 
 
 async def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:

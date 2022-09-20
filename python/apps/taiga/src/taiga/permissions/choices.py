@@ -16,10 +16,10 @@ class EditUSPermissions(TextChoices):
 
 
 class EditTaskPermissions(TextChoices):
-    ADD_TASK = "add_task", "Add task"
-    COMMENT_TASK = "comment_task", "Comment task"
-    DELETE_TASK = "delete_task", "Delete task"
-    MODIFY_TASK = "modify_task", "Modify task"
+    ADD_STORY = "add_story", "Add story"
+    COMMENT_STORY = "comment_story", "Comment story"
+    DELETE_STORY = "delete_story", "Delete story"
+    MODIFY_STORY = "modify_story", "Modify story"
 
 
 # possible permissions for members or public members
@@ -34,11 +34,11 @@ class ProjectPermissions(TextChoices):
     MODIFY_US = "modify_us", "Modify US"
     VIEW_US = "view_us", "View US"
     # Task permissions
-    ADD_TASK = "add_task", "Add task"
-    COMMENT_TASK = "comment_task", "Comment task"
-    DELETE_TASK = "delete_task", "Delete task"
-    MODIFY_TASK = "modify_task", "Modify task"
-    VIEW_TASK = "view_task", "View task"
+    ADD_STORY = "add_story", "Add story"
+    COMMENT_STORY = "comment_story", "Comment story"
+    DELETE_STORY = "delete_story", "Delete story"
+    MODIFY_STORY = "modify_story", "Modify story"
+    VIEW_STORY = "view_story", "View story"
 
 
 # possible permissions for workspace members

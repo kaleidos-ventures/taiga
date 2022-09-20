@@ -6,8 +6,14 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import BaseModel
-from taiga.tasks.serializers import TaskSerializer
+from taiga.workflows.serializers.nested import WorkflowStatusNestedSerializer
 
 
-class CreateTaskContent(BaseModel):
-    task: TaskSerializer
+class StorySerializer(BaseModel):
+    ref: int
+    name: str
+    order: int
+    status: WorkflowStatusNestedSerializer
+
+    class Config:
+        orm_mode = True

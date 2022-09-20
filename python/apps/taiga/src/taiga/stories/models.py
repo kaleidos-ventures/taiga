@@ -11,14 +11,14 @@ from taiga.base.utils.datetime import timestamp_mics
 from taiga.projects.references.mixins import ProjectReferenceMixin
 
 
-class Task(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
+class Story(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
     name = models.CharField(max_length=500, null=False, blank=False, verbose_name="name")
     order = models.BigIntegerField(default=timestamp_mics, null=False, blank=False, verbose_name="order")
     project = models.ForeignKey(
         "projects.Project",
         null=False,
         blank=False,
-        related_name="tasks",
+        related_name="stories",
         on_delete=models.CASCADE,
         verbose_name="project",
     )
@@ -26,7 +26,7 @@ class Task(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
         "workflows.Workflow",
         null=False,
         blank=False,
-        related_name="tasks",
+        related_name="stories",
         on_delete=models.CASCADE,
         verbose_name="workflow",
     )
@@ -34,14 +34,14 @@ class Task(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
         "workflows.WorkflowStatus",
         null=False,
         blank=False,
-        related_name="tasks",
+        related_name="stories",
         on_delete=models.CASCADE,
         verbose_name="status",
     )
 
     class Meta:
-        verbose_name = "task"
-        verbose_name_plural = "tasks"
+        verbose_name = "story"
+        verbose_name_plural = "stories"
         unique_together = (
             "ref",
             "project",
@@ -53,4 +53,4 @@ class Task(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
         return f"#{self.ref} {self.name}"
 
     def __repr__(self) -> str:
-        return f"<Task {self.project} #{self.ref}>"
+        return f"<Story {self.project} #{self.ref}>"

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5a5887ed-3629-4abc-a1e6-5d9663d176b5",
+		"_postman_id": "bc15a111-b32c-413b-a6ae-af99566deda3",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "15018493"
@@ -1804,10 +1804,10 @@
 			]
 		},
 		{
-			"name": "projects.{p}.workflows.{wf}.tasks",
+			"name": "projects.{p}.workflows.{wf}.stories",
 			"item": [
 				{
-					"name": "200.projects.{p}.workflows.{wf}.tasks",
+					"name": "200.projects.{p}.workflows.{wf}.stories",
 					"event": [
 						{
 							"listen": "test",
@@ -1861,7 +1861,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"task1\",\n    \"status\": \"done\"\n}",
+							"raw": "{\n    \"name\": \"story1\",\n    \"status\": \"done\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1869,7 +1869,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/tasks",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -1879,14 +1879,14 @@
 								"{{pj-slug}}",
 								"workflows",
 								"{{wf-slug}}",
-								"tasks"
+								"stories"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.workflows.{wf}.tasks",
+					"name": "200.projects.{p}.workflows.{wf}.stories",
 					"event": [
 						{
 							"listen": "test",
@@ -1938,7 +1938,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/tasks?offset=0&limit=10",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories?offset=0&limit=10",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -1948,7 +1948,7 @@
 								"{{pj-slug}}",
 								"workflows",
 								"{{wf-slug}}",
-								"tasks"
+								"stories"
 							],
 							"query": [
 								{

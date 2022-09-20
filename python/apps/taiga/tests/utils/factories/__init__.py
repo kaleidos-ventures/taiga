@@ -19,7 +19,7 @@ from .roles import (  # noqa
     create_workspace_membership,
     create_workspace_role,
 )
-from .tasks import TaskFactory, build_task, create_task  # noqa
+from .stories import StoryFactory, build_story, create_story  # noqa
 from .users import UserFactory, build_user, create_user  # noqa
 from .workflows import (  # noqa
     WorkflowFactory,

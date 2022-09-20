@@ -42,7 +42,7 @@ async def test_update_project_role_permissions_is_admin():
 
 async def test_update_project_role_permissions_incompatible_permissions():
     role = f.build_project_role(is_admin=False)
-    permissions = ["view_task"]
+    permissions = ["view_story"]
 
     with pytest.raises(ex.IncompatiblePermissionsSetError):
         await services.update_project_role_permissions(role=role, permissions=permissions)

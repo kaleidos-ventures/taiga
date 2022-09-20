@@ -6,16 +6,16 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.events import events_manager
-from taiga.tasks.events.content import CreateTaskContent
-from taiga.tasks.models import Task
-from taiga.tasks.serializers import TaskSerializer
+from taiga.stories.events.content import CreateStoryContent
+from taiga.stories.models import Story
+from taiga.stories.serializers import StorySerializer
 
-CREATE_TASK = "tasks.create"
+CREATE_STORY = "stories.create"
 
 
-async def emit_event_when_task_is_created(task: Task) -> None:
+async def emit_event_when_story_is_created(story: Story) -> None:
     # Publish on the project channel
-    if task:
+    if story:
         await events_manager.publish_on_project_channel(
-            project=task.project, type=CREATE_TASK, content=CreateTaskContent(task=TaskSerializer.from_orm(task))
+            project=story.project, type=CREATE_STORY, content=CreateStoryContent(story=StorySerializer.from_orm(story))
         )

@@ -5,15 +5,17 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializers import BaseModel
-from taiga.workflows.serializers.nested import WorkflowStatusNestedSerializer
+from dataclasses import dataclass
+
+from taiga.users.models import User
+from taiga.workflows.models import WorkflowStatus
 
 
-class TaskSerializer(BaseModel):
+@dataclass
+class Story:
     ref: int
     name: str
     order: int
-    status: WorkflowStatusNestedSerializer
-
-    class Config:
-        orm_mode = True
+    created_at: str
+    created_by: User
+    status: WorkflowStatus

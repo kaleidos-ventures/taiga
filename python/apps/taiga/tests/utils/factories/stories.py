@@ -9,21 +9,21 @@ from asgiref.sync import sync_to_async
 from .base import Factory, factory
 
 
-class TaskFactory(Factory):
-    name = factory.Sequence(lambda n: f"Task {n}")
+class StoryFactory(Factory):
+    name = factory.Sequence(lambda n: f"Story {n}")
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
     workflow = factory.SubFactory("tests.utils.factories.WorkflowFactory")
     status = factory.SubFactory("tests.utils.factories.WorkflowStatusFactory")
     created_by = factory.SubFactory("tests.utils.factories.UserFactory")
 
     class Meta:
-        model = "tasks.Task"
+        model = "stories.Story"
 
 
 @sync_to_async
-def create_task(**kwargs):
-    return TaskFactory.create(**kwargs)
+def create_story(**kwargs):
+    return StoryFactory.create(**kwargs)
 
 
-def build_task(**kwargs):
-    return TaskFactory.build(**kwargs)
+def build_story(**kwargs):
+    return StoryFactory.build(**kwargs)

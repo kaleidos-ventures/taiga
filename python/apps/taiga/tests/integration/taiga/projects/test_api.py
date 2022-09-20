@@ -352,8 +352,8 @@ async def test_get_project_workspace_member_permissions_anonymous_user(client):
 @pytest.mark.parametrize(
     "permissions",
     [
-        (["view_us", "view_task"]),
-        (["view_us", "view_task", "comment_task"]),
+        (["view_us", "view_story"]),
+        (["view_us", "view_story", "comment_story"]),
         (["view_us", "comment_us"]),
     ],
 )
@@ -378,8 +378,8 @@ async def test_update_project_public_permissions_project_not_found(client):
 @pytest.mark.parametrize(
     "permissions",
     [
-        (["view_task"]),
-        (["comment_task"]),
+        (["view_story"]),
+        (["comment_story"]),
         (["comment_us"]),
     ],
 )
@@ -437,7 +437,7 @@ async def test_update_project_public_permissions_anonymous_user(client):
 async def test_update_project_workspace_member_permissions_ok(client):
     workspace = await f.create_workspace(is_premium=True)
     project = await f.create_project(workspace=workspace)
-    data = {"permissions": ["view_us", "view_task"]}
+    data = {"permissions": ["view_us", "view_story"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.slug}/workspace-member-permissions", json=data)
@@ -465,7 +465,7 @@ async def test_update_project_workspace_member_permissions_project_not_found(cli
 
 async def test_update_project_workspace_member_permissions_incompatible(client):
     project = await f.create_project()
-    data = {"permissions": ["view_task"]}
+    data = {"permissions": ["view_story"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.slug}/workspace-member-permissions", json=data)

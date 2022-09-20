@@ -7,11 +7,11 @@
 
 
 from taiga.base.db import admin
-from taiga.tasks.models import Task
+from taiga.stories.models import Story
 
 
-@admin.register(Task)
-class TaskAdmin(admin.ModelAdmin[Task]):
+@admin.register(Story)
+class StoryAdmin(admin.ModelAdmin[Story]):
     fieldsets = (
         (
             None,

@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "fe54a47b-11a2-4f37-a041-7dbfa403e539",
+		"_postman_id": "9b773a81-3dcd-43c7-b882-75b766eea80c",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"_exporter_id": "15018493"
 	},
 	"item": [
 		{
@@ -1674,10 +1674,10 @@
 			]
 		},
 		{
-			"name": "project tasks",
+			"name": "project stories",
 			"item": [
 				{
-					"name": "new task",
+					"name": "new story",
 					"event": [
 						{
 							"listen": "test",
@@ -1710,7 +1710,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"task1\",\n    \"status\": \"done\"\n}",
+							"raw": "{\n    \"name\": \"story1\",\n    \"status\": \"done\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1718,7 +1718,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/tasks",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -1728,14 +1728,14 @@
 								"{{pj-slug}}",
 								"workflows",
 								"{{wf-slug}}",
-								"tasks"
+								"stories"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "get tasks",
+					"name": "get stories",
 					"event": [
 						{
 							"listen": "test",
@@ -1767,7 +1767,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/tasks?offset=0&limit=10",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories?offset=0&limit=10",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -1777,7 +1777,7 @@
 								"{{pj-slug}}",
 								"workflows",
 								"{{wf-slug}}",
-								"tasks"
+								"stories"
 							],
 							"query": [
 								{

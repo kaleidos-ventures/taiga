@@ -5,17 +5,9 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from dataclasses import dataclass
-
-from taiga.users.models import User
-from taiga.workflows.models import WorkflowStatus
+from taiga.base.serializers import BaseModel
+from taiga.stories.serializers import StorySerializer
 
 
-@dataclass
-class Task:
-    ref: int
-    name: str
-    order: int
-    created_at: str
-    created_by: User
-    status: WorkflowStatus
+class CreateStoryContent(BaseModel):
+    story: StorySerializer

@@ -206,13 +206,13 @@ async def test_get_user_permissions_for_project():
 @pytest.mark.parametrize(
     "permissions, expected",
     [
-        (["view_task", "foo"], False),
+        (["view_story", "foo"], False),
         (["comment_us", "not_valid"], False),
         (["non_existent"], False),
-        (["view_us", "view_task"], True),
+        (["view_us", "view_story"], True),
         (["comment_us", "view_us"], True),
-        (["view_us", "comment_task", "view_task"], True),
-        (["comment_task", "view_task"], True),
+        (["view_us", "comment_story", "view_story"], True),
+        (["comment_story", "view_story"], True),
     ],
 )
 def test_permissions_are_valid(permissions, expected):
@@ -227,16 +227,16 @@ def test_permissions_are_valid(permissions, expected):
 @pytest.mark.parametrize(
     "permissions, expected",
     [
-        (["view_task"], False),
-        (["comment_us", "view_task"], False),
-        (["comment_task", "view_us"], False),
-        (["view_us", "view_task"], True),
+        (["view_story"], False),
+        (["comment_us", "view_story"], False),
+        (["comment_story", "view_us"], False),
+        (["view_us", "view_story"], True),
         (["comment_us", "view_us"], True),
-        (["view_us", "comment_task", "view_task"], True),
-        (["view_us", "comment_task"], False),
-        (["modify_us", "comment_task"], False),
+        (["view_us", "comment_story", "view_story"], True),
+        (["view_us", "comment_story"], False),
+        (["modify_us", "comment_story"], False),
         (["view_us", "modify_us", "comment_us"], True),
-        (["add_task", "modify_task", "comment_task"], False),
+        (["add_story", "modify_story", "comment_story"], False),
     ],
 )
 def test_permissions_are_compatible(permissions, expected):

@@ -65,7 +65,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [tuiHint]="t('project.card.close_card')"
         icon="close"
         type="button"></button>
-      <div class="project-item-card">
+      <div
+        class="project-item-card"
+        [@invitationAccepted]="animationAcceptedInvitation">
         <div
           class="card-badge-container"
           [@itemSlideOutAnimation]
@@ -106,6 +108,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <p
           class="project-card-description"
           [@itemSlideOutAnimation]
+          (@itemSlideOutAnimation.done)="invitationAccepted()"
           *ngIf="invitationStatus === 'accepted'">
           {{ project.description }}
         </p>

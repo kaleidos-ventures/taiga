@@ -28,6 +28,7 @@ import { Store } from '@ngrx/store';
 import { Project, Workspace } from '@taiga/data';
 import { distinctUntilChanged, map, skip } from 'rxjs/operators';
 import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
+const cssValue = getComputedStyle(document.documentElement);
 
 type CardVariant = 'project' | 'placeholder' | 'invitation';
 @UntilDestroy()
@@ -37,6 +38,21 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
   styleUrls: ['./project-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
+    trigger('invitationAccepted', [
+      transition('* => done', [
+        style({
+          outline: 'solid 2px transparent',
+        }),
+        animate(
+          '600ms ease-in-out',
+          style({
+            outline: `solid 1px ${cssValue.getPropertyValue(
+              '--color-primary'
+            )}`,
+          })
+        ),
+      ]),
+    ]),
     trigger('itemSlideOutAnimation', [
       transition(':enter', [
         style({
@@ -125,6 +141,8 @@ export class ProjectCardComponent implements OnInit {
   public invitationStatus$ = this.store.select(selectAcceptedInvite);
   public rejectedByAdmin = false;
 
+  public animationAcceptedInvitation: 'done' | null = null;
+
   public ngOnInit(): void {
     if (
       this.project &&
@@ -165,5 +183,9 @@ export class ProjectCardComponent implements OnInit {
 
       this.rejectInvite.next(this.project.slug);
     }
+  }
+
+  public invitationAccepted() {
+    this.animationAcceptedInvitation = 'done';
   }
 }

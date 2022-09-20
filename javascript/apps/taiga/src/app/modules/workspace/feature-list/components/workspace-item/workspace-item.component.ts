@@ -360,29 +360,6 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     this.cd.detectChanges();
   }
 
-  public justRevoked() {
-    const invitations = [...this.state.get('invitations')];
-    const rndInt = Math.floor(Math.random() * (invitations.length - 1));
-    if (invitations.length) {
-      this.invitationRevokedEvent(
-        invitations[rndInt].slug,
-        this.workspace.slug
-      );
-    }
-  }
-
-  public justInvited() {
-    this.invitationCreateEvent(randUserName(), this.workspace.slug, true);
-  }
-
-  public justAccept() {
-    const invitations = [...this.state.get('invitations')];
-    const rndInt = Math.floor(Math.random() * (invitations.length - 1));
-    if (invitations.length) {
-      this.membershipCreateEvent(invitations[rndInt].slug);
-    }
-  }
-
   public invitationRevokedEvent(project: string, workspaceSlug: string) {
     const invitations = [...this.state.get('invitations')];
     const workspaceInvitations = invitations.filter(

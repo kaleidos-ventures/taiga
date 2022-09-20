@@ -38,11 +38,11 @@ describe('PermissionsService', () => {
     });
 
     const value = spectator.service.formatRawPermissions([
-      'view_us',
-      'add_us',
-      'modify_us',
-      'delete_us',
-      'comment_us',
+      'view_story',
+      'add_story',
+      'modify_story',
+      'delete_story',
+      'comment_story',
     ]);
 
     formGroup.patchValue(value);
@@ -61,8 +61,8 @@ describe('PermissionsService', () => {
     const project = ProjectMockFactory();
 
     project.userPermissions = [
-      'view_us',
-      'modify_us',
+      'view_story',
+      'modify_story',
       'view_issues',
       'modify_issue',
     ];

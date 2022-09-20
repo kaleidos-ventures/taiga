@@ -105,15 +105,15 @@ export class ProjectApiService {
     permissions = permissions.filter((permission) => {
       const validPermission = [
         'add_member',
-        'delete_us',
+        'delete_story',
         'delete_task',
         'modify_task',
         'view_task',
-        'modify_us',
-        'comment_us',
-        'view_us',
+        'modify_story',
+        'comment_story',
+        'view_story',
         'add_task',
-        'add_us',
+        'add_story',
         'comment_task',
         'delete_project',
         'modify_project',
@@ -134,15 +134,15 @@ export class ProjectApiService {
     permissions = permissions.filter((permission) => {
       const validPermission = [
         'add_member',
-        'delete_us',
+        'delete_story',
         'delete_task',
         'modify_task',
         'view_task',
-        'modify_us',
-        'comment_us',
-        'view_us',
+        'modify_story',
+        'comment_story',
+        'view_story',
         'add_task',
-        'add_us',
+        'add_story',
         'comment_task',
         'delete_project',
         'modify_project',
@@ -162,15 +162,15 @@ export class ProjectApiService {
     permissions = permissions.filter((permission) => {
       const validPermission = [
         'add_member',
-        'delete_us',
+        'delete_story',
         'delete_task',
         'modify_task',
         'view_task',
-        'modify_us',
-        'comment_us',
-        'view_us',
+        'modify_story',
+        'comment_story',
+        'view_story',
         'add_task',
-        'add_us',
+        'add_story',
         'comment_task',
         'delete_project',
         'modify_project',
@@ -320,7 +320,7 @@ export class ProjectApiService {
     limit: number
   ): Observable<Story[]> {
     return this.http.get<Story[]>(
-      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/tasks`,
+      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/stories`,
       {
         params: {
           offset,
@@ -331,15 +331,15 @@ export class ProjectApiService {
   }
 
   public createStory(
-    task: Partial<Story>,
+    story: Pick<Story, 'name' | 'status'>,
     project: Project['slug'],
     workflow: Workflow['slug']
   ): Observable<Story> {
     return this.http.post<Story>(
-      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/tasks`,
+      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/stories`,
       {
-        name: task.name,
-        status: task.status,
+        name: story.name,
+        status: story.status.slug,
       }
     );
   }

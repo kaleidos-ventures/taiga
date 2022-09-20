@@ -19,11 +19,11 @@ export enum Permissions {
   modifyMilestone = 'modify_milestone',
   deleteMilestone = 'delete_milestone',
   // User Story
-  viewUserstory = 'view_us',
-  addUserstory = 'add_us',
-  modifyUserstory = 'modify_us',
-  commentUserstory = 'comment_us',
-  deleteUserstory = 'delete_us',
+  viewStory = 'view_story',
+  addStory = 'add_story',
+  modifyStory = 'modify_story',
+  commentStory = 'comment_story',
+  deleteStory = 'delete_story',
   // Task
   viewTask = 'view_task',
   addTask = 'add_task',

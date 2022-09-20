@@ -30,7 +30,7 @@ export interface KanbanState {
   createStoryForm: Status['slug'];
   scrollToStory: PartialStory['tmpId'][];
   empty: boolean | null;
-  newEventStories: Story['reference'][];
+  newEventStories: Story['ref'][];
 }
 
 export const initialKanbanState: KanbanState = {
@@ -72,7 +72,7 @@ export const reducer = createReducer(
       state.scrollToStory.push(story.tmpId);
     }
 
-    state.stories[story.status].push(story);
+    state.stories[story.status.slug].push(story);
 
     return state;
   }),
@@ -102,11 +102,11 @@ export const reducer = createReducer(
     KanbanApiActions.fetchStoriesSuccess,
     (state, { stories, offset }): KanbanState => {
       stories.forEach((story) => {
-        if (!state.stories[story.status]) {
-          state.stories[story.status] = [];
+        if (!state.stories[story.status.slug]) {
+          state.stories[story.status.slug] = [];
         }
 
-        state.stories[story.status].push(story);
+        state.stories[story.status.slug].push(story);
       });
 
       state.loadingStories = false;
@@ -128,20 +128,24 @@ export const reducer = createReducer(
   on(
     KanbanApiActions.createStorySuccess,
     (state, { story, tmpId }): KanbanState => {
-      state.stories[story.status] = state.stories[story.status].map((it) => {
-        if ('tmpId' in it) {
-          return it.tmpId === tmpId ? story : it;
-        }
+      state.stories[story.status.slug] = state.stories[story.status.slug].map(
+        (it) => {
+          if ('tmpId' in it) {
+            return it.tmpId === tmpId ? story : it;
+          }
 
-        return it;
-      });
+          return it;
+        }
+      );
 
       return state;
     }
   ),
   on(KanbanApiActions.createStoryError, (state, { story }): KanbanState => {
     if ('tmpId' in story) {
-      state.stories[story.status] = state.stories[story.status].filter((it) => {
+      state.stories[story.status.slug] = state.stories[
+        story.status.slug
+      ].filter((it) => {
         return !('tmpId' in it && it.tmpId === story.tmpId);
       });
     }
@@ -154,17 +158,17 @@ export const reducer = createReducer(
     return state;
   }),
   on(KanbanEventsActions.newStory, (state, { story }): KanbanState => {
-    state.stories[story.status].push(story);
+    state.stories[story.status.slug].push(story);
 
-    state.newEventStories.push(story.reference);
+    state.newEventStories.push(story.ref);
 
     return state;
   }),
   on(
     KanbanActions.timeoutAnimationEventNewStory,
-    (state, { reference }): KanbanState => {
+    (state, { ref }): KanbanState => {
       state.newEventStories = state.newEventStories.filter((it) => {
-        return it !== reference;
+        return it !== ref;
       });
 
       return state;

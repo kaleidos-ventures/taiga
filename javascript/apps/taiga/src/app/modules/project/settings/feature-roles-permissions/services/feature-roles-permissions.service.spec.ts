@@ -76,7 +76,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         comment: new FormControl(false),
       });
 
-      // userstories has comments
+      // stories has comments
       spectator.service.applyPermission('us', 'edit', formGroup);
 
       expect(formGroup.get('comment')!.disabled).toBeFalsy();
@@ -162,7 +162,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
     });
   });
 
-  it('permission form to backend format - userstories', () => {
+  it('permission form to backend format - stories', () => {
     const formGroup = new FormGroup({
       us: new FormGroup({
         create: new FormControl(true),
@@ -175,11 +175,11 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
     let permission = spectator.service.getRoleFormGroupPermissions(formGroup);
 
     expect(permission).toEqual([
-      'view_us',
-      'add_us',
-      'modify_us',
-      'delete_us',
-      'comment_us',
+      'view_story',
+      'add_story',
+      'modify_story',
+      'delete_story',
+      'comment_story',
     ]);
 
     formGroup.setValue({
@@ -193,7 +193,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
     permission = spectator.service.getRoleFormGroupPermissions(formGroup);
 
-    expect(permission).toEqual(['view_us']);
+    expect(permission).toEqual(['view_story']);
 
     formGroup.disable();
     permission = spectator.service.getRoleFormGroupPermissions(formGroup);
@@ -201,7 +201,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
     expect(permission).toEqual([]);
   });
 
-  it('permission form to backend format - userstories disabled', () => {
+  it('permission form to backend format - stories disabled', () => {
     const formGroup = new FormGroup({
       us: new FormGroup({
         create: new FormControl(true),

@@ -81,11 +81,11 @@ export class ProjectFeatureKanbanComponent {
 
   private events() {
     this.wsService
-      .projectEvents<Story>('projectstories.create')
+      .projectEvents<{ story: Story }>('stories.create')
       .pipe(untilDestroyed(this))
       .subscribe((msg) => {
         this.store.dispatch(
-          KanbanEventsActions.newStory({ story: msg.event.content })
+          KanbanEventsActions.newStory({ story: msg.event.content.story })
         );
       });
   }

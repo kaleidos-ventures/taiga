@@ -28,7 +28,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
 
   public getEntities(): Map<Entity, string> {
     return new Map([
-      ['us', 'commons.userstories'],
+      ['us', 'commons.stories'],
       ['task', 'commons.tasks'],
       ['sprint', 'commons.sprints'],
       ['issue', 'commons.issues'],

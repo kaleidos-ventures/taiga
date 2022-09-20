@@ -137,7 +137,7 @@ export class KanbanEffects {
       delay(KanbanStatusComponent.slideInTime + 1),
       map((action) => {
         return KanbanActions.timeoutAnimationEventNewStory({
-          reference: action.story.reference,
+          ref: action.story.ref,
         });
       })
     );

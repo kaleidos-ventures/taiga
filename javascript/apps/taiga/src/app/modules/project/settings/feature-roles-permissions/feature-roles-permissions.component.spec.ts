@@ -64,7 +64,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
     projectsSettingsFeatureRolesPermissionsService.getEntities.andReturn(
       new Map([
-        ['us', 'Userstories'],
+        ['us', 'Stories'],
         ['task', 'Tasks'],
         ['sprint', 'Sprints'],
         ['issue', 'Issues'],
@@ -84,11 +84,11 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       const role = RoleMockFactory();
 
       role.permissions = [
-        'view_us',
-        'add_us',
-        'modify_us',
-        'delete_us',
-        'comment_us',
+        'view_story',
+        'add_story',
+        'modify_story',
+        'delete_story',
+        'comment_story',
       ] as Permissions[];
 
       permissionsService.formatRawPermissions.mockReturnValue({
@@ -125,7 +125,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
     it('no edit permissions', () => {
       const role = RoleMockFactory();
 
-      role.permissions = ['view_us'] as Permissions[];
+      role.permissions = ['view_story'] as Permissions[];
 
       permissionsService.formatRawPermissions.andReturn({
         us: {
@@ -178,7 +178,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       expect(spectator.component.form.get(role.slug)?.disabled).toEqual(true);
     });
 
-    it('userstory no access', () => {
+    it('story no access', () => {
       const role = RoleMockFactory();
 
       role.permissions = ['view_task', 'view_sprints'] as Permissions[];
@@ -238,7 +238,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       store.refreshState();
       spectator.detectChanges();
 
-      const finalPermissions = ['view_us'];
+      const finalPermissions = ['view_story'];
 
       projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions.mockReturnValue(
         finalPermissions
@@ -279,7 +279,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       store.refreshState();
       spectator.detectChanges();
 
-      const finalPermissions = ['view_us'];
+      const finalPermissions = ['view_story'];
 
       projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions.mockReturnValue(
         finalPermissions
@@ -319,7 +319,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       store.refreshState();
       spectator.detectChanges();
 
-      const finalPermissions = ['view_us'];
+      const finalPermissions = ['view_story'];
 
       projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions.mockReturnValue(
         finalPermissions
@@ -375,7 +375,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
     });
 
     it('public permissions', () => {
-      const permissions = ['view_us'];
+      const permissions = ['view_story'];
       const store = spectator.inject(MockStore);
 
       store.setState({
@@ -412,7 +412,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
     });
 
     it('workspace permissions', () => {
-      const permissions = ['view_us'];
+      const permissions = ['view_story'];
       const store = spectator.inject(MockStore);
 
       store.setState({

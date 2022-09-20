@@ -40,11 +40,11 @@ const getPermissions = () => {
     Permissions.modifyMilestone,
     Permissions.deleteMilestone,
 
-    Permissions.viewUserstory,
-    Permissions.addUserstory,
-    Permissions.modifyUserstory,
-    Permissions.commentUserstory,
-    Permissions.deleteUserstory,
+    Permissions.viewStory,
+    Permissions.addStory,
+    Permissions.modifyStory,
+    Permissions.commentStory,
+    Permissions.deleteStory,
 
     Permissions.viewTask,
     Permissions.addTask,

@@ -7,11 +7,15 @@
  */
 
 import { randNumber, randSlug, randText } from '@ngneat/falso';
-import { Status } from '..';
+import { Status, StatusMockFactory } from '..';
 import { Story } from './story.model';
 
 export const StoryMockFactory = (
-  statuses: Status['slug'][] = ['new', 'in-progress', 'done']
+  statuses: Status[] = [
+    StatusMockFactory(),
+    StatusMockFactory(),
+    StatusMockFactory(),
+  ]
 ): Story => {
   let titleCount = Math.floor(Math.random() * 200);
 
@@ -20,11 +24,9 @@ export const StoryMockFactory = (
   }
 
   return {
-    reference: randNumber({ min: 1, max: 999 }),
+    ref: randNumber({ min: 1, max: 999 }),
     name: randText({ charCount: titleCount }),
     order: randNumber(),
-    workflow: randSlug(),
-    project: randSlug(),
     slug: randSlug(),
     status: statuses[Math.floor(Math.random() * statuses.length)],
   };

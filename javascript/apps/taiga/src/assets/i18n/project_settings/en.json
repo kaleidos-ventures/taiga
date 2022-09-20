@@ -28,7 +28,7 @@
     "modify": "Modify",
     "delete": "Delete",
     "restricted": "Can edit <i class=\"restricted\">(restricted)</i>",
-    "userstories_child_help": "By removing access to user stories you are removing access to tasks and sprints as well."
+    "stories_child_help": "By removing access to stories you are removing access to tasks and sprints as well."
   },
   "modal_permissions": {
     "potential_permission_conflicts": "Potential permission conflicts",

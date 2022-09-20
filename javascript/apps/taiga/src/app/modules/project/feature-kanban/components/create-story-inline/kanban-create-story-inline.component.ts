@@ -75,8 +75,11 @@ export class KanbanCreateStoryInlineComponent implements AfterViewInit {
           story: {
             tmpId: v4(),
             name: this.form.get('title')!.value,
-            status: this.status.slug,
-            workflow: this.workflow.slug,
+            status: {
+              name: this.status.name,
+              slug: this.status.slug,
+              color: this.status.color,
+            },
           },
           workflow: this.workflow.slug,
         })

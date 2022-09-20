@@ -19,11 +19,11 @@ const mapFormEntitiesPermissions: Record<
   Partial<Record<EntityPermission, string[]>>
 > = {
   us: {
-    view: ['view_us'],
-    create: ['add_us'],
-    modify: ['modify_us'],
-    delete: ['delete_us'],
-    comment: ['comment_us'],
+    view: ['view_story'],
+    create: ['add_story'],
+    modify: ['modify_story'],
+    delete: ['delete_story'],
+    comment: ['comment_story'],
   },
   task: {
     view: ['view_task'],

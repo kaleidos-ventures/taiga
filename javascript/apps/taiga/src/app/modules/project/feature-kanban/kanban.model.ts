@@ -10,7 +10,7 @@ import { SetOptional } from 'type-fest';
 import { Story } from '@taiga/data';
 
 export interface PartialStory
-  extends SetOptional<Story, 'reference' | 'slug' | 'project' | 'order'> {
+  extends SetOptional<Story, 'ref' | 'slug' | 'order'> {
   tmpId: string;
 }
 

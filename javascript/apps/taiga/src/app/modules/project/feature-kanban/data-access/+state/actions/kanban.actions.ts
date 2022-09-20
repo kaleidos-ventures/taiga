@@ -25,7 +25,7 @@ export const KanbanActions = createActionGroup({
     }>(),
     'Scrolled To New Story': props<{ tmpId: PartialStory['tmpId'] }>(),
     'Timeout Animation Event New Story': props<{
-      reference: Story['reference'];
+      ref: Story['ref'];
     }>(),
   },
 });

@@ -22,5 +22,4 @@ export interface Milestone {
   projectExtraInfo: unknown;
   slug: string;
   totalPoints: number;
-  // userStories: Userstory[];
 }

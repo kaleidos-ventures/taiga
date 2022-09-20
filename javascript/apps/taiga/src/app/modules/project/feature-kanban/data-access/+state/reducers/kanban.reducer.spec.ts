@@ -47,7 +47,7 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.stories[story.status]).toEqual([story]);
+    expect(state.stories[story.status.slug]).toEqual([story]);
     expect(state.loadingStories).toEqual(false);
     expect(state.empty).toEqual(false);
   });

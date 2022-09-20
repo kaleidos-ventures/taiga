@@ -37,7 +37,7 @@ export interface InvitationInfo {
   project: {
     name: string;
     slug: string;
-    isAnon: boolean;
+    anonUserCanView: boolean;
   };
 }
 

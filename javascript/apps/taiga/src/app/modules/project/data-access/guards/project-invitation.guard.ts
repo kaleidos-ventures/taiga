@@ -60,7 +60,7 @@ export class ProjectInvitationGuard implements CanActivate {
               });
             }
           } else {
-            if (invitation.project.isAnon) {
+            if (invitation.project.anonUserCanView) {
               void this.router.navigate(
                 ['/project/', invitation.project.slug],
                 {

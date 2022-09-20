@@ -145,7 +145,7 @@ describe('Project Invitation Guard', () => {
 
     const invitation = InvitationInfoMockFactory();
 
-    invitation.project.isAnon = true;
+    invitation.project.anonUserCanView = true;
     invitation.existingUser = false;
     req.flush(invitation);
 
@@ -188,7 +188,7 @@ describe('Project Invitation Guard', () => {
       projectInvitationToken: token,
     };
 
-    invitation.project.isAnon = false;
+    invitation.project.anonUserCanView = false;
     invitation.existingUser = false;
     req.flush(invitation);
 

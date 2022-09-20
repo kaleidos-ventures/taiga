@@ -25,7 +25,6 @@ describe('Kanban', () => {
 
   it('create story', () => {
     const title = randProductName();
-    console.log(title);
 
     cy.getBySel('open-create-story-form').first().click();
     cy.getBySel('story-title').type(title);

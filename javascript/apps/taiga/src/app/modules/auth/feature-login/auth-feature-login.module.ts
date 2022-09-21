@@ -9,16 +9,16 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+import { AuthForestComponent } from '../components/auth-forest/auth-forest.component';
+import { SocialLoginComponent } from '../components/social-login/social-login.component';
 import { AuthFeatureLoginComponent } from './auth-feature-login.component';
 import { LoginComponent } from './components/login/login.component';
-import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
-import { AuthForestModule } from '../components/auth-forest/auth-forest.module';
-import { SocialLoginModule } from '../components/social-login/social-login.module';
 
 const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
 
@@ -43,8 +43,8 @@ const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
     TuiLinkModule,
     ContextNotificationModule,
     ButtonLoadingModule,
-    AuthForestModule,
-    SocialLoginModule,
+    AuthForestComponent,
+    SocialLoginComponent,
   ],
 })
 export class AuthFeatureLoginModule {}

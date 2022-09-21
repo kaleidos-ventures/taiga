@@ -10,6 +10,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'tg-auth-forest',
+  standalone: true,
   templateUrl: './auth-forest.component.html',
   styleUrls: ['./auth-forest.component.css'],
 })

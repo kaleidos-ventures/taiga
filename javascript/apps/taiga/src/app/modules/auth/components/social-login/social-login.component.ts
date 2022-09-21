@@ -6,14 +6,34 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { ConfigService } from '@taiga/core';
+import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+import { SocialLoginButtonComponent } from '../social-login-button/social-login-button.component';
 
 @Component({
   selector: 'tg-social-login',
+  standalone: true,
   templateUrl: './social-login.component.html',
   styleUrls: ['./social-login.component.css'],
+  imports: [
+    CommonModule,
+    TranslocoModule,
+    ContextNotificationModule,
+    SocialLoginButtonComponent,
+  ],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'auth',
+        alias: 'auth',
+      },
+    },
+  ],
 })
 export class SocialLoginComponent implements OnInit {
   constructor(

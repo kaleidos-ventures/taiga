@@ -5,18 +5,20 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { CommonModule } from '@angular/common';
 import {
-  Component,
   ChangeDetectionStrategy,
+  Component,
   Input,
   OnInit,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
+import { TuiAvatarModule } from '@taiga-ui/kit';
 import { User } from '@taiga/data';
 import { filter } from 'rxjs/operators';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 
 interface State {
   user: Partial<User>;
@@ -24,10 +26,12 @@ interface State {
 
 @Component({
   selector: 'tg-user-avatar',
+  standalone: true,
   templateUrl: './user-avatar.component.html',
   styleUrls: ['./user-avatar.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  imports: [CommonModule, TuiAvatarModule],
 })
 export class UserAvatarComponent implements OnInit {
   @Input()

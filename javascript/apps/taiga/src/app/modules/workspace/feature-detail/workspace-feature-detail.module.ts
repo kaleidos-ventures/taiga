@@ -6,25 +6,25 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
-import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { workspaceDetailFeature } from './+state/reducers/workspace-detail.reducer';
-import { WorkspaceDetailEffects } from './+state/effects/workspace-detail.effects';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ProjectCardModule } from '~/app/shared/project-card/project-card.module';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
-import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
-import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-skeleton/workspace-detail-skeleton.component';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
+import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
+import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
 import { ResizeEventModule } from '~/app/shared/resize/resize.module';
 import { TitleDirective } from '~/app/shared/title/title.directive';
+import { WorkspaceDetailEffects } from './+state/effects/workspace-detail.effects';
+import { workspaceDetailFeature } from './+state/reducers/workspace-detail.reducer';
+import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-skeleton/workspace-detail-skeleton.component';
+import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
+import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
 
 @NgModule({
   declarations: [WorkspaceDetailComponent, WorkspaceDetailSkeletonComponent],
@@ -39,7 +39,7 @@ import { TitleDirective } from '~/app/shared/title/title.directive';
     BadgeModule,
     StoreModule.forFeature(workspaceDetailFeature),
     EffectsModule.forFeature([WorkspaceDetailEffects]),
-    ProjectCardModule,
+    ProjectCardComponent,
     ResizeEventModule,
     WorkspacePageRoutingModule,
     SkeletonsModule,

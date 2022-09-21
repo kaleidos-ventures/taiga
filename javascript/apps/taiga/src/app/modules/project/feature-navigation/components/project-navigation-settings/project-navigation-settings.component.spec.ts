@@ -6,33 +6,37 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ActivatedRoute, Router } from '@angular/router';
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-// import { ProjectMockFactory } from '@taiga/data';
+import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import '@ng-web-apis/universal/mocks';
+import { randProductName, randWord } from '@ngneat/falso';
+import {
+  createComponentFactory,
+  mockProvider,
+  Spectator,
+} from '@ngneat/spectator/jest';
+import { ProjectMockFactory } from '@taiga/data';
+import { Subject } from 'rxjs';
+import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';
+import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { ProjectNavigationSettingsComponent } from './project-navigation-settings.component';
-
-import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
-import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';
-import { randProductName, randWord } from '@ngneat/falso';
 
 const projectName = randProductName();
 const fragment = randWord();
 
 describe('ProjectSettingsComponent', () => {
+  const animationEvents$ = new Subject();
   let spectator: Spectator<ProjectNavigationSettingsComponent>;
   const createComponent = createComponentFactory({
     component: ProjectNavigationSettingsComponent,
-    imports: [getTranslocoModule()],
+    imports: [getTranslocoModule(), RouterTestingModule],
     declareComponent: false,
-    mocks: [RouteHistoryService, ProjectNavigationComponent],
+    mocks: [RouteHistoryService],
     providers: [
-      {
-        provide: Router,
-        useValue: {
-          url: '/router',
-        },
-      },
+      mockProvider(ProjectNavigationComponent, {
+        animationEvents$,
+      }),
       {
         provide: ActivatedRoute,
         useValue: {
@@ -51,11 +55,20 @@ describe('ProjectSettingsComponent', () => {
     spectator = createComponent({
       detectChanges: false,
     });
+    spectator.component.project = ProjectMockFactory(true);
+
+    animationEvents$.next({
+      toState: 'open-settings',
+      phaseName: 'done',
+    });
   });
 
   it('get history nav - has history', () => {
     spectator.component.ngOnInit = jest.fn();
     spectator.component.getFragment = jest.fn();
+    spectator.component.getRouter = jest
+      .fn()
+      .mockReturnValue({ url: '/router' });
 
     const routeHistory =
       spectator.inject<RouteHistoryService>(RouteHistoryService);
@@ -71,6 +84,9 @@ describe('ProjectSettingsComponent', () => {
   it('get history nav - has no history defaults to current route', () => {
     spectator.component.ngOnInit = jest.fn();
     spectator.component.getFragment = jest.fn();
+    spectator.component.getRouter = jest
+      .fn()
+      .mockReturnValue({ url: '/router' });
 
     const routeHistory =
       spectator.inject<RouteHistoryService>(RouteHistoryService);
@@ -86,16 +102,17 @@ describe('ProjectSettingsComponent', () => {
   it('get history nav - first route is on settings', () => {
     spectator.component.ngOnInit = jest.fn();
     spectator.component.getFragment = jest.fn();
+    spectator.component.getRouter = jest
+      .fn()
+      .mockReturnValue({ url: '/router' });
 
     const routeHistory =
       spectator.inject<RouteHistoryService>(RouteHistoryService);
     routeHistory.getPreviousUrl.mockReturnValue('');
 
-    const router = spectator.inject<Router>(Router);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: force this private property value for testing.
-    router.url = '/settings';
+    spectator.component.getRouter = jest
+      .fn()
+      .mockReturnValue({ url: '/settings' });
 
     spectator.detectChanges();
 

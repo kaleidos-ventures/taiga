@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -20,12 +21,15 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { InvitationParams, SignUpError } from '@taiga/data';
+import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { PasswordStrengthComponent } from '@taiga/ui/inputs/password-strength/password-strength.component';
 import {
   signup,
@@ -33,13 +37,33 @@ import {
   signUpSuccess,
 } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { SignUp } from '~/app/modules/auth/feature-sign-up/models/sign-up.model';
+import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
 
 @UntilDestroy()
 @Component({
   selector: 'tg-signup',
+  standalone: true,
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css', '../../styles/sign-up.shared.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    TranslocoModule,
+    ReactiveFormsModule,
+    InputsModule,
+    GetUrlPipeModule,
+    ButtonLoadingModule,
+  ],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'project_overview',
+        alias: 'project_overview',
+      },
+    },
+  ],
 })
 export class SignupComponent implements OnInit {
   @Input()

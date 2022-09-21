@@ -15,7 +15,7 @@ import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiAvatarModule, TuiBadgedContentModule } from '@taiga-ui/kit';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { DropdownModule } from '../dropdown/dropdown.module';
-import { UserAvatarModule } from '../user-avatar/user-avatar.component.module';
+import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 import { NavigationProjectsComponent } from './navigation-projects/navigation-projects.component';
 import { NavigationUserDropdownComponent } from './navigation-user-dropdown/navigation-user-dropdown.component';
 import { NavigationComponent } from './navigation.component';
@@ -28,7 +28,7 @@ import { NavigationComponent } from './navigation.component';
     TuiLinkModule,
     TuiSvgModule,
     TranslocoModule,
-    UserAvatarModule,
+    UserAvatarComponent,
     TuiAutoFocusModule,
     RouterModule,
     AvatarModule,

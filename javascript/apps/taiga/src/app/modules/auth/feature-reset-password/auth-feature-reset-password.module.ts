@@ -6,22 +6,21 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslocoModule } from '@ngneat/transloco';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { AuthFeatureResetPasswordComponent } from './auth-feature-reset-password.component';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { AuthForestModule } from '../components/auth-forest/auth-forest.module';
-import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
-import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
-import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
-import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 import { RouterModule, Routes } from '@angular/router';
-import { ResetPasswordGuard } from './reset-password.guard';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
+import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
+import { AuthForestComponent } from '../components/auth-forest/auth-forest.component';
+import { AuthFeatureResetPasswordComponent } from './auth-feature-reset-password.component';
 import { NewPasswordComponent } from './components/new-password.component';
+import { ResetPasswordGuard } from './reset-password.guard';
 
 const routes: Routes = [
   {
@@ -42,7 +41,6 @@ const routes: Routes = [
     CommonModule,
     ReactiveFormsModule,
     InputsModule,
-    AuthForestModule,
     TuiButtonModule,
     GetUrlPipeModule,
     InternalLinkModule,
@@ -50,6 +48,7 @@ const routes: Routes = [
     TuiLinkModule,
     RouterModule.forChild(routes),
     ContextNotificationModule,
+    AuthForestComponent,
   ],
   exports: [],
   providers: [

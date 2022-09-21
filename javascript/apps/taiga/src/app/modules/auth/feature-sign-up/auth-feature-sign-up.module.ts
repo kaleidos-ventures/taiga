@@ -9,21 +9,21 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { VerifyEmailGuard } from '../guards/verify-email.guard';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
+import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+import { ExternalLinkModule } from '~/app/shared/directives/external-link/external-link.module';
+import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
+import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
+import { SocialLoginComponent } from '../components/social-login/social-login.component';
+import { SocialSignupGuard } from '../guards/social-signup.guard';
+import { VerifyEmailGuard } from '../guards/verify-email.guard';
 import { AuthFeatureSignUpComponent } from './auth-feature-sign-up.component';
 import { SignupComponent } from './components/signup/signup.component';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { ExternalLinkModule } from '~/app/shared/directives/external-link/external-link.module';
 import { AuthFeatureVerifyEmailComponent } from './components/verify-email/verify-email.component';
-import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
-import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
-import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
-import { SocialLoginModule } from '../components/social-login/social-login.module';
-import { SocialSignupGuard } from '../guards/social-signup.guard';
 
 const routes: Routes = [
   {
@@ -56,11 +56,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    AuthFeatureSignUpComponent,
-    SignupComponent,
-    AuthFeatureVerifyEmailComponent,
-  ],
+  declarations: [AuthFeatureSignUpComponent, AuthFeatureVerifyEmailComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
@@ -74,8 +70,10 @@ const routes: Routes = [
     GetUrlPipeModule,
     InternalLinkModule,
     ButtonLoadingModule,
-    SocialLoginModule,
+    SocialLoginComponent,
+    SignupComponent,
   ],
+  exports: [],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -85,6 +83,5 @@ const routes: Routes = [
       },
     },
   ],
-  exports: [SignupComponent],
 })
 export class AuthFeatureSignUpModule {}

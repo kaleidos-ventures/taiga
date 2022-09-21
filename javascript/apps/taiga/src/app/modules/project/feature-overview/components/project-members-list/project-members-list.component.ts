@@ -7,7 +7,11 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import {
+  CdkVirtualScrollViewport,
+  ScrollingModule,
+} from '@angular/cdk/scrolling';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -17,21 +21,59 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
+import {
+  TuiButtonModule,
+  TuiHintModule,
+  TuiLinkModule,
+  TuiScrollbarModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { Invitation, Membership, User } from '@taiga/data';
+import { AvatarModule } from '@taiga/ui/avatar';
+import { BadgeModule } from '@taiga/ui/badge/badge.module';
+import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { of } from 'rxjs';
 import { delay, take, tap } from 'rxjs/operators';
-import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 import {
   selectCanPaginate,
   selectLoadingMoreMembers,
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
+import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
+import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 
 @Component({
   selector: 'tg-project-members-list',
+  standalone: true,
   templateUrl: './project-members-list.component.html',
   styleUrls: ['./project-members-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    SkeletonsModule,
+    TuiScrollbarModule,
+    CommonModule,
+    TuiButtonModule,
+    TuiSvgModule,
+    AvatarModule,
+    TranslocoModule,
+    TuiLinkModule,
+    UserCardComponent,
+    TuiHintModule,
+    ScrollingModule,
+    BadgeModule,
+    CapitalizePipeModule,
+  ],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'project_overview',
+        alias: 'project_overview',
+      },
+    },
+  ],
   animations: [
     fadeIntOutAnimation,
     trigger('fadeInRight', [

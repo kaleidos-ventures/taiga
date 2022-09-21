@@ -6,12 +6,17 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
+import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { Invitation, Membership, Project, User } from '@taiga/data';
+import { ModalModule } from '@taiga/ui/modal';
+import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { Subject } from 'rxjs';
 import { delay, map, take } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
@@ -42,16 +47,40 @@ import {
   acceptInvitationSlugSuccess,
   inviteUsersSuccess,
 } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
 import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectMembersListComponent } from '../project-members-list/project-members-list.component';
+import { ProjectMembersModalComponent } from '../project-members-modal/project-members-modal.component';
 
 @UntilDestroy()
 @Component({
   selector: 'tg-project-members',
+  standalone: true,
   templateUrl: './project-members.component.html',
   styleUrls: ['./project-members.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState],
+  providers: [
+    RxState,
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'project_overview',
+        alias: 'project_overview',
+      },
+    },
+  ],
+  imports: [
+    CommonModule,
+    TuiButtonModule,
+    TuiSvgModule,
+    TranslocoModule,
+    TuiLinkModule,
+    ModalModule,
+    ProjectMembersModalComponent,
+    SkeletonsModule,
+    ProjectMembersListComponent,
+    InviteToProjectModule,
+  ],
 })
 export class ProjectMembersComponent {
   @ViewChild(ProjectMembersListComponent)

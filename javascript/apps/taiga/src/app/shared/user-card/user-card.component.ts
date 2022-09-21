@@ -6,15 +6,20 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
+import { TuiSvgModule } from '@taiga-ui/core';
 import { User } from '@taiga/data';
 import { InvitationService } from '~/app/services/invitation.service';
+import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 
 @Component({
   selector: 'tg-user-card',
+  standalone: true,
   templateUrl: './user-card.component.html',
   styleUrls: ['./user-card.component.css'],
+  imports: [CommonModule, UserAvatarComponent, TuiSvgModule],
 })
 export class UserCardComponent implements OnChanges {
   @Input() public user!: Partial<User>;

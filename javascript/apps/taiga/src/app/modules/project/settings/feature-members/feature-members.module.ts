@@ -34,7 +34,7 @@ import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
 import { TitleDirective } from '~/app/shared/title/title.directive';
-import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
+import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { MembersEffects } from './+state/effects/members.effects';
 import { membersFeature } from './+state/reducers/members.reducer';
 import { MembersListComponent } from './components/members-list/members-list.component';
@@ -73,7 +73,7 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     InputsModule,
     TuiButtonModule,
     TuiLinkModule,
-    UserCardModule,
+    UserCardComponent,
     TuiSvgModule,
     TuiAutoFocusModule,
     A11yModule,

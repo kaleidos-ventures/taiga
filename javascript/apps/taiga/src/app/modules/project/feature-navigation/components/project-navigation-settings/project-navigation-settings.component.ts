@@ -7,6 +7,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -18,10 +19,12 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { Project } from '@taiga/data';
+import { AvatarModule } from '@taiga/ui/avatar';
 import { filter, take } from 'rxjs/operators';
 import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
@@ -29,9 +32,18 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
 @UntilDestroy()
 @Component({
   selector: 'tg-project-navigation-settings',
+  standalone: true,
   templateUrl: './project-navigation-settings.component.html',
   styleUrls: ['./project-navigation-settings.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    TuiButtonModule,
+    TuiSvgModule,
+    TranslocoModule,
+    AvatarModule,
+    RouterModule,
+  ],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -83,7 +95,8 @@ export class ProjectNavigationSettingsComponent implements OnInit {
   }
 
   public getHistoryNav() {
-    this.previousUrl = this.routeHistory.getPreviousUrl() || this.router.url;
+    this.previousUrl =
+      this.routeHistory.getPreviousUrl() || this.getRouter().url;
     if (this.previousUrl.includes('/settings')) {
       const params: string = this.route.snapshot.params.slug;
       this.previousUrl = `/project/${params}/`;
@@ -92,7 +105,7 @@ export class ProjectNavigationSettingsComponent implements OnInit {
 
   public navigateBack() {
     this.closeMenu.next();
-    void this.router.navigate([this.previousUrl]);
+    void this.getRouter().navigate([this.previousUrl]);
   }
 
   public getFragment() {
@@ -100,5 +113,9 @@ export class ProjectNavigationSettingsComponent implements OnInit {
       this.currentFragment = fragment;
       this.cd.markForCheck();
     });
+  }
+
+  public getRouter() {
+    return this.router;
   }
 }

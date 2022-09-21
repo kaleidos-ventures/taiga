@@ -9,39 +9,39 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
-import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
 import { TranslocoModule } from '@ngneat/transloco';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import {
   TuiButtonModule,
-  TuiSvgModule,
-  TuiLinkModule,
   TuiDataListModule,
-  TuiScrollbarModule,
   TuiDropdownModule,
+  TuiLinkModule,
+  TuiScrollbarModule,
+  TuiSvgModule,
 } from '@taiga-ui/core';
 import { TuiComboBoxModule, TuiDataListWrapperModule } from '@taiga-ui/kit';
-import { InviteToProjectComponent } from './invite-to-project.component';
-import { UserAvatarModule } from '~/app/shared/user-avatar/user-avatar.component.module';
-import { UserToInviteModule } from './components/user-to-invite.module';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { rolesPermissionsFeature } from '~/app/modules/project/settings/feature-roles-permissions/+state/reducers/roles-permissions.reducer';
+import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
+import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { RolesPermissionsEffects } from '~/app/modules/project/settings/feature-roles-permissions/+state/effects/roles-permissions.effects';
-import { invitationFeature } from '~/app/shared/invite-to-project/data-access/+state/reducers/invitation.reducers';
+import { rolesPermissionsFeature } from '~/app/modules/project/settings/feature-roles-permissions/+state/reducers/roles-permissions.reducer';
 import { InvitationEffects } from '~/app/shared/invite-to-project/data-access/+state/effects/invitation.effects';
-import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { invitationFeature } from '~/app/shared/invite-to-project/data-access/+state/reducers/invitation.reducers';
+import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
+import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { ButtonLoadingModule } from '../directives/button-loading/button-loading.module';
-import { UserCardModule } from '~/app/shared/user-card/user-card-component.module';
 import { CapitalizePipeModule } from '../pipes/capitalize/capitalize.pipe.module';
+import { UserToInviteComponent } from './components/user-to-invite.component';
+import { InviteToProjectComponent } from './invite-to-project.component';
 
 @NgModule({
   imports: [
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    UserAvatarModule,
+    UserAvatarComponent,
     TuiButtonModule,
     TuiLinkModule,
     InputsModule,
@@ -54,14 +54,14 @@ import { CapitalizePipeModule } from '../pipes/capitalize/capitalize.pipe.module
     TuiActiveZoneModule,
     TuiComboBoxModule,
     TuiDataListWrapperModule,
-    UserToInviteModule,
+    UserToInviteComponent,
     ContextNotificationModule,
     StoreModule.forFeature(rolesPermissionsFeature),
     StoreModule.forFeature(invitationFeature),
     EffectsModule.forFeature([RolesPermissionsEffects, InvitationEffects]),
     TuiAutoFocusModule,
     ButtonLoadingModule,
-    UserCardModule,
+    UserCardComponent,
     CapitalizePipeModule,
   ],
   declarations: [InviteToProjectComponent],

@@ -13,8 +13,8 @@ import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
-import { ProjectNavigationSettingsModule } from './components/project-navigation-settings/project-navigation-settings.module';
-import { ProjectNavigationMenuModule } from './components/project-navigation-menu/project-navigation-menu.module';
+import { ProjectNavigationMenuComponent } from './components/project-navigation-menu/project-navigation-menu.component';
+import { ProjectNavigationSettingsComponent } from './components/project-navigation-settings/project-navigation-settings.component';
 import { ProjectNavigationComponent } from './project-feature-navigation.component';
 
 @NgModule({
@@ -26,8 +26,8 @@ import { ProjectNavigationComponent } from './project-feature-navigation.compone
     A11yModule,
     RouterModule,
     AvatarModule,
-    ProjectNavigationSettingsModule,
-    ProjectNavigationMenuModule,
+    ProjectNavigationSettingsComponent,
+    ProjectNavigationMenuComponent,
   ],
   providers: [],
   declarations: [ProjectNavigationComponent],

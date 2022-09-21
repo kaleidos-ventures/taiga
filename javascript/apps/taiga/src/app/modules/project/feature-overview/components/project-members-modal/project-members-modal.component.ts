@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,13 +14,38 @@ import {
   Input,
   Output,
 } from '@angular/core';
+import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import {
+  TuiButtonModule,
+  TuiScrollbarModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { Invitation, Membership, User } from '@taiga/data';
+import { ProjectMembersListComponent } from '../project-members-list/project-members-list.component';
 
 @Component({
   selector: 'tg-project-members-modal',
+  standalone: true,
   templateUrl: './project-members-modal.component.html',
   styleUrls: ['./project-members-modal.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    TuiButtonModule,
+    TuiSvgModule,
+    TranslocoModule,
+    TuiScrollbarModule,
+    ProjectMembersListComponent,
+  ],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'project_overview',
+        alias: 'project_overview',
+      },
+    },
+  ],
 })
 export class ProjectMembersModalComponent {
   @Input()

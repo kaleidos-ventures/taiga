@@ -6,9 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslocoService } from '@ngneat/transloco';
+import {
+  TranslocoModule,
+  TranslocoService,
+  TRANSLOCO_SCOPE,
+} from '@ngneat/transloco';
 import { ConfigService } from '@taiga/core';
 
 interface SocialParams {
@@ -18,8 +23,19 @@ interface SocialParams {
 
 @Component({
   selector: 'tg-social-login-button',
+  standalone: true,
   templateUrl: './social-login-button.component.html',
   styleUrls: ['./social-login-button.component.css'],
+  imports: [CommonModule, TranslocoModule],
+  providers: [
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'auth',
+        alias: 'auth',
+      },
+    },
+  ],
 })
 export class SocialLoginButtonComponent {
   @Input() public social!: keyof ConfigService['social'];

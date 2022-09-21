@@ -89,7 +89,7 @@ async def test_user_has_perm_without_perm():
 async def test_user_has_perm_being_project_admin():
     user = await f.create_user()
     project = await f.create_project(owner=user)
-    perm = "view_us"
+    perm = "view_story"
 
     assert await services.user_has_perm(user=user, perm=perm, obj=project) is True
 
@@ -102,7 +102,7 @@ async def test_user_has_perm_being_project_member():
         is_admin=False,
     )
     user = await f.create_user()
-    view_perm = "view_us"
+    view_perm = "view_story"
     await f.create_project_membership(user=user, project=project, role=general_member_role)
 
     assert await services.user_has_perm(user=user, perm=view_perm, obj=project) is True
@@ -111,14 +111,14 @@ async def test_user_has_perm_being_project_member():
 async def test_user_has_perm_not_being_project_member():
     project = await f.create_project()
     user = await f.create_user()
-    perm = "view_us"
+    perm = "view_story"
 
     assert await services.user_has_perm(user=user, perm=perm, obj=project) is False
 
 
 async def test_user_has_perm_without_workspace_and_project():
     user = await f.create_user()
-    perm = "view_us"
+    perm = "view_story"
 
     assert await services.user_has_perm(user=user, perm=perm, obj=None) is False
 
@@ -185,8 +185,8 @@ async def test_get_user_permissions_for_project():
     params = [False, True, False, False, False, [], project]
     assert await services.get_user_permissions_for_project(*params) == choices.ProjectPermissions.values
 
-    params = [False, False, True, False, False, ["view_us"], project]
-    assert await services.get_user_permissions_for_project(*params) == ["view_us"]
+    params = [False, False, True, False, False, ["view_story"], project]
+    assert await services.get_user_permissions_for_project(*params) == ["view_story"]
 
     params = [False, False, False, True, False, [], project]
     assert await services.get_user_permissions_for_project(*params) == project.workspace_member_permissions
@@ -206,13 +206,12 @@ async def test_get_user_permissions_for_project():
 @pytest.mark.parametrize(
     "permissions, expected",
     [
-        (["view_story", "foo"], False),
-        (["comment_us", "not_valid"], False),
-        (["non_existent"], False),
-        (["view_us", "view_story"], True),
-        (["comment_us", "view_us"], True),
-        (["view_us", "comment_story", "view_story"], True),
         (["comment_story", "view_story"], True),
+        (["comment_story", "not_valid"], False),
+        (["non_existent"], False),
+        (["view_story", "comment_story", "view_task"], True),
+        (["view_story", "foo"], False),
+        (["view_story", "view_task"], True),
     ],
 )
 def test_permissions_are_valid(permissions, expected):
@@ -227,16 +226,15 @@ def test_permissions_are_valid(permissions, expected):
 @pytest.mark.parametrize(
     "permissions, expected",
     [
-        (["view_story"], False),
-        (["comment_us", "view_story"], False),
-        (["comment_story", "view_us"], False),
-        (["view_us", "view_story"], True),
-        (["comment_us", "view_us"], True),
-        (["view_us", "comment_story", "view_story"], True),
-        (["view_us", "comment_story"], False),
-        (["modify_us", "comment_story"], False),
-        (["view_us", "modify_us", "comment_us"], True),
         (["add_story", "modify_story", "comment_story"], False),
+        (["comment_story", "view_story"], True),
+        (["comment_task", "view_story"], False),
+        (["modify_task", "comment_story"], False),
+        (["view_story", "comment_story", "view_story"], True),
+        (["view_story", "modify_story", "comment_story"], True),
+        (["view_story", "view_story"], True),
+        (["view_story"], True),
+        (["view_task", "comment_story"], False),
     ],
 )
 def test_permissions_are_compatible(permissions, expected):

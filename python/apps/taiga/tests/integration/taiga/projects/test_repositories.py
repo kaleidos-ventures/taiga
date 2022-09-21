@@ -186,7 +186,7 @@ async def test_get_template_return_template():
 
 async def test_update_project_public_permissions():
     project = await f.create_project(name="Project 1")
-    permissions = ["add_story", "view_story", "add_us", "view_us"]
+    permissions = ["add_story", "view_story", "add_task", "view_task"]
     await repositories.update_project_public_permissions(project, permissions)
     assert len(project.public_permissions) == 4
     assert len(project.anon_permissions) == 2
@@ -199,7 +199,7 @@ async def test_update_project_public_permissions():
 
 async def test_update_project_workspace_member_permissions():
     project = await f.create_project(name="Project 1")
-    permissions = ["add_story", "view_story", "add_us", "view_us"]
+    permissions = ["add_story", "view_story", "add_task", "view_task"]
     await repositories.update_project_workspace_member_permissions(project, permissions)
     assert len(project.workspace_member_permissions) == 4
 
@@ -229,7 +229,7 @@ async def test_get_workspace_projects_for_user_1():
     await f.create_project_membership(user=user7, project=pj12, role=pj_general_role)
     pj_general_role.permissions = []
     await _save_role(pj_general_role)
-    pj12.workspace_member_permissions = ["view_us"]
+    pj12.workspace_member_permissions = ["view_task"]
     await _save_project(project=pj12)
     # user7 is pj-member, ws-members don't have permissions
     pj13 = await f.create_project(workspace=workspace, owner=user6)
@@ -237,9 +237,9 @@ async def test_get_workspace_projects_for_user_1():
     await f.create_project_membership(user=user7, project=pj13, role=pj_general_role)
     pj_general_role.permissions = []
     await _save_role(pj_general_role)
-    # user7 is not a pj-member but the project allows 'view_us' to ws-members
+    # user7 is not a pj-member but the project allows 'view_task' to ws-members
     pj14 = await f.create_project(workspace=workspace, owner=user6)
-    pj14.workspace_member_permissions = ["view_us"]
+    pj14.workspace_member_permissions = ["view_task"]
     await _save_project(project=pj14)
     # user7 is not a pj-member and ws-members are not allowed
     await f.create_project(workspace=workspace, owner=user6)

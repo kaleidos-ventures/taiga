@@ -227,8 +227,8 @@ async def test_get_role_for_user_none():
 
 async def test_update_project_role_permissions():
     role = await f.create_project_role()
-    role = await repositories.update_project_role_permissions(role, ["view_us"])
-    assert "view_us" in role.permissions
+    role = await repositories.update_project_role_permissions(role, ["view_story"])
+    assert "view_story" in role.permissions
 
 
 ##########################################################

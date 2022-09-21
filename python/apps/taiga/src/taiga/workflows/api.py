@@ -18,7 +18,7 @@ from taiga.workflows.dataclasses import Workflow
 from taiga.workflows.serializers import WorkflowSerializer
 
 # PERMISSIONS
-GET_PROJECT_WORKFLOWS = HasPerm("view_us")
+GET_PROJECT_WORKFLOWS = HasPerm("view_story")
 
 
 @routes.projects.get(

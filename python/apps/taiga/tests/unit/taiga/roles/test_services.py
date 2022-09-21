@@ -42,7 +42,7 @@ async def test_update_project_role_permissions_is_admin():
 
 async def test_update_project_role_permissions_incompatible_permissions():
     role = f.build_project_role(is_admin=False)
-    permissions = ["view_story"]
+    permissions = ["view_task"]
 
     with pytest.raises(ex.IncompatiblePermissionsSetError):
         await services.update_project_role_permissions(role=role, permissions=permissions)
@@ -58,7 +58,7 @@ async def test_update_project_role_permissions_not_valid_permissions():
 
 async def test_update_project_role_permissions_ok():
     role = f.build_project_role()
-    permissions = ["view_us"]
+    permissions = ["view_story"]
 
     with patch("taiga.roles.services.roles_repositories", autospec=True) as fake_role_repository:
         fake_role_repository.update_project_role_permissions.return_value = role

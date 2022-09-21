@@ -69,7 +69,7 @@ async def test_get_user_workspaces_overview_latest_projects():
     await f.create_project_membership(user=user7, project=pj12, role=pj_general_role)
     pj_general_role.permissions = []
     await _save_role(role=pj_general_role)
-    pj12.workspace_member_permissions = ["view_us"]
+    pj12.workspace_member_permissions = ["view_task"]
     await _save_project(project=pj12)
     # user7 is pj-member, ws-members dont have permissions
     pj13 = await f.create_project(name="pj13", workspace=workspace1, owner=user6)
@@ -77,9 +77,9 @@ async def test_get_user_workspaces_overview_latest_projects():
     await f.create_project_membership(user=user7, project=pj13, role=pj_general_role)
     pj_general_role.permissions = []
     await _save_role(role=pj_general_role)
-    # user7 is not a pj-member but the project allows 'view_us' to ws-members
+    # user7 is not a pj-member but the project allows 'view_task' to ws-members
     pj14 = await f.create_project(name="pj14", workspace=workspace1, owner=user6)
-    pj14.workspace_member_permissions = ["view_us"]
+    pj14.workspace_member_permissions = ["view_task"]
     await _save_project(project=pj14)
     # user7 is not a pj-member and ws-members are not allowed
     await f.create_project(name="pj15", workspace=workspace1, owner=user6)
@@ -262,7 +262,7 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         await f.create_project_membership(user=self.user2, project=pj12, role=pj_general_role)
         pj_general_role.permissions = []
         await _save_role(role=pj_general_role)
-        pj12.workspace_member_permissions = ["view_us"]
+        pj12.workspace_member_permissions = ["view_task"]
         await _save_project(project=pj12)
         # self.user3 is pj-guest
         await f.create_project_invitation(
@@ -274,9 +274,9 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         await f.create_project_membership(user=self.user2, project=pj13, role=pj_general_role)
         pj_general_role.permissions = []
         await _save_role(role=pj_general_role)
-        # self.user2 is not a pj-member but the project allows 'view_us' to ws-members
+        # self.user2 is not a pj-member but the project allows 'view_task' to ws-members
         pj14 = await f.create_project(name="pj14", workspace=workspace1, owner=self.user1)
-        pj14.workspace_member_permissions = ["view_us"]
+        pj14.workspace_member_permissions = ["view_task"]
         await _save_project(project=pj14)
         # self.user2 is not a pj-member and ws-members are not allowed
         await f.create_project(name="pj15", workspace=workspace1, owner=self.user1)
@@ -549,7 +549,7 @@ async def test_get_workspace_detail_premium_projects_ws_member():
     await f.create_project_membership(user=user9, project=pj12, role=pj_general_role)
     pj_general_role.permissions = []
     await _save_role(role=pj_general_role)
-    pj12.workspace_member_permissions = ["view_us"]
+    pj12.workspace_member_permissions = ["view_task"]
     await _save_project(project=pj12)
     # user9 is pj-member, ws-members dont have permissions
     pj13 = await f.create_project(name="pj13", workspace=workspace1, owner=user8)
@@ -557,9 +557,9 @@ async def test_get_workspace_detail_premium_projects_ws_member():
     await f.create_project_membership(user=user9, project=pj13, role=pj_general_role)
     pj_general_role.permissions = []
     await _save_role(role=pj_general_role)
-    # user9 is not a pj-member but the project allows 'view_us' to ws-members
+    # user9 is not a pj-member but the project allows 'view_task' to ws-members
     pj14 = await f.create_project(name="pj14", workspace=workspace1, owner=user8)
-    pj14.workspace_member_permissions = ["view_us"]
+    pj14.workspace_member_permissions = ["view_task"]
     await _save_project(project=pj14)
     # user9 is not a pj-member and ws-members are not allowed
     await f.create_project(name="pj15", workspace=workspace1, owner=user8)

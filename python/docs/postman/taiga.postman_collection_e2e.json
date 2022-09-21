@@ -1471,7 +1471,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"numMembers\");",
 									"    pm.expect(jsonRes).to.have.property(\"isAdmin\");",
 									"    ",
-									"    pm.expect(jsonRes.permissions).to.include(\"view_us\")",
+									"    pm.expect(jsonRes.permissions).to.include(\"view_story\")",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
@@ -1497,7 +1497,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_us\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1616,8 +1616,8 @@
 									"",
 									"    // Validate response API fields",
 									"    pm.expect(jsonRes.length).to.eql(2);",
-									"    pm.expect(jsonRes).to.include('view_us');",
-									"    pm.expect(jsonRes).to.include('modify_us');",
+									"    pm.expect(jsonRes).to.include('view_story');",
+									"    pm.expect(jsonRes).to.include('modify_story');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1639,7 +1639,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_us\",\n        \"modify_us\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1680,8 +1680,8 @@
 									"",
 									"    // Validate response API fields",
 									"    pm.expect(jsonRes.length).to.eql(2);",
-									"    pm.expect(jsonRes).to.include('view_us');",
-									"    pm.expect(jsonRes).to.include('modify_us');",
+									"    pm.expect(jsonRes).to.include('view_story');",
+									"    pm.expect(jsonRes).to.include('modify_story');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -5182,8 +5182,8 @@
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"    pm.expect(jsonRes.length).to.eql(2);",
-									"    pm.expect(jsonRes).to.include('view_us');",
-									"    pm.expect(jsonRes).to.include('modify_us');",
+									"    pm.expect(jsonRes).to.include('view_story');",
+									"    pm.expect(jsonRes).to.include('modify_story');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -5205,7 +5205,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_us\",\n        \"modify_us\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -5244,8 +5244,8 @@
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"    pm.expect(jsonRes.length).to.eql(2);",
-									"    pm.expect(jsonRes).to.include('view_us');",
-									"    pm.expect(jsonRes).to.include('modify_us');",
+									"    pm.expect(jsonRes).to.include('view_story');",
+									"    pm.expect(jsonRes).to.include('modify_story');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -5572,7 +5572,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_us\",\n        \"modify_us\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"

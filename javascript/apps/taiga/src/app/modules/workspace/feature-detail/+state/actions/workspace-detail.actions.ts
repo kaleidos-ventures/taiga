@@ -25,3 +25,27 @@ export const fetchWorkspaceProjectsSuccess = createAction(
 );
 
 export const resetWorkspace = createAction('[Workspace] Reset workspace');
+
+export const invitationDetailCreateEvent = createAction(
+  '[Workspace Detail] new invitation event, fetch invitations',
+  props<{
+    projectSlug: Project['slug'];
+    workspaceSlug: Workspace['slug'];
+    role: string;
+  }>()
+);
+
+export const fetchWorkspaceDetailInvitationsSuccess = createAction(
+  '[Workspace Detail API] Fetch workspace detail Invitations success',
+  props<{
+    projectSlug: Project['slug'];
+    invitations: Project[];
+    project: Project[];
+    role: string;
+  }>()
+);
+
+export const invitationDetailRevokedEvent = createAction(
+  '[Workspace Detail] revoked invitation event, update workspace',
+  props<{ projectSlug: Project['slug'] }>()
+);

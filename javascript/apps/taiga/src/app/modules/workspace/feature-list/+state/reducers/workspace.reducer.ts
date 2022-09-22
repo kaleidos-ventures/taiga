@@ -197,12 +197,13 @@ export const reducer = createReducer(
   ),
   on(
     WorkspaceActions.invitationRevokedEvent,
-    (state, { slug, workspace }): WorkspaceState => {
-      const indexWorkspace = state.workspaces.findIndex((currentWorkspace) => {
-        return currentWorkspace.slug === slug;
+    (state, { workspace }): WorkspaceState => {
+      state.workspaces = state.workspaces.map((it) => {
+        if (it.slug === workspace.slug) {
+          return workspace;
+        }
+        return it;
       });
-      state.workspaces[indexWorkspace] = workspace;
-
       return state;
     }
   )

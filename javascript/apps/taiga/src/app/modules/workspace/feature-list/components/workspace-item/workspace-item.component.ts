@@ -65,7 +65,7 @@ interface ViewModel {
   allVisibleProjects: WorkspaceProject[];
 }
 
-interface State {
+export interface WorkspaceItemState {
   projectsToShow: number;
   showAllProjects: boolean;
   projects: WorkspaceProject[];
@@ -164,13 +164,13 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
   public reorder: Record<string, string> = {};
 
-  public animationDisabled = false;
+  public animationDisabled = true;
 
   private eventsSubscription$!: Subscription;
 
   constructor(
     private store: Store,
-    private state: RxState<State>,
+    private state: RxState<WorkspaceItemState>,
     private userStorageService: UserStorageService,
     private cd: ChangeDetectorRef
   ) {
@@ -178,6 +178,7 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
       rejectedInvites: [],
       invitations: [],
       projectSiblingToAnimate: [],
+      slideOutActive: false,
     });
   }
 
@@ -354,13 +355,13 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
       } else if (event === 'projectmemberships.create') {
         this.membershipCreateEvent(projectSlug);
       } else if (event === 'projectinvitations.revoke') {
-        this.invitationRevokedEvent(projectSlug, workspaceSlug);
+        this.invitationRevokedEvent(projectSlug);
       }
     }
     this.cd.detectChanges();
   }
 
-  public invitationRevokedEvent(project: string, workspaceSlug: string) {
+  public invitationRevokedEvent(project: string) {
     const invitations = [...this.state.get('invitations')];
     const workspaceInvitations = invitations.filter(
       (workspaceInvitation) => workspaceInvitation.slug !== project
@@ -369,7 +370,6 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     newWorkspace.invitedProjects = workspaceInvitations;
     this.store.dispatch(
       invitationRevokedEvent({
-        slug: workspaceSlug,
         workspace: newWorkspace,
       })
     );
@@ -513,11 +513,15 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
   }
 
   public slideOutAnimationDone(event: AnimationEvent) {
+    console.log('event', event);
     if (event.toState !== 'void') {
+      console.log('notVoid');
+
       return;
     }
-
+    // console.log('slideOutActive', this.state.get('slideOutActive'));
     this.state.set({ slideOutActive: false });
+    console.log('slideOutActiveAfter', this.state.get('slideOutActive'));
   }
 
   public setShowAllProjects(showAllProjects: boolean) {
@@ -572,11 +576,12 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes.workspace) {
-      this.refreshInvitations();
+      // if previousValue workspace was undefined means that it's the initial render so we need to activate the animations
+      this.refreshInvitations(!changes.workspace.previousValue);
     }
   }
 
-  public refreshInvitations() {
+  public refreshInvitations(activateAnimations = false) {
     const oldInvitations = this.state.get('invitations');
     const newInvitations = this.workspace.invitedProjects
       .filter((invitation) => {
@@ -609,10 +614,19 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
         });
       });
     } else {
+      this.state.set({ slideOutActive: true });
+
       this.state.set({
         newInvitations,
         invitations: this.workspace.invitedProjects,
       });
+
+      if (activateAnimations) {
+        // prevent animation on first render
+        requestAnimationFrame(() => {
+          this.animationDisabled = false;
+        });
+      }
     }
   }
 

@@ -57,7 +57,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         *ngIf="
           (loading$ | async) === false &&
           !vm.workspace.totalProjects &&
-          !vm.invitedProjects.length &&
+          !vm.invitations.length &&
           vm.workspace.hasProjects &&
           vm.workspace.userRole !== 'admin' &&
           !vm.creatingWorkspaceDetail
@@ -68,7 +68,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         *ngIf="
           (loading$ | async) === false &&
           !vm.workspace.totalProjects &&
-          !vm.invitedProjects.length &&
+          !vm.invitations.length &&
           !vm.workspace.hasProjects &&
           vm.workspace.userRole !== 'admin' &&
           !vm.creatingWorkspaceDetail
@@ -94,18 +94,29 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </div>
         <div
           *ngFor="
-            let invitedProject of vm.invitedProjects;
+            let invitation of vm.invitations;
             trackBy: trackByLatestProject
           "
-          @slideOut
-          [@reorder]="reorder[invitedProject.slug]"
+          [@cardSlideOut]="vm.slideOutActive ? 'on' : 'off'"
+          (@cardSlideOut.done)="slideOutAnimationDone($event)"
+          [@newProject]="
+            vm.newInvitations.includes(invitation.slug) ? 'inprogress' : 'idle'
+          "
+          (@newProject.start)="newProjectAnimationStart($event, invitation)"
+          (@newProject.done)="newProjectAnimationDone($event)"
+          [@newInvitationSibling]="
+            vm.projectSiblingToAnimate.includes(invitation.slug)
+              ? 'inprogress'
+              : 'idle'
+          "
+          [@reorder]="reorder[invitation.slug]"
           (@reorder.done)="reorderDone($event)">
           <tg-project-card
             variant="invitation"
             (rejectInvite)="rejectProjectInvite($event)"
             (acceptInvite)="acceptProjectInvite($event.slug, $event.name)"
             [workspace]="vm.workspace"
-            [project]="invitedProject">
+            [project]="invitation">
           </tg-project-card>
         </div>
         <ng-container *ngIf="vm.creatingWorkspaceDetail">
@@ -119,7 +130,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </ng-container>
         <div
           *ngFor="let project of vm.projects; trackBy: trackByLatestProject"
-          @slideOut
+          [@newProject]="
+            newProjectsToAnimate.includes(project.slug) ? 'inprogress' : 'idle'
+          "
+          (@newProject.start)="newProjectAnimationStart($event, project)"
+          (@newProject.done)="newProjectAnimationDone($event)"
+          [@newInvitationSibling]="
+            vm.projectSiblingToAnimate.includes(project.slug)
+              ? 'inprogress'
+              : 'idle'
+          "
           [@reorder]="reorder[project.slug]"
           (@reorder.done)="reorderDone($event)">
           <tg-project-card [project]="project"> </tg-project-card>

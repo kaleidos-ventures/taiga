@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { fetch } from '@nrwl/angular';
+import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { WorkspaceApiService } from '@taiga/api';
 import { timer, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -52,6 +52,36 @@ export class WorkspaceDetailEffects {
               return WorkspaceActions.fetchWorkspaceProjectsSuccess({
                 projects,
                 invitedProjects,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
+  public invitationDetailCreateEvent$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceActions.invitationDetailCreateEvent),
+      pessimisticUpdate({
+        run: (action) => {
+          return zip(
+            this.workspaceApiService.fetchWorkspaceProjects(
+              action.workspaceSlug
+            ),
+            this.workspaceApiService.fetchWorkspaceInvitedProjects(
+              action.workspaceSlug
+            ),
+            timer(300)
+          ).pipe(
+            map(([project, invitations]) => {
+              return WorkspaceActions.fetchWorkspaceDetailInvitationsSuccess({
+                projectSlug: action.projectSlug,
+                project,
+                invitations,
+                role: action.role,
               });
             })
           );

@@ -75,7 +75,7 @@ export const fetchWorkspaceProjectsSuccess = createAction(
 
 export const invitationRevokedEvent = createAction(
   '[Workspace] revoked invitation event, update workspace',
-  props<{ slug: Workspace['slug']; workspace: Workspace }>()
+  props<{ workspace: Workspace }>()
 );
 
 export const invitationCreateEvent = createAction(

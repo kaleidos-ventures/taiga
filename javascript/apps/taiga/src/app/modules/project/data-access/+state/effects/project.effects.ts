@@ -55,6 +55,38 @@ export class ProjectEffects {
     { dispatch: false }
   );
 
+  public permissionsUpdate$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.permissionsUpdate),
+      fetch({
+        run: (action) => {
+          return this.projectApiService.getProject(action.slug).pipe(
+            map((project) => {
+              return ProjectActions.fetchProjectSuccess({ project });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status === 403) {
+            void this.router.navigate(['/']);
+          }
+
+          return this.appService.errorManagement(httpResponse, {
+            403: {
+              type: 'toast',
+              options: {
+                label: '',
+                message: 'errors.you_dont_have_permission_to_see',
+                status: TuiNotification.Error,
+                closeOnNavigation: false,
+              },
+            },
+          });
+        },
+      })
+    );
+  });
+
   public revokedInvitation$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(ProjectActions.revokedInvitation),

@@ -13,9 +13,11 @@ import {
   Component,
   OnDestroy,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
+import { filter, merge } from 'rxjs';
 import {
   selectCurrentProject,
   selectShowBannerOnRevoke,
@@ -24,8 +26,10 @@ import { WsService } from '~/app/services/ws';
 import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
+import { permissionsUpdate } from '../data-access/+state/actions/project.actions';
 import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-project-feature-shell',
   templateUrl: './project-feature-shell.component.html',
@@ -77,6 +81,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     }>,
     private userStorageService: UserStorageService
   ) {
+    this.watchProject();
     this.state.connect(
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())
@@ -104,6 +109,28 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
 
   public get showPendingInvitationNotification() {
     return !this.getRejectedOverviewInvites().includes(this.subscribedProject!);
+  }
+
+  public watchProject() {
+    merge(
+      this.wsService
+        .userEvents<{ project: string }>('projectmemberships.update')
+        .pipe(
+          filter((data) => {
+            return (
+              data.event.content.project === this.state.get('project').slug
+            );
+          })
+        ),
+      this.wsService.projectEvents('projects.permissions.update'),
+      this.wsService.projectEvents('projectroles.update')
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(
+          permissionsUpdate({ slug: this.state.get('project').slug })
+        );
+      });
   }
 
   public getRejectedOverviewInvites() {

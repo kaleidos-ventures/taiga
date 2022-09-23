@@ -16,7 +16,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Entity, EntityPermission } from '@taiga/data';
-import { distinctUntilChanged } from 'rxjs';
+import { distinctUntilChanged, filter } from 'rxjs';
 import { PermissionsService } from '~/app/services/permissions.service';
 
 // How to use
@@ -57,11 +57,17 @@ export class HasPermissionDirective implements OnInit {
     this.elseTemplateRef = templateRef;
   }
 
+  @Input()
+  public set hasPermissionCanLosePermissions(canLosePermissions: boolean) {
+    this.canLosePermissions = canLosePermissions;
+  }
+
   private hasView = false;
   private operation: 'AND' | 'OR' = 'AND';
   private permissions: EntityPermission[] = [];
   private entities!: Entity[];
   private elseTemplateRef: TemplateRef<unknown> | null = null;
+  private canLosePermissions = true;
 
   constructor(
     private permissionsService: PermissionsService,
@@ -73,25 +79,35 @@ export class HasPermissionDirective implements OnInit {
   public ngOnInit() {
     this.permissionsService
       .hasPermissions$(this.entities, this.permissions, this.operation)
-      .pipe(untilDestroyed(this), distinctUntilChanged())
+      .pipe(
+        untilDestroyed(this),
+        distinctUntilChanged(),
+        filter((view) => {
+          return !(this.hasView && !view && !this.canLosePermissions);
+        })
+      )
       .subscribe((view) => {
         this.updateView(view);
       });
   }
 
   private updateView(view: boolean) {
-    if (view && !this.hasView) {
-      this.hasView = true;
+    if (this.hasView) {
+      this.viewContainer.clear();
+    }
+
+    if (view) {
       this.viewContainer.createEmbeddedView(this.templateRef);
-      this.cd.markForCheck();
-    } else if (!view) {
+      this.hasView = true;
+    } else {
       if (this.elseTemplateRef) {
         this.viewContainer.createEmbeddedView(this.elseTemplateRef);
-        this.cd.markForCheck();
+        this.hasView = true;
       } else {
-        this.viewContainer.clear();
         this.hasView = false;
       }
     }
+
+    this.cd.markForCheck();
   }
 }

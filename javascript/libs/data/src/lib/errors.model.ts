@@ -20,6 +20,7 @@ export interface ErrorManagementToastOptions {
     paramsMessage?: HashMap<unknown>;
     status: TuiNotification;
     scope?: string;
+    closeOnNavigation?: boolean;
   };
 }
 

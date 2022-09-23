@@ -56,7 +56,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           *hasPermission="
             ['create'];
             entity: 'story';
-            else: noCreationPermissionsTpl
+            else: noCreationPermissionsTpl;
+            canLosePermissions: false
           ">
           <ng-container *ngIf="vm.showAddForm; else addStoryTpl">
             <tg-create-story-inline

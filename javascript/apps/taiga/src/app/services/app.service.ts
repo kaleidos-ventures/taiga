@@ -52,6 +52,7 @@ export class AppService {
           paramsMessage: config.options.paramsMessage,
           status: config.options.status,
           scope: config.options.scope,
+          closeOnNavigation: config.options.closeOnNavigation,
         });
       }
     } else if (status === 403) {

@@ -21,7 +21,11 @@ import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth
 import { AppService } from '~/app/services/app.service';
 import { WsService, WsServiceMock } from '~/app/services/ws';
 import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { fetchProject, fetchProjectSuccess } from '../actions/project.actions';
+import {
+  fetchProject,
+  fetchProjectSuccess,
+  permissionsUpdate,
+} from '../actions/project.actions';
 import { ProjectEffects } from './project.effects';
 
 describe('ProjectEffects', () => {
@@ -86,6 +90,48 @@ describe('ProjectEffects', () => {
       expectObservable(effects.acceptedInvitation$).toBe('-c', {
         c: fetchProject({ slug }),
       });
+    });
+  });
+
+  it('Permissions update - success', () => {
+    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const project = ProjectMockFactory();
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(ProjectEffects);
+
+    projectApiService.getProject.mockReturnValue(cold('-b|', { b: project }));
+
+    actions$ = hot('-a', { a: permissionsUpdate({ slug }) });
+
+    const expected = cold('--a', {
+      a: fetchProjectSuccess({ project }),
+    });
+
+    expect(effects.permissionsUpdate$).toBeObservable(expected);
+  });
+
+  it('Permissions update - error', () => {
+    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(ProjectEffects);
+    const router = spectator.inject(Router);
+    const appService = spectator.inject(AppService);
+
+    projectApiService.getProject.mockReturnValue(
+      cold(
+        '-#|',
+        {},
+        {
+          status: 403,
+        }
+      )
+    );
+
+    actions$ = hot('-a', { a: permissionsUpdate({ slug }) });
+
+    expect(effects.permissionsUpdate$).toSatisfyOnFlush(() => {
+      expect(router.navigate).toHaveBeenCalledWith(['/']);
+      expect(appService.errorManagement).toHaveBeenCalled();
     });
   });
 });

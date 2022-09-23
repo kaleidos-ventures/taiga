@@ -30,3 +30,8 @@ export const revokedInvitation = createAction(
 export const revokedNoPermissionInvitation = createAction(
   '[Project][ws] invitation revoked and you have no permission'
 );
+
+export const permissionsUpdate = createAction(
+  '[Project][ws] permission update',
+  props<{ slug: Project['slug'] }>()
+);

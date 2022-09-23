@@ -331,14 +331,14 @@ export class ProjectApiService {
   }
 
   public createStory(
-    story: Pick<Story, 'name' | 'status'>,
+    story: Pick<Story, 'title' | 'status'>,
     project: Project['slug'],
     workflow: Workflow['slug']
   ): Observable<Story> {
     return this.http.post<Story>(
       `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/stories`,
       {
-        name: story.name,
+        title: story.title,
         status: story.status.slug,
       }
     );

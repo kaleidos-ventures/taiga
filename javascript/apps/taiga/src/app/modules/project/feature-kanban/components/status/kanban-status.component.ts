@@ -105,7 +105,7 @@ export class KanbanStatusComponent
       return {
         // TODO: when design card is ready, calculate story height
         itemHeights: state.stories.map((story) => {
-          return 42 + (Math.ceil(story.name.length / 23) - 1) * 14;
+          return 42 + (Math.ceil(story.title.length / 23) - 1) * 14;
         }),
         empty: state.loadingStories ? false : !state.stories.length,
         ...state,

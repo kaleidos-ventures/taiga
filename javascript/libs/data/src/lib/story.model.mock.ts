@@ -25,7 +25,7 @@ export const StoryMockFactory = (
 
   return {
     ref: randNumber({ min: 1, max: 999 }),
-    name: randText({ charCount: titleCount }),
+    title: randText({ charCount: titleCount }),
     order: randNumber(),
     slug: randSlug(),
     status: statuses[Math.floor(Math.random() * statuses.length)],

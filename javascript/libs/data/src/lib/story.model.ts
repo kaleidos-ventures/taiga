@@ -10,7 +10,7 @@ import { Status } from './status.model';
 
 export interface Story {
   ref: number;
-  name: string;
+  title: string;
   slug: string;
   order: number;
   status: Pick<Status, 'slug' | 'color' | 'name'>;

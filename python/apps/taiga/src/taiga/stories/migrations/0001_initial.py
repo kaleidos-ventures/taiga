@@ -39,9 +39,18 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("created_at", models.DateTimeField(auto_now_add=True, verbose_name="created at")),
-                ("ref", models.BigIntegerField(db_index=True, default=0, verbose_name="ref")),
-                ("name", models.CharField(max_length=500, verbose_name="name")),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created at"),
+                ),
+                (
+                    "ref",
+                    models.BigIntegerField(db_index=True, default=0, verbose_name="ref"),
+                ),
+                (
+                    "title",
+                    models.CharField(max_length=500, verbose_name="title"),
+                ),
                 (
                     "order",
                     models.BigIntegerField(default=taiga.base.utils.datetime.timestamp_mics, verbose_name="order"),

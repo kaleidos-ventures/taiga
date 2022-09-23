@@ -1710,7 +1710,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"story1\",\n    \"status\": \"done\"\n}",
+							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"done\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

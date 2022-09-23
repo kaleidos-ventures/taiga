@@ -11,7 +11,7 @@ from taiga.workflows.serializers.nested import WorkflowStatusNestedSerializer
 
 class StorySerializer(BaseModel):
     ref: int
-    name: str
+    title: str
     order: int
     status: WorkflowStatusNestedSerializer
 

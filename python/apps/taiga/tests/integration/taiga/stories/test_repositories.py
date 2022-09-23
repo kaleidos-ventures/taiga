@@ -24,14 +24,14 @@ async def test_create_story_ok() -> None:
     status = await f.create_workflow_status(workflow=workflow)
 
     story = await repositories.create_story(
-        name="test_create_story_ok",
+        title="test_create_story_ok",
         project_id=project.id,
         workflow_id=workflow.id,
         status_id=status.id,
         user_id=user.id,
     )
 
-    assert story.name == "test_create_story_ok"
+    assert story.title == "test_create_story_ok"
 
 
 ##########################################################

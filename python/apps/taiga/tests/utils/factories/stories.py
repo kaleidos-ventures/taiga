@@ -10,7 +10,7 @@ from .base import Factory, factory
 
 
 class StoryFactory(Factory):
-    name = factory.Sequence(lambda n: f"Story {n}")
+    title = factory.Sequence(lambda n: f"Story {n}")
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
     workflow = factory.SubFactory("tests.utils.factories.WorkflowFactory")
     status = factory.SubFactory("tests.utils.factories.WorkflowStatusFactory")

@@ -50,7 +50,7 @@ async def create_story(
     workflow = await get_workflow_or_404(project_slug=project_slug, workflow_slug=workflow_slug)
 
     return await stories_services.create_story(
-        name=form.name, project=project, workflow=workflow, status_slug=form.status, user=request.user
+        title=form.title, project=project, workflow=workflow, status_slug=form.status, user=request.user
     )
 
 

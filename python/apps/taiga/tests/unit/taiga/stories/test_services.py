@@ -56,12 +56,12 @@ async def test_create_story_ok():
         await services.create_story(
             project=story.project,
             workflow=build_worklow_dt(story),
-            name=story.name,
+            title=story.title,
             status_slug=story.status.slug,
             user=user,
         )
         fake_stories_repo.create_story.assert_awaited_once_with(
-            name=story.name,
+            title=story.title,
             project_id=story.project.id,
             workflow_id=story.workflow.id,
             status_id=story.status.id,
@@ -80,7 +80,7 @@ async def test_create_story_invalid_status():
         await services.create_story(
             project=story1.project,
             workflow=build_worklow_dt(story1),
-            name=story1.name,
+            title=story1.title,
             status_slug=story2.status.slug,
             user=user,
         )

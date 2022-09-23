@@ -16,14 +16,14 @@ from taiga.users.models import User
 from taiga.workflows import dataclasses as dt
 
 
-async def create_story(project: Project, workflow: dt.Workflow, name: str, status_slug: str, user: User) -> Story:
+async def create_story(project: Project, workflow: dt.Workflow, title: str, status_slug: str, user: User) -> Story:
     try:
         workflow_status = next(status for status in workflow.statuses if status.slug == status_slug)
     except StopIteration:
         raise InvalidStatusError("The provided status is not valid.")
 
     story = await stories_repositories.create_story(
-        name=name, project_id=project.id, workflow_id=workflow.id, status_id=workflow_status.id, user_id=user.id
+        title=title, project_id=project.id, workflow_id=workflow.id, status_id=workflow_status.id, user_id=user.id
     )
 
     await stories_events.emit_event_when_story_is_created(story=story)

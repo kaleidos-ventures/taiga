@@ -38,7 +38,7 @@ async def test_list_project_workflow_stories_ok(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"name": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.slug}
 
     client.login(pj_admin)
     response = client.post(f"/projects/{project.slug}/workflows/{workflow.slug}/stories", json=data)
@@ -52,7 +52,7 @@ async def test_list_story_invalid_project(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"name": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.slug}
 
     client.login(pj_admin)
     response = client.post(f"/projects/{WRONG_SLUG}/workflows/{workflow.slug}/stories", json=data)
@@ -65,7 +65,7 @@ async def test_list_story_invalid_workflow(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"name": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.slug}
 
     client.login(pj_admin)
     response = client.post(f"/projects/{project.slug}/workflows/{WRONG_SLUG}/stories", json=data)
@@ -78,7 +78,7 @@ async def test_list_story_invalid_status(client):
     workflow = await f.create_workflow(project=project)
     await f.create_workflow_status(workflow=workflow)
 
-    data = {"name": "New story", "status": WRONG_SLUG}
+    data = {"title": "New story", "status": WRONG_SLUG}
 
     client.login(pj_admin)
     response = client.post(f"/projects/{project.slug}/workflows/{workflow.slug}/stories", json=data)
@@ -97,7 +97,7 @@ async def test_create_story_invalid_project(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"name": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.slug}
 
     client.login(pj_admin)
     response = client.post(f"/projects/{WRONG_SLUG}/workflows/{workflow.slug}/stories", json=data)
@@ -110,7 +110,7 @@ async def test_create_story_invalid_workflow(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"name": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.slug}
 
     client.login(pj_admin)
     response = client.post(f"/projects/{project.slug}/workflows/{WRONG_SLUG}/stories", json=data)
@@ -123,7 +123,7 @@ async def test_create_story_invalid_status(client):
     workflow = await f.create_workflow(project=project)
     await f.create_workflow_status(workflow=workflow)
 
-    data = {"name": "New story", "status": WRONG_SLUG}
+    data = {"title": "New story", "status": WRONG_SLUG}
 
     client.login(pj_admin)
     response = client.post(f"/projects/{project.slug}/workflows/{workflow.slug}/stories", json=data)
@@ -140,7 +140,7 @@ async def test_create_story_being_ws_or_pj_admin_ok(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"name": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.slug}
 
     client.login(ws_owner)
     response = client.post(f"/projects/{project.slug}/workflows/{workflow.slug}/stories", json=data)
@@ -171,7 +171,7 @@ async def test_create_story_user_has_valid_perm_ok(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"name": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.slug}
 
     client.login(ws_member)
     response = client.post(f"/projects/{project.slug}/workflows/{workflow.slug}/stories", json=data)
@@ -206,7 +206,7 @@ async def test_create_story_user_has_valid_perm_ko(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"name": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.slug}
 
     client.login(ws_member)
     response = client.post(f"/projects/{project.slug}/workflows/{workflow.slug}/stories", json=data)

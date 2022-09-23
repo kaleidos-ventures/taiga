@@ -12,7 +12,7 @@ from taiga.projects.references.mixins import ProjectReferenceMixin
 
 
 class Story(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
-    name = models.CharField(max_length=500, null=False, blank=False, verbose_name="name")
+    title = models.CharField(max_length=500, null=False, blank=False, verbose_name="title")
     order = models.BigIntegerField(default=timestamp_mics, null=False, blank=False, verbose_name="order")
     project = models.ForeignKey(
         "projects.Project",
@@ -50,7 +50,7 @@ class Story(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
         indexes = ProjectReferenceMixin.Meta.indexes
 
     def __str__(self) -> str:
-        return f"#{self.ref} {self.name}"
+        return f"#{self.ref} {self.title}"
 
     def __repr__(self) -> str:
         return f"<Story {self.project} #{self.ref}>"

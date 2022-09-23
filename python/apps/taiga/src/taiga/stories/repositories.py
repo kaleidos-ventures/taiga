@@ -14,7 +14,7 @@ from taiga.stories.models import Story
 
 @sync_to_async
 def create_story(
-    name: str,
+    title: str,
     project_id: UUID,
     workflow_id: UUID,
     status_id: UUID,
@@ -22,7 +22,7 @@ def create_story(
 ) -> Story:
 
     story = Story.objects.create(
-        name=name,
+        title=title,
         project_id=project_id,
         workflow_id=workflow_id,
         status_id=status_id,

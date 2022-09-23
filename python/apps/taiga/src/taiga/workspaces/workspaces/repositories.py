@@ -25,8 +25,8 @@ from taiga.base.db.models import (
     Value,
     When,
 )
-from taiga.invitations.choices import ProjectInvitationStatus
-from taiga.projects.models import Project
+from taiga.projects.invitations.choices import ProjectInvitationStatus
+from taiga.projects.projects.models import Project
 from taiga.users.models import User
 from taiga.workspaces.roles import repositories as roles_repositories
 from taiga.workspaces.workspaces.models import Workspace

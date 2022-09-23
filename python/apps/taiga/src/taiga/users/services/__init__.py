@@ -10,8 +10,8 @@ from taiga.base.api.pagination import Pagination
 from taiga.base.utils.slug import generate_int_suffix, slugify
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
-from taiga.invitations import services as invitations_services
-from taiga.invitations.services import exceptions as invitations_ex
+from taiga.projects.invitations import services as invitations_services
+from taiga.projects.invitations.services import exceptions as invitations_ex
 from taiga.tokens import exceptions as tokens_ex
 from taiga.users import repositories as users_repositories
 from taiga.users.dataclasses import VerificationInfo

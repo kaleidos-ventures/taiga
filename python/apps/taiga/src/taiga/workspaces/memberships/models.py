@@ -27,7 +27,7 @@ class WorkspaceMembership(models.BaseModel):
         verbose_name="workspace",
     )
     role = models.ForeignKey(
-        "roles.WorkspaceRole",
+        "workspaces_roles.WorkspaceRole",
         null=False,
         blank=False,
         related_name="memberships",

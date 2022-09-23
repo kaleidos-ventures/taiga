@@ -9,8 +9,8 @@ from typing import Any
 
 from asgiref.sync import sync_to_async
 from taiga.permissions import choices
-from taiga.projects.models import Project
-from taiga.roles import repositories as roles_repositories
+from taiga.projects.projects.models import Project
+from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.users.models import AnyUser
 from taiga.workspaces.roles import repositories as ws_roles_repositories
 from taiga.workspaces.workspaces.models import Workspace
@@ -28,7 +28,7 @@ async def is_project_admin(user: AnyUser, obj: Any) -> bool:
     if user.is_superuser:
         return True
 
-    role = await roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
+    role = await pj_roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
     return role.is_admin if role else False
 
 
@@ -105,7 +105,7 @@ def _get_object_project(obj: Any) -> Project | None:
 
 
 async def get_user_project_role_info(user: AnyUser, project: Project) -> tuple[bool, bool, list[str]]:
-    role = await roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
+    role = await pj_roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
     if role:
         return role.is_admin, True, role.permissions
 

@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.projects.models import Project
+from taiga.projects.projects.models import Project
 from taiga.users.models import AnyUser, User
 from taiga.workspaces.workspaces.models import Workspace
 

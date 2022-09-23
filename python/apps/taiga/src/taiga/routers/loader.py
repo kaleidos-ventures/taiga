@@ -13,9 +13,10 @@ from taiga.auth import api as auth_api  # noqa
 from taiga.integrations.github.auth import api as github_auth_api  # noqa
 from taiga.integrations.gitlab.auth import api as gitlab_auth_api  # noqa
 from taiga.integrations.google.auth import api as google_auth_api  # noqa
-from taiga.invitations import api as invitations_api  # noqa
-from taiga.projects import api as projects_api  # noqa
-from taiga.roles import api as roles_api  # noqa
+from taiga.projects.invitations import api as projects_invitations_api  # noqa
+from taiga.projects.memberships import api as projects_memberships_api  # noqa
+from taiga.projects.projects import api as projects_api  # noqa
+from taiga.projects.roles import api as projects_roles_api  # noqa
 from taiga.routers import routes
 from taiga.routers.routes import tags_metadata
 from taiga.stories import api as stories_api  # noqa

@@ -55,7 +55,7 @@ from taiga.events import channels, pubsub
 from taiga.events.events import Event, EventContent
 from taiga.events.responses import EventResponse
 from taiga.events.subscriber import Subscriber
-from taiga.projects.models import Project
+from taiga.projects.projects.models import Project
 from taiga.users.models import User
 from taiga.workspaces.workspaces.models import Workspace
 

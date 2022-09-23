@@ -10,6 +10,8 @@ from taiga.permissions import choices
 
 from .base import Factory, factory
 
+# WORKSPACE ROLE
+
 
 class WorkspaceRoleFactory(Factory):
     name = factory.Sequence(lambda n: f"WS Role {n}")
@@ -19,12 +21,15 @@ class WorkspaceRoleFactory(Factory):
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
 
     class Meta:
-        model = "roles.WorkspaceRole"
+        model = "workspaces_roles.WorkspaceRole"
 
 
 @sync_to_async
 def create_workspace_role(**kwargs):
     return WorkspaceRoleFactory.create(**kwargs)
+
+
+# WORKSPACE MEMBERSHIP
 
 
 class WorkspaceMembershipFactory(Factory):
@@ -33,12 +38,15 @@ class WorkspaceMembershipFactory(Factory):
     role = factory.SubFactory("tests.utils.factories.WorkspaceRoleFactory")
 
     class Meta:
-        model = "memberships.WorkspaceMembership"
+        model = "workspaces_memberships.WorkspaceMembership"
 
 
 @sync_to_async
 def create_workspace_membership(**kwargs):
     return WorkspaceMembershipFactory.create(**kwargs)
+
+
+# WORKSPACE
 
 
 class WorkspaceFactory(Factory):

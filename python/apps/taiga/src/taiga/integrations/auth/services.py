@@ -11,7 +11,7 @@ from taiga.auth.dataclasses import AccessWithRefreshToken
 from taiga.base.utils import datetime
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
-from taiga.invitations import services as invitations_services
+from taiga.projects.invitations import services as invitations_services
 from taiga.users import repositories as users_repositories
 from taiga.users import services as users_services
 

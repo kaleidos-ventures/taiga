@@ -11,14 +11,15 @@ from asgiref.sync import sync_to_async
 from faker import Faker
 from fastapi import UploadFile
 from taiga.base.db import transaction
-from taiga.invitations import repositories as invitations_repositories
-from taiga.invitations.choices import ProjectInvitationStatus
-from taiga.invitations.models import ProjectInvitation
 from taiga.permissions import choices
-from taiga.projects import services as projects_services
-from taiga.projects.models import Project
-from taiga.roles import repositories as roles_repositories
-from taiga.roles.models import ProjectMembership, ProjectRole
+from taiga.projects.invitations import repositories as pj_invitations_repositories
+from taiga.projects.invitations.choices import ProjectInvitationStatus
+from taiga.projects.invitations.models import ProjectInvitation
+from taiga.projects.memberships import repositories as pj_memberships_repositories
+from taiga.projects.memberships.models import ProjectMembership
+from taiga.projects.projects import services as projects_services
+from taiga.projects.projects.models import Project
+from taiga.projects.roles.models import ProjectRole
 from taiga.stories import repositories as stories_repositories
 from taiga.stories.models import Story
 from taiga.users.models import User
@@ -215,14 +216,14 @@ async def _create_project_memberships(project: Project, users: list[User], excep
     num_admins = random.randint(0, 2)
     for _ in range(num_admins):
         user = other_users.pop(0)
-        await roles_repositories.create_project_membership(user=user, project=project, role=admin_role)
+        await pj_memberships_repositories.create_project_membership(user=user, project=project, role=admin_role)
 
     # add other members in the different roles
     num_members = random.randint(0, len(other_users))
     for _ in range(num_members):
         user = other_users.pop(0)
         role = random.choice(other_roles)
-        await roles_repositories.create_project_membership(user=user, project=project, role=role)
+        await pj_memberships_repositories.create_project_membership(user=user, project=project, role=role)
 
 
 @sync_to_async
@@ -425,7 +426,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-admin, user1001 pj-member",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1001, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1001, project=project, role=members_role)
     # project: user1000 pj-admin, user1001 pj-member without permissions
     project = await _create_project(
         workspace=workspace,
@@ -434,7 +435,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-admin, user1001 pj-member without permissions",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1001, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1001, project=project, role=members_role)
     members_role.permissions = []
     await sync_to_async(members_role.save)()
     # project: user1000 pj-admin, user1001 not pj-member, ws-members not allowed
@@ -469,7 +470,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-admin, user1001 pj-member",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1001, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1001, project=project, role=members_role)
     # project: user1000 pj-admin, user1001 pj-member
     project = await _create_project(
         workspace=workspace,
@@ -478,7 +479,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-admin, user1001 pj-member",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1001, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1001, project=project, role=members_role)
     # project: user1000 pj-admin, user1001 pj-member
     project = await _create_project(
         workspace=workspace,
@@ -487,7 +488,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-admin, user1001 pj-member",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1001, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1001, project=project, role=members_role)
     # project: user1000 pj-admin, user1001 pj-member
     project = await _create_project(
         workspace=workspace,
@@ -496,7 +497,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-admin, user1001 pj-member",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1001, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1001, project=project, role=members_role)
     # project: user1000 pj-admin, user1001 pj-member
     project = await _create_project(
         workspace=workspace,
@@ -505,7 +506,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-admin, user1001 pj-member",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1001, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1001, project=project, role=members_role)
 
     # workspace premium: user1000 ws-admin, user1001 ws-member, has_projects=true
     workspace = await _create_workspace(owner=user1000, is_premium=True, name="u1001 is ws member, hasProjects:T")
@@ -526,7 +527,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-admin, user1001 pj-member without permissions, ws-members allowed",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1001, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1001, project=project, role=members_role)
     members_role.permissions = []
     await sync_to_async(members_role.save)()
     project.workspace_member_permissions = ["view_story"]
@@ -547,7 +548,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-admin, user1001 pj-member",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1001, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1001, project=project, role=members_role)
     # project: user1000 pj-member, user1001 pj-admin
     project = await _create_project(
         workspace=workspace,
@@ -556,7 +557,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-member, user1001 pj-admin",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1000, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1000, project=project, role=members_role)
     # project: user1000 pj-admin, user1001 not pj-member, ws-allowed
     project = await _create_project(
         workspace=workspace,
@@ -574,7 +575,7 @@ async def _create_project_membership_scenario() -> None:
         description="user1000 pj-admin, user1001 pj-member without permissions, ws-members allowed",
     )
     members_role = await sync_to_async(project.roles.get)(slug="general")
-    await roles_repositories.create_project_membership(user=user1001, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1001, project=project, role=members_role)
     members_role.permissions = []
     project.workspace_member_permissions = ["view_story"]
     await sync_to_async(project.save)()
@@ -595,7 +596,7 @@ async def _create_project_membership_scenario() -> None:
     members_role = await sync_to_async(project.roles.get)(slug="general")
     members_role.permissions = []
     await sync_to_async(members_role.save)()
-    await roles_repositories.create_project_membership(user=user1002, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1002, project=project, role=members_role)
     await sync_to_async(project.save)()
     # project: u1000 pj-admin, u1002 pj-member view_story, u1001/u1003 no pj-members ws-members/public not-allowed
     project = await _create_project(
@@ -608,7 +609,7 @@ async def _create_project_membership_scenario() -> None:
     members_role = await sync_to_async(project.roles.get)(slug="general")
     members_role.permissions = ["view_story"]
     await sync_to_async(members_role.save)()
-    await roles_repositories.create_project_membership(user=user1002, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1002, project=project, role=members_role)
     await sync_to_async(project.save)()
     # project: u1k pj-admin, u1k2 pj-member view_story, u1k1/u1k3 no pj-member, public view-us, ws-members not-allowed
     project = await _create_project(
@@ -622,7 +623,7 @@ async def _create_project_membership_scenario() -> None:
     members_role.permissions = ["view_story"]
     project.public_permissions = ["view_story"]
     await sync_to_async(members_role.save)()
-    await roles_repositories.create_project_membership(user=user1002, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1002, project=project, role=members_role)
     await sync_to_async(project.save)()
 
     # workspace premium: user1000 (ws-admin), user1001 (ws-member), user1002 (ws-guest), user1003 (ws-guest)
@@ -641,7 +642,7 @@ async def _create_project_membership_scenario() -> None:
     members_role.permissions = ["view_story"]
     project.public_permissions = ["view_story"]
     await sync_to_async(members_role.save)()
-    await roles_repositories.create_project_membership(user=user1002, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1002, project=project, role=members_role)
     await sync_to_async(project.save)()
 
     # workspace premium: user1000 (ws-admin), user1001/user1002 (ws-member), user1003 (ws-guest)
@@ -661,7 +662,7 @@ async def _create_project_membership_scenario() -> None:
     members_role.permissions = ["view_story"]
     project.public_permissions = ["view_story"]
     await sync_to_async(members_role.save)()
-    await roles_repositories.create_project_membership(user=user1002, project=project, role=members_role)
+    await pj_memberships_repositories.create_project_membership(user=user1002, project=project, role=members_role)
     await sync_to_async(project.save)()
 
 
@@ -718,7 +719,7 @@ async def _create_project_invitations(project: Project, users: list[User]) -> No
         )
 
     # create invitations in bulk
-    await invitations_repositories.create_project_invitations(objs=invitations)
+    await pj_invitations_repositories.create_project_invitations(objs=invitations)
 
 
 ################################
@@ -767,25 +768,25 @@ async def _create_scenario_with_invitations() -> None:
     # user900 creates 7 projects in ws5 and user901 is member of these
     pj = await _create_project(workspace=ws5, owner=user900)
     pj_member_role = (await _get_project_other_roles(project=pj))[0]
-    await roles_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
+    await pj_memberships_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
     pj = await _create_project(workspace=ws5, owner=user900)
     pj_member_role = (await _get_project_other_roles(project=pj))[0]
-    await roles_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
+    await pj_memberships_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
     pj = await _create_project(workspace=ws5, owner=user900)
     pj_member_role = (await _get_project_other_roles(project=pj))[0]
-    await roles_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
+    await pj_memberships_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
     pj = await _create_project(workspace=ws5, owner=user900)
     pj_member_role = (await _get_project_other_roles(project=pj))[0]
-    await roles_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
+    await pj_memberships_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
     pj = await _create_project(workspace=ws5, owner=user900)
     pj_member_role = (await _get_project_other_roles(project=pj))[0]
-    await roles_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
+    await pj_memberships_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
     pj = await _create_project(workspace=ws5, owner=user900)
     pj_member_role = (await _get_project_other_roles(project=pj))[0]
-    await roles_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
+    await pj_memberships_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
     pj = await _create_project(workspace=ws5, owner=user900)
     pj_member_role = (await _get_project_other_roles(project=pj))[0]
-    await roles_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
+    await pj_memberships_repositories.create_project_membership(user=user901, project=pj, role=pj_member_role)
 
 
 async def _create_scenario_for_searches() -> None:
@@ -809,7 +810,7 @@ async def _create_scenario_for_searches() -> None:
     # electra is pj member of a project in ws1
     pj1 = await _create_project(workspace=ws1, owner=user800)
     pj_member_role = (await _get_project_other_roles(project=pj1))[0]
-    await roles_repositories.create_project_membership(user=electra, project=pj1, role=pj_member_role)
+    await pj_memberships_repositories.create_project_membership(user=electra, project=pj1, role=pj_member_role)
 
 
 async def _create_scenario_for_revoke() -> None:
@@ -839,7 +840,7 @@ async def _create_scenario_for_revoke() -> None:
 
     pj = await _create_project(workspace=ws, owner=user1)
     pj_member_role = (await _get_project_other_roles(project=pj))[0]
-    await roles_repositories.create_project_membership(user=user3, project=pj, role=pj_member_role)
+    await pj_memberships_repositories.create_project_membership(user=user3, project=pj, role=pj_member_role)
 
 
 async def _create_scenario_with_1k_stories(workspace: Workspace, users: list[User], owner: User) -> None:

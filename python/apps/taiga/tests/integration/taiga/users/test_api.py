@@ -10,7 +10,7 @@ from unittest import mock
 
 import pytest
 from fastapi import status
-from taiga.invitations.services import _generate_project_invitation_token
+from taiga.projects.invitations.services import _generate_project_invitation_token
 from taiga.users.services import _generate_reset_password_token, _generate_verify_user_token
 from tests.utils import factories as f
 

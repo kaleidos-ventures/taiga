@@ -11,8 +11,8 @@ from taiga.base.db import admin
 from taiga.base.db.admin.http import HttpRequest
 from taiga.base.db.admin.users import UserAdmin as DjangoUserAdmin
 from taiga.base.db.users import Group
-from taiga.invitations.models import ProjectInvitation
-from taiga.projects.models import ProjectMembership
+from taiga.projects.invitations.models import ProjectInvitation
+from taiga.projects.memberships.models import ProjectMembership
 from taiga.users.models import AuthData, User
 from taiga.workspaces.memberships.models import WorkspaceMembership
 

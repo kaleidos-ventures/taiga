@@ -5,15 +5,20 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from .invitations import ProjectInvitationFactory, build_project_invitation, create_project_invitation  # noqa
-from .projects import ProjectFactory, build_project, create_project, create_simple_project  # noqa
-from .roles import (  # noqa
+from .projects import (  # noqa
+    ProjectFactory,
+    ProjectInvitationFactory,
     ProjectMembershipFactory,
     ProjectRoleFactory,
+    build_project,
+    build_project_invitation,
     build_project_membership,
     build_project_role,
+    create_project,
+    create_project_invitation,
     create_project_membership,
     create_project_role,
+    create_simple_project,
 )
 from .stories import StoryFactory, build_story, create_story  # noqa
 from .users import UserFactory, build_user, create_user  # noqa

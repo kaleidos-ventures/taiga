@@ -8,7 +8,7 @@
 from dataclasses import dataclass
 
 from taiga.auth.dataclasses import AccessWithRefreshToken
-from taiga.invitations.models import ProjectInvitation
+from taiga.projects.invitations.models import ProjectInvitation
 
 
 @dataclass

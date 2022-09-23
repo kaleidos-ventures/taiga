@@ -11,7 +11,7 @@ from taiga.base.api import AuthRequest, PaginationQuery, set_pagination
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm
-from taiga.projects.api import get_project_or_404
+from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.stories import services as stories_services
 from taiga.stories.models import Story

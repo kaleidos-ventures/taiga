@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from taiga.base.serializers import BaseModel
-from taiga.projects.serializers.related import ProjectSummarySerializer
+from taiga.projects.projects.serializers.related import ProjectSummarySerializer
 
 
 class WorkspaceDetailSerializer(BaseModel):

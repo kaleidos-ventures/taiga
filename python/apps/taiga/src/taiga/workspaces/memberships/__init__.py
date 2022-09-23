@@ -4,3 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+
+
+# Force this config to override the default label
+default_app_config = "taiga.workspaces.memberships.apps.WorkspaceMembershipConfig"

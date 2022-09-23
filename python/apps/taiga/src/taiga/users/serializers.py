@@ -8,7 +8,7 @@
 from pydantic import EmailStr
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.serializers import BaseModel
-from taiga.invitations.serializers.related import ProjectInvitationSummaryVerifyUserSerializer
+from taiga.projects.invitations.serializers.related import ProjectInvitationSummaryVerifyUserSerializer
 
 
 class UserBaseSerializer(BaseModel):

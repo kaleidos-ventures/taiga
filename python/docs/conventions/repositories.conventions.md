@@ -7,7 +7,7 @@ The repositories are the modules responsible for obtaining the data from the dif
 Using `<package_name>_repositories` as the name of the module imported. For example:
 
 ```python
-from taiga.projects import repositories as projects_repositories
+from taiga.projects.projects import repositories as projects_repositories
 ```
 
 ## BBDD repositories:

@@ -25,9 +25,9 @@ from taiga.base.db.models import (
 )
 from taiga.base.db.users import django_update_last_login
 from taiga.base.utils.datetime import aware_utcnow
-from taiga.invitations.choices import ProjectInvitationStatus
-from taiga.invitations.models import ProjectInvitation
-from taiga.roles.models import ProjectMembership
+from taiga.projects.invitations.choices import ProjectInvitationStatus
+from taiga.projects.invitations.models import ProjectInvitation
+from taiga.projects.memberships.models import ProjectMembership
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import AuthData, User
 from taiga.users.tokens import VerifyUserToken

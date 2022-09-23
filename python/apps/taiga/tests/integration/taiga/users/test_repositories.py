@@ -8,8 +8,8 @@
 import pytest
 from asgiref.sync import sync_to_async
 from taiga.base.db.exceptions import IntegrityError
-from taiga.invitations.choices import ProjectInvitationStatus
 from taiga.permissions import choices
+from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
 from taiga.users.tokens import VerifyUserToken

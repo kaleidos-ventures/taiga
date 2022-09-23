@@ -9,7 +9,7 @@ from typing import Final
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
-from taiga.roles.models import ProjectMembership
+from taiga.projects.memberships.models import ProjectMembership
 from taiga.workspaces.memberships.models import WorkspaceMembership
 from taiga.workspaces.roles.models import WorkspaceRole
 from taiga.workspaces.workspaces.models import Workspace

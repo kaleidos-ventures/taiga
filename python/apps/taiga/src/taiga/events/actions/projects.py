@@ -11,9 +11,9 @@ from taiga.base.api.permissions import Or, check_permissions
 from taiga.events import channels
 from taiga.events.responses import ActionResponse
 from taiga.exceptions.api import ForbiddenError
-from taiga.invitations.permissions import HasPendingProjectInvitation
 from taiga.permissions import CanViewProject
-from taiga.projects import services as projects_services
+from taiga.projects.invitations.permissions import HasPendingProjectInvitation
+from taiga.projects.projects import services as projects_services
 
 from .base import Action
 

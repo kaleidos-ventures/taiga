@@ -7,7 +7,7 @@
 
 
 from taiga.base.api import Pagination
-from taiga.projects.models import Project
+from taiga.projects.projects.models import Project
 from taiga.stories import events as stories_events
 from taiga.stories import repositories as stories_repositories
 from taiga.stories.models import Story

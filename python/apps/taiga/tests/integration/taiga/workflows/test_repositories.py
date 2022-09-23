@@ -7,7 +7,7 @@
 
 import pytest
 from asgiref.sync import sync_to_async
-from taiga.projects.models import Project
+from taiga.projects.projects.models import Project
 from taiga.workflows import repositories
 from taiga.workflows.models import Workflow
 from tests.utils import factories as f

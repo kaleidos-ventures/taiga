@@ -31,7 +31,7 @@ class Workspace(models.BaseModel):
     members = models.ManyToManyField(
         "users.User",
         related_name="workspaces",
-        through="memberships.WorkspaceMembership",
+        through="workspaces_memberships.WorkspaceMembership",
         through_fields=("workspace", "user"),
         verbose_name="members",
     )

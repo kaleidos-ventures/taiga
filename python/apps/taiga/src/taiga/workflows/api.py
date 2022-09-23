@@ -11,7 +11,7 @@ from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404
 from taiga.permissions import HasPerm
-from taiga.projects.api import get_project_or_404
+from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.workflows import services as workflows_services
 from taiga.workflows.dataclasses import Workflow

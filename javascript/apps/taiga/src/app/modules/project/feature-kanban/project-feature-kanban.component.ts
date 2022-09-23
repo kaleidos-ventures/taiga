@@ -23,6 +23,8 @@ import {
   selectWorkflows,
 } from './data-access/+state/selectors/kanban.selectors';
 import { Story } from '@taiga/data';
+import { PermissionsService } from '~/app/services/permissions.service';
+import { Router } from '@angular/router';
 
 interface ComponentState {
   loadingWorkflows: KanbanState['loadingWorkflows'];
@@ -57,8 +59,19 @@ export class ProjectFeatureKanbanComponent {
   constructor(
     private store: Store,
     private state: RxState<ComponentState>,
-    private wsService: WsService
+    private wsService: WsService,
+    private permissionService: PermissionsService,
+    private router: Router
   ) {
+    const canViewPage = this.permissionService.hasPermissions('story', [
+      'view',
+    ]);
+
+    if (!canViewPage) {
+      void this.router.navigate(['403']);
+      return;
+    }
+
     this.store.dispatch(KanbanActions.initKanban());
     this.checkInviteModalStatus();
     this.state.connect(

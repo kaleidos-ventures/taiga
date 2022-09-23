@@ -87,7 +87,7 @@ export class RolePermissionRowComponent implements OnChanges {
   public checkRestrictions() {
     const storiesState =
       this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
-        this.getEntityFormGroup('us')
+        this.getEntityFormGroup('story')
       );
 
     if (storiesState === 'no_access') {
@@ -108,7 +108,7 @@ export class RolePermissionRowComponent implements OnChanges {
     if (entity === 'task' || entity === 'sprint') {
       const storiesState =
         this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
-          this.getEntityFormGroup('us')
+          this.getEntityFormGroup('story')
         );
 
       if (storiesState === 'no_access') {

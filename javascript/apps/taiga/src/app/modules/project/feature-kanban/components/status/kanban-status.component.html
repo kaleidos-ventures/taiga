@@ -55,7 +55,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           class="create-story"
           *hasPermission="
             ['create'];
-            entity: 'us';
+            entity: 'story';
             else: noCreationPermissionsTpl
           ">
           <ng-container *ngIf="vm.showAddForm; else addStoryTpl">

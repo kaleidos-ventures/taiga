@@ -28,7 +28,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
 
   public getEntities(): Map<Entity, string> {
     return new Map([
-      ['us', 'commons.stories'],
+      ['story', 'commons.stories'],
       ['task', 'commons.tasks'],
       ['sprint', 'commons.sprints'],
       ['issue', 'commons.issues'],
@@ -143,7 +143,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       .filter(([entity]) => !roleForm.get(entity)?.disabled)
       .filter(([entity]) => {
         if (
-          roleForm.get('us')?.disabled &&
+          roleForm.get('story')?.disabled &&
           (entity === 'task' || entity === 'sprint')
         ) {
           return false;
@@ -191,7 +191,7 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
     (Object.keys(publicPermissions) as Entity[])
       .filter((permission) => {
         if (
-          !memberPermissions['us'] &&
+          !memberPermissions['story'] &&
           (permission === 'sprint' || permission === 'task')
         ) {
           return false;

@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-export type Entity = 'us' | 'task' | 'sprint' | 'issue' | 'epic' | 'wiki';
+export type Entity = 'story' | 'task' | 'sprint' | 'issue' | 'epic' | 'wiki';
 
 export type EntityPermission =
   | 'view'

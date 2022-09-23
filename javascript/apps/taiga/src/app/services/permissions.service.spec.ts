@@ -29,7 +29,7 @@ describe('PermissionsService', () => {
 
   it('format raw permissions to valid formGroup value', () => {
     const formGroup = new FormGroup({
-      us: new FormGroup({
+      story: new FormGroup({
         create: new FormControl(false),
         modify: new FormControl(false),
         delete: new FormControl(false),
@@ -48,7 +48,7 @@ describe('PermissionsService', () => {
     formGroup.patchValue(value);
 
     expect(formGroup.value).toEqual({
-      us: {
+      story: {
         create: true,
         modify: true,
         delete: true,
@@ -77,29 +77,29 @@ describe('PermissionsService', () => {
       },
     });
 
-    expect(spectator.service.hasPermissions('us', 'view')).toEqual(true);
-    expect(spectator.service.hasPermissions('us', 'delete')).toEqual(false);
+    expect(spectator.service.hasPermissions('story', 'view')).toEqual(true);
+    expect(spectator.service.hasPermissions('story', 'delete')).toEqual(false);
     expect(spectator.service.hasPermissions('sprint', 'view')).toEqual(false);
 
     expect(
-      spectator.service.hasPermissions(['us', 'issue'], ['view', 'modify'])
+      spectator.service.hasPermissions(['story', 'issue'], ['view', 'modify'])
     ).toEqual(true);
     expect(
       spectator.service.hasPermissions(
-        ['us', 'issue'],
+        ['story', 'issue'],
         ['view', 'modify', 'delete']
       )
     ).toEqual(false);
     expect(
       spectator.service.hasPermissions(
-        ['us', 'issue', 'sprint'],
+        ['story', 'issue', 'sprint'],
         ['view', 'modify']
       )
     ).toEqual(false);
 
     expect(
       spectator.service.hasPermissions(
-        ['us', 'issue', 'sprint'],
+        ['story', 'issue', 'sprint'],
         ['view', 'modify'],
         'OR'
       )

@@ -58,7 +58,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         comment: new FormControl(false),
       });
 
-      spectator.service.applyPermission('us', 'edit', formGroup);
+      spectator.service.applyPermission('story', 'edit', formGroup);
 
       expect(formGroup.value).toEqual({
         create: true,
@@ -77,7 +77,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
       });
 
       // stories has comments
-      spectator.service.applyPermission('us', 'edit', formGroup);
+      spectator.service.applyPermission('story', 'edit', formGroup);
 
       expect(formGroup.get('comment')!.disabled).toBeFalsy();
 
@@ -95,7 +95,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         comment: new FormControl(true),
       });
 
-      spectator.service.applyPermission('us', 'view', formGroup);
+      spectator.service.applyPermission('story', 'view', formGroup);
 
       expect(formGroup.value).toEqual({
         create: false,
@@ -164,7 +164,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
   it('permission form to backend format - stories', () => {
     const formGroup = new FormGroup({
-      us: new FormGroup({
+      story: new FormGroup({
         create: new FormControl(true),
         modify: new FormControl(true),
         delete: new FormControl(true),
@@ -183,7 +183,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
     ]);
 
     formGroup.setValue({
-      us: {
+      story: {
         create: false,
         modify: false,
         delete: false,
@@ -203,7 +203,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
   it('permission form to backend format - stories disabled', () => {
     const formGroup = new FormGroup({
-      us: new FormGroup({
+      story: new FormGroup({
         create: new FormControl(true),
         modify: new FormControl(true),
         delete: new FormControl(true),
@@ -223,7 +223,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
       }),
     });
 
-    formGroup.get('us')?.disable();
+    formGroup.get('story')?.disable();
 
     const permission = spectator.service.getRoleFormGroupPermissions(formGroup);
 
@@ -232,13 +232,13 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
   it('conflicts permissions: no conflicts between member and public', () => {
     const publicPermissions: any = {
-      us: {
+      story: {
         view: true,
         comment: true,
       },
     };
     const memberPermissions: any = {
-      us: {
+      story: {
         view: true,
         comment: true,
       },
@@ -252,7 +252,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
   it('conflicts permissions: member(no-access) and public(view)', () => {
     const publicPermissions: any = {
-      us: {
+      story: {
         view: true,
       },
     };
@@ -262,7 +262,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
       memberPermissions
     )?.[0];
     const expectedValue = {
-      name: 'us',
+      name: 'story',
       permission: {
         member: [],
         onlyPublicPermission: ['view'],
@@ -305,7 +305,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
   it('conflicts permissions: member(no-access) and public(view and comment)', () => {
     const publicPermissions: any = {
-      us: {
+      story: {
         view: true,
         comment: true,
       },
@@ -316,7 +316,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
       memberPermissions
     )?.[0];
     const expectedValue = {
-      name: 'us',
+      name: 'story',
       permission: {
         member: [],
         onlyPublicPermission: ['view', 'comment'],
@@ -359,7 +359,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
   it('conflicts permissions: member(view) and public(edit)', () => {
     const publicPermissions: any = {
-      us: {
+      story: {
         view: true,
         create: true,
         delete: true,
@@ -368,7 +368,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
       },
     };
     const memberPermissions: any = {
-      us: {
+      story: {
         view: true,
       },
     };
@@ -378,7 +378,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
     )?.[0];
 
     const expectedValue: any = {
-      name: 'us',
+      name: 'story',
       permission: {
         member: ['view'],
         onlyPublicPermission: ['create', 'modify', 'delete', 'comment'],
@@ -427,7 +427,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
 
   it('conflicts permissions: member(edit but cannot create) and public(edit)', () => {
     const publicPermissions: any = {
-      us: {
+      story: {
         view: true,
         create: true,
         delete: true,
@@ -436,7 +436,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
       },
     };
     const memberPermissions: any = {
-      us: {
+      story: {
         view: true,
         delete: true,
         modify: true,
@@ -448,7 +448,7 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
     )?.[0];
 
     const expectedValue: any = {
-      name: 'us',
+      name: 'story',
       permission: {
         member: ['view', 'modify', 'delete'],
         onlyPublicPermission: ['create', 'comment'],

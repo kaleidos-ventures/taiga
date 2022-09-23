@@ -64,7 +64,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
     projectsSettingsFeatureRolesPermissionsService.getEntities.andReturn(
       new Map([
-        ['us', 'Stories'],
+        ['story', 'Stories'],
         ['task', 'Tasks'],
         ['sprint', 'Sprints'],
         ['issue', 'Issues'],
@@ -92,7 +92,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       ] as Permissions[];
 
       permissionsService.formatRawPermissions.mockReturnValue({
-        us: {
+        story: {
           create: true,
           modify: true,
           delete: true,
@@ -112,7 +112,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       expect(spectator.component.form.value).toEqual({
         [role.slug]: {
-          us: {
+          story: {
             create: true,
             modify: true,
             delete: true,
@@ -128,7 +128,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
       role.permissions = ['view_story'] as Permissions[];
 
       permissionsService.formatRawPermissions.andReturn({
-        us: {
+        story: {
           create: false,
           modify: false,
           delete: false,
@@ -148,7 +148,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       expect(spectator.component.form.value).toEqual({
         [role.slug]: {
-          us: {
+          story: {
             create: false,
             modify: false,
             delete: false,

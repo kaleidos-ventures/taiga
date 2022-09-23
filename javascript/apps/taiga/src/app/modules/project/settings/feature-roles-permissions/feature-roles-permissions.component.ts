@@ -273,9 +273,9 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
       if (!currentPermissions[entity]) {
         fb.disable();
-      } else if (entity === 'sprint' && !currentPermissions.us) {
+      } else if (entity === 'sprint' && !currentPermissions.story) {
         fb.disable();
-      } else if (entity === 'task' && !currentPermissions.us) {
+      } else if (entity === 'task' && !currentPermissions.story) {
         fb.disable();
       }
     }

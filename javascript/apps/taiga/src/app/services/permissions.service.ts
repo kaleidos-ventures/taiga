@@ -18,7 +18,7 @@ const mapFormEntitiesPermissions: Record<
   Entity,
   Partial<Record<EntityPermission, string[]>>
 > = {
-  us: {
+  story: {
     view: ['view_story'],
     create: ['add_story'],
     modify: ['modify_story'],

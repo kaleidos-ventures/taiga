@@ -28,7 +28,7 @@ describe('HasPermissionDirective', () => {
     spectator = createDirective(`
       <div *hasPermission="
         ['view', 'edit'];
-        entity: 'us';
+        entity: 'story';
         operation: 'OR'">
         Visible
       </div>

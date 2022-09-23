@@ -12,7 +12,7 @@ from taiga.base.validator import as_form
 
 @as_form
 class StoryValidator(BaseModel):
-    name: constr(strip_whitespace=True, max_length=80)  # type: ignore
+    name: constr(strip_whitespace=True, max_length=500)  # type: ignore
     status: str
 
     @validator("status")

@@ -7,32 +7,87 @@
 
 import random
 import string
-from typing import Type
+from typing import Callable, Type
 
-from django.db.models import Model
+from django.db.models import Model, QuerySet
 from slugify import slugify
 
 
 def generate_int_suffix() -> str:
+    """
+    Generates a suffix consisting of 3 random numbers.
+
+    :return a text suffix
+    :rtype str
+    """
     return f"{random.randint(0,999):03}"
 
 
-def _generate_suffix() -> str:
+def generate_chars_suffix(char_num: int = 6) -> str:
+    """
+    Generates a suffix consisting of n random alphanumeric characters.
+
+    :param char_num: number of characters for the suffix. Default value is 6
+    :type char_num: int
+    :return a text suffix
+    :rtype str
+    """
     alphabet = string.ascii_letters + string.digits
-    return "".join(random.choice(alphabet) for i in range(6))
+    return "".join(random.choice(alphabet) for i in range(char_num))
 
 
 def slugify_uniquely(value: str, model: Type[Model], slugfield: str = "slug") -> str:
     """
     Returns a slug on a name which is unique within a model's table
+
+    :param value: base text for the slug
+    :type value: str
+    :param model: a django model
+    :type queryset: Type[Model]
+    :param slugfield: name of the field that contains the slug (default `slug`)
+    :type slugfield: str
+    :return a unique slug
+    :rtype str
     """
-    suffix = _generate_suffix()
+    suffix = generate_chars_suffix()
     potential = base = slugify(value)
     if len(potential) == 0:
         potential = "null"
     while True:
         if suffix:
-            potential = "-".join([base, str(suffix)])
+            potential = f"{base}-{suffix}"
         if not model.objects.filter(**{slugfield: potential}).exists():
             return potential
-        suffix = _generate_suffix()
+        suffix = generate_chars_suffix()
+
+
+def slugify_uniquely_for_queryset(
+    value: str,
+    queryset: QuerySet[Model],
+    slugfield: str = "slug",
+    generate_suffix: Callable[..., str] = generate_int_suffix,
+) -> str:
+    """
+    Returns a slug on a name which is unique within a Django queryset. This method adds suffix only if it is necessary.
+
+    :param value: base text for the slug
+    :type value: str
+    :param queryset: a django queryset
+    :type queryset: QuerySet
+    :param slugfield: name of the field that contains the slug (default `slug`)
+    :type slugfield: str
+    :param generate_suffix: function that generates a suffix (default one returns an incremental integer)
+    :type generate_suffix: Callable[..., str]
+    :return a unique slug
+    :rtype str
+    """
+    suffix = ""
+    potential = base = slugify(value)
+    if len(potential) == 0:
+        potential = "null"
+    while True:
+        if suffix:
+            potential = f"{base}-{suffix}"
+        if not queryset.filter(**{slugfield: potential}).exists():
+            return potential
+        suffix = generate_suffix()

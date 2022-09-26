@@ -5,8 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import Any
+
 from taiga.base.db import models
 from taiga.base.utils.datetime import timestamp_mics
+from taiga.base.utils.slug import slugify_uniquely_for_queryset
 
 
 class Workflow(models.BaseModel):
@@ -66,3 +69,9 @@ class WorkflowStatus(models.BaseModel):
 
     def __repr__(self) -> str:
         return f"<WorkflowStatus {self.workflow.name} - {self.name}>"
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if not self.slug:
+            self.slug = slugify_uniquely_for_queryset(value=self.name, queryset=self.workflow.statuses.all())
+
+        super().save(*args, **kwargs)

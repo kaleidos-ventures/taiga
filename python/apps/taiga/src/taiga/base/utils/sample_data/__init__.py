@@ -19,7 +19,10 @@ from taiga.projects import services as projects_services
 from taiga.projects.models import Project
 from taiga.roles import repositories as roles_repositories
 from taiga.roles.models import ProjectMembership, ProjectRole
+from taiga.stories import repositories as stories_repositories
+from taiga.stories.models import Story
 from taiga.users.models import User
+from taiga.workflows.models import Workflow, WorkflowStatus
 from taiga.workspaces.memberships import repositories as ws_memberships_repositories
 from taiga.workspaces.roles.models import WorkspaceRole
 from taiga.workspaces.workspaces import services as workspaces_services
@@ -32,9 +35,18 @@ random.seed(0)
 ################################
 # CONFIGURATION
 ################################
+# Users
 NUM_USERS = 10
+# Projects
 NUM_PROJECT_COLORS = 8
+# Workspaces
 NUM_WORKSPACE_COLORS = 8
+# Workflows
+NUM_WORKFLOWS_COLORS = 4
+
+# Stories
+NUM_STORIES_PER_WORKFLOW = (0, 30)  # (min, max) by default
+STORY_TITLE_MAX_SIZE = ((80,) * 3) + ((120,) * 6) + (490,)  # 80 (30%), 120 (60%), 490 (10%)
 ################################
 
 
@@ -68,8 +80,14 @@ async def load_sample_data() -> None:
 
         # add other users to different roles (admin and general)
         await _create_project_memberships(project=project, users=users, except_for=workspace.owner)
-
         projects.append(project)
+
+    for project in projects:
+        # PROJECT INVITATIONS
+        await _create_project_invitations(project=project, users=users)
+
+        # STORIES
+        await _create_stories(project=project)
 
     # CUSTOM PROJECTS
     custom_owner = users[0]
@@ -79,14 +97,14 @@ async def load_sample_data() -> None:
     await _create_project_with_several_roles(owner=custom_owner, workspace=workspace, users=users)
     await _create_project_membership_scenario()
 
-    # PROJECT INVITATIONS
-    for project in projects:
-        await _create_project_invitations(project=project, users=users)
-
     # CUSTOM SCENARIOS
     await _create_scenario_with_invitations()
     await _create_scenario_for_searches()
     await _create_scenario_for_revoke()
+    await _create_scenario_with_1k_stories(workspace=workspace, owner=custom_owner, users=users)
+    await _create_scenario_with_2k_stories_and_40_workflow_statuses(
+        workspace=workspace, owner=custom_owner, users=users
+    )
 
     print("Sample data loaded.")
 
@@ -292,6 +310,64 @@ async def _create_project(
         )
 
     return project
+
+
+#################################
+# WORKFLOWS
+#################################
+
+
+@sync_to_async
+def _get_workflows(project: Project) -> list[Workflow]:
+    return list(project.workflows.all())
+
+
+@sync_to_async
+def _get_workflow_statuses(workflow: Workflow) -> list[WorkflowStatus]:
+    return list(workflow.statuses.all())
+
+
+async def _create_workflow_status(
+    workflow: Workflow,
+    name: str | None = None,
+    color: int | None = None,
+) -> None:
+    await WorkflowStatus.objects.acreate(  # type: ignore[attr-defined]
+        name=name or fake.unique.text(max_nb_chars=15)[:-1],
+        color=color or fake.random_int(min=1, max=NUM_WORKSPACE_COLORS),
+        workflow=workflow,
+    )
+
+
+#################################
+# STORIES
+#################################
+
+
+async def _create_stories(
+    project: Project, min_stories: int = NUM_STORIES_PER_WORKFLOW[0], max_stories: int | None = None
+) -> None:
+    num_stories_to_create = fake.random_int(
+        min=min_stories, max=max_stories or min_stories or NUM_STORIES_PER_WORKFLOW[1]
+    )
+
+    members = await _get_project_members(project=project)
+    for workflow in await _get_workflows(project=project):
+        statuses = await _get_workflow_statuses(workflow=workflow)
+        for i in range(num_stories_to_create):
+            await _create_story(status=random.choice(statuses), owner=random.choice(members))
+
+
+async def _create_story(status: WorkflowStatus, owner: User, title: str | None = None) -> Story:
+    _title = title or fake.text(max_nb_chars=random.choice(STORY_TITLE_MAX_SIZE))
+
+    return await stories_repositories.create_story(
+        title=_title,
+        project_id=status.workflow.project_id,
+        workflow_id=status.workflow_id,
+        status_id=status.id,
+        user_id=owner.id,
+    )
 
 
 ################################
@@ -764,3 +840,33 @@ async def _create_scenario_for_revoke() -> None:
     pj = await _create_project(workspace=ws, owner=user1)
     pj_member_role = (await _get_project_other_roles(project=pj))[0]
     await roles_repositories.create_project_membership(user=user3, project=pj, role=pj_member_role)
+
+
+async def _create_scenario_with_1k_stories(workspace: Workspace, users: list[User], owner: User) -> None:
+    """
+    Create a new project with 1000 stories.
+    """
+    project = await _create_project(
+        name="1k Stories", description="This project contains 1000 stories.", owner=owner, workspace=workspace
+    )
+    await _create_project_memberships(project=project, users=users, except_for=project.owner)
+    await _create_stories(project=project, min_stories=1000)
+
+
+async def _create_scenario_with_2k_stories_and_40_workflow_statuses(
+    workspace: Workspace, users: list[User], owner: User
+) -> None:
+    """
+    Create a new project with 2000 stories and 40 statuses.
+    """
+    project = await _create_project(
+        name="2k Stories, 40 statuses",
+        description="This project contains 2000 stories and 40 statuses.",
+        owner=owner,
+        workspace=workspace,
+    )
+    await _create_project_memberships(project=project, users=users, except_for=project.owner)
+    workflow = (await _get_workflows(project=project))[0]
+    for i in range(0, 40 - len(await _get_workflow_statuses(workflow=workflow))):
+        await _create_workflow_status(workflow=workflow)
+    await _create_stories(project=project, min_stories=2000)

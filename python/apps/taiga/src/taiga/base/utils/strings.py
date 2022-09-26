@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-from humps import decamelize
+from humps.main import decamelize
 
 
 def camel_to_kebab(msg: str) -> str:

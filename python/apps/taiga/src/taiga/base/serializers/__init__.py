@@ -7,7 +7,7 @@
 
 from typing import TYPE_CHECKING, TypeVar
 
-from humps import camelize
+from humps.main import camelize
 from pydantic import BaseModel as _BaseModel
 
 if TYPE_CHECKING:

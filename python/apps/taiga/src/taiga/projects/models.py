@@ -186,7 +186,7 @@ class Project(models.BaseModel):
 
     @property
     def anon_permissions(self) -> list[str]:
-        return list(filter(lambda x: x.startswith("view_"), self.public_permissions))
+        return list(filter(lambda x: x.startswith("view_"), self.public_permissions or []))
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.slug:

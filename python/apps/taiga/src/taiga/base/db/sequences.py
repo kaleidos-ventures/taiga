@@ -11,7 +11,9 @@ This module contains useful functions for managing sequences in taiga.
 
 from contextlib import closing
 
-from taiga.base.db import connection, transaction
+from taiga.base.db import connection
+from taiga.base.db import exceptions as ex
+from taiga.base.db import transaction
 
 
 @transaction.atomic
@@ -63,9 +65,12 @@ def next_value(seqname: str) -> int:
     """
     sql = "SELECT nextval(%s);"
     with closing(connection.cursor()) as cursor:
-        cursor.execute(sql, [seqname])
-        result = cursor.fetchone()
-        return result[0]
+        try:
+            cursor.execute(sql, [seqname])
+            result = cursor.fetchone()
+            return result[0]
+        except ex.ProgrammingError:
+            raise ex.SequenceDoesNotExist()
 
 
 def current_value(seqname: str) -> int:
@@ -79,9 +84,12 @@ def current_value(seqname: str) -> int:
     """
     sql = "SELECT currval(%s);"
     with closing(connection.cursor()) as cursor:
-        cursor.execute(sql, [seqname])
-        result = cursor.fetchone()
-        return result[0]
+        try:
+            cursor.execute(sql, [seqname])
+            result = cursor.fetchone()
+            return result[0]
+        except ex.ProgrammingError:
+            raise ex.SequenceDoesNotExist()
 
 
 @transaction.atomic

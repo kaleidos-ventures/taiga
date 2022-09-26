@@ -7,11 +7,12 @@
 
 from uuid import UUID
 
+from taiga.base.db import exceptions as ex
 from taiga.base.db import sequences as seq
 
 
 def get_project_references_seqname(id: UUID) -> str:
-    return f"project_references_{0}"
+    return f"project_references_{id.hex}"
 
 
 def create_project_references_sequence(project_id: UUID) -> None:
@@ -22,10 +23,16 @@ def create_project_references_sequence(project_id: UUID) -> None:
 
 def get_new_project_reference_id(project_id: UUID) -> int:
     seqname = get_project_references_seqname(project_id)
-    return seq.next_value(seqname)
+    try:
+        return seq.next_value(seqname)
+    except ex.SequenceDoesNotExist:
+        seq.create(seqname)
+        return seq.next_value(seqname)
 
 
-def delete_project_references_sequence(project_id: UUID) -> None:
+def delete_project_references_sequence(project_id: UUID) -> bool:
     seqname = get_project_references_seqname(project_id)
     if seq.exists(seqname):
         seq.delete(seqname)
+        return True
+    return False

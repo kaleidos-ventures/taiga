@@ -21,3 +21,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </ng-container>
   </cdk-virtual-scroll-viewport>
 </tui-scrollbar>
+
+<tg-drag-in-progress *ngIf="movingStories$ | async as stories">
+  <div *ngFor="let story of stories; trackBy: trackByStorySlug">
+    <tg-kanban-story
+      class="dragging"
+      [story]="story"></tg-kanban-story>
+  </div>
+</tg-drag-in-progress>

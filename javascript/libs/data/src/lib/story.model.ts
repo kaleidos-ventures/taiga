@@ -12,6 +12,5 @@ export interface Story {
   ref: number;
   title: string;
   slug: string;
-  order: number;
   status: Pick<Status, 'slug' | 'color' | 'name'>;
 }

@@ -8,7 +8,7 @@
 
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Injectable } from '@angular/core';
-import { fromEvent, map, merge, switchMap, takeUntil } from 'rxjs';
+import { filter, fromEvent, map, merge, switchMap, takeUntil } from 'rxjs';
 import { finalizeWithValue } from '../utils/operators/finalize-with-value';
 
 @Injectable()
@@ -17,6 +17,9 @@ export class KineticScrollService {
 
   public start(el: HTMLElement, cdkScrollable: CdkVirtualScrollViewport) {
     const movement = fromEvent(el, 'mousedown').pipe(
+      filter((event) => {
+        return !(event.target as HTMLElement).closest('tg-kanban-story');
+      }),
       switchMap((event) => {
         const initScrollPosition = cdkScrollable.measureScrollOffset('left');
         const initMousePosition = (event as MouseEvent).clientX;

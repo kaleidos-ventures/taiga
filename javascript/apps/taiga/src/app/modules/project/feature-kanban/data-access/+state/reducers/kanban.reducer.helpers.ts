@@ -7,21 +7,17 @@
  */
 
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
-
+import { DropCandidate } from '~/app/shared/drag/drag.model';
 import { KanbanState } from './kanban.reducer';
-
-export interface DropCandidate {
-  position: 'top' | 'bottom';
-}
 
 export function findStory(
   state: KanbanState,
-  ref: KanbanStory['ref']
+  condition: (story: KanbanStory) => boolean
 ): KanbanStory | undefined {
   let story;
 
   Object.values(state.stories).some((stories) => {
-    const statusStory = stories.find((story) => story.ref === ref);
+    const statusStory = stories.find((story) => condition(story));
 
     if (statusStory) {
       story = statusStory;
@@ -33,27 +29,72 @@ export function findStory(
   return story;
 }
 
+export function findStoryIndex(
+  state: KanbanState,
+  ref: KanbanStory['ref']
+): number {
+  let storyIndex = -1;
+
+  Object.values(state.stories).some((stories) => {
+    const statusStory = stories.findIndex((story) => {
+      return story.ref === ref;
+    });
+
+    if (statusStory !== -1) {
+      storyIndex = statusStory;
+    }
+
+    return statusStory !== -1;
+  });
+
+  return storyIndex;
+}
+
+export function getStory(
+  state: KanbanState,
+  targetRef: KanbanStory['ref'],
+  position: DropCandidate['position']
+) {
+  const target = findStory(state, (it) => it.ref === targetRef);
+
+  if (target) {
+    let index = state.stories[target.status.slug].findIndex((it) => {
+      return it.ref === target.ref;
+    });
+
+    if (position === 'top') {
+      index--;
+    } else {
+      index++;
+    }
+
+    return state.stories[target.status.slug][index];
+  }
+
+  return undefined;
+}
+
 export function addStory(
   state: KanbanState,
   story: KanbanStory,
-  status: KanbanStory['status']['slug'],
-  target?: KanbanStory,
-  position?: DropCandidate['position']
+  targetRef: KanbanStory['ref'],
+  position: DropCandidate['position'],
+  status?: KanbanStory['status']['slug']
 ) {
-  const targetStory = findStory(state, target?.ref);
+  const target = findStory(state, (it) => it.ref === targetRef);
 
-  if (targetStory) {
-    let index = state.stories[status].findIndex((it) => {
-      return it.ref === targetStory.ref;
+  if (target) {
+    let index = state.stories[target.status.slug].findIndex((it) => {
+      return it.ref === target.ref;
     });
 
     if (position === 'bottom') {
       index++;
     }
 
-    state.stories[status].splice(index, 0, story);
-  } else {
-    state.stories[status].splice(0, 0, story);
+    state.stories[target.status.slug].splice(index, 0, story);
+  } else if (status) {
+    state.stories[status].push(story);
   }
 
   return state;
@@ -68,6 +109,21 @@ export function removeStory(
       return !condition(it);
     });
   });
+
+  return state;
+}
+
+export function setIntialPosition(state: KanbanState, story: KanbanStory) {
+  if (story.ref) {
+    const index = findStoryIndex(state, story.ref);
+
+    if (index !== -1) {
+      state.initialDragDropPosition[story.ref] = {
+        status: story.status.slug,
+        index,
+      };
+    }
+  }
 
   return state;
 }

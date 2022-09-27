@@ -10,9 +10,14 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   HostBinding,
   HostListener,
+  Inject,
   Input,
+  OnChanges,
+  Optional,
+  SimpleChanges,
 } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -30,6 +35,8 @@ import {
 export interface StoryState {
   kanbanStoryA11y: KanbanStoryA11y;
 }
+import { KanbanStatusComponent } from '../status/kanban-status.component';
+
 @UntilDestroy()
 @Component({
   selector: 'tg-kanban-story',
@@ -38,7 +45,7 @@ export interface StoryState {
   providers: [RxState],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KanbanStoryComponent {
+export class KanbanStoryComponent implements OnChanges {
   @Input()
   public story!: KanbanStory;
 
@@ -53,7 +60,12 @@ export class KanbanStoryComponent {
   public index!: number;
 
   @Input()
-  public total!: number;
+  public total = 0;
+
+  @HostBinding('class.drag-shadow')
+  public get dragShadow() {
+    return this.story._shadow || this.story._dragging;
+  }
 
   @HostBinding('attr.data-ref')
   public get ref() {
@@ -110,11 +122,19 @@ export class KanbanStoryComponent {
     });
   }
 
+  public get nativeElement() {
+    return this.el.nativeElement as HTMLElement;
+  }
+
   constructor(
     private store: Store,
     private state: RxState<StoryState>,
     private liveAnnouncer: LiveAnnouncer,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private el: ElementRef,
+    @Optional()
+    @Inject(KanbanStatusComponent)
+    private kabanStatus: KanbanStatusComponent
   ) {
     this.state.connect(
       'kanbanStoryA11y',
@@ -185,6 +205,33 @@ export class KanbanStoryComponent {
       }
 
       this.store.dispatch(KanbanActions.dropStoryA11y(dropStoryData));
+    }
+  }
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes.story && this.story._shadow) {
+      requestAnimationFrame(() => {
+        this.scrollToDragStoryIfNotVisible();
+      });
+    }
+  }
+
+  private scrollToDragStoryIfNotVisible() {
+    const statusScrollBottom =
+      this.kabanStatus.kanbanVirtualScroll?.scrollStrategy.viewport?.elementRef.nativeElement.getBoundingClientRect()
+        .bottom;
+
+    if (statusScrollBottom) {
+      const newTop =
+        this.nativeElement.getBoundingClientRect().bottom -
+        statusScrollBottom +
+        1;
+
+      if (newTop > 0) {
+        this.kabanStatus.kanbanVirtualScroll?.scrollStrategy.scrollTo({
+          top: newTop,
+        });
+      }
     }
   }
 }

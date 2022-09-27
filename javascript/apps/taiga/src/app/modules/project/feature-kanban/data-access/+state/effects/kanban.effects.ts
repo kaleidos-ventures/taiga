@@ -13,9 +13,13 @@ import { Store } from '@ngrx/store';
 import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { delay, filter, map } from 'rxjs';
+import { Story } from '@taiga/data';
+import { delay, filter, map, tap } from 'rxjs';
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import {
+  selectCurrentProject,
+  selectCurrentProjectSlug,
+} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
 import { AppService } from '~/app/services/app.service';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -24,7 +28,10 @@ import {
   KanbanApiActions,
   KanbanEventsActions,
 } from '../actions/kanban.actions';
-import { selectWorkflows } from '../selectors/kanban.selectors';
+import {
+  selectCurrentWorkflowSlug,
+  selectWorkflows,
+} from '../selectors/kanban.selectors';
 
 @Injectable()
 export class KanbanEffects {
@@ -143,7 +150,7 @@ export class KanbanEffects {
     );
   });
 
-  public moveStory$ = createEffect(() => {
+  public moveStoryKeyboard$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(KanbanActions.dropStoryA11y),
       concatLatestFrom(() => [
@@ -156,7 +163,7 @@ export class KanbanEffects {
             status: story.currentPosition.status,
           };
           return this.projectApiService
-            .moveStory(storyData, project, workflow, reorder)
+            .moveStory(storyData, project.slug, workflow.slug, reorder)
             .pipe(
               map((story) => {
                 return KanbanApiActions.moveStorySuccess({
@@ -165,14 +172,84 @@ export class KanbanEffects {
               })
             );
         },
-        undoAction: (action) => {
+        undoAction: (action, httpResponse: HttpErrorResponse) => {
           return KanbanApiActions.moveStoryError({
-            story: action.story,
+            story: action.story.ref!,
+            errorStatus: httpResponse.status,
           });
         },
       })
     );
   });
+
+  public moveStoryMouse$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.storyDropped),
+      filter((action) => !!action.status),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProjectSlug).pipe(filterNil()),
+        this.store.select(selectCurrentWorkflowSlug),
+      ]),
+      optimisticUpdate({
+        run: (action, project, workflow) => {
+          let reorder:
+            | {
+                place: 'before' | 'after';
+                ref: Story['ref'];
+              }
+            | undefined;
+
+          if (action.candidate) {
+            reorder = {
+              place: action.candidate.position === 'top' ? 'before' : 'after',
+              ref: action.candidate.ref,
+            };
+          }
+
+          return this.projectApiService
+            .moveStory(
+              {
+                ref: action.ref,
+                status: action.status!,
+              },
+              project,
+              workflow,
+              reorder
+            )
+            .pipe(
+              map((story) => {
+                return KanbanApiActions.moveStorySuccess({
+                  story,
+                });
+              })
+            );
+        },
+        undoAction: (action, httpResponse: HttpErrorResponse) => {
+          return KanbanApiActions.moveStoryError({
+            errorStatus: httpResponse.status,
+            story: action.ref,
+          });
+        },
+      })
+    );
+  });
+
+  public moveStoryError$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(KanbanApiActions.moveStoryError),
+        filter((error) => error.errorStatus === 403),
+        tap(() => {
+          this.appService.toastNotification({
+            message: 'modify_story_permission',
+            status: TuiNotification.Error,
+            scope: 'kanban',
+          });
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   constructor(
     private appService: AppService,

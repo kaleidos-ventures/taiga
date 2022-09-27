@@ -28,8 +28,12 @@ import { randNumber } from '@ngneat/falso';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import {
+  selectCurrentProject,
+  selectCurrentProjectSlug,
+} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanStoryA11y } from '~/app/modules/project/feature-kanban/kanban.model';
+import { selectCurrentWorkflowSlug } from '../selectors/kanban.selectors';
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
   let spectator: SpectatorService<KanbanEffects>;
@@ -174,7 +178,7 @@ describe('ProjectEffects', () => {
     });
   });
 
-  it('move story', () => {
+  it('move story keyboard', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(KanbanEffects);
     const story = StoryMockFactory();
@@ -217,6 +221,51 @@ describe('ProjectEffects', () => {
       a: KanbanApiActions.moveStorySuccess({ story }),
     });
 
-    expect(effects.moveStory$).toBeObservable(expected);
+    expect(effects.moveStoryKeyboard$).toBeObservable(expected);
+  });
+
+  it('move story mouse', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(KanbanEffects);
+    const story = StoryMockFactory();
+    const status = StatusMockFactory();
+    const workflow = WorkflowMockFactory();
+    const project = ProjectMockFactory();
+
+    store.overrideSelector(selectCurrentProjectSlug, project.slug);
+    store.overrideSelector(selectCurrentWorkflowSlug, workflow.slug);
+
+    projectApiService.moveStory.mockReturnValue(cold('-b|', { b: story }));
+
+    actions$ = hot('-a', {
+      a: KanbanActions.storyDropped({
+        ref: story.ref,
+        candidate: {
+          ref: 1111,
+          position: 'bottom',
+        },
+        status: status.slug,
+      }),
+    });
+
+    const expected = cold('--a', {
+      a: KanbanApiActions.moveStorySuccess({ story }),
+    });
+
+    expect(effects.moveStoryMouse$).toSatisfyOnFlush(() => {
+      expect(effects.moveStoryMouse$).toBeObservable(expected);
+      expect(projectApiService.moveStory).toHaveBeenCalledWith(
+        {
+          ref: story.ref,
+          status: status.slug,
+        },
+        project.slug,
+        workflow.slug,
+        {
+          place: 'after',
+          ref: 1111,
+        }
+      );
+    });
   });
 });

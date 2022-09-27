@@ -34,6 +34,7 @@ import { DataAccessKanbanModule } from './data-access/kanban-data-access.module'
 import { ProjectFeatureKanbanRoutingModule } from './project-feature-kanban-routing.module';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
 import { KanbanVirtualScrollDirective } from './custom-scroll-strategy/kanban-scroll-strategy';
+import { DragModule } from '~/app/shared/drag/drag.module';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { KanbanVirtualScrollDirective } from './custom-scroll-strategy/kanban-sc
     A11yModule,
     InputsModule,
     TuiActiveZoneModule,
+    DragModule,
   ],
   providers: [
     {

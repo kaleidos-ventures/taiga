@@ -19,15 +19,18 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
-import { Store } from '@ngrx/store';
+import { Status, Workflow, Story } from '@taiga/data';
+import { KanbanStatusKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
+import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
 import { RxState } from '@rx-angular/state';
-import { Status, Workflow } from '@taiga/data';
+import { Store } from '@ngrx/store';
 import { distinctUntilChanged, map, takeUntil, timer } from 'rxjs';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { KanbanState } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
 import {
   selectActiveA11yDragDropStory,
+  selectHasDropCandidate,
   selectLoadingStories,
   selectNewEventStories,
   selectPermissionsError,
@@ -35,14 +38,16 @@ import {
   selectStatusNewStories,
   selectStories,
 } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
-import { KanbanStatusKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
 import { StatusScrollDynamicHeight } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
 import {
   KanbanStory,
   KanbanStoryA11y,
 } from '~/app/modules/project/feature-kanban/kanban.model';
 import { filterNil } from '~/app/shared/utils/operators';
-import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
+import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { PermissionsService } from '~/app/services/permissions.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface KanbanComponentState {
   stories: KanbanStory[];
@@ -55,8 +60,10 @@ export interface KanbanComponentState {
   newEventStories: KanbanState['newEventStories'];
   permissionsError: boolean;
   activeA11yDragDropStory: KanbanStoryA11y;
+  hasDropCandidate: KanbanState['hasDropCandidate'];
 }
 
+@UntilDestroy()
 @Component({
   selector: 'tg-kanban-status',
   templateUrl: './kanban-status.component.html',
@@ -89,7 +96,7 @@ export class KanbanStatusComponent
     OnInit
 {
   @ViewChild(KanbanVirtualScrollDirective)
-  public kanbanVirtualScroll!: KanbanVirtualScrollDirective;
+  public kanbanVirtualScroll?: KanbanVirtualScrollDirective;
 
   @Input()
   public status!: Status;
@@ -119,6 +126,20 @@ export class KanbanStatusComponent
     return 0;
   }
 
+  @ViewChild(CdkVirtualScrollViewport)
+  public set scrollable(cdkScrollable: CdkVirtualScrollViewport) {
+    this.cdkScrollable = cdkScrollable;
+
+    if (this.cdkScrollable) {
+      this.autoScrollService
+        .listen(this.cdkScrollable, 'vertical', 100, 0.7)
+        .pipe(untilDestroyed(this))
+        .subscribe();
+    }
+  }
+
+  public cdkScrollable!: CdkVirtualScrollViewport;
+
   public model$ = this.state.select().pipe(
     map((state) => {
       return {
@@ -142,10 +163,6 @@ export class KanbanStatusComponent
     4: 'var(--color-info60)',
   };
 
-  public get cdkScrollable() {
-    return this.kanbanVirtualScroll.scrollStrategy.viewport;
-  }
-
   public get columnSize() {
     return this.kanbanWorkflowComponent.statusColumnSize;
   }
@@ -159,7 +176,9 @@ export class KanbanStatusComponent
     private kanbanWorkflowComponent: KanbanWorkflowComponent,
     private transloco: TranslocoService,
     private store: Store,
-    private state: RxState<KanbanComponentState>
+    private state: RxState<KanbanComponentState>,
+    private autoScrollService: AutoScrollService,
+    private permissionService: PermissionsService
   ) {
     this.state.set({ visible: false, stories: [] });
   }
@@ -200,6 +219,16 @@ export class KanbanStatusComponent
       this.store.select(selectActiveA11yDragDropStory)
     );
 
+    this.state.connect(
+      'hasDropCandidate',
+      this.store.select(selectHasDropCandidate)
+    );
+
+    this.state.connect(
+      'canEdit',
+      this.permissionService.hasPermissions$('story', ['modify'])
+    );
+
     this.watchNewStories();
   }
 
@@ -223,18 +252,32 @@ export class KanbanStatusComponent
     this.store.dispatch(KanbanActions.closeCreateStoryForm());
   }
 
-  public trackBySlug(_index: number, story: KanbanStory) {
+  public onDragStart(story: Story) {
+    this.store.dispatch(KanbanActions.storyDragStart({ ref: story.ref }));
+  }
+
+  public trackByRef(_index: number, story: KanbanStory) {
     if ('tmpId' in story) {
       return story.tmpId;
     }
 
-    return story.slug;
+    return story.ref;
   }
 
   public ngOnChanges(changes: SimpleChanges) {
     if (changes.status) {
       this.fillColor();
     }
+  }
+
+  public showSmallDragShadowClass(story: KanbanStory) {
+    return (
+      this.state.get('hasDropCandidate') && story._dragging && !story._shadow
+    );
+  }
+
+  public disableScroll(story: KanbanStory) {
+    return story._shadow || !story.ref || !this.state.get('canEdit');
   }
 
   private fillColor() {
@@ -249,7 +292,7 @@ export class KanbanStatusComponent
         .select(selectStatusNewStories(this.status.slug))
         .pipe(filterNil()),
       (newStory) => {
-        this.scrollToStory(newStory.tmpId!);
+        this.scrollToStory(newStory.tmpId);
       }
     );
   }
@@ -273,7 +316,7 @@ export class KanbanStatusComponent
 
         if (el) {
           requestAnimationFrame(() => {
-            this.kanbanVirtualScroll.scrollStrategy.scrollTo({ bottom: 0 });
+            this.kanbanVirtualScroll?.scrollStrategy.scrollTo({ bottom: 0 });
             this.store.dispatch(KanbanActions.scrolledToNewStory({ tmpId }));
           });
         }

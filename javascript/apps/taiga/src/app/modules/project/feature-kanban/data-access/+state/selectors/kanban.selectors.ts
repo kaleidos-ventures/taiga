@@ -21,6 +21,9 @@ export const {
   selectNewEventStories,
   selectPermissionsError,
   selectActiveA11yDragDropStory,
+  selectDragging,
+  selectHasDropCandidate,
+  selectCurrentWorkflowSlug,
 } = kanbanFeature;
 
 export const selectStatusFormOpen = (statusSlug: Status['slug']) => {

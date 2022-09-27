@@ -350,15 +350,15 @@ export class ProjectApiService {
       ref: Story['ref'];
       status: Status['slug'];
     },
-    project: Project,
-    workflow: Workflow,
+    project: Project['slug'],
+    workflow: Workflow['slug'],
     reorder?: {
       place: 'after' | 'before';
       ref: Story['ref'];
     }
   ): Observable<Story> {
     return this.http.post<Story>(
-      `${this.config.apiUrl}/projects/${project.slug}/workflows/${workflow.slug}/stories/reorder`,
+      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/stories/reorder`,
       {
         status: story.status,
         stories: [story.ref],

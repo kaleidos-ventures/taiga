@@ -5,6 +5,7 @@
   "empty_status": "There are no stories.",
   "add_story": "Add story",
   "create_story_permission": "You no longer have permissions to create stories",
+  "modify_story_permission": "You no longer have permissions to modify stories",
   "lost_kanban_access": "You no longer have permissions to access this content.",
   "story_title": "{{ref}} {{title}}. Position {{position}} of {{total}}",
   "story_title_a11y": "{{ref}} {{title}}. Position {{position}} of {{total}}. Press Spacebar to Reorder",

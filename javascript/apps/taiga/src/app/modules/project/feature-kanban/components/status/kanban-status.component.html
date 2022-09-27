@@ -9,6 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <div
+      [tgDropZone]="status.slug"
       class="wrapper"
       inViewport
       [rootMargin]="columnSize"
@@ -39,12 +40,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 *cdkVirtualFor="
                   let story of vm.stories;
                   let i = index;
-                  trackBy: trackBySlug
+                  trackBy: trackByRef
                 ">
                 <tg-kanban-story
                   [class.drag-a11y]="
                     story.ref === vm.activeA11yDragDropStory.ref
                   "
+                  [class.small-drag-shadow]="showSmallDragShadowClass(story)"
+                  [tgDraggable]="story.ref"
+                  [dragData]="story"
+                  [dragDisabled]="disableScroll(story)"
                   [@slideIn]="
                     vm.newEventStories.includes(story.ref) ? 'on' : 'off'
                   "

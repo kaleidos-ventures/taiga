@@ -209,3 +209,11 @@ textarea {
 .modal-bg {
   background-color: rgba(122, 137, 167, 0.5);
 }
+
+/* D&D */
+.drop-in-progress {
+  & * {
+    /* stylelint-disable-next-line declaration-no-important */
+    cursor: grab !important;
+  }
+}

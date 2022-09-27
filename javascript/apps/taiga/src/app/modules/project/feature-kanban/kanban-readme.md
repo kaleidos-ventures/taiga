@@ -18,7 +18,7 @@ Most of the `KanbanVirtualScrollStrategy` code is based in other `VirtualScrollS
 
 ## Kanban keyboard navigation
 
-`KanbanWorkflowKeyboardNavigationDirective` capture arrow left/right keyboard events no navigate horizontally between statuses. Because we use virtual scroll the status is not always visible so is going to wait until is render to move the focus & scroll.
+`KanbanKeyboardNavigationDirective` capture arrow left/right keyboard events no navigate horizontally between statuses. Because we use virtual scroll the status is not always visible so is going to wait until is render to move the focus & scroll.
 
 We also capture keyboard arrows to move between stories. When the user navigate between story in different statuses, we make a live announce with the new status title.
 
@@ -35,3 +35,7 @@ Angular cdk scroll needs a fixed height for the scroll, but we need a dynamic he
 ## Scroll to the new story
 
 When a new story is created, it is stored in the global state. `KanbanStatusComponent` is watching for new stories in a status using `selectStatusNewStories(this.status.slug)` and every time a new story is created the component run `scrollToStory`. The function `scrollToStory` is not easy because we don't render all the stories so the component scroll to bottom and then wait for 500ms for changes in the scrollStrategy height if there is any change then run again scroll bottom.
+
+## D&D
+
+The drag & drop is listening events in kanban-workflow.component.ts & animate the drop.

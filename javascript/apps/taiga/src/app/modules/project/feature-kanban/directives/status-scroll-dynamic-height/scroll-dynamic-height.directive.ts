@@ -139,7 +139,7 @@ export class StatusScrollDynamicHeightDirective
 
   private contentHeight() {
     this.observer.observe(this.nativeElement.parentElement as HTMLElement, {
-      attributes: false,
+      attributes: true,
       childList: true,
       subtree: true,
     });

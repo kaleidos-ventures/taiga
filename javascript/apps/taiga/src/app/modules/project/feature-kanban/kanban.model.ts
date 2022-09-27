@@ -9,25 +9,29 @@
 import { Status, Story } from '@taiga/data';
 import { SetOptional } from 'type-fest';
 
-export interface PartialStory
-  extends SetOptional<Story, 'ref' | 'slug' | 'order'> {
-  tmpId?: string;
+interface BaseStory extends Story {
+  _dragging?: boolean;
+  _shadow?: boolean;
 }
 
 export interface KanbanStoryA11y {
   ref: null | PartialStory['ref'];
   initialPosition: {
     status: Status['slug'];
-    index: null | PartialStory['order'];
+    index: null | number;
   };
   prevPosition: {
     status: Status['slug'];
-    index: null | PartialStory['order'];
+    index: null | number;
   };
   currentPosition: {
     status: Status['slug'];
-    index: null | PartialStory['order'];
+    index: null | number;
   };
 }
 
-export type KanbanStory = PartialStory | Story;
+export interface PartialStory extends SetOptional<BaseStory, 'ref' | 'slug'> {
+  tmpId: string;
+}
+
+export type KanbanStory = PartialStory | BaseStory;

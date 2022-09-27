@@ -133,8 +133,8 @@ export function scrollAndFocus(
   el: HTMLElement,
   ref: string
 ) {
-  status
-    .cdkScrollable!.elementScrolled()
+  status.cdkScrollable
+    .elementScrolled()
     .pipe(take(1))
     .subscribe(() => {
       requestAnimationFrame(() => {

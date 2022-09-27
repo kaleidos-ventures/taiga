@@ -34,3 +34,7 @@ tui-scrollbar {
     block-size: 100%;
   }
 }
+
+tg-kanban-story {
+  margin: 0;
+}

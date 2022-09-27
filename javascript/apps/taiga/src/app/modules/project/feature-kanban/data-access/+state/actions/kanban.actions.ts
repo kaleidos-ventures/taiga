@@ -13,6 +13,7 @@ import {
   KanbanStoryA11y,
   PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
+import { DropCandidate } from '~/app/shared/drag/drag.model';
 
 export const KanbanActions = createActionGroup({
   source: 'Kanban',
@@ -42,6 +43,25 @@ export const KanbanActions = createActionGroup({
       };
     }>(),
     'Cancel drag Story A11y': props<{ story: KanbanStoryA11y }>(),
+    'Story dropped': props<{
+      ref: Story['ref'];
+      candidate?: {
+        ref: Story['ref'];
+        position: DropCandidate['position'];
+      };
+      status?: Story['status']['slug'];
+    }>(),
+    'Story drag start': props<{
+      ref: Story['ref'];
+    }>(),
+    'Story drop candidate': props<{
+      ref: Story['ref'];
+      candidate?: {
+        ref: Story['ref'];
+        position: DropCandidate['position'];
+      };
+      status?: Story['status']['slug'];
+    }>(),
   },
 });
 
@@ -56,7 +76,7 @@ export const KanbanApiActions = createActionGroup({
     }>(),
     'Create Story Error': props<{ status: number; story: KanbanStory }>(),
     'Move Story Success': props<{ story: Story }>(),
-    'Move Story Error': props<{ story: KanbanStoryA11y }>(),
+    'Move Story Error': props<{ story: Story['ref']; errorStatus: number }>(),
   },
 });
 

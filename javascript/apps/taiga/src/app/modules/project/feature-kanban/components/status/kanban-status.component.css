@@ -44,11 +44,15 @@ tg-kanban-story {
 }
 
 .empty {
+  align-items: center;
   background-color: var(--color-gray20);
   border-radius: 4px;
+  box-sizing: content-box;
   color: var(--color-gray80);
+  display: flex;
   font-style: italic;
-  inline-size: 100%;
+  justify-content: center;
+  min-block-size: 25px;
   padding: var(--spacing-8);
   text-align: center;
 }
@@ -57,6 +61,7 @@ tg-kanban-story {
   max-block-size: 100%;
 
   &::ng-deep .cdk-virtual-scroll-content-wrapper {
+    max-inline-size: 100%;
     padding-inline-end: var(--wrapper-padding-inline-end);
   }
 }
@@ -65,10 +70,6 @@ tg-kanban-story {
   block-size: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.open-create-story-form {
-  margin-block-start: var(--spacing-8);
 }
 
 .create-story {

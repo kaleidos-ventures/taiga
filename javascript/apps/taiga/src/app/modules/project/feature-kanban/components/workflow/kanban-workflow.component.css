@@ -13,10 +13,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 tg-kanban-status {
   inline-size: var(--column-width);
-
-  &:not(:last-child) {
-    margin-inline-end: var(--spacing-8);
-  }
+  margin-inline-end: var(--spacing-8);
 }
 
 cdk-virtual-scroll-viewport {

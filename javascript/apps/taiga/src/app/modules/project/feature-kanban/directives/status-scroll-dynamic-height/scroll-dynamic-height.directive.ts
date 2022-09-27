@@ -37,7 +37,9 @@ export class StatusScrollDynamicHeightDirective
 
   @HostListener('window:resize')
   public onResize() {
-    this.calculateHeight();
+    requestAnimationFrame(() => {
+      this.calculateHeight();
+    });
   }
 
   private siblings: HTMLElement[] = [];

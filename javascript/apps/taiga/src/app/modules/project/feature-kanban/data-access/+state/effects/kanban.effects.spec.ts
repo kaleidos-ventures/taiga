@@ -120,7 +120,7 @@ describe('ProjectEffects', () => {
     const story = StoryMockFactory();
 
     const error = {
-      status: 401,
+      status: 403,
     };
 
     const tmpStory = {
@@ -157,7 +157,7 @@ describe('ProjectEffects', () => {
     store.overrideSelector(selectCurrentProject, project);
 
     actions$ = hot('-a', {
-      a: KanbanApiActions.createStoryError({ status: 401, story }),
+      a: KanbanApiActions.createStoryError({ status: 403, story }),
     });
 
     const expected = cold('-a', {

@@ -96,7 +96,7 @@ export class KanbanEffects {
             );
         },
         onError: (action, httpResponse: HttpErrorResponse) => {
-          if (httpResponse.status !== 401) {
+          if (httpResponse.status !== 403) {
             this.appService.errorManagement(httpResponse);
           }
 
@@ -112,7 +112,7 @@ export class KanbanEffects {
   public createStoryError$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(KanbanApiActions.createStoryError),
-      filter((error) => error.status === 401),
+      filter((error) => error.status === 403),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),

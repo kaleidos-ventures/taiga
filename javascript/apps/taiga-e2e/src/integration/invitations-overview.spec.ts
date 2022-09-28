@@ -69,6 +69,20 @@ describe('Invite users to project from overview when user is admin', () => {
     });
   });
 
+  it('Should not allow to add to list a project member when tap enter on keyboard', () => {
+    openInvitationModal();
+    typeEmailToInvite('JORGE');
+    cy.getBySel('suggestions-list').should('exist');
+    cy.getBySel('info-user').should('exist');
+    cy.getBySel('info-user')
+      .invoke('text')
+      .should('to.have.string', 'Already a member');
+    cy.getBySel('input-add-invites').type('{enter}');
+    cy.getBySel('info-user').should('exist');
+    cy.getBySel('tip-wrapper').should('exist');
+    cy.getBySel('user-list').should('not.exist');
+  });
+
   it('Should show a member in the autocomplete list when we write in caps', () => {
     openInvitationModal();
     typeEmailToInvite('JORGE');

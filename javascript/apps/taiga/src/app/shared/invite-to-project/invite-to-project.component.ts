@@ -380,7 +380,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     this.resetErrors();
     if (this.suggestionContactsDropdownActivate) {
       const user = this.suggestedUsers[this.suggestionSelected];
-      if (!user.userIsMember && !user.userIsAddedToList) {
+      if (user && !user.userIsMember && !user.userIsAddedToList) {
         this.includeSuggestedContact(this.suggestionSelected);
       }
     } else if (this.inviteIdentifier === '') {
@@ -410,10 +410,15 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
 
   public includeSuggestedContact(index: number, event?: Event) {
     event?.preventDefault();
-    this.store.dispatch(
-      addSuggestedContact({ contact: this.suggestedUsers[index] })
-    );
-    this.validEmails$.next([this.suggestedUsers[index].username]);
+    if (
+      this.suggestedUsers[index] &&
+      !this.suggestedUsers[index].userIsMember
+    ) {
+      this.store.dispatch(
+        addSuggestedContact({ contact: this.suggestedUsers[index] })
+      );
+      this.validEmails$.next([this.suggestedUsers[index].username]);
+    }
   }
 
   public handleArrow(arrow: 'up' | 'down') {

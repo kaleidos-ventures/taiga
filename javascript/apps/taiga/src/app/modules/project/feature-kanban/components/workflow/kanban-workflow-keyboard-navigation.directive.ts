@@ -11,7 +11,7 @@ import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Directive, HostListener, QueryList } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { Status, Workflow } from '@taiga/data';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { inViewport } from '~/app/shared/utils/in-viewport';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
 import { KanbanWorkflowComponent } from './kanban-workflow.component';
@@ -66,16 +66,50 @@ export class KanbanWorkflowKeyboardNavigationDirective {
     el: HTMLElement,
     key: 'ArrowUp' | 'ArrowDown'
   ) {
-    let nextStory;
+    const { kanbanStatusComponents } = this.kanbanWorkflowComponent;
+    let nextStory: HTMLElement;
 
     if (key === 'ArrowDown') {
-      nextStory = el.parentElement?.nextElementSibling;
+      nextStory = el.parentElement?.nextElementSibling as HTMLElement;
     } else {
-      nextStory = el.parentElement?.previousElementSibling;
+      nextStory = el.parentElement?.previousElementSibling as HTMLElement;
     }
 
     if (nextStory) {
-      nextStory.querySelector<HTMLElement>('a')!.focus();
+      const status = kanbanStatusComponents.find((cmp) =>
+        cmp.nativeElement.contains(nextStory)
+      );
+
+      const el = nextStory.querySelector<HTMLElement>('a');
+
+      if (status?.cdkScrollable && el) {
+        const nextRef = nextStory.dataset.ref;
+
+        if (nextRef) {
+          // angular cdk virtual-scroll reuse the same componente so
+          // it is not safe to go to the next story using the `nextStory` DOM element
+          const focus = () => {
+            document
+              .querySelector<HTMLElement>(
+                `tg-kanban-story[data-ref='${nextRef}'] a`
+              )
+              ?.focus();
+          };
+
+          status.cdkScrollable
+            .elementScrolled()
+            .pipe(take(1))
+            .subscribe(() => {
+              requestAnimationFrame(() => {
+                focus();
+              });
+            });
+
+          el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+
+          focus();
+        }
+      }
     }
   }
 

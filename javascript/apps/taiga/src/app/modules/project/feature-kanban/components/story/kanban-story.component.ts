@@ -6,7 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  Input,
+} from '@angular/core';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 
 @Component({
@@ -24,4 +29,9 @@ export class KanbanStoryComponent {
 
   @Input()
   public total!: number;
+
+  @HostBinding('attr.data-ref')
+  public get ref() {
+    return this.story.ref;
+  }
 }

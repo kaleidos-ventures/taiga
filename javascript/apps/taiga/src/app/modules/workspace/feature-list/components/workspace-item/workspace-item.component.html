@@ -119,8 +119,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         "
         [@reorder]="reorder[invitation.slug]"
         (@reorder.done)="reorderDone($event)">
-        <p>{{ vm.slideOutActive }}</p>
-
         <tg-project-card
           variant="invitation"
           data-test="project-card-invitation"
@@ -143,8 +141,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             ? 'inprogress'
             : 'idle'
         ">
-        <p>{{ vm.slideOutActive }}</p>
-
         <tg-project-card
           data-test="project-card"
           [workspace]="workspace"

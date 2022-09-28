@@ -6,9 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Workspace } from './workspace.model';
 import { randDepartment, randNumber, randSlug } from '@ngneat/falso';
 import { ProjectMockFactory } from '../lib/project.model.mock';
+import { Workspace } from './workspace.model';
 
 export const WorkspaceMockFactory = (): Workspace => {
   const workspace: Workspace = {
@@ -171,7 +171,6 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
     invitedProjects.push(project);
     latestProjects.push(project);
   }
-
   return {
     ...workspace,
     latestProjects,

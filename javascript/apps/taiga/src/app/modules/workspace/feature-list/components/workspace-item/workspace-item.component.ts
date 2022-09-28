@@ -513,15 +513,10 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
   }
 
   public slideOutAnimationDone(event: AnimationEvent) {
-    console.log('event', event);
     if (event.toState !== 'void') {
-      console.log('notVoid');
-
       return;
     }
-    // console.log('slideOutActive', this.state.get('slideOutActive'));
     this.state.set({ slideOutActive: false });
-    console.log('slideOutActiveAfter', this.state.get('slideOutActive'));
   }
 
   public setShowAllProjects(showAllProjects: boolean) {

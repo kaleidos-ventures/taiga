@@ -8,7 +8,6 @@
 
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
-import { current } from 'immer';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
 
@@ -86,7 +85,6 @@ export const reducer = createReducer(
         const invitationToAdd = invitations.filter((project) => {
           return project.slug === projectSlug;
         });
-        console.log(current(state.workspace));
         state.workspaceInvitedProjects.unshift(invitationToAdd[0]);
       } else {
         const projectToAdd = project.filter((project) => {

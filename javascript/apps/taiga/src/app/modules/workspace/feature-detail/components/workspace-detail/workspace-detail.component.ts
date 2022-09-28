@@ -155,10 +155,11 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     private userStorageService: UserStorageService,
     private state: RxState<WorkspaceDetailState>
   ) {
+    console.log('eee');
     this.state.set({
       rejectedInvites: [],
-      invitations: [],
       projectSiblingToAnimate: [],
+      invitations: [],
     });
   }
 
@@ -172,6 +173,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
     this.model$ = this.state.select().pipe(
       map((state) => {
+        console.log('b', state);
         let invitations = state.invitations;
         let projects = state.projects;
 

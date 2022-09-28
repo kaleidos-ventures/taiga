@@ -214,17 +214,17 @@ describe('WorkspaceItem', () => {
       });
     });
 
-    // it('End animation and update state', (done) => {
-    //   const eventObj: any = {
-    //     toState: 'void',
-    //   };
-    //   spectator.component.slideOutAnimationDone(eventObj);
-    //   spectator.detectChanges();
-    //   spectator.component.model$.subscribe(({ slideOutActive }) => {
-    //     expect(slideOutActive).toBeFalsy();
-    //     done();
-    //   });
-    // });
+    it('End animation and update state', (done) => {
+      const eventObj: any = {
+        toState: 'void',
+      };
+      spectator.component.slideOutAnimationDone(eventObj);
+      spectator.detectChanges();
+      spectator.component.model$.subscribe(({ slideOutActive }) => {
+        expect(slideOutActive).toBeFalsy();
+        done();
+      });
+    });
 
     it('The project has to reflect at least 3 projects', (done) => {
       spectator.component.projectsToShow = 1;
@@ -532,46 +532,45 @@ describe('WorkspaceItem', () => {
         }
       );
     });
-  });
 
-  // it('Display user has no projects message', (done) => {
-  //   const eventObj: any = {
-  //     toState: 'void',
-  //   };
+    it('Display user has no projects message', (done) => {
+      const eventObj: any = {
+        toState: 'void',
+      };
 
-  //   spectator.component.workspace = WorkspaceMockFactory();
-  //   spectator.component.workspace.hasProjects = false;
-  //   spectator.component.workspace.latestProjects = [];
+      spectator.component.workspace = WorkspaceMockFactory();
+      spectator.component.workspace.hasProjects = false;
+      spectator.component.workspace.latestProjects = [];
+      spectator.component.slideOutAnimationDone(eventObj);
+      spectator.component.workspace.userRole = 'member';
+      spectator.component.getActiveInvitations = jest.fn().mockReturnValue([]);
+      spectator.detectChanges();
 
-  //   requestAnimationFrame(() => {
-  //     spectator.component.slideOutAnimationDone(eventObj);
-  //     spectator.component.workspace.userRole = 'member';
-  //     spectator.component.getActiveInvitations = jest.fn().mockReturnValue([]);
+      spectator.component.model$.subscribe(({ slideOutActive }) => {
+        expect(slideOutActive).toBeFalsy();
+        done();
+      });
 
-  //     spectator.component.model$.subscribe(({ slideOutActive }) => {
-  //       expect(slideOutActive).toBeTruthy();
-  //       done();
-  //     });
-  //   });
-
-  //   expect(spectator.component.userHasNoAccess).toBeTruthy();
-  // });
-
-  it('Display user has no access message', (done) => {
-    const eventObj: any = {
-      toState: 'void',
-    };
-    spectator.component.workspace = WorkspaceMockFactory();
-    spectator.component.workspace.hasProjects = true;
-    spectator.component.workspace.latestProjects = [];
-    spectator.component.slideOutAnimationDone(eventObj);
-    spectator.component.workspace.userRole = 'member';
-    spectator.component.getActiveInvitations = jest.fn().mockReturnValue([]);
-
-    spectator.component.model$.subscribe(({ slideOutActive }) => {
-      expect(slideOutActive).toBeFalsy();
-      done();
+      expect(spectator.component.userHasNoAccess).toBeTruthy();
     });
-    expect(spectator.component.userHasNoAccess).toBeTruthy();
+
+    it('Display user has no access message', (done) => {
+      const eventObj: any = {
+        toState: 'void',
+      };
+      spectator.component.workspace = WorkspaceMockFactory();
+      spectator.component.workspace.hasProjects = true;
+      spectator.component.workspace.latestProjects = [];
+      spectator.component.slideOutAnimationDone(eventObj);
+      spectator.component.workspace.userRole = 'member';
+      spectator.component.getActiveInvitations = jest.fn().mockReturnValue([]);
+      spectator.detectChanges();
+
+      spectator.component.model$.subscribe(({ slideOutActive }) => {
+        expect(slideOutActive).toBeFalsy();
+        done();
+      });
+      expect(spectator.component.userHasNoAccess).toBeTruthy();
+    });
   });
 });

@@ -42,7 +42,7 @@ export class KanbanWorkflowComponent
   public kanbanStatusComponents!: QueryList<KanbanStatusComponent>;
 
   public activeStatusIndex = 0;
-  public statusColumnSize = 288;
+  public statusColumnSize = 292;
 
   public get nativeElement() {
     return this.el.nativeElement as HTMLElement;

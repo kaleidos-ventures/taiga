@@ -155,7 +155,6 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     private userStorageService: UserStorageService,
     private state: RxState<WorkspaceDetailState>
   ) {
-    console.log('eee');
     this.state.set({
       rejectedInvites: [],
       projectSiblingToAnimate: [],
@@ -173,7 +172,6 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
     this.model$ = this.state.select().pipe(
       map((state) => {
-        console.log('b', state);
         let invitations = state.invitations;
         let projects = state.projects;
 
@@ -467,24 +465,33 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
   public refreshInvitations(
     old: WorkspaceProject[],
-    newInvite: WorkspaceProject[]
+    invitations: WorkspaceProject[]
   ) {
+    let removedInvitations: string[] = [];
+    let newInvitations: string[] = [];
+    let addedInvitations: WorkspaceProject[] = [];
+    if (invitations) {
+      addedInvitations = invitations;
+    }
     const oldInvitations = old;
-    const newInvitations = newInvite
-      .filter((invitation) => {
-        return !oldInvitations.find((oldInvitation) => {
-          return oldInvitation.slug === invitation.slug;
-        });
-      })
-      .map((invitation) => invitation.slug);
 
-    const removedInvitations = oldInvitations
-      .filter((invitation) => {
-        return !newInvite.find((oldInvitation) => {
-          return oldInvitation.slug === invitation.slug;
-        });
-      })
-      .map((invitation) => invitation.slug);
+    if (oldInvitations) {
+      newInvitations = addedInvitations
+        .filter((invitation) => {
+          return !oldInvitations.find((oldInvitation) => {
+            return oldInvitation.slug === invitation.slug;
+          });
+        })
+        .map((invitation) => invitation.slug);
+
+      removedInvitations = oldInvitations
+        .filter((invitation) => {
+          return !addedInvitations.find((oldInvitation) => {
+            return oldInvitation.slug === invitation.slug;
+          });
+        })
+        .map((invitation) => invitation.slug);
+    }
 
     if (removedInvitations.length) {
       // activate slideOut & then re-render template (requestAnimationFrame) to start the :leave animation
@@ -497,14 +504,14 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
         this.state.set({
           newInvitations,
-          invitations: newInvite,
+          invitations: addedInvitations,
         });
       });
     } else {
       this.state.set({ slideOutActive: true });
       this.state.set({
         newInvitations,
-        invitations: newInvite,
+        invitations: addedInvitations,
       });
     }
   }

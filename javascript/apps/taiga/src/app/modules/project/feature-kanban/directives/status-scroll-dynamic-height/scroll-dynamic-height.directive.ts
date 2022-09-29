@@ -125,7 +125,6 @@ export class StatusScrollDynamicHeightDirective
 
   public ngAfterViewInit(): void {
     this.initialHeight();
-    this.siblings = this.getSiblings();
     this.contentHeight();
   }
 
@@ -159,6 +158,8 @@ export class StatusScrollDynamicHeightDirective
   }
 
   private getMaxHeight() {
+    this.siblings = this.getSiblings();
+
     const siblingsSize = this.siblings.reduce((prev, el) => {
       return prev + this.getElementFullSize(el);
     }, 0);

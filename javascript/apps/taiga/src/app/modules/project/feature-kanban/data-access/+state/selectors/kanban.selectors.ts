@@ -20,6 +20,7 @@ export const {
   selectEmpty,
   selectNewEventStories,
   selectPermissionsError,
+  selectActiveA11yDragDropStory,
 } = kanbanFeature;
 
 export const selectStatusFormOpen = (statusSlug: Status['slug']) => {

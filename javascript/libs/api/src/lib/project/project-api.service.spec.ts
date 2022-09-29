@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { randDomainSuffix, randNumber } from '@ngneat/falso';
 import {
   createHttpFactory,
   HttpMethod,
@@ -13,7 +14,11 @@ import {
 } from '@ngneat/spectator';
 import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
-import { randDomainSuffix } from '@ngneat/falso';
+import {
+  ProjectMockFactory,
+  StoryMockFactory,
+  WorkflowMockFactory,
+} from '@taiga/data';
 import { ProjectApiService } from './project-api.service';
 
 describe('ProjectApiService', () => {
@@ -35,6 +40,36 @@ describe('ProjectApiService', () => {
     spectator.service.getProject(slug).subscribe();
 
     const req = spectator.expectOne(url, HttpMethod.GET);
+    expect(req.request.url).toEqual(url);
+  });
+
+  it('moveStory', () => {
+    const storyMock = StoryMockFactory();
+    const projectMock = ProjectMockFactory();
+    const workflowMock = WorkflowMockFactory();
+
+    const reorder: { place: 'after' | 'before'; ref: number } = {
+      place: 'after',
+      ref: randNumber(),
+    };
+
+    const data = {
+      story: {
+        ref: storyMock.ref,
+        status: storyMock.status.slug,
+      },
+      project: projectMock,
+      workflow: workflowMock,
+      reorder,
+    };
+
+    const url = `${ConfigServiceMock.apiUrl}/projects/${data.project.slug}/workflows/${data.workflow.slug}/stories/reorder`;
+
+    spectator.service
+      .moveStory(data.story, data.project, data.workflow, data.reorder)
+      .subscribe();
+
+    const req = spectator.expectOne(url, HttpMethod.POST);
     expect(req.request.url).toEqual(url);
   });
 });

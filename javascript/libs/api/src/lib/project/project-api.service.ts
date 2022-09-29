@@ -17,8 +17,9 @@ import {
   Project,
   ProjectCreation,
   Role,
-  Workflow,
+  Status,
   Story,
+  Workflow,
 } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -340,6 +341,28 @@ export class ProjectApiService {
       {
         title: story.title,
         status: story.status.slug,
+      }
+    );
+  }
+
+  public moveStory(
+    story: {
+      ref: Story['ref'];
+      status: Status['slug'];
+    },
+    project: Project,
+    workflow: Workflow,
+    reorder?: {
+      place: 'after' | 'before';
+      ref: Story['ref'];
+    }
+  ): Observable<Story> {
+    return this.http.post<Story>(
+      `${this.config.apiUrl}/projects/${project.slug}/workflows/${workflow.slug}/stories/reorder`,
+      {
+        status: story.status,
+        stories: [story.ref],
+        reorder,
       }
     );
   }

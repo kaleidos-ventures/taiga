@@ -7,9 +7,10 @@
  */
 
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Workflow, Story, Status } from '@taiga/data';
+import { Status, Story, Workflow } from '@taiga/data';
 import {
   KanbanStory,
+  KanbanStoryA11y,
   PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
 
@@ -27,6 +28,20 @@ export const KanbanActions = createActionGroup({
     'Timeout Animation Event New Story': props<{
       ref: Story['ref'];
     }>(),
+    'Drag Story A11y': props<{ story: KanbanStoryA11y }>(),
+    'Move Story A11y': props<{
+      story: KanbanStoryA11y;
+      status: KanbanStory['status'];
+    }>(),
+    'Drop Story A11y': props<{
+      story: KanbanStoryA11y;
+      workflow: Workflow;
+      reorder?: {
+        place: 'after' | 'before';
+        ref: Story['ref'];
+      };
+    }>(),
+    'Cancel drag Story A11y': props<{ story: KanbanStoryA11y }>(),
   },
 });
 
@@ -40,6 +55,8 @@ export const KanbanApiActions = createActionGroup({
       tmpId: PartialStory['tmpId'];
     }>(),
     'Create Story Error': props<{ status: number; story: KanbanStory }>(),
+    'Move Story Success': props<{ story: Story }>(),
+    'Move Story Error': props<{ story: KanbanStoryA11y }>(),
   },
 });
 

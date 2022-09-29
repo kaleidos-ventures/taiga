@@ -7,7 +7,7 @@
  */
 
 import { createFeature, createReducer, on } from '@ngrx/store';
-import { Workflow, Status } from '@taiga/data';
+import { Status, Workflow } from '@taiga/data';
 import { immerReducer } from '~/app/shared/utils/store';
 import {
   KanbanActions,
@@ -19,8 +19,10 @@ import { Story } from '@taiga/data';
 
 import {
   KanbanStory,
+  KanbanStoryA11y,
   PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
+import { addStory, findStory, removeStory } from './kanban.reducer.helpers';
 
 export interface KanbanState {
   loadingWorkflows: boolean;
@@ -32,6 +34,7 @@ export interface KanbanState {
   empty: boolean | null;
   newEventStories: Story['ref'][];
   permissionsError: boolean;
+  activeA11yDragDropStory: KanbanStoryA11y;
 }
 
 export const initialKanbanState: KanbanState = {
@@ -44,6 +47,21 @@ export const initialKanbanState: KanbanState = {
   empty: null,
   newEventStories: [],
   permissionsError: false,
+  activeA11yDragDropStory: {
+    ref: null,
+    initialPosition: {
+      index: null,
+      status: '',
+    },
+    prevPosition: {
+      index: null,
+      status: '',
+    },
+    currentPosition: {
+      index: null,
+      status: '',
+    },
+  },
 };
 
 export const reducer = createReducer(
@@ -78,6 +96,130 @@ export const reducer = createReducer(
 
     return state;
   }),
+  on(KanbanActions.dragStoryA11y, (state, { story }): KanbanState => {
+    state.activeA11yDragDropStory = story;
+
+    return state;
+  }),
+  on(KanbanActions.moveStoryA11y, (state, { story, status }): KanbanState => {
+    if (story.ref) {
+      const storyToMove = findStory(state, story.ref);
+      if (storyToMove) {
+        state = removeStory(state, (it) => it.ref === storyToMove?.ref);
+
+        const recipientStory: {
+          story?: KanbanStory;
+          position: 'top' | 'bottom';
+        } = {
+          story: state.stories[story.currentPosition?.status].at(
+            story.currentPosition.index!
+          ),
+          position: 'top',
+        };
+
+        const isLastStory =
+          story.currentPosition.index! >
+          state.stories[story.currentPosition?.status].length - 1;
+
+        if (isLastStory) {
+          recipientStory.story =
+            state.stories[story.currentPosition?.status].at(-1);
+          recipientStory.position = 'bottom';
+        }
+
+        storyToMove.status = status;
+
+        state = addStory(
+          state,
+          storyToMove,
+          story.currentPosition.status,
+          recipientStory.story,
+          recipientStory.position
+        );
+      }
+    }
+
+    state.activeA11yDragDropStory = {
+      ref: story.ref,
+      initialPosition: {
+        index: story.initialPosition.index,
+        status: story.initialPosition.status,
+      },
+      prevPosition: {
+        index: story.prevPosition.index,
+        status: story.prevPosition.status,
+      },
+      currentPosition: {
+        index: story.currentPosition.index,
+        status: story.currentPosition.status,
+      },
+    };
+
+    return state;
+  }),
+  on(KanbanActions.dropStoryA11y, (state): KanbanState => {
+    state.activeA11yDragDropStory = {
+      ref: null,
+      initialPosition: {
+        index: null,
+        status: '',
+      },
+      prevPosition: {
+        index: null,
+        status: '',
+      },
+      currentPosition: {
+        index: null,
+        status: '',
+      },
+    };
+
+    return state;
+  }),
+  on(
+    KanbanActions.cancelDragStoryA11y,
+    KanbanApiActions.moveStoryError,
+    (state, { story }): KanbanState => {
+      if (story.ref) {
+        const storyToMove = findStory(state, story.ref);
+        if (storyToMove) {
+          state = removeStory(state, (it) => it.ref === storyToMove?.ref);
+          const nextStory = state.stories[story.initialPosition?.status].at(
+            story.initialPosition.index!
+          );
+          if (nextStory) {
+            const nextStoryStatus = nextStory.status;
+            storyToMove.status = nextStoryStatus;
+            state = addStory(
+              state,
+              storyToMove,
+              story.currentPosition.status,
+              nextStory,
+              'top'
+            );
+          }
+        }
+      }
+
+      state.activeA11yDragDropStory = {
+        ref: null,
+        initialPosition: {
+          index: null,
+          status: '',
+        },
+        prevPosition: {
+          index: null,
+          status: '',
+        },
+        currentPosition: {
+          index: null,
+          status: '',
+        },
+      };
+
+      return state;
+    }
+  ),
   on(
     KanbanApiActions.fetchWorkflowsSuccess,
     (state, { workflows }): KanbanState => {

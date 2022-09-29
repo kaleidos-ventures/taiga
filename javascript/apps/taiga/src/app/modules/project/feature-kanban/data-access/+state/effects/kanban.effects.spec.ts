@@ -10,23 +10,26 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
-import { AppService } from '~/app/services/app.service';
 import { Observable } from 'rxjs';
+import { AppService } from '~/app/services/app.service';
 
-import { KanbanEffects } from './kanban.effects';
-import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';
-import { cold, hot } from 'jest-marbles';
 import {
   ProjectMockFactory,
+  StatusMockFactory,
   StoryMockFactory,
   UserMockFactory,
   WorkflowMockFactory,
 } from '@taiga/data';
+import { cold, hot } from 'jest-marbles';
+import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';
+import { KanbanEffects } from './kanban.effects';
 
+import { randNumber } from '@ngneat/falso';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { KanbanStoryA11y } from '~/app/modules/project/feature-kanban/kanban.model';
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
   let spectator: SpectatorService<KanbanEffects>;
@@ -169,5 +172,51 @@ describe('ProjectEffects', () => {
     expect(effects.createStoryError$).toSatisfyOnFlush(() => {
       expect(appService.toastNotification).toHaveBeenCalled();
     });
+  });
+
+  it('move story', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(KanbanEffects);
+    const story = StoryMockFactory();
+
+    projectApiService.moveStory.mockReturnValue(cold('-b|', { b: story }));
+
+    const status = StatusMockFactory();
+
+    const fakeStoryposition = {
+      status: status.slug,
+      index: randNumber(),
+    };
+
+    const kanbanStory: KanbanStoryA11y = {
+      ref: story.ref,
+      prevPosition: fakeStoryposition,
+      initialPosition: fakeStoryposition,
+      currentPosition: fakeStoryposition,
+    };
+
+    const workflow = WorkflowMockFactory();
+
+    const reorder: {
+      place: 'after' | 'before';
+      ref: number;
+    } = {
+      place: 'before',
+      ref: randNumber(),
+    };
+
+    actions$ = hot('-a', {
+      a: KanbanActions.dropStoryA11y({
+        story: kanbanStory,
+        workflow,
+        reorder,
+      }),
+    });
+
+    const expected = cold('--a', {
+      a: KanbanApiActions.moveStorySuccess({ story }),
+    });
+
+    expect(effects.moveStory$).toBeObservable(expected);
   });
 });

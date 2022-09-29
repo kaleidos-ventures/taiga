@@ -42,13 +42,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   trackBy: trackBySlug
                 ">
                 <tg-kanban-story
+                  [class.drag-a11y]="
+                    story.ref === vm.activeA11yDragDropStory.ref
+                  "
                   [@slideIn]="
                     vm.newEventStories.includes(story.ref) ? 'on' : 'off'
                   "
                   [story]="story"
+                  [stories]="vm.stories"
+                  [workflow]="workflow"
                   [index]="i"
                   [total]="vm.stories.length"
-                  [attr.data-tmp-id]="story.tmpId"></tg-kanban-story>
+                  [attr.data-tmp-id]="story.tmpId">
+                </tg-kanban-story>
               </ng-container>
             </cdk-virtual-scroll-viewport>
           </tui-scrollbar>

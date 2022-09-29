@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { animate, style, transition, trigger } from '@angular/animations';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,12 +19,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
-import { Status, Workflow } from '@taiga/data';
-import { KanbanStatusKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
-import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
-import { RxState } from '@rx-angular/state';
 import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
+import { Status, Workflow } from '@taiga/data';
+import { distinctUntilChanged, map, takeUntil, timer } from 'rxjs';
+import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
+import { KanbanState } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
 import {
+  selectActiveA11yDragDropStory,
   selectLoadingStories,
   selectNewEventStories,
   selectPermissionsError,
@@ -31,14 +35,14 @@ import {
   selectStatusNewStories,
   selectStories,
 } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
-import { distinctUntilChanged, map, takeUntil, timer } from 'rxjs';
-import { KanbanState } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
-import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
-import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
+import { KanbanStatusKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
 import { StatusScrollDynamicHeight } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
+import {
+  KanbanStory,
+  KanbanStoryA11y,
+} from '~/app/modules/project/feature-kanban/kanban.model';
 import { filterNil } from '~/app/shared/utils/operators';
-import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
-import { animate, style, transition, trigger } from '@angular/animations';
+import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
 
 export interface KanbanComponentState {
   stories: KanbanStory[];
@@ -50,6 +54,7 @@ export interface KanbanComponentState {
   formAutoFocus: boolean;
   newEventStories: KanbanState['newEventStories'];
   permissionsError: boolean;
+  activeA11yDragDropStory: KanbanStoryA11y;
 }
 
 @Component({
@@ -96,6 +101,18 @@ export class KanbanStatusComponent
     return this.transloco.translate('kanban.status_label', {
       statusName: this.status.name,
     });
+  }
+
+  @HostBinding('attr.data-name') public get statusName() {
+    return this.status.name;
+  }
+
+  @HostBinding('attr.data-slug') public get statusSlug() {
+    return this.status.slug;
+  }
+
+  @HostBinding('attr.data-color') public get statusColor() {
+    return this.status.color;
   }
 
   @HostBinding('attr.tabindex') public get tabIndex() {
@@ -178,6 +195,11 @@ export class KanbanStatusComponent
       this.store.select(selectPermissionsError)
     );
 
+    this.state.connect(
+      'activeA11yDragDropStory',
+      this.store.select(selectActiveA11yDragDropStory)
+    );
+
     this.watchNewStories();
   }
 
@@ -227,7 +249,7 @@ export class KanbanStatusComponent
         .select(selectStatusNewStories(this.status.slug))
         .pipe(filterNil()),
       (newStory) => {
-        this.scrollToStory(newStory.tmpId);
+        this.scrollToStory(newStory.tmpId!);
       }
     );
   }

@@ -17,6 +17,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
+import { RxState } from '@rx-angular/state';
 import { Workflow } from '@taiga/data';
 import { KineticScrollService } from '~/app/shared/scroll/kinetic-scroll.service';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
@@ -27,7 +28,7 @@ import { KanbanKeyboardNavigation } from '~/app/modules/project/feature-kanban/d
   templateUrl: './kanban-workflow.component.html',
   styleUrls: ['./kanban-workflow.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [KineticScrollService],
+  providers: [KineticScrollService, RxState],
 })
 export class KanbanWorkflowComponent
   implements KanbanKeyboardNavigation, AfterViewInit

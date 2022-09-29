@@ -8,13 +8,36 @@
 
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { Directive, HostListener, QueryList } from '@angular/core';
+import {
+  Directive,
+  HostListener,
+  OnInit,
+  QueryList,
+  ViewChild,
+} from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
+import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
 import { Status, Workflow } from '@taiga/data';
-import { Observable, take } from 'rxjs';
-import { inViewport } from '~/app/shared/utils/in-viewport';
+import { Observable } from 'rxjs';
 import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
 import { KanbanWorkflowComponent } from '~/app/modules/project/feature-kanban/components/workflow/kanban-workflow.component';
+import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
+import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import {
+  KanbanStory,
+  KanbanStoryA11y,
+} from '~/app/modules/project/feature-kanban/kanban.model';
+import { inViewport } from '~/app/shared/utils/in-viewport';
+import {
+  focusRef,
+  getNextHorizontalStory,
+  getNextStatus,
+  getNextVerticalStory,
+  getStatusFromStoryElement,
+  scrollAndFocus,
+} from './kanban-keyboard-navigation.helpers';
 
 export interface KanbanStatusKeyboardNavigation {
   nativeElement: HTMLElement;
@@ -31,7 +54,10 @@ export interface KanbanKeyboardNavigation {
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[tgKanbanKeyboardNavigation]',
 })
-export class KanbanKeyboardNavigationDirective {
+export class KanbanKeyboardNavigationDirective implements OnInit {
+  @ViewChild(KanbanVirtualScrollDirective)
+  public kanbanVirtualScroll!: KanbanVirtualScrollDirective;
+
   @HostListener('keydown.arrowRight.prevent', ['$event.target', '$event.key'])
   @HostListener('keydown.arrowLeft.prevent', ['$event.target', '$event.key'])
   public onKeyDownArrow(
@@ -41,7 +67,11 @@ export class KanbanKeyboardNavigationDirective {
     if (current.tagName === 'TG-KANBAN-STATUS') {
       this.statatusNavigation(current, key);
     } else if (current.tagName === 'A') {
-      this.storyNavigationHorizontal(current, key);
+      if (this.currentDraggedStory.ref) {
+        this.storyNavigationHorizontalA11y(current, key);
+      } else {
+        this.storyNavigationHorizontal(current, key);
+      }
     }
   }
 
@@ -52,32 +82,165 @@ export class KanbanKeyboardNavigationDirective {
     key: 'ArrowUp' | 'ArrowDown'
   ): void {
     if (current.tagName === 'A') {
-      this.storyNavigationVertical(current, key);
+      if (this.currentDraggedStory.ref) {
+        this.storyNavigationVerticalA11y(current, key);
+      } else {
+        this.storyNavigationVertical(current, key);
+      }
     }
+  }
+
+  public currentDraggedStory!: KanbanStoryA11y;
+
+  public ngOnInit(): void {
+    this.state.hold(this.state.select('KanbanStoryA11y'), (activeStory) => {
+      this.currentDraggedStory = activeStory;
+    });
   }
 
   constructor(
     private kanbanWorkflowComponent: KanbanWorkflowComponent,
     private liveAnnouncer: LiveAnnouncer,
-    private translocoService: TranslocoService
-  ) {}
+    private translocoService: TranslocoService,
+    private store: Store,
+    private state: RxState<{
+      KanbanStoryA11y: KanbanStoryA11y;
+    }>
+  ) {
+    this.state.connect(
+      'KanbanStoryA11y',
+      this.store.select(selectActiveA11yDragDropStory)
+    );
+  }
+
+  private storyNavigationVerticalA11y(
+    el: HTMLElement,
+    key: 'ArrowUp' | 'ArrowDown'
+  ) {
+    const currentIndex = Number(this.currentDraggedStory.currentPosition.index);
+    const currentStatus = this.currentDraggedStory.currentPosition.status;
+    const newIndex = this.calculateNewIndex(currentIndex, currentStatus, key);
+
+    const nextStory = getNextVerticalStory(el, key) || el;
+
+    const { kanbanStatusComponents } = this.kanbanWorkflowComponent;
+    const status = getStatusFromStoryElement(kanbanStatusComponents, nextStory);
+
+    if (nextStory) {
+      const el = nextStory.querySelector<HTMLElement>('a');
+
+      if (status?.cdkScrollable && el) {
+        const nextRef = nextStory.dataset.ref;
+
+        if (nextRef) {
+          scrollAndFocus(status, el, nextRef);
+
+          focusRef(nextRef);
+        }
+      }
+    }
+
+    const story = {
+      ref: this.currentDraggedStory.ref,
+      initialPosition: {
+        status: this.currentDraggedStory.initialPosition.status,
+        index: this.currentDraggedStory.initialPosition.index,
+      },
+      prevPosition: {
+        status: this.currentDraggedStory.currentPosition.status,
+        index: currentIndex,
+      },
+      currentPosition: {
+        status: this.currentDraggedStory.currentPosition.status,
+        index: newIndex,
+      },
+    };
+
+    if (status) {
+      const statusData: KanbanStory['status'] = {
+        slug: status.statusSlug,
+        color: status.statusColor,
+        name: status.statusName,
+      };
+
+      const statusStories =
+        status.nativeElement.querySelectorAll<HTMLElement>('tg-kanban-story');
+
+      const newPositionTranslation = this.translocoService.translate(
+        'kanban.position_live_announce',
+        {
+          storyIndex: newIndex + 1,
+          totalStories: statusStories.length,
+        }
+      );
+
+      const announcement = `${newPositionTranslation}`;
+      this.liveAnnouncer.clear();
+      this.liveAnnouncer.announce(announcement, 'assertive').then(
+        () => {
+          setTimeout(() => {
+            this.liveAnnouncer.clear();
+          }, 50);
+        },
+        () => {
+          // error
+        }
+      );
+
+      this.store.dispatch(
+        KanbanActions.moveStoryA11y({ story, status: statusData })
+      );
+    }
+  }
+
+  private calculateNewIndex(
+    currentIndex: number,
+    currentStatus: string,
+    key: 'ArrowUp' | 'ArrowDown'
+  ) {
+    if (key === 'ArrowDown') {
+      const currentStatusEl = this.getCurrentStatusEl(currentStatus);
+      const currentStatusStories = this.getCurrentStoriesEl(currentStatusEl!);
+      const currentStatusStoriesLength = currentStatusStories!.length;
+
+      return currentIndex + 1 >= currentStatusStoriesLength
+        ? currentStatusStoriesLength - 1
+        : currentIndex + 1;
+    } else {
+      return currentIndex === 0 ? currentIndex : currentIndex - 1;
+    }
+  }
+
+  private getCurrentStatusEl(currentStatus: string): HTMLElement | undefined {
+    const statuses = Array.from(
+      document.querySelectorAll<HTMLElement>('tg-kanban-status')
+    );
+
+    return statuses.find((status) => {
+      return status.getAttribute('data-slug') === currentStatus;
+    });
+  }
+
+  private getCurrentStoriesEl(
+    statusEl: HTMLElement
+  ): HTMLElement[] | undefined {
+    return Array.from(
+      statusEl.querySelectorAll<HTMLElement>('tg-kanban-story')
+    );
+  }
 
   private storyNavigationVertical(
     el: HTMLElement,
     key: 'ArrowUp' | 'ArrowDown'
   ) {
     const { kanbanStatusComponents } = this.kanbanWorkflowComponent;
-    let nextStory: HTMLElement;
 
-    if (key === 'ArrowDown') {
-      nextStory = el.parentElement?.nextElementSibling as HTMLElement;
-    } else {
-      nextStory = el.parentElement?.previousElementSibling as HTMLElement;
-    }
+    const nextStory = getNextVerticalStory(el, key);
 
     if (nextStory) {
-      const status = kanbanStatusComponents.find((cmp) =>
-        cmp.nativeElement.contains(nextStory)
+      const status = getStatusFromStoryElement(
+        kanbanStatusComponents,
+        nextStory
       );
 
       const el = nextStory.querySelector<HTMLElement>('a');
@@ -86,30 +249,118 @@ export class KanbanKeyboardNavigationDirective {
         const nextRef = nextStory.dataset.ref;
 
         if (nextRef) {
-          // angular cdk virtual-scroll reuse the same componente so
-          // it is not safe to go to the next story using the `nextStory` DOM element
-          const focus = () => {
-            document
-              .querySelector<HTMLElement>(
-                `tg-kanban-story[data-ref='${nextRef}'] a`
-              )
-              ?.focus();
-          };
+          scrollAndFocus(status, el, nextRef);
 
-          status.cdkScrollable
-            .elementScrolled()
-            .pipe(take(1))
-            .subscribe(() => {
-              requestAnimationFrame(() => {
-                focus();
-              });
-            });
-
-          el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-
-          focus();
+          focusRef(nextRef);
         }
       }
+    }
+  }
+
+  private storyNavigationHorizontalA11y(
+    el: HTMLElement,
+    key: 'ArrowRight' | 'ArrowLeft'
+  ) {
+    const status = this.currentDraggedStory.currentPosition.status;
+    const currentStatusEl = this.getCurrentStatusEl(status);
+    const currentStatusStoriesEl = this.getCurrentStoriesEl(currentStatusEl!);
+
+    const currentStoryEl = currentStatusStoriesEl!.at(
+      this.currentDraggedStory.currentPosition.index!
+    );
+
+    const nextStatusEl = getNextStatus(currentStoryEl!, key, false);
+
+    const horizontalNavData = getNextHorizontalStory(
+      currentStoryEl!,
+      nextStatusEl!
+    );
+
+    if (horizontalNavData.nextStatus) {
+      const statusData: KanbanStory['status'] = {
+        slug: horizontalNavData.nextStatus.getAttribute('data-slug')!,
+        color: Number(
+          horizontalNavData.nextStatus.getAttribute('data-color')!
+        )!,
+        name: horizontalNavData.nextStatus.getAttribute('data-name')!,
+      };
+
+      const nextStatusStories = Array.from(
+        horizontalNavData.nextStatus.querySelectorAll<HTMLElement>(
+          'tg-kanban-story'
+        )
+      );
+
+      let storyIndex = 0;
+
+      if (horizontalNavData?.nextStory) {
+        const nextStoryIndex = Number(
+          horizontalNavData.nextStory?.story.getAttribute('data-position')
+        );
+
+        const isLastStory =
+          nextStoryIndex ===
+          Number(nextStatusStories.at(-1)?.getAttribute('data-position'));
+
+        storyIndex = isLastStory ? nextStoryIndex + 1 : nextStoryIndex;
+      }
+
+      // Live announcement
+      const statusNameTranslation = this.translocoService.translate(
+        'kanban.status_live_announce',
+        {
+          status: statusData.name,
+        }
+      );
+
+      const newPositionTranslation = this.translocoService.translate(
+        'kanban.position_live_announce',
+        {
+          storyIndex: storyIndex + 1,
+          totalStories: nextStatusStories.length + 1,
+        }
+      );
+
+      const announcement = `${statusNameTranslation}. ${newPositionTranslation}`;
+
+      this.liveAnnouncer.clear();
+      this.liveAnnouncer.announce(announcement, 'assertive').then(
+        () => {
+          setTimeout(() => {
+            this.liveAnnouncer.clear();
+          }, 50);
+        },
+        () => {
+          // error
+        }
+      );
+
+      const story = {
+        ref: this.currentDraggedStory.ref,
+        initialPosition: {
+          status: this.currentDraggedStory.initialPosition.status,
+          index: this.currentDraggedStory.initialPosition.index,
+        },
+        prevPosition: {
+          status: this.currentDraggedStory.currentPosition.status,
+          index: this.currentDraggedStory.currentPosition.index,
+        },
+        currentPosition: {
+          status: statusData.slug,
+          index: storyIndex,
+        },
+      };
+
+      this.store.dispatch(
+        KanbanActions.moveStoryA11y({ story, status: statusData })
+      );
+
+      setTimeout(() => {
+        horizontalNavData.nextStatus
+          .querySelectorAll('tg-kanban-story')
+          [storyIndex].querySelector<HTMLElement>('a')!
+          .focus();
+      }, 100);
     }
   }
 
@@ -117,90 +368,39 @@ export class KanbanKeyboardNavigationDirective {
     el: HTMLElement,
     key: 'ArrowRight' | 'ArrowLeft'
   ) {
-    const status = el.closest('tg-kanban-status');
+    const nextStatusEl = getNextStatus(el, key, true);
 
-    const statuses = Array.from(
-      document.querySelectorAll<HTMLElement>('tg-kanban-status')
-    );
+    const horizontalNavData = getNextHorizontalStory(el, nextStatusEl!);
 
-    if (key === 'ArrowLeft') {
-      statuses.reverse();
-    }
+    if (horizontalNavData) {
+      const nextStatusName =
+        horizontalNavData.nextStatus.querySelector<HTMLElement>(
+          '.name'
+        )!.innerText;
 
-    const currentStatusIndex = statuses.findIndex((it) => it === status);
-
-    const nextStatus = statuses.find((it, index) => {
-      if (index > currentStatusIndex) {
-        return it.querySelector('tg-kanban-story');
-      }
-
-      return false;
-    });
-
-    const storyTop = el.getBoundingClientRect().top;
-    const storyBottom = el.getBoundingClientRect().bottom;
-
-    if (nextStatus) {
-      const stories = Array.from(
-        nextStatus.querySelectorAll<HTMLElement>('tg-kanban-story')
-      );
-
-      const nextStory = stories.reduce<{
-        diff: number;
-        story: HTMLElement;
-      } | null>((storyCandidate, story) => {
-        let diffTop = story.getBoundingClientRect().top - storyTop;
-        let diffBotton = story.getBoundingClientRect().bottom - storyBottom;
-
-        if (diffTop < 0) {
-          diffTop = -diffTop;
-        }
-
-        if (diffBotton < 0) {
-          diffBotton = -diffBotton;
-        }
-
-        const diff = diffBotton + diffTop;
-
-        if (!storyCandidate) {
-          return {
-            story,
-            diff,
-          };
-        } else if (diff < storyCandidate.diff) {
-          return {
-            story,
-            diff,
-          };
-        }
-
-        return storyCandidate;
-      }, null);
-
-      if (nextStory) {
-        const nextStatusName =
-          nextStatus.querySelector<HTMLElement>('.name')!.innerText;
-
-        this.liveAnnouncer
-          .announce(
-            this.translocoService.translate('kanban.status_live_announce', {
-              status: nextStatusName,
-            }),
-            'assertive'
-          )
-          .then(
-            () => {
-              // #hack, force the announcement to be made before the story title
-              setTimeout(() => {
-                nextStory.story.querySelector<HTMLElement>('a')!.focus();
+      this.liveAnnouncer
+        .announce(
+          this.translocoService.translate('kanban.status_live_announce', {
+            status: nextStatusName,
+          }),
+          'assertive'
+        )
+        .then(
+          () => {
+            // #hack, force the announcement to be made before the story title
+            setTimeout(() => {
+              if (horizontalNavData.nextStory) {
+                horizontalNavData.nextStory.story
+                  .querySelector<HTMLElement>('a')!
+                  .focus();
                 this.liveAnnouncer.clear();
-              }, 50);
-            },
-            () => {
-              // error
-            }
-          );
-      }
+              }
+            }, 50);
+          },
+          () => {
+            // error
+          }
+        );
     }
   }
 

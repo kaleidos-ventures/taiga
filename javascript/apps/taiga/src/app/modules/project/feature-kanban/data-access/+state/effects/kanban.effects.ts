@@ -6,25 +6,25 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { filterNil } from '~/app/shared/utils/operators';
+import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
+import { TuiNotification } from '@taiga-ui/core';
+import { ProjectApiService } from '@taiga/api';
+import { delay, filter, map } from 'rxjs';
+import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
+import { AppService } from '~/app/services/app.service';
+import { filterNil } from '~/app/shared/utils/operators';
 import {
   KanbanActions,
   KanbanApiActions,
   KanbanEventsActions,
 } from '../actions/kanban.actions';
-import { fetch, pessimisticUpdate } from '@nrwl/angular';
-import { ProjectApiService } from '@taiga/api';
-import { delay, filter, map } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import { AppService } from '~/app/services/app.service';
-import { TuiNotification } from '@taiga-ui/core';
-import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectWorkflows } from '../selectors/kanban.selectors';
-import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
 
 @Injectable()
 export class KanbanEffects {
@@ -139,6 +139,37 @@ export class KanbanEffects {
         return KanbanActions.timeoutAnimationEventNewStory({
           ref: action.story.ref,
         });
+      })
+    );
+  });
+
+  public moveStory$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.dropStoryA11y),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      optimisticUpdate({
+        run: ({ story, workflow, reorder }, project) => {
+          const storyData = {
+            ref: story.ref!,
+            status: story.currentPosition.status,
+          };
+          return this.projectApiService
+            .moveStory(storyData, project, workflow, reorder)
+            .pipe(
+              map((story) => {
+                return KanbanApiActions.moveStorySuccess({
+                  story,
+                });
+              })
+            );
+        },
+        undoAction: (action) => {
+          return KanbanApiActions.moveStoryError({
+            story: action.story,
+          });
+        },
       })
     );
   });

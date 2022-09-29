@@ -6,18 +6,36 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy,
   Component,
   HostBinding,
+  HostListener,
   Input,
 } from '@angular/core';
-import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
+import { TranslocoService } from '@ngneat/transloco';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
+import { Workflow } from '@taiga/data';
+import { filter, fromEvent, take } from 'rxjs';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
+import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import {
+  KanbanStory,
+  KanbanStoryA11y,
+} from '~/app/modules/project/feature-kanban/kanban.model';
 
+export interface StoryState {
+  kanbanStoryA11y: KanbanStoryA11y;
+}
+@UntilDestroy()
 @Component({
   selector: 'tg-kanban-story',
   templateUrl: './kanban-story.component.html',
   styleUrls: ['./kanban-story.component.css'],
+  providers: [RxState],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KanbanStoryComponent {
@@ -25,6 +43,13 @@ export class KanbanStoryComponent {
   public story!: KanbanStory;
 
   @Input()
+  public workflow!: Workflow;
+
+  @Input()
+  public stories!: KanbanStory[];
+
+  @Input()
+  @HostBinding('attr.data-position')
   public index!: number;
 
   @Input()
@@ -33,5 +58,133 @@ export class KanbanStoryComponent {
   @HostBinding('attr.data-ref')
   public get ref() {
     return this.story.ref;
+  }
+
+  @HostListener('keydown.space.prevent', ['$event.target', '$event.code'])
+  public dragA11yStart() {
+    const keyEscape$ = fromEvent<KeyboardEvent>(document.body, 'keydown').pipe(
+      filter((event) => event.code === 'Escape')
+    );
+    const keySpace$ = fromEvent<KeyboardEvent>(document.body, 'keydown').pipe(
+      filter((event) => event.code == 'Space')
+    );
+
+    // On press escape anywhere
+    keyEscape$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+      const currentDraggedStory = this.state.get('kanbanStoryA11y');
+      this.store.dispatch(
+        KanbanActions.cancelDragStoryA11y({ story: currentDraggedStory })
+      );
+
+      // Manage focus
+      // Get current story element
+      const statuses = Array.from(
+        document.querySelectorAll<HTMLElement>('tg-kanban-status')
+      );
+
+      const currentStatus = statuses.find((status) => {
+        return (
+          status.getAttribute('data-slug') ===
+          currentDraggedStory.initialPosition?.status
+        );
+      });
+
+      const currentStatusStories = Array.from(
+        currentStatus!.querySelectorAll<HTMLElement>('tg-kanban-story')
+      );
+
+      const currentStory = currentStatusStories.at(
+        currentDraggedStory.initialPosition.index!
+      );
+
+      if (currentStory) {
+        currentStory.querySelector<HTMLElement>('a')!.focus();
+      }
+    });
+
+    // On press space
+
+    // FIX: Space should be pressed anywhere
+    keySpace$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+      this.dragOrDropStoryA11y();
+    });
+  }
+
+  constructor(
+    private store: Store,
+    private state: RxState<StoryState>,
+    private liveAnnouncer: LiveAnnouncer,
+    private translocoService: TranslocoService
+  ) {
+    this.state.connect(
+      'kanbanStoryA11y',
+      this.store.select(selectActiveA11yDragDropStory)
+    );
+  }
+
+  public dragOrDropStoryA11y() {
+    const currentStory = this.state.get('kanbanStoryA11y');
+
+    const story: KanbanStoryA11y = {
+      ref: this.story.ref,
+      initialPosition: {
+        status: this.story.status.slug,
+        index: this.index,
+      },
+      prevPosition: {
+        status: this.story.status.slug,
+        index: this.index,
+      },
+      currentPosition: {
+        status: this.story.status.slug,
+        index: this.index,
+      },
+    };
+    if (!currentStory.ref) {
+      const announcement = this.translocoService.translate(
+        'kanban.grabbed_live_announce',
+        {
+          title: this.story.title,
+          position: this.index + 1,
+        }
+      );
+
+      this.liveAnnouncer.announce(announcement, 'assertive').then(
+        () => {
+          setTimeout(() => {
+            this.liveAnnouncer.clear();
+          }, 50);
+        },
+        () => {
+          // error
+        }
+      );
+
+      this.store.dispatch(KanbanActions.dragStoryA11y({ story }));
+    } else {
+      const dropStoryData: {
+        story: KanbanStoryA11y;
+        workflow: Workflow;
+        reorder?: {
+          place: 'before' | 'after';
+          ref: number;
+        };
+      } = {
+        story,
+        workflow: this.workflow,
+      };
+
+      if (this.stories.length > 1) {
+        dropStoryData.reorder = {
+          place: this.index === 0 ? 'before' : 'after',
+          ref:
+            this.index === 0
+              ? this.stories[this.index + 1].ref!
+              : this.stories[this.index - 1].ref!,
+        };
+      }
+
+      this.store.dispatch(KanbanActions.dropStoryA11y(dropStoryData));
+    }
   }
 }

@@ -70,6 +70,11 @@ jobs:
       run: |
         python -m taiga i18n compile-catalog
 
+    - name: Create DB migrations
+      working-directory: ./python/apps/taiga
+      run: |
+        python -m taiga db init-migrations
+
     - name: Test with pytest
       working-directory: ./python/apps/taiga
       run: |

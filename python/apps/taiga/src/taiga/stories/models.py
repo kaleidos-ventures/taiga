@@ -43,12 +43,9 @@ class Story(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
     class Meta:
         verbose_name = "story"
         verbose_name_plural = "stories"
-        unique_together = (
-            "ref",
-            "project",
-        )
-        ordering = ["project", "workflow", "status", "order"]
+        constraints = ProjectReferenceMixin.Meta.constraints
         indexes = ProjectReferenceMixin.Meta.indexes
+        ordering = ["project", "workflow", "status", "order"]
 
     def __str__(self) -> str:
         return f"#{self.ref} {self.title}"

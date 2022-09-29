@@ -41,10 +41,10 @@ class Workspace(models.BaseModel):
     class Meta:
         verbose_name = "workspace"
         verbose_name_plural = "workspaces"
-        ordering = ["slug"]
-        index_together = [
-            ["name", "id"],
+        indexes = [
+            models.Index(fields=["slug"]),
         ]
+        ordering = ["name"]
 
     def __str__(self) -> str:
         return self.slug

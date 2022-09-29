@@ -28,11 +28,14 @@ class Workflow(models.BaseModel):
     class Meta:
         verbose_name = "workflow"
         verbose_name_plural = "workflows"
-        unique_together = (
-            "slug",
-            "project",
-        )
-        ordering = ["project", "order", "slug"]
+        constraints = [
+            models.UniqueConstraint(fields=["project", "slug"], name="%(app_label)s_%(class)s_unique_project_slug"),
+            models.UniqueConstraint(fields=["project", "name"], name="%(app_label)s_%(class)s_unique_project_name"),
+        ]
+        indexes = [
+            models.Index(fields=["project", "slug"]),
+        ]
+        ordering = ["project", "order", "name"]
 
     def __str__(self) -> str:
         return self.name
@@ -58,11 +61,10 @@ class WorkflowStatus(models.BaseModel):
     class Meta:
         verbose_name = "workflow status"
         verbose_name_plural = "workflow statuses"
-        unique_together = (
-            "slug",
-            "workflow",
-        )
-        ordering = ["workflow", "order", "slug"]
+        indexes = [
+            models.Index(fields=["workflow", "slug"]),
+        ]
+        ordering = ["workflow", "order", "name"]
 
     def __str__(self) -> str:
         return self.name

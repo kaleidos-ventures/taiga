@@ -76,10 +76,14 @@ class ProjectInvitation(models.BaseModel):
     class Meta:
         verbose_name = "project invitation"
         verbose_name_plural = "project invitations"
-        unique_together = (
-            "email",
-            "project",
-        )
+        constraints = [
+            models.UniqueConstraint(fields=["project", "email"], name="%(app_label)s_%(class)s_unique_project_email")
+        ]
+        indexes = [
+            models.Index(fields=["email"]),
+            models.Index(fields=["project", "email"]),
+            models.Index(fields=["project", "user"]),
+        ]
         ordering = ["project", "user", "email"]
 
     def __str__(self) -> str:

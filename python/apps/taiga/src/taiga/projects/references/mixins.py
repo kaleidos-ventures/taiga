@@ -25,6 +25,7 @@ class ProjectReferenceMixin(models.Model):
 
     class Meta:
         abstract = True
+        constraints = [models.UniqueConstraint(fields=["project", "ref"], name="projects_unique_refs")]
         indexes = [
             models.Index(fields=["project", "ref"]),
         ]

@@ -48,6 +48,11 @@ class OutstandingToken(models.BaseModel):
     class Meta:
         verbose_name = "outstanding token"
         verbose_name_plural = "outstanding tokens"
+        indexes = [
+            models.Index(fields=["content_type", "object_id", "token_type"]),
+            models.Index(fields=["jti"]),
+            models.Index(fields=["expires_at"]),
+        ]
         ordering = ("content_type", "object_id", "token_type")
 
     def __str__(self) -> str:
@@ -65,6 +70,9 @@ class DenylistedToken(models.BaseModel):
     class Meta:
         verbose_name = "denylisted token"
         verbose_name_plural = "denylisted tokens"
+        indexes = [
+            models.Index(fields=["token"]),
+        ]
 
     def __str__(self) -> str:
         return f"Denylisted token for {self.token.content_object} ({type(self.token.content_object)})"

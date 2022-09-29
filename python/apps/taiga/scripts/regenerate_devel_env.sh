@@ -45,13 +45,17 @@ createdb -U $dbuser -h $dbhost -p $dbport $dbname
 if [ "$?" -ne "0" ]; then
   echo && echo "Error accessing the database, aborting."
 else
+  echo "-> Generate initial migrations"
+  python -m taiga db drop-migrations
+  python -m taiga db init-migrations
   echo "-> Load migrations"
-  python -m taiga migrate
+  python -m taiga db migrate --syncdb
+  echo "-> Initialize taskqueue"
   python -m taiga tasksqueue init
   echo "-> Load initial user (admin/123123)"
-  python -m taiga loadfixtures initial_user
+  python -m taiga db load-fixtures initial_user
   echo "-> Load initial project_templates (kanban)"
-  python -m taiga loadfixtures initial_project_templates
+  python -m taiga db load-fixtures initial_project_templates
   echo "-> Generate sample data"
   python -m taiga sampledata
   echo "-> Compile translations"

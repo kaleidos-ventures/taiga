@@ -1,2 +1,6 @@
 /media
 /static
+
+# Ignore all migrations except from taiga.base.db
+migrations/
+!**/taiga/base/db/migrations/

@@ -37,8 +37,14 @@ class ProjectRole(models.BaseModel):
     class Meta:
         verbose_name = "project role"
         verbose_name_plural = "project roles"
-        ordering = ["project", "order", "slug"]
-        unique_together = (("slug", "project"),)
+        constraints = [
+            models.UniqueConstraint(fields=["project", "slug"], name="%(app_label)s_%(class)s_unique_project_slug"),
+            models.UniqueConstraint(fields=["project", "name"], name="%(app_label)s_%(class)s_unique_project_name"),
+        ]
+        indexes = [
+            models.Index(fields=["project", "slug"]),
+        ]
+        ordering = ["project", "order", "name"]
 
     def __str__(self) -> str:
         return self.name

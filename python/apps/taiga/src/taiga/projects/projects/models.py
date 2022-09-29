@@ -74,11 +74,11 @@ class Project(models.BaseModel):
     class Meta:
         verbose_name = "project"
         verbose_name_plural = "projects"
-        ordering = ["workspace", "slug"]
-        # TODO refacxtor https://docs.djangoproject.com/en/4.0/ref/models/options/#indexes
-        index_together = [
-            ["name", "id"],
+        indexes = [
+            models.Index(fields=["slug"]),
+            models.Index(fields=["workspace", "slug"]),
         ]
+        ordering = ["name"]
 
     def __str__(self) -> str:
         return self.name
@@ -130,6 +130,9 @@ class ProjectTemplate(models.BaseModel):
     class Meta:
         verbose_name = "project template"
         verbose_name_plural = "project templates"
+        indexes = [
+            models.Index(fields=["slug"]),
+        ]
         ordering = ["name"]
 
     def __str__(self) -> str:

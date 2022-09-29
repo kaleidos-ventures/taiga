@@ -39,17 +39,17 @@ INSTALLED_APPS = [
     # taiga
     "taiga.base.db",
     "taiga.emails",
-    "taiga.workspaces.memberships",
-    "taiga.workspaces.roles",
+    "taiga.users",
+    "taiga.tokens",
     "taiga.workspaces.workspaces",
+    "taiga.workspaces.roles",
+    "taiga.workspaces.memberships",
+    "taiga.projects.projects",
+    "taiga.projects.roles",
     "taiga.projects.invitations",
     "taiga.projects.memberships",
-    "taiga.projects.roles",
-    "taiga.projects.projects",
     "taiga.workflows",
-    "taiga.users",
     "taiga.stories",
-    "taiga.tokens",
     # 3-party
     "easy_thumbnails",
 ]

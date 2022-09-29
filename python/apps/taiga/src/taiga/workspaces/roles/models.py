@@ -37,8 +37,14 @@ class WorkspaceRole(models.BaseModel):
     class Meta:
         verbose_name = "workspace role"
         verbose_name_plural = "workspace roles"
-        ordering = ["workspace", "order", "slug"]
-        unique_together = (("slug", "workspace"),)
+        constraints = [
+            models.UniqueConstraint(fields=["workspace", "slug"], name="%(app_label)s_%(class)s_unique_workspace_slug"),
+            models.UniqueConstraint(fields=["workspace", "name"], name="%(app_label)s_%(class)s_unique_workspace_name"),
+        ]
+        indexes = [
+            models.Index(fields=["workspace", "slug"]),
+        ]
+        ordering = ["workspace", "order", "name"]
 
     def __str__(self) -> str:
         return self.name

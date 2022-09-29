@@ -39,10 +39,12 @@ class ProjectMembership(models.BaseModel):
     class Meta:
         verbose_name = "project membership"
         verbose_name_plural = "project memberships"
-        unique_together = (
-            "user",
-            "project",
-        )
+        constraints = [
+            models.UniqueConstraint(fields=["project", "user"], name="%(app_label)s_%(class)s_unique_project_user"),
+        ]
+        indexes = [
+            models.Index(fields=["project", "user"]),
+        ]
         ordering = ["project", "user"]
 
     def __str__(self) -> str:

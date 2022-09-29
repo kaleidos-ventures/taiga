@@ -58,6 +58,10 @@ class User(models.BaseModel, AbstractBaseUser):
     class Meta:
         verbose_name = "user"
         verbose_name_plural = "users"
+        indexes = [
+            models.Index(fields=["username"]),
+            models.Index(fields=["email"]),
+        ]
         ordering = ["username"]
 
     def __str__(self) -> str:
@@ -93,7 +97,15 @@ class AuthData(models.BaseModel):
     extra = models.JSONField(null=True, blank=True, verbose_name="extra")
 
     class Meta:
-        unique_together = ["key", "value"]
+        verbose_name = "user's auth data"
+        verbose_name_plural = "user's auth data"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "key"], name="%(app_label)s_%(class)s_unique_user_key"),
+        ]
+        indexes = [
+            models.Index(fields=["user", "key"]),
+        ]
+        ordering = ["user", "key"]
 
     def __str__(self) -> str:
         return f"{self.key}: {self.value}"

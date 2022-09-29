@@ -39,10 +39,12 @@ class WorkspaceMembership(models.BaseModel):
     class Meta:
         verbose_name = "workspace membership"
         verbose_name_plural = "workspace memberships"
-        unique_together = (
-            "user",
-            "workspace",
-        )
+        constraints = [
+            models.UniqueConstraint(fields=["workspace", "user"], name="%(app_label)s_%(class)s_unique_workspace_user"),
+        ]
+        indexes = [
+            models.Index(fields=["workspace", "user"]),
+        ]
         ordering = ["workspace", "user"]
 
     def __str__(self) -> str:

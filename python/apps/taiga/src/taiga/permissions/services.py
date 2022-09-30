@@ -15,6 +15,8 @@ from taiga.users.models import AnyUser
 from taiga.workspaces.roles import repositories as ws_roles_repositories
 from taiga.workspaces.workspaces.models import Workspace
 
+MIN_PROJECT_MEMBER_PERMISSIONS = [choices.ProjectPermissions.VIEW_PROJECT.value]
+
 AuthorizableObj = Project | Workspace
 
 
@@ -144,7 +146,8 @@ async def get_user_permissions_for_project(
     elif is_workspace_admin:
         return choices.ProjectPermissions.values
     elif is_project_member:
-        return project_role_permissions
+        # a project member will always view the project she's member of, no matter her role's permissions
+        return list(set(project_role_permissions) | set(MIN_PROJECT_MEMBER_PERMISSIONS))
     elif is_workspace_member:
         return project.workspace_member_permissions or []
     elif is_authenticated:

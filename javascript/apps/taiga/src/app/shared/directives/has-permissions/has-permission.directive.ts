@@ -61,16 +61,15 @@ export class HasPermissionDirective implements OnInit {
   public set hasPermissionCanLosePermissions(canLosePermissions: boolean) {
     this.canLosePermissions = canLosePermissions;
 
-    // if the user now can lose permissions now we have to refresh the view
+    // if the user now can lose permissions we have to refresh the view
     if (this.canLosePermissions) {
       this.permissionsService
         .hasPermissions$(this.entities, this.permissions, this.operation)
-        .pipe(
-          take(1),
-          filter((view) => !view)
-        )
+        .pipe(take(1))
         .subscribe((view) => {
-          this.updateView(view);
+          if (!view) {
+            this.updateView(view);
+          }
         });
     }
   }

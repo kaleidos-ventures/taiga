@@ -120,8 +120,6 @@ export const reducer = createReducer(
       if (state.empty && state.workflows) {
         // open the first form if the kanban is empty
         state.createStoryForm = state.workflows[0].statuses[0].slug;
-      } else {
-        state.createStoryForm = '';
       }
 
       return state;

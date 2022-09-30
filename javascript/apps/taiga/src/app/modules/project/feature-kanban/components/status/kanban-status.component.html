@@ -25,6 +25,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <ng-container *ngIf="vm.visible && !vm.loadingStories">
         <div
           *ngIf="vm.stories.length"
+          tgKanbanKeyboardNavigation
           class="stories"
           [tgScrollDynamicHeight]="vm.stories">
           <tui-scrollbar>

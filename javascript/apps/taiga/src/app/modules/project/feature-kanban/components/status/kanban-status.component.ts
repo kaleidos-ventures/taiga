@@ -19,7 +19,7 @@ import {
 } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { Status, Workflow } from '@taiga/data';
-import { KanbanWorkflowStatusKeyboardNavigation } from '../workflow/kanban-workflow-keyboard-navigation.directive';
+import { KanbanStatusKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
 import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
 import { RxState } from '@rx-angular/state';
 import { Store } from '@ngrx/store';
@@ -78,7 +78,7 @@ export interface KanbanComponentState {
 })
 export class KanbanStatusComponent
   implements
-    KanbanWorkflowStatusKeyboardNavigation,
+    KanbanStatusKeyboardNavigation,
     StatusScrollDynamicHeight,
     OnChanges,
     OnInit

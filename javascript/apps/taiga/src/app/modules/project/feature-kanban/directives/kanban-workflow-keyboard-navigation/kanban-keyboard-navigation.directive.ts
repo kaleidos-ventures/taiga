@@ -13,14 +13,14 @@ import { TranslocoService } from '@ngneat/transloco';
 import { Status, Workflow } from '@taiga/data';
 import { Observable, take } from 'rxjs';
 import { inViewport } from '~/app/shared/utils/in-viewport';
-import { KanbanStatusComponent } from '../status/kanban-status.component';
-import { KanbanWorkflowComponent } from './kanban-workflow.component';
+import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
+import { KanbanWorkflowComponent } from '~/app/modules/project/feature-kanban/components/workflow/kanban-workflow.component';
 
-export interface KanbanWorkflowStatusKeyboardNavigation {
+export interface KanbanStatusKeyboardNavigation {
   nativeElement: HTMLElement;
 }
 
-export interface KanbanWorkflowKeyboardNavigation {
+export interface KanbanKeyboardNavigation {
   workflow: Workflow;
   cdkScrollable: CdkVirtualScrollViewport;
   kanbanStatusComponents: QueryList<KanbanStatusComponent>;
@@ -29,9 +29,9 @@ export interface KanbanWorkflowKeyboardNavigation {
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: 'tg-kanban-workflow',
+  selector: '[tgKanbanKeyboardNavigation]',
 })
-export class KanbanWorkflowKeyboardNavigationDirective {
+export class KanbanKeyboardNavigationDirective {
   @HostListener('keydown.arrowRight.prevent', ['$event.target', '$event.key'])
   @HostListener('keydown.arrowLeft.prevent', ['$event.target', '$event.key'])
   public onKeyDownArrow(

@@ -28,7 +28,7 @@ import { TitleComponent } from '~/app/shared/title/title.component';
 import { KanbanCreateStoryInlineComponent } from './components/create-story-inline/kanban-create-story-inline.component';
 import { KanbanStatusComponent } from './components/status/kanban-status.component';
 import { KanbanStoryComponent } from './components/story/kanban-story.component';
-import { KanbanWorkflowKeyboardNavigationDirective } from './components/workflow/kanban-workflow-keyboard-navigation.directive';
+import { KanbanKeyboardNavigationDirective } from './directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
 import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
 import { DataAccessKanbanModule } from './data-access/kanban-data-access.module';
 import { ProjectFeatureKanbanRoutingModule } from './project-feature-kanban-routing.module';
@@ -40,7 +40,7 @@ import { KanbanVirtualScrollDirective } from './custom-scroll-strategy/kanban-sc
     ProjectFeatureKanbanComponent,
     KanbanStatusComponent,
     KanbanWorkflowComponent,
-    KanbanWorkflowKeyboardNavigationDirective,
+    KanbanKeyboardNavigationDirective,
     KanbanStoryComponent,
     KanbanCreateStoryInlineComponent,
     StatusScrollDynamicHeightDirective,

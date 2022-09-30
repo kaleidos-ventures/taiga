@@ -16,7 +16,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Entity, EntityPermission } from '@taiga/data';
-import { distinctUntilChanged, filter } from 'rxjs';
+import { distinctUntilChanged, filter, take } from 'rxjs';
 import { PermissionsService } from '~/app/services/permissions.service';
 
 // How to use
@@ -60,6 +60,19 @@ export class HasPermissionDirective implements OnInit {
   @Input()
   public set hasPermissionCanLosePermissions(canLosePermissions: boolean) {
     this.canLosePermissions = canLosePermissions;
+
+    // if the user now can lose permissions now we have to refresh the view
+    if (this.canLosePermissions) {
+      this.permissionsService
+        .hasPermissions$(this.entities, this.permissions, this.operation)
+        .pipe(
+          take(1),
+          filter((view) => !view)
+        )
+        .subscribe((view) => {
+          this.updateView(view);
+        });
+    }
   }
 
   private hasView = false;

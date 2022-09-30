@@ -31,6 +31,7 @@ export interface KanbanState {
   scrollToStory: PartialStory['tmpId'][];
   empty: boolean | null;
   newEventStories: Story['ref'][];
+  permissionsError: boolean;
 }
 
 export const initialKanbanState: KanbanState = {
@@ -42,6 +43,7 @@ export const initialKanbanState: KanbanState = {
   scrollToStory: [],
   empty: null,
   newEventStories: [],
+  permissionsError: false,
 };
 
 export const reducer = createReducer(
@@ -141,17 +143,24 @@ export const reducer = createReducer(
       return state;
     }
   ),
-  on(KanbanApiActions.createStoryError, (state, { story }): KanbanState => {
-    if ('tmpId' in story) {
-      state.stories[story.status.slug] = state.stories[
-        story.status.slug
-      ].filter((it) => {
-        return !('tmpId' in it && it.tmpId === story.tmpId);
-      });
-    }
+  on(
+    KanbanApiActions.createStoryError,
+    (state, { status, story }): KanbanState => {
+      if ('tmpId' in story) {
+        state.stories[story.status.slug] = state.stories[
+          story.status.slug
+        ].filter((it) => {
+          return !('tmpId' in it && it.tmpId === story.tmpId);
+        });
+      }
 
-    return state;
-  }),
+      if (status === 403) {
+        state.permissionsError = true;
+      }
+
+      return state;
+    }
+  ),
   on(KanbanActions.scrolledToNewStory, (state, { tmpId }): KanbanState => {
     state.scrollToStory = state.scrollToStory.filter((it) => it !== tmpId);
 

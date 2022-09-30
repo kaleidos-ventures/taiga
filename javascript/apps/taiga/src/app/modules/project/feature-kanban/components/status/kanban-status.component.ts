@@ -26,6 +26,7 @@ import { Store } from '@ngrx/store';
 import {
   selectLoadingStories,
   selectNewEventStories,
+  selectPermissionsError,
   selectStatusFormOpen,
   selectStatusNewStories,
   selectStories,
@@ -48,6 +49,7 @@ export interface KanbanComponentState {
   emptyKanban: boolean | null;
   formAutoFocus: boolean;
   newEventStories: KanbanState['newEventStories'];
+  permissionsError: boolean;
 }
 
 @Component({
@@ -169,6 +171,11 @@ export class KanbanStatusComponent
     this.state.connect(
       'showAddForm',
       this.store.select(selectStatusFormOpen(this.status.slug))
+    );
+
+    this.state.connect(
+      'permissionsError',
+      this.store.select(selectPermissionsError)
     );
 
     this.watchNewStories();

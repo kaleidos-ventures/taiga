@@ -10,7 +10,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { map } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { WsService } from '~/app/services/ws';
 import {
@@ -25,6 +25,10 @@ import {
 import { Story } from '@taiga/data';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { Router } from '@angular/router';
+import { AppService } from '~/app/services/app.service';
+import { TuiNotification } from '@taiga-ui/core';
+import { filterNil } from '~/app/shared/utils/operators';
+import { concatLatestFrom } from '@ngrx/effects';
 
 interface ComponentState {
   loadingWorkflows: KanbanState['loadingWorkflows'];
@@ -61,7 +65,8 @@ export class ProjectFeatureKanbanComponent {
     private state: RxState<ComponentState>,
     private wsService: WsService,
     private permissionService: PermissionsService,
-    private router: Router
+    private router: Router,
+    private appService: AppService
   ) {
     const canViewPage = this.permissionService.hasPermissions('story', [
       'view',
@@ -80,6 +85,23 @@ export class ProjectFeatureKanbanComponent {
     );
     this.state.connect('workflows', this.store.select(selectWorkflows));
     this.events();
+
+    this.permissionService
+      .hasPermissions$('story', ['view'])
+      .pipe(
+        untilDestroyed(this),
+        filter((canView) => !canView),
+        concatLatestFrom(() => this.project$.pipe(filterNil()))
+      )
+      .subscribe(([, project]) => {
+        void this.router.navigate(['project', project.slug]);
+
+        this.appService.toastNotification({
+          message: 'lost_kanban_access',
+          status: TuiNotification.Error,
+          scope: 'kanban',
+        });
+      });
   }
 
   public project$ = this.store.select(selectCurrentProject);

@@ -5,6 +5,7 @@
   "empty_status": "There are no stories.",
   "add_story": "Add story",
   "create_story_permission": "You no longer have permissions to create stories",
+  "lost_kanban_access": "You no longer have permissions to access this content.",
   "story_title": "{{ref}} {{title}}. Position {{position}} of {{total}}",
   "status_live_announce": "Status {{ status }}",
   "create_story_form": {

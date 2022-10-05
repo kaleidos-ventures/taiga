@@ -12,8 +12,24 @@ from taiga.workflows.serializers.nested import WorkflowStatusNestedSerializer
 class StorySerializer(BaseModel):
     ref: int
     title: str
-    order: int
     status: WorkflowStatusNestedSerializer
+
+    class Config:
+        orm_mode = True
+
+
+class ReorderSerializer(BaseModel):
+    place: str
+    ref: int
+
+    class Config:
+        orm_mode = True
+
+
+class ReorderStoriesSerializer(BaseModel):
+    status: WorkflowStatusNestedSerializer
+    stories: list[int]
+    reorder: ReorderSerializer | None
 
     class Config:
         orm_mode = True

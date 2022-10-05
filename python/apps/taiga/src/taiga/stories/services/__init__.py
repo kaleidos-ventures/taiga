@@ -5,25 +5,36 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import Any
 
 from taiga.base.api import Pagination
 from taiga.projects.projects.models import Project
 from taiga.stories import events as stories_events
 from taiga.stories import repositories as stories_repositories
 from taiga.stories.models import Story
-from taiga.stories.services.exceptions import InvalidStatusError
+from taiga.stories.services import exceptions as ex
 from taiga.users.models import User
 from taiga.workflows import dataclasses as dt
+from taiga.workflows import repositories as workflows_repositories
+from taiga.workflows.dataclasses import Workflow
+from taiga.workflows.models import WorkflowStatus
 
 
 async def create_story(project: Project, workflow: dt.Workflow, title: str, status_slug: str, user: User) -> Story:
     try:
         workflow_status = next(status for status in workflow.statuses if status.slug == status_slug)
     except StopIteration:
-        raise InvalidStatusError("The provided status is not valid.")
+        raise ex.InvalidStatusError("The provided status is not valid.")
+
+    order = await stories_repositories.get_max_order(status_id=workflow_status.id) + 100
 
     story = await stories_repositories.create_story(
-        title=title, project_id=project.id, workflow_id=workflow.id, status_id=workflow_status.id, user_id=user.id
+        title=title,
+        project_id=project.id,
+        workflow_id=workflow.id,
+        status_id=workflow_status.id,
+        user_id=user.id,
+        order=order,
     )
 
     await stories_events.emit_event_when_story_is_created(story=story)
@@ -46,3 +57,55 @@ async def get_paginated_stories_by_workflow(
     pagination = Pagination(offset=offset, limit=limit, total=total_stories)
 
     return pagination, stories
+
+
+async def reorder_stories(
+    project: Project,
+    workflow: Workflow,
+    target_status_slug: str,
+    stories_refs: list[int],
+    reorder: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    # check target_status exists
+    try:
+        target_status = await workflows_repositories.get_status(
+            project_slug=project.slug, workflow_slug=workflow.slug, status_slug=target_status_slug
+        )
+    except WorkflowStatus.DoesNotExist:
+        raise ex.InvalidStatusError(f"Status {target_status_slug} doesn't exist in this project")
+
+    # check anchor story exists
+    if reorder:
+        try:
+            assert reorder["ref"] not in stories_refs
+            reorder_story = await stories_repositories.get_story(
+                workflow_id=workflow.id, status_id=target_status.id, ref=reorder["ref"]
+            )
+            reorder_place = reorder["place"]
+        except Story.DoesNotExist:
+            raise ex.InvalidStoryRefError(f"Ref {reorder['ref']} doesn't exist in this project")
+        except AssertionError:
+            raise ex.InvalidStoryRefError(f"Ref {reorder['ref']} should not be part of the stories to reorder")
+    else:
+        reorder_story = None
+        reorder_place = None
+
+    # check all stories "to reorder" exist
+    stories_to_reorder = await stories_repositories.get_stories_to_reorder(workflow_id=workflow.id, refs=stories_refs)
+    if len(stories_to_reorder) < len(stories_refs):
+        raise ex.InvalidStoryRefError("One or more refs don't exist in this project")
+
+    # update stories
+    await stories_repositories.reorder_stories(
+        target_status=target_status,
+        stories_to_reorder=stories_to_reorder,
+        reorder_story=reorder_story,
+        reorder_place=reorder_place,
+    )
+
+    # event
+    await stories_events.emit_when_stories_are_reordered(
+        project=project, status=target_status, stories=stories_refs, reorder=reorder
+    )
+
+    return {"status": target_status, "stories": stories_refs, "reorder": reorder}

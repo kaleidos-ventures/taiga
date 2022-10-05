@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import random
+from decimal import Decimal
 
 from asgiref.sync import sync_to_async
 from faker import Faker
@@ -356,10 +357,10 @@ async def _create_stories(
     for workflow in await _get_workflows(project=project):
         statuses = await _get_workflow_statuses(workflow=workflow)
         for i in range(num_stories_to_create):
-            await _create_story(status=random.choice(statuses), owner=random.choice(members))
+            await _create_story(status=random.choice(statuses), owner=random.choice(members), order=Decimal(i))
 
 
-async def _create_story(status: WorkflowStatus, owner: User, title: str | None = None) -> Story:
+async def _create_story(status: WorkflowStatus, owner: User, order: Decimal, title: str | None = None) -> Story:
     _title = title or fake.text(max_nb_chars=random.choice(STORY_TITLE_MAX_SIZE))
 
     return await stories_repositories.create_story(
@@ -368,6 +369,7 @@ async def _create_story(status: WorkflowStatus, owner: User, title: str | None =
         workflow_id=status.workflow_id,
         status_id=status.id,
         user_id=owner.id,
+        order=order,
     )
 
 

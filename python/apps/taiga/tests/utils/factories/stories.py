@@ -17,6 +17,7 @@ class StoryFactory(Factory):
     workflow = factory.SubFactory("tests.utils.factories.WorkflowFactory")
     status = factory.SubFactory("tests.utils.factories.WorkflowStatusFactory")
     created_by = factory.SubFactory("tests.utils.factories.UserFactory")
+    order = factory.Sequence(lambda n: n + 1)
 
     class Meta:
         model = "stories.Story"

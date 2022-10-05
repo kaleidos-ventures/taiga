@@ -10,7 +10,7 @@ from fastapi.params import Depends
 from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import Or, check_permissions
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422, ERROR_401
+from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import CanViewProject, HasPerm, IsAuthenticated, IsProjectAdmin
 from taiga.permissions import services as permissions_services
 from taiga.projects.invitations.permissions import HasPendingProjectInvitation

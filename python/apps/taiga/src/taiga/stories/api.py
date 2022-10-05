@@ -15,13 +15,14 @@ from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.stories import services as stories_services
 from taiga.stories.models import Story
-from taiga.stories.serializers import StorySerializer
-from taiga.stories.validators import StoryValidator
+from taiga.stories.serializers import ReorderStoriesSerializer, StorySerializer
+from taiga.stories.validators import ReorderStoriesValidator, StoryValidator
 from taiga.workflows.api import get_workflow_or_404
 
 # PERMISSIONS
 CREATE_STORY = HasPerm("add_story")
 LIST_STORIES = HasPerm("view_story")
+REORDER_STORIES = HasPerm("modify_story")
 
 
 ################################################
@@ -85,3 +86,35 @@ async def list_stories(
     set_pagination(response=response, pagination=pagination)
 
     return stories
+
+
+@routes.projects.post(
+    "/{project_slug}/workflows/{workflow_slug}/stories/reorder",
+    name="project.stories.reorder",
+    summary="Reorder stories in kanban; change priority and/or status",
+    response_model=ReorderStoriesSerializer,
+    responses=ERROR_404 | ERROR_422 | ERROR_403,
+)
+async def reorder_stories(
+    request: AuthRequest,
+    response: Response,
+    form: ReorderStoriesValidator,
+    project_slug: str = Query(None, description="the project slug (str)"),
+    workflow_slug: str = Query(None, description="the workflow slug (str)"),
+) -> ReorderStoriesSerializer:
+    """
+    Reorder one or more stories in the kanban; it may change priority and/or status
+    """
+    project = await get_project_or_404(project_slug)
+    await check_permissions(permissions=REORDER_STORIES, user=request.user, obj=project)
+    workflow = await get_workflow_or_404(project_slug=project_slug, workflow_slug=workflow_slug)
+
+    resp = await stories_services.reorder_stories(
+        project=project,
+        workflow=workflow,
+        target_status_slug=form.status,
+        stories_refs=form.stories,
+        reorder=form.get_reorder_dict(),
+    )
+
+    return ReorderStoriesSerializer(**resp)

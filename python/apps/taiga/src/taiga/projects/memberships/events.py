@@ -8,7 +8,6 @@
 from taiga.events import events_manager
 from taiga.projects.memberships.models import ProjectMembership
 
-
 UPDATE_PROJECT_MEMBERSHIP = "projectmemberships.update"
 
 

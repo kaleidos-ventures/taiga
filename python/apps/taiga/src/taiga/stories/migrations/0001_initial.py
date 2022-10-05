@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ("title", models.CharField(max_length=500, verbose_name="title")),
                 (
                     "order",
-                    models.BigIntegerField(default=taiga.base.utils.datetime.timestamp_mics, verbose_name="order"),
+                    models.DecimalField(max_digits=16, decimal_places=10, default=100, verbose_name="order"),
                 ),
                 (
                     "created_by",

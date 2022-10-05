@@ -231,9 +231,12 @@ async def test_get_user_permissions_for_project():
     params = [False, True, False, False, False, [], project]
     assert await services.get_user_permissions_for_project(*params) == choices.ProjectPermissions.values
 
-    params = [False, False, True, False, False, ["view_story"], project]
+    params = [False, False, True, False, True, ["view_story", "view_project"], project]
     # a project member will always view the project she's member of, no matter her role's permissions
-    assert "view_project" in await services.get_user_permissions_for_project(*params)
+    res = await services.get_user_permissions_for_project(*params)
+    assert "view_story" in res
+    assert "view_project" in res
+    assert len(res) == 2
 
     params = [False, False, False, True, False, [], project]
     assert await services.get_user_permissions_for_project(*params) == project.workspace_member_permissions

@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "5772a36d-838c-4bdd-9d87-13601c6dd93c",
+		"_postman_id": "16dd1cfc-85c3-4535-a428-6d346d3acdc3",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -1821,14 +1820,16 @@
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"",
+									"    pm.environment.set(\"ref1\", jsonRes.ref);",
+									"",
+									"",
 									"    // Validate response API contract",
 									"    pm.expect(jsonRes).to.have.property(\"ref\");",
 									"    pm.expect(jsonRes).to.have.property(\"title\");",
-									"    pm.expect(jsonRes).to.have.property(\"order\");",
 									"    pm.expect(jsonRes).to.have.property(\"status\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(4);",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
@@ -1903,11 +1904,10 @@
 									"    // Validate response API contract",
 									"    pm.expect(jsonRes[0]).to.have.property(\"ref\");",
 									"    pm.expect(jsonRes[0]).to.have.property(\"title\");",
-									"    pm.expect(jsonRes[0]).to.have.property(\"order\");",
 									"    pm.expect(jsonRes[0]).to.have.property(\"status\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes[0]).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(4);",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes[0].status).to.have.property(\"name\");",
@@ -1959,6 +1959,155 @@
 									"key": "limit",
 									"value": "10"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "N/A 200.projects.{p}.workflows.{wf}.stories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    pm.environment.set(\"ref2\", jsonRes.ref);",
+									"",
+									"    // Validate response API contract",
+									"    pm.expect(jsonRes).to.have.property(\"ref\");",
+									"    pm.expect(jsonRes).to.have.property(\"title\");",
+									"    pm.expect(jsonRes).to.have.property(\"status\");",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"",
+									"    // Validate second-level entries",
+									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
+									"    pm.expect(jsonRes.status).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
+									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"done\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"workflows",
+								"{{wf-slug}}",
+								"stories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{p}.workflows.{wf}.stories.reorder",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    // Validate response API contract",
+									"    pm.expect(jsonRes).to.have.property(\"reorder\");",
+									"    pm.expect(jsonRes).to.have.property(\"status\");",
+									"    pm.expect(jsonRes).to.have.property(\"stories\");",
+									"    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"done\",\n    \"stories\": [{{ref2}}],\n    \"reorder\": {\"place\": \"before\", \"ref\": {{ref1}}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories/reorder",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"workflows",
+								"{{wf-slug}}",
+								"stories",
+								"reorder"
 							]
 						}
 					},

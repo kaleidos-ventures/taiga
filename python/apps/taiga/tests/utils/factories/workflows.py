@@ -41,6 +41,10 @@ def create_workflow(**kwargs):
     return WorkflowFactory.create(**kwargs)
 
 
+def build_workflow_status(**kwargs):
+    return WorkflowStatusFactory.build(**kwargs)
+
+
 @sync_to_async
 def create_workflow_status(**kwargs):
     return WorkflowStatusFactory.create(**kwargs)

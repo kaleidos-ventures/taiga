@@ -11,3 +11,7 @@ from taiga.base.services.exceptions import TaigaServiceException
 
 class InvalidStatusError(TaigaServiceException):
     ...
+
+
+class InvalidStoryRefError(TaigaServiceException):
+    ...

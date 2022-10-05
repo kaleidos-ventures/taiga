@@ -7,13 +7,14 @@
 
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin
-from taiga.base.utils.datetime import timestamp_mics
 from taiga.projects.references.mixins import ProjectReferenceMixin
 
 
 class Story(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
     title = models.CharField(max_length=500, null=False, blank=False, verbose_name="title")
-    order = models.BigIntegerField(default=timestamp_mics, null=False, blank=False, verbose_name="order")
+    order = models.DecimalField(
+        max_digits=16, decimal_places=10, default=100, null=False, blank=False, verbose_name="order"
+    )
     project = models.ForeignKey(
         "projects.Project",
         null=False,
@@ -53,4 +54,4 @@ class Story(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
         return f"#{self.ref} {self.title}"
 
     def __repr__(self) -> str:
-        return f"<Story {self.project} #{self.ref}>"
+        return f"<Story #{self.ref}>"

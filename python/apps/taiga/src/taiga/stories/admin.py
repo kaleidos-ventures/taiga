@@ -19,7 +19,7 @@ class StoryAdmin(admin.ModelAdmin[Story]):
                 "fields": (
                     "id",
                     "ref",
-                    "name",
+                    "title",
                     "order",
                     "created_by",
                     "created_at",
@@ -31,12 +31,12 @@ class StoryAdmin(admin.ModelAdmin[Story]):
         ),
     )
     readonly_fields = ("id", "ref", "created_at", "created_by")
-    list_display = ["ref", "name", "project", "workflow", "status", "order"]
+    list_display = ["ref", "title", "project", "workflow", "status", "order"]
     list_filter = ("project", "created_by", "workflow", "status")
     search_fields = [
         "id",
         "ref",
-        "name",
+        "title",
         "project__name",
         "project__slug",
         "workflow__name",

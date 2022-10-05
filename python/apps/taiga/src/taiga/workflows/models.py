@@ -68,7 +68,7 @@ class WorkflowStatus(models.BaseModel):
         return self.name
 
     def __repr__(self) -> str:
-        return f"<WorkflowStatus {self.workflow.name} - {self.name}>"
+        return f"<WorkflowStatus {self.name}>"
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.slug:

@@ -7,8 +7,7 @@
 
 from taiga.permissions import services as permissions_services
 from taiga.projects.projects.models import Project
-from taiga.projects.roles import repositories
-from taiga.projects.roles import events
+from taiga.projects.roles import events, repositories
 from taiga.projects.roles.models import ProjectRole
 from taiga.projects.roles.services import exceptions as ex
 
@@ -31,11 +30,8 @@ async def update_project_role_permissions(role: ProjectRole, permissions: list[s
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
-    project_role_permissions = await (
-        repositories.update_project_role_permissions(role=role, permissions=permissions)
-    )
+    project_role_permissions = await (repositories.update_project_role_permissions(role=role, permissions=permissions))
 
     await events.emit_event_when_project_role_permissions_are_updated(role=role)
 
     return project_role_permissions
-

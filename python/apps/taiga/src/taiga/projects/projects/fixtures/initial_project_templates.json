@@ -15,6 +15,7 @@
                 "order": 1,
                 "is_admin": true,
                 "permissions": [
+                  "view_project",
                   "add_story",
                   "comment_story",
                   "delete_story",
@@ -33,6 +34,7 @@
                 "order": 2,
                 "is_admin": false,
                 "permissions": [
+                  "view_project",
                   "add_story",
                   "comment_story",
                   "delete_story",

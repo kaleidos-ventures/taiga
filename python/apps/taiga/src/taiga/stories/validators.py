@@ -5,7 +5,9 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from pydantic import constr, validator
+from typing import Any
+
+from pydantic import conlist, constr, validator
 from taiga.base.serializers import BaseModel
 
 
@@ -17,3 +19,37 @@ class StoryValidator(BaseModel):
     def check_not_empty(cls, v: str) -> str:
         assert v != "", "Empty field is not allowed"
         return v
+
+
+class ReorderValidator(BaseModel):
+    place: str
+    ref: int
+
+    @validator("place")
+    def check_valid_place(cls, v: str) -> str:
+        assert v in ["before", "after"], "Place should be 'after' or 'before'"
+        return v
+
+
+class ReorderStoriesValidator(BaseModel):
+    status: str
+    stories: conlist(int, min_items=1)  # type: ignore[valid-type]
+    reorder: ReorderValidator | None
+
+    @validator("status")
+    def check_not_empty(cls, v: str) -> str:
+        assert v != "", "Empty field is not allowed"
+        return v
+
+    @validator("stories")
+    def return_unique_stories(cls, v: list[int]) -> list[int]:
+        """
+        If there are some stories references repeated, ignore them,
+        but keep the original order. Example:
+        v = [1, 1, 9, 1, 9, 6, 9, 7]
+        return [1, 9, 6, 7]
+        """
+        return sorted(set(v), key=v.index)
+
+    def get_reorder_dict(self) -> dict[str, Any]:
+        return self.dict()["reorder"]

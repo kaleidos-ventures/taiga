@@ -8,7 +8,6 @@
 from taiga import events
 from taiga.projects.projects.models import Project
 
-
 PROJECT_PERMISSIONS_UPDATE = "projects.permissions.update"
 
 

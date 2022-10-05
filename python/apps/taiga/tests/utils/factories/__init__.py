@@ -26,6 +26,7 @@ from .workflows import (  # noqa
     WorkflowFactory,
     WorkflowStatusFactory,
     build_workflow,
+    build_workflow_status,
     create_workflow,
     create_workflow_status,
 )

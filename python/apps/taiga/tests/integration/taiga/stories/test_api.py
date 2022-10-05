@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
+from asgiref.sync import sync_to_async
 from fastapi import status
 from tests.utils import factories as f
 
@@ -219,3 +220,50 @@ async def test_create_story_user_has_valid_perm_ko(client):
     client.login(public_user)
     response = client.post(f"/projects/{project.slug}/workflows/{workflow.slug}/stories", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+##########################################################
+# POST /projects/<slug>/workflows/<slug>/stories/reorder
+##########################################################
+
+
+async def test_reorder_stories_with_reorder_ok(client):
+    pj_admin = await f.create_user()
+    pj = await f.create_project(owner=pj_admin)
+    workflow = await sync_to_async(pj.workflows.first)()
+    status_new = await sync_to_async(workflow.statuses.first)()
+    s1 = await f.create_story(project=pj, workflow=workflow, status=status_new)
+    await f.create_story(project=pj, workflow=workflow, status=status_new)
+    s3 = await f.create_story(project=pj, workflow=workflow, status=status_new)
+
+    data = {"status": "new", "stories": [s1.ref], "reorder": {"place": "before", "ref": s3.ref}}
+    client.login(pj_admin)
+    response = client.post(f"/projects/{pj.slug}/workflows/main/stories/reorder", json=data)
+
+    assert response.status_code == status.HTTP_200_OK, response.text
+    res = response.json()
+    assert "status" in res
+    assert "reorder" in res
+    assert "stories" in res
+    assert res["stories"] == [s1.ref]
+
+
+async def test_reorder_stories_without_reorder_ok(client):
+    pj_admin = await f.create_user()
+    pj = await f.create_project(owner=pj_admin)
+    workflow = await sync_to_async(pj.workflows.first)()
+    status_new = await sync_to_async(workflow.statuses.first)()
+    s1 = await f.create_story(project=pj, workflow=workflow, status=status_new)
+    await f.create_story(project=pj, workflow=workflow, status=status_new)
+    await f.create_story(project=pj, workflow=workflow, status=status_new)
+
+    data = {"status": status_new.slug, "stories": [s1.ref]}
+    client.login(pj_admin)
+    response = client.post(f"/projects/{pj.slug}/workflows/main/stories/reorder", json=data)
+
+    assert response.status_code == status.HTTP_200_OK, response.text
+    res = response.json()
+    assert "status" in res
+    assert "reorder" in res
+    assert "stories" in res
+    assert res["stories"] == [s1.ref]

@@ -33,7 +33,7 @@ def get_project_workflow(project_slug: str, workflow_slug: str) -> dt.Workflow |
 
 
 @sync_to_async
-def get_status(project_slug: str, workflow_slug: str, status_slug: str) -> WorkflowStatus | None:
+def get_status(project_slug: str, workflow_slug: str, status_slug: str) -> WorkflowStatus:
     return WorkflowStatus.objects.get(
         slug=status_slug, workflow__slug=workflow_slug, workflow__project__slug=project_slug
     )

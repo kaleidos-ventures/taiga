@@ -284,6 +284,21 @@ async def test_get_workspace_projects_for_user_3():
     assert len(res) == 0
 
 
+async def test_get_workspace_projects_for_user_4():
+    user6 = await f.create_user()
+    user7 = await f.create_user()
+
+    # workspace premium, user6(ws-admin), user7(no ws-member, ws-members have permissions)
+    workspace = await f.create_workspace(owner=user6, is_premium=True)
+    # user7 is not a pj-member or ws-member but ws-members are allowed
+    await f.create_project(workspace=workspace, owner=user6)
+
+    res = await repositories.get_workspace_projects_for_user(workspace.id, user6.id)
+    assert len(res) == 1
+    res = await repositories.get_workspace_projects_for_user(workspace.id, user7.id)
+    assert len(res) == 0
+
+
 ##########################################################
 # get_workspace_invited_projects_for_user
 ##########################################################

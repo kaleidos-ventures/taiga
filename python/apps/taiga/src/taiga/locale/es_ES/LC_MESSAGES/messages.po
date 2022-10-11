@@ -187,7 +187,7 @@ msgstr "Nuevo inicio de sesión en tu cuenta de Taiga"
 #: taiga/emails/templates/social_login_warning.html.jinja:456
 #: taiga/emails/templates/social_login_warning.txt.jinja:9
 msgid "emails.social_warning_login.hi"
-msgstr "Hola %(full_name),"
+msgstr "Hola %(name)s,"
 
 #: taiga/emails/templates/social_login_warning.html.jinja:461
 #: taiga/emails/templates/social_login_warning.txt.jinja:11
@@ -204,7 +204,7 @@ msgstr "Cuándo:"
 #: taiga/emails/templates/social_login_warning.html.jinja:475
 #: taiga/emails/templates/social_login_warning.txt.jinja:15
 msgid "emails.social_login_warning.not_you"
-msgstr "Si has sido tú, puedes ignorar este email"
+msgstr "Si no has sido tú, escríbenos un correo a %(support_email)s"
 
 #: taiga/emails/templates/social_login_warning.html.jinja:480
 #: taiga/emails/templates/social_login_warning.txt.jinja:17

@@ -28,6 +28,7 @@ import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { InvitationParams, SignUpError } from '@taiga/data';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { PasswordStrengthComponent } from '@taiga/ui/inputs/password-strength/password-strength.component';
@@ -54,6 +55,8 @@ import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module
     InputsModule,
     GetUrlPipeModule,
     ButtonLoadingModule,
+    TuiButtonModule,
+    TuiLinkModule,
   ],
   providers: [
     {

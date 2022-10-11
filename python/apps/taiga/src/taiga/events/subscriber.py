@@ -44,7 +44,7 @@ class Subscriber:
             pass
 
     def __repr__(self) -> str:
-        return f"Sunscriber(id={self.id!r})"
+        return f"Subscriber(id={self.id!r})"
 
     @property
     def user(self) -> AnyUser:

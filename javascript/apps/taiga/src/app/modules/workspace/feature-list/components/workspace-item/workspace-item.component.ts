@@ -14,6 +14,7 @@ import {
   trigger,
 } from '@angular/animations';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -141,7 +142,9 @@ export interface WorkspaceItemState {
     ]),
   ],
 })
-export class WorkspaceItemComponent implements OnInit, OnChanges {
+export class WorkspaceItemComponent
+  implements OnInit, OnChanges, AfterViewInit
+{
   @Input()
   public workspace!: Workspace;
 
@@ -317,6 +320,10 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
         };
       })
     );
+  }
+
+  public ngAfterViewInit() {
+    this.state.set({ slideOutActive: false });
   }
 
   public newProjectAnimationStart(
@@ -597,7 +604,6 @@ export class WorkspaceItemComponent implements OnInit, OnChanges {
     if (removedInvitations.length) {
       // activate slideOut & then re-render template (requestAnimationFrame) to start the :leave animation
       this.state.set({ slideOutActive: true });
-
       requestAnimationFrame(() => {
         if (removedInvitations.length) {
           this.animateLeavingInvitationSiblings(removedInvitations[0]);

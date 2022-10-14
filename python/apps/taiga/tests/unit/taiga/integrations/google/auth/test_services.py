@@ -31,7 +31,7 @@ async def test_google_login_ok():
         fake_google_services.get_user_info_from_google.return_value = GoogleUserProfile(
             email="email@test.com", full_name="Full Name", google_id="1", bio="Bio"
         )
-        await services.google_login(code="code", redirect_uri="https://redirect.uri")
+        await services.google_login(code="code", redirect_uri="https://redirect.uri", lang="es_ES")
         fake_integrations_auth_services.social_login.assert_awaited_once()
 
 

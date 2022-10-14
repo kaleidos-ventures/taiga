@@ -10,8 +10,13 @@ from typing import Iterable, TypeAlias, Union
 
 from taiga.base.db import models, validators
 from taiga.base.db.users import AbstractBaseUser, AnonymousUser, UserManager
+from taiga.conf import settings
 
 AnyUser: TypeAlias = Union[AnonymousUser, "User"]
+
+
+def default_language() -> str:
+    return settings.LANG
 
 
 class User(models.BaseModel, AbstractBaseUser):
@@ -41,6 +46,7 @@ class User(models.BaseModel, AbstractBaseUser):
     )
     full_name = models.CharField(max_length=256, null=True, blank=True, verbose_name="full name")
     accepted_terms = models.BooleanField(null=False, blank=False, default=True, verbose_name="accepted terms")
+    lang = models.CharField(max_length=20, null=False, blank=False, default=default_language, verbose_name="language")
     date_joined = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="date joined")
     date_verification = models.DateTimeField(null=True, blank=True, default=None, verbose_name="date verification")
 

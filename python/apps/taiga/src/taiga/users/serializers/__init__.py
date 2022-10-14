@@ -20,7 +20,7 @@ class UserBaseSerializer(BaseModel):
 
 
 class UserSerializer(UserBaseSerializer):
-    ...
+    lang: str
 
     class Config:
         orm_mode = True
@@ -28,12 +28,13 @@ class UserSerializer(UserBaseSerializer):
 
 class UserMeSerializer(UserBaseSerializer):
     email: EmailStr
+    lang: str
 
     class Config:
         orm_mode = True
 
 
-class UserSearchSerializer(UserSerializer):
+class UserSearchSerializer(UserBaseSerializer):
     user_is_member: bool | None
     user_has_pending_invitation: bool | None
 

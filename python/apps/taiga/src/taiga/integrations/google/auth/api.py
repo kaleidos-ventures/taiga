@@ -25,4 +25,4 @@ async def google_login(form: GoogleLoginValidator) -> AccessWithRefreshToken:
     Get an access and refresh token using a Google authorization.
     For a non-existing user, this process registers a new user as well.
     """
-    return await auth_google_services.google_login(code=form.code, redirect_uri=form.redirect_uri)
+    return await auth_google_services.google_login(code=form.code, redirect_uri=form.redirect_uri, lang=form.lang)

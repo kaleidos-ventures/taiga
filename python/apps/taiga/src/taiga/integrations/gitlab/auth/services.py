@@ -12,7 +12,7 @@ from taiga.integrations.gitlab import exceptions as ex
 from taiga.integrations.gitlab import services as gitlab_services
 
 
-async def gitlab_login(code: str, redirect_uri: str) -> AccessWithRefreshToken:
+async def gitlab_login(code: str, redirect_uri: str, lang: str | None = None) -> AccessWithRefreshToken:
     if not settings.GITLAB_CLIENT_ID or not settings.GITLAB_CLIENT_SECRET or not settings.GITLAB_URL:
         raise ex.GitlabLoginError("Login with Gitlab is not available. Contact with the platform administrators.")
 
@@ -30,4 +30,5 @@ async def gitlab_login(code: str, redirect_uri: str) -> AccessWithRefreshToken:
         social_key="gitlab",
         social_id=user_info.gitlab_id,
         bio=user_info.bio,
+        lang=lang,
     )

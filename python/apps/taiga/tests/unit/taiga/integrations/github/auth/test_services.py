@@ -31,7 +31,7 @@ async def test_github_login_ok():
         fake_github_services.get_user_info_from_github.return_value = GithubUserProfile(
             email="email@test.com", full_name="Full Name", github_id="1", bio="Bio"
         )
-        await services.github_login(code="code")
+        await services.github_login(code="code", lang="es_ES")
         fake_integrations_auth_services.social_login.assert_awaited_once()
 
 

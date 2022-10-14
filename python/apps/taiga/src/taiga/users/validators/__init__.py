@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from pydantic import EmailStr, StrictBool, constr, validator
+from taiga.base.i18n import i18n
 from taiga.base.serializers import BaseModel
 from taiga.conf import settings
 from taiga.users.validators.mixins import PasswordMixin
@@ -19,6 +20,7 @@ class CreateUserValidator(PasswordMixin, BaseModel):
     email: EmailStr
     full_name: constr(max_length=50)  # type: ignore
     accept_terms: StrictBool
+    lang: str | None
     project_invitation_token: str | None
     accept_project_invitation: StrictBool = True
 
@@ -39,6 +41,12 @@ class CreateUserValidator(PasswordMixin, BaseModel):
     @validator("accept_terms")
     def check_accept_terms(cls, v: bool) -> bool:
         assert v is True, "User has to accept terms of service"
+        return v
+
+    @validator("lang")
+    def check_lang(cls, v: str) -> str:
+        if v:
+            assert v in i18n.available_languages, "Language is not available"
         return v
 
 

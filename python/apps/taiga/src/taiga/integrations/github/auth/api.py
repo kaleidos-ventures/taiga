@@ -25,4 +25,4 @@ async def github_login(form: GithubLoginValidator) -> AccessWithRefreshToken:
     Get an access and refresh token using a Github authorization.
     For a non-existing user, this process registers a new user as well.
     """
-    return await auth_github_services.github_login(code=form.code)
+    return await auth_github_services.github_login(code=form.code, lang=form.lang)

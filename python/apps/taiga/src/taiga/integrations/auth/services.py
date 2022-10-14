@@ -9,6 +9,7 @@
 from taiga.auth import services as auth_services
 from taiga.auth.dataclasses import AccessWithRefreshToken
 from taiga.base.utils import datetime
+from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
 from taiga.projects.invitations import services as invitations_services
@@ -16,7 +17,9 @@ from taiga.users import repositories as users_repositories
 from taiga.users import services as users_services
 
 
-async def social_login(email: str, full_name: str, social_key: str, social_id: str, bio: str) -> AccessWithRefreshToken:
+async def social_login(
+    email: str, full_name: str, social_key: str, social_id: str, bio: str, lang: str | None = None
+) -> AccessWithRefreshToken:
     # check if the user exists and already has social login with the requested system
     user = await users_repositories.get_user_from_auth_data(key=social_key, value=social_id)
     if not user:
@@ -25,8 +28,9 @@ async def social_login(email: str, full_name: str, social_key: str, social_id: s
         if not user:
             # create a new user with social login data and verify it
             username = await users_services.generate_username(email=email)
+            lang = lang if lang else settings.LANG
             user = await users_repositories.create_user(
-                email=email, username=username, full_name=full_name, password=None
+                email=email, username=username, full_name=full_name, password=None, lang=lang
             )
             await users_repositories.verify_user(user)
             await invitations_services.update_user_projects_invitations(user=user)

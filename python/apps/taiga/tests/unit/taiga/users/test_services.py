@@ -9,6 +9,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.conf import settings
 from taiga.projects.invitations.services.exceptions import BadInvitationTokenError, InvitationDoesNotExistError
 from taiga.tokens import exceptions as tokens_ex
 from taiga.users import services
@@ -25,7 +26,8 @@ async def test_create_user_ok(tqmanager):
     username = "email"
     full_name = "Full Name"
     password = "CorrectP4ssword$"
-    user = f.build_user(id=1, email=email, username=username, full_name=full_name)
+    lang = "es_ES"
+    user = f.build_user(id=1, email=email, username=username, full_name=full_name, lang=lang)
 
     accept_project_invitation = True
     project_invitation_token = "eyJ0Token"
@@ -44,10 +46,55 @@ async def test_create_user_ok(tqmanager):
             password=password,
             accept_project_invitation=accept_project_invitation,
             project_invitation_token=project_invitation_token,
+            lang=lang,
         )
 
         fake_users_repo.create_user.assert_awaited_once_with(
-            email=email, username=username, full_name=full_name, password=password
+            email=email, username=username, full_name=full_name, password=password, lang=lang
+        )
+        assert len(tqmanager.pending_jobs) == 1
+        job = tqmanager.pending_jobs[0]
+        assert "send_email" in job["task_name"]
+        assert job["args"] == {
+            "email_name": "sign_up",
+            "to": "email@email.com",
+            "context": {"verification_token": "verify_token"},
+        }
+
+        fake_user_token.assert_awaited_once_with(user, project_invitation_token, accept_project_invitation)
+
+
+async def test_create_user_default_instance_lang(tqmanager):
+    email = "email@email.com"
+    username = "email"
+    full_name = "Full Name"
+    password = "CorrectP4ssword$"
+    lang = None
+    default_instance_lang = settings.LANG
+    user = f.build_user(id=1, email=email, username=username, full_name=full_name, lang=lang)
+
+    accept_project_invitation = True
+    project_invitation_token = "eyJ0Token"
+
+    with (
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
+        patch("taiga.users.services._generate_verify_user_token", return_value="verify_token") as fake_user_token,
+        patch("taiga.users.services.generate_username", return_value=username),
+    ):
+        fake_users_repo.get_user_by_username_or_email.return_value = None
+        fake_users_repo.create_user.return_value = user
+
+        await services.create_user(
+            email=email,
+            full_name=full_name,
+            password=password,
+            accept_project_invitation=accept_project_invitation,
+            project_invitation_token=project_invitation_token,
+            lang=lang,
+        )
+
+        fake_users_repo.create_user.assert_awaited_once_with(
+            email=email, username=username, full_name=full_name, password=password, lang=default_instance_lang
         )
         assert len(tqmanager.pending_jobs) == 1
         job = tqmanager.pending_jobs[0]

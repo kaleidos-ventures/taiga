@@ -103,10 +103,12 @@ def update_last_login(user: User) -> None:
 
 
 @sync_to_async
-def create_user(email: str, username: str, full_name: str, password: str) -> User:
+def create_user(email: str, username: str, full_name: str, password: str, lang: str | None = None) -> User:
     user = User.objects.create(
         email=email, username=username, full_name=full_name, is_active=False, accepted_terms=True
     )
+    if lang:
+        user.lang = lang
     user.set_password(password)
     user.save()
     return user

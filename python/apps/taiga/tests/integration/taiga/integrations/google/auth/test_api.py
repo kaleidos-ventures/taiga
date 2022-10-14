@@ -33,7 +33,7 @@ async def test_google_login(client, httpx_mock):
         json={"sub": "google_id", "email": "email", "name": "fullname", "hd": "my bio"},
     )
 
-    data = {"code": "code", "redirect_uri": "https://redirect.uri"}
+    data = {"code": "code", "redirect_uri": "https://redirect.uri", "lang": "es_ES"}
     response = client.post("/auth/google", json=data)
 
     assert response.status_code == status.HTTP_200_OK, response.text

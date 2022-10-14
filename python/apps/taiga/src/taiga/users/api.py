@@ -65,6 +65,7 @@ async def create_user(form: users_validators.CreateUserValidator) -> User:
         email=form.email,
         full_name=form.full_name,
         password=form.password,
+        lang=form.lang,
         project_invitation_token=form.project_invitation_token,
         accept_project_invitation=form.accept_project_invitation,
     )

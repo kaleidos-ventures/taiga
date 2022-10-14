@@ -57,7 +57,7 @@ class AuthDataInline(admin.TabularInline[AuthData, User]):
 class UserAdmin(DjangoUserAdmin):
     fieldsets = (
         (None, {"fields": ("id", "username", "password")}),
-        ("Personal info", {"fields": ("email", "full_name", "accepted_terms")}),
+        ("Personal info", {"fields": ("email", "full_name", "accepted_terms", "lang")}),
         ("Permissions", {"fields": ("is_active", "is_superuser")}),
         ("Important dates", {"fields": (("date_joined", "date_verification"), "last_login")}),
     )

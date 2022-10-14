@@ -18,6 +18,7 @@ def test_validate_create_user_ok_all_fields():
     terms = True
     project_inv_token = "eyJ0zB26LvR9jQw7"
     accept_project_invitation = False
+    lang = "es_ES"
 
     validator = CreateUserValidator(
         email=email,
@@ -26,6 +27,7 @@ def test_validate_create_user_ok_all_fields():
         accept_terms=terms,
         project_invitation_token=project_inv_token,
         accept_project_invitation=accept_project_invitation,
+        lang=lang,
     )
 
     assert validator.email == email
@@ -34,6 +36,7 @@ def test_validate_create_user_ok_all_fields():
     assert validator.accept_terms == terms
     assert validator.project_invitation_token == project_inv_token
     assert validator.accept_project_invitation == accept_project_invitation
+    assert validator.lang == lang
 
 
 def test_validate_create_user_wrong_not_all_required_fields():
@@ -114,4 +117,19 @@ def test_validate_create_user_invalid_short_password():
 
     expected_error_fields = ["password"]
     expected_error_messages = ["ensure this value has at least 8 characters"]
+    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
+
+
+def test_validate_create_user_not_available_lang():
+    email = "user@email.com"
+    full_name = "User fullname"
+    password = "Dragon123"
+    terms = True
+    lang = "xx"
+
+    with pytest.raises(ValidationError) as validation_errors:
+        CreateUserValidator(email=email, full_name=full_name, password=password, accept_terms=terms, lang=lang)
+
+    expected_error_fields = ["lang"]
+    expected_error_messages = ["Language is not available"]
     check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)

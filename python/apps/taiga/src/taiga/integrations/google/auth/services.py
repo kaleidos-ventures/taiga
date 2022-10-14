@@ -12,7 +12,7 @@ from taiga.integrations.google import exceptions as ex
 from taiga.integrations.google import services as google_services
 
 
-async def google_login(code: str, redirect_uri: str) -> AccessWithRefreshToken:
+async def google_login(code: str, redirect_uri: str, lang: str | None = None) -> AccessWithRefreshToken:
     if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
         raise ex.GoogleLoginError("Login with Google is not available. Contact with the platform administrators.")
 
@@ -30,4 +30,5 @@ async def google_login(code: str, redirect_uri: str) -> AccessWithRefreshToken:
         social_key="google",
         social_id=user_info.google_id,
         bio=user_info.bio,
+        lang=lang,
     )

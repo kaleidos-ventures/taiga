@@ -12,7 +12,7 @@ from taiga.integrations.github import exceptions as ex
 from taiga.integrations.github import services as github_services
 
 
-async def github_login(code: str) -> AccessWithRefreshToken:
+async def github_login(code: str, lang: str | None = None) -> AccessWithRefreshToken:
     if not settings.GITHUB_CLIENT_ID or not settings.GITHUB_CLIENT_SECRET:
         raise ex.GithubLoginError("Login with Github is not available. Contact with the platform administrators.")
 
@@ -30,4 +30,5 @@ async def github_login(code: str) -> AccessWithRefreshToken:
         social_key="github",
         social_id=user_info.github_id,
         bio=user_info.bio,
+        lang=lang,
     )

@@ -8,6 +8,7 @@
 from taiga.auth import services as auth_services
 from taiga.base.api.pagination import Pagination
 from taiga.base.utils.slug import generate_int_suffix, slugify
+from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
 from taiga.projects.invitations import services as invitations_services
@@ -28,6 +29,7 @@ async def create_user(
     email: str,
     full_name: str,
     password: str,
+    lang: str | None = None,
     project_invitation_token: str | None = None,
     accept_project_invitation: bool = True,
 ) -> User:
@@ -36,16 +38,17 @@ async def create_user(
     if user and user.is_active:
         raise ex.EmailAlreadyExistsError("Email already exists")
 
+    lang = lang if lang else settings.LANG
     if not user:
         # new user
         username = await generate_username(email=email)
         user = await users_repositories.create_user(
-            email=email, username=username, full_name=full_name, password=password
+            email=email, username=username, full_name=full_name, password=password, lang=lang
         )
     else:
         # the user (is_active=False) tries to sign-up again before verifying the previous attempt
         user = await users_repositories.update_user(
-            user=user, new_values={"full_name": full_name, "password": password}
+            user=user, new_values={"full_name": full_name, "password": password, "lang": lang}
         )
 
     await _send_verify_user_email(

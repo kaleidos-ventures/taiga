@@ -51,6 +51,7 @@ async def test_create_user_ok(client):
         "acceptTerms": True,
         "projectInvitationToken": "eyJ0eXAiOToken",
         "accept_project_invitation": False,
+        "lang": "es_ES",
     }
 
     response = client.post("/users", json=data)

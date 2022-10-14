@@ -6,13 +6,11 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import BaseModel
-from taiga.projects.roles.serializers import BaseProjectRoleSerializer
-from taiga.users.serializers.related import UserSummarySerializer
 
 
-class ProjectMembershipSerializer(BaseModel):
-    user: UserSummarySerializer
-    role: BaseProjectRoleSerializer
+class UserSummarySerializer(BaseModel):
+    username: str
+    full_name: str
 
     class Config:
         orm_mode = True

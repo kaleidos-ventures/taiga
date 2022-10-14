@@ -82,32 +82,39 @@ async def test_create_user_success():
     username = "userNAME"
     full_name = "Full Name"
     password = "password"
-    user = await users_repositories.create_user(email=email, username=username, full_name=full_name, password=password)
+    lang = "es_ES"
+    user = await users_repositories.create_user(
+        email=email, username=username, full_name=full_name, password=password, lang=lang
+    )
     await db.refresh_model_from_db(user)
     assert user.email == email.lower()
     assert user.username == username.lower()
     assert user.password
+    assert user.lang == lang
 
 
-async def test_create_user_error_emaili_or_username_case_insensitive():
+async def test_create_user_error_email_or_username_case_insensitive():
     email = "EMAIL@email.com"
     username = "userNAME"
     full_name = "Full Name"
     password = "password"
+    lang = "es_ES"
 
     email2 = "OTHER_EMAIL@email.com"
     username2 = "other_userNAME"
 
-    await users_repositories.create_user(email=email, username=username, full_name=full_name, password=password)
+    await users_repositories.create_user(
+        email=email, username=username, full_name=full_name, password=password, lang=lang
+    )
 
     with pytest.raises(IntegrityError):
         await users_repositories.create_user(
-            email=email.upper(), username=username2, full_name=full_name, password=password
+            email=email.upper(), username=username2, full_name=full_name, password=password, lang=lang
         )
 
     with pytest.raises(IntegrityError):
         await users_repositories.create_user(
-            email=email2, username=username.upper(), full_name=full_name, password=password
+            email=email2, username=username.upper(), full_name=full_name, password=password, lang=lang
         )
 
 

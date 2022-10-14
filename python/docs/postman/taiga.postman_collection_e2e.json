@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "16dd1cfc-85c3-4535-a428-6d346d3acdc3",
+		"_postman_id": "5d5277ae-2356-4f76-971a-9c4e70935bb0",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -347,9 +348,10 @@
 									"    pm.expect(jsonRes).to.have.property(\"username\");",
 									"    pm.expect(jsonRes).to.have.property(\"fullName\");",
 									"    pm.expect(jsonRes).to.have.property(\"email\");",
+									"    pm.expect(jsonRes).to.have.property(\"lang\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -401,10 +403,11 @@
 									"    // Validate response API fields",
 									"    pm.expect(jsonRes).to.have.property(\"username\");",
 									"    pm.expect(jsonRes).to.have.property(\"fullName\");",
+									"    pm.expect(jsonRes).to.have.property(\"lang\");",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(2);",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
 									"",
 									"});"
 								],
@@ -427,7 +430,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"ada.lovelace{{$randomInt}}@email.com\",\n  \"fullName\": \"Ada Lovelace\",\n  \"password\": \"CorrectP4ssword%\",\n  \"acceptTerms\": true\n}",
+							"raw": "{\n  \"email\": \"ada.lovelace{{$randomInt}}@email.com\",\n  \"fullName\": \"Ada Lovelace\",\n  \"password\": \"CorrectP4ssword%\",\n  \"acceptTerms\": true,\n  \"lang\": \"es_ES\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -465,10 +468,11 @@
 									"    // Validate response API fields",
 									"    pm.expect(jsonRes).to.have.property(\"username\");",
 									"    pm.expect(jsonRes).to.have.property(\"fullName\");",
+									"    pm.expect(jsonRes).to.have.property(\"lang\");",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(2);",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
 									"",
 									"});"
 								],

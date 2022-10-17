@@ -6,13 +6,32 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { filter, map } from 'rxjs';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { TuiNotification } from '@taiga-ui/core';
+import { ShortcutsService } from '@taiga/core';
+import { Project, Story, StoryView } from '@taiga/data';
+import { combineLatest, filter, map } from 'rxjs';
+import {
+  clearStory,
+  updateStoryShowView,
+} from '~/app/modules/project/data-access/+state/actions/project.actions';
+import {
+  selectCurrentProject,
+  selectCurrentStory,
+  selectShowStoryView,
+  selectStoryView,
+} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { AppService } from '~/app/services/app.service';
+import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
+import { ResizedEvent } from '~/app/shared/resize/resize.model';
+import { filterNil } from '~/app/shared/utils/operators';
 import {
   KanbanActions,
   KanbanEventsActions,
@@ -22,19 +41,15 @@ import {
   selectLoadingWorkflows,
   selectWorkflows,
 } from './data-access/+state/selectors/kanban.selectors';
-import { Story } from '@taiga/data';
-import { PermissionsService } from '~/app/services/permissions.service';
-import { Router } from '@angular/router';
-import { AppService } from '~/app/services/app.service';
-import { TuiNotification } from '@taiga-ui/core';
-import { filterNil } from '~/app/shared/utils/operators';
-import { concatLatestFrom } from '@ngrx/effects';
 import { KanbanReorderEvent } from './kanban.model';
 
 interface ComponentState {
   loadingWorkflows: KanbanState['loadingWorkflows'];
   workflows: KanbanState['workflows'];
   invitePeopleModal: boolean;
+  showStoryDetail: boolean;
+  storyView: StoryView;
+  project: Project;
 }
 
 @UntilDestroy()
@@ -47,6 +62,7 @@ interface ComponentState {
 })
 export class ProjectFeatureKanbanComponent {
   public invitePeopleModal = false;
+  public kanbanWidth = 0;
   public model$ = this.state.select().pipe(
     map((state) => {
       const hasStatuses =
@@ -54,12 +70,22 @@ export class ProjectFeatureKanbanComponent {
           return workflow.statuses.length;
         }) ?? true;
 
+      this.setCloseShortcut();
+      if (state.storyView === 'side-view') {
+        this.shortcutsService.setScope('side-view');
+      } else {
+        this.shortcutsService.deleteScope('side-view');
+      }
+
       return {
         ...state,
         isEmpty: !hasStatuses,
       };
     })
   );
+  public showStoryDetail$ = this.store.select(selectShowStoryView);
+  public storyView$ = this.store.select(selectStoryView);
+  public project$ = this.store.select(selectCurrentProject);
 
   constructor(
     private store: Store,
@@ -67,7 +93,9 @@ export class ProjectFeatureKanbanComponent {
     private wsService: WsService,
     private permissionService: PermissionsService,
     private router: Router,
-    private appService: AppService
+    private appService: AppService,
+    private location: Location,
+    public shortcutsService: ShortcutsService
   ) {
     const canViewPage = this.permissionService.hasPermissions('story', [
       'view',
@@ -84,6 +112,13 @@ export class ProjectFeatureKanbanComponent {
       'loadingWorkflows',
       this.store.select(selectLoadingWorkflows)
     );
+
+    this.state.connect(
+      'showStoryDetail',
+      this.store.select(selectShowStoryView)
+    );
+
+    this.state.connect('storyView', this.store.select(selectStoryView));
     this.state.connect('workflows', this.store.select(selectWorkflows));
     this.events();
 
@@ -103,16 +138,58 @@ export class ProjectFeatureKanbanComponent {
           scope: 'kanban',
         });
       });
+
+    combineLatest([
+      this.store.select(selectCurrentStory),
+      this.showStoryDetail$,
+    ])
+      .pipe(
+        untilDestroyed(this),
+        concatLatestFrom(() => [this.project$.pipe(filterNil())])
+      )
+      .subscribe(([data, project]) => {
+        const story = data[0];
+        const showStoryDetail = data[1];
+        if (story && showStoryDetail) {
+          this.location.replaceState(
+            `project/${project.slug}/stories/${story.ref!}`
+          );
+        }
+      });
   }
 
-  public project$ = this.store.select(selectCurrentProject);
+  public setCloseShortcut() {
+    this.shortcutsService
+      .task('side-view.close')
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.closeSideview();
+      });
+  }
+
+  public closeSideview() {
+    this.store.dispatch(
+      updateStoryShowView({
+        showView: false,
+      })
+    );
+    this.shortcutsService.deleteScope('side-view');
+  }
 
   public closeModal() {
     this.state.set({ invitePeopleModal: false });
   }
 
+  public closeViewModal() {
+    this.store.dispatch(clearStory());
+  }
+
   public trackBySlug(_index: number, obj: { slug: string }) {
     return obj.slug;
+  }
+
+  public onResized(event: ResizedEvent) {
+    this.kanbanWidth = event.newRect.width;
   }
 
   private events() {

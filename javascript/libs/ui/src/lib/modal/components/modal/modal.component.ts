@@ -7,20 +7,20 @@
  */
 
 import {
-  Component,
-  ChangeDetectionStrategy,
-  Input,
-  ViewChild,
   AfterViewInit,
-  Output,
+  ChangeDetectionStrategy,
+  Component,
   EventEmitter,
+  Input,
+  Output,
+  ViewChild,
 } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { ShortcutsService } from '@taiga/core';
-import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
-import { TuiDialogService } from '@taiga-ui/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TuiDialogService } from '@taiga-ui/core';
+import { ShortcutsService } from '@taiga/core';
 import { ModalService } from '@taiga/ui/modal/services/modal.service';
+import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { pairwise, startWith } from 'rxjs/operators';
 
 /*
@@ -53,6 +53,15 @@ export class ModalComponent implements AfterViewInit {
 
   @Input()
   public heightAuto = false;
+
+  @Input()
+  public closeButton = true;
+
+  @Input()
+  public noPadding = false;
+
+  @Input()
+  public big = false;
 
   @Input()
   public set open(value: boolean) {
@@ -112,6 +121,6 @@ export class ModalComponent implements AfterViewInit {
 
   private processClose() {
     this.modalService.getContext().completeWith(null);
-    this.shortcutsService.resetScope();
+    this.shortcutsService.deleteScope('modal');
   }
 }

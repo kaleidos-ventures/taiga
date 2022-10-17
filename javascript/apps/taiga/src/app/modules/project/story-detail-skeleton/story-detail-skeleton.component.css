@@ -1,0 +1,190 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/animations.css";
+
+:host {
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-block-start: var(--spacing-16);
+}
+
+.story-skeleton {
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--spacing-16);
+  padding-inline: var(--spacing-16);
+}
+
+.story-skeleton-menu {
+  display: flex;
+  justify-content: space-between;
+  margin-block-end: var(--spacing-16);
+
+  & * {
+    @mixin pulseAnimation;
+  }
+
+  @nest .static & {
+    & * {
+      animation: none;
+    }
+  }
+}
+
+.story-skeleton-menu-start {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: var(--spacing-12);
+}
+
+.story-skeleton-menu-end {
+  display: flex;
+  gap: var(--spacing-12);
+  inline-size: 35%;
+  justify-content: space-around;
+  max-inline-size: 181px;
+}
+
+:is(.line, .skeleton-button, .skeleton-separator) {
+  background-color: var(--color-gray20);
+  border-radius: 2px;
+}
+
+.story-skeleton-content {
+  display: grid;
+  flex-grow: 1;
+  grid-template-columns: 61.4% 38.6%;
+
+  & * {
+    @mixin pulseAnimation;
+  }
+}
+
+.story-skeleton-main {
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--spacing-16);
+  padding-inline: var(--spacing-16);
+}
+
+.story-skeleton-sidebar {
+  block-size: 100%;
+  border-inline-start: solid 1px var(--color-gray30);
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--spacing-16);
+  padding-inline: var(--spacing-16);
+
+  & .line {
+    margin-block-end: var(--spacing-16);
+  }
+}
+
+.skeleton-paragraph {
+  margin-block: var(--spacing-24);
+
+  & .line {
+    margin-block-end: var(--spacing-8);
+  }
+}
+
+.story-skeleton-title {
+  display: flex;
+  gap: var(--spacing-12);
+
+  &.align-oddenly {
+    justify-content: center;
+    margin-block-start: var(--spacing-16);
+
+    &.skeleton-button {
+      margin-inline-end: var(--spacing-68);
+    }
+  }
+}
+
+.skeleton-separator {
+  block-size: var(--spacing-20);
+  inline-size: 1px;
+}
+
+.line {
+  block-size: var(--spacing-12);
+}
+
+.skeleton-menu-text {
+  block-size: 0.875rem;
+}
+
+.skeleton-title {
+  block-size: var(--spacing-16);
+}
+
+.line-sidebar {
+  block-size: 1.375rem;
+}
+
+@define-mixin line $size {
+  .line-$(size) {
+    inline-size: $size%;
+
+    @mixin-content;
+  }
+}
+
+@mixin line 10;
+@mixin line 20;
+@mixin line 30;
+@mixin line 40;
+@mixin line 60;
+@mixin line 75;
+@mixin line 95;
+@mixin line 100;
+
+@define-mixin skeleton-button $size {
+  .skeleton-button-$(size) {
+    /* stylelint-disable-next-line custom-property-pattern */
+    block-size: var(--spacing-$size);
+    /* stylelint-disable-next-line custom-property-pattern */
+    inline-size: var(--spacing-$size);
+
+    @mixin-content;
+  }
+}
+
+@mixin skeleton-button 16;
+@mixin skeleton-button 20;
+
+@define-mixin opacity $opacity {
+  .opacity-$(opacity) {
+    opacity: .$opacity;
+    @mixin-content;
+  }
+}
+
+@mixin opacity 75;
+@mixin opacity 50;
+@mixin opacity 40;
+
+@media (prefers-reduced-motion) {
+  .story-skeleton-menu {
+    & * {
+      @mixin pulseAnimation 3;
+    }
+  }
+
+  .story-skeleton-content {
+    & * {
+      @mixin pulseAnimation 3;
+    }
+  }
+}

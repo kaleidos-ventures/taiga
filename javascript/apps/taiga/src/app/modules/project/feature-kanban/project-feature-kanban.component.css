@@ -10,10 +10,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   background: var(--color-gray10);
   block-size: 100%;
   display: grid;
-  grid-template-rows: min-content 1fr;
-  padding: var(--spacing-16);
-  padding-block-end: 0;
-  padding-inline-end: 0;
+  grid-template-rows: 1fr min-content;
+  padding: 0;
 }
 
 h1 {
@@ -28,4 +26,18 @@ h1 {
   margin-block-start: var(--spacing-28);
   padding: var(--spacing-16);
   text-align: center;
+}
+
+.kanban-wrapper {
+  block-size: 100%;
+  display: flex;
+  flex-grow: 1;
+}
+
+.kanban {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  padding-block-start: var(--spacing-16);
+  padding-inline-start: var(--spacing-16);
 }

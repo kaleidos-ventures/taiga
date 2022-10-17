@@ -36,7 +36,7 @@ export class AuthService {
   }
 
   public getAuth(): Auth | undefined {
-    return this.localStorageService.get<Auth>('auth');
+    return LocalStorageService.get<Auth>('auth');
   }
 
   public setAuth(auth: Auth) {
@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   public getUser(): User | undefined {
-    return this.localStorageService.get<User>('user');
+    return LocalStorageService.get<User>('user');
   }
 
   public setUser(user: User) {

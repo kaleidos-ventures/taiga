@@ -7,16 +7,16 @@
  */
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { User } from '@taiga/data';
+import { Observable } from 'rxjs';
+import { distinctUntilChanged, filter, map, share, skip } from 'rxjs/operators';
 import { WsService } from '~/app/services/ws';
-import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { setUser } from './modules/auth/data-access/+state/actions/auth.actions';
 import { AuthService } from './modules/auth/services/auth.service';
+import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { RouteHistoryService } from './shared/route-history/route-history.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { distinctUntilChanged, filter, map, share, skip } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'tg-root',
@@ -54,7 +54,7 @@ export class AppComponent {
     this.wsService.listen(auth?.token);
     this.authService.autoRefresh();
 
-    const user = this.localStorageService.get<User>('user');
+    const user = LocalStorageService.get<User>('user');
 
     if (user) {
       this.store.dispatch(setUser({ user }));

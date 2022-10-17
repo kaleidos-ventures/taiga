@@ -23,18 +23,22 @@ import { TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Workflow } from '@taiga/data';
+import { Project, Workflow } from '@taiga/data';
 import { filter, fromEvent, take } from 'rxjs';
+import { fetchStory } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import {
   KanbanStory,
   KanbanStoryA11y,
 } from '~/app/modules/project/feature-kanban/kanban.model';
+import { filterNil } from '~/app/shared/utils/operators';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
 
 export interface StoryState {
   kanbanStoryA11y: KanbanStoryA11y;
+  project: Project;
 }
 
 @UntilDestroy()
@@ -127,7 +131,9 @@ export class KanbanStoryComponent implements OnChanges {
         () => {
           setTimeout(() => {
             if (currentStory) {
-              currentStory.querySelector<HTMLElement>('a')!.focus();
+              currentStory
+                .querySelector<HTMLElement>('.story-keyboard-navigation')!
+                .focus();
             }
             this.liveAnnouncer.clear();
           }, 50);
@@ -165,6 +171,10 @@ export class KanbanStoryComponent implements OnChanges {
     this.state.connect(
       'kanbanStoryA11y',
       this.store.select(selectActiveA11yDragDropStory)
+    );
+    this.state.connect(
+      'project',
+      this.store.select(selectCurrentProject).pipe(filterNil())
     );
   }
 
@@ -269,6 +279,15 @@ export class KanbanStoryComponent implements OnChanges {
         this.scrollToDragStoryIfNotVisible();
       });
     }
+  }
+
+  public openStory() {
+    this.store.dispatch(
+      fetchStory({
+        projectSlug: this.state.get('project').slug,
+        storyRef: this.story.ref!,
+      })
+    );
   }
 
   private scrollToDragStoryIfNotVisible() {

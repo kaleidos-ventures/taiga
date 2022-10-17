@@ -21,7 +21,7 @@ export class UserStorageService {
   }
 
   public refreshPrefix() {
-    const user = this.localStorageService.get<User>('user');
+    const user = LocalStorageService.get<User>('user');
 
     const prefix = user?.username ? `${window.btoa(user.username)}_` : '';
 
@@ -29,7 +29,7 @@ export class UserStorageService {
   }
 
   public get<T>(key: string): T | undefined {
-    return this.localStorageService.get(this.prefix + key);
+    return LocalStorageService.get(this.prefix + key);
   }
 
   public set(key: string, newValue?: unknown) {

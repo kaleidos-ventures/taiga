@@ -8,35 +8,65 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
-    <h1
-      tgTitle
-      data-test="kanban-title">
-      {{ t('kanban.title') }}
-    </h1>
-    <div>
-      <ng-container *ngIf="!vm.isEmpty">
-        <ng-container
-          *ngFor="let workflow of vm.workflows; trackBy: trackBySlug">
-          <tg-kanban-workflow [workflow]="workflow"></tg-kanban-workflow>
-        </ng-container>
-      </ng-container>
-
+    <ng-container *ngIf="vm.storyView">
       <div
-        *ngIf="vm.isEmpty"
-        class="empty">
-        {{ t('kanban.empty') }}
-      </div>
-    </div>
+        (resized)="onResized($event)"
+        class="kanban-wrapper kanban-cdk-area">
+        <div class="kanban">
+          <h1
+            tgTitle
+            data-test="kanban-title">
+            {{ t('kanban.title') }}
+          </h1>
+          <div class="kanban-wrapper">
+            <ng-container *ngIf="!vm.isEmpty">
+              <ng-container
+                *ngFor="let workflow of vm.workflows; trackBy: trackBySlug">
+                <tg-kanban-workflow [workflow]="workflow"></tg-kanban-workflow>
+              </ng-container>
+            </ng-container>
 
-    <tg-ui-modal
-      [open]="vm.invitePeopleModal"
-      (requestClose)="closeModal()">
-      <ng-container *ngIf="project$ | async as project">
-        <tg-invite-to-project
-          *ngIf="vm.invitePeopleModal && project.userIsAdmin"
-          (closeModal)="closeModal()"
-          [project]="project"></tg-invite-to-project>
+            <div
+              *ngIf="vm.isEmpty"
+              class="empty">
+              {{ t('kanban.empty') }}
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="vm.showStoryDetail">
+          <tg-project-feature-story-wrapper-side-view
+            *ngIf="vm.showStoryDetail && vm.storyView === 'side-view'"
+            [kanbanWidth]="
+              kanbanWidth
+            "></tg-project-feature-story-wrapper-side-view>
+        </ng-container>
+      </div>
+      <ng-container *ngIf="vm.showStoryDetail">
+        <tg-ui-modal
+          [big]="true"
+          [noPadding]="true"
+          [closeButton]="false"
+          [open]="vm.showStoryDetail && vm.storyView === 'modal-view'"
+          (requestClose)="closeViewModal()">
+          <ng-container *ngIf="project$ | async as project">
+            <tg-project-feature-story-wrapper-modal-view
+              (closeModal)="
+                closeViewModal()
+              "></tg-project-feature-story-wrapper-modal-view>
+          </ng-container>
+        </tg-ui-modal>
       </ng-container>
-    </tg-ui-modal>
+
+      <tg-ui-modal
+        [open]="vm.invitePeopleModal"
+        (requestClose)="closeModal()">
+        <ng-container *ngIf="project$ | async as project">
+          <tg-invite-to-project
+            *ngIf="vm.invitePeopleModal && project.userIsAdmin"
+            (closeModal)="closeModal()"
+            [project]="project"></tg-invite-to-project>
+        </ng-container>
+      </tg-ui-modal>
+    </ng-container>
   </ng-container>
 </ng-container>

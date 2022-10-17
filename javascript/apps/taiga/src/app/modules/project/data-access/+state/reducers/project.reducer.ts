@@ -7,8 +7,9 @@
  */
 
 import { createFeature, createReducer, on } from '@ngrx/store';
-import { Project } from '@taiga/data';
+import { Project, StoryDetail, StoryView } from '@taiga/data';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/project.actions';
 
@@ -18,12 +19,18 @@ export interface ProjectState {
   currentProjectSlug: Project['slug'] | null;
   projects: Record<Project['slug'], Project>;
   showBannerOnRevoke: boolean;
+  showStoryView: boolean;
+  currentStory: StoryDetail | null;
+  storyView: StoryView;
 }
 
 export const initialState: ProjectState = {
   currentProjectSlug: null,
   projects: {},
   showBannerOnRevoke: false,
+  showStoryView: false,
+  currentStory: null,
+  storyView: LocalStorageService.get('story_view') || 'modal-view',
 };
 
 export const reducer = createReducer(
@@ -65,6 +72,31 @@ export const reducer = createReducer(
         state.showBannerOnRevoke = false;
       }
 
+      return state;
+    }
+  ),
+  on(
+    ProjectActions.updateStoryShowView,
+    (state, { showView }): ProjectState => {
+      state.showStoryView = showView;
+      return state;
+    }
+  ),
+  on(ProjectActions.fetchStorySuccess, (state, { story }): ProjectState => {
+    state.currentStory = story;
+    state.showStoryView = state.storyView !== 'full-view';
+    return state;
+  }),
+  on(ProjectActions.clearStory, (state): ProjectState => {
+    state.showStoryView = false;
+    state.currentStory = null;
+    return state;
+  }),
+  on(
+    ProjectActions.updateStoryViewMode,
+    (state, { storyView }): ProjectState => {
+      state.showStoryView = storyView !== 'full-view';
+      state.storyView = storyView;
       return state;
     }
   )

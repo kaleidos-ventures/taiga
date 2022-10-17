@@ -12,5 +12,7 @@ tui-dialog-host {
   & .t-overlay {
     /* stylelint-disable-next-line declaration-no-important, function-no-unknown */
     background-color: color-mod(var(--color-gray60) a(50%)) !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    transition: opacity 0s ease-in !important;
   }
 }

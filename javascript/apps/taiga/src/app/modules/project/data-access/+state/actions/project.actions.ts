@@ -7,7 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { Project } from '@taiga/data';
+import { Project, StoryDetail, StoryView } from '@taiga/data';
 
 export const fetchProjectSuccess = createAction(
   '[Project] fetch success',
@@ -35,3 +35,35 @@ export const permissionsUpdate = createAction(
   '[Project][ws] permission update',
   props<{ slug: Project['slug'] }>()
 );
+
+export const updateStoryShowView = createAction(
+  '[Story] Update show view',
+  props<{
+    showView: boolean;
+  }>()
+);
+
+export const fetchStory = createAction(
+  '[Story] load story detail',
+  props<{
+    projectSlug: string;
+    storyRef: number;
+  }>()
+);
+
+export const fetchStorySuccess = createAction(
+  '[Story] loaded story detail',
+  props<{
+    story: StoryDetail;
+  }>()
+);
+
+export const updateStoryViewMode = createAction(
+  '[Story] Update story view mode',
+  props<{
+    storyView: StoryView;
+    previousStoryView: StoryView;
+  }>()
+);
+
+export const clearStory = createAction('[Story] leave story detail');

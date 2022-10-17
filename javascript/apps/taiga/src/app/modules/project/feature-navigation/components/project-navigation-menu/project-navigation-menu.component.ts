@@ -15,14 +15,16 @@ import {
   EventEmitter,
   Input,
   Output,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { Project } from '@taiga/data';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { clearStory } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 
 interface ProjectMenuDialog {
@@ -116,7 +118,7 @@ export class ProjectNavigationMenuComponent {
 
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
 
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(private cd: ChangeDetectorRef, private store: Store) {}
 
   public initDialog(
     el: HTMLElement,
@@ -234,5 +236,9 @@ export class ProjectNavigationMenuComponent {
     this.displaySettingsMenu.next();
     this.dialog.open = false;
     this.dialog.type = '';
+  }
+
+  public clearStoryDetail() {
+    this.store.dispatch(clearStory());
   }
 }

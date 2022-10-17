@@ -14,3 +14,10 @@ export interface Story {
   slug: string;
   status: Pick<Status, 'slug' | 'color' | 'name'>;
 }
+
+export interface StoryDetail extends Partial<Story> {
+  prev: number | null;
+  next: number | null;
+}
+
+export type StoryView = 'modal-view' | 'full-view' | 'side-view';

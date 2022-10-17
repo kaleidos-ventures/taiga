@@ -31,8 +31,15 @@ const routes: Routes = [
         path: 'kanban',
         loadChildren: () =>
           import(
-            '~/app/modules/project/feature-kanban/project-feature-kanban.module'
-          ).then((m) => m.ProjectFeatureKanbanModule),
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
+      },
+      {
+        path: 'stories/:storyRef',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
       },
       {
         path: 'settings',

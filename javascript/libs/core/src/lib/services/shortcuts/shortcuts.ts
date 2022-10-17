@@ -12,4 +12,9 @@ export default [
     defaultKey: 'esc',
     scope: 'modal',
   },
+  {
+    task: 'side-view.close',
+    defaultKey: 'esc',
+    scope: 'side-view',
+  },
 ];

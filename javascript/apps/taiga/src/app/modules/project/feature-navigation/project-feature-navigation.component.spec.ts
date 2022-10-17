@@ -6,17 +6,19 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Router } from '@angular/router';
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { ProjectMockFactory } from '@taiga/data';
-import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
-
-import { ProjectNavigationComponent } from './project-feature-navigation.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { mockProvider } from '@ngneat/spectator/jest';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+  createComponentFactory,
+  mockProvider,
+  Spectator,
+} from '@ngneat/spectator/jest';
+import { ProjectMockFactory } from '@taiga/data';
 import { Subject } from 'rxjs';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
+import { ProjectNavigationComponent } from './project-feature-navigation.component';
 
 describe('ProjectNavigationComponent', () => {
   const events$ = new Subject();
@@ -43,9 +45,8 @@ describe('ProjectNavigationComponent', () => {
   });
 
   it('default', () => {
-    const localStorageService =
-      spectator.inject<LocalStorageService>(LocalStorageService);
-    localStorageService.get.mockReturnValue(true);
+    const mockLocalStorageServiceGet = jest.fn().mockReturnValue(true);
+    LocalStorageService.get = mockLocalStorageServiceGet;
 
     spectator.detectChanges();
     events$.next(undefined);
@@ -54,9 +55,8 @@ describe('ProjectNavigationComponent', () => {
   });
 
   it('on init check if project navigation bar is collapsed - true', () => {
-    const localStorageService =
-      spectator.inject<LocalStorageService>(LocalStorageService);
-    localStorageService.get.mockReturnValue(true);
+    const mockLocalStorageServiceGet = jest.fn().mockReturnValue(true);
+    LocalStorageService.get = mockLocalStorageServiceGet;
 
     spectator.detectChanges();
 
@@ -64,9 +64,8 @@ describe('ProjectNavigationComponent', () => {
   });
 
   it('on init check if project navigation bar is collapsed - false', () => {
-    const localStorageService =
-      spectator.inject<LocalStorageService>(LocalStorageService);
-    localStorageService.get.mockReturnValue(false);
+    const mockLocalStorageServiceGet = jest.fn().mockReturnValue(false);
+    LocalStorageService.get = mockLocalStorageServiceGet;
 
     spectator.detectChanges();
 

@@ -129,4 +129,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   --color-notice80: rgba(146, 44, 164, 1);
   --color-notice90: rgba(103, 48, 113, 1);
   --color-notice100: rgba(66, 28, 74, 1);
+
+  /* box-shadow color */
+  --color-box-shadow: rgba(216, 222, 233, 0.5);
 }

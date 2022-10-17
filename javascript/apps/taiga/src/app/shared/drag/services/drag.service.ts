@@ -276,22 +276,24 @@ export class DragService {
         this.setPosition(position.x, position.y);
       });
 
-    mouseMove$.pipe(take(1)).subscribe(() => {
-      this.add(draggableDirective);
+    mouseMove$
+      .pipe(takeUntil(merge(escape$, mouseUp$)), take(1))
+      .subscribe(() => {
+        this.add(draggableDirective);
 
-      initialPosition =
-        draggableDirective.nativeElement.getBoundingClientRect();
+        initialPosition =
+          draggableDirective.nativeElement.getBoundingClientRect();
 
-      this.source = this.elements$.value.map((it) => {
-        return {
-          id: it.id,
-          data: it.dragData,
-        };
+        this.source = this.elements$.value.map((it) => {
+          return {
+            id: it.id,
+            data: it.dragData,
+          };
+        });
+
+        this.setPosition(initialPosition.x, initialPosition.y);
+        this.started$.next(draggableDirective.dragData);
       });
-
-      this.setPosition(initialPosition.x, initialPosition.y);
-      this.started$.next(draggableDirective.dragData);
-    });
   }
 
   private findDropZone(point: Point) {

@@ -9,20 +9,25 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-template #domPortalContent>
   <ng-container *transloco="let t">
     <div class="modal-inner-wrapper">
-      <div
-        class="modal-content"
-        [class.height-auto]="heightAuto">
-        <ng-content></ng-content>
+      <div class="modal-content-wrapper">
+        <div
+          class="modal-content"
+          [class.no-padding]="noPadding"
+          [class.big]="big"
+          [class.height-auto]="heightAuto">
+          <ng-content></ng-content>
+        </div>
+        <button
+          *ngIf="closeButton"
+          class="close"
+          tuiIconButton
+          data-test="close-modal"
+          [attr.aria-label]="t('commons.close_modal')"
+          appearance="us-header-button"
+          icon="close"
+          type="button"
+          (click)="close()"></button>
       </div>
-      <button
-        class="close"
-        tuiIconButton
-        data-test="close-modal"
-        [attr.aria-label]="t('commons.close_modal')"
-        appearance="us-header-button"
-        icon="close"
-        type="button"
-        (click)="close()"></button>
     </div>
   </ng-container>
 </ng-template>

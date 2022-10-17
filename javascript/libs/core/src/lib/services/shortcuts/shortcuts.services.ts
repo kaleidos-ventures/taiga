@@ -7,10 +7,10 @@
  */
 
 import { Injectable } from '@angular/core';
-import shortcuts from './shortcuts';
 import hotkeys from 'hotkeys-js';
 import { Subject } from 'rxjs';
-import { share, finalize } from 'rxjs/operators';
+import { finalize, share } from 'rxjs/operators';
+import shortcuts from './shortcuts';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +35,7 @@ export class ShortcutsService {
       return subject.pipe(
         finalize(() => {
           hotkeys.unbind(shortcut.defaultKey, shortcut.scope);
-          this.resetScope();
+          this.deleteScope(shortcut.scope);
         }),
         share()
       );
@@ -48,6 +48,10 @@ export class ShortcutsService {
 
   public setScope(scope: string) {
     hotkeys.setScope(scope);
+  }
+
+  public deleteScope(scope: string) {
+    hotkeys.deleteScope(scope);
   }
 
   public resetScope() {

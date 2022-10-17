@@ -12,7 +12,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class LocalStorageService {
-  public get<T>(key: string): T | undefined {
+  public static get<T>(key: string): T | undefined {
     const item = localStorage.getItem(key);
     if (item) {
       try {

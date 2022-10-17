@@ -1,0 +1,54 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+:host {
+  display: block;
+  position: relative;
+}
+
+.side-panel {
+  background: var(--color-white);
+  block-size: 100%;
+  border-inline-start: solid 1px var(--color-gray40);
+  box-shadow: -4px 4px 8px var(--color-box-shadow);
+  display: flex;
+  inline-size: 500px;
+  position: relative;
+  transition: border-inline-start 0.3s ease-in, box-shadow 0.3s ease-in;
+
+  &.drag-on {
+    border-inline-start: solid 1px var(--color-secondary50);
+    box-shadow: -4px -4px 15px var(--color-box-shadow);
+
+    & .dragbar::after {
+      background-color: var(--color-secondary50);
+    }
+  }
+}
+
+.dragbar {
+  block-size: 4rem;
+  border: solid 3px transparent;
+  inline-size: 1px;
+  inset-block-start: 50%;
+  position: absolute;
+
+  &::after {
+    background: var(--color-gray40);
+    block-size: 100%;
+    content: "";
+    inline-size: 1px;
+    inset-inline-start: -1px;
+    position: absolute;
+    transition: background-color 0.3s ease-in;
+  }
+
+  &:hover {
+    cursor: ew-resize;
+  }
+}

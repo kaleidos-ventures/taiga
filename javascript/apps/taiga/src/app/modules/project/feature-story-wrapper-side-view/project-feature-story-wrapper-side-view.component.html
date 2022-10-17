@@ -1,0 +1,34 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <div
+      #resizeSidepanel
+      [class.drag-on]="dragging"
+      [style.min-inline-size]="calculateMinInlineSize()"
+      [style.max-inline-size]="calculateMaxInlineSize()"
+      [style.width.px]="sidepanelWidth"
+      class="side-panel">
+      <tg-kanban-story-detail
+        [isCollapsed]="isCollapsed"></tg-kanban-story-detail>
+      <div
+        #dragHandle
+        *ngIf="showDragbar()"
+        class="dragbar"
+        cdkDrag
+        cdkDragLockAxis="x"
+        cdkDragBoundary=".kanban-cdk-area"
+        (mousedown)="isDragging(true)"
+        (mouseup)="isDragging(false)"
+        (cdkDragStarted)="isDragging(true)"
+        (cdkDragReleased)="isDragging(false)"
+        (cdkDragMoved)="dragMove(dragHandle, $event)"></div>
+    </div>
+  </ng-container>
+</ng-container>

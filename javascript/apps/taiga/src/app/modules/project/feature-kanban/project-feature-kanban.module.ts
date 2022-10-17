@@ -7,6 +7,7 @@
  */
 
 import { A11yModule } from '@angular/cdk/a11y';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
@@ -20,21 +21,23 @@ import {
 } from '@taiga-ui/core';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
+import { ProjectFeatureStoryWrapperModalViewModule } from '~/app/modules/project//feature-story-wrapper-modal-view/project-feature-story-wrapper-modal-view.module';
+import { StatusScrollDynamicHeightDirective } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
+import { ProjectFeatureStoryWrapperSideViewModule } from '~/app/modules/project/feature-story-wrapper-side-view/project-feature-story-wrapper-side-view.module';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { InViewportDirective } from '~/app/shared/directives/in-viewport.directive';
-import { StatusScrollDynamicHeightDirective } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
+import { DragModule } from '~/app/shared/drag/drag.module';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
+import { ResizeEventModule } from '~/app/shared/resize/resize.module';
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { KanbanCreateStoryInlineComponent } from './components/create-story-inline/kanban-create-story-inline.component';
 import { KanbanStatusComponent } from './components/status/kanban-status.component';
 import { KanbanStoryComponent } from './components/story/kanban-story.component';
-import { KanbanKeyboardNavigationDirective } from './directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
 import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
-import { DataAccessKanbanModule } from './data-access/kanban-data-access.module';
-import { ProjectFeatureKanbanRoutingModule } from './project-feature-kanban-routing.module';
-import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
 import { KanbanVirtualScrollDirective } from './custom-scroll-strategy/kanban-scroll-strategy';
-import { DragModule } from '~/app/shared/drag/drag.module';
+import { DataAccessKanbanModule } from './data-access/kanban-data-access.module';
+import { KanbanKeyboardNavigationDirective } from './directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
+import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +50,8 @@ import { DragModule } from '~/app/shared/drag/drag.module';
     StatusScrollDynamicHeightDirective,
     KanbanVirtualScrollDirective,
   ],
+  exports: [ProjectFeatureKanbanComponent],
+
   imports: [
     TuiAutoFocusModule,
     TuiLinkModule,
@@ -55,7 +60,6 @@ import { DragModule } from '~/app/shared/drag/drag.module';
     TitleComponent,
     CommonModule,
     TranslocoModule,
-    ProjectFeatureKanbanRoutingModule,
     TuiSvgModule,
     ModalModule,
     InviteToProjectModule,
@@ -67,6 +71,10 @@ import { DragModule } from '~/app/shared/drag/drag.module';
     InputsModule,
     TuiActiveZoneModule,
     DragModule,
+    ProjectFeatureStoryWrapperSideViewModule,
+    ProjectFeatureStoryWrapperModalViewModule,
+    DragDropModule,
+    ResizeEventModule,
   ],
   providers: [
     {

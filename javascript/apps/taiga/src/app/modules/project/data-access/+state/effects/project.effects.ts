@@ -6,24 +6,31 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fetch } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import {
+  selectCurrentProject,
+  selectCurrentStory,
+  selectStoryView,
+} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { WsService } from '~/app/services/ws';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
+import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectActions from '../actions/project.actions';
-
 @Injectable()
 export class ProjectEffects {
   public loadProject$ = createEffect(() => {
@@ -153,6 +160,75 @@ export class ProjectEffects {
     { dispatch: false }
   );
 
+  public loadStoryDetail$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.fetchStory),
+
+      fetch({
+        run: (action) => {
+          return this.projectApiService
+            .getStory(action.projectSlug, action.storyRef)
+            .pipe(
+              map((story) => {
+                return ProjectActions.fetchStorySuccess({
+                  story,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
+  public loadStoryDetailSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(ProjectActions.fetchStorySuccess),
+        concatLatestFrom(() => [
+          this.store.select(selectCurrentProject).pipe(filterNil()),
+          this.store.select(selectStoryView),
+        ]),
+        map(([action, project, storyView]) => {
+          if (storyView === 'full-view') {
+            void this.router.navigate([
+              `/project/${project.slug}/stories/${action.story.ref!}`,
+            ]);
+          } else {
+            this.location.replaceState(
+              `project/${project.slug}/stories/${action.story.ref!}`
+            );
+          }
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  public updateStoryViewMode$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(ProjectActions.updateStoryViewMode),
+        concatLatestFrom(() => [
+          this.store.select(selectCurrentProject).pipe(filterNil()),
+          this.store.select(selectCurrentStory).pipe(filterNil()),
+        ]),
+        map(([action, project, story]) => {
+          this.localStorage.set('story_view', action.storyView);
+          if (action.storyView === 'full-view') {
+            void this.router.navigate([
+              `/project/${project.slug}/stories/${story.ref!}`,
+            ]);
+          } else if (action.previousStoryView === 'full-view') {
+            void this.router.navigate([`project/${project.slug}/kanban`]);
+          }
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(
     private actions$: Actions,
     private projectApiService: ProjectApiService,
@@ -161,6 +237,8 @@ export class ProjectEffects {
     private wsService: WsService,
     private store: Store,
     private router: Router,
-    private revokeInvitationService: RevokeInvitationService
+    private revokeInvitationService: RevokeInvitationService,
+    private location: Location,
+    private localStorage: LocalStorageService
   ) {}
 }

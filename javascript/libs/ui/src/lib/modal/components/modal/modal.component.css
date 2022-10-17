@@ -9,6 +9,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "tools/typography.css";
 
 .modal-inner-wrapper {
+  --modal-inner-margin: 1rem;
+
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  padding-block: 0;
+  position: relative;
+}
+
+.modal-content-wrapper {
+  display: flex;
   position: relative;
 }
 
@@ -19,9 +30,23 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   background-color: var(--color-white);
   border-radius: 5px;
   inline-size: var(--modal-width);
+  margin-block: 0;
+  margin-inline: auto;
   max-block-size: var(--modal-max-height);
+  overflow: auto;
   padding: var(--spacing-40);
   position: relative;
+
+  &.big {
+    inline-size: calc(-120px + 100vw);
+    max-block-size: calc(-112px + 100vh);
+    max-inline-size: 1280px;
+    min-inline-size: 768px;
+  }
+
+  &.no-padding {
+    padding: 0;
+  }
 
   &.height-auto {
     max-block-size: unset;

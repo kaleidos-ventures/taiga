@@ -21,5 +21,23 @@
     "create_story_button": "Create Story",
     "max_length": "Character limit has been reached.",
     "story_title_placeholder": "Start writing a Story title..."
+  },
+  "story_detail": {
+    "story": "Story<span class='hash' aria-hidden='true'>#</span><span class='ref'>{{ storyRef }}</span>",
+    "story_sr": "Story {{ storyRef }}: {{ storyTitle }}",
+    "copy_story": "Copy story link",
+    "click_to_copy": "Click to copy story link",
+    "link_copied": "Copied to clipboard!",
+    "previous": "Navigate to previous story",
+    "next": "Navigate to next story",
+    "change_view": "Change story view",
+    "change_view_sr": "Current view: {{ currentView }}.Change story view",
+    "story_options": "Story options",
+    "close": "Close story modal",
+    "modal_view": "Modal view",
+    "side_panel_view": "Side panel view",
+    "full_width_view": "Full width view",
+    "ctrl_x": "Ctrl + X",
+    "collapse_sidebar": "Collapse sidebar"
   }
 }

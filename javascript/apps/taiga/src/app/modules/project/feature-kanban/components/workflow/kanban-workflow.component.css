@@ -9,6 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 :host {
   block-size: 100%;
   display: block;
+  inline-size: 100%;
 }
 
 tg-kanban-status {

@@ -14,6 +14,9 @@ export const {
   selectCurrentProjectSlug,
   selectProjects,
   selectShowBannerOnRevoke,
+  selectShowStoryView,
+  selectCurrentStory,
+  selectStoryView,
 } = projectFeature;
 
 export const selectCurrentProject = createSelector(

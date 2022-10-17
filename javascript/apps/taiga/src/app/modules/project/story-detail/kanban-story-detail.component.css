@@ -1,0 +1,187 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+.workflow {
+  @mixin font-small;
+
+  color: var(--color-secondary);
+  margin-inline-end: var(--spacing-16);
+  position: relative;
+  text-decoration: underline;
+
+  &::after {
+    color: var(--color-gray30);
+    content: "\\";
+    inset-inline-end: -10px;
+    position: absolute;
+  }
+}
+
+:host {
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+}
+
+.story {
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.story-ref {
+  @mixin font-small;
+
+  color: var(--color-gray80);
+  font-weight: var(--font-weight-medium);
+  margin-inline-end: var(--spacing-12);
+  text-transform: uppercase;
+
+  &::ng-deep .hash {
+    color: var(--color-secondary50);
+    margin-inline-start: var(--spacing-4);
+  }
+
+  &::ng-deep .ref {
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+.story-header {
+  display: flex;
+  justify-content: space-between;
+  margin-block: var(--spacing-8);
+  margin-inline: var(--spacing-8);
+
+  & .start {
+    align-items: center;
+    display: flex;
+    margin-inline-start: var(--spacing-8);
+  }
+
+  & .end {
+    column-gap: var(--spacing-8);
+    display: grid;
+    grid-template-columns: 32px 32px 40px 32px 32px;
+
+    &.no-close {
+      grid-template-columns: 32px 32px 40px 32px;
+    }
+  }
+
+  & .change-view {
+    margin-inline-start: var(--spacing-8);
+    position: relative;
+
+    &::before {
+      block-size: var(--spacing-24);
+      border-inline-start: solid 1px var(--color-gray20);
+      content: "";
+      inset-block: 0;
+      inset-inline-start: calc(var(--spacing-8) * -1);
+      margin-block: auto;
+      position: absolute;
+    }
+  }
+}
+
+.story-content {
+  display: grid;
+  flex-grow: 1;
+  grid-template-columns: 61.4% 38.6%;
+
+  &.close {
+    grid-template-columns: calc(100% - 33px) 33px;
+  }
+}
+
+.sidebar {
+  align-items: flex-end;
+  border-inline-start: solid 1px var(--color-gray30);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.main-content {
+  margin-block: var(--spacing-16);
+  margin-inline: var(--spacing-24);
+}
+
+.title {
+  @mixin font-heading-4;
+
+  margin-block: 0 var(--spacing-16);
+}
+
+.copy-link:not(:hover) {
+  &::ng-deep .t-wrapper {
+    background-color: transparent;
+  }
+
+  &::ng-deep svg {
+    fill: var(--color-gray70);
+  }
+}
+
+.copy-link {
+  &.copied {
+    &::ng-deep .t-wrapper {
+      background-color: var(--color-ok10);
+    }
+
+    &::ng-deep svg {
+      fill: var(--color-ok);
+    }
+  }
+}
+
+.view-options-list {
+  block-size: 112px;
+  border: 0;
+  inline-size: 238px;
+  /* stylelint-disable-next-line declaration-no-important */
+  padding: var(--spacing-8) !important;
+
+  & .view-option {
+    align-items: center;
+    display: flex;
+  }
+
+  & .option-name {
+    @mixin font-inline;
+
+    color: var(--color-gray100);
+  }
+
+  & .option-icon {
+    block-size: var(--spacing-16);
+    fill: var(--color-secondary);
+    inline-size: var(--spacing-16);
+    margin-inline-end: var(--spacing-8);
+  }
+
+  & .shortcut {
+    @mixin font-small;
+
+    color: var(--color-gray80);
+  }
+
+  & .view-option-btn:hover,
+  & .view-option-btn.selected {
+    & .option-name {
+      color: var(--color-secondary);
+    }
+
+    & .shortcut {
+      color: var(--color-gray100);
+    }
+  }
+}

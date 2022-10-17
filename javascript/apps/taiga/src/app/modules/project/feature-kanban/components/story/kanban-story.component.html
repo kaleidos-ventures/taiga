@@ -7,7 +7,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
-    <a
+    <button
+      type="button"
       [attr.aria-label]="
         !vm.kanbanStoryA11y.ref
           ? t('kanban.story_title_a11y', {
@@ -26,13 +27,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           total: total
         })
       "
-      class="story-title"
-      href="">
+      class="story-title story-keyboard-navigation"
+      (click)="openStory()">
       <div class="draggable-icon">
         <tui-svg src="draggable"></tui-svg>
       </div>
       <div class="ref">{{ story.ref }}</div>
       <div class="text">{{ story.title }}</div>
-    </a>
+    </button>
   </ng-container>
 </ng-container>

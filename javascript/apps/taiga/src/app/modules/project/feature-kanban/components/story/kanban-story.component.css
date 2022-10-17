@@ -6,11 +6,13 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
+@import "tools/typography.css";
+
 :host {
   background: var(--color-white);
   border: 1px solid var(--color-gray30);
   border-radius: 4px;
-  box-shadow: 1px 2px 2px 0 rgba(216, 222, 233, 0.5);
+  box-shadow: 1px 2px 2px 0 var(--color-box-shadow);
   display: block;
   margin-block-end: 4px;
   margin-inline: 4px;
@@ -21,7 +23,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     border-color: transparent;
     box-shadow: none;
 
-    & a {
+    & button {
       visibility: hidden;
     }
   }
@@ -44,7 +46,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  &:hover.dragging a {
+  &:hover.dragging .story-keyboard-navigation {
     cursor: grabbing;
   }
 
@@ -86,10 +88,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .story-title {
+  @mixin font-inline;
+
+  background-color: transparent;
+  border: none;
   box-sizing: content-box;
   display: flex;
   line-height: 21px;
   padding: var(--spacing-8);
+  text-align: start;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .draggable-icon {

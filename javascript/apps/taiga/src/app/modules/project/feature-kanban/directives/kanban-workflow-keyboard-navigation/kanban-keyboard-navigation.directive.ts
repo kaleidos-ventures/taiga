@@ -66,7 +66,7 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
   ): void {
     if (current.tagName === 'TG-KANBAN-STATUS') {
       this.statatusNavigation(current, key);
-    } else if (current.tagName === 'A') {
+    } else if (current.classList.contains('story-keyboard-navigation')) {
       if (this.currentDraggedStory.ref) {
         this.storyNavigationHorizontalA11y(current, key);
       } else {
@@ -81,7 +81,7 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
     current: HTMLElement,
     key: 'ArrowUp' | 'ArrowDown'
   ): void {
-    if (current.tagName === 'A') {
+    if (current.classList.contains('story-keyboard-navigation')) {
       if (this.currentDraggedStory.ref) {
         this.storyNavigationVerticalA11y(current, key);
       } else {
@@ -165,7 +165,9 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
         () => {
           setTimeout(() => {
             if (nextStory) {
-              const el = nextStory.querySelector<HTMLElement>('a');
+              const el = nextStory.querySelector<HTMLElement>(
+                '.story-keyboard-navigation'
+              );
 
               if (status?.cdkScrollable && el) {
                 const nextRef = nextStory.dataset.ref;
@@ -241,8 +243,9 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
         nextStory
       );
 
-      const el = nextStory.querySelector<HTMLElement>('a');
-
+      const el = nextStory.querySelector<HTMLElement>(
+        '.story-keyboard-navigation'
+      );
       if (status?.cdkScrollable && el) {
         const nextRef = nextStory.dataset.ref;
 
@@ -347,7 +350,9 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
             this.liveAnnouncer.clear();
             horizontalNavData.nextStatus
               .querySelectorAll('tg-kanban-story')
-              [storyIndex].querySelector<HTMLElement>('a')!
+              [storyIndex].querySelector<HTMLElement>(
+                '.story-keyboard-navigation'
+              )!
               .focus();
           }, 100);
         },
@@ -385,7 +390,7 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
             setTimeout(() => {
               if (horizontalNavData.nextStory) {
                 horizontalNavData.nextStory
-                  .querySelector<HTMLElement>('a')!
+                  .querySelector<HTMLElement>('.story-keyboard-navigation')!
                   .focus();
                 this.liveAnnouncer.clear();
               }

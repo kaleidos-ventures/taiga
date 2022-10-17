@@ -19,6 +19,7 @@ import {
   Role,
   Status,
   Story,
+  StoryDetail,
   Workflow,
 } from '@taiga/data';
 import { Observable } from 'rxjs';
@@ -364,6 +365,15 @@ export class ProjectApiService {
         stories: [story.ref],
         reorder,
       }
+    );
+  }
+
+  public getStory(
+    projectSlug: Project['slug'],
+    storyRef: StoryDetail['ref']
+  ): Observable<StoryDetail> {
+    return this.http.get<StoryDetail>(
+      `${this.config.apiUrl}/projects/${projectSlug}/stories/${storyRef}`
     );
   }
 }

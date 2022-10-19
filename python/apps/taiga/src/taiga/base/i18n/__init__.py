@@ -6,14 +6,15 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import functools
+import operator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Final, Generator
+from typing import Final, Generator
 
 from babel import localedata
 from babel.core import Locale
 from babel.support import Translations
-from taiga.base.i18n.choices import get_script_type
+from taiga.base.i18n.choices import ScriptType, get_script_type
 from taiga.base.i18n.dataclasses import Language
 
 ROOT_DIR: Final[Path] = Path(__file__).resolve().parent.parent.parent  # src/taiga
@@ -41,10 +42,10 @@ class I18N:
 
     def _get_locale(self, identifier: str) -> Locale:
         """
-        Get a `babel.Locale` objects from its identifier.
+        Get a `babel.core.Locale` objects from its identifier.
 
-        :return a `babel.Locale` object
-        :rtype babel.Locale
+        :return a `babel.core.Locale` object
+        :rtype babel.core.Locale
         """
         return Locale.parse(identifier)
 
@@ -116,10 +117,10 @@ class I18N:
     @functools.cached_property
     def locales(self) -> list[Locale]:
         """
-        List with all the available locales as `babel.Locale` objects.
+        List with all the available locales as `babel.core.Locale` objects.
 
         :return a list with all the available locales
-        :rtype list[babel.Locale]
+        :rtype list[babel.core.Locale]
         """
         locales = []
         for p in TRANSLATION_DIRECTORY.glob("*"):
@@ -178,25 +179,31 @@ class I18N:
         - Second alphabetically for its language name.
 
         :return a list of `Language` objects
-        :rtype taiga.base.i18n.dataclasses.Language
+        :rtype list[taiga.base.i18n.dataclasses.Language]
         """
         from taiga.conf import settings
 
-        def sorted_key_func(lang: Language) -> tuple[Any, ...]:
-            return lang.script_type, lang.name.lower()
+        langs: list[Language] = []
+        for loc in i18n.locales:
+            code = str(loc)
+            script_type = get_script_type(code)
+            name = loc.display_name.title() if script_type is ScriptType.LATIN else loc.display_name
+            english_name = loc.english_name
+            text_direction = loc.text_direction
+            is_default = code == settings.LANG
 
-        langs = [
-            Language(
-                code=str(loc),
-                name=loc.display_name,
-                english_name=loc.english_name,
-                text_direction=loc.text_direction,
-                is_default=str(loc) == settings.LANG,
-                script_type=get_script_type(str(loc)),
+            langs.append(
+                Language(
+                    code=code,
+                    name=name,
+                    english_name=english_name,
+                    text_direction=text_direction,
+                    is_default=is_default,
+                    script_type=script_type,
+                )
             )
-            for loc in i18n.locales
-        ]
-        langs.sort(key=sorted_key_func)
+
+        langs.sort(key=operator.attrgetter("script_type", "name"))
         return langs
 
 

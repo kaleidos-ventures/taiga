@@ -10,10 +10,8 @@ from pathlib import Path
 from typing import Final
 
 import typer
-from rich.console import Console
-from rich.syntax import Syntax
 from taiga.base.i18n import i18n
-from taiga.base.utils import json
+from taiga.base.utils import json, pprint
 from taiga.conf import settings
 from taiga.emails import render as email_render
 from taiga.emails.emails import EmailPart, Emails
@@ -56,15 +54,15 @@ def render(
         context = {}
 
     # Print email parti
-    console = Console()
+    console = pprint.Console()
     with i18n.use(lang):
         match part:
             case EmailPart.SUBJECT:
-                syntax = Syntax(email_render.render_subject(email_name, context), "txt")
+                syntax = pprint.Syntax(email_render.render_subject(email_name, context), "txt")
                 console.print(syntax)
             case EmailPart.TXT:
-                syntax = Syntax(email_render.render_email_txt(email_name, context), "txt")
+                syntax = pprint.Syntax(email_render.render_email_txt(email_name, context), "txt")
                 console.print(syntax)
             case EmailPart.HTML:
-                syntax = Syntax(email_render.render_email_html(email_name, context), "html")
+                syntax = pprint.Syntax(email_render.render_email_html(email_name, context), "html")
                 console.print(syntax)

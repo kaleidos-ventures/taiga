@@ -8,10 +8,13 @@
 import functools
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Final, Generator
+from typing import Any, Final, Generator
 
+from babel import localedata
 from babel.core import Locale
 from babel.support import Translations
+from taiga.base.i18n.choices import get_script_type
+from taiga.base.i18n.dataclasses import Language
 
 ROOT_DIR: Final[Path] = Path(__file__).resolve().parent.parent.parent  # src/taiga
 TRANSLATION_DIRECTORY: Final[Path] = ROOT_DIR.joinpath("locale")
@@ -36,14 +39,28 @@ class I18N:
         """
         self.reset_lang()
 
-    def _get_translations(self, lang: str) -> Translations:
+    def _get_locale(self, identifier: str) -> Locale:
         """
-        Get a `babel.support.Translations` instance for some language.
+        Get a `babel.Locale` objects from its identifier.
+
+        :return a `babel.Locale` object
+        :rtype babel.Locale
+        """
+        return Locale.parse(identifier)
+
+    def _get_translations(self, identifier: str) -> Translations:
+        """
+        Get a `babel.Translations` instance for some language.
 
         It will first try to fetch from the cache, but if it doesn't exist, it will create a new one and store it for
         future use.
+
+        :param identifier: the language or locale identifier
+        :type identifier: str
+        :return a `babel.Translations` instance
+        :rtype babel.Translations
         """
-        locale = Locale.parse(lang)
+        locale = self._get_locale(identifier)
         translations = self._translations_cache.get(str(locale), None)
 
         if translations is None:
@@ -56,12 +73,15 @@ class I18N:
 
         return translations
 
-    def set_lang(self, lang: str) -> None:
+    def set_lang(self, identifier: str) -> None:
         """
         Apply all the necessary changes to translate to a new language.
+
+        :param identifier: the language or locale identifier
+        :type identifier: str
         """
         # apply lang to shortcuts translations functions
-        self.translations = self._get_translations(lang)
+        self.translations = self._get_translations(identifier)
 
         # apply lang to templating module
         from taiga.base.templating import env
@@ -80,43 +100,104 @@ class I18N:
         self.set_lang(settings.LANG)
 
     @contextmanager
-    def use(self, lang: str) -> Generator[None, None, None]:
+    def use(self, identifier: str) -> Generator[None, None, None]:
         """
         Context manager to use a language and reset it at the end.
+
+        :param identifier: the language or locale identifier
+        :type identifier: str
+        :return the generator instance
+        :rtype Generator[None, None, None]
         """
-        self.set_lang(lang)
+        self.set_lang(identifier)
         yield
         self.reset_lang()
 
     @functools.cached_property
     def locales(self) -> list[Locale]:
         """
-        List with all the available locales as `babel.core.Locale` objects.
+        List with all the available locales as `babel.Locale` objects.
+
+        :return a list with all the available locales
+        :rtype list[babel.Locale]
         """
         locales = []
         for p in TRANSLATION_DIRECTORY.glob("*"):
             if p.is_dir():
-                lang = p.parts[-1]
-                locales.append(Locale.parse(lang))
+                identifier = p.parts[-1]
+                locales.append(self._get_locale(identifier))
 
         return locales
 
-    def is_language_available(self, lang: str) -> bool:
+    def is_language_available(self, identifier: str) -> bool:
         """
-        Check if there is locales for a concrete lang.
+        Check if there is language for a concrete identifier.
+
+        :param identifier: the language or locale identifier
+        :type identifier: str
+        :return true if there is a locale available for this identifier
+        :rtype bool
         """
         try:
-            config_locale = Locale.parse(lang)
+            config_locale = self._get_locale(identifier)
             return config_locale in self.locales
         except Exception:  # UnknownLocaleError, ValueError or TypeError
             return False
 
     @functools.cached_property
+    def global_languages(self) -> list[str]:
+        """
+        List with the codes for all the global languages.
+
+        :return a list of locale codes
+        :rtype list[str]
+        """
+        locale_ids = localedata.locale_identifiers()  # type: ignore[no-untyped-call]
+        locale_ids.sort()
+        return locale_ids
+
+    @functools.cached_property
     def available_languages(self) -> list[str]:
         """
-        List with all the available locales as `str`.
+        List with the codes for all the available languages.
+
+        :return a list of locale codes
+        :rtype list[str]
         """
         return [str(loc) for loc in self.locales]
+
+    @functools.cached_property
+    def available_languages_info(self) -> list[Language]:
+        """
+        List with the info for all the available languages.
+
+        The languages order will be as follow:
+
+        - First for the writing system (alphabet or script type) in this order: Latin, Cyrillic, Greek, Hebrew, Arabic,
+          Chinese and derivatives, and others.
+        - Second alphabetically for its language name.
+
+        :return a list of `Language` objects
+        :rtype taiga.base.i18n.dataclasses.Language
+        """
+        from taiga.conf import settings
+
+        def sorted_key_func(lang: Language) -> tuple[Any, ...]:
+            return lang.script_type, lang.name.lower()
+
+        langs = [
+            Language(
+                code=str(loc),
+                name=loc.display_name,
+                english_name=loc.english_name,
+                text_direction=loc.text_direction,
+                is_default=str(loc) == settings.LANG,
+                script_type=get_script_type(str(loc)),
+            )
+            for loc in i18n.locales
+        ]
+        langs.sort(key=sorted_key_func)
+        return langs
 
 
 i18n = I18N()

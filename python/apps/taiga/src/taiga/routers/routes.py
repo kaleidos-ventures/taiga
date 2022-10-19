@@ -54,3 +54,13 @@ tags_metadata.append(
 # /my
 my = AuthAPIRouter(prefix="/my", tags=["my"])
 tags_metadata.append({"name": "my", "description": "Endpoints for logged-in user's resources."})
+
+
+# /system
+system = APIRouter(prefix="/system", tags=["system"])
+tags_metadata.append(
+    {
+        "name": "system",
+        "description": "Endpoint for system settings and other resources.",
+    }
+)

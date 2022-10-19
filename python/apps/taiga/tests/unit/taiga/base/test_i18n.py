@@ -5,8 +5,10 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from unittest.mock import PropertyMock, patch
+
 from taiga.base import templating
-from taiga.base.i18n import FALLBACK_LOCALE, I18N
+from taiga.base.i18n import FALLBACK_LOCALE, I18N, Locale
 
 
 def test_i18n_is_created_with_the_falback_lang():
@@ -94,3 +96,47 @@ def test_i18n_if_is_language_available():
 
     assert i18n.is_language_available(lang)
     assert not i18n.is_language_available(invalid_lang)
+
+
+def test_i19n_get_available_languages_info_return_sorted_list():
+    codes = [
+        "ar",
+        "bg",
+        "ca",
+        "en_us",
+        "es_es",
+        "eu",
+        "fa",
+        "he",
+        "ja",
+        "ko",
+        "pt",
+        "pt_br",
+        "ru",
+        "uk",
+        "zh_hans",
+        "zh_hant",
+    ]
+    sorted_codes = [
+        "ca",
+        "en_US",
+        "es_ES",
+        "eu",
+        "pt",
+        "pt_BR",
+        "bg",
+        "ru",
+        "uk",
+        "he",
+        "ar",
+        "fa",
+        "zh_Hans",
+        "zh_Hant",
+        "ja",
+        "ko",
+    ]
+    with patch("taiga.base.i18n.I18N.locales", new_callable=PropertyMock) as locales_mock:
+        locales_mock.return_value = [Locale.parse(cod) for cod in codes]
+
+        i18n = I18N()
+        assert sorted_codes == [lang.code for lang in i18n.available_languages_info]

@@ -9,10 +9,8 @@ import logging
 
 import typer
 from babel.messages import frontend as babel_cli
-from rich import print
-from rich.console import Console
-from rich.table import Table
 from taiga.base.i18n import FALLBACK_LOCALE, ROOT_DIR, TRANSLATION_DIRECTORY, i18n
+from taiga.base.utils import pprint
 from taiga.base.utils.commands import set_working_directory
 from taiga.conf import settings
 
@@ -26,16 +24,18 @@ cli = typer.Typer(
 )
 
 
-@cli.command(help="List available locales")
-def list_locales() -> None:
-    table = Table(title="Available locales")
+@cli.command(help="List available languages")
+def list_languages() -> None:
+    table = pprint.Table(title="Available languages")
     table.add_column("Code", style="bold yellow")
+    table.add_column("Name (EN)")
     table.add_column("Language")
     table.add_column("Territory")
     table.add_column("Extra", style="italic")
 
     for loc in i18n.locales:
         code = str(loc)
+        name = loc.english_name
         language = loc.language_name
         territory = loc.territory_name
         extra: list[str] = []
@@ -44,21 +44,26 @@ def list_locales() -> None:
         if code == settings.LANG:
             extra.append("default")
 
-        table.add_row(code, language, territory, ", ".join(extra))
+        table.add_row(code, name, language, territory, ", ".join(extra))
 
-    console = Console()
+    console = pprint.Console()
     console.print(table)
 
 
 @cli.command(help="Add a new language to the catalog")
 def add_language(lang_code: str) -> None:
-    cmd = babel_cli.init_catalog()
-    cmd.input_file = str(TRANSLATION_DIRECTORY.joinpath("messages.pot"))
-    cmd.output_dir = str(TRANSLATION_DIRECTORY)
-    cmd.locale = lang_code
-    cmd.finalize_options()
-    cmd.run()
-    print(f"[green]Language '{lang_code}' added[/green]")
+    try:
+        cmd = babel_cli.init_catalog()
+        cmd.input_file = str(TRANSLATION_DIRECTORY.joinpath("messages.pot"))
+        cmd.output_dir = str(TRANSLATION_DIRECTORY)
+        cmd.locale = lang_code
+        cmd.finalize_options()
+        cmd.run()
+        pprint.print(f"[green]Language '{lang_code}' added[/green]")
+    except Exception:
+        # DistutilsOptionError < babel.UnknownLocaleError
+        pprint.print(f"[red]Language code '{lang_code}' does not exist[/red]")
+        pprint.print(f"Valid Language code are: [green]{'[/green], [green]'.join(i18n.global_languages)}[/green]")
 
 
 @cli.command(help="Update catalog (code to .po)")
@@ -78,7 +83,7 @@ def update_catalog() -> None:
     cmd.output_dir = str(TRANSLATION_DIRECTORY)
     cmd.finalize_options()
     cmd.run()
-    print("[green]Catalog updated[/green]")
+    pprint.print("[green]Catalog updated[/green]")
 
 
 @cli.command(help="Compile catalog (.po to .mo)")
@@ -87,4 +92,4 @@ def compile_catalog() -> None:
     cmd.directory = str(TRANSLATION_DIRECTORY)
     cmd.finalize_options()
     cmd.run()  # type: ignore[no-untyped-call]
-    print("[green]Catalog compiled[/green]")
+    pprint.print("[green]Catalog compiled[/green]")

@@ -18,6 +18,17 @@ class StorySerializer(BaseModel):
         orm_mode = True
 
 
+class StoryDetailSerializer(BaseModel):
+    ref: int
+    title: str
+    status: WorkflowStatusNestedSerializer
+    prev: int | None
+    next: int | None
+
+    class Config:
+        orm_mode = True
+
+
 class ReorderSerializer(BaseModel):
     place: str
     ref: int

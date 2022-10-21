@@ -45,7 +45,6 @@ async def create_story(project: Project, workflow: dt.Workflow, title: str, stat
 async def get_paginated_stories_by_workflow(
     project_slug: str, workflow_slug: str, offset: int, limit: int
 ) -> tuple[Pagination, list[Story]]:
-
     total_stories = await stories_repositories.get_total_stories_by_workflow(
         project_slug=project_slug, workflow_slug=workflow_slug
     )
@@ -109,3 +108,15 @@ async def reorder_stories(
     )
 
     return {"status": target_status, "stories": stories_refs, "reorder": reorder}
+
+
+async def get_story(ref: int, project: Project) -> dict[str, Any] | None:
+    story = await stories_repositories.get_story_with_neighbors_as_dict(project_id=project.id, ref=ref)
+
+    if story:
+        story["prev"] = story["prev"].ref if story["prev"] else None
+        story["next"] = story["next"].ref if story["next"] else None
+
+        return story
+
+    return None

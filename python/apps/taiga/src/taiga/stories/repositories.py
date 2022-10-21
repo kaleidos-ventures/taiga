@@ -4,13 +4,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
 from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from django.db.models import QuerySet
+from taiga.base.repositories import neighbors as neighbors_repositories
 from taiga.stories.models import Story
 from taiga.workflows.models import WorkflowStatus
 
@@ -55,6 +55,25 @@ def _get_stories_qs(**kwargs: Any) -> QuerySet[Story]:
         qs = qs.filter(ref__in=refs)
 
     return qs
+
+
+@sync_to_async
+def get_story_with_neighbors_as_dict(project_id: UUID, ref: int) -> dict[str, Any] | None:
+    try:
+        story = Story.objects.filter(project_id=project_id, ref=ref).get()
+    except Story.DoesNotExist:
+        return None
+
+    story_qs = Story.objects.filter(project_id=project_id, workflow_id=story.workflow.id).order_by("status", "order")
+    neighbors = neighbors_repositories.get_neighbors_sync(obj=story, model_queryset=story_qs)
+
+    return {
+        "ref": story.ref,
+        "title": story.title,
+        "status": story.status,
+        "prev": neighbors.prev,
+        "next": neighbors.next,
+    }
 
 
 @sync_to_async

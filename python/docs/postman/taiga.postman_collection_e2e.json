@@ -1825,7 +1825,7 @@
 									"    var jsonRes = pm.response.json();",
 									"",
 									"    pm.environment.set(\"ref1\", jsonRes.ref);",
-									"",
+									"    pm.environment.set(\"story_ref\", jsonRes.ref);",
 									"",
 									"    // Validate response API contract",
 									"    pm.expect(jsonRes).to.have.property(\"ref\");",
@@ -1963,6 +1963,75 @@
 									"key": "limit",
 									"value": "10"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{p}.stories.{ref}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    console.log(jsonRes);",
+									"    // Validate response API contract",
+									"    pm.expect(jsonRes).to.have.property(\"ref\");",
+									"    pm.expect(jsonRes).to.have.property(\"title\");",
+									"    pm.expect(jsonRes).to.have.property(\"status\");",
+									"    pm.expect(jsonRes).to.have.property(\"prev\");",
+									"    pm.expect(jsonRes).to.have.property(\"next\");",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"",
+									"    // Validate second-level entries",
+									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
+									"    pm.expect(jsonRes.status).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
+									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/stories/{{story_ref}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"stories",
+								"{{story_ref}}"
 							]
 						}
 					},

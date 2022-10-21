@@ -1685,7 +1685,8 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"   // pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"       pm.environment.set(\"ref1\", pm.response.json().ref);",
+									"       pm.environment.set(\"story_ref\", pm.response.json().ref);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1710,7 +1711,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"done\"\n}",
+							"raw": "{\n    \"title\": \"story2\",\n    \"status\": \"new\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1788,6 +1789,54 @@
 									"key": "limit",
 									"value": "10"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get story",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"   // pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/stories/{{story_ref}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"stories",
+								"{{story_ref}}"
 							]
 						}
 					},

@@ -187,6 +187,73 @@ async def test_reorder_story_not_all_stories_exist():
 
 
 #######################################################
+# get story
+#######################################################
+
+
+async def test_get_story_ok():
+    story1 = f.build_story(ref=1)
+    story2 = f.build_story(ref=2, project=story1.project, workflow=story1.workflow, status=story1.status)
+    story3 = f.build_story(ref=3, project=story1.project, workflow=story1.workflow, status=story1.status)
+    story_with_neighbors = {
+        "ref": story2.ref,
+        "title": story2.title,
+        "status": story2.status,
+        "prev": story1,
+        "next": story3,
+    }
+
+    with patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
+        fake_stories_repo.get_story_with_neighbors_as_dict.return_value = story_with_neighbors
+        story_ret = await services.get_story(project=story2.project, ref=story2.ref)
+
+        fake_stories_repo.get_story_with_neighbors_as_dict.assert_awaited_once_with(
+            project_id=story2.project.id, ref=story2.ref
+        )
+        assert story_ret["ref"] == story2.ref
+        assert story_ret["prev"] == story1.ref
+        assert story_ret["next"] == story3.ref
+
+
+async def test_get_story_no_neighbors():
+    story = f.build_story(ref=1)
+    story_no_prev_neighbor = {
+        "ref": story.ref,
+        "title": story.title,
+        "status": story.status,
+        "prev": None,
+        "next": None,
+    }
+
+    with patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
+        fake_stories_repo.get_story_with_neighbors_as_dict.return_value = story_no_prev_neighbor
+
+        story_ret = await services.get_story(project=story.project, ref=story.ref)
+
+        fake_stories_repo.get_story_with_neighbors_as_dict.assert_awaited_once_with(
+            project_id=story.project.id, ref=story.ref
+        )
+        assert story_ret["ref"] == story.ref
+        assert story_ret["prev"] is None
+        assert story_ret["next"] is None
+
+
+async def test_get_story_no_story():
+    story = f.build_story(ref=1)
+    no_story = None
+
+    with patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
+        fake_stories_repo.get_story_with_neighbors_as_dict.return_value = no_story
+
+        story_ret = await services.get_story(project=story.project, ref=story.ref)
+
+        fake_stories_repo.get_story_with_neighbors_as_dict.assert_awaited_once_with(
+            project_id=story.project.id, ref=story.ref
+        )
+        assert story_ret is None
+
+
+#######################################################
 # utils
 #######################################################
 

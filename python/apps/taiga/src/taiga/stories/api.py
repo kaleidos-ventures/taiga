@@ -9,18 +9,20 @@ from fastapi import Depends, Query
 from starlette.responses import Response
 from taiga.base.api import AuthRequest, PaginationQuery, set_pagination
 from taiga.base.api.permissions import check_permissions
+from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm
 from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.stories import services as stories_services
 from taiga.stories.models import Story
-from taiga.stories.serializers import ReorderStoriesSerializer, StorySerializer
+from taiga.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer, StorySerializer
 from taiga.stories.validators import ReorderStoriesValidator, StoryValidator
 from taiga.workflows.api import get_workflow_or_404
 
 # PERMISSIONS
 CREATE_STORY = HasPerm("add_story")
+GET_STORY = HasPerm("view_story")
 LIST_STORIES = HasPerm("view_story")
 REORDER_STORIES = HasPerm("modify_story")
 
@@ -88,6 +90,31 @@ async def list_stories(
     return stories
 
 
+@routes.projects.get(
+    "/{project_slug}/stories/{ref}",
+    name="project.stories.get",
+    summary="List all the stories for a project workflow",
+    response_model=StoryDetailSerializer,
+    responses=ERROR_404 | ERROR_403,
+)
+async def get_story(
+    request: AuthRequest,
+    project_slug: str = Query(None, description="the project slug (str)"),
+    ref: int = Query(None, description="the unique story reference within a project (str)"),
+) -> StoryDetailSerializer:
+    """
+    Get a story from a project workflow with information about its closest neighbors
+    """
+    project = await get_project_or_404(project_slug)
+    await check_permissions(permissions=GET_STORY, user=request.user, obj=project)
+
+    resp = await stories_services.get_story(ref=ref, project=project)
+    if resp is None:
+        raise ex.NotFoundError(f"Story with ref {ref} does not exist")
+
+    return StoryDetailSerializer(**resp)
+
+
 @routes.projects.post(
     "/{project_slug}/workflows/{workflow_slug}/stories/reorder",
     name="project.stories.reorder",
@@ -97,7 +124,6 @@ async def list_stories(
 )
 async def reorder_stories(
     request: AuthRequest,
-    response: Response,
     form: ReorderStoriesValidator,
     project_slug: str = Query(None, description="the project slug (str)"),
     workflow_slug: str = Query(None, description="the workflow slug (str)"),

@@ -440,3 +440,38 @@ async def test_get_max_order() -> None:
     assert max_order == 120
     max_order = await repositories.get_max_order(workflow_id=workflow_2.id)
     assert max_order == 90
+
+
+##########################################################
+# get_story_with_neighbors_as_dict
+##########################################################
+
+
+async def test_get_story_with_neighbors_as_dict() -> None:
+    pj_admin = await f.create_user()
+    project = await f.create_project(owner=pj_admin)
+    workflow = await sync_to_async(project.workflows.first)()
+    status1 = await sync_to_async(workflow.statuses.first)()
+    story1 = await f.create_story(project=project, workflow=workflow, status=status1)
+    story2 = await f.create_story(project=project, workflow=workflow, status=status1)
+    story3 = await f.create_story(project=project, workflow=workflow, status=status1)
+
+    story_ret = await repositories.get_story_with_neighbors_as_dict(project_id=project.id, ref=story2.ref)
+    assert story_ret["ref"] == story2.ref
+    assert story_ret["title"] == story2.title
+    assert story_ret["status"] == story2.status
+    assert story_ret["prev"] == story1
+    assert story_ret["next"] == story3
+
+    story_ret = await repositories.get_story_with_neighbors_as_dict(project_id=project.id, ref=story1.ref)
+    assert story_ret["prev"] is None
+    assert story_ret["next"] == story2
+
+    story_ret = await repositories.get_story_with_neighbors_as_dict(project_id=project.id, ref=story3.ref)
+    assert story_ret["prev"] == story2
+    assert story_ret["next"] is None
+
+
+async def test_get_story_with_neighbors_as_dict_no_story() -> None:
+    story_ret = await repositories.get_story_with_neighbors_as_dict(project_id=99999, ref=99999)
+    assert story_ret is None

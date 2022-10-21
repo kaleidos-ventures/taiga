@@ -7,7 +7,7 @@
 
 import pytest
 from pydantic import ValidationError
-from taiga.users.validators import CreateUserValidator
+from taiga.users.validators import CreateUserValidator, UpdateUserValidator
 from tests.unit.utils import check_validation_errors
 
 
@@ -129,6 +129,31 @@ def test_validate_create_user_not_available_lang():
 
     with pytest.raises(ValidationError) as validation_errors:
         CreateUserValidator(email=email, full_name=full_name, password=password, accept_terms=terms, lang=lang)
+
+    expected_error_fields = ["lang"]
+    expected_error_messages = ["Language is not available"]
+    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
+
+
+def test_validate_update_user_ok_all_fields():
+    full_name = "User fullname"
+    lang = "es_ES"
+
+    validator = UpdateUserValidator(
+        full_name=full_name,
+        lang=lang,
+    )
+
+    assert validator.full_name == full_name
+    assert validator.lang == lang
+
+
+def test_validate_update_user_not_available_lang():
+    full_name = "User fullname"
+    lang = "xx"
+
+    with pytest.raises(ValidationError) as validation_errors:
+        UpdateUserValidator(full_name=full_name, lang=lang)
 
     expected_error_fields = ["lang"]
     expected_error_messages = ["Language is not available"]

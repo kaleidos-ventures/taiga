@@ -143,6 +143,28 @@ async def test_create_user_email_exists():
 
 
 ##########################################################
+# update_user
+##########################################################
+
+
+async def test_update_user_ok(tqmanager):
+    user = f.build_user(id=1, full_name="Full Name", lang="es_ES")
+    new_full_name = "New Full Name"
+    new_lang = "en_US"
+
+    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
+        await services.update_user(
+            user=user,
+            full_name=new_full_name,
+            lang=new_lang,
+        )
+
+        fake_users_repo.update_user.assert_awaited_once_with(
+            user=user, new_values={"full_name": new_full_name, "lang": new_lang}
+        )
+
+
+##########################################################
 # verify_user
 ##########################################################
 

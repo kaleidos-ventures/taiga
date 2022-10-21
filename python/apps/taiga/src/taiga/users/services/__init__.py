@@ -60,6 +60,10 @@ async def create_user(
     return user
 
 
+async def update_user(user: User, full_name: str, lang: str) -> User:
+    return await users_repositories.update_user(user=user, new_values={"full_name": full_name, "lang": lang})
+
+
 async def generate_username(email: str) -> str:
     username = slugify(email.split("@")[0])
     suffix = ""

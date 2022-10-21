@@ -50,6 +50,22 @@ class CreateUserValidator(PasswordMixin, BaseModel):
         return v
 
 
+class UpdateUserValidator(BaseModel):
+    full_name: constr(max_length=50)  # type: ignore
+    lang: str
+
+    @validator("full_name", "lang")
+    def check_not_empty(cls, v: str) -> str:
+        assert v != "", "Empty field is not allowed"
+        return v
+
+    @validator("lang")
+    def check_lang(cls, v: str) -> str:
+        if v:
+            assert v in i18n.available_languages, "Language is not available"
+        return v
+
+
 class VerifyTokenValidator(BaseModel):
     token: str
 

@@ -18,24 +18,53 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
-# GET /users/me
+# GET /my/user
 ##########################################################
 
 
-async def test_me_error_no_authenticated_user(client):
-    response = client.get("/users/me")
+async def test_my_user_error_no_authenticated_user(client):
+    response = client.get("/my/user")
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-async def test_me_success(client):
+async def test_my_user_success(client):
     user = await f.create_user()
 
     client.login(user)
-    response = client.get("/users/me")
+    response = client.get("/my/user")
 
     assert response.status_code == status.HTTP_200_OK
     assert "email" in response.json().keys()
+
+
+##########################################################
+# PUT /my/user
+##########################################################
+
+
+async def test_update_my_user_error_no_authenticated_user(client):
+    data = {
+        "fullName": "Ada Lovelace",
+        "lang": "es_ES",
+    }
+    response = client.put("/my/user", json=data)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+async def test_update_my_user_success(client):
+    user = await f.create_user(lang="en_US")
+    data = {
+        "fullName": "Ada Lovelace",
+        "lang": "es_ES",
+    }
+
+    client.login(user)
+    response = client.put("/my/user", json=data)
+
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["lang"] == "es_ES"
 
 
 ##########################################################

@@ -20,13 +20,6 @@ class UserBaseSerializer(BaseModel):
 
 
 class UserSerializer(UserBaseSerializer):
-    lang: str
-
-    class Config:
-        orm_mode = True
-
-
-class UserMeSerializer(UserBaseSerializer):
     email: EmailStr
     lang: str
 

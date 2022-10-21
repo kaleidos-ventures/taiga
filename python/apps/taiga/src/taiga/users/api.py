@@ -20,7 +20,7 @@ from taiga.users import services as users_services
 from taiga.users import validators as users_validators
 from taiga.users.dataclasses import VerificationInfo
 from taiga.users.models import User
-from taiga.users.serializers import UserMeSerializer, UserSearchSerializer, UserSerializer, VerificationInfoSerializer
+from taiga.users.serializers import UserSearchSerializer, UserSerializer, VerificationInfoSerializer
 
 # PERMISSIONS
 LIST_USERS = IsAuthenticated()
@@ -32,14 +32,14 @@ GET_USERS_BY_TEXT = IsAuthenticated()
 #####################################################################
 
 
-@routes.users.get(
-    "/me",
-    name="users.me",
+@routes.my.get(
+    "/user",
+    name="my.user",
     summary="Get authenticated user profile",
-    response_model=UserMeSerializer,
+    response_model=UserSerializer,
     responses=ERROR_401,
 )
-async def me(request: Request) -> User:
+async def get_my_user(request: Request) -> User:
     """
     Get the profile of the current authenticated user (according to the auth token in the request headers).
     """
@@ -48,6 +48,28 @@ async def me(request: Request) -> User:
         raise ex.AuthorizationError("User is anonymous")
 
     return request.user
+
+
+@routes.my.put(
+    "/user",
+    name="my.user.update",
+    summary="Update authenticated user profile",
+    response_model=UserSerializer,
+    responses=ERROR_401 | ERROR_400 | ERROR_422,
+)
+async def update_my_user(request: Request, form: users_validators.UpdateUserValidator) -> User:
+    """
+    Update the profile of the current authenticated user (according to the auth token in the request headers).
+    """
+    if request.user.is_anonymous:
+        # NOTE: We force a 401 instead of using the permissions system (which would return a 403)
+        raise ex.AuthorizationError("User is anonymous")
+
+    return await users_services.update_user(
+        user=request.user,
+        full_name=form.full_name,
+        lang=form.lang,
+    )
 
 
 @routes.unauth_users.post(

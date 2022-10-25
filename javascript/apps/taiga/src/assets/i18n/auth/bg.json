@@ -1,0 +1,129 @@
+{
+  "social": {
+    "github": "Continue with Github",
+    "google": "Continue with Google",
+    "gitlab": "Continue with Gitlab",
+    "separator": "or",
+    "errors": {
+      "config": "Something went wrong with your authentication, contact with <a class='link' href='mailto:{{adminEmail}}'>the admin.</a>",
+      "server": "We can't connect with {{social}}, try again in a few minutes."
+    }
+  },
+  "signup": {
+    "title": "Create a Taiga account",
+    "subtitle": "Free for all",
+    "email": "Email",
+    "password": "Password",
+    "full_name": "Full name",
+    "create_account": "Create an account",
+    "create_account_email": "Create an account with your email",
+    "terms_and_privacy": "By creating the account, you agree to our <a  href='{{ termsOfService }}' target='_blank'>terms of service</a> and <a href='{{ privacyPolicy }}' target='_blank'> privacy policy</a>.",
+    "already_account": "Already have an account? <a href='{{ login }}'>Login here</a>",
+    "all_options": "All options",
+    "resend_email_label": "We just sent you an email",
+    "resend_email_message": "The verification email is on its way!",
+    "sent_email_label": "Didn't received the email?",
+    "sent_email_message": "Check your spam and if not, try resending the email in a few minutes.",
+    "join": "Create an account to join the project <strong>{{ project }}</strong>",
+    "in_progress": "Creating account",
+    "success": "Account created",
+    "errors": {
+      "email_required": "Enter your email address",
+      "full_name_required": "Enter a full name",
+      "password_required": "Enter a password",
+      "invalid_email": "Invalid email address",
+      "email_exists": "The email is already in use",
+      "register": "There was a problem registering your account",
+      "please_refresh": "Please refresh the page or try again in a few minutes",
+      "resend_email_label": "Sorry, something went wrong sending the email",
+      "resend_email_message": "Wait a few minutes and try again"
+    }
+  },
+  "login": {
+    "title": "Log in to your Taiga account",
+    "username": "Email or username",
+    "password": "Password",
+    "forgot_password": "Forgot your password?",
+    "login": "Log in",
+    "in_progress": "Logging in",
+    "success": "Logged in",
+    "not_registered_yet": "Not registered yet?",
+    "create_free_account": "Create a free account",
+    "errors": {
+      "username_required": "Enter your email or username",
+      "password_required": "Enter a password",
+      "submited_error": "Your email, username or password are incorrect. Check them and try again"
+    }
+  },
+  "verify": {
+    "title": "Check your inbox to complete your registration",
+    "verification_link_sent": "Click the verification link in the email we sent you to:",
+    "mail_not_received": "Didn't receive the email?",
+    "resend_button": "Resend email",
+    "footer_text": "Want to use a different email?",
+    "footer_button": "Create a new account",
+    "resend_toast_label": "We just sent you an email",
+    "resend_toast_message": "The verification email is on its way!",
+    "errors": {
+      "invalid_token_label": "Sorry, your validation link is invalid",
+      "invalid_token_message": "Check that your link is correct.",
+      "expired_token_label": "Sorry, your validation link has expired",
+      "expired_token_message": "Try to create your account again.",
+      "used_token_label": "Sorry, your validation link has already been used",
+      "used_token_message": "Try to create your account again."
+    }
+  },
+  "password": {
+    "weak": "Weak",
+    "medium": "Medium",
+    "strong": "Strong",
+    "help_weak": "At least {{number}} characters, including an uppercase and a number or a symbol",
+    "help_medium": "For a stronger password try with at least 15 characters or a special character",
+    "help_strong": "Your password is great!",
+    "show": "Show password",
+    "hide": "Hide password",
+    "num_characters": "{{number}} characters",
+    "validation": "1 {{characterType}}",
+    "validation_multiple": "1 {{characterType1}} or {{characterType2}}",
+    "password_help": "Enter a password with at least:",
+    "character": {
+      "uppercase": "uppercase",
+      "lowercase": "lowercase",
+      "symbol": "symbol",
+      "number": "number"
+    }
+  },
+  "logout": {
+    "logged_out": "You are now logged out",
+    "see_you_soon": "We hope to see you soon!"
+  },
+  "reset_password": {
+    "title": "Reset your Taiga password",
+    "description": "Enter your email and we will send you a reset link.",
+    "submit": "Send reset link",
+    "send_in_progress": "Sending",
+    "send_success": "Sent",
+    "go_back": "Nah, I remember the password. <a href='{{ login }}'>Take me back.</a>",
+    "reset_success": "Password reset successfully",
+    "confirm": {
+      "title": "Check your inbox",
+      "description": "If there is an account associated with this email address you will receive an email with instructions to reset your password to:",
+      "back": "Go back to login",
+      "new_email": "Want to use a different email?",
+      "create_account": "Create a new account"
+    },
+    "expired_invitation": {
+      "title": "Your reset link has expired.",
+      "description": "Please enter your email address and we will send you a new reset link to your inbox."
+    },
+    "new_password": {
+      "title": "Choose a new password",
+      "password_label": "New password",
+      "repeat_password": "Repeat password",
+      "submit": "Reset password",
+      "submit_in_progress": "Resetting",
+      "submit_success": "Reset",
+      "password_match": "Passwords do not match"
+    }
+  }
+}

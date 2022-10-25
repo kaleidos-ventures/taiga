@@ -56,10 +56,11 @@
     "new_project": "New project"
   },
   "navigation_user": {
-    "user_profile": "User Profile",
-    "edit_setting": "Edit setting",
-    "account_setting": "Account settings",
-    "accesibility_setting": "Accesibility settings",
+    "user_profile": "See Profile",
+    "edit_profile": "Edit profile",
+    "preferences": "Preferences",
+    "account_setting": "Account",
+    "accesibility_setting": "Accesibility",
     "log_out": "Log out"
   },
   "main_project_navigation": {

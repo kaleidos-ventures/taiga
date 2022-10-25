@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
 
-import { Auth, LoginInput, SignUpInput } from '@taiga/data';
+import { Auth, Language, LoginInput, SignUpInput } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
@@ -26,9 +26,10 @@ export class AuthApiService {
     return this.http.post<Auth>(`${this.config.apiUrl}/users`, data);
   }
 
-  public socialSignUp(code: string, social: string) {
+  public socialSignUp(code: string, social: string, lang: Language['code']) {
     const params = {
       code,
+      lang,
       redirectUri:
         social === 'gitlab' || social === 'google'
           ? `${window.location.origin}/signup/${social}`

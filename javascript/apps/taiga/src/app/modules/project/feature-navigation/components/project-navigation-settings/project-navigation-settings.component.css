@@ -6,7 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
-@import "tools/typography.css";
+@import "vertical-menu.css";
 
 :host {
   background: var(--color-gray10);
@@ -70,96 +70,4 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   /* stylelint-enable */
 }
 
-.project-settings-title {
-  @mixin font-small;
-
-  color: var(--color-gray90);
-  font-weight: var(--font-weight-medium);
-  margin: 0;
-  padding-block: var(--spacing-16) var(--spacing-12);
-  padding-inline: var(--spacing-16);
-  text-transform: uppercase;
-}
-
-.project-settings-menu,
-.project-settings-submenu {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.project-settings-menu-item {
-  @mixin font-inline;
-
-  color: var(--color-gray70);
-  margin-block-end: 0;
-}
-
-.project-settings-menu-anchor {
-  color: currentColor;
-  display: block;
-  font-weight: var(--font-weight-regular);
-  padding-block: var(--spacing-8);
-  padding-inline: var(--spacing-16);
-
-  &:hover {
-    background: var(--color-gray20);
-    color: var(--color-secondary80);
-  }
-
-  &.active {
-    background: var(--color-gray20);
-    color: var(--color-secondary80);
-    font-weight: var(--font-weight-medium);
-
-    & + .project-settings-submenu {
-      background: var(--color-gray20);
-    }
-  }
-
-  &:focus-visible {
-    box-shadow: inset 0 0 0 2px var(--color-secondary);
-    outline: 0;
-  }
-
-  &:focus:not(:focus-visible) {
-    box-shadow: none;
-    outline: none;
-  }
-}
-
-.project-settings-submenu {
-  padding-block-end: var(--spacing-8);
-  padding-inline: var(--spacing-16) var(--spacing-8);
-}
-
-.project-settings-submenu-item {
-  margin-block-end: 0;
-}
-
-.project-settings-submenu-anchor {
-  @mixin font-small;
-
-  border-inline-start: 3px solid var(--color-gray30);
-  color: var(--color-gray80);
-  display: block;
-  font-weight: var(--font-weight-medium);
-  padding-block: var(--spacing-8);
-  padding-inline: var(--spacing-12);
-
-  &:hover {
-    background: var(--color-gray30);
-    border-inline-start-color: var(--color-gray30);
-    color: var(--color-secondary80);
-  }
-
-  &.active {
-    background: var(--color-gray20);
-    border-inline-start-color: var(--color-secondary80);
-    color: var(--color-secondary80);
-
-    &:hover {
-      background: var(--color-gray30);
-    }
-  }
-}
+@mixin vertical-menu project-settings;

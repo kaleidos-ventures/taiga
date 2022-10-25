@@ -18,8 +18,8 @@ export function getTranslocoModule(options: TranslocoTestingOptions = {}) {
       en: {},
     },
     translocoConfig: {
-      availableLangs: ['en'],
-      defaultLang: 'en',
+      availableLangs: ['en-US'],
+      defaultLang: 'en-US',
     },
     preloadLangs: true,
     ...options,

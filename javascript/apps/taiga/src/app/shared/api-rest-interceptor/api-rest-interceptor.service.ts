@@ -19,7 +19,7 @@ import { Router } from '@angular/router';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { AuthApiService } from '@taiga/api';
-import { ConfigService, globalLoading, selectGlobalLoading } from '@taiga/core';
+import { ConfigService, coreActions, selectGlobalLoading } from '@taiga/core';
 import { Auth } from '@taiga/data';
 import { BehaviorSubject, EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
@@ -43,11 +43,11 @@ export class ApiRestInterceptorService implements HttpInterceptor {
       .pipe(concatLatestFrom(() => this.store.select(selectGlobalLoading)))
       .subscribe(([requests, loading]) => {
         if (requests.length && !loading) {
-          this.store.dispatch(globalLoading({ loading: true }));
+          this.store.dispatch(coreActions.globalLoading({ loading: true }));
         } else if (!requests.length && loading) {
           // Is async to run this action after http effect actions
           requestAnimationFrame(() => {
-            this.store.dispatch(globalLoading({ loading: false }));
+            this.store.dispatch(coreActions.globalLoading({ loading: false }));
           });
         }
       });

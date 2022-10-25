@@ -122,6 +122,13 @@ const routes: Routes = [
       noHeader: true,
     },
   },
+  {
+    path: 'user-settings',
+    loadChildren: () =>
+      import(
+        './modules/feature-user-settings/feature-user-settings.module'
+      ).then((m) => m.FeatureUserSettingsModule),
+  },
 ];
 
 @NgModule({

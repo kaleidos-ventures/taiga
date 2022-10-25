@@ -15,6 +15,10 @@ Run `ncu` and check if the upgrade is ok, then run `ncu -u`.
 
 If you need to exclude a specific package add -x, `ncu -x rxjs typescript`.
 
+Don't update:
+
+node-fetch - it will break scripts/
+
 ## Check that everything works
 
 [] npm run start

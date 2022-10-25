@@ -43,8 +43,8 @@ export class AppService {
     errorOptions?: ErrorManagementOptions
   ) {
     const status = error.status as keyof ErrorManagementOptions;
-    if (errorOptions && errorOptions[status]) {
-      const config = errorOptions[status];
+    if ((errorOptions && errorOptions[status]) || errorOptions?.any) {
+      const config = errorOptions[status] ?? errorOptions?.any;
       if (config && config.type === 'toast') {
         return this.toastNotification({
           label: config.options.label,

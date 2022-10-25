@@ -1,0 +1,35 @@
+{
+  "new_project": "New Project",
+  "choose_workspace": "Choose workspace",
+  "choose_workspace_error": "Please choose a workspace",
+  "wip_step": {
+    "back": "Back to  create project"
+  },
+  "first_step": {
+    "blank_project": "Blank project",
+    "blank_project_description": "Start a project from scratch",
+    "template_project": "From a template",
+    "template_project_description": "Use one of our community templates",
+    "import_project": "Import a project",
+    "import_project_description": "Import the scaffoding of another project",
+    "duplicate_project": "Duplicate",
+    "duplicate_project_description": "Duplicate a project",
+    "duplicate_project_tip": "This is just a placeholder",
+    "discard_project": "Discard this project?",
+    "discard_warning": "Closing this window without clicking “create project” will delete the content you’ve added."
+  },
+  "second_step": {
+    "project_details": "Project details",
+    "project_name": "Project name",
+    "project_name_error": "Project name can’t be empty",
+    "project_description": "Project description",
+    "project_description_placeholder": "Add a short description to help others better understand your project.",
+    "project_icon": "Project icon",
+    "create_project": "Create project",
+    "create_project_in_progress": "Creating",
+    "create_project_success": "Created",
+    "max_length_error": "Project description must be 200 characters or fewer",
+    "choose_image_tip": "Allowed formats: gif, png, jpg, svg and webp",
+    "format_error": "The file format is not allowed. Allowed formats: gif, png, jpg, svg or webp"
+  }
+}

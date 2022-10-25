@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Language } from './language.model';
 import { Role } from './roles.model';
 
 export interface User {
@@ -19,7 +20,7 @@ export interface User {
   gravatarId: string;
   id: number;
   isActive: boolean;
-  lang: string;
+  lang: Language['code'];
   maxMembershipsPrivateProjects: number | null;
   maxMembershipsPublicProjects: number | null;
   maxPrivateProjects: number | null;

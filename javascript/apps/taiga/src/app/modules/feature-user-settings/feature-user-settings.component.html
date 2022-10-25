@@ -1,0 +1,138 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t; read: 'user_settings.sections'">
+  <div class="menu-wrapper">
+    <div
+      *ngIf="model$ | async as vm"
+      class="menu">
+      <h2 class="user-settings-title">{{ t('user_settings') }}</h2>
+      <ul class="user-settings-menu">
+        <li class="user-settings-menu-item">
+          <a
+            class="user-settings-menu-anchor"
+            routerLink="/user-settings/profile"
+            routerLinkActive="active"
+            >{{ t('edit_profile') }}</a
+          >
+        </li>
+        <li class="user-settings-menu-item">
+          <a
+            class="user-settings-menu-anchor"
+            href=""
+            >{{ t('account') }}</a
+          >
+          <ul class="user-settings-submenu">
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                href=""
+                >{{ t('email') }}
+              </a>
+            </li>
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                href=""
+                >{{ t('change_password') }}
+              </a>
+            </li>
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                href=""
+                >{{ t('billing_subscription') }}
+              </a>
+            </li>
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                href=""
+                >{{ t('delete_account') }}
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="user-settings-menu-item">
+          <a
+            class="user-settings-menu-anchor"
+            routerLink="/user-settings/preferences"
+            routerLinkActive="active"
+            >{{ t('preferences') }}</a
+          >
+          <ul class="user-settings-submenu">
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                [class.active]="vm.currentFragment === 'language'"
+                routerLink="/user-settings/preferences"
+                fragment="language"
+                >{{ t('language') }}
+              </a>
+            </li>
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                [class.active]="vm.currentFragment === 'notifications'"
+                routerLink="/user-settings/preferences"
+                fragment="notifications"
+                >{{ t('notifications') }}
+              </a>
+            </li>
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                [class.active]="vm.currentFragment === 'privacy_visibility'"
+                routerLink="/user-settings/preferences"
+                fragment="privacy_visibility"
+                >{{ t('privacy_visibility') }}
+              </a>
+            </li>
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                [class.active]="vm.currentFragment === 'start_pages'"
+                routerLink="/user-settings/preferences"
+                fragment="start_pages"
+                >{{ t('start_pages') }}
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="user-settings-menu-item">
+          <a
+            class="user-settings-menu-anchor"
+            href=""
+            >{{ t('accesibility') }}</a
+          >
+          <ul class="user-settings-submenu">
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                href=""
+                >{{ t('shortcuts') }}
+              </a>
+            </li>
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                href=""
+                >{{ t('themes') }}
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="user-settings-container">
+    <router-outlet></router-outlet>
+  </div>
+</ng-container>

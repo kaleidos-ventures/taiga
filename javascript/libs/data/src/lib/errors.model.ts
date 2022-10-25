@@ -29,6 +29,7 @@ export interface ErrorManagementOptions {
   403?: ErrorManagementToastOptions;
   404?: ErrorManagementToastOptions;
   500?: ErrorManagementToastOptions;
+  any?: ErrorManagementToastOptions;
 }
 
 export interface genericResponseError {

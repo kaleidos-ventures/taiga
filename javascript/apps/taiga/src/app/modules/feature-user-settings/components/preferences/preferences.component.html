@@ -1,0 +1,90 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t; read: 'user_settings'">
+  <ng-container *ngIf="model$ | async as vm">
+    <h3
+      tabindex="-1"
+      mainFocus
+      class="settings-title">
+      {{ t('sections.preferences') }}
+    </h3>
+    <section>
+      <h3
+        watchElement="language"
+        data-fragment="language"
+        class="settings-subtitle">
+        {{ t('sections.language') }}
+      </h3>
+
+      <form *ngIf="vm.currentLang">
+        <tg-ui-select
+          class="language-selector"
+          [label]="t('language.select')">
+          <tui-select
+            tuiTextfieldSize="l"
+            [valueContent]="langCurrentContent"
+            [formControl]="language">
+            {{ t('language.select') }}
+            <tui-data-list *tuiDataList>
+              <tui-opt-group
+                *ngFor="let language of vm.languages; trackBy: trackByIndex">
+                <button
+                  *ngFor="let language of language; trackBy: trackByLanguage"
+                  [dir]="language.textDirection === 'rtl' ? 'rtl' : 'ltr'"
+                  tuiOption
+                  [value]="language.code">
+                  {{ language.name }}
+                  <span
+                    class="default-lang"
+                    *ngIf="language.isDefault">
+                    {{ t('language.default') }}
+                  </span>
+                </button>
+              </tui-opt-group>
+            </tui-data-list>
+          </tui-select>
+          <ng-template
+            #langCurrentContent
+            let-lang>
+            {{ vm.currentLang.name }}
+            <span
+              class="default-lang"
+              *ngIf="vm.currentLang.isDefault">
+              {{ t('language.default') }}
+            </span>
+          </ng-template>
+        </tg-ui-select>
+      </form>
+    </section>
+    <section>
+      <h3
+        watchElement="notifications"
+        data-fragment="notifications"
+        class="settings-subtitle">
+        {{ t('sections.notifications') }}
+      </h3>
+    </section>
+    <section>
+      <h3
+        watchElement="privacy_visibility"
+        data-fragment="privacy_visibility"
+        class="settings-subtitle">
+        {{ t('sections.privacy_visibility') }}
+      </h3>
+    </section>
+    <section>
+      <h3
+        watchElement="start_pages"
+        data-fragment="start_pages"
+        class="settings-subtitle">
+        {{ t('sections.start_pages') }}
+      </h3>
+    </section>
+  </ng-container>
+</ng-container>

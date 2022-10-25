@@ -1,0 +1,7 @@
+{
+  "invitations": {
+    "accept_invitation": "Accept your invitation",
+    "accept_member": "Accept it to became a project member.",
+    "pending_invitation": "You have a pending invitation to this project."
+  }
+}

@@ -14,7 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { TranslocoService } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
-import { StoreModule } from '@ngrx/store';
+import { Store, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TUI_IS_CYPRESS } from '@taiga-ui/cdk';
 import {
@@ -26,8 +26,8 @@ import {
 } from '@taiga-ui/core';
 import { TUI_ENGLISH_LANGUAGE, TUI_LANGUAGE } from '@taiga-ui/i18n';
 import { tuiToggleOptionsProvider } from '@taiga-ui/kit';
-import { ApiModule } from '@taiga/api';
-import { ConfigService, CoreModule } from '@taiga/core';
+import { ApiModule, SystemApiService } from '@taiga/api';
+import { ConfigService, CoreModule, coreActions } from '@taiga/core';
 import { PROMPT_PROVIDER } from '@taiga/ui/modal/services/modal.service';
 import { SvgSpriteModule } from '@taiga/ui/svg-sprite';
 import { paramCase } from 'change-case';
@@ -105,30 +105,56 @@ export function prefersReducedMotion(): boolean {
     {
       provide: APP_INITIALIZER,
       multi: true,
-      deps: [ConfigService, EnvironmentService, TranslocoService],
+      deps: [
+        ConfigService,
+        EnvironmentService,
+        TranslocoService,
+        SystemApiService,
+        Store,
+      ],
       useFactory: (
         appConfigService: ConfigService,
         environmentService: EnvironmentService,
-        translocoService: TranslocoService
+        translocoService: TranslocoService,
+        systemApiService: SystemApiService,
+        store: Store
       ) => {
         return () => {
-          const config = environmentService.getEnvironment().configLocal;
-          if (config) {
-            appConfigService._config = config;
-            translocoService.setDefaultLang(config.defaultLanguage);
+          return new Promise((resolve) => {
+            const config = environmentService.getEnvironment().configLocal;
+            if (config) {
+              appConfigService._config = config;
 
-            if (config.emailWs) {
-              import('./shared/mail-testing')
-                .then((mailTesting) => {
-                  mailTesting.init(environment.configLocal?.emailWs);
-                })
-                .catch(() => {
-                  console.error('error loading mail testing');
-                });
+              if (config.emailWs) {
+                import('./shared/mail-testing')
+                  .then((mailTesting) => {
+                    mailTesting.init(environment.configLocal?.emailWs);
+                  })
+                  .catch(() => {
+                    console.error('error loading mail testing');
+                  });
+              }
+            } else {
+              throw new Error('No config provided');
             }
-          } else {
-            throw new Error('No config provided');
-          }
+
+            systemApiService.getLanguages().subscribe((langs) => {
+              store.dispatch(coreActions.setLanguages({ languages: langs }));
+              const availableCodes = langs.map((lang) => lang.code);
+              const defaultLang = langs.find((lang) => lang.isDefault);
+
+              translocoService.setAvailableLangs(availableCodes);
+
+              if (defaultLang) {
+                translocoService.setDefaultLang(defaultLang.code);
+                translocoService.setFallbackLangForMissingTranslation({
+                  fallbackLang: defaultLang.code,
+                });
+              }
+
+              resolve(undefined);
+            });
+          });
         };
       },
     },

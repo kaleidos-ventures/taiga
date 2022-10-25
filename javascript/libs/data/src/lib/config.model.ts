@@ -11,7 +11,6 @@ export type SocialLogins = 'github' | 'gitlab' | 'google';
 export interface Config {
   api: string;
   ws: string;
-  defaultLanguage: 'en';
   adminEmail: string;
   supportEmail: string;
   emailWs?: string;

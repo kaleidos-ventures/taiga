@@ -6,9 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createAction, props } from '@ngrx/store';
+import { createActionGroup, props } from '@ngrx/store';
+import { Language } from '@taiga/data';
 
-export const globalLoading = createAction(
-  '[Core] Global loading',
-  props<{ loading: boolean }>()
-);
+export const coreActions = createActionGroup({
+  source: 'Core',
+  events: {
+    'Global loading': props<{ loading: boolean }>(),
+    'Set Languages': props<{ languages: Language[] }>(),
+  },
+});

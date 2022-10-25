@@ -228,25 +228,30 @@ export class AuthEffects {
           projectInvitationToken,
         }) => {
           this.buttonLoadingService.start();
-          return this.authApiService
-            .signUp({
-              email,
-              password,
-              fullName,
-              acceptTerms,
-              acceptProjectInvitation,
-              projectInvitationToken,
+          return this.authService.getUserRegistrationLang().pipe(
+            switchMap((lang) => {
+              return this.authApiService
+                .signUp({
+                  email,
+                  password,
+                  fullName,
+                  acceptTerms,
+                  acceptProjectInvitation,
+                  projectInvitationToken,
+                  lang: lang.code,
+                })
+                .pipe(
+                  switchMap(this.buttonLoadingService.waitLoading()),
+                  map(() => {
+                    if (!resend) {
+                      return AuthActions.signUpSuccess({ email });
+                    } else {
+                      return AuthActions.resendSuccess();
+                    }
+                  })
+                );
             })
-            .pipe(
-              switchMap(this.buttonLoadingService.waitLoading()),
-              map(() => {
-                if (!resend) {
-                  return AuthActions.signUpSuccess({ email });
-                } else {
-                  return AuthActions.resendSuccess();
-                }
-              })
-            );
+          );
         },
         onError: (action, httpResponse: HttpErrorResponse) => {
           this.buttonLoadingService.error();
@@ -412,21 +417,27 @@ export class AuthEffects {
       ofType(AuthActions.socialSignup),
       pessimisticUpdate({
         run: ({ code, social }) => {
-          return this.authApiService.socialSignUp(code, social).pipe(
-            mergeMap((auth: Auth) => {
-              this.authService.setAuth(auth);
-              return this.usersApiService.me().pipe(
-                map((user) => {
-                  this.authService.setUser(user);
-                  return { user, auth };
-                })
-              );
-            }),
-            map(({ user, auth }) => {
-              return AuthActions.loginSuccess({
-                user,
-                auth,
-              });
+          return this.authService.getUserRegistrationLang().pipe(
+            switchMap((lang) => {
+              return this.authApiService
+                .socialSignUp(code, social, lang.code)
+                .pipe(
+                  mergeMap((auth: Auth) => {
+                    this.authService.setAuth(auth);
+                    return this.usersApiService.me().pipe(
+                      map((user) => {
+                        this.authService.setUser(user);
+                        return { user, auth };
+                      })
+                    );
+                  }),
+                  map(({ user, auth }) => {
+                    return AuthActions.loginSuccess({
+                      user,
+                      auth,
+                    });
+                  })
+                );
             })
           );
         },

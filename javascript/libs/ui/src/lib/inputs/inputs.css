@@ -6,15 +6,20 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
+:host {
+  --label-color: var(--color-gray80);
+  --label-font-weight: var(--font-weight-medium);
+}
+
 label {
-  color: var(--color-gray80);
+  color: var(--label-color);
   line-height: 1.5;
   margin-block-end: var(--spacing-4);
   margin-inline-start: var(--spacing-4);
   min-inline-size: 0;
 
   &:not(.readonly) {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--label-font-weight);
   }
 
   &[for]:not(.readonly) {

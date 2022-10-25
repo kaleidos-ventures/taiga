@@ -21,6 +21,10 @@ export class UsersApiService {
     return this.http.get<User>(`${this.config.apiUrl}/my/user`);
   }
 
+  public updateUser(user: Partial<User>) {
+    return this.http.put<User>(`${this.config.apiUrl}/my/user`, user);
+  }
+
   public requestResetPassword(email: string) {
     return this.http.post(`${this.config.apiUrl}/users/reset-password`, {
       email,

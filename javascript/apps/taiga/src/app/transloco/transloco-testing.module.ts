@@ -10,7 +10,7 @@ import {
   TranslocoTestingModule,
   TranslocoTestingOptions,
 } from '@ngneat/transloco';
-import en from 'apps/taiga/src/assets/i18n/en.json';
+import en from 'apps/taiga/src/assets/i18n/en-US.json';
 
 export function getTranslocoModule(options: TranslocoTestingOptions = {}) {
   return TranslocoTestingModule.forRoot({

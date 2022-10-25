@@ -21,10 +21,10 @@ import {
   TranslocoTestingOptions,
 } from '@ngneat/transloco';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import imageUpload from 'apps/taiga/src/assets/i18n/image_upload/en.json';
+import imageUpload from 'apps/taiga/src/assets/i18n/image_upload/en-US.json';
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import common from 'apps/taiga/src/assets/i18n/en.json';
+import common from 'apps/taiga/src/assets/i18n/en-US.json';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',

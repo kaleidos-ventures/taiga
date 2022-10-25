@@ -17,3 +17,8 @@ export const selectGlobalLoading = createSelector(
   selectCoreState,
   (state: fromCore.CoreState) => state.loading
 );
+
+export const selectLanguages = createSelector(
+  selectCoreState,
+  (state: fromCore.CoreState) => state.languages
+);

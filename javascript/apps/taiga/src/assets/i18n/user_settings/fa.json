@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "user_settings": "User settings",
+    "edit_profile": "Edit profile",
+    "account": "Account",
+    "email": "Email",
+    "change_password": "Change password",
+    "billing_subscription": "Billing and subscription",
+    "delete_account": "Delete/close account",
+    "preferences": "Preferences",
+    "language": "Language",
+    "notifications": "Notifications",
+    "privacy_visibility": "Privacy & visibility",
+    "start_pages": "Start pages",
+    "accesibility": "Accesibility",
+    "shortcuts": "Shortcuts",
+    "themes": "Themes"
+  },
+  "language": {
+    "select": "Select platform language",
+    "default": "- Default"
+  }
+}

@@ -124,7 +124,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
 
     <ng-template #userDropdown>
-      <tg-navigation-user-dropdown [user]="user"></tg-navigation-user-dropdown>
+      <tg-navigation-user-dropdown
+        [user]="user"
+        (requestClose)="openUserDropdown = false"></tg-navigation-user-dropdown>
     </ng-template>
 
     <ng-template #projectsDropdown>

@@ -5,7 +5,13 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  EventEmitter,
+  Output,
+} from '@angular/core';
 import { User } from '@taiga/data';
 
 @Component({
@@ -17,4 +23,7 @@ import { User } from '@taiga/data';
 export class NavigationUserDropdownComponent {
   @Input()
   public user!: User;
+
+  @Output()
+  public requestClose = new EventEmitter();
 }

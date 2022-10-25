@@ -1,0 +1,19 @@
+{
+  "placeholder_title": "You are not member of any Workspace yet",
+  "placeholder_text": "Group your projects into workspaces. You decide if they match something as big as an organization or as personal as your pet projects.",
+  "placeholder_link": "Learn More",
+  "placeholder_button": "Create workspace",
+  "add_workspace": "Add workspace",
+  "show_activity": "Show activity",
+  "project": "Project",
+  "create_workspace": "Create workspace",
+  "back_to_projects": "Back to projects",
+  "workspace_name": "Workspace Name",
+  "tooltip_add_workspace": "Group your projects into workspaces. You decide if they match something as big as an organization or as personal as your pet projects.",
+  "error_name_empty": "Workspace name can’t be empty",
+  "error_characters": "Workspace name can’t contain any of this characters: | ! ? * / .",
+  "less_projects": "Less projects",
+  "more_projects": "{{ projects }} more projects",
+  "placehoder_no_access": "You don't have access to any projects in this workspace yet. <br /> Check with your workspace admin.",
+  "placehoder_no_projects": "There are no projects in the workspace."
+}

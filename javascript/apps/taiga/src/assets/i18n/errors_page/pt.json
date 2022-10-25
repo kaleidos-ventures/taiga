@@ -1,0 +1,14 @@
+{
+  "500": {
+    "something_wrong": "Something went wrong",
+    "sorry_not_working": "Sorry, something is not working properly. <br /> Please refresh the page or try again in a few minutes.",
+    "problem_contact": "If the problem persists contact with us here: <a href='mailto:{{ email }}'>{{ email }}</a>",
+    "take_me_home": "Take me home",
+    "refresh": "Refresh page"
+  },
+  "403": {
+    "title": "You are forbidden",
+    "text": "The cheese forbid you from going forward",
+    "call_for_action": "Take me home"
+  }
+}

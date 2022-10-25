@@ -7,12 +7,15 @@
  */
 
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { AuthApiService } from '@taiga/api';
-import { ConfigService } from '@taiga/core';
+import { ConfigService, selectLanguages } from '@taiga/core';
 import { Auth, User } from '@taiga/data';
+import { map, take } from 'rxjs';
 import { WsService } from '~/app/services/ws';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +28,9 @@ export class AuthService {
     private authApiService: AuthApiService,
     private config: ConfigService,
     private wsService: WsService,
-    private userStorageService: UserStorageService
+    private userStorageService: UserStorageService,
+    private store: Store,
+    private utilsService: UtilsService
   ) {}
 
   public isLogged() {
@@ -53,6 +58,17 @@ export class AuthService {
     this.userStorageService.refreshPrefix();
   }
 
+  public patchUser(patchUser: Partial<User>) {
+    const user = this.getUser();
+
+    if (user) {
+      this.setUser({
+        ...user,
+        ...patchUser,
+      });
+    }
+  }
+
   public logout() {
     this.wsService.command('signout').subscribe();
     this.localStorageService.remove('user');
@@ -74,6 +90,32 @@ export class AuthService {
         });
       }
     }, 1000 * 3600 * 3);
+  }
+
+  public getUserRegistrationLang() {
+    return this.store
+      .select(selectLanguages)
+      .pipe(take(1))
+      .pipe(
+        map((langs) => {
+          const userNavLang = this.utilsService.navigatorLanguage();
+          let userLang = langs.find((it) => it.code === userNavLang);
+
+          if (userLang) {
+            return userLang;
+          }
+
+          userLang = langs.find((it) =>
+            it.code.startsWith(userNavLang.slice(0, 2))
+          );
+
+          if (userLang) {
+            return userLang;
+          }
+
+          return langs.find((it) => it.isDefault)!;
+        })
+      );
   }
 
   public displaySocialNetworks() {

@@ -5,6 +5,7 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
+import { Language } from './language.model';
 import { User } from './user.model';
 
 export interface Auth {
@@ -29,6 +30,7 @@ export interface SignUpInput {
   acceptTerms: boolean;
   acceptProjectInvitation: boolean;
   projectInvitationToken?: string;
+  lang: Language['code'];
 }
 
 // This interface implements `message` and `msg` since backend provide both options depending on the error

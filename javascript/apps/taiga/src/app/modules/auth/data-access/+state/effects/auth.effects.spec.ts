@@ -218,12 +218,16 @@ describe('AuthEffects', () => {
     const authApiService = spectator.inject(AuthApiService);
     const effects = spectator.inject(AuthEffects);
     const buttonLoadingService = spectator.inject(ButtonLoadingService);
+    const authService = spectator.inject(AuthService);
 
     authApiService.signUp.mockReturnValue(cold('-b|', { b: response }));
+    authService.getUserRegistrationLang.mockReturnValue(
+      cold('-b|', { b: 'en-US' })
+    );
 
     actions$ = hot('-a', { a: signup(signupData) });
 
-    const expected = cold('--a', {
+    const expected = cold('---a', {
       a: signUpSuccess({ email: signupData.email }),
     });
 
@@ -246,6 +250,11 @@ describe('AuthEffects', () => {
     const effects = spectator.inject(AuthEffects);
     const authApiService = spectator.inject(AuthApiService);
     const buttonLoadingService = spectator.inject(ButtonLoadingService);
+    const authService = spectator.inject(AuthService);
+
+    authService.getUserRegistrationLang.mockReturnValue(
+      cold('-b|', { b: 'en-US' })
+    );
 
     const httpError = new HttpErrorResponse({
       status: 400,
@@ -262,7 +271,7 @@ describe('AuthEffects', () => {
 
     actions$ = hot('-a', { a: signup(signupData) });
 
-    const expected = cold('-a', {
+    const expected = cold('--a', {
       a: signUpError({ response: httpError }),
     });
 
@@ -402,10 +411,13 @@ describe('AuthEffects', () => {
 
     authApiService.socialSignUp.mockReturnValue(cold('-b|', { b: auth }));
     usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
+    authService.getUserRegistrationLang.mockReturnValue(
+      cold('-b|', { b: 'en-US' })
+    );
 
     actions$ = hot('-a', { a: socialSignup({ code, social }) });
 
-    const expected = cold('---a', {
+    const expected = cold('----a', {
       a: loginSuccess({ user, auth }),
     });
     expect(effects.socialSignUp$).toBeObservable(expected);
@@ -422,6 +434,11 @@ describe('AuthEffects', () => {
     const authApiService = spectator.inject(AuthApiService);
     const router = spectator.inject(Router);
     const effects = spectator.inject(AuthEffects);
+    const authService = spectator.inject(AuthService);
+
+    authService.getUserRegistrationLang.mockReturnValue(
+      cold('-b|', { b: 'en-US' })
+    );
 
     const errors = [
       `${social}-api-error`,
@@ -446,7 +463,7 @@ describe('AuthEffects', () => {
 
     actions$ = hot('-a', { a: socialSignup({ code, social }) });
 
-    const expected = cold('-a', {
+    const expected = cold('--a', {
       a: signUpError({ response: httpError }),
     });
 

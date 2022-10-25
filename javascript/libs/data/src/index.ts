@@ -31,3 +31,5 @@ export * from './lib/workflow.model';
 export * from './lib/workflow.model.mock';
 export * from './lib/story.model';
 export * from './lib/story.model.mock';
+export * from './lib/language.model';
+export * from './lib/language.model.mock';

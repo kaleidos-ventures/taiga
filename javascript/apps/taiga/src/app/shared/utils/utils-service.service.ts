@@ -69,6 +69,10 @@ export class UtilsService {
     return state!;
   }
 
+  public navigatorLanguage() {
+    return navigator.language;
+  }
+
   public getUrl(commands: number[] | string[] | string) {
     const routerCommands = Array.isArray(commands) ? commands : [commands];
 

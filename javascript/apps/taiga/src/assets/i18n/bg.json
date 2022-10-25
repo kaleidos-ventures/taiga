@@ -1,0 +1,98 @@
+{
+  "commons": {
+    "organizations": "Organizations",
+    "project": "Project",
+    "projects": "Projects",
+    "overview": "Overview",
+    "epics": "Epics",
+    "scrum": "Scrum",
+    "backlog": "Backlog",
+    "kanban": "Kanban",
+    "issues": "Issues",
+    "wiki": "Wiki",
+    "meetup": "Meetup",
+    "team": "Team",
+    "cancel": "Cancel",
+    "members": "Members",
+    "upgrade": "Upgrade",
+    "owner": "Owner",
+    "workspace": "Workspace",
+    "back": "Back",
+    "optional": "Optional",
+    "close": "Close",
+    "close_modal": "Close modal",
+    "pending": "Pending",
+    "confirmation_modal": {
+      "yes": "Yes, quit",
+      "no": "No, keep editing"
+    },
+    "roles": {
+      "admin": "Admin",
+      "member": "Member",
+      "guest": "Guest"
+    },
+    "tasks": "Tasks",
+    "stories": "Stories",
+    "sprints": "Sprints",
+    "your_user": "{{ name }} <strong class='is-self'>(You)</strong>"
+  },
+  "navigation": {
+    "go_home": "Go to home",
+    "search": "Search",
+    "discover": "Discover",
+    "help": "Help",
+    "notification": "Notification",
+    "notification_desc": "{notifications, plural, =0 {no notifications} one {1 notification} other {# notifications}}",
+    "user_avatar": "User Avatar",
+    "create_account": "Create account",
+    "log_in": "Log in",
+    "new_tab": "Opens in a new tab"
+  },
+  "navigation_projects": {
+    "pinned": "Pinned projects",
+    "recent_projects": "Recent projects",
+    "empty_recent_projects": "You don't have any projects yet",
+    "view_projects": "View your projects",
+    "new_project": "New project"
+  },
+  "navigation_user": {
+    "user_profile": "See Profile",
+    "edit_profile": "Edit profile",
+    "preferences": "Preferences",
+    "account_setting": "Account",
+    "accesibility_setting": "Accesibility",
+    "log_out": "Log out"
+  },
+  "main_project_navigation": {
+    "goto": "Go to",
+    "project_settings": "Project settings",
+    "collapse_menu": "Collapse menu"
+  },
+  "project": {
+    "create_first_project": "Create your first project",
+    "create_new_project": "Add a project",
+    "card": {
+      "accept_invite": "Accept invitation",
+      "pending_invitation": "Pending invitation",
+      "close_card": "Close card"
+    }
+  },
+  "errors": {
+    "please_refresh": "Please refresh the page or try again in a few minutes",
+    "login": "There was a problem login your account",
+    "create_project": "There was a problem creating your project",
+    "create_workspace": "There was a problem creating your workspace",
+    "member_roles": "There was a problem loading member roles",
+    "public_permissions": "There was a problem loading public permissions",
+    "workspace_permissions": "There was a problem loading workspace  permissions",
+    "resend_email": "There was a problem reseind your email",
+    "save_changes": "An error ocurred while saving your changes",
+    "generic_toast_label": "Something went wrong!",
+    "generic_toast_message": "Try again in a few minutes.",
+    "invalid_token_toast_message": "Invalid token.",
+    "invitation_no_longer_valid": "The invitation is no longer valid.",
+    "project_invitation_no_longer_valid": "The invitation to {{ name }} is no longer valid.",
+
+    "you_dont_have_permission_to_see": "You don't have permission to see the project."
+  }
+}

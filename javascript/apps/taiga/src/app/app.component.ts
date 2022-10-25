@@ -8,15 +8,20 @@
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { TranslocoService } from '@ngneat/transloco';
+import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { selectLanguages } from '@taiga/core';
 import { User } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map, share, skip } from 'rxjs/operators';
 import { WsService } from '~/app/services/ws';
 import { setUser } from './modules/auth/data-access/+state/actions/auth.actions';
+import { selectUser } from './modules/auth/data-access/+state/selectors/auth.selectors';
 import { AuthService } from './modules/auth/services/auth.service';
 import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { RouteHistoryService } from './shared/route-history/route-history.service';
+import { filterNil } from './shared/utils/operators';
 
 @Component({
   selector: 'tg-root',
@@ -35,8 +40,11 @@ export class AppComponent {
     private wsService: WsService,
     private localStorageService: LocalStorageService,
     private store: Store,
-    private routeHistoryService: RouteHistoryService
+    private routeHistoryService: RouteHistoryService,
+    private translocoService: TranslocoService
   ) {
+    this.language();
+
     this.header$ = this.router.events.pipe(
       filter(
         (evt: unknown): evt is NavigationEnd => evt instanceof NavigationEnd
@@ -86,6 +94,24 @@ export class AppComponent {
             (mainFocus as HTMLElement).focus();
           }
         });
+      });
+  }
+
+  public language() {
+    this.store
+      .select(selectUser)
+      .pipe(
+        filterNil(),
+        concatLatestFrom(() => [this.store.select(selectLanguages)])
+      )
+      .subscribe(([user, languages]) => {
+        const lang = languages.find((it) => it.code === user.lang);
+        this.translocoService.setActiveLang(user.lang);
+
+        document.body.setAttribute(
+          'dir',
+          lang?.textDirection === 'rtl' ? 'rtl' : 'ltr'
+        );
       });
   }
 

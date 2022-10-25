@@ -10,6 +10,7 @@ import { createFeature, createReducer, on } from '@ngrx/store';
 import { immerReducer } from '~/app/shared/utils/store';
 import { User } from '@taiga/data';
 import * as AuthActions from '../actions/auth.actions';
+import { userSettingsActions } from '~/app/modules/feature-user-settings/data-access/+state/actions/user-settings.actions';
 
 export interface AuthState {
   user: User | null;
@@ -58,6 +59,13 @@ export const reducer = createReducer(
   }),
   on(AuthActions.initLoginPage, (state): AuthState => {
     state.loginError = false;
+
+    return state;
+  }),
+  on(userSettingsActions.newLanguage, (state, { lang }): AuthState => {
+    if (state.user) {
+      state.user.lang = lang.code;
+    }
 
     return state;
   })

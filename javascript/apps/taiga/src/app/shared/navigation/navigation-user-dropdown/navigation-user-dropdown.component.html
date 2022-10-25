@@ -28,9 +28,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </li>
     <li>
       <a
-        href="#"
+        [routerLink]="['user-settings', 'profile']"
+        (click)="requestClose.emit()"
         class="user-link">
-        {{ t('edit_setting') }}
+        {{ t('edit_profile') }}
       </a>
     </li>
     <li>
@@ -38,6 +39,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         href="#"
         class="user-link">
         {{ t('account_setting') }}
+      </a>
+    </li>
+    <li>
+      <a
+        [routerLink]="['user-settings', 'preferences']"
+        (click)="requestClose.emit()"
+        class="user-link">
+        {{ t('preferences') }}
       </a>
     </li>
     <li>
@@ -50,6 +59,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <li class="log-out">
       <button
         [routerLink]="['/logout']"
+        (click)="requestClose.emit()"
         data-test="log-out"
         tuiLink
         class="user-link">

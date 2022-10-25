@@ -7,25 +7,34 @@
  */
 
 import { createReducer, on } from '@ngrx/store';
-import { globalLoading } from './core.actions';
+import { Language } from '@taiga/data';
+import { coreActions } from './core.actions';
 
 export const coreFeatureKey = 'core';
 
 export interface CoreState {
   loading: boolean;
+  languages: Language[];
 }
 
 export const initialState: CoreState = {
   loading: false,
+  languages: [],
 };
 
 export const reducer = createReducer(
   initialState,
 
-  on(globalLoading, (state, { loading }): CoreState => {
+  on(coreActions.globalLoading, (state, { loading }): CoreState => {
     return {
       ...state,
       loading,
+    };
+  }),
+  on(coreActions.setLanguages, (state, { languages }): CoreState => {
+    return {
+      ...state,
+      languages,
     };
   })
 );

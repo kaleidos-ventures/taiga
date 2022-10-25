@@ -28,7 +28,7 @@ For translations outsite the scope, use this sytax or remove read from the \*tra
 
 ## Add a new keys to weblate
 
-Add the new key in `javascript/apps/taiga/src/assets/i18n/en.json`, following the [transloco](https://ngneat.github.io/transloco/docs/translation-in-the-template) docs parameters or plurals.
+Add the new key in `javascript/apps/taiga/src/assets/i18n/en-US.json`, following the [transloco](https://ngneat.github.io/transloco/docs/translation-in-the-template) docs parameters or plurals.
 
 Run `npm run translations:join` to join tranlations scope to one file to send weblate. The files are in `dist-i18n`.
 

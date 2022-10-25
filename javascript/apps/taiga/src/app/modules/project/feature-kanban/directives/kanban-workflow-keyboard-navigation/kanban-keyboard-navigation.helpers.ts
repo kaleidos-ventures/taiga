@@ -68,37 +68,48 @@ export function getNextHorizontalStory(
       nextStatus.querySelectorAll<HTMLElement>('tg-kanban-story')
     );
 
-    const nextStory = stories.reduce<{
-      diff: number;
-      story: HTMLElement;
-    } | null>((storyCandidate, story) => {
-      let diffTop = story.getBoundingClientRect().top - storyTop;
-      let diffBotton = story.getBoundingClientRect().bottom - storyBottom;
+    let nextStory = stories.find((story) => {
+      const rect = story.getBoundingClientRect();
 
-      if (diffTop < 0) {
-        diffTop = -diffTop;
-      }
+      return storyTop >= rect.top && storyBottom <= rect.bottom;
+    });
 
-      if (diffBotton < 0) {
-        diffBotton = -diffBotton;
-      }
+    if (!nextStory) {
+      const closest = stories.reduce<{
+        diff: number;
+        story: HTMLElement;
+      } | null>((storyCandidate, story) => {
+        let diffTop = story.getBoundingClientRect().top - storyTop;
+        let diffBotton = story.getBoundingClientRect().bottom - storyBottom;
 
-      const diff = diffBotton + diffTop;
+        if (diffTop < 0) {
+          diffTop = -diffTop;
+        }
 
-      if (!storyCandidate) {
-        return {
-          story,
-          diff,
-        };
-      } else if (diff < storyCandidate.diff) {
-        return {
-          story,
-          diff,
-        };
-      }
+        if (diffBotton < 0) {
+          diffBotton = -diffBotton;
+        }
 
-      return storyCandidate;
-    }, null);
+        const diff = diffBotton + diffTop;
+
+        if (!storyCandidate) {
+          return {
+            story,
+            diff,
+          };
+        } else if (diff < storyCandidate.diff) {
+          return {
+            story,
+            diff,
+          };
+        }
+
+        return storyCandidate;
+      }, null);
+
+      nextStory = closest?.story;
+    }
+
     return { nextStory, nextStatus };
   }
   return { nextStory: null, nextStatus };

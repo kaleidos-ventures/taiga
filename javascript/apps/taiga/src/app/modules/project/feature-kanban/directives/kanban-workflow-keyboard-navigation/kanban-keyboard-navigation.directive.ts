@@ -295,7 +295,7 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
 
       if (horizontalNavData?.nextStory) {
         const nextStoryIndex = Number(
-          horizontalNavData.nextStory?.story.getAttribute('data-position')
+          horizontalNavData.nextStory?.getAttribute('data-position')
         );
 
         const isLastStory =
@@ -390,7 +390,7 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
             // #hack, force the announcement to be made before the story title
             setTimeout(() => {
               if (horizontalNavData.nextStory) {
-                horizontalNavData.nextStory.story
+                horizontalNavData.nextStory
                   .querySelector<HTMLElement>('a')!
                   .focus();
                 this.liveAnnouncer.clear();

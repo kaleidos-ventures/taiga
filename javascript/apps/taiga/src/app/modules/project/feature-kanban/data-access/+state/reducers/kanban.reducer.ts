@@ -95,6 +95,21 @@ export const reducer = createReducer(
     state.scrollToStory = [];
     state.createStoryForm = '';
     state.empty = null;
+    state.activeA11yDragDropStory = {
+      ref: null,
+      initialPosition: {
+        index: null,
+        status: '',
+      },
+      prevPosition: {
+        index: null,
+        status: '',
+      },
+      currentPosition: {
+        index: null,
+        status: '',
+      },
+    };
 
     return state;
   }),

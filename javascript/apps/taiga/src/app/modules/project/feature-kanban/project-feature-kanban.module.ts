@@ -32,6 +32,7 @@ import { ResizeEventModule } from '~/app/shared/resize/resize.module';
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { KanbanCreateStoryInlineComponent } from './components/create-story-inline/kanban-create-story-inline.component';
 import { KanbanStatusComponent } from './components/status/kanban-status.component';
+import { A11yDragStoryDirective } from './components/story/kanban-story-a11y-drag.directive';
 import { KanbanStoryComponent } from './components/story/kanban-story.component';
 import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
 import { KanbanVirtualScrollDirective } from './custom-scroll-strategy/kanban-scroll-strategy';
@@ -49,6 +50,7 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     KanbanCreateStoryInlineComponent,
     StatusScrollDynamicHeightDirective,
     KanbanVirtualScrollDirective,
+    A11yDragStoryDirective,
   ],
   exports: [ProjectFeatureKanbanComponent],
 

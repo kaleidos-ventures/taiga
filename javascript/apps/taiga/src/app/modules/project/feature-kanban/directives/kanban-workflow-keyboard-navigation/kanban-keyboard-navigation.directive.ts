@@ -121,10 +121,8 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
     const currentStatus = this.currentDraggedStory.currentPosition.status;
     const newIndex = this.calculateNewIndex(currentIndex, currentStatus, key);
 
-    const nextStory = getNextVerticalStory(el, key) || el;
-
     const { kanbanStatusComponents } = this.kanbanWorkflowComponent;
-    const status = getStatusFromStoryElement(kanbanStatusComponents, nextStory);
+    const status = getStatusFromStoryElement(kanbanStatusComponents, el);
 
     const story = {
       ref: this.currentDraggedStory.ref,
@@ -164,19 +162,14 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
       this.liveAnnouncer.announce(announcement, 'assertive').then(
         () => {
           setTimeout(() => {
-            if (nextStory) {
-              const el = nextStory.querySelector<HTMLElement>(
-                '.story-keyboard-navigation'
-              );
-
-              if (status?.cdkScrollable && el) {
-                const nextRef = nextStory.dataset.ref;
-
-                if (nextRef) {
-                  scrollAndFocus(status, el, nextRef);
-
-                  focusRef(nextRef);
-                }
+            if (el) {
+              if (status?.cdkScrollable && this.currentDraggedStory.ref) {
+                scrollAndFocus(
+                  status,
+                  el,
+                  String(this.currentDraggedStory.ref)
+                );
+                focusRef(String(this.currentDraggedStory.ref));
               }
             }
             this.liveAnnouncer.clear();
@@ -186,7 +179,6 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
           // error
         }
       );
-
       this.store.dispatch(
         KanbanActions.moveStoryA11y({ story, status: statusData })
       );

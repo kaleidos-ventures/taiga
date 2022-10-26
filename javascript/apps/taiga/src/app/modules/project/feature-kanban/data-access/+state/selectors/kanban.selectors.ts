@@ -11,6 +11,7 @@ import { Status } from '@taiga/data';
 import { kanbanFeature } from '../reducers/kanban.reducer';
 
 export const {
+  selectKanbanState,
   selectLoadingWorkflows,
   selectLoadingStories,
   selectWorkflows,

@@ -173,11 +173,11 @@ export class KanbanStatusComponent
   }
 
   constructor(
+    public state: RxState<KanbanComponentState>,
     private el: ElementRef,
     private kanbanWorkflowComponent: KanbanWorkflowComponent,
     private transloco: TranslocoService,
     private store: Store,
-    private state: RxState<KanbanComponentState>,
     private autoScrollService: AutoScrollService,
     private permissionService: PermissionsService
   ) {

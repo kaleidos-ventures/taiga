@@ -31,11 +31,11 @@ import {
   KanbanStory,
   KanbanStoryA11y,
 } from '~/app/modules/project/feature-kanban/kanban.model';
+import { KanbanStatusComponent } from '../status/kanban-status.component';
 
 export interface StoryState {
   kanbanStoryA11y: KanbanStoryA11y;
 }
-import { KanbanStatusComponent } from '../status/kanban-status.component';
 
 @UntilDestroy()
 @Component({
@@ -84,9 +84,6 @@ export class KanbanStoryComponent implements OnChanges {
     // On press escape anywhere
     keyEscape$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
       const currentDraggedStory = this.state.get('kanbanStoryA11y');
-      this.store.dispatch(
-        KanbanActions.cancelDragStoryA11y({ story: currentDraggedStory })
-      );
 
       // Manage focus
       // Get current story element
@@ -109,9 +106,36 @@ export class KanbanStoryComponent implements OnChanges {
         currentDraggedStory.initialPosition.index!
       );
 
-      if (currentStory) {
-        currentStory.querySelector<HTMLElement>('a')!.focus();
-      }
+      this.store.dispatch(
+        KanbanActions.cancelDragStoryA11y({ story: currentDraggedStory })
+      );
+
+      const announcementDrop = this.translocoService.translate(
+        'kanban.dropped_live_announce',
+        {
+          title: this.story.title,
+        }
+      );
+
+      const announcementReorderCancelled = this.translocoService.translate(
+        'kanban.reorder_cancelled_live_announce'
+      );
+
+      const announcement = `${announcementDrop}. ${announcementReorderCancelled}`;
+
+      this.liveAnnouncer.announce(announcement, 'assertive').then(
+        () => {
+          setTimeout(() => {
+            if (currentStory) {
+              currentStory.querySelector<HTMLElement>('a')!.focus();
+            }
+            this.liveAnnouncer.clear();
+          }, 50);
+        },
+        () => {
+          // error
+        }
+      );
     });
 
     // On press space
@@ -121,6 +145,8 @@ export class KanbanStoryComponent implements OnChanges {
       this.dragOrDropStoryA11y();
     });
   }
+
+  public readonly model$ = this.state.select();
 
   public get nativeElement() {
     return this.el.nativeElement as HTMLElement;
@@ -203,6 +229,35 @@ export class KanbanStoryComponent implements OnChanges {
               : this.stories[this.index - 1].ref!,
         };
       }
+
+      const announcementDrop = this.translocoService.translate(
+        'kanban.dropped_live_announce',
+        {
+          title: this.story.title,
+        }
+      );
+
+      const announcementFinalPosition = this.translocoService.translate(
+        'kanban.final_position_live_announce',
+        {
+          storyIndex: this.index + 1,
+          totalStories: this.stories.length,
+          status: story.currentPosition.status,
+        }
+      );
+
+      const announcement = `${announcementDrop}. ${announcementFinalPosition}`;
+
+      this.liveAnnouncer.announce(announcement, 'assertive').then(
+        () => {
+          setTimeout(() => {
+            this.liveAnnouncer.clear();
+          }, 50);
+        },
+        () => {
+          // error
+        }
+      );
 
       this.store.dispatch(KanbanActions.dropStoryA11y(dropStoryData));
     }

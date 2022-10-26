@@ -11,7 +11,10 @@
   "story_title_a11y": "{{ref}} {{title}}. Position {{position}} of {{total}}. Press Spacebar to Reorder",
   "status_live_announce": "Status {{ status }}",
   "position_live_announce": "New position {{ storyIndex }} of {{totalStories}}",
+  "final_position_live_announce": "Final position {{ storyIndex }} of {{totalStories}}. Status {{status}}",
   "grabbed_live_announce": "{{title}} grabbed, current position {{position}}. Up and down arrow keys to change position, left and right arrow keys to change status, Spacebar to drop, Escape key to cancel",
+  "dropped_live_announce": "{{title}} dropped",
+  "reorder_cancelled_live_announce": "reorder cancelled",
   "create_story_form": {
     "story_title_label": "Story title",
     "title_story_required": "Story title can’t be empty.",

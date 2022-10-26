@@ -6,30 +6,34 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t">
-  <a
-    [attr.aria-label]="
-      t('kanban.story_title_a11y', {
-        ref: story.ref,
-        title: story.title,
-        position: index + 1,
-        total: total
-      })
-    "
-    [attr.title]="
-      t('kanban.story_title', {
-        ref: story.ref,
-        title: story.title,
-        position: index + 1,
-        total: total
-      })
-    "
-    class="story-title"
-    href="">
-    <tui-svg
-      class="draggable-icon"
-      src="draggable"></tui-svg>
+  <ng-container *ngIf="model$ | async as vm">
+    <a
+      [attr.aria-label]="
+        !vm.kanbanStoryA11y.ref
+          ? t('kanban.story_title_a11y', {
+              ref: story.ref,
+              title: story.title,
+              position: index + 1,
+              total: total
+            })
+          : null
+      "
+      [attr.title]="
+        t('kanban.story_title', {
+          ref: story.ref,
+          title: story.title,
+          position: index + 1,
+          total: total
+        })
+      "
+      class="story-title"
+      href="">
+      <tui-svg
+        class="draggable-icon"
+        src="draggable"></tui-svg>
 
-    <div class="ref">{{ story.ref }}</div>
-    <div class="text">{{ story.title }}</div>
-  </a>
+      <div class="ref">{{ story.ref }}</div>
+      <div class="text">{{ story.title }}</div>
+    </a>
+  </ng-container>
 </ng-container>

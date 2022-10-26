@@ -22,11 +22,12 @@ import {
   KanbanStoryA11y,
   PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
+import { DropCandidate } from '~/app/shared/drag/drag.model';
 import {
   addStory,
   findStory,
-  removeStory,
   getStory,
+  removeStory,
   setIntialPosition,
 } from './kanban.reducer.helpers';
 
@@ -208,20 +209,28 @@ export const reducer = createReducer(
       const storyToMove = findStory(state, (it) => it.ref === story.ref);
       if (storyToMove) {
         state = removeStory(state, (it) => it.ref === storyToMove?.ref);
-        const nextStory = state.stories[story.initialPosition?.status].at(
-          story.initialPosition.index!
+        const nextStory: KanbanStory | undefined = state.stories[
+          story.initialPosition?.status
+        ].at(story.initialPosition.index!);
+
+        const addPositionData = {
+          state,
+          storyToMove,
+          status: story.initialPosition?.status,
+          nextStory:
+            nextStory?.ref ||
+            state.stories[story.initialPosition?.status].at(-1)?.ref ||
+            0,
+          position: nextStory ? 'top' : 'bottom',
+        };
+
+        state = addStory(
+          addPositionData.state,
+          addPositionData.storyToMove,
+          addPositionData.nextStory,
+          addPositionData.position as DropCandidate['position'],
+          addPositionData.status
         );
-        if (nextStory) {
-          const nextStoryStatus = nextStory.status;
-          storyToMove.status = nextStoryStatus;
-          state = addStory(
-            state,
-            storyToMove,
-            nextStory.ref,
-            'top',
-            story.currentPosition.status
-          );
-        }
       }
     }
 

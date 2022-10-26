@@ -126,20 +126,6 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
     const { kanbanStatusComponents } = this.kanbanWorkflowComponent;
     const status = getStatusFromStoryElement(kanbanStatusComponents, nextStory);
 
-    if (nextStory) {
-      const el = nextStory.querySelector<HTMLElement>('a');
-
-      if (status?.cdkScrollable && el) {
-        const nextRef = nextStory.dataset.ref;
-
-        if (nextRef) {
-          scrollAndFocus(status, el, nextRef);
-
-          focusRef(nextRef);
-        }
-      }
-    }
-
     const story = {
       ref: this.currentDraggedStory.ref,
       initialPosition: {
@@ -175,10 +161,22 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
       );
 
       const announcement = `${newPositionTranslation}`;
-      this.liveAnnouncer.clear();
       this.liveAnnouncer.announce(announcement, 'assertive').then(
         () => {
           setTimeout(() => {
+            if (nextStory) {
+              const el = nextStory.querySelector<HTMLElement>('a');
+
+              if (status?.cdkScrollable && el) {
+                const nextRef = nextStory.dataset.ref;
+
+                if (nextRef) {
+                  scrollAndFocus(status, el, nextRef);
+
+                  focusRef(nextRef);
+                }
+              }
+            }
             this.liveAnnouncer.clear();
           }, 50);
         },
@@ -305,36 +303,6 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
         storyIndex = isLastStory ? nextStoryIndex + 1 : nextStoryIndex;
       }
 
-      // Live announcement
-      const statusNameTranslation = this.translocoService.translate(
-        'kanban.status_live_announce',
-        {
-          status: statusData.name,
-        }
-      );
-
-      const newPositionTranslation = this.translocoService.translate(
-        'kanban.position_live_announce',
-        {
-          storyIndex: storyIndex + 1,
-          totalStories: nextStatusStories.length + 1,
-        }
-      );
-
-      const announcement = `${statusNameTranslation}. ${newPositionTranslation}`;
-
-      this.liveAnnouncer.clear();
-      this.liveAnnouncer.announce(announcement, 'assertive').then(
-        () => {
-          setTimeout(() => {
-            this.liveAnnouncer.clear();
-          }, 50);
-        },
-        () => {
-          // error
-        }
-      );
-
       const story = {
         ref: this.currentDraggedStory.ref,
         initialPosition: {
@@ -355,12 +323,38 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
         KanbanActions.moveStoryA11y({ story, status: statusData })
       );
 
-      setTimeout(() => {
-        horizontalNavData.nextStatus
-          .querySelectorAll('tg-kanban-story')
-          [storyIndex].querySelector<HTMLElement>('a')!
-          .focus();
-      }, 100);
+      // Live announcement
+      const statusNameTranslation = this.translocoService.translate(
+        'kanban.status_live_announce',
+        {
+          status: statusData.name,
+        }
+      );
+
+      const newPositionTranslation = this.translocoService.translate(
+        'kanban.position_live_announce',
+        {
+          storyIndex: storyIndex + 1,
+          totalStories: nextStatusStories.length + 1,
+        }
+      );
+
+      const announcement = `${statusNameTranslation}. ${newPositionTranslation}`;
+
+      this.liveAnnouncer.announce(announcement, 'assertive').then(
+        () => {
+          setTimeout(() => {
+            this.liveAnnouncer.clear();
+            horizontalNavData.nextStatus
+              .querySelectorAll('tg-kanban-story')
+              [storyIndex].querySelector<HTMLElement>('a')!
+              .focus();
+          }, 100);
+        },
+        () => {
+          // error
+        }
+      );
     }
   }
 

@@ -480,6 +480,8 @@ export const reducer = createReducer(
 
     stories.forEach((story) => {
       if (story) {
+        story.status = action.status;
+
         if (action.reorder) {
           state = addStory(
             state,

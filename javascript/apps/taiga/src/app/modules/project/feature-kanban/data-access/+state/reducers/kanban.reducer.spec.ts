@@ -359,6 +359,7 @@ describe('Kanban reducer', () => {
     const { initialKanbanState } = kanbanReducer;
     const workflow = WorkflowMockFactory();
     const status = StatusMockFactory();
+    const status2 = StatusMockFactory();
 
     const stories: KanbanStory[] = [
       {
@@ -374,19 +375,25 @@ describe('Kanban reducer', () => {
         ...StoryMockFactory([status]),
       },
     ];
+    const stories2: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status2]),
+      },
+    ];
 
     const state = kanbanReducer.kanbanFeature.reducer(
       {
         ...initialKanbanState,
         stories: {
           [status.slug]: stories,
+          [status2.slug]: stories2,
         },
         workflows: [workflow],
       },
       KanbanEventsActions.reorderStory({
         stories: [stories[0].ref!],
         reorder: {
-          ref: stories[1].ref!,
+          ref: stories2[0].ref!,
           place: 'after',
         },
         status: status,
@@ -394,6 +401,6 @@ describe('Kanban reducer', () => {
     );
 
     expect(state.stories[status.slug][0].ref).toEqual(stories[1].ref);
-    expect(state.stories[status.slug][1].ref).toEqual(stories[0].ref);
+    expect(state.stories[status2.slug][1].ref).toEqual(stories[0].ref);
   });
 });

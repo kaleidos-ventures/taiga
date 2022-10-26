@@ -18,7 +18,7 @@ pytestmark = pytest.mark.django_db(transaction=True)
 ##########################################################
 
 
-class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
+class GetObjectNeighbors(IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.pj_admin = await f.create_user()
         self.project = await f.create_project(owner=self.pj_admin)
@@ -33,20 +33,20 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.status_21 = await self.workflow_2.statuses.afirst()
         self.story_221 = await f.create_story(project=self.project, workflow=self.workflow_2, status=self.status_21)
 
-    async def test_get_neighbors_no_filter_both_neighbors(self) -> None:
+    async def test_get_neighbors_no_filter_no_prev_neighbor(self) -> None:
         neighbors = await neighbors_repositories.get_neighbors(obj=self.story_111)
         assert neighbors.prev is None
         assert neighbors.next == self.story_112
 
-    async def test_get_neighbors_no_filter_one_neighbors(self) -> None:
-        neighbors = await neighbors_repositories.get_neighbors(obj=self.story_112)
-        assert neighbors.prev == self.story_111
-        assert neighbors.next == self.story_221
-
-    async def test_get_neighbors_no_filter_no_neighbors_ok(self) -> None:
+    async def test_get_neighbors_no_filter_no_next_neighbor_ok(self) -> None:
         neighbors = await neighbors_repositories.get_neighbors(obj=self.story_221)
         assert neighbors.prev == self.story_112
         assert neighbors.next is None
+
+    async def test_get_neighbors_no_filter_both_neighbors(self) -> None:
+        neighbors = await neighbors_repositories.get_neighbors(obj=self.story_112)
+        assert neighbors.prev == self.story_111
+        assert neighbors.next == self.story_221
 
     async def test_get_neighbors_with_model_queryset_broad_filters_all_match(self) -> None:
         same_story112_project_qs = Story.objects.filter(project_id=self.story_112.project.id).order_by(

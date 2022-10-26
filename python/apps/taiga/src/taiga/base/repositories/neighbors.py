@@ -29,7 +29,7 @@ class Neighbor(Generic[T]):
 def get_neighbors_sync(obj: T, model_queryset: QuerySet[T] | None = None) -> Neighbor[T]:
     """Get the neighbors of a model instance.
 
-    The neighbors are the objects that are at the left/right of `obj` in the results set.
+    The neighbors are the objects that are at the left/right of `obj` that also fulfill the queryset.
 
     :param obj: The object model you want to know its neighbors.
     :param model_queryset: Additional model constraints to be applied to the default queryset.

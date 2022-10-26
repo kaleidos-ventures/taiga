@@ -58,6 +58,7 @@ async def test_create_user_ok(tqmanager):
         assert job["args"] == {
             "email_name": "sign_up",
             "to": "email@email.com",
+            "lang": "es_ES",
             "context": {"verification_token": "verify_token"},
         }
 
@@ -71,7 +72,7 @@ async def test_create_user_default_instance_lang(tqmanager):
     password = "CorrectP4ssword$"
     lang = None
     default_instance_lang = settings.LANG
-    user = f.build_user(id=1, email=email, username=username, full_name=full_name, lang=lang)
+    user = f.build_user(id=1, email=email, username=username, full_name=full_name, lang=default_instance_lang)
 
     accept_project_invitation = True
     project_invitation_token = "eyJ0Token"
@@ -102,6 +103,7 @@ async def test_create_user_default_instance_lang(tqmanager):
         assert job["args"] == {
             "email_name": "sign_up",
             "to": "email@email.com",
+            "lang": default_instance_lang,
             "context": {"verification_token": "verify_token"},
         }
 
@@ -129,6 +131,7 @@ async def test_create_user_unverified(tqmanager):
         assert job["args"] == {
             "email_name": "sign_up",
             "to": "email@email.com",
+            "lang": "es_ES",
             "context": {"verification_token": "verify_token"},
         }
 
@@ -518,6 +521,7 @@ async def test_reset_password_send_reset_password_email_ok(tqmanager):
         assert job["args"] == {
             "email_name": "reset_password",
             "to": user.email,
+            "lang": "es_ES",
             "context": {"reset_password_token": "reset_token"},
         }
 

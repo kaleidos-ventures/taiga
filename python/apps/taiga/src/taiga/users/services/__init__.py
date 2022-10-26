@@ -83,7 +83,7 @@ async def _send_verify_user_email(
         )
     }
 
-    await send_email.defer(email_name=Emails.SIGN_UP.value, to=user.email, context=context)
+    await send_email.defer(email_name=Emails.SIGN_UP.value, to=user.email, context=context, lang=user.lang)
 
 
 async def _generate_verify_user_token(
@@ -182,7 +182,7 @@ async def _generate_reset_password_token(user: User) -> str:
 
 async def _send_reset_password_email(user: User) -> None:
     context = {"reset_password_token": await _generate_reset_password_token(user)}
-    await send_email.defer(email_name=Emails.RESET_PASSWORD.value, to=user.email, context=context)
+    await send_email.defer(email_name=Emails.RESET_PASSWORD.value, to=user.email, context=context, lang=user.lang)
 
 
 async def request_reset_password(email: str) -> None:

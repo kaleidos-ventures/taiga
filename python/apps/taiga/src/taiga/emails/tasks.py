@@ -11,6 +11,8 @@ from typing import Any
 
 from aiosmtplib import SMTPConnectError
 from jinja2 import TemplateNotFound
+from taiga.base.i18n import i18n
+from taiga.conf import settings
 from taiga.emails import exceptions as ex
 from taiga.emails.emails import Emails
 from taiga.emails.render import render_email_html, render_email_txt, render_subject
@@ -26,6 +28,7 @@ async def send_email(
     to: str | list[str],
     context: dict[str, Any] = {},
     attachment_paths: list[str] = [],
+    lang: str = settings.LANG,
 ) -> None:
 
     # validate the email template
@@ -42,13 +45,14 @@ async def send_email(
         logger.error("Requested to send an email with no recipients. Aborting.")
         return
 
-    # render the email contents using both the email template and variables dictionary
-    try:
-        body_txt = render_email_txt(email_name, context)
-        subject = render_subject(email_name, context)
-        body_html = render_email_html(email_name, context)
-    except TemplateNotFound as template_exception:
-        raise ex.EmailTemplateError(f"Missing or invalid email template. {template_exception}")
+    # render the email contents in the user's language using both the email template and variables dictionary
+    with i18n.use(lang):
+        try:
+            body_txt = render_email_txt(email_name, context)
+            subject = render_subject(email_name, context)
+            body_html = render_email_html(email_name, context)
+        except TemplateNotFound as template_exception:
+            raise ex.EmailTemplateError(f"Missing or invalid email template. {template_exception}")
 
     # send the email message using the configured backend
     try:

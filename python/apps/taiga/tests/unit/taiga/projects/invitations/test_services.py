@@ -187,6 +187,7 @@ async def test_send_project_invitations_for_existing_user(tqmanager, correlation
         args = job["args"]
         assert args["email_name"] == "project_invitation"
         assert args["to"] == invitation.email
+        assert args["lang"] == invitation.user.lang
         assert args["context"]["invitation_token"] == "invitation-token"
         assert args["context"]["project_color"] == invitation.project.color
         assert args["context"]["project_workspace"] == invitation.project.workspace.name

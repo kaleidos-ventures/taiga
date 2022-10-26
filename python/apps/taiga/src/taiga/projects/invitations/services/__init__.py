@@ -117,6 +117,7 @@ async def send_project_invitation_email(invitation: ProjectInvitation, is_resend
         email_name=Emails.PROJECT_INVITATION.value,
         to=email,
         context=context,
+        lang=receiver.lang if receiver else settings.LANG,
     )
 
 

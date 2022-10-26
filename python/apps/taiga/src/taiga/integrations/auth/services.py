@@ -25,10 +25,10 @@ async def social_login(
     if not user:
         # check if the user exists (without social login yet)
         user = await users_repositories.get_first_user(email=email)
+        lang = lang if lang else settings.LANG
         if not user:
             # create a new user with social login data and verify it
             username = await users_services.generate_username(email=email)
-            lang = lang if lang else settings.LANG
             user = await users_repositories.create_user(
                 email=email, username=username, full_name=full_name, password=None, lang=lang
             )
@@ -39,7 +39,7 @@ async def social_login(
             # username and email are the same
             # but full_name is got from social login, and previous password is deleted
             user = await users_repositories.update_user(
-                user=user, new_values={"full_name": full_name, "password": None}
+                user=user, new_values={"full_name": full_name, "password": None, "lang": lang}
             )
             await users_repositories.verify_user(user)
             await invitations_services.update_user_projects_invitations(user=user)
@@ -47,7 +47,7 @@ async def social_login(
             # the user existed and now is adding a new login method
             # so we send her a warning email
             await send_social_login_warning_email(
-                full_name=user.full_name, email=user.email, login_method=social_key.capitalize()
+                full_name=user.full_name, email=user.email, login_method=social_key.capitalize(), lang=lang
             )
 
         await users_repositories.create_auth_data(user=user, key=social_key, value=social_id)
@@ -55,10 +55,10 @@ async def social_login(
     return await auth_services.create_auth_credentials(user=user)
 
 
-async def send_social_login_warning_email(full_name: str, email: str, login_method: str) -> None:
+async def send_social_login_warning_email(full_name: str, email: str, login_method: str, lang: str) -> None:
     context = {
         "full_name": full_name,
         "login_method": login_method,
         "login_time": datetime.aware_utcnow(),
     }
-    await send_email.defer(email_name=Emails.SOCIAL_LOGIN_WARNING.value, to=email, context=context)
+    await send_email.defer(email_name=Emails.SOCIAL_LOGIN_WARNING.value, to=email, context=context, lang=lang)

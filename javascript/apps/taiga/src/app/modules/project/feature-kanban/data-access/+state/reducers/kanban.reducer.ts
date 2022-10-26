@@ -464,6 +464,36 @@ export const reducer = createReducer(
     delete state.initialDragDropPosition[story.ref];
 
     return state;
+  }),
+  on(KanbanEventsActions.reorderStory, (state, action): KanbanState => {
+    const stories = action.stories.map((story) => {
+      return findStory(state, (it) => it.ref === story);
+    });
+
+    state = removeStory(state, (it) => {
+      if (it.ref) {
+        return action.stories.includes(it.ref);
+      }
+
+      return false;
+    });
+
+    stories.forEach((story) => {
+      if (story) {
+        if (action.reorder) {
+          state = addStory(
+            state,
+            story,
+            action.reorder.ref,
+            action.reorder.place === 'before' ? 'top' : 'bottom'
+          );
+        } else {
+          state = addStory(state, story, undefined, 'top', action.status.slug);
+        }
+      }
+    });
+
+    return state;
   })
 );
 

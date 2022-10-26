@@ -12,7 +12,11 @@ import {
   WorkflowMockFactory,
 } from '@taiga/data';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
-import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';
+import {
+  KanbanActions,
+  KanbanApiActions,
+  KanbanEventsActions,
+} from '../actions/kanban.actions';
 import * as kanbanReducer from './kanban.reducer';
 
 describe('Kanban reducer', () => {
@@ -349,5 +353,47 @@ describe('Kanban reducer', () => {
     expect(state.stories[status.slug][2]).toEqual(stories[0]);
     expect(state.initialDragDropPosition[stories[0].ref!]).toBeUndefined();
     expect(state.stories[status.slug].length).toEqual(stories.length);
+  });
+
+  it('reorder event', () => {
+    const { initialKanbanState } = kanbanReducer;
+    const workflow = WorkflowMockFactory();
+    const status = StatusMockFactory();
+
+    const stories: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status]),
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+    ];
+
+    const state = kanbanReducer.kanbanFeature.reducer(
+      {
+        ...initialKanbanState,
+        stories: {
+          [status.slug]: stories,
+        },
+        workflows: [workflow],
+      },
+      KanbanEventsActions.reorderStory({
+        stories: [stories[0].ref!],
+        reorder: {
+          ref: stories[1].ref!,
+          place: 'after',
+        },
+        status: status,
+      })
+    );
+
+    expect(state.stories[status.slug][0].ref).toEqual(stories[1].ref);
+    expect(state.stories[status.slug][1].ref).toEqual(stories[0].ref);
   });
 });

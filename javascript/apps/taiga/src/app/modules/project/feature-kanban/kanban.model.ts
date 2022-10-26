@@ -35,3 +35,14 @@ export interface PartialStory extends SetOptional<BaseStory, 'ref' | 'slug'> {
 }
 
 export type KanbanStory = PartialStory | BaseStory;
+
+export interface KanbanReorderEvent {
+  reorder: {
+    reorder: {
+      place: 'before' | 'after';
+      ref: Story['ref'];
+    } | null;
+    status: Status;
+    stories: Story['ref'][];
+  };
+}

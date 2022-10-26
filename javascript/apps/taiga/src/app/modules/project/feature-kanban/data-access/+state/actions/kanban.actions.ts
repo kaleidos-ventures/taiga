@@ -9,6 +9,7 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import { Status, Story, Workflow } from '@taiga/data';
 import {
+  KanbanReorderEvent,
   KanbanStory,
   KanbanStoryA11y,
   PartialStory,
@@ -84,5 +85,6 @@ export const KanbanEventsActions = createActionGroup({
   source: 'Kanban Event',
   events: {
     'New Story': props<{ story: Story }>(),
+    'Reorder Story': props<KanbanReorderEvent['reorder']>(),
   },
 });

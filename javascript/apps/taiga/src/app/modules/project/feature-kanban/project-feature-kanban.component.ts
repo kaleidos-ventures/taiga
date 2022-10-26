@@ -29,6 +29,7 @@ import { AppService } from '~/app/services/app.service';
 import { TuiNotification } from '@taiga-ui/core';
 import { filterNil } from '~/app/shared/utils/operators';
 import { concatLatestFrom } from '@ngrx/effects';
+import { KanbanReorderEvent } from './kanban.model';
 
 interface ComponentState {
   loadingWorkflows: KanbanState['loadingWorkflows'];
@@ -121,6 +122,15 @@ export class ProjectFeatureKanbanComponent {
       .subscribe((msg) => {
         this.store.dispatch(
           KanbanEventsActions.newStory({ story: msg.event.content.story })
+        );
+      });
+
+    this.wsService
+      .projectEvents<KanbanReorderEvent>('stories.reorder')
+      .pipe(untilDestroyed(this))
+      .subscribe((event) => {
+        this.store.dispatch(
+          KanbanEventsActions.reorderStory(event.event.content.reorder)
         );
       });
   }

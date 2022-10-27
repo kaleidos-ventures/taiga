@@ -70,6 +70,7 @@ def get_story_with_neighbors_as_dict(project_id: UUID, ref: int) -> dict[str, An
     return {
         "ref": story.ref,
         "title": story.title,
+        "workflow": story.workflow,
         "status": story.status,
         "prev": neighbors.prev,
         "next": neighbors.next,

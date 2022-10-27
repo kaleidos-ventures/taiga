@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9bdd7aa6-77b3-4755-9c16-93f63f9f6895",
+		"_postman_id": "9bda31c4-6d47-4f2d-abd3-a71ad28551a0",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3299216"
 	},
 	"item": [
 		{
@@ -2054,12 +2055,13 @@
 									"    // Validate response API contract",
 									"    pm.expect(jsonRes).to.have.property(\"ref\");",
 									"    pm.expect(jsonRes).to.have.property(\"title\");",
+									"    pm.expect(jsonRes).to.have.property(\"workflow\");",
 									"    pm.expect(jsonRes).to.have.property(\"status\");",
 									"    pm.expect(jsonRes).to.have.property(\"prev\");",
 									"    pm.expect(jsonRes).to.have.property(\"next\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(6);",
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
@@ -2067,6 +2069,12 @@
 									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"",
+									"    pm.expect(jsonRes.workflow).to.have.property(\"name\");",
+									"    pm.expect(jsonRes.workflow).to.have.property(\"slug\");",
+									"    numOfReturnedFields = Object.keys(jsonRes.workflow).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(2);",
+									"",
 									"});"
 								],
 								"type": "text/javascript"

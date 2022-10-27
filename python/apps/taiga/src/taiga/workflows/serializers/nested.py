@@ -15,3 +15,11 @@ class WorkflowStatusNestedSerializer(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class WorkflowNestedSerializer(BaseModel):
+    name: str
+    slug: str
+
+    class Config:
+        orm_mode = True

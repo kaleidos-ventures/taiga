@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import BaseModel
-from taiga.workflows.serializers.nested import WorkflowStatusNestedSerializer
+from taiga.workflows.serializers.nested import WorkflowNestedSerializer, WorkflowStatusNestedSerializer
 
 
 class StorySerializer(BaseModel):
@@ -22,6 +22,7 @@ class StoryDetailSerializer(BaseModel):
     ref: int
     title: str
     status: WorkflowStatusNestedSerializer
+    workflow: WorkflowNestedSerializer
     prev: int | None
     next: int | None
 

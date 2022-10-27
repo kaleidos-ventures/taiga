@@ -62,8 +62,8 @@ export class ProjectNavigationSettingsComponent implements OnInit {
   public closeMenu = new EventEmitter<void>();
 
   @ViewChild('firstChild')
-  public set firstChild(elm: ElementRef | undefined) {
-    if (elm) {
+  public set firstChild(el: ElementRef | undefined) {
+    if (el) {
       this.projectNavigationComponent.animationEvents$
         .pipe(
           filter(
@@ -73,7 +73,7 @@ export class ProjectNavigationSettingsComponent implements OnInit {
           take(1)
         )
         .subscribe(() => {
-          (elm.nativeElement as HTMLElement).focus();
+          (el.nativeElement as HTMLElement).focus();
         });
     }
   }

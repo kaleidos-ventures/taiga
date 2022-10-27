@@ -6,7 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
@@ -20,7 +19,6 @@ import { map, tap } from 'rxjs/operators';
 import {
   selectCurrentProject,
   selectCurrentStory,
-  selectStoryView,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
@@ -182,30 +180,6 @@ export class ProjectEffects {
     );
   });
 
-  public loadStoryDetailSuccess$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(ProjectActions.fetchStorySuccess),
-        concatLatestFrom(() => [
-          this.store.select(selectCurrentProject).pipe(filterNil()),
-          this.store.select(selectStoryView),
-        ]),
-        map(([action, project, storyView]) => {
-          if (storyView === 'full-view') {
-            void this.router.navigate([
-              `/project/${project.slug}/stories/${action.story.ref!}`,
-            ]);
-          } else {
-            this.location.replaceState(
-              `project/${project.slug}/stories/${action.story.ref!}`
-            );
-          }
-        })
-      );
-    },
-    { dispatch: false }
-  );
-
   public updateStoryViewMode$ = createEffect(
     () => {
       return this.actions$.pipe(
@@ -238,7 +212,6 @@ export class ProjectEffects {
     private store: Store,
     private router: Router,
     private revokeInvitationService: RevokeInvitationService,
-    private location: Location,
     private localStorage: LocalStorageService
   ) {}
 }

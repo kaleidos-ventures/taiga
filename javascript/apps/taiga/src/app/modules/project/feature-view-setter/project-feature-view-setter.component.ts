@@ -6,8 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { fetchStory } from '~/app/modules/project/data-access/+state/actions/project.actions';
@@ -20,22 +20,57 @@ import { selectStoryView } from '~/app/modules/project/data-access/+state/select
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
 })
-export class ProjectFeatureViewSetterComponent {
+export class ProjectFeatureViewSetterComponent implements OnDestroy {
   public storyView$ = this.store.select(selectStoryView);
   public isKanban = false;
+  public destroyOnLocationChange: () => void;
 
-  constructor(private store: Store, private route: ActivatedRoute) {
+  constructor(private store: Store, private location: Location) {
     const url = window.location.href;
     this.isKanban = url.includes('kanban');
+
+    this.destroyOnLocationChange = this.location.onUrlChange((url) => {
+      this.isKanban = url.includes('kanban');
+      const isStory = url.includes('/stories');
+
+      if (isStory) {
+        this.fetchStory();
+        setTimeout(() => {
+          const mainFocus = document.querySelector('.story-detail-focus');
+
+          if (mainFocus) {
+            (mainFocus as HTMLElement).focus();
+          }
+        }, 100);
+      }
+    });
+
     if (!this.isKanban) {
-      const projectSlug = url.match(/(?<=project\/)[^/]+/)![0];
-      const storyRef = +url.match(/(?<=stories\/)[^/]+/)![0];
-      this.store.dispatch(
-        fetchStory({
-          projectSlug,
-          storyRef,
-        })
-      );
+      this.fetchStory();
     }
+  }
+
+  public ngOnDestroy(): void {
+    this.destroyOnLocationChange();
+  }
+
+  private fetchStory() {
+    const params = this.getUrlParams();
+
+    this.store.dispatch(
+      fetchStory({
+        projectSlug: params.projectSlug,
+        storyRef: params.storyRef,
+      })
+    );
+  }
+
+  private getUrlParams() {
+    const url = window.location.href;
+
+    return {
+      projectSlug: url.match(/(?<=project\/)[^/]+/)![0],
+      storyRef: +url.match(/(?<=stories\/)[^/]+/)![0],
+    };
   }
 }

@@ -300,7 +300,7 @@ export const reducer = createReducer(
   ),
   on(
     KanbanApiActions.fetchStoriesSuccess,
-    (state, { stories, offset }): KanbanState => {
+    (state, { stories, offset, complete }): KanbanState => {
       stories.forEach((story) => {
         if (!state.stories[story.status.slug]) {
           state.stories[story.status.slug] = [];
@@ -309,7 +309,7 @@ export const reducer = createReducer(
         state.stories[story.status.slug].push(story);
       });
 
-      state.loadingStories = false;
+      state.loadingStories = !complete;
 
       if (!offset) {
         state.empty = !stories.length;

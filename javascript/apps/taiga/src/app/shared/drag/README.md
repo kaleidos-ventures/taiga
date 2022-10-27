@@ -32,7 +32,7 @@ The html that is going to follow the cursor on drag.
 ```html
 <tg-drag-in-progress *ngIf="moving$ | async as movingElements">
   <div *ngFor="let element of movingElements; trackBy: trackBy">
-    <tg-example-component [elm]="element"></tg-example-component>
+    <tg-example-component [el]="element"></tg-example-component>
   </div>
 </tg-drag-in-progress>
 ```

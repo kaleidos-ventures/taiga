@@ -23,7 +23,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [style.border-color]="color"></div>
         <div class="name">{{ status.name }}</div>
       </div>
-      <ng-container *ngIf="vm.visible && !vm.loadingStories">
+      <ng-container *ngIf="vm.visible">
         <div
           *ngIf="vm.stories.length"
           tgKanbanKeyboardNavigation
@@ -31,6 +31,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [tgScrollDynamicHeight]="vm.stories">
           <tui-scrollbar>
             <cdk-virtual-scroll-viewport
+              appendOnly
               tabindex="-1"
               tuiScrollable
               kanbanVirtualScrollStrategy
@@ -50,6 +51,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   [tgDraggable]="story.ref"
                   [dragData]="story"
                   [dragDisabled]="disableScroll(story)"
+                  [class.selected-story]="vm.currentStory?.ref === story.ref"
                   [@slideIn]="
                     vm.newEventStories.includes(story.ref) ? 'on' : 'off'
                   "

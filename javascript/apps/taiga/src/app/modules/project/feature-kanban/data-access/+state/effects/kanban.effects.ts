@@ -14,7 +14,7 @@ import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { Story } from '@taiga/data';
-import { delay, filter, map, tap } from 'rxjs';
+import { delay, filter, finalize, map, tap } from 'rxjs';
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
@@ -32,6 +32,9 @@ import {
   selectCurrentWorkflowSlug,
   selectWorkflows,
 } from '../selectors/kanban.selectors';
+import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
+
+import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 
 @Injectable()
 export class KanbanEffects {
@@ -68,11 +71,15 @@ export class KanbanEffects {
           return this.projectApiService
             .getAllStories(project.slug, 'main')
             .pipe(
-              map(({ stories, offset }) => {
+              map(({ stories, offset, complete }) => {
                 return KanbanApiActions.fetchStoriesSuccess({
                   stories,
                   offset,
+                  complete,
                 });
+              }),
+              finalize(() => {
+                return KanbanActions.loadStoriesComplete();
               })
             );
         },
@@ -251,10 +258,25 @@ export class KanbanEffects {
     { dispatch: false }
   );
 
+  public loadStoryDetailSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(ProjectActions.fetchStory),
+        tap((action) => {
+          this.kanbanScrollManagerService
+            .scrollToRef(action.storyRef)
+            .subscribe();
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(
     private appService: AppService,
     private actions$: Actions,
     private store: Store,
-    private projectApiService: ProjectApiService
+    private projectApiService: ProjectApiService,
+    private kanbanScrollManagerService: KanbanScrollManagerService
   ) {}
 }

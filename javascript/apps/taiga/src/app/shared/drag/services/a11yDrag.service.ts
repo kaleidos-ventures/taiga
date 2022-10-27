@@ -141,7 +141,7 @@ export class A11yDragService {
 
               if (currentStory) {
                 currentStory
-                  .querySelector<HTMLElement>('.story-keyboard-navigation')!
+                  .querySelector<HTMLElement>('.story-kanban-ref-focus')!
                   .focus();
               }
               this.liveAnnouncer.clear();

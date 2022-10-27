@@ -9,6 +9,7 @@
 import { createSelector } from '@ngrx/store';
 import { Status } from '@taiga/data';
 import { kanbanFeature } from '../reducers/kanban.reducer';
+import { findStory } from '../reducers/kanban.reducer.helpers';
 
 export const {
   selectKanbanState,
@@ -54,3 +55,17 @@ export const selectStatusNewStories = (statusSlug: Status['slug']) => {
     }
   );
 };
+
+export const selectStory = (ref: number) => {
+  return createSelector(kanbanFeature.selectKanbanState, (state) => {
+    return findStory(state, (it) => it.ref === ref);
+  });
+};
+
+export const selectCurrentWorkflow = createSelector(
+  selectWorkflows,
+  selectCurrentWorkflowSlug,
+  (wokflows, slug) => {
+    return wokflows?.find((it) => it.slug === slug);
+  }
+);

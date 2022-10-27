@@ -30,6 +30,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
+.selected-story {
+  background: var(--color-gray20);
+  border-color: var(--color-secondary);
+}
+
 .header {
   align-items: center;
   display: flex;
@@ -54,6 +59,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 tg-kanban-story {
   margin-block-end: var(--spacing-8);
 
+  /* This will cause a weird scroll behavior if status doesn't have appendOnly (the scroll will move by itself a few px in loop), becasue the same story will have diffrent height when is calculate in kanban-scroll-strategy */
   &:first-child {
     margin-block-start: var(--spacing-4);
   }

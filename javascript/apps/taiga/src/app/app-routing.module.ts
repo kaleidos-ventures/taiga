@@ -129,6 +129,7 @@ const routes: Routes = [
   imports: [
     QuicklinkModule,
     RouterModule.forRoot(routes, {
+      paramsInheritanceStrategy: 'always',
       initialNavigation: 'enabledBlocking',
       preloadingStrategy: QuicklinkStrategy,
       anchorScrolling: 'enabled',

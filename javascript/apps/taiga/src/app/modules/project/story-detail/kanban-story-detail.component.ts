@@ -37,7 +37,6 @@ import {
 import { Project, StoryDetail, StoryView } from '@taiga/data';
 import {
   clearStory,
-  fetchStory,
   updateStoryViewMode,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
@@ -171,15 +170,22 @@ export class KanbanStoryDetailComponent {
   }
 
   public navigateToStory(ref: number | null) {
-    this.store.dispatch(
-      fetchStory({
-        projectSlug: this.state.get('project').slug,
-        storyRef: ref!,
-      })
-    );
+    if (ref) {
+      this.location.go(
+        `project/${this.state.get('project').slug}/stories/${ref}`
+      );
+    }
   }
 
-  public closeStory() {
+  public closeStory(ref: number | undefined) {
+    if (ref) {
+      const mainFocus = document.querySelector(
+        `tg-kanban-story[data-ref='${ref}'] .story-kanban-ref-focus`
+      );
+      if (mainFocus) {
+        (mainFocus as HTMLElement).focus();
+      }
+    }
     this.store.dispatch(clearStory());
     this.location.replaceState(
       `project/${this.state.get('project').slug}/kanban`

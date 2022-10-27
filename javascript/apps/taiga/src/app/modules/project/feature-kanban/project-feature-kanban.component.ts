@@ -16,14 +16,13 @@ import { RxState } from '@rx-angular/state';
 import { TuiNotification } from '@taiga-ui/core';
 import { ShortcutsService } from '@taiga/core';
 import { Project, Story, StoryView } from '@taiga/data';
-import { combineLatest, filter, map } from 'rxjs';
+import { filter, map } from 'rxjs';
 import {
   clearStory,
   updateStoryShowView,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
-  selectCurrentStory,
   selectShowStoryView,
   selectStoryView,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -137,24 +136,6 @@ export class ProjectFeatureKanbanComponent {
           status: TuiNotification.Error,
           scope: 'kanban',
         });
-      });
-
-    combineLatest([
-      this.store.select(selectCurrentStory),
-      this.showStoryDetail$,
-    ])
-      .pipe(
-        untilDestroyed(this),
-        concatLatestFrom(() => [this.project$.pipe(filterNil())])
-      )
-      .subscribe(([data, project]) => {
-        const story = data[0];
-        const showStoryDetail = data[1];
-        if (story && showStoryDetail) {
-          this.location.replaceState(
-            `project/${project.slug}/stories/${story.ref!}`
-          );
-        }
       });
   }
 

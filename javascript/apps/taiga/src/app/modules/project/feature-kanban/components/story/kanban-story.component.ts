@@ -21,10 +21,12 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { Project } from '@taiga/data';
 import { distinctUntilChanged, map } from 'rxjs';
-import { fetchStory } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+
+import { Location } from '@angular/common';
+
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -72,6 +74,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
 
   constructor(
     public state: RxState<StoryState>,
+    private location: Location,
     private store: Store,
     private el: ElementRef,
     @Optional()
@@ -102,12 +105,11 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
   }
 
   public openStory() {
-    this.store.dispatch(
-      fetchStory({
-        projectSlug: this.state.get('project').slug,
-        storyRef: this.story.ref!,
-      })
-    );
+    if (this.story.ref) {
+      this.location.go(
+        `project/${this.state.get('project').slug}/stories/${this.story.ref}`
+      );
+    }
   }
 
   private scrollToDragStoryIfNotVisible() {

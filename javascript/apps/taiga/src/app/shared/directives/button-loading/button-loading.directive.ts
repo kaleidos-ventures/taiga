@@ -192,10 +192,10 @@ export class ButtonLoadingDirective implements AfterViewInit {
   }
 
   private setContentText(msg = '') {
-    const elm = this.contentTextElement();
+    const el = this.contentTextElement();
 
-    if (elm) {
-      const textNode = Array.from(elm.childNodes).find(
+    if (el) {
+      const textNode = Array.from(el.childNodes).find(
         (it) => it.nodeType === Node.TEXT_NODE
       );
 

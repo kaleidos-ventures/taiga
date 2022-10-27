@@ -82,13 +82,17 @@ describe('ProjectEffects', () => {
     const stories = [StoryMockFactory()];
 
     projectApiService.getAllStories.mockReturnValue(
-      cold('-b|', { b: { stories, offset: 0 } })
+      cold('-b|', { b: { stories, offset: 0, complete: false } })
     );
 
     actions$ = hot('-a', { a: KanbanActions.initKanban() });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.fetchStoriesSuccess({ stories, offset: 0 }),
+      a: KanbanApiActions.fetchStoriesSuccess({
+        stories,
+        offset: 0,
+        complete: false,
+      }),
     });
 
     expect(effects.loadKanbanStories$).toBeObservable(expected);

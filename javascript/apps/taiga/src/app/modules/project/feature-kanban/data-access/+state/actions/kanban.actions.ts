@@ -66,6 +66,7 @@ export const KanbanActions = createActionGroup({
       };
       status?: Story['status']['slug'];
     }>(),
+    'Load stories complete': emptyProps(),
   },
 });
 
@@ -73,7 +74,11 @@ export const KanbanApiActions = createActionGroup({
   source: 'Kanban Api',
   events: {
     'Fetch Workflows Success': props<{ workflows: Workflow[] }>(),
-    'Fetch Stories Success': props<{ stories: Story[]; offset: number }>(),
+    'Fetch Stories Success': props<{
+      stories: Story[];
+      offset: number;
+      complete: boolean;
+    }>(),
     'Create Story Success': props<{
       story: Story;
       tmpId: PartialStory['tmpId'];

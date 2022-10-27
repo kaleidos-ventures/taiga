@@ -44,6 +44,7 @@ export class KanbanVirtualScrollStrategy implements VirtualScrollStrategy {
   constructor(private defaultItemHeights: ItemHeight) {}
   public contentChanged$ = new Subject<void>();
   public updatedItemHeights$ = new Subject<void>();
+  public afterViewCheck$ = new Subject<void>();
   public scrolledIndexChange$ = new Subject<number>();
   public scrolledIndexChange: Observable<number> =
     this.scrolledIndexChange$.pipe(distinctUntilChanged());
@@ -56,6 +57,7 @@ export class KanbanVirtualScrollStrategy implements VirtualScrollStrategy {
     this.updateRenderedRange();
     this.contentChanged$.pipe(debounceTime(100)).subscribe(() => {
       this.checkRenderedContentSize();
+      this.afterViewCheck$.next();
     });
   }
   public detach() {

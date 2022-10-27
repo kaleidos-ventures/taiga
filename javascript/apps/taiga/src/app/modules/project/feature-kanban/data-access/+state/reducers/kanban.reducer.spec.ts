@@ -53,6 +53,7 @@ describe('Kanban reducer', () => {
       KanbanApiActions.fetchStoriesSuccess({
         stories: [story],
         offset: 0,
+        complete: true,
       })
     );
 
@@ -74,6 +75,7 @@ describe('Kanban reducer', () => {
       KanbanApiActions.fetchStoriesSuccess({
         stories: [],
         offset: 0,
+        complete: true,
       })
     );
 

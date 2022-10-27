@@ -290,9 +290,9 @@ export class ProjectApiService {
   public getAllStories(
     project: Project['slug'],
     workflow: Workflow['slug']
-  ): Observable<{ stories: Story[]; offset: number }> {
+  ): Observable<{ stories: Story[]; offset: number; complete: boolean }> {
     return new Observable((subscriber) => {
-      const limit = 50;
+      const limit = 100;
       let offset = 0;
 
       const nextPage = () => {
@@ -300,9 +300,11 @@ export class ProjectApiService {
           (stories) => {
             offset += stories.length;
 
-            subscriber.next({ stories, offset });
+            const complete = stories.length < limit;
 
-            if (stories.length < limit) {
+            subscriber.next({ stories, offset, complete });
+
+            if (complete) {
               subscriber.complete();
             } else {
               nextPage();

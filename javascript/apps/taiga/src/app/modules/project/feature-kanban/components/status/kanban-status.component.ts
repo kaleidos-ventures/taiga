@@ -7,6 +7,7 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,17 +15,19 @@ import {
   HostBinding,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
-import { Status, Workflow, Story } from '@taiga/data';
-import { KanbanStatusKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
-import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
-import { RxState } from '@rx-angular/state';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
+import { Status, Story, StoryDetail, Workflow } from '@taiga/data';
 import { distinctUntilChanged, map, takeUntil, timer } from 'rxjs';
+import { selectCurrentStory } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { KanbanState } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
@@ -38,16 +41,16 @@ import {
   selectStatusNewStories,
   selectStories,
 } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { KanbanStatusKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
 import { StatusScrollDynamicHeight } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
 import {
   KanbanStory,
   KanbanStoryA11y,
 } from '~/app/modules/project/feature-kanban/kanban.model';
-import { filterNil } from '~/app/shared/utils/operators';
-import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { PermissionsService } from '~/app/services/permissions.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service';
+import { filterNil } from '~/app/shared/utils/operators';
+import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
 
 export interface KanbanComponentState {
   stories: KanbanStory[];
@@ -62,6 +65,7 @@ export interface KanbanComponentState {
   permissionsError: boolean;
   activeA11yDragDropStory: KanbanStoryA11y;
   hasDropCandidate: KanbanState['hasDropCandidate'];
+  currentStory: StoryDetail | null;
 }
 
 @UntilDestroy()
@@ -94,10 +98,14 @@ export class KanbanStatusComponent
     KanbanStatusKeyboardNavigation,
     StatusScrollDynamicHeight,
     OnChanges,
-    OnInit
+    OnInit,
+    OnDestroy
 {
   @ViewChild(KanbanVirtualScrollDirective)
   public kanbanVirtualScroll?: KanbanVirtualScrollDirective;
+
+  @ViewChild(CdkVirtualScrollViewport)
+  public viewPort!: CdkVirtualScrollViewport;
 
   @Input()
   public status!: Status;
@@ -179,15 +187,11 @@ export class KanbanStatusComponent
     private transloco: TranslocoService,
     private store: Store,
     private autoScrollService: AutoScrollService,
-    private permissionService: PermissionsService
+    private permissionService: PermissionsService,
+    private kanbanScrollManagerService: KanbanScrollManagerService
   ) {
-    this.state.set({
-      visible: false,
-      stories: [],
-      initialCanEdit: this.permissionService.hasPermissions('story', [
-        'modify',
-      ]),
-    });
+    this.state.set({ visible: false, stories: [] });
+    this.kanbanScrollManagerService.registerKanbanStatus(this);
   }
 
   public ngOnInit(): void {
@@ -235,6 +239,7 @@ export class KanbanStatusComponent
       'canEdit',
       this.permissionService.hasPermissions$('story', ['modify'])
     );
+    this.state.connect('currentStory', this.store.select(selectCurrentStory));
 
     this.watchNewStories();
   }
@@ -275,6 +280,10 @@ export class KanbanStatusComponent
     if (changes.status) {
       this.fillColor();
     }
+  }
+
+  public ngOnDestroy(): void {
+    this.kanbanScrollManagerService.destroyKanbanStatus(this);
   }
 
   public showSmallDragShadowClass(story: KanbanStory) {

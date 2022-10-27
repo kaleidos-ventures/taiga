@@ -220,6 +220,14 @@ export class DragService {
           x: initialPosition.x + mouseMove.x,
           y: initialPosition.y + mouseMove.y,
         };
+      }),
+      filter((mouseMove) => {
+        return (
+          mouseMove.x > 5 ||
+          mouseMove.x < -5 ||
+          mouseMove.y > 5 ||
+          mouseMove.y < -5
+        );
       })
     );
 
@@ -252,9 +260,10 @@ export class DragService {
     )
       .pipe(take(1))
       .subscribe((drop) => {
-        this.dropped$.next(drop);
-
-        this.dragEnded();
+        if (this.elements$.value.length) {
+          this.dropped$.next(drop);
+          this.dragEnded();
+        }
       });
 
     mouseMove$

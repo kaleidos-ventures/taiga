@@ -18,7 +18,7 @@ export class UsersApiService {
   constructor(private http: HttpClient, private config: ConfigService) {}
 
   public me() {
-    return this.http.get<User>(`${this.config.apiUrl}/my/user/`);
+    return this.http.get<User>(`${this.config.apiUrl}/my/user`);
   }
 
   public requestResetPassword(email: string) {

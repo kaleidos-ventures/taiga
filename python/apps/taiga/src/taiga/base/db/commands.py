@@ -53,7 +53,7 @@ def db_shell() -> None:
 ######################################
 
 
-@cli.command(help="Drop taiga migrations files")
+@cli.command(help="Drop Taiga migrations files")
 def drop_migrations(
     verbosity: Verbosity = typer.Option(
         "1",
@@ -69,7 +69,7 @@ def drop_migrations(
         shutil.rmtree(migrations_dir)
 
 
-@cli.command(help="Drop taiga migrations and initialize all of them")
+@cli.command(help="Initialize Taiga migrations")
 def init_migrations(
     ctx: typer.Context,
     interactive: bool = typer.Option(True, " /--no-input", help="Tells to NOT prompt the user for input of any kind."),

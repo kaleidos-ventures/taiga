@@ -15,6 +15,7 @@ export const {
   selectProjects,
   selectShowBannerOnRevoke,
   selectShowStoryView,
+  selectLoadingStory,
   selectCurrentStory,
   selectStoryView,
 } = projectFeature;

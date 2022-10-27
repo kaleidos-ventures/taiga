@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { StoryDetailSkeletonComponent } from '../story-detail-skeleton/story-detail-skeleton.component';
 import { KanbanStoryDetailComponent } from '../story-detail/kanban-story-detail.component';
 import { ProjectFeatureStoryWrapperSideViewComponent } from './project-feature-story-wrapper-side-view.component';
 
@@ -22,6 +23,7 @@ import { ProjectFeatureStoryWrapperSideViewComponent } from './project-feature-s
     TranslocoModule,
     KanbanStoryDetailComponent,
     DragDropModule,
+    StoryDetailSkeletonComponent,
   ],
   declarations: [ProjectFeatureStoryWrapperSideViewComponent],
   providers: [],

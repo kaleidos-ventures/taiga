@@ -14,6 +14,7 @@ import {
   TuiScrollbarModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
+import { StoryDetailSkeletonComponent } from '../story-detail-skeleton/story-detail-skeleton.component';
 import { KanbanStoryDetailComponent } from '../story-detail/kanban-story-detail.component';
 import { ProjectFeatureStoryWrapperModalViewComponent } from './project-feature-story-wrapper-modal-view.component';
 
@@ -25,6 +26,7 @@ import { ProjectFeatureStoryWrapperModalViewComponent } from './project-feature-
     TranslocoModule,
     KanbanStoryDetailComponent,
     TuiScrollbarModule,
+    StoryDetailSkeletonComponent,
   ],
   declarations: [ProjectFeatureStoryWrapperModalViewComponent],
   providers: [],

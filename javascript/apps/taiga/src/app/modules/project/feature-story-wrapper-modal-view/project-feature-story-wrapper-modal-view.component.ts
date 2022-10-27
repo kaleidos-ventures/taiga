@@ -12,7 +12,13 @@ import {
   EventEmitter,
   Output,
 } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
+import { selectLoadingStory } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+
+export interface StoryState {
+  loadingStory: boolean;
+}
 @Component({
   selector: 'tg-project-feature-story-wrapper-modal-view',
   templateUrl: './project-feature-story-wrapper-modal-view.component.html',
@@ -23,4 +29,10 @@ import { RxState } from '@rx-angular/state';
 export class ProjectFeatureStoryWrapperModalViewComponent {
   @Output()
   public closeModal = new EventEmitter();
+
+  public readonly model$ = this.state.select();
+
+  constructor(private store: Store, private state: RxState<StoryState>) {
+    this.state.connect('loadingStory', this.store.select(selectLoadingStory));
+  }
 }

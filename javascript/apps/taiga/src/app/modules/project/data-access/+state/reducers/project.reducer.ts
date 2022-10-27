@@ -20,6 +20,7 @@ export interface ProjectState {
   projects: Record<Project['slug'], Project>;
   showBannerOnRevoke: boolean;
   showStoryView: boolean;
+  loadingStory: boolean;
   currentStory: StoryDetail | null;
   storyView: StoryView;
 }
@@ -29,6 +30,7 @@ export const initialState: ProjectState = {
   projects: {},
   showBannerOnRevoke: false,
   showStoryView: false,
+  loadingStory: false,
   currentStory: null,
   storyView: LocalStorageService.get('story_view') || 'modal-view',
 };
@@ -82,7 +84,13 @@ export const reducer = createReducer(
       return state;
     }
   ),
+  on(ProjectActions.fetchStory, (state): ProjectState => {
+    state.loadingStory = true;
+    state.currentStory = null;
+    return state;
+  }),
   on(ProjectActions.fetchStorySuccess, (state, { story }): ProjectState => {
+    state.loadingStory = false;
     state.currentStory = story;
     state.showStoryView = state.storyView !== 'full-view';
     return state;

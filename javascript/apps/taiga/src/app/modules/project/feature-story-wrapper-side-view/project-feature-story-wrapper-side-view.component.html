@@ -16,8 +16,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [style.width.px]="sidepanelWidth"
       class="side-panel">
       <tg-kanban-story-detail
+        *ngIf="!vm.loadingStory"
         [sidebarOpen]="sidebarOpen"
         (toggleSidebar)="onToggleSidebar()"></tg-kanban-story-detail>
+      <tg-story-detail-skeleton
+        [isCollapsed]="isCollapsed"
+        *ngIf="vm.loadingStory"></tg-story-detail-skeleton>
       <div
         #dragHandle
         *ngIf="showDragbar()"

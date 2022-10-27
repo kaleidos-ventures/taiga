@@ -7,6 +7,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t">
-  <tg-kanban-story-detail></tg-kanban-story-detail>
-  <!-- <tg-story-detail-skeleton></tg-story-detail-skeleton> -->
+  <ng-container *ngIf="model$ | async as vm">
+    <tg-kanban-story-detail *ngIf="!vm.loadingStory"></tg-kanban-story-detail>
+    <tg-story-detail-skeleton
+      *ngIf="vm.loadingStory"></tg-story-detail-skeleton>
+  </ng-container>
 </ng-container>

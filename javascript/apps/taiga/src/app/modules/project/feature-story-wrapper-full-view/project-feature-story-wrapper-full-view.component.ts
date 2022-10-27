@@ -7,7 +7,12 @@
  */
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
+import { selectLoadingStory } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+export interface StoryState {
+  loadingStory: boolean;
+}
 @Component({
   selector: 'tg-project-feature-story-wrapper-full-view',
   templateUrl: './project-feature-story-wrapper-full-view.component.html',
@@ -15,4 +20,10 @@ import { RxState } from '@rx-angular/state';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
 })
-export class ProjectFeatureStoryWrapperFullViewComponent {}
+export class ProjectFeatureStoryWrapperFullViewComponent {
+  public readonly model$ = this.state.select();
+
+  constructor(private store: Store, private state: RxState<StoryState>) {
+    this.state.connect('loadingStory', this.store.select(selectLoadingStory));
+  }
+}

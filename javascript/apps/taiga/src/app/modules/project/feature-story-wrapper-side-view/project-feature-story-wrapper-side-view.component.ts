@@ -21,6 +21,7 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { StoryView } from '@taiga/data';
 import {
+  selectLoadingStory,
   selectShowStoryView,
   selectStoryView,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -28,6 +29,7 @@ import { LocalStorageService } from '~/app/shared/local-storage/local-storage.se
 interface WrapperSideViewState {
   showView: boolean;
   selectedStoryView: StoryView;
+  loadingStory: boolean;
 }
 
 @Component({
@@ -64,6 +66,7 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   ) {
     this.state.connect('showView', this.store.select(selectShowStoryView));
     this.state.connect('selectedStoryView', this.store.select(selectStoryView));
+    this.state.connect('loadingStory', this.store.select(selectLoadingStory));
   }
 
   public dragMove(dragHandle: HTMLElement, event: CdkDragMove<unknown>) {

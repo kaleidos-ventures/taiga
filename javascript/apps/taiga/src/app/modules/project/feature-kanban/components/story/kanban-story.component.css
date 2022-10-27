@@ -94,8 +94,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .draggable-icon {
   display: none;
-  fill: var(--color-secondary50);
-  inline-size: 5px;
-  inset-inline-start: 5px;
   position: absolute;
+  transform: translate(-4px, 1px);
+
+  & tui-svg {
+    fill: var(--color-secondary50);
+    inline-size: 5px;
+  }
 }

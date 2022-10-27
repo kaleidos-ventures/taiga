@@ -54,6 +54,7 @@ export interface KanbanComponentState {
   visible: boolean;
   loadingStories: KanbanState['loadingStories'];
   canEdit: boolean;
+  initialCanEdit: boolean;
   showAddForm: boolean;
   emptyKanban: boolean | null;
   formAutoFocus: boolean;
@@ -180,7 +181,13 @@ export class KanbanStatusComponent
     private autoScrollService: AutoScrollService,
     private permissionService: PermissionsService
   ) {
-    this.state.set({ visible: false, stories: [] });
+    this.state.set({
+      visible: false,
+      stories: [],
+      initialCanEdit: this.permissionService.hasPermissions('story', [
+        'modify',
+      ]),
+    });
   }
 
   public ngOnInit(): void {
@@ -277,7 +284,11 @@ export class KanbanStatusComponent
   }
 
   public disableScroll(story: KanbanStory) {
-    return story._shadow || !story.ref || !this.state.get('canEdit');
+    const canEdit = this.state.get('canEdit')
+      ? true
+      : this.state.get('initialCanEdit');
+
+    return story._shadow || !story.ref || !canEdit;
   }
 
   private fillColor() {

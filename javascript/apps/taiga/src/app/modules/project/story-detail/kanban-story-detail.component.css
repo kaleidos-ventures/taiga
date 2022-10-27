@@ -15,6 +15,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   margin-inline-end: var(--spacing-16);
   position: relative;
   text-decoration: underline;
+  text-transform: uppercase;
 
   &::after {
     color: var(--color-gray30);

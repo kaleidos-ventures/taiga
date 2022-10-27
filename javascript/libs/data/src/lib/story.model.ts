@@ -7,6 +7,7 @@
  */
 
 import { Status } from './status.model';
+import { Workflow } from './workflow.model';
 
 export interface Story {
   ref: number;
@@ -16,6 +17,7 @@ export interface Story {
 }
 
 export interface StoryDetail extends Partial<Story> {
+  workflow: Partial<Workflow>;
   prev: number | null;
   next: number | null;
 }

@@ -14,11 +14,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       *ngIf="vm.story">
       <div class="story-header">
         <div class="start">
-          <!-- TODO when is fullview and has workflow -->
           <span
             *ngIf="vm.selectedStoryView === 'full-view'"
             class="workflow"
-            >WORKFLOW NAME</span
+            >{{ vm.story.workflow.name }}</span
           >
           <span
             #storyRef

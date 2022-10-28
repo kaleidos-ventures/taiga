@@ -68,7 +68,7 @@ class User(models.BaseModel, AbstractBaseUser):
         return self.get_full_name()
 
     def __repr__(self) -> str:
-        return f"<Usert {self.username}>"
+        return f"<User {self.username}>"
 
     def get_short_name(self) -> str:
         return self.username

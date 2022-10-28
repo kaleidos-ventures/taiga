@@ -31,6 +31,9 @@ class UserSearchSerializer(UserBaseSerializer):
     user_is_member: bool | None
     user_has_pending_invitation: bool | None
 
+    class Config:
+        orm_mode = True
+
 
 class VerificationInfoSerializer(BaseModel):
     auth: AccessTokenWithRefreshSerializer

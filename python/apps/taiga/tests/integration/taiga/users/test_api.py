@@ -187,18 +187,37 @@ async def test_get_users_by_text_anonymous(client):
 
 async def test_get_users_by_text(client):
     user = await f.create_user()
+    user2 = await f.create_user()
     client.login(user)
 
-    text = "text_to_search"
+    text = user2.username
     project_slug = "pj-slug"
     offset = 0
-    limit = 1
+    limit = 10
+
+    response = client.get(f"/users/search?text={text}&project={project_slug}&offset={offset}&limit={limit}")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert len(response.json()) == 1
+    assert response.headers["Pagination-Offset"] == "0"
+    assert response.headers["Pagination-Limit"] == "10"
+    assert response.headers["Pagination-Total"] == "1"
+
+
+async def test_get_users_by_text_no_results(client):
+    user = await f.create_user()
+    await f.create_user()
+    client.login(user)
+
+    text = "noresults"
+    project_slug = "pj-slug"
+    offset = 0
+    limit = 10
 
     response = client.get(f"/users/search?text={text}&project={project_slug}&offset={offset}&limit={limit}")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 0
     assert response.headers["Pagination-Offset"] == "0"
-    assert response.headers["Pagination-Limit"] == "1"
+    assert response.headers["Pagination-Limit"] == "10"
     assert response.headers["Pagination-Total"] == "0"
 
 

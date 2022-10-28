@@ -9,5 +9,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 :host {
   block-size: 100vh;
   display: block;
-  max-block-size: calc(-112px + 100vh);
+  max-block-size: calc((var(--modal-block-margin) * -1) + 100vh);
+
+  &::ng-deep .modal-scrollbar {
+    max-block-size: 100%;
+
+    & .t-thumb {
+      border: 0.15rem solid transparent;
+      /* stylelint-disable-next-line declaration-no-important */
+      inline-size: 0.25rem !important;
+    }
+
+    & .t-bar_vertical {
+      inline-size: var(--spacing-8);
+      margin-block-end: var(--spacing-4);
+      margin-block-start: var(--spacing-4);
+      margin-inline-end: 2px;
+    }
+  }
 }

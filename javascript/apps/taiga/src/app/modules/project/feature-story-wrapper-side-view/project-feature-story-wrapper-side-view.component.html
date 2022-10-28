@@ -16,6 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [style.width.px]="sidepanelWidth"
       class="side-panel">
       <tg-kanban-story-detail
+        (storyCollapsing)="setCollapsed($event)"
         [isCollapsed]="isCollapsed"></tg-kanban-story-detail>
       <div
         #dragHandle

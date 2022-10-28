@@ -18,6 +18,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   box-shadow: -4px 4px 8px var(--color-box-shadow);
   display: flex;
   inline-size: 500px;
+  max-block-size: calc(100vh - var(--header-height));
   position: relative;
   transition: border-inline-start 0.3s ease-in, box-shadow 0.3s ease-in;
 

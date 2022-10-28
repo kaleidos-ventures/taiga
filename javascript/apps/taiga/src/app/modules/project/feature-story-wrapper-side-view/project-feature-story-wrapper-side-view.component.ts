@@ -8,12 +8,12 @@
 
 import { CdkDragMove } from '@angular/cdk/drag-drop';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
-  OnChanges,
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -29,7 +29,9 @@ interface WrapperSideViewState {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
 })
-export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
+export class ProjectFeatureStoryWrapperSideViewComponent
+  implements AfterViewInit
+{
   @ViewChild('resizeSidepanel') public sidepanel?: ElementRef<HTMLElement>;
   @ViewChild('dragHandle') public dragHandle!: ElementRef<HTMLElement>;
 
@@ -41,8 +43,8 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   public sidepanelSetted = false;
   public isCollapsed = false;
 
-  private minWidth = 440;
-  private minWidthToForceCollapse = 472;
+  private minWidthCollapsed = 440;
+  private minWidthUncollapsed = 472;
 
   constructor(
     private store: Store,
@@ -52,14 +54,9 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
     this.state.connect('showView', this.store.select(selectShowStoryView));
   }
 
-  public ngOnChanges(): void {
-    if (this.sidepanel && !this.sidepanelSetted) {
-      this.sidepanelWidth = this.kanbanWidth / 4;
-      this.sidepanelSetted = true;
-      if (this.sidepanelWidth <= this.minWidthToForceCollapse) {
-        this.isCollapsed = true;
-      }
-    }
+  public ngAfterViewInit(): void {
+    this.setCollapsed(this.isCollapsed);
+    this.cd.detectChanges();
   }
 
   public dragMove(dragHandle: HTMLElement, event: CdkDragMove<unknown>) {
@@ -74,10 +71,13 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
 
   public calculateMinInlineSize() {
     const quarterWidth = this.kanbanWidth / 4;
-    if (this.kanbanWidth && quarterWidth >= this.minWidth) {
+    const calculatedMinWidth = this.isCollapsed
+      ? this.minWidthCollapsed
+      : this.minWidthUncollapsed;
+    if (this.kanbanWidth && quarterWidth >= calculatedMinWidth) {
       return `${quarterWidth}px`;
     } else {
-      return `${this.minWidth}px`;
+      return `${calculatedMinWidth}px`;
     }
   }
 
@@ -86,6 +86,22 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   }
 
   public showDragbar() {
-    return this.kanbanWidth / 2 >= this.minWidth;
+    const calculatedMinWidth = this.isCollapsed
+      ? this.minWidthCollapsed
+      : this.minWidthUncollapsed;
+
+    return this.kanbanWidth / 2 >= calculatedMinWidth;
+  }
+
+  public setCollapsed(isCollapsed: boolean) {
+    const calculatedDifference =
+      this.minWidthUncollapsed - this.minWidthCollapsed;
+
+    if (this.isCollapsed) {
+      this.sidepanelWidth = this.sidepanelWidth + calculatedDifference;
+    } else {
+      this.sidepanelWidth = this.sidepanelWidth - calculatedDifference;
+    }
+    this.isCollapsed = isCollapsed;
   }
 }

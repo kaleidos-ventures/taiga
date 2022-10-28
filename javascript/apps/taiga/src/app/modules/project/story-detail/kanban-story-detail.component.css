@@ -93,6 +93,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
+.scrollbar-content {
+  display: flex;
+}
+
 .story-content {
   display: grid;
   flex-grow: 1;
@@ -100,6 +104,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   &.close {
     grid-template-columns: calc(100% - 33px) 33px;
+  }
+
+  &.side-view,
+  &.full-view {
+    block-size: calc(100vh - 48px - 48px);
+  }
+
+  &.modal-view {
+    block-size: calc(100vh - 112px - 48px);
   }
 }
 

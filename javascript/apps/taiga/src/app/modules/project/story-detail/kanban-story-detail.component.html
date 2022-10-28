@@ -9,6 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <div
+      cdkTrapFocus
       class="story"
       *ngIf="vm.story">
       <div class="story-header">
@@ -20,6 +21,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             >WORKFLOW NAME</span
           >
           <span
+            #storyRef
             tabindex="0"
             [attr.aria-label]="
               t('kanban.story_detail.story_sr', {
@@ -127,30 +129,33 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </tui-data-list>
         </ng-template>
       </div>
-      <div
-        class="story-content"
-        [class.close]="
-          (!sidebarOpen && vm.selectedStoryView === 'side-view') ||
-          forceCollapsed
-        ">
-        <div class="main-content">
-          <h1 class="title">{{ vm.story.title }}</h1>
-          <div class="creation-info">
-            <tg-user-avatar></tg-user-avatar>
+      <tui-scrollbar class="scrollbar-content">
+        <div
+          class="story-content"
+          [class]="vm.selectedStoryView"
+          [class.close]="
+            (!sidebarOpen && vm.selectedStoryView === 'side-view') ||
+            forceCollapsed
+          ">
+          <div class="main-content">
+            <h1 class="title">{{ vm.story.title }}</h1>
+            <div class="creation-info">
+              <tg-user-avatar></tg-user-avatar>
+            </div>
+          </div>
+          <div class="sidebar">
+            <button
+              *ngIf="vm.selectedStoryView === 'side-view'"
+              [attr.aria-label]="t('kanban.story_detail.collapse_sidebar')"
+              [icon]="sidebarOpen ? 'chevrons-right' : 'chevrons-left'"
+              appearance="tertiary"
+              class="sidepanel-icon"
+              tuiIconButton
+              (click)="handleSidePanel()"
+              type="button"></button>
           </div>
         </div>
-        <div class="sidebar">
-          <button
-            *ngIf="vm.selectedStoryView === 'side-view'"
-            [attr.aria-label]="t('kanban.story_detail.collapse_sidebar')"
-            [icon]="sidebarOpen ? 'chevrons-right' : 'chevrons-left'"
-            appearance="tertiary"
-            class="sidepanel-icon"
-            tuiIconButton
-            (click)="handleSidePanel()"
-            type="button"></button>
-        </div>
-      </div>
+      </tui-scrollbar>
     </div>
   </ng-container>
 </ng-container>

@@ -9,7 +9,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
-import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import {
+  TuiButtonModule,
+  TuiScrollbarModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { KanbanStoryDetailComponent } from '../story-detail/kanban-story-detail.component';
 import { ProjectFeatureStoryWrapperModalViewComponent } from './project-feature-story-wrapper-modal-view.component';
 
@@ -20,6 +24,7 @@ import { ProjectFeatureStoryWrapperModalViewComponent } from './project-feature-
     TuiSvgModule,
     TranslocoModule,
     KanbanStoryDetailComponent,
+    TuiScrollbarModule,
   ],
   declarations: [ProjectFeatureStoryWrapperModalViewComponent],
   providers: [],

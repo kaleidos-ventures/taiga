@@ -15,7 +15,6 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -80,21 +79,16 @@ import { filterNil } from '~/app/shared/utils/operators';
     },
   ],
 })
-export class KanbanStoryDetailComponent implements OnChanges {
+export class KanbanStoryDetailComponent {
   @Input()
-  public isCollapsed = false;
-
-  @Output()
-  public closeButton = new EventEmitter();
+  public sidebarOpen = false;
 
   @ViewChild('storyRef') public storyRef!: ElementRef;
 
   @Output()
-  public storyCollapsing = new EventEmitter();
+  public toggleSidebar = new EventEmitter<void>();
 
-  public collapsedAlreadyForced = false;
   public collapsedSet = false;
-  public forceCollapsed = false;
   public linkCopied = false;
   public dropdownState = false;
   public storyViewOptions: { id: StoryView; translation: string }[] = [
@@ -111,18 +105,20 @@ export class KanbanStoryDetailComponent implements OnChanges {
       translation: 'kanban.story_detail.full_width_view',
     },
   ];
-  public sidebarOpen = LocalStorageService.get('story_view_sidebar') || false;
   public model$ = this.state.select();
-
-  private widthToForceCollapse = 472;
 
   public get getCurrentViewTranslation() {
     const index = this.storyViewOptions.findIndex(
       (it) => it.id === this.state.get('selectedStoryView')
     );
-    return this.translocoService.translate(
-      this.storyViewOptions[index].translation
-    );
+
+    if (index !== -1) {
+      return this.translocoService.translate(
+        this.storyViewOptions[index].translation
+      );
+    }
+
+    return '';
   }
 
   constructor(
@@ -149,38 +145,8 @@ export class KanbanStoryDetailComponent implements OnChanges {
     this.state.connect('selectedStoryView', this.store.select(selectStoryView));
   }
 
-  public ngOnChanges(): void {
-    this.setCollapse();
-    this.checkIfForceCollapse();
-  }
-
   public trackByIndex(index: number) {
     return index;
-  }
-
-  public setCollapse() {
-    // set if is collapsed
-    if (this.sidebarOpen && !this.collapsedSet) {
-      this.isCollapsed = this.sidebarOpen as boolean;
-      this.collapsedSet = true;
-      this.storyCollapsing.next(!this.sidebarOpen);
-    }
-  }
-
-  public checkIfForceCollapse() {
-    // Forcing collapse if width is inferior to widthToForceCollapse, only work on side-view.
-    const selectedStoryView = this.state.get('selectedStoryView');
-    if (
-      (this.el.nativeElement as HTMLElement).clientWidth <=
-        this.widthToForceCollapse &&
-      !this.collapsedAlreadyForced &&
-      selectedStoryView === 'side-view'
-    ) {
-      this.collapsedAlreadyForced = true;
-      this.forceCollapsed = true;
-      this.sidebarOpen = false;
-      this.storyCollapsing.next(!this.sidebarOpen);
-    }
   }
 
   public selectStoryView(id: StoryView) {
@@ -196,13 +162,6 @@ export class KanbanStoryDetailComponent implements OnChanges {
   public getStoryLink() {
     this.clipboard.copy(window.location.href);
     this.linkCopied = true;
-  }
-
-  public handleSidePanel() {
-    this.forceCollapsed = false;
-    this.localStorage.set('story_view_sidebar', !this.sidebarOpen);
-    this.sidebarOpen = !this.sidebarOpen;
-    this.storyCollapsing.next(!this.sidebarOpen);
   }
 
   public resetCopyLink() {

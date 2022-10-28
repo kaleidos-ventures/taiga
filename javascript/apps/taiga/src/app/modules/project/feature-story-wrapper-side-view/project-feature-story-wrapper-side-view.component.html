@@ -11,13 +11,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <div
       #resizeSidepanel
       [class.drag-on]="dragging"
-      [style.min-inline-size]="calculateMinInlineSize()"
-      [style.max-inline-size]="calculateMaxInlineSize()"
+      [style.min-inline-size]="minInlineSize"
+      [style.max-inline-size]="maxInlineSize"
       [style.width.px]="sidepanelWidth"
       class="side-panel">
       <tg-kanban-story-detail
-        (storyCollapsing)="setCollapsed($event)"
-        [isCollapsed]="isCollapsed"></tg-kanban-story-detail>
+        [sidebarOpen]="sidebarOpen"
+        (toggleSidebar)="onToggleSidebar()"></tg-kanban-story-detail>
       <div
         #dragHandle
         *ngIf="showDragbar()"

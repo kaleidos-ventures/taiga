@@ -132,10 +132,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <div
           class="story-content"
           [class]="vm.selectedStoryView"
-          [class.close]="
-            (!sidebarOpen && vm.selectedStoryView === 'side-view') ||
-            forceCollapsed
-          ">
+          [class.close]="!sidebarOpen && vm.selectedStoryView === 'side-view'">
           <div class="main-content">
             <h1 class="title">{{ vm.story.title }}</h1>
             <div class="creation-info">
@@ -150,7 +147,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               appearance="tertiary"
               class="sidepanel-icon"
               tuiIconButton
-              (click)="handleSidePanel()"
+              (click)="toggleSidebar.next()"
               type="button"></button>
           </div>
         </div>

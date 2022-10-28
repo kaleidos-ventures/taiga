@@ -120,21 +120,6 @@ def test_validate_create_user_invalid_short_password():
     check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
 
 
-def test_validate_create_user_not_available_lang():
-    email = "user@email.com"
-    full_name = "User fullname"
-    password = "Dragon123"
-    terms = True
-    lang = "xx"
-
-    with pytest.raises(ValidationError) as validation_errors:
-        CreateUserValidator(email=email, full_name=full_name, password=password, accept_terms=terms, lang=lang)
-
-    expected_error_fields = ["lang"]
-    expected_error_messages = ["Language is not available"]
-    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
-
-
 def test_validate_update_user_ok_all_fields():
     full_name = "User fullname"
     lang = "es_ES"
@@ -146,15 +131,3 @@ def test_validate_update_user_ok_all_fields():
 
     assert validator.full_name == full_name
     assert validator.lang == lang
-
-
-def test_validate_update_user_not_available_lang():
-    full_name = "User fullname"
-    lang = "xx"
-
-    with pytest.raises(ValidationError) as validation_errors:
-        UpdateUserValidator(full_name=full_name, lang=lang)
-
-    expected_error_fields = ["lang"]
-    expected_error_messages = ["Language is not available"]
-    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)

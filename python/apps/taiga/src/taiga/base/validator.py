@@ -6,11 +6,16 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import inspect
+from typing import Any, Callable, Generator
 
 from fastapi import Form
 from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
+from taiga.base.i18n import i18n
 from taiga.base.serializers import BaseModel
+from taiga.conf import settings
+
+CallableGenerator = Generator[Callable[..., Any], None, None]
 
 
 def as_form(cls: type[BaseModel]) -> type[BaseModel]:
@@ -38,3 +43,19 @@ def as_form(cls: type[BaseModel]) -> type[BaseModel]:
     _as_form.__signature__ = sig  # type: ignore[attr-defined]
     setattr(cls, "as_form", _as_form)
     return cls
+
+
+class LanguageCode(str):
+    @classmethod
+    def __modify_schema__(cls, field_schema: dict[str, Any]) -> None:
+        field_schema["example"] = settings.LANG
+        field_schema["enum"] = i18n.available_languages
+
+    @classmethod
+    def __get_validators__(cls) -> CallableGenerator:
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, value: str) -> str:
+        assert value in i18n.available_languages, "Language is not available"
+        return value

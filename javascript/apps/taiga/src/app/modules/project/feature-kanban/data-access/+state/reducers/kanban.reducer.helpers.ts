@@ -79,7 +79,7 @@ export function addStory(
   story: KanbanStory,
   targetRef: KanbanStory['ref'],
   position: DropCandidate['position'],
-  status?: KanbanStory['status']['slug']
+  status?: KanbanStory['status']
 ) {
   const target = findStory(state, (it) => it.ref === targetRef);
 
@@ -94,7 +94,7 @@ export function addStory(
 
     state.stories[target.status.slug].splice(index, 0, story);
   } else if (status) {
-    state.stories[status].push(story);
+    state.stories[status.slug].push(story);
   }
 
   return state;

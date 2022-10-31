@@ -43,7 +43,10 @@ export const KanbanActions = createActionGroup({
         ref: Story['ref'];
       };
     }>(),
-    'Cancel drag Story A11y': props<{ story: KanbanStoryA11y }>(),
+    'Cancel drag Story A11y': props<{
+      story: KanbanStoryA11y;
+      status: Story['status'];
+    }>(),
     'Story dropped': props<{
       ref: Story['ref'];
       candidate?: {

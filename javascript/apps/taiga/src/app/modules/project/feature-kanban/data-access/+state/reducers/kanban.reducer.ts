@@ -177,7 +177,7 @@ export const reducer = createReducer(
           storyToMove,
           recipientStory.story?.ref,
           recipientStory.position,
-          story.currentPosition.status
+          status
         );
       }
     }
@@ -219,54 +219,63 @@ export const reducer = createReducer(
 
     return state;
   }),
-  on(KanbanActions.cancelDragStoryA11y, (state, { story }): KanbanState => {
-    if (story.ref) {
-      const storyToMove = findStory(state, (it) => it.ref === story.ref);
-      if (storyToMove) {
-        state = removeStory(state, (it) => it.ref === storyToMove?.ref);
-        const nextStory: KanbanStory | undefined = state.stories[
-          story.initialPosition?.status
-        ].at(story.initialPosition.index!);
+  on(
+    KanbanActions.cancelDragStoryA11y,
+    (state, { story, status }): KanbanState => {
+      if (story.ref) {
+        const storyToMove = findStory(state, (it) => it.ref === story.ref);
+        if (storyToMove) {
+          state = removeStory(state, (it) => it.ref === storyToMove?.ref);
+          const nextStory: KanbanStory | undefined = state.stories[
+            story.initialPosition?.status
+          ].at(story.initialPosition.index!);
 
-        const addPositionData = {
-          state,
-          storyToMove,
-          status: story.initialPosition?.status,
-          nextStory:
-            nextStory?.ref ||
-            state.stories[story.initialPosition?.status].at(-1)?.ref ||
-            0,
-          position: nextStory ? 'top' : 'bottom',
-        };
+          storyToMove.status = status;
 
-        state = addStory(
-          addPositionData.state,
-          addPositionData.storyToMove,
-          addPositionData.nextStory,
-          addPositionData.position as DropCandidate['position'],
-          addPositionData.status
-        );
+          const addPositionData = {
+            state,
+            storyToMove,
+            status: {
+              slug: status.slug,
+              name: status.name,
+              color: status.color,
+            },
+            nextStory:
+              nextStory?.ref ||
+              state.stories[story.initialPosition?.status].at(-1)?.ref ||
+              0,
+            position: nextStory ? 'top' : 'bottom',
+          };
+
+          state = addStory(
+            addPositionData.state,
+            addPositionData.storyToMove,
+            addPositionData.nextStory,
+            addPositionData.position as DropCandidate['position'],
+            addPositionData.status
+          );
+        }
       }
+
+      state.activeA11yDragDropStory = {
+        ref: null,
+        initialPosition: {
+          index: null,
+          status: '',
+        },
+        prevPosition: {
+          index: null,
+          status: '',
+        },
+        currentPosition: {
+          index: null,
+          status: '',
+        },
+      };
+
+      return state;
     }
-
-    state.activeA11yDragDropStory = {
-      ref: null,
-      initialPosition: {
-        index: null,
-        status: '',
-      },
-      prevPosition: {
-        index: null,
-        status: '',
-      },
-      currentPosition: {
-        index: null,
-        status: '',
-      },
-    };
-
-    return state;
-  }),
+  ),
   on(
     KanbanApiActions.fetchWorkflowsSuccess,
     (state, { workflows }): KanbanState => {
@@ -514,7 +523,7 @@ export const reducer = createReducer(
             action.reorder.place === 'before' ? 'top' : 'bottom'
           );
         } else {
-          state = addStory(state, story, undefined, 'top', action.status.slug);
+          state = addStory(state, story, undefined, 'top', action.status);
         }
       }
     });

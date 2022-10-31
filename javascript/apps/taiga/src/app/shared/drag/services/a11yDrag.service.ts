@@ -101,17 +101,18 @@ export class A11yDragService {
           );
         });
 
-        const currentStatusStories = Array.from(
-          currentStatus!.querySelectorAll<HTMLElement>('tg-kanban-story')
-        );
-
-        const currentStory = currentStatusStories.at(
-          storyA11y.initialPosition.index!
-        );
+        const currentStatusData: KanbanStory['status'] = {
+          slug: currentStatus!.getAttribute('data-slug')!,
+          color: Number(currentStatus!.getAttribute('data-color'))!,
+          name: currentStatus!.getAttribute('data-name')!,
+        };
 
         this.finish();
         this.store.dispatch(
-          KanbanActions.cancelDragStoryA11y({ story: storyA11y })
+          KanbanActions.cancelDragStoryA11y({
+            story: storyA11y,
+            status: currentStatusData,
+          })
         );
 
         const announcementDrop = this.translocoService.translate(
@@ -130,6 +131,14 @@ export class A11yDragService {
         this.liveAnnouncer.announce(announcement, 'assertive').then(
           () => {
             setTimeout(() => {
+              const currentStatusStories = Array.from(
+                currentStatus!.querySelectorAll<HTMLElement>('tg-kanban-story')
+              );
+
+              const currentStory = currentStatusStories.at(
+                storyA11y.initialPosition.index!
+              );
+
               if (currentStory) {
                 currentStory
                   .querySelector<HTMLElement>('.story-keyboard-navigation')!

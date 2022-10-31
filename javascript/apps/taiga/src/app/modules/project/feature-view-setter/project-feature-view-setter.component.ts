@@ -41,7 +41,7 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
           if (mainFocus) {
             (mainFocus as HTMLElement).focus();
           }
-        }, 100);
+        }, 400);
       }
     });
 

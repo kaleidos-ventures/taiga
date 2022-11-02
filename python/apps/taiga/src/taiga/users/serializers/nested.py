@@ -8,7 +8,7 @@
 from taiga.base.serializers import BaseModel
 
 
-class UserSummarySerializer(BaseModel):
+class UserSummaryNestedSerializer(BaseModel):
     username: str
     full_name: str
 

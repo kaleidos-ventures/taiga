@@ -12,7 +12,7 @@ from taiga.base.serializers import BaseModel
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects.serializers.related import ProjectSmallSummarySerializer
 from taiga.projects.roles.serializers import BaseProjectRoleSerializer
-from taiga.users.serializers.related import UserSummarySerializer
+from taiga.users.serializers.nested import UserSummaryNestedSerializer
 
 
 class PublicProjectInvitationSerializer(BaseModel):
@@ -27,7 +27,7 @@ class PublicProjectInvitationSerializer(BaseModel):
 
 class ProjectInvitationSerializer(BaseModel):
     id: UUID
-    user: UserSummarySerializer | None
+    user: UserSummaryNestedSerializer | None
     role: BaseProjectRoleSerializer
     email: EmailStr
 
@@ -37,7 +37,7 @@ class ProjectInvitationSerializer(BaseModel):
 
 class PrivateEmailProjectInvitationSerializer(BaseModel):
     id: UUID
-    user: UserSummarySerializer | None
+    user: UserSummaryNestedSerializer | None
     role: BaseProjectRoleSerializer
     email: EmailStr | None
 

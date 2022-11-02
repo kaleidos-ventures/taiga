@@ -6,8 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { Subject } from 'rxjs';
 import { filter, pairwise } from 'rxjs/operators';
 
 @Injectable({
@@ -15,8 +17,13 @@ import { filter, pairwise } from 'rxjs/operators';
 })
 export class RouteHistoryService {
   public previousUrl!: string;
+  public urlChanged = new Subject<{ url: string; state: unknown }>();
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private location: Location) {
+    this.location.onUrlChange((url, state) => {
+      this.urlChanged.next({ url, state });
+    });
+  }
 
   public listen() {
     this.router.events

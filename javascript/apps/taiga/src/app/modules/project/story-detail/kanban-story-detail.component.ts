@@ -10,7 +10,9 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { CommonModule, Location } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -24,6 +26,7 @@ import {
   TranslocoService,
   TRANSLOCO_SCOPE,
 } from '@ngneat/transloco';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import {
@@ -48,6 +51,8 @@ import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { filterNil } from '~/app/shared/utils/operators';
+
+@UntilDestroy()
 @Component({
   selector: 'tg-kanban-story-detail',
   standalone: true,
@@ -78,7 +83,7 @@ import { filterNil } from '~/app/shared/utils/operators';
     },
   ],
 })
-export class KanbanStoryDetailComponent {
+export class KanbanStoryDetailComponent implements AfterViewInit {
   @Input()
   public sidebarOpen = false;
 
@@ -121,6 +126,7 @@ export class KanbanStoryDetailComponent {
   }
 
   constructor(
+    private cd: ChangeDetectorRef,
     private el: ElementRef,
     private store: Store,
     private clipboard: Clipboard,
@@ -166,6 +172,7 @@ export class KanbanStoryDetailComponent {
   public resetCopyLink() {
     setTimeout(() => {
       this.linkCopied = false;
+      this.cd.detectChanges();
     }, 1000);
   }
 
@@ -190,5 +197,16 @@ export class KanbanStoryDetailComponent {
     this.location.replaceState(
       `project/${this.state.get('project').slug}/kanban`
     );
+  }
+
+  public ngAfterViewInit(): void {
+    const locationState = this.location.getState() as null | {
+      fromCard?: boolean;
+    };
+
+    // click came from a story card
+    if (locationState?.fromCard) {
+      (this.storyRef.nativeElement as HTMLElement).focus();
+    }
   }
 }

@@ -104,7 +104,6 @@ export class ProjectFeatureKanbanComponent {
       void this.router.navigate(['403']);
       return;
     }
-
     this.store.dispatch(KanbanActions.initKanban());
     this.checkInviteModalStatus();
     this.state.connect(

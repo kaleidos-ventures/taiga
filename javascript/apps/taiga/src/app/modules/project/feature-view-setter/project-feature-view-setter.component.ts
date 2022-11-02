@@ -6,13 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { fetchStory } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectStoryView } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-project-feature-view-setter',
   templateUrl: './project-feature-view-setter.component.html',
@@ -20,38 +22,31 @@ import { selectStoryView } from '~/app/modules/project/data-access/+state/select
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
 })
-export class ProjectFeatureViewSetterComponent implements OnDestroy {
+export class ProjectFeatureViewSetterComponent {
   public storyView$ = this.store.select(selectStoryView);
   public isKanban = false;
-  public destroyOnLocationChange: () => void;
 
-  constructor(private store: Store, private location: Location) {
+  constructor(
+    private store: Store,
+    private routerHistory: RouteHistoryService
+  ) {
     const url = window.location.href;
     this.isKanban = url.includes('kanban');
 
-    this.destroyOnLocationChange = this.location.onUrlChange((url) => {
-      this.isKanban = url.includes('kanban');
-      const isStory = url.includes('/stories');
+    this.routerHistory.urlChanged
+      .pipe(untilDestroyed(this))
+      .subscribe(({ url }) => {
+        this.isKanban = url.includes('kanban');
+        const isStory = url.includes('/stories');
 
-      if (isStory) {
-        this.fetchStory();
-        setTimeout(() => {
-          const mainFocus = document.querySelector('.story-detail-focus');
-
-          if (mainFocus) {
-            (mainFocus as HTMLElement).focus();
-          }
-        }, 400);
-      }
-    });
+        if (isStory) {
+          this.fetchStory();
+        }
+      });
 
     if (!this.isKanban) {
       this.fetchStory();
     }
-  }
-
-  public ngOnDestroy(): void {
-    this.destroyOnLocationChange();
   }
 
   private fetchStory() {

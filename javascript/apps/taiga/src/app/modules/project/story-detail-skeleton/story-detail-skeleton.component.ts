@@ -7,13 +7,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  HostBinding,
-  Input,
-} from '@angular/core';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'tg-story-detail-skeleton',
@@ -26,10 +20,4 @@ import { LocalStorageService } from '~/app/shared/local-storage/local-storage.se
 export class StoryDetailSkeletonComponent {
   @Input()
   public isCollapsed?: boolean;
-
-  @HostBinding('class.static') @Input() public static = false;
-
-  public sidebarOpen = this.isCollapsed
-    ? this.isCollapsed
-    : LocalStorageService.get('story_view_sidebar') || false;
 }

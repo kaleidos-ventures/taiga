@@ -23,7 +23,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     border-color: transparent;
     box-shadow: none;
 
-    & button {
+    & .story-title {
       visibility: hidden;
     }
   }

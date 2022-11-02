@@ -98,9 +98,7 @@ export class KanbanScrollManagerService {
 
               this.scrollToIndexUntilVisible(status, index, ref).subscribe(
                 (storyEl) => {
-                  setTimeout(() => {
-                    storyEl.scrollIntoView({ block: position });
-                  }, 150);
+                  storyEl.scrollIntoView({ block: position });
                 }
               );
             }

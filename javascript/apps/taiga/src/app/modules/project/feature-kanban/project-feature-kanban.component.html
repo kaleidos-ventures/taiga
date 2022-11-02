@@ -33,20 +33,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </div>
           </div>
         </div>
-        <ng-container *ngIf="vm.showStoryDetail">
+        <ng-container
+          *ngIf="vm.showStoryDetail && vm.storyView === 'side-view'">
           <tg-project-feature-story-wrapper-side-view
-            *ngIf="vm.showStoryDetail && vm.storyView === 'side-view'"
             [kanbanWidth]="
               kanbanWidth
             "></tg-project-feature-story-wrapper-side-view>
         </ng-container>
       </div>
-      <ng-container *ngIf="vm.showStoryDetail">
+      <ng-container *ngIf="vm.showStoryDetail && vm.storyView === 'modal-view'">
         <tg-ui-modal
           [big]="true"
           [noPadding]="true"
           [closeButton]="false"
-          [open]="vm.showStoryDetail && vm.storyView === 'modal-view'"
+          [open]="vm.showStoryDetail"
           (requestClose)="closeViewModal()">
           <ng-container *ngIf="project$ | async as project">
             <tg-project-feature-story-wrapper-modal-view

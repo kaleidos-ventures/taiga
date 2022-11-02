@@ -11,6 +11,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import {
@@ -77,6 +78,7 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     ProjectFeatureStoryWrapperModalViewModule,
     DragDropModule,
     ResizeEventModule,
+    RouterModule,
   ],
   providers: [
     {

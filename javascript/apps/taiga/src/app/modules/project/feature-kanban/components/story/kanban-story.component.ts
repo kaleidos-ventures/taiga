@@ -104,10 +104,16 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     }
   }
 
-  public openStory() {
+  public openStory(event: MouseEvent) {
+    event.preventDefault();
+
     if (this.story.ref) {
       this.location.go(
-        `project/${this.state.get('project').slug}/stories/${this.story.ref}`
+        `project/${this.state.get('project').slug}/stories/${this.story.ref}`,
+        undefined,
+        {
+          fromCard: true,
+        }
       );
     }
   }

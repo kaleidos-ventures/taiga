@@ -76,6 +76,10 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
 
   public isDragging(isDragging: boolean) {
     this.dragging = isDragging;
+
+    if (!isDragging) {
+      this.localStorage.set('story_width', this.sidepanelWidth);
+    }
   }
 
   public showDragbar() {
@@ -124,6 +128,13 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   }
 
   public setInitialSidePanelWidth() {
+    const storedStoryWidth = this.localStorage.get<number>('story_width');
+
+    if (storedStoryWidth) {
+      this.sidepanelWidth = storedStoryWidth;
+      return;
+    }
+
     this.sidepanelWidth = this.kanbanWidth / 4;
 
     const calculatedDifference =

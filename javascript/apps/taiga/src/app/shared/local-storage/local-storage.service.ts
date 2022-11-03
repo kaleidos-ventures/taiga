@@ -24,6 +24,10 @@ export class LocalStorageService {
     return undefined;
   }
 
+  public get<T>(key: string): T | undefined {
+    return LocalStorageService.get<T>(key);
+  }
+
   public set(key: string, newValue?: unknown) {
     localStorage.setItem(key, JSON.stringify(newValue));
   }

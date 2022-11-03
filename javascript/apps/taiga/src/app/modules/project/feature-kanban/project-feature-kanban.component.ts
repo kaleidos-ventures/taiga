@@ -17,10 +17,7 @@ import { TuiNotification } from '@taiga-ui/core';
 import { ShortcutsService } from '@taiga/core';
 import { Project, Story, StoryDetail, StoryView } from '@taiga/data';
 import { filter, map } from 'rxjs';
-import {
-  clearStory,
-  updateStoryShowView,
-} from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { clearStory } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
   selectCurrentStory,
@@ -150,24 +147,23 @@ export class ProjectFeatureKanbanComponent {
       .task('side-view.close')
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        const selectedStory = this.state.get('selectedStory');
-        if (selectedStory.ref) {
-          const mainFocus = document.querySelector(
-            `tg-kanban-story[data-ref='${selectedStory.ref}'] .story-kanban-ref-focus`
-          );
-          if (mainFocus) {
-            (mainFocus as HTMLElement).focus();
-          }
-        }
         this.closeSideview();
       });
   }
 
   public closeSideview() {
-    this.store.dispatch(
-      updateStoryShowView({
-        showView: false,
-      })
+    const selectedStory = this.state.get('selectedStory');
+    if (selectedStory.ref) {
+      const mainFocus = document.querySelector(
+        `tg-kanban-story[data-ref='${selectedStory.ref}'] .story-kanban-ref-focus`
+      );
+      if (mainFocus) {
+        (mainFocus as HTMLElement).focus();
+      }
+    }
+    this.store.dispatch(clearStory());
+    this.location.replaceState(
+      `project/${this.state.get('project').slug}/kanban`
     );
     this.shortcutsService.deleteScope('side-view');
   }

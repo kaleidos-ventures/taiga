@@ -15,7 +15,7 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiNotification } from '@taiga-ui/core';
 import { ShortcutsService } from '@taiga/core';
-import { Project, Story, StoryView } from '@taiga/data';
+import { Project, Story, StoryDetail, StoryView } from '@taiga/data';
 import { filter, map } from 'rxjs';
 import {
   clearStory,
@@ -23,6 +23,7 @@ import {
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
+  selectCurrentStory,
   selectShowStoryView,
   selectStoryView,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -49,6 +50,7 @@ interface ComponentState {
   showStoryDetail: boolean;
   storyView: StoryView;
   project: Project;
+  selectedStory: StoryDetail;
 }
 
 @UntilDestroy()
@@ -116,6 +118,11 @@ export class ProjectFeatureKanbanComponent {
       this.store.select(selectShowStoryView)
     );
 
+    this.state.connect(
+      'selectedStory',
+      this.store.select(selectCurrentStory).pipe(filterNil())
+    );
+
     this.state.connect('storyView', this.store.select(selectStoryView));
     this.state.connect('workflows', this.store.select(selectWorkflows));
     this.events();
@@ -143,6 +150,15 @@ export class ProjectFeatureKanbanComponent {
       .task('side-view.close')
       .pipe(untilDestroyed(this))
       .subscribe(() => {
+        const selectedStory = this.state.get('selectedStory');
+        if (selectedStory.ref) {
+          const mainFocus = document.querySelector(
+            `tg-kanban-story[data-ref='${selectedStory.ref}'] .story-kanban-ref-focus`
+          );
+          if (mainFocus) {
+            (mainFocus as HTMLElement).focus();
+          }
+        }
         this.closeSideview();
       });
   }

@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "9bda31c4-6d47-4f2d-abd3-a71ad28551a0",
+		"_postman_id": "c8efb4a9-4802-4f78-9975-91ec67cb61f3",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -2038,82 +2037,6 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.stories.{ref}",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Response JSON is correct\", function () {",
-									"    var jsonRes = pm.response.json();",
-									"    console.log(jsonRes);",
-									"    // Validate response API contract",
-									"    pm.expect(jsonRes).to.have.property(\"ref\");",
-									"    pm.expect(jsonRes).to.have.property(\"title\");",
-									"    pm.expect(jsonRes).to.have.property(\"workflow\");",
-									"    pm.expect(jsonRes).to.have.property(\"status\");",
-									"    pm.expect(jsonRes).to.have.property(\"prev\");",
-									"    pm.expect(jsonRes).to.have.property(\"next\");",
-									"    // Validate we're not returning more fields than expected",
-									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(6);",
-									"",
-									"    // Validate second-level entries",
-									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
-									"    pm.expect(jsonRes.status).to.have.property(\"slug\");",
-									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
-									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(3);",
-									"",
-									"    pm.expect(jsonRes.workflow).to.have.property(\"name\");",
-									"    pm.expect(jsonRes.workflow).to.have.property(\"slug\");",
-									"    numOfReturnedFields = Object.keys(jsonRes.workflow).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(2);",
-									"",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {}
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/stories/{{story_ref}}",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-slug}}",
-								"stories",
-								"{{story_ref}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "N/A 200.projects.{p}.workflows.{wf}.stories",
 					"event": [
 						{
@@ -2257,6 +2180,88 @@
 								"{{wf-slug}}",
 								"stories",
 								"reorder"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "projects.{p}.stories.{ref}",
+			"item": [
+				{
+					"name": "200.projects.{p}.stories.{ref}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    // Validate response API contract",
+									"    pm.expect(jsonRes).to.have.property(\"ref\");",
+									"    pm.expect(jsonRes).to.have.property(\"title\");",
+									"    pm.expect(jsonRes).to.have.property(\"workflow\");",
+									"    pm.expect(jsonRes).to.have.property(\"status\");",
+									"    pm.expect(jsonRes).to.have.property(\"createdAt\");",
+									"    pm.expect(jsonRes).to.have.property(\"createdBy\");",
+									"    pm.expect(jsonRes).to.have.property(\"prev\");",
+									"    pm.expect(jsonRes).to.have.property(\"next\");",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(8);",
+									"",
+									"    // Validate second-level entries",
+									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
+									"    pm.expect(jsonRes.status).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
+									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"",
+									"    pm.expect(jsonRes.workflow).to.have.property(\"name\");",
+									"    pm.expect(jsonRes.workflow).to.have.property(\"slug\");",
+									"    numOfReturnedFields = Object.keys(jsonRes.workflow).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(2);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/stories/{{story_ref}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-slug}}",
+								"stories",
+								"{{story_ref}}"
 							]
 						}
 					},

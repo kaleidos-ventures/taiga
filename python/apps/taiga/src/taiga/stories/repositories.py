@@ -60,7 +60,7 @@ def _get_stories_qs(**kwargs: Any) -> QuerySet[Story]:
 @sync_to_async
 def get_story_with_neighbors_as_dict(project_id: UUID, ref: int) -> dict[str, Any] | None:
     try:
-        story = Story.objects.filter(project_id=project_id, ref=ref).get()
+        story = Story.objects.select_related("created_by").get(project_id=project_id, ref=ref)
     except Story.DoesNotExist:
         return None
 
@@ -72,6 +72,8 @@ def get_story_with_neighbors_as_dict(project_id: UUID, ref: int) -> dict[str, An
         "title": story.title,
         "workflow": story.workflow,
         "status": story.status,
+        "created_at": story.created_at,
+        "created_by": story.created_by,
         "prev": neighbors.prev,
         "next": neighbors.next,
     }

@@ -5,7 +5,10 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from datetime import datetime
+
 from taiga.base.serializers import BaseModel
+from taiga.users.serializers.nested import UserSummaryNestedSerializer
 from taiga.workflows.serializers.nested import WorkflowNestedSerializer, WorkflowStatusNestedSerializer
 
 
@@ -23,6 +26,8 @@ class StoryDetailSerializer(BaseModel):
     title: str
     status: WorkflowStatusNestedSerializer
     workflow: WorkflowNestedSerializer
+    created_by: UserSummaryNestedSerializer
+    created_at: datetime
     prev: int | None
     next: int | None
 

@@ -7,11 +7,11 @@
 
 from taiga.base.serializers import BaseModel
 from taiga.projects.roles.serializers import BaseProjectRoleSerializer
-from taiga.users.serializers.nested import UserSummaryNestedSerializer
+from taiga.users.serializers.nested import UserNestedSerializer
 
 
 class ProjectMembershipSerializer(BaseModel):
-    user: UserSummaryNestedSerializer
+    user: UserNestedSerializer
     role: BaseProjectRoleSerializer
 
     class Config:

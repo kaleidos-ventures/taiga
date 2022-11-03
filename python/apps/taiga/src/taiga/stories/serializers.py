@@ -8,7 +8,7 @@
 from datetime import datetime
 
 from taiga.base.serializers import BaseModel
-from taiga.users.serializers.nested import UserSummaryNestedSerializer
+from taiga.users.serializers.nested import UserNestedSerializer
 from taiga.workflows.serializers.nested import WorkflowNestedSerializer, WorkflowStatusNestedSerializer
 
 
@@ -26,7 +26,7 @@ class StoryDetailSerializer(BaseModel):
     title: str
     status: WorkflowStatusNestedSerializer
     workflow: WorkflowNestedSerializer
-    created_by: UserSummaryNestedSerializer
+    created_by: UserNestedSerializer
     created_at: datetime
     prev: int | None
     next: int | None

@@ -14,8 +14,9 @@ from typing import Final, Generator
 from babel import localedata
 from babel.core import Locale
 from babel.support import Translations
-from taiga.base.i18n.choices import ScriptType, get_script_type
-from taiga.base.i18n.dataclasses import Language
+from taiga.base.i18n import choices as i18n_choices
+from taiga.base.i18n.choices import ScriptType
+from taiga.base.i18n.schemas import LanguageSchema
 
 ROOT_DIR: Final[Path] = Path(__file__).resolve().parent.parent.parent  # src/taiga
 TRANSLATION_DIRECTORY: Final[Path] = ROOT_DIR.joinpath("locale")
@@ -168,7 +169,7 @@ class I18N:
         return [str(loc) for loc in self.locales]
 
     @functools.cached_property
-    def available_languages_info(self) -> list[Language]:
+    def available_languages_info(self) -> list[LanguageSchema]:
         """
         List with the info for all the available languages.
 
@@ -178,22 +179,22 @@ class I18N:
           Chinese and derivatives, and others.
         - Second alphabetically for its language name.
 
-        :return a list of `Language` objects
-        :rtype list[taiga.base.i18n.dataclasses.Language]
+        :return a list of `LanguageSchema` objects
+        :rtype list[taiga.base.i18n.schemas.LanguageSchema]
         """
         from taiga.conf import settings
 
-        langs: list[Language] = []
+        langs: list[LanguageSchema] = []
         for loc in i18n.locales:
             code = str(loc)
-            script_type = get_script_type(code)
+            script_type = i18n_choices.get_script_type(code)
             name = loc.display_name.title() if script_type is ScriptType.LATIN else loc.display_name
             english_name = loc.english_name
             text_direction = loc.text_direction
             is_default = code == settings.LANG
 
             langs.append(
-                Language(
+                LanguageSchema(
                     code=code,
                     name=name,
                     english_name=english_name,

@@ -11,8 +11,8 @@ import pytest
 from taiga.stories import services
 from taiga.stories.models import Story
 from taiga.stories.services import exceptions as ex
-from taiga.workflows import dataclasses as dt
 from taiga.workflows.models import WorkflowStatus
+from taiga.workflows.schemas import WorkflowSchema
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -259,7 +259,7 @@ async def test_get_story_no_story():
 
 
 def build_worklow_dt(story):
-    return dt.Workflow(
+    return WorkflowSchema(
         id=story.workflow.id,
         name=story.workflow.name,
         slug=story.workflow.slug,

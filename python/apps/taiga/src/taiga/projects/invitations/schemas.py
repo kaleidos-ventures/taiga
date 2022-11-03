@@ -13,7 +13,7 @@ from taiga.projects.projects.models import Project
 
 
 @dataclass
-class PublicProjectInvitation:
+class PublicProjectInvitationSchema:
     status: ProjectInvitationStatus | str
     email: str
     existing_user: bool
@@ -21,6 +21,6 @@ class PublicProjectInvitation:
 
 
 @dataclass
-class CreateProjectInvitations:
+class CreateProjectInvitationsSchema:
     invitations: list[ProjectInvitation]
     already_members: int

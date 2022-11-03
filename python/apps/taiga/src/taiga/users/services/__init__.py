@@ -15,8 +15,8 @@ from taiga.projects.invitations import services as invitations_services
 from taiga.projects.invitations.services import exceptions as invitations_ex
 from taiga.tokens import exceptions as tokens_ex
 from taiga.users import repositories as users_repositories
-from taiga.users.dataclasses import VerificationInfo
 from taiga.users.models import User
+from taiga.users.schemas import VerificationInfoSchema
 from taiga.users.services import exceptions as ex
 from taiga.users.tokens import ResetPasswordToken, VerifyUserToken
 
@@ -99,7 +99,7 @@ async def _generate_verify_user_token(
     return str(verify_user_token)
 
 
-async def verify_user(token: str) -> VerificationInfo:
+async def verify_user(token: str) -> VerificationInfoSchema:
     # Get token and deny it
     try:
         verify_token = await VerifyUserToken.create(token)
@@ -145,7 +145,7 @@ async def verify_user(token: str) -> VerificationInfo:
 
     # Generate auth credentials and attach invitation
     auth = await auth_services.create_auth_credentials(user=user)
-    return VerificationInfo(auth=auth, project_invitation=project_invitation)
+    return VerificationInfoSchema(auth=auth, project_invitation=project_invitation)
 
 
 async def clean_expired_users() -> None:

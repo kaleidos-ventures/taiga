@@ -8,7 +8,7 @@ from typing import Final
 
 import httpx
 from taiga.conf import settings
-from taiga.integrations.github.dataclasses import GithubUserProfile
+from taiga.integrations.github.schemas import GithubUserProfileSchema
 
 ACCESS_TOKEN_URL: Final[str] = "https://github.com/login/oauth/access_token"
 EMAILS_API_URL: Final[str] = "https://api.github.com/user/emails"
@@ -36,7 +36,7 @@ async def get_access_to_github(code: str) -> str | None:
     return data.get("access_token", None)
 
 
-async def get_user_info_from_github(access_token: str) -> GithubUserProfile | None:
+async def get_user_info_from_github(access_token: str) -> GithubUserProfileSchema | None:
     headers = HEADERS.copy()
     headers["Authorization"] = f"token {access_token}"
 
@@ -57,7 +57,7 @@ async def get_user_info_from_github(access_token: str) -> GithubUserProfile | No
             primary_email = e["email"]
             break
 
-    return GithubUserProfile(
+    return GithubUserProfileSchema(
         email=primary_email,
         github_id=user_profile.get("id"),
         full_name=full_name,

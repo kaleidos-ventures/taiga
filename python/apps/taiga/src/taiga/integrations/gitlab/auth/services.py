@@ -5,14 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.auth.schemas import AccessWithRefreshTokenSchema
 from taiga.conf import settings
 from taiga.integrations.auth import services as integrations_auth_services
 from taiga.integrations.gitlab import exceptions as ex
 from taiga.integrations.gitlab import services as gitlab_services
 
 
-async def gitlab_login(code: str, redirect_uri: str, lang: str | None = None) -> AccessWithRefreshToken:
+async def gitlab_login(code: str, redirect_uri: str, lang: str | None = None) -> AccessWithRefreshTokenSchema:
     if not settings.GITLAB_CLIENT_ID or not settings.GITLAB_CLIENT_SECRET or not settings.GITLAB_URL:
         raise ex.GitlabLoginError("Login with Gitlab is not available. Contact with the platform administrators.")
 

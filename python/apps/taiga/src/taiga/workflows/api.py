@@ -14,7 +14,7 @@ from taiga.permissions import HasPerm
 from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.workflows import services as workflows_services
-from taiga.workflows.dataclasses import Workflow
+from taiga.workflows.schemas import WorkflowSchema
 from taiga.workflows.serializers import WorkflowSerializer
 
 # PERMISSIONS
@@ -30,7 +30,7 @@ GET_PROJECT_WORKFLOWS = HasPerm("view_story")
 )
 async def get_project_workflows(
     request: Request, slug: str = Query(None, description="the project slug (str)")
-) -> list[Workflow]:
+) -> list[WorkflowSchema]:
     """
     Get project workflows
     """
@@ -40,7 +40,7 @@ async def get_project_workflows(
     return await workflows_services.get_project_workflows(project_slug=slug)
 
 
-async def get_workflow_or_404(project_slug: str, workflow_slug: str) -> Workflow:
+async def get_workflow_or_404(project_slug: str, workflow_slug: str) -> WorkflowSchema:
     workflow = await workflows_services.get_project_workflow(project_slug=project_slug, workflow_slug=workflow_slug)
     if workflow is None:
         raise ex.NotFoundError(f"Workflow {workflow_slug} does not exist")

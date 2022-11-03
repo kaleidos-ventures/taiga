@@ -5,14 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.auth.schemas import AccessWithRefreshTokenSchema
 from taiga.conf import settings
 from taiga.integrations.auth import services as integrations_auth_services
 from taiga.integrations.google import exceptions as ex
 from taiga.integrations.google import services as google_services
 
 
-async def google_login(code: str, redirect_uri: str, lang: str | None = None) -> AccessWithRefreshToken:
+async def google_login(code: str, redirect_uri: str, lang: str | None = None) -> AccessWithRefreshTokenSchema:
     if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
         raise ex.GoogleLoginError("Login with Google is not available. Contact with the platform administrators.")
 

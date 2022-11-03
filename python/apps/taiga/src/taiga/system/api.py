@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.i18n import i18n
-from taiga.base.i18n.dataclasses import Language
+from taiga.base.i18n.schemas import LanguageSchema
 from taiga.routers import routes
 from taiga.system.serializers import LanguageSerializer
 
@@ -17,5 +17,5 @@ from taiga.system.serializers import LanguageSerializer
     summary="List system available languages",
     response_model=list[LanguageSerializer],
 )
-async def list_languages() -> list[Language]:
+async def list_languages() -> list[LanguageSchema]:
     return i18n.available_languages_info

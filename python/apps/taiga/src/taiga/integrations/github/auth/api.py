@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.auth.schemas import AccessWithRefreshTokenSchema
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.exceptions.api.errors import ERROR_400, ERROR_422
 from taiga.integrations.github.auth import services as auth_github_services
@@ -20,7 +20,7 @@ from taiga.routers import routes
     response_model=AccessTokenWithRefreshSerializer,
     responses=ERROR_400 | ERROR_422,
 )
-async def github_login(form: GithubLoginValidator) -> AccessWithRefreshToken:
+async def github_login(form: GithubLoginValidator) -> AccessWithRefreshTokenSchema:
     """
     Get an access and refresh token using a Github authorization.
     For a non-existing user, this process registers a new user as well.

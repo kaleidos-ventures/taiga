@@ -8,7 +8,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.auth.schemas import AccessWithRefreshTokenSchema
 from taiga.conf import settings
 from taiga.projects.invitations.services.exceptions import BadInvitationTokenError, InvitationDoesNotExistError
 from taiga.tokens import exceptions as tokens_ex
@@ -175,7 +175,7 @@ async def test_update_user_ok(tqmanager):
 async def test_verify_user_ok_no_project_invitation_token():
     user = f.build_user(is_active=False)
     object_data = {"id": 1}
-    auth_credentials = AccessWithRefreshToken(token="token", refresh="refresh")
+    auth_credentials = AccessWithRefreshTokenSchema(token="token", refresh="refresh")
 
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
@@ -210,7 +210,7 @@ async def test_verify_user_ok_with_accepting_project_invitation_token():
     object_data = {"id": 1}
     project_invitation_token = "invitation_token"
     accept_project_invitation = True
-    auth_credentials = AccessWithRefreshToken(token="token", refresh="refresh")
+    auth_credentials = AccessWithRefreshTokenSchema(token="token", refresh="refresh")
 
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
@@ -248,7 +248,7 @@ async def test_verify_user_ok_without_accepting_project_invitation_token():
     object_data = {"id": 1}
     project_invitation_token = "invitation_token"
     accept_project_invitation = False
-    auth_credentials = AccessWithRefreshToken(token="token", refresh="refresh")
+    auth_credentials = AccessWithRefreshTokenSchema(token="token", refresh="refresh")
 
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
@@ -337,7 +337,7 @@ async def test_verify_user_error_project_invitation_token(exception):
     object_data = {"id": 1}
     project_invitation_token = "invitation_token"
     accept_project_invitation = False
-    auth_credentials = AccessWithRefreshToken(token="token", refresh="refresh")
+    auth_credentials = AccessWithRefreshTokenSchema(token="token", refresh="refresh")
 
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,

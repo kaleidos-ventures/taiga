@@ -7,11 +7,10 @@
 
 from dataclasses import dataclass
 
-from taiga.auth.dataclasses import AccessWithRefreshToken
-from taiga.projects.invitations.models import ProjectInvitation
-
 
 @dataclass
-class VerificationInfo:
-    auth: AccessWithRefreshToken
-    project_invitation: ProjectInvitation | None
+class GitlabUserProfileSchema:
+    gitlab_id: str
+    email: str
+    full_name: str
+    bio: str

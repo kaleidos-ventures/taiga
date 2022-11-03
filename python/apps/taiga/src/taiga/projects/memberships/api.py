@@ -7,7 +7,8 @@
 
 from fastapi import Depends, Query, Response
 from taiga.base.api import AuthRequest
-from taiga.base.api.pagination import PaginationQuery, set_pagination
+from taiga.base.api import pagination as api_pagination
+from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import Or, check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
@@ -54,7 +55,7 @@ async def get_project_memberships(
         project=project, offset=pagination_params.offset, limit=pagination_params.limit
     )
 
-    set_pagination(response=response, pagination=pagination)
+    api_pagination.set_pagination(response=response, pagination=pagination)
 
     return memberships
 

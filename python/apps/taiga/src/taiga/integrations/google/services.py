@@ -9,7 +9,7 @@ from typing import Final
 
 import httpx
 from taiga.conf import settings
-from taiga.integrations.google.dataclasses import GoogleUserProfile
+from taiga.integrations.google.schemas import GoogleUserProfileSchema
 
 HEADERS: Final[dict[str, str]] = {
     "Accept": "application/json",
@@ -44,7 +44,7 @@ async def get_access_to_google(code: str, redirect_uri: str) -> str | None:
     return data.get("access_token", None)
 
 
-async def get_user_info_from_google(access_token: str) -> GoogleUserProfile | None:
+async def get_user_info_from_google(access_token: str) -> GoogleUserProfileSchema | None:
     headers = HEADERS.copy()
     headers["Authorization"] = f"Bearer {access_token}"
 
@@ -56,7 +56,7 @@ async def get_user_info_from_google(access_token: str) -> GoogleUserProfile | No
 
     user_profile = response_user.json()
 
-    return GoogleUserProfile(
+    return GoogleUserProfileSchema(
         email=user_profile.get("email"),
         google_id=user_profile.get("sub"),
         full_name=user_profile.get("name"),

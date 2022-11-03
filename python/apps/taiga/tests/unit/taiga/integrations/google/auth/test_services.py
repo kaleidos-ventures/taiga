@@ -11,7 +11,7 @@ import pytest
 from taiga.conf import settings
 from taiga.integrations.google import exceptions as ex
 from taiga.integrations.google.auth import services
-from taiga.integrations.google.dataclasses import GoogleUserProfile
+from taiga.integrations.google.schemas import GoogleUserProfileSchema
 
 ##########################################################
 # google_login
@@ -28,7 +28,7 @@ async def test_google_login_ok():
         ) as fake_integrations_auth_services,
     ):
         fake_google_services.get_access_to_google.return_value = "access_token"
-        fake_google_services.get_user_info_from_google.return_value = GoogleUserProfile(
+        fake_google_services.get_user_info_from_google.return_value = GoogleUserProfileSchema(
             email="email@test.com", full_name="Full Name", google_id="1", bio="Bio"
         )
         await services.google_login(code="code", redirect_uri="https://redirect.uri", lang="es_ES")

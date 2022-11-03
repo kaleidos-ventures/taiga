@@ -7,20 +7,27 @@
 
 from fastapi import Depends, Query, Response
 from taiga.auth import services as auth_services
-from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.auth.schemas import AccessWithRefreshTokenSchema
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.api import Request
-from taiga.base.api.pagination import PaginationQuery, set_pagination
+from taiga.base.api import pagination as api_pagination
+from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_422
 from taiga.permissions import IsAuthenticated
 from taiga.routers import routes
 from taiga.users import services as users_services
-from taiga.users import validators as users_validators
-from taiga.users.dataclasses import VerificationInfo
 from taiga.users.models import User
+from taiga.users.schemas import VerificationInfoSchema
 from taiga.users.serializers import UserSearchSerializer, UserSerializer, VerificationInfoSerializer
+from taiga.users.validators import (
+    CreateUserValidator,
+    RequestResetPasswordValidator,
+    ResetPasswordValidator,
+    UpdateUserValidator,
+    VerifyTokenValidator,
+)
 
 # PERMISSIONS
 LIST_USERS = IsAuthenticated()
@@ -57,7 +64,7 @@ async def get_my_user(request: Request) -> User:
     response_model=UserSerializer,
     responses=ERROR_401 | ERROR_400 | ERROR_422,
 )
-async def update_my_user(request: Request, form: users_validators.UpdateUserValidator) -> User:
+async def update_my_user(request: Request, form: UpdateUserValidator) -> User:
     """
     Update the profile of the current authenticated user (according to the auth token in the request headers).
     """
@@ -79,7 +86,7 @@ async def update_my_user(request: Request, form: users_validators.UpdateUserVali
     response_model=UserSerializer,
     responses=ERROR_400 | ERROR_422,
 )
-async def create_user(form: users_validators.CreateUserValidator) -> User:
+async def create_user(form: CreateUserValidator) -> User:
     """
     Create new user, which is not yet verified.
     """
@@ -100,7 +107,7 @@ async def create_user(form: users_validators.CreateUserValidator) -> User:
     response_model=VerificationInfoSerializer,
     responses=ERROR_400 | ERROR_422,
 )
-async def verify_user(form: users_validators.VerifyTokenValidator) -> VerificationInfo:
+async def verify_user(form: VerifyTokenValidator) -> VerificationInfoSchema:
     """
     Verify the account of a new signup user.
     """
@@ -140,7 +147,7 @@ async def get_users_by_text(
         limit=pagination_params.limit,
     )
 
-    set_pagination(response=response, pagination=pagination)
+    api_pagination.set_pagination(response=response, pagination=pagination)
 
     return users
 
@@ -157,7 +164,7 @@ async def get_users_by_text(
     response_model=bool,
     responses=ERROR_422,
 )
-async def request_reset_password(form: users_validators.RequestResetPasswordValidator) -> bool:
+async def request_reset_password(form: RequestResetPasswordValidator) -> bool:
     """
     Request a user password reset.
     """
@@ -186,7 +193,7 @@ async def verify_reset_password_token(token: str) -> bool:
     response_model=AccessTokenWithRefreshSerializer,
     responses=ERROR_400 | ERROR_422,
 )
-async def reset_password(token: str, form: users_validators.ResetPasswordValidator) -> AccessWithRefreshToken:
+async def reset_password(token: str, form: ResetPasswordValidator) -> AccessWithRefreshTokenSchema:
     """
     Reset user password
     """

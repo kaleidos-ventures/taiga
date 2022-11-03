@@ -7,7 +7,7 @@
 
 
 from taiga.auth import services as auth_services
-from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.auth.schemas import AccessWithRefreshTokenSchema
 from taiga.base.utils import datetime
 from taiga.conf import settings
 from taiga.emails.emails import Emails
@@ -19,7 +19,7 @@ from taiga.users import services as users_services
 
 async def social_login(
     email: str, full_name: str, social_key: str, social_id: str, bio: str, lang: str | None = None
-) -> AccessWithRefreshToken:
+) -> AccessWithRefreshTokenSchema:
     # check if the user exists and already has social login with the requested system
     user = await users_repositories.get_user_from_auth_data(key=social_key, value=social_id)
     if not user:

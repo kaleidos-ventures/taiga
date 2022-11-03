@@ -6,22 +6,16 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from dataclasses import dataclass
-from uuid import UUID
+from typing import Literal
+
+from taiga.base.i18n.choices import ScriptType
 
 
 @dataclass
-class WorkflowStatus:
-    id: UUID
+class LanguageSchema:
+    code: str
     name: str
-    slug: str
-    color: int
-    order: int
-
-
-@dataclass
-class Workflow:
-    id: UUID
-    name: str
-    slug: str
-    order: int
-    statuses: list[WorkflowStatus]
+    english_name: str
+    text_direction: Literal["ltr"] | Literal["rtl"]
+    is_default: bool
+    script_type: ScriptType

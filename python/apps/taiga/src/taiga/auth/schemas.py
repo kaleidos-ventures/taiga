@@ -9,8 +9,6 @@ from dataclasses import dataclass
 
 
 @dataclass
-class GithubUserProfile:
-    github_id: str
-    email: str
-    full_name: str
-    bio: str
+class AccessWithRefreshTokenSchema:
+    token: str
+    refresh: str

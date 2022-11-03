@@ -6,13 +6,13 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
-from taiga.workflows import dataclasses as dt
 from taiga.workflows import repositories as workflows_repositories
+from taiga.workflows.schemas import WorkflowSchema
 
 
-async def get_project_workflows(project_slug: str) -> list[dt.Workflow]:
+async def get_project_workflows(project_slug: str) -> list[WorkflowSchema]:
     return await workflows_repositories.get_project_workflows(project_slug=project_slug)
 
 
-async def get_project_workflow(project_slug: str, workflow_slug: str) -> dt.Workflow | None:
+async def get_project_workflow(project_slug: str, workflow_slug: str) -> WorkflowSchema | None:
     return await workflows_repositories.get_project_workflow(project_slug=project_slug, workflow_slug=workflow_slug)

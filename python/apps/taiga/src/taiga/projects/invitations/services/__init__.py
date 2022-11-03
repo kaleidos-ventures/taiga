@@ -16,8 +16,8 @@ from taiga.emails.tasks import send_email
 from taiga.projects.invitations import events as invitations_events
 from taiga.projects.invitations import repositories as invitations_repositories
 from taiga.projects.invitations.choices import ProjectInvitationStatus
-from taiga.projects.invitations.dataclasses import CreateProjectInvitations, PublicProjectInvitation
 from taiga.projects.invitations.models import ProjectInvitation
+from taiga.projects.invitations.schemas import CreateProjectInvitationsSchema, PublicProjectInvitationSchema
 from taiga.projects.invitations.services import exceptions as ex
 from taiga.projects.invitations.tokens import ProjectInvitationToken
 from taiga.projects.memberships import repositories as memberships_repositories
@@ -38,10 +38,10 @@ async def get_project_invitation(token: str) -> ProjectInvitation | None:
     return await invitations_repositories.get_project_invitation(**invitation_token.object_data)
 
 
-async def get_public_project_invitation(token: str) -> PublicProjectInvitation | None:
+async def get_public_project_invitation(token: str) -> PublicProjectInvitationSchema | None:
     if invitation := await get_project_invitation(token=token):
 
-        return PublicProjectInvitation(
+        return PublicProjectInvitationSchema(
             status=invitation.status,
             email=invitation.email,
             existing_user=invitation.user is not None,
@@ -139,7 +139,7 @@ async def _is_spam(invitation: ProjectInvitation) -> bool:
 
 async def create_project_invitations(
     project: Project, invitations: list[dict[str, str]], invited_by: User
-) -> CreateProjectInvitations:
+) -> CreateProjectInvitationsSchema:
     # create two lists with roles_slug and the emails received (either directly by the invitation's email, or by the
     # invited username's email)
     already_members = 0
@@ -239,7 +239,7 @@ async def create_project_invitations(
             project=project, invitations=invitations_to_send_list
         )
 
-    return CreateProjectInvitations(invitations=list(invitations_to_send_list), already_members=already_members)
+    return CreateProjectInvitationsSchema(invitations=list(invitations_to_send_list), already_members=already_members)
 
 
 async def accept_project_invitation(invitation: ProjectInvitation) -> ProjectInvitation:

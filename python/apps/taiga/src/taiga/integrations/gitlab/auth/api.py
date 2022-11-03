@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.auth.schemas import AccessWithRefreshTokenSchema
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.exceptions.api.errors import ERROR_400, ERROR_422
 from taiga.integrations.gitlab.auth import services as auth_gitlab_services
@@ -20,7 +20,7 @@ from taiga.routers import routes
     response_model=AccessTokenWithRefreshSerializer,
     responses=ERROR_400 | ERROR_422,
 )
-async def gitlab_login(form: GitlabLoginValidator) -> AccessWithRefreshToken:
+async def gitlab_login(form: GitlabLoginValidator) -> AccessWithRefreshTokenSchema:
     """
     Get an access and refresh token using a Gitlab authorization.
     For a non-existing user, this process registers a new user as well.

@@ -14,13 +14,12 @@ from taiga.stories import repositories as stories_repositories
 from taiga.stories.models import Story
 from taiga.stories.services import exceptions as ex
 from taiga.users.models import User
-from taiga.workflows import dataclasses as dt
 from taiga.workflows import repositories as workflows_repositories
-from taiga.workflows.dataclasses import Workflow
 from taiga.workflows.models import WorkflowStatus
+from taiga.workflows.schemas import WorkflowSchema
 
 
-async def create_story(project: Project, workflow: dt.Workflow, title: str, status_slug: str, user: User) -> Story:
+async def create_story(project: Project, workflow: WorkflowSchema, title: str, status_slug: str, user: User) -> Story:
     try:
         workflow_status = next(status for status in workflow.statuses if status.slug == status_slug)
     except StopIteration:
@@ -60,7 +59,7 @@ async def get_paginated_stories_by_workflow(
 
 async def reorder_stories(
     project: Project,
-    workflow: Workflow,
+    workflow: WorkflowSchema,
     target_status_slug: str,
     stories_refs: list[int],
     reorder: dict[str, Any] | None = None,

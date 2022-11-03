@@ -5,14 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth.dataclasses import AccessWithRefreshToken
+from taiga.auth.schemas import AccessWithRefreshTokenSchema
 from taiga.conf import settings
 from taiga.integrations.auth import services as integrations_auth_services
 from taiga.integrations.github import exceptions as ex
 from taiga.integrations.github import services as github_services
 
 
-async def github_login(code: str, lang: str | None = None) -> AccessWithRefreshToken:
+async def github_login(code: str, lang: str | None = None) -> AccessWithRefreshTokenSchema:
     if not settings.GITHUB_CLIENT_ID or not settings.GITHUB_CLIENT_SECRET:
         raise ex.GithubLoginError("Login with Github is not available. Contact with the platform administrators.")
 

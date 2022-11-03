@@ -11,7 +11,7 @@ import pytest
 from taiga.conf import settings
 from taiga.integrations.github import exceptions as ex
 from taiga.integrations.github.auth import services
-from taiga.integrations.github.dataclasses import GithubUserProfile
+from taiga.integrations.github.schemas import GithubUserProfileSchema
 
 ##########################################################
 # github_login
@@ -28,7 +28,7 @@ async def test_github_login_ok():
         ) as fake_integrations_auth_services,
     ):
         fake_github_services.get_access_to_github.return_value = "access_token"
-        fake_github_services.get_user_info_from_github.return_value = GithubUserProfile(
+        fake_github_services.get_user_info_from_github.return_value = GithubUserProfileSchema(
             email="email@test.com", full_name="Full Name", github_id="1", bio="Bio"
         )
         await services.github_login(code="code", lang="es_ES")

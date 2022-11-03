@@ -6,16 +6,11 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from dataclasses import dataclass
-from typing import Literal
-
-from taiga.base.i18n.choices import ScriptType
 
 
 @dataclass
-class Language:
-    code: str
-    name: str
-    english_name: str
-    text_direction: Literal["ltr"] | Literal["rtl"]
-    is_default: bool
-    script_type: ScriptType
+class GoogleUserProfileSchema:
+    google_id: str
+    email: str
+    full_name: str
+    bio: str

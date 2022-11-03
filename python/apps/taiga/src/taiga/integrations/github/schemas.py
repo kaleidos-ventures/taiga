@@ -9,8 +9,8 @@ from dataclasses import dataclass
 
 
 @dataclass
-class GoogleUserProfile:
-    google_id: str
+class GithubUserProfileSchema:
+    github_id: str
     email: str
     full_name: str
     bio: str

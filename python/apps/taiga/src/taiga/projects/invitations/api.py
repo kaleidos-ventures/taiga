@@ -9,15 +9,16 @@ from uuid import UUID
 
 from fastapi import Depends, Query, Response, status
 from taiga.base.api import AuthRequest
-from taiga.base.api.pagination import PaginationQuery, set_pagination
+from taiga.base.api import pagination as api_pagination
+from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import IsAuthenticated, IsProjectAdmin
 from taiga.projects.invitations import services as invitations_services
-from taiga.projects.invitations.dataclasses import CreateProjectInvitations, PublicProjectInvitation
 from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.invitations.permissions import IsProjectInvitationRecipient
+from taiga.projects.invitations.schemas import CreateProjectInvitationsSchema, PublicProjectInvitationSchema
 from taiga.projects.invitations.serializers import (
     CreateProjectInvitationsSerializer,
     ProjectInvitationSerializer,
@@ -50,7 +51,7 @@ UPDATE_PROJECT_INVITATION = IsProjectAdmin()
 )
 async def get_public_project_invitation(
     token: str = Query(None, description="the project invitation token (str)")
-) -> PublicProjectInvitation:
+) -> PublicProjectInvitationSchema:
     """
     Get public information about a project invitation
     """
@@ -86,7 +87,7 @@ async def list_project_invitations(
         project=project, user=request.user, offset=pagination_params.offset, limit=pagination_params.limit
     )
 
-    set_pagination(response=response, pagination=pagination)
+    api_pagination.set_pagination(response=response, pagination=pagination)
     return invitations
 
 
@@ -139,7 +140,7 @@ async def create_project_invitations(
     request: AuthRequest,
     form: ProjectInvitationsValidator,
     slug: str = Query(None, description="the project slug (str)"),
-) -> CreateProjectInvitations:
+) -> CreateProjectInvitationsSchema:
     """
     Create invitations to a project for a list of users (identified either by their username or their email, and the
     role they'll take in the project). In case of receiving several invitations for the same user, just the first

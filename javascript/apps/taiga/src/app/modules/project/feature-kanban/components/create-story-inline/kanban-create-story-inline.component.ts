@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -18,10 +19,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { TranslocoService } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { Status, Workflow } from '@taiga/data';
-import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { v4 } from 'uuid';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 
 @Component({
   selector: 'tg-create-story-inline',
@@ -64,7 +66,12 @@ export class KanbanCreateStoryInlineComponent implements AfterViewInit {
 
   public submitted = false;
 
-  constructor(public fb: FormBuilder, private store: Store) {}
+  constructor(
+    public fb: FormBuilder,
+    private store: Store,
+    private liveAnnouncer: LiveAnnouncer,
+    private translocoService: TranslocoService
+  ) {}
 
   public submit() {
     this.form.markAllAsTouched();
@@ -84,9 +91,25 @@ export class KanbanCreateStoryInlineComponent implements AfterViewInit {
           workflow: this.workflow.slug,
         })
       );
+      const announcement = this.translocoService.translate(
+        'kanban.story_created',
+        {
+          title: this.form.get('title')!.value,
+        }
+      );
 
-      this.reset();
-      (this.titleElement.nativeElement as HTMLElement).focus();
+      this.liveAnnouncer.announce(announcement, 'assertive').then(
+        () => {
+          setTimeout(() => {
+            this.reset();
+            (this.titleElement.nativeElement as HTMLElement).focus();
+            this.liveAnnouncer.clear();
+          }, 50);
+        },
+        () => {
+          // error
+        }
+      );
     } else {
       this.submitted = true;
     }

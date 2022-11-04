@@ -101,6 +101,9 @@ export class KanbanStatusComponent
     OnInit,
     OnDestroy
 {
+  @ViewChild('createStoryWrapper')
+  public createStoryWrapper?: ElementRef;
+
   @ViewChild(KanbanVirtualScrollDirective)
   public kanbanVirtualScroll?: KanbanVirtualScrollDirective;
 
@@ -262,6 +265,11 @@ export class KanbanStatusComponent
 
   public cancelStoryCreate() {
     this.store.dispatch(KanbanActions.closeCreateStoryForm());
+    requestAnimationFrame(() => {
+      (this.createStoryWrapper?.nativeElement as HTMLElement)
+        .querySelector('button')
+        ?.focus();
+    });
   }
 
   public onDragStart(story: Story) {

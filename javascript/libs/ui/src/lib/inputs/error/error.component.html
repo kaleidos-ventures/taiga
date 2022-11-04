@@ -7,9 +7,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <label
   *ngIf="showError"
+  role="alert"
   [attr.for]="fieldService.id"
   aria-live="assertive"
   class="label-error">
-  <tui-svg class="warning" src="warning"></tui-svg>
+  <tui-svg
+    class="warning"
+    src="warning"></tui-svg>
   <ng-content></ng-content>
 </label>

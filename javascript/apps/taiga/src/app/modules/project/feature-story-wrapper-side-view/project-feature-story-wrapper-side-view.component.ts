@@ -150,8 +150,10 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   public ngOnChanges(changes: SimpleChanges) {
     if (changes.kanbanWidth.currentValue && !this.sidepanelWidth) {
       this.setInitialSidePanelWidth();
-      this.calculateInlineSize();
       this.checkIfForceCollapse();
+    }
+    if (changes.kanbanWidth.currentValue) {
+      this.calculateInlineSize();
     }
   }
 }

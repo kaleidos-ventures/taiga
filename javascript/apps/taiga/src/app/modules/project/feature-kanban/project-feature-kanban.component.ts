@@ -111,6 +111,10 @@ export class ProjectFeatureKanbanComponent {
     );
 
     this.state.connect(
+      'project',
+      this.store.select(selectCurrentProject).pipe(filterNil())
+    );
+    this.state.connect(
       'showStoryDetail',
       this.store.select(selectShowStoryView)
     );
@@ -153,14 +157,16 @@ export class ProjectFeatureKanbanComponent {
 
   public closeSideview() {
     const selectedStory = this.state.get('selectedStory');
-    if (selectedStory.ref) {
-      const mainFocus = document.querySelector(
-        `tg-kanban-story[data-ref='${selectedStory.ref}'] .story-kanban-ref-focus`
-      );
-      if (mainFocus) {
-        (mainFocus as HTMLElement).focus();
+    setTimeout(() => {
+      if (selectedStory.ref) {
+        const mainFocus = document.querySelector(
+          `tg-kanban-story[data-ref='${selectedStory.ref}'] .story-kanban-ref-focus`
+        );
+        if (mainFocus) {
+          (mainFocus as HTMLElement).focus();
+        }
       }
-    }
+    }, 200);
     this.store.dispatch(clearStory());
     this.location.replaceState(
       `project/${this.state.get('project').slug}/kanban`
@@ -173,7 +179,22 @@ export class ProjectFeatureKanbanComponent {
   }
 
   public closeViewModal() {
+    const selectedStory = this.state.get('selectedStory');
+    setTimeout(() => {
+      if (selectedStory.ref) {
+        const mainFocus = document.querySelector(
+          `tg-kanban-story[data-ref='${selectedStory.ref}'] .story-kanban-ref-focus`
+        );
+        if (mainFocus) {
+          (mainFocus as HTMLElement).focus();
+        }
+      }
+    }, 200);
+
     this.store.dispatch(clearStory());
+    this.location.replaceState(
+      `project/${this.state.get('project').slug}/kanban`
+    );
   }
 
   public trackBySlug(_index: number, obj: { slug: string }) {

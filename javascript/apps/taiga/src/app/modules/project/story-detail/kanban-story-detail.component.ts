@@ -40,12 +40,14 @@ import {
 import { Project, StoryDetail, StoryView } from '@taiga/data';
 import {
   clearStory,
+  updatedStoryViewMode,
   updateStoryViewMode,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
   selectCurrentStory,
   selectStoryView,
+  selectUpdateStoryView,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
@@ -137,6 +139,7 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
       project: Project;
       story: StoryDetail;
       selectedStoryView: StoryView;
+      updateStoryView: boolean;
     }>
   ) {
     this.state.connect(
@@ -148,6 +151,22 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
       this.store.select(selectCurrentStory).pipe(filterNil())
     );
     this.state.connect('selectedStoryView', this.store.select(selectStoryView));
+    this.state.connect(
+      'updateStoryView',
+      this.store.select(selectUpdateStoryView)
+    );
+
+    this.state.hold(this.state.select('updateStoryView'), (updated) => {
+      if (updated) {
+        setTimeout(() => {
+          const mainFocus = document.querySelector('.story-detail-focus');
+          if (mainFocus) {
+            (mainFocus as HTMLElement).focus();
+          }
+          this.store.dispatch(updatedStoryViewMode());
+        }, 200);
+      }
+    });
   }
 
   public trackByIndex(index: number) {
@@ -185,18 +204,20 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
   }
 
   public closeStory(ref: number | undefined) {
-    if (ref) {
-      const mainFocus = document.querySelector(
-        `tg-kanban-story[data-ref='${ref}'] .story-kanban-ref-focus`
-      );
-      if (mainFocus) {
-        (mainFocus as HTMLElement).focus();
-      }
-    }
     this.store.dispatch(clearStory());
     this.location.replaceState(
       `project/${this.state.get('project').slug}/kanban`
     );
+    if (ref) {
+      setTimeout(() => {
+        const mainFocus = document.querySelector(
+          `tg-kanban-story[data-ref='${ref}'] .story-kanban-ref-focus`
+        );
+        if (mainFocus) {
+          (mainFocus as HTMLElement).focus();
+        }
+      }, 200);
+    }
   }
 
   public ngAfterViewInit(): void {

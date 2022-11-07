@@ -23,6 +23,7 @@ export interface ProjectState {
   loadingStory: boolean;
   currentStory: StoryDetail | null;
   storyView: StoryView;
+  updateStoryView: boolean;
 }
 
 export const initialState: ProjectState = {
@@ -33,6 +34,7 @@ export const initialState: ProjectState = {
   loadingStory: false,
   currentStory: null,
   storyView: LocalStorageService.get('story_view') || 'modal-view',
+  updateStoryView: false,
 };
 
 export const reducer = createReducer(
@@ -105,9 +107,14 @@ export const reducer = createReducer(
     (state, { storyView }): ProjectState => {
       state.showStoryView = storyView !== 'full-view';
       state.storyView = storyView;
+      state.updateStoryView = true;
       return state;
     }
-  )
+  ),
+  on(ProjectActions.updatedStoryViewMode, (state): ProjectState => {
+    state.updateStoryView = false;
+    return state;
+  })
 );
 
 export const projectFeature = createFeature({

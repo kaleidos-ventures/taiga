@@ -14,10 +14,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       *ngIf="vm.story">
       <div class="story-header">
         <div class="start">
-          <span
+          <a
+            href="#"
             *ngIf="vm.selectedStoryView === 'full-view'"
             class="workflow"
-            >{{ vm.story.workflow.name }}</span
+            >{{ vm.story.workflow.name }}</a
           >
           <span
             #storyRef
@@ -59,6 +60,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             appearance="tertiary"
             class="chevron"
             tuiIconButton
+            tuiHintDirection="top-right"
+            [tuiHint]="t('kanban.story_detail.previous')"
             (click)="navigateToStory(vm.story.prev)"
             type="button"></button>
           <button
@@ -68,6 +71,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             appearance="tertiary"
             class="chevron"
             tuiIconButton
+            tuiHintDirection="top-right"
+            [tuiHint]="t('kanban.story_detail.next')"
             (click)="navigateToStory(vm.story.next)"
             type="button"></button>
           <tui-hosted-dropdown

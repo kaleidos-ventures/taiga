@@ -40,6 +40,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   &:focus-within {
     border-color: var(--color-secondary);
+    outline: solid 1px var(--color-secondary);
 
     & .story-title {
       outline: none;

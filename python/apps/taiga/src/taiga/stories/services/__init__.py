@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from decimal import Decimal
 from typing import Any
 
 from taiga.base.api import Pagination
@@ -18,6 +19,10 @@ from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.models import WorkflowStatus
 from taiga.workflows.schemas import WorkflowSchema
 
+##########################################################
+# create story
+##########################################################
+
 
 async def create_story(project: Project, workflow: WorkflowSchema, title: str, status_slug: str, user: User) -> Story:
     try:
@@ -25,7 +30,12 @@ async def create_story(project: Project, workflow: WorkflowSchema, title: str, s
     except StopIteration:
         raise ex.InvalidStatusError("The provided status is not valid.")
 
-    order = await stories_repositories.get_max_order(status_id=workflow_status.id) + 100
+    order = 100
+    latest_story = await stories_repositories.get_stories(
+        filters={"status_id": workflow_status.id}, order_by=["-order"], offset=0, limit=1
+    )
+    if latest_story:
+        order += latest_story[0].order
 
     story = await stories_repositories.create_story(
         title=title,
@@ -41,20 +51,106 @@ async def create_story(project: Project, workflow: WorkflowSchema, title: str, s
     return story
 
 
+##########################################################
+# get story
+##########################################################
+
+
+async def get_story(ref: int, project: Project) -> dict[str, Any] | None:
+    story = await stories_repositories.get_story(
+        filters={"ref": ref, "project_id": project.id},
+        select_related=["created_by", "project", "workflow", "status", "workspace"],
+    )
+    if not story:
+        return None
+
+    neighbors = await stories_repositories.get_story_neighbors(story=story, filters={"workflow_id": story.workflow_id})
+
+    return {
+        "ref": story.ref,
+        "title": story.title,
+        "workflow": story.workflow,
+        "status": story.status,
+        "created_at": story.created_at,
+        "created_by": story.created_by,
+        "prev": neighbors.prev.ref if neighbors.prev else None,
+        "next": neighbors.next.ref if neighbors.next else None,
+    }
+
+
+##########################################################
+# get stories
+##########################################################
+
+
 async def get_paginated_stories_by_workflow(
     project_slug: str, workflow_slug: str, offset: int, limit: int
 ) -> tuple[Pagination, list[Story]]:
-    total_stories = await stories_repositories.get_total_stories_by_workflow(
-        project_slug=project_slug, workflow_slug=workflow_slug
+    total_stories = await stories_repositories.get_total_stories(
+        filters={"workflow_slug": workflow_slug, "project_slug": project_slug}
     )
 
-    stories = await stories_repositories.get_stories_by_workflow(
-        project_slug=project_slug, workflow_slug=workflow_slug, offset=offset, limit=limit
+    stories = await stories_repositories.get_stories(
+        filters={"workflow_slug": workflow_slug, "project_slug": project_slug},
+        offset=offset,
+        limit=limit,
+        select_related=["created_by", "project", "workflow", "status"],
     )
 
     pagination = Pagination(offset=offset, limit=limit, total=total_stories)
 
     return pagination, stories
+
+
+##########################################################
+# update stories
+##########################################################
+
+DEFAULT_POST_OFFSET = 100  # default offset when adding a story at the end
+DEFAULT_FIRST_ORDER = Decimal(0)  # default pre_position when adding a story at the beginning
+
+
+async def _calculate_offset(
+    total_stories_to_reorder: int,
+    target_status: WorkflowStatus,
+    reorder_place: str | None = None,
+    reorder_story: Story | None = None,
+) -> tuple[Decimal, Decimal]:
+
+    total_slots = total_stories_to_reorder + 1
+
+    if not reorder_place and not reorder_story:
+        latest_story = await stories_repositories.get_stories(
+            filters={"status_id": target_status.id}, order_by=["-order"], offset=0, limit=1
+        )
+        if latest_story:
+            pre_order = latest_story[0].order
+        else:
+            pre_order = DEFAULT_FIRST_ORDER
+        post_order = pre_order + (DEFAULT_POST_OFFSET * total_slots)
+
+    elif reorder_story:
+        neighbors = await stories_repositories.get_story_neighbors(
+            story=reorder_story, filters={"status_id": reorder_story.status_id}
+        )
+        if reorder_place == "after":
+            pre_order = reorder_story.order
+            if neighbors.next:
+                post_order = neighbors.next.order
+            else:
+                post_order = pre_order + (DEFAULT_POST_OFFSET * total_slots)
+
+        elif reorder_place == "before":
+            post_order = reorder_story.order
+            if neighbors.prev:
+                pre_order = neighbors.prev.order
+            else:
+                pre_order = DEFAULT_FIRST_ORDER
+        else:
+            return NotImplemented
+
+    offset = (post_order - pre_order) / total_slots
+    return offset, pre_order
 
 
 async def reorder_stories(
@@ -65,40 +161,54 @@ async def reorder_stories(
     reorder: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     # check target_status exists
-    try:
-        target_status = await workflows_repositories.get_status(
-            project_slug=project.slug, workflow_slug=workflow.slug, status_slug=target_status_slug
-        )
-    except WorkflowStatus.DoesNotExist:
+    target_status = await workflows_repositories.get_status(
+        project_slug=project.slug, workflow_slug=workflow.slug, status_slug=target_status_slug
+    )
+    if not target_status:
         raise ex.InvalidStatusError(f"Status {target_status_slug} doesn't exist in this project")
 
     # check anchor story exists
     if reorder:
-        try:
-            assert reorder["ref"] not in stories_refs
-            reorder_story = await stories_repositories.get_story(
-                workflow_id=workflow.id, status_id=target_status.id, ref=reorder["ref"]
-            )
-            reorder_place = reorder["place"]
-        except Story.DoesNotExist:
-            raise ex.InvalidStoryRefError(f"Ref {reorder['ref']} doesn't exist in this project")
-        except AssertionError:
+        if reorder["ref"] in stories_refs:
             raise ex.InvalidStoryRefError(f"Ref {reorder['ref']} should not be part of the stories to reorder")
+
+        reorder_story = await stories_repositories.get_story(
+            filters={"workflow_id": workflow.id, "status_id": target_status.id, "ref": reorder["ref"]}
+        )
+        if not reorder_story:
+            raise ex.InvalidStoryRefError(f"Ref {reorder['ref']} doesn't exist in this project")
+        reorder_place = reorder["place"]
     else:
         reorder_story = None
         reorder_place = None
 
     # check all stories "to reorder" exist
-    stories_to_reorder = await stories_repositories.get_stories_to_reorder(workflow_id=workflow.id, refs=stories_refs)
+    stories_to_reorder = await stories_repositories.get_stories_to_reorder(
+        filters={"workflow_id": workflow.id, "refs": stories_refs}
+    )
     if len(stories_to_reorder) < len(stories_refs):
         raise ex.InvalidStoryRefError("One or more refs don't exist in this project")
 
-    # update stories
-    await stories_repositories.reorder_stories(
+    # calculate offset
+    offset, pre_order = await _calculate_offset(
+        total_stories_to_reorder=len(stories_to_reorder),
         target_status=target_status,
-        stories_to_reorder=stories_to_reorder,
         reorder_story=reorder_story,
         reorder_place=reorder_place,
+    )
+
+    # update stories
+    stories_to_update_tmp = {s.ref: s for s in stories_to_reorder}
+    stories_to_update = []
+    for i, ref in enumerate(stories_refs):
+        story = stories_to_update_tmp[ref]
+        story.status = target_status
+        story.order = pre_order + (offset * (i + 1))
+        stories_to_update.append(story)
+
+    # save stories
+    await stories_repositories.bulk_update_stories(
+        stories_to_update=stories_to_update, fields_to_update=["status", "order"]
     )
 
     # event
@@ -107,15 +217,3 @@ async def reorder_stories(
     )
 
     return {"status": target_status, "stories": stories_refs, "reorder": reorder}
-
-
-async def get_story(ref: int, project: Project) -> dict[str, Any] | None:
-    story = await stories_repositories.get_story_with_neighbors_as_dict(project_id=project.id, ref=ref)
-
-    if story:
-        story["prev"] = story["prev"].ref if story["prev"] else None
-        story["next"] = story["next"].ref if story["next"] else None
-
-        return story
-
-    return None

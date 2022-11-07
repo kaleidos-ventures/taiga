@@ -33,10 +33,13 @@ def get_project_workflow(project_slug: str, workflow_slug: str) -> WorkflowSchem
 
 
 @sync_to_async
-def get_status(project_slug: str, workflow_slug: str, status_slug: str) -> WorkflowStatus:
-    return WorkflowStatus.objects.get(
-        slug=status_slug, workflow__slug=workflow_slug, workflow__project__slug=project_slug
-    )
+def get_status(project_slug: str, workflow_slug: str, status_slug: str) -> WorkflowStatus | None:
+    try:
+        return WorkflowStatus.objects.get(
+            slug=status_slug, workflow__slug=workflow_slug, workflow__project__slug=project_slug
+        )
+    except WorkflowStatus.DoesNotExist:
+        return None
 
 
 def _get_workflow_dt(workflow: Workflow) -> WorkflowSchema:

@@ -8,28 +8,28 @@
 
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable } from 'rxjs';
 import { ProjectApiService } from '@taiga/api';
+import { Observable } from 'rxjs';
 
-import { ProjectOverviewEffects } from './project-overview.effects';
 import { Action } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   InvitationMockFactory,
   MembershipMockFactory,
   ProjectMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
   fetchMembersSuccess,
   initMembers,
   nextMembersPage,
 } from '../actions/project-overview.actions';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
+import { ProjectOverviewEffects } from './project-overview.effects';
 
-import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { Router } from '@angular/router';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 
 describe('ProjectOverviewEffects', () => {
   let actions$: Observable<Action>;

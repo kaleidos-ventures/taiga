@@ -54,9 +54,9 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   public minInlineSize = '';
   public maxInlineSize = '';
 
-  private minWidthCollapsed = 440;
-  private minWidthUncollapsed = 472;
-  private widthToForceCollapse = 472;
+  public minWidthCollapsed = 440;
+  public minWidthUncollapsed = 472;
+  public widthToForceCollapse = 472;
 
   constructor(
     private store: Store,

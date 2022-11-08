@@ -20,6 +20,13 @@ export interface StoryDetail extends Partial<Story> {
   workflow: Partial<Workflow>;
   prev: number | null;
   next: number | null;
+  createdBy: createdBy;
+  createdAt: string;
+}
+
+export interface createdBy {
+  username: string;
+  fullName: string;
 }
 
 export type StoryView = 'modal-view' | 'full-view' | 'side-view';

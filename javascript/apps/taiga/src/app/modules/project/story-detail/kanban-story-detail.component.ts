@@ -39,6 +39,14 @@ import {
 } from '@taiga-ui/core';
 import { Project, StoryDetail, StoryView } from '@taiga/data';
 import {
+  differenceInDays,
+  differenceInSeconds,
+  differenceInYears,
+  format,
+  formatDistanceToNow,
+  parseISO,
+} from 'date-fns';
+import {
   clearStory,
   updatedStoryViewMode,
   updateStoryViewMode,
@@ -228,6 +236,37 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
     // click came from a story card
     if (locationState?.fromCard) {
       (this.storyRef.nativeElement as HTMLElement).focus();
+    }
+  }
+
+  public getStoryDateDistance() {
+    const story = this.state.get('story');
+    const date = parseISO(story.createdAt);
+
+    const secondsDistance = Math.abs(differenceInSeconds(date, new Date()));
+    const daysDistance = Math.abs(differenceInDays(date, new Date()));
+    const yearsDistance = Math.abs(differenceInYears(date, new Date()));
+
+    // Less than 30 sec -> now
+    // between 30 sec and 6 days -> about {relativeTime} ago
+    // between 6 days and 1 year -> MONTH DAY
+    // More than 1 year -> MONTH DAY YEAR
+
+    if (!yearsDistance) {
+      if (daysDistance > 6) {
+        return format(date, 'MMM d');
+      } else {
+        if (secondsDistance <= 60) {
+          return this.translocoService.translate('kanban.story_detail.now');
+        }
+        const distance = formatDistanceToNow(date);
+        const agoString = this.translocoService.translate(
+          'kanban.story_detail.ago'
+        );
+        return `${distance} ${agoString}`;
+      }
+    } else {
+      return format(date, 'MMM d yyyy');
     }
   }
 }

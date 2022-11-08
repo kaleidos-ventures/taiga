@@ -26,6 +26,9 @@
   "story_detail": {
     "story": "Story<span class='hash' aria-hidden='true'>#</span><span class='ref'>{{ storyRef }}</span>",
     "story_sr": "Story {{ storyRef }}: {{ storyTitle }}",
+    "story_date_distance": "created the story {{ dateDistance }}",
+    "now": "now",
+    "ago": "ago",
     "copy_story": "Copy story link",
     "click_to_copy": "Click to copy story link",
     "link_copied": "Copied to clipboard!",

@@ -7,6 +7,7 @@
 
 from typing import Literal
 
+from taiga.base.i18n.choices import ScriptType
 from taiga.base.serializers import BaseModel
 
 
@@ -14,5 +15,6 @@ class LanguageSerializer(BaseModel):
     code: str
     name: str
     english_name: str
+    script_type: ScriptType
     text_direction: Literal["ltr"] | Literal["rtl"]
     is_default: bool

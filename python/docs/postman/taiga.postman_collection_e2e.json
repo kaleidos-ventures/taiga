@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c8efb4a9-4802-4f78-9975-91ec67cb61f3",
+		"_postman_id": "057f2b88-f046-41c1-9fcc-ebea566190b4",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -6438,6 +6438,7 @@
 									"        pm.expect(lang).to.have.property(\"name\");",
 									"        pm.expect(lang).to.have.property(\"englishName\");",
 									"        pm.expect(lang).to.have.property(\"textDirection\");",
+									"        pm.expect(lang).to.have.property(\"scriptType\");",
 									"        pm.expect(lang).to.have.property(\"isDefault\");",
 									"    }",
 									"});// Post-request execution tasks",

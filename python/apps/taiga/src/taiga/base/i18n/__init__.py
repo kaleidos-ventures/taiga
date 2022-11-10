@@ -11,11 +11,12 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Final, Generator
 
-from babel import localedata
-from babel.core import Locale
+from babel import UnknownLocaleError, localedata
+from babel.core import Locale, get_locale_identifier, parse_locale
 from babel.support import Translations
 from taiga.base.i18n import choices as i18n_choices
 from taiga.base.i18n.choices import ScriptType
+from taiga.base.i18n.exceptions import UnknownLocaleIdentifierError
 from taiga.base.i18n.schemas import LanguageSchema
 
 ROOT_DIR: Final[Path] = Path(__file__).resolve().parent.parent.parent  # src/taiga
@@ -41,14 +42,29 @@ class I18N:
         """
         self.reset_lang()
 
-    def _get_locale(self, identifier: str) -> Locale:
+    def _get_locale(self, identifier: str) -> Locale | None:
         """
         Get a `babel.core.Locale` objects from its identifier.
 
-        :return a `babel.core.Locale` object
-        :rtype babel.core.Locale
+        The identifier can use "_" or "-" as component separator, for example, you can use "es_ES" or "es-ES".
+
+        :return a `babel.core.Locale` object or None
+        :rtype babel.core.Locale | None
         """
-        return Locale.parse(identifier)
+        # For "en_US"
+        try:
+            return Locale.parse(identifier)
+        except (ValueError, UnknownLocaleError):
+            pass
+
+        # For "en-US"
+        try:
+            return Locale.parse(identifier, sep="-")
+        except (ValueError, UnknownLocaleError):
+            pass
+
+        # Not exists
+        return None
 
     def _get_translations(self, identifier: str) -> Translations:
         """
@@ -57,12 +73,20 @@ class I18N:
         It will first try to fetch from the cache, but if it doesn't exist, it will create a new one and store it for
         future use.
 
+        The identifier can use "_" or "-" as component separator, for example, you can use "es_ES" or "es-ES".
+
+        If the identifier is not valid or does not exist, it will throw an exception (UnknownLocaleIdentifierError).
+
         :param identifier: the language or locale identifier
         :type identifier: str
         :return a `babel.Translations` instance
         :rtype babel.Translations
         """
+
         locale = self._get_locale(identifier)
+        if not locale:
+            raise UnknownLocaleIdentifierError(identifier)
+
         translations = self._translations_cache.get(str(locale), None)
 
         if translations is None:
@@ -78,6 +102,8 @@ class I18N:
     def set_lang(self, identifier: str) -> None:
         """
         Apply all the necessary changes to translate to a new language.
+
+        The identifier can use "_" or "-" as component separator, for example, you can use "es_ES" or "es-ES".
 
         :param identifier: the language or locale identifier
         :type identifier: str
@@ -106,6 +132,8 @@ class I18N:
         """
         Context manager to use a language and reset it at the end.
 
+        The identifier can use "_" or "-" as component separator, for example, you can use "es_ES" or "es-ES".
+
         :param identifier: the language or locale identifier
         :type identifier: str
         :return the generator instance
@@ -127,13 +155,16 @@ class I18N:
         for p in TRANSLATION_DIRECTORY.glob("*"):
             if p.is_dir():
                 identifier = p.parts[-1]
-                locales.append(self._get_locale(identifier))
+                if locale := self._get_locale(identifier):
+                    locales.append(locale)
 
         return locales
 
     def is_language_available(self, identifier: str) -> bool:
         """
         Check if there is language for a concrete identifier.
+
+        The identifier can use "_" or "-" as component separator, for example, you can use "es_ES" or "es-ES".
 
         :param identifier: the language or locale identifier
         :type identifier: str
@@ -143,7 +174,7 @@ class I18N:
         try:
             config_locale = self._get_locale(identifier)
             return config_locale in self.locales
-        except Exception:  # UnknownLocaleError, ValueError or TypeError
+        except UnknownLocaleIdentifierError:
             return False
 
     @functools.cached_property
@@ -186,16 +217,16 @@ class I18N:
 
         langs: list[LanguageSchema] = []
         for loc in i18n.locales:
-            code = str(loc)
-            script_type = i18n_choices.get_script_type(code)
+            loc_id = str(loc)
+            script_type = i18n_choices.get_script_type(loc.language)
             name = loc.display_name.title() if script_type is ScriptType.LATIN else loc.display_name
             english_name = loc.english_name
             text_direction = loc.text_direction
-            is_default = code == settings.LANG
+            is_default = loc_id == settings.LANG
 
             langs.append(
                 LanguageSchema(
-                    code=code,
+                    code=get_locale_identifier(parse_locale(loc_id), sep="-"),
                     name=name,
                     english_name=english_name,
                     text_direction=text_direction,

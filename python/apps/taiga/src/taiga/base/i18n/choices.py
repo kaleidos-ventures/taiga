@@ -20,87 +20,52 @@ class ScriptType(OrderedEnum):
     OTHER = "other"
 
 
-# NOTE:
-#   Language code format should be:
-#     - {ISO 639-1 lang code}
-#     - {ISO 639-1 lang code}_{ISO 3166-1 alpha-2 country code}
+# NOTE: Available locale identifier (using "_" instead of "-" as separator)
+# https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/availableLocales.json
 
 
 LATIN_LANGS: Final[list[str]] = [
     "ca",
-    "ca_ES",
     "da",
-    "da_DK",
     "de",
-    "de_DE",
     "en",
-    "en_GB",
-    "en_US",
     "es",
-    "es_ES",
     "eu",
-    "eu_ES",
     "fi",
-    "fi_FI",
     "gl",
-    "gl_ES",
     "fr",
-    "fr_FR",
     "it",
-    "it_IT",
     "lv",
-    "lv_LV",
     "nb",
-    "nb_NO",
     "nl",
-    "nl_NL",
     "pl",
-    "pl_PL",
     "pt",
-    "pt_BR",
-    "pt_PT",
     "sv",
-    "sv_SE",
     "tr",
-    "tr_TR",
     "vi",
-    "vi_VN",
 ]
 
 CYRILLIC_LANGS: Final[list[str]] = [
     "bg",
-    "bg_BG",
     "bs",
-    "bs_BA",
     "uk",
-    "uk_UA",
     "sr",
-    "sr_RS",
     "ru",
-    "ru_RU",
 ]
 GREEK_LANGS: Final[list[str]] = [
     "el",
-    "el_GR",
 ]
 HEBREW_LANGS: Final[list[str]] = [
     "he",
-    "he_IL",
 ]
 ARABIC_LANGS: Final[list[str]] = [
     "fa",
-    "fa_IR",
     "ar",
-    "ar_SY",
 ]
 CHINESE_AND_DEV_LANGS: Final[list[str]] = [
     "ko",
-    "ko_KR",
     "zh",
-    "zh_Hans",
-    "zh_Hant",
     "ja",
-    "ja_JP",
 ]
 
 

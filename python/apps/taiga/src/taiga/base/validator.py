@@ -57,5 +57,5 @@ class LanguageCode(str):
 
     @classmethod
     def validate(cls, value: str) -> str:
-        assert value in i18n.available_languages, "Language is not available"
+        assert i18n.is_language_available(value), "Language is not available"
         return value

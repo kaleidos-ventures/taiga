@@ -7,8 +7,9 @@
 
 from unittest.mock import PropertyMock, patch
 
+import pytest
 from taiga.base import templating
-from taiga.base.i18n import FALLBACK_LOCALE, I18N, Locale
+from taiga.base.i18n import FALLBACK_LOCALE, I18N, Locale, UnknownLocaleIdentifierError
 
 
 def test_i18n_is_created_with_the_falback_lang():
@@ -59,6 +60,53 @@ def test_i18n_set_lang(override_settings, initialize_template_env):
         assert len(i18n._translations_cache) == 2
 
 
+def test_i18n_set_lang_with_hyphen(override_settings, initialize_template_env):
+    settings_lang = "en_US"
+    lang = "es_ES"
+    lang_with_hyphen = "es-ES"
+    with (override_settings({"LANG": settings_lang}), initialize_template_env()):
+        i18n = I18N()
+        i18n.initialize()
+
+        init_trans = i18n.translations
+        assert init_trans.info()["language"] == settings_lang
+        assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
+        assert templating.env.globals["gettext"] == init_trans.gettext
+        assert len(i18n._translations_cache) == 1  # fallback == settings lang
+
+        i18n.set_lang(lang_with_hyphen)
+
+        new_trans = i18n.translations
+        assert new_trans.info()["language"] == lang
+        assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
+        assert templating.env.globals["gettext"] == new_trans.gettext
+        assert len(i18n._translations_cache) == 2
+
+
+def test_i18n_set_lang_with_invalid_identifier(override_settings, initialize_template_env):
+    settings_lang = "en_US"
+    invalid_lang = "invalid"
+
+    with (override_settings({"LANG": settings_lang}), initialize_template_env()):
+        i18n = I18N()
+        i18n.initialize()
+
+        init_trans = i18n.translations
+        assert init_trans.info()["language"] == settings_lang
+        assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
+        assert templating.env.globals["gettext"] == init_trans.gettext
+        assert len(i18n._translations_cache) == 1  # fallback == settings lang
+
+        with pytest.raises(UnknownLocaleIdentifierError):
+            i18n.set_lang(invalid_lang)
+
+        new_trans = i18n.translations
+        assert new_trans.info()["language"] == settings_lang
+        assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
+        assert templating.env.globals["gettext"] == new_trans.gettext
+        assert len(i18n._translations_cache) == 1
+
+
 def test_i18n_reset_lang(override_settings):
     settings_lang = "es_ES"
     lang = "en_US"
@@ -90,11 +138,13 @@ def test_i18n_use_contextmanager(override_settings):
 
 
 def test_i18n_if_is_language_available():
-    lang = "en_US"
+    lang_with_low_line = "en_US"
+    lang_with_hyphen = "en-US"
     invalid_lang = "invalid_lang"
     i18n = I18N()
 
-    assert i18n.is_language_available(lang)
+    assert i18n.is_language_available(lang_with_low_line)
+    assert i18n.is_language_available(lang_with_hyphen)
     assert not i18n.is_language_available(invalid_lang)
 
 
@@ -119,19 +169,19 @@ def test_i19n_get_available_languages_info_return_sorted_list():
     ]
     sorted_codes = [
         "ca",
-        "en_US",
-        "es_ES",
+        "en-US",
+        "es-ES",
         "eu",
         "pt",
-        "pt_BR",
+        "pt-BR",
         "bg",
         "ru",
         "uk",
         "he",
         "ar",
         "fa",
-        "zh_Hans",
-        "zh_Hant",
+        "zh-Hans",
+        "zh-Hant",
         "ja",
         "ko",
     ]

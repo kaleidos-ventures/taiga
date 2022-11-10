@@ -10,6 +10,10 @@ from pydantic import ValidationError
 from taiga.base.serializers import BaseModel
 from taiga.base.validator import LanguageCode
 
+#####################################################################
+# LanguageCode
+#####################################################################
+
 
 class TestsLanguageCodeValidator(BaseModel):
     language: LanguageCode
@@ -38,6 +42,13 @@ def test_languagecode_validator_with_unavailable_language() -> None:
 
 def test_languagecode_validator_with_available_language() -> None:
     lang = "en_US"
+
+    validator = TestsLanguageCodeValidator(language=lang)
+    assert validator.language == lang
+
+
+def test_languagecode_validator_with_available_language_with_hypen() -> None:
+    lang = "en-US"
 
     validator = TestsLanguageCodeValidator(language=lang)
     assert validator.language == lang

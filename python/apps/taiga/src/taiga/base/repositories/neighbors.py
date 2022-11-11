@@ -11,8 +11,7 @@ from typing import Generic, TypeVar
 from asgiref.sync import sync_to_async
 from django.core.exceptions import EmptyResultSet, ObjectDoesNotExist
 from django.db import connection
-from django.db.models import QuerySet
-from taiga.base.db.models import BaseModel
+from taiga.base.db.models import BaseModel, QuerySet
 
 T = TypeVar("T", bound=BaseModel)
 

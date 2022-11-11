@@ -9,8 +9,8 @@ import random
 import string
 from typing import Callable, Type
 
-from django.db.models import Model, QuerySet
 from slugify import slugify
+from taiga.base.db.models import Model, QuerySet
 
 
 def generate_int_suffix() -> str:

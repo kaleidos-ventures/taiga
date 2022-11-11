@@ -28,6 +28,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [label]="t('language.select')">
           <tui-select
             tuiTextfieldSize="l"
+            data-test="language-select"
             [valueContent]="langCurrentContent"
             [formControl]="language">
             {{ t('language.select') }}
@@ -38,6 +39,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   *ngFor="let language of language; trackBy: trackByLanguage"
                   [dir]="language.textDirection === 'rtl' ? 'rtl' : 'ltr'"
                   tuiOption
+                  data-test="language-select-option"
                   [value]="language.code">
                   {{ language.name }}
                   <span

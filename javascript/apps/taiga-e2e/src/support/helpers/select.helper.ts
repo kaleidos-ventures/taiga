@@ -16,7 +16,7 @@ export class SelectHelper {
   public setValue(optionIndex: number) {
     if (this.option) {
       cy.getBySel(this.option).eq(optionIndex).should('be.visible');
-      cy.getBySel(this.option).eq(optionIndex).click();
+      cy.getBySel(this.option).eq(optionIndex).click({ force: true });
     }
   }
 

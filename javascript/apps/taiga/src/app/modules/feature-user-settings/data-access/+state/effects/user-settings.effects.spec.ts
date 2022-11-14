@@ -9,7 +9,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { ProjectApiService, UsersApiService } from '@taiga/api';
+import { UsersApiService } from '@taiga/api';
 import { Observable } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
 
@@ -22,8 +22,8 @@ import {
 import { UserSettingsEffects } from './user-settings.effects';
 
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { selectLanguages } from '@taiga/core';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 
 describe('UserSettingsEffects', () => {

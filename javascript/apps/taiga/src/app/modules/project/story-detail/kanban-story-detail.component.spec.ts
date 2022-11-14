@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import '@ng-web-apis/universal/mocks';
 import {
   randBoolean,
@@ -17,6 +18,7 @@ import {
 import { createComponentFactory, Spectator } from '@ngneat/spectator';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { RxState } from '@rx-angular/state';
+import { TuiScrollbarComponent, TuiScrollbarModule } from '@taiga-ui/core';
 import {
   Project,
   StoryDetail,
@@ -24,7 +26,9 @@ import {
   WorkflowMockFactory,
 } from '@taiga/data';
 import * as dateFns from 'date-fns';
+import { MockComponent } from 'ng-mocks';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
+import { selectCurrentStory } from '../data-access/+state/selectors/project.selectors';
 import { KanbanStoryDetailComponent } from './kanban-story-detail.component';
 
 describe('KanbanStoryDetailComponent', () => {
@@ -56,9 +60,22 @@ describe('KanbanStoryDetailComponent', () => {
   }> = new RxState();
 
   let spectator: Spectator<KanbanStoryDetailComponent>;
+  const mockScrollBar = MockComponent(TuiScrollbarComponent);
   const createComponent = createComponentFactory({
     component: KanbanStoryDetailComponent,
     imports: [getTranslocoModule()],
+    schemas: [NO_ERRORS_SCHEMA],
+    overrideModules: [
+      [
+        TuiScrollbarModule,
+        {
+          set: {
+            declarations: [mockScrollBar],
+            exports: [mockScrollBar],
+          },
+        },
+      ],
+    ],
     providers: [
       provideMockStore({ initialState }),
       {
@@ -74,34 +91,37 @@ describe('KanbanStoryDetailComponent', () => {
     spectator = createComponent();
     store = spectator.inject(MockStore);
     mockState = new RxState();
+    store.overrideSelector(selectCurrentStory, initialState.currentStory);
+    spectator.detectChanges();
+    store.refreshState();
   });
 
-  it('DateDistance - more than one year includes year', () => {
-    initialState.currentStory.createdAt = '2014-02-11T11:30:30';
-    spectator.component.story = initialState.currentStory;
+  it('DateDistance - more than one year includes year', (done) => {
     jest.spyOn(dateFns, 'differenceInYears').mockImplementation(() => 1);
-    const distance = spectator.component.getStoryDateDistance();
-    expect(distance).toBe('Feb 11 2014');
+    spectator.component.model$.subscribe(({ storyDateDistance }) => {
+      expect(storyDateDistance).toBe('Feb 11 2014');
+      done();
+    });
   });
 
-  it('DateDistance - less than one year, more than 6 days', () => {
-    initialState.currentStory.createdAt = '2014-02-11T11:30:30';
-    spectator.component.story = initialState.currentStory;
+  it('DateDistance - less than one year, more than 6 days', (done) => {
     jest.spyOn(dateFns, 'differenceInYears').mockImplementation(() => 0);
     jest.spyOn(dateFns, 'differenceInDays').mockImplementation(() => 10);
-    const distance = spectator.component.getStoryDateDistance();
-    expect(distance).toBe('Feb 11');
+    spectator.component.model$.subscribe(({ storyDateDistance }) => {
+      expect(storyDateDistance).toBe('Feb 11');
+      done();
+    });
   });
 
   // Between 60 sec and 6 days text depends on date-fns text so its not tested
 
-  it('DateDistance - less than one year, less than 6 days, less than 60sec', () => {
-    initialState.currentStory.createdAt = '2014-02-11T11:30:30';
-    spectator.component.story = initialState.currentStory;
+  it('DateDistance - less than one year, less than 6 days, less than 60sec', (done) => {
     jest.spyOn(dateFns, 'differenceInYears').mockImplementation(() => 0);
     jest.spyOn(dateFns, 'differenceInDays').mockImplementation(() => 0);
     jest.spyOn(dateFns, 'differenceInSeconds').mockImplementation(() => 10);
-    const distance = spectator.component.getStoryDateDistance();
-    expect(distance).toBe('kanban.story_detail.now');
+    spectator.component.model$.subscribe(({ storyDateDistance }) => {
+      expect(storyDateDistance).toBe('kanban.story_detail.now');
+      done();
+    });
   });
 });

@@ -46,6 +46,7 @@ import {
   formatDistanceToNow,
   parseISO,
 } from 'date-fns';
+import { map } from 'rxjs';
 import {
   clearStory,
   updatedStoryViewMode,
@@ -118,9 +119,17 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
       translation: 'kanban.story_detail.full_width_view',
     },
   ];
-  public model$ = this.state.select();
 
-  public story = this.state.get('story');
+  public model$ = this.state.select().pipe(
+    map((state) => {
+      if (state.story) {
+        state.storyDateDistance = this.getStoryDateDistance(state.story);
+      }
+      return {
+        ...state,
+      };
+    })
+  );
 
   public get getCurrentViewTranslation() {
     const index = this.storyViewOptions.findIndex(
@@ -147,6 +156,7 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
       story: StoryDetail;
       selectedStoryView: StoryView;
       updateStoryView: boolean;
+      storyDateDistance: string;
     }>
   ) {
     this.state.connect(
@@ -238,9 +248,8 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
     }
   }
 
-  public getStoryDateDistance() {
-    const createdAt = parseISO(this.story.createdAt);
-
+  public getStoryDateDistance(story: StoryDetail) {
+    const createdAt = parseISO(story.createdAt);
     const secondsDistance = Math.abs(
       differenceInSeconds(createdAt, new Date())
     );

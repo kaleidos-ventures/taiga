@@ -5,20 +5,23 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from decimal import Decimal
-from typing import Any, TypedDict
+from typing import Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
+from taiga.base.db.models import QuerySet
 from taiga.base.repositories import neighbors as neighbors_repositories
 from taiga.base.repositories.neighbors import Neighbor
 from taiga.stories.models import Story
 
 ##########################################################
-# filters and params
+# filters and querysets
 ##########################################################
 
+DEFAULT_QUERYSET = Story.objects.all()
 
-class StoriesFilters(TypedDict, total=False):
+
+class StoryListFilters(TypedDict, total=False):
     refs: list[int]
     workflow_slug: str
     project_slug: str
@@ -26,7 +29,10 @@ class StoriesFilters(TypedDict, total=False):
     status_id: UUID
 
 
-def _get_stories_filters(filters: StoriesFilters) -> dict[str, Any]:
+def _apply_filters_to_queryset_list(
+    qs: QuerySet[Story],
+    filters: StoryListFilters = {},
+) -> QuerySet[Story]:
     filter_data = dict(filters.copy())
 
     if "refs" in filters:
@@ -38,7 +44,8 @@ def _get_stories_filters(filters: StoriesFilters) -> dict[str, Any]:
     if "project_slug" in filters:
         filter_data["project__slug"] = filter_data.pop("project_slug")
 
-    return filter_data
+    qs = qs.filter(**filter_data)
+    return qs
 
 
 class StoryFilters(TypedDict, total=False):
@@ -47,14 +54,52 @@ class StoryFilters(TypedDict, total=False):
     project_id: UUID
 
 
-def _get_select_related(select_related: list[str]) -> list[str]:
-    select_related_data = select_related.copy()
+def _apply_filters_to_queryset(qs: QuerySet[Story], filters: StoryFilters = {}) -> QuerySet[Story]:
+    qs = qs.filter(**filters)
 
-    if "workspace" in select_related_data:
-        select_related_data.pop(select_related_data.index("workspace"))
-        select_related_data.append("project__workspace")
+    return qs
 
-    return select_related_data
+
+StorySelectRelated = list[
+    Literal[
+        "created_by",
+        "project",
+        "workflow",
+        "status",
+        "workspace",
+    ]
+]
+
+
+def _apply_select_related_to_queryset(
+    qs: QuerySet[Story],
+    select_related: StorySelectRelated,
+) -> QuerySet[Story]:
+    select_related_data = []
+
+    for key in select_related:
+        if key == "workspace":
+            select_related_data.append("project__workspace")
+        else:
+            select_related_data.append(key)
+
+    qs = qs.select_related(*select_related_data)
+    return qs
+
+
+StoryOrderBy = list[
+    Literal[
+        "order",
+        "-order",
+        "status",
+    ]
+]
+
+
+def _apply_order_by_to_queryset(qs: QuerySet[Story], order_by: StoryOrderBy) -> QuerySet[Story]:
+    qs = qs.order_by(*order_by)
+
+    return qs
 
 
 ##########################################################
@@ -87,10 +132,12 @@ def create_story(
 ##########################################################
 
 
-def get_story_sync(filters: StoryFilters = {}, select_related: list[str] = ["status"]) -> Story | None:
-    select_related_data = _get_select_related(select_related)
+def get_story_sync(filters: StoryFilters = {}, select_related: StorySelectRelated = ["status"]) -> Story | None:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
+
     try:
-        return Story.objects.select_related(*select_related_data).get(**filters)
+        return qs.get()
     except Story.DoesNotExist:
         return None
 
@@ -105,17 +152,15 @@ get_story = sync_to_async(get_story_sync)
 
 @sync_to_async
 def get_stories(
-    filters: StoriesFilters = {},
-    order_by: list[str] = ["order"],
+    filters: StoryListFilters = {},
+    order_by: StoryOrderBy = ["order"],
     offset: int | None = None,
     limit: int | None = None,
-    select_related: list[str] = ["status"],
+    select_related: StorySelectRelated = ["status"],
 ) -> list[Story]:
-
-    filter_data = _get_stories_filters(filters)
-    select_related_data = _get_select_related(select_related)
-
-    qs = Story.objects.select_related(*select_related_data).filter(**filter_data).order_by(*order_by)
+    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
+    qs = _apply_order_by_to_queryset(qs=qs, order_by=order_by)
 
     if limit is not None and offset is not None:
         limit += offset
@@ -129,8 +174,8 @@ def get_stories(
 
 
 @sync_to_async
-def bulk_update_stories(stories_to_update: list[Story], fields_to_update: list[str]) -> None:
-    Story.objects.bulk_update(stories_to_update, fields_to_update)
+def bulk_update_stories(objs_to_update: list[Story], fields_to_update: list[str]) -> None:
+    Story.objects.bulk_update(objs_to_update, fields_to_update)
 
 
 ##########################################################
@@ -139,27 +184,27 @@ def bulk_update_stories(stories_to_update: list[Story], fields_to_update: list[s
 
 
 @sync_to_async
-def get_total_stories(filters: StoriesFilters = {}) -> int:
-    filter_data = _get_stories_filters(filters)
-    qs = Story.objects.filter(**filter_data)
+def get_total_stories(filters: StoryListFilters = {}) -> int:
+    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+
     return qs.count()
 
 
 @sync_to_async
-def get_story_neighbors(story: Story, filters: StoriesFilters = {}) -> Neighbor[Story]:
-    filter_data = _get_stories_filters(filters)
-    story_qs = Story.objects.filter(**filter_data).order_by("status", "order")
-    return neighbors_repositories.get_neighbors_sync(obj=story, model_queryset=story_qs)
+def get_story_neighbors(story: Story, filters: StoryListFilters = {}) -> Neighbor[Story]:
+    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_order_by_to_queryset(qs=qs, order_by=["status", "order"])
+
+    return neighbors_repositories.get_neighbors_sync(obj=story, model_queryset=qs)
 
 
 @sync_to_async
-def get_stories_to_reorder(filters: StoriesFilters = {}) -> list[Story]:
+def get_stories_to_reorder(filters: StoryListFilters = {}) -> list[Story]:
     """
     This method is very similar to "get_stories" except this has to keep
     the order of the input references.
     """
-    filter_data = _get_stories_filters(filters)
-    qs = Story.objects.filter(**filter_data)
+    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
 
     refs = filters["refs"]
     result = [None] * len(refs)  # create an empty list the size of the references list

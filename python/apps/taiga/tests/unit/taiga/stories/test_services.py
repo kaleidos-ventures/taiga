@@ -234,7 +234,7 @@ async def test_reorder_stories_ok():
         )
 
         fake_stories_repo.bulk_update_stories.assert_awaited_once_with(
-            stories_to_update=[s1, s2, s3], fields_to_update=["status", "order"]
+            objs_to_update=[s1, s2, s3], fields_to_update=["status", "order"]
         )
         fake_stories_events.emit_when_stories_are_reordered.assert_awaited_once()
 

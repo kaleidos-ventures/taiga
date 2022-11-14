@@ -208,7 +208,7 @@ async def reorder_stories(
 
     # save stories
     await stories_repositories.bulk_update_stories(
-        stories_to_update=stories_to_update, fields_to_update=["status", "order"]
+        objs_to_update=stories_to_update, fields_to_update=["status", "order"]
     )
 
     # event

@@ -14,8 +14,9 @@ module.exports = {
   core: { ...rootMain.core, builder: 'webpack5' },
 
   stories: [
-    '../src/lib/**/*.stories.mdx',
-    '../src/lib/**/*.stories.@(js|jsx|ts|tsx)',
+    ...rootMain.stories,
+    '../**/*.stories.mdx',
+    '../**/*.stories.@(js|jsx|ts|tsx)',
   ],
   staticDirs: [{ from: '../../../apps/taiga/src/assets', to: '/assets' }],
   addons: [...rootMain.addons],

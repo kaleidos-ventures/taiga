@@ -15,6 +15,7 @@ tui-data-list {
   /* stylelint-disable-next-line selector-max-type */
   & button {
     border: solid 1px var(--color-white) !important;
+    inline-size: 100%;
     margin: 0 !important;
     min-block-size: var(--spacing-24) !important;
     padding: var(--spacing-8) !important;

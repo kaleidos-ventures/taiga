@@ -1,4 +1,5 @@
 {
+  "name": "taiga",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/taiga/src",
@@ -6,13 +7,9 @@
   "targets": {
     "build": {
       "executor": "@angular-builders/custom-webpack:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "allowedCommonJsDependencies": [
-          "angular2-text-mask"
-        ],
+        "allowedCommonJsDependencies": ["angular2-text-mask"],
         "customWebpackConfig": {
           "path": "./extra-webpack.config.ts",
           "mergeStrategies": {
@@ -101,15 +98,11 @@
           "apps/taiga/src/**/*.html"
         ]
       },
-      "outputs": [
-        "{options.outputFile}"
-      ]
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/taiga"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/taiga"],
       "options": {
         "jestConfig": "apps/taiga/jest.config.ts",
         "passWithNoTests": true
@@ -155,16 +148,12 @@
       "options": {
         "browserTarget": "taiga:build:production",
         "serverTarget": "taiga:server:production",
-        "routes": [
-          "/"
-        ]
+        "routes": ["/"]
       },
       "configurations": {
         "production": {}
       }
     }
   },
-  "tags": [
-    "scope:taiga"
-  ]
+  "tags": ["scope:taiga"]
 }

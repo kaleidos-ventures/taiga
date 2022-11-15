@@ -19,11 +19,12 @@ import { ModalWrapperComponent } from '../components/wrapper/modal-wrapper.compo
   providedIn: 'root',
 })
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export class ModalService extends AbstractTuiDialogService<any> {
+export class ModalService extends AbstractTuiDialogService<any, any> {
   private context!: TuiDialog<unknown, unknown>;
   public defaultOptions = {} as const;
 
-  public component = new PolymorpheusComponent(ModalWrapperComponent);
+  // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
+  readonly component = new PolymorpheusComponent(ModalWrapperComponent);
 
   public setContext(context: TuiDialog<unknown, unknown>) {
     this.context = context;

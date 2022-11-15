@@ -8,6 +8,7 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '../auth/guards/auth.guard';
 import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
 import { PreferencesComponent } from './components/preferences/preferences.component';
 import { FeatureUserSettingsComponent } from './feature-user-settings.component';
@@ -16,6 +17,7 @@ const routes: Routes = [
   {
     path: '',
     component: FeatureUserSettingsComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'profile',

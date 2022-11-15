@@ -5,149 +5,196 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
-from taiga.base.db.models import Q
-from taiga.base.utils.datetime import aware_utcnow
+from taiga.base.db.models import Q, QuerySet
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.projects.models import Project
-from taiga.projects.roles.models import ProjectRole
 from taiga.users.models import User
 
+##########################################################
+# filters and querysets
+##########################################################
+
+
+DEFAULT_QUERYSET = ProjectInvitation.objects.all()
+
+
+class ProjectInvitationListFilters(TypedDict, total=False):
+    project_slug: str
+    user: User
+    status: ProjectInvitationStatus
+    statuses: list[ProjectInvitationStatus]
+
+
+def _apply_filters_to_queryset_list(
+    qs: QuerySet[ProjectInvitation],
+    filters: ProjectInvitationListFilters = {},
+) -> QuerySet[ProjectInvitation]:
+    filter_data = dict(filters.copy())
+
+    if "project_slug" in filter_data:
+        filter_data["project__slug"] = filter_data.pop("project_slug")
+
+    if "statuses" in filter_data:
+        filter_data["status__in"] = filter_data.pop("statuses")
+
+    qs = qs.filter(**filter_data)
+    return qs
+
+
+class ProjectInvitationFilters(TypedDict, total=False):
+    id: UUID
+    username_or_email: str
+    statuses: list[str]
+    project: Project
+    project_slug: str
+
+
+def _apply_filters_to_queryset(
+    qs: QuerySet[ProjectInvitation],
+    filters: ProjectInvitationFilters = {},
+) -> QuerySet[ProjectInvitation]:
+    filter_data = dict(filters.copy())
+
+    if "username_or_email" in filter_data:
+        username_or_email = filter_data.pop("username_or_email")
+        by_user = Q(user__username__iexact=username_or_email) | Q(user__email__iexact=username_or_email)
+        by_email = Q(user__isnull=True, email__iexact=username_or_email)
+        qs = qs.filter(by_user | by_email)
+
+    if "project_slug" in filter_data:
+        filter_data["project__slug"] = filter_data.pop("project_slug")
+
+    if "statuses" in filter_data:
+        filter_data["status__in"] = filter_data.pop("statuses")
+
+    qs = qs.filter(**filter_data)
+    return qs
+
+
+ProjectInvitationSelectRelated = list[
+    Literal[
+        "user",
+        "project",
+        "role",
+        "workspace",
+    ]
+]
+
+
+def _apply_select_related_to_queryset(
+    qs: QuerySet[ProjectInvitation],
+    select_related: ProjectInvitationSelectRelated,
+) -> QuerySet[ProjectInvitation]:
+    select_related_data = []
+
+    for key in select_related:
+        if key == "workspace":
+            select_related_data.append("project__workspace")
+        else:
+            select_related_data.append(key)
+
+    qs = qs.select_related(*select_related_data)
+    return qs
+
+
+ProjectInvitationOrderBy = list[
+    Literal[
+        "full_name",
+        "email",
+    ]
+]
+
+
+def _apply_order_by_to_queryset(
+    qs: QuerySet[ProjectInvitation],
+    order_by: ProjectInvitationOrderBy,
+) -> QuerySet[ProjectInvitation]:
+    order_by_data = []
+
+    for key in order_by:
+        if key == "full_name":
+            order_by_data.append("user__full_name")
+        else:
+            order_by_data.append(key)
+
+    qs = qs.order_by(*order_by_data)
+    return qs
+
+
+##########################################################
+# create project invitation
+##########################################################
+
 
 @sync_to_async
-def get_project_invitation(id: str | UUID) -> ProjectInvitation | None:
-    try:
-        return ProjectInvitation.objects.select_related("user", "project", "project__workspace", "role").get(id=id)
-    except ProjectInvitation.DoesNotExist:
-        return None
+def create_project_invitations(
+    objs: list[ProjectInvitation],
+    select_related: ProjectInvitationSelectRelated = ["user", "project", "role"],
+) -> list[ProjectInvitation]:
+    qs = _apply_select_related_to_queryset(qs=DEFAULT_QUERYSET, select_related=select_related)
+    return qs.bulk_create(objs=objs)
+
+
+##########################################################
+# get project invitation
+##########################################################
 
 
 @sync_to_async
-def get_project_invitation_by_username_or_email(
-    project_slug: str, username_or_email: str, statuses: list[ProjectInvitationStatus] = []
+def get_project_invitation(
+    filters: ProjectInvitationFilters,
+    select_related: ProjectInvitationSelectRelated = ["user", "project", "role"],
 ) -> ProjectInvitation | None:
-    by_user = Q(user__username__iexact=username_or_email) | Q(user__email__iexact=username_or_email)
-    by_email = Q(user__isnull=True, email__iexact=username_or_email)
-    by_project = Q(project__slug=project_slug)
-    qs_filter = by_project & (by_user | by_email)
-    if statuses:
-        qs_filter = Q(status__in=statuses) & qs_filter
-
+    qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
+    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
     try:
-        return ProjectInvitation.objects.select_related(
-            "user", "project", "project__workspace", "role", "invited_by"
-        ).get(qs_filter)
+        return qs.get()
     except ProjectInvitation.DoesNotExist:
         return None
 
 
-@sync_to_async
-def get_project_invitation_by_id(project_slug: str, id: UUID) -> ProjectInvitation | None:
-    try:
-        return ProjectInvitation.objects.select_related(
-            "user", "project", "project__workspace", "role", "invited_by"
-        ).get(id=id, project__slug=project_slug)
-    except ProjectInvitation.DoesNotExist:
-        return None
+##########################################################
+# get project invitations
+##########################################################
 
 
 @sync_to_async
 def get_project_invitations(
-    project_slug: str,
-    offset: int = 0,
-    limit: int = 0,
-    user: User | None = None,
-    status: ProjectInvitationStatus | None = None,
+    filters: ProjectInvitationListFilters = {},
+    offset: int | None = None,
+    limit: int | None = None,
+    select_related: ProjectInvitationSelectRelated = ["project", "user", "role"],
+    order_by: ProjectInvitationOrderBy = ["full_name", "email"],
 ) -> list[ProjectInvitation]:
-    project_invitees_qs = (
-        ProjectInvitation.objects.select_related("user", "role").filter(project__slug=project_slug)
-        # pending invitations for NULL users will be listed after invitations for existing users (with a fullname)
-        .order_by("user__full_name", "email")
-    )
+    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
+    qs = _apply_order_by_to_queryset(order_by=order_by, qs=qs)
 
-    if status:
-        project_invitees_qs &= project_invitees_qs.filter(status=status)
+    if limit is not None and offset is not None:
+        limit += offset
 
-    if user:
-        same_user_id = Q(user_id=user.id)
-        same_user_email = Q(user__isnull=True, email__iexact=user.email)
-        # the invitation may be outdated, and the initially unregistered user may have (by other means) become a user
-        project_invitees_qs &= project_invitees_qs.filter(same_user_id | same_user_email)
+    return list(qs[offset:limit])
 
-    if limit:
-        project_invitees_qs = project_invitees_qs[offset : offset + limit]
 
-    return list(project_invitees_qs)
+##########################################################
+# update invitations
+##########################################################
 
 
 @sync_to_async
-def get_total_project_invitations(project_slug: str, status: ProjectInvitationStatus | None = None) -> int:
-    project_invitees_qs = ProjectInvitation.objects.filter(project__slug=project_slug)
-
-    if status:
-        project_invitees_qs &= project_invitees_qs.filter(status=status)
-
-    return project_invitees_qs.count()
-
-
-@sync_to_async
-def get_project_invitation_by_user(project_slug: str, user: User) -> ProjectInvitation | None:
-    is_pending = Q(status=ProjectInvitationStatus.PENDING)
-    same_project = Q(project__slug=project_slug)
-    same_user_id = Q(user_id=user.id)
-    same_user_email = Q(user__isnull=True) & Q(email__iexact=user.email)
-
-    # the invitation may be outdated, and the initially unregistered user may have (by other means) become a user
-    try:
-        return ProjectInvitation.objects.select_related("user", "role", "project").get(
-            is_pending, same_project, same_user_id | same_user_email
-        )
-    except ProjectInvitation.DoesNotExist:
-        return None
-
-
-@sync_to_async
-def get_user_projects_invitations(user: User, status: ProjectInvitationStatus | None = None) -> list[ProjectInvitation]:
-    """
-    All project invitations of a given user, in an optional given status
-    """
-    qs = ProjectInvitation.objects.select_related("user", "project", "project__workspace").filter(user=user)
-    if status:
-        qs &= qs.filter(status=status)
-
-    return list(qs)
-
-
-@sync_to_async
-def accept_project_invitation(invitation: ProjectInvitation) -> ProjectInvitation:
-    invitation.status = ProjectInvitationStatus.ACCEPTED
+def update_project_invitation(invitation: ProjectInvitation) -> ProjectInvitation:
     invitation.save()
     return invitation
 
 
 @sync_to_async
-def create_project_invitations(objs: list[ProjectInvitation]) -> list[ProjectInvitation]:
-    return ProjectInvitation.objects.select_related("user", "project", "project__workspace").bulk_create(objs=objs)
-
-
-@sync_to_async
-def update_project_invitations(objs: list[ProjectInvitation]) -> int:
-    return ProjectInvitation.objects.select_related("user", "project", "project__workspace").bulk_update(
-        objs=objs, fields=["role", "invited_by", "num_emails_sent", "resent_at", "resent_by", "status"]
-    )
-
-
-@sync_to_async
-def has_pending_project_invitation_for_user(user: User, project: Project) -> bool:
-    return (
-        ProjectInvitation.objects.filter(project_id=project.id)
-        .filter(status=ProjectInvitationStatus.PENDING)
-        .filter(Q(user_id=user.id) | Q(user__isnull=True, email__iexact=user.email))
-        .exists()
-    )
+def bulk_update_project_invitations(objs_to_update: list[ProjectInvitation], fields_to_update: list[str]) -> None:
+    ProjectInvitation.objects.bulk_update(objs_to_update, fields_to_update)
 
 
 @sync_to_async
@@ -155,27 +202,14 @@ def update_user_projects_invitations(user: User) -> None:
     ProjectInvitation.objects.filter(email=user.email).update(user=user)
 
 
-@sync_to_async
-def resend_project_invitation(invitation: ProjectInvitation, resent_by: User) -> ProjectInvitation:
-    invitation.num_emails_sent += 1
-    invitation.resent_at = aware_utcnow()
-    invitation.resent_by = resent_by
-    invitation.save()
-    return invitation
+##########################################################
+# misc
+##########################################################
 
 
 @sync_to_async
-def revoke_project_invitation(invitation: ProjectInvitation, revoked_by: User) -> ProjectInvitation:
-    invitation.status = ProjectInvitationStatus.REVOKED
-    invitation.revoked_at = aware_utcnow()
-    invitation.revoked_by = revoked_by
-    invitation.save()
-    return invitation
-
-
-@sync_to_async
-def update_project_invitation(invitation: ProjectInvitation, role: ProjectRole) -> ProjectInvitation:
-    invitation.role = role
-    invitation.save()
-
-    return invitation
+def get_total_project_invitations(
+    filters: ProjectInvitationListFilters = {},
+) -> int:
+    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    return qs.count()

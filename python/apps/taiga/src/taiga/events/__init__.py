@@ -6,5 +6,5 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.events.app import app, connect_events_manager, disconnect_events_manager  # noqa
-from taiga.events.app import manager as events_manager  # noqa
 from taiga.events.events import Event  # noqa
+from taiga.events.manager import manager as events_manager  # noqa

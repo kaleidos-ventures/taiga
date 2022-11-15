@@ -140,9 +140,7 @@ async def test_get_project_detail():
 
     with (
         patch("taiga.projects.projects.services.permissions_services", autospec=True) as fake_permissions_services,
-        patch(
-            "taiga.projects.projects.services.pj_invitations_repositories", autospec=True
-        ) as fake_pj_invitation_repositories,
+        patch("taiga.projects.projects.services.pj_invitations_services", autospec=True) as fake_pj_invitation_services,
         patch(
             "taiga.projects.projects.services.pj_memberships_repositories", autospec=True
         ) as fake_pj_memberships_repositories,
@@ -160,7 +158,7 @@ async def test_get_project_detail():
         fake_permissions_services.get_user_workspace_role_info.assert_awaited_once()
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once()
         fake_workspaces_repositories.get_workspace_summary.assert_awaited_once()
-        fake_pj_invitation_repositories.has_pending_project_invitation_for_user.assert_awaited_once()
+        fake_pj_invitation_services.has_pending_project_invitation_for_user.assert_awaited_once()
         fake_pj_memberships_repositories.user_is_project_member.assert_awaited_once()
 
 
@@ -174,7 +172,7 @@ async def test_get_project_detail_anonymous():
     with (
         patch("taiga.projects.projects.services.permissions_services", autospec=True) as fake_permissions_services,
         patch(
-            "taiga.projects.projects.services.pj_invitations_repositories", autospec=True
+            "taiga.projects.projects.services.pj_invitations_services", autospec=True
         ) as fake_pj_invitation_repositories,
         patch(
             "taiga.projects.projects.services.pj_memberships_repositories", autospec=True

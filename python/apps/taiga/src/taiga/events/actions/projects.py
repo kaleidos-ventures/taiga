@@ -13,7 +13,6 @@ from taiga.events.responses import ActionResponse
 from taiga.exceptions.api import ForbiddenError
 from taiga.permissions import CanViewProject
 from taiga.projects.invitations.permissions import HasPendingProjectInvitation
-from taiga.projects.projects import services as projects_services
 
 from .base import Action
 
@@ -32,6 +31,8 @@ class SubscribeToProjectEventsAction(Action, type="subscribe_to_project_events")
     project: str
 
     async def run(self, subscriber: "Subscriber") -> None:
+        from taiga.projects.projects import services as projects_services
+
         project = await projects_services.get_project(slug=self.project)
 
         if project:

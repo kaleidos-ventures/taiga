@@ -5,9 +5,15 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from enum import Enum
 from typing import Final
 
 from taiga.base.utils.enum import OrderedEnum
+
+
+class TextDirection(Enum):
+    RTL = "rtl"
+    LTR = "ltr"
 
 
 class ScriptType(OrderedEnum):
@@ -18,10 +24,6 @@ class ScriptType(OrderedEnum):
     ARABIC = "arabic"
     CHINESE_AND_DEVS = "chinese_and_devs"
     OTHER = "other"
-
-
-# NOTE: Available locale identifier (using "_" instead of "-" as separator)
-# https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/availableLocales.json
 
 
 LATIN_LANGS: Final[list[str]] = [

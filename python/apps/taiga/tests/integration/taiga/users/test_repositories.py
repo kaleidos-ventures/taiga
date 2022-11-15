@@ -82,7 +82,7 @@ async def test_create_user_success():
     username = "userNAME"
     full_name = "Full Name"
     password = "password"
-    lang = "es_ES"
+    lang = "es-ES"
     user = await users_repositories.create_user(
         email=email, username=username, full_name=full_name, password=password, lang=lang
     )
@@ -98,7 +98,7 @@ async def test_create_user_error_email_or_username_case_insensitive():
     username = "userNAME"
     full_name = "Full Name"
     password = "password"
-    lang = "es_ES"
+    lang = "es-ES"
 
     email2 = "OTHER_EMAIL@email.com"
     username2 = "other_userNAME"

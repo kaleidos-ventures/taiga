@@ -41,7 +41,7 @@ async def test_gitlab_login(client, httpx_mock):
         },
     )
 
-    data = {"code": "code", "redirect_uri": "https://redirect.uri", "lang": "es_ES"}
+    data = {"code": "code", "redirect_uri": "https://redirect.uri", "lang": "es-ES"}
     response = client.post("/auth/gitlab", json=data)
 
     assert response.status_code == status.HTTP_200_OK, response.text

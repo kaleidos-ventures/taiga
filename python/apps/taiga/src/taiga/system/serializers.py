@@ -5,9 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Literal
-
-from taiga.base.i18n.choices import ScriptType
+from taiga.base.i18n.choices import ScriptType, TextDirection
 from taiga.base.serializers import BaseModel
 
 
@@ -16,5 +14,5 @@ class LanguageSerializer(BaseModel):
     name: str
     english_name: str
     script_type: ScriptType
-    text_direction: Literal["ltr"] | Literal["rtl"]
+    text_direction: TextDirection
     is_default: bool

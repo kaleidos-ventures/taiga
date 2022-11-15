@@ -10,7 +10,7 @@ from taiga.base.utils.datetime import display_lifetime
 
 
 def test_display_lifetime():
-    with i18n.use("en_US"):
+    with i18n.use("en-US"):
         minutes = 3 * 24 * 60  # 3 days
         assert display_lifetime(minutes) == "3 days"
 

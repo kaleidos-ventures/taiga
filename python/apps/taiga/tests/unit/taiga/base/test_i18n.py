@@ -19,7 +19,7 @@ def test_i18n_is_created_with_the_falback_lang():
 
 
 def test_i18n_is_initialized_with_the_config_lang(override_settings, initialize_template_env):
-    settings_lang = "es_ES"
+    settings_lang = "es-ES"
     with (override_settings({"LANG": settings_lang}), initialize_template_env()):
         i18n = I18N()
 
@@ -32,21 +32,21 @@ def test_i18n_is_initialized_with_the_config_lang(override_settings, initialize_
         i18n.initialize()
 
         init_trans = i18n.translations
-        assert init_trans.info()["language"] == settings_lang
+        assert init_trans.info()["language"] == settings_lang.replace("-", "_")
         assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
         assert templating.env.globals["gettext"] == init_trans.gettext
         assert len(i18n._translations_cache) == 2  # fallback != settings lang
 
 
 def test_i18n_set_lang(override_settings, initialize_template_env):
-    settings_lang = "en_US"
-    lang = "es_ES"
+    settings_lang = "en-US"
+    lang = "es-ES"
     with (override_settings({"LANG": settings_lang}), initialize_template_env()):
         i18n = I18N()
         i18n.initialize()
 
         init_trans = i18n.translations
-        assert init_trans.info()["language"] == settings_lang
+        assert init_trans.info()["language"] == settings_lang.replace("-", "_")
         assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
         assert templating.env.globals["gettext"] == init_trans.gettext
         assert len(i18n._translations_cache) == 1  # fallback == settings lang
@@ -54,37 +54,14 @@ def test_i18n_set_lang(override_settings, initialize_template_env):
         i18n.set_lang(lang)
 
         new_trans = i18n.translations
-        assert new_trans.info()["language"] == lang
-        assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
-        assert templating.env.globals["gettext"] == new_trans.gettext
-        assert len(i18n._translations_cache) == 2
-
-
-def test_i18n_set_lang_with_hyphen(override_settings, initialize_template_env):
-    settings_lang = "en_US"
-    lang = "es_ES"
-    lang_with_hyphen = "es-ES"
-    with (override_settings({"LANG": settings_lang}), initialize_template_env()):
-        i18n = I18N()
-        i18n.initialize()
-
-        init_trans = i18n.translations
-        assert init_trans.info()["language"] == settings_lang
-        assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
-        assert templating.env.globals["gettext"] == init_trans.gettext
-        assert len(i18n._translations_cache) == 1  # fallback == settings lang
-
-        i18n.set_lang(lang_with_hyphen)
-
-        new_trans = i18n.translations
-        assert new_trans.info()["language"] == lang
+        assert new_trans.info()["language"] == lang.replace("-", "_")
         assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
         assert templating.env.globals["gettext"] == new_trans.gettext
         assert len(i18n._translations_cache) == 2
 
 
 def test_i18n_set_lang_with_invalid_identifier(override_settings, initialize_template_env):
-    settings_lang = "en_US"
+    settings_lang = "en-US"
     invalid_lang = "invalid"
 
     with (override_settings({"LANG": settings_lang}), initialize_template_env()):
@@ -92,7 +69,7 @@ def test_i18n_set_lang_with_invalid_identifier(override_settings, initialize_tem
         i18n.initialize()
 
         init_trans = i18n.translations
-        assert init_trans.info()["language"] == settings_lang
+        assert init_trans.info()["language"] == settings_lang.replace("-", "_")
         assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
         assert templating.env.globals["gettext"] == init_trans.gettext
         assert len(i18n._translations_cache) == 1  # fallback == settings lang
@@ -101,51 +78,53 @@ def test_i18n_set_lang_with_invalid_identifier(override_settings, initialize_tem
             i18n.set_lang(invalid_lang)
 
         new_trans = i18n.translations
-        assert new_trans.info()["language"] == settings_lang
+        assert new_trans.info()["language"] == settings_lang.replace("-", "_")
         assert "jinja2.ext.InternationalizationExtension" in templating.env.extensions
         assert templating.env.globals["gettext"] == new_trans.gettext
         assert len(i18n._translations_cache) == 1
 
 
 def test_i18n_reset_lang(override_settings):
-    settings_lang = "es_ES"
-    lang = "en_US"
+    settings_lang = "es-ES"
+    lang = "en-US"
     with override_settings({"LANG": settings_lang}):
         i18n = I18N()
         i18n.initialize()
         i18n.set_lang(lang)
 
-        assert i18n.translations.info()["language"] == lang
+        assert i18n.translations.info()["language"] == lang.replace("-", "_")
 
         i18n.reset_lang()
 
-        assert i18n.translations.info()["language"] == settings_lang
+        assert i18n.translations.info()["language"] == settings_lang.replace("-", "_")
 
 
 def test_i18n_use_contextmanager(override_settings):
-    settings_lang = "es_ES"
-    lang = "en_US"
+    settings_lang = "es-ES"
+    lang = "en-US"
     with override_settings({"LANG": settings_lang}):
         i18n = I18N()
         i18n.initialize()
 
-        assert i18n.translations.info()["language"] == settings_lang
+        assert i18n.translations.info()["language"] == settings_lang.replace("-", "_")
 
         with i18n.use(lang):
-            assert i18n.translations.info()["language"] == lang
+            assert i18n.translations.info()["language"] == lang.replace("-", "_")
 
-        assert i18n.translations.info()["language"] == settings_lang
+        assert i18n.translations.info()["language"] == settings_lang.replace("-", "_")
 
 
-def test_i18n_if_is_language_available():
-    lang_with_low_line = "en_US"
-    lang_with_hyphen = "en-US"
-    invalid_lang = "invalid_lang"
+@pytest.mark.parametrize(
+    "lang, result",
+    [
+        ("en_US", False),
+        ("en-US", True),
+        ("invalid_lang", False),
+    ],
+)
+def test_i18n_if_is_language_available(lang, result):
     i18n = I18N()
-
-    assert i18n.is_language_available(lang_with_low_line)
-    assert i18n.is_language_available(lang_with_hyphen)
-    assert not i18n.is_language_available(invalid_lang)
+    assert i18n.is_language_available(lang) == result
 
 
 def test_i19n_get_available_languages_info_return_sorted_list():
@@ -153,19 +132,19 @@ def test_i19n_get_available_languages_info_return_sorted_list():
         "ar",
         "bg",
         "ca",
-        "en_us",
-        "es_es",
+        "en-US",
+        "es-ES",
         "eu",
         "fa",
         "he",
         "ja",
         "ko",
         "pt",
-        "pt_br",
+        "pt-BR",
         "ru",
         "uk",
-        "zh_hans",
-        "zh_hant",
+        "zh-Hans",
+        "zh-Hant",
     ]
     sorted_codes = [
         "ca",
@@ -186,7 +165,7 @@ def test_i19n_get_available_languages_info_return_sorted_list():
         "ko",
     ]
     with patch("taiga.base.i18n.I18N.locales", new_callable=PropertyMock) as locales_mock:
-        locales_mock.return_value = [Locale.parse(cod) for cod in codes]
+        locales_mock.return_value = [Locale.parse(cod, sep="-") for cod in codes]
 
         i18n = I18N()
         assert sorted_codes == [lang.code for lang in i18n.available_languages_info]

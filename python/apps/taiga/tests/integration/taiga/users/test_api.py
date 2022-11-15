@@ -46,7 +46,7 @@ async def test_my_user_success(client):
 async def test_update_my_user_error_no_authenticated_user(client):
     data = {
         "fullName": "Ada Lovelace",
-        "lang": "es_ES",
+        "lang": "es-ES",
     }
     response = client.put("/my/user", json=data)
 
@@ -54,17 +54,16 @@ async def test_update_my_user_error_no_authenticated_user(client):
 
 
 async def test_update_my_user_success(client):
-    user = await f.create_user(lang="en_US")
+    user = await f.create_user()
     data = {
         "fullName": "Ada Lovelace",
-        "lang": "es_ES",
+        "lang": "es-ES",
     }
 
     client.login(user)
     response = client.put("/my/user", json=data)
 
     assert response.status_code == status.HTTP_200_OK, response.text
-    assert response.json()["lang"] == "es_ES"
 
 
 ##########################################################
@@ -80,7 +79,7 @@ async def test_create_user_ok(client):
         "acceptTerms": True,
         "projectInvitationToken": "eyJ0eXAiOToken",
         "accept_project_invitation": False,
-        "lang": "es_ES",
+        "lang": "es-ES",
     }
 
     response = client.post("/users", json=data)

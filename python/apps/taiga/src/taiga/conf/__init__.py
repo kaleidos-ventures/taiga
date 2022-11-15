@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     MEDIA_ROOT: Path = _BASE_DIR.parent.joinpath("media/")
 
     # I18N
-    LANG: str = "en_US"
+    LANG: str = "en-US"
 
     # Pagination
     DEFAULT_PAGE_SIZE: int = 10

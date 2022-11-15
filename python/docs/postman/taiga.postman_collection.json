@@ -245,7 +245,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"fullName\": \"Amy Tyler\",\n  \"lang\": \"es_ES\"\n}",
+							"raw": "{\n  \"fullName\": \"Amy Tyler\",\n  \"lang\": \"es-ES\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -344,7 +344,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"acceptTerms\": true,\n  \"fullName\": \"Ada Lovelace\",\n  \"email\": \"ada.lovelace@email.com\",\n  \"password\": \"adaLov3%\",\n  \"lang\": \"es_ES\"\n}",
+							"raw": "{\n  \"acceptTerms\": true,\n  \"fullName\": \"Ada Lovelace\",\n  \"email\": \"ada.lovelace@email.com\",\n  \"password\": \"adaLov3%\",\n  \"lang\": \"es-ES\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

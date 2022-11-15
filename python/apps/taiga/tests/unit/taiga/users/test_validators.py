@@ -10,6 +10,10 @@ from pydantic import ValidationError
 from taiga.users.validators import CreateUserValidator, UpdateUserValidator
 from tests.unit.utils import check_validation_errors
 
+###############################################
+# CreateUserValidator
+###############################################
+
 
 def test_validate_create_user_ok_all_fields():
     email = "user@email.com"
@@ -18,7 +22,7 @@ def test_validate_create_user_ok_all_fields():
     terms = True
     project_inv_token = "eyJ0zB26LvR9jQw7"
     accept_project_invitation = False
-    lang = "es_ES"
+    lang = "es-ES"
 
     validator = CreateUserValidator(
         email=email,
@@ -84,16 +88,17 @@ def test_validate_create_user_invalid_email(email):
 
 
 @pytest.mark.parametrize(
-    "password",
+    "password, error",
     [
-        "UPPERAndLower",
-        "UPPERANDNUMBER0",
-        "lowerandnumber0",
-        "&/()@+01234",
-        "symbol+andlower",
+        ("UPPERAndLower", "Invalid password"),
+        ("UPPERANDNUMBER0", "Invalid password"),
+        ("lowerandnumber0", "Invalid password"),
+        ("&/()@+01234", "Invalid password"),
+        ("symbol+andlower", "Invalid password"),
+        ("SHORT", "ensure this value has at least 8 characters"),
     ],
 )
-def test_validate_create_user_invalid_password(password):
+def test_validate_create_user_invalid_password(password, error):
     email = "user@email.com"
     full_name = "User fullname"
     terms = True
@@ -101,28 +106,17 @@ def test_validate_create_user_invalid_password(password):
     with pytest.raises(ValidationError) as validation_errors:
         CreateUserValidator(email=email, full_name=full_name, password=password, accept_terms=terms)
 
-    expected_error_fields = ["password"]
-    expected_error_messages = ["Invalid password"]
-    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
+    check_validation_errors(validation_errors, ["password"], [error])
 
 
-def test_validate_create_user_invalid_short_password():
-    password = "SHORT"
-    email = "user@email.com"
-    full_name = "User fullname"
-    terms = True
-
-    with pytest.raises(ValidationError) as validation_errors:
-        CreateUserValidator(email=email, full_name=full_name, password=password, accept_terms=terms)
-
-    expected_error_fields = ["password"]
-    expected_error_messages = ["ensure this value has at least 8 characters"]
-    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
+###############################################
+# UpdateUserValidator
+###############################################
 
 
 def test_validate_update_user_ok_all_fields():
     full_name = "User fullname"
-    lang = "es_ES"
+    lang = "es-ES"
 
     validator = UpdateUserValidator(
         full_name=full_name,
@@ -131,3 +125,29 @@ def test_validate_update_user_ok_all_fields():
 
     assert validator.full_name == full_name
     assert validator.lang == lang
+
+
+def test_validate_update_user_wrong_not_all_required_fields():
+    with pytest.raises(ValidationError) as validation_errors:
+        UpdateUserValidator()
+
+    expected_error_fields = ["fullName", "lang"]
+    expected_error_messages = ["field required"]
+    check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
+
+
+@pytest.mark.parametrize(
+    "lang",
+    [
+        "invalid",
+        "es_ES",
+    ],
+)
+def test_validate_update_user_invalid_language(lang):
+    with pytest.raises(ValidationError) as validation_errors:
+        UpdateUserValidator(
+            full_name="new full name",
+            lang=lang,
+        )
+
+    check_validation_errors(validation_errors, ["lang"], ["Language is not available"])

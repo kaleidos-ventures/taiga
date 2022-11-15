@@ -26,7 +26,7 @@ async def test_create_user_ok(tqmanager):
     username = "email"
     full_name = "Full Name"
     password = "CorrectP4ssword$"
-    lang = "es_ES"
+    lang = "es-ES"
     user = f.build_user(id=1, email=email, username=username, full_name=full_name, lang=lang)
 
     accept_project_invitation = True
@@ -58,7 +58,7 @@ async def test_create_user_ok(tqmanager):
         assert job["args"] == {
             "email_name": "sign_up",
             "to": "email@email.com",
-            "lang": "es_ES",
+            "lang": "es-ES",
             "context": {"verification_token": "verify_token"},
         }
 
@@ -131,7 +131,7 @@ async def test_create_user_unverified(tqmanager):
         assert job["args"] == {
             "email_name": "sign_up",
             "to": "email@email.com",
-            "lang": "es_ES",
+            "lang": "en-US",
             "context": {"verification_token": "verify_token"},
         }
 
@@ -151,9 +151,9 @@ async def test_create_user_email_exists():
 
 
 async def test_update_user_ok(tqmanager):
-    user = f.build_user(id=1, full_name="Full Name", lang="es_ES")
+    user = f.build_user(id=1, full_name="Full Name", lang="es-ES")
     new_full_name = "New Full Name"
-    new_lang = "en_US"
+    new_lang = "en-US"
 
     with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
         await services.update_user(
@@ -521,7 +521,7 @@ async def test_reset_password_send_reset_password_email_ok(tqmanager):
         assert job["args"] == {
             "email_name": "reset_password",
             "to": user.email,
-            "lang": "es_ES",
+            "lang": "en-US",
             "context": {"reset_password_token": "reset_token"},
         }
 

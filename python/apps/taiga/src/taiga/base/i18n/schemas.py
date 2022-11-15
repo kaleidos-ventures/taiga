@@ -6,9 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from dataclasses import dataclass
-from typing import Literal
 
-from taiga.base.i18n.choices import ScriptType
+from taiga.base.i18n.choices import ScriptType, TextDirection
 
 
 @dataclass
@@ -16,6 +15,6 @@ class LanguageSchema:
     code: str
     name: str
     english_name: str
-    text_direction: Literal["ltr"] | Literal["rtl"]
+    text_direction: TextDirection
     is_default: bool
     script_type: ScriptType

@@ -430,7 +430,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"fullName\": \"Norma Fisher\",\n  \"lang\": \"es_ES\"\n}",
+							"raw": "{\n  \"fullName\": \"Norma Fisher\",\n  \"lang\": \"es-ES\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -497,7 +497,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"ada.lovelace{{$randomInt}}@email.com\",\n  \"fullName\": \"Ada Lovelace\",\n  \"password\": \"CorrectP4ssword%\",\n  \"acceptTerms\": true,\n  \"lang\": \"es_ES\"\n}",
+							"raw": "{\n  \"email\": \"ada.lovelace{{$randomInt}}@email.com\",\n  \"fullName\": \"Ada Lovelace\",\n  \"password\": \"CorrectP4ssword%\",\n  \"acceptTerms\": true,\n  \"lang\": \"es-ES\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

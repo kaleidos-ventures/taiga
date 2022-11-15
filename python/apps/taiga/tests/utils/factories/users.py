@@ -16,7 +16,6 @@ class UserFactory(Factory):
     full_name = factory.Sequence(lambda n: f"Test User {n}")
     password = factory.django.Password("123123")
     is_active = True
-    lang = "es_ES"
 
     class Meta:
         model = "users.User"

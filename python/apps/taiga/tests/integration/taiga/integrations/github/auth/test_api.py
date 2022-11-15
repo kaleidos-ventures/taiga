@@ -48,7 +48,7 @@ async def test_github_login(client, httpx_mock):
         },
     )
 
-    data = {"code": "code", "lang": "es_ES"}
+    data = {"code": "code", "lang": "es-ES"}
     response = client.post("/auth/github", json=data)
 
     assert response.status_code == status.HTTP_200_OK, response.text

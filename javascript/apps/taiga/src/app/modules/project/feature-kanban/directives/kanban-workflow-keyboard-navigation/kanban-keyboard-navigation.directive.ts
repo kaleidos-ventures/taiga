@@ -24,7 +24,10 @@ import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/comp
 import { KanbanWorkflowComponent } from '~/app/modules/project/feature-kanban/components/workflow/kanban-workflow.component';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
-import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import {
+  selectActiveA11yDragDropStory,
+  selectStories,
+} from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import {
   KanbanStory,
   KanbanStoryA11y,
@@ -105,12 +108,14 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
     private store: Store,
     private state: RxState<{
       KanbanStoryA11y: KanbanStoryA11y;
+      Stories: Record<Status['slug'], KanbanStory[]>;
     }>
   ) {
     this.state.connect(
       'KanbanStoryA11y',
       this.store.select(selectActiveA11yDragDropStory)
     );
+    this.state.connect('Stories', this.store.select(selectStories));
   }
 
   private storyNavigationVerticalA11y(
@@ -147,14 +152,11 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
         name: status.statusName,
       };
 
-      const statusStories =
-        status.nativeElement.querySelectorAll<HTMLElement>('tg-kanban-story');
-
       const newPositionTranslation = this.translocoService.translate(
         'kanban.position_live_announce',
         {
           storyIndex: newIndex + 1,
-          totalStories: statusStories.length,
+          totalStories: Object.keys(this.state.get('Stories')[statusData.slug]).length,
         }
       );
 
@@ -330,7 +332,8 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
         'kanban.position_live_announce',
         {
           storyIndex: storyIndex + 1,
-          totalStories: nextStatusStories.length + 1,
+          totalStories:
+            Object.keys(this.state.get('Stories')[statusData.slug]).length,
         }
       );
 

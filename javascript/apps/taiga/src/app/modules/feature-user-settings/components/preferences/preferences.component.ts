@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -26,7 +26,7 @@ import { UtilsService } from '~/app/shared/utils/utils-service.service';
   providers: [RxState],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PreferencesComponent {
+export class PreferencesComponent implements OnInit {
   public readonly model$ = this.state.select();
   public language = new FormControl('');
 
@@ -38,7 +38,9 @@ export class PreferencesComponent {
       languages: Language[][];
       currentLang: Language;
     }>
-  ) {
+  ) {}
+
+  public ngOnInit() {
     this.store.dispatch(userSettingsActions.initPreferences());
 
     const currentLang$ = this.store.select(selectUser).pipe(
@@ -46,15 +48,21 @@ export class PreferencesComponent {
       map((user) => user.lang)
     );
 
+    const userNavLang = this.utilsService.navigatorLanguage();
+
     this.state.connect(
       'languages',
       combineLatest([this.store.select(selectLanguages), currentLang$]).pipe(
         map(([languages, lang]) => {
           const current = languages.find((it) => it.code === lang);
           const defaultLang = languages.find((it) => it.isDefault);
-          const userLang = languages.find(
-            (it) => it.code === this.utilsService.navigatorLanguage()
-          );
+          let userLang = languages.find((it) => it.code === userNavLang);
+
+          if (!userLang) {
+            userLang = languages.find((it) =>
+              it.code.startsWith(userNavLang.slice(0, 2))
+            );
+          }
 
           const initialLangs: Language[] = [];
 

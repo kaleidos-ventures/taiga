@@ -47,6 +47,9 @@ describe('PreferencesComponent', () => {
       detectChanges: false,
     });
 
+    const utilsService = spectator.inject(UtilsService);
+    utilsService.navigatorLanguage.mockReturnValue('en-US');
+
     store = spectator.inject(MockStore);
   });
 
@@ -58,6 +61,9 @@ describe('PreferencesComponent', () => {
 
     store.overrideSelector(selectUser, user);
     store.overrideSelector(selectLanguages, languagesList);
+
+    const utilsService = spectator.inject(UtilsService);
+    utilsService.navigatorLanguage.mockReturnValue('en-US');
 
     store.refreshState();
     spectator.detectChanges();
@@ -78,6 +84,9 @@ describe('PreferencesComponent', () => {
 
     store.overrideSelector(selectUser, user);
     store.overrideSelector(selectLanguages, languagesList);
+
+    const utilsService = spectator.inject(UtilsService);
+    utilsService.navigatorLanguage.mockReturnValue('en-US');
 
     store.refreshState();
     spectator.detectChanges();
@@ -174,6 +183,31 @@ describe('PreferencesComponent', () => {
       });
     });
 
+    it('user language en-US, browser en', (done) => {
+      const user = UserMockFactory();
+      const languagesList = LanguageListMockFactory();
+
+      user.lang = 'en-US';
+
+      const utilsService = spectator.inject(UtilsService);
+
+      utilsService.navigatorLanguage.mockReturnValue('en');
+
+      store.overrideSelector(selectUser, user);
+      store.overrideSelector(selectLanguages, languagesList);
+
+      store.refreshState();
+      spectator.detectChanges();
+
+      spectator.component.model$.subscribe(({ languages }) => {
+        expect(languages[0]).toHaveLength(1);
+        expect(languages[0][0].code).toEqual('en-US');
+        expect(languages).toHaveLength(languageSelectGroups);
+        expect(languages.flat()).toHaveLength(languagesList.length);
+        done();
+      });
+    });
+
     it('user language es-ES, browser lang fake', (done) => {
       const user = UserMockFactory();
       const languagesList = LanguageListMockFactory();
@@ -182,7 +216,7 @@ describe('PreferencesComponent', () => {
 
       const utilsService = spectator.inject(UtilsService);
 
-      utilsService.navigatorLanguage.mockReturnValue('fake');
+      utilsService.navigatorLanguage.mockReturnValue('xx-fake');
 
       store.overrideSelector(selectUser, user);
       store.overrideSelector(selectLanguages, languagesList);

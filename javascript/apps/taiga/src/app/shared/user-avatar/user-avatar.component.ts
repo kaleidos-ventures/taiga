@@ -15,8 +15,8 @@ import {
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
-import { TuiAvatarModule } from '@taiga-ui/kit';
 import { User } from '@taiga/data';
+import { AvatarModule } from '@taiga/ui/avatar';
 import { filter } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 
@@ -31,14 +31,20 @@ interface State {
   styleUrls: ['./user-avatar.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
-  imports: [CommonModule, TuiAvatarModule],
+  imports: [CommonModule, AvatarModule],
 })
 export class UserAvatarComponent implements OnInit {
   @Input()
-  public rounded = true;
+  public rounded = false;
 
   @Input()
-  public size: TuiSizeXS | TuiSizeXXL = 's';
+  public size: TuiSizeXS | TuiSizeXXL = 'l';
+
+  @Input()
+  public color = 1;
+
+  @Input()
+  public type: 'dark' | 'light' = 'light';
 
   @Input()
   public set user(user: Partial<User>) {

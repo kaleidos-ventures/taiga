@@ -9,144 +9,139 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "tools/typography.css";
 
 :host {
-  border-radius: 3px;
   display: flex;
 }
 
 tui-avatar {
+  --tui-radius-s: 3px;
+  --tui-radius-m: 3px;
+  --tui-radius-l: 3px;
+  --tui-radius-xl: 3px;
+  --tui-radius-xxl: 2px;
+
   &.no-border {
-    border-color: transparent;
-    color: transparent;
+    --tui-avatar-border: transparent;
+    --tui-avatar-color: transparent;
   }
 
   &.color-0 {
-    --tui-text-01: var(--color-gray50);
-
-    border-color: currentColor;
-    color: var(--color-gray30);
+    --tui-avatar-border: var(--color-gray50);
+    --tui-avatar-color: var(--color-gray50);
+    --tui-avatar-background: var(--color-gray30);
   }
 
   &[data-type="light"] {
     &.color-1 {
-      --tui-text-01: var(--color-warning80);
-
-      border-color: currentColor;
-      color: var(--color-warning30);
+      --tui-avatar-border: var(--color-warning30);
+      --tui-avatar-color: var(--color-warning30);
+      --tui-avatar-background: var(--color-warning80);
     }
 
     &.color-2 {
-      --tui-text-01: var(--color-red80);
-
-      border-color: currentColor;
-      color: var(--color-red30);
+      --tui-avatar-border: var(--color-red30);
+      --tui-avatar-color: var(--color-red80);
+      --tui-avatar-background: var(--color-red30);
     }
 
     &.color-3 {
-      --tui-text-01: var(--color-notice80);
-
-      border-color: currentColor;
-      color: var(--color-notice30);
+      --tui-avatar-border: var(--color-notice30);
+      --tui-avatar-color: var(--color-notice80);
+      --tui-avatar-background: var(--color-notice30);
     }
 
     &.color-4 {
-      --tui-text-01: var(--color-ok80);
-
-      border-color: currentColor;
-      color: var(--color-ok30);
+      --tui-avatar-border: var(--color-ok30);
+      --tui-avatar-color: var(--color-ok80);
+      --tui-avatar-background: var(--color-ok30);
     }
 
     &.color-5 {
-      --tui-text-01: var(--color-secondary80);
-
-      border-color: currentColor;
-      color: var(--color-secondary30);
+      --tui-avatar-border: var(--color-secondary30);
+      --tui-avatar-color: var(--color-secondary80);
+      --tui-avatar-background: var(--color-secondary30);
     }
 
     &.color-6 {
-      --tui-text-01: var(--color-info80);
-
-      border-color: currentColor;
-      color: var(--color-info30);
+      --tui-avatar-border: var(--color-info30);
+      --tui-avatar-color: var(--color-info80);
+      --tui-avatar-background: var(--color-info30);
     }
 
     &.color-7 {
-      --tui-text-01: var(--color-green80);
-
-      border-color: currentColor;
-      color: var(--color-green30);
+      --tui-avatar-border: var(--color-green30);
+      --tui-avatar-color: var(--color-green80);
+      --tui-avatar-background: var(--color-green30);
     }
 
     &.color-8 {
-      --tui-text-01: var(--color-yellow80);
-
-      border-color: currentColor;
-      color: var(--color-yellow30);
+      --tui-avatar-border: var(--color-yellow30);
+      --tui-avatar-color: var(--color-yellow80);
+      --tui-avatar-background: var(--color-yellow30);
     }
   }
 
   &[data-type="dark"] {
     &.color-1 {
-      --tui-text-01: var(--color-red100);
-
-      border-color: currentColor;
-      color: var(--color-red50);
+      --tui-avatar-border: var(--color-red50);
+      --tui-avatar-color: var(--color-red100);
+      --tui-avatar-background: var(--color-red50);
     }
 
     &.color-2 {
-      --tui-text-01: var(--color-info100);
-
-      border-color: currentColor;
-      color: var(--color-info50);
+      --tui-avatar-border: var(--color-info50);
+      --tui-avatar-color: var(--color-info100);
+      --tui-avatar-background: var(--color-info50);
     }
 
     &.color-3 {
-      --tui-text-01: var(--color-green100);
-
-      border-color: currentColor;
-      color: var(--color-green50);
+      --tui-avatar-border: var(--color-green50);
+      --tui-avatar-color: var(--color-green100);
+      --tui-avatar-background: var(--color-green50);
     }
 
     &.color-4 {
-      --tui-text-01: var(--color-ok100);
-
-      border-color: currentColor;
-      color: var(--color-ok50);
+      --tui-avatar-border: var(--color-ok50);
+      --tui-avatar-color: var(--color-ok100);
+      --tui-avatar-background: var(--color-ok50);
     }
 
     &.color-5 {
-      --tui-text-01: var(--color-yellow100);
-
-      border-color: currentColor;
-      color: var(--color-yellow50);
+      --tui-avatar-border: var(--color-yellow50);
+      --tui-avatar-color: var(--color-yellow100);
+      --tui-avatar-background: var(--color-yellow50);
     }
 
     &.color-6 {
-      --tui-text-01: var(--color-warning100);
-
-      border-color: currentColor;
-      color: var(--color-warning50);
+      --tui-avatar-border: var(--color-warning50);
+      --tui-avatar-color: var(--color-warning100);
+      --tui-avatar-background: var(--color-warning50);
     }
 
     &.color-7 {
-      --tui-text-01: var(--color-notice100);
-
-      border-color: currentColor;
-      color: var(--color-notice50);
+      --tui-avatar-border: var(--color-notice50);
+      --tui-avatar-color: var(--color-notice100);
+      --tui-avatar-background: var(--color-notice50);
     }
 
     &.color-8 {
-      --tui-text-01: var(--color-secondary100);
-
-      border-color: currentColor;
-      color: var(--color-secondary50);
+      --tui-avatar-border: var(--color-secondary50);
+      --tui-avatar-color: var(--color-secondary100);
+      --tui-avatar-background: var(--color-secondary50);
     }
+  }
+
+  &[data-size="s"] {
+    @mixin font-small;
+
+    block-size: var(--spacing-24);
+    font-weight: var(--font-weight-regular);
+    inline-size: var(--spacing-24);
   }
 
   &[data-size="m"] {
     @mixin font-small;
 
     block-size: var(--spacing-24);
-    border-radius: 3px;
     font-weight: var(--font-weight-regular);
     inline-size: var(--spacing-24);
   }
@@ -155,7 +150,6 @@ tui-avatar {
     @mixin font-inline;
 
     block-size: var(--spacing-32);
-    border-radius: 3px;
     font-weight: var(--font-weight-regular);
     inline-size: var(--spacing-32);
   }
@@ -164,7 +158,6 @@ tui-avatar {
     @mixin font-heading-4;
 
     block-size: var(--spacing-48);
-    border-radius: 3px;
     font-weight: var(--font-weight-regular);
     inline-size: var(--spacing-48);
   }
@@ -173,7 +166,6 @@ tui-avatar {
     @mixin font-heading-4;
 
     block-size: var(--spacing-64);
-    border-radius: 2px;
     font-weight: var(--font-weight-regular);
     inline-size: var(--spacing-64);
   }

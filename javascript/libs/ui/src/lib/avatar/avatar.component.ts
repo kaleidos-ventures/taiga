@@ -6,12 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
 import { RandomColorService } from '../services/random-color/random-color.service';
 
@@ -21,7 +16,16 @@ import { RandomColorService } from '../services/random-color/random-color.servic
   styleUrls: ['./avatar.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AvatarComponent implements OnInit {
+export class AvatarComponent {
+  @Input()
+  public autoColor = false;
+
+  @Input()
+  public avatarUrl = '';
+
+  @Input()
+  public rounded = false;
+
   @Input()
   public size: TuiSizeXS | TuiSizeXXL = 'l';
 
@@ -29,13 +33,10 @@ export class AvatarComponent implements OnInit {
   public name = '';
 
   @Input()
-  public url = '';
-
-  @Input()
   public color = 1;
 
   @Input()
-  public type!: 'dark' | 'light';
+  public type: 'dark' | 'light' = 'light';
 
   public setColorClass() {
     return RandomColorService.getColorClass(this.color);
@@ -43,11 +44,5 @@ export class AvatarComponent implements OnInit {
 
   public setAvatarName(name: string) {
     return name.replace(/\s/g, '').split('').slice(0, 2).join(' ');
-  }
-
-  public ngOnInit() {
-    if (!this.type) {
-      throw new Error('type is mandatory');
-    }
   }
 }

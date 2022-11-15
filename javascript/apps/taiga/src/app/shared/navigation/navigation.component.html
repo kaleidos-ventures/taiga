@@ -117,7 +117,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [attr.aria-label]="t('user_avatar')"
             type="button"
             data-test="user-settings">
-            <tg-user-avatar [attr.title]="t('user_avatar')"></tg-user-avatar>
+            <tg-user-avatar
+              [rounded]="true"
+              [attr.title]="t('user_avatar')"></tg-user-avatar>
           </button>
         </tui-hosted-dropdown>
       </div>

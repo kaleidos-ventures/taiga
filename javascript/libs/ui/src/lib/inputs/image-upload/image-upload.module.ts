@@ -8,11 +8,11 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ImageUploadComponent } from './image-upload.component';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { UiErrorModule } from '../error/error.module';
+import { ImageUploadComponent } from './image-upload.component';
 
 @NgModule({
   imports: [

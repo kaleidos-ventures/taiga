@@ -8,9 +8,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <tui-avatar
   [attr.data-type]="type"
-  [class]="url ? null : setColorClass()"
-  [class.no-border]="url"
+  [class]="avatarUrl ? null : setColorClass()"
+  [class.no-border]="avatarUrl"
+  [autoColor]="autoColor"
+  [rounded]="rounded"
   [size]="size"
-  [avatarUrl]="url"
+  [avatarUrl]="avatarUrl"
   [text]="setAvatarName(name)">
 </tui-avatar>

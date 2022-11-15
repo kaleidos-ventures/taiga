@@ -7,10 +7,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *ngIf="user$ | async as user">
-  <tui-avatar
+  <tg-ui-avatar
     [size]="size"
-    [avatarUrl]="user.photo ?? ''"
-    [autoColor]="true"
+    [color]="color"
     [rounded]="rounded"
-    [text]="user.fullName ?? ''"></tui-avatar>
+    [autoColor]="true"
+    [name]="user.fullName ?? ''"
+    [avatarUrl]="user.photo ?? ''"
+    [type]="type"></tg-ui-avatar>
 </ng-container>

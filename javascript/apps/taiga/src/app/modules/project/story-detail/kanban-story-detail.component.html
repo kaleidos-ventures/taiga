@@ -141,7 +141,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <div class="main-content">
             <h1 class="title">{{ vm.story.title }}</h1>
             <div class="creation-info">
-              <tg-user-avatar></tg-user-avatar>
+              <tg-user-avatar
+                size="m"
+                class="no-border"
+                [user]="vm.story.createdBy"
+                type="light"
+                [rounded]="true"
+                aria-hidden></tg-user-avatar>
               <span class="creation-info-fullname">
                 {{ vm.story.createdBy.fullName }}
               </span>

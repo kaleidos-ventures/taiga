@@ -21,6 +21,12 @@ tui-data-list {
     padding: var(--spacing-8) !important;
 
     /* stylelint-disable-next-line selector-max-type */
+    &.active-option {
+      background: var(--color-gray20);
+      color: var(--color-secondary80);
+    }
+
+    /* stylelint-disable-next-line selector-max-type */
     &:hover {
       background: var(--color-gray20) !important;
       color: var(--color-secondary80) !important;

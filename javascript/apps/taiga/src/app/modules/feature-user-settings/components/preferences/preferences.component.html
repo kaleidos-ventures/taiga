@@ -39,6 +39,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   *ngFor="let language of language; trackBy: trackByLanguage"
                   [dir]="language.textDirection === 'rtl' ? 'rtl' : 'ltr'"
                   tuiOption
+                  [class.active-option]="language.code === vm.currentLang.code"
                   data-test="language-select-option"
                   [value]="language.code">
                   {{ language.name }}

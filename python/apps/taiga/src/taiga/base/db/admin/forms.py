@@ -8,7 +8,7 @@
 import json
 from typing import Any
 
-from django.forms import widgets
+from django.forms import Form, ModelForm, widgets  # noqa
 from django.forms.models import ModelChoiceField  # noqa
 
 

@@ -5,12 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any
+from typing import Any, Type
 
 from taiga.base.db import admin
+from taiga.base.db.admin import forms
 from taiga.base.db.admin.http import HttpRequest
 from taiga.base.db.admin.users import UserAdmin as DjangoUserAdmin
 from taiga.base.db.users import Group
+from taiga.base.i18n import i18n
 from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.memberships.models import ProjectMembership
 from taiga.users.models import AuthData, User
@@ -78,3 +80,16 @@ class UserAdmin(DjangoUserAdmin):
         ProjectMembershipsInline,
         ProjectInvitationInline,
     ]
+
+    def get_form(
+        self, request: HttpRequest, obj: User | None = None, change: bool = False, **kwargs: Any
+    ) -> Type[forms.ModelForm[User]]:
+        form = super().get_form(request, obj, **kwargs)
+
+        if "lang" in form.base_fields:
+            # Use Select widget to get a dynamic choices for lang field
+            form.base_fields["lang"].widget = forms.widgets.Select(
+                choices=((lang.code, lang.english_name) for lang in i18n.available_languages_info)
+            )
+
+        return form

@@ -98,6 +98,7 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
   public collapsedSet = false;
   public linkCopied = false;
   public dropdownState = false;
+  public hintShown = false;
   public storyViewOptions: { id: StoryView; translation: string }[] = [
     {
       id: 'modal-view',
@@ -112,6 +113,7 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
       translation: 'kanban.story_detail.full_width_view',
     },
   ];
+  public resetCopyLinkTimeout?: ReturnType<typeof setTimeout>;
 
   public model$ = this.state.select();
 
@@ -184,16 +186,30 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
     );
   }
 
+  public displayHint() {
+    setTimeout(() => {
+      this.hintShown = true;
+      this.cd.detectChanges();
+    }, 200);
+  }
+
   public getStoryLink() {
     this.clipboard.copy(window.location.href);
+
     this.linkCopied = true;
   }
 
-  public resetCopyLink() {
-    setTimeout(() => {
-      this.linkCopied = false;
-      this.cd.detectChanges();
-    }, 1000);
+  public resetCopyLink(type: 'fast' | 'slow') {
+    if (this.linkCopied) {
+      const time = type === 'fast' ? 200 : 4000;
+      this.resetCopyLinkTimeout = setTimeout(() => {
+        this.hintShown = false;
+        this.linkCopied = false;
+        this.cd.detectChanges();
+      }, time);
+    } else {
+      this.hintShown = false;
+    }
   }
 
   public navigateToStory(ref: number | null) {

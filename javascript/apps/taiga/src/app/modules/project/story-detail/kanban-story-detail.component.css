@@ -130,13 +130,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .title {
-  @mixin font-heading-4;
+  @mixin font-heading-3;
 
   margin-block: 0 var(--spacing-16);
 }
 
 .creation-info {
-  align-items: center;
+  align-items: baseline;
   display: flex;
   gap: var(--spacing-4);
 }

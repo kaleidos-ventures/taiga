@@ -201,7 +201,7 @@ async def get_user_project_role_info():
     project = await f.create_project(owner=user)
     with patch("taiga.permissions.services.pj_roles_repositories", autospec=True) as fake_repository:
         await get_user_project_role_info(user=user, project=project)
-        fake_repository.get_role_for_user.assert_awaited_once()
+        fake_repository.get_project_role.assert_awaited_once()
 
 
 #####################################################

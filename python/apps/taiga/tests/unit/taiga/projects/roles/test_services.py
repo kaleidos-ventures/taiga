@@ -21,10 +21,26 @@ async def test_get_project_role():
     project = f.build_project()
     slug = "general"
 
-    with patch("taiga.projects.roles.services.repositories", autospec=True) as fake_role_repository:
+    with patch("taiga.projects.roles.services.pj_roles_repositories", autospec=True) as fake_role_repository:
         fake_role_repository.get_project_role.return_value = f.build_project_role()
         await services.get_project_role(project=project, slug=slug)
         fake_role_repository.get_project_role.assert_awaited_once()
+
+
+#######################################################
+# get_project_roles_as_dict
+#######################################################
+
+
+async def test_get_project_roles_as_dict():
+    role = f.build_project_role(is_admin=True)
+
+    with patch("taiga.projects.roles.services.pj_roles_repositories", autospec=True) as fake_role_repository:
+        fake_role_repository.get_project_roles.return_value = [role]
+        ret = await services.get_project_roles_as_dict(project=role.project)
+
+        fake_role_repository.get_project_roles.assert_awaited_once_with(filters={"project_id": role.project_id})
+        assert ret[role.slug] == role
 
 
 #######################################################
@@ -37,7 +53,7 @@ async def test_update_project_role_permissions_is_admin():
     permissions = []
 
     with (
-        patch("taiga.projects.roles.services.events", autospec=True) as fake_roles_events,
+        patch("taiga.projects.roles.services.pj_roles_events", autospec=True) as fake_roles_events,
         pytest.raises(ex.NonEditableRoleError),
     ):
         await services.update_project_role_permissions(role=role, permissions=permissions)
@@ -49,7 +65,7 @@ async def test_update_project_role_permissions_incompatible_permissions():
     permissions = ["view_task"]
 
     with (
-        patch("taiga.projects.roles.services.events", autospec=True) as fake_roles_events,
+        patch("taiga.projects.roles.services.pj_roles_events", autospec=True) as fake_roles_events,
         pytest.raises(ex.IncompatiblePermissionsSetError),
     ):
         await services.update_project_role_permissions(role=role, permissions=permissions)
@@ -61,7 +77,7 @@ async def test_update_project_role_permissions_not_valid_permissions():
     permissions = ["not_valid", "foo", "bar"]
 
     with (
-        patch("taiga.projects.roles.services.events", autospec=True) as fake_roles_events,
+        patch("taiga.projects.roles.services.pj_roles_events", autospec=True) as fake_roles_events,
         pytest.raises(ex.NotValidPermissionsSetError),
     ):
         await services.update_project_role_permissions(role=role, permissions=permissions)
@@ -73,8 +89,8 @@ async def test_update_project_role_permissions_ok():
     permissions = ["view_story"]
 
     with (
-        patch("taiga.projects.roles.services.events", autospec=True) as fake_roles_events,
-        patch("taiga.projects.roles.services.repositories", autospec=True) as fake_role_repository,
+        patch("taiga.projects.roles.services.pj_roles_events", autospec=True) as fake_roles_events,
+        patch("taiga.projects.roles.services.pj_roles_repositories", autospec=True) as fake_role_repository,
     ):
         fake_role_repository.update_project_role_permissions.return_value = role
         await services.update_project_role_permissions(role=role, permissions=permissions)

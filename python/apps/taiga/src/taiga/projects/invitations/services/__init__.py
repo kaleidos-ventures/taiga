@@ -23,7 +23,8 @@ from taiga.projects.invitations.tokens import ProjectInvitationToken
 from taiga.projects.memberships import repositories as memberships_repositories
 from taiga.projects.projects.models import Project
 from taiga.projects.projects.services import get_logo_small_thumbnail_url
-from taiga.projects.roles import repositories as roles_repositories
+from taiga.projects.roles import repositories as pj_roles_repositories
+from taiga.projects.roles import services as pj_roles_services
 from taiga.tokens.exceptions import TokenError
 from taiga.users import repositories as users_repositories
 from taiga.users.models import AnyUser, User
@@ -78,7 +79,9 @@ async def get_paginated_pending_project_invitations(
     if user.is_anonymous:
         return pagination, []
 
-    role = await roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
+    role = await pj_roles_repositories.get_project_role(
+        filters={"user_id": user.id, "memberships_project_id": project.id}
+    )
 
     if role and role.is_admin:
         invitations = await invitations_repositories.get_project_invitations(
@@ -171,7 +174,7 @@ async def create_project_invitations(
     # emails =    ['user1@taiga.demo']  |  emails_roles =    ['general']
     # usernames = ['user3']             |  usernames_roles = ['admin']
 
-    project_roles_dict = await roles_repositories.get_project_roles_as_dict(project=project)
+    project_roles_dict = await pj_roles_services.get_project_roles_as_dict(project=project)
     # project_roles_dict = {'admin': <Role: Administrator>, 'general': <Role: General>}
     project_roles_slugs = project_roles_dict.keys()
     wrong_roles_slugs = set(emails_roles + usernames_roles) - project_roles_slugs
@@ -359,7 +362,9 @@ async def update_project_invitation(invitation: ProjectInvitation, role_slug: st
     if invitation.status == ProjectInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation has already been revoked")
 
-    project_role = await roles_repositories.get_project_role(project=invitation.project, slug=role_slug)
+    project_role = await (
+        pj_roles_repositories.get_project_role(filters={"project_id": invitation.project_id, "slug": role_slug})
+    )
 
     if not project_role:
         raise ex.NonExistingRoleError("Role does not exist")

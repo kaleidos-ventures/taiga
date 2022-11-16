@@ -127,10 +127,10 @@ async def test_get_project_invitations_ok_admin():
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_repositories", autospec=True) as fake_pj_roles_repo,
     ):
         fake_invitations_repo.get_project_invitations.return_value = [invitation]
-        fake_roles_repo.get_role_for_user.return_value = role_admin
+        fake_pj_roles_repo.get_project_role.return_value = role_admin
 
         pagination, invitations = await services.get_paginated_pending_project_invitations(
             project=invitation.project, user=invitation.project.owner, offset=0, limit=10
@@ -159,10 +159,10 @@ async def test_get_project_invitations_ok_not_admin():
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_repositories", autospec=True) as fake_pj_roles_repo,
     ):
         fake_invitations_repo.get_project_invitations.return_value = [invitation]
-        fake_roles_repo.get_role_for_user.return_value = not_admin_role
+        fake_pj_roles_repo.get_project_role.return_value = not_admin_role
 
         pagination, invitations = await services.get_paginated_pending_project_invitations(
             project=invitation.project, user=invitation.user, offset=0, limit=10
@@ -266,10 +266,10 @@ async def test_create_project_invitations_non_existing_role(tqmanager):
     invitations = [{"email": "test@email.com", "role_slug": "non_existing_role"}]
 
     with (
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_services", autospec=True) as fake_pj_roles_services,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
-        fake_roles_repo.get_project_roles_as_dict.return_value = {role.slug: role}
+        fake_pj_roles_services.get_project_roles_as_dict.return_value = {role.slug: role}
 
         with pytest.raises(ex.NonExistingRoleError):
             await services.create_project_invitations(project=project, invitations=invitations, invited_by=user)
@@ -286,13 +286,13 @@ async def test_create_project_invitations_already_member(tqmanager):
     invitations = [{"email": user2.email, "role_slug": role.slug}]
 
     with (
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_services", autospec=True) as fake_pj_roles_services,
         patch("taiga.projects.invitations.services.memberships_repositories", autospec=True) as fake_memberships_repo,
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
-        fake_roles_repo.get_project_roles_as_dict.return_value = {role.slug: role}
+        fake_pj_roles_services.get_project_roles_as_dict.return_value = {role.slug: role}
         fake_users_repo.get_users_by_emails_as_dict.return_value = {user2.email: user2}
         fake_users_repo.get_users_by_usernames_as_dict.return_value = {}
         fake_memberships_repo.get_project_members.return_value = [user2]
@@ -317,12 +317,12 @@ async def test_create_project_invitations_with_pending_invitations(tqmanager):
     invitations = [{"email": invitation.email, "role_slug": role2.slug}]
 
     with (
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_services", autospec=True) as fake_pj_roles_services,
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
-        fake_roles_repo.get_project_roles_as_dict.return_value = {role2.slug: role2}
+        fake_pj_roles_services.get_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation.return_value = invitation
         fake_users_repo.get_users_by_emails_as_dict.return_value = {}
 
@@ -345,13 +345,13 @@ async def test_create_project_invitations_with_pending_invitations_time_spam(tqm
     invitations = [{"email": invitation.email, "role_slug": role2.slug}]
 
     with (
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_services", autospec=True) as fake_pj_roles_services,
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         override_settings({"PROJECT_INVITATION_RESEND_TIME": 10}),
     ):
-        fake_roles_repo.get_project_roles_as_dict.return_value = {role2.slug: role2}
+        fake_pj_roles_services.get_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation.return_value = invitation
         fake_users_repo.get_users_by_emails_as_dict.return_value = {}
 
@@ -381,12 +381,12 @@ async def test_create_project_invitations_with_revoked_invitations(tqmanager):
     invitations = [{"email": invitation.email, "role_slug": role2.slug}]
 
     with (
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_services", autospec=True) as fake_pj_roles_services,
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
-        fake_roles_repo.get_project_roles_as_dict.return_value = {role2.slug: role2}
+        fake_pj_roles_services.get_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation.return_value = invitation
         fake_users_repo.get_users_by_emails_as_dict.return_value = {}
 
@@ -414,13 +414,13 @@ async def test_create_project_invitations_with_revoked_invitations_time_spam(tqm
     invitations = [{"email": invitation.email, "role_slug": role2.slug}]
 
     with (
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_services", autospec=True) as fake_pj_roles_services,
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         override_settings({"PROJECT_INVITATION_RESEND_TIME": 10}),
     ):
-        fake_roles_repo.get_project_roles_as_dict.return_value = {role2.slug: role2}
+        fake_pj_roles_services.get_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation.return_value = invitation
         fake_users_repo.get_users_by_emails_as_dict.return_value = {}
 
@@ -446,18 +446,18 @@ async def test_create_project_invitations_by_emails(tqmanager):
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_services", autospec=True) as fake_pj_roles_services,
         patch("taiga.projects.invitations.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
-        fake_roles_repo.get_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
+        fake_pj_roles_services.get_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
         fake_users_repo.get_users_by_emails_as_dict.return_value = {user2.email: user2}
         fake_users_repo.get_users_by_usernames_as_dict.return_value = {}
         fake_invitations_repo.get_project_invitation.return_value = None
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user1)
 
-        fake_roles_repo.get_project_roles_as_dict.assert_awaited_once_with(project=project)
+        fake_pj_roles_services.get_project_roles_as_dict.assert_awaited_once_with(project=project)
         fake_users_repo.get_users_by_emails_as_dict.assert_awaited_once_with(emails=[user2.email, "test@email.com"])
         fake_invitations_repo.create_project_invitations.assert_awaited_once()
 
@@ -480,11 +480,11 @@ async def test_create_project_invitations_by_usernames(tqmanager):
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_services", autospec=True) as fake_pj_roles_services,
         patch("taiga.projects.invitations.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
-        fake_roles_repo.get_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
+        fake_pj_roles_services.get_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
         fake_users_repo.get_first_user.side_effect = [user2, user3]
         fake_users_repo.get_users_by_usernames_as_dict.return_value = {user2.username: user2, user3.username: user3}
         fake_users_repo.get_users_by_emails_as_dict.return_value = {}
@@ -492,7 +492,7 @@ async def test_create_project_invitations_by_usernames(tqmanager):
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user1)
 
-        fake_roles_repo.get_project_roles_as_dict.assert_awaited_once_with(project=project)
+        fake_pj_roles_services.get_project_roles_as_dict.assert_awaited_once_with(project=project)
         fake_invitations_repo.create_project_invitations.assert_awaited_once()
 
         assert len(tqmanager.pending_jobs) == 2
@@ -518,11 +518,11 @@ async def test_create_project_invitations_duplicated_email_username(tqmanager):
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_services", autospec=True) as fake_pj_roles_services,
         patch("taiga.projects.invitations.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
-        fake_roles_repo.get_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
+        fake_pj_roles_services.get_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
         fake_users_repo.get_first_user.side_effect = [user2, user3, user4]
         fake_users_repo.get_users_by_usernames_as_dict.return_value = {
             user2.username: user2,
@@ -534,7 +534,7 @@ async def test_create_project_invitations_duplicated_email_username(tqmanager):
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user1)
 
-        fake_roles_repo.get_project_roles_as_dict.assert_awaited_once_with(project=project)
+        fake_pj_roles_services.get_project_roles_as_dict.assert_awaited_once_with(project=project)
         fake_users_repo.get_users_by_emails_as_dict.assert_awaited_once_with(emails=[user3.email, user4.email])
         fake_invitations_repo.create_project_invitations.assert_awaited_once()
 
@@ -554,12 +554,12 @@ async def test_create_project_invitations_invalid_username(tqmanager):
         patch(
             "taiga.projects.invitations.services.users_repositories.get_first_user", autospec=True
         ) as fake_get_first_user,
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_services", autospec=True) as fake_pj_roles_services,
         patch("taiga.projects.invitations.services.users_repositories", autospec=True) as fake_users_repo,
         pytest.raises(NonExistingUsernameError),
     ):
         fake_get_first_user.return_value = None
-        fake_roles_repo.get_project_roles_as_dict.return_value = {role.slug: role}
+        fake_pj_roles_services.get_project_roles_as_dict.return_value = {role.slug: role}
         fake_users_repo.get_users_by_usernames_as_dict.return_value = {}
         fake_users_repo.get_users_by_emails_as_dict.return_value = {}
 
@@ -603,14 +603,14 @@ async def tests_accept_project_invitation_error_invitation_has_already_been_acce
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_repositories", autospec=True) as fake_pj_roles_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         pytest.raises(ex.InvitationAlreadyAcceptedError),
     ):
         await services.accept_project_invitation(invitation=invitation)
 
         fake_invitations_repo.accept_project_invitation.assert_not_awaited()
-        fake_roles_repo.create_project_membership.assert_not_awaited()
+        fake_pj_roles_repo.create_project_membership.assert_not_awaited()
         fake_invitations_events.emit_event_when_project_invitation_is_accepted.assert_not_awaited()
 
 
@@ -624,14 +624,14 @@ async def tests_accept_project_invitation_error_invitation_has_been_revoked() ->
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_repositories", autospec=True) as fake_pj_roles_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         pytest.raises(ex.InvitationRevokedError),
     ):
         await services.accept_project_invitation(invitation=invitation)
 
         fake_invitations_repo.accept_project_invitation.assert_not_awaited()
-        fake_roles_repo.create_project_membership.assert_not_awaited()
+        fake_pj_roles_repo.create_project_membership.assert_not_awaited()
         fake_invitations_events.emit_event_when_project_invitation_is_accepted.assert_not_awaited()
 
 
@@ -1094,15 +1094,15 @@ async def test_update_project_invitation_role_non_existing_role():
     )
     non_existing_role_slug = "non_existing_role_slug"
     with (
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_repositories", autospec=True) as fake_pj_roles_repo,
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         pytest.raises(ex.NonExistingRoleError),
     ):
-        fake_roles_repo.get_project_role.return_value = None
+        fake_pj_roles_repo.get_project_role.return_value = None
 
         await services.update_project_invitation(invitation=invitation, role_slug=non_existing_role_slug)
-        fake_roles_repo.get_project_role.assert_awaited_once_with(project=project, slug=non_existing_role_slug)
+        fake_pj_roles_repo.get_project_role.assert_awaited_once_with(project=project, slug=non_existing_role_slug)
         fake_invitations_repo.update_project_invitation.assert_not_awaited()
         fake_invitations_events.emit_event_when_project_invitation_is_updated.assert_not_awaited()
 
@@ -1116,13 +1116,15 @@ async def test_update_project_invitation_role_ok():
     )
     admin_role = f.build_project_role(project=project, is_admin=True)
     with (
-        patch("taiga.projects.invitations.services.roles_repositories", autospec=True) as fake_roles_repo,
+        patch("taiga.projects.invitations.services.pj_roles_repositories", autospec=True) as fake_pj_roles_repo,
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
-        fake_roles_repo.get_project_role.return_value = admin_role
+        fake_pj_roles_repo.get_project_role.return_value = admin_role
         updated_invitation = await services.update_project_invitation(invitation=invitation, role_slug=admin_role.slug)
-        fake_roles_repo.get_project_role.assert_awaited_once_with(project=project, slug=admin_role.slug)
+        fake_pj_roles_repo.get_project_role.assert_awaited_once_with(
+            filters={"project_id": project.id, "slug": admin_role.slug}
+        )
         fake_invitations_repo.update_project_invitation.assert_awaited_once_with(invitation=invitation)
         fake_invitations_events.emit_event_when_project_invitation_is_updated.assert_awaited_once_with(
             invitation=updated_invitation

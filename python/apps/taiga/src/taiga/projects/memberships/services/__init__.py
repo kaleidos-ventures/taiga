@@ -11,7 +11,7 @@ from taiga.projects.memberships import repositories as memberships_repositories
 from taiga.projects.memberships.models import ProjectMembership
 from taiga.projects.memberships.services import exceptions as ex
 from taiga.projects.projects.models import Project
-from taiga.projects.roles import repositories as roles_repositories
+from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.projects.roles.models import ProjectRole
 
 
@@ -41,7 +41,9 @@ async def _is_membership_the_only_admin(membership_role: ProjectRole, project_ro
 
 
 async def update_project_membership(membership: ProjectMembership, role_slug: str) -> ProjectMembership:
-    project_role = await roles_repositories.get_project_role(project=membership.project, slug=role_slug)
+    project_role = await (
+        pj_roles_repositories.get_project_role(filters={"project_id": membership.project_id, "slug": role_slug})
+    )
 
     if not project_role:
         raise ex.NonExistingRoleError("Role does not exist")

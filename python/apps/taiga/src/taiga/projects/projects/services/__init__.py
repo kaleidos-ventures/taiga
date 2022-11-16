@@ -62,9 +62,13 @@ async def create_project(
     await projects_repositories.apply_template_to_project(template=template, project=project)
 
     # assign the owner to the project as the default owner role (should be 'admin')
-    owner_role = await pj_roles_repositories.get_project_role(project=project, slug=template.default_owner_role)
+    owner_role = await (
+        pj_roles_repositories.get_project_role(filters={"project_id": project.id, "slug": template.default_owner_role})
+    )
     if not owner_role:
-        owner_role = await pj_roles_repositories.get_first_role(project=project)
+        owner_role = await (
+            pj_roles_repositories.get_project_roles(filters={"project_id": project.id}, offset=0, limit=1)[0]
+        )
 
     await pj_memberships_repositories.create_project_membership(user=owner, project=project, role=owner_role)
 

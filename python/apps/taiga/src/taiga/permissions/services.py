@@ -28,7 +28,9 @@ async def is_project_admin(user: AnyUser, obj: Any) -> bool:
     if user.is_superuser:
         return True
 
-    role = await pj_roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
+    role = await pj_roles_repositories.get_project_role(
+        filters={"user_id": user.id, "memberships_project_id": project.id}
+    )
     return role.is_admin if role else False
 
 
@@ -105,7 +107,9 @@ def _get_object_project(obj: Any) -> Project | None:
 
 
 async def get_user_project_role_info(user: AnyUser, project: Project) -> tuple[bool, bool, list[str]]:
-    role = await pj_roles_repositories.get_role_for_user(user_id=user.id, project_id=project.id)
+    role = await pj_roles_repositories.get_project_role(
+        filters={"user_id": user.id, "memberships_project_id": project.id}
+    )
     if role:
         return role.is_admin, True, role.permissions
 

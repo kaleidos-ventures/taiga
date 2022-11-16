@@ -367,7 +367,11 @@ describe('MembersEffects', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(MembersEffects);
     const invitationRole = {
-      roleSlug: randSlug(),
+      newRole: {
+        isAdmin: false,
+        name: randRole(),
+        slug: randSlug(),
+      },
       id: randomUUID(),
       oldRole: {
         isAdmin: false,
@@ -383,7 +387,7 @@ describe('MembersEffects', () => {
       role: {
         isAdmin: false,
         name: invitationRole.oldRole.name,
-        slug: invitationRole.roleSlug,
+        slug: invitationRole.newRole.slug,
       },
     };
 
@@ -396,7 +400,10 @@ describe('MembersEffects', () => {
     });
 
     const expected = cold('-a', {
-      a: membersActions.updateInvitationRoleSuccess(),
+      a: membersActions.updateInvitationRoleSuccess({
+        id: invitationRole.id,
+        newRole: invitationRole.newRole,
+      }),
     });
 
     expect(effects.updateInvitationRole$).toBeObservable(expected);

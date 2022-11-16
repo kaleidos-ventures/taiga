@@ -346,11 +346,14 @@ export class MembersEffects {
           return this.projectApiService
             .updateInvitationRole(project.slug, {
               id: action.id,
-              roleSlug: action.roleSlug,
+              roleSlug: action.newRole.slug!,
             })
             .pipe(
               map(() => {
-                return membersActions.updateInvitationRoleSuccess();
+                return membersActions.updateInvitationRoleSuccess({
+                  id: action.id,
+                  newRole: action.newRole,
+                });
               })
             );
         },

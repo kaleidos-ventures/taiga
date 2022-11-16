@@ -88,14 +88,25 @@ export const membersActions = createActionGroup({
     }>(),
     'Update invitation role': props<{
       id: string;
-      roleSlug: string;
+      newRole: {
+        isAdmin: boolean;
+        name?: string;
+        slug?: string;
+      };
       oldRole?: {
         isAdmin: boolean;
         name?: string;
         slug?: string;
       };
     }>(),
-    'Update invitation role success': emptyProps(),
+    'Update invitation role success': props<{
+      id: string;
+      newRole: {
+        isAdmin: boolean;
+        name?: string;
+        slug?: string;
+      };
+    }>(),
     'Update invitation role error': emptyProps(),
     'Update member info': emptyProps(),
   },

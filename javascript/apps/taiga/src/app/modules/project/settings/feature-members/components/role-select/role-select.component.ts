@@ -70,20 +70,24 @@ export class RoleSelectComponent implements OnChanges {
   }
 
   public roleChange(role: string) {
-    const roleSlug = this.roles.find((it) => it.name === role)?.slug;
-    if (this.isMember && roleSlug) {
+    const newRole = this.roles.find((it) => it.name === role);
+    if (this.isMember && newRole) {
       this.store.dispatch(
         membersActions.updateMemberRole({
           username: this.invitationOrMember.user?.username || '',
-          roleSlug: roleSlug,
+          roleSlug: newRole.slug,
           oldRole: this.invitationOrMember.role,
         })
       );
-    } else if (this.invitationOrMember.id && roleSlug) {
+    } else if (this.invitationOrMember.id && newRole) {
       this.store.dispatch(
         membersActions.updateInvitationRole({
           id: this.invitationOrMember.id,
-          roleSlug: roleSlug,
+          newRole: {
+            name: newRole.name,
+            slug: newRole.slug,
+            isAdmin: newRole.isAdmin,
+          },
           oldRole: this.invitationOrMember.role,
         })
       );

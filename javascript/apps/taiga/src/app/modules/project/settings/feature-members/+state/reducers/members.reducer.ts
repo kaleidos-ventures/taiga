@@ -177,6 +177,17 @@ export const reducer = createReducer(
 
       return state;
     }
+  ),
+  on(
+    membersActions.updateInvitationRoleSuccess,
+    (state, { id, newRole }): MembersState => {
+      const index = state.invitations.findIndex(
+        (inv: Invitation) => inv.id === id
+      );
+      state.invitations[index].role = newRole;
+
+      return state;
+    }
   )
 );
 

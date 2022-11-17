@@ -27,7 +27,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     color: var(--color-gray100);
     margin: 0;
-    margin-inline-start: var(--spacing-16);
   }
 
   & p {
@@ -36,12 +35,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     color: var(--color-gray80);
     font-weight: var(--font-weight-regular);
     line-height: 21px;
+    margin-block-start: var(--spacing-24);
   }
 
   & .actions {
     display: flex;
     justify-content: flex-end;
-    margin-block-start: var(--spacing-16);
+    margin-block-start: var(--spacing-24);
 
     & button {
       margin-inline-end: var(--spacing-8);

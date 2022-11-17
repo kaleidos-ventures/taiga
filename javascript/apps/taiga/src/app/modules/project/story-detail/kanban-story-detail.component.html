@@ -152,11 +152,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 {{ vm.story.createdBy.fullName }}
               </span>
               <span
-                *ngIf="vm.storyDateDistance"
+                *ngIf="vm.story.createdAt"
                 class="creation-info-date">
                 {{
                   t('kanban.story_detail.story_date_distance', {
-                    dateDistance: vm.storyDateDistance
+                    dateDistance: vm.story.createdAt | dateDistance
                   })
                 }}
               </span>

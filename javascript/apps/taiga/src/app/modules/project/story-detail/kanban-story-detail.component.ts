@@ -39,15 +39,6 @@ import {
 } from '@taiga-ui/core';
 import { Project, StoryDetail, StoryView } from '@taiga/data';
 import {
-  differenceInDays,
-  differenceInSeconds,
-  differenceInYears,
-  format,
-  formatDistanceToNow,
-  parseISO,
-} from 'date-fns';
-import { map } from 'rxjs';
-import {
   clearStory,
   updatedStoryViewMode,
   updateStoryViewMode,
@@ -59,6 +50,7 @@ import {
   selectUpdateStoryView,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
+import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { filterNil } from '~/app/shared/utils/operators';
 
@@ -82,6 +74,7 @@ import { filterNil } from '~/app/shared/utils/operators';
     TuiSvgModule,
     UserAvatarComponent,
     A11yModule,
+    DateDistancePipe,
   ],
   providers: [
     {
@@ -120,16 +113,7 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
     },
   ];
 
-  public model$ = this.state.select().pipe(
-    map((state) => {
-      if (state.story) {
-        state.storyDateDistance = this.getStoryDateDistance(state.story);
-      }
-      return {
-        ...state,
-      };
-    })
-  );
+  public model$ = this.state.select();
 
   public get getCurrentViewTranslation() {
     const index = this.storyViewOptions.findIndex(
@@ -245,37 +229,6 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
     // click came from a story card
     if (locationState?.fromCard) {
       (this.storyRef.nativeElement as HTMLElement).focus();
-    }
-  }
-
-  public getStoryDateDistance(story: StoryDetail) {
-    const createdAt = parseISO(story.createdAt);
-    const secondsDistance = Math.abs(
-      differenceInSeconds(createdAt, new Date())
-    );
-    const daysDistance = Math.abs(differenceInDays(createdAt, new Date()));
-    const yearsDistance = Math.abs(differenceInYears(createdAt, new Date()));
-
-    // Less than 60 sec -> now
-    // between 60 sec and 6 days -> about {relativeTime} ago
-    // between 6 days and 1 year -> MONTH DAY
-    // More than 1 year -> MONTH DAY YEAR
-
-    if (!yearsDistance) {
-      if (daysDistance > 6) {
-        return format(createdAt, 'MMM d');
-      } else {
-        if (secondsDistance <= 60) {
-          return this.translocoService.translate('kanban.story_detail.now');
-        }
-        const distance = formatDistanceToNow(createdAt);
-        const agoString = this.translocoService.translate(
-          'kanban.story_detail.ago'
-        );
-        return `${distance} ${agoString}`;
-      }
-    } else {
-      return format(createdAt, 'MMM d yyyy');
     }
   }
 }

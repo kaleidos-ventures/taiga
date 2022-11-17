@@ -24,6 +24,11 @@ tui-data-list {
     &.active-option {
       background: var(--color-gray20);
       color: var(--color-secondary80);
+
+      /* stylelint-disable-next-line selector-max-type */
+      & tui-svg {
+        display: none;
+      }
     }
 
     /* stylelint-disable-next-line selector-max-type */

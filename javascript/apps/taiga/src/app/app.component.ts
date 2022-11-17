@@ -106,12 +106,17 @@ export class AppComponent {
       )
       .subscribe(([user, languages]) => {
         const lang = languages.find((it) => it.code === user.lang);
+
         this.translocoService.setActiveLang(user.lang);
 
-        document.body.setAttribute(
-          'dir',
-          lang?.textDirection === 'rtl' ? 'rtl' : 'ltr'
-        );
+        if (lang) {
+          document.body.setAttribute(
+            'dir',
+            lang.textDirection === 'rtl' ? 'rtl' : 'ltr'
+          );
+
+          document.documentElement.setAttribute('lang', lang.code);
+        }
       });
   }
 

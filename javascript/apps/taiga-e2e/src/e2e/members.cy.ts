@@ -105,9 +105,9 @@ describe('change role', () => {
     navigateToMembersSettings();
     cy.tgCheckA11y();
 
-    cy.get(`[data-test=user1]`).should('be.visible');
+    cy.get('[data-test=user1]').should('be.visible');
     cy.getBySel('disabled-change-role').should('not.exist');
-    cy.get(`[data-test=user1]`).find('input').click();
+    cy.get('[data-test=user1]').find('input').click();
     cy.getBySel('permissions-warning').should('be.visible');
   });
 });

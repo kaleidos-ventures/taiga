@@ -7,9 +7,10 @@
     "e2e": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/taiga-e2e/cypress.json",
+        "cypressConfig": "apps/taiga-e2e/cypress.config.ts",
         "tsConfig": "apps/taiga-e2e/tsconfig.e2e.json",
-        "devServerTarget": "taiga:serve:development"
+        "devServerTarget": "taiga:serve:development",
+        "testingType": "e2e"
       },
       "configurations": {
         "production": {

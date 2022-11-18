@@ -115,8 +115,8 @@ async def get_project_detail(project: Project, user: AnyUser) -> Project:
     )
 
     project.user_is_admin = is_project_admin  # type: ignore[attr-defined]
-    project.user_is_member = await pj_memberships_repositories.user_is_project_member(  # type: ignore[attr-defined]
-        project.slug, user.id
+    project.user_is_member = await pj_memberships_repositories.exist_project_membership(  # type: ignore[attr-defined]
+        filters={"project_id": project.id, "user_id": user.id}
     )
     project.user_has_pending_invitation = (  # type: ignore[attr-defined]
         False

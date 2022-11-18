@@ -71,7 +71,7 @@ async def test_get_project_memberships():
     await repositories.create_project_membership(user=user1, project=project, role=role)
     await repositories.create_project_membership(user=user2, project=project, role=role)
 
-    memberships = await repositories.get_project_memberships(project_slug=project.slug, offset=0, limit=100)
+    memberships = await repositories.get_project_memberships(filters={"project_id": project.id}, offset=0, limit=100)
     assert len(memberships) == 3
 
 
@@ -87,7 +87,10 @@ async def test_get_project_membership():
     role = await f.create_project_role(project=project)
     membership = await repositories.create_project_membership(user=user, project=project, role=role)
 
-    assert await repositories.get_project_membership(project_slug=project.slug, username=user.username) == membership
+    ret_membership = repositories.get_project_membership(
+        filters={"project_slug": project.slug, "username": user.username}
+    )
+    assert await ret_membership == membership
 
 
 ##########################################################
@@ -104,7 +107,7 @@ async def test_get_total_project_memberships():
     await repositories.create_project_membership(user=user1, project=project, role=role)
     await repositories.create_project_membership(user=user2, project=project, role=role)
 
-    total_memberships = await repositories.get_total_project_memberships(project_slug=project.slug)
+    total_memberships = await repositories.get_total_project_memberships(filters={"project_id": project.id})
     assert total_memberships == 3
 
 
@@ -121,7 +124,8 @@ async def test_update_project_membership():
     membership = await repositories.create_project_membership(user=user, project=project, role=role)
 
     new_role = await f.create_project_role(project=project)
-    updated_membership = await repositories.update_project_membership(membership=membership, role=new_role)
+    membership.role = new_role
+    updated_membership = await repositories.update_project_membership(membership=membership)
     assert updated_membership.role == new_role
 
 
@@ -144,7 +148,8 @@ async def test_get_num_members_by_role_id():
     )
     await f.create_project_membership(user=user, project=project, role=role)
     await f.create_project_membership(user=user2, project=project, role=role)
-    res = await repositories.get_num_members_by_role_id(role_id=role.id)
+    res = await repositories.get_total_project_memberships(filters={"role_id": role.id})
+
     assert res == 2
 
 
@@ -157,7 +162,7 @@ async def test_get_num_members_by_role_id_no_members():
         is_admin=True,
         project=project,
     )
-    assert await repositories.get_num_members_by_role_id(role_id=role.id) == 0
+    assert await repositories.get_total_project_memberships(filters={"role_id": role.id}) == 0
 
 
 ##########################################################
@@ -180,11 +185,11 @@ async def test_create_workspace_membership():
 
 
 ##########################################################
-# user_is_project_member
+# exist_project_membership
 ##########################################################
 
 
-async def test_user_is_project_member():
+async def test_exist_project_membership():
     owner = await f.create_user()
     user1 = await f.create_user()
     user2 = await f.create_user()
@@ -192,9 +197,15 @@ async def test_user_is_project_member():
     role = await f.create_project_role(project=project)
     await repositories.create_project_membership(user=user1, project=project, role=role)
 
-    owner_is_member = await repositories.user_is_project_member(project_slug=project.slug, user_id=owner.id)
-    user1_is_member = await repositories.user_is_project_member(project_slug=project.slug, user_id=user1.id)
-    user2_is_member = await repositories.user_is_project_member(project_slug=project.slug, user_id=user2.id)
+    owner_is_member = await repositories.exist_project_membership(
+        filters={"project_id": project.id, "user_id": owner.id}
+    )
+    user1_is_member = await repositories.exist_project_membership(
+        filters={"project_id": project.id, "user_id": user1.id}
+    )
+    user2_is_member = await repositories.exist_project_membership(
+        filters={"project_id": project.id, "user_id": user2.id}
+    )
 
     assert owner_is_member is True
     assert user1_is_member is True

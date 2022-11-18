@@ -157,7 +157,7 @@ async def test_get_project_detail():
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once()
         fake_workspaces_services.get_workspace_summary.assert_awaited_once()
         fake_pj_invitation_services.has_pending_project_invitation_for_user.assert_awaited_once()
-        fake_pj_memberships_repositories.user_is_project_member.assert_awaited_once()
+        fake_pj_memberships_repositories.exist_project_membership.assert_awaited_once()
 
 
 async def test_get_project_detail_anonymous():
@@ -188,7 +188,7 @@ async def test_get_project_detail_anonymous():
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once()
         fake_workspaces_services.get_workspace_summary.assert_awaited_once()
         fake_pj_invitation_repositories.has_pending_project_invitation_for_user.assert_not_awaited()
-        fake_pj_memberships_repositories.user_is_project_member.assert_awaited_once()
+        fake_pj_memberships_repositories.exist_project_membership.assert_awaited_once()
 
 
 ##########################################################

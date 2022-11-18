@@ -71,11 +71,15 @@ async def test_update_project_membership_role_only_one_admin():
         pytest.raises(ex.MembershipIsTheOnlyAdminError),
     ):
         fake_pj_role_repository.get_project_role.return_value = general_role
-        fake_membership_repository.get_num_members_by_role_id.return_value = 1
+        fake_membership_repository.get_total_project_memberships.return_value = 1
 
         await services.update_project_membership(membership=membership, role_slug=general_role.slug)
-        fake_pj_role_repository.get_project_role.assert_awaited_once_with(project=project, slug=general_role.slug)
-        fake_membership_repository.get_num_members_by_role_id.assert_awaited_once_with(role_id=admin_role.id)
+        fake_pj_role_repository.get_project_role.assert_awaited_once_with(
+            filters={"project_id": project.id, "slug": general_role.slug}
+        )
+        fake_membership_repository.get_total_project_memberships.assert_awaited_once_with(
+            filters={"role_id": admin_role.id}
+        )
         fake_membership_repository.update_project_membership.assert_not_awaited()
         fake_membership_events.emit_event_when_project_membership_is_updated.assert_not_awaited()
 
@@ -99,10 +103,8 @@ async def test_update_project_membership_role_ok():
         fake_pj_role_repository.get_project_role.assert_awaited_once_with(
             filters={"project_id": project.id, "slug": admin_role.slug}
         )
-        fake_membership_repository.get_num_members_by_role_id.assert_not_awaited()
-        fake_membership_repository.update_project_membership.assert_awaited_once_with(
-            membership=membership, role=admin_role
-        )
+        fake_membership_repository.get_total_project_memberships.assert_not_awaited()
+        fake_membership_repository.update_project_membership.assert_awaited_once_with(membership=membership)
         fake_membership_events.emit_event_when_project_membership_is_updated.assert_awaited_once_with(
             membership=updated_membership
         )

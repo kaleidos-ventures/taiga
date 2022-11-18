@@ -147,7 +147,7 @@ def create_project_invitations(
 
 @sync_to_async
 def get_project_invitation(
-    filters: ProjectInvitationFilters,
+    filters: ProjectInvitationFilters = {},
     select_related: ProjectInvitationSelectRelated = ["user", "project", "role"],
 ) -> ProjectInvitation | None:
     qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)

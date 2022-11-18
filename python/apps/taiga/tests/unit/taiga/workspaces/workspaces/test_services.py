@@ -36,7 +36,7 @@ async def test_get_workspace():
     slug = "slug"
     with patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo:
         await services.get_workspace(slug=slug)
-        fake_workspaces_repo.get_workspace.assert_awaited_with(slug=slug)
+        fake_workspaces_repo.get_workspace.assert_awaited_with(filters={"slug": slug})
 
 
 ##########################################################
@@ -44,26 +44,45 @@ async def test_get_workspace():
 ##########################################################
 
 
-async def test_get_workspaces_detail_for_admin():
+async def test_get_workspace_detail():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
 
     with (
         patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
+        patch("taiga.workspaces.workspaces.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
+        patch("taiga.workspaces.workspaces.services.projects_repositories", autospec=True) as fake_projects_repo,
     ):
+        fake_ws_roles_repo.get_user_workspace_role_name.return_value = "admin"
+        fake_projects_repo.get_total_projects.return_value = 1
         await services.get_workspace_detail(id=workspace.id, user_id=user.id)
-        fake_workspaces_repo.get_workspace_detail.assert_awaited_with(id=workspace.id, user_id=user.id)
+        fake_workspaces_repo.get_workspace_detail.assert_awaited_with(
+            user_id=user.id,
+            user_workspace_role_name="admin",
+            user_projects_count=1,
+            filters={"id": workspace.id},
+        )
 
 
-async def test_get_workspaces_detail_for_member():
+##########################################################
+# get_workspace_summary
+##########################################################
+
+
+async def test_get_workspace_summary():
     user = await f.create_user()
-    workspace = await f.create_workspace()
+    workspace = await f.create_workspace(owner=user)
 
     with (
         patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
+        patch("taiga.workspaces.workspaces.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
     ):
-        await services.get_workspace_detail(id=workspace.id, user_id=user.id)
-        fake_workspaces_repo.get_workspace_detail.assert_awaited_with(id=workspace.id, user_id=user.id)
+        fake_ws_roles_repo.get_user_workspace_role_name.return_value = "admin"
+        await services.get_workspace_summary(id=workspace.id, user_id=user.id)
+        fake_workspaces_repo.get_workspace_summary.assert_awaited_with(
+            user_workspace_role_name="admin",
+            filters={"id": workspace.id},
+        )
 
 
 ##########################################################

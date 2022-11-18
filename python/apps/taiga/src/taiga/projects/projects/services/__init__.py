@@ -20,7 +20,7 @@ from taiga.projects.projects.services import exceptions as ex
 from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.users.models import AnyUser, User
 from taiga.workspaces.roles import repositories as ws_roles_repositories
-from taiga.workspaces.workspaces import repositories as workspaces_repositories
+from taiga.workspaces.workspaces import services as workspaces_services
 from taiga.workspaces.workspaces.models import Workspace
 
 
@@ -90,7 +90,16 @@ async def get_project_detail(project: Project, user: AnyUser) -> Project:
     (is_workspace_admin, is_workspace_member, _) = await permissions_services.get_user_workspace_role_info(
         user=user, workspace=project.workspace
     )
-    project.workspace = await workspaces_repositories.get_workspace_summary(id=project.workspace.id, user_id=user.id)
+
+    workspace = await workspaces_services.get_workspace_summary(
+        id=project.workspace.id,
+        user_id=user.id,  # type: ignore[arg-type]
+    )
+    if not workspace:
+        # this should never happen
+        raise NotImplementedError
+
+    project.workspace = workspace
 
     # User related fields
     project.user_permissions = (  # type: ignore[attr-defined]

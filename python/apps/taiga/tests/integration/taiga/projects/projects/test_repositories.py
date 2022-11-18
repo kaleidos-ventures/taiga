@@ -324,3 +324,52 @@ async def test_get_workspace_invited_projects_for_user():
     assert len(res) == 2
     assert res[0].name == pj1.name
     assert res[1].name == pj3.name
+
+
+##########################################################
+# misc - get_total_projects
+##########################################################
+
+
+async def test_get_total_projects_in_ws_for_admin() -> None:
+    user1 = await f.create_user()
+    other_user = await f.create_user()
+    ws = await f.create_workspace(owner=user1)
+    await f.create_project(workspace=ws, owner=other_user)
+    await f.create_project(workspace=ws, owner=user1)
+
+    res = await repositories.get_total_projects(filters={"user_id": user1.id, "workspace_id": ws.id})
+    assert res == 2
+
+
+async def test_get_total_projects_in_ws_for_member() -> None:
+    admin = await f.create_user()
+    user1 = await f.create_user()
+    ws = await f.create_workspace(owner=admin)
+
+    ws_member_role = await _get_ws_member_role(workspace=ws)
+    await f.create_workspace_membership(user=user1, workspace=ws, role=ws_member_role)
+
+    pj1 = await f.create_project(workspace=ws, owner=admin)
+    pj1.workspace_member_permissions = ["view_project"]
+    await _save_project(project=pj1)
+
+    res = await repositories.get_total_projects(filters={"user_id": user1.id, "workspace_id": ws.id})
+    assert res == 1
+
+
+async def test_get_total_projects_in_ws_for_guest() -> None:
+    admin = await f.create_user()
+    user1 = await f.create_user()
+    ws = await f.create_workspace(owner=admin)
+
+    pj1 = await f.create_project(workspace=ws, owner=admin)
+    pj_general_role = await _get_pj_member_role(project=pj1)
+    await f.create_project_membership(user=user1, project=pj1, role=pj_general_role)
+
+    pj2 = await f.create_project(workspace=ws, owner=admin)
+    pj_general_role = await _get_pj_member_role(project=pj2)
+    await f.create_project_membership(user=user1, project=pj2, role=pj_general_role)
+
+    res = await repositories.get_total_projects(filters={"user_id": user1.id, "workspace_id": ws.id})
+    assert res == 2

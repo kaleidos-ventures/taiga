@@ -144,20 +144,18 @@ async def test_get_project_detail():
         patch(
             "taiga.projects.projects.services.pj_memberships_repositories", autospec=True
         ) as fake_pj_memberships_repositories,
-        patch(
-            "taiga.projects.projects.services.workspaces_repositories", autospec=True
-        ) as fake_workspaces_repositories,
+        patch("taiga.projects.projects.services.workspaces_services", autospec=True) as fake_workspaces_services,
     ):
         fake_permissions_services.get_user_project_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_workspace_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_permissions_for_project.return_value = (True, True, [])
-        fake_workspaces_repositories.get_workspace_summary.return_value = workspace
+        fake_workspaces_services.get_workspace_summary.return_value = workspace
         await services.get_project_detail(project=project, user=user)
 
         fake_permissions_services.get_user_project_role_info.assert_awaited_once()
         fake_permissions_services.get_user_workspace_role_info.assert_awaited_once()
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once()
-        fake_workspaces_repositories.get_workspace_summary.assert_awaited_once()
+        fake_workspaces_services.get_workspace_summary.assert_awaited_once()
         fake_pj_invitation_services.has_pending_project_invitation_for_user.assert_awaited_once()
         fake_pj_memberships_repositories.user_is_project_member.assert_awaited_once()
 
@@ -177,20 +175,18 @@ async def test_get_project_detail_anonymous():
         patch(
             "taiga.projects.projects.services.pj_memberships_repositories", autospec=True
         ) as fake_pj_memberships_repositories,
-        patch(
-            "taiga.projects.projects.services.workspaces_repositories", autospec=True
-        ) as fake_workspaces_repositories,
+        patch("taiga.projects.projects.services.workspaces_services", autospec=True) as fake_workspaces_services,
     ):
         fake_permissions_services.get_user_project_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_workspace_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_permissions_for_project.return_value = (True, True, [])
-        fake_workspaces_repositories.get_workspace_summary.return_value = workspace
+        fake_workspaces_services.get_workspace_summary.return_value = workspace
         await services.get_project_detail(project=project, user=anonymous_user)
 
         fake_permissions_services.get_user_project_role_info.assert_awaited_once()
         fake_permissions_services.get_user_workspace_role_info.assert_awaited_once()
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once()
-        fake_workspaces_repositories.get_workspace_summary.assert_awaited_once()
+        fake_workspaces_services.get_workspace_summary.assert_awaited_once()
         fake_pj_invitation_repositories.has_pending_project_invitation_for_user.assert_not_awaited()
         fake_pj_memberships_repositories.user_is_project_member.assert_awaited_once()
 

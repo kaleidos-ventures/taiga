@@ -20,7 +20,10 @@ WS_ROLE_NAME_GUEST: Final = "guest"
 WS_ROLE_NAME_NONE: Final = "none"
 
 
-def get_user_workspace_role_name_sync(workspace_id: UUID, user_id: UUID) -> str:
+def get_user_workspace_role_name_sync(workspace_id: UUID, user_id: UUID | None) -> str:
+    if not user_id:
+        return WS_ROLE_NAME_NONE
+
     try:
         membership = WorkspaceMembership.objects.select_related("role").get(workspace_id=workspace_id, user_id=user_id)
 

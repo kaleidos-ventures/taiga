@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from itertools import chain
-from typing import Callable, Iterable
+from typing import Callable, Iterable, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -21,6 +21,7 @@ from taiga.base.db.models import (
     OuterRef,
     Prefetch,
     Q,
+    QuerySet,
     Subquery,
     Value,
     When,
@@ -28,8 +29,93 @@ from taiga.base.db.models import (
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects.models import Project
 from taiga.users.models import User
-from taiga.workspaces.roles import repositories as roles_repositories
 from taiga.workspaces.workspaces.models import Workspace
+
+##########################################################
+# filters and querysets
+##########################################################
+
+
+DEFAULT_QUERYSET = Workspace.objects.all()
+
+
+class WorkspaceFilters(TypedDict, total=False):
+    slug: str
+    id: UUID
+
+
+def _apply_filters_to_queryset(
+    qs: QuerySet[Workspace],
+    filters: WorkspaceFilters = {},
+) -> QuerySet[Workspace]:
+    filter_data = dict(filters.copy())
+    qs = qs.filter(**filter_data)
+    return qs
+
+
+##########################################################
+# create workspace
+##########################################################
+
+
+@sync_to_async
+def create_workspace(name: str, color: int, owner: User) -> Workspace:
+    return Workspace.objects.create(name=name, color=color, owner=owner)
+
+
+##########################################################
+#  get workspace
+##########################################################
+
+
+@sync_to_async
+def get_workspace(
+    filters: WorkspaceFilters = {},
+) -> Workspace | None:
+    qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
+    try:
+        return qs.get()
+    except Workspace.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def get_workspace_detail(
+    user_id: UUID | None,
+    user_workspace_role_name: str,
+    user_projects_count: int,
+    filters: WorkspaceFilters = {},
+) -> Workspace | None:
+    qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
+    qs = qs.annotate(user_role=Value(user_workspace_role_name, output_field=CharField()))
+    qs = qs.annotate(total_projects=Value(user_projects_count, output_field=IntegerField()))
+    qs = qs.annotate(has_projects=Exists(Project.objects.filter(workspace=OuterRef("pk"))))
+    qs = qs.annotate(
+        user_is_owner=Case(When(owner_id=user_id, then=Value(True)), default=Value(False), output_field=BooleanField())
+    )
+
+    try:
+        return qs.get()
+    except Workspace.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def get_workspace_summary(
+    user_workspace_role_name: str,
+    filters: WorkspaceFilters = {},
+) -> Workspace | None:
+    qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
+    qs = qs.annotate(user_role=Value(user_workspace_role_name, output_field=CharField()))
+    try:
+        return qs.get()
+    except Workspace.DoesNotExist:
+        return None
+
+
+##########################################################
+# misc
+##########################################################
 
 
 @sync_to_async
@@ -282,150 +368,3 @@ def get_user_workspace_overview(user: User, slug: str) -> Workspace | None:
         )
     except Workspace.DoesNotExist:
         return None  # There is no workspace with this slug for this user
-
-
-@sync_to_async
-def create_workspace(name: str, color: int, owner: User) -> Workspace:
-    return Workspace.objects.create(name=name, color=color, owner=owner)
-
-
-@sync_to_async
-def get_workspace(slug: str) -> Workspace | None:
-    try:
-        return Workspace.objects.get(slug=slug)
-    except Workspace.DoesNotExist:
-        return None
-
-
-def _get_total_user_projects_sync(workspace_id: UUID, user_id: UUID) -> int:
-    ws_admin = Q(workspace__memberships__user_id=user_id) & Q(workspace__memberships__role__is_admin=True)
-    ws_member_allowed = (
-        Q(workspace__memberships__user_id=user_id)
-        & ~Q(memberships__user_id=user_id)
-        & Q(workspace_member_permissions__len__gt=0)
-    )
-    pj_member_allowed = Q(memberships__user_id=user_id)
-
-    return (
-        Project.objects.filter(workspace_id=workspace_id)
-        .filter(ws_admin | ws_member_allowed | pj_member_allowed)
-        .distinct()
-        .count()
-    )
-
-
-@sync_to_async
-def get_workspace_detail(id: UUID, user_id: UUID) -> Workspace | None:
-    user_workspace_role_name = roles_repositories.get_user_workspace_role_name_sync(workspace_id=id, user_id=user_id)
-    user_projects_count = _get_total_user_projects_sync(workspace_id=id, user_id=user_id)
-
-    try:
-        return (
-            Workspace.objects.annotate(total_projects=Value(user_projects_count, output_field=IntegerField()))
-            .annotate(has_projects=Exists(Project.objects.filter(workspace=OuterRef("pk"))))
-            .annotate(
-                user_is_owner=Case(
-                    When(owner_id=user_id, then=Value(True)), default=Value(False), output_field=BooleanField()
-                )
-            )
-            .annotate(user_role=Value(user_workspace_role_name, output_field=CharField()))
-            .get(id=id)
-        )
-    except Workspace.DoesNotExist:
-        return None
-
-
-@sync_to_async
-def get_workspace_summary(id: UUID, user_id: UUID) -> Workspace | None:
-    user_workspace_role_name = roles_repositories.get_user_workspace_role_name_sync(workspace_id=id, user_id=user_id)
-    try:
-        return Workspace.objects.annotate(user_role=Value(user_workspace_role_name, output_field=CharField())).get(
-            id=id
-        )
-    except Workspace.DoesNotExist:
-        return None
-
-
-# # DRAFT: This is a not-working attempt to solve the problematic using just one query
-#
-# from taiga.base.db.models import Count, OuterRef, Subquery
-#
-# def get_user_workspaces_overview(user: User) -> list[Workspace]:
-#     # return the user"s workspaces including those projects viewable by the user:
-#     #   (1) all the workspaces the user is a member of (all workspace roles will have at least "view" permission),
-#     #         (1a) listing all the projects if the user is a ws_admin (no mattering if the user is a pj-member), or
-#     #         (1b) listing just the projects the user can view if the user is a ws_member.
-#     #   (2) all the workspaces containing projects the user is a member of (with permissions)
-#
-#     objects_with_member = Q(members__id=user.id)
-#     projects_that_belongs_to_a_ws = Q(workspace_id=OuterRef("workspace_id"))
-#     projects_with_member_and_permissions = objects_with_member & Q(memberships__role__permissions__len__gt=0)
-#     projects_with_ws_member = Q(workspace__members__id=user.id)
-#     projects_with_ws_role_admin = Q(workspace__memberships__role__is_admin=True)
-#
-#     project_workspaces_ids = Project.objects.filter(objects_with_member).values_list("workspace", flat=True)
-#     user_is_workspace_member = projects_that_belongs_to_a_ws & projects_with_ws_member
-#     user_is_workspace_admin = user_is_workspace_member & projects_with_ws_role_admin
-#     user_is_not_workspace_admin = user_is_workspace_member & ~projects_with_ws_role_admin
-#     # TODO: Subquery is not working
-#     latest_user_projects_ids = Subquery(
-#         (
-#             Project.objects.filter(
-#                 # workspaces the user is a ws-admin (all its projects
-#                 Q(workspace_id=OuterRef("workspace_id")) &
-#                 Q(workspace__members__id=user.id) &
-#                 Q(workspace__memberships__role__is_admin=True)
-#             ).filter(
-#                 # workspaces the user is a ws-member (not-pj-member) (just if user has ws-permissions)
-#                 Q(workspace_id=OuterRef("workspace_id")) &
-#                 Q(workspace__members__id=user.id) &
-#                 Q(workspace__memberships__role__is_admin=False) &
-#                 ((Q(members__id=user.id) &
-#                   Q(workspace__memberships__role__permissions__len__gt=0))
-#                  |( ~Q(members__id=user.id) & Q(workspace_member_permissions__len__gt=0)))
-#             ).filter(  # workspaces the user is not ws-member but a pj-member (just if user has pj-permissions)
-#                 Q(workspace_id=OuterRef("workspace_id")) &
-#                 ~Q(workspace__members__id=user.id) &
-#                 Q(members__id=user.id) &
-#                 Q(memberships__role__permissions__len__gt=0))
-#         )
-#             .values_list("id", flat=True)
-#             .order_by("-created_at")[:6]
-#     )
-#
-#     latest_user_projects = Project.objects.filter(id__in=latest_user_projects_ids).order_by("-created_at")
-#
-#     all_user_projects = Subquery(
-#         Project.objects.filter(
-#             Q(workspace_id=OuterRef("id"))  # (1a)
-#             if user_is_workspace_admin
-#             else Q(workspace_id=OuterRef("id")) & projects_with_member_and_permissions  # (1b)
-#         )
-#             .annotate(cnt=Count("pk"))
-#             .order_by("cnt")
-#             .values("cnt")[:1],
-#         output_field=IntegerField(),
-#             )
-#
-#     # all_user_projects.contains_aggregate = False
-#     # qs = Project.objects.annotate(total_projects=all_user_projects)
-#
-#     workspace_user_rol_id = Subquery(
-#         WorkspaceMembership.objects.filter(Q(user_id=user.id) & Q(workspace_id=OuterRef("id")))
-#             .values_list("role__id", flat=True)
-#             .order_by("-id")[:1]
-#     )
-#     # role = WorkspaceRole.objects.filter(id__in=workspace_user_rol_id)
-#
-#     projects = Project.objects.filter(Q(workspace_id=OuterRef("id")))
-#
-#     return (
-#         Workspace.objects.filter(objects_with_member | Q(id__in=project_workspaces_ids))  # (1)  # (2)
-#             .prefetch_related(Prefetch("projects", queryset=latest_user_projects, to_attr="latest_projects"))
-#             # TODO: fix the count of variable (not use the ORM field)
-#             .annotate(total_projects=Count("projects", queryset=all_user_projects))
-#             .annotate(has_projects=Exists(projects))
-#             .annotate(my_role=workspace_user_rol_id)
-#         # TODO: add "myRol" object, not the id
-#         # .order_by("-created_at")
-#     )

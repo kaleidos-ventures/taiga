@@ -11,7 +11,7 @@ from fastapi import status
 from taiga.permissions import choices
 from tests.utils import factories as f
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 #############################################################

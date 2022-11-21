@@ -35,6 +35,8 @@ from .workspaces import (  # noqa
     WorkspaceMembershipFactory,
     WorkspaceRoleFactory,
     build_workspace,
+    build_workspace_membership,
+    build_workspace_role,
     create_workspace,
     create_workspace_membership,
     create_workspace_role,

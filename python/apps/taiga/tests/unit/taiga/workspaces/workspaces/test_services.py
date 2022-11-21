@@ -15,7 +15,7 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
-# get_my_workspaces_projects
+# get_user_workspaces_overview
 ##########################################################
 
 
@@ -50,10 +50,10 @@ async def test_get_workspace_detail():
 
     with (
         patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
-        patch("taiga.workspaces.workspaces.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
+        patch("taiga.workspaces.workspaces.services.ws_roles_services", autospec=True) as fake_ws_roles_services,
         patch("taiga.workspaces.workspaces.services.projects_repositories", autospec=True) as fake_projects_repo,
     ):
-        fake_ws_roles_repo.get_user_workspace_role_name.return_value = "admin"
+        fake_ws_roles_services.get_workspace_role_name.return_value = "admin"
         fake_projects_repo.get_total_projects.return_value = 1
         await services.get_workspace_detail(id=workspace.id, user_id=user.id)
         fake_workspaces_repo.get_workspace_detail.assert_awaited_with(
@@ -75,9 +75,9 @@ async def test_get_workspace_summary():
 
     with (
         patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
-        patch("taiga.workspaces.workspaces.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
+        patch("taiga.workspaces.workspaces.services.ws_roles_services", autospec=True) as fake_ws_roles_services,
     ):
-        fake_ws_roles_repo.get_user_workspace_role_name.return_value = "admin"
+        fake_ws_roles_services.get_workspace_role_name.return_value = "admin"
         await services.get_workspace_summary(id=workspace.id, user_id=user.id)
         fake_workspaces_repo.get_workspace_summary.assert_awaited_with(
             user_workspace_role_name="admin",

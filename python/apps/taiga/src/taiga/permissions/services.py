@@ -42,7 +42,7 @@ async def is_workspace_admin(user: AnyUser, obj: Any) -> bool:
     if user.is_superuser:
         return True
 
-    role = await ws_roles_repositories.get_workspace_role_for_user(user_id=user.id, workspace_id=workspace.id)
+    role = await ws_roles_repositories.get_workspace_role(filters={"user_id": user.id, "workspace_id": workspace.id})
     return role.is_admin if role else False
 
 
@@ -117,7 +117,7 @@ async def get_user_project_role_info(user: AnyUser, project: Project) -> tuple[b
 
 
 async def get_user_workspace_role_info(user: AnyUser, workspace: Workspace) -> tuple[bool, bool, list[str]]:
-    role = await ws_roles_repositories.get_workspace_role_for_user(user_id=user.id, workspace_id=workspace.id)
+    role = await ws_roles_repositories.get_workspace_role(filters={"user_id": user.id, "workspace_id": workspace.id})
     if role:
         return role.is_admin, True, role.permissions
 

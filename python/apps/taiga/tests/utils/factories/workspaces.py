@@ -29,6 +29,10 @@ def create_workspace_role(**kwargs):
     return WorkspaceRoleFactory.create(**kwargs)
 
 
+def build_workspace_role(**kwargs):
+    return WorkspaceRoleFactory.build(**kwargs)
+
+
 # WORKSPACE MEMBERSHIP
 
 
@@ -44,6 +48,10 @@ class WorkspaceMembershipFactory(Factory):
 @sync_to_async
 def create_workspace_membership(**kwargs):
     return WorkspaceMembershipFactory.create(**kwargs)
+
+
+def build_workspace_membership(**kwargs):
+    return WorkspaceMembershipFactory.build(**kwargs)
 
 
 # WORKSPACE

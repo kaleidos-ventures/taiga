@@ -12,6 +12,7 @@ from taiga.projects.projects import repositories as projects_repositories
 from taiga.users.models import User
 from taiga.workspaces.memberships import repositories as ws_memberships_repositories
 from taiga.workspaces.roles import repositories as ws_roles_repositories
+from taiga.workspaces.roles import services as ws_roles_services
 from taiga.workspaces.workspaces import repositories as workspaces_repositories
 from taiga.workspaces.workspaces.models import Workspace
 
@@ -29,9 +30,7 @@ async def get_workspace(slug: str) -> Workspace | None:
 
 
 async def get_workspace_detail(id: UUID, user_id: UUID | None) -> Workspace | None:
-    user_workspace_role_name = await ws_roles_repositories.get_user_workspace_role_name(
-        workspace_id=id, user_id=user_id
-    )
+    user_workspace_role_name = await ws_roles_services.get_workspace_role_name(workspace_id=id, user_id=user_id)
     user_projects_count = await projects_repositories.get_total_projects(
         filters={"workspace_id": id, "user_id": user_id},
     )
@@ -44,9 +43,7 @@ async def get_workspace_detail(id: UUID, user_id: UUID | None) -> Workspace | No
 
 
 async def get_workspace_summary(id: UUID, user_id: UUID | None) -> Workspace | None:
-    user_workspace_role_name = await ws_roles_repositories.get_user_workspace_role_name(
-        workspace_id=id, user_id=user_id
-    )
+    user_workspace_role_name = await ws_roles_services.get_workspace_role_name(workspace_id=id, user_id=user_id)
     return await workspaces_repositories.get_workspace_summary(
         filters={"id": id},
         user_workspace_role_name=user_workspace_role_name,

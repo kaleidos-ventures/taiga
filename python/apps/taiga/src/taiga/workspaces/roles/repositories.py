@@ -5,48 +5,46 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Final
+from typing import TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
-from taiga.projects.memberships.models import ProjectMembership
-from taiga.workspaces.memberships.models import WorkspaceMembership
+from taiga.base.db.models import QuerySet
 from taiga.workspaces.roles.models import WorkspaceRole
 from taiga.workspaces.workspaces.models import Workspace
 
-WS_ROLE_NAME_ADMIN: Final = "admin"
-WS_ROLE_NAME_MEMBER: Final = "member"
-WS_ROLE_NAME_GUEST: Final = "guest"
-WS_ROLE_NAME_NONE: Final = "none"
+##########################################################
+# filters and querysets
+##########################################################
 
 
-def get_user_workspace_role_name_sync(workspace_id: UUID, user_id: UUID | None) -> str:
-    if not user_id:
-        return WS_ROLE_NAME_NONE
-
-    try:
-        membership = WorkspaceMembership.objects.select_related("role").get(workspace_id=workspace_id, user_id=user_id)
-
-        if membership.role.is_admin:
-            return WS_ROLE_NAME_ADMIN
-        else:
-            return WS_ROLE_NAME_MEMBER
-    except WorkspaceMembership.DoesNotExist:
-        if ProjectMembership.objects.filter(user_id=user_id, project__workspace_id=workspace_id).exists():
-            return WS_ROLE_NAME_GUEST
-        else:
-            return WS_ROLE_NAME_NONE
+DEFAULT_QUERYSET = WorkspaceRole.objects.all()
 
 
-get_user_workspace_role_name = sync_to_async(get_user_workspace_role_name_sync)
+class WorkspaceRoleFilters(TypedDict, total=False):
+    user_id: UUID
+    workspace_id: UUID
 
 
-@sync_to_async
-def get_workspace_role_for_user(user_id: UUID, workspace_id: UUID) -> WorkspaceRole | None:
-    try:
-        return WorkspaceRole.objects.get(memberships__user__id=user_id, memberships__workspace__id=workspace_id)
-    except WorkspaceRole.DoesNotExist:
-        return None
+def _apply_filters_to_queryset(
+    qs: QuerySet[WorkspaceRole],
+    filters: WorkspaceRoleFilters = {},
+) -> QuerySet[WorkspaceRole]:
+    filter_data = dict(filters.copy())
+
+    if "user_id" in filter_data:
+        filter_data["memberships__user_id"] = filter_data.pop("user_id")
+
+    if "workspace_id" in filter_data:
+        filter_data["memberships__workspace_id"] = filter_data.pop("workspace_id")
+
+    qs = qs.filter(**filter_data)
+    return qs
+
+
+##########################################################
+# create workspace role
+##########################################################
 
 
 @sync_to_async
@@ -60,3 +58,19 @@ def create_workspace_role(
         permissions=permissions,
         is_admin=is_admin,
     )
+
+
+##########################################################
+# get workspace role
+##########################################################
+
+
+@sync_to_async
+def get_workspace_role(
+    filters: WorkspaceRoleFilters = {},
+) -> WorkspaceRole | None:
+    qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
+    try:
+        return qs.get()
+    except WorkspaceRole.DoesNotExist:
+        return None

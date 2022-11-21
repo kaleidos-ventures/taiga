@@ -5,14 +5,83 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import Literal, TypedDict
+from uuid import UUID
 
 from asgiref.sync import sync_to_async
+from taiga.base.db.models import QuerySet
 from taiga.users.models import User
 from taiga.workspaces.memberships.models import WorkspaceMembership
 from taiga.workspaces.roles.models import WorkspaceRole
 from taiga.workspaces.workspaces.models import Workspace
 
+##########################################################
+# filters and querysets
+##########################################################
+
+
+DEFAULT_QUERYSET = WorkspaceMembership.objects.all()
+
+
+class WorkspaceMembershipFilters(TypedDict, total=False):
+    workspace_id: UUID
+    user_id: UUID
+
+
+def _apply_filters_to_queryset(
+    qs: QuerySet[WorkspaceMembership],
+    filters: WorkspaceMembershipFilters = {},
+) -> QuerySet[WorkspaceMembership]:
+    filter_data = dict(filters.copy())
+    qs = qs.filter(**filter_data)
+    return qs
+
+
+WorkspaceMembershipSelectRelated = list[
+    Literal[
+        "role",
+        "user",
+        "workspace",
+    ]
+]
+
+
+def _apply_select_related_to_queryset(
+    qs: QuerySet[WorkspaceMembership],
+    select_related: WorkspaceMembershipSelectRelated,
+) -> QuerySet[WorkspaceMembership]:
+    select_related_data = []
+
+    for key in select_related:
+        select_related_data.append(key)
+
+    qs = qs.select_related(*select_related_data)
+    return qs
+
+
+##########################################################
+# create workspace membership
+##########################################################
+
 
 @sync_to_async
 def create_workspace_membership(user: User, workspace: Workspace, role: WorkspaceRole) -> WorkspaceMembership:
     return WorkspaceMembership.objects.create(user=user, workspace=workspace, role=role)
+
+
+##########################################################
+# get workspace membership
+##########################################################
+
+
+@sync_to_async
+def get_workspace_membership(
+    filters: WorkspaceMembershipFilters = {},
+    select_related: WorkspaceMembershipSelectRelated = ["role"],
+) -> WorkspaceMembership | None:
+    qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
+    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
+    try:
+        return qs.get()
+    except WorkspaceMembership.DoesNotExist:
+        return None

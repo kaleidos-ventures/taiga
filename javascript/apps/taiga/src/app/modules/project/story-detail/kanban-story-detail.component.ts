@@ -244,7 +244,9 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
 
     // click came from a story card
     if (locationState?.fromCard) {
-      (this.storyRef.nativeElement as HTMLElement).focus();
+      setTimeout(() => {
+        (this.storyRef.nativeElement as HTMLElement).focus();
+      }, 200);
     }
   }
 }

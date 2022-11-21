@@ -73,7 +73,7 @@ export function prefersReducedMotion(): boolean {
     NavigationModule,
     TuiAlertModule,
     AppRoutingModule,
-    BrowserModule.withServerTransition({ appId: 'serverApp' }),
+    BrowserModule,
     BrowserAnimationsModule.withConfig({
       disableAnimations: prefersReducedMotion(),
     }),

@@ -104,52 +104,6 @@
         "jestConfig": "apps/taiga/jest.config.ts",
         "passWithNoTests": true
       }
-    },
-    "server": {
-      "executor": "@angular-devkit/build-angular:server",
-      "options": {
-        "outputPath": "dist/taiga/server",
-        "main": "apps/taiga/server.ts",
-        "tsConfig": "apps/taiga/tsconfig.server.json",
-        "sourceMap": true
-      },
-      "configurations": {
-        "production": {
-          "outputHashing": "media",
-          "fileReplacements": [
-            {
-              "replace": "apps/taiga/src/environments/environment.ts",
-              "with": "apps/taiga/src/environments/environment.prod.ts"
-            }
-          ],
-          "sourceMap": false
-        }
-      },
-      "defaultConfiguration": ""
-    },
-    "serve-ssr": {
-      "executor": "@nguniversal/builders:ssr-dev-server",
-      "options": {
-        "browserTarget": "taiga:build",
-        "serverTarget": "taiga:server"
-      },
-      "configurations": {
-        "production": {
-          "browserTarget": "taiga:build:production",
-          "serverTarget": "taiga:server:production"
-        }
-      }
-    },
-    "prerender": {
-      "executor": "@nguniversal/builders:prerender",
-      "options": {
-        "browserTarget": "taiga:build:production",
-        "serverTarget": "taiga:server:production",
-        "routes": ["/"]
-      },
-      "configurations": {
-        "production": {}
-      }
     }
   },
   "tags": ["scope:taiga"]

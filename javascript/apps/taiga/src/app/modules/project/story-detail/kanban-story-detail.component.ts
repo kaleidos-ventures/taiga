@@ -8,7 +8,7 @@
 
 import { A11yModule } from '@angular/cdk/a11y';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { CommonModule, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -21,16 +21,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import {
-  TranslocoModule,
-  TranslocoService,
-  TRANSLOCO_SCOPE,
-} from '@ngneat/transloco';
+import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import {
-  TuiButtonModule,
   TuiDataListModule,
   TuiHintModule,
   TuiLinkModule,
@@ -49,6 +44,7 @@ import {
   selectStoryView,
   selectUpdateStoryView,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
@@ -62,10 +58,8 @@ import { filterNil } from '~/app/shared/utils/operators';
   styleUrls: ['./kanban-story-detail.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
-    TranslocoModule,
-    TuiButtonModule,
+    CommonTemplateModule,
     TuiHintModule,
     TuiLinkModule,
     TuiScrollbarModule,

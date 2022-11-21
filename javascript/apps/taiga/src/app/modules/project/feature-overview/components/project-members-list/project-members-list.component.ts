@@ -11,7 +11,6 @@ import {
   CdkVirtualScrollViewport,
   ScrollingModule,
 } from '@angular/cdk/scrolling';
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -21,10 +20,9 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import {
-  TuiButtonModule,
   TuiHintModule,
   TuiLinkModule,
   TuiScrollbarModule,
@@ -40,6 +38,7 @@ import {
   selectCanPaginate,
   selectLoadingMoreMembers,
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
@@ -53,11 +52,9 @@ import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
   imports: [
     SkeletonsModule,
     TuiScrollbarModule,
-    CommonModule,
-    TuiButtonModule,
     TuiSvgModule,
     AvatarModule,
-    TranslocoModule,
+    CommonTemplateModule,
     TuiLinkModule,
     UserCardComponent,
     TuiHintModule,

@@ -7,16 +7,14 @@
  */
 
 import { A11yModule } from '@angular/cdk/a11y';
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import {
-  TuiButtonModule,
   TuiHintModule,
   TuiLinkModule,
   TuiSvgModule,
@@ -27,6 +25,7 @@ import { AvatarModule } from '@taiga/ui/avatar';
 import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { SkeletonsModule } from 'libs/ui/src/lib/skeletons/skeletons.module';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
 import { ResizeEventModule } from '~/app/shared/resize/resize.module';
@@ -49,10 +48,8 @@ import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-rout
   imports: [
     TitleDirective,
     ReactiveFormsModule,
-    CommonModule,
-    TuiButtonModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     TuiLinkModule,
     InputsModule,
     TuiAvatarModule,

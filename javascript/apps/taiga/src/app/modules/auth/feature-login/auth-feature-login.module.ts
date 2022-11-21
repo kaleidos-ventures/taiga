@@ -6,14 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TuiLinkModule } from '@taiga-ui/core';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 import { AuthForestComponent } from '../components/auth-forest/auth-forest.component';
 import { SocialLoginComponent } from '../components/social-login/social-login.component';
@@ -34,11 +34,9 @@ const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
     },
   ],
   imports: [
-    CommonModule,
+    CommonTemplateModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
-    TranslocoModule,
-    TuiButtonModule,
     InputsModule,
     TuiLinkModule,
     ContextNotificationModule,

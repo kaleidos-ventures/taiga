@@ -6,11 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { ProjectMembersListComponent } from './components/project-members-list/project-members-list.component';
 import { ProjectMembersModalComponent } from './components/project-members-modal/project-members-modal.component';
@@ -21,11 +21,9 @@ import { ProjectFeatureOverviewComponent } from './project-feature-overview.comp
 
 @NgModule({
   imports: [
-    CommonModule,
-    TuiButtonModule,
     TuiSvgModule,
     AvatarModule,
-    TranslocoModule,
+    CommonTemplateModule,
     ProjectOverviewRoutingModule,
     TuiLinkModule,
     DataAccessProjectOverviewModule,

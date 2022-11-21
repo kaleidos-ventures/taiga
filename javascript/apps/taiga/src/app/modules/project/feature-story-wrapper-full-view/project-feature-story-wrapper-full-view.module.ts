@@ -6,20 +6,17 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TranslocoModule } from '@ngneat/transloco';
-import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiSvgModule } from '@taiga-ui/core';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { StoryDetailSkeletonComponent } from '../story-detail-skeleton/story-detail-skeleton.component';
 import { KanbanStoryDetailComponent } from '../story-detail/kanban-story-detail.component';
 import { ProjectFeatureStoryWrapperFullViewComponent } from './project-feature-story-wrapper-full-view.component';
 
 @NgModule({
   imports: [
-    CommonModule,
-    TuiButtonModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     KanbanStoryDetailComponent,
     StoryDetailSkeletonComponent,
   ],

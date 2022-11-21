@@ -8,30 +8,33 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TuiSvgModule, TuiTextfieldControllerModule } from '@taiga-ui/core';
-import { InputComponent } from './input/input.component';
-import { InputRefDirective } from './input-ref.directive';
-import { SelectComponent } from './select/select.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { TranslocoModule } from '@ngneat/transloco';
 import {
-  TuiDataListModule,
   TuiButtonModule,
+  TuiDataListModule,
   TuiLinkModule,
+  TuiSvgModule,
+  TuiTextfieldControllerModule,
 } from '@taiga-ui/core';
 import {
   TuiDataListWrapperModule,
   TuiSelectModule,
   TuiTextAreaModule,
 } from '@taiga-ui/kit';
-import { ReactiveFormsModule } from '@angular/forms';
-import { TextareaComponent } from './textarea/textarea.component';
-import { FormDirective } from './form/form.directive';
 import { UiErrorModule } from './error/error.module';
+import { FormDirective } from './form/form.directive';
+import { InputRefDirective } from './input-ref.directive';
+import { InputComponent } from './input/input.component';
 import { UiPasswordStrengthModule } from './password-strength/password-strength.module';
-import { TranslocoModule } from '@ngneat/transloco';
+import { SelectComponent } from './select/select.component';
+import { TextareaComponent } from './textarea/textarea.component';
 @NgModule({
   imports: [
-    TuiSvgModule,
     CommonModule,
+    TranslocoModule,
+    TuiButtonModule,
+    TuiSvgModule,
     ReactiveFormsModule,
     TuiSelectModule,
     TuiDataListModule,
@@ -40,9 +43,7 @@ import { TranslocoModule } from '@ngneat/transloco';
     TuiTextAreaModule,
     UiErrorModule,
     UiPasswordStrengthModule,
-    TuiButtonModule,
     TuiLinkModule,
-    TranslocoModule,
   ],
   declarations: [
     FormDirective,

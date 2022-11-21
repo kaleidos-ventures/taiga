@@ -7,22 +7,19 @@
  */
 
 import { A11yModule } from '@angular/cdk/a11y';
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TranslocoModule } from '@ngneat/transloco';
-import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiSvgModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { ProjectNavigationMenuComponent } from './components/project-navigation-menu/project-navigation-menu.component';
 import { ProjectNavigationSettingsComponent } from './components/project-navigation-settings/project-navigation-settings.component';
 import { ProjectNavigationComponent } from './project-feature-navigation.component';
 
 @NgModule({
   imports: [
-    CommonModule,
-    TuiButtonModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     A11yModule,
     RouterModule,
     AvatarModule,

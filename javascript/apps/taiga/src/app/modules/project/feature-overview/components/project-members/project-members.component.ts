@@ -6,14 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { Invitation, Membership, Project, User } from '@taiga/data';
 import { ModalModule } from '@taiga/ui/modal';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
@@ -42,6 +41,7 @@ import {
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
 import { WsService } from '~/app/services/ws';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import {
   acceptInvitationSlug,
   acceptInvitationSlugSuccess,
@@ -70,10 +70,8 @@ import { ProjectMembersModalComponent } from '../project-members-modal/project-m
     },
   ],
   imports: [
-    CommonModule,
-    TuiButtonModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     TuiLinkModule,
     ModalModule,
     ProjectMembersModalComponent,

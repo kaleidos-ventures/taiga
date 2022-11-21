@@ -6,23 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  TranslocoModule,
-  TranslocoService,
-  TRANSLOCO_SCOPE,
-} from '@ngneat/transloco';
-import {
-  TuiButtonModule,
-  TuiHintModule,
-  TuiLinkModule,
-  TuiSvgModule,
-} from '@taiga-ui/core';
+import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TuiHintModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { Role, User } from '@taiga/data';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 
@@ -37,13 +28,11 @@ import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
-    TuiButtonModule,
     TuiLinkModule,
     InputsModule,
     TuiSvgModule,
     TuiHintModule,
-    TranslocoModule,
+    CommonTemplateModule,
     UserCardComponent,
     BadgeModule,
     CapitalizePipeModule,

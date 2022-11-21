@@ -6,15 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TuiSvgModule } from '@taiga-ui/core';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { ModalPermissionEntityRowComponent } from './components/modal-permission-entity-row/modal-permission-entity-row.component';
 import { ModalPermissionComparisonComponent } from './modal-permission-comparison.component';
 
 @NgModule({
-  imports: [CommonModule, TuiButtonModule, TuiSvgModule, TranslocoModule],
+  imports: [CommonTemplateModule, TuiSvgModule],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

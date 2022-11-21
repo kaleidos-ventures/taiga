@@ -6,14 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TranslocoModule } from '@ngneat/transloco';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
-import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiAvatarModule, TuiBadgedContentModule } from '@taiga-ui/kit';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { CommonTemplateModule } from '../common-template.module';
 import { DropdownModule } from '../dropdown/dropdown.module';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 import { NavigationProjectsComponent } from './navigation-projects/navigation-projects.component';
@@ -22,12 +21,10 @@ import { NavigationComponent } from './navigation.component';
 
 @NgModule({
   imports: [
-    CommonModule,
-    TuiButtonModule,
     TuiAvatarModule,
     TuiLinkModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     UserAvatarComponent,
     TuiAutoFocusModule,
     RouterModule,

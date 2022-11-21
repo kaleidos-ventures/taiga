@@ -6,15 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TranslocoModule } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import {
-  TuiButtonModule,
   TuiDataListModule,
   TuiDropdownModule,
   TuiLinkModule,
@@ -31,6 +28,7 @@ import { InvitationEffects } from '~/app/shared/invite-to-project/data-access/+s
 import { invitationFeature } from '~/app/shared/invite-to-project/data-access/+state/reducers/invitation.reducers';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
+import { CommonTemplateModule } from '../common-template.module';
 import { ButtonLoadingModule } from '../directives/button-loading/button-loading.module';
 import { CapitalizePipeModule } from '../pipes/capitalize/capitalize.pipe.module';
 import { UserToInviteComponent } from './components/user-to-invite.component';
@@ -40,14 +38,12 @@ import { InviteToProjectComponent } from './invite-to-project.component';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
     UserAvatarComponent,
-    TuiButtonModule,
     TuiLinkModule,
     InputsModule,
     BadgeModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     TuiDataListModule,
     TuiScrollbarModule,
     TuiDropdownModule,

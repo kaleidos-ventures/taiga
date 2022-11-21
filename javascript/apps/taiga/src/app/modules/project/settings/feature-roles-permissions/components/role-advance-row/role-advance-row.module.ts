@@ -6,28 +6,21 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import {
-  TuiButtonModule,
-  TuiHintModule,
-  TuiLinkModule,
-  TuiSvgModule,
-} from '@taiga-ui/core';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TuiHintModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiToggleModule } from '@taiga-ui/kit';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { RoleCustomizeModule } from '../role-customize/role-customize.module';
 import { RoleAdvanceRowComponent } from './role-advance-row.component';
 
 @NgModule({
   imports: [
-    CommonModule,
-    TuiButtonModule,
     TuiLinkModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     TuiToggleModule,
     RoleCustomizeModule,
     InputsModule,

@@ -7,33 +7,31 @@
  */
 
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiToggleModule } from '@taiga-ui/kit';
-import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
-import { RolePermissionRowModule } from './components/role-permission-row/role-permission-row.module';
-import { RoleCustomizeModule } from './components/role-customize/role-customize.module';
-import { RoleAdvanceRowModule } from './components/role-advance-row/role-advance-row.module';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { ModalPermissionComparisonModule } from './components/modal-permission-comparison/modal-permission-comparison.module';
-import { rolesPermissionsFeature } from './+state/reducers/roles-permissions.reducer';
-import { RolesPermissionsEffects } from './+state/effects/roles-permissions.effects';
-import { StoreModule } from '@ngrx/store';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiToggleModule } from '@taiga-ui/kit';
+import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { TitleDirective } from '~/app/shared/title/title.directive';
+import { RolesPermissionsEffects } from './+state/effects/roles-permissions.effects';
+import { rolesPermissionsFeature } from './+state/reducers/roles-permissions.reducer';
+import { ModalPermissionComparisonModule } from './components/modal-permission-comparison/modal-permission-comparison.module';
+import { RoleAdvanceRowModule } from './components/role-advance-row/role-advance-row.module';
+import { RoleCustomizeModule } from './components/role-customize/role-customize.module';
+import { RolePermissionRowModule } from './components/role-permission-row/role-permission-row.module';
+import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
 
 @NgModule({
   declarations: [ProjectSettingsFeatureRolesPermissionsComponent],
   imports: [
-    CommonModule,
-    TuiButtonModule,
     TuiLinkModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     TuiToggleModule,
     ContextNotificationModule,
     ModalModule,

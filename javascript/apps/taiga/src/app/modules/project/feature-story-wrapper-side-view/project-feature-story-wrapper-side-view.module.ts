@@ -7,20 +7,17 @@
  */
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TranslocoModule } from '@ngneat/transloco';
-import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiSvgModule } from '@taiga-ui/core';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { StoryDetailSkeletonComponent } from '../story-detail-skeleton/story-detail-skeleton.component';
 import { KanbanStoryDetailComponent } from '../story-detail/kanban-story-detail.component';
 import { ProjectFeatureStoryWrapperSideViewComponent } from './project-feature-story-wrapper-side-view.component';
 
 @NgModule({
   imports: [
-    CommonModule,
-    TuiButtonModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     KanbanStoryDetailComponent,
     DragDropModule,
     StoryDetailSkeletonComponent,

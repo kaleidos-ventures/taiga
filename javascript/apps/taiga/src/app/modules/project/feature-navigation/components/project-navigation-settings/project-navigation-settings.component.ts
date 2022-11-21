@@ -7,7 +7,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -20,13 +19,14 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiSvgModule } from '@taiga-ui/core';
 import { Project } from '@taiga/data';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { filter, take } from 'rxjs/operators';
 import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
 @UntilDestroy()
@@ -36,14 +36,7 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
   templateUrl: './project-navigation-settings.component.html',
   styleUrls: ['./project-navigation-settings.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    TuiButtonModule,
-    TuiSvgModule,
-    TranslocoModule,
-    AvatarModule,
-    RouterModule,
-  ],
+  imports: [TuiSvgModule, CommonTemplateModule, AvatarModule, RouterModule],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

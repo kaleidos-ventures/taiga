@@ -6,11 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiButtonModule } from '@taiga-ui/core';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { Error403Component } from './error-403.component';
 
 const routes: Routes = [
@@ -24,12 +23,7 @@ const routes: Routes = [
 ];
 @NgModule({
   declarations: [Error403Component],
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    TranslocoModule,
-    TuiButtonModule,
-  ],
+  imports: [RouterModule.forChild(routes), CommonTemplateModule],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

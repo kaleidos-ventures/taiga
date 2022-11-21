@@ -7,20 +7,14 @@
  */
 
 import { A11yModule } from '@angular/cdk/a11y';
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
-import {
-  TuiButtonModule,
-  TuiDataListModule,
-  TuiLinkModule,
-  TuiSvgModule,
-} from '@taiga-ui/core';
+import { TuiDataListModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import {
   TuiDataListWrapperModule,
   TuiSelectModule,
@@ -31,6 +25,7 @@ import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
 import { TitleDirective } from '~/app/shared/title/title.directive';
@@ -71,7 +66,6 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     TuiSelectModule,
     TuiDataListWrapperModule,
     InputsModule,
-    TuiButtonModule,
     TuiLinkModule,
     UserCardComponent,
     TuiSvgModule,
@@ -80,8 +74,7 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     TuiActiveZoneModule,
     ContextNotificationModule,
     TuiDataListModule,
-    CommonModule,
-    TranslocoModule,
+    CommonTemplateModule,
     DynamicTableModule,
     ModalModule,
     InviteToProjectModule,

@@ -6,7 +6,6 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,13 +13,10 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import {
-  TuiButtonModule,
-  TuiScrollbarModule,
-  TuiSvgModule,
-} from '@taiga-ui/core';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TuiScrollbarModule, TuiSvgModule } from '@taiga-ui/core';
 import { Invitation, Membership, User } from '@taiga/data';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { ProjectMembersListComponent } from '../project-members-list/project-members-list.component';
 
 @Component({
@@ -30,10 +26,8 @@ import { ProjectMembersListComponent } from '../project-members-list/project-mem
   styleUrls: ['./project-members-modal.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
-    TuiButtonModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     TuiScrollbarModule,
     ProjectMembersListComponent,
   ],

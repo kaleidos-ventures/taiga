@@ -13,7 +13,6 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -25,15 +24,15 @@ import {
   Output,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TuiButtonModule, TuiHintModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiHintModule, TuiSvgModule } from '@taiga-ui/core';
 import { Project, Workspace } from '@taiga/data';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { distinctUntilChanged, map, skip } from 'rxjs/operators';
 import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
+import { CommonTemplateModule } from '../common-template.module';
 import { DataAccessInvitationToProjectModule } from '../invite-to-project/data-access/+state/invite-to-project-data-access.module';
 import { InviteToProjectModule } from '../invite-to-project/invite-to-project.module';
 import { CapitalizePipeModule } from '../pipes/capitalize/capitalize.pipe.module';
@@ -48,11 +47,9 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
   styleUrls: ['./project-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
-    TuiButtonModule,
     TuiSvgModule,
-    TranslocoModule,
+    CommonTemplateModule,
     AvatarModule,
     InviteToProjectModule,
     TuiHintModule,

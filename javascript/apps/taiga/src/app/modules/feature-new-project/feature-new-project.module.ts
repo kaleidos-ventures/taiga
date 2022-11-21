@@ -6,19 +6,19 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
-import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiSvgModule } from '@taiga-ui/core';
 import { TuiDataListWrapperModule, TuiSelectModule } from '@taiga-ui/kit';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { ModalModule } from '@taiga/ui/modal';
 import { ImageUploadModule } from 'libs/ui/src/lib/inputs/image-upload/image-upload.module';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 import { TitleDirective } from '~/app/shared/title/title.directive';
 import { NewProjectEffects } from './+state/effects/new-project.effects';
@@ -32,8 +32,6 @@ import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.mo
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
-    TranslocoModule,
     EffectsModule.forFeature([NewProjectEffects]),
     TuiSvgModule,
     TuiSelectModule,
@@ -41,7 +39,7 @@ import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.mo
     TuiAutoFocusModule,
     AvatarModule,
     RouterModule,
-    TuiButtonModule,
+    CommonTemplateModule,
     InputsModule,
     ImageUploadModule,
     ModalModule,

@@ -6,14 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TuiLinkModule } from '@taiga-ui/core';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
 import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
@@ -37,11 +37,9 @@ const routes: Routes = [
 @NgModule({
   declarations: [AuthFeatureResetPasswordComponent, NewPasswordComponent],
   imports: [
-    TranslocoModule,
-    CommonModule,
+    CommonTemplateModule,
     ReactiveFormsModule,
     InputsModule,
-    TuiButtonModule,
     GetUrlPipeModule,
     InternalLinkModule,
     ButtonLoadingModule,

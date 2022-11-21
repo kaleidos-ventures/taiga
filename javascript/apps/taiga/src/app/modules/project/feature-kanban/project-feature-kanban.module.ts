@@ -9,13 +9,11 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import {
-  TuiButtonModule,
   TuiLinkModule,
   TuiScrollbarModule,
   TuiSvgModule,
@@ -25,6 +23,7 @@ import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 import { ProjectFeatureStoryWrapperModalViewModule } from '~/app/modules/project//feature-story-wrapper-modal-view/project-feature-story-wrapper-modal-view.module';
 import { StatusScrollDynamicHeightDirective } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
 import { ProjectFeatureStoryWrapperSideViewModule } from '~/app/modules/project/feature-story-wrapper-side-view/project-feature-story-wrapper-side-view.module';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { InViewportDirective } from '~/app/shared/directives/in-viewport.directive';
 import { DragModule } from '~/app/shared/drag/drag.module';
@@ -58,11 +57,9 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
   imports: [
     TuiAutoFocusModule,
     TuiLinkModule,
-    TuiButtonModule,
     HasPermissionDirective,
     TitleComponent,
-    CommonModule,
-    TranslocoModule,
+    CommonTemplateModule,
     TuiSvgModule,
     ModalModule,
     InviteToProjectModule,

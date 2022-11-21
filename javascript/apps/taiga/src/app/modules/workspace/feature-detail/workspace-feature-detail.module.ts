@@ -6,16 +6,16 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
+import { TuiLinkModule } from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
 import { ResizeEventModule } from '~/app/shared/resize/resize.module';
@@ -30,12 +30,10 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
   declarations: [WorkspaceDetailComponent, WorkspaceDetailSkeletonComponent],
   imports: [
     TitleDirective,
-    CommonModule,
-    TuiButtonModule,
     TuiLinkModule,
     RouterModule,
     AvatarModule,
-    TranslocoModule,
+    CommonTemplateModule,
     BadgeModule,
     StoreModule.forFeature(workspaceDetailFeature),
     EffectsModule.forFeature([WorkspaceDetailEffects]),

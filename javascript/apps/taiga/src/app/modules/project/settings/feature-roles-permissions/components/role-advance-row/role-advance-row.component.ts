@@ -12,15 +12,15 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
-  OnInit,
   OnChanges,
+  OnInit,
   SimpleChanges,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
-import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Entity } from '@taiga/data';
+import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
+import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 
 let nextId = 0;
 @UntilDestroy()

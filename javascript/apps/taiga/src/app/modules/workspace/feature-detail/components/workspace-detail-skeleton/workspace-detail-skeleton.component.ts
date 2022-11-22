@@ -16,7 +16,7 @@ import {
 @Component({
   selector: 'tg-workspace-detail-skeleton',
   templateUrl: './workspace-detail-skeleton.component.html',
-  styleUrls: ['./workspace-detail-skeleton.component.css'],
+  styleUrls: ['../../../styles/workspace-skeleton.shared.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkspaceDetailSkeletonComponent {

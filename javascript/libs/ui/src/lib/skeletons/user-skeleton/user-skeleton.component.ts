@@ -11,7 +11,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 @Component({
   selector: 'tg-ui-user-skeleton',
   templateUrl: './user-skeleton.component.html',
-  styleUrls: ['../skeleton.css', './user-skeleton.component.css'],
+  styleUrls: ['./user-skeleton.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserSkeletonComponent {}

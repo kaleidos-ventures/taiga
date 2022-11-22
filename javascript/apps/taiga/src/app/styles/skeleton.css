@@ -1,0 +1,85 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/animations.css";
+
+/* mixin line - auto generates utility classes */
+@define-mixin line $size {
+  .skeleton-line-$(size) {
+    inline-size: $size%;
+    @mixin-content;
+  }
+}
+
+@mixin line 10;
+@mixin line 20;
+@mixin line 25;
+@mixin line 30;
+@mixin line 40;
+@mixin line 50;
+@mixin line 60;
+@mixin line 75;
+@mixin line 95;
+@mixin line 100;
+
+/* mixin opacity - auto generates utility classes */
+
+@define-mixin opacity $opacity {
+  .skeleton-opacity-$(opacity) {
+    /* stylelint-disable-next-line unit-no-unknown */
+    opacity: 0$opacity;
+    @mixin-content;
+  }
+}
+
+@mixin opacity 75;
+@mixin opacity 50;
+@mixin opacity 40;
+
+@media (prefers-reduced-motion) {
+  :is(.avatar, .line) {
+    @mixin pulseAnimation 3;
+  }
+}
+
+/* mixin square - auto generates utility classes */
+@define-mixin square $size {
+  .skeleton-square-$(size) {
+    /* stylelint-disable-next-line custom-property-pattern */
+    block-size: var(--spacing-$size);
+    /* stylelint-disable-next-line custom-property-pattern */
+    inline-size: var(--spacing-$size);
+
+    @mixin-content;
+  }
+}
+
+@mixin square 16;
+@mixin square 20;
+@mixin square 24;
+
+/* skeleton-animation for menu or content */
+.skeleton-animation {
+  & * {
+    @mixin pulseAnimation;
+  }
+
+  @nest .static & {
+    & * {
+      animation: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion) {
+  .skeleton-animation {
+    & * {
+      @mixin pulseAnimation 3;
+    }
+  }
+}

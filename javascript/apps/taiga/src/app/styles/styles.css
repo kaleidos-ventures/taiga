@@ -22,3 +22,4 @@ This layer holds any **global** settings for your project. This layer should onl
 @import "taiga-ui/taiga-ui.css";
 @import "button.css";
 @import "accesibility.css";
+@import "skeleton.css";

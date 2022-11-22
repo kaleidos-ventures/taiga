@@ -36,16 +36,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: flex;
   justify-content: space-between;
   margin-block-end: var(--spacing-16);
-
-  & * {
-    @mixin pulseAnimation;
-  }
-
-  @nest .static & {
-    & * {
-      animation: none;
-    }
-  }
 }
 
 .story-skeleton-menu-start {
@@ -72,10 +62,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: grid;
   flex-grow: 1;
   grid-template-columns: 100%;
-
-  & * {
-    @mixin pulseAnimation;
-  }
 }
 
 .story-skeleton-main {
@@ -140,60 +126,4 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 .line-sidebar {
   block-size: 1.375rem;
-}
-
-@define-mixin line $size {
-  .line-$(size) {
-    inline-size: $size%;
-
-    @mixin-content;
-  }
-}
-
-@mixin line 10;
-@mixin line 20;
-@mixin line 30;
-@mixin line 40;
-@mixin line 60;
-@mixin line 75;
-@mixin line 95;
-@mixin line 100;
-
-@define-mixin skeleton-button $size {
-  .skeleton-button-$(size) {
-    /* stylelint-disable-next-line custom-property-pattern */
-    block-size: var(--spacing-$size);
-    /* stylelint-disable-next-line custom-property-pattern */
-    inline-size: var(--spacing-$size);
-
-    @mixin-content;
-  }
-}
-
-@mixin skeleton-button 16;
-@mixin skeleton-button 20;
-
-@define-mixin opacity $opacity {
-  .opacity-$(opacity) {
-    opacity: .$opacity;
-    @mixin-content;
-  }
-}
-
-@mixin opacity 75;
-@mixin opacity 50;
-@mixin opacity 40;
-
-@media (prefers-reduced-motion) {
-  .story-skeleton-menu {
-    & * {
-      @mixin pulseAnimation 3;
-    }
-  }
-
-  .story-skeleton-content {
-    & * {
-      @mixin pulseAnimation 3;
-    }
-  }
 }

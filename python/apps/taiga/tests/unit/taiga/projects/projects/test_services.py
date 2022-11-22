@@ -8,10 +8,16 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+from asgiref.sync import sync_to_async
 from fastapi import UploadFile
+from taiga.projects.invitations.choices import ProjectInvitationStatus
+from taiga.projects.projects import repositories as projects_repositories
 from taiga.projects.projects import services
+from taiga.projects.projects.models import ProjectTemplate
 from taiga.projects.projects.services import exceptions as ex
+from taiga.projects.roles.models import ProjectRole
 from taiga.users.models import AnonymousUser
+from taiga.workflows.models import Workflow
 from tests.utils import factories as f
 from tests.utils.images import valid_image_upload_file
 
@@ -29,7 +35,10 @@ async def test_get_workspace_projects_for_user_admin():
 
     with (patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,):
         await services.get_workspace_projects_for_user(workspace=workspace, user=user)
-        fake_projects_repo.get_projects.assert_awaited_once_with(workspace_slug=workspace.slug)
+        fake_projects_repo.get_projects.assert_awaited_once_with(
+            filters={"workspace_id": workspace.id},
+            prefetch_related=["workspace"],
+        )
 
 
 async def test_get_workspace_projects_for_user_member():
@@ -42,8 +51,9 @@ async def test_get_workspace_projects_for_user_member():
     ):
         fake_ws_roles_repo.get_workspace_role.return_value = MagicMock(is_admin=False)
         await services.get_workspace_projects_for_user(workspace=workspace, user=user)
-        fake_projects_repo.get_workspace_projects_for_user.assert_awaited_once_with(
-            workspace_id=workspace.id, user_id=user.id
+        fake_projects_repo.get_projects.assert_awaited_once_with(
+            filters={"workspace_id": workspace.id, "member_id": user.id},
+            prefetch_related=["workspace"],
         )
 
 
@@ -58,8 +68,12 @@ async def test_get_workspace_invited_projects_for_user():
 
     with patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo:
         await services.get_workspace_invited_projects_for_user(workspace=workspace, user=user)
-        fake_projects_repo.get_workspace_invited_projects_for_user.assert_awaited_once_with(
-            workspace_id=workspace.id, user_id=user.id
+        fake_projects_repo.get_projects.assert_awaited_once_with(
+            filters={
+                "workspace_id": workspace.id,
+                "invitee_id": user.id,
+                "invitation_status": ProjectInvitationStatus.PENDING,
+            }
         )
 
 
@@ -83,7 +97,7 @@ async def test_create_project():
         await services.create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
 
         fake_project_repository.create_project.assert_awaited_once()
-        fake_project_repository.get_template.assert_awaited_once()
+        fake_project_repository.get_project_template.assert_awaited_once()
         fake_pj_role_repository.get_project_role.assert_awaited_once()
         fake_pj_memberships_repository.create_project_membership.assert_awaited_once()
 
@@ -126,6 +140,26 @@ async def test_create_project_with_no_logo():
         fake_project_repository.create_project.assert_awaited_once_with(
             workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=None
         )
+
+
+##########################################################
+# apply_template_to_project
+##########################################################
+
+
+# TODO: create integration tests for each 'create' repository functions
+# TODO: migrate this test to a unit test
+async def test_apply_template_to_project():
+    project = await f.create_simple_project()
+    template = await sync_to_async(ProjectTemplate.objects.first)()
+
+    roles_before = await sync_to_async(ProjectRole.objects.count)()
+    workflows_before = await sync_to_async(Workflow.objects.count)()
+
+    await projects_repositories.apply_template_to_project(template=template, project=project)
+
+    assert await sync_to_async(ProjectRole.objects.count)() == roles_before + 2
+    assert await sync_to_async(Workflow.objects.count)() == workflows_before + 1
 
 
 ##########################################################
@@ -205,9 +239,7 @@ async def test_update_project_public_permissions_ok():
         patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
     ):
         await services.update_project_public_permissions(project=project, permissions=permissions)
-        fake_project_repository.update_project_public_permissions.assert_awaited_once_with(
-            project=project, permissions=permissions
-        )
+        fake_project_repository.update_project.assert_awaited_once_with(project=project)
         fake_projects_events.emit_event_when_project_permissions_are_updated.assert_awaited_with(project=project)
 
 
@@ -250,9 +282,7 @@ async def test_update_project_workspace_member_permissions_ok():
         patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
     ):
         await services.update_project_workspace_member_permissions(project=project, permissions=permissions)
-        fake_project_repository.update_project_workspace_member_permissions.assert_awaited_once_with(
-            project=project, permissions=permissions
-        )
+        fake_project_repository.update_project.assert_awaited_once_with(project=project)
         fake_projects_events.emit_event_when_project_permissions_are_updated.assert_awaited_with(project=project)
 
 

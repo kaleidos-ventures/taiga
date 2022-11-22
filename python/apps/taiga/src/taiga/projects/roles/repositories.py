@@ -10,6 +10,7 @@ from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import Count, QuerySet
+from taiga.projects.projects.models import Project
 from taiga.projects.roles.models import ProjectRole
 
 ##########################################################
@@ -74,6 +75,33 @@ def _apply_select_related_to_queryset(
 
     qs = qs.select_related(*select_related_data)
     return qs
+
+
+##########################################################
+# create workflow
+##########################################################
+
+
+def create_project_role_sync(
+    name: str,
+    slug: str,
+    order: int,
+    project: Project,
+    permissions: list[str],
+    is_admin: bool,
+) -> ProjectRole:
+
+    return ProjectRole.objects.create(
+        name=name,
+        slug=slug,
+        order=order,
+        project=project,
+        permissions=permissions,
+        is_admin=is_admin,
+    )
+
+
+create_project_role = sync_to_async(create_project_role_sync)
 
 
 ##########################################################

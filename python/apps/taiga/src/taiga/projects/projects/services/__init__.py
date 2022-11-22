@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from functools import partial
+from uuid import UUID
 
 from fastapi import UploadFile
 from taiga.base.db.models import File
@@ -12,6 +13,7 @@ from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
 from taiga.permissions import services as permissions_services
 from taiga.projects.invitations import services as pj_invitations_services
+from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.memberships import repositories as pj_memberships_repositories
 from taiga.projects.projects import events as projects_events
 from taiga.projects.projects import repositories as projects_repositories
@@ -24,21 +26,31 @@ from taiga.workspaces.workspaces import services as workspaces_services
 from taiga.workspaces.workspaces.models import Workspace
 
 
-async def get_projects(workspace_slug: str) -> list[Project]:
-    return await projects_repositories.get_projects(workspace_slug=workspace_slug)
+async def get_projects(workspace_id: UUID) -> list[Project]:
+    return await projects_repositories.get_projects(
+        filters={"workspace_id": workspace_id},
+        prefetch_related=["workspace"],
+    )
 
 
 async def get_workspace_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
     role = await ws_roles_repositories.get_workspace_role(filters={"user_id": user.id, "workspace_id": workspace.id})
     if role and role.is_admin:
-        return await get_projects(workspace_slug=workspace.slug)
+        return await get_projects(workspace_id=workspace.id)
 
-    return await projects_repositories.get_workspace_projects_for_user(workspace_id=workspace.id, user_id=user.id)
+    return await projects_repositories.get_projects(
+        filters={"workspace_id": workspace.id, "member_id": user.id},
+        prefetch_related=["workspace"],
+    )
 
 
 async def get_workspace_invited_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
-    return await projects_repositories.get_workspace_invited_projects_for_user(
-        workspace_id=workspace.id, user_id=user.id
+    return await projects_repositories.get_projects(
+        filters={
+            "workspace_id": workspace.id,
+            "invitee_id": user.id,
+            "invitation_status": ProjectInvitationStatus.PENDING,
+        }
     )
 
 
@@ -49,7 +61,7 @@ async def create_project(
     color: int | None,
     owner: User,
     logo: UploadFile | None = None,
-) -> Project:
+) -> ProjectInvitationStatus:
     logo_file = None
     if logo:
         logo_file = File(file=logo.file, name=logo.filename)
@@ -58,7 +70,7 @@ async def create_project(
         workspace=workspace, name=name, description=description, color=color, owner=owner, logo=logo_file
     )
 
-    template = await projects_repositories.get_template(slug=settings.DEFAULT_PROJECT_TEMPLATE)
+    template = await projects_repositories.get_project_template(filters={"slug": settings.DEFAULT_PROJECT_TEMPLATE})
     await projects_repositories.apply_template_to_project(template=template, project=project)
 
     # assign the owner to the project as the default owner role (should be 'admin')
@@ -76,7 +88,7 @@ async def create_project(
 
 
 async def get_project(slug: str) -> Project | None:
-    return await projects_repositories.get_project(slug=slug)
+    return await projects_repositories.get_project(filters={"slug": slug})
 
 
 async def get_project_detail(project: Project, user: AnyUser) -> Project:
@@ -144,14 +156,13 @@ async def update_project_public_permissions(project: Project, permissions: list[
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
-    project_public_permissions = await projects_repositories.update_project_public_permissions(
-        project=project, permissions=permissions
-    )
+    project.public_permissions = permissions
+    await projects_repositories.update_project(project=project)
 
     # TODO: emit an event to users/project with the new permissions when a change happens?
     await projects_events.emit_event_when_project_permissions_are_updated(project=project)
 
-    return project_public_permissions
+    return project.public_permissions
 
 
 async def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:
@@ -164,13 +175,12 @@ async def update_project_workspace_member_permissions(project: Project, permissi
     if not await projects_repositories.project_is_in_premium_workspace(project):
         raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be set")
 
-    workspace_permissions = await projects_repositories.update_project_workspace_member_permissions(
-        project=project, permissions=permissions
-    )
+    project.workspace_member_permissions = permissions
+    await projects_repositories.update_project(project=project)
 
     await projects_events.emit_event_when_project_permissions_are_updated(project=project)
 
-    return workspace_permissions
+    return project.workspace_member_permissions
 
 
 async def get_workspace_member_permissions(project: Project) -> list[str]:

@@ -16,6 +16,25 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
+# create_project_roles
+##########################################################
+
+
+async def test_create_project_roles():
+    project = await f.create_project()
+    project_role_res = await repositories.create_project_role(
+        name="project-role",
+        slug="slug",
+        order=1,
+        project=project,
+        permissions=[],
+        is_admin=True,
+    )
+    assert project_role_res.name == "project-role"
+    assert project_role_res.project == project
+
+
+##########################################################
 # get_project_roles
 ##########################################################
 

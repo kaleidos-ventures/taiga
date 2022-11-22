@@ -16,6 +16,42 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
+# create_workflow
+##########################################################
+
+
+async def test_create_workflow():
+    project = await f.create_project()
+    workflow_res = await repositories.create_workflow(
+        name="workflow",
+        slug="slug",
+        order=1,
+        project=project,
+    )
+    assert workflow_res.name == "workflow"
+    assert workflow_res.project == project
+
+
+##########################################################
+# create_workflow_status
+##########################################################
+
+
+async def test_create_workflow_status():
+    workflow = await f.create_workflow()
+
+    workflow_status_res = await repositories.create_workflow_status(
+        name="workflow-status",
+        slug="slug",
+        color=1,
+        order=1,
+        workflow=workflow,
+    )
+    assert workflow_status_res.name == "workflow-status"
+    assert workflow_status_res.workflow == workflow
+
+
+##########################################################
 # get_project_workflows
 ##########################################################
 

@@ -5,53 +5,107 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import TypedDict
+from typing import Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import File, Q, QuerySet
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects.models import Project, ProjectTemplate
-from taiga.projects.roles.models import ProjectRole
+from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.users.models import User
-from taiga.workflows.models import Workflow, WorkflowStatus
+from taiga.workflows import repositories as workflows_repositories
 from taiga.workspaces.workspaces.models import Workspace
 
-##########################################################
-# filters and querysets
-##########################################################
-
 DEFAULT_QUERYSET = Project.objects.all()
+DEFAULT_PROJECT_TEMPLATE_QUERYSET = ProjectTemplate.objects.all()
+
+
+##########################################################
+# Project - filters and querysets
+##########################################################
 
 
 class ProjectListFilters(TypedDict, total=False):
-    user_id: UUID
+    member_id: UUID
     workspace_id: UUID
+    invitee_id: UUID
+    invitation_status: ProjectInvitationStatus
 
 
-def _apply_filters_to_queryset_list(
+def _apply_filters_to_project_queryset_list(
     qs: QuerySet[Project],
     filters: ProjectListFilters = {},
 ) -> QuerySet[Project]:
     filter_data = dict(filters.copy())
 
-    if "user_id" in filter_data:
-        user_id = filter_data.pop("user_id")
-        ws_admin = Q(workspace__memberships__user_id=user_id) & Q(workspace__memberships__role__is_admin=True)
+    if "invitation_status" in filter_data:
+        filter_data["invitations__status"] = filter_data.pop("invitation_status")
+
+    # filters for those projects where the user is invited to join (not yet a member)
+    if "invitee_id" in filter_data:
+        filter_data["invitations__user_id"] = filter_data.pop("invitee_id")
+
+    # filters for those projects where the user is already a project (or a workspace) member
+    if "member_id" in filter_data:
+        member_id = filter_data.pop("member_id")
+        ws_admin = Q(workspace__memberships__user_id=member_id) & Q(workspace__memberships__role__is_admin=True)
         ws_member_allowed = (
-            Q(workspace__memberships__user_id=user_id)
-            & ~Q(memberships__user_id=user_id)
+            Q(workspace__memberships__user_id=member_id)
+            & ~Q(memberships__user_id=member_id)
             & Q(workspace_member_permissions__len__gt=0)
         )
-        pj_member_allowed = Q(memberships__user_id=user_id)
+        pj_member_allowed = Q(memberships__user_id=member_id)
         qs = qs.filter(ws_admin | ws_member_allowed | pj_member_allowed)
 
     qs = qs.filter(**filter_data)
     return qs
 
 
+class ProjectFilters(TypedDict, total=False):
+    slug: str
+
+
+def _apply_filters_to_project_queryset(
+    qs: QuerySet[Project],
+    filters: ProjectFilters = {},
+) -> QuerySet[Project]:
+    qs = qs.filter(**filters)
+    return qs
+
+
+ProjectPrefetchRelated = list[
+    Literal[
+        "workspace",
+    ]
+]
+
+
+def _apply_prefetch_related_to_project_queryset(
+    qs: QuerySet[Project],
+    prefetch_related: ProjectPrefetchRelated,
+) -> QuerySet[Project]:
+    qs = qs.prefetch_related(*prefetch_related)
+    return qs
+
+
+ProjectOrderBy = list[
+    Literal[
+        "-created_at",
+    ]
+]
+
+
+def _apply_order_by_to_project_queryset(
+    qs: QuerySet[Project],
+    order_by: ProjectOrderBy,
+) -> QuerySet[Project]:
+    qs = qs.order_by(*order_by)
+    return qs
+
+
 ##########################################################
-# create project
+# Project - create project
 ##########################################################
 
 
@@ -65,15 +119,131 @@ def create_project(
     logo: File | None = None,  # type: ignore
 ) -> Project:
 
-    project = Project.objects.create(
-        name=name, description=description, workspace=workspace, color=color, owner=owner, logo=logo
+    return Project.objects.create(
+        name=name,
+        description=description,
+        workspace=workspace,
+        color=color,
+        owner=owner,
+        logo=logo,
     )
+
+
+##########################################################
+# Project - get projects
+##########################################################
+
+
+@sync_to_async
+def get_projects(
+    filters: ProjectListFilters = {},
+    prefetch_related: ProjectPrefetchRelated = [],
+    order_by: ProjectOrderBy = ["-created_at"],
+    offset: int | None = None,
+    limit: int | None = None,
+) -> list[Project]:
+    qs = _apply_filters_to_project_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_prefetch_related_to_project_queryset(qs=qs, prefetch_related=prefetch_related)
+    qs = _apply_order_by_to_project_queryset(order_by=order_by, qs=qs)
+    qs = qs.distinct()
+
+    if limit is not None and offset is not None:
+        limit += offset
+
+    return list(qs[offset:limit])
+
+
+##########################################################
+# Project - get project
+##########################################################
+
+
+@sync_to_async
+def get_project(
+    filters: ProjectFilters = {},
+    prefetch_related: ProjectPrefetchRelated = ["workspace"],
+) -> Project | None:
+    qs = _apply_filters_to_project_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_prefetch_related_to_project_queryset(qs=qs, prefetch_related=prefetch_related)
+
+    try:
+        return qs.get()
+    except Project.DoesNotExist:
+        return None
+
+
+##########################################################
+# Project - update project
+##########################################################
+
+
+@sync_to_async
+def update_project(project: Project) -> Project:
+    project.save()
     return project
+
+
+##########################################################
+# Project - misc
+##########################################################
+
+
+@sync_to_async
+def get_total_projects(
+    filters: ProjectListFilters = {},
+) -> int:
+    qs = _apply_filters_to_project_queryset_list(filters=filters, qs=DEFAULT_QUERYSET)
+    return qs.distinct().count()
+
+
+@sync_to_async
+def project_is_in_premium_workspace(project: Project) -> bool:
+    # TODO: this method should be solved in the service with a "select_related" query
+    return project.workspace.is_premium
+
+
+##########################################################
+# Project Template - filters and querysets
+##########################################################
+
+
+class ProjectTemplateFilters(TypedDict, total=False):
+    slug: str
+
+
+def _apply_filters_to_project_template_queryset(
+    qs: QuerySet[ProjectTemplate],
+    filters: ProjectTemplateFilters = {},
+) -> QuerySet[ProjectTemplate]:
+    qs = qs.filter(**filters)
+    return qs
+
+
+##########################################################
+# Project Template - get project template
+##########################################################
+
+
+@sync_to_async
+def get_project_template(
+    filters: ProjectTemplateFilters = {},
+) -> ProjectTemplate | None:
+    qs = _apply_filters_to_project_template_queryset(qs=DEFAULT_PROJECT_TEMPLATE_QUERYSET, filters=filters)
+
+    try:
+        return qs.get()
+    except ProjectTemplate.DoesNotExist:
+        return None
+
+
+##########################################################
+# Project Template - misc
+##########################################################
 
 
 def apply_template_to_project_sync(template: ProjectTemplate, project: Project) -> None:
     for role in template.roles:
-        ProjectRole.objects.create(
+        pj_roles_repositories.create_project_role_sync(
             name=role["name"],
             slug=role["slug"],
             order=role["order"],
@@ -83,14 +253,14 @@ def apply_template_to_project_sync(template: ProjectTemplate, project: Project) 
         )
 
     for workflow in template.workflows:
-        wf = Workflow.objects.create(
+        wf = workflows_repositories.create_workflow_sync(
             name=workflow["name"],
             slug=workflow["slug"],
             order=workflow["order"],
             project=project,
         )
         for status in workflow["statuses"]:
-            WorkflowStatus.objects.create(
+            workflows_repositories.create_workflow_status_sync(
                 name=status["name"],
                 slug=status["slug"],
                 color=status["color"],
@@ -100,89 +270,3 @@ def apply_template_to_project_sync(template: ProjectTemplate, project: Project) 
 
 
 apply_template_to_project = sync_to_async(apply_template_to_project_sync)
-
-##########################################################
-
-
-@sync_to_async
-def get_projects(workspace_slug: str) -> list[Project]:
-    return list(
-        Project.objects.prefetch_related("workspace").filter(workspace__slug=workspace_slug).order_by("-created_at")
-    )
-
-
-@sync_to_async
-def get_workspace_projects_for_user(workspace_id: UUID, user_id: UUID) -> list[Project]:
-    # projects of a workspace where:
-    # - the user is not pj-member, is ws-member and the project allows to ws-members
-    # - the user is pj-member
-    pj_in_workspace = Q(workspace_id=workspace_id)
-    ws_allowed = (
-        ~Q(members__id=user_id) & Q(workspace__members__id=user_id) & Q(workspace_member_permissions__len__gt=0)
-    )
-    pj_allowed = Q(members__id=user_id)
-    return list(
-        Project.objects.prefetch_related("workspace")
-        .filter(pj_in_workspace & (ws_allowed | pj_allowed))
-        .order_by("-created_at")
-        .distinct()
-    )
-
-
-@sync_to_async
-def get_workspace_invited_projects_for_user(workspace_id: UUID, user_id: UUID) -> list[Project]:
-    return list(
-        Project.objects.filter(
-            workspace_id=workspace_id, invitations__user_id=user_id, invitations__status=ProjectInvitationStatus.PENDING
-        )
-    )
-
-
-@sync_to_async
-def get_project(slug: str) -> Project | None:
-    try:
-        return Project.objects.prefetch_related("workspace").get(slug=slug)
-    except Project.DoesNotExist:
-        return None
-
-
-@sync_to_async
-def get_project_owner(project: Project) -> User:
-    return project.owner
-
-
-@sync_to_async
-def get_template(slug: str) -> ProjectTemplate:
-    return ProjectTemplate.objects.get(slug=slug)
-
-
-@sync_to_async
-def update_project_public_permissions(project: Project, permissions: list[str]) -> list[str]:
-    project.public_permissions = permissions
-    project.save()
-    return project.public_permissions
-
-
-@sync_to_async
-def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:
-    project.workspace_member_permissions = permissions
-    project.save()
-    return project.workspace_member_permissions
-
-
-@sync_to_async
-def project_is_in_premium_workspace(project: Project) -> bool:
-    return project.workspace.is_premium
-
-
-##########################################################
-# misc
-##########################################################
-
-
-@sync_to_async
-def get_total_projects(
-    filters: ProjectListFilters = {},
-) -> int:
-    qs = _apply_filters_to_queryset_list(filters=filters, qs=DEFAULT_QUERYSET)
-    return qs.distinct().count()

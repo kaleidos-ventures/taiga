@@ -162,7 +162,7 @@ async def reorder_stories(
 ) -> dict[str, Any]:
     # check target_status exists
     target_status = await workflows_repositories.get_status(
-        project_slug=project.slug, workflow_slug=workflow.slug, status_slug=target_status_slug
+        filters={"project_slug": project.slug, "workflow_slug": workflow.slug, "slug": target_status_slug}
     )
     if not target_status:
         raise ex.InvalidStatusError(f"Status {target_status_slug} doesn't exist in this project")

@@ -83,7 +83,7 @@ def devserve(
         worker = Process(target=run_worker)
         worker.start()
 
-    _run_api(host=host, port=port, access_log=True, use_colors=True, reload=True, debug=True)
+    _run_api(host=host, port=port, access_log=True, use_colors=True, reload=True)
 
 
 @cli.command(help="Run a Taiga server.")

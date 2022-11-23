@@ -270,7 +270,7 @@ async def test_reorder_stories_without_reorder_ok(client):
 
 
 ##########################################################
-# GET /projects/<slug>/workflows/<slug>/stories/<ref>
+# GET /projects/<slug>/stories/<ref>
 ##########################################################
 
 
@@ -278,22 +278,18 @@ async def test_get_story_with_neighbors_ok(client):
     pj_admin = await f.create_user()
     project = await f.create_project(owner=pj_admin)
     workflow = await sync_to_async(project.workflows.first)()
-    status1 = await sync_to_async(workflow.statuses.first)()
-    story1 = await f.create_story(project=project, workflow=workflow, status=status1)
-    story2 = await f.create_story(project=project, workflow=workflow, status=status1)
+    story_status = await sync_to_async(workflow.statuses.first)()
+    story = await f.create_story(project=project, workflow=workflow, status=story_status)
 
     client.login(pj_admin)
-    response = client.get(f"/projects/{project.slug}/stories/{story1.ref}")
+    response = client.get(f"/projects/{project.slug}/stories/{story.ref}")
     res = response.json()
 
     assert response.status_code == status.HTTP_200_OK, response.text
-    assert "prev" in res
-    assert "next" in res
-    assert res["next"] == story2.ref
-    assert res["prev"] is None
+    assert res["ref"] == story.ref
 
 
-async def test_get_story_invalid_project(client):
+async def test_get_story_invalid_project_slug(client):
     pj_admin = await f.create_user()
 
     client.login(pj_admin)
@@ -302,17 +298,7 @@ async def test_get_story_invalid_project(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_get_story_invalid_workflow(client):
-    pj_admin = await f.create_user()
-    pj = await f.create_project(owner=pj_admin)
-
-    client.login(pj_admin)
-    response = client.get(f"/projects/{pj.slug}/stories/{WRONG_REF}")
-
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-async def test_get_story_invalid_story(client):
+async def test_get_story_invalid_ref(client):
     pj_admin = await f.create_user()
     pj = await f.create_project(owner=pj_admin)
 

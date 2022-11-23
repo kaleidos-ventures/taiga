@@ -73,8 +73,8 @@ async def get_story(ref: int, project: Project) -> dict[str, Any] | None:
         "status": story.status,
         "created_at": story.created_at,
         "created_by": story.created_by,
-        "prev": neighbors.prev.ref if neighbors.prev else None,
-        "next": neighbors.next.ref if neighbors.next else None,
+        "prev": neighbors.prev,
+        "next": neighbors.next,
     }
 
 

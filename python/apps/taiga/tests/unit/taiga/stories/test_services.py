@@ -89,8 +89,8 @@ async def test_get_story_ok():
             select_related=["created_by", "project", "workflow", "status", "workspace"],
         )
         assert story["ref"] == story2.ref
-        assert story["prev"] == story1.ref
-        assert story["next"] == story3.ref
+        assert story["prev"] == story1
+        assert story["next"] == story3
 
 
 async def test_get_story_no_neighbors():

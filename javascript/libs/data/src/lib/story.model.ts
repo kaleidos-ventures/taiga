@@ -16,10 +16,16 @@ export interface Story {
   status: Pick<Status, 'slug' | 'color' | 'name'>;
 }
 
-export interface StoryDetail extends Partial<Story> {
+export interface StoryDetail extends Story {
   workflow: Partial<Workflow>;
-  prev: number | null;
-  next: number | null;
+  prev: null | {
+    ref: Story['ref'];
+    title: Story['title'];
+  };
+  next: null | {
+    ref: Story['ref'];
+    title: Story['title'];
+  };
   createdBy: createdBy;
   createdAt: string;
 }

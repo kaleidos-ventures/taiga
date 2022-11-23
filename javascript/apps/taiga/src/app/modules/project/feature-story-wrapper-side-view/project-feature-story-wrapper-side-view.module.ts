@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { A11yModule } from '@angular/cdk/a11y';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
 import { TuiSvgModule } from '@taiga-ui/core';
@@ -21,6 +22,7 @@ import { ProjectFeatureStoryWrapperSideViewComponent } from './project-feature-s
     KanbanStoryDetailComponent,
     DragDropModule,
     StoryDetailSkeletonComponent,
+    A11yModule,
   ],
   declarations: [ProjectFeatureStoryWrapperSideViewComponent],
   providers: [],

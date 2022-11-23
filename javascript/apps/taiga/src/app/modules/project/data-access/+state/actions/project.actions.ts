@@ -66,8 +66,4 @@ export const updateStoryViewMode = createAction(
   }>()
 );
 
-export const updatedStoryViewMode = createAction(
-  '[Story] story view has been updated'
-);
-
 export const clearStory = createAction('[Story] leave story detail');

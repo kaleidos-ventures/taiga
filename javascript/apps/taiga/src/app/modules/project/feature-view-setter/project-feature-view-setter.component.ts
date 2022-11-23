@@ -10,6 +10,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
+import { distinctUntilChanged, map } from 'rxjs';
 import { fetchStory } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectStoryView } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
@@ -34,8 +35,12 @@ export class ProjectFeatureViewSetterComponent {
     this.isKanban = url.includes('kanban');
 
     this.routerHistory.urlChanged
-      .pipe(untilDestroyed(this))
-      .subscribe(({ url }) => {
+      .pipe(
+        untilDestroyed(this),
+        map(({ url }) => url),
+        distinctUntilChanged()
+      )
+      .subscribe((url) => {
         this.isKanban = url.includes('kanban');
         const isStory = url.includes('/stories');
 

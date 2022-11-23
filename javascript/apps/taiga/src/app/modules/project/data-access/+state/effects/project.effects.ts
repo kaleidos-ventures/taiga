@@ -192,7 +192,7 @@ export class ProjectEffects {
           this.localStorage.set('story_view', action.storyView);
           if (action.storyView === 'full-view') {
             void this.router.navigate([
-              `/project/${project.slug}/stories/${story.ref!}`,
+              `/project/${project.slug}/stories/${story.ref}`,
             ]);
           } else if (action.previousStoryView === 'full-view') {
             void this.router.navigate([`project/${project.slug}/kanban`]);

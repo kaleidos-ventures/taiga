@@ -26,6 +26,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import {
+  TuiButtonComponent,
   TuiDataListModule,
   TuiHintModule,
   TuiLinkModule,
@@ -35,14 +36,12 @@ import {
 import { Project, StoryDetail, StoryView } from '@taiga/data';
 import {
   clearStory,
-  updatedStoryViewMode,
   updateStoryViewMode,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
   selectCurrentStory,
   selectStoryView,
-  selectUpdateStoryView,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
@@ -85,6 +84,10 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
   public sidebarOpen = false;
 
   @ViewChild('storyRef') public storyRef!: ElementRef;
+
+  @ViewChild('nextStory') public nextStory!: TuiButtonComponent;
+
+  @ViewChild('previousStory') public previousStory!: TuiButtonComponent;
 
   @Output()
   public toggleSidebar = new EventEmitter<void>();
@@ -148,22 +151,6 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
       this.store.select(selectCurrentStory).pipe(filterNil())
     );
     this.state.connect('selectedStoryView', this.store.select(selectStoryView));
-    this.state.connect(
-      'updateStoryView',
-      this.store.select(selectUpdateStoryView)
-    );
-
-    this.state.hold(this.state.select('updateStoryView'), (updated) => {
-      if (updated) {
-        setTimeout(() => {
-          const mainFocus = document.querySelector('.story-detail-focus');
-          if (mainFocus) {
-            (mainFocus as HTMLElement).focus();
-          }
-          this.store.dispatch(updatedStoryViewMode());
-        }, 200);
-      }
-    });
   }
 
   public trackByIndex(index: number) {
@@ -178,6 +165,9 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
         previousStoryView: this.state.get('selectedStoryView'),
       })
     );
+
+    // reset state to prevent focus on navigation arrows
+    this.location.replaceState(this.location.path(), undefined, {});
   }
 
   public displayHint() {
@@ -206,12 +196,24 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
     }
   }
 
-  public navigateToStory(ref: number | null) {
-    if (ref) {
-      this.location.go(
-        `project/${this.state.get('project').slug}/stories/${ref}`
-      );
-    }
+  public navigateToNextStory(ref: number) {
+    this.location.go(
+      `project/${this.state.get('project').slug}/stories/${ref}`,
+      undefined,
+      {
+        nextStoryNavigation: true,
+      }
+    );
+  }
+
+  public navigateToPreviousStory(ref: number) {
+    this.location.go(
+      `project/${this.state.get('project').slug}/stories/${ref}`,
+      undefined,
+      {
+        previousStoryNavigation: true,
+      }
+    );
   }
 
   public closeStory(ref: number | undefined) {
@@ -220,27 +222,36 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
       `project/${this.state.get('project').slug}/kanban`
     );
     if (ref) {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         const mainFocus = document.querySelector(
           `tg-kanban-story[data-ref='${ref}'] .story-kanban-ref-focus`
         );
         if (mainFocus) {
           (mainFocus as HTMLElement).focus();
         }
-      }, 200);
+      });
     }
   }
 
   public ngAfterViewInit(): void {
+    // taiga ui in the modal has a focus trap that makes the focus on the element, so we need to delay the focus one tick
+    requestAnimationFrame(() => {
+      this.setInitilFocus();
+    });
+  }
+
+  public setInitilFocus() {
     const locationState = this.location.getState() as null | {
-      fromCard?: boolean;
+      nextStoryNavigation?: boolean;
+      previousStoryNavigation?: boolean;
     };
 
-    // click came from a story card
-    if (locationState?.fromCard) {
-      setTimeout(() => {
-        (this.storyRef.nativeElement as HTMLElement).focus();
-      }, 200);
+    if (locationState?.nextStoryNavigation) {
+      this.nextStory.nativeFocusableElement?.focus();
+    } else if (locationState?.previousStoryNavigation) {
+      this.previousStory.nativeFocusableElement?.focus();
+    } else {
+      (this.storyRef.nativeElement as HTMLElement).focus();
     }
   }
 }

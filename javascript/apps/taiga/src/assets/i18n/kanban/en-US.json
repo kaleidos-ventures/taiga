@@ -32,6 +32,8 @@
     "copy_story": "Copy story link",
     "click_to_copy": "Click to copy story link",
     "link_copied": "Copied to clipboard!",
+    "previous_story": "Navigate to previous story, {{story}}",
+    "next_story": "Navigate to next story, {{story}}",
     "previous": "Navigate to previous story",
     "next": "Navigate to next story",
     "change_view": "Change story view",

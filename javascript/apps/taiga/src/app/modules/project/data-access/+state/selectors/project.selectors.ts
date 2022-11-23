@@ -18,7 +18,6 @@ export const {
   selectLoadingStory,
   selectCurrentStory,
   selectStoryView,
-  selectUpdateStoryView,
 } = projectFeature;
 
 export const selectCurrentProject = createSelector(

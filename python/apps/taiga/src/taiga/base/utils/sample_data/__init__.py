@@ -334,7 +334,7 @@ async def _create_workflow_status(
     name: str | None = None,
     color: int | None = None,
 ) -> None:
-    await WorkflowStatus.objects.acreate(  # type: ignore[attr-defined]
+    await WorkflowStatus.objects.acreate(
         name=name or fake.unique.text(max_nb_chars=15)[:-1],
         color=color or fake.random_int(min=1, max=NUM_WORKSPACE_COLORS),
         workflow=workflow,

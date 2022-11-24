@@ -81,7 +81,12 @@ class TokenBackend:
         if self.issuer is not None:
             jwt_payload["iss"] = self.issuer
 
-        return jwt.encode(jwt_payload, self.signing_key, algorithm=self.algorithm, json_encoder=json.JSONEncoder)
+        return jwt.encode(
+            jwt_payload,
+            self.signing_key,
+            algorithm=self.algorithm,
+            json_encoder=json.JSONEncoder,
+        )
 
     def decode(self, token: str, verify: bool = True) -> dict[str, Any]:
         """
@@ -99,7 +104,10 @@ class TokenBackend:
                 verify=verify,
                 audience=self.audience,
                 issuer=self.issuer,
-                options={"verify_aud": self.audience is not None, "verify_signature": verify},
+                options={
+                    "verify_aud": self.audience is not None,
+                    "verify_signature": verify,
+                },
             )
         except ExpiredSignatureError:
             raise ex.ExpiredTokenBackendError("Expired token")

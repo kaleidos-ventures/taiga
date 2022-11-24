@@ -19,7 +19,7 @@ class HTTPBearer(HTTPBearerBase):
         return scheme.strip().lower(), token.strip()
 
     async def __call__(self, request: Request) -> HTTPAuthorizationCredentials | None:
-        authorization: str = request.headers.get("Authorization")
+        authorization = request.headers.get("Authorization", "")
         scheme, credentials = self._get_authorization_scheme_token(authorization)
         if not (authorization and scheme and credentials):
             return None

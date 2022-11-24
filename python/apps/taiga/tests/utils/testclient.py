@@ -25,3 +25,10 @@ class TestClient(TestClientBase):
 @pytest.fixture
 def client() -> TestClient:
     return TestClient(api)
+
+
+@pytest.fixture
+def non_mocked_hosts() -> list[str]:
+    # This is to prevent pytest_httpx from catching calls to the TestClient
+    # https://github.com/Colin-b/pytest_httpx/tree/master#do-not-mock-some-requests
+    return ["testserver"]

@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.4.0
     hooks:
       - id: trailing-whitespace
         files: 'python/apps/taiga/'
@@ -14,7 +14,7 @@ repos:
         files: 'python/'
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
+    rev: 6.0.0
     hooks:
       - id: flake8
         additional_dependencies: [flake8-typing-imports==1.12.0]
@@ -22,14 +22,14 @@ repos:
         args: [--config=python/.flake8]
 
   - repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 22.10.0
     hooks:
       - id: black
         files: 'python/apps/taiga/'
         args: [--config=python/.black]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.931
+    rev: v0.991
     hooks:
       - id: mypy
         language: system
@@ -45,7 +45,7 @@ repos:
         args: [--settings-path=python/.isort.cfg]
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.1.11
+    rev: v1.3.1
     hooks:
       - id: insert-license
         files: '(python/apps/taiga/).*\.py$'

@@ -282,7 +282,7 @@ class DenylistMixin(_BaseMixin):
         """
         Adds this token to the outstanding token list.
         """
-        token = await super().create_for_object(obj)  # type: ignore[misc]  # https://github.com/python/mypy/issues/9282
+        token = await super().create_for_object(obj)
 
         jti = token[settings.TOKENS.JTI_CLAIM]
         created_at = token.current_time

@@ -226,7 +226,11 @@ async def test_str() -> None:
     # Should encode the given token
     encoded_token = str(token)
 
-    assert encoded_token.startswith("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjk0NjY4NDgwMH0.")
+    # Depens on the order of the keys in the dict
+    assert encoded_token in [
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjk0NjY4NDgwMH0.rZeMtOlEp130jYrxFSRaa0Nb1qU5iQBsOFdhmeFylGM",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjk0NjY4NDgwMH0.nzyCR5dMWIBZ2HQMEDroNoUBBGjgB19I8Ken97XV1Fg",
+    ]
 
 
 async def test_repr(token: MyToken) -> None:

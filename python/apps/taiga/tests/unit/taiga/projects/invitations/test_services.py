@@ -462,7 +462,7 @@ async def test_create_project_invitations_by_emails(tqmanager):
 
         fake_pj_roles_services.get_project_roles_as_dict.assert_awaited_once_with(project=project)
         fake_users_services.get_users_emails_as_dict.assert_awaited_once()
-        fake_users_services.get_users_usernames_as_dict.assert_awaited_once()
+        fake_users_services.get_users_usernames_as_dict.assert_not_awaited()
         fake_invitations_repo.create_project_invitations.assert_awaited_once()
 
         assert len(tqmanager.pending_jobs) == 2

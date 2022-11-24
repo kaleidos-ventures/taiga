@@ -20,59 +20,6 @@ pytestmark = pytest.mark.django_db(transaction=True)
 
 
 ##########################################################
-# get_user_by_username_or_email
-##########################################################
-
-# username
-
-
-async def test_get_user_by_username_or_email_success_username_case_insensitive():
-    user = await f.create_user(username="test_user_1")
-    await f.create_user(username="test_user_2")
-    assert user == await users_repositories.get_user_by_username_or_email(username_or_email="test_user_1")
-    assert user == await users_repositories.get_user_by_username_or_email(username_or_email="TEST_user_1")
-
-
-async def test_get_user_by_username_or_email_error_invalid_username_case_insensitive():
-    await f.create_user(username="test_user")
-    assert await users_repositories.get_user_by_username_or_email(username_or_email="test_other_user") is None
-
-
-# email
-
-
-async def test_get_user_by_username_or_email_success_email_case_insensitive():
-    user = await f.create_user(email="test_user_1@email.com")
-    await f.create_user(email="test_user_2@email.com")
-    assert user == await users_repositories.get_user_by_username_or_email(username_or_email="test_user_1@email.com")
-    assert user == await users_repositories.get_user_by_username_or_email(username_or_email="TEST_user_1@email.com")
-
-
-async def test_get_user_by_username_or_email_error_invalid_email_case_insensitive():
-    await f.create_user(email="test_user@email.com")
-    assert await users_repositories.get_user_by_username_or_email(username_or_email="test_other_user@email.com") is None
-
-
-##########################################################
-# check_password / change_password
-##########################################################
-
-
-async def test_change_password_and_check_password():
-    password1 = "password-one"
-    password2 = "password-two"
-    user = await f.create_user(password=password1)
-
-    assert await users_repositories.check_password(user, password1)
-    assert not await users_repositories.check_password(user, password2)
-
-    await users_repositories.change_password(user, password2)
-
-    assert not await users_repositories.check_password(user, password1)
-    assert await users_repositories.check_password(user, password2)
-
-
-##########################################################
 # create_user
 ##########################################################
 
@@ -119,25 +66,94 @@ async def test_create_user_error_email_or_username_case_insensitive():
 
 
 ##########################################################
-# verify_user
+# get_users
 ##########################################################
 
 
-async def test_verify_user():
-    user = await f.create_user(is_active=False)
+async def test_get_users_by_usernames():
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    user3 = await f.create_user(is_active=False)
 
-    assert not user.is_active
-    assert user.date_verification is None
+    users = await users_repositories.get_users(
+        filters={"is_active": True, "usernames": [user1.username, user2.username, user3.username]}
+    )
 
-    await users_repositories.verify_user(user)
-    await db.refresh_model_from_db(user)
+    assert len(users) == 2
+    assert user3 not in users
 
-    assert user.is_active
-    assert user.date_verification is not None
+
+async def test_get_users_by_emails():
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    user3 = await f.create_user(is_active=False)
+
+    users = await users_repositories.get_users(
+        filters={"is_active": True, "emails": [user1.email, user2.email, user3.email]}
+    )
+
+    assert len(users) == 2
+    assert user3 not in users
 
 
 ##########################################################
-# clean_expired_users
+# get_user
+##########################################################
+
+
+async def test_get_user_by_username_or_email_success_username_case_insensitive():
+    user = await f.create_user(username="test_user_1")
+    await f.create_user(username="test_user_2")
+    assert user == await users_repositories.get_user(filters={"username_or_email": "test_user_1"})
+    assert user == await users_repositories.get_user(filters={"username_or_email": "TEST_user_1"})
+
+
+async def test_get_user_by_username_or_email_error_invalid_username_case_insensitive():
+    assert await users_repositories.get_user(filters={"username_or_email": "test_other_user"}) is None
+
+
+async def test_get_user_by_username_or_email_success_email_case_insensitive():
+    user = await f.create_user(email="test_user_1@email.com")
+    await f.create_user(email="test_user_2@email.com")
+    assert user == await users_repositories.get_user(filters={"username_or_email": "test_user_1@email.com"})
+    assert user == await users_repositories.get_user(filters={"username_or_email": "TEST_user_1@email.com"})
+
+
+async def test_get_user_by_username_or_email_error_invalid_email_case_insensitive():
+    assert await users_repositories.get_user(filters={"username_or_email": "test_other_user@email.com"}) is None
+
+
+async def test_get_user_by_email():
+    user = await f.create_user()
+    assert user == await users_repositories.get_user(filters={"email": user.email})
+
+
+async def test_get_user_by_uuid():
+    user = await f.create_user()
+    assert user == await users_repositories.get_user(filters={"id": user.id})
+
+
+##########################################################
+# misc - check_password / change_password
+##########################################################
+
+
+async def test_change_password_and_check_password():
+    password1 = "password-one"
+    password2 = "password-two"
+    user = await f.create_user(password=password1)
+
+    assert await users_repositories.check_password(user, password1)
+    assert not await users_repositories.check_password(user, password2)
+
+    await users_repositories.change_password(user, password2)
+
+    assert not await users_repositories.check_password(user, password1)
+    assert await users_repositories.check_password(user, password2)
+
+
+##########################################################
+# misc - clean_expired_users
 ##########################################################
 
 
@@ -256,3 +272,30 @@ async def test_get_users_by_text():
     assert inactive_user not in search_by_text_no_pj_pagination_result
     assert ws_pj_admin not in search_by_text_no_pj_pagination_result
     assert storm not in search_by_text_no_pj_pagination_result
+
+
+##########################################################
+# create_auth_data
+##########################################################
+
+
+async def test_create_auth_data():
+    user = await f.create_user()
+    key = "google"
+    value = "1234"
+
+    await users_repositories.create_auth_data(user=user, key=key, value=value)
+
+    auth_data = await users_repositories.get_auth_data(filters={"key": key, "value": value})
+    assert auth_data.user == user
+    assert auth_data.key == key
+
+
+##########################################################
+# get_auth_data
+##########################################################
+
+
+async def test_get_auth_data():
+    auth_data = await f.create_auth_data()
+    assert auth_data == await users_repositories.get_auth_data(filters={"key": auth_data.key, "value": auth_data.value})

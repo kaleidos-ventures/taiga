@@ -31,7 +31,7 @@ async def test_login_success():
         fake_tokens_services.token_is_denied.return_value = False
         fake_tokens_services.outstanding_token_exist.return_value = False
 
-        fake_users_repo.get_user_by_username_or_email.return_value = user
+        fake_users_repo.get_user.return_value = user
         fake_users_repo.check_password.return_value = True
 
         data = await auth_serv.login(username=username, password=password)
@@ -39,7 +39,7 @@ async def test_login_success():
         assert data.token
         assert data.refresh
 
-        fake_users_repo.get_user_by_username_or_email.assert_awaited_once_with(username_or_email=username)
+        fake_users_repo.get_user.assert_awaited_once_with(filters={"username_or_email": username, "is_active": True})
         fake_users_repo.check_password.assert_awaited_once_with(user=user, password=password)
         fake_users_repo.update_last_login.assert_awaited_once_with(user=user)
 
@@ -49,13 +49,15 @@ async def test_login_error_invalid_username():
     password = "test_password"
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
-        fake_users_repo.get_user_by_username_or_email.return_value = False
+        fake_users_repo.get_user.return_value = None
 
         data = await auth_serv.login(username=invalid_username, password=password)
 
         assert not data
 
-        fake_users_repo.get_user_by_username_or_email.assert_awaited_once_with(username_or_email=invalid_username)
+        fake_users_repo.get_user.assert_awaited_once_with(
+            filters={"username_or_email": invalid_username, "is_active": True}
+        )
         fake_users_repo.check_password.assert_not_awaited()
         fake_users_repo.update_last_login.assert_not_awaited()
 
@@ -67,33 +69,15 @@ async def test_login_error_invalid_password():
     user = f.build_user(username=username, password=password, is_active=True)
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
-        fake_users_repo.get_user_by_username_or_email.return_value = user
+        fake_users_repo.get_user.return_value = user
         fake_users_repo.check_password.return_value = False
 
         data = await auth_serv.login(username=username, password=invalid_password)
 
         assert not data
 
-        fake_users_repo.get_user_by_username_or_email.assert_awaited_once_with(username_or_email=username)
+        fake_users_repo.get_user.assert_awaited_once_with(filters={"username_or_email": username, "is_active": True})
         fake_users_repo.check_password.assert_awaited_once_with(user=user, password=invalid_password)
-        fake_users_repo.update_last_login.assert_not_awaited()
-
-
-async def test_login_error_inactive_user():
-    username = "test_user"
-    password = "test_password"
-    user = f.build_user(username=username, password=password, is_active=False)
-
-    with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
-        fake_users_repo.get_user_by_username_or_email.return_value = user
-        fake_users_repo.check_password.return_value = True
-
-        data = await auth_serv.login(username=username, password=password)
-
-        assert not data
-
-        fake_users_repo.get_user_by_username_or_email.assert_awaited_once_with(username_or_email=username)
-        fake_users_repo.check_password.assert_awaited_once_with(user=user, password=password)
         fake_users_repo.update_last_login.assert_not_awaited()
 
 
@@ -137,7 +121,7 @@ async def test_authenticate_success():
     token = await AccessToken.create_for_object(user)
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
-        fake_users_repo.get_first_user.return_value = user
+        fake_users_repo.get_user.return_value = user
 
         data = await auth_serv.authenticate(token=str(token))
 
@@ -155,7 +139,7 @@ async def test_authenticate_error_inactive_user():
     token = await AccessToken.create_for_object(user)
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repo:
-        fake_users_repo.get_first_user.return_value = None
+        fake_users_repo.get_user.return_value = None
 
         with pytest.raises(ex.UnauthorizedUserError):
             await auth_serv.authenticate(token=str(token))

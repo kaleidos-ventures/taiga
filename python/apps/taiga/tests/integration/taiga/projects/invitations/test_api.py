@@ -86,18 +86,18 @@ async def test_create_project_invitations_non_existing_role(client):
 
 
 async def test_create_project_invitations(client):
-    user1 = await f.create_user()
-    user2 = await f.create_user()
-    await f.create_user(email="user-test@email.com")
-    project = await f.create_project(owner=user1)
+    user = await f.create_user()
+    invitee1 = await f.create_user(email="invitee1@taiga.demo", username="invitee1")
+    await f.create_user(email="invitee2@taiga.demo", username="invitee2")
+    project = await f.create_project(owner=user)
     data = {
         "invitations": [
-            {"email": "user-test@email.com", "role_slug": "admin"},
+            {"email": "invitee2@taiga.demo", "role_slug": "admin"},
             {"email": "test@email.com", "role_slug": "general"},
-            {"username": user2.username, "role_slug": "general"},
+            {"username": invitee1.username, "role_slug": "general"},
         ]
     }
-    client.login(user1)
+    client.login(user)
     response = client.post(f"/projects/{project.slug}/invitations", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
 

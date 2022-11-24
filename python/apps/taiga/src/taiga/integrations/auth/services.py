@@ -21,10 +21,12 @@ async def social_login(
     email: str, full_name: str, social_key: str, social_id: str, bio: str, lang: str | None = None
 ) -> AccessWithRefreshTokenSchema:
     # check if the user exists and already has social login with the requested system
-    user = await users_repositories.get_user_from_auth_data(key=social_key, value=social_id)
-    if not user:
+    auth_data = await users_repositories.get_auth_data(filters={"key": social_key, "value": social_id})
+    if auth_data:
+        user = auth_data.user
+    else:
         # check if the user exists (without social login yet)
-        user = await users_repositories.get_first_user(email=email)
+        user = await users_repositories.get_user(filters={"email": email})
         lang = lang if lang else settings.LANG
         if not user:
             # create a new user with social login data and verify it
@@ -32,16 +34,17 @@ async def social_login(
             user = await users_repositories.create_user(
                 email=email, username=username, full_name=full_name, password=None, lang=lang
             )
-            await users_repositories.verify_user(user)
+            await users_services.verify_user(user)
             await invitations_services.update_user_projects_invitations(user=user)
         elif user and not user.is_active:
             # update existing (but not verified) user with social login data and verify it
             # username and email are the same
             # but full_name is got from social login, and previous password is deleted
-            user = await users_repositories.update_user(
-                user=user, new_values={"full_name": full_name, "password": None, "lang": lang}
-            )
-            await users_repositories.verify_user(user)
+            user.full_name = full_name
+            user.password = None
+            user.lang = lang
+            user = await users_repositories.update_user(user=user)
+            await users_services.verify_user(user)
             await invitations_services.update_user_projects_invitations(user=user)
         elif user:
             # the user existed and now is adding a new login method

@@ -111,7 +111,7 @@ async def verify_user(form: VerifyTokenValidator) -> VerificationInfoSchema:
     """
     Verify the account of a new signup user.
     """
-    return await users_services.verify_user(token=form.token)
+    return await users_services.verify_user_from_token(token=form.token)
 
 
 #####################################################################

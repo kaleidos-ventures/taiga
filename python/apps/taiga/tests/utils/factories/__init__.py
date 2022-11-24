@@ -21,7 +21,7 @@ from .projects import (  # noqa
     create_simple_project,
 )
 from .stories import StoryFactory, build_story, create_story  # noqa
-from .users import UserFactory, build_user, create_user  # noqa
+from .users import AuthDataFactory, UserFactory, build_auth_data, build_user, create_auth_data, create_user  # noqa
 from .workflows import (  # noqa
     WorkflowFactory,
     WorkflowStatusFactory,

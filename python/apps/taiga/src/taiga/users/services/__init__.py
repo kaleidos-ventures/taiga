@@ -7,6 +7,7 @@
 
 from taiga.auth import services as auth_services
 from taiga.base.api.pagination import Pagination
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.base.utils.slug import generate_int_suffix, slugify
 from taiga.conf import settings
 from taiga.emails.emails import Emails
@@ -33,7 +34,7 @@ async def create_user(
     project_invitation_token: str | None = None,
     accept_project_invitation: bool = True,
 ) -> User:
-    user = await users_repositories.get_user_by_username_or_email(username_or_email=email)
+    user = await users_repositories.get_user(filters={"username_or_email": email})
 
     if user and user.is_active:
         raise ex.EmailAlreadyExistsError("Email already exists")
@@ -47,9 +48,10 @@ async def create_user(
         )
     else:
         # the user (is_active=False) tries to sign-up again before verifying the previous attempt
-        user = await users_repositories.update_user(
-            user=user, new_values={"full_name": full_name, "password": password, "lang": lang}
-        )
+        user.full_name = full_name
+        user.lang = lang
+        user.set_password(password)
+        await users_repositories.update_user(user=user)
 
     await _send_verify_user_email(
         user=user,
@@ -61,7 +63,10 @@ async def create_user(
 
 
 async def update_user(user: User, full_name: str, lang: str) -> User:
-    return await users_repositories.update_user(user=user, new_values={"full_name": full_name, "lang": lang})
+    user.full_name = full_name
+    user.lang = lang
+    await users_repositories.update_user(user=user)
+    return user
 
 
 async def generate_username(email: str) -> str:
@@ -69,7 +74,7 @@ async def generate_username(email: str) -> str:
     suffix = ""
     while True:
         potential = f"{username}{suffix}"
-        if not await users_repositories.user_exists(username=potential):
+        if not await users_repositories.user_exists(filters={"username": potential}):
             return potential
         suffix = generate_int_suffix()
 
@@ -99,7 +104,13 @@ async def _generate_verify_user_token(
     return str(verify_user_token)
 
 
-async def verify_user(token: str) -> VerificationInfoSchema:
+async def verify_user(user: User) -> None:
+    user.is_active = True
+    user.date_verification = aware_utcnow()
+    await users_repositories.update_user(user=user)
+
+
+async def verify_user_from_token(token: str) -> VerificationInfoSchema:
     # Get token and deny it
     try:
         verify_token = await VerifyUserToken.create(token)
@@ -113,11 +124,11 @@ async def verify_user(token: str) -> VerificationInfoSchema:
     await verify_token.denylist()
 
     # Get user and verify it
-    user = await users_repositories.get_first_user(**verify_token.object_data)
+    user = await users_repositories.get_user(filters=verify_token.object_data)
     if not user:
         raise ex.BadVerifyUserTokenError("The user doesn't exist.")
 
-    await users_repositories.verify_user(user=user)
+    await verify_user(user=user)
     await invitations_services.update_user_projects_invitations(user=user)
 
     # Accept project invitation, if it exists and the user comes from the email's CTA. Errors will be ignored
@@ -153,6 +164,25 @@ async def clean_expired_users() -> None:
 
 
 #####################################################################
+# get users
+#####################################################################
+
+
+async def get_users_emails_as_dict(
+    emails: list[str],
+) -> dict[str, User]:
+    users = await users_repositories.get_users(filters={"is_active": True, "emails": emails})
+    return {u.email: u for u in users}
+
+
+async def get_users_usernames_as_dict(
+    usernames: list[str],
+) -> dict[str, User]:
+    users = await users_repositories.get_users(filters={"is_active": True, "usernames": usernames})
+    return {u.username: u for u in users}
+
+
+#####################################################################
 # Reset Password
 #####################################################################
 
@@ -168,7 +198,7 @@ async def _get_user_and_reset_password_token(token: str) -> tuple[ResetPasswordT
         raise ex.BadResetPasswordTokenError("Invalid or malformed token.")
 
     # Get user
-    user = await users_repositories.get_first_user(**reset_token.object_data, is_active=True)
+    user = await users_repositories.get_user(filters={"id": reset_token.object_data["id"], "is_active": True})
     if not user:
         await reset_token.denylist()
         raise ex.BadResetPasswordTokenError("Invalid or malformed token.")
@@ -186,8 +216,8 @@ async def _send_reset_password_email(user: User) -> None:
 
 
 async def request_reset_password(email: str) -> None:
-    user = await users_repositories.get_user_by_username_or_email(username_or_email=email)
-    if user and user.is_active:
+    user = await users_repositories.get_user(filters={"username_or_email": email, "is_active": True})
+    if user:
         await _send_reset_password_email(user)
 
 

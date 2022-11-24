@@ -14,9 +14,9 @@ from taiga.users.models import User
 
 
 async def login(username: str, password: str) -> AccessWithRefreshTokenSchema | None:
-    user = await users_repositories.get_user_by_username_or_email(username_or_email=username)
+    user = await users_repositories.get_user(filters={"username_or_email": username, "is_active": True})
 
-    if not user or not await users_repositories.check_password(user=user, password=password) or not user.is_active:
+    if not user or not await users_repositories.check_password(user=user, password=password):
         return None
 
     return await create_auth_credentials(user=user)
@@ -44,7 +44,7 @@ async def authenticate(token: str) -> tuple[list[str], User]:
         raise ex.BadAuthTokenError()
 
     # Check user authorization permissions
-    if user := await users_repositories.get_first_user(**access_token.object_data, is_active=True):
+    if user := await users_repositories.get_user(filters={"id": access_token.object_data["id"], "is_active": True}):
         return ["auth"], user
 
     raise ex.UnauthorizedUserError("Error authenticating the user")

@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import Any
 from uuid import UUID
 
 from taiga.base.api.pagination import Pagination
@@ -26,7 +27,7 @@ from taiga.projects.projects.services import get_logo_small_thumbnail_url
 from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.projects.roles import services as pj_roles_services
 from taiga.tokens.exceptions import TokenError
-from taiga.users import repositories as users_repositories
+from taiga.users import services as users_services
 from taiga.users.models import AnyUser, User
 
 
@@ -181,14 +182,23 @@ async def create_project_invitations(
     if wrong_roles_slugs:
         raise ex.NonExistingRoleError(f"These role slugs don't exist: {wrong_roles_slugs}")
 
-    users_emails_dict = await users_repositories.get_users_by_emails_as_dict(emails=emails)
-    # users_emails_dict = {'user1@taiga.demo': <User: Norma Fisher>,
-    users_usernames_dict = await users_repositories.get_users_by_usernames_as_dict(usernames=usernames)
-    # users_usernames_dict = {'user3': <User: Elizabeth Woods>,
-    # all usernames should belong to a user; otherwise it's an error
-    if len(users_usernames_dict) < len(usernames):
-        wrong_usernames = set(usernames) - users_usernames_dict.keys()
-        raise ex.NonExistingUsernameError(f"These usernames don't exist: {wrong_usernames}")
+    users_emails_dict: dict[str, Any] = {}
+    if len(emails) > 0:
+        users_emails_dict = await users_services.get_users_emails_as_dict(emails=emails)
+    # users_emails_dict = {
+    #   'user1@taiga.demo': <User: Norma Fisher>,
+    #   'user3@taiga.demo': <User: Elisabeth Woods>,
+    # }
+    users_usernames_dict: dict[str, Any] = {}
+    if len(usernames) > 0:
+        users_usernames_dict = await users_services.get_users_usernames_as_dict(usernames=usernames)
+        # users_usernames_dict = {
+        #   'user3': <User: Elizabeth Woods>,
+        # }
+        # all usernames should belong to a user; otherwise it's an error
+        if len(users_usernames_dict) < len(usernames):
+            wrong_usernames = set(usernames) - users_usernames_dict.keys()
+            raise ex.NonExistingUsernameError(f"These usernames don't exist: {wrong_usernames}")
 
     invitations_to_create: dict[str, ProjectInvitation] = {}
     invitations_to_update: dict[str, ProjectInvitation] = {}
@@ -199,7 +209,7 @@ async def create_project_invitations(
     # users_dict = {
     #         'user1@taiga.demo': <User: Norma Fisher>,
     #         'user3': <User: Elizabeth Woods>,
-    #         'user1': <User: Norma Fisher>
+    #         'user3@taiga.demo': <User: Elizabeth Woods>,
     # }
 
     for key, role_slug in zip(emails + usernames, emails_roles + usernames_roles):

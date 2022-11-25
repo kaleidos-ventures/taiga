@@ -4,11 +4,12 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+from uuid import UUID
 
 import pytest
 from pydantic import ValidationError
 from taiga.base.serializers import BaseModel
-from taiga.base.validator import LanguageCode
+from taiga.base.validators import B64UUID, LanguageCode
 
 #####################################################################
 # LanguageCode
@@ -33,3 +34,26 @@ def test_languagecode_validator_with_available_language() -> None:
 def test_languagecode_validator_with_unavailable_language(lang: str | None) -> None:
     with pytest.raises(ValidationError):
         TestsLanguageCodeValidator(language=lang)
+
+
+#####################################################################
+# B64UUID
+#####################################################################
+
+
+class TestsB64UUID(BaseModel):
+    b64id: B64UUID
+
+
+@pytest.mark.parametrize(
+    "b64id, result",
+    [
+        ("", None),
+        ("6Jgsbshort", None),
+        ("@#!", None),
+        ("6JgsbGyoEe2VExhWgGrI2w", UUID("e8982c6c-6ca8-11ed-9513-1856806ac8db")),
+    ],
+)
+def test_b64id(b64id: str | None, result: UUID | None):
+    validator = TestsB64UUID(b64id=b64id)
+    assert validator.b64id == result

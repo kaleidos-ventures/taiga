@@ -20,7 +20,7 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
-# POST /projects/<slug>/invitations
+# POST /projects/<id>/invitations
 ##########################################################
 
 
@@ -32,7 +32,7 @@ async def test_create_project_invitations_anonymous_user(client):
             {"email": "test@email.com", "role_slug": "general"},
         ]
     }
-    response = client.post(f"/projects/{project.slug}/invitations", json=data)
+    response = client.post(f"/projects/{project.b64id}/invitations", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
@@ -46,7 +46,7 @@ async def test_create_project_invitations_user_without_permission(client):
     }
     user = await f.create_user()
     client.login(user)
-    response = client.post(f"/projects/{project.slug}/invitations", json=data)
+    response = client.post(f"/projects/{project.b64id}/invitations", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
@@ -58,8 +58,9 @@ async def test_create_project_invitations_project_not_found(client):
             {"email": "test@email.com", "role_slug": "general"},
         ]
     }
+    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
     client.login(user)
-    response = client.post("/projects/non-existent/invitations", json=data)
+    response = client.post(f"/projects/{non_existent_id}/invitations", json=data)
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -68,7 +69,7 @@ async def test_create_project_invitations_not_existing_username(client):
     project = await f.create_project(owner=user)
     data = {"invitations": [{"username": "not-a-username", "role_slug": "general"}]}
     client.login(user)
-    response = client.post(f"/projects/{project.slug}/invitations", json=data)
+    response = client.post(f"/projects/{project.b64id}/invitations", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
@@ -81,7 +82,7 @@ async def test_create_project_invitations_non_existing_role(client):
         ]
     }
     client.login(user)
-    response = client.post(f"/projects/{project.slug}/invitations", json=data)
+    response = client.post(f"/projects/{project.b64id}/invitations", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
@@ -98,12 +99,12 @@ async def test_create_project_invitations(client):
         ]
     }
     client.login(user)
-    response = client.post(f"/projects/{project.slug}/invitations", json=data)
+    response = client.post(f"/projects/{project.b64id}/invitations", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
 ##########################################################
-# GET /projects/<slug>/invitations
+# GET /projects/<id>/invitations
 ##########################################################
 
 
@@ -111,7 +112,7 @@ async def test_get_project_invitations_admin(client):
     project = await f.create_project()
 
     client.login(project.owner)
-    response = client.get(f"/projects/{project.slug}/invitations")
+    response = client.get(f"/projects/{project.b64id}/invitations")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
@@ -143,7 +144,7 @@ async def test_get_project_invitations_admin_with_pagination(client):
 
     offset = 0
     limit = 1
-    response = client.get(f"/projects/{project.slug}/invitations?offset={offset}&limit={limit}")
+    response = client.get(f"/projects/{project.b64id}/invitations?offset={offset}&limit={limit}")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
     assert response.headers["Pagination-Offset"] == "0"
@@ -156,7 +157,7 @@ async def test_get_project_invitations_allowed_to_public_users(client):
     not_a_member = await f.create_user()
 
     client.login(not_a_member)
-    response = client.get(f"/projects/{project.slug}/invitations")
+    response = client.get(f"/projects/{project.b64id}/invitations")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json() == []
 
@@ -164,16 +165,17 @@ async def test_get_project_invitations_allowed_to_public_users(client):
 async def test_get_project_invitations_not_allowed_to_anonymous_users(client):
     project = await f.create_project()
 
-    response = client.get(f"/projects/{project.slug}/invitations")
+    response = client.get(f"/projects/{project.b64id}/invitations")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json() == []
 
 
-async def test_get_project_invitations_wrong_slug(client):
+async def test_get_project_invitations_wrong_id(client):
     project = await f.create_project()
+    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
     client.login(project.owner)
-    response = client.get("/projects/WRONG_PJ_SLUG/invitations")
+    response = client.get(f"/projects/{non_existent_id}/invitations")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -262,7 +264,7 @@ async def test_accept_project_invitation_error_invitation_revoked(client):
 
 
 #########################################################################
-# POST /projects/<slug>/invitations/accept authenticated user accepts a project invitation
+# POST /projects/<id>/invitations/accept authenticated user accepts a project invitation
 #########################################################################
 
 
@@ -275,7 +277,7 @@ async def test_accept_user_project_invitation(client):
     await ProjectInvitationToken.create_for_object(invitation)
 
     client.login(invited_user)
-    response = client.post(f"projects/{project.slug}/invitations/accept")
+    response = client.post(f"projects/{project.b64id}/invitations/accept")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json()["user"]["username"] == invited_user.username
     assert response.json()["email"] == invited_user.email
@@ -286,7 +288,7 @@ async def test_accept_user_project_not_found(client):
     uninvited_user = await f.create_user()
 
     client.login(uninvited_user)
-    response = client.post(f"projects/{project.slug}/invitations/accept")
+    response = client.post(f"projects/{project.b64id}/invitations/accept")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -299,7 +301,7 @@ async def test_accept_user_already_accepted_project_invitation(client):
     await ProjectInvitationToken.create_for_object(invitation)
 
     client.login(invited_user)
-    response = client.post(f"projects/{project.slug}/invitations/accept")
+    response = client.post(f"projects/{project.b64id}/invitations/accept")
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
@@ -312,12 +314,12 @@ async def test_accept_user_revoked_project_invitation(client):
     await ProjectInvitationToken.create_for_object(invitation)
 
     client.login(invited_user)
-    response = client.post(f"projects/{project.slug}/invitations/accept")
+    response = client.post(f"projects/{project.b64id}/invitations/accept")
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
 #########################################################################
-# POST /projects/<slug>/invitations/resend
+# POST /projects/<id>/invitations/resend
 #########################################################################
 
 
@@ -329,7 +331,7 @@ async def test_resend_project_invitation_by_username_ok(client):
 
     client.login(owner)
     data = {"username_or_email": user.username}
-    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/resend", json=data)
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
@@ -341,7 +343,7 @@ async def test_resend_project_invitation_by_user_email_ok(client):
 
     client.login(owner)
     data = {"username_or_email": user.email}
-    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/resend", json=data)
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
@@ -353,7 +355,7 @@ async def test_resend_project_invitation_by_email_ok(client):
 
     client.login(owner)
     data = {"username_or_email": email}
-    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/resend", json=data)
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
@@ -365,7 +367,7 @@ async def test_resend_project_invitation_user_without_permission(client):
 
     client.login(user)
     data = {"username_or_email": email}
-    response = client.post(f"/projects/{project.slug}/invitations/resend", json=data)
+    response = client.post(f"/projects/{project.b64id}/invitations/resend", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
@@ -375,7 +377,7 @@ async def test_resend_project_invitation_not_exist(client):
 
     client.login(owner)
     data = {"username_or_email": "not_exist"}
-    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/resend", json=data)
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -389,7 +391,7 @@ async def test_resend_project_invitation_already_accepted(client):
 
     client.login(owner)
     data = {"username_or_email": user.username}
-    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/resend", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
@@ -403,12 +405,12 @@ async def test_resend_project_invitation_revoked(client):
 
     client.login(owner)
     data = {"username_or_email": user.username}
-    response = client.post(f"projects/{project.slug}/invitations/resend", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/resend", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
 #########################################################################
-# POST /projects/<slug>/invitations/revoke
+# POST /projects/<id>/invitations/revoke
 #########################################################################
 
 
@@ -420,7 +422,7 @@ async def test_revoke_project_invitation_for_email_ok(client):
 
     client.login(admin)
     data = {"username_or_email": email}
-    response = client.post(f"projects/{project.slug}/invitations/revoke", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/revoke", json=data)
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
@@ -434,7 +436,7 @@ async def test_revoke_project_invitation_for_username_ok(client):
 
     client.login(admin)
     data = {"username_or_email": user.username}
-    response = client.post(f"projects/{project.slug}/invitations/revoke", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/revoke", json=data)
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
@@ -448,7 +450,7 @@ async def test_revoke_project_invitation_for_user_email_ok(client):
 
     client.login(admin)
     data = {"username_or_email": user.email}
-    response = client.post(f"projects/{project.slug}/invitations/revoke", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/revoke", json=data)
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
@@ -459,7 +461,7 @@ async def test_revoke_project_invitation_not_found(client):
 
     client.login(admin)
     data = {"username_or_email": user.email}
-    response = client.post(f"projects/{project.slug}/invitations/revoke", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/revoke", json=data)
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -469,7 +471,7 @@ async def test_revoke_project_invitation_not_found_2(client):
 
     client.login(admin)
     data = {"username_or_email": "nouser"}
-    response = client.post(f"projects/{project.slug}/invitations/revoke", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/revoke", json=data)
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -489,7 +491,7 @@ async def test_revoke_project_invitation_already_member_invalid(client):
 
     client.login(admin)
     data = {"username_or_email": user.email}
-    response = client.post(f"projects/{project.slug}/invitations/revoke", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/revoke", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
@@ -509,12 +511,12 @@ async def test_revoke_project_invitation_revoked(client):
 
     client.login(admin)
     data = {"username_or_email": user.email}
-    response = client.post(f"projects/{project.slug}/invitations/revoke", json=data)
+    response = client.post(f"projects/{project.b64id}/invitations/revoke", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
 ##########################################################
-# PATCH /projects/<slug>/invitations/<id>
+# PATCH /projects/<project_id>/invitations/<id>
 ##########################################################
 
 
@@ -525,7 +527,7 @@ async def test_update_project_invitation_role_invitation_not_exist(client):
     client.login(owner)
     id = uuid.uuid1()
     data = {"role_slug": "admin"}
-    response = client.patch(f"projects/{project.slug}/invitations/{id}", json=data)
+    response = client.patch(f"projects/{project.b64id}/invitations/{id}", json=data)
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -547,7 +549,7 @@ async def test_update_project_invitation_role_user_without_permission(client):
 
     client.login(user)
     data = {"role_slug": "admin"}
-    response = client.patch(f"/projects/{project.slug}/invitations/{invitation.id}", json=data)
+    response = client.patch(f"/projects/{project.b64id}/invitations/{invitation.id}", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
@@ -566,5 +568,5 @@ async def test_update_project_invitation_role_ok(client):
 
     client.login(owner)
     data = {"role_slug": "admin"}
-    response = client.patch(f"projects/{project.slug}/invitations/{invitation.id}", json=data)
+    response = client.patch(f"projects/{project.b64id}/invitations/{invitation.id}", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text

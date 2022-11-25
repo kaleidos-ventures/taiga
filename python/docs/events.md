@@ -109,7 +109,7 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
   ```json
   {
       "command": "subscribe_to_project_events",
-      "project": "project_slug"
+      "project": "project_id"
   }
   ```
 - Response OK:
@@ -118,11 +118,11 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
       "type": "action",
       "action": {
           "command": "subscribe_to_project_events",
-          "project": "project_slug"
+          "project": "project_id"
       },
       "status": "ok",
       "content": {
-          "channel": "projects.project_slug"
+          "channel": "projects.project_id"
       }
   }
   ```
@@ -132,7 +132,7 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
       "type": "action",
       "action": {
           "command": "subscribe_to_project_events",
-          "project": "<some_project_slug>"
+          "project": "<project_id>"
       },
       "status": "error",
       "content": {
@@ -147,7 +147,7 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
   ```json
   {
         "command": "unsubscribe_from_project_events",
-        "project": "<some_project_slug>"
+        "project": "<project_id>"
   }
   ```
 - Response OK:
@@ -156,7 +156,7 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
       "type": "action",
       "action": {
           "command": "unsubscribe_from_project_events",
-          "project": "<some_project_slug>"
+          "project": "<project_id>"
       },
       "status": "ok",
       "content": {
@@ -170,7 +170,7 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
       "type": "action",
       "action": {
           "command": "unsubscribe_from_project_events",
-          "project": "<some_project_slug>"
+          "project": "<project_id>"
       },
       "status": "error",
       "content": {
@@ -183,7 +183,7 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
       "type": "action",
       "action": {
           "command": "unsubscribe_from_project_events",
-          "project": "<some_project_slug>"
+          "project": "<project_id>"
       },
       "status": "error",
       "content": {
@@ -213,8 +213,8 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
 
 - `system` - channel for brodcast important messages for all the clients. [TODO]
 - `users.<username>` - channel to publish all user events.
-- `projects.<project_slug>` - channel to publish all the project events. [TODO]
-- `workspaces.<workspace_slug>` - channel to publish all the workspace events. [TODO]
+- `projects.<project_id>` - channel to publish all the project events. [TODO]
+- `workspaces.<workspace_id>` - channel to publish all the workspace events. [TODO]
 
 
 ### Types and content schemas
@@ -244,8 +244,8 @@ Content for:
 - user channel:
   ```
   {
-      "workspace": "workspace_slug",
-      "project": "project_slug"
+      "workspace": "workspace_id",
+      "project": "project_id"
   }
   ```
 - project channel:
@@ -264,8 +264,8 @@ Content for:
 - user channel:
   ```
   {
-      "workspace": "workspace_slug",
-      "project": "project_slug"
+      "workspace": "workspace_id",
+      "project": "project_id"
   }
   ```
 - project channel:
@@ -281,8 +281,8 @@ Content for:
 - user channel:
   ```
   {
-      "workspace": "workspace_slug",
-      "project": "project_slug"
+      "workspace": "workspace_id",
+      "project": "project_id"
   }
   ```
 - project channel:
@@ -298,8 +298,8 @@ Content for:
 - user channel:
   ```
   {
-      "workspace": "workspace_slug",
-      "project": "project_slug"
+      "workspace": "workspace_id",
+      "project": "project_id"
   }
   ```
 - project channel:
@@ -315,8 +315,8 @@ Content for:
 - user channel:
   ```
   {
-      "workspace": "workspace_slug",
-      "project": "project_slug"
+      "workspace": "workspace_id",
+      "project": "project_id"
   }
   ```
 - project channel:

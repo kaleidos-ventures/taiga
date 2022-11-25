@@ -6,15 +6,15 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
+from uuid import UUID
+
 from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.schemas import WorkflowSchema
 
 
-async def get_project_workflows(project_slug: str) -> list[WorkflowSchema]:
-    return await workflows_repositories.get_project_workflows(filters={"project_slug": project_slug})
+async def get_project_workflows(project_id: UUID) -> list[WorkflowSchema]:
+    return await workflows_repositories.get_project_workflows(filters={"project_id": project_id})
 
 
-async def get_project_workflow(project_slug: str, workflow_slug: str) -> WorkflowSchema | None:
-    return await workflows_repositories.get_project_workflow(
-        filters={"project_slug": project_slug, "slug": workflow_slug}
-    )
+async def get_project_workflow(project_id: UUID, workflow_slug: str) -> WorkflowSchema | None:
+    return await workflows_repositories.get_project_workflow(filters={"project_id": project_id, "slug": workflow_slug})

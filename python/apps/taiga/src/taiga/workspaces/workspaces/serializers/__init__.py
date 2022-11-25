@@ -4,11 +4,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-from taiga.base.serializers import BaseModel
+
+from taiga.base.serializers import UUIDB64, BaseModel
 from taiga.projects.projects.serializers.related import ProjectSummarySerializer
 
 
 class WorkspaceDetailSerializer(BaseModel):
+    id: UUIDB64
     name: str
     slug: str
     color: int
@@ -25,6 +27,7 @@ class WorkspaceDetailSerializer(BaseModel):
 
 
 class WorkspaceSerializer(BaseModel):
+    id: UUIDB64
     name: str
     slug: str
     color: int

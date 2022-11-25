@@ -7,6 +7,7 @@
 
 from decimal import Decimal
 from typing import Any
+from uuid import UUID
 
 from taiga.base.api import Pagination
 from taiga.projects.projects.models import Project
@@ -84,14 +85,14 @@ async def get_story(ref: int, project: Project) -> dict[str, Any] | None:
 
 
 async def get_paginated_stories_by_workflow(
-    project_slug: str, workflow_slug: str, offset: int, limit: int
+    project_id: UUID, workflow_slug: str, offset: int, limit: int
 ) -> tuple[Pagination, list[Story]]:
     total_stories = await stories_repositories.get_total_stories(
-        filters={"workflow_slug": workflow_slug, "project_slug": project_slug}
+        filters={"workflow_slug": workflow_slug, "project_id": project_id}
     )
 
     stories = await stories_repositories.get_stories(
-        filters={"workflow_slug": workflow_slug, "project_slug": project_slug},
+        filters={"workflow_slug": workflow_slug, "project_id": project_id},
         offset=offset,
         limit=limit,
         select_related=["created_by", "project", "workflow", "status"],
@@ -162,7 +163,7 @@ async def reorder_stories(
 ) -> dict[str, Any]:
     # check target_status exists
     target_status = await workflows_repositories.get_status(
-        filters={"project_slug": project.slug, "workflow_slug": workflow.slug, "slug": target_status_slug}
+        filters={"project_id": project.id, "workflow_slug": workflow.slug, "slug": target_status_slug}
     )
     if not target_status:
         raise ex.InvalidStatusError(f"Status {target_status_slug} doesn't exist in this project")

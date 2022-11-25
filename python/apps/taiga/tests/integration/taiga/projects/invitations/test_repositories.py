@@ -74,7 +74,7 @@ async def test_get_project_invitation_by_user_username() -> None:
 
     new_invitation = await repositories.get_project_invitation(
         filters={
-            "project_slug": invitation.project.slug,
+            "project_id": invitation.project.id,
             "username_or_email": invitation.user.username,
             "statuses": [ProjectInvitationStatus.PENDING],
         }
@@ -89,7 +89,7 @@ async def test_get_project_invitation_by_user_email() -> None:
 
     new_invitation = await repositories.get_project_invitation(
         filters={
-            "project_slug": invitation.project.slug,
+            "project_id": invitation.project.id,
             "username_or_email": invitation.user.email,
             "statuses": [ProjectInvitationStatus.PENDING],
         }
@@ -104,7 +104,7 @@ async def test_get_project_invitation_by_email() -> None:
 
     new_invitation = await repositories.get_project_invitation(
         filters={
-            "project_slug": invitation.project.slug,
+            "project_id": invitation.project.id,
             "username_or_email": invitation.email,
             "statuses": [ProjectInvitationStatus.PENDING],
         }
@@ -118,7 +118,7 @@ async def test_get_project_invitation_by_email_no_status() -> None:
     invitation = await f.create_project_invitation(user=None)
 
     new_invitation = await repositories.get_project_invitation(
-        filters={"project_slug": invitation.project.slug, "username_or_email": invitation.email}
+        filters={"project_id": invitation.project.id, "username_or_email": invitation.email}
     )
 
     assert new_invitation is not None
@@ -177,7 +177,7 @@ async def test_get_project_invitations_all_pending_users():
     )
 
     response = await repositories.get_project_invitations(
-        filters={"project_slug": project.slug, "status": ProjectInvitationStatus.PENDING}, offset=0, limit=100
+        filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING}, offset=0, limit=100
     )
     assert len(response) == 5
     assert response[0].email == user_a.email
@@ -204,7 +204,7 @@ async def test_get_project_invitations_single_pending_user():
     )
 
     response = await repositories.get_project_invitations(
-        filters={"project_slug": project.slug, "user": user1, "status": ProjectInvitationStatus.PENDING},
+        filters={"project_id": project.id, "user": user1, "status": ProjectInvitationStatus.PENDING},
         offset=0,
         limit=100,
     )
@@ -222,7 +222,7 @@ async def test_get_project_invitations_single_pending_non_existing_user():
     )
 
     invitations = await repositories.get_project_invitations(
-        filters={"project_slug": project.slug, "email": non_existing_email, "status": ProjectInvitationStatus.PENDING},
+        filters={"project_id": project.id, "email": non_existing_email, "status": ProjectInvitationStatus.PENDING},
         offset=0,
         limit=100,
     )
@@ -244,7 +244,7 @@ async def test_get_project_invitations_all_accepted_users():
     )
 
     response = await repositories.get_project_invitations(
-        filters={"project_slug": project.slug, "status": ProjectInvitationStatus.ACCEPTED}, offset=0, limit=100
+        filters={"project_id": project.id, "status": ProjectInvitationStatus.ACCEPTED}, offset=0, limit=100
     )
     assert len(response) == 2
     assert response[0].email == user1.email
@@ -324,6 +324,6 @@ async def test_get_total_project_invitations():
     )
 
     response = await repositories.get_total_project_invitations(
-        filters={"project_slug": project.slug, "status": ProjectInvitationStatus.PENDING}
+        filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING}
     )
     assert response == 3

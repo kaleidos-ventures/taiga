@@ -13,6 +13,7 @@ from taiga.base.api import Request
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
+from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_422
 from taiga.permissions import IsAuthenticated
@@ -130,7 +131,7 @@ async def get_users_by_text(
     response: Response,
     pagination_params: PaginationQuery = Depends(),
     text: str = Query(None, description="search text (str)"),
-    project: str = Query(None, description="the project slug (str)"),
+    project: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> list[User]:
     """
     List all the users matching the full-text search criteria, ordering results by their proximity to a project :
@@ -142,7 +143,7 @@ async def get_users_by_text(
 
     pagination, users = await users_services.get_paginated_users_by_text(
         text=text,
-        project_slug=project,
+        project_id=project,
         offset=pagination_params.offset,
         limit=pagination_params.limit,
     )

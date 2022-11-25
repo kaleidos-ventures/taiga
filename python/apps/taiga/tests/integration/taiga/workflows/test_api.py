@@ -22,15 +22,16 @@ async def test_get_project_workflows(client):
     project = await f.create_project()
 
     client.login(project.owner)
-    response = client.get(f"/projects/{project.slug}/workflows")
+    response = client.get(f"/projects/{project.b64id}/workflows")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_get_project_workflows_wrong_slug(client):
+async def test_get_project_workflows_wrong_id(client):
     project = await f.create_project()
+    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
     client.login(project.owner)
-    response = client.get("/projects/WRONG_PJ_SLUG/workflows")
+    response = client.get(f"/projects/{non_existent_id}/workflows")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -39,5 +40,5 @@ async def test_get_project_workflows_wrong_permissions(client):
     user = await f.create_user()
 
     client.login(user)
-    response = client.get(f"/projects/{project.slug}/workflows")
+    response = client.get(f"/projects/{project.b64id}/workflows")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text

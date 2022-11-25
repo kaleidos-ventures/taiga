@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import uuid
 from unittest.mock import patch
 
 import pytest
@@ -33,10 +34,10 @@ async def test_get_my_workspaces_projects():
 
 
 async def test_get_workspace():
-    slug = "slug"
+    ws_id = uuid.uuid1()
     with patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo:
-        await services.get_workspace(slug=slug)
-        fake_workspaces_repo.get_workspace.assert_awaited_with(filters={"slug": slug})
+        await services.get_workspace(id=ws_id)
+        fake_workspaces_repo.get_workspace.assert_awaited_with(filters={"id": ws_id})
 
 
 ##########################################################

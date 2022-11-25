@@ -7,7 +7,7 @@
 
 from pydantic import EmailStr, StrictBool, constr, validator
 from taiga.base.serializers import BaseModel
-from taiga.base.validator import LanguageCode
+from taiga.base.validators import LanguageCode
 from taiga.conf import settings
 from taiga.users.validators.mixins import PasswordMixin
 

@@ -140,16 +140,16 @@ async def test_get_paginated_stories_by_workflow():
         fake_stories_repo.get_stories.return_value = [story]
 
         await services.get_paginated_stories_by_workflow(
-            project_slug=story.project.slug, workflow_slug=story.workflow.slug, offset=0, limit=10
+            project_id=story.project.id, workflow_slug=story.workflow.slug, offset=0, limit=10
         )
         fake_stories_repo.get_total_stories.assert_awaited_once_with(
-            filters={"project_slug": story.project.slug, "workflow_slug": story.workflow.slug}
+            filters={"project_id": story.project.id, "workflow_slug": story.workflow.slug}
         )
         fake_stories_repo.get_stories.assert_awaited_once_with(
             offset=0,
             limit=10,
             select_related=["created_by", "project", "workflow", "status"],
-            filters={"project_slug": story.project.slug, "workflow_slug": story.workflow.slug},
+            filters={"project_id": story.project.id, "workflow_slug": story.workflow.slug},
         )
 
 

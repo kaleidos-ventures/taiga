@@ -199,12 +199,12 @@ def clean_expired_users() -> None:
 @sync_to_async
 def get_users_by_text(
     text_search: str = "",
-    project_slug: str | None = None,
+    project_id: UUID | None = None,
     exclude_inactive: bool = True,
     offset: int = 0,
     limit: int = 0,
 ) -> list[User]:
-    qs = _get_users_by_text_qs(text_search=text_search, project_slug=project_slug, exclude_inactive=exclude_inactive)
+    qs = _get_users_by_text_qs(text_search=text_search, project_id=project_id, exclude_inactive=exclude_inactive)
     if limit:
         return list(qs[offset : offset + limit])
 
@@ -213,21 +213,21 @@ def get_users_by_text(
 
 @sync_to_async
 def get_total_users_by_text(
-    text_search: str = "", project_slug: str | None = None, exclude_inactive: bool = True
+    text_search: str = "", project_id: UUID | None = None, exclude_inactive: bool = True
 ) -> int:
-    qs = _get_users_by_text_qs(text_search=text_search, project_slug=project_slug, exclude_inactive=exclude_inactive)
+    qs = _get_users_by_text_qs(text_search=text_search, project_id=project_id, exclude_inactive=exclude_inactive)
     return qs.count()
 
 
 def _get_users_by_text_qs(
-    text_search: str = "", project_slug: str | None = None, exclude_inactive: bool = True
+    text_search: str = "", project_id: UUID | None = None, exclude_inactive: bool = True
 ) -> QuerySet[User]:
     """
     Get all the users that match a full text search (against their full_name and username fields), returning a
     prioritized (not filtered) list by their closeness to a given project (if any).
 
     :param text_search: The text the users should match in either their full names or usernames to be considered
-    :param project_slug: Users will be ordered by their proximity to this project excluding itself
+    :param project_id: Users will be ordered by their proximity to this project excluding itself
     :param exclude_inactive: true (return just active users), false (returns all users)
     :return: a prioritized queryset of users
     """
@@ -240,19 +240,19 @@ def _get_users_by_text_qs(
         users_matching_full_text_search = _get_users_by_fullname_or_username(text_search, users_qs)
         users_qs = users_matching_full_text_search
 
-    if project_slug:
+    if project_id:
         # List all the users matching the full-text search criteria, ordering results by their proximity to a project :
         #     1st. project members of this project
         #     2nd. members of the project's workspace / members of the project's organization (if any)
         #     3rd. rest of users (the priority for this group is not too important)
 
         # 1st: Users that share the same project
-        memberships = ProjectMembership.objects.filter(user__id=OuterRef("pk"), project__slug=project_slug)
+        memberships = ProjectMembership.objects.filter(user__id=OuterRef("pk"), project__id=project_id)
         pending_invitations = ProjectInvitation.objects.filter(
-            user__id=OuterRef("pk"), project__slug=project_slug, status=ProjectInvitationStatus.PENDING
+            user__id=OuterRef("pk"), project__id=project_id, status=ProjectInvitationStatus.PENDING
         )
         project_users_qs = (
-            users_qs.filter(projects__slug=project_slug)
+            users_qs.filter(projects__id=project_id)
             .annotate(user_is_member=Exists(memberships))
             .annotate(user_has_pending_invitation=Exists(pending_invitations))
         )
@@ -260,17 +260,17 @@ def _get_users_by_text_qs(
 
         # 2nd: Users that are members of the project's workspace but are NOT project members
         workspace_users_qs = (
-            users_qs.filter(workspaces__projects__slug=project_slug)
+            users_qs.filter(workspaces__projects__id=project_id)
             .annotate(user_is_member=Value(False, output_field=BooleanField()))
             .annotate(user_has_pending_invitation=Exists(pending_invitations))
-            .exclude(projects__slug=project_slug)
+            .exclude(projects__id=project_id)
         )
         sorted_workspace_users_qs = _sort_queryset_if_unsorted(workspace_users_qs, text_search)
 
         # 3rd: Users that are neither a project member nor a member of its workspace
         other_users_qs = (
-            users_qs.exclude(projects__slug=project_slug)
-            .exclude(workspaces__projects__slug=project_slug)
+            users_qs.exclude(projects__id=project_id)
+            .exclude(workspaces__projects__id=project_id)
             .annotate(user_is_member=Value(False, output_field=BooleanField()))
             .annotate(user_has_pending_invitation=Exists(pending_invitations))
         )

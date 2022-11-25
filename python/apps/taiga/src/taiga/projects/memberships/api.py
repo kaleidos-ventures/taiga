@@ -5,11 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 from fastapi import Depends, Query, Response
 from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import Or, check_permissions
+from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import CanViewProject, IsProjectAdmin
@@ -32,7 +35,7 @@ UPDATE_PROJECT_MEMBERSHIP = IsProjectAdmin()
 
 
 @routes.projects.get(
-    "/{slug}/memberships",
+    "/{id}/memberships",
     name="project.memberships.get",
     summary="Get project memberships",
     response_model=list[ProjectMembershipSerializer],
@@ -42,13 +45,13 @@ async def get_project_memberships(
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
-    slug: str = Query(None, description="the project slug (str)"),
+    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> list[ProjectMembership]:
     """
     Get project memberships
     """
 
-    project = await get_project_or_404(slug)
+    project = await get_project_or_404(id)
     await check_permissions(permissions=GET_PROJECT_MEMBERSHIPS, user=request.user, obj=project)
 
     pagination, memberships = await memberships_services.get_paginated_project_memberships(
@@ -61,7 +64,7 @@ async def get_project_memberships(
 
 
 @routes.projects.patch(
-    "/{slug}/memberships/{username}",
+    "/{id}/memberships/{username}",
     name="project.memberships.update",
     summary="Update project membership",
     response_model=ProjectMembershipSerializer,
@@ -70,13 +73,13 @@ async def get_project_memberships(
 async def update_project_membership(
     request: AuthRequest,
     form: ProjectMembershipValidator,
-    slug: str = Query(None, description="the project slug (str)"),
+    id: B64UUID = Query(None, description="the project id (B64UUID)"),
     username: str = Query(None, description="the membership username (str)"),
 ) -> ProjectMembership:
     """
     Update project membership
     """
-    membership = await get_project_membership_or_404(project_slug=slug, username=username)
+    membership = await get_project_membership_or_404(project_id=id, username=username)
 
     await check_permissions(permissions=UPDATE_PROJECT_MEMBERSHIP, user=request.user, obj=membership)
 
@@ -88,8 +91,8 @@ async def update_project_membership(
 ################################################
 
 
-async def get_project_membership_or_404(project_slug: str, username: str) -> ProjectMembership:
-    membership = await memberships_services.get_project_membership(project_slug=project_slug, username=username)
+async def get_project_membership_or_404(project_id: UUID, username: str) -> ProjectMembership:
+    membership = await memberships_services.get_project_membership(project_id=project_id, username=username)
     if not membership:
         raise ex.NotFoundError("Membership not found")
 

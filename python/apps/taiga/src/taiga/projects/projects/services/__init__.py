@@ -61,7 +61,7 @@ async def create_project(
     color: int | None,
     owner: User,
     logo: UploadFile | None = None,
-) -> ProjectInvitationStatus:
+) -> Project:
     logo_file = None
     if logo:
         logo_file = File(file=logo.file, name=logo.filename)
@@ -87,8 +87,8 @@ async def create_project(
     return project
 
 
-async def get_project(slug: str) -> Project | None:
-    return await projects_repositories.get_project(filters={"slug": slug})
+async def get_project(id: UUID) -> Project | None:
+    return await projects_repositories.get_project(filters={"id": id})
 
 
 async def get_project_detail(project: Project, user: AnyUser) -> Project:

@@ -233,7 +233,7 @@ async def test_get_users_by_text():
     assert inactive_user not in all_active_no_sys_users_result
 
     # searching for project, no text search. Ordering by project closeness and alphabetically (full_name/username)
-    search_by_text_no_pj_result = await users_repositories.get_users_by_text(project_slug=project.slug)
+    search_by_text_no_pj_result = await users_repositories.get_users_by_text(project_id=project.id)
     assert len(search_by_text_no_pj_result) == 7
     # pj members should be returned first (project closeness criteria)
     assert search_by_text_no_pj_result[0].full_name == "Electra - pj member"
@@ -267,7 +267,7 @@ async def test_get_users_by_text():
 
     # Paginated search. Order first by project closeness (pj, ws, others), then by text search order (rank, left match)
     search_by_text_no_pj_pagination_result = await users_repositories.get_users_by_text(
-        text_search="EL", project_slug=project.slug, offset=0, limit=4
+        text_search="EL", project_id=project.id, offset=0, limit=4
     )
 
     assert len(search_by_text_no_pj_pagination_result) == 4

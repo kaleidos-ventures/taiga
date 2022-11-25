@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import uuid1
+
 import pytest
 from asgiref.sync import sync_to_async
 from django.core.files import File
@@ -12,9 +14,8 @@ from taiga.base.db import sequences as seq
 from taiga.projects import references
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects import repositories
-from taiga.projects.projects.models import Project, ProjectTemplate
+from taiga.projects.projects.models import Project
 from taiga.projects.roles.models import ProjectRole
-from taiga.workflows.models import Workflow
 from taiga.workspaces.roles.models import WorkspaceRole
 from taiga.workspaces.workspaces.models import Workspace
 from tests.utils import factories as f
@@ -81,7 +82,7 @@ async def test_create_project():
     project = await repositories.create_project(
         name="My test project", description="", color=3, owner=workspace.owner, workspace=workspace
     )
-    assert project.slug.startswith("my-test-project")
+    assert project.slug == "my-test-project"
     assert await _seq_exists(references.get_project_references_seqname(project.id))
 
 
@@ -90,7 +91,7 @@ async def test_create_project_with_non_ASCI_chars():
     project = await repositories.create_project(
         name="My proj#%&乕شect", description="", color=3, owner=workspace.owner, workspace=workspace
     )
-    assert project.slug.startswith("my-proj-hu-shect")
+    assert project.slug == "my-proj-hu-shect"
     assert await _seq_exists(references.get_project_references_seqname(project.id))
 
 
@@ -148,11 +149,12 @@ async def test_delete_project():
 
 async def test_get_project_return_project():
     project = await f.create_project(name="Project 1")
-    assert await repositories.get_project(filters={"slug": project.slug}) == project
+    assert await repositories.get_project(filters={"id": project.id}) == project
 
 
 async def test_get_project_return_none():
-    assert await repositories.get_project(filters={"slug": "project-not-exist"}) is None
+    non_existent_id = uuid1()
+    assert await repositories.get_project(filters={"id": non_existent_id}) is None
 
 
 ##########################################################

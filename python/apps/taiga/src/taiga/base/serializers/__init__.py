@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 from humps.main import camelize
 from pydantic import BaseModel as _BaseModel
+from taiga.base.serializers.fields import UUIDB64  # noqa
 
 if TYPE_CHECKING:
     Model = TypeVar("Model", bound="BaseModel")

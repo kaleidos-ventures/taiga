@@ -37,7 +37,7 @@ def _apply_filters_to_queryset_list(
 
 
 class ProjectMembershipFilters(TypedDict, total=False):
-    project_slug: str
+    project_id: UUID
     username: str
     user_id: UUID
     workspace_id: UUID
@@ -49,8 +49,8 @@ def _apply_filters_to_queryset(
 ) -> QuerySet[ProjectMembership]:
     filter_data = dict(filters.copy())
 
-    if "project_slug" in filter_data:
-        filter_data["project__slug"] = filter_data.pop("project_slug")
+    if "project_id" in filter_data:
+        filter_data["project__id"] = filter_data.pop("project_id")
 
     if "username" in filter_data:
         filter_data["user__username"] = filter_data.pop("username")

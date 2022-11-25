@@ -24,7 +24,6 @@ DEFAULT_QUERYSET = Story.objects.all()
 class StoryListFilters(TypedDict, total=False):
     refs: list[int]
     workflow_slug: str
-    project_slug: str
     project_id: UUID
     status_id: UUID
 
@@ -41,8 +40,8 @@ def _apply_filters_to_queryset_list(
     if "workflow_slug" in filters:
         filter_data["workflow__slug"] = filter_data.pop("workflow_slug")
 
-    if "project_slug" in filters:
-        filter_data["project__slug"] = filter_data.pop("project_slug")
+    if "project_id" in filters:
+        filter_data["project__id"] = filter_data.pop("project_id")
 
     qs = qs.filter(**filter_data)
     return qs

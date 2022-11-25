@@ -306,7 +306,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users/search?text={{search-text}}&project={{pj-slug}}&offset={{offset}}&limit={{limit}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users/search?text={{search-text}}&project={{pj-id}}&offset={{offset}}&limit={{limit}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -322,7 +322,7 @@
 								},
 								{
 									"key": "project",
-									"value": "{{pj-slug}}"
+									"value": "{{pj-id}}"
 								},
 								{
 									"key": "offset",
@@ -506,7 +506,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"ws-slug\", pm.response.json().slug);",
+									"    pm.environment.set(\"ws-id\", pm.response.json().id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -549,7 +549,7 @@
 					"response": []
 				},
 				{
-					"name": "workspace by slug",
+					"name": "workspace by id",
 					"event": [
 						{
 							"listen": "test",
@@ -576,14 +576,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-slug}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"workspaces",
-								"{{ws-slug}}"
+								"{{ws-id}}"
 							]
 						}
 					},
@@ -617,14 +617,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-slug}}/projects",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/projects",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"workspaces",
-								"{{ws-slug}}",
+								"{{ws-id}}",
 								"projects"
 							]
 						}
@@ -659,14 +659,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-slug}}/invited-projects",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/invited-projects",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"workspaces",
-								"{{ws-slug}}",
+								"{{ws-id}}",
 								"invited-projects"
 							]
 						}
@@ -687,7 +687,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"    pm.environment.set(\"pj-id\", pm.response.json().id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -719,8 +719,8 @@
 									"type": "text"
 								},
 								{
-									"key": "workspaceSlug",
-									"value": "{{ws-slug}}",
+									"key": "workspaceId",
+									"value": "{{ws-id}}",
 									"type": "text"
 								},
 								{
@@ -755,7 +755,7 @@
 					"response": []
 				},
 				{
-					"name": "project by slug",
+					"name": "project by id",
 					"event": [
 						{
 							"listen": "test",
@@ -794,14 +794,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}"
+								"{{pj-id}}"
 							]
 						}
 					},
@@ -844,14 +844,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles/{{role-slug}}/permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/roles/{{role-slug}}/permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"roles",
 								"{{role-slug}}",
 								"permissions"
@@ -900,14 +900,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/roles",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"roles"
 							]
 						}
@@ -951,14 +951,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/public-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/public-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"public-permissions"
 							]
 						}
@@ -1005,14 +1005,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/public-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/public-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"public-permissions"
 							]
 						}
@@ -1056,14 +1056,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workspace-member-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workspace-member-permissions"
 							]
 						}
@@ -1110,14 +1110,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workspace-member-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workspace-member-permissions"
 							]
 						}
@@ -1164,14 +1164,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships?offset={{offset}}&limit={{limit}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships?offset={{offset}}&limit={{limit}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"memberships"
 							],
 							"query": [
@@ -1225,14 +1225,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/{{username}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/{{username}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"memberships",
 								"{{username}}"
 							]
@@ -1280,14 +1280,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workflows"
 							]
 						}
@@ -1341,14 +1341,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							]
 						}
@@ -1439,14 +1439,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/resend",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/resend",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"resend"
 							]
@@ -1494,14 +1494,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations?offset={{offset}}&limit={{limit}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations?offset={{offset}}&limit={{limit}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							],
 							"query": [
@@ -1589,14 +1589,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/accept",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/accept",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"accept"
 							]
@@ -1641,14 +1641,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/revoke",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/revoke",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"revoke"
 							]
@@ -1693,14 +1693,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/{{invit-id}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/{{invit-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"{{invit-id}}"
 							]
@@ -1756,14 +1756,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workflows",
 								"{{wf-slug}}",
 								"stories"
@@ -1781,7 +1781,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"   // pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"   // pm.environment.set(\"pj-id\", pm.response.json().slug);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1805,14 +1805,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories?offset=0&limit=10",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories?offset=0&limit=10",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workflows",
 								"{{wf-slug}}",
 								"stories"
@@ -1840,7 +1840,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"   // pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"   // pm.environment.set(\"pj-id\", pm.response.json().slug);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1864,14 +1864,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/stories/{{story_ref}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"stories",
 								"{{story_ref}}"
 							]
@@ -1888,7 +1888,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"   // pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"   // pm.environment.set(\"pj-id\", pm.response.json().slug);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1921,14 +1921,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories/reorder",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories/reorder",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workflows",
 								"{{wf-slug}}",
 								"stories",
@@ -1985,7 +1985,7 @@
 					"response": []
 				},
 				{
-					"name": "my workspaces by slug",
+					"name": "my workspaces by id",
 					"event": [
 						{
 							"listen": "test",
@@ -2012,7 +2012,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces/{{ws-slug}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces/{{ws-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -2020,7 +2020,7 @@
 							"path": [
 								"my",
 								"workspaces",
-								"{{ws-slug}}"
+								"{{ws-id}}"
 							]
 						}
 					},
@@ -2054,7 +2054,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/projects/{{pj-slug}}/permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/projects/{{pj-id}}/permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -2062,7 +2062,7 @@
 							"path": [
 								"my",
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"permissions"
 							]
 						}

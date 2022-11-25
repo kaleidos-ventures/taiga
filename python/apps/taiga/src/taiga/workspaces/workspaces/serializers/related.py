@@ -5,10 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializers import BaseModel
+from taiga.base.serializers import UUIDB64, BaseModel
 
 
 class WorkspaceSummarySerializer(BaseModel):
+    id: UUIDB64
     name: str
     slug: str
     user_role: str

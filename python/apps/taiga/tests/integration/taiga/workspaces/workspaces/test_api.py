@@ -64,14 +64,14 @@ async def test_my_workspaces_success(client):
 
 
 #############################################################
-#  GET /my/workspaces/<slug>
+#  GET /my/workspaces/<id>
 #############################################################
 
 
 async def test_my_workspace_being_anonymous(client):
     workspace = await f.create_workspace()
 
-    response = client.get(f"/my/workspaces/{workspace.slug}")
+    response = client.get(f"/my/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
@@ -80,16 +80,17 @@ async def test_my_workspace_success(client):
     workspace = await f.create_workspace(owner=user)
 
     client.login(user)
-    response = client.get(f"/my/workspaces/{workspace.slug}")
+    response = client.get(f"/my/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json()["name"] == workspace.name
 
 
-async def test_my_workspace_not_found_error_because_invalid_sulg(client):
+async def test_my_workspace_not_found_error_because_invalid_id(client):
     user = await f.create_user()
+    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
     client.login(user)
-    response = client.get("/my/workspaces/invalid-slug")
+    response = client.get(f"/my/workspaces/{non_existent_id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -98,12 +99,12 @@ async def test_my_workspace_not_found_error_because_there_is_no_relation(client)
     workspace = await f.create_workspace()
 
     client.login(user)
-    response = client.get(f"/my/workspaces/{workspace.slug}")
+    response = client.get(f"/my/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
 #############################################################
-#  GET /workspaces/<slug>
+#  GET /workspaces/<id>
 #############################################################
 
 
@@ -112,7 +113,7 @@ async def test_get_workspace_being_workspace_admin(client):
     workspace = await f.create_workspace(owner=user)
 
     client.login(user)
-    response = client.get(f"/workspaces/{workspace.slug}")
+    response = client.get(f"/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
@@ -127,7 +128,7 @@ async def test_get_workspace_being_workspace_member(client):
     await f.create_workspace_membership(user=user2, workspace=workspace, role=general_member_role)
 
     client.login(user2)
-    response = client.get(f"/workspaces/{workspace.slug}")
+    response = client.get(f"/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
@@ -136,20 +137,21 @@ async def test_get_workspace_being_no_workspace_member(client):
 
     user2 = await f.create_user()
     client.login(user2)
-    response = client.get(f"/workspaces/{workspace.slug}")
+    response = client.get(f"/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 async def test_get_workspace_being_anonymous(client):
     workspace = await f.create_workspace()
 
-    response = client.get(f"/workspaces/{workspace.slug}")
+    response = client.get(f"/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 async def test_get_workspace_not_found_error(client):
     user = await f.create_user()
+    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
     client.login(user)
-    response = client.get("/workspaces/non-existent")
+    response = client.get(f"/workspaces/{non_existent_id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

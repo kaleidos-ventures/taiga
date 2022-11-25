@@ -15,9 +15,9 @@ from taiga.conf import settings
 class Urls(Enum):
     VERIFY_SIGNUP = "/signup/verify/{verification_token}"
     RESET_PASSWORD = "/reset-password/{reset_password_token}"
-    PROJECT_HOME = "/project/{project_slug}"
+    PROJECT_HOME = "/project/{project_id}"
     PROJECT_INVITATION = "/accept-project-invitation/{invitation_token}"
-    PROJECT_INVITATION_PREVIEW = "/project/{project_slug}/preview/{invitation_token}"
+    PROJECT_INVITATION_PREVIEW = "/project/{project_id}/preview/{invitation_token}"
 
 
 def resolve_front_url(url_key: str, query_params: dict[str, str] | None = None, **kwargs: Any) -> str:

@@ -40,7 +40,6 @@ DEFAULT_QUERYSET = Workspace.objects.all()
 
 
 class WorkspaceFilters(TypedDict, total=False):
-    slug: str
     id: UUID
 
 
@@ -251,7 +250,7 @@ def get_user_workspaces_overview(user: User) -> list[Workspace]:
 
 
 @sync_to_async
-def get_user_workspace_overview(user: User, slug: str) -> Workspace | None:
+def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
     # Generic annotations:
     has_projects = Exists(Project.objects.filter(workspace=OuterRef("pk")))
     user_is_owner = Case(When(owner_id=user.id, then=Value(True)), default=Value(False), output_field=BooleanField())
@@ -271,7 +270,7 @@ def get_user_workspace_overview(user: User, slug: str) -> Workspace | None:
         latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:6])).order_by("-created_at")
         return (
             Workspace.objects.filter(
-                slug=slug,
+                id=id,
                 memberships__user_id=user.id,  # user_is_ws_member
                 memberships__role__is_admin=True,  # user_ws_role_is_admin
             )
@@ -309,7 +308,7 @@ def get_user_workspace_overview(user: User, slug: str) -> Workspace | None:
         latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:6])).order_by("-created_at")
         return (
             Workspace.objects.filter(
-                slug=slug,
+                id=id,
                 memberships__user__id=user.id,  # user_is_ws_member
                 memberships__role__is_admin=False,  # user_ws_role_is_member
             )
@@ -354,7 +353,7 @@ def get_user_workspace_overview(user: User, slug: str) -> Workspace | None:
         )
         latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:6])).order_by("-created_at")
         return (
-            Workspace.objects.filter(user_not_ws_member & (user_pj_member | user_invited_pj), slug=slug)
+            Workspace.objects.filter(user_not_ws_member & (user_pj_member | user_invited_pj), id=id)
             .distinct()
             .prefetch_related(
                 Prefetch("projects", queryset=latest_projects_qs, to_attr="latest_projects"),
@@ -367,4 +366,4 @@ def get_user_workspace_overview(user: User, slug: str) -> Workspace | None:
             .get()
         )
     except Workspace.DoesNotExist:
-        return None  # There is no workspace with this slug for this user
+        return None  # There is no workspace with this id for this user

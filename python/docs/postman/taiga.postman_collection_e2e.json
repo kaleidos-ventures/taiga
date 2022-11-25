@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ea62dca9-188b-41b8-bc75-5de76b6998ed",
+		"_postman_id": "603ef056-4141-4deb-8b1c-f8a24c84e617",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "3299216"
@@ -852,7 +852,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"ws-slug\", pm.response.json().slug);",
+									"    pm.environment.set(\"ws-id\", pm.response.json().id);",
 									"});",
 									"",
 									"",
@@ -865,7 +865,7 @@
 									"    var jsonRes = pm.response.json();",
 									"",
 									"    // Validate response API fields",
-									"    pm.expect(jsonRes).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"isPremium\");",
 									"",
 									"    pm.expect(jsonRes.name).to.be.eql(\"My workspace\");",
@@ -873,7 +873,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(8);",
+									"    pm.expect(numOfReturnedFields).to.equal(9);",
 									"",
 									"});"
 								],
@@ -934,6 +934,7 @@
 									"    var jsonRes = pm.response.json();",
 									"",
 									"    // Validate response API fields",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"name\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"color\");",
@@ -941,7 +942,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(8);",
+									"    pm.expect(numOfReturnedFields).to.equal(9);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -962,14 +963,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-slug}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"workspaces",
-								"{{ws-slug}}"
+								"{{ws-id}}"
 							]
 						}
 					},
@@ -1037,14 +1038,14 @@
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									"pm.test(\"Save a workspace slug in environment\", function () {",
+									"pm.test(\"Save a workspace id in environment\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"",
 									"    var wsWithLatesPtoject = false;",
 									"    for (const [i, ws] of jsonRes.entries()) {",
 									"        // store a workspace with at least a latestProject",
 									"        if (ws.latestProjects.length > 0) {",
-									"            pm.environment.set(\"ws-slug\", ws.slug);",
+									"            pm.environment.set(\"ws-id\", ws.id);",
 									"            wsWithLatesPtoject=true;",
 									"            break;",
 									"        }",
@@ -1114,6 +1115,7 @@
 									"    pm.expect(firstProject).to.have.property(\"logo\");",
 									"    pm.expect(firstProject).to.have.property(\"logoSmall\");",
 									"    pm.expect(firstProject).to.have.property(\"logoLarge\");",
+									"    pm.expect(firstProject).to.have.property(\"id\");",
 									"    pm.expect(firstProject).to.have.property(\"name\");",
 									"    pm.expect(firstProject).to.have.property(\"slug\");",
 									"    pm.expect(firstProject).to.have.property(\"description\");",
@@ -1121,7 +1123,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(firstProject).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(7);",
+									"    pm.expect(numOfReturnedFields).to.equal(8);",
 									"});",
 									""
 								],
@@ -1155,14 +1157,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-slug}}/projects",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/projects",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"workspaces",
-								"{{ws-slug}}",
+								"{{ws-id}}",
 								"projects"
 							]
 						}
@@ -1287,7 +1289,7 @@
 									"    var jsonRes = pm.response.json();",
 									"    ",
 									"    pm.expect(jsonRes).to.be.length.above(0);",
-									"    pm.environment.set(\"ws-slug\", jsonRes[0].slug);",
+									"    pm.environment.set(\"ws-id\", jsonRes[0].id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1330,7 +1332,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"    pm.environment.set(\"pj-id\", pm.response.json().id);",
 									"});",
 									"",
 									"// Tests",
@@ -1345,6 +1347,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"logo\");",
 									"    pm.expect(jsonRes).to.have.property(\"logoSmall\");",
 									"    pm.expect(jsonRes).to.have.property(\"logoLarge\");",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"workspace\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsAdmin\");",
@@ -1356,17 +1359,18 @@
 									"    pm.expect(jsonRes.name).to.be.eql(\"My project\");",
 									"",
 									"    var workspace = jsonRes.workspace;",
+									"    pm.expect(workspace).to.have.property(\"id\");",
 									"    pm.expect(workspace).to.have.property(\"name\");",
 									"    pm.expect(workspace).to.have.property(\"userRole\");",
 									"    pm.expect(workspace).to.have.property(\"slug\");",
 									"",
-									"    pm.expect(workspace.slug).to.be.eql(pm.environment.get(\"ws-slug\"));",
+									"    pm.expect(workspace.id).to.be.eql(pm.environment.get(\"ws-id\"));",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(4);",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(12);",
+									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1398,8 +1402,8 @@
 									"type": "text"
 								},
 								{
-									"key": "workspaceSlug",
-									"value": "{{ws-slug}}",
+									"key": "workspaceId",
+									"value": "{{ws-id}}",
 									"type": "text"
 								},
 								{
@@ -1454,6 +1458,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"logo\");",
 									"    pm.expect(jsonRes).to.have.property(\"logoSmall\");",
 									"    pm.expect(jsonRes).to.have.property(\"logoLarge\");",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"name\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"description\");",
@@ -1464,15 +1469,16 @@
 									"    pm.expect(jsonRes).to.have.property(\"userHasPendingInvitation\");",
 									"",
 									"    var workspace = jsonRes.workspace;",
+									"    pm.expect(workspace).to.have.property(\"id\");",
 									"    pm.expect(workspace).to.have.property(\"name\");",
 									"    pm.expect(workspace).to.have.property(\"slug\");",
 									"    pm.expect(workspace).to.have.property(\"userRole\");",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(4);",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(12);",
+									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1505,14 +1511,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}"
+								"{{pj-id}}"
 							]
 						}
 					},
@@ -1577,14 +1583,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles/{{role-slug}}/permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/roles/{{role-slug}}/permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"roles",
 								"{{role-slug}}",
 								"permissions"
@@ -1655,14 +1661,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/roles",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"roles"
 							]
 						}
@@ -1719,14 +1725,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/public-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/public-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"public-permissions"
 							]
 						}
@@ -1786,14 +1792,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/public-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/public-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"public-permissions"
 							]
 						}
@@ -1859,14 +1865,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workflows"
 							]
 						}
@@ -1943,14 +1949,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workflows",
 								"{{wf-slug}}",
 								"stories"
@@ -2011,14 +2017,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories?offset=0&limit=10",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories?offset=0&limit=10",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workflows",
 								"{{wf-slug}}",
 								"stories"
@@ -2101,14 +2107,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workflows",
 								"{{wf-slug}}",
 								"stories"
@@ -2169,14 +2175,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workflows/{{wf-slug}}/stories/reorder",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories/reorder",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workflows",
 								"{{wf-slug}}",
 								"stories",
@@ -2253,14 +2259,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/stories/{{story_ref}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"stories",
 								"{{story_ref}}"
 							]
@@ -2349,14 +2355,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							]
 						}
@@ -2405,14 +2411,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/resend",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/resend",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"resend"
 							]
@@ -2462,14 +2468,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/resend",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/resend",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"resend"
 							]
@@ -2524,14 +2530,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/resend",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/resend",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"resend"
 							]
@@ -2579,6 +2585,7 @@
 									"    pm.expect(invitationRole).to.have.property(\"name\");",
 									"    pm.expect(invitationRole).to.have.property(\"slug\");",
 									"",
+									"    pm.expect(invitationProject).to.have.property(\"id\");",
 									"    pm.expect(invitationProject).to.have.property(\"name\");",
 									"    pm.expect(invitationProject).to.have.property(\"slug\");",
 									"    pm.expect(invitationProject).to.have.property(\"anonUserCanView\");",
@@ -2591,7 +2598,7 @@
 									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"    pm.expect(numOfReturnedUserFields).to.equal(2);",
 									"    pm.expect(numOfReturnedRoleFields).to.equal(3);",
-									"    pm.expect(numOfReturnedProjectFields).to.equal(3);",
+									"    pm.expect(numOfReturnedProjectFields).to.equal(4);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2624,14 +2631,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations?offset={{offset}}&limit={{limit}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations?offset={{offset}}&limit={{limit}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							],
 							"query": [
@@ -2670,6 +2677,7 @@
 									"    pm.expect(project).to.have.property(\"logo\");",
 									"    pm.expect(project).to.have.property(\"logoSmall\");",
 									"    pm.expect(project).to.have.property(\"logoLarge\");",
+									"    pm.expect(project).to.have.property(\"id\");",
 									"    pm.expect(project).to.have.property(\"name\");",
 									"    pm.expect(project).to.have.property(\"slug\");",
 									"    pm.expect(project).to.have.property(\"description\");",
@@ -2677,7 +2685,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(project).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(7);",
+									"    pm.expect(numOfReturnedFields).to.equal(8);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2698,14 +2706,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-slug}}/projects",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/projects",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"workspaces",
-								"{{ws-slug}}",
+								"{{ws-id}}",
 								"projects"
 							]
 						}
@@ -2795,6 +2803,7 @@
 									"    pm.expect(invitationRole).to.have.property(\"name\");",
 									"    pm.expect(invitationRole).to.have.property(\"slug\");",
 									"",
+									"    pm.expect(invitationProject).to.have.property(\"id\");",
 									"    pm.expect(invitationProject).to.have.property(\"name\");",
 									"    pm.expect(invitationProject).to.have.property(\"slug\");",
 									"    pm.expect(invitationProject).to.have.property(\"anonUserCanView\");",
@@ -2807,7 +2816,7 @@
 									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"    pm.expect(numOfReturnedUserFields).to.equal(2);",
 									"    pm.expect(numOfReturnedRoleFields).to.equal(3);",
-									"    pm.expect(numOfReturnedProjectFields).to.equal(3);",
+									"    pm.expect(numOfReturnedProjectFields).to.equal(4);",
 									"});// Post-request execution tasks",
 									""
 								],
@@ -2829,14 +2838,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/accept",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/accept",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"accept"
 							]
@@ -2852,14 +2861,14 @@
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									"pm.test(\"Save project slug in environment\", function () {",
+									"pm.test(\"Save project id in environment\", function () {",
 									"    res = pm.response.json();",
 									"    // searching for p48",
 									"    for (var ws of res) {",
 									"        if (ws.latestProjects.length > 0 & ws.isPremium == true & ws.name.includes('uk1-ws-mb')) {",
 									"            for (var pj of ws.latestProjects) {",
 									"                if (pj.name.includes('p48')) {",
-									"                    pm.environment.set(\"pj-slug\", pj.slug);",
+									"                    pm.environment.set(\"pj-id\", pj.id);",
 									"                    break;",
 									"                }",
 									"            }",
@@ -3121,7 +3130,7 @@
 									"    var jsonRes = pm.response.json();",
 									"    ",
 									"    pm.expect(jsonRes).to.be.length.above(0);",
-									"    pm.environment.set(\"ws-slug\", jsonRes[0].slug);",
+									"    pm.environment.set(\"ws-id\", jsonRes[0].id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3164,7 +3173,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"    pm.environment.set(\"pj-id\", pm.response.json().id);",
 									"});",
 									"",
 									"// Tests",
@@ -3179,6 +3188,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"logo\");",
 									"    pm.expect(jsonRes).to.have.property(\"logoSmall\");",
 									"    pm.expect(jsonRes).to.have.property(\"logoLarge\");",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"workspace\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsAdmin\");",
@@ -3190,17 +3200,18 @@
 									"    pm.expect(jsonRes.name).to.be.eql(\"My project\");",
 									"",
 									"    var workspace = jsonRes.workspace;",
+									"    pm.expect(workspace).to.have.property(\"id\");",
 									"    pm.expect(workspace).to.have.property(\"name\");",
 									"    pm.expect(workspace).to.have.property(\"userRole\");",
 									"    pm.expect(workspace).to.have.property(\"slug\");",
 									"",
-									"    pm.expect(workspace.slug).to.be.eql(pm.environment.get(\"ws-slug\"));",
+									"    pm.expect(workspace.id).to.be.eql(pm.environment.get(\"ws-id\"));",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(4);",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(12);",
+									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3232,8 +3243,8 @@
 									"type": "text"
 								},
 								{
-									"key": "workspaceSlug",
-									"value": "{{ws-slug}}",
+									"key": "workspaceId",
+									"value": "{{ws-id}}",
 									"type": "text"
 								},
 								{
@@ -3308,14 +3319,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							]
 						}
@@ -3364,14 +3375,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/revoke",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/revoke",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"revoke"
 							]
@@ -3421,14 +3432,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/revoke",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/revoke",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"revoke"
 							]
@@ -3478,14 +3489,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/revoke",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/revoke",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"revoke"
 							]
@@ -3535,14 +3546,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/revoke",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/revoke",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"revoke"
 							]
@@ -3591,14 +3602,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							]
 						}
@@ -3608,7 +3619,7 @@
 			]
 		},
 		{
-			"name": "projetcs.{p}.invitations.{i}",
+			"name": "projects.{p}.invitations.{i}",
 			"item": [
 				{
 					"name": "N/A auth.token (user2)",
@@ -3674,7 +3685,7 @@
 									"    var jsonRes = pm.response.json();",
 									"    ",
 									"    pm.expect(jsonRes).to.be.length.above(0);",
-									"    pm.environment.set(\"ws-slug\", jsonRes[0].slug);",
+									"    pm.environment.set(\"ws-id\", jsonRes[0].id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3717,7 +3728,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"    pm.environment.set(\"pj-id\", pm.response.json().id);",
 									"});",
 									"",
 									"// Tests",
@@ -3756,8 +3767,8 @@
 									"type": "text"
 								},
 								{
-									"key": "workspaceSlug",
-									"value": "{{ws-slug}}",
+									"key": "workspaceId",
+									"value": "{{ws-id}}",
 									"type": "text"
 								},
 								{
@@ -3833,14 +3844,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/{{invit-id}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/{{invit-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"{{invit-id}}"
 							]
@@ -3895,14 +3906,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							]
 						}
@@ -3991,14 +4002,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/accept",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/accept",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"accept"
 							]
@@ -4102,14 +4113,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/{{invit-id}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/{{invit-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"{{invit-id}}"
 							]
@@ -4164,14 +4175,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							]
 						}
@@ -4220,14 +4231,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/revoke",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/revoke",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"revoke"
 							]
@@ -4282,14 +4293,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/{{invit-id}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/{{invit-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"{{invit-id}}"
 							]
@@ -4344,14 +4355,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							]
 						}
@@ -4405,14 +4416,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/{{invit-id}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/{{invit-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"{{invit-id}}"
 							]
@@ -4454,6 +4465,7 @@
 									"    pm.expect(invitationRole).to.have.property(\"name\");",
 									"    pm.expect(invitationRole).to.have.property(\"slug\");",
 									"",
+									"    pm.expect(invitationProject).to.have.property(\"id\");",
 									"    pm.expect(invitationProject).to.have.property(\"name\");",
 									"    pm.expect(invitationProject).to.have.property(\"slug\");",
 									"    pm.expect(invitationProject).to.have.property(\"anonUserCanView\");",
@@ -4468,7 +4480,7 @@
 									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"    pm.expect(numOfReturnedUserFields).to.equal(2);",
 									"    pm.expect(numOfReturnedRoleFields).to.equal(3);",
-									"    pm.expect(numOfReturnedProjectFields).to.equal(3);",
+									"    pm.expect(numOfReturnedProjectFields).to.equal(4);",
 									"});// Post-request execution tasks",
 									""
 								],
@@ -4499,14 +4511,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/{{invit-id}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/{{invit-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"{{invit-id}}"
 							]
@@ -4583,7 +4595,7 @@
 									"    var jsonRes = pm.response.json();",
 									"    ",
 									"    pm.expect(jsonRes).to.be.length.above(0);",
-									"    pm.environment.set(\"ws-slug\", jsonRes[0].slug);",
+									"    pm.environment.set(\"ws-id\", jsonRes[0].id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -4626,7 +4638,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"    pm.environment.set(\"pj-id\", pm.response.json().id);",
 									"});",
 									"",
 									"// Tests",
@@ -4641,6 +4653,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"logo\");",
 									"    pm.expect(jsonRes).to.have.property(\"logoSmall\");",
 									"    pm.expect(jsonRes).to.have.property(\"logoLarge\");",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"workspace\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsAdmin\");",
@@ -4652,17 +4665,18 @@
 									"    pm.expect(jsonRes.name).to.be.eql(\"My project\");",
 									"",
 									"    var workspace = jsonRes.workspace;",
+									"    pm.expect(workspace).to.have.property(\"id\");",
 									"    pm.expect(workspace).to.have.property(\"name\");",
 									"    pm.expect(workspace).to.have.property(\"userRole\");",
 									"    pm.expect(workspace).to.have.property(\"slug\");",
 									"",
-									"    pm.expect(workspace.slug).to.be.eql(pm.environment.get(\"ws-slug\"));",
+									"    pm.expect(workspace.id).to.be.eql(pm.environment.get(\"ws-id\"));",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(4);",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(12);",
+									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -4694,8 +4708,8 @@
 									"type": "text"
 								},
 								{
-									"key": "workspaceSlug",
-									"value": "{{ws-slug}}",
+									"key": "workspaceId",
+									"value": "{{ws-id}}",
 									"type": "text"
 								},
 								{
@@ -4770,14 +4784,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							]
 						}
@@ -4866,14 +4880,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations/accept",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations/accept",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations",
 								"accept"
 							]
@@ -5005,14 +5019,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships?offset={{offset}}&limit={{limit}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships?offset={{offset}}&limit={{limit}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"memberships"
 							],
 							"query": [
@@ -5071,14 +5085,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/not-exist",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/not-exist",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"memberships",
 								"not-exist"
 							]
@@ -5133,14 +5147,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/user4",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/user4",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"memberships",
 								"user4"
 							]
@@ -5195,14 +5209,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/{{username}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/{{username}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"memberships",
 								"{{username}}"
 							]
@@ -5280,14 +5294,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/user4",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/user4",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"memberships",
 								"user4"
 							]
@@ -5365,14 +5379,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/memberships/{{username}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/{{username}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"memberships",
 								"{{username}}"
 							]
@@ -5447,7 +5461,7 @@
 									"    // store a premium project containing latestProjects",
 									"    for (var ws of res) {",
 									"        if (ws.latestProjects.length > 0 & ws.isPremium == true) {",
-									"            pm.environment.set(\"pj-slug\", ws.latestProjects[0].slug);",
+									"            pm.environment.set(\"pj-id\", ws.latestProjects[0].id);",
 									"            break;",
 									"        }   ",
 									"    }",
@@ -5538,14 +5552,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workspace-member-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workspace-member-permissions"
 							]
 						}
@@ -5603,14 +5617,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workspace-member-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workspace-member-permissions"
 							]
 						}
@@ -5660,14 +5674,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workspace-member-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workspace-member-permissions"
 							]
 						}
@@ -5736,7 +5750,7 @@
 									"    // store a not-premium project containing latestProjects",
 									"    for (var ws of res) {",
 									"        if (ws.latestProjects.length > 0 & ws.isPremium == false) {",
-									"            pm.environment.set(\"pj-slug\", ws.latestProjects[0].slug);",
+									"            pm.environment.set(\"pj-id\", ws.latestProjects[0].id);",
 									"            break;",
 									"        }   ",
 									"    }    ",
@@ -5837,14 +5851,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workspace-member-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workspace-member-permissions"
 							]
 						}
@@ -5905,14 +5919,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/workspace-member-permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"workspace-member-permissions"
 							]
 						}
@@ -5988,7 +6002,7 @@
 									"    var jsonRes = pm.response.json();",
 									"    ",
 									"    pm.expect(jsonRes).to.be.length.above(0);",
-									"    pm.environment.set(\"ws-slug\", jsonRes[0].slug);",
+									"    pm.environment.set(\"ws-id\", jsonRes[0].id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -6031,7 +6045,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"    pm.environment.set(\"pj-id\", pm.response.json().id);",
 									"});",
 									"",
 									"// Tests",
@@ -6068,8 +6082,8 @@
 									"type": "text"
 								},
 								{
-									"key": "workspaceSlug",
-									"value": "{{ws-slug}}",
+									"key": "workspaceId",
+									"value": "{{ws-id}}",
 									"type": "text"
 								},
 								{
@@ -6144,7 +6158,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/projects/{{pj-slug}}/permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/projects/{{pj-id}}/permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -6152,7 +6166,7 @@
 							"path": [
 								"my",
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"permissions"
 							]
 						}
@@ -6200,14 +6214,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/invitations",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"invitations"
 							]
 						}
@@ -6293,6 +6307,7 @@
 									"            pm.expect(ws.latestProjects[0]).to.have.property(\"logo\");",
 									"            pm.expect(ws.latestProjects[0]).to.have.property(\"logoSmall\");",
 									"            pm.expect(ws.latestProjects[0]).to.have.property(\"logoLarge\");",
+									"            pm.expect(ws.latestProjects[0]).to.have.property(\"id\");",
 									"            pm.expect(ws.latestProjects[0]).to.have.property(\"name\");",
 									"            pm.expect(ws.latestProjects[0]).to.have.property(\"slug\");",
 									"            pm.expect(ws.latestProjects[0]).to.have.property(\"description\");",
@@ -6301,9 +6316,9 @@
 									"  ",
 									"            // Validate we're not returning more fields than expected",
 									"            var numOfReturnedFields = Object.keys(ws).length;",
-									"            pm.expect(numOfReturnedFields).to.equal(10);",
+									"            pm.expect(numOfReturnedFields).to.equal(11);",
 									"            numOfReturnedFields = Object.keys(ws.latestProjects[0]).length;",
-									"            pm.expect(numOfReturnedFields).to.equal(7);",
+									"            pm.expect(numOfReturnedFields).to.equal(8);",
 									"        }",
 									"",
 									"        if (!someWsHaveInvitedProjects && ws.invitedProjects.length >0) {",
@@ -6313,6 +6328,7 @@
 									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"logo\");",
 									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"logoSmall\");",
 									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"logoLarge\");",
+									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"id\");",
 									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"name\");",
 									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"slug\");",
 									"            pm.expect(ws.invitedProjects[0]).to.have.property(\"description\");",
@@ -6320,9 +6336,9 @@
 									"",
 									"            // Validate we're not returning more fields than expected",
 									"            var numOfReturnedFields = Object.keys(ws).length;",
-									"            pm.expect(numOfReturnedFields).to.equal(10);",
+									"            pm.expect(numOfReturnedFields).to.equal(11);",
 									"            numOfReturnedFields = Object.keys(ws.invitedProjects[0]).length;",
-									"            pm.expect(numOfReturnedFields).to.equal(7);",
+									"            pm.expect(numOfReturnedFields).to.equal(8);",
 									"",
 									"        }",
 									"    };",
@@ -6382,6 +6398,7 @@
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
 									"",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"name\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"color\");",
@@ -6394,7 +6411,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"userIsOwner\");",
 									"    ",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(10);        ",
+									"    pm.expect(numOfReturnedFields).to.equal(11);        ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -6422,7 +6439,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces/{{ws-slug}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces/{{ws-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -6430,7 +6447,7 @@
 							"path": [
 								"my",
 								"workspaces",
-								"{{ws-slug}}"
+								"{{ws-id}}"
 							]
 						}
 					},
@@ -6567,7 +6584,7 @@
 									"    var jsonRes = pm.response.json();",
 									"    ",
 									"    pm.expect(jsonRes).to.be.length.above(0);",
-									"    pm.environment.set(\"ws-slug\", jsonRes[0].slug);",
+									"    pm.environment.set(\"ws-id\", jsonRes[0].id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -6610,7 +6627,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"pj-slug\", pm.response.json().slug);",
+									"    pm.environment.set(\"pj-id\", pm.response.json().id);",
 									"});",
 									"",
 									"// Tests",
@@ -6647,8 +6664,8 @@
 									"type": "text"
 								},
 								{
-									"key": "workspaceSlug",
-									"value": "{{ws-slug}}",
+									"key": "workspaceId",
+									"value": "{{ws-id}}",
 									"type": "text"
 								},
 								{
@@ -6734,14 +6751,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles/{{role-slug}}/permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/roles/{{role-slug}}/permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"roles",
 								"{{role-slug}}",
 								"permissions"
@@ -6911,14 +6928,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-slug}}/roles/{{role-slug}}/permissions",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/roles/{{role-slug}}/permissions",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"{{pj-slug}}",
+								"{{pj-id}}",
 								"roles",
 								"{{role-slug}}",
 								"permissions"
@@ -7039,14 +7056,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/wrong_pj_slug",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/xxxxxxxxxxxxxxxxxxxxxx",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
 								"projects",
-								"wrong_pj_slug"
+								"xxxxxxxxxxxxxxxxxxxxxx"
 							]
 						}
 					},

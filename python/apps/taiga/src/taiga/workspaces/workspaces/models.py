@@ -5,15 +5,15 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any
+import functools
 
+from slugify import slugify
 from taiga.base.db import models
-from taiga.base.utils.slug import slugify_uniquely
+from taiga.base.utils.uuid import encode_uuid_to_b64str
 
 
 class Workspace(models.BaseModel):
     name = models.CharField(max_length=40, null=False, blank=False, verbose_name="name")
-    slug = models.LowerSlugField(max_length=250, unique=True, null=False, blank=True, verbose_name="slug")
     color = models.IntegerField(null=False, blank=False, default=1, verbose_name="color")
 
     created_at = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="created at")
@@ -41,19 +41,18 @@ class Workspace(models.BaseModel):
     class Meta:
         verbose_name = "workspace"
         verbose_name_plural = "workspaces"
-        indexes = [
-            models.Index(fields=["slug"]),
-        ]
         ordering = ["name"]
 
     def __str__(self) -> str:
-        return self.slug
+        return self.name
 
     def __repr__(self) -> str:
-        return f"<Workspace {self.slug}>"
+        return f"<Workspace {self.name}>"
 
-    def save(self, *args: Any, **kwargs: Any) -> None:
-        if not self.slug:
-            self.slug = slugify_uniquely(self.name, self.__class__)
+    @property
+    def slug(self) -> str:
+        return slugify(self.name)
 
-        super().save(*args, **kwargs)
+    @functools.cached_property
+    def b64id(self) -> str:
+        return encode_uuid_to_b64str(self.id)

@@ -8,9 +8,11 @@
 import functools
 from typing import Any
 
+from slugify import slugify
 from taiga.base.db import models
 from taiga.base.utils.files import get_file_path
 from taiga.base.utils.slug import slugify_uniquely
+from taiga.base.utils.uuid import encode_uuid_to_b64str
 from taiga.permissions.choices import ProjectPermissions
 from taiga.projects import references
 
@@ -19,7 +21,6 @@ get_project_logo_file_path = functools.partial(get_file_path, base_path="project
 
 class Project(models.BaseModel):
     name = models.CharField(max_length=80, null=False, blank=False, verbose_name="name")
-    slug = models.LowerSlugField(max_length=250, unique=True, null=False, blank=True, verbose_name="slug")
     description = models.CharField(max_length=220, null=True, blank=True, verbose_name="description")
     color = models.IntegerField(default=1, null=False, blank=True, verbose_name="color")
     logo = models.FileField(
@@ -75,8 +76,7 @@ class Project(models.BaseModel):
         verbose_name = "project"
         verbose_name_plural = "projects"
         indexes = [
-            models.Index(fields=["slug"]),
-            models.Index(fields=["workspace", "slug"]),
+            models.Index(fields=["workspace", "id"]),
         ]
         ordering = ["name"]
 
@@ -84,7 +84,15 @@ class Project(models.BaseModel):
         return self.name
 
     def __repr__(self) -> str:
-        return f"<Project {self.slug}>"
+        return f"<Project {self.name}>"
+
+    @property
+    def slug(self) -> str:
+        return slugify(self.name)
+
+    @functools.cached_property
+    def b64id(self) -> str:
+        return encode_uuid_to_b64str(self.id)
 
     @property
     def public_user_can_view(self) -> bool:
@@ -105,9 +113,6 @@ class Project(models.BaseModel):
         return list(filter(lambda x: x.startswith("view_"), self.public_permissions or []))
 
     def save(self, *args: Any, **kwargs: Any) -> None:
-        if not self.slug:
-            self.slug = slugify_uniquely(self.name, self.__class__)
-
         super().save(*args, **kwargs)
 
         references.create_project_references_sequence(project_id=self.id)

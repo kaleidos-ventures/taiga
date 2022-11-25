@@ -5,11 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializers import BaseModel
+from taiga.base.serializers import UUIDB64, BaseModel
 from taiga.projects.projects.serializers import ProjectLogoMixin
 
 
 class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
+    id: UUIDB64
     name: str
     slug: str
     description: str | None = None
@@ -20,6 +21,7 @@ class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
 
 
 class ProjectSmallSummarySerializer(BaseModel):
+    id: UUIDB64
     name: str
     slug: str
     anon_user_can_view: bool

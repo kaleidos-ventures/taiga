@@ -27,7 +27,7 @@ pytestmark = pytest.mark.django_db
 async def test_create_workspace_with_non_ASCI_chars():
     user = await f.create_user()
     workspace = await repositories.create_workspace(name="My w0r#%&乕شspace", color=3, owner=user)
-    assert workspace.slug.startswith("my-w0r-hu-shspace")
+    assert workspace.name == "My w0r#%&乕شspace"
 
 
 ##########################################################
@@ -37,12 +37,13 @@ async def test_create_workspace_with_non_ASCI_chars():
 
 async def test_get_workspace_return_workspace():
     workspace = await f.create_workspace(name="ws 1")
-    assert await repositories.get_workspace(filters={"slug": workspace.slug}) == workspace
+    assert await repositories.get_workspace(filters={"id": workspace.id}) == workspace
 
 
 async def test_get_workspace_return_none():
+    non_existing_ws_id = uuid.uuid1()
     await f.create_workspace(name="ws 1")
-    assert await repositories.get_workspace(filters={"slug": "ws-not-exist"}) is None
+    assert await repositories.get_workspace(filters={"id": non_existing_ws_id}) is None
 
 
 ##########################################################
@@ -679,7 +680,7 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
     async def test_get_workspace1(self):
         await self._asyncSetUp_workspace1()
 
-        ws = await repositories.get_user_workspace_overview(user=self.user1, slug=self.workspace1.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user1, id=self.workspace1.id)
         self.assertEqual(ws.name, self.workspace1.name)
         self.assertEqual(len(ws.latest_projects), 6)
         self.assertEqual(len(ws.invited_projects), 1)
@@ -688,7 +689,7 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.assertEqual(ws.user_role, "admin")
         self.assertTrue(ws.user_is_owner)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user2, slug=self.workspace1.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user2, id=self.workspace1.id)
         self.assertEqual(ws.name, self.workspace1.name)
         self.assertEqual(len(ws.latest_projects), 6)
         self.assertEqual(len(ws.invited_projects), 0)
@@ -697,7 +698,7 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.assertEqual(ws.user_role, "member")
         self.assertFalse(ws.user_is_owner)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user3, slug=self.workspace1.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user3, id=self.workspace1.id)
         self.assertEqual(ws.name, self.workspace1.name)
         self.assertEqual(len(ws.latest_projects), 0)
         self.assertEqual(len(ws.invited_projects), 3)
@@ -709,7 +710,7 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
     async def test_get_workspace2(self):
         await self._asyncSetUp_workspace2()
 
-        ws = await repositories.get_user_workspace_overview(user=self.user1, slug=self.workspace2.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user1, id=self.workspace2.id)
         self.assertEqual(ws.name, self.workspace2.name)
         self.assertEqual(len(ws.latest_projects), 1)
         self.assertEqual(len(ws.invited_projects), 0)
@@ -718,7 +719,7 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.assertEqual(ws.user_role, "admin")
         self.assertTrue(ws.user_is_owner)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user2, slug=self.workspace2.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user2, id=self.workspace2.id)
         self.assertEqual(ws.name, self.workspace2.name)
         self.assertEqual(len(ws.latest_projects), 0)
         self.assertEqual(len(ws.invited_projects), 0)
@@ -727,13 +728,13 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.assertEqual(ws.user_role, "member")
         self.assertFalse(ws.user_is_owner)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user3, slug=self.workspace2.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user3, id=self.workspace2.id)
         self.assertIsNone(ws)
 
     async def test_get_workspace3(self):
         await self._asyncSetUp_workspace3()
 
-        ws = await repositories.get_user_workspace_overview(user=self.user1, slug=self.workspace3.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user1, id=self.workspace3.id)
         self.assertEqual(ws.name, self.workspace3.name)
         self.assertEqual(len(ws.latest_projects), 0)
         self.assertEqual(len(ws.invited_projects), 0)
@@ -742,7 +743,7 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.assertEqual(ws.user_role, "admin")
         self.assertTrue(ws.user_is_owner)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user2, slug=self.workspace3.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user2, id=self.workspace3.id)
         self.assertEqual(ws.name, self.workspace3.name)
         self.assertEqual(len(ws.latest_projects), 0)
         self.assertEqual(len(ws.invited_projects), 0)
@@ -751,16 +752,16 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.assertEqual(ws.user_role, "member")
         self.assertFalse(ws.user_is_owner)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user3, slug=self.workspace3.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user3, id=self.workspace3.id)
         self.assertIsNone(ws)
 
     async def test_get_workspace4(self):
         await self._asyncSetUp_workspace4()
 
-        ws = await repositories.get_user_workspace_overview(user=self.user1, slug=self.workspace4.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user1, id=self.workspace4.id)
         self.assertIsNone(ws)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user2, slug=self.workspace4.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user2, id=self.workspace4.id)
         self.assertEqual(ws.name, self.workspace4.name)
         self.assertEqual(len(ws.latest_projects), 0)
         self.assertEqual(len(ws.invited_projects), 0)
@@ -769,13 +770,13 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.assertEqual(ws.user_role, "admin")
         self.assertTrue(ws.user_is_owner)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user3, slug=self.workspace4.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user3, id=self.workspace4.id)
         self.assertIsNone(ws)
 
     async def test_get_workspace5(self):
         await self._asyncSetUp_workspace5()
 
-        ws = await repositories.get_user_workspace_overview(user=self.user1, slug=self.workspace5.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user1, id=self.workspace5.id)
         self.assertEqual(ws.name, self.workspace5.name)
         self.assertEqual(len(ws.latest_projects), 4)
         self.assertEqual(len(ws.invited_projects), 0)
@@ -784,7 +785,7 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.assertEqual(ws.user_role, "admin")
         self.assertTrue(ws.user_is_owner)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user2, slug=self.workspace5.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user2, id=self.workspace5.id)
         self.assertEqual(ws.name, self.workspace5.name)
         self.assertEqual(len(ws.latest_projects), 3)
         self.assertEqual(len(ws.invited_projects), 0)
@@ -793,13 +794,13 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.assertEqual(ws.user_role, "guest")
         self.assertFalse(ws.user_is_owner)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user3, slug=self.workspace5.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user3, id=self.workspace5.id)
         self.assertIsNone(ws)
 
     async def test_get_workspace6(self):
         await self._asyncSetUp_workspace6()
 
-        ws = await repositories.get_user_workspace_overview(user=self.user1, slug=self.workspace6.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user1, id=self.workspace6.id)
         self.assertEqual(ws.name, self.workspace6.name)
         self.assertEqual(len(ws.latest_projects), 1)
         self.assertEqual(len(ws.invited_projects), 0)
@@ -808,20 +809,20 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         self.assertEqual(ws.user_role, "admin")
         self.assertTrue(ws.user_is_owner)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user2, slug=self.workspace6.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user2, id=self.workspace6.id)
         self.assertIsNone(ws)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user3, slug=self.workspace6.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user3, id=self.workspace6.id)
         self.assertIsNone(ws)
 
     async def test_get_workspace7(self):
         await self._asyncSetUp_workspace7()
 
-        ws = await repositories.get_user_workspace_overview(user=self.user1, slug=self.workspace7.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user1, id=self.workspace7.id)
         self.assertIsNone(ws)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user2, slug=self.workspace7.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user2, id=self.workspace7.id)
         self.assertIsNone(ws)
 
-        ws = await repositories.get_user_workspace_overview(user=self.user3, slug=self.workspace7.slug)
+        ws = await repositories.get_user_workspace_overview(user=self.user3, id=self.workspace7.id)
         self.assertIsNone(ws)

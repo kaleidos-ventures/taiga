@@ -5,10 +5,5 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializers import BaseModel
-from taiga.base.validators import LanguageCode
-
-
-class GithubLoginValidator(BaseModel):
-    code: str
-    lang: LanguageCode | None
+from taiga.base.validators.fields import B64UUID, LanguageCode  # noqa
+from taiga.base.validators.forms import as_form  # noqa

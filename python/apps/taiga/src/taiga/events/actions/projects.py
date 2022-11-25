@@ -8,6 +8,7 @@
 from typing import TYPE_CHECKING, Literal
 
 from taiga.base.api.permissions import Or, check_permissions
+from taiga.base.utils.uuid import decode_b64str_to_uuid
 from taiga.events import channels
 from taiga.events.responses import ActionResponse
 from taiga.exceptions.api import ForbiddenError
@@ -33,7 +34,8 @@ class SubscribeToProjectEventsAction(Action, type="subscribe_to_project_events")
     async def run(self, subscriber: "Subscriber") -> None:
         from taiga.projects.projects import services as projects_services
 
-        project = await projects_services.get_project(slug=self.project)
+        project_id = decode_b64str_to_uuid(self.project)
+        project = await projects_services.get_project(id=project_id)
 
         if project:
             try:

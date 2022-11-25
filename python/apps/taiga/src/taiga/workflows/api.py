@@ -5,9 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 from fastapi import Query
 from taiga.base.api import Request
 from taiga.base.api.permissions import check_permissions
+from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404
 from taiga.permissions import HasPerm
@@ -22,26 +25,26 @@ GET_PROJECT_WORKFLOWS = HasPerm("view_story")
 
 
 @routes.projects.get(
-    "/{slug}/workflows",
+    "/{id}/workflows",
     name="project.workflow.get",
     summary="Get project workflows",
     response_model=list[WorkflowSerializer],
     responses=ERROR_404 | ERROR_403,
 )
 async def get_project_workflows(
-    request: Request, slug: str = Query(None, description="the project slug (str)")
+    request: Request, id: B64UUID = Query(None, description="the project id (B64UUID)")
 ) -> list[WorkflowSchema]:
     """
     Get project workflows
     """
 
-    project = await get_project_or_404(slug)
+    project = await get_project_or_404(id)
     await check_permissions(permissions=GET_PROJECT_WORKFLOWS, user=request.user, obj=project)
-    return await workflows_services.get_project_workflows(project_slug=slug)
+    return await workflows_services.get_project_workflows(project_id=id)
 
 
-async def get_workflow_or_404(project_slug: str, workflow_slug: str) -> WorkflowSchema:
-    workflow = await workflows_services.get_project_workflow(project_slug=project_slug, workflow_slug=workflow_slug)
+async def get_workflow_or_404(project_id: UUID, workflow_slug: str) -> WorkflowSchema:
+    workflow = await workflows_services.get_project_workflow(project_id=project_id, workflow_slug=workflow_slug)
     if workflow is None:
         raise ex.NotFoundError(f"Workflow {workflow_slug} does not exist")
 

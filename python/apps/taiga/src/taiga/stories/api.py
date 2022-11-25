@@ -9,6 +9,7 @@ from fastapi import Depends, Query
 from starlette.responses import Response
 from taiga.base.api import AuthRequest, PaginationQuery, set_pagination
 from taiga.base.api.permissions import check_permissions
+from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm
@@ -33,7 +34,7 @@ REORDER_STORIES = HasPerm("modify_story")
 
 
 @routes.projects.post(
-    "/{project_slug}/workflows/{workflow_slug}/stories",
+    "/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.create",
     summary="Create a story in a workflow status",
     response_model=StorySerializer,
@@ -42,15 +43,15 @@ REORDER_STORIES = HasPerm("modify_story")
 async def create_story(
     request: AuthRequest,
     form: StoryValidator,
-    project_slug: str = Query(None, description="the project slug (str)"),
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> Story:
     """
     Creates a story for the logged user in the given workflow and status
     """
-    project = await get_project_or_404(project_slug)
+    project = await get_project_or_404(project_id)
     await check_permissions(permissions=CREATE_STORY, user=request.user, obj=project)
-    workflow = await get_workflow_or_404(project_slug=project_slug, workflow_slug=workflow_slug)
+    workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
 
     return await stories_services.create_story(
         title=form.title, project=project, workflow=workflow, status_slug=form.status, user=request.user
@@ -58,7 +59,7 @@ async def create_story(
 
 
 @routes.projects.get(
-    "/{project_slug}/workflows/{workflow_slug}/stories",
+    "/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.get",
     summary="List all the stories for a project workflow",
     response_model=list[StorySerializer],
@@ -68,18 +69,18 @@ async def list_stories(
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
-    project_slug: str = Query(None, description="the project slug (str)"),
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> list[Story]:
     """
     List all the stories for a project workflow and all of its statuses
     """
-    project = await get_project_or_404(project_slug)
+    project = await get_project_or_404(project_id)
     await check_permissions(permissions=LIST_STORIES, user=request.user, obj=project)
-    await get_workflow_or_404(project_slug=project_slug, workflow_slug=workflow_slug)
+    await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
 
     pagination, stories = await stories_services.get_paginated_stories_by_workflow(
-        project_slug=project_slug,
+        project_id=project_id,
         workflow_slug=workflow_slug,
         offset=pagination_params.offset,
         limit=pagination_params.limit,
@@ -91,7 +92,7 @@ async def list_stories(
 
 
 @routes.projects.get(
-    "/{project_slug}/stories/{ref}",
+    "/{project_id}/stories/{ref}",
     name="project.stories.get",
     summary="List all the stories for a project workflow",
     response_model=StoryDetailSerializer,
@@ -99,13 +100,13 @@ async def list_stories(
 )
 async def get_story(
     request: AuthRequest,
-    project_slug: str = Query(None, description="the project slug (str)"),
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     ref: int = Query(None, description="the unique story reference within a project (str)"),
 ) -> StoryDetailSerializer:
     """
     Get a story from a project workflow with information about its closest neighbors
     """
-    project = await get_project_or_404(project_slug)
+    project = await get_project_or_404(project_id)
     await check_permissions(permissions=GET_STORY, user=request.user, obj=project)
 
     resp = await stories_services.get_story(ref=ref, project=project)
@@ -116,7 +117,7 @@ async def get_story(
 
 
 @routes.projects.post(
-    "/{project_slug}/workflows/{workflow_slug}/stories/reorder",
+    "/{project_id}/workflows/{workflow_slug}/stories/reorder",
     name="project.stories.reorder",
     summary="Reorder stories in kanban; change priority and/or status",
     response_model=ReorderStoriesSerializer,
@@ -125,15 +126,15 @@ async def get_story(
 async def reorder_stories(
     request: AuthRequest,
     form: ReorderStoriesValidator,
-    project_slug: str = Query(None, description="the project slug (str)"),
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> ReorderStoriesSerializer:
     """
     Reorder one or more stories in the kanban; it may change priority and/or status
     """
-    project = await get_project_or_404(project_slug)
+    project = await get_project_or_404(project_id)
     await check_permissions(permissions=REORDER_STORIES, user=request.user, obj=project)
-    workflow = await get_workflow_or_404(project_slug=project_slug, workflow_slug=workflow_slug)
+    workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
 
     resp = await stories_services.reorder_stories(
         project=project,

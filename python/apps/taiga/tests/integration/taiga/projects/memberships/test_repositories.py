@@ -68,9 +68,7 @@ async def test_get_project_membership():
     role = await f.create_project_role(project=project)
     membership = await repositories.create_project_membership(user=user, project=project, role=role)
 
-    ret_membership = repositories.get_project_membership(
-        filters={"project_slug": project.slug, "username": user.username}
-    )
+    ret_membership = repositories.get_project_membership(filters={"project_id": project.id, "username": user.username})
     assert await ret_membership == membership
 
 

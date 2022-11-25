@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 from taiga.base.api.pagination import Pagination
 from taiga.projects.memberships import events as memberships_events
 from taiga.projects.memberships import repositories as memberships_repositories
@@ -28,9 +30,9 @@ async def get_paginated_project_memberships(
     return pagination, memberships
 
 
-async def get_project_membership(project_slug: str, username: str) -> ProjectMembership:
+async def get_project_membership(project_id: UUID, username: str) -> ProjectMembership:
     return await memberships_repositories.get_project_membership(
-        filters={"project_slug": project_slug, "username": username}
+        filters={"project_id": project_id, "username": username}
     )
 
 

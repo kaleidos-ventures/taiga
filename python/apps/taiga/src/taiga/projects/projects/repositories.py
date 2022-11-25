@@ -63,7 +63,7 @@ def _apply_filters_to_project_queryset_list(
 
 
 class ProjectFilters(TypedDict, total=False):
-    slug: str
+    id: UUID
 
 
 def _apply_filters_to_project_queryset(

@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 import pytest
 from pydantic import ValidationError
 from taiga.projects.projects.validators import ProjectValidator
@@ -16,7 +18,7 @@ def test_validate_create_user_wrong_not_all_required_fields():
     with pytest.raises(ValidationError) as validation_errors:
         ProjectValidator()
 
-    expected_error_fields = ["name", "workspaceSlug"]
+    expected_error_fields = ["name", "workspaceId"]
     expected_error_messages = ["field required"]
     check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
 
@@ -32,9 +34,9 @@ def test_validate_project_with_empty_name(client):
 def test_validate_project_with_long_name(client):
     name = "Project ab c de f gh i jk l mn pw r st u vw x yz ab c de f gh i jk l mn pw r st u vw x yz"
     color = 1
-    workspace_slug = "slug"
+    workspace_id = "6JgsbGyoEe2VExhWgGrI2w"
     with pytest.raises(ValidationError, match=r"ensure this value has at most 80 characters"):
-        ProjectValidator(name=name, color=color, workspace_slug=workspace_slug)
+        ProjectValidator(name=name, color=color, workspace_id=workspace_id)
 
 
 def test_validate_project_with_long_description(client):
@@ -46,30 +48,31 @@ def test_validate_project_with_long_description(client):
         "aenean massa. Cum sociis natoque penatibus"
     )
     color = 1
-    workspace_slug = "slug"
+    workspace_id = "6JgsbGyoEe2VExhWgGrI2w"
 
     with pytest.raises(ValidationError, match=r"ensure this value has at most 220 characters"):
-        ProjectValidator(name=name, description=description, color=color, workspace_slug=workspace_slug)
+        ProjectValidator(name=name, description=description, color=color, workspace_id=workspace_id)
 
 
 def test_validate_project_with_invalid_color(client):
     name = "Project test"
     color = 9
-    workspace_slug = "slug"
+    workspace_id = "6JgsbGyoEe2VExhWgGrI2w"
 
     with pytest.raises(ValidationError, match=r"ensure this value is less than 9"):
-        ProjectValidator(name=name, color=color, workspace_slug=workspace_slug)
+        ProjectValidator(name=name, color=color, workspace_id=workspace_id)
 
 
 def test_valid_project():
     name = "Project test"
-    workspace_slug = "ws_slug"
+    workspace_b64id = "6JgsbGyoEe2VExhWgGrI2w"
+    workspace_UUIDid = UUID("e8982c6c-6ca8-11ed-9513-1856806ac8db")
     color = 1
 
-    project = ProjectValidator(workspace_slug=workspace_slug, name=name, color=color)
+    project = ProjectValidator(workspace_id=workspace_b64id, name=name, color=color)
 
     assert project.name == name
-    assert project.workspace_slug == workspace_slug
+    assert project.workspace_id == workspace_UUIDid
     assert project.color == color
 
 
@@ -83,7 +86,7 @@ def test_validate_logo_content_type(client):
 
     expected_error_fields = [
         "logo",
-        "workspaceSlug",
+        "workspaceId",
     ]
     expected_error_messages = ["Invalid image format", "field required"]
     check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)
@@ -97,6 +100,6 @@ def test_validate_logo_content(client):
     with pytest.raises(ValidationError) as validations_errors:
         ProjectValidator(name=name, color=color, logo=logo)
 
-    expected_error_fields = ["logo", "workspaceSlug"]
+    expected_error_fields = ["logo", "workspaceId"]
     expected_error_messages = ["Invalid image content", "field required"]
     check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)

@@ -11,8 +11,8 @@ from taiga.workspaces.workspaces.models import Workspace
 
 _SYSTEM_CHANNEL_PATTERN = "system"
 _USER_CHANNEL_PATTERN = "users.{username}"
-_PROJECT_CHANNEL_PATTERN = "projects.{slug}"
-_WORKSPACE_CHANNEL_PATTERN = "workspaces.{slug}"
+_PROJECT_CHANNEL_PATTERN = "projects.{id}"
+_WORKSPACE_CHANNEL_PATTERN = "workspaces.{id}"
 
 
 def system_channel() -> str:
@@ -25,10 +25,10 @@ def user_channel(user: AnyUser | str) -> str:
 
 
 def project_channel(project: Project | str) -> str:
-    slug = project.slug if isinstance(project, Project) else project
-    return _PROJECT_CHANNEL_PATTERN.format(slug=slug)
+    id = project.b64id if isinstance(project, Project) else project
+    return _PROJECT_CHANNEL_PATTERN.format(id=id)
 
 
 def workspace_channel(workspace: Workspace | str) -> str:
-    slug = workspace.slug if isinstance(workspace, Workspace) else workspace
-    return _WORKSPACE_CHANNEL_PATTERN.format(slug=slug)
+    id = workspace.b64id if isinstance(workspace, Workspace) else workspace
+    return _WORKSPACE_CHANNEL_PATTERN.format(id=id)

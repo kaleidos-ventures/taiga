@@ -8,6 +8,7 @@
 from fastapi import Query
 from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import check_permissions
+from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import IsProjectAdmin
@@ -26,26 +27,26 @@ UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
 
 
 @routes.projects.get(
-    "/{slug}/roles",
+    "/{id}/roles",
     name="project.permissions.get",
     summary="Get project roles permissions",
     response_model=list[ProjectRoleSerializer],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def get_project_roles(
-    request: AuthRequest, slug: str = Query(None, description="the project slug (str)")
+    request: AuthRequest, id: B64UUID = Query(None, description="the project id (B64UUID)")
 ) -> list[ProjectRole]:
     """
     Get project roles and permissions
     """
 
-    project = await get_project_or_404(slug)
+    project = await get_project_or_404(id)
     await check_permissions(permissions=GET_PROJECT_ROLES, user=request.user, obj=project)
     return await roles_services.get_project_roles(project=project)
 
 
 @routes.projects.put(
-    "/{slug}/roles/{role_slug}/permissions",
+    "/{id}/roles/{role_slug}/permissions",
     name="project.permissions.put",
     summary="Edit project roles permissions",
     response_model=ProjectRoleSerializer,
@@ -54,14 +55,14 @@ async def get_project_roles(
 async def update_project_role_permissions(
     request: AuthRequest,
     form: PermissionsValidator,
-    slug: str = Query(None, description="the project slug (str)"),
+    id: B64UUID = Query(None, description="the project id (B64UUID)"),
     role_slug: str = Query(None, description="the role slug (str)"),
 ) -> ProjectRole:
     """
     Edit project roles permissions
     """
 
-    project = await get_project_or_404(slug)
+    project = await get_project_or_404(id)
     await check_permissions(permissions=UPDATE_PROJECT_ROLE_PERMISSIONS, user=request.user, obj=project)
     role = await get_project_role_or_404(project=project, slug=role_slug)
 

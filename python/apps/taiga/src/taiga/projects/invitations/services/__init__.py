@@ -61,17 +61,17 @@ async def get_public_project_invitation(token: str) -> PublicProjectInvitationSc
 
 
 async def get_project_invitation_by_username_or_email(
-    project_slug: str, username_or_email: str
+    project_id: UUID, username_or_email: str
 ) -> ProjectInvitation | None:
     return await invitations_repositories.get_project_invitation(
-        filters={"project_slug": project_slug, "username_or_email": username_or_email},
+        filters={"project_id": project_id, "username_or_email": username_or_email},
         select_related=["user", "project", "workspace", "role", "invited_by"],
     )
 
 
-async def get_project_invitation_by_id(project_slug: str, id: UUID) -> ProjectInvitation | None:
+async def get_project_invitation_by_id(project_id: UUID, id: UUID) -> ProjectInvitation | None:
     return await invitations_repositories.get_project_invitation(
-        filters={"project_slug": project_slug, "id": id},
+        filters={"project_id": project_id, "id": id},
         select_related=["user", "project", "workspace", "role", "invited_by"],
     )
 
@@ -90,16 +90,16 @@ async def get_paginated_pending_project_invitations(
 
     if role and role.is_admin:
         invitations = await invitations_repositories.get_project_invitations(
-            filters={"project_slug": project.slug, "status": ProjectInvitationStatus.PENDING},
+            filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING},
             offset=offset,
             limit=limit,
         )
         total_invitations = await invitations_repositories.get_total_project_invitations(
-            filters={"project_slug": project.slug, "status": ProjectInvitationStatus.PENDING},
+            filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING},
         )
     else:
         invitations = await invitations_repositories.get_project_invitations(
-            filters={"project_slug": project.slug, "status": ProjectInvitationStatus.PENDING, "user": user},
+            filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING, "user": user},
             offset=offset,
             limit=limit,
         )
@@ -124,7 +124,7 @@ async def send_project_invitation_email(invitation: ProjectInvitation, is_resend
     context = {
         "invitation_token": invitation_token,
         "project_name": project.name,
-        "project_slug": project.slug,
+        "project_id": project.b64id,
         "project_color": project.color,
         "project_image_url": await get_logo_small_thumbnail_url(project.logo),
         "project_workspace": project.workspace.name,
@@ -230,7 +230,7 @@ async def create_project_invitations(
 
         invitation = await invitations_repositories.get_project_invitation(
             filters={
-                "project_slug": project.slug,
+                "project_id": project.id,
                 "username_or_email": email,
                 "statuses": [ProjectInvitationStatus.PENDING, ProjectInvitationStatus.REVOKED],
             },

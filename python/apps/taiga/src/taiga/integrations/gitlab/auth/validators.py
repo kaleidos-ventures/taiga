@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import BaseModel
-from taiga.base.validator import LanguageCode
+from taiga.base.validators import LanguageCode
 
 
 class GitlabLoginValidator(BaseModel):

@@ -20,5 +20,5 @@ async def test_get_project_workflows_ok():
 
     with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
         fake_workflows_repo.get_project_workflows.return_value = workflows
-        await services.get_project_workflows(project_slug="slug")
+        await services.get_project_workflows(project_id="id")
         fake_workflows_repo.get_project_workflows.assert_awaited_once()

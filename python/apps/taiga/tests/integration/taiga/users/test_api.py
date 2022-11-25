@@ -176,11 +176,11 @@ async def test_verify_user_error_used_token(client):
 
 async def test_get_users_by_text_anonymous(client):
     text = "text_to_search"
-    project_slug = "pj-slug"
+    project_id = "6JgsbGyoEe2VExhWgGrI2w"
     offset = 0
     limit = 1
 
-    response = client.get(f"/users/search?text={text}&project={project_slug}&offset={offset}&limit={limit}")
+    response = client.get(f"/users/search?text={text}&project={project_id}&offset={offset}&limit={limit}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
@@ -190,11 +190,11 @@ async def test_get_users_by_text(client):
     client.login(user)
 
     text = user2.username
-    project_slug = "pj-slug"
+    project_id = "6JgsbGyoEe2VExhWgGrI2w"
     offset = 0
     limit = 10
 
-    response = client.get(f"/users/search?text={text}&project={project_slug}&offset={offset}&limit={limit}")
+    response = client.get(f"/users/search?text={text}&project={project_id}&offset={offset}&limit={limit}")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
     assert response.headers["Pagination-Offset"] == "0"
@@ -208,11 +208,11 @@ async def test_get_users_by_text_no_results(client):
     client.login(user)
 
     text = "noresults"
-    project_slug = "pj-slug"
+    project_id = "6JgsbGyoEe2VExhWgGrI2w"
     offset = 0
     limit = 10
 
-    response = client.get(f"/users/search?text={text}&project={project_slug}&offset={offset}&limit={limit}")
+    response = client.get(f"/users/search?text={text}&project={project_id}&offset={offset}&limit={limit}")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 0
     assert response.headers["Pagination-Offset"] == "0"

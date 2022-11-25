@@ -24,7 +24,7 @@ DEFAULT_QUERYSET = ProjectInvitation.objects.all()
 
 
 class ProjectInvitationListFilters(TypedDict, total=False):
-    project_slug: str
+    project_id: UUID
     user: User
     status: ProjectInvitationStatus
     statuses: list[ProjectInvitationStatus]
@@ -36,8 +36,8 @@ def _apply_filters_to_queryset_list(
 ) -> QuerySet[ProjectInvitation]:
     filter_data = dict(filters.copy())
 
-    if "project_slug" in filter_data:
-        filter_data["project__slug"] = filter_data.pop("project_slug")
+    if "project_id" in filter_data:
+        filter_data["project__id"] = filter_data.pop("project_id")
 
     if "statuses" in filter_data:
         filter_data["status__in"] = filter_data.pop("statuses")
@@ -51,7 +51,7 @@ class ProjectInvitationFilters(TypedDict, total=False):
     username_or_email: str
     statuses: list[str]
     project: Project
-    project_slug: str
+    project_id: UUID
 
 
 def _apply_filters_to_queryset(
@@ -66,8 +66,8 @@ def _apply_filters_to_queryset(
         by_email = Q(user__isnull=True, email__iexact=username_or_email)
         qs = qs.filter(by_user | by_email)
 
-    if "project_slug" in filter_data:
-        filter_data["project__slug"] = filter_data.pop("project_slug")
+    if "project_id" in filter_data:
+        filter_data["project__id"] = filter_data.pop("project_id")
 
     if "statuses" in filter_data:
         filter_data["status__in"] = filter_data.pop("statuses")

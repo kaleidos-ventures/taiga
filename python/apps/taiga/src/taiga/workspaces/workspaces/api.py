@@ -5,9 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 from fastapi import Query
 from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import check_permissions
+from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm, IsAuthenticated
@@ -39,39 +42,39 @@ async def list_my_workspaces(request: AuthRequest) -> list[Workspace]:
 
 
 @routes.my.get(
-    "/workspaces/{slug}",
+    "/workspaces/{id}",
     name="my.workspaces.get",
     summary="Get the overview of a workspace to which I belong",
     response_model=WorkspaceDetailSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def get_my_workspace(
-    request: AuthRequest, slug: str = Query("", description="the workspace slug(str)")
+    request: AuthRequest, id: B64UUID = Query("", description="the workspace id(B64UUID)")
 ) -> Workspace:
     """
     Get the workspaces overview for the logged user.
     """
     await check_permissions(permissions=GET_MY_WORKSPACE, user=request.user, obj=None)
-    workspace_overview = await workspaces_services.get_user_workspace_overview(user=request.user, slug=slug)
+    workspace_overview = await workspaces_services.get_user_workspace_overview(user=request.user, id=id)
     if workspace_overview is None:
-        raise ex.NotFoundError(f"Workspace {slug} does not exist")
+        raise ex.NotFoundError(f"Workspace {id} does not exist")
     return workspace_overview
 
 
 @routes.workspaces.get(
-    "/{slug}",
+    "/{id}",
     name="workspaces.get",
     summary="Get workspace",
     response_model=WorkspaceSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def get_workspace(
-    request: AuthRequest, slug: str = Query("", description="the workspace slug(str)")
+    request: AuthRequest, id: B64UUID = Query("", description="the workspace id(B64UUID)")
 ) -> Workspace:
     """
-    Get workspace detail by slug.
+    Get workspace detail by id.
     """
-    workspace = await get_workspace_or_404(slug=slug)
+    workspace = await get_workspace_or_404(id=id)
     await check_permissions(permissions=GET_WORKSPACE, user=request.user, obj=workspace)
     return await workspaces_services.get_workspace_detail(
         id=workspace.id, user_id=request.user.id  # type: ignore[return-value]
@@ -95,9 +98,9 @@ async def create_workspace(form: WorkspaceValidator, request: AuthRequest) -> Wo
     )
 
 
-async def get_workspace_or_404(slug: str) -> Workspace:
-    workspace = await workspaces_services.get_workspace(slug=slug)
+async def get_workspace_or_404(id: UUID) -> Workspace:
+    workspace = await workspaces_services.get_workspace(id=id)
     if workspace is None:
-        raise ex.NotFoundError(f"Workspace {slug} does not exist")
+        raise ex.NotFoundError(f"Workspace {id} does not exist")
 
     return workspace

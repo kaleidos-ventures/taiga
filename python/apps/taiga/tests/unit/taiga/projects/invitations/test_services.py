@@ -149,7 +149,7 @@ async def test_get_project_invitations_ok_admin():
 
         fake_invitations_repo.get_project_invitations.assert_awaited_once_with(
             filters={
-                "project_slug": invitation.project.slug,
+                "project_id": invitation.project.id,
                 "status": ProjectInvitationStatus.PENDING,
             },
             offset=pagination.offset,
@@ -157,7 +157,7 @@ async def test_get_project_invitations_ok_admin():
         )
         fake_invitations_repo.get_total_project_invitations.assert_awaited_once_with(
             filters={
-                "project_slug": invitation.project.slug,
+                "project_id": invitation.project.id,
                 "status": ProjectInvitationStatus.PENDING,
             }
         )
@@ -181,7 +181,7 @@ async def test_get_project_invitations_ok_not_admin():
 
         fake_invitations_repo.get_project_invitations.assert_awaited_once_with(
             filters={
-                "project_slug": invitation.project.slug,
+                "project_id": invitation.project.id,
                 "status": ProjectInvitationStatus.PENDING,
                 "user": invitation.user,
             },
@@ -226,7 +226,7 @@ async def test_send_project_invitations_for_existing_user(tqmanager, correlation
         assert args["context"]["project_workspace"] == invitation.project.workspace.name
         assert args["context"]["project_image_url"] is None
         assert args["context"]["project_name"] == invitation.project.name
-        assert args["context"]["project_slug"] == invitation.project.slug
+        assert args["context"]["project_id"] == invitation.project.b64id
         assert args["context"]["receiver_name"] == invitation.user.full_name
         assert args["context"]["sender_name"] == invitation.invited_by.full_name
 
@@ -260,7 +260,7 @@ async def test_send_project_invitations_for_new_user(tqmanager):
         assert args["context"]["project_workspace"] == invitation.project.workspace.name
         assert args["context"]["project_image_url"] is None
         assert args["context"]["project_name"] == invitation.project.name
-        assert args["context"]["project_slug"] == invitation.project.slug
+        assert args["context"]["project_id"] == invitation.project.b64id
         assert args["context"]["receiver_name"] is None
         assert args["context"]["sender_name"] == invitation.invited_by.full_name
 

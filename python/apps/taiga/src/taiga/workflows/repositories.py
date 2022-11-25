@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from typing import Literal, TypedDict
+from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import QuerySet
@@ -23,7 +24,7 @@ DEFAULT_QUERYSET_WORKFLOW_STATUS = WorkflowStatus.objects.all()
 
 
 class WorkflowListFilters(TypedDict, total=False):
-    project_slug: str
+    project_id: UUID
 
 
 def _apply_filters_to_workflow_queryset_list(
@@ -32,8 +33,8 @@ def _apply_filters_to_workflow_queryset_list(
 ) -> QuerySet[Workflow]:
     filter_data = dict(filters.copy())
 
-    if "project_slug" in filter_data:
-        filter_data["project__slug"] = filter_data.pop("project_slug")
+    if "project_id" in filter_data:
+        filter_data["project__id"] = filter_data.pop("project_id")
 
     qs = qs.filter(**filter_data)
     return qs
@@ -41,7 +42,7 @@ def _apply_filters_to_workflow_queryset_list(
 
 class WorkflowFilters(TypedDict, total=False):
     slug: str
-    project_slug: str
+    project_id: UUID
 
 
 def _apply_filters_to_workflow_queryset(
@@ -50,8 +51,8 @@ def _apply_filters_to_workflow_queryset(
 ) -> QuerySet[Workflow]:
     filter_data = dict(filters.copy())
 
-    if "project_slug" in filter_data:
-        filter_data["project__slug"] = filter_data.pop("project_slug")
+    if "project_id" in filter_data:
+        filter_data["project__id"] = filter_data.pop("project_id")
 
     qs = qs.filter(**filter_data)
     return qs
@@ -188,7 +189,7 @@ def _get_workflow_dt(workflow: Workflow) -> WorkflowSchema:
 class WorkflowStatusFilters(TypedDict, total=False):
     slug: str
     workflow_slug: str
-    project_slug: str
+    project_id: UUID
 
 
 def _apply_filters_to_workflow_status_queryset(
@@ -200,8 +201,8 @@ def _apply_filters_to_workflow_status_queryset(
     if "workflow_slug" in filter_data:
         filter_data["workflow__slug"] = filter_data.pop("workflow_slug")
 
-    if "project_slug" in filter_data:
-        filter_data["workflow__project__slug"] = filter_data.pop("project_slug")
+    if "project_id" in filter_data:
+        filter_data["workflow__project__id"] = filter_data.pop("project_id")
 
     qs = qs.filter(**filter_data)
     return qs

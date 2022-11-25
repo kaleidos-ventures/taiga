@@ -9,13 +9,13 @@ from fastapi import UploadFile
 from pydantic import conint, constr, validator
 from taiga.base.serializers import BaseModel
 from taiga.base.utils.images import valid_content_type, valid_image_format
-from taiga.base.validator import as_form
+from taiga.base.validators import B64UUID, as_form
 
 
 @as_form
 class ProjectValidator(BaseModel):
     name: constr(strip_whitespace=True, max_length=80)  # type: ignore
-    workspace_slug: str
+    workspace_id: B64UUID
     # description max_length validation to 220 characteres to resolve
     # this problem https://stackoverflow.com/a/69851342/2883148
     description: constr(max_length=220) | None = None  # type: ignore

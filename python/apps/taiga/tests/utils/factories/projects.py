@@ -93,7 +93,6 @@ def build_project_invitation(**kwargs):
 
 class ProjectFactory(Factory):
     name = factory.Sequence(lambda n: f"Project {n}")
-    slug = factory.Sequence(lambda n: f"project-{n}")
     description = factory.Sequence(lambda n: f"Description {n}")
     owner = factory.SubFactory("tests.utils.factories.UserFactory")
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")

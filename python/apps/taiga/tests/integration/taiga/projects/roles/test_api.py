@@ -13,7 +13,7 @@ pytestmark = pytest.mark.django_db
 
 
 #########################################################################
-# PUT /projects/<project_slug>/roles/<role_slug>/permissions
+# PUT /projects/<project_id>/roles/<role_slug>/permissions
 #########################################################################
 
 
@@ -22,7 +22,7 @@ async def test_update_project_role_permissions_anonymous_user(client):
     role_slug = "general"
     data = {"permissions": ["view_story"]}
 
-    response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
+    response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
@@ -30,9 +30,10 @@ async def test_update_project_role_permissions_anonymous_user(client):
 async def test_update_project_role_permissions_project_not_found(client):
     user = await f.create_user()
     data = {"permissions": ["view_story"]}
+    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
     client.login(user)
-    response = client.put("/projects/non-existent/roles/role-slug/permissions", json=data)
+    response = client.put(f"/projects/{non_existent_id}/roles/role-slug/permissions", json=data)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
@@ -42,7 +43,7 @@ async def test_update_project_role_permissions_role_not_found(client):
     data = {"permissions": ["view_story"]}
 
     client.login(project.owner)
-    response = client.put(f"/projects/{project.slug}/roles/role-slug/permissions", json=data)
+    response = client.put(f"/projects/{project.b64id}/roles/role-slug/permissions", json=data)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
@@ -53,7 +54,7 @@ async def test_update_project_role_permissions_user_without_permission(client):
     data = {"permissions": ["view_story"]}
 
     client.login(user)
-    response = client.put(f"/projects/{project.slug}/roles/role-slug/permissions", json=data)
+    response = client.put(f"/projects/{project.b64id}/roles/role-slug/permissions", json=data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
@@ -64,7 +65,7 @@ async def test_update_project_role_permissions_role_admin(client):
     data = {"permissions": ["view_story"]}
 
     client.login(project.owner)
-    response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
+    response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
@@ -75,7 +76,7 @@ async def test_update_project_role_permissions_incompatible_permissions(client):
     data = {"permissions": ["view_task"]}
 
     client.login(project.owner)
-    response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
+    response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
@@ -86,7 +87,7 @@ async def test_update_project_role_permissions_not_valid_permissions(client):
     data = {"permissions": ["not_valid", "foo"]}
 
     client.login(project.owner)
-    response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
+    response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
@@ -97,7 +98,7 @@ async def test_update_project_role_permissions_ok(client):
     data = {"permissions": ["view_story"]}
 
     client.login(project.owner)
-    response = client.put(f"/projects/{project.slug}/roles/{role_slug}/permissions", json=data)
+    response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
     assert response.status_code == status.HTTP_200_OK, response.text
     assert data["permissions"] == response.json()["permissions"]

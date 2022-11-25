@@ -12,6 +12,7 @@ from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
+from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import IsAuthenticated, IsProjectAdmin
@@ -63,7 +64,7 @@ async def get_public_project_invitation(
 
 
 @routes.projects.get(
-    "/{slug}/invitations",
+    "/{id}/invitations",
     name="project.invitations.get",
     summary="List project pending invitations",
     response_model=list[ProjectInvitationSerializer],
@@ -73,7 +74,7 @@ async def list_project_invitations(
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
-    slug: str = Query(None, description="the project slug (str)"),
+    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> list[ProjectInvitation]:
     """
     List (pending) project invitations
@@ -81,7 +82,7 @@ async def list_project_invitations(
     If the user is invited to the project: return a list with just her project invitation
     If the user is not invited to the project (including anonymous users): return an empty list
     """
-    project = await get_project_or_404(slug)
+    project = await get_project_or_404(id)
 
     pagination, invitations = await invitations_services.get_paginated_pending_project_invitations(
         project=project, user=request.user, offset=pagination_params.offset, limit=pagination_params.limit
@@ -110,27 +111,27 @@ async def accept_project_invitation_by_token(
 
 
 @routes.projects.post(
-    "/{slug}/invitations/accept",
+    "/{id}/invitations/accept",
     name="project.my.invitations.accept",
     summary="Accept a project invitation for authenticated users",
     response_model=ProjectInvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
 async def accept_project_invitation_by_project(
-    request: AuthRequest, slug: str = Query(None, description="the project slug (str)")
+    request: AuthRequest, id: B64UUID = Query(None, description="the project id (B64UUID)")
 ) -> ProjectInvitation:
     """
     An authenticated user accepts a project invitation
     """
     await check_permissions(permissions=ACCEPT_PROJECT_INVITATION, user=request.user, obj=None)
     invitation = await get_project_invitation_by_username_or_email_or_404(
-        project_slug=slug, username_or_email=request.user.username
+        project_id=id, username_or_email=request.user.username
     )
     return await invitations_services.accept_project_invitation(invitation=invitation)
 
 
 @routes.projects.post(
-    "/{slug}/invitations",
+    "/{id}/invitations",
     name="project.invitations.create",
     summary="Create project invitations",
     response_model=CreateProjectInvitationsSerializer,
@@ -139,14 +140,14 @@ async def accept_project_invitation_by_project(
 async def create_project_invitations(
     request: AuthRequest,
     form: ProjectInvitationsValidator,
-    slug: str = Query(None, description="the project slug (str)"),
+    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> CreateProjectInvitationsSchema:
     """
     Create invitations to a project for a list of users (identified either by their username or their email, and the
     role they'll take in the project). In case of receiving several invitations for the same user, just the first
     role will be considered.
     """
-    project = await get_project_or_404(slug=slug)
+    project = await get_project_or_404(id=id)
     await check_permissions(permissions=CREATE_PROJECT_INVITATIONS, user=request.user, obj=project)
 
     return await invitations_services.create_project_invitations(
@@ -155,7 +156,7 @@ async def create_project_invitations(
 
 
 @routes.projects.post(
-    "/{slug}/invitations/resend",
+    "/{id}/invitations/resend",
     name="project.invitations.resend",
     summary="Resend project invitation",
     response_class=Response,
@@ -165,20 +166,20 @@ async def create_project_invitations(
 async def resend_project_invitation(
     request: AuthRequest,
     form: ResendProjectInvitationValidator,
-    slug: str = Query(None, description="the project slug (str)"),
+    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> None:
     """
     Resend invitation to a project
     """
     invitation = await get_project_invitation_by_username_or_email_or_404(
-        project_slug=slug, username_or_email=form.username_or_email
+        project_id=id, username_or_email=form.username_or_email
     )
     await check_permissions(permissions=RESEND_PROJECT_INVITATION, user=request.user, obj=invitation)
     await invitations_services.resend_project_invitation(invitation=invitation, resent_by=request.user)
 
 
 @routes.projects.post(
-    "/{slug}/invitations/revoke",
+    "/{id}/invitations/revoke",
     name="project.invitations.revoke",
     summary="Revoke project invitation",
     responses=ERROR_422 | ERROR_400 | ERROR_403,
@@ -188,20 +189,20 @@ async def resend_project_invitation(
 async def revoke_project_invitation(
     request: AuthRequest,
     form: RevokeProjectInvitationValidator,
-    slug: str = Query(None, description="the project slug (str)"),
+    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> None:
     """
     Revoke invitation in a project.
     """
     invitation = await get_project_invitation_by_username_or_email_or_404(
-        project_slug=slug, username_or_email=form.username_or_email
+        project_id=id, username_or_email=form.username_or_email
     )
     await check_permissions(permissions=REVOKE_PROJECT_INVITATION, user=request.user, obj=invitation)
     await invitations_services.revoke_project_invitation(invitation=invitation, revoked_by=request.user)
 
 
 @routes.projects.patch(
-    "/{slug}/invitations/{id}",
+    "/{project_id}/invitations/{id}",
     name="project.invitations.update",
     summary="Update project invitation",
     response_model=ProjectInvitationSerializer,
@@ -210,23 +211,23 @@ async def revoke_project_invitation(
 async def update_project_invitation(
     request: AuthRequest,
     form: UpdateProjectInvitationValidator,
-    slug: str = Query(None, description="the project slug (str)"),
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     id: UUID = Query(None, description="the invitation id (int)"),
 ) -> ProjectInvitation:
     """
     Update project invitation
     """
-    invitation = await get_project_invitation_by_id_or_404(project_slug=slug, id=id)
+    invitation = await get_project_invitation_by_id_or_404(project_id=project_id, id=id)
     await check_permissions(permissions=UPDATE_PROJECT_INVITATION, user=request.user, obj=invitation)
 
     return await invitations_services.update_project_invitation(invitation=invitation, role_slug=form.role_slug)
 
 
 async def get_project_invitation_by_username_or_email_or_404(
-    project_slug: str, username_or_email: str
+    project_id: UUID, username_or_email: str
 ) -> ProjectInvitation:
     invitation = await invitations_services.get_project_invitation_by_username_or_email(
-        project_slug=project_slug, username_or_email=username_or_email
+        project_id=project_id, username_or_email=username_or_email
     )
     if not invitation:
         raise ex.NotFoundError("Invitation does not exist")
@@ -234,8 +235,8 @@ async def get_project_invitation_by_username_or_email_or_404(
     return invitation
 
 
-async def get_project_invitation_by_id_or_404(project_slug: str, id: UUID) -> ProjectInvitation:
-    invitation = await invitations_services.get_project_invitation_by_id(project_slug=project_slug, id=id)
+async def get_project_invitation_by_id_or_404(project_id: UUID, id: UUID) -> ProjectInvitation:
+    invitation = await invitations_services.get_project_invitation_by_id(project_id=project_id, id=id)
     if not invitation:
         raise ex.NotFoundError("Invitation does not exist")
 

@@ -88,7 +88,7 @@ def devserve(
 
 @cli.command(help="Run a Taiga server.")
 def serve(host: str = typer.Option("0.0.0.0", "--host", "-h"), port: int = typer.Option(8000, "--port", "-p")) -> None:
-    _run_api(host=host, port=port, reload=False, debug=False)
+    _run_api(host=host, port=port, reload=False)
 
 
 @cli.command(help="Load sample data.")

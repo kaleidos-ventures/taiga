@@ -6,11 +6,14 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import inspect
+from typing import Any, Callable, Generator
 
 from fastapi import Form
 from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 from taiga.base.serializers import BaseModel
+
+CallableGenerator = Generator[Callable[..., Any], None, None]
 
 
 def as_form(cls: type[BaseModel]) -> type[BaseModel]:

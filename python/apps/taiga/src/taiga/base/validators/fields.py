@@ -8,6 +8,7 @@
 from typing import Any, Callable, Generator
 from uuid import UUID
 
+from pydantic import ConstrainedStr
 from taiga.base.i18n import i18n
 from taiga.base.utils.uuid import decode_b64str_to_uuid
 from taiga.conf import settings
@@ -29,6 +30,11 @@ class LanguageCode(str):
     def validate(cls, value: str) -> str:
         assert i18n.is_language_available(value), "Language is not available"
         return value
+
+
+class StrNotEmpty(ConstrainedStr):
+    strip_whitespace = True
+    min_length = 1
 
 
 class B64UUID(UUID):

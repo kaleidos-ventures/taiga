@@ -15,3 +15,7 @@ class InvalidStatusError(TaigaServiceException):
 
 class InvalidStoryRefError(TaigaServiceException):
     ...
+
+
+class UpdatingStoryWithWrongVersionError(TaigaServiceException):
+    ...

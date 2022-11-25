@@ -5,6 +5,9 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import Any
+from uuid import UUID
+
 from fastapi import Depends, Query
 from starlette.responses import Response
 from taiga.base.api import AuthRequest, PaginationQuery, set_pagination
@@ -18,13 +21,14 @@ from taiga.routers import routes
 from taiga.stories import services as stories_services
 from taiga.stories.models import Story
 from taiga.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer, StorySerializer
-from taiga.stories.validators import ReorderStoriesValidator, StoryValidator
+from taiga.stories.validators import ReorderStoriesValidator, StoryValidator, UpdateStoryValidator
 from taiga.workflows.api import get_workflow_or_404
 
 # PERMISSIONS
-CREATE_STORY = HasPerm("add_story")
-GET_STORY = HasPerm("view_story")
 LIST_STORIES = HasPerm("view_story")
+GET_STORY = HasPerm("view_story")
+CREATE_STORY = HasPerm("add_story")
+UPDATE_STORY = HasPerm("modify_story")
 REORDER_STORIES = HasPerm("modify_story")
 
 
@@ -36,7 +40,7 @@ REORDER_STORIES = HasPerm("modify_story")
 @routes.projects.post(
     "/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.create",
-    summary="Create a story in a workflow status",
+    summary="Create an story",
     response_model=StorySerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
@@ -47,7 +51,7 @@ async def create_story(
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> Story:
     """
-    Creates a story for the logged user in the given workflow and status
+    Creates a story in the given project workflow
     """
     project = await get_project_or_404(project_id)
     await check_permissions(permissions=CREATE_STORY, user=request.user, obj=project)
@@ -60,8 +64,8 @@ async def create_story(
 
 @routes.projects.get(
     "/{project_id}/workflows/{workflow_slug}/stories",
-    name="project.stories.get",
-    summary="List all the stories for a project workflow",
+    name="project.stories.list",
+    summary="List stories",
     response_model=list[StorySerializer],
     responses=ERROR_404 | ERROR_403,
 )
@@ -73,11 +77,11 @@ async def list_stories(
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> list[Story]:
     """
-    List all the stories for a project workflow and all of its statuses
+    List all the stories for a project workflow
     """
     project = await get_project_or_404(project_id)
+    workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)  # noqa
     await check_permissions(permissions=LIST_STORIES, user=request.user, obj=project)
-    await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
 
     pagination, stories = await stories_services.get_paginated_stories_by_workflow(
         project_id=project_id,
@@ -94,7 +98,7 @@ async def list_stories(
 @routes.projects.get(
     "/{project_id}/stories/{ref}",
     name="project.stories.get",
-    summary="List all the stories for a project workflow",
+    summary="Get story",
     response_model=StoryDetailSerializer,
     responses=ERROR_404 | ERROR_403,
 )
@@ -102,24 +106,46 @@ async def get_story(
     request: AuthRequest,
     project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     ref: int = Query(None, description="the unique story reference within a project (str)"),
-) -> StoryDetailSerializer:
+) -> dict[str, Any]:
     """
-    Get a story from a project workflow with information about its closest neighbors
+    Get the detailed information of an story.
     """
     project = await get_project_or_404(project_id)
     await check_permissions(permissions=GET_STORY, user=request.user, obj=project)
 
-    resp = await stories_services.get_story(ref=ref, project=project)
+    resp = await stories_services.get_detailed_story(project_id=project_id, ref=ref)
     if resp is None:
         raise ex.NotFoundError(f"Story with ref {ref} does not exist")
 
-    return StoryDetailSerializer(**resp)
+    return resp
+
+
+@routes.projects.patch(
+    "/{project_id}/stories/{ref}",
+    name="project.stories.update",
+    summary="Update story",
+    response_model=StoryDetailSerializer,
+    responses=ERROR_404 | ERROR_403,
+)
+async def update_story(
+    request: AuthRequest,
+    form: UpdateStoryValidator,
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
+    ref: int = Query(None, description="the unique story reference within a project (str)"),
+) -> dict[str, Any]:
+    """
+    Update an story from a project.
+    """
+    values = form.dict(exclude_unset=True)
+    story = await get_story_or_404(project_id, ref)
+    await check_permissions(permissions=UPDATE_STORY, user=request.user, obj=story)
+    return await stories_services.update_story(story=story, values=values)
 
 
 @routes.projects.post(
     "/{project_id}/workflows/{workflow_slug}/stories/reorder",
     name="project.stories.reorder",
-    summary="Reorder stories in kanban; change priority and/or status",
+    summary="Reorder stories",
     response_model=ReorderStoriesSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
@@ -130,11 +156,11 @@ async def reorder_stories(
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> ReorderStoriesSerializer:
     """
-    Reorder one or more stories in the kanban; it may change priority and/or status
+    Reorder one or more stories; it may change priority and/or status
     """
     project = await get_project_or_404(project_id)
-    await check_permissions(permissions=REORDER_STORIES, user=request.user, obj=project)
     workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
+    await check_permissions(permissions=REORDER_STORIES, user=request.user, obj=project)
 
     resp = await stories_services.reorder_stories(
         project=project,
@@ -145,3 +171,11 @@ async def reorder_stories(
     )
 
     return ReorderStoriesSerializer(**resp)
+
+
+async def get_story_or_404(project_id: UUID, ref: int) -> Story:
+    story = await stories_services.get_story(project_id=project_id, ref=ref)
+    if story is None:
+        raise ex.NotFoundError(f"Story {ref} does not exist in project {project_id}")
+
+    return story

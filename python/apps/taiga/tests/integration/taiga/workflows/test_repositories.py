@@ -52,14 +52,14 @@ async def test_create_workflow_status():
 
 
 ##########################################################
-# get_project_workflows
+# get_workflows
 ##########################################################
 
 
-async def test_get_project_workflows_ok() -> None:
+async def test_get_workflows_ok() -> None:
     project = await f.create_project()
 
-    workflows = await repositories.get_project_workflows(filters={"project_id": project.id})
+    workflows = await repositories.get_workflows(filters={"project_id": project.id})
 
     assert len(workflows) == 1
     assert len(workflows[0].statuses) == 4
@@ -68,32 +68,27 @@ async def test_get_project_workflows_ok() -> None:
 
 async def test_get_project_without_workflows_ok() -> None:
     project = await f.create_simple_project()
-
-    workflows = await repositories.get_project_workflows(filters={"project_id": project.id})
+    workflows = await repositories.get_workflows(filters={"project_id": project.id})
 
     assert len(workflows) == 0
 
 
 ##########################################################
-# get_project_workflow
+# get_workflow
 ##########################################################
 
 
-async def test_get_project_workflow_ok() -> None:
+async def test_get_workflow_ok() -> None:
     project = await f.create_project()
-    project_workflows = await _get_project_workflows(project=project)
-    workflow = await repositories.get_project_workflow(
-        filters={"project_id": project.id, "slug": project_workflows[0].slug}
-    )
-
+    workflows = await _get_workflows(project=project)
+    workflow = await repositories.get_workflow(filters={"project_id": project.id, "slug": workflows[0].slug})
     assert workflow is not None
     assert hasattr(workflow, "id")
 
 
 async def test_get_project_without_workflow_ok() -> None:
     project = await f.create_simple_project()
-    workflow = await repositories.get_project_workflow(filters={"project_id": project.id, "slug": "not-existing-slug"})
-
+    workflow = await repositories.get_workflow(filters={"project_id": project.id, "slug": "not-existing-slug"})
     assert workflow is None
 
 
@@ -103,5 +98,5 @@ async def test_get_project_without_workflow_ok() -> None:
 
 
 @sync_to_async
-def _get_project_workflows(project: Project) -> list[Workflow]:
+def _get_workflows(project: Project) -> list[Workflow]:
     return list(project.workflows.all())

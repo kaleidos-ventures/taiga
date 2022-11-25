@@ -17,6 +17,7 @@ class StorySerializer(BaseModel):
     ref: int
     title: str
     status: WorkflowStatusNestedSerializer
+    version: int
 
     class Config:
         orm_mode = True
@@ -31,9 +32,7 @@ class StoryDetailSerializer(BaseModel):
     created_at: datetime
     prev: StoryNeighborSerializer | None
     next: StoryNeighborSerializer | None
-
-    class Config:
-        orm_mode = True
+    version: int
 
 
 class ReorderSerializer(BaseModel):

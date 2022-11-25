@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from decimal import Decimal
 from unittest.mock import patch
 
 import pytest
@@ -46,7 +47,7 @@ async def test_create_story_ok():
             workflow_id=story.workflow.id,
             status_id=story.status.id,
             user_id=user.id,
-            order=100,
+            order=Decimal(100),
         )
         fake_stories_events.emit_event_when_story_is_created.assert_awaited_once_with(story=story)
 
@@ -72,7 +73,7 @@ async def test_create_story_invalid_status():
 #######################################################
 
 
-async def test_get_story_ok():
+async def test_get_detailed_story_ok():
     story1 = f.build_story(ref=1)
     story2 = f.build_story(ref=2, project=story1.project, workflow=story1.workflow, status=story1.status)
     story3 = f.build_story(ref=3, project=story1.project, workflow=story1.workflow, status=story1.status)
@@ -82,18 +83,23 @@ async def test_get_story_ok():
         fake_stories_repo.get_story.return_value = story2
         fake_stories_repo.get_story_neighbors.return_value = neighbors
 
-        story = await services.get_story(project=story2.project, ref=story2.ref)
+        story = await services.get_detailed_story(project_id=story2.project_id, ref=story2.ref)
 
         fake_stories_repo.get_story.assert_awaited_once_with(
-            filters={"ref": story2.ref, "project_id": story2.project.id},
+            filters={"ref": story2.ref, "project_id": story2.project_id},
             select_related=["created_by", "project", "workflow", "status", "workspace"],
         )
+
+        fake_stories_repo.get_story_neighbors.assert_awaited_once_with(
+            story=story2, filters={"workflow_id": story2.workflow_id}
+        )
+
         assert story["ref"] == story2.ref
         assert story["prev"] == story1
         assert story["next"] == story3
 
 
-async def test_get_story_no_neighbors():
+async def test_get_detailed_story_no_neighbors():
     story1 = f.build_story(ref=1)
     neighbors = Neighbor(prev=None, next=None)
 
@@ -101,29 +107,36 @@ async def test_get_story_no_neighbors():
         fake_stories_repo.get_story.return_value = story1
         fake_stories_repo.get_story_neighbors.return_value = neighbors
 
-        story = await services.get_story(project=story1.project, ref=story1.ref)
+        story = await services.get_detailed_story(project_id=story1.project_id, ref=story1.ref)
 
         fake_stories_repo.get_story.assert_awaited_once_with(
-            filters={"ref": story1.ref, "project_id": story1.project.id},
+            filters={"ref": story1.ref, "project_id": story1.project_id},
             select_related=["created_by", "project", "workflow", "status", "workspace"],
         )
+
+        fake_stories_repo.get_story_neighbors.assert_awaited_once_with(
+            story=story1, filters={"workflow_id": story1.workflow_id}
+        )
+
         assert story["ref"] == story1.ref
         assert story["prev"] is None
         assert story["next"] is None
 
 
-async def test_get_story_no_story():
+async def test_get_detailed_story_no_story():
     project = f.build_project()
 
     with patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
         fake_stories_repo.get_story.return_value = None
 
-        story = await services.get_story(project=project, ref=42)
+        story = await services.get_detailed_story(project_id=project.id, ref=42)
 
         fake_stories_repo.get_story.assert_awaited_once_with(
             filters={"ref": 42, "project_id": project.id},
             select_related=["created_by", "project", "workflow", "status", "workspace"],
         )
+        fake_stories_repo.get_story_neighbors.assert_not_awaited()
+
         assert story is None
 
 
@@ -166,12 +179,12 @@ async def test_calculate_offset() -> None:
         fake_stories_repo.get_stories.return_value = [latest_story]
         offset, pre_order = await services._calculate_offset(total_stories_to_reorder=1, target_status=target_status)
         assert pre_order == latest_story.order
-        assert offset == 100
+        assert offset == Decimal(100)
 
         fake_stories_repo.get_stories.return_value = None
         offset, pre_order = await services._calculate_offset(total_stories_to_reorder=1, target_status=target_status)
-        assert pre_order == 0
-        assert offset == 100
+        assert pre_order == Decimal(0)
+        assert offset == Decimal(100)
 
         # reorder_story
         reord_st = f.build_story(status=target_status, order=250)
@@ -184,14 +197,14 @@ async def test_calculate_offset() -> None:
             total_stories_to_reorder=1, target_status=target_status, reorder_story=reord_st, reorder_place="after"
         )
         assert pre_order == reord_st.order
-        assert offset == 25
+        assert offset == Decimal(25)
 
         fake_stories_repo.get_story_neighbors.return_value = Neighbor(next=None, prev=None)
         offset, pre_order = await services._calculate_offset(
             total_stories_to_reorder=1, target_status=target_status, reorder_story=reord_st, reorder_place="after"
         )
         assert pre_order == reord_st.order
-        assert offset == 100
+        assert offset == Decimal(100)
 
         # before
         fake_stories_repo.get_story_neighbors.return_value = Neighbor(next=None, prev=prev_st)
@@ -199,14 +212,14 @@ async def test_calculate_offset() -> None:
             total_stories_to_reorder=1, target_status=target_status, reorder_story=reord_st, reorder_place="before"
         )
         assert pre_order == prev_st.order
-        assert offset == 50
+        assert offset == Decimal(50)
 
         fake_stories_repo.get_story_neighbors.return_value = Neighbor(next=None, prev=None)
         offset, pre_order = await services._calculate_offset(
             total_stories_to_reorder=1, target_status=target_status, reorder_story=reord_st, reorder_place="before"
         )
-        assert pre_order == 0
-        assert offset == 125
+        assert pre_order == Decimal(0)
+        assert offset == Decimal(125)
 
 
 async def test_reorder_stories_ok():

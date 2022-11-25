@@ -323,3 +323,55 @@ Content for:
   ```
   null
   ```
+
+#### `stories.create`
+
+It happens when a new story has been created.
+
+Content for:
+- project channel:
+  ```
+  {
+      "story": {... "story object" ...}
+  }
+  ```
+
+#### `stories.update`
+
+It happens when an story has been updated.
+
+Content for:
+- project channel:
+  ```
+  {
+      "story": {... "detailed story object" ...}
+      "updatesAttrs" : [
+          "attr1",
+          "attr2",
+          ...
+      ]
+  }
+  ```
+
+#### `stories.reorder`
+
+It happens when some stories are reordered.
+
+Content for:
+- project channel:
+  ```
+  {
+      "reorder": {
+          "status": {... workflow status object ...},
+	      "stories": [
+		      "moved story ref1 (int)",
+		      "moved story ref2 (int)",
+              ....
+	      ],
+	      "reorder": {
+		      "place": "'before' or 'after'",
+		      "ref": "story ref (int)"
+	      }
+      }
+  }
+  ```

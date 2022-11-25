@@ -8,6 +8,7 @@
 from typing import Iterable
 
 from taiga.events import events_manager
+from taiga.projects.invitations.events.content import ProjectInvitationContent
 from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.projects.models import Project
 
@@ -25,7 +26,10 @@ async def emit_event_when_project_invitations_are_created(
         await events_manager.publish_on_user_channel(
             user=invitation.user,  # type: ignore[arg-type]
             type=CREATE_PROJECT_INVITATION,
-            content={"workspace": invitation.project.workspace.b64id, "project": invitation.project.b64id},
+            content=ProjectInvitationContent(
+                workspace=invitation.project.workspace.b64id,
+                project=invitation.project.b64id,
+            ),
         )
 
     # Publish on the project channel
@@ -45,7 +49,10 @@ async def emit_event_when_project_invitation_is_updated(invitation: ProjectInvit
         await events_manager.publish_on_user_channel(
             user=invitation.user,
             type=UPDATE_PROJECT_INVITATION,
-            content={"workspace": invitation.project.workspace.b64id, "project": invitation.project.b64id},
+            content=ProjectInvitationContent(
+                workspace=invitation.project.workspace.b64id,
+                project=invitation.project.b64id,
+            ),
         )
 
 
@@ -63,7 +70,10 @@ async def emit_event_when_project_invitation_is_accepted(invitation: ProjectInvi
         await events_manager.publish_on_user_channel(
             user=invitation.user,
             type=ACCEPT_PROJECT_INVITATION,
-            content={"workspace": invitation.project.workspace.b64id, "project": invitation.project.b64id},
+            content=ProjectInvitationContent(
+                workspace=invitation.project.workspace.b64id,
+                project=invitation.project.b64id,
+            ),
         )
 
 
@@ -76,5 +86,8 @@ async def emit_event_when_project_invitation_is_revoked(invitation: ProjectInvit
         await events_manager.publish_on_user_channel(
             user=invitation.user,
             type=REVOKE_PROJECT_INVITATION,
-            content={"workspace": invitation.project.workspace.b64id, "project": invitation.project.b64id},
+            content=ProjectInvitationContent(
+                workspace=invitation.project.workspace.b64id,
+                project=invitation.project.b64id,
+            ),
         )

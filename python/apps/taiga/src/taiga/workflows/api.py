@@ -21,30 +21,52 @@ from taiga.workflows.schemas import WorkflowSchema
 from taiga.workflows.serializers import WorkflowSerializer
 
 # PERMISSIONS
-GET_PROJECT_WORKFLOWS = HasPerm("view_story")
+LIST_WORKFLOWS = HasPerm("view_story")
+GET_WORKFLOW = HasPerm("view_story")
 
 
 @routes.projects.get(
     "/{id}/workflows",
-    name="project.workflow.get",
-    summary="Get project workflows",
+    name="project.workflow.list",
+    summary="List workflows",
     response_model=list[WorkflowSerializer],
     responses=ERROR_404 | ERROR_403,
 )
-async def get_project_workflows(
-    request: Request, id: B64UUID = Query(None, description="the project id (B64UUID)")
+async def list_workflows(
+    request: Request,
+    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> list[WorkflowSchema]:
     """
-    Get project workflows
+    List the workflows of a project
     """
-
     project = await get_project_or_404(id)
-    await check_permissions(permissions=GET_PROJECT_WORKFLOWS, user=request.user, obj=project)
-    return await workflows_services.get_project_workflows(project_id=id)
+    await check_permissions(permissions=LIST_WORKFLOWS, user=request.user, obj=project)
+    return await workflows_services.get_workflows(project_id=id)
+
+
+@routes.projects.get(
+    "/{id}/workflows/{workflow_slug}",
+    name="project.workflow.get",
+    summary="Get project workflow",
+    response_model=WorkflowSerializer,
+    responses=ERROR_404 | ERROR_403,
+)
+async def get_workflow(
+    request: Request,
+    id: B64UUID = Query(None, description="the project id (B64UUID)"),
+    workflow_slug: str = Query(None, description="the workflow slug (str)"),
+) -> WorkflowSchema:
+    """
+    Get the details of a workflow
+    """
+    project = await get_project_or_404(id)
+    workflow = await get_workflow_or_404(project_id=id, workflow_slug=workflow_slug)
+    await check_permissions(permissions=GET_WORKFLOW, user=request.user, obj=project)
+    return workflow
 
 
 async def get_workflow_or_404(project_id: UUID, workflow_slug: str) -> WorkflowSchema:
-    workflow = await workflows_services.get_project_workflow(project_id=project_id, workflow_slug=workflow_slug)
+    workflow = await workflows_services.get_workflow(project_id=project_id, workflow_slug=workflow_slug)
     if workflow is None:
         raise ex.NotFoundError(f"Workflow {workflow_slug} does not exist")
 

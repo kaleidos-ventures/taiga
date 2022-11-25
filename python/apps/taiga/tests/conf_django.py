@@ -15,6 +15,12 @@ DEBUG = True
 MEDIA_ROOT = "/tmp/taiga/media"
 STATICA_ROOT = "/tmp/taiga/static"
 
+
+INSTALLED_APPS += [  # noqa: F405
+    "tests.samples.occ",
+]
+
+
 # This is only for GitHubActions
 if os.getenv("GITHUB_WORKFLOW"):
     DATABASES = {

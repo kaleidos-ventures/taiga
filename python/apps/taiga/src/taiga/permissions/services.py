@@ -92,6 +92,8 @@ def _get_object_workspace(obj: Any) -> Workspace | None:
         return obj
     elif obj and hasattr(obj, "workspace"):
         return obj.workspace
+    elif obj and hasattr(obj, "project"):
+        return obj.project.workspace
 
     return None
 

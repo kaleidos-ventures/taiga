@@ -6,6 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.events import events_manager
+from taiga.projects.memberships.events.content import ProjectMembershipContent
 from taiga.projects.memberships.models import ProjectMembership
 
 UPDATE_PROJECT_MEMBERSHIP = "projectmemberships.update"
@@ -13,7 +14,9 @@ UPDATE_PROJECT_MEMBERSHIP = "projectmemberships.update"
 
 async def emit_event_when_project_membership_is_updated(membership: ProjectMembership) -> None:
     await events_manager.publish_on_user_channel(
-        user=membership.user, type=UPDATE_PROJECT_MEMBERSHIP, content={"project": membership.project.b64id}
+        user=membership.user,
+        type=UPDATE_PROJECT_MEMBERSHIP,
+        content=ProjectMembershipContent(project=membership.project.b64id),
     )
 
     await events_manager.publish_on_project_channel(project=membership.project, type=UPDATE_PROJECT_MEMBERSHIP)

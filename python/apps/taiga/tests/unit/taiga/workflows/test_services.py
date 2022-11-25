@@ -11,14 +11,14 @@ from taiga.workflows import services
 from tests.utils import factories as f
 
 #######################################################
-# get_project_workflows
+# get_workflows
 #######################################################
 
 
-async def test_get_project_workflows_ok():
+async def test_get_workflows_ok():
     workflows = [f.build_workflow()]
 
     with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
-        fake_workflows_repo.get_project_workflows.return_value = workflows
-        await services.get_project_workflows(project_id="id")
-        fake_workflows_repo.get_project_workflows.assert_awaited_once()
+        fake_workflows_repo.get_workflows.return_value = workflows
+        await services.get_workflows(project_id="id")
+        fake_workflows_repo.get_workflows.assert_awaited_once()

@@ -127,7 +127,7 @@ create_workflow = sync_to_async(create_workflow_sync)
 
 
 @sync_to_async
-def get_project_workflows(
+def get_workflows(
     filters: WorkflowListFilters = {},
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],
     order_by: WorkflowOrderBy = ["order"],
@@ -148,7 +148,7 @@ def get_project_workflows(
 
 
 @sync_to_async
-def get_project_workflow(
+def get_workflow(
     filters: WorkflowFilters = {},
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],
 ) -> WorkflowSchema | None:
@@ -188,6 +188,7 @@ def _get_workflow_dt(workflow: Workflow) -> WorkflowSchema:
 
 class WorkflowStatusFilters(TypedDict, total=False):
     slug: str
+    workflow_id: UUID
     workflow_slug: str
     project_id: UUID
 

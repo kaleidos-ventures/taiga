@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from decimal import Decimal
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 from taiga.base.api import Pagination
@@ -20,6 +20,10 @@ from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.models import WorkflowStatus
 from taiga.workflows.schemas import WorkflowSchema
 
+DEFAULT_ORDER_OFFSET = Decimal(100)  # default offset when adding a story
+DEFAULT_PRE_ORDER = Decimal(0)  # default pre_position when adding a story at the beginning
+
+
 ##########################################################
 # create story
 ##########################################################
@@ -31,12 +35,11 @@ async def create_story(project: Project, workflow: WorkflowSchema, title: str, s
     except StopIteration:
         raise ex.InvalidStatusError("The provided status is not valid.")
 
-    order = 100
     latest_story = await stories_repositories.get_stories(
         filters={"status_id": workflow_status.id}, order_by=["-order"], offset=0, limit=1
     )
-    if latest_story:
-        order += latest_story[0].order
+
+    order = DEFAULT_ORDER_OFFSET + (latest_story[0].order if latest_story else 0)
 
     story = await stories_repositories.create_story(
         title=title,
@@ -57,9 +60,16 @@ async def create_story(project: Project, workflow: WorkflowSchema, title: str, s
 ##########################################################
 
 
-async def get_story(ref: int, project: Project) -> dict[str, Any] | None:
+async def get_story(project_id: UUID, ref: int) -> Story | None:
+    return await stories_repositories.get_story(
+        filters={"ref": ref, "project_id": project_id},
+        select_related=["project"],
+    )
+
+
+async def get_detailed_story(project_id: UUID, ref: int) -> dict[str, Any] | None:
     story = await stories_repositories.get_story(
-        filters={"ref": ref, "project_id": project.id},
+        filters={"ref": ref, "project_id": project_id},
         select_related=["created_by", "project", "workflow", "status", "workspace"],
     )
     if not story:
@@ -74,6 +84,7 @@ async def get_story(ref: int, project: Project) -> dict[str, Any] | None:
         "status": story.status,
         "created_at": story.created_at,
         "created_by": story.created_by,
+        "version": story.version,
         "prev": neighbors.prev,
         "next": neighbors.next,
     }
@@ -107,8 +118,54 @@ async def get_paginated_stories_by_workflow(
 # update stories
 ##########################################################
 
-DEFAULT_POST_OFFSET = 100  # default offset when adding a story at the end
-DEFAULT_FIRST_ORDER = Decimal(0)  # default pre_position when adding a story at the beginning
+
+async def update_story(story: Story, values: dict[str, Any] = {}) -> dict[str, Any]:
+    # Update story
+    update_values = await _validate_and_process_values_to_update(story, values)
+    if not await stories_repositories.update_story(story=story, values=update_values):
+        raise ex.UpdatingStoryWithWrongVersionError("Updating a story with the wrong version.")
+
+    # Get detailed story
+    updated_story = cast(
+        dict[str, None],
+        await get_detailed_story(project_id=story.project_id, ref=story.ref),
+    )
+
+    # Emit event
+    await stories_events.emit_event_when_story_is_updated(
+        project=story.project,
+        story=updated_story,
+        updates_attrs=[*update_values],
+    )
+
+    return updated_story
+
+
+async def _validate_and_process_values_to_update(story: Story, values: dict[str, Any]) -> dict[str, Any]:
+    output = values.copy()
+
+    if status_slug := output.pop("status", None):
+        status = await workflows_repositories.get_status(
+            filters={"workflow_id": story.workflow_id, "slug": status_slug}
+        )
+
+        if not status:
+            raise ex.InvalidStatusError("The provided status is not valid.")
+        elif status.id != story.status_id:
+            output["status"] = status
+
+            # Calculate new order
+            latest_story = await stories_repositories.get_stories(
+                filters={"status_id": status.id}, order_by=["-order"], offset=0, limit=1
+            )
+            output["order"] = DEFAULT_ORDER_OFFSET + (latest_story[0].order if latest_story else 0)
+
+    return output
+
+
+##########################################################
+# reorder stories
+##########################################################
 
 
 async def _calculate_offset(
@@ -120,17 +177,17 @@ async def _calculate_offset(
 
     total_slots = total_stories_to_reorder + 1
 
-    if not reorder_place and not reorder_story:
+    if not reorder_story:
         latest_story = await stories_repositories.get_stories(
             filters={"status_id": target_status.id}, order_by=["-order"], offset=0, limit=1
         )
         if latest_story:
             pre_order = latest_story[0].order
         else:
-            pre_order = DEFAULT_FIRST_ORDER
-        post_order = pre_order + (DEFAULT_POST_OFFSET * total_slots)
+            pre_order = DEFAULT_PRE_ORDER
+        post_order = pre_order + (DEFAULT_ORDER_OFFSET * total_slots)
 
-    elif reorder_story:
+    else:
         neighbors = await stories_repositories.get_story_neighbors(
             story=reorder_story, filters={"status_id": reorder_story.status_id}
         )
@@ -139,14 +196,14 @@ async def _calculate_offset(
             if neighbors.next:
                 post_order = neighbors.next.order
             else:
-                post_order = pre_order + (DEFAULT_POST_OFFSET * total_slots)
+                post_order = pre_order + (DEFAULT_ORDER_OFFSET * total_slots)
 
         elif reorder_place == "before":
             post_order = reorder_story.order
             if neighbors.prev:
                 pre_order = neighbors.prev.order
             else:
-                pre_order = DEFAULT_FIRST_ORDER
+                pre_order = DEFAULT_PRE_ORDER
         else:
             return NotImplemented
 

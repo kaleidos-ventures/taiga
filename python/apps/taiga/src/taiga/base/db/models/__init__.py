@@ -6,7 +6,6 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import uuid
-from typing import Any, Protocol
 
 # isort: off
 from django.db.models import *  # noqa
@@ -38,25 +37,3 @@ class BaseModel(Model):
 
     class Meta:
         abstract = True
-
-
-django_model_type: Any = type(Model)
-protocol_type: Any = type(Protocol)
-
-
-class ModelProtocol(django_model_type, protocol_type):
-    """
-    This technique allows us to use Protocol with Django models without metaclass conflict.
-
-    .. code::
-        class ModelWithProject(Protocol):
-            project_id: UUID
-
-        class SummableMixin(Summable, metaclass=ModelProtocol):
-            ...
-            def __save__(self, ...) -> None:
-                ...
-                self.project_id
-    """
-
-    pass

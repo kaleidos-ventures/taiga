@@ -5,11 +5,12 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from decimal import Decimal
-from typing import Literal, TypedDict
+from typing import Any, Final, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import QuerySet
+from taiga.base.occ import repositories as occ_repositories
 from taiga.base.repositories import neighbors as neighbors_repositories
 from taiga.base.repositories.neighbors import Neighbor
 from taiga.stories.models import Story
@@ -43,20 +44,23 @@ def _apply_filters_to_queryset_list(
     if "project_id" in filters:
         filter_data["project__id"] = filter_data.pop("project_id")
 
-    qs = qs.filter(**filter_data)
-    return qs
+    return qs.filter(**filter_data)
 
 
 class StoryFilters(TypedDict, total=False):
     id: UUID
     ref: int
     project_id: UUID
+    project_slug: str
 
 
 def _apply_filters_to_queryset(qs: QuerySet[Story], filters: StoryFilters = {}) -> QuerySet[Story]:
-    qs = qs.filter(**filters)
+    filter_data = dict(filters.copy())
 
-    return qs
+    if "project_slug" in filters:
+        filter_data["project__slug"] = filter_data.pop("project_slug")
+
+    return qs.filter(**filter_data)
 
 
 StorySelectRelated = list[
@@ -82,8 +86,7 @@ def _apply_select_related_to_queryset(
         else:
             select_related_data.append(key)
 
-    qs = qs.select_related(*select_related_data)
-    return qs
+    return qs.select_related(*select_related_data)
 
 
 StoryOrderBy = list[
@@ -96,9 +99,7 @@ StoryOrderBy = list[
 
 
 def _apply_order_by_to_queryset(qs: QuerySet[Story], order_by: StoryOrderBy) -> QuerySet[Story]:
-    qs = qs.order_by(*order_by)
-
-    return qs
+    return qs.order_by(*order_by)
 
 
 ##########################################################
@@ -170,6 +171,14 @@ def get_stories(
 ##########################################################
 # update stories
 ##########################################################
+
+PROTECTED_ATTRS_ON_UPDATE: Final[list[str]] = [
+    "title",
+]
+
+
+async def update_story(story: Story, values: dict[str, Any] = {}) -> bool:
+    return await occ_repositories.update(story, values=values, protected_attrs=PROTECTED_ATTRS_ON_UPDATE)
 
 
 @sync_to_async

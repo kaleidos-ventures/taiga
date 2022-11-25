@@ -8,11 +8,16 @@ from unittest.mock import Mock
 
 import pytest
 from fastapi.websockets import WebSocket
+from taiga.base.serializers import BaseModel
 from taiga.events import channels
 from taiga.events.events import Event
 from taiga.events.manager import EventsManager
 from taiga.events.pubsub import RedisPubSubBackend
 from tests.utils import factories as f
+
+
+class MsgEventContent(BaseModel):
+    msg: str
 
 
 @pytest.fixture
@@ -93,7 +98,7 @@ async def test_pubsub_manager_publish_and_listen(pubsub):
 async def test_pubsub_manager_publish_on_system_channel(pubsub):
     channel = channels.system_channel()
     t = "event"
-    c = {"msg": "msg"}
+    c = MsgEventContent(msg="msg")
     event = Event(type=t, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})
@@ -112,7 +117,7 @@ async def test_pubsub_manager_publish_on_user_channel(pubsub):
     user = f.build_user()
     channel = channels.user_channel(user)
     t = "event"
-    c = {"msg": "msg"}
+    c = MsgEventContent(msg="msg")
     event = Event(type=t, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})
@@ -131,7 +136,7 @@ async def test_pubsub_manager_publish_on_project_channel(pubsub):
     project = f.build_project()
     channel = channels.project_channel(project)
     t = "event"
-    c = {"msg": "msg"}
+    c = MsgEventContent(msg="msg")
     event = Event(type=t, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})
@@ -150,7 +155,7 @@ async def test_pubsub_manager_publish_on_workspace_channel(pubsub):
     workspace = f.build_workspace()
     channel = channels.workspace_channel(workspace)
     t = "event"
-    c = {"msg": "msg"}
+    c = MsgEventContent(msg="msg")
     event = Event(type=t, content=c)
 
     websocket = Mock(spec=WebSocket, scope={})

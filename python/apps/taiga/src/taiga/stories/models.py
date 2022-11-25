@@ -7,10 +7,11 @@
 
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin
+from taiga.base.occ.models import VersionedMixin
 from taiga.projects.references.mixins import ProjectReferenceMixin
 
 
-class Story(models.BaseModel, ProjectReferenceMixin, CreatedMetaInfoMixin):
+class Story(models.BaseModel, ProjectReferenceMixin, VersionedMixin, CreatedMetaInfoMixin):
     title = models.CharField(max_length=500, null=False, blank=False, verbose_name="title")
     order = models.DecimalField(
         max_digits=16, decimal_places=10, default=100, null=False, blank=False, verbose_name="order"

@@ -7,12 +7,12 @@ At some point the fixtures may have become obsolete due to changes in the databa
 To regenerate the `fixtures.sql` file:
 
 1. Add this variable to your python .env
-`TAIGA_SECRET_KEY="secret"`
-
+   ```
+   TAIGA_SECRET_KEY="secret"
+   ```
 2. Follow the python guide and regenerate the database
-
 3. Change to the GitHub fixtures directory `taiga/.github/sql-fixtures`
-
 4. Then, finally make the dump
-
-`pg_dump -Fc -Z 9 --file=fixtures.sql taiga`
+   ```
+   pg_dump -Fc -Z 9 --file=fixtures.sql taiga
+   ```

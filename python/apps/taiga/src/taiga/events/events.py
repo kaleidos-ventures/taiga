@@ -5,19 +5,18 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-
 from typing import Any
 
 from pydantic import Field
 from taiga.base.logging.context import get_current_correlation_id
 from taiga.base.serializers import BaseModel
 
-EventContent = dict[str, Any] | BaseModel | None
+EventContent = BaseModel | None
 
 
 class Event(BaseModel):
     type: str
-    content: EventContent = None
+    content: dict[str, Any] | EventContent = None
     correlation_id: str | None = Field(default_factory=get_current_correlation_id)
 
     def __eq__(self, other: object) -> bool:
@@ -29,7 +28,8 @@ class Event(BaseModel):
         )
 
     def __repr__(self) -> str:
-        return f"Event(type={self.type!r}, correlation_id={self.correlation_id}, content={self.content!r})"
+        _content = self.content.dict(by_alias=True) if isinstance(self.content, BaseModel) else self.content
+        return f"Event(type={self.type!r}, correlation_id={self.correlation_id}, content={_content!r})"
 
     def __str__(self) -> str:
-        return self.json()
+        return self.json(by_alias=True)

@@ -7,18 +7,27 @@
 
 from typing import Any
 
-from pydantic import conlist, constr, validator
+from pydantic import ConstrainedStr, conlist, validator
+from pydantic.types import PositiveInt
 from taiga.base.serializers import BaseModel
+from taiga.base.validators import StrNotEmpty
+
+
+class Title(ConstrainedStr):
+    strip_whitespace = True
+    min_length = 1
+    max_length = 500
 
 
 class StoryValidator(BaseModel):
-    title: constr(strip_whitespace=True, max_length=500)  # type: ignore
-    status: str
+    title: Title
+    status: StrNotEmpty
 
-    @validator("status")
-    def check_not_empty(cls, v: str) -> str:
-        assert v != "", "Empty field is not allowed"
-        return v
+
+class UpdateStoryValidator(BaseModel):
+    version: PositiveInt
+    title: Title | None
+    status: str | None
 
 
 class ReorderValidator(BaseModel):
@@ -32,14 +41,9 @@ class ReorderValidator(BaseModel):
 
 
 class ReorderStoriesValidator(BaseModel):
-    status: str
+    status: StrNotEmpty
     stories: conlist(int, min_items=1)  # type: ignore[valid-type]
     reorder: ReorderValidator | None
-
-    @validator("status")
-    def check_not_empty(cls, v: str) -> str:
-        assert v != "", "Empty field is not allowed"
-        return v
 
     @validator("stories")
     def return_unique_stories(cls, v: list[int]) -> list[int]:

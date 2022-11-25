@@ -5,5 +5,11 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.validators.fields import B64UUID, LanguageCode, StrNotEmpty  # noqa
-from taiga.base.validators.forms import as_form  # noqa
+from taiga.base.db import models
+
+
+class VersionedMixin(models.Model):
+    version = models.PositiveBigIntegerField(null=False, blank=False, default=1, verbose_name="version")
+
+    class Meta:
+        abstract = True

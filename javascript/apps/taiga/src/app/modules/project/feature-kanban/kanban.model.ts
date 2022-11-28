@@ -30,7 +30,8 @@ export interface KanbanStoryA11y {
   };
 }
 
-export interface PartialStory extends SetOptional<BaseStory, 'ref' | 'slug'> {
+export interface PartialStory
+  extends SetOptional<BaseStory, 'ref' | 'slug' | 'version'> {
   tmpId: string;
 }
 

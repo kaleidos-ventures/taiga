@@ -15,7 +15,6 @@ import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { Story } from '@taiga/data';
 import { delay, filter, finalize, map, tap } from 'rxjs';
-import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
@@ -23,6 +22,7 @@ import {
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
 import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
+import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { AppService } from '~/app/services/app.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import {
@@ -245,9 +245,8 @@ export class KanbanEffects {
         filter((error) => error.errorStatus === 403),
         tap(() => {
           this.appService.toastNotification({
-            message: 'modify_story_permission',
+            message: 'errors.modify_story_permission',
             status: TuiNotification.Error,
-            scope: 'kanban',
           });
         })
       );
@@ -258,7 +257,7 @@ export class KanbanEffects {
   public loadStoryDetailSuccess$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(ProjectActions.fetchStory),
+        ofType(StoryDetailActions.initStory),
         tap((action) => {
           this.kanbanScrollManagerService
             .scrollToRef(action.storyRef)

@@ -6,13 +6,14 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
+/* stylelint-disable declaration-no-important */
+
 @import "tools/typography.css";
 
 /* select type: avatar | text */
 .avatar {
   & ::ng-deep {
     & .t-input_template {
-      /* stylelint-disable-next-line declaration-no-important */
       padding-inline-start: var(--spacing-4) !important;
     }
   }
@@ -28,18 +29,26 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     margin: 0;
     overflow: hidden;
     padding: 0;
-    /* stylelint-disable-next-line declaration-no-important */
     position: absolute !important;
     white-space: nowrap;
   }
 }
 
 :host {
+  --hover-bg-color: var(--color-gray10);
+  --focused-bg-color: var(--color-white);
+
   display: block;
 
   &.readonly ::ng-deep {
     & tui-arrow {
       visibility: hidden;
+    }
+
+    & .t-input_template {
+      border: 0;
+      inline-size: 100% !important;
+      max-inline-size: 100% !important;
     }
   }
 
@@ -70,7 +79,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & .t-icon {
-    /* stylelint-disable-next-line declaration-no-important */
     color: var(--color-secondary) !important;
   }
 
@@ -97,8 +105,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       padding-inline-end: var(--spacing-4);
     }
 
+    &:not([data-state="readonly"]) {
+      &:hover {
+        background: var(--hover-bg-color);
+      }
+    }
+
     &._focused {
-      background: var(--color-white);
+      background: var(--focused-bg-color);
 
       &[data-state="readonly"] {
         background: var(--color-gray10);

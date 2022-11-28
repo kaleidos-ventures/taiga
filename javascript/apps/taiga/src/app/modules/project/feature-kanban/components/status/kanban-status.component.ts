@@ -26,7 +26,6 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Status, Story, StoryDetail, Workflow } from '@taiga/data';
 import { distinctUntilChanged, map, takeUntil, timer } from 'rxjs';
-import { selectCurrentStory } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
@@ -50,7 +49,9 @@ import {
 import { PermissionsService } from '~/app/services/permissions.service';
 import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service';
 import { filterNil } from '~/app/shared/utils/operators';
+import { selectStory } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
 import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 export interface KanbanComponentState {
   stories: KanbanStory[];
@@ -168,13 +169,6 @@ export class KanbanStatusComponent
   public static slideInTime = 300;
   public color = '';
 
-  private colors: Record<Status['color'], string> = {
-    1: 'var(--color-gray60)',
-    2: 'var(--color-ok60)',
-    3: 'var(--color-notice60)',
-    4: 'var(--color-info60)',
-  };
-
   public get columnSize() {
     return this.kanbanWorkflowComponent.statusColumnSize;
   }
@@ -242,7 +236,7 @@ export class KanbanStatusComponent
       'canEdit',
       this.permissionService.hasPermissions$('story', ['modify'])
     );
-    this.state.connect('currentStory', this.store.select(selectCurrentStory));
+    this.state.connect('currentStory', this.store.select(selectStory));
 
     this.watchNewStories();
   }
@@ -309,9 +303,7 @@ export class KanbanStatusComponent
   }
 
   private fillColor() {
-    if (this.colors[this.status.color]) {
-      this.color = this.colors[this.status.color];
-    }
+    this.color = `var(--color-${UtilsService.statusColor(this.status.color)})`;
   }
 
   private watchNewStories() {

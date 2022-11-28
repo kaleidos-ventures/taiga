@@ -22,12 +22,10 @@ import { RxState } from '@rx-angular/state';
 import { StoryView } from '@taiga/data';
 import {
   selectLoadingStory,
-  selectShowStoryView,
   selectStoryView,
-} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+} from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 interface WrapperSideViewState {
-  showView: boolean;
   selectedStoryView: StoryView;
   loadingStory: boolean;
 }
@@ -64,7 +62,6 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
     private state: RxState<WrapperSideViewState>,
     private localStorage: LocalStorageService
   ) {
-    this.state.connect('showView', this.store.select(selectShowStoryView));
     this.state.connect('selectedStoryView', this.store.select(selectStoryView));
     this.state.connect('loadingStory', this.store.select(selectLoadingStory));
   }

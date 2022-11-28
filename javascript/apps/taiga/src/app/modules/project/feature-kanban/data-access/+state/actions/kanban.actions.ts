@@ -94,5 +94,6 @@ export const KanbanEventsActions = createActionGroup({
   events: {
     'New Story': props<{ story: Story }>(),
     'Reorder Story': props<KanbanReorderEvent['reorder']>(),
+    'Update Story': props<{ story: Story }>(),
   },
 });

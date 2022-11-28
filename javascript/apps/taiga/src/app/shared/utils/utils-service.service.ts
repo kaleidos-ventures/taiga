@@ -10,6 +10,7 @@ import { LocationStrategy } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { Status } from '@taiga/data';
 import { take } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
@@ -83,5 +84,16 @@ export class UtilsService {
     return this.locationStrategy.prepareExternalUrl(
       this.router.serializeUrl(urlTree)
     );
+  }
+
+  public static statusColor(colorNumber: number, type = 60) {
+    const colors: Record<Status['color'], string> = {
+      1: `gray${type}`,
+      2: `ok${type}`,
+      3: `notice${type}`,
+      4: `info${type}`,
+    };
+
+    return colors[colorNumber];
   }
 }

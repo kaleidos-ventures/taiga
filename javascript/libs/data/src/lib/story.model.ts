@@ -11,13 +11,14 @@ import { Workflow } from './workflow.model';
 
 export interface Story {
   ref: number;
+  version: number;
   title: string;
   slug: string;
   status: Pick<Status, 'slug' | 'color' | 'name'>;
 }
 
 export interface StoryDetail extends Story {
-  workflow: Partial<Workflow>;
+  workflow: Pick<Workflow, 'name' | 'slug'>;
   prev: null | {
     ref: Story['ref'];
     title: Story['title'];
@@ -28,6 +29,12 @@ export interface StoryDetail extends Story {
   };
   createdBy: createdBy;
   createdAt: string;
+}
+
+export interface StoryUpdate {
+  ref: Story['ref'];
+  version: Story['version'];
+  status?: Story['status']['slug'];
 }
 
 export interface createdBy {

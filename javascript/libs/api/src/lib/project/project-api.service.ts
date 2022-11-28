@@ -20,6 +20,7 @@ import {
   Status,
   Story,
   StoryDetail,
+  StoryUpdate,
   Workflow,
 } from '@taiga/data';
 import { Observable } from 'rxjs';
@@ -273,6 +274,15 @@ export class ProjectApiService {
     );
   }
 
+  public getWorkflow(
+    projectId: Project['id'],
+    slug: string
+  ): Observable<Workflow> {
+    return this.http.get<Workflow>(
+      `${this.config.apiUrl}/projects/${projectId}/workflows/${slug}`
+    );
+  }
+
   public updateInvitationRole(
     id: string,
     userData: { id: string; roleSlug: string }
@@ -374,6 +384,15 @@ export class ProjectApiService {
   ): Observable<StoryDetail> {
     return this.http.get<StoryDetail>(
       `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}`
+    );
+  }
+
+  public updateStory(projectId: Project['id'], story: StoryUpdate) {
+    return this.http.patch<StoryDetail>(
+      `${this.config.apiUrl}/projects/${projectId}/stories/${story.ref}`,
+      {
+        ...story,
+      }
     );
   }
 }

@@ -23,7 +23,7 @@ describe('Settings', () => {
     cy.visit('/');
     createWorkspaceRequest(workspace.name)
       .then((request) => {
-        void createFullProjectInWSRequest(request.body.slug, project.name);
+        void createFullProjectInWSRequest(request.body.id, project.name);
       })
       .catch(console.error);
   });

@@ -127,3 +127,16 @@ export function setIntialPosition(state: KanbanState, story: KanbanStory) {
 
   return state;
 }
+
+export function replaceStory(
+  state: KanbanState,
+  fn: (story: KanbanStory) => KanbanStory
+) {
+  Object.entries(state.stories).forEach(([status, stories]) => {
+    state.stories[status] = stories.map((it) => {
+      return fn(it);
+    });
+  });
+
+  return state;
+}

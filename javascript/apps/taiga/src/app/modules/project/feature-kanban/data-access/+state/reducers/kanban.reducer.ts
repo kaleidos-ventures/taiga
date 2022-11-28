@@ -28,8 +28,10 @@ import {
   findStory,
   getStory,
   removeStory,
+  replaceStory,
   setIntialPosition,
 } from './kanban.reducer.helpers';
+import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 
 export interface KanbanState {
   loadingWorkflows: boolean;
@@ -527,6 +529,48 @@ export const reducer = createReducer(
         }
       }
     });
+
+    return state;
+  }),
+  on(StoryDetailActions.updateStory, (state, { story }): KanbanState => {
+    const oldStory = findStory(state, (it) => it.ref === story.ref);
+
+    // TODO: current workflow
+    if (oldStory?.status.slug !== story.status && state.workflows) {
+      const status = state.workflows[0].statuses.find(
+        (it) => it.slug === story.status
+      );
+
+      if (oldStory && status && state.stories[status.slug]) {
+        state = removeStory(state, (it) => it.ref === story.ref);
+        state.stories[status.slug].push({
+          ...oldStory,
+          ...story,
+          status,
+        });
+      }
+    }
+
+    return state;
+  }),
+  on(KanbanEventsActions.updateStory, (state, { story }): KanbanState => {
+    const oldStory = findStory(state, (it) => it.ref === story.ref);
+
+    if (oldStory?.status.slug !== story?.status.slug) {
+      state = removeStory(state, (it) => it.ref === story.ref);
+      state.stories[story.status.slug].push(story);
+    } else {
+      state = replaceStory(state, (it) => {
+        if (it.ref === story.ref) {
+          return {
+            ...it,
+            ...story,
+          };
+        }
+
+        return it;
+      });
+    }
 
     return state;
   })

@@ -7,7 +7,13 @@
  */
 
 import { randText } from '@ngneat/falso';
-import { InvitationRequest, Project, Workspace } from '@taiga/data';
+import {
+  InvitationRequest,
+  Project,
+  Status,
+  Story,
+  Workspace,
+} from '@taiga/data';
 import { request } from './api.helpers';
 
 // NAVIGATION
@@ -42,14 +48,14 @@ export const createFullProjectInWS = (
 };
 
 export const createFullProjectInWSRequest = (
-  workspaceSlug: Workspace['slug'],
+  workspaceId: Workspace['id'],
   projectName: Project['name']
 ): Promise<Cypress.Response<Project>> => {
   return request(
     'POST',
     '/projects',
     {
-      workspaceSlug: workspaceSlug,
+      workspaceId: workspaceId,
       name: projectName,
       color: 1,
       logo: undefined,
@@ -99,4 +105,20 @@ export const createProjectWsDetail = (projectName: string) => {
   selectBlankProject();
   typeProjectName(projectName);
   submitProject();
+};
+
+export const createStoryRequest = (
+  workspaceSlug: Workspace['slug'],
+  projectId: Project['id'],
+  story: Partial<Story>,
+  statusSlug: Status['slug']
+): Promise<Cypress.Response<Project>> => {
+  return request(
+    'POST',
+    `/projects/${projectId}/workflows/${workspaceSlug}/stories`,
+    {
+      ...story,
+      status: statusSlug,
+    }
+  );
 };

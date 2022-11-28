@@ -6,9 +6,16 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randNumber, randSlug, randText } from '@ngneat/falso';
+import {
+  randFullName,
+  randNumber,
+  randPastDate,
+  randSlug,
+  randText,
+  randUser,
+} from '@ngneat/falso';
 import { Status, StatusMockFactory } from '..';
-import { Story } from './story.model';
+import { Story, StoryDetail } from './story.model';
 
 export const StoryMockFactory = (
   statuses: Status[] = [
@@ -25,8 +32,42 @@ export const StoryMockFactory = (
 
   return {
     ref: randNumber({ min: 1, max: 999 }),
+    version: randNumber(),
     title: randText({ charCount: titleCount }),
     slug: randSlug(),
     status: statuses[Math.floor(Math.random() * statuses.length)],
+  };
+};
+
+export const StoryDetailMockFactory = (
+  statuses: Status[] = [
+    StatusMockFactory(),
+    StatusMockFactory(),
+    StatusMockFactory(),
+  ]
+): StoryDetail => {
+  let titleCount = Math.floor(Math.random() * 200);
+
+  if (titleCount < 10) {
+    titleCount = 10;
+  }
+
+  return {
+    ref: randNumber({ min: 1, max: 999 }),
+    version: randNumber(),
+    title: randText({ charCount: titleCount }),
+    slug: randSlug(),
+    status: statuses[Math.floor(Math.random() * statuses.length)],
+    workflow: {
+      name: randText(),
+      slug: randSlug(),
+    },
+    prev: null,
+    next: null,
+    createdBy: {
+      username: randUser().username,
+      fullName: randFullName(),
+    },
+    createdAt: randPastDate().toString(),
   };
 };

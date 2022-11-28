@@ -9,7 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <tui-scrollbar class="modal-scrollbar">
-      <tg-kanban-story-detail *ngIf="!vm.loadingStory"></tg-kanban-story-detail>
+      <tg-story-detail *ngIf="!vm.loadingStory"></tg-story-detail>
       <tg-story-detail-skeleton
         *ngIf="vm.loadingStory"></tg-story-detail-skeleton>
     </tui-scrollbar>

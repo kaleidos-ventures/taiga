@@ -10,3 +10,7 @@ export const navigateToKanban = () => {
   cy.getBySel('kanban-button').click();
   cy.get('tg-project-feature-kanban').should('be.visible');
 };
+
+export const getStatusColumn = (statusSlug: string) => {
+  return cy.getBySel(statusSlug);
+};

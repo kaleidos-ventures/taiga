@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { selectLoadingStory } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { selectLoadingStory } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 
 export interface StoryState {
   loadingStory: boolean;

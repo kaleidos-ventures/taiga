@@ -22,9 +22,9 @@ import { Store } from '@ngrx/store';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { Project } from '@taiga/data';
 import { AvatarModule } from '@taiga/ui/avatar';
-import { clearStory } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
+import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 
 interface ProjectMenuDialog {
   hover: boolean;
@@ -236,6 +236,6 @@ export class ProjectNavigationMenuComponent {
   }
 
   public clearStoryDetail() {
-    this.store.dispatch(clearStory());
+    this.store.dispatch(StoryDetailActions.leaveStoryDetail());
   }
 }

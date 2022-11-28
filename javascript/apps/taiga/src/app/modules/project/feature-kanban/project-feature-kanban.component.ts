@@ -16,19 +16,19 @@ import { RxState } from '@rx-angular/state';
 import { TuiNotification } from '@taiga-ui/core';
 import { ShortcutsService } from '@taiga/core';
 import { Project, Story, StoryDetail, StoryView } from '@taiga/data';
-import { filter, map } from 'rxjs';
-import { clearStory } from '~/app/modules/project/data-access/+state/actions/project.actions';
-import {
-  selectCurrentProject,
-  selectCurrentStory,
-  selectShowStoryView,
-  selectStoryView,
-} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { filter, map, startWith } from 'rxjs';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
+import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { filterNil } from '~/app/shared/utils/operators';
+import { StoryDetailActions } from '../story-detail/data-access/+state/actions/story-detail.actions';
+import {
+  selectStory,
+  selectStoryView,
+} from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 import {
   KanbanActions,
   KanbanEventsActions,
@@ -81,8 +81,6 @@ export class ProjectFeatureKanbanComponent {
       };
     })
   );
-  public showStoryDetail$ = this.store.select(selectShowStoryView);
-  public storyView$ = this.store.select(selectStoryView);
   public project$ = this.store.select(selectCurrentProject);
 
   constructor(
@@ -93,7 +91,8 @@ export class ProjectFeatureKanbanComponent {
     private router: Router,
     private appService: AppService,
     private location: Location,
-    public shortcutsService: ShortcutsService
+    public shortcutsService: ShortcutsService,
+    public routeHistoryService: RouteHistoryService
   ) {
     const canViewPage = this.permissionService.hasPermissions('story', [
       'view',
@@ -116,12 +115,16 @@ export class ProjectFeatureKanbanComponent {
     );
     this.state.connect(
       'showStoryDetail',
-      this.store.select(selectShowStoryView)
+      this.routeHistoryService.urlChanged.pipe(
+        map((it) => it.url),
+        startWith(this.router.url),
+        map((url) => url.includes('/stories/'))
+      )
     );
 
     this.state.connect(
       'selectedStory',
-      this.store.select(selectCurrentStory).pipe(filterNil())
+      this.store.select(selectStory).pipe(filterNil())
     );
 
     this.state.connect('storyView', this.store.select(selectStoryView));
@@ -167,7 +170,7 @@ export class ProjectFeatureKanbanComponent {
         }
       }
     }, 200);
-    this.store.dispatch(clearStory());
+    this.store.dispatch(StoryDetailActions.leaveStoryDetail());
     this.location.replaceState(
       `project/${this.state.get('project').id}/${
         this.state.get('project').slug
@@ -193,7 +196,7 @@ export class ProjectFeatureKanbanComponent {
       }
     }, 200);
 
-    this.store.dispatch(clearStory());
+    this.store.dispatch(StoryDetailActions.leaveStoryDetail());
     this.location.replaceState(
       `project/${this.state.get('project').id}/${
         this.state.get('project').slug
@@ -225,6 +228,15 @@ export class ProjectFeatureKanbanComponent {
       .subscribe((event) => {
         this.store.dispatch(
           KanbanEventsActions.reorderStory(event.event.content.reorder)
+        );
+      });
+
+    this.wsService
+      .projectEvents<{ story: StoryDetail }>('stories.update')
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => {
+        this.store.dispatch(
+          KanbanEventsActions.updateStory({ story: msg.event.content.story })
         );
       });
   }

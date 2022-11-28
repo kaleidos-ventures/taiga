@@ -17,6 +17,9 @@ export class SelectHelper {
     if (this.option) {
       cy.getBySel(this.option).eq(optionIndex).should('be.visible');
       cy.getBySel(this.option).eq(optionIndex).click({ force: true });
+    } else {
+      cy.get('tui-data-list button').eq(optionIndex).should('be.visible');
+      cy.get('tui-data-list button').eq(optionIndex).click({ force: true });
     }
   }
 

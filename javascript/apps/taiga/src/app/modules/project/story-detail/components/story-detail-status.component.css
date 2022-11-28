@@ -1,0 +1,115 @@
+/* stylelint-disable declaration-no-important */
+/* stylelint-disable selector-max-compound-selectors */
+
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+:host {
+  container-type: inline-size;
+  display: block;
+}
+
+.status-field {
+  --hover-bg-color: var(--color-gray20);
+
+  inline-size: 100%;
+  max-inline-size: 450px;
+
+  &.loading tui-select {
+    display: none;
+  }
+
+  & tui-select {
+    max-inline-size: 312px;
+
+    &:not(._focused) {
+      &::ng-deep [tuiwrapper][data-appearance="textfield"]::after {
+        opacity: 0;
+      }
+    }
+  }
+}
+
+@container (inline-size > 280px) {
+  /* FIX: !important https://github.com/angular/angular/issues/48264 */
+  .status-field {
+    align-items: center;
+    display: flex !important;
+    justify-content: space-between;
+  }
+
+  label {
+    inline-size: 30%;
+    margin: 0 !important;
+  }
+
+  .input-container {
+    inline-size: 70%;
+  }
+}
+
+.status-tui {
+  & ::ng-deep {
+    & tui-select-option {
+      & .t-content {
+        max-inline-size: 100%;
+      }
+    }
+
+    & .t-input {
+      padding-block: 0 !important;
+      padding-inline: var(--tui-padding-l) 0.5rem !important;
+    }
+
+    & .t-textfield .t-content {
+      padding-inline: var(--tui-padding-l) 0.5rem !important;
+    }
+
+    & .t-input_template {
+      inline-size: 100% !important;
+      max-inline-size: 100% !important;
+      padding-inline-start: var(--spacing-4) !important;
+    }
+  }
+}
+
+.loading-status {
+  background: var(--color-gray10);
+  padding: var(--spacing-8);
+
+  & .loading-status-content {
+    background: var(--color-gray30);
+    block-size: 15px;
+    border-radius: 4px;
+    inline-size: 100%;
+  }
+}
+
+.status-option {
+  align-items: center;
+  border-radius: 4px;
+  display: flex;
+  inline-size: 100%;
+  padding: var(--spacing-4);
+
+  & .status-color {
+    block-size: var(--spacing-12);
+    border: 3px solid var(--color-gray100);
+    border-radius: 50%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    inline-size: var(--spacing-12);
+    margin-inline-end: var(--spacing-8);
+  }
+
+  & .status-name {
+    @mixin text-overflow;
+  }
+}

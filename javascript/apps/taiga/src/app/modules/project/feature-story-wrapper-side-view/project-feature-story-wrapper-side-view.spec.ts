@@ -8,7 +8,7 @@
 
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { selectStoryView } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { selectStoryView } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { ProjectFeatureStoryWrapperSideViewComponent } from './project-feature-story-wrapper-side-view.component';
 

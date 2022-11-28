@@ -6,12 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { randUuid } from '@ngneat/falso';
 import {
   StatusMockFactory,
   StoryMockFactory,
   WorkflowMockFactory,
 } from '@taiga/data';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
+import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import {
   KanbanActions,
   KanbanApiActions,
@@ -404,5 +406,163 @@ describe('Kanban reducer', () => {
 
     expect(state.stories[status.slug][0].ref).toEqual(stories[1].ref);
     expect(state.stories[status2.slug][1].ref).toEqual(stories[0].ref);
+  });
+
+  it('update story status', () => {
+    const { initialKanbanState } = kanbanReducer;
+    const workflow = WorkflowMockFactory();
+    const status = StatusMockFactory();
+    const status2 = StatusMockFactory();
+
+    workflow.statuses = [status, status2];
+
+    const stories: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status]),
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+    ];
+    const stories2: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status2]),
+      },
+    ];
+
+    const storyUpdate = {
+      ref: stories[0].ref!,
+      version: 1,
+      status: status2.slug,
+    };
+
+    const state = kanbanReducer.kanbanFeature.reducer(
+      {
+        ...initialKanbanState,
+        stories: {
+          [status.slug]: stories,
+          [status2.slug]: stories2,
+        },
+        workflows: [workflow],
+      },
+      StoryDetailActions.updateStory({
+        projectId: randUuid(),
+        story: storyUpdate,
+      })
+    );
+
+    expect(state.stories[status.slug].length).toEqual(3);
+    expect(state.stories[status2.slug][1].ref).toEqual(stories[0].ref);
+  });
+
+  it('update story status by event', () => {
+    const { initialKanbanState } = kanbanReducer;
+    const workflow = WorkflowMockFactory();
+    const status = StatusMockFactory();
+    const status2 = StatusMockFactory();
+    const story = StoryMockFactory([status]);
+
+    workflow.statuses = [status, status2];
+
+    const stories: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status]),
+        ref: story.ref,
+        slug: story.slug,
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+    ];
+    const stories2: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status2]),
+      },
+    ];
+
+    const state = kanbanReducer.kanbanFeature.reducer(
+      {
+        ...initialKanbanState,
+        stories: {
+          [status.slug]: stories,
+          [status2.slug]: stories2,
+        },
+        workflows: [workflow],
+      },
+      KanbanEventsActions.updateStory({
+        story: {
+          ...story,
+          title: 'new title',
+          status: status2,
+        },
+      })
+    );
+
+    expect(state.stories[status.slug].length).toEqual(3);
+    expect(state.stories[status2.slug][1].ref).toEqual(stories[0].ref);
+    expect(state.stories[status2.slug][1].title).toEqual('new title');
+  });
+
+  it('update story title by event', () => {
+    const { initialKanbanState } = kanbanReducer;
+    const workflow = WorkflowMockFactory();
+    const status = StatusMockFactory();
+    const status2 = StatusMockFactory();
+    const story = StoryMockFactory([status]);
+
+    workflow.statuses = [status, status2];
+
+    const stories: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status]),
+        ref: story.ref,
+        slug: story.slug,
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+      {
+        ...StoryMockFactory([status]),
+      },
+    ];
+    const stories2: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status2]),
+      },
+    ];
+
+    const state = kanbanReducer.kanbanFeature.reducer(
+      {
+        ...initialKanbanState,
+        stories: {
+          [status.slug]: stories,
+          [status2.slug]: stories2,
+        },
+        workflows: [workflow],
+      },
+      KanbanEventsActions.updateStory({
+        story: {
+          ...story,
+          title: 'new title',
+        },
+      })
+    );
+
+    expect(state.stories[status.slug][0].title).toEqual('new title');
   });
 });

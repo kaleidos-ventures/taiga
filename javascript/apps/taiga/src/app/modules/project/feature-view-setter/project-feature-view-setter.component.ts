@@ -11,9 +11,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { distinctUntilChanged, map } from 'rxjs';
-import { fetchStory } from '~/app/modules/project/data-access/+state/actions/project.actions';
-import { selectStoryView } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
+import { StoryDetailActions } from '../story-detail/data-access/+state/actions/story-detail.actions';
+import {
+  selectStory,
+  selectStoryView,
+} from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 
 @UntilDestroy()
 @Component({
@@ -25,6 +28,7 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
 })
 export class ProjectFeatureViewSetterComponent {
   public storyView$ = this.store.select(selectStoryView);
+  public selectStory$ = this.store.select(selectStory);
   public isKanban = false;
 
   constructor(
@@ -58,7 +62,7 @@ export class ProjectFeatureViewSetterComponent {
     const params = this.getUrlParams();
 
     this.store.dispatch(
-      fetchStory({
+      StoryDetailActions.initStory({
         projectId: params.projectId,
         storyRef: params.storyRef,
       })
@@ -69,8 +73,8 @@ export class ProjectFeatureViewSetterComponent {
     const url = window.location.href;
 
     return {
-      projectId: url.match(/(?<=project\/)[^/]+/)![0],
-      storyRef: +url.match(/(?<=stories\/)[^/]+/)![0],
+      projectId: url.match(/(?<=\/project\/)[^/]+/)![0],
+      storyRef: +url.match(/(?<=\/stories\/)[^/]+/)![0],
     };
   }
 }

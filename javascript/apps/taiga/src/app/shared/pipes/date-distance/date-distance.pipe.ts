@@ -38,12 +38,10 @@ export class DateDistancePipe implements PipeTransform {
         return format(createdAt, 'MMM d');
       } else {
         if (secondsDistance <= 60) {
-          return this.translocoService.translate('kanban.story_detail.now');
+          return this.translocoService.translate('story.now');
         }
         const distance = formatDistanceToNow(createdAt);
-        const agoString = this.translocoService.translate(
-          'kanban.story_detail.ago'
-        );
+        const agoString = this.translocoService.translate('story.ago');
         return `${distance} ${agoString}`;
       }
     } else {

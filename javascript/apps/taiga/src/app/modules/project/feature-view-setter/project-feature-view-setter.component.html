@@ -10,7 +10,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <ng-container *ngIf="storyView !== 'full-view' || isKanban">
     <tg-project-feature-kanban></tg-project-feature-kanban>
   </ng-container>
-  <ng-container *ngIf="storyView === 'full-view'">
-    <tg-project-feature-story-wrapper-full-view></tg-project-feature-story-wrapper-full-view>
+  <ng-container *ngIf="selectStory$ | async as story">
+    <tg-project-feature-story-wrapper-full-view
+      *ngIf="
+        storyView === 'full-view' && story
+      "></tg-project-feature-story-wrapper-full-view>
   </ng-container>
 </ng-container>

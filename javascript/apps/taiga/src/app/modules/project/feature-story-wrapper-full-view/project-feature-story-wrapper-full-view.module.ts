@@ -10,14 +10,14 @@ import { NgModule } from '@angular/core';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { StoryDetailSkeletonComponent } from '../story-detail-skeleton/story-detail-skeleton.component';
-import { KanbanStoryDetailComponent } from '../story-detail/kanban-story-detail.component';
+import { StoryDetailModule } from '../story-detail/story-detail.module';
 import { ProjectFeatureStoryWrapperFullViewComponent } from './project-feature-story-wrapper-full-view.component';
 
 @NgModule({
   imports: [
     TuiSvgModule,
     CommonTemplateModule,
-    KanbanStoryDetailComponent,
+    StoryDetailModule,
     StoryDetailSkeletonComponent,
   ],
   declarations: [ProjectFeatureStoryWrapperFullViewComponent],

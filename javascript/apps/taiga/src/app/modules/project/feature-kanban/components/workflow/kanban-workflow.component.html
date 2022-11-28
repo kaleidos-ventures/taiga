@@ -16,6 +16,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <ng-container
       *cdkVirtualFor="let status of workflow.statuses; trackBy: trackBySlug">
       <tg-kanban-status
+        [attr.data-test]="status.slug"
         [status]="status"
         [workflow]="workflow"></tg-kanban-status>
     </ng-container>

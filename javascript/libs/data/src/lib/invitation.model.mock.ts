@@ -36,6 +36,7 @@ export const InvitationInfoMockFactory = (): InvitationInfo => {
     existingUser: randBoolean(),
     availableLogins,
     project: {
+      id: project.id,
       name: project.name,
       slug: project.slug,
       anonUserCanView: randBoolean(),

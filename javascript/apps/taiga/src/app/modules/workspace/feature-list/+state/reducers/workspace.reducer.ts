@@ -18,8 +18,8 @@ export interface WorkspaceState {
   creatingWorkspace: boolean;
   loading: boolean;
   createFormHasError: boolean;
-  workspaceProjects: Record<Workspace['slug'], WorkspaceProject[]>;
-  rejectedInvites: Project['slug'][];
+  workspaceProjects: Record<Workspace['id'], WorkspaceProject[]>;
+  rejectedInvites: Project['id'][];
 }
 
 export const initialState: WorkspaceState = {
@@ -46,7 +46,7 @@ export const reducer = createReducer(
       state.loading = false;
 
       state.workspaces.forEach((workspace) => {
-        state.workspaceProjects[workspace.slug] = workspace.latestProjects;
+        state.workspaceProjects[workspace.id] = workspace.latestProjects;
       });
 
       return state;
@@ -82,19 +82,19 @@ export const reducer = createReducer(
   ),
   on(
     WorkspaceActions.fetchWorkspaceProjects,
-    (state, { slug }): WorkspaceState => {
-      state.loadingWorkspaces.push(slug);
+    (state, { id }): WorkspaceState => {
+      state.loadingWorkspaces.push(id);
 
       return state;
     }
   ),
   on(
     WorkspaceActions.fetchWorkspaceProjectsSuccess,
-    (state, { slug, projects }): WorkspaceState => {
-      state.workspaceProjects[slug] = projects.map((project) => {
+    (state, { id, projects }): WorkspaceState => {
+      state.workspaceProjects[id] = projects.map((project) => {
         return {
           name: project.name,
-          slug: project.slug,
+          id: project.id,
           description: project.description,
           color: project.color,
           logoSmall: project.logoSmall,
@@ -108,23 +108,16 @@ export const reducer = createReducer(
     WorkspaceActions.fetchWorkspaceInvitationsSuccess,
     (
       state,
-      {
-        projectSlug,
-        workspaceSlug,
-        invitations,
-        project,
-        role,
-        rejectedInvites,
-      }
+      { projectId, workspaceId, invitations, project, role, rejectedInvites }
     ): WorkspaceState => {
       const currentWorkspaceIndex = state.workspaces.findIndex((workspace) => {
-        return workspace.slug === workspaceSlug;
+        return workspace.id === workspaceId;
       });
 
       // Add invitation if you are not admin, if you are admin transform the invitation in a project inside the workspace.
       if (role !== 'admin') {
         const invitationToAdd = invitations.filter((project) => {
-          return project.slug === projectSlug;
+          return project.id === projectId;
         });
 
         state.workspaces[currentWorkspaceIndex].invitedProjects.unshift(
@@ -132,10 +125,10 @@ export const reducer = createReducer(
         );
       } else {
         const projectToAdd = project.filter((project) => {
-          return project.slug === projectSlug;
+          return project.id === projectId;
         });
         state.workspaces[currentWorkspaceIndex].totalProjects++;
-        state.workspaceProjects[workspaceSlug].unshift(projectToAdd[0]);
+        state.workspaceProjects[workspaceId].unshift(projectToAdd[0]);
       }
 
       if (role === 'guest') {
@@ -144,7 +137,7 @@ export const reducer = createReducer(
         const workspaceRejectedInvites = state.workspaces[
           currentWorkspaceIndex
         ].invitedProjects.filter((project) => {
-          return rejectedInvites.includes(project.slug);
+          return rejectedInvites.includes(project.id);
         });
 
         // Put the workspace in the first place if there is nothing visually inside the workspace when called to emulate a new workspace creation until refresh, only if you are not admin.
@@ -153,7 +146,7 @@ export const reducer = createReducer(
           workspaceRejectedInvites.length ===
             state.workspaces[currentWorkspaceIndex].invitedProjects.length -
               1 &&
-          !state.workspaceProjects[workspaceSlug].length
+          !state.workspaceProjects[workspaceId].length
         ) {
           state.workspaces.splice(
             0,
@@ -189,8 +182,8 @@ export const reducer = createReducer(
   ),
   on(
     InvitationActions.revokeInvitation,
-    (state, { projectSlug }): WorkspaceState => {
-      state.rejectedInvites.push(projectSlug);
+    (state, { projectId }): WorkspaceState => {
+      state.rejectedInvites.push(projectId);
 
       return state;
     }
@@ -199,7 +192,7 @@ export const reducer = createReducer(
     WorkspaceActions.invitationRevokedEvent,
     (state, { workspace }): WorkspaceState => {
       state.workspaces = state.workspaces.map((it) => {
-        if (it.slug === workspace.slug) {
+        if (it.id === workspace.id) {
           return workspace;
         }
         return it;

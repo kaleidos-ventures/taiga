@@ -15,7 +15,7 @@ export interface WorkspaceDetailState {
   workspace: Workspace | null;
   creatingWorkspaceDetail: boolean;
   projects: Project[];
-  workspaceProjects: Record<Workspace['slug'], WorkspaceProject[]>;
+  workspaceProjects: Record<Workspace['id'], WorkspaceProject[]>;
   workspaceInvitedProjects: Project[];
   loading: boolean;
 }
@@ -64,10 +64,10 @@ export const reducer = createReducer(
   }),
   on(
     WorkspaceActions.invitationDetailRevokedEvent,
-    (state, { projectSlug }): WorkspaceDetailState => {
+    (state, { projectId }): WorkspaceDetailState => {
       state.workspaceInvitedProjects = state.workspaceInvitedProjects.filter(
         (project) => {
-          return project.slug !== projectSlug;
+          return project.id !== projectId;
         }
       );
 
@@ -78,17 +78,17 @@ export const reducer = createReducer(
     WorkspaceActions.fetchWorkspaceDetailInvitationsSuccess,
     (
       state,
-      { projectSlug, invitations, project, role }
+      { projectId, invitations, project, role }
     ): WorkspaceDetailState => {
       // Add invitation if you are not admin, if you are admin transform the invitation in a project inside the workspace.
       if (role !== 'admin') {
         const invitationToAdd = invitations.filter((project) => {
-          return project.slug === projectSlug;
+          return project.id === projectId;
         });
         state.workspaceInvitedProjects.unshift(invitationToAdd[0]);
       } else {
         const projectToAdd = project.filter((project) => {
-          return project.slug === projectSlug;
+          return project.id === projectId;
         });
         state.projects.unshift(projectToAdd[0]);
       }

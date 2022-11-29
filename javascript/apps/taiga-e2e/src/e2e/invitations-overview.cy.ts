@@ -277,7 +277,7 @@ describe('Invitations banner', () => {
     cy.getBySel('project-card-invitation').find('a').eq(0).click();
     cy.getBySel('logged-user-invitation').should('exist');
     cy.getBySel('member-item').eq(0).should('contain.text', 'Pending');
-    cy.getBySel('accept-invitation-slug').click();
+    cy.getBySel('accept-invitation-id').click();
     cy.getBySel('logged-user-invitation').should('not.exist');
     cy.getBySel('member-item').eq(0).should('not.contain.text', 'Pending');
   });

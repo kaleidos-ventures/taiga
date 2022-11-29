@@ -41,6 +41,7 @@ export interface InvitationInfo {
   existingUser: boolean;
   availableLogins: string[];
   project: {
+    id: string;
     name: string;
     slug: string;
     anonUserCanView: boolean;
@@ -53,7 +54,7 @@ export interface InvitationParams {
   projectInvitationToken: string;
   slug: string;
   acceptProjectInvitation: boolean;
-  nextProjectSlug?: string;
+  nextProjectId?: string;
 }
 
 export interface SearchUserRequest {

@@ -9,7 +9,7 @@
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import '@ng-web-apis/universal/mocks';
-import { randProductName, randWord } from '@ngneat/falso';
+import { randDomainSuffix, randUuid, randWord } from '@ngneat/falso';
 import {
   createComponentFactory,
   mockProvider,
@@ -22,7 +22,8 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { ProjectNavigationSettingsComponent } from './project-navigation-settings.component';
 
-const projectName = randProductName();
+const projectId = randUuid();
+const projectName = randDomainSuffix({ length: 3 }).join('-');
 const fragment = randWord();
 
 describe('ProjectSettingsComponent', () => {
@@ -43,6 +44,7 @@ describe('ProjectSettingsComponent', () => {
           fragment,
           snapshot: {
             params: {
+              id: projectId,
               slug: projectName,
             },
           },
@@ -118,6 +120,8 @@ describe('ProjectSettingsComponent', () => {
 
     spectator.component.getHistoryNav();
 
-    expect(spectator.component.previousUrl).toEqual(`/project/${projectName}/`);
+    expect(spectator.component.previousUrl).toEqual(
+      `/project/${projectId}/${projectName}`
+    );
   });
 });

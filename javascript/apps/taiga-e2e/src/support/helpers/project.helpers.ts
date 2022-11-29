@@ -62,10 +62,10 @@ export const createFullProjectInWSRequest = (
 };
 
 export const inviteUserWSRequest = (
-  slug: string,
+  id: string,
   invitations: InvitationRequest[]
 ) => {
-  return request('POST', `/projects/${slug}/invitations`, {
+  return request('POST', `/projects/${id}/invitations`, {
     invitations,
   });
 };

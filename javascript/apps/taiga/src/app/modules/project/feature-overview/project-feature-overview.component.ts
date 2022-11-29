@@ -104,7 +104,7 @@ export class ProjectFeatureOverviewComponent
           filter(
             (eventResponse) =>
               eventResponse.event.content.project ===
-              this.state.get('project').slug
+              this.state.get('project').id
           )
         )
         .subscribe(() => {
@@ -114,26 +114,26 @@ export class ProjectFeatureOverviewComponent
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.revoke',
       })
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.wsService
           .command('unsubscribe_from_project_events', {
-            project: this.state.get('project').slug,
+            project: this.state.get('project').id,
           })
           .subscribe();
         this.wsService
           .command('subscribe_to_project_events', {
-            project: this.state.get('project').slug,
+            project: this.state.get('project').id,
           })
           .subscribe();
       });
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.revoke',
       })
       .pipe(
@@ -146,7 +146,7 @@ export class ProjectFeatureOverviewComponent
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.revoke',
       })
       .pipe(

@@ -232,7 +232,7 @@ export class ProjectNavigationComponent implements OnInit {
   public openSettings() {
     this.showProjectSettings = true;
     void this.router.navigate(
-      ['project', this.project.slug, 'settings', 'project'],
+      ['project', this.project.id, this.project.slug, 'settings', 'project'],
       {
         state: {
           ignoreNextMainFocus: true,

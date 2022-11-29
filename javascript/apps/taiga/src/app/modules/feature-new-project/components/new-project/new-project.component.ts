@@ -13,19 +13,19 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ProjectCreation } from '@taiga/data';
-import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
+import { Observable } from 'rxjs';
 import { createProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
-import { selectWorkspaces } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import { Step } from '~/app/modules/feature-new-project/data/new-project.model';
-import { ActivatedRoute } from '@angular/router';
+import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
+import { selectWorkspaces } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import {
   TemplateProjectForm,
   TemplateStepComponent,
 } from '../template-step/template-step.component';
-import { Observable } from 'rxjs';
-import { Actions } from '@ngrx/effects';
 
 @Component({
   selector: 'tg-new-project',
@@ -49,7 +49,7 @@ export class NewProjectComponent implements OnInit {
   public savedForm?: TemplateProjectForm;
 
   public formData: ProjectCreation = {
-    workspaceSlug: '',
+    workspaceId: '',
     name: '',
     description: 'string',
     color: 0,
@@ -57,7 +57,7 @@ export class NewProjectComponent implements OnInit {
 
   public ngOnInit() {
     this.store.dispatch(fetchWorkspaceList());
-    this.setQueryParamSlug();
+    this.setQueryParamId();
   }
 
   public canDeactivate(): boolean | Observable<boolean> {
@@ -67,18 +67,18 @@ export class NewProjectComponent implements OnInit {
     return true;
   }
 
-  public setQueryParamSlug() {
-    const slug = this.route.snapshot.queryParamMap.get('workspace');
-    if (slug) {
-      this.formData.workspaceSlug = slug;
+  public setQueryParamId() {
+    const id = this.route.snapshot.queryParamMap.get('workspace');
+    if (id) {
+      this.formData.workspaceId = id;
     }
   }
 
   public onSelectTemplate(
     step: Step,
-    workspaceSlug: ProjectCreation['workspaceSlug']
+    workspaceId: ProjectCreation['workspaceId']
   ) {
-    this.formData.workspaceSlug = workspaceSlug;
+    this.formData.workspaceId = workspaceId;
     this.setStep(step);
   }
 

@@ -45,9 +45,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [members]="vm.previewMembers"
       [invitationsToAnimate]="vm.invitationsToAnimate"
       [membersToAnimate]="vm.membersToAnimate"
-      (hasAcceptedInvitation)="
-        acceptInvitationSlug()
-      "></tg-project-members-list>
+      (hasAcceptedInvitation)="acceptInvitationId()"></tg-project-members-list>
 
     <div *ngIf="vm.loading">
       <tg-ui-user-skeleton></tg-ui-user-skeleton>

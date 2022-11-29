@@ -192,7 +192,7 @@ export const reducer = createReducer(
     state.notificationClosed = false;
     return state;
   }),
-  on(InvitationActions.acceptInvitationSlugSuccess, (state, { username }) => {
+  on(InvitationActions.acceptInvitationIdSuccess, (state, { username }) => {
     state.totalInvitations -= 1;
     state.totalMemberships += 1;
     state.invitationsToAnimate = [];

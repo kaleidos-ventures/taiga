@@ -16,8 +16,8 @@ import * as ProjectActions from '../actions/project.actions';
 export const projectFeatureKey = 'project';
 
 export interface ProjectState {
-  currentProjectSlug: Project['slug'] | null;
-  projects: Record<Project['slug'], Project>;
+  currentProjectId: Project['id'] | null;
+  projects: Record<Project['id'], Project>;
   showBannerOnRevoke: boolean;
   showStoryView: boolean;
   loadingStory: boolean;
@@ -26,7 +26,7 @@ export interface ProjectState {
 }
 
 export const initialState: ProjectState = {
-  currentProjectSlug: null,
+  currentProjectId: null,
   projects: {},
   showBannerOnRevoke: false,
   showStoryView: false,
@@ -38,14 +38,14 @@ export const initialState: ProjectState = {
 export const reducer = createReducer(
   initialState,
   on(ProjectActions.fetchProjectSuccess, (state, { project }): ProjectState => {
-    state.projects[project.slug] = project;
-    state.currentProjectSlug = project.slug;
+    state.projects[project.id] = project;
+    state.currentProjectId = project.id;
 
     return state;
   }),
   on(ProjectActions.eventInvitation, (state): ProjectState => {
-    if (state.currentProjectSlug) {
-      const project = state.projects[state.currentProjectSlug];
+    if (state.currentProjectId) {
+      const project = state.projects[state.currentProjectId];
       if (project) {
         project.userHasPendingInvitation = true;
       }
@@ -54,9 +54,9 @@ export const reducer = createReducer(
     return state;
   }),
   on(
-    InvitationActions.acceptInvitationSlugSuccess,
-    (state, { projectSlug }): ProjectState => {
-      const project = state.projects[projectSlug];
+    InvitationActions.acceptInvitationIdSuccess,
+    (state, { projectId }): ProjectState => {
+      const project = state.projects[projectId];
 
       if (project) {
         project.userHasPendingInvitation = false;
@@ -66,9 +66,9 @@ export const reducer = createReducer(
     }
   ),
   on(
-    InvitationActions.acceptInvitationSlugError,
-    (state, { projectSlug }): ProjectState => {
-      const project = state.projects[projectSlug];
+    InvitationActions.acceptInvitationIdError,
+    (state, { projectId }): ProjectState => {
+      const project = state.projects[projectId];
 
       if (project) {
         state.showBannerOnRevoke = false;

@@ -138,19 +138,19 @@ export class ProjectCardComponent implements OnInit {
   @Input()
   public project?: Pick<
     Project,
-    'name' | 'slug' | 'description' | 'color' | 'logoSmall'
+    'id' | 'name' | 'slug' | 'description' | 'color' | 'logoSmall'
   >;
 
   @Input()
   public acceptedInvites: string[] = [];
 
   @Output()
-  public rejectInvite = new EventEmitter<Project['slug']>();
+  public rejectInvite = new EventEmitter<Project['id']>();
 
   @Output()
   public acceptInvite = new EventEmitter<{
     name: Project['name'];
-    slug: Project['slug'];
+    id: Project['id'];
   }>();
 
   @HostBinding('attr.data-invite-status')
@@ -167,7 +167,7 @@ export class ProjectCardComponent implements OnInit {
     if (
       this.project &&
       this.acceptedInvites.length &&
-      this.acceptedInvites.includes(this.project?.slug)
+      this.acceptedInvites.includes(this.project?.id)
     ) {
       this.invitationStatus = 'accepted';
       this.cd.markForCheck();
@@ -177,7 +177,7 @@ export class ProjectCardComponent implements OnInit {
         untilDestroyed(this),
         map((accepted) => {
           if (
-            (this.project && accepted.includes(this.project.slug)) ||
+            (this.project && accepted.includes(this.project.id)) ||
             this.rejectedByAdmin
           ) {
             return 'accepted';
@@ -201,7 +201,7 @@ export class ProjectCardComponent implements OnInit {
         this.invitationStatus = 'accepted';
       }
 
-      this.rejectInvite.next(this.project.slug);
+      this.rejectInvite.next(this.project.id);
     }
   }
 

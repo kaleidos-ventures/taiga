@@ -90,27 +90,24 @@ export const reducer = createReducer(
       return state;
     }
   ),
-  on(
-    InvitationActions.acceptInvitationSlug,
-    (state, { slug }): InvitationState => {
-      state.acceptedInvite.push(slug);
+  on(InvitationActions.acceptInvitationId, (state, { id }): InvitationState => {
+    state.acceptedInvite.push(id);
 
-      return state;
-    }
-  ),
+    return state;
+  }),
   on(
     WorkspaceActions.acceptInvitationEvent,
-    (state, { projectSlug }): InvitationState => {
-      state.acceptedInvite.push(projectSlug);
+    (state, { projectId }): InvitationState => {
+      state.acceptedInvite.push(projectId);
 
       return state;
     }
   ),
   on(
-    InvitationActions.acceptInvitationSlugError,
-    (state, { projectSlug }): InvitationState => {
+    InvitationActions.acceptInvitationIdError,
+    (state, { projectId }): InvitationState => {
       state.acceptedInvite = state.acceptedInvite.filter((invitation) => {
-        return invitation !== projectSlug;
+        return invitation !== projectId;
       });
 
       return state;

@@ -136,7 +136,7 @@ export class ProjectFeatureKanbanComponent {
         concatLatestFrom(() => this.project$.pipe(filterNil()))
       )
       .subscribe(([, project]) => {
-        void this.router.navigate(['project', project.slug]);
+        void this.router.navigate(['project', project.id, project.slug]);
 
         this.appService.toastNotification({
           message: 'lost_kanban_access',
@@ -169,7 +169,9 @@ export class ProjectFeatureKanbanComponent {
     }, 200);
     this.store.dispatch(clearStory());
     this.location.replaceState(
-      `project/${this.state.get('project').slug}/kanban`
+      `project/${this.state.get('project').id}/${
+        this.state.get('project').slug
+      }/kanban`
     );
     this.shortcutsService.deleteScope('side-view');
   }
@@ -193,7 +195,9 @@ export class ProjectFeatureKanbanComponent {
 
     this.store.dispatch(clearStory());
     this.location.replaceState(
-      `project/${this.state.get('project').slug}/kanban`
+      `project/${this.state.get('project').id}/${
+        this.state.get('project').slug
+      }/kanban`
     );
   }
 

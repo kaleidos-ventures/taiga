@@ -46,7 +46,7 @@ export class AuthEffects {
           next,
           acceptProjectInvitation,
           invitationStatus,
-          nextProjectSlug,
+          nextProjectId,
         }) => {
           this.buttonLoadingService.start();
           return this.authApiService
@@ -73,7 +73,7 @@ export class AuthEffects {
                   next,
                   acceptProjectInvitation,
                   invitationStatus,
-                  nextProjectSlug,
+                  nextProjectId,
                 });
               })
             );
@@ -107,7 +107,7 @@ export class AuthEffects {
             projectInvitationToken,
             acceptProjectInvitation,
             invitationStatus,
-            nextProjectSlug,
+            nextProjectId,
           }) => {
             return this.store.select(selectUser).pipe(
               filterNil(),
@@ -138,9 +138,9 @@ export class AuthEffects {
                       }),
                       catchError((httpResponse: HttpErrorResponse) => {
                         const error = httpResponse;
-                        if (nextProjectSlug) {
+                        if (nextProjectId) {
                           return this.projectApiService
-                            .getProject(nextProjectSlug)
+                            .getProject(nextProjectId)
                             .pipe(
                               tap((project) => {
                                 this.revokeInvitationService.acceptInvitationTokenRevokeError(

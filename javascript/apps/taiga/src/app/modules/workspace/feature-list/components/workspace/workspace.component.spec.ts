@@ -42,10 +42,7 @@ describe('Workspace List', () => {
   });
 
   let store: MockStore;
-  let mockRejectInviteSelect: MemoizedSelector<
-    WorkspaceState,
-    Project['slug'][]
-  >;
+  let mockRejectInviteSelect: MemoizedSelector<WorkspaceState, Project['id'][]>;
 
   beforeEach(() => {
     spectator = createComponent({
@@ -80,7 +77,7 @@ describe('Workspace List', () => {
     // Mock latestProjects
     workspaceItem.latestProjects = [];
 
-    const rejectedInvited: Project['slug'][] = [];
+    const rejectedInvited: Project['id'][] = [];
 
     mockRejectInviteSelect.setResult(rejectedInvited);
     store.refreshState();
@@ -101,7 +98,7 @@ describe('Workspace List', () => {
     workspaceItem.latestProjects = [];
 
     // Mock rejectedProjects
-    const rejectedInvited: Project['slug'][] = [];
+    const rejectedInvited: Project['id'][] = [];
     mockRejectInviteSelect.setResult(rejectedInvited);
     store.refreshState();
 
@@ -122,7 +119,7 @@ describe('Workspace List', () => {
     workspaceItem.latestProjects = [project];
 
     // Mock rejectedProjects
-    const rejectedInvited: Project['slug'][] = [];
+    const rejectedInvited: Project['id'][] = [];
     mockRejectInviteSelect.setResult(rejectedInvited);
     store.refreshState();
 
@@ -142,7 +139,7 @@ describe('Workspace List', () => {
     workspaceItem.latestProjects = [];
 
     // Mock rejectedProjects
-    const rejectedInvited: Project['slug'][] = [];
+    const rejectedInvited: Project['id'][] = [];
     mockRejectInviteSelect.setResult(rejectedInvited);
     store.refreshState();
 
@@ -167,7 +164,7 @@ describe('Workspace List', () => {
     // Mock rejectedProjects
     const exampleInvite = ProjectMockFactory();
 
-    const rejectedInvited: Project['slug'][] = [exampleInvite.slug];
+    const rejectedInvited: Project['id'][] = [exampleInvite.id];
     mockRejectInviteSelect.setResult(rejectedInvited);
     store.refreshState();
 

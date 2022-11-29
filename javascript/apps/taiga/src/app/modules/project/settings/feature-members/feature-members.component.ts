@@ -83,7 +83,7 @@ export class ProjectsSettingsFeatureMembersComponent {
   public initWSsubscriptions() {
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.revoke',
       })
       .pipe(untilDestroyed(this))
@@ -95,7 +95,7 @@ export class ProjectsSettingsFeatureMembersComponent {
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.create',
       })
       .pipe(untilDestroyed(this))
@@ -107,7 +107,7 @@ export class ProjectsSettingsFeatureMembersComponent {
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.update',
       })
       .pipe(untilDestroyed(this))

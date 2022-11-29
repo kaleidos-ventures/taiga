@@ -188,7 +188,7 @@ export class ProjectMembersListComponent {
     return false;
   }
 
-  public acceptInvitationSlug() {
+  public acceptInvitationId() {
     this.hasAcceptedInvitation.next();
     this.showAcceptInvitationButton = false;
   }

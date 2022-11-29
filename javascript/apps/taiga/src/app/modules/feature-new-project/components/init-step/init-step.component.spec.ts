@@ -6,19 +6,22 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { SimpleChange } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import {
+  randCompanyName,
+  randDomainSuffix,
+  randNumber,
+  randUuid,
+} from '@ngneat/falso';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { WorkspaceMockFactory } from '@taiga/data';
+import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
-
 import { InitStepComponent } from './init-step.component';
 
-import { randDomainSuffix, randNumber, randCompanyName } from '@ngneat/falso';
-import { FormBuilder } from '@angular/forms';
-import { WorkspaceMockFactory } from '@taiga/data';
-import { ActivatedRoute } from '@angular/router';
-import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
-import { SimpleChange } from '@angular/core';
-
-const workspaceSlug = randDomainSuffix({ length: 3 }).join('-');
+const workspaceId = randUuid();
 
 describe('InitStepComponent', () => {
   let spectator: Spectator<InitStepComponent>;
@@ -42,7 +45,7 @@ describe('InitStepComponent', () => {
           snapshot: {
             queryParamMap: {
               get: () => {
-                return workspaceSlug;
+                return workspaceId;
               },
             },
           },
@@ -58,7 +61,7 @@ describe('InitStepComponent', () => {
       props: {
         workspaces: [
           {
-            id: randNumber(),
+            id: randUuid(),
             name: randCompanyName(),
             slug: randDomainSuffix({ length: 3 }).join('-'),
             color: randNumber(),
@@ -97,9 +100,9 @@ describe('InitStepComponent', () => {
 
   it('test that a workspace is activated', () => {
     const workspace = WorkspaceMockFactory();
-    workspace.slug = workspaceSlug;
+    workspace.id = workspaceId;
     spectator.component.workspaces = [workspace];
-    spectator.component.selectedWorkspaceSlug = workspace.slug;
+    spectator.component.selectedWorkspaceId = workspace.id;
     spectator.component.initForm();
     spectator.component.ngOnChanges({
       workspaces: new SimpleChange(null, spectator.component.workspaces, false),

@@ -91,8 +91,9 @@ export class ProjectNavigationSettingsComponent implements OnInit {
     this.previousUrl =
       this.routeHistory.getPreviousUrl() || this.getRouter().url;
     if (this.previousUrl.includes('/settings')) {
-      const params: string = this.route.snapshot.params.slug;
-      this.previousUrl = `/project/${params}/`;
+      const id: string = this.route.snapshot.params.id;
+      const slug: string = this.route.snapshot.params.slug;
+      this.previousUrl = `/project/${id}/${slug}`;
     }
   }
 

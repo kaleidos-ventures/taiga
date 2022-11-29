@@ -42,84 +42,82 @@ export class ProjectInvitationCTAGuard implements CanActivate {
       )
       .pipe(
         mergeMap((invitation: InvitationInfo) => {
-          return this.projectApiService
-            .getProject(invitation.project.slug)
-            .pipe(
-              catchError(() => {
-                return of(null);
-              }),
-              mergeMap((project) => {
-                if (this.authService.isLogged()) {
-                  return this.http
-                    .post<{ slug: Project['slug'] }>(
-                      `${this.config.apiUrl}/projects/invitations/${token}/accept`,
-                      {}
-                    )
-                    .pipe(
-                      map(() => {
-                        return this.router.parseUrl(
-                          `/project/${invitation.project.slug}`
-                        );
-                      }),
-                      catchError((httpResponse: HttpErrorResponse) => {
-                        return this.revokeInvitationService.invitationCtaRevokeError(
-                          invitation,
-                          httpResponse
-                        );
-                      })
-                    );
+          return this.projectApiService.getProject(invitation.project.id).pipe(
+            catchError(() => {
+              return of(null);
+            }),
+            mergeMap((project) => {
+              if (this.authService.isLogged()) {
+                return this.http
+                  .post<{ id: Project['id'] }>(
+                    `${this.config.apiUrl}/projects/invitations/${token}/accept`,
+                    {}
+                  )
+                  .pipe(
+                    map(() => {
+                      return this.router.parseUrl(
+                        `/project/${invitation.project.id}/${invitation.project.slug}`
+                      );
+                    }),
+                    catchError((httpResponse: HttpErrorResponse) => {
+                      return this.revokeInvitationService.invitationCtaRevokeError(
+                        invitation,
+                        httpResponse
+                      );
+                    })
+                  );
+              } else {
+                if (invitation.existingUser) {
+                  const urlTree = this.router.parseUrl('/login');
+                  urlTree.queryParams = {
+                    next: `/project/${invitation.project.id}/${invitation.project.slug}`,
+                    acceptProjectInvitation: 'true',
+                    projectInvitationToken: token,
+                    nextProjectId: invitation.project.id,
+                    availableLogins: invitation.availableLogins.join(','),
+                  };
+
+                  return of(urlTree);
                 } else {
-                  if (invitation.existingUser) {
-                    const urlTree = this.router.parseUrl('/login');
-                    urlTree.queryParams = {
-                      next: `/project/${invitation.project.slug}`,
-                      acceptProjectInvitation: 'true',
-                      projectInvitationToken: token,
-                      nextProjectSlug: invitation.project.slug,
-                      availableLogins: invitation.availableLogins.join(','),
-                    };
-
-                    return of(urlTree);
-                  } else {
-                    if (invitation.status === 'revoked') {
-                      if (project && project.userPermissions.length > 0) {
-                        this.appService.toastNotification({
-                          message: 'errors.invitation_no_longer_valid',
-                          status: TuiNotification.Error,
-                          autoClose: false,
-                          closeOnNavigation: false,
-                        });
-                        return of(
-                          this.router.parseUrl(
-                            `/project/${invitation.project.slug}`
-                          )
-                        );
-                      } else {
-                        this.appService.toastNotification({
-                          message: 'errors.invitation_no_longer_valid',
-                          status: TuiNotification.Error,
-                          autoClose: false,
-                          closeOnNavigation: false,
-                        });
-                        const urlTree = this.router.parseUrl('/signup');
-
-                        return of(urlTree);
-                      }
+                  if (invitation.status === 'revoked') {
+                    if (project && project.userPermissions.length > 0) {
+                      this.appService.toastNotification({
+                        message: 'errors.invitation_no_longer_valid',
+                        status: TuiNotification.Error,
+                        autoClose: false,
+                        closeOnNavigation: false,
+                      });
+                      return of(
+                        this.router.parseUrl(
+                          `/project/${invitation.project.id}/${invitation.project.slug}`
+                        )
+                      );
                     } else {
+                      this.appService.toastNotification({
+                        message: 'errors.invitation_no_longer_valid',
+                        status: TuiNotification.Error,
+                        autoClose: false,
+                        closeOnNavigation: false,
+                      });
                       const urlTree = this.router.parseUrl('/signup');
-                      urlTree.queryParams = {
-                        project: invitation.project.name,
-                        email: invitation.email,
-                        acceptProjectInvitation: 'true',
-                        projectInvitationToken: token,
-                      };
 
                       return of(urlTree);
                     }
+                  } else {
+                    const urlTree = this.router.parseUrl('/signup');
+                    urlTree.queryParams = {
+                      project: invitation.project.name,
+                      email: invitation.email,
+                      acceptProjectInvitation: 'true',
+                      projectInvitationToken: token,
+                    };
+
+                    return of(urlTree);
                   }
                 }
-              })
-            );
+              }
+            })
+          );
         }),
         catchError(() => {
           this.appService.toastNotification({

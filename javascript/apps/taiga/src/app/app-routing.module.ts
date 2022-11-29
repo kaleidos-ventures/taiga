@@ -55,7 +55,7 @@ const routes: Routes = [
     canActivate: [ProjectInvitationCTAGuard],
   },
   {
-    path: 'project/:slug/preview/:token',
+    path: 'project/:id/preview/:token',
     children: [],
     canActivate: [ProjectInvitationGuard],
   },
@@ -70,12 +70,17 @@ const routes: Routes = [
 
   // WORKSPACE
   {
-    path: 'workspace/:slug',
+    path: 'workspace/:id/:slug',
     loadChildren: () =>
       import(
         './modules/workspace/feature-detail/workspace-feature-detail.module'
       ).then((m) => m.WorkspaceFeatureDetailModule),
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'workspace/:id',
+    redirectTo: '/workspace/:id/:slug',
+    pathMatch: 'full',
   },
 
   // PROJECT
@@ -87,19 +92,17 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
-
-  // #TODO: Project Url must be project-name+Id. See if we can add the workspace+worskpaceId on the url.
   {
-    path: 'project',
-    children: [
-      {
-        path: ':slug',
-        loadChildren: () =>
-          import(
-            './modules/project/feature-shell/project-feature-shell.module'
-          ).then((m) => m.ProjectFeatureShellModule),
-      },
-    ],
+    path: 'project/:id/:slug',
+    loadChildren: () =>
+      import(
+        './modules/project/feature-shell/project-feature-shell.module'
+      ).then((m) => m.ProjectFeatureShellModule),
+  },
+  {
+    path: 'project/:id',
+    redirectTo: '/project/:id/:slug',
+    pathMatch: 'full',
   },
 
   {

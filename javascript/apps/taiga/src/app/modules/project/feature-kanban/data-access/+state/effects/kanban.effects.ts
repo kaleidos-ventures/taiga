@@ -15,12 +15,14 @@ import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { Story } from '@taiga/data';
 import { delay, filter, finalize, map, tap } from 'rxjs';
+import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
-  selectCurrentProjectSlug,
+  selectCurrentProjectId,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
+import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
 import { AppService } from '~/app/services/app.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import {
@@ -32,9 +34,6 @@ import {
   selectCurrentWorkflowSlug,
   selectWorkflows,
 } from '../selectors/kanban.selectors';
-import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
-
-import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 
 @Injectable()
 export class KanbanEffects {
@@ -46,7 +45,7 @@ export class KanbanEffects {
       ]),
       fetch({
         run: (action, project) => {
-          return this.projectApiService.getWorkflows(project.slug).pipe(
+          return this.projectApiService.getWorkflows(project.id).pipe(
             map((workflows) => {
               return KanbanApiActions.fetchWorkflowsSuccess({ workflows });
             })
@@ -68,20 +67,18 @@ export class KanbanEffects {
       ]),
       fetch({
         run: (action, project) => {
-          return this.projectApiService
-            .getAllStories(project.slug, 'main')
-            .pipe(
-              map(({ stories, offset, complete }) => {
-                return KanbanApiActions.fetchStoriesSuccess({
-                  stories,
-                  offset,
-                  complete,
-                });
-              }),
-              finalize(() => {
-                return KanbanActions.loadStoriesComplete();
-              })
-            );
+          return this.projectApiService.getAllStories(project.id, 'main').pipe(
+            map(({ stories, offset, complete }) => {
+              return KanbanApiActions.fetchStoriesSuccess({
+                stories,
+                offset,
+                complete,
+              });
+            }),
+            finalize(() => {
+              return KanbanActions.loadStoriesComplete();
+            })
+          );
         },
         onError: (action, error: HttpErrorResponse) => {
           return this.appService.errorManagement(error);
@@ -99,7 +96,7 @@ export class KanbanEffects {
       pessimisticUpdate({
         run: ({ story, workflow }, project) => {
           return this.projectApiService
-            .createStory(story, project.slug, workflow)
+            .createStory(story, project.id, workflow)
             .pipe(
               map((newStory) => {
                 return KanbanApiActions.createStorySuccess({
@@ -137,7 +134,7 @@ export class KanbanEffects {
           scope: 'kanban',
         });
 
-        return fetchProject({ slug: project.slug });
+        return fetchProject({ id: project.id });
       })
     );
   });
@@ -194,7 +191,7 @@ export class KanbanEffects {
       ofType(KanbanActions.storyDropped),
       filter((action) => !!action.status),
       concatLatestFrom(() => [
-        this.store.select(selectCurrentProjectSlug).pipe(filterNil()),
+        this.store.select(selectCurrentProjectId).pipe(filterNil()),
         this.store.select(selectCurrentWorkflowSlug),
       ]),
       optimisticUpdate({

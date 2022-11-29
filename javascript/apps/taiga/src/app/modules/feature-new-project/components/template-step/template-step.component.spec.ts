@@ -5,15 +5,13 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
-
 import { FormBuilder } from '@angular/forms';
-import { TemplateStepComponent } from './template-step.component';
-
-import { randDomainSuffix } from '@ngneat/falso';
+import { randUuid } from '@ngneat/falso';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
+import { TemplateStepComponent } from './template-step.component';
 
 describe('TemplateStepComponent', () => {
   let spectator: Spectator<TemplateStepComponent>;
@@ -29,20 +27,20 @@ describe('TemplateStepComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        selectedWorkspaceSlug: randDomainSuffix({ length: 3 }).join('-'),
+        selectedWorkspaceId: randUuid(),
       },
       detectChanges: false,
     });
   });
 
   it('getCurrentWorkspace', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const id = randUuid();
 
     const workspace = WorkspaceMockFactory();
-    workspace.slug = slug;
+    workspace.id = id;
     spectator.component.workspaces = [workspace];
 
-    spectator.component.selectedWorkspaceSlug = slug;
+    spectator.component.selectedWorkspaceId = id;
 
     expect(spectator.component.getCurrentWorkspace()).toEqual(workspace);
   });

@@ -41,7 +41,7 @@ export class ProjectInvitationGuard implements CanActivate {
           if (invitation.existingUser) {
             if (this.authService.isLogged()) {
               void this.router.navigate(
-                ['/project/', invitation.project.slug],
+                ['/project/', invitation.project.id, invitation.project.slug],
                 {
                   state: { invite: invitation.status },
                 }
@@ -49,18 +49,18 @@ export class ProjectInvitationGuard implements CanActivate {
             } else {
               void this.router.navigate(['/login'], {
                 queryParams: {
-                  next: `/project/${invitation.project.slug}`,
+                  next: `/project/${invitation.project.id}/${invitation.project.slug}`,
                   projectInvitationToken: token,
                   acceptProjectInvitation: false,
                   invitationStatus: invitation.status,
-                  nextProjectSlug: invitation.project.slug,
+                  nextProjectId: invitation.project.id,
                 },
               });
             }
           } else {
             if (invitation.project.anonUserCanView) {
               void this.router.navigate(
-                ['/project/', invitation.project.slug],
+                ['/project/', invitation.project.id, invitation.project.slug],
                 {
                   state: { invite: invitation.status },
                 }

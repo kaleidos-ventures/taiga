@@ -6,15 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { randUuid } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { Observable } from 'rxjs';
-
-import { randDomainSuffix } from '@ngneat/falso';
 import { WorkspaceApiService } from '@taiga/api';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
+import { Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { AppService } from '~/app/services/app.service';
 import {
@@ -58,7 +57,7 @@ describe('WorkspaceEffects', () => {
   });
 
   it('fetch workspace projects', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const id = randUuid();
     const project = ProjectMockFactory();
     const workspaceApiService = spectator.inject(WorkspaceApiService);
     const effects = spectator.inject(WorkspaceEffects);
@@ -74,10 +73,10 @@ describe('WorkspaceEffects', () => {
         cold('-b|', { b: [project] })
       );
 
-      actions$ = hot('-a', { a: fetchWorkspaceProjects({ slug }) });
+      actions$ = hot('-a', { a: fetchWorkspaceProjects({ id }) });
 
       expectObservable(effects.fetchWorkspaceProjects$).toBe('300ms -a', {
-        a: fetchWorkspaceProjectsSuccess({ slug, projects: [project] }),
+        a: fetchWorkspaceProjectsSuccess({ id, projects: [project] }),
       });
     });
   });

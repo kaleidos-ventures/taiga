@@ -58,7 +58,11 @@ export class ProjectsSettingsFeatureSettingsComponent {
             scope: 'project_settings',
             closeOnNavigation: false,
           });
-          void this.router.navigate(['/project/', action.project.slug]);
+          void this.router.navigate([
+            '/project/',
+            action.project.id,
+            action.project.slug,
+          ]);
         } else if (action.project.userIsAdmin) {
           this.store.dispatch(
             initRolesPermissions({ project: action.project })
@@ -68,7 +72,7 @@ export class ProjectsSettingsFeatureSettingsComponent {
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectmemberships.create',
       })
       .pipe(untilDestroyed(this))
@@ -78,7 +82,7 @@ export class ProjectsSettingsFeatureSettingsComponent {
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectmemberships.update',
       })
       .pipe(untilDestroyed(this))

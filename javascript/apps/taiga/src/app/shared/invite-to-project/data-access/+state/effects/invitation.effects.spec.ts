@@ -6,16 +6,19 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randEmail, randSlug, randUserName, randWord } from '@ngneat/falso';
+import { Router } from '@angular/router';
+import {
+  randEmail,
+  randSlug,
+  randUserName,
+  randUuid,
+  randWord,
+} from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { InvitationApiService, ProjectApiService } from '@taiga/api';
-import { Observable } from 'rxjs';
-import { AppService } from '~/app/services/app.service';
-
-import { Router } from '@angular/router';
 import {
   Contact,
   InvitationResponse,
@@ -24,14 +27,16 @@ import {
   UserMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
+import { Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
+import { AppService } from '~/app/services/app.service';
 import {
-  acceptInvitationSlug,
-  acceptInvitationSlugError,
-  acceptInvitationSlugSuccess,
+  acceptInvitationId,
+  acceptInvitationIdError,
+  acceptInvitationIdSuccess,
   inviteUsersSuccess,
   revokeInvitation,
   searchUser,
@@ -82,7 +87,7 @@ describe('InvitationEffects', () => {
 
     actions$ = hot('-a', {
       a: inviteUsersToProject({
-        slug: randSlug(),
+        id: randUuid(),
         invitation: invitationMockPayload,
       }),
     });
@@ -98,11 +103,12 @@ describe('InvitationEffects', () => {
     expect(effects.sendInvitations$).toBeObservable(expected);
   });
 
-  it('Accept invitation slug', () => {
+  it('Accept invitation id', () => {
     const user = UserMockFactory();
     const slug = randSlug();
+    const id = randUuid();
     const username = user.username;
-    const acceptInvitationSlugMockPayload = [
+    const acceptInvitationIdMockPayload = [
       {
         user: {
           username: username,
@@ -119,27 +125,27 @@ describe('InvitationEffects', () => {
     const effects = spectator.inject(InvitationEffects);
     const projectApiService = spectator.inject(ProjectApiService);
     store.overrideSelector(selectUser, user);
-    projectApiService.acceptInvitationSlug.mockReturnValue(
-      cold('-a|', { a: acceptInvitationSlugMockPayload })
+    projectApiService.acceptInvitationId.mockReturnValue(
+      cold('-a|', { a: acceptInvitationIdMockPayload })
     );
 
     actions$ = hot('-a', {
-      a: acceptInvitationSlug({ slug }),
+      a: acceptInvitationId({ id }),
     });
 
     const expected = cold('--a', {
-      a: acceptInvitationSlugSuccess({ projectSlug: slug, username }),
+      a: acceptInvitationIdSuccess({ projectId: id, username }),
     });
 
-    expect(effects.acceptInvitationSlug$).toBeObservable(expected);
+    expect(effects.acceptInvitationId$).toBeObservable(expected);
   });
 
-  it('Accept invitation slug error', () => {
-    const slug = randSlug();
+  it('Accept invitation id error', () => {
+    const id = randUuid();
     const effects = spectator.inject(InvitationEffects);
     const appService = spectator.inject(AppService);
     const projectApiService = spectator.inject(ProjectApiService);
-    projectApiService.acceptInvitationSlug.mockReturnValue(
+    projectApiService.acceptInvitationId.mockReturnValue(
       cold(
         '-#|',
         {},
@@ -155,26 +161,26 @@ describe('InvitationEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: acceptInvitationSlug({ slug }),
+      a: acceptInvitationId({ id }),
     });
 
     const expected = cold('--a', {
-      a: acceptInvitationSlugError({ projectSlug: slug }),
+      a: acceptInvitationIdError({ projectId: id }),
     });
 
-    expect(effects.acceptInvitationSlug$).toBeObservable(expected);
+    expect(effects.acceptInvitationId$).toBeObservable(expected);
 
-    expect(effects.acceptInvitationSlug$).toSatisfyOnFlush(() => {
+    expect(effects.acceptInvitationId$).toSatisfyOnFlush(() => {
       expect(appService.toastNotification).toHaveBeenCalled();
     });
   });
 
   it('Accept invitation revoke error', () => {
-    const slug = randSlug();
+    const id = randUuid();
     const effects = spectator.inject(InvitationEffects);
     const appService = spectator.inject(AppService);
     const projectApiService = spectator.inject(ProjectApiService);
-    projectApiService.acceptInvitationSlug.mockReturnValue(
+    projectApiService.acceptInvitationId.mockReturnValue(
       cold(
         '-#|',
         {},
@@ -190,16 +196,16 @@ describe('InvitationEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: acceptInvitationSlug({ slug }),
+      a: acceptInvitationId({ id }),
     });
 
     const expected = cold('--a', {
-      a: revokeInvitation({ projectSlug: slug }),
+      a: revokeInvitation({ projectId: id }),
     });
 
-    expect(effects.acceptInvitationSlug$).toBeObservable(expected);
+    expect(effects.acceptInvitationId$).toBeObservable(expected);
 
-    expect(effects.acceptInvitationSlug$).toSatisfyOnFlush(() => {
+    expect(effects.acceptInvitationId$).toSatisfyOnFlush(() => {
       expect(appService.toastNotification).toHaveBeenCalled();
     });
   });

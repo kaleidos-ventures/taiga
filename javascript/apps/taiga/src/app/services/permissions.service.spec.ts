@@ -70,9 +70,9 @@ describe('PermissionsService', () => {
 
     store.setState({
       project: {
-        currentProjectSlug: project.slug,
+        currentProjectId: project.id,
         projects: {
-          [project.slug]: project,
+          [project.id]: project,
         },
       },
     });

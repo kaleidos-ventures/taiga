@@ -33,7 +33,7 @@ export const membersActions = createActionGroup({
       eventType: 'create' | 'update';
     }>(),
     'Resend invitation': props<{
-      slug: string;
+      id: string;
       usernameOrEmail: string;
     }>(),
     'Resend invitation success': emptyProps(),

@@ -63,9 +63,9 @@ describe('WorkspaceItem', () => {
     workspaceList: {
       loadingWorkspaces: [],
       workspaceProjects: {
-        [workspaceItem.slug]: workspaceItem.latestProjects,
-        [workspaceItemAdmin.slug]: workspaceItemAdmin.latestProjects,
-        [workspaceItemMember.slug]: workspaceItemMember.latestProjects,
+        [workspaceItem.id]: workspaceItem.latestProjects,
+        [workspaceItemAdmin.id]: workspaceItemAdmin.latestProjects,
+        [workspaceItemMember.id]: workspaceItemMember.latestProjects,
       },
     },
   };
@@ -104,7 +104,7 @@ describe('WorkspaceItem', () => {
   describe('guest', () => {
     let mockRejectInviteSelect: MemoizedSelector<
       WorkspaceState,
-      Project['slug'][]
+      Project['id'][]
     >;
 
     beforeEach(() => {
@@ -125,7 +125,7 @@ describe('WorkspaceItem', () => {
     });
 
     it('on init', (done) => {
-      const rejectedInvites = [workspaceItem.invitedProjects.at(0)!.slug];
+      const rejectedInvites = [workspaceItem.invitedProjects.at(0)!.id];
       store.overrideSelector(selectRejectedInvites, rejectedInvites);
 
       const availableInvites = workspaceItem.invitedProjects.slice(1);
@@ -145,19 +145,19 @@ describe('WorkspaceItem', () => {
         spectator.inject<UserStorageService>(UserStorageService);
       const dispatchSpy = jest.spyOn(store, 'dispatch');
 
-      const slug = workspaceItem.invitedProjects.at(0)!.slug;
+      const id = workspaceItem.invitedProjects.at(0)!.id;
       spectator.component.projectsToShow = workspaceItem.invitedProjects.length;
 
       spectator.detectChanges();
 
-      spectator.component.rejectProjectInvite(slug);
+      spectator.component.rejectProjectInvite(id);
 
       requestAnimationFrame(() => {
-        mockRejectInviteSelect.setResult([slug]);
+        mockRejectInviteSelect.setResult([id]);
         store.refreshState();
 
         expect(dispatchSpy).toBeCalledWith(
-          setWorkspaceListRejectedInvites({ projects: [slug] })
+          setWorkspaceListRejectedInvites({ projects: [id] })
         );
 
         spectator.component.model$.subscribe(({ invitations }) => {
@@ -176,7 +176,7 @@ describe('WorkspaceItem', () => {
       const dispatchSpy = jest.spyOn(store, 'dispatch');
       spectator.detectChanges();
       const action = fetchWorkspaceProjects({
-        slug: spectator.component.workspace.slug,
+        id: spectator.component.workspace.id,
       });
 
       spectator.component.setShowAllProjects(false);
@@ -189,11 +189,11 @@ describe('WorkspaceItem', () => {
     });
 
     it('Animate sibling rows on reject', (done) => {
-      const slug = workspaceItem.invitedProjects.at(0)!.slug;
+      const id = workspaceItem.invitedProjects.at(0)!.id;
 
       spectator.detectChanges();
 
-      spectator.component.rejectProjectInvite(slug);
+      spectator.component.rejectProjectInvite(id);
 
       requestAnimationFrame(() => {
         spectator.component.model$.subscribe(({ slideOutActive }) => {
@@ -201,12 +201,12 @@ describe('WorkspaceItem', () => {
           expect(Object.keys(spectator.component.reorder).length).toEqual(3);
           expect(
             (spectator.component.reorder[
-              workspaceItem.invitedProjects.at(1)!.slug
+              workspaceItem.invitedProjects.at(1)!.id
             ] = 'moving')
           );
           expect(
             (spectator.component.reorder[
-              workspaceItem.invitedProjects.at(2)!.slug
+              workspaceItem.invitedProjects.at(2)!.id
             ] = 'moving')
           );
           done();
@@ -270,12 +270,12 @@ describe('WorkspaceItem', () => {
 
     it('Invitation revoked via event', (done) => {
       const invitationToRevoke =
-        spectator.component.workspace.invitedProjects[0].slug;
-      const workspaceToRevoke = spectator.component.workspace.slug;
+        spectator.component.workspace.invitedProjects[0].id;
+      const workspaceToRevoke = spectator.component.workspace.id;
 
       const newWorkspace = { ...spectator.component.workspace };
       const invitations = spectator.component.workspace.invitedProjects.filter(
-        (workspaceInvitation) => workspaceInvitation.slug !== invitationToRevoke
+        (workspaceInvitation) => workspaceInvitation.id !== invitationToRevoke
       );
       newWorkspace.invitedProjects = invitations;
 
@@ -299,8 +299,8 @@ describe('WorkspaceItem', () => {
 
     it('Invitation created via event', (done) => {
       const invitationToCreate =
-        spectator.component.workspace.invitedProjects[0].slug;
-      const currentWorkspace = spectator.component.workspace.slug;
+        spectator.component.workspace.invitedProjects[0].id;
+      const currentWorkspace = spectator.component.workspace.id;
 
       const dispatchSpy = jest.spyOn(store, 'dispatch');
       spectator.component.wsEvent(
@@ -310,8 +310,8 @@ describe('WorkspaceItem', () => {
       );
       spectator.detectChanges();
       const action = invitationCreateEvent({
-        projectSlug: invitationToCreate,
-        workspaceSlug: currentWorkspace,
+        projectId: invitationToCreate,
+        workspaceId: currentWorkspace,
         role: 'guest',
         rejectedInvites: [],
       });
@@ -324,8 +324,8 @@ describe('WorkspaceItem', () => {
 
     it('Membership created via event', (done) => {
       const memberToCreate =
-        spectator.component.workspace.invitedProjects[0].slug;
-      const currentWorkspace = spectator.component.workspace.slug;
+        spectator.component.workspace.invitedProjects[0].id;
+      const currentWorkspace = spectator.component.workspace.id;
 
       const dispatchSpy = jest.spyOn(store, 'dispatch');
       spectator.component.wsEvent(
@@ -337,7 +337,7 @@ describe('WorkspaceItem', () => {
       spectator.component.projectsToShow = 3;
       spectator.detectChanges();
       const action = acceptInvitationEvent({
-        projectSlug: memberToCreate,
+        projectId: memberToCreate,
       });
 
       spectator.component.model$.subscribe(() => {
@@ -375,13 +375,13 @@ describe('WorkspaceItem', () => {
         ({ projects, invitations, showMoreProjects }) => {
           expect(projects.length + invitations.length).toEqual(projectsToShow);
 
-          const slugs = [...projects, ...invitations].map(
-            (project) => project.slug
+          const ids = [...projects, ...invitations].map(
+            (project) => project.id
           );
 
-          const uniqSlugs = [...new Set(slugs)];
+          const uniqIds = [...new Set(ids)];
 
-          expect(uniqSlugs.length).toEqual(projectsToShow);
+          expect(uniqIds.length).toEqual(projectsToShow);
           expect(showMoreProjects).toEqual(false);
 
           done();
@@ -404,11 +404,11 @@ describe('WorkspaceItem', () => {
         ({ projects, invitations, showMoreProjects, remainingProjects }) => {
           expect(projects.length + invitations.length).toEqual(12);
 
-          const slugs = [...projects, ...invitations].map(
-            (project) => project.slug
+          const ids = [...projects, ...invitations].map(
+            (project) => project.id
           );
 
-          const uniqSlugs = [...new Set(slugs)];
+          const uniqSlugs = [...new Set(ids)];
 
           expect(uniqSlugs.length).toEqual(projectsToShow);
           expect(showMoreProjects).toEqual(true);
@@ -424,8 +424,7 @@ describe('WorkspaceItem', () => {
     it('Accept invitation does not remove the project from invitations but remove it from projects', (done) => {
       const projectsToShow = 50;
 
-      const acceptedInvitationSlug =
-        workspaceItemMember.invitedProjects[0].slug;
+      const acceptedInvitationId = workspaceItemMember.invitedProjects[0].id;
       const acceptedInvitationName =
         workspaceItemMember.invitedProjects[0].name;
 
@@ -434,12 +433,12 @@ describe('WorkspaceItem', () => {
       store.setState({
         ...initialState,
         invitation: {
-          acceptedInvite: [acceptedInvitationSlug],
+          acceptedInvite: [acceptedInvitationId],
         },
       });
 
       spectator.component.acceptProjectInvite(
-        acceptedInvitationSlug,
+        acceptedInvitationId,
         acceptedInvitationName
       );
       spectator.detectChanges();
@@ -447,11 +446,11 @@ describe('WorkspaceItem', () => {
       spectator.component.model$.subscribe(({ projects, invitations }) => {
         expect(
           invitations.find(
-            (invitation) => invitation.slug === acceptedInvitationSlug
+            (invitation) => invitation.id === acceptedInvitationId
           )
         ).toBeTruthy();
         expect(
-          projects.find((project) => project.slug === acceptedInvitationSlug)
+          projects.find((project) => project.id === acceptedInvitationId)
         ).toBeFalsy();
 
         done();
@@ -487,11 +486,11 @@ describe('WorkspaceItem', () => {
         ({ projects, invitations, showMoreProjects }) => {
           expect(projects.length + invitations.length).toEqual(projectsToShow);
 
-          const slugs = [...projects, ...invitations].map(
-            (project) => project.slug
+          const ids = [...projects, ...invitations].map(
+            (project) => project.id
           );
 
-          const uniqSlugs = [...new Set(slugs)];
+          const uniqSlugs = [...new Set(ids)];
 
           expect(uniqSlugs.length).toEqual(projectsToShow);
           expect(showMoreProjects).toEqual(false);
@@ -516,11 +515,11 @@ describe('WorkspaceItem', () => {
         ({ projects, invitations, showMoreProjects, remainingProjects }) => {
           expect(projects.length + invitations.length).toEqual(8);
 
-          const slugs = [...projects, ...invitations].map(
-            (project) => project.slug
+          const ids = [...projects, ...invitations].map(
+            (project) => project.id
           );
 
-          const uniqSlugs = [...new Set(slugs)];
+          const uniqSlugs = [...new Set(ids)];
 
           expect(uniqSlugs.length).toEqual(projectsToShow);
           expect(showMoreProjects).toEqual(true);

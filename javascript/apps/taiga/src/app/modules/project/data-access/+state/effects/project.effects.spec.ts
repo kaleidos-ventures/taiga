@@ -7,7 +7,7 @@
  */
 
 import { Router } from '@angular/router';
-import { randDomainSuffix } from '@ngneat/falso';
+import { randUuid } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -20,7 +20,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { AppService } from '~/app/services/app.service';
 import { WsService, WsServiceMock } from '~/app/services/ws';
-import { acceptInvitationSlugSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { acceptInvitationIdSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import {
   fetchProject,
   fetchProjectSuccess,
@@ -55,14 +55,14 @@ describe('ProjectEffects', () => {
   });
 
   it('load project', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const id = randUuid();
     const project = ProjectMockFactory();
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectEffects);
 
     projectApiService.getProject.mockReturnValue(cold('-b|', { b: project }));
 
-    actions$ = hot('-a', { a: fetchProject({ slug }) });
+    actions$ = hot('-a', { a: fetchProject({ id }) });
 
     const expected = cold('--a', {
       a: fetchProjectSuccess({ project }),
@@ -72,36 +72,36 @@ describe('ProjectEffects', () => {
   });
 
   it('Accepted Invitation', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const id = randUuid();
     const user = UserMockFactory();
     const username = user.username;
     const effects = spectator.inject(ProjectEffects);
 
     actions$ = hot('-a', {
-      a: acceptInvitationSlugSuccess({ projectSlug: slug, username }),
+      a: acceptInvitationIdSuccess({ projectId: id, username }),
     });
 
     testScheduler.run((helpers) => {
       const { hot, expectObservable } = helpers;
       actions$ = hot('-a', {
-        a: acceptInvitationSlugSuccess({ projectSlug: slug, username }),
+        a: acceptInvitationIdSuccess({ projectId: id, username }),
       });
 
       expectObservable(effects.acceptedInvitation$).toBe('-c', {
-        c: fetchProject({ slug }),
+        c: fetchProject({ id }),
       });
     });
   });
 
   it('Permissions update - success', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const id = randUuid();
     const project = ProjectMockFactory();
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectEffects);
 
     projectApiService.getProject.mockReturnValue(cold('-b|', { b: project }));
 
-    actions$ = hot('-a', { a: permissionsUpdate({ slug }) });
+    actions$ = hot('-a', { a: permissionsUpdate({ id }) });
 
     const expected = cold('--a', {
       a: fetchProjectSuccess({ project }),
@@ -111,7 +111,7 @@ describe('ProjectEffects', () => {
   });
 
   it('Permissions update - error', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
+    const id = randUuid();
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectEffects);
     const router = spectator.inject(Router);
@@ -127,7 +127,7 @@ describe('ProjectEffects', () => {
       )
     );
 
-    actions$ = hot('-a', { a: permissionsUpdate({ slug }) });
+    actions$ = hot('-a', { a: permissionsUpdate({ id }) });
 
     expect(effects.permissionsUpdate$).toSatisfyOnFlush(() => {
       expect(router.navigate).toHaveBeenCalledWith(['/']);

@@ -7,18 +7,18 @@
  */
 
 import {
-  randSlug,
-  randNumber,
-  randWord,
-  randParagraph,
-  randImg,
-  randProductName,
   randBoolean,
+  randImg,
+  randNumber,
+  randParagraph,
+  randProductName,
+  randSlug,
+  randUuid,
+  randWord,
 } from '@ngneat/falso';
 import { ProjectCreation, Workspace } from '..';
 import { Milestone } from './milestone.model';
 import { MilestoneMockFactory } from './milestone.model.mock';
-
 import { Project } from './project.model';
 import { WorkspaceMockFactory } from './workspace.model.mock';
 
@@ -34,10 +34,11 @@ export const ProjectMockFactory = (
   milestones = false,
   workspace?: Pick<
     Workspace,
-    'color' | 'name' | 'slug' | 'isPremium' | 'userRole'
+    'id' | 'color' | 'name' | 'slug' | 'isPremium' | 'userRole'
   >
 ): Project => {
   const project = {
+    id: randUuid(),
     name: randWord({ length: 3, capitalize: true }).join(' '),
     slug: randSlug(),
     milestones: milestones ? getMilestones() : [],
@@ -58,7 +59,7 @@ export const ProjectMockFactory = (
 
 export const ProjectCreationMockFactory = (): ProjectCreation => {
   return {
-    workspaceSlug: randSlug(),
+    workspaceId: randUuid(),
     name: randProductName(),
     description: randParagraph({ length: 3 }).join('\n'),
     color: randNumber(),

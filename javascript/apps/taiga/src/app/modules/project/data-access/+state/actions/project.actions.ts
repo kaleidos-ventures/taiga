@@ -16,7 +16,7 @@ export const fetchProjectSuccess = createAction(
 
 export const fetchProject = createAction(
   '[Project] fetch',
-  props<{ slug: Project['slug'] }>()
+  props<{ id: Project['id'] }>()
 );
 
 export const eventInvitation = createAction(
@@ -33,7 +33,7 @@ export const revokedNoPermissionInvitation = createAction(
 
 export const permissionsUpdate = createAction(
   '[Project][ws] permission update',
-  props<{ slug: Project['slug'] }>()
+  props<{ id: Project['id'] }>()
 );
 
 export const updateStoryShowView = createAction(
@@ -46,7 +46,7 @@ export const updateStoryShowView = createAction(
 export const fetchStory = createAction(
   '[Story] load story detail',
   props<{
-    projectSlug: string;
+    projectId: string;
     storyRef: number;
   }>()
 );

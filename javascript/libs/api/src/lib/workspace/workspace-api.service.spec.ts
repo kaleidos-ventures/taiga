@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { randUuid } from '@ngneat/falso';
 import {
   createHttpFactory,
   HttpMethod,
@@ -14,8 +15,6 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { WorkspaceApiService } from './workspace-api.service';
-
-import { randDomainSuffix } from '@ngneat/falso';
 
 describe('WorkspaceApiService', () => {
   let spectator: SpectatorHttp<WorkspaceApiService>;
@@ -37,17 +36,17 @@ describe('WorkspaceApiService', () => {
   });
 
   it('get Workspace', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
-    const url = `${ConfigServiceMock.apiUrl}/my/workspaces/${slug}`;
-    spectator.service.fetchWorkspace(slug).subscribe();
+    const id = randUuid();
+    const url = `${ConfigServiceMock.apiUrl}/my/workspaces/${id}`;
+    spectator.service.fetchWorkspace(id).subscribe();
     const req = spectator.expectOne(url, HttpMethod.GET);
     expect(req.request.url).toEqual(url);
   });
 
   it('get Workspace detail', () => {
-    const slug = randDomainSuffix({ length: 3 }).join('-');
-    const url = `${ConfigServiceMock.apiUrl}/workspaces/${slug}`;
-    spectator.service.fetchWorkspaceDetail(slug).subscribe();
+    const id = randUuid();
+    const url = `${ConfigServiceMock.apiUrl}/workspaces/${id}`;
+    spectator.service.fetchWorkspaceDetail(id).subscribe();
     const req = spectator.expectOne(url, HttpMethod.GET);
     expect(req.request.url).toEqual(url);
   });

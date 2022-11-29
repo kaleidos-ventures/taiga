@@ -11,7 +11,7 @@ import { Project } from '@taiga/data';
 import { projectFeature } from '../reducers/project.reducer';
 
 export const {
-  selectCurrentProjectSlug,
+  selectCurrentProjectId,
   selectProjects,
   selectShowBannerOnRevoke,
   selectShowStoryView,
@@ -22,18 +22,18 @@ export const {
 
 export const selectCurrentProject = createSelector(
   selectProjects,
-  selectCurrentProjectSlug,
-  (projects, projectSlug): Project | undefined => {
-    if (!projectSlug) {
+  selectCurrentProjectId,
+  (projects, projectId): Project | undefined => {
+    if (!projectId) {
       return undefined;
     }
 
-    return projects[projectSlug];
+    return projects[projectId];
   }
 );
 
-export const selectProject = (projectSlug: Project['slug']) => {
+export const selectProject = (projectId: Project['id']) => {
   return createSelector(selectProjects, (projects) => {
-    return projects[projectSlug] ?? null;
+    return projects[projectId] ?? null;
   });
 };

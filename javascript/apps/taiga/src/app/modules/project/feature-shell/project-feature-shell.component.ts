@@ -23,7 +23,7 @@ import {
   selectShowBannerOnRevoke,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { WsService } from '~/app/services/ws';
-import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { acceptInvitationId } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { permissionsUpdate } from '../data-access/+state/actions/project.actions';
@@ -93,10 +93,10 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     );
 
     this.state.hold(this.state.select('project'), (project) => {
-      this.subscribedProject = project.slug;
+      this.subscribedProject = project.id;
       this.unsubscribeFromProjectEvents();
       this.wsService
-        .command('subscribe_to_project_events', { project: project.slug })
+        .command('subscribe_to_project_events', { project: project.id })
         .subscribe();
 
       this.store.dispatch(
@@ -117,9 +117,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
         .userEvents<{ project: string }>('projectmemberships.update')
         .pipe(
           filter((data) => {
-            return (
-              data.event.content.project === this.state.get('project').slug
-            );
+            return data.event.content.project === this.state.get('project').id;
           })
         ),
       this.wsService.projectEvents('projects.permissions.update'),
@@ -128,14 +126,14 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.store.dispatch(
-          permissionsUpdate({ slug: this.state.get('project').slug })
+          permissionsUpdate({ id: this.state.get('project').id })
         );
       });
   }
 
   public getRejectedOverviewInvites() {
     return (
-      this.userStorageService.get<Project['slug'][] | undefined>(
+      this.userStorageService.get<Project['id'][] | undefined>(
         'overview_rejected_invites'
       ) || []
     );
@@ -169,10 +167,10 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     this.store.dispatch(setNotificationClosed({ notificationClosed: true }));
   }
 
-  public acceptInvitationSlug() {
+  public acceptInvitationId() {
     this.store.dispatch(
-      acceptInvitationSlug({
-        slug: this.state.get('project').slug,
+      acceptInvitationId({
+        id: this.state.get('project').id,
         isBanner: true,
       })
     );

@@ -18,7 +18,6 @@ import { ProjectApiService } from '@taiga/api';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { InvitationInfoMockFactory, ProjectMockFactory } from '@taiga/data';
 import { of } from 'rxjs';
-
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { AppService } from '~/app/services/app.service';
 import { ProjectInvitationGuard } from './project-invitation.guard';
@@ -69,7 +68,7 @@ describe('Project Invitation Guard', () => {
     req.flush(invitation);
 
     expect(router.navigate).toHaveBeenCalledWith(
-      [`/project/`, invitation.project.slug],
+      [`/project/`, invitation.project.id, invitation.project.slug],
       { state: { invite: 'pending' } }
     );
   });
@@ -104,10 +103,10 @@ describe('Project Invitation Guard', () => {
 
     const invitation = InvitationInfoMockFactory();
     const queryParams = {
-      next: `/project/${invitation.project.slug}`,
+      next: `/project/${invitation.project.id}/${invitation.project.slug}`,
       acceptProjectInvitation: false,
       projectInvitationToken: token,
-      nextProjectSlug: invitation.project.slug,
+      nextProjectId: invitation.project.id,
       invitationStatus: 'pending',
     };
 
@@ -150,7 +149,7 @@ describe('Project Invitation Guard', () => {
     req.flush(invitation);
 
     expect(router.navigate).toHaveBeenCalledWith(
-      [`/project/`, invitation.project.slug],
+      [`/project/`, invitation.project.id, invitation.project.slug],
       { state: { invite: 'pending' } }
     );
   });

@@ -10,6 +10,7 @@ import { Milestone } from './milestone.model';
 import { Workspace } from './workspace.model';
 
 export interface Project {
+  id: string;
   logoSmall: string;
   logoLarge: string;
   logo: string;
@@ -19,7 +20,7 @@ export interface Project {
   color: number;
   workspace: Pick<
     Workspace,
-    'name' | 'slug' | 'color' | 'isPremium' | 'userRole'
+    'id' | 'name' | 'slug' | 'color' | 'isPremium' | 'userRole'
   >;
   milestones: Milestone[];
   userIsAdmin: boolean;
@@ -29,7 +30,7 @@ export interface Project {
 }
 
 export interface ProjectCreation {
-  workspaceSlug: Workspace['slug'];
+  workspaceId: Workspace['id'];
   name: string;
   description?: string;
   color: number;

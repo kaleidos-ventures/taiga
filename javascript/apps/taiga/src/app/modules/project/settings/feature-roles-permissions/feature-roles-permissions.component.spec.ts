@@ -10,8 +10,8 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import {
-  Spectator,
   createComponentFactory,
+  Spectator,
   SpyObject,
 } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -226,8 +226,8 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
           memberRoles: [role],
         },
         project: {
-          projects: { [project.slug]: project },
-          currentProjectSlug: project.slug,
+          projects: { [project.id]: project },
+          currentProjectId: project.id,
         },
       });
 
@@ -250,7 +250,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       expect(dispatchSpy).toBeCalledWith(
         updateRolePermissions({
-          project: project.slug,
+          project: project.id,
           roleSlug: role.slug,
           permissions: finalPermissions,
         })
@@ -267,8 +267,8 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
           publicPermissions: role.permissions,
         },
         project: {
-          projects: { [project.slug]: project },
-          currentProjectSlug: project.slug,
+          projects: { [project.id]: project },
+          currentProjectId: project.id,
         },
       });
 
@@ -291,7 +291,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       expect(dispatchSpy).toBeCalledWith(
         updatePublicPermissions({
-          project: project.slug,
+          project: project.id,
           permissions: finalPermissions,
         })
       );
@@ -307,8 +307,8 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
           workspacePermissions: role.permissions,
         },
         project: {
-          currentProjectSlug: project.slug,
-          projects: { [project.slug]: project },
+          currentProjectId: project.id,
+          projects: { [project.id]: project },
         },
       });
 
@@ -331,7 +331,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       expect(dispatchSpy).toBeCalledWith(
         updateWorkspacePermissions({
-          project: project.slug,
+          project: project.id,
           permissions: finalPermissions,
         })
       );
@@ -349,7 +349,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
           memberRoles: [role],
         },
         project: {
-          currentProjectSlug: 'test',
+          currentProjectId: 'test',
           projects: {},
         },
       });
@@ -383,7 +383,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
           publicPermissions: permissions,
         },
         project: {
-          currentProjectSlug: 'test',
+          currentProjectId: 'test',
           projects: {},
         },
       });
@@ -421,7 +421,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
         },
         project: {
           projects: {},
-          currentProjectSlug: 'test',
+          currentProjectId: 'test',
         },
       });
 

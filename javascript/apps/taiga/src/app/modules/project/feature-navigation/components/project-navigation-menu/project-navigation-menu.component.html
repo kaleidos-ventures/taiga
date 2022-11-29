@@ -22,7 +22,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           (focusout)="out()"
           [attr.data-text]="'project'"
           [class.active-dialog]="dialog.type === 'project'"
-          [routerLink]="['/project', project.slug]">
+          [routerLink]="['/project', project.id, project.slug]">
           <tg-ui-avatar
             class="project-logo-image"
             type="light"
@@ -37,7 +37,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <a
             class="workspace-data-project"
             data-test="project-name"
-            [routerLink]="['/project', project.slug]">
+            [routerLink]="['/project', project.id, project.slug]">
             {{ project.name }}
           </a>
           <a
@@ -46,7 +46,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               project.workspace.userRole === 'member'
             "
             class="workspace-data-workspace workspace-data-workspace-anchor"
-            [routerLink]="['/workspace', project.workspace.slug]">
+            [routerLink]="[
+              '/workspace',
+              project.workspace.id,
+              project.workspace.slug
+            ]">
             {{ project.workspace.name }}
           </a>
           <span
@@ -76,7 +80,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="collapsed ? t('commons.overview') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'overview'"
-                [routerLink]="['/project', project.slug]"
+                [routerLink]="['/project', project.id, project.slug]"
                 routerLinkActive
                 #overviewActive="routerLinkActive"
                 [routerLinkActiveOptions]="{ exact: true }">
@@ -175,7 +179,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="collapsed ? t('commons.kanban') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'kanban'"
-                [routerLink]="['/project', project.slug, 'kanban']"
+                [routerLink]="['/project', project.id, project.slug, 'kanban']"
                 routerLinkActive
                 #kanbanActive="routerLinkActive">
                 <tui-svg
@@ -413,12 +417,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [style.height.px]="dialog.mainLinkHeight">
       <a
         class="workspace-data-project"
-        [routerLink]="['/project', project.slug]">
+        [routerLink]="['/project', project.id, project.slug]">
         {{ project.name }}
       </a>
       <a
         class="workspace-data-workspace"
-        [routerLink]="['/workspace', project.workspace.slug]">
+        [routerLink]="[
+          '/workspace',
+          project.workspace.id,
+          project.workspace.slug
+        ]">
         {{ project.workspace.name }}
       </a>
     </div>

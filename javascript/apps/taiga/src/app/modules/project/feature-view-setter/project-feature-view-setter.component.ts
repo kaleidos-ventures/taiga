@@ -59,7 +59,7 @@ export class ProjectFeatureViewSetterComponent {
 
     this.store.dispatch(
       fetchStory({
-        projectSlug: params.projectSlug,
+        projectId: params.projectId,
         storyRef: params.storyRef,
       })
     );
@@ -69,7 +69,7 @@ export class ProjectFeatureViewSetterComponent {
     const url = window.location.href;
 
     return {
-      projectSlug: url.match(/(?<=project\/)[^/]+/)![0],
+      projectId: url.match(/(?<=project\/)[^/]+/)![0],
       storyRef: +url.match(/(?<=stories\/)[^/]+/)![0],
     };
   }

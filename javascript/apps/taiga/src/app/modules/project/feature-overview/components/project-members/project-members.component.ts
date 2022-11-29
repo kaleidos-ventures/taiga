@@ -43,8 +43,8 @@ import { WaitingForToastNotification } from '~/app/modules/project/feature-overv
 import { WsService } from '~/app/services/ws';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import {
-  acceptInvitationSlug,
-  acceptInvitationSlugSuccess,
+  acceptInvitationId,
+  acceptInvitationIdSuccess,
   inviteUsersSuccess,
 } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
@@ -185,7 +185,7 @@ export class ProjectMembersComponent {
     );
 
     const invitationAccepted = this.actions$.pipe(
-      ofType(acceptInvitationSlugSuccess),
+      ofType(acceptInvitationIdSuccess),
       delay(WaitingForToastNotification),
       take(1)
     );
@@ -209,7 +209,7 @@ export class ProjectMembersComponent {
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.create',
       })
       .pipe(untilDestroyed(this))
@@ -219,7 +219,7 @@ export class ProjectMembersComponent {
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectmemberships.create',
       })
       .pipe(untilDestroyed(this))
@@ -229,7 +229,7 @@ export class ProjectMembersComponent {
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.update',
       })
       .pipe(untilDestroyed(this))
@@ -239,7 +239,7 @@ export class ProjectMembersComponent {
 
     this.wsService
       .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').slug}`,
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectmemberships.update',
       })
       .pipe(untilDestroyed(this))
@@ -287,10 +287,10 @@ export class ProjectMembersComponent {
     );
   }
 
-  public acceptInvitationSlug() {
+  public acceptInvitationId() {
     this.store.dispatch(
-      acceptInvitationSlug({
-        slug: this.state.get('project').slug,
+      acceptInvitationId({
+        id: this.state.get('project').id,
       })
     );
   }

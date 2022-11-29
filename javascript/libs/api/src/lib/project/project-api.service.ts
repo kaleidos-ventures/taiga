@@ -46,13 +46,13 @@ export class ProjectApiService {
     return this.http.get<Project[]>(`${this.config.apiUrl}/projects`);
   }
 
-  public getProject(slug: Project['slug']) {
-    return this.http.get<Project>(`${this.config.apiUrl}/projects/${slug}`);
+  public getProject(id: Project['id']) {
+    return this.http.get<Project>(`${this.config.apiUrl}/projects/${id}`);
   }
 
   public createProject(project: ProjectCreation) {
     const form = {
-      workspaceSlug: project.workspaceSlug,
+      workspaceId: project.workspaceId,
       name: project.name,
       color: project.color,
       logo: project.logo,
@@ -62,14 +62,12 @@ export class ProjectApiService {
     return this.http.post<Project>(`${this.config.apiUrl}/projects`, formData);
   }
 
-  public getMemberRoles(slug: Project['slug']) {
-    return this.http.get<Role[]>(
-      `${this.config.apiUrl}/projects/${slug}/roles`
-    );
+  public getMemberRoles(id: Project['id']) {
+    return this.http.get<Role[]>(`${this.config.apiUrl}/projects/${id}/roles`);
   }
 
-  public getPermissions(slug: Project['slug']) {
-    return this.getProject(slug).pipe(
+  public getPermissions(id: Project['id']) {
+    return this.getProject(id).pipe(
       map((project: Project) => {
         return project.userPermissions;
       }),
@@ -79,15 +77,15 @@ export class ProjectApiService {
     );
   }
 
-  public getPublicPermissions(slug: Project['slug']) {
+  public getPublicPermissions(id: Project['id']) {
     return this.http.get<string[]>(
-      `${this.config.apiUrl}/projects/${slug}/public-permissions`
+      `${this.config.apiUrl}/projects/${id}/public-permissions`
     );
   }
 
-  public getworkspacePermissions(slug: Project['slug']) {
+  public getworkspacePermissions(id: Project['id']) {
     return this.http.get<string[]>(
-      `${this.config.apiUrl}/projects/${slug}/workspace-member-permissions`
+      `${this.config.apiUrl}/projects/${id}/workspace-member-permissions`
     );
   }
 
@@ -98,7 +96,7 @@ export class ProjectApiService {
   }
 
   public putMemberRoles(
-    slug: Project['slug'],
+    id: Project['id'],
     roleSlug: Role['slug'],
     permissions: string[]
   ) {
@@ -125,14 +123,14 @@ export class ProjectApiService {
     });
 
     return this.http.put<Role>(
-      `${this.config.apiUrl}/projects/${slug}/roles/${roleSlug}/permissions`,
+      `${this.config.apiUrl}/projects/${id}/roles/${roleSlug}/permissions`,
       {
         permissions,
       }
     );
   }
 
-  public putPublicPermissions(slug: Project['slug'], permissions: string[]) {
+  public putPublicPermissions(id: Project['id'], permissions: string[]) {
     permissions = permissions.filter((permission) => {
       const validPermission = [
         'add_member',
@@ -153,14 +151,14 @@ export class ProjectApiService {
       return validPermission.includes(permission);
     });
     return this.http.put<string[]>(
-      `${this.config.apiUrl}/projects/${slug}/public-permissions`,
+      `${this.config.apiUrl}/projects/${id}/public-permissions`,
       {
         permissions,
       }
     );
   }
 
-  public putworkspacePermissions(slug: Project['slug'], permissions: string[]) {
+  public putworkspacePermissions(id: Project['id'], permissions: string[]) {
     permissions = permissions.filter((permission) => {
       const validPermission = [
         'add_member',
@@ -181,7 +179,7 @@ export class ProjectApiService {
       return validPermission.includes(permission);
     });
     return this.http.put<string[]>(
-      `${this.config.apiUrl}/projects/${slug}/workspace-member-permissions`,
+      `${this.config.apiUrl}/projects/${id}/workspace-member-permissions`,
       {
         permissions,
       }
@@ -189,12 +187,12 @@ export class ProjectApiService {
   }
 
   public getMembers(
-    slug: string,
+    id: string,
     offset = 0,
     limit = 10
   ): Observable<MembersResponse> {
     return this.http
-      .get<Membership[]>(`${this.config.apiUrl}/projects/${slug}/memberships`, {
+      .get<Membership[]>(`${this.config.apiUrl}/projects/${id}/memberships`, {
         observe: 'response',
         params: {
           offset,
@@ -212,12 +210,12 @@ export class ProjectApiService {
   }
 
   public getInvitations(
-    slug: string,
+    id: string,
     offset = 0,
     limit = 10
   ): Observable<InvitationsResponse> {
     return this.http
-      .get<Invitation[]>(`${this.config.apiUrl}/projects/${slug}/invitations`, {
+      .get<Invitation[]>(`${this.config.apiUrl}/projects/${id}/invitations`, {
         observe: 'response',
         params: {
           offset,
@@ -241,9 +239,9 @@ export class ProjectApiService {
     );
   }
 
-  public acceptInvitationSlug(slug: string) {
+  public acceptInvitationId(id: string) {
     return this.http.post(
-      `${this.config.apiUrl}/projects/${slug}/invitations/accept`,
+      `${this.config.apiUrl}/projects/${id}/invitations/accept`,
       {}
     );
   }
@@ -258,29 +256,29 @@ export class ProjectApiService {
   }
 
   public updateMemberRole(
-    slug: string,
+    id: string,
     userData: { username: string; roleSlug: string }
   ) {
     return this.http.patch(
-      `${this.config.apiUrl}/projects/${slug}/memberships/${userData.username}`,
+      `${this.config.apiUrl}/projects/${id}/memberships/${userData.username}`,
       {
         roleSlug: userData.roleSlug,
       }
     );
   }
 
-  public getWorkflows(slug: string): Observable<Workflow[]> {
+  public getWorkflows(id: string): Observable<Workflow[]> {
     return this.http.get<Workflow[]>(
-      `${this.config.apiUrl}/projects/${slug}/workflows`
+      `${this.config.apiUrl}/projects/${id}/workflows`
     );
   }
 
   public updateInvitationRole(
-    slug: string,
+    id: string,
     userData: { id: string; roleSlug: string }
   ) {
     return this.http.patch(
-      `${this.config.apiUrl}/projects/${slug}/invitations/${userData.id}`,
+      `${this.config.apiUrl}/projects/${id}/invitations/${userData.id}`,
       {
         roleSlug: userData.roleSlug,
       }
@@ -288,7 +286,7 @@ export class ProjectApiService {
   }
 
   public getAllStories(
-    project: Project['slug'],
+    project: Project['id'],
     workflow: Workflow['slug']
   ): Observable<{ stories: Story[]; offset: number; complete: boolean }> {
     return new Observable((subscriber) => {
@@ -318,7 +316,7 @@ export class ProjectApiService {
   }
 
   public getStories(
-    project: Project['slug'],
+    project: Project['id'],
     workflow: Workflow['slug'],
     offset: number,
     limit: number
@@ -336,7 +334,7 @@ export class ProjectApiService {
 
   public createStory(
     story: Pick<Story, 'title' | 'status'>,
-    project: Project['slug'],
+    project: Project['id'],
     workflow: Workflow['slug']
   ): Observable<Story> {
     return this.http.post<Story>(
@@ -353,7 +351,7 @@ export class ProjectApiService {
       ref: Story['ref'];
       status: Status['slug'];
     },
-    project: Project['slug'],
+    project: Project['id'],
     workflow: Workflow['slug'],
     reorder?: {
       place: 'after' | 'before';
@@ -371,11 +369,11 @@ export class ProjectApiService {
   }
 
   public getStory(
-    projectSlug: Project['slug'],
+    projectId: Project['id'],
     storyRef: StoryDetail['ref']
   ): Observable<StoryDetail> {
     return this.http.get<StoryDetail>(
-      `${this.config.apiUrl}/projects/${projectSlug}/stories/${storyRef}`
+      `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}`
     );
   }
 }

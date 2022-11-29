@@ -29,7 +29,7 @@ export class ProjectFeatureShellResolverService {
   public resolve(route: ActivatedRouteSnapshot) {
     const params = route.params as Record<string, string>;
 
-    return this.projectApiService.getProject(params['slug']).pipe(
+    return this.projectApiService.getProject(params['id']).pipe(
       tap((project) => {
         this.store.dispatch(ProjectActions.fetchProjectSuccess({ project }));
       }),

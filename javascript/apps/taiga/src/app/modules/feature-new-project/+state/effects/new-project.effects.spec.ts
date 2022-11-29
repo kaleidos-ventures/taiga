@@ -6,22 +6,21 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
-import { AppService } from '~/app/services/app.service';
-import { Observable } from 'rxjs';
-
 import { ProjectCreationMockFactory, ProjectMockFactory } from '@taiga/data';
-import { NewProjectEffects } from './new-project.effects';
+import { cold, hot } from 'jest-marbles';
+import { Observable } from 'rxjs';
+import { AppService } from '~/app/services/app.service';
 import {
   createProject,
   createProjectSuccess,
 } from '../actions/new-project.actions';
-import { cold, hot } from 'jest-marbles';
-import { RouterTestingModule } from '@angular/router/testing';
-import { Router } from '@angular/router';
+import { NewProjectEffects } from './new-project.effects';
 
 describe('NewProjectEffects', () => {
   let actions$: Observable<Action>;
@@ -75,7 +74,7 @@ describe('NewProjectEffects', () => {
 
     expect(effects.createProjectSuccess$).toSatisfyOnFlush(() => {
       expect(router.navigate).toHaveBeenCalledWith(
-        ['/project/', project.slug, 'kanban'],
+        ['/project/', project.id, project.slug, 'kanban'],
         { state: { invite: true } }
       );
     });

@@ -28,9 +28,9 @@ export class InvitationApiService {
     });
   }
 
-  public inviteUsers(slug: string, invitations: InvitationRequest[]) {
+  public inviteUsers(id: string, invitations: InvitationRequest[]) {
     return this.http.post<InvitationResponse>(
-      `${this.config.apiUrl}/projects/${slug}/invitations`,
+      `${this.config.apiUrl}/projects/${id}/invitations`,
       {
         invitations,
       }
@@ -43,9 +43,9 @@ export class InvitationApiService {
     );
   }
 
-  public resendInvitation(slug: string, usernameOrEmail: string) {
+  public resendInvitation(id: string, usernameOrEmail: string) {
     return this.http.post(
-      `${this.config.apiUrl}/projects/${slug}/invitations/resend`,
+      `${this.config.apiUrl}/projects/${id}/invitations/resend`,
       {
         usernameOrEmail,
       }

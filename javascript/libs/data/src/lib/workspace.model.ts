@@ -10,13 +10,13 @@ import { Project } from './project.model';
 
 export type WorkspaceProject = Pick<
   Project,
-  'name' | 'slug' | 'description' | 'color' | 'logoSmall'
+  'id' | 'name' | 'slug' | 'description' | 'color' | 'logoSmall'
 >;
 
 export type WorkspaceRole = 'admin' | 'member' | 'guest' | 'none';
 
 export interface Workspace {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   color: number;

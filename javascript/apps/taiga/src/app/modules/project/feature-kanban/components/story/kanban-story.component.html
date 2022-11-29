@@ -8,7 +8,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <a
-      [href]="'/project/' + vm.project.slug + '/stories/' + story.ref"
+      [href]="
+        '/project/' +
+        vm.project.id +
+        '/' +
+        vm.project.slug +
+        '/stories/' +
+        story.ref
+      "
       (click)="openStory($event)"
       [attr.aria-label]="
         !vm.isA11yDragInProgress

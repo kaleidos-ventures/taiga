@@ -54,7 +54,9 @@ export class RevokeInvitationService {
           );
 
           if (project && project.userPermissions.length > 0) {
-            return this.router.parseUrl(`/project/${invitation.project.slug}`);
+            return this.router.parseUrl(
+              `/project/${invitation.project.id}/${invitation.project.slug}`
+            );
           }
         }
 
@@ -146,8 +148,8 @@ export class RevokeInvitationService {
     }
   }
 
-  public acceptInvitationSlugRevokeError(
-    slug: string,
+  public acceptInvitationIdRevokeError(
+    id: string,
     name?: string,
     isBanner?: boolean
   ) {
@@ -170,12 +172,12 @@ export class RevokeInvitationService {
       closeOnNavigation: false,
     });
     if (isBanner) {
-      return InvitationActions.revokeInvitationBannerSlugError({
-        projectSlug: slug,
+      return InvitationActions.revokeInvitationBannerIdError({
+        projectId: id,
       });
     }
     return InvitationActions.revokeInvitation({
-      projectSlug: slug,
+      projectId: id,
     });
   }
 

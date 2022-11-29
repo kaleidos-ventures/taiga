@@ -20,7 +20,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           ">
           <a
             class="project"
-            [routerLink]="['/project', project.slug]"
+            [routerLink]="['/project', project.id, project.slug]"
             [attr.data-test]="'recent-project-' + i">
             <div class="project-image">
               <tg-ui-avatar

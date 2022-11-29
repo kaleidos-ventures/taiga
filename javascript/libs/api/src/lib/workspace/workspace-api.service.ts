@@ -22,14 +22,14 @@ export class WorkspaceApiService {
     return this.http.get<Workspace[]>(`${this.config.apiUrl}/my/workspaces`);
   }
 
-  public fetchWorkspace(slug: Workspace['slug']) {
+  public fetchWorkspace(id: Workspace['id']) {
     return this.http.get<Workspace>(
-      `${this.config.apiUrl}/my/workspaces/${slug}`
+      `${this.config.apiUrl}/my/workspaces/${id}`
     );
   }
 
-  public fetchWorkspaceDetail(slug: Workspace['slug']) {
-    return this.http.get<Workspace>(`${this.config.apiUrl}/workspaces/${slug}`);
+  public fetchWorkspaceDetail(id: Workspace['id']) {
+    return this.http.get<Workspace>(`${this.config.apiUrl}/workspaces/${id}`);
   }
 
   public createWorkspace(workspaceCreation: WorkspaceCreation) {
@@ -46,15 +46,15 @@ export class WorkspaceApiService {
       );
   }
 
-  public fetchWorkspaceProjects(slug: Workspace['slug']) {
+  public fetchWorkspaceProjects(id: Workspace['id']) {
     return this.http.get<Project[]>(
-      `${this.config.apiUrl}/workspaces/${slug}/projects`
+      `${this.config.apiUrl}/workspaces/${id}/projects`
     );
   }
 
-  public fetchWorkspaceInvitedProjects(slug: Workspace['slug']) {
+  public fetchWorkspaceInvitedProjects(id: Workspace['id']) {
     return this.http.get<Project[]>(
-      `${this.config.apiUrl}/workspaces/${slug}/invited-projects`
+      `${this.config.apiUrl}/workspaces/${id}/invited-projects`
     );
   }
 }

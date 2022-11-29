@@ -6,17 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-
-import { map } from 'rxjs/operators';
-
-import { HttpErrorResponse } from '@angular/common/http';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { WorkspaceApiService } from '@taiga/api';
 import { Project, Workspace } from '@taiga/data';
 import { timer, zip } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import * as WorkspaceActions from '../actions/workspace.actions';
@@ -37,7 +35,7 @@ export class WorkspaceEffects {
       ofType(WorkspaceActions.initWorkspaceList),
       map(() => {
         const rejectedInvites =
-          this.userStorageService.get<Project['slug'][] | undefined>(
+          this.userStorageService.get<Project['id'][] | undefined>(
             'general_rejected_invites'
           ) ?? [];
 
@@ -105,12 +103,12 @@ export class WorkspaceEffects {
       pessimisticUpdate({
         run: (action) => {
           return zip(
-            this.workspaceApiService.fetchWorkspaceProjects(action.slug),
+            this.workspaceApiService.fetchWorkspaceProjects(action.id),
             timer(300)
           ).pipe(
             map(([projects]) => {
               return WorkspaceActions.fetchWorkspaceProjectsSuccess({
-                slug: action.slug,
+                id: action.id,
                 projects,
               });
             })
@@ -128,18 +126,16 @@ export class WorkspaceEffects {
       pessimisticUpdate({
         run: (action) => {
           return zip(
-            this.workspaceApiService.fetchWorkspaceProjects(
-              action.workspaceSlug
-            ),
+            this.workspaceApiService.fetchWorkspaceProjects(action.workspaceId),
             this.workspaceApiService.fetchWorkspaceInvitedProjects(
-              action.workspaceSlug
+              action.workspaceId
             ),
             timer(300)
           ).pipe(
             map(([project, invitations]) => {
               return WorkspaceActions.fetchWorkspaceInvitationsSuccess({
-                projectSlug: action.projectSlug,
-                workspaceSlug: action.workspaceSlug,
+                projectId: action.projectId,
+                workspaceId: action.workspaceId,
                 project,
                 invitations,
                 role: action.role,
@@ -160,7 +156,7 @@ export class WorkspaceEffects {
       pessimisticUpdate({
         run: (action) => {
           return zip(
-            this.workspaceApiService.fetchWorkspace(action.workspaceSlug),
+            this.workspaceApiService.fetchWorkspace(action.workspaceId),
             timer(300)
           ).pipe(
             map(([workspace]) => {

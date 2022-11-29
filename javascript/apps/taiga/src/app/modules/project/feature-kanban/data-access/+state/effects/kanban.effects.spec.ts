@@ -6,13 +6,12 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { randNumber } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { ProjectApiService } from '@taiga/api';
-import { Observable } from 'rxjs';
-import { AppService } from '~/app/services/app.service';
-
 import {
   ProjectMockFactory,
   StatusMockFactory,
@@ -21,19 +20,19 @@ import {
   WorkflowMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
-import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';
-import { KanbanEffects } from './kanban.effects';
-
-import { randNumber } from '@ngneat/falso';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { Observable } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
-  selectCurrentProjectSlug,
+  selectCurrentProjectId,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanStoryA11y } from '~/app/modules/project/feature-kanban/kanban.model';
+import { AppService } from '~/app/services/app.service';
+import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';
 import { selectCurrentWorkflowSlug } from '../selectors/kanban.selectors';
+import { KanbanEffects } from './kanban.effects';
+
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
   let spectator: SpectatorService<KanbanEffects>;
@@ -172,7 +171,7 @@ describe('ProjectEffects', () => {
     });
 
     const expected = cold('-a', {
-      a: fetchProject({ slug: project.slug }),
+      a: fetchProject({ id: project.id }),
     });
 
     expect(effects.createStoryError$).toBeObservable(expected);
@@ -236,7 +235,7 @@ describe('ProjectEffects', () => {
     const workflow = WorkflowMockFactory();
     const project = ProjectMockFactory();
 
-    store.overrideSelector(selectCurrentProjectSlug, project.slug);
+    store.overrideSelector(selectCurrentProjectId, project.id);
     store.overrideSelector(selectCurrentWorkflowSlug, workflow.slug);
 
     projectApiService.moveStory.mockReturnValue(cold('-b|', { b: story }));
@@ -263,7 +262,7 @@ describe('ProjectEffects', () => {
           ref: story.ref,
           status: status.slug,
         },
-        project.slug,
+        project.id,
         workflow.slug,
         {
           place: 'after',

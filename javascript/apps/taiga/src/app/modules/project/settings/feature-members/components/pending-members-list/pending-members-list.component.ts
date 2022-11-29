@@ -348,7 +348,7 @@ export class PendingMembersListComponent {
   public resend(member: Invitation) {
     this.store.dispatch(
       membersActions.resendInvitation({
-        slug: this.state.get('project').slug,
+        id: this.state.get('project').id,
         usernameOrEmail: member.user?.username || member.email,
       })
     );

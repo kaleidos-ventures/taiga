@@ -13,6 +13,7 @@ import {
   randRole,
   randSlug,
   randUserName,
+  randUuid,
 } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -102,7 +103,7 @@ describe('MembersEffects', () => {
     expect(effects.nextMembersPage$).toBeObservable(expected);
     expect(effects.nextMembersPage$).toSatisfyOnFlush(() => {
       expect(projectApiService.getMembers).toHaveBeenCalledWith(
-        project.slug,
+        project.id,
         0,
         20
       );
@@ -139,7 +140,7 @@ describe('MembersEffects', () => {
     expect(effects.nextPendingPage$).toBeObservable(expected);
     expect(effects.nextPendingPage$).toSatisfyOnFlush(() => {
       expect(projectApiService.getInvitations).toHaveBeenCalledWith(
-        project.slug,
+        project.id,
         0,
         20
       );
@@ -154,7 +155,7 @@ describe('MembersEffects', () => {
 
     actions$ = hot('-a', {
       a: membersActions.resendInvitation({
-        slug: randSlug(),
+        id: randUuid(),
         usernameOrEmail: randEmail(),
       }),
     });

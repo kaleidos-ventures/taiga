@@ -32,5 +32,5 @@ export const selectRoleAdministrator = () => {
 };
 
 export const acceptInvitationFromProjectOverview = () => {
-  cy.getBySel('accept-invitation-slug').should('be.visible').click();
+  cy.getBySel('accept-invitation-id').should('be.visible').click();
 };

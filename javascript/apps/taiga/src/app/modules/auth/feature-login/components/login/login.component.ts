@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
   @Input() public acceptProjectInvitation = undefined;
   @Input() public next = '';
   @Input() public invitationStatus = '';
-  @Input() public nextProjectSlug = '';
+  @Input() public nextProjectId = '';
 
   public readonly model$ = this.state.select();
 
@@ -74,9 +74,7 @@ export class LoginComponent implements OnInit {
           next: this.next,
           acceptProjectInvitation: this.acceptProjectInvitation === 'true',
           invitationStatus: this.invitationStatus,
-          nextProjectSlug: this.nextProjectSlug
-            ? this.nextProjectSlug
-            : undefined,
+          nextProjectId: this.nextProjectId ? this.nextProjectId : undefined,
         })
       );
     } else {

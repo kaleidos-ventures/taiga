@@ -295,7 +295,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
     this.store.dispatch(
       updateRolePermissions({
-        project: this.state.get('project').slug,
+        project: this.state.get('project').id,
         roleSlug: role.slug,
         permissions,
       })
@@ -310,7 +310,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
     this.store.dispatch(
       updatePublicPermissions({
-        project: this.state.get('project').slug,
+        project: this.state.get('project').id,
         permissions,
       })
     );
@@ -324,7 +324,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
     this.store.dispatch(
       updateWorkspacePermissions({
-        project: this.state.get('project').slug,
+        project: this.state.get('project').id,
         permissions,
       })
     );

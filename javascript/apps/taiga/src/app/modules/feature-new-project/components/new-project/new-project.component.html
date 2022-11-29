@@ -12,8 +12,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <!-- Init Template -->
       <ng-container *ngIf="currentStep === 'init'">
         <tg-init-step
-          (templateSelected)="onSelectTemplate($event.step, $event.slug)"
-          [selectedWorkspaceSlug]="formData.workspaceSlug"
+          (templateSelected)="onSelectTemplate($event.step, $event.id)"
+          [selectedWorkspaceId]="formData.workspaceId"
           [workspaces]="workspaceList">
         </tg-init-step>
       </ng-container>
@@ -24,7 +24,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           (projectData)="createProject($event)"
           (cancel)="cancelTemplateStep($event)"
           [initialForm]="savedForm"
-          [selectedWorkspaceSlug]="formData.workspaceSlug"
+          [selectedWorkspaceId]="formData.workspaceId"
           [workspaces]="workspaceList">
         </tg-template-step>
       </ng-container>

@@ -335,7 +335,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
         searchUser({
           searchUser: {
             text: searchText,
-            project: this.project.slug,
+            project: this.project.id,
           },
           peopleAdded: this.getPeopleAdded(),
         })
@@ -491,7 +491,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     } else if (this.users.length && this.inviteIdentifier === '') {
       this.store.dispatch(
         inviteUsersToProject({
-          slug: this.project.slug,
+          id: this.project.id,
           invitation: this.generatePayload(),
         })
       );

@@ -27,7 +27,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <form [formGroup]="createProjectForm">
       <tg-ui-select
         *ngIf="
-          (selectedWorkspaceSlug && workspaces.length) || !selectedWorkspaceSlug
+          (selectedWorkspaceId && workspaces.length) || !selectedWorkspaceId
         "
         [label]="t('commons.workspace')"
         type="avatar"

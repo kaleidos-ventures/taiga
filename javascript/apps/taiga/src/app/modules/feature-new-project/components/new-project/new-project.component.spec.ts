@@ -6,16 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NewProjectComponent } from './new-project.component';
-
-import { randDomainSuffix } from '@ngneat/falso';
-import { Observable } from 'rxjs';
-import { Action } from '@ngrx/store';
+import { randUuid } from '@ngneat/falso';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { Action } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { Observable } from 'rxjs';
+import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
+import { NewProjectComponent } from './new-project.component';
 
 describe('NewProjectComponent', () => {
   let spectator: Spectator<NewProjectComponent>;
@@ -52,10 +51,10 @@ describe('NewProjectComponent', () => {
   it('on select template', () => {
     spectator.component.setStep = jest.fn();
 
-    const workspaceSlug = randDomainSuffix({ length: 3 }).join('-');
+    const workspaceId = randUuid();
     const step = 'template';
-    spectator.component.onSelectTemplate(step, workspaceSlug);
-    expect(spectator.component.formData.workspaceSlug).toEqual(workspaceSlug);
+    spectator.component.onSelectTemplate(step, workspaceId);
+    expect(spectator.component.formData.workspaceId).toEqual(workspaceId);
     expect(spectator.component.setStep).toBeCalledWith(step);
   });
 });

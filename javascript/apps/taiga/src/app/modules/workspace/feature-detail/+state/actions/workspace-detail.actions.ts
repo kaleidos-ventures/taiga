@@ -11,7 +11,7 @@ import { Project, Workspace } from '@taiga/data';
 
 export const fetchWorkspace = createAction(
   '[Workspace] Fetch',
-  props<{ slug: Workspace['slug'] }>()
+  props<{ id: Workspace['id'] }>()
 );
 
 export const fetchWorkspaceSuccess = createAction(
@@ -29,8 +29,8 @@ export const resetWorkspace = createAction('[Workspace] Reset workspace');
 export const invitationDetailCreateEvent = createAction(
   '[Workspace Detail] new invitation event, fetch invitations',
   props<{
-    projectSlug: Project['slug'];
-    workspaceSlug: Workspace['slug'];
+    projectId: Project['id'];
+    workspaceId: Workspace['id'];
     role: string;
   }>()
 );
@@ -38,7 +38,7 @@ export const invitationDetailCreateEvent = createAction(
 export const fetchWorkspaceDetailInvitationsSuccess = createAction(
   '[Workspace Detail API] Fetch workspace detail Invitations success',
   props<{
-    projectSlug: Project['slug'];
+    projectId: Project['id'];
     invitations: Project[];
     project: Project[];
     role: string;
@@ -47,5 +47,5 @@ export const fetchWorkspaceDetailInvitationsSuccess = createAction(
 
 export const invitationDetailRevokedEvent = createAction(
   '[Workspace Detail] revoked invitation event, update workspace',
-  props<{ projectSlug: Project['slug'] }>()
+  props<{ projectId: Project['id'] }>()
 );

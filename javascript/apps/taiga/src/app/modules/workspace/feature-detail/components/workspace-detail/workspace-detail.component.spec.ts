@@ -19,7 +19,6 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { ConfigService } from '@taiga/core';
 import { WorkspaceMemberMockFactory, WorkspaceProject } from '@taiga/data';
 import { Observable, of } from 'rxjs';
-
 import {
   invitationDetailCreateEvent,
   invitationDetailRevokedEvent,
@@ -68,7 +67,7 @@ describe('ButtonComponent', () => {
       {
         provide: ActivatedRoute,
         useValue: {
-          paramMap: of(convertToParamMap({ slug: workspaceItemMember.slug })),
+          paramMap: of(convertToParamMap({ id: workspaceItemMember.id })),
         },
       },
     ],
@@ -84,10 +83,10 @@ describe('ButtonComponent', () => {
   });
 
   it('Invitation revoked via event', (done) => {
-    const projectToRevoke = workspaceItemMember.invitedProjects[0].slug;
+    const projectToRevoke = workspaceItemMember.invitedProjects[0].id;
     const dispatchSpy = jest.spyOn(store, 'dispatch');
     const action = invitationDetailRevokedEvent({
-      projectSlug: projectToRevoke,
+      projectId: projectToRevoke,
     });
     spectator.component.invitationRevokedEvent(projectToRevoke);
 
@@ -98,10 +97,10 @@ describe('ButtonComponent', () => {
   });
 
   it('Membership created via event', (done) => {
-    const projectToPromote = workspaceItemMember.invitedProjects[0].slug;
+    const projectToPromote = workspaceItemMember.invitedProjects[0].id;
     const dispatchSpy = jest.spyOn(store, 'dispatch');
     const action = acceptInvitationEvent({
-      projectSlug: projectToPromote,
+      projectId: projectToPromote,
     });
     spectator.component.membershipCreateEvent(projectToPromote);
 
@@ -112,13 +111,13 @@ describe('ButtonComponent', () => {
   });
 
   it('Invitation created via event', (done) => {
-    const projectToInvite = workspaceItemMember.invitedProjects[0].slug;
-    const workspaceSlug = workspaceItemMember.slug;
+    const projectToInvite = workspaceItemMember.invitedProjects[0].id;
+    const workspaceId = workspaceItemMember.id;
     const workspaceRole = workspaceItemMember.userRole;
     const dispatchSpy = jest.spyOn(store, 'dispatch');
     const action = invitationDetailCreateEvent({
-      projectSlug: projectToInvite,
-      workspaceSlug: workspaceSlug,
+      projectId: projectToInvite,
+      workspaceId: workspaceId,
       role: workspaceRole,
     });
     spectator.component.invitationCreateEvent(projectToInvite);
@@ -131,7 +130,7 @@ describe('ButtonComponent', () => {
 
   it('refresh invitation', (done) => {
     const newInvitations = workspaceItemMember.invitedProjects;
-    const slugNewInvitation = newInvitations[0].slug;
+    const idNewInvitation = newInvitations[0].id;
     const oldInvitations = [...newInvitations];
     oldInvitations.shift();
 
@@ -141,7 +140,7 @@ describe('ButtonComponent', () => {
 
     spectator.component.model$.subscribe(({ invitations }) => {
       expect(
-        invitations.find((invitation) => invitation.slug === slugNewInvitation)
+        invitations.find((invitation) => invitation.id === idNewInvitation)
       ).toBeTruthy();
       done();
     });
@@ -167,7 +166,7 @@ describe('ButtonComponent', () => {
 
     requestAnimationFrame(() => {
       siblings = spectator.component.getSiblingsRow(
-        workspaceItemMember.invitedProjects[1].slug
+        workspaceItemMember.invitedProjects[1].id
       );
       expect(siblings).toHaveLength(spectator.component.amountOfProjectsToShow);
       done();
@@ -194,15 +193,15 @@ describe('ButtonComponent', () => {
 
     requestAnimationFrame(() => {
       siblings = spectator.component.getSiblingsRow(
-        workspaceItemMember.invitedProjects[4].slug
+        workspaceItemMember.invitedProjects[4].id
       );
       spectator.component.model$.subscribe(({ invitations }) => {
         if (siblings) {
-          expect(siblings[0].slug).toBe(
-            invitations[spectator.component.amountOfProjectsToShow - 1 + 1].slug
+          expect(siblings[0].id).toBe(
+            invitations[spectator.component.amountOfProjectsToShow - 1 + 1].id
           );
-          expect(siblings[1].slug).toBe(
-            invitations[spectator.component.amountOfProjectsToShow - 1 + 2].slug
+          expect(siblings[1].id).toBe(
+            invitations[spectator.component.amountOfProjectsToShow - 1 + 2].id
           );
         }
         done();
@@ -251,12 +250,8 @@ describe('ButtonComponent', () => {
 
     requestAnimationFrame(() => {
       spectator.component.model$.subscribe(({ invitations }) => {
-        spectator.component.animateLeavingInvitationSiblings(
-          invitations[4].slug
-        );
-        expect(spectator.component.reorder[invitations[4].slug]).toBe(
-          'entering'
-        );
+        spectator.component.animateLeavingInvitationSiblings(invitations[4].id);
+        expect(spectator.component.reorder[invitations[4].id]).toBe('entering');
         done();
       });
     });

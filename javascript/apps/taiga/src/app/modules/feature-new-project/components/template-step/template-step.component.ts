@@ -8,14 +8,14 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   OnInit,
   Output,
   ViewChild,
-  HostListener,
-  ChangeDetectorRef,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -48,7 +48,7 @@ export class TemplateStepComponent implements OnInit {
   public initialForm?: TemplateProjectForm;
 
   @Input()
-  public selectedWorkspaceSlug!: ProjectCreation['workspaceSlug'];
+  public selectedWorkspaceId!: ProjectCreation['workspaceId'];
 
   @Input()
   public workspaces!: Workspace[];
@@ -132,7 +132,7 @@ export class TemplateStepComponent implements OnInit {
 
   public getCurrentWorkspace() {
     return this.workspaces.find(
-      (workspace) => workspace.slug === this.selectedWorkspaceSlug
+      (workspace) => workspace.id === this.selectedWorkspaceId
     );
   }
 
@@ -167,7 +167,7 @@ export class TemplateStepComponent implements OnInit {
       const workspace = this.formValue.workspace;
 
       const projectFormValue: ProjectCreation = {
-        workspaceSlug: workspace.slug,
+        workspaceId: workspace.id,
         name: this.formValue.name,
         description: this.formValue.description,
         color: this.formValue.color,

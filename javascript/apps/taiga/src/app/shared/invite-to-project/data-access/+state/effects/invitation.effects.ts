@@ -35,8 +35,8 @@ export class InvitationEffects {
     return this.actions$.pipe(
       ofType(InvitationActions.revokeInvitation),
       map((action) => {
-        return InvitationActions.acceptInvitationSlugError({
-          projectSlug: action.projectSlug,
+        return InvitationActions.acceptInvitationIdError({
+          projectId: action.projectId,
         });
       })
     );
@@ -49,7 +49,7 @@ export class InvitationEffects {
         run: (action) => {
           this.buttonLoadingService.start();
           return this.invitationApiService
-            .inviteUsers(action.slug, action.invitation)
+            .inviteUsers(action.id, action.invitation)
             .pipe(
               switchMap(this.buttonLoadingService.waitLoading()),
               map((response: InvitationResponse) => {
@@ -129,18 +129,18 @@ export class InvitationEffects {
     { dispatch: false }
   );
 
-  public acceptInvitationSlug$ = createEffect(() => {
+  public acceptInvitationId$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.acceptInvitationSlug),
+      ofType(InvitationActions.acceptInvitationId),
       optimisticUpdate({
         run: (action) => {
-          return this.projectApiService.acceptInvitationSlug(action.slug).pipe(
+          return this.projectApiService.acceptInvitationId(action.id).pipe(
             concatLatestFrom(() =>
               this.store.select(selectUser).pipe(filterNil())
             ),
             map(([, user]) => {
-              return InvitationActions.acceptInvitationSlugSuccess({
-                projectSlug: action.slug,
+              return InvitationActions.acceptInvitationIdSuccess({
+                projectId: action.id,
                 username: user.username,
               });
             })
@@ -148,8 +148,8 @@ export class InvitationEffects {
         },
         undoAction: (action, httpResponse: HttpErrorResponse) => {
           if (this.revokeInvitationService.isRevokeError(httpResponse)) {
-            return this.revokeInvitationService.acceptInvitationSlugRevokeError(
-              action.slug,
+            return this.revokeInvitationService.acceptInvitationIdRevokeError(
+              action.id,
               action.name,
               action.isBanner
             );
@@ -160,8 +160,8 @@ export class InvitationEffects {
             status: TuiNotification.Error,
           });
 
-          return InvitationActions.acceptInvitationSlugError({
-            projectSlug: action.slug,
+          return InvitationActions.acceptInvitationIdError({
+            projectId: action.id,
           });
         },
       })

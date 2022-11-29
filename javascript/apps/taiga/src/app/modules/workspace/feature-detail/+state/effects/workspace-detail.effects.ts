@@ -6,10 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-
-import { HttpErrorResponse } from '@angular/common/http';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { WorkspaceApiService } from '@taiga/api';
 import { timer, zip } from 'rxjs';
@@ -24,13 +23,11 @@ export class WorkspaceDetailEffects {
       ofType(WorkspaceActions.fetchWorkspace),
       fetch({
         run: (action) => {
-          return this.workspaceApiService
-            .fetchWorkspaceDetail(action.slug)
-            .pipe(
-              map((workspace) => {
-                return WorkspaceActions.fetchWorkspaceSuccess({ workspace });
-              })
-            );
+          return this.workspaceApiService.fetchWorkspaceDetail(action.id).pipe(
+            map((workspace) => {
+              return WorkspaceActions.fetchWorkspaceSuccess({ workspace });
+            })
+          );
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
           this.appService.errorManagement(httpResponse),
@@ -44,8 +41,8 @@ export class WorkspaceDetailEffects {
       fetch({
         run: (action) => {
           return zip(
-            this.workspaceApiService.fetchWorkspaceProjects(action.slug),
-            this.workspaceApiService.fetchWorkspaceInvitedProjects(action.slug),
+            this.workspaceApiService.fetchWorkspaceProjects(action.id),
+            this.workspaceApiService.fetchWorkspaceInvitedProjects(action.id),
             timer(1000)
           ).pipe(
             map(([projects, invitedProjects]) => {
@@ -68,17 +65,15 @@ export class WorkspaceDetailEffects {
       pessimisticUpdate({
         run: (action) => {
           return zip(
-            this.workspaceApiService.fetchWorkspaceProjects(
-              action.workspaceSlug
-            ),
+            this.workspaceApiService.fetchWorkspaceProjects(action.workspaceId),
             this.workspaceApiService.fetchWorkspaceInvitedProjects(
-              action.workspaceSlug
+              action.workspaceId
             ),
             timer(300)
           ).pipe(
             map(([project, invitations]) => {
               return WorkspaceActions.fetchWorkspaceDetailInvitationsSuccess({
-                projectSlug: action.projectSlug,
+                projectId: action.projectId,
                 project,
                 invitations,
                 role: action.role,

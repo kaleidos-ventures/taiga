@@ -36,7 +36,7 @@ export class ProjectEffects {
       ofType(ProjectActions.fetchProject),
       fetch({
         run: (action) => {
-          return this.projectApiService.getProject(action.slug).pipe(
+          return this.projectApiService.getProject(action.id).pipe(
             map((project) => {
               return ProjectActions.fetchProjectSuccess({ project });
             })
@@ -65,7 +65,7 @@ export class ProjectEffects {
       ofType(ProjectActions.permissionsUpdate),
       fetch({
         run: (action) => {
-          return this.projectApiService.getProject(action.slug).pipe(
+          return this.projectApiService.getProject(action.id).pipe(
             map((project) => {
               return ProjectActions.fetchProjectSuccess({ project });
             })
@@ -103,7 +103,7 @@ export class ProjectEffects {
 
   public acceptedInvitation$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.acceptInvitationSlugSuccess),
+      ofType(InvitationActions.acceptInvitationIdSuccess),
       tap(() => {
         this.appService.toastNotification({
           message: 'invitation_accept_message',
@@ -112,29 +112,29 @@ export class ProjectEffects {
           autoClose: true,
         });
       }),
-      map(({ projectSlug }) => {
-        return ProjectActions.fetchProject({ slug: projectSlug });
+      map(({ projectId }) => {
+        return ProjectActions.fetchProject({ id: projectId });
       })
     );
   });
 
   public acceptedInvitationError$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.acceptInvitationSlugError),
-      map(({ projectSlug }) => {
-        return ProjectActions.fetchProject({ slug: projectSlug });
+      ofType(InvitationActions.acceptInvitationIdError),
+      map(({ projectId }) => {
+        return ProjectActions.fetchProject({ id: projectId });
       })
     );
   });
 
-  public revokeInvitationBannerSlugError$ = createEffect(() => {
+  public revokeInvitationBannerIdError$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.revokeInvitationBannerSlugError),
+      ofType(InvitationActions.revokeInvitationBannerIdError),
       fetch({
-        run: ({ projectSlug }) => {
-          return this.projectApiService.getProject(projectSlug).pipe(
+        run: ({ projectId }) => {
+          return this.projectApiService.getProject(projectId).pipe(
             map((project) => {
-              return ProjectActions.fetchProject({ slug: project.slug });
+              return ProjectActions.fetchProject({ id: project.id });
             })
           );
         },
@@ -165,7 +165,7 @@ export class ProjectEffects {
       fetch({
         run: (action) => {
           return this.projectApiService
-            .getStory(action.projectSlug, action.storyRef)
+            .getStory(action.projectId, action.storyRef)
             .pipe(
               map((story) => {
                 return ProjectActions.fetchStorySuccess({
@@ -191,7 +191,7 @@ export class ProjectEffects {
         map(([action, project, story]) => {
           this.localStorage.set('story_view', action.storyView);
           void this.router.navigate([
-            `/project/${project.slug}/stories/${story.ref}`,
+            `/project/${project.id}/${project.slug}/stories/${story.ref}`,
           ]);
         })
       );

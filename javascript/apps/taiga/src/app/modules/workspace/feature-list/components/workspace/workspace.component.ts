@@ -140,7 +140,7 @@ export class WorkspaceComponent implements OnDestroy {
       workspaceList: Workspace[];
       showActivity: boolean;
       createFormHasError: boolean;
-      rejectedInvites: Project['slug'][];
+      rejectedInvites: Project['id'][];
     }>
   ) {
     this.store.dispatch(initWorkspaceList());
@@ -182,7 +182,7 @@ export class WorkspaceComponent implements OnDestroy {
       .subscribe((eventResponse) => {
         if (
           this.state.get('workspaceList').some((workspace) => {
-            return workspace.slug === eventResponse.event.content.workspace;
+            return workspace.id === eventResponse.event.content.workspace;
           })
         ) {
           this.eventsSubject.next({
@@ -194,7 +194,7 @@ export class WorkspaceComponent implements OnDestroy {
           // If the workspace of the invitation does not exist we fetch the workspace, adding it to the top of the list.
           this.store.dispatch(
             fetchWorkspace({
-              workspaceSlug: eventResponse.event.content.workspace,
+              workspaceId: eventResponse.event.content.workspace,
             })
           );
         }
@@ -223,7 +223,7 @@ export class WorkspaceComponent implements OnDestroy {
   }
 
   public trackByWorkspace(index: number, workspace: Workspace) {
-    return workspace.slug;
+    return workspace.id;
   }
 
   public onResized(event: ResizedEvent) {
@@ -240,7 +240,7 @@ export class WorkspaceComponent implements OnDestroy {
     const latestProjects = workspace.latestProjects;
     const rejectedInvites = this.state.get('rejectedInvites');
     const hasInvitedProjects = workspace.invitedProjects.filter((project) => {
-      return !rejectedInvites.includes(project.slug);
+      return !rejectedInvites.includes(project.id);
     });
 
     return !(

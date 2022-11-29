@@ -50,7 +50,7 @@ export class MembersEffects {
       ),
       exhaustMap(([action, project]) => {
         return this.projectApiService
-          .getMembers(project.slug, action.offset, MEMBERS_PAGE_SIZE)
+          .getMembers(project.id, action.offset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((membersResponse) => {
               return membersActions.fetchMembersSuccess({
@@ -76,7 +76,7 @@ export class MembersEffects {
       ),
       exhaustMap(([action, project]) => {
         return this.projectApiService
-          .getInvitations(project.slug, action.offset, MEMBERS_PAGE_SIZE)
+          .getInvitations(project.id, action.offset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((invitationsResponse) => {
               return membersActions.fetchInvitationsSuccess({
@@ -103,7 +103,7 @@ export class MembersEffects {
       ]),
       exhaustMap(([, project, membersOffset]) => {
         return this.projectApiService
-          .getMembers(project.slug, membersOffset, MEMBERS_PAGE_SIZE)
+          .getMembers(project.id, membersOffset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((membersResponse) => {
               return membersActions.fetchMembersSuccess({
@@ -130,7 +130,7 @@ export class MembersEffects {
       ]),
       exhaustMap(([, project, invitationsOffset]) => {
         return this.projectApiService
-          .getInvitations(project.slug, invitationsOffset, MEMBERS_PAGE_SIZE)
+          .getInvitations(project.id, invitationsOffset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((invitationsResponse) => {
               return membersActions.fetchInvitationsSuccess({
@@ -157,7 +157,7 @@ export class MembersEffects {
       optimisticUpdate({
         run: (action, project) => {
           return this.projectApiService
-            .revokeInvitation(project.slug, action.invitation.email)
+            .revokeInvitation(project.id, action.invitation.email)
             .pipe(
               map(() =>
                 membersActions.revokeInvitationSuccess({
@@ -216,7 +216,7 @@ export class MembersEffects {
         run: (action) => {
           this.buttonLoadingService.start();
           return this.invitationApiService
-            .resendInvitation(action.slug, action.usernameOrEmail)
+            .resendInvitation(action.id, action.usernameOrEmail)
             .pipe(
               switchMap(this.buttonLoadingService.waitLoading()),
               map(() => {
@@ -305,7 +305,7 @@ export class MembersEffects {
       pessimisticUpdate({
         run: (action, project) => {
           return this.projectApiService
-            .updateMemberRole(project.slug, {
+            .updateMemberRole(project.id, {
               username: action.username,
               roleSlug: action.roleSlug,
             })
@@ -344,7 +344,7 @@ export class MembersEffects {
       pessimisticUpdate({
         run: (action, project) => {
           return this.projectApiService
-            .updateInvitationRole(project.slug, {
+            .updateInvitationRole(project.id, {
               id: action.id,
               roleSlug: action.newRole.slug!,
             })
@@ -375,7 +375,7 @@ export class MembersEffects {
         this.store.select(selectCurrentProject).pipe(filterNil())
       ),
       map(([, project]) => {
-        return fetchProject({ slug: project.slug });
+        return fetchProject({ id: project.id });
       })
     );
   });

@@ -198,7 +198,9 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
 
   public navigateToNextStory(ref: number) {
     this.location.go(
-      `project/${this.state.get('project').slug}/stories/${ref}`,
+      `project/${this.state.get('project').id}/${
+        this.state.get('project').slug
+      }/stories/${ref}`,
       undefined,
       {
         nextStoryNavigation: true,
@@ -208,7 +210,9 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
 
   public navigateToPreviousStory(ref: number) {
     this.location.go(
-      `project/${this.state.get('project').slug}/stories/${ref}`,
+      `project/${this.state.get('project').id}/${
+        this.state.get('project').slug
+      }/stories/${ref}`,
       undefined,
       {
         previousStoryNavigation: true,
@@ -219,7 +223,9 @@ export class KanbanStoryDetailComponent implements AfterViewInit {
   public closeStory(ref: number | undefined) {
     this.store.dispatch(clearStory());
     this.location.replaceState(
-      `project/${this.state.get('project').slug}/kanban`
+      `project/${this.state.get('project').id}/${
+        this.state.get('project').slug
+      }/kanban`
     );
     if (ref) {
       requestAnimationFrame(() => {

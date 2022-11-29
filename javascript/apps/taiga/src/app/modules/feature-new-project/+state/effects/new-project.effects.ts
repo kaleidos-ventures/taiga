@@ -6,17 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-
-import { map, switchMap } from 'rxjs/operators';
-
 import { HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { Project } from '@taiga/data';
+import { map, switchMap } from 'rxjs/operators';
 import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { AppService } from '~/app/services/app.service';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
@@ -64,7 +62,7 @@ export class NewProjectEffects {
         ofType(NewProjectActions.createProjectSuccess),
         map((action) => {
           void this.router.navigate(
-            ['/project/', action.project.slug, 'kanban'],
+            ['/project/', action.project.id, action.project.slug, 'kanban'],
             {
               state: { invite: true },
             }

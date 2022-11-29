@@ -18,29 +18,29 @@ export const inviteUsersSuccess = createAction(
   }>()
 );
 
-export const acceptInvitationSlug = createAction(
-  '[Invitation] Accept your invitation via Slug',
-  props<{ slug: string; name?: string; isBanner?: boolean }>()
+export const acceptInvitationId = createAction(
+  '[Invitation] Accept your invitation via id',
+  props<{ id: string; name?: string; isBanner?: boolean }>()
 );
 
-export const acceptInvitationSlugSuccess = createAction(
-  '[Invitation] Success accept your invitation via Slug',
-  props<{ projectSlug: string; username: string }>()
+export const acceptInvitationIdSuccess = createAction(
+  '[Invitation] Success accept your invitation via id',
+  props<{ projectId: string; username: string }>()
 );
 
-export const acceptInvitationSlugError = createAction(
-  '[Invitation] Error accept your invitation via Slug',
-  props<{ projectSlug: string }>()
+export const acceptInvitationIdError = createAction(
+  '[Invitation] Error accept your invitation via id',
+  props<{ projectId: string }>()
 );
 
-export const revokeInvitationBannerSlugError = createAction(
-  '[Invitation] Error accept your invitation via Slug using Project Overview Banner',
-  props<{ projectSlug: string }>()
+export const revokeInvitationBannerIdError = createAction(
+  '[Invitation] Error accept your invitation via id using Project Overview Banner',
+  props<{ projectId: string }>()
 );
 
 export const revokeInvitation = createAction(
   '[WorkspaceList] revoke invitation',
-  props<{ projectSlug: Project['slug'] }>()
+  props<{ projectId: Project['id'] }>()
 );
 
 export const inviteUsersError = createAction('[Invitation] invite users error');

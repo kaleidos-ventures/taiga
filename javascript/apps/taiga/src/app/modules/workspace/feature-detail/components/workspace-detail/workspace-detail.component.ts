@@ -41,7 +41,7 @@ import {
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { acceptInvitationEvent } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { WsService } from '~/app/services/ws';
-import { acceptInvitationSlug } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { acceptInvitationId } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
@@ -177,7 +177,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
         // ignore previously accepted invitations
         projects = projects.filter(
-          (project) => !state.acceptedInvites.includes(project.slug)
+          (project) => !state.acceptedInvites.includes(project.id)
         );
 
         // workspace admin may have an invitation to a project that it already has access to.
@@ -188,19 +188,19 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
             // a member can have some projects in both list because the project could have access permissions for workspace members
             invitations = invitations.filter((invitation) => {
               return !projects.find((project) => {
-                return project.slug === invitation.slug;
+                return project.id === invitation.id;
               });
             });
           } else {
             projects = projects.filter((project) => {
               return !invitations.find((invitation) => {
-                return project.slug === invitation.slug;
+                return project.id === invitation.id;
               });
             });
           }
 
           invitations = invitations.filter((invitation) => {
-            return !state.rejectedInvites.includes(invitation.slug);
+            return !state.rejectedInvites.includes(invitation.id);
           });
         }
 
@@ -221,10 +221,10 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     );
 
     this.route.paramMap.pipe(untilDestroyed(this)).subscribe((params) => {
-      const slug = params.get('slug');
+      const id = params.get('id');
 
-      if (slug) {
-        this.store.dispatch(fetchWorkspace({ slug }));
+      if (id) {
+        this.store.dispatch(fetchWorkspace({ id }));
       }
     });
 
@@ -281,41 +281,41 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       });
   }
 
-  public invitationRevokedEvent(projectSlug: string) {
+  public invitationRevokedEvent(projectId: string) {
     this.store.dispatch(
       invitationDetailRevokedEvent({
-        projectSlug,
+        projectId,
       })
     );
   }
 
-  public invitationCreateEvent(projectSlug: string) {
+  public invitationCreateEvent(projectId: string) {
     const workspace = this.state.get('workspace');
     if (workspace) {
       if (workspace.userRole === 'admin') {
-        this.newProjectsToAnimate.push(projectSlug);
+        this.newProjectsToAnimate.push(projectId);
       }
       this.store.dispatch(
         invitationDetailCreateEvent({
-          projectSlug: projectSlug,
-          workspaceSlug: workspace.slug,
+          projectId: projectId,
+          workspaceId: workspace.id,
           role: workspace.userRole,
         })
       );
     }
   }
 
-  public membershipCreateEvent(projectSlug: string) {
+  public membershipCreateEvent(projectId: string) {
     this.store.dispatch(
       acceptInvitationEvent({
-        projectSlug,
+        projectId,
       })
     );
   }
 
-  public getRejectedInvites(): Project['slug'][] {
+  public getRejectedInvites(): Project['id'][] {
     return (
-      this.userStorageService.get<Project['slug'][] | undefined>(
+      this.userStorageService.get<Project['id'][] | undefined>(
         'workspace_rejected_invites'
       ) ?? []
     );
@@ -327,7 +327,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   }
 
   public trackByLatestProject(index: number, project: WorkspaceProject) {
-    return project.slug;
+    return project.id;
   }
 
   public setCardAmounts(width: number) {
@@ -339,27 +339,27 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     this.setCardAmounts(event.newRect.width);
   }
 
-  public acceptProjectInvite(slug: string, name?: string) {
+  public acceptProjectInvite(id: string, name?: string) {
     this.store.dispatch(
-      acceptInvitationSlug({
-        slug,
+      acceptInvitationId({
+        id,
         name,
       })
     );
   }
 
-  public rejectProjectInvite(slug: Project['slug']) {
+  public rejectProjectInvite(id: Project['id']) {
     this.state.set({ slideOutActive: true });
 
     requestAnimationFrame(() => {
-      this.animateLeavingInvitationSiblings(slug);
+      this.animateLeavingInvitationSiblings(id);
       const rejectedInvites = this.getRejectedInvites();
-      rejectedInvites.push(slug);
+      rejectedInvites.push(id);
       this.setRejectedInvites(rejectedInvites);
     });
   }
 
-  public getSiblingsRow(slug: string) {
+  public getSiblingsRow(id: string) {
     const projectsToShow = this.amountOfProjectsToShow;
     let vm!: ViewDetailModel;
 
@@ -382,19 +382,17 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       [] as Array<WorkspaceProject[]>
     );
     return result.find((chunk) => {
-      return chunk.find((project) => project.slug === slug);
+      return chunk.find((project) => project.id === id);
     });
   }
 
-  public animateLeavingInvitationSiblings(slug: string) {
-    const siblings = this.getSiblingsRow(slug);
+  public animateLeavingInvitationSiblings(id: string) {
+    const siblings = this.getSiblingsRow(id);
     if (siblings) {
-      const rejectedIndex = siblings.findIndex(
-        (project) => project.slug === slug
-      );
+      const rejectedIndex = siblings.findIndex((project) => project.id === id);
       siblings.forEach((project, index) => {
         if (index > rejectedIndex) {
-          this.reorder[project.slug] = 'moving';
+          this.reorder[project.id] = 'moving';
         }
       });
       let vm!: ViewDetailModel;
@@ -407,7 +405,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       const newProjectInTopLine = vm.allVisibleProjects[projectsToShow];
 
       if (newProjectInTopLine) {
-        this.reorder[newProjectInTopLine.slug] = 'entering';
+        this.reorder[newProjectInTopLine.id] = 'entering';
       }
     }
   }
@@ -452,13 +450,13 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const siblings = this.getSiblingsRow(project.slug);
+    const siblings = this.getSiblingsRow(project.id);
 
     if (siblings) {
       this.state.set({
         projectSiblingToAnimate: siblings
-          .filter((it) => it.slug !== project.slug)
-          .map((it) => it.slug),
+          .filter((it) => it.id !== project.id)
+          .map((it) => it.id),
       });
     }
   }
@@ -479,18 +477,18 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       newInvitations = addedInvitations
         .filter((invitation) => {
           return !oldInvitations.find((oldInvitation) => {
-            return oldInvitation.slug === invitation.slug;
+            return oldInvitation.id === invitation.id;
           });
         })
-        .map((invitation) => invitation.slug);
+        .map((invitation) => invitation.id);
 
       removedInvitations = oldInvitations
         .filter((invitation) => {
           return !addedInvitations.find((oldInvitation) => {
-            return oldInvitation.slug === invitation.slug;
+            return oldInvitation.id === invitation.id;
           });
         })
-        .map((invitation) => invitation.slug);
+        .map((invitation) => invitation.id);
     }
 
     if (removedInvitations.length) {

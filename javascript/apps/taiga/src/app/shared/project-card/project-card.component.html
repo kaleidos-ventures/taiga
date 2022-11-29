@@ -17,7 +17,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <a
         tuiLink
         [routerLink]="['/new-project']"
-        [queryParams]="{ workspace: workspace.slug }"
+        [queryParams]="{ workspace: workspace.id }"
         data-test="create-project-card"
         class="project-item-link">
         <ng-container *ngIf="firstProject">
@@ -40,7 +40,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [name]="project.name">
         </tg-ui-avatar>
         <a
-          [routerLink]="['/project', project.slug]"
+          [routerLink]="['/project', project.id, project.slug]"
           class="project-card-link"
           data-test="project-card-name">
           {{ project.name }}
@@ -87,7 +87,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [name]="project.name">
           </tg-ui-avatar>
           <a
-            [routerLink]="['/project', project.slug]"
+            [routerLink]="['/project', project.id, project.slug]"
             class="project-card-link"
             data-test="project-card">
             {{ project.name }}
@@ -99,9 +99,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [@itemSlideOutAnimation]
           data-test="project-accept-invite"
           *ngIf="invitationStatus !== 'accepted'"
-          (click)="
-            acceptInvite.next({ slug: project.slug, name: project.name })
-          "
+          (click)="acceptInvite.next({ id: project.id, name: project.name })"
           appearance="primary"
           type="button">
           {{ t('project.card.accept_invite') }}

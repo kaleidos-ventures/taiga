@@ -39,12 +39,12 @@ export class ProjectOverviewEffects {
       ]),
       exhaustMap(([, project]) => {
         return zip(
-          this.projectApiService.getMembers(project.slug, 0),
+          this.projectApiService.getMembers(project.id, 0),
           this.store.select(selectShowAllMembers).pipe(filterNil())
         ).pipe(
           exhaustMap(([membersResponse, showAllMembers]) => {
             return this.projectApiService
-              .getInvitations(project.slug, 0, MEMBERS_PAGE_SIZE)
+              .getInvitations(project.id, 0, MEMBERS_PAGE_SIZE)
               .pipe(
                 map((invitationsResponse) => {
                   return ProjectOverviewActions.fetchMembersSuccess({
@@ -83,7 +83,7 @@ export class ProjectOverviewEffects {
         ]) => {
           if (hasMoreMembers) {
             return zip(
-              this.projectApiService.getMembers(project.slug, members.length),
+              this.projectApiService.getMembers(project.id, members.length),
               this.store.select(selectShowAllMembers).pipe(filterNil())
             ).pipe(
               exhaustMap(([membersResponse, showAllMembers]) => {
@@ -97,7 +97,7 @@ export class ProjectOverviewEffects {
                   );
                 } else {
                   return this.projectApiService
-                    .getInvitations(project.slug, invitations.length)
+                    .getInvitations(project.id, invitations.length)
                     .pipe(
                       map((invitationsResponse) => {
                         return ProjectOverviewActions.fetchMembersSuccess({
@@ -116,7 +116,7 @@ export class ProjectOverviewEffects {
           } else if (hasMoreInvitations) {
             return zip(
               this.projectApiService.getInvitations(
-                project.slug,
+                project.id,
                 invitations.length
               ),
               this.store.select(selectShowAllMembers).pipe(filterNil())
@@ -145,8 +145,8 @@ export class ProjectOverviewEffects {
       ),
       exhaustMap(([, project]) => {
         return zip(
-          this.projectApiService.getMembers(project.slug, 0),
-          this.projectApiService.getInvitations(project.slug, 0),
+          this.projectApiService.getMembers(project.id, 0),
+          this.projectApiService.getInvitations(project.id, 0),
           this.store.select(selectShowAllMembers).pipe(filterNil())
         ).pipe(
           map(([membersResponse, invitationsResponse, showAllMembers]) => {
@@ -179,8 +179,8 @@ export class ProjectOverviewEffects {
       ),
       exhaustMap(([, project]) => {
         return zip(
-          this.projectApiService.getMembers(project.slug, 0),
-          this.projectApiService.getInvitations(project.slug, 0)
+          this.projectApiService.getMembers(project.id, 0),
+          this.projectApiService.getInvitations(project.id, 0)
         ).pipe(
           map(([membersResponse, invitationsResponse]) => {
             return ProjectOverviewActions.fetchMembersSuccess({
@@ -207,7 +207,7 @@ export class ProjectOverviewEffects {
         this.store.select(selectCurrentProject).pipe(filterNil())
       ),
       map(([, project]) => {
-        return ProjectActions.fetchProject({ slug: project.slug });
+        return ProjectActions.fetchProject({ id: project.id });
       })
     );
   });

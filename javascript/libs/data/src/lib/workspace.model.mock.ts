@@ -6,13 +6,13 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randDepartment, randNumber, randSlug } from '@ngneat/falso';
+import { randDepartment, randNumber, randSlug, randUuid } from '@ngneat/falso';
 import { ProjectMockFactory } from '../lib/project.model.mock';
 import { Workspace } from './workspace.model';
 
 export const WorkspaceMockFactory = (): Workspace => {
   const workspace: Workspace = {
-    id: randNumber(),
+    id: randUuid(),
     slug: randSlug(),
     name: randDepartment(),
     color: randNumber(),
@@ -32,6 +32,7 @@ export const WorkspaceMockFactory = (): Workspace => {
   for (let i = 0; i < numProjects; i++) {
     latestProjects.push(
       ProjectMockFactory(false, {
+        id: workspace.id,
         color: workspace.color,
         slug: workspace.slug,
         name: workspace.name,
@@ -44,6 +45,7 @@ export const WorkspaceMockFactory = (): Workspace => {
   for (let i = 0; i < numProjects; i++) {
     invitedProjects.push(
       ProjectMockFactory(false, {
+        id: workspace.id,
         color: workspace.color,
         slug: workspace.slug,
         name: workspace.name,
@@ -63,7 +65,7 @@ export const WorkspaceMockFactory = (): Workspace => {
 
 export const WorkspaceAdminMockFactory = (): Workspace => {
   const workspace: Workspace = {
-    id: randNumber(),
+    id: randUuid(),
     slug: randSlug(),
     name: randDepartment(),
     color: randNumber(),
@@ -83,6 +85,7 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
   for (let i = 0; i < numProjects; i++) {
     latestProjects.push(
       ProjectMockFactory(false, {
+        id: workspace.id,
         color: workspace.color,
         slug: workspace.slug,
         name: workspace.name,
@@ -94,6 +97,7 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
 
   for (let i = 0; i < numProjects; i++) {
     const project = ProjectMockFactory(false, {
+      id: workspace.id,
       color: workspace.color,
       slug: workspace.slug,
       name: workspace.name,
@@ -117,7 +121,7 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
 
 export const WorkspaceMemberMockFactory = (): Workspace => {
   const workspace: Workspace = {
-    id: randNumber(),
+    id: randUuid(),
     slug: randSlug(),
     name: randDepartment(),
     color: randNumber(),
@@ -137,6 +141,7 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
   for (let i = 0; i < numProjects; i++) {
     latestProjects.push(
       ProjectMockFactory(false, {
+        id: workspace.id,
         color: workspace.color,
         slug: workspace.slug,
         name: workspace.name,
@@ -148,6 +153,7 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
 
   for (let i = 0; i < numProjects; i++) {
     const project = ProjectMockFactory(false, {
+      id: workspace.id,
       color: workspace.color,
       slug: workspace.slug,
       name: workspace.name,
@@ -161,6 +167,7 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
   // all the invitations are also in the project list if the user is a member & the project has public permissions
   for (let i = 0; i < numProjects; i++) {
     const project = ProjectMockFactory(false, {
+      id: workspace.id,
       color: workspace.color,
       slug: workspace.slug,
       name: workspace.name,

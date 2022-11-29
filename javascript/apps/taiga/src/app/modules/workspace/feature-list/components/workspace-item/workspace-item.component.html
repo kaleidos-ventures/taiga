@@ -21,7 +21,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             workspace.userRole === 'admin' || workspace.userRole === 'member'
           "
           data-test="workspace-item-title"
-          [routerLink]="['/workspace/', workspace.slug]"
+          [routerLink]="['/workspace/', workspace.id, workspace.slug]"
           class="workspace-item-title workspace-item-title-active">
           {{ workspace.name }}
         </a>
@@ -67,7 +67,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           data-test="new-project-btn"
           appearance="primary"
           [routerLink]="['/new-project']"
-          [queryParams]="{ workspace: workspace.slug }"
+          [queryParams]="{ workspace: workspace.id }"
           tuiButton
           icon="plus"
           type="button">
@@ -108,22 +108,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [@cardSlideOut]="vm.slideOutActive ? 'on' : 'off'"
         (@cardSlideOut.done)="slideOutAnimationDone($event)"
         [@newProject]="
-          vm.newInvitations.includes(invitation.slug) ? 'inprogress' : 'idle'
+          vm.newInvitations.includes(invitation.id) ? 'inprogress' : 'idle'
         "
         (@newProject.start)="newProjectAnimationStart($event, invitation)"
         (@newProject.done)="newProjectAnimationDone($event)"
         [@newInvitationSibling]="
-          vm.projectSiblingToAnimate.includes(invitation.slug)
+          vm.projectSiblingToAnimate.includes(invitation.id)
             ? 'inprogress'
             : 'idle'
         "
-        [@reorder]="reorder[invitation.slug]"
+        [@reorder]="reorder[invitation.id]"
         (@reorder.done)="reorderDone($event)">
         <tg-project-card
           variant="invitation"
           data-test="project-card-invitation"
           (rejectInvite)="rejectProjectInvite($event)"
-          (acceptInvite)="acceptProjectInvite($event.slug, $event.name)"
+          (acceptInvite)="acceptProjectInvite($event.id, $event.name)"
           [acceptedInvites]="vm.acceptedInvites"
           [workspace]="workspace"
           [project]="invitation">
@@ -132,12 +132,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div
         *ngFor="let project of vm.projects; trackBy: trackByLatestProject"
         [@newProject]="
-          newProjectsToAnimate.includes(project.slug) ? 'inprogress' : 'idle'
+          newProjectsToAnimate.includes(project.id) ? 'inprogress' : 'idle'
         "
         (@newProject.start)="newProjectAnimationStart($event, project)"
         (@newProject.done)="newProjectAnimationDone($event)"
         [@newInvitationSibling]="
-          vm.projectSiblingToAnimate.includes(project.slug)
+          vm.projectSiblingToAnimate.includes(project.id)
             ? 'inprogress'
             : 'idle'
         ">
@@ -146,11 +146,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [workspace]="workspace"
           [project]="project"
           [acceptedInvites]="vm.acceptedInvites"
-          [@reorder]="reorder[project.slug]"
+          [@reorder]="reorder[project.id]"
           (@reorder.done)="reorderDone($event)">
         </tg-project-card>
       </div>
-      <ng-container *ngIf="vm.workspacesSkeletonList.includes(workspace.slug)">
+      <ng-container *ngIf="vm.workspacesSkeletonList.includes(workspace.id)">
         <div
           *ngFor="
             let _ of [].constructor(vm.skeletonToShow);

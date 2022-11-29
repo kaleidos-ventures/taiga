@@ -24,8 +24,10 @@ import {
 } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { ProjectCreation, Workspace } from '@taiga/data';
-import { Template } from '~/app/modules/feature-new-project/data/new-project.model';
-import { Step } from '~/app/modules/feature-new-project/data/new-project.model';
+import {
+  Step,
+  Template,
+} from '~/app/modules/feature-new-project/data/new-project.model';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
 @Component({
@@ -36,7 +38,7 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
 })
 export class InitStepComponent implements OnInit, OnChanges {
   @Input()
-  public selectedWorkspaceSlug!: ProjectCreation['workspaceSlug'];
+  public selectedWorkspaceId!: ProjectCreation['workspaceId'];
 
   @Input()
   public workspaces!: Workspace[];
@@ -44,7 +46,7 @@ export class InitStepComponent implements OnInit, OnChanges {
   @Output()
   public templateSelected = new EventEmitter<{
     step: Step;
-    slug: ProjectCreation['workspaceSlug'];
+    id: ProjectCreation['workspaceId'];
   }>();
 
   public createProjectForm!: FormGroup;
@@ -135,7 +137,7 @@ export class InitStepComponent implements OnInit, OnChanges {
 
   public getCurrentWorkspace() {
     return this.workspaces.find(
-      (workspace) => workspace.slug === this.selectedWorkspaceSlug
+      (workspace) => workspace.id === this.selectedWorkspaceId
     );
   }
 
@@ -148,7 +150,7 @@ export class InitStepComponent implements OnInit, OnChanges {
     if (this.createProjectForm.valid) {
       this.templateSelected.next({
         step,
-        slug: workspace.slug,
+        id: workspace.id,
       });
     } else {
       this.createProjectForm.markAllAsTouched();

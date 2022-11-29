@@ -6,17 +6,15 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-
-import { filter, map } from 'rxjs/operators';
-
-import * as ProjectActions from '../actions/roles-permissions.actions';
+import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
+import { filter, map } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
-import { fetch, pessimisticUpdate } from '@nrwl/angular';
-import { HttpErrorResponse } from '@angular/common/http';
+import * as ProjectActions from '../actions/roles-permissions.actions';
 
 @Injectable()
 export class RolesPermissionsEffects {
@@ -25,13 +23,11 @@ export class RolesPermissionsEffects {
       ofType(ProjectActions.initRolesPermissions),
       fetch({
         run: (action) => {
-          return this.projectApiService
-            .getMemberRoles(action.project.slug)
-            .pipe(
-              map((roles) => {
-                return ProjectActions.fetchMemberRolesSuccess({ roles });
-              })
-            );
+          return this.projectApiService.getMemberRoles(action.project.id).pipe(
+            map((roles) => {
+              return ProjectActions.fetchMemberRolesSuccess({ roles });
+            })
+          );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
           this.appService.errorManagement(httpResponse, {
@@ -55,7 +51,7 @@ export class RolesPermissionsEffects {
       fetch({
         run: (action) => {
           return this.projectApiService
-            .getPublicPermissions(action.project.slug)
+            .getPublicPermissions(action.project.id)
             .pipe(
               map((permissions) => {
                 return ProjectActions.fetchPublicPermissionsSuccess({

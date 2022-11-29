@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -23,11 +24,8 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
 import { distinctUntilChanged, map } from 'rxjs';
-import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
-
-import { Location } from '@angular/common';
-
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { filterNil } from '~/app/shared/utils/operators';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
@@ -109,7 +107,9 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
 
     if (this.story.ref) {
       this.location.go(
-        `project/${this.state.get('project').slug}/stories/${this.story.ref}`,
+        `project/${this.state.get('project').id}/${
+          this.state.get('project').slug
+        }/stories/${this.story.ref}`,
         undefined,
         {
           fromCard: true,

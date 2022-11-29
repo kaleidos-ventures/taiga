@@ -62,7 +62,7 @@ export class VerifyEmailGuard implements CanActivate {
         }),
         tap(({ verification }) => {
           this.projectApiService
-            .getProject(verification.projectInvitation?.project?.slug)
+            .getProject(verification.projectInvitation?.project?.id)
             .pipe(
               catchError((httpResponse: HttpErrorResponse) => {
                 this.revokeInvitationService.verifyEmailRevokeError(
@@ -73,11 +73,12 @@ export class VerifyEmailGuard implements CanActivate {
             );
         }),
         map(({ user, verification }) => {
+          const id = verification.projectInvitation?.project?.id;
           const slug = verification.projectInvitation?.project?.slug;
           const data = {
             user,
             auth: verification.auth,
-            next: slug ? `/project/${slug}` : undefined,
+            next: id ? `/project/${id}/${slug}` : undefined,
           };
 
           this.store.dispatch(loginSuccess(data));

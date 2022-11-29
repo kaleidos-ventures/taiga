@@ -6,20 +6,21 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { ProjectApiService } from '@taiga/api';
-import { Observable } from 'rxjs';
-
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { ProjectApiService } from '@taiga/api';
 import {
   InvitationMockFactory,
   MembershipMockFactory,
   ProjectMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
+import { Observable } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
   fetchMembersSuccess,
@@ -27,9 +28,6 @@ import {
   nextMembersPage,
 } from '../actions/project-overview.actions';
 import { ProjectOverviewEffects } from './project-overview.effects';
-
-import { Router } from '@angular/router';
-import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 
 describe('ProjectOverviewEffects', () => {
   let actions$: Observable<Action>;
@@ -106,12 +104,9 @@ describe('ProjectOverviewEffects', () => {
 
     expect(effects.initMembers$).toBeObservable(expected);
     expect(effects.initMembers$).toSatisfyOnFlush(() => {
-      expect(projectApiService.getMembers).toHaveBeenCalledWith(
-        project.slug,
-        0
-      );
+      expect(projectApiService.getMembers).toHaveBeenCalledWith(project.id, 0);
       expect(projectApiService.getInvitations).toHaveBeenCalledWith(
-        project.slug,
+        project.id,
         0,
         MEMBERS_PAGE_SIZE
       );
@@ -154,7 +149,7 @@ describe('ProjectOverviewEffects', () => {
       expect(effects.nextMembersPage$).toBeObservable(expected);
       expect(effects.nextMembersPage$).toSatisfyOnFlush(() => {
         expect(projectApiService.getMembers).toHaveBeenCalledWith(
-          project.slug,
+          project.id,
           0
         );
       });
@@ -208,7 +203,7 @@ describe('ProjectOverviewEffects', () => {
       expect(effects.nextMembersPage$).toBeObservable(expected);
       expect(effects.nextMembersPage$).toSatisfyOnFlush(() => {
         expect(projectApiService.getInvitations).toHaveBeenCalledWith(
-          project.slug,
+          project.id,
           MEMBERS_PAGE_SIZE
         );
       });

@@ -8,6 +8,7 @@
 from typing import Any
 from uuid import UUID
 
+from taiga.auth import services as auth_services
 from taiga.base.api.pagination import Pagination
 from taiga.base.utils import emails
 from taiga.base.utils.datetime import aware_utcnow
@@ -50,6 +51,9 @@ async def get_public_project_invitation(token: str) -> PublicProjectInvitationSc
             status=invitation.status,
             email=invitation.email,
             existing_user=invitation.user is not None,
+            available_logins=(
+                await auth_services.get_available_user_logins(user=invitation.user) if invitation.user else []
+            ),
             project=invitation.project,
         )
 

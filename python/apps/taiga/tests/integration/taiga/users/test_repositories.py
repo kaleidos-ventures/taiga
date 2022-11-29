@@ -65,6 +65,20 @@ async def test_create_user_error_email_or_username_case_insensitive():
         )
 
 
+async def test_create_user_no_password_from_social():
+    email = "EMAIL@email.com"
+    username = "userNAME"
+    full_name = "Full Name"
+    password = None
+    lang = "es-ES"
+
+    res = await users_repositories.create_user(
+        email=email, username=username, full_name=full_name, password=password, lang=lang
+    )
+
+    assert res.password == ""
+
+
 ##########################################################
 # get_users
 ##########################################################
@@ -299,3 +313,44 @@ async def test_create_auth_data():
 async def test_get_auth_data():
     auth_data = await f.create_auth_data()
     assert auth_data == await users_repositories.get_auth_data(filters={"key": auth_data.key, "value": auth_data.value})
+
+
+##########################################################
+# get_auths_data
+##########################################################
+
+
+async def test_get_auths_data():
+    user = await f.create_user()
+    auth_data1 = await f.create_auth_data(user=user, key="google")
+    auth_data2 = await f.create_auth_data(user=user, key="gitlab")
+
+    auth_datas = await users_repositories.get_auths_data(filters={"user_id": user.id})
+    assert auth_data1 in auth_datas
+    assert auth_data2 in auth_datas
+
+    auth_datas = await users_repositories.get_auths_data(filters={"user_id": user.id, "key": auth_data1.key})
+    assert auth_data1 in auth_datas
+    assert auth_data2 not in auth_datas
+
+
+async def test_get_auths_data_filtered():
+    user = await f.create_user()
+    auth_data1 = await f.create_auth_data(user=user, key="google")
+    auth_data2 = await f.create_auth_data(user=user, key="gitlab")
+
+    auth_datas = await users_repositories.get_auths_data(filters={"user_id": user.id})
+    assert auth_data1 in auth_datas
+    assert auth_data2 in auth_datas
+
+    auth_datas = await users_repositories.get_auths_data(filters={"user_id": user.id, "key": auth_data1.key})
+    assert auth_data1 in auth_datas
+    assert auth_data2 not in auth_datas
+
+
+async def test_get_auths_data_default_related():
+    user = await f.create_user()
+    await f.create_auth_data(user=user)
+
+    auth_datas = await users_repositories.get_auths_data(filters={"user_id": user.id})
+    assert auth_datas[0].user.email == user.email

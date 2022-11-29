@@ -17,6 +17,7 @@ class PublicProjectInvitationSchema:
     status: ProjectInvitationStatus | str
     email: str
     existing_user: bool
+    available_logins: list[str]
     project: Project
 
 

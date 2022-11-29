@@ -76,3 +76,13 @@ async def create_auth_credentials(user: User) -> AccessWithRefreshTokenSchema:
     refresh_token = await RefreshToken.create_for_object(user)
 
     return AccessWithRefreshTokenSchema(token=str(refresh_token.access_token), refresh=str(refresh_token))
+
+
+async def get_available_user_logins(user: User) -> list[str]:
+    available_social_user_logins = await users_repositories.get_auths_data(filters={"user_id": user.id})
+    available_user_logins = [x.key for x in available_social_user_logins]
+
+    if user.password:
+        available_user_logins.append("password")
+
+    return available_user_logins

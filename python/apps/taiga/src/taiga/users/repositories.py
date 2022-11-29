@@ -91,13 +91,16 @@ def _apply_filters_to_queryset(
 
 
 @sync_to_async
-def create_user(email: str, username: str, full_name: str, password: str, lang: str | None = None) -> User:
+def create_user(email: str, username: str, full_name: str, password: str | None, lang: str | None = None) -> User:
     user = User.objects.create(
         email=email, username=username, full_name=full_name, is_active=False, accepted_terms=True
     )
     if lang:
         user.lang = lang
-    user.set_password(password)
+
+    if password:
+        user.set_password(password)
+
     user.save()
     return user
 
@@ -162,7 +165,7 @@ def user_exists(
 
 @sync_to_async
 def check_password(user: User, password: str) -> bool:
-    return user.check_password(password)
+    return user.password != "" and user.check_password(password)
 
 
 @sync_to_async
@@ -343,6 +346,18 @@ def _apply_filters_to_auth_data_queryset(
     return qs
 
 
+class AuthDataListFilters(TypedDict, total=False):
+    user_id: UUID
+
+
+def _apply_filters_to_auth_data_queryset_list(
+    qs: QuerySet[AuthData],
+    filters: AuthDataListFilters = {},
+) -> QuerySet[AuthData]:
+    qs = qs.filter(**filters)
+    return qs
+
+
 AuthDataSelectRelated = list[Literal["user"]]
 
 
@@ -362,6 +377,22 @@ def _apply_select_related_to_auth_data_queryset(
 @sync_to_async
 def create_auth_data(user: User, key: str, value: str, extra: dict[str, str] = {}) -> AuthData:
     return AuthData.objects.create(user=user, key=key, value=value, extra=extra)
+
+
+##########################################################
+# get auths data
+##########################################################
+
+
+@sync_to_async
+def get_auths_data(
+    filters: AuthDataListFilters = {},
+    select_related: AuthDataSelectRelated = ["user"],
+) -> list[AuthData]:
+    qs = _apply_filters_to_auth_data_queryset_list(qs=DEFAULT_AUTH_DATA_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_auth_data_queryset(qs=qs, select_related=select_related)
+
+    return list(qs)
 
 
 ##########################################################

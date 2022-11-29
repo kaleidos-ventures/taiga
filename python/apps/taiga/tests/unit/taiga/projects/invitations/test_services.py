@@ -67,21 +67,28 @@ async def test_get_project_invitation_error_not_found():
 
 
 async def test_get_public_project_invitation_ok():
-    invitation = f.build_project_invitation()
+    user = f.build_user(is_active=True)
+    invitation = f.build_project_invitation(user=user)
     token = str(await ProjectInvitationToken.create_for_object(invitation))
+    available_user_logins = ["gitlab", "password"]
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.projects.invitations.services.auth_services", autospec=True) as fake_auth_services,
     ):
         fake_invitations_repo.get_project_invitation.return_value = invitation
+        fake_auth_services.get_available_user_logins.return_value = available_user_logins
         pub_invitation = await services.get_public_project_invitation(token=token)
         fake_invitations_repo.get_project_invitation.assert_awaited_once_with(
             filters={"id": str(invitation.id)},
             select_related=["user", "project", "workspace", "role"],
         )
+        fake_auth_services.get_available_user_logins.assert_awaited_once_with(user=invitation.user)
+
         assert pub_invitation.email == invitation.email
         assert pub_invitation.existing_user is True
         assert pub_invitation.project == invitation.project
+        assert pub_invitation.available_logins == available_user_logins
 
 
 async def test_get_public_project_invitation_ok_without_user():
@@ -90,6 +97,7 @@ async def test_get_public_project_invitation_ok_without_user():
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.projects.invitations.services.auth_services", autospec=True) as fake_auth_services,
     ):
         fake_invitations_repo.get_project_invitation.return_value = invitation
         pub_invitation = await services.get_public_project_invitation(token)
@@ -97,9 +105,12 @@ async def test_get_public_project_invitation_ok_without_user():
             filters={"id": str(invitation.id)},
             select_related=["user", "project", "workspace", "role"],
         )
+        fake_auth_services.get_available_user_logins.assert_not_awaited()
+
         assert pub_invitation.email == invitation.email
         assert pub_invitation.existing_user is False
         assert pub_invitation.project == invitation.project
+        assert pub_invitation.available_logins == []
 
 
 async def test_get_public_project_invitation_error_invitation_not_exists():

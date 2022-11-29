@@ -19,6 +19,7 @@ class PublicProjectInvitationSerializer(BaseModel):
     status: ProjectInvitationStatus
     email: EmailStr
     existing_user: bool
+    available_logins: list[str]
     project: ProjectSmallSummarySerializer
 
     class Config:
@@ -27,6 +28,7 @@ class PublicProjectInvitationSerializer(BaseModel):
 
 class ProjectInvitationSerializer(BaseModel):
     id: UUID
+    project: ProjectSmallSummarySerializer
     user: UserNestedSerializer | None
     role: BaseProjectRoleSerializer
     email: EmailStr

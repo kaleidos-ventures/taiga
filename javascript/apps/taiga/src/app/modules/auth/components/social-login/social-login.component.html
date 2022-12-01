@@ -36,7 +36,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       }) }}
     </ng-container>
   </tg-ui-context-notification>
-  <div class="login-separator">
+  <div
+    class="login-separator"
+    *ngIf="availableLogins.includes('password')">
     <span class="login-separator-text">{{ t('social.separator') }}</span>
   </div>
 </ng-container>

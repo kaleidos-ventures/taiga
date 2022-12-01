@@ -235,7 +235,7 @@ export class ProjectApiService {
   }
 
   public acceptInvitationToken(token: string) {
-    return this.http.post<Invitation[]>(
+    return this.http.post<Invitation>(
       `${this.config.apiUrl}/projects/invitations/${token}/accept`,
       {}
     );

@@ -6,16 +6,20 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { AuthService } from './auth.service';
-import { ConfigService, selectLanguages } from '@taiga/core';
+import { ActivatedRoute } from '@angular/router';
+import { randUuid } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { LanguageListMockFactory } from '@taiga/data';
-import { UtilsService } from '~/app/shared/utils/utils-service.service';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { AuthApiService } from '@taiga/api';
+import { ConfigService, selectLanguages } from '@taiga/core';
+import { LanguageListMockFactory } from '@taiga/data';
 import { WsService } from '~/app/services/ws';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
+import { AuthService } from './auth.service';
+
+const projectInvitationToken = randUuid();
 
 describe('WsService', () => {
   let spectator: SpectatorService<AuthService>;
@@ -24,7 +28,21 @@ describe('WsService', () => {
 
   const createService = createServiceFactory({
     service: AuthService,
-    providers: [provideMockStore({})],
+    providers: [
+      provideMockStore({}),
+      {
+        provide: ActivatedRoute,
+        useValue: {
+          snapshot: {
+            queryParamMap: {
+              get: () => {
+                return projectInvitationToken;
+              },
+            },
+          },
+        },
+      },
+    ],
     mocks: [
       UtilsService,
       LocalStorageService,

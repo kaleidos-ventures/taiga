@@ -73,6 +73,7 @@ export const socialSignup = createAction(
     code: string;
     social: string;
     redirect?: string;
+    projectInvitationToken?: string;
   }>()
 );
 

@@ -23,6 +23,7 @@ import {
   randSequence,
   randUrl,
   randUserName,
+  randUuid,
 } from '@ngneat/falso';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -401,6 +402,7 @@ describe('AuthEffects', () => {
   it('social login', () => {
     const code = randSequence({ size: 100 });
     const social = rand(['github', 'gitlab', 'google']);
+    const projectInvitationToken = randUuid();
 
     const authApiService = spectator.inject(AuthApiService);
     const authService = spectator.inject(AuthService);
@@ -415,10 +417,17 @@ describe('AuthEffects', () => {
       cold('-b|', { b: 'en-US' })
     );
 
-    actions$ = hot('-a', { a: socialSignup({ code, social }) });
+    actions$ = hot('-a', {
+      a: socialSignup({ code, social, projectInvitationToken }),
+    });
 
     const expected = cold('----a', {
-      a: loginSuccess({ user, auth }),
+      a: loginSuccess({
+        user,
+        auth,
+        acceptProjectInvitation: true,
+        projectInvitationToken,
+      }),
     });
     expect(effects.socialSignUp$).toBeObservable(expected);
     expect(effects.socialSignUp$).toSatisfyOnFlush(() => {

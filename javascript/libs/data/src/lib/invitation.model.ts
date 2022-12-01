@@ -8,8 +8,14 @@
 
 import { NumberSymbol } from '@angular/common';
 import { Membership } from './membership.model';
+import { Project } from './project.model';
 export interface Invitation extends Partial<Membership> {
   email: string;
+  project?: {
+    name: Project['name'];
+    slug: Project['slug'];
+    anonUserCanView: boolean;
+  };
 }
 export interface Contact {
   email?: string;
@@ -29,11 +35,11 @@ export interface InvitationResponse {
   invitations: Invitation[];
   alreadyMembers: NumberSymbol;
 }
-
 export interface InvitationInfo {
   status: 'pending' | 'accepted' | 'revoked';
   email: string;
   existingUser: boolean;
+  availableLogins: string[];
   project: {
     name: string;
     slug: string;

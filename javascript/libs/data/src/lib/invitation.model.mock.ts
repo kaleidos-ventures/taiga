@@ -7,9 +7,11 @@
  */
 
 import {
+  rand,
   randBoolean,
   randEmail,
   randFullName,
+  randNumber,
   randUserName,
 } from '@ngneat/falso';
 import { Contact, Invitation, InvitationInfo } from './invitation.model';
@@ -25,10 +27,14 @@ export const InvitationMockFactory = (): Invitation => {
 
 export const InvitationInfoMockFactory = (): InvitationInfo => {
   const project = ProjectMockFactory();
+  const availableLogins = rand(['password', 'github', 'gitlab', 'google'], {
+    length: randNumber({ max: 4 }),
+  });
   return {
     status: 'pending',
     email: randEmail(),
     existingUser: randBoolean(),
+    availableLogins,
     project: {
       name: project.name,
       slug: project.slug,

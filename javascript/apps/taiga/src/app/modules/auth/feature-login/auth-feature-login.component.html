@@ -19,6 +19,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tg-social-login *ngIf="displaySocialNetworks"></tg-social-login>
         <ng-container *ngIf="queryParams$ | async as queryParams">
           <tg-login
+            *ngIf="
+              !queryParams.availableLogins ||
+              queryParams.availableLogins.includes('password')
+            "
             [projectInvitationToken]="queryParams.projectInvitationToken"
             [acceptProjectInvitation]="queryParams.acceptProjectInvitation"
             [invitationStatus]="queryParams.invitationStatus"

@@ -54,4 +54,5 @@ export interface SocialSignupInput {
   code: string;
   redirect?: string;
   state?: string;
+  projectInvitationToken?: string;
 }

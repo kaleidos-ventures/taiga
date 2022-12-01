@@ -10,7 +10,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { TuiNotification } from '@taiga-ui/core';
-import { ProjectApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 import { InvitationInfo } from '@taiga/data';
 import { of, throwError } from 'rxjs';
@@ -27,8 +26,7 @@ export class ProjectInvitationGuard implements CanActivate {
     private router: Router,
     private http: HttpClient,
     private config: ConfigService,
-    private appService: AppService,
-    private projectApiService: ProjectApiService
+    private appService: AppService
   ) {}
 
   public canActivate(route: ActivatedRouteSnapshot) {

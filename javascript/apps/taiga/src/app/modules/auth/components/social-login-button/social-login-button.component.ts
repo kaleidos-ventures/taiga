@@ -8,7 +8,7 @@
 
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   TranslocoModule,
   TranslocoService,
@@ -19,6 +19,7 @@ import { ConfigService } from '@taiga/core';
 interface SocialParams {
   social: string;
   redirect: string;
+  projectInvitationToken: string;
 }
 
 @Component({
@@ -43,7 +44,8 @@ export class SocialLoginButtonComponent {
   constructor(
     private config: ConfigService,
     private router: Router,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private route: ActivatedRoute
   ) {}
 
   public get socialImage() {
@@ -71,10 +73,16 @@ export class SocialLoginButtonComponent {
     }
     const clientId = socialConfig.clientId;
     const redirectUri = `${window.location.origin}/signup/${this.social}`;
+    const projectInvitationToken =
+      this.route.snapshot.queryParamMap.get('projectInvitationToken') || '';
     const params: SocialParams = {
       social: this.social,
       redirect: this.router.url,
+      projectInvitationToken: '',
     };
+    if (projectInvitationToken) {
+      params.projectInvitationToken = projectInvitationToken;
+    }
     const qs = Object.keys(params)
       .map((key) => {
         return `${key}=${params[key as keyof SocialParams]}`;

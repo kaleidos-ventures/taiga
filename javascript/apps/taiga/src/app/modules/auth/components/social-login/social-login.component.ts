@@ -8,7 +8,7 @@
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { ConfigService } from '@taiga/core';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
@@ -36,30 +36,39 @@ import { SocialLoginButtonComponent } from '../social-login-button/social-login-
   ],
 })
 export class SocialLoginComponent implements OnInit {
-  constructor(
-    private config: ConfigService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+  constructor(private config: ConfigService, private route: ActivatedRoute) {}
 
   public socialError: string | null = null;
   public social: string | null = null;
+  public availableLogins: string[] = [];
   public adminEmail: string = this.config.adminEmail;
 
   public get isGithubActive() {
-    return !!this.config.social.github.clientId;
+    return (
+      !!this.config.social.github.clientId &&
+      (!this.availableLogins.length || this.availableLogins.includes('github'))
+    );
   }
 
   public get isGitlabActive() {
-    return !!this.config.social.gitlab.clientId;
+    return (
+      !!this.config.social.gitlab.clientId &&
+      (!this.availableLogins.length || this.availableLogins.includes('gitlab'))
+    );
   }
 
   public get isGoogleActive() {
-    return !!this.config.social.google.clientId;
+    return (
+      !!this.config.social.google.clientId &&
+      (!this.availableLogins.length || this.availableLogins.includes('google'))
+    );
   }
 
   public ngOnInit(): void {
     this.social = this.route.snapshot.queryParamMap.get('social');
     this.socialError = this.route.snapshot.queryParamMap.get('socialError');
+    this.availableLogins =
+      this.route.snapshot.queryParamMap.get('availableLogins')?.split(',') ||
+      [];
   }
 }

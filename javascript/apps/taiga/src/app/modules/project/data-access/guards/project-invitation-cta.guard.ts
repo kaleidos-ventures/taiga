@@ -76,6 +76,7 @@ export class ProjectInvitationCTAGuard implements CanActivate {
                       acceptProjectInvitation: 'true',
                       projectInvitationToken: token,
                       nextProjectSlug: invitation.project.slug,
+                      availableLogins: invitation.availableLogins.join(','),
                     };
 
                     return of(urlTree);

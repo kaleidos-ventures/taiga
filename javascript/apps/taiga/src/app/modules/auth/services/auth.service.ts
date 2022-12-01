@@ -7,6 +7,7 @@
  */
 
 import { Injectable } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AuthApiService } from '@taiga/api';
 import { ConfigService, selectLanguages } from '@taiga/core';
@@ -30,7 +31,8 @@ export class AuthService {
     private wsService: WsService,
     private userStorageService: UserStorageService,
     private store: Store,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
+    private route: ActivatedRoute
   ) {}
 
   public isLogged() {
@@ -118,11 +120,27 @@ export class AuthService {
       );
   }
 
+  public anyAvailableSocialLogins(availableLogins: string[]) {
+    const acceptedSocialLogins = ['github', 'gitlab', 'google'];
+    return acceptedSocialLogins.find((social) =>
+      availableLogins.includes(social)
+    );
+  }
+
   public displaySocialNetworks() {
     const social = this.config.social;
     const isGithubConfigured = !!social.github.clientId;
     const isGitlabConfigured = !!social.gitlab.clientId;
     const isGoogleConfigured = !!social.google.clientId;
-    return isGithubConfigured || isGitlabConfigured || isGoogleConfigured;
+    const availableLogins =
+      this.route.snapshot.queryParamMap.get('availableLogins')?.split(',') ||
+      [];
+    const isAnyAvailableSocialLogin =
+      this.anyAvailableSocialLogins(availableLogins);
+
+    return (
+      (!availableLogins.length || isAnyAvailableSocialLogin) &&
+      (isGithubConfigured || isGitlabConfigured || isGoogleConfigured)
+    );
   }
 }

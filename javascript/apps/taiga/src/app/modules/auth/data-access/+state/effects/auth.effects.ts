@@ -113,14 +113,27 @@ export class AuthEffects {
               filterNil(),
               take(1),
               mergeMap(() => {
-                if (projectInvitationToken && next && acceptProjectInvitation) {
+                if (projectInvitationToken && acceptProjectInvitation) {
                   return this.projectApiService
                     .acceptInvitationToken(projectInvitationToken)
                     .pipe(
-                      map(() => {
-                        void this.router.navigate([next], {
-                          state: { invite: invitationStatus },
-                        });
+                      map((invitation) => {
+                        if (next) {
+                          void this.router.navigate([next], {
+                            state: { invite: invitationStatus },
+                          });
+                        } else if (invitation.project) {
+                          void this.router.navigate(
+                            [`project/${invitation.project.slug}`],
+                            {
+                              state: { invite: invitationStatus },
+                            }
+                          );
+                        } else {
+                          void this.router.navigate(['/'], {
+                            state: { invite: invitationStatus },
+                          });
+                        }
                         return EMPTY;
                       }),
                       catchError((httpResponse: HttpErrorResponse) => {
@@ -132,7 +145,7 @@ export class AuthEffects {
                               tap((project) => {
                                 this.revokeInvitationService.acceptInvitationTokenRevokeError(
                                   error,
-                                  next,
+                                  next || '/',
                                   !!project.userPermissions.length
                                 );
                                 return EMPTY;
@@ -140,13 +153,18 @@ export class AuthEffects {
                               catchError((httpResponse: HttpErrorResponse) => {
                                 this.revokeInvitationService.acceptInvitationTokenRevokeError(
                                   error,
-                                  next,
+                                  next || '/',
                                   false
                                 );
                                 return throwError(() => httpResponse);
                               })
                             );
+                        } else {
+                          void this.router.navigate(['/'], {
+                            state: { invite: invitationStatus },
+                          });
                         }
+
                         return EMPTY;
                       })
                     );
@@ -416,7 +434,7 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.socialSignup),
       pessimisticUpdate({
-        run: ({ code, social }) => {
+        run: ({ code, social, projectInvitationToken }) => {
           return this.authService.getUserRegistrationLang().pipe(
             switchMap((lang) => {
               return this.authApiService
@@ -432,10 +450,15 @@ export class AuthEffects {
                     );
                   }),
                   map(({ user, auth }) => {
-                    return AuthActions.loginSuccess({
+                    const loginData = {
                       user,
                       auth,
-                    });
+                      acceptProjectInvitation: projectInvitationToken
+                        ? true
+                        : false,
+                      projectInvitationToken,
+                    };
+                    return AuthActions.loginSuccess(loginData);
                   })
                 );
             })

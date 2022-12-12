@@ -79,8 +79,11 @@ const routes: Routes = [
   },
   {
     path: 'workspace/:id',
-    redirectTo: '/workspace/:id/:slug',
-    pathMatch: 'full',
+    loadChildren: () =>
+      import(
+        './modules/workspace/feature-detail/workspace-feature-detail.module'
+      ).then((m) => m.WorkspaceFeatureDetailModule),
+    canActivate: [AuthGuard],
   },
 
   // PROJECT
@@ -101,8 +104,10 @@ const routes: Routes = [
   },
   {
     path: 'project/:id',
-    redirectTo: '/project/:id/:slug',
-    pathMatch: 'full',
+    loadChildren: () =>
+      import(
+        './modules/project/feature-shell/project-feature-shell.module'
+      ).then((m) => m.ProjectFeatureShellModule),
   },
 
   {

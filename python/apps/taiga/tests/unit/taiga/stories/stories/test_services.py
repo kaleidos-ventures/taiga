@@ -15,9 +15,6 @@ from taiga.stories.stories.services import exceptions as ex
 from taiga.workflows.schemas import WorkflowSchema
 from tests.utils import factories as f
 
-pytestmark = pytest.mark.django_db
-
-
 #######################################################
 # create_story
 #######################################################
@@ -167,6 +164,209 @@ async def test_get_paginated_stories_by_workflow():
 
 
 #######################################################
+# update_story
+#######################################################
+
+
+async def test_update_story_ok():
+    story = f.build_story()
+    values = {"title": "new title"}
+    detailed_story = {
+        "ref": story.ref,
+        "title": "new_title",
+        "version": story.version + 1,
+    }
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch(
+            "taiga.stories.stories.services._validate_and_process_values_to_update", autospec=True
+        ) as fake_validate_and_process,
+        patch("taiga.stories.stories.services.get_detailed_story", autospec=True) as fake_get_detailed_story,
+        patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+    ):
+        fake_validate_and_process.return_value = values
+        fake_stories_repo.update_story.return_value = True
+        fake_get_detailed_story.return_value = detailed_story
+
+        updated_story = await services.update_story(
+            story=story,
+            current_version=story.version,
+            values=values,
+        )
+
+        fake_validate_and_process.assert_awaited_once_with(
+            story=story,
+            values=values,
+        )
+        fake_stories_repo.update_story.assert_awaited_once_with(
+            id=story.id,
+            current_version=story.version,
+            values=values,
+        )
+        fake_get_detailed_story.assert_awaited_once_with(
+            project_id=story.project_id,
+            ref=story.ref,
+        )
+        fake_stories_events.emit_event_when_story_is_updated.assert_awaited_once_with(
+            project=story.project,
+            story=updated_story,
+            updates_attrs=[*values],
+        )
+        assert updated_story == detailed_story
+
+
+async def test_update_story_error_wrong_version():
+    story = f.build_story()
+    values = {"title": "new title"}
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch(
+            "taiga.stories.stories.services._validate_and_process_values_to_update", autospec=True
+        ) as fake_validate_and_process,
+        patch("taiga.stories.stories.services.get_detailed_story", autospec=True) as fake_get_detailed_story,
+        patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+    ):
+        fake_validate_and_process.return_value = values
+        fake_stories_repo.update_story.return_value = False
+
+        with (pytest.raises(ex.UpdatingStoryWithWrongVersionError)):
+            await services.update_story(story=story, current_version=story.version, values=values)
+        fake_validate_and_process.assert_awaited_once_with(
+            story=story,
+            values=values,
+        )
+        fake_stories_repo.update_story.assert_awaited_once_with(
+            id=story.id,
+            current_version=story.version,
+            values=values,
+        )
+        fake_get_detailed_story.assert_not_awaited()
+        fake_stories_events.emit_event_when_story_is_updated.assert_not_awaited()
+
+
+# Validator
+
+
+async def test_validate_and_process_values_to_update_ok_without_status():
+    story = f.build_story()
+    values = {"title": "new_title"}
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
+        valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
+
+        fake_workflows_repo.get_status.assert_not_awaited()
+        fake_stories_repo.get_stories.assert_not_awaited()
+
+        assert valid_values == values
+
+
+async def test_validate_and_process_values_to_update_ok_with_status_empty():
+    story = f.build_story()
+    status = f.build_workflow_status()
+    values = {"title": "new_title", "status": status.slug}
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
+        fake_workflows_repo.get_status.return_value = status
+        fake_stories_repo.get_stories.return_value = []
+
+        valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
+
+        fake_workflows_repo.get_status.assert_awaited_once_with(
+            filters={"workflow_id": story.workflow_id, "slug": values["status"]},
+        )
+        fake_stories_repo.get_stories.assert_awaited_once_with(
+            filters={"status_id": status.id},
+            order_by=["-order"],
+            offset=0,
+            limit=1,
+        )
+
+        assert valid_values["title"] == values["title"]
+        assert valid_values["status"] == status
+        assert valid_values["order"] == services.DEFAULT_ORDER_OFFSET
+
+
+async def test_validate_and_process_values_to_update_ok_with_status_not_empty():
+    story = f.build_story()
+    status = f.build_workflow_status()
+    story2 = f.build_story(status=status, order=42)
+    values = {"title": "new_title", "status": status.slug}
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
+        fake_workflows_repo.get_status.return_value = status
+        fake_stories_repo.get_stories.return_value = [story2]
+
+        valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
+
+        fake_workflows_repo.get_status.assert_awaited_once_with(
+            filters={"workflow_id": story.workflow_id, "slug": values["status"]},
+        )
+        fake_stories_repo.get_stories.assert_awaited_once_with(
+            filters={"status_id": status.id},
+            order_by=["-order"],
+            offset=0,
+            limit=1,
+        )
+
+        assert valid_values["title"] == values["title"]
+        assert valid_values["status"] == status
+        assert valid_values["order"] == services.DEFAULT_ORDER_OFFSET + story2.order
+
+
+async def test_validate_and_process_values_to_update_ok_with_same_status():
+    status = f.build_workflow_status()
+    story = f.build_story(status=status)
+    values = {"title": "new_title", "status": status.slug}
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
+        fake_workflows_repo.get_status.return_value = status
+
+        valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
+
+        fake_workflows_repo.get_status.assert_awaited_once_with(
+            filters={"workflow_id": story.workflow_id, "slug": values["status"]},
+        )
+        fake_stories_repo.get_stories.assert_not_awaited()
+
+        assert valid_values["title"] == values["title"]
+        assert "status" not in valid_values
+        assert "order" not in valid_values
+
+
+async def test_validate_and_process_values_to_update_error_wrong_status():
+    story = f.build_story()
+    values = {"title": "new_title", "status": "wrong_status"}
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
+        fake_workflows_repo.get_status.return_value = None
+
+        with (pytest.raises(ex.InvalidStatusError)):
+            await services._validate_and_process_values_to_update(story=story, values=values)
+
+        fake_workflows_repo.get_status.assert_awaited_once_with(
+            filters={"workflow_id": story.workflow_id, "slug": "wrong_status"},
+        )
+        fake_stories_repo.get_stories.assert_not_awaited()
+
+
+#######################################################
 # _calculate_offset
 #######################################################
 
@@ -222,8 +422,12 @@ async def test_calculate_offset() -> None:
         assert offset == Decimal(125)
 
 
-async def test_reorder_stories_ok():
+#######################################################
+# reorde_stories
+#######################################################
 
+
+async def test_reorder_stories_ok():
     with (
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,

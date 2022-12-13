@@ -119,10 +119,14 @@ async def get_paginated_stories_by_workflow(
 ##########################################################
 
 
-async def update_story(story: Story, values: dict[str, Any] = {}) -> dict[str, Any]:
+async def update_story(story: Story, current_version: int, values: dict[str, Any] = {}) -> dict[str, Any]:
     # Update story
     update_values = await _validate_and_process_values_to_update(story, values)
-    if not await stories_repositories.update_story(story=story, values=update_values):
+    if not await stories_repositories.update_story(
+        id=story.id,
+        current_version=current_version,
+        values=update_values,
+    ):
         raise ex.UpdatingStoryWithWrongVersionError("Updating a story with the wrong version.")
 
     # Get detailed story

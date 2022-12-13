@@ -330,31 +330,6 @@ async def test_update_story_unprotected_attribute_ok(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_update_story_unprotected_attribute_ok_with_invalid_version(client):
-    project = await f.create_project()
-    workflow = await project.workflows.afirst()
-    status1 = await workflow.statuses.afirst()
-    status2 = await workflow.statuses.alast()
-    story = await f.create_story(project=project, workflow=workflow, status=status1, version=2)
-
-    data = {"version": story.version - 1, "status": status2.slug}
-    client.login(project.owner)
-    response = client.patch(f"/projects/{project.b64id}/stories/{story.ref}", json=data)
-    assert response.status_code == status.HTTP_200_OK, response.text
-
-
-async def test_update_story_protected_attribute_ok(client):
-    project = await f.create_project()
-    workflow = await project.workflows.afirst()
-    status1 = await workflow.statuses.afirst()
-    story = await f.create_story(project=project, workflow=workflow, status=status1)
-
-    data = {"version": story.version, "title": "new title"}
-    client.login(project.owner)
-    response = client.patch(f"/projects/{project.b64id}/stories/{story.ref}", json=data)
-    assert response.status_code == status.HTTP_200_OK, response.text
-
-
 async def test_update_story_protected_attribute_error_with_invalid_version(client):
     project = await f.create_project()
     workflow = await project.workflows.afirst()
@@ -365,3 +340,12 @@ async def test_update_story_protected_attribute_error_with_invalid_version(clien
     client.login(project.owner)
     response = client.patch(f"/projects/{project.b64id}/stories/{story.ref}", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+async def test_update_story_invalid_ref(client):
+    project = await f.create_project()
+
+    data = {"version": 1, "title": "new title"}
+    client.login(project.owner)
+    response = client.patch(f"/projects/{project.b64id}/stories/1000000", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

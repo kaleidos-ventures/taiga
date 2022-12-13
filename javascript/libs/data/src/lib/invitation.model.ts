@@ -12,6 +12,7 @@ import { Project } from './project.model';
 export interface Invitation extends Partial<Membership> {
   email: string;
   project?: {
+    id: Project['id'];
     name: Project['name'];
     slug: Project['slug'];
     anonUserCanView: boolean;

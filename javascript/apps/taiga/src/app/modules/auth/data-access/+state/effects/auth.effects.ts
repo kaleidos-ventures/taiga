@@ -124,7 +124,9 @@ export class AuthEffects {
                           });
                         } else if (invitation.project) {
                           void this.router.navigate(
-                            [`project/${invitation.project.slug}`],
+                            [
+                              `project/${invitation.project.id}/${invitation.project.slug}`,
+                            ],
                             {
                               state: { invite: invitationStatus },
                             }

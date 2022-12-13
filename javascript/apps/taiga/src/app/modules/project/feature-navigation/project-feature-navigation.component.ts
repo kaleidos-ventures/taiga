@@ -210,7 +210,7 @@ export class ProjectNavigationComponent implements OnInit {
         : (this.showProjectSettings = true);
     });
     this.showProjectSettings = this.router.isActive(
-      this.router.createUrlTree(['project', this.project.slug, 'settings']),
+      this.router.createUrlTree(['project', this.project.id, 'settings']),
       {
         paths: 'subset',
         queryParams: 'ignored',

@@ -22,16 +22,18 @@ from taiga.stories.stories.models import Story
 DEFAULT_QUERYSET = Story.objects.all()
 
 
-class StoryListFilters(TypedDict, total=False):
+class StoryFilters(TypedDict, total=False):
+    id: UUID
+    ref: int
     refs: list[int]
     workflow_slug: str
     project_id: UUID
     status_id: UUID
 
 
-def _apply_filters_to_queryset_list(
+def _apply_filters_to_queryset(
     qs: QuerySet[Story],
-    filters: StoryListFilters = {},
+    filters: StoryFilters = {},
 ) -> QuerySet[Story]:
     filter_data = dict(filters.copy())
 
@@ -43,22 +45,6 @@ def _apply_filters_to_queryset_list(
 
     if "project_id" in filters:
         filter_data["project__id"] = filter_data.pop("project_id")
-
-    return qs.filter(**filter_data)
-
-
-class StoryFilters(TypedDict, total=False):
-    id: UUID
-    ref: int
-    project_id: UUID
-    project_slug: str
-
-
-def _apply_filters_to_queryset(qs: QuerySet[Story], filters: StoryFilters = {}) -> QuerySet[Story]:
-    filter_data = dict(filters.copy())
-
-    if "project_slug" in filters:
-        filter_data["project__slug"] = filter_data.pop("project_slug")
 
     return qs.filter(**filter_data)
 
@@ -152,13 +138,13 @@ get_story = sync_to_async(get_story_sync)
 
 @sync_to_async
 def get_stories(
-    filters: StoryListFilters = {},
+    filters: StoryFilters = {},
     order_by: StoryOrderBy = ["order"],
     offset: int | None = None,
     limit: int | None = None,
     select_related: StorySelectRelated = ["status"],
 ) -> list[Story]:
-    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
     qs = _apply_order_by_to_queryset(qs=qs, order_by=order_by)
 
@@ -177,8 +163,14 @@ PROTECTED_ATTRS_ON_UPDATE: Final[list[str]] = [
 ]
 
 
-async def update_story(story: Story, values: dict[str, Any] = {}) -> bool:
-    return await occ_repositories.update(story, values=values, protected_attrs=PROTECTED_ATTRS_ON_UPDATE)
+async def update_story(id: UUID, current_version: int | None = None, values: dict[str, Any] = {}) -> bool:
+    return await occ_repositories.update(
+        model_class=Story,
+        id=id,
+        current_version=current_version,
+        values=values,
+        protected_attrs=PROTECTED_ATTRS_ON_UPDATE,
+    )
 
 
 @sync_to_async
@@ -192,27 +184,27 @@ def bulk_update_stories(objs_to_update: list[Story], fields_to_update: list[str]
 
 
 @sync_to_async
-def get_total_stories(filters: StoryListFilters = {}) -> int:
-    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+def get_total_stories(filters: StoryFilters = {}) -> int:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
 
     return qs.count()
 
 
 @sync_to_async
-def get_story_neighbors(story: Story, filters: StoryListFilters = {}) -> Neighbor[Story]:
-    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+def get_story_neighbors(story: Story, filters: StoryFilters = {}) -> Neighbor[Story]:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = _apply_order_by_to_queryset(qs=qs, order_by=["status", "order"])
 
     return neighbors_repositories.get_neighbors_sync(obj=story, model_queryset=qs)
 
 
 @sync_to_async
-def get_stories_to_reorder(filters: StoryListFilters = {}) -> list[Story]:
+def get_stories_to_reorder(filters: StoryFilters = {}) -> list[Story]:
     """
     This method is very similar to "get_stories" except this has to keep
     the order of the input references.
     """
-    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
 
     refs = filters["refs"]
     result = [None] * len(refs)  # create an empty list the size of the references list

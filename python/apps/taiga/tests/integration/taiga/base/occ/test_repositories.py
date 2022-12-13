@@ -17,10 +17,14 @@ async def test_update_success() -> None:
     name_new = "item updated"
 
     item = await SampleOCCItem.objects.acreate(name=name)
-    values = {"name": name_new, "version": item.version}
+    values = {"name": name_new}
 
-    assert item.version == 1
-    assert await repositories.update(item, values=values)
+    assert await repositories.update(
+        model_class=SampleOCCItem,
+        id=item.id,
+        current_version=item.version,
+        values=values,
+    )
 
     item = await SampleOCCItem.objects.aget(id=item.id)
     assert item.name == name_new
@@ -34,8 +38,11 @@ async def test_update_success_without_version() -> None:
     item = await SampleOCCItem.objects.acreate(name=name)
     values = {"name": name_new}
 
-    assert item.version == 1
-    assert await repositories.update(item, values=values)
+    assert await repositories.update(
+        model_class=SampleOCCItem,
+        id=item.id,
+        values=values,
+    )
 
     item = await SampleOCCItem.objects.aget(id=item.id)
     assert item.name == name_new
@@ -47,10 +54,14 @@ async def test_update_success_with_invalid_version() -> None:
     name_new = "item updated"
 
     item = await SampleOCCItem.objects.acreate(name=name)
-    values = {"name": name_new, "version": item.version - 1}
+    values = {"name": name_new}
 
-    assert item.version == 1
-    assert await repositories.update(item, values=values)
+    assert await repositories.update(
+        model_class=SampleOCCItem,
+        id=item.id,
+        current_version=item.version - 1,
+        values=values,
+    )
 
     item = await SampleOCCItem.objects.aget(id=item.id)
     assert item.name == name_new
@@ -63,14 +74,37 @@ async def test_update_success_with_protected_attrs() -> None:
     new_description = "item description updated"
 
     item = await SampleOCCItem.objects.acreate(name=name)
-    values = {"name": name_new, "description": new_description, "version": item.version}
+    values = {"name": name_new, "description": new_description}
 
-    assert item.version == 1
-    assert await repositories.update(item, values=values, protected_attrs=["description"])
+    assert await repositories.update(
+        model_class=SampleOCCItem,
+        id=item.id,
+        current_version=item.version,
+        values=values,
+        protected_attrs=["description"],
+    )
 
     item = await SampleOCCItem.objects.aget(id=item.id)
     assert item.name == name_new
     assert item.version == 2
+
+
+async def test_update_error_without_changes() -> None:
+    name = "item"
+
+    item = await SampleOCCItem.objects.acreate(name=name)
+    values = {}
+
+    assert not await repositories.update(
+        model_class=SampleOCCItem,
+        id=item.id,
+        current_version=item.version,
+        values=values,
+    )
+
+    item = await SampleOCCItem.objects.aget(id=item.id)
+    assert item.name == name
+    assert item.version == 1
 
 
 async def test_update_error_without_version_when_is_needed() -> None:
@@ -80,7 +114,12 @@ async def test_update_error_without_version_when_is_needed() -> None:
     item = await SampleOCCItem.objects.acreate(name=name)
     values = {"name": name_new}
 
-    assert not await repositories.update(item, values=values, protected_attrs=["name"])
+    assert not await repositories.update(
+        model_class=SampleOCCItem,
+        id=item.id,
+        values=values,
+        protected_attrs=["name"],
+    )
 
     item = await SampleOCCItem.objects.aget(id=item.id)
     assert item.name == name
@@ -92,9 +131,15 @@ async def test_update_error_with_protected_attrs_and_worng_version() -> None:
     name_new = "item updated"
 
     item = await SampleOCCItem.objects.acreate(name=name)
-    values = {"name": name_new, "version": item.version + 1}
+    values = {"name": name_new}
 
-    assert not await repositories.update(item, values=values, protected_attrs=["name"])
+    assert not await repositories.update(
+        model_class=SampleOCCItem,
+        id=item.id,
+        values=values,
+        current_version=item.version + 1,
+        protected_attrs=["name"],
+    )
 
     item = await SampleOCCItem.objects.aget(id=item.id)
     assert item.name == name
@@ -111,8 +156,24 @@ async def test_update_error_concurrency_example() -> None:
 
     assert item_a.version == item_b.version == 1
 
-    values_a = {"name": name_new_a, "version": item_a.version}
-    values_b = {"name": name_new_b, "version": item_b.version}
+    values_a = {"name": name_new_a}
+    values_b = {"name": name_new_b}
 
-    assert await repositories.update(item_a, values=values_a, protected_attrs=["name"])
-    assert not await repositories.update(item_b, values=values_b, protected_attrs=["name"])
+    assert await repositories.update(
+        model_class=SampleOCCItem,
+        id=item_a.id,
+        values=values_a,
+        current_version=item_a.version,
+        protected_attrs=["name"],
+    )
+    assert not await repositories.update(
+        model_class=SampleOCCItem,
+        id=item_b.id,
+        values=values_b,
+        current_version=item_b.version,
+        protected_attrs=["name"],
+    )
+
+    item = await SampleOCCItem.objects.aget(id=item_a.id)
+    assert item.name == name_new_a
+    assert item.version == 2

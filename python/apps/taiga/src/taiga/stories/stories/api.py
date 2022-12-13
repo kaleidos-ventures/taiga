@@ -136,10 +136,12 @@ async def update_story(
     """
     Update an story from a project.
     """
-    values = form.dict(exclude_unset=True)
     story = await get_story_or_404(project_id, ref)
     await check_permissions(permissions=UPDATE_STORY, user=request.user, obj=story)
-    return await stories_services.update_story(story=story, values=values)
+
+    values = form.dict(exclude_unset=True)
+    current_version = values.pop("version")
+    return await stories_services.update_story(story=story, current_version=current_version, values=values)
 
 
 @routes.projects.post(

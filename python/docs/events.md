@@ -209,7 +209,7 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
 }
 ```
 
-### Chanels
+### Channels
 
 - `system` - channel for brodcast important messages for all the clients. [TODO]
 - `users.<username>` - channel to publish all user events.

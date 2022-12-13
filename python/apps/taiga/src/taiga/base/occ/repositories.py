@@ -5,23 +5,30 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any, TypeVar
+from typing import Any, Type
+from uuid import UUID
 
 from taiga.base.db.models import BaseModel, F
 
-_ModelT = TypeVar("_ModelT", bound=BaseModel)
 
-
-async def update(obj: _ModelT, values: dict[str, Any], protected_attrs: list[str] = []) -> bool:
+async def update(
+    model_class: Type[BaseModel],
+    id: UUID,
+    values: dict[str, Any] = {},
+    current_version: int | None = None,
+    protected_attrs: list[str] = [],
+) -> bool:
     updates = dict(values.copy())
-    current_version = updates.get("version")
     updates["version"] = F("version") + 1
+
+    if len(updates) == 1:
+        return False  # Nothing to update
 
     # check the version if any of the protected attributes are updated
     if set(protected_attrs).intersection(set(updates.keys())):
-        qs = type(obj).objects.filter(id=obj.id, version=current_version)
+        qs = model_class.objects.filter(id=id, version=current_version)
     else:
-        qs = type(obj).objects.filter(id=obj.id)
+        qs = model_class.objects.filter(id=id)
 
     num_updates = await qs.aupdate(**updates)
 

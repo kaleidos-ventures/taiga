@@ -80,6 +80,37 @@ async def test_get_stories() -> None:
 
 
 ##########################################################
+# update_story
+##########################################################
+
+
+async def test_update_story_success() -> None:
+    project = await f.create_project()
+    workflow = await project.workflows.afirst()
+    status = await workflow.statuses.afirst()
+    story = await f.create_story(project=project, workflow=workflow, status=status)
+
+    assert await repositories.update_story(
+        id=story.id,
+        current_version=story.version,
+        values={"title": "new title"},
+    )
+
+
+async def test_update_story_error() -> None:
+    project = await f.create_project()
+    workflow = await project.workflows.afirst()
+    status = await workflow.statuses.afirst()
+    story = await f.create_story(project=project, workflow=workflow, status=status)
+
+    assert not await repositories.update_story(
+        id=story.id,
+        current_version=story.version + 1,
+        values={"title": "new title"},
+    )
+
+
+##########################################################
 # misc - get_story_neighbors
 ##########################################################
 

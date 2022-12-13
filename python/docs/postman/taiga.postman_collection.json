@@ -1840,7 +1840,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"   // pm.environment.set(\"pj-id\", pm.response.json().slug);",
+									"   pm.environment.set(\"story_version\", pm.response.json().version);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1863,6 +1863,63 @@
 						},
 						"method": "GET",
 						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"stories",
+								"{{story_ref}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update story",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"   pm.environment.set(\"story_version\", pm.response.json().version);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"New title\",\n    \"version\": {{story_version}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}",
 							"protocol": "{{protocol}}",

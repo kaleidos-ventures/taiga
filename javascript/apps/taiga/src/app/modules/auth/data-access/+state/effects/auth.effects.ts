@@ -437,15 +437,12 @@ export class AuthEffects {
       ofType(AuthActions.socialSignup),
       pessimisticUpdate({
         run: ({ code, social, projectInvitationToken }) => {
-          console.log('socialSignup');
           return this.authService.getUserRegistrationLang().pipe(
             switchMap((lang) => {
-              console.log('lang', lang);
               return this.authApiService
                 .socialSignUp(code, social, lang.code)
                 .pipe(
                   mergeMap((auth: Auth) => {
-                    console.log('auth', auth);
                     this.authService.setAuth(auth);
                     return this.usersApiService.me().pipe(
                       map((user) => {
@@ -455,7 +452,6 @@ export class AuthEffects {
                     );
                   }),
                   map(({ user, auth }) => {
-                    console.log('map', user);
                     const loginData = {
                       user,
                       auth,

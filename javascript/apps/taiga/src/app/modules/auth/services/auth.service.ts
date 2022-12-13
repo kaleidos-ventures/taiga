@@ -12,7 +12,7 @@ import { Store } from '@ngrx/store';
 import { AuthApiService } from '@taiga/api';
 import { ConfigService, selectLanguages } from '@taiga/core';
 import { Auth, User } from '@taiga/data';
-import { map, take } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 import { WsService } from '~/app/services/ws';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
@@ -95,29 +95,28 @@ export class AuthService {
   }
 
   public getUserRegistrationLang() {
-    return this.store
-      .select(selectLanguages)
-      .pipe(take(1))
-      .pipe(
-        map((langs) => {
-          const userNavLang = this.utilsService.navigatorLanguage();
-          let userLang = langs.find((it) => it.code === userNavLang);
+    return this.store.select(selectLanguages).pipe(
+      filter((langs) => !!langs.length),
+      take(1),
+      map((langs) => {
+        const userNavLang = this.utilsService.navigatorLanguage();
+        let userLang = langs.find((it) => it.code === userNavLang);
 
-          if (userLang) {
-            return userLang;
-          }
+        if (userLang) {
+          return userLang;
+        }
 
-          userLang = langs.find((it) =>
-            it.code.startsWith(userNavLang.slice(0, 2))
-          );
+        userLang = langs.find((it) =>
+          it.code.startsWith(userNavLang.slice(0, 2))
+        );
 
-          if (userLang) {
-            return userLang;
-          }
+        if (userLang) {
+          return userLang;
+        }
 
-          return langs.find((it) => it.isDefault)!;
-        })
-      );
+        return langs.find((it) => it.isDefault)!;
+      })
+    );
   }
 
   public anyAvailableSocialLogins(availableLogins: string[]) {

@@ -54,7 +54,7 @@
           "sourceMap": {
             "scripts": true,
             "styles": true,
-            "hidden": true,
+            "hidden": false,
             "vendor": false
           }
         },

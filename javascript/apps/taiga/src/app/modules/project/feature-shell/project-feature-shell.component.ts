@@ -16,7 +16,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Project } from '@taiga/data';
+import { Membership, Project } from '@taiga/data';
 import { filter, merge } from 'rxjs';
 import {
   selectCurrentProject,
@@ -26,7 +26,10 @@ import { WsService } from '~/app/services/ws';
 import { acceptInvitationId } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
-import { permissionsUpdate } from '../data-access/+state/actions/project.actions';
+import {
+  newProjectMembers,
+  permissionsUpdate,
+} from '../data-access/+state/actions/project.actions';
 import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
 
 @UntilDestroy()
@@ -128,6 +131,21 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
         this.store.dispatch(
           permissionsUpdate({ id: this.state.get('project').id })
         );
+      });
+
+    this.wsService
+      .projectEvents<{ members: Membership[] }>('projectmemberships.create')
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(newProjectMembers());
+      });
+
+    // todo: not working, made up. Back is going to do this?
+    this.wsService
+      .projectEvents<{ members: Membership[] }>('story.asign.update')
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        // new assigne // delete assigne
       });
   }
 

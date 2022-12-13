@@ -268,6 +268,60 @@ export class KanbanEffects {
     { dispatch: false }
   );
 
+  public assign$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.assignMember),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: (action, project) => {
+          return this.projectApiService
+            .assingStory(
+              project.id,
+              action.storyRef,
+              action.member.user.username
+            )
+            .pipe(
+              map(() => {
+                return KanbanApiActions.assignMemberSuccess();
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.toastSaveChangesError(httpResponse);
+        },
+      })
+    );
+  });
+
+  public unAssign$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.unassignMember),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: (action, project) => {
+          return this.projectApiService
+            .unAssingStory(
+              project.id,
+              action.storyRef,
+              action.member.user.username
+            )
+            .pipe(
+              map(() => {
+                return KanbanApiActions.unassignMemberSuccess();
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.toastSaveChangesError(httpResponse);
+        },
+      })
+    );
+  });
+
   constructor(
     private appService: AppService,
     private actions$: Actions,

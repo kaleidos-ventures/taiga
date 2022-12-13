@@ -87,6 +87,7 @@ export class KanbanCreateStoryInlineComponent implements AfterViewInit {
               slug: this.status.slug,
               color: this.status.color,
             },
+            assignedTo: [],
           },
           workflow: this.workflow.slug,
         })

@@ -8,6 +8,7 @@
 
 import { Status } from './status.model';
 import { Workflow } from './workflow.model';
+import { Membership } from './membership.model';
 
 export interface Story {
   ref: number;
@@ -15,6 +16,7 @@ export interface Story {
   title: string;
   slug: string;
   status: Pick<Status, 'slug' | 'color' | 'name'>;
+  assignedTo: Membership[];
 }
 
 export interface StoryDetail extends Story {

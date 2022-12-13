@@ -7,7 +7,7 @@
  */
 
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Status, Story, Workflow } from '@taiga/data';
+import { Membership, Status, Story, Workflow } from '@taiga/data';
 import {
   KanbanReorderEvent,
   KanbanStory,
@@ -67,6 +67,8 @@ export const KanbanActions = createActionGroup({
       status?: Story['status']['slug'];
     }>(),
     'Load stories complete': emptyProps(),
+    'Assign Member': props<{ storyRef: Story['ref']; member: Membership }>(),
+    'UnAssign Member': props<{ storyRef: Story['ref']; member: Membership }>(),
   },
 });
 
@@ -91,6 +93,8 @@ export const KanbanApiActions = createActionGroup({
       };
     }>(),
     'Move Story Error': props<{ story: Story['ref']; errorStatus: number }>(),
+    'Assign Member Success': emptyProps(),
+    'UnAssign Member Success': emptyProps(),
   },
 });
 

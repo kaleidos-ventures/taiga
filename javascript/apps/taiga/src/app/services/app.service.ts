@@ -38,6 +38,19 @@ export class AppService {
     };
   }
 
+  public toastSaveChangesError(httpResponse: HttpErrorResponse) {
+    this.errorManagement(httpResponse, {
+      any: {
+        type: 'toast',
+        options: {
+          label: 'errors.save_changes',
+          message: 'errors.please_refresh',
+          status: TuiNotification.Error,
+        },
+      },
+    });
+  }
+
   public errorManagement(
     error: HttpErrorResponse,
     errorOptions?: ErrorManagementOptions

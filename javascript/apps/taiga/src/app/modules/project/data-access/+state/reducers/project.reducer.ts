@@ -7,7 +7,7 @@
  */
 
 import { createFeature, createReducer, on } from '@ngrx/store';
-import { Project } from '@taiga/data';
+import { Membership, Project } from '@taiga/data';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/project.actions';
@@ -18,12 +18,14 @@ export interface ProjectState {
   currentProjectId: Project['id'] | null;
   projects: Record<Project['id'], Project>;
   showBannerOnRevoke: boolean;
+  members: Membership[];
 }
 
 export const initialState: ProjectState = {
   currentProjectId: null,
   projects: {},
   showBannerOnRevoke: false,
+  members: [],
 };
 
 export const reducer = createReducer(
@@ -31,6 +33,7 @@ export const reducer = createReducer(
   on(ProjectActions.fetchProjectSuccess, (state, { project }): ProjectState => {
     state.projects[project.id] = project;
     state.currentProjectId = project.id;
+    state.members = [];
 
     return state;
   }),
@@ -64,6 +67,14 @@ export const reducer = createReducer(
       if (project) {
         state.showBannerOnRevoke = false;
       }
+
+      return state;
+    }
+  ),
+  on(
+    ProjectActions.fetchProjectMembersSuccess,
+    (state, { members }): ProjectState => {
+      state.members = members;
 
       return state;
     }

@@ -7,7 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { Project } from '@taiga/data';
+import { Membership, Project } from '@taiga/data';
 
 export const fetchProjectSuccess = createAction(
   '[Project] fetch success',
@@ -17,6 +17,13 @@ export const fetchProjectSuccess = createAction(
 export const fetchProject = createAction(
   '[Project] fetch',
   props<{ id: Project['id'] }>()
+);
+
+export const initAssignUser = createAction('[Project] init assign user');
+
+export const fetchProjectMembersSuccess = createAction(
+  '[Project] fetch members success',
+  props<{ members: Membership[] }>()
 );
 
 export const eventInvitation = createAction(
@@ -41,4 +48,8 @@ export const updateStoryShowView = createAction(
   props<{
     showView: boolean;
   }>()
+);
+
+export const newProjectMembers = createAction(
+  '[Project][ws] New Project Members'
 );

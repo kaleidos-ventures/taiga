@@ -575,7 +575,40 @@ export const reducer = createReducer(
     }
 
     return state;
-  })
+  }),
+  on(KanbanActions.assignMember, (state, { member, storyRef }): KanbanState => {
+    state = replaceStory(state, (it) => {
+      if (it.ref === storyRef) {
+        return {
+          ...it,
+          assignedTo: [...it.assignedTo, member],
+        };
+      }
+
+      return it;
+    });
+
+    return state;
+  }),
+  on(
+    KanbanActions.unassignMember,
+    (state, { member, storyRef }): KanbanState => {
+      state = replaceStory(state, (it) => {
+        if (it.ref === storyRef) {
+          return {
+            ...it,
+            assignedTo: it.assignedTo.filter(
+              (storyUser) => storyUser.user.username !== member.user.username
+            ),
+          };
+        }
+
+        return it;
+      });
+
+      return state;
+    }
+  )
 );
 
 export const kanbanFeature = createFeature({

@@ -21,9 +21,10 @@ import {
   Story,
   StoryDetail,
   StoryUpdate,
+  User,
   Workflow,
 } from '@taiga/data';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 export interface MembersResponse {
@@ -331,15 +332,26 @@ export class ProjectApiService {
     offset: number,
     limit: number
   ): Observable<Story[]> {
-    return this.http.get<Story[]>(
-      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/stories`,
-      {
-        params: {
-          offset,
-          limit,
-        },
-      }
-    );
+    return this.http
+      .get<Story[]>(
+        `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/stories`,
+        {
+          params: {
+            offset,
+            limit,
+          },
+        }
+      )
+      .pipe(
+        map((stories) => {
+          // TODO: API
+          return stories.map((story) => {
+            story.assignedTo = [];
+
+            return story;
+          });
+        })
+      );
   }
 
   public createStory(
@@ -397,5 +409,52 @@ export class ProjectApiService {
         ...story,
       }
     );
+  }
+
+  public getAllMembers(projectId: Project['id']): Observable<Membership[]> {
+    return new Observable((subscriber) => {
+      const limit = 100;
+      const members: Membership[] = [];
+      let offset = 0;
+
+      const nextPage = () => {
+        this.getMembers(projectId, offset, limit).subscribe((response) => {
+          offset += response.memberships.length;
+
+          const complete = response.memberships.length < limit;
+
+          members.push(...response.memberships);
+
+          if (complete) {
+            subscriber.next(members);
+            subscriber.complete();
+          } else {
+            nextPage();
+          }
+        });
+      };
+
+      nextPage();
+    });
+  }
+
+  public assingStory(
+    projectId: Project['id'],
+    storyRef: Story['ref'],
+    user: User['username']
+  ) {
+    console.log('assing', projectId, storyRef, user);
+
+    return of({});
+  }
+
+  public unAssingStory(
+    projectId: Project['id'],
+    storyRef: Story['ref'],
+    user: User['username']
+  ) {
+    console.log('unassing', projectId, storyRef, user);
+
+    return of({});
   }
 }

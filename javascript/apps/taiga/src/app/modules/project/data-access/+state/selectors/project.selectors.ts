@@ -14,6 +14,7 @@ export const {
   selectCurrentProjectId,
   selectProjects,
   selectShowBannerOnRevoke,
+  selectMembers,
 } = projectFeature;
 
 export const selectCurrentProject = createSelector(

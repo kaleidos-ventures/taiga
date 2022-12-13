@@ -22,17 +22,19 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Project } from '@taiga/data';
+import { Membership, Project } from '@taiga/data';
 import { distinctUntilChanged, map } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { filterNil } from '~/app/shared/utils/operators';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
 
 export interface StoryState {
   isA11yDragInProgress: boolean;
   project: Project;
+  showAssignUser: boolean;
 }
 
 @UntilDestroy()
@@ -78,7 +80,11 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     @Optional()
     @Inject(KanbanStatusComponent)
     private kabanStatus: KanbanStatusComponent
-  ) {}
+  ) {
+    this.state.set({
+      showAssignUser: false,
+    });
+  }
 
   public ngOnInit(): void {
     this.state.connect(
@@ -116,6 +122,41 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
         }
       );
     }
+  }
+
+  public toggleAssingUser(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.state.set('showAssignUser', ({ showAssignUser }) => {
+      return !showAssignUser;
+    });
+  }
+
+  public assign(member: Membership) {
+    if (this.story.ref) {
+      this.store.dispatch(
+        KanbanActions.assignMember({ member, storyRef: this.story.ref })
+      );
+    }
+  }
+
+  public unassign(member: Membership) {
+    if (this.story.ref) {
+      this.store.dispatch(
+        KanbanActions.unassignMember({ member, storyRef: this.story.ref })
+      );
+    }
+  }
+
+  public onAssignUserActiveZoneChange(active: boolean) {
+    if (!active) {
+      this.closeAssignDropdown();
+    }
+  }
+
+  public closeAssignDropdown() {
+    this.state.set({ showAssignUser: false });
   }
 
   private scrollToDragStoryIfNotVisible() {

@@ -9,18 +9,24 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { fetch } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
+import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectActions from '../actions/project.actions';
+import {
+  selectCurrentProject,
+  selectMembers,
+} from '../selectors/project.selectors';
 @Injectable()
 export class ProjectEffects {
   public loadProject$ = createEffect(() => {
@@ -150,12 +156,66 @@ export class ProjectEffects {
     { dispatch: false }
   );
 
+  public initAssignUser$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.initAssignUser),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+        this.store.select(selectMembers),
+      ]),
+      filter(([, , members]) => {
+        return !members.length;
+      }),
+      fetch({
+        run: (action, project) => {
+          return this.projectApiService.getAllMembers(project.id).pipe(
+            map((members) => {
+              return ProjectActions.fetchProjectMembersSuccess({
+                members,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
+  public newMembersEvent = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.newProjectMembers),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+        this.store.select(selectMembers),
+      ]),
+      filter(([, , members]) => {
+        // do not fill if fetchProjectUsersSuccess hasn't been called
+        return !!members.length;
+      }),
+      fetch({
+        run: (_, project) => {
+          return this.projectApiService.getAllMembers(project.id).pipe(
+            map((members) => {
+              return ProjectActions.fetchProjectMembersSuccess({
+                members,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
   constructor(
     private actions$: Actions,
     private projectApiService: ProjectApiService,
     private navigationService: NavigationService,
     private appService: AppService,
     private router: Router,
-    private revokeInvitationService: RevokeInvitationService
+    private revokeInvitationService: RevokeInvitationService,
+    private store: Store
   ) {}
 }

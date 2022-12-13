@@ -35,12 +35,38 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           total: total
         })
       "
-      class="story-title story-kanban-ref-focus">
-      <div class="draggable-icon">
-        <tui-svg src="draggable"></tui-svg>
+      class="story-kanban-ref-focus">
+      <div class="story-title">
+        <div class="draggable-icon">
+          <tui-svg src="draggable"></tui-svg>
+        </div>
+        <div class="ref">{{ story.ref }}</div>
+        <div class="text">{{ story.title }}</div>
       </div>
-      <div class="ref">{{ story.ref }}</div>
-      <div class="text">{{ story.title }}</div>
+      <div
+        class="assign-user"
+        [tuiDropdown]="assignUser"
+        [tuiDropdownMinHeight]="272"
+        [tuiDropdownMaxHeight]="530"
+        [tuiDropdownManual]="vm.showAssignUser"
+        (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)">
+        <button (click)="toggleAssingUser($event)">assign</button>
+      </div>
     </a>
+    <!--
+  User can modify to add users:
+
+    *hasPermission="
+    ['create'];
+    entity: 'modify';
+  "> -->
+
+    <ng-template #assignUser>
+      <tg-assign-user
+        [assigned]="story.assignedTo"
+        (assign)="assign($event)"
+        (unassign)="unassign($event)"
+        (requestClose)="closeAssignDropdown()"></tg-assign-user>
+    </ng-template>
   </ng-container>
 </ng-container>

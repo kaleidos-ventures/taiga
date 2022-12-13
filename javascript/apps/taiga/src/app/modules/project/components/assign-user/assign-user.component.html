@@ -1,0 +1,52 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <h2>{{ t('project.assign_user.title') }}</h2>
+
+    <button (click)="this.requestClose.next()">Close</button>
+
+    <ul>
+      <li
+        *ngFor="let assignedUser of vm.assigned; trackBy: trackByMember"
+        class="user-row">
+        <tg-user-avatar
+          size="m"
+          class="no-border"
+          [user]="assignedUser.user"
+          type="light"
+          [rounded]="true"
+          aria-hidden="true"></tg-user-avatar>
+        {{ assignedUser.user.fullName }} - {{ assignedUser.user.username }}
+        <button (click)="unassign.next(assignedUser)">delete</button>
+      </li>
+    </ul>
+
+    <h2>{{ t('project.assign_user.add') }}</h2>
+
+    <input
+      tuiAutoFocus
+      type="search"
+      [(ngModel)]="searchText"
+      (ngModelChange)="search$.next(searchText)" />
+
+    <tui-scrollbar class="scrollbar-members">
+      <ul>
+        <li *ngFor="let member of vm.members; trackBy: trackByMember">
+          <tg-user-card
+            (click)="onAssign(member)"
+            [user]="member.user"
+            [isSelf]="vm.currentUser.username === member.user.username"
+            [navigateToUser]="false">
+          </tg-user-card>
+        </li>
+      </ul>
+    </tui-scrollbar>
+  </ng-container>
+</ng-container>

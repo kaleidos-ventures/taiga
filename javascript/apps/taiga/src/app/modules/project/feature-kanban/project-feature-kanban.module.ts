@@ -27,9 +27,11 @@ import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { InViewportDirective } from '~/app/shared/directives/in-viewport.directive';
 import { DragModule } from '~/app/shared/drag/drag.module';
+import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
 import { ResizeEventModule } from '~/app/shared/resize/resize.module';
 import { TitleComponent } from '~/app/shared/title/title.component';
+import { AssignUserComponent } from '../components/assign-user/assign-user.component';
 import { KanbanCreateStoryInlineComponent } from './components/create-story-inline/kanban-create-story-inline.component';
 import { KanbanStatusComponent } from './components/status/kanban-status.component';
 import { A11yDragStoryDirective } from './components/story/kanban-story-a11y-drag.directive';
@@ -76,6 +78,8 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     DragDropModule,
     ResizeEventModule,
     RouterModule,
+    DropdownModule,
+    AssignUserComponent,
   ],
   providers: [
     {

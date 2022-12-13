@@ -38,6 +38,9 @@ const routes: Routes = [
         (m) => m.AuthFeatureSignUpModule
       ),
     canActivate: [AuthFeatureLoginGuard],
+    data: {
+      noHeader: true,
+    },
   },
   {
     path: 'reset-password',

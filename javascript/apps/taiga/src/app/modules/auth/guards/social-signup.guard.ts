@@ -8,15 +8,11 @@
 
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Params } from '@angular/router';
-import { Actions, ofType } from '@ngrx/effects';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { SocialSignupInput } from '@taiga/data';
-import { map, take } from 'rxjs/operators';
 
-import {
-  signUpSuccess,
-  socialSignup,
-} from '../data-access/+state/actions/auth.actions';
+import { socialSignup } from '../data-access/+state/actions/auth.actions';
 @Injectable({
   providedIn: 'root',
 })
@@ -33,13 +29,12 @@ export class SocialSignupGuard implements CanActivate {
     const redirect = urlParams.get('redirect')!;
     const projectInvitationToken =
       urlParams.get('projectInvitationToken') || '';
-    this.store.dispatch(
-      socialSignup({ code, redirect, social, projectInvitationToken })
-    );
-    return this.actions$.pipe(
-      ofType(signUpSuccess),
-      take(1),
-      map(() => true)
-    );
+
+    requestAnimationFrame(() => {
+      this.store.dispatch(
+        socialSignup({ code, redirect, social, projectInvitationToken })
+      );
+    });
+    return true;
   }
 }

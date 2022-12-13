@@ -83,7 +83,7 @@ export class RolesPermissionsEffects {
       fetch({
         run: (action) => {
           return this.projectApiService
-            .getworkspacePermissions(action.project.slug)
+            .getworkspacePermissions(action.project.id)
             .pipe(
               map((permissions) => {
                 return ProjectActions.fetchWorkspacePermissionsSuccess({

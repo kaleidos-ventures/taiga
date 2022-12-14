@@ -8,13 +8,14 @@
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { randUrl, randUuid } from '@ngneat/falso';
+import { randBoolean, randUrl, randUuid } from '@ngneat/falso';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { SocialLoginButtonComponent } from './social-login-button.component';
 
 const projectInvitationToken = randUuid();
+const acceptProjectInvitation = randBoolean().toString();
 
 describe('SocialLoginButtonComponent', () => {
   let spectator: Spectator<SocialLoginButtonComponent>;
@@ -37,8 +38,14 @@ describe('SocialLoginButtonComponent', () => {
           useValue: {
             snapshot: {
               queryParamMap: {
-                get: () => {
-                  return projectInvitationToken;
+                get: (param: string) => {
+                  if (param === 'projectInvitationToken') {
+                    return projectInvitationToken;
+                  }
+                  if (param === 'acceptProjectInvitation') {
+                    return acceptProjectInvitation;
+                  }
+                  return null;
                 },
               },
             },
@@ -74,7 +81,7 @@ describe('SocialLoginButtonComponent', () => {
     // @ts-ignore: force this private property value for testing.
     router.url = randURL;
 
-    const params = `social=${social}&redirect=${randURL}&projectInvitationToken=${projectInvitationToken}`;
+    const params = `social=${social}&redirect=${randURL}&projectInvitationToken=${projectInvitationToken}&acceptProjectInvitation=${acceptProjectInvitation}`;
     const encodedParams = encodeURIComponent(params);
 
     expect(spectator.component.socialURL).toBe(
@@ -99,7 +106,7 @@ describe('SocialLoginButtonComponent', () => {
     // @ts-ignore: force this private property value for testing.
     router.url = randURL;
 
-    const params = `social=${social}&redirect=${randURL}&projectInvitationToken=${projectInvitationToken}`;
+    const params = `social=${social}&redirect=${randURL}&projectInvitationToken=${projectInvitationToken}&acceptProjectInvitation=${acceptProjectInvitation}`;
     const encodedParams = encodeURIComponent(params);
 
     expect(spectator.component.socialURL).toBe(

@@ -102,12 +102,14 @@ describe('Project Invitation Guard', () => {
     );
 
     const invitation = InvitationInfoMockFactory();
+
     const queryParams = {
       next: `/project/${invitation.project.id}/${invitation.project.slug}`,
       acceptProjectInvitation: false,
       projectInvitationToken: token,
       nextProjectId: invitation.project.id,
       invitationStatus: 'pending',
+      availableLogins: invitation.availableLogins.join(','),
     };
 
     invitation.existingUser = true;

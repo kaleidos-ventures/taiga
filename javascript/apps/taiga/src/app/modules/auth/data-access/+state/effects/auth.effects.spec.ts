@@ -403,6 +403,7 @@ describe('AuthEffects', () => {
     const code = randSequence({ size: 100 });
     const social = rand(['github', 'gitlab', 'google']);
     const projectInvitationToken = randUuid();
+    const acceptProjectInvitation = randBoolean();
 
     const authApiService = spectator.inject(AuthApiService);
     const authService = spectator.inject(AuthService);
@@ -418,14 +419,19 @@ describe('AuthEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: socialSignup({ code, social, projectInvitationToken }),
+      a: socialSignup({
+        code,
+        social,
+        projectInvitationToken,
+        acceptProjectInvitation,
+      }),
     });
 
     const expected = cold('----a', {
       a: loginSuccess({
         user,
         auth,
-        acceptProjectInvitation: true,
+        acceptProjectInvitation,
         projectInvitationToken,
       }),
     });

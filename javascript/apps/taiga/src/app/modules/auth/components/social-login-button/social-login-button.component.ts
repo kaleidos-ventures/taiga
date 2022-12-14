@@ -77,7 +77,7 @@ export class SocialLoginButtonComponent {
       this.route.snapshot.queryParamMap.get('projectInvitationToken') || '';
     const params: SocialParams = {
       social: this.social,
-      redirect: this.router.url,
+      redirect: this.router.url ? this.router.url.match(/^[^?]*/g)!.join() : '',
       projectInvitationToken: '',
     };
     if (projectInvitationToken) {

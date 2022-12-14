@@ -21,14 +21,21 @@ const routes: Routes = [
     },
     children: [
       {
-        path: '',
+        path: ':slug/kanban',
         loadChildren: () =>
           import(
-            '~/app/modules/project/feature-overview/project-feature-overview.module'
-          ).then((m) => m.ProjectFeatureOverviewModule),
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
       },
       {
         path: 'kanban',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
+      },
+      {
+        path: ':slug/stories/:storyRef',
         loadChildren: () =>
           import(
             '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
@@ -42,6 +49,16 @@ const routes: Routes = [
           ).then((m) => m.ProjectFeatureViewSetterModule),
       },
       {
+        path: ':slug/settings',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/settings/feature-settings/feature-settings.module'
+          ).then((m) => m.ProjectSettingsFeatureSettingsModule),
+        resolve: {
+          project: ProjectAdminResolver,
+        },
+      },
+      {
         path: 'settings',
         loadChildren: () =>
           import(
@@ -50,6 +67,20 @@ const routes: Routes = [
         resolve: {
           project: ProjectAdminResolver,
         },
+      },
+      {
+        path: '',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-overview/project-feature-overview.module'
+          ).then((m) => m.ProjectFeatureOverviewModule),
+      },
+      {
+        path: ':slug',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-overview/project-feature-overview.module'
+          ).then((m) => m.ProjectFeatureOverviewModule),
       },
     ],
   },

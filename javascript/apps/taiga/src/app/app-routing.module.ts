@@ -99,13 +99,6 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'project/:id/:slug',
-    loadChildren: () =>
-      import(
-        './modules/project/feature-shell/project-feature-shell.module'
-      ).then((m) => m.ProjectFeatureShellModule),
-  },
-  {
     path: 'project/:id',
     loadChildren: () =>
       import(

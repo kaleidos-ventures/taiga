@@ -436,7 +436,12 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.socialSignup),
       pessimisticUpdate({
-        run: ({ code, social, projectInvitationToken }) => {
+        run: ({
+          code,
+          social,
+          projectInvitationToken,
+          acceptProjectInvitation,
+        }) => {
           return this.authService.getUserRegistrationLang().pipe(
             switchMap((lang) => {
               return this.authApiService
@@ -455,9 +460,7 @@ export class AuthEffects {
                     const loginData = {
                       user,
                       auth,
-                      acceptProjectInvitation: projectInvitationToken
-                        ? true
-                        : false,
+                      acceptProjectInvitation,
                       projectInvitationToken,
                     };
                     return AuthActions.loginSuccess(loginData);

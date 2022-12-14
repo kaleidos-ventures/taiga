@@ -29,10 +29,18 @@ export class SocialSignupGuard implements CanActivate {
     const redirect = urlParams.get('redirect')!;
     const projectInvitationToken =
       urlParams.get('projectInvitationToken') || '';
+    const acceptProjectInvitation =
+      urlParams.get('acceptProjectInvitation') === 'true' || false;
 
     requestAnimationFrame(() => {
       this.store.dispatch(
-        socialSignup({ code, redirect, social, projectInvitationToken })
+        socialSignup({
+          code,
+          redirect,
+          social,
+          projectInvitationToken,
+          acceptProjectInvitation,
+        })
       );
     });
     return true;

@@ -20,6 +20,7 @@ interface SocialParams {
   social: string;
   redirect: string;
   projectInvitationToken: string;
+  acceptProjectInvitation: string;
 }
 
 @Component({
@@ -75,13 +76,17 @@ export class SocialLoginButtonComponent {
     const redirectUri = `${window.location.origin}/signup/${this.social}`;
     const projectInvitationToken =
       this.route.snapshot.queryParamMap.get('projectInvitationToken') || '';
+    const acceptProjectInvitation =
+      this.route.snapshot.queryParamMap.get('acceptProjectInvitation') || '';
     const params: SocialParams = {
       social: this.social,
       redirect: this.router.url ? this.router.url.match(/^[^?]*/g)!.join() : '',
       projectInvitationToken: '',
+      acceptProjectInvitation: '',
     };
     if (projectInvitationToken) {
       params.projectInvitationToken = projectInvitationToken;
+      params.acceptProjectInvitation = acceptProjectInvitation;
     }
     const qs = Object.keys(params)
       .map((key) => {

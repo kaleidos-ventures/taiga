@@ -29,6 +29,8 @@ export class ProjectInvitationGuard implements CanActivate {
     private appService: AppService
   ) {}
 
+  // http://localhost:4200/project/8PlTSnoYEe2o7Qx6FaCG-w/preview/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicHJvamVjdC1pbnZpdGF0aW9uIiwiZXhwIjoxNjcxMjg2NTAwLCJqdGkiOiI3MTFiZDZhZWZlZjM0ZGMwODNlNjc0NjAwYWI1OGYzZiIsIm9iamVjdF9pZCI6Ijg3ZWM0YzYyLTdhZjAtMTFlZC04MmU2LTBjN2ExNWEwODZmYiJ9.YDkpEA05A1yMiWRgskRbY91B-JfIAht6r3rJEzbZ4tQ
+
   public canActivate(route: ActivatedRouteSnapshot) {
     const token = route.params.token as string;
 
@@ -54,6 +56,7 @@ export class ProjectInvitationGuard implements CanActivate {
                   acceptProjectInvitation: false,
                   invitationStatus: invitation.status,
                   nextProjectId: invitation.project.id,
+                  availableLogins: invitation.availableLogins.join(','),
                 },
               });
             }

@@ -169,9 +169,9 @@ export class KanbanEffects {
           return this.projectApiService
             .moveStory(storyData, project.slug, workflow.slug, reorder)
             .pipe(
-              map((story) => {
+              map((reorder) => {
                 return KanbanApiActions.moveStorySuccess({
-                  story,
+                  reorder,
                 });
               })
             );
@@ -221,9 +221,9 @@ export class KanbanEffects {
               reorder
             )
             .pipe(
-              map((story) => {
+              map((reorder) => {
                 return KanbanApiActions.moveStorySuccess({
-                  story,
+                  reorder,
                 });
               })
             );

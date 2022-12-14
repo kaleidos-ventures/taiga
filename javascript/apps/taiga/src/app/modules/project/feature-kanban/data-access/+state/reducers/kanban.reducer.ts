@@ -495,8 +495,10 @@ export const reducer = createReducer(
 
     return state;
   }),
-  on(KanbanApiActions.moveStorySuccess, (state, { story }): KanbanState => {
-    delete state.initialDragDropPosition[story.ref];
+  on(KanbanApiActions.moveStorySuccess, (state, { reorder }): KanbanState => {
+    reorder.stories.forEach((story) => {
+      delete state.initialDragDropPosition[story];
+    });
 
     return state;
   }),

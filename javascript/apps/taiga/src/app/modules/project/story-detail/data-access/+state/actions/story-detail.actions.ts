@@ -45,5 +45,8 @@ export const StoryDetailEventsActions = createActionGroup({
   source: 'StoryDetail Event',
   events: {
     'Update Story': props<{ story: StoryDetail }>(),
+    'Update Story Status By Reorder': props<{
+      status: StoryDetail['status'];
+    }>(),
   },
 });

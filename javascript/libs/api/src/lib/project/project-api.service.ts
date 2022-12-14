@@ -367,8 +367,11 @@ export class ProjectApiService {
       place: 'after' | 'before';
       ref: Story['ref'];
     }
-  ): Observable<Story> {
-    return this.http.post<Story>(
+  ) {
+    return this.http.post<{
+      status: Status;
+      stories: Story['ref'][];
+    }>(
       `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/stories/reorder`,
       {
         status: story.status,

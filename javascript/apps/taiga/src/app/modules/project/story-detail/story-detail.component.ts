@@ -31,6 +31,7 @@ import { selectCurrentProject } from '~/app/modules/project/data-access/+state/s
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
+import { KanbanReorderEvent } from '../feature-kanban/kanban.model';
 import {
   StoryDetailActions,
   StoryDetailEventsActions,
@@ -220,6 +221,25 @@ export class StoryDetailComponent {
         this.store.dispatch(
           StoryDetailEventsActions.updateStory({
             story: msg.event.content.story,
+          })
+        );
+      }
+    );
+
+    this.state.hold(
+      this.wsService.projectEvents<KanbanReorderEvent>('stories.reorder').pipe(
+        filter((msg) => {
+          const story = this.state.get('story');
+          return (
+            msg.event.content.reorder.stories.includes(story.ref) &&
+            story.status.slug !== msg.event.content.reorder.status.slug
+          );
+        })
+      ),
+      (msg) => {
+        this.store.dispatch(
+          StoryDetailEventsActions.updateStoryStatusByReorder({
+            status: msg.event.content.reorder.status,
           })
         );
       }

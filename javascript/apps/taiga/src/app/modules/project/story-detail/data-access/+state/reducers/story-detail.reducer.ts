@@ -8,6 +8,7 @@
 
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { StoryDetail, StoryView, Workflow } from '@taiga/data';
+import { KanbanApiActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { immerReducer } from '~/app/shared/utils/store';
 
@@ -83,6 +84,26 @@ export const reducer = createReducer(
     StoryDetailEventsActions.updateStory,
     (state, { story }): StoryDetailState => {
       state.story = story;
+
+      return state;
+    }
+  ),
+  on(
+    KanbanApiActions.moveStorySuccess,
+    (state, { reorder }): StoryDetailState => {
+      if (state.story && reorder.stories.includes(state.story.ref)) {
+        state.story.status = reorder.status;
+      }
+
+      return state;
+    }
+  ),
+  on(
+    StoryDetailEventsActions.updateStoryStatusByReorder,
+    (state, action): StoryDetailState => {
+      if (state.story) {
+        state.story.status = action.status;
+      }
 
       return state;
     }

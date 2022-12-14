@@ -84,7 +84,12 @@ export const KanbanApiActions = createActionGroup({
       tmpId: PartialStory['tmpId'];
     }>(),
     'Create Story Error': props<{ status: number; story: KanbanStory }>(),
-    'Move Story Success': props<{ story: Story }>(),
+    'Move Story Success': props<{
+      reorder: {
+        status: Status;
+        stories: Story['ref'][];
+      };
+    }>(),
     'Move Story Error': props<{ story: Story['ref']; errorStatus: number }>(),
   },
 });

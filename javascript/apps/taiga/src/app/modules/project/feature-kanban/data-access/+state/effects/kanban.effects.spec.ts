@@ -186,7 +186,14 @@ describe('ProjectEffects', () => {
     const effects = spectator.inject(KanbanEffects);
     const story = StoryMockFactory();
 
-    projectApiService.moveStory.mockReturnValue(cold('-b|', { b: story }));
+    projectApiService.moveStory.mockReturnValue(
+      cold('-b|', {
+        b: {
+          stories: [story.ref],
+          status: story.status,
+        },
+      })
+    );
 
     const status = StatusMockFactory();
 
@@ -221,7 +228,12 @@ describe('ProjectEffects', () => {
     });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.moveStorySuccess({ story }),
+      a: KanbanApiActions.moveStorySuccess({
+        reorder: {
+          stories: [story.ref],
+          status: story.status,
+        },
+      }),
     });
 
     expect(effects.moveStoryKeyboard$).toBeObservable(expected);
@@ -238,7 +250,14 @@ describe('ProjectEffects', () => {
     store.overrideSelector(selectCurrentProjectId, project.id);
     store.overrideSelector(selectCurrentWorkflowSlug, workflow.slug);
 
-    projectApiService.moveStory.mockReturnValue(cold('-b|', { b: story }));
+    projectApiService.moveStory.mockReturnValue(
+      cold('-b|', {
+        b: {
+          status: story.status,
+          stories: [story.ref],
+        },
+      })
+    );
 
     actions$ = hot('-a', {
       a: KanbanActions.storyDropped({
@@ -252,7 +271,12 @@ describe('ProjectEffects', () => {
     });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.moveStorySuccess({ story }),
+      a: KanbanApiActions.moveStorySuccess({
+        reorder: {
+          stories: [story.ref],
+          status: story.status,
+        },
+      }),
     });
 
     expect(effects.moveStoryMouse$).toSatisfyOnFlush(() => {

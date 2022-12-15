@@ -71,6 +71,7 @@ export class ProjectInvitationCTAGuard implements CanActivate {
                   const urlTree = this.router.parseUrl('/login');
                   urlTree.queryParams = {
                     next: `/project/${invitation.project.id}/${invitation.project.slug}`,
+                    email: invitation.email,
                     acceptProjectInvitation: 'true',
                     projectInvitationToken: token,
                     nextProjectId: invitation.project.id,

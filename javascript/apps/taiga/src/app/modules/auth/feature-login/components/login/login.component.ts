@@ -33,6 +33,7 @@ interface Login {
 export class LoginComponent implements OnInit {
   @Input() public projectInvitationToken = '';
   @Input() public acceptProjectInvitation = undefined;
+  @Input() public email = '';
   @Input() public next = '';
   @Input() public invitationStatus = '';
   @Input() public nextProjectId = '';
@@ -58,7 +59,7 @@ export class LoginComponent implements OnInit {
     this.state.hold(this.store.select(selectLoginError).pipe());
 
     this.loginForm = this.fb.group({
-      username: ['', Validators.required],
+      username: [this.email, Validators.required],
       password: ['', Validators.required],
     });
   }

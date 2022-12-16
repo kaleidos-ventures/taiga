@@ -5,13 +5,10 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializers import BaseModel
+import random
+
+NUM_USER_COLORS = 8
 
 
-class UserNestedSerializer(BaseModel):
-    username: str
-    full_name: str
-    color: int
-
-    class Config:
-        orm_mode = True
+def generate_random_color(min_color: int = 1, max_color: int = NUM_USER_COLORS) -> int:
+    return random.randint(min_color, max_color)

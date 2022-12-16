@@ -75,6 +75,7 @@ async def test_create_user_ok(client):
     data = {
         "email": "test.create@email.com",
         "fullName": "Ada Lovelace",
+        "color": 8,
         "password": "correctP4ssword%",
         "acceptTerms": True,
         "projectInvitationToken": "eyJ0eXAiOToken",

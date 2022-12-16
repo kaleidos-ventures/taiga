@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from pydantic import EmailStr, StrictBool, constr, validator
+from pydantic import EmailStr, StrictBool, conint, constr, validator
 from taiga.base.serializers import BaseModel
 from taiga.base.validators import LanguageCode
 from taiga.conf import settings
@@ -20,6 +20,7 @@ class CreateUserValidator(PasswordMixin, BaseModel):
     email: EmailStr
     full_name: constr(max_length=50)  # type: ignore
     accept_terms: StrictBool
+    color: conint(gt=0, lt=9) | None = None  # type: ignore
     lang: LanguageCode | None
     project_invitation_token: str | None
     accept_project_invitation: StrictBool = True

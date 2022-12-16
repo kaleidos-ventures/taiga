@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f74871f2-519e-4ee2-bc05-05e86524d18a",
+		"_postman_id": "13173539-b166-435a-87d3-a0a024d684e9",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -344,7 +344,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"acceptTerms\": true,\n  \"fullName\": \"Ada Lovelace\",\n  \"email\": \"ada.lovelace@email.com\",\n  \"password\": \"adaLov3%\",\n  \"lang\": \"es-ES\"\n}",
+							"raw": "{\n  \"acceptTerms\": true,\n  \"fullName\": \"Ada Lovelace\",\n  \"email\": \"ada.lovelace@email.com\",\n  \"password\": \"adaLov3%\",\n  \"lang\": \"es-ES\",\n  \"color\": 4\n}",
 							"options": {
 								"raw": {
 									"language": "json"

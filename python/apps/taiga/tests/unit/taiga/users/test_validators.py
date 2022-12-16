@@ -109,6 +109,26 @@ def test_validate_create_user_invalid_password(password, error):
     check_validation_errors(validation_errors, ["password"], [error])
 
 
+@pytest.mark.parametrize(
+    "color, error",
+    [
+        (0, "ensure this value is greater than 0"),
+        (9, "ensure this value is less than 9"),
+        (-1, "ensure this value is greater than 0"),
+    ],
+)
+def test_validate_create_user_invalid_color(color, error):
+    email = "user@email.com"
+    full_name = "User fullname"
+    password = "Dragon123"
+    terms = True
+
+    with pytest.raises(ValidationError) as validation_errors:
+        CreateUserValidator(email=email, full_name=full_name, color=color, password=password, accept_terms=terms)
+
+    check_validation_errors(validation_errors, ["color"], [error])
+
+
 ###############################################
 # UpdateUserValidator
 ###############################################

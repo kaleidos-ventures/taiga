@@ -28,10 +28,11 @@ async def test_create_user_success():
     email = "EMAIL@email.com"
     username = "userNAME"
     full_name = "Full Name"
+    color = 8
     password = "password"
     lang = "es-ES"
     user = await users_repositories.create_user(
-        email=email, username=username, full_name=full_name, password=password, lang=lang
+        email=email, username=username, full_name=full_name, color=color, password=password, lang=lang
     )
     await db.refresh_model_from_db(user)
     assert user.email == email.lower()
@@ -46,22 +47,23 @@ async def test_create_user_error_email_or_username_case_insensitive():
     full_name = "Full Name"
     password = "password"
     lang = "es-ES"
+    color = 1
 
     email2 = "OTHER_EMAIL@email.com"
     username2 = "other_userNAME"
 
     await users_repositories.create_user(
-        email=email, username=username, full_name=full_name, password=password, lang=lang
+        email=email, username=username, full_name=full_name, password=password, lang=lang, color=color
     )
 
     with pytest.raises(IntegrityError):
         await users_repositories.create_user(
-            email=email.upper(), username=username2, full_name=full_name, password=password, lang=lang
+            email=email.upper(), username=username2, full_name=full_name, password=password, lang=lang, color=color
         )
 
     with pytest.raises(IntegrityError):
         await users_repositories.create_user(
-            email=email2, username=username.upper(), full_name=full_name, password=password, lang=lang
+            email=email2, username=username.upper(), full_name=full_name, password=password, lang=lang, color=color
         )
 
 
@@ -71,9 +73,10 @@ async def test_create_user_no_password_from_social():
     full_name = "Full Name"
     password = None
     lang = "es-ES"
+    color = 1
 
     res = await users_repositories.create_user(
-        email=email, username=username, full_name=full_name, password=password, lang=lang
+        email=email, username=username, full_name=full_name, password=password, lang=lang, color=color
     )
 
     assert res.password == ""

@@ -5,13 +5,14 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializers import BaseModel
+from taiga.base.utils.colors import generate_random_color
 
 
-class UserNestedSerializer(BaseModel):
-    username: str
-    full_name: str
-    color: int
+def test_random_color_default():
+    res = generate_random_color()
+    assert 0 < res < 9
 
-    class Config:
-        orm_mode = True
+
+def test_random_color_custom():
+    res = generate_random_color(99, 100)
+    assert 98 < res < 101

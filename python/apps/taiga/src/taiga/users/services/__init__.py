@@ -9,6 +9,7 @@ from uuid import UUID
 
 from taiga.auth import services as auth_services
 from taiga.base.api.pagination import Pagination
+from taiga.base.utils.colors import generate_random_color
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.base.utils.slug import generate_int_suffix, slugify
 from taiga.conf import settings
@@ -33,6 +34,7 @@ async def create_user(
     full_name: str,
     password: str,
     lang: str | None = None,
+    color: int | None = None,
     project_invitation_token: str | None = None,
     accept_project_invitation: bool = True,
 ) -> User:
@@ -44,9 +46,11 @@ async def create_user(
     lang = lang if lang else settings.LANG
     if not user:
         # new user
+        if not color:
+            color = generate_random_color()
         username = await generate_username(email=email)
         user = await users_repositories.create_user(
-            email=email, username=username, full_name=full_name, password=password, lang=lang
+            email=email, username=username, full_name=full_name, color=color, password=password, lang=lang
         )
     else:
         # the user (is_active=False) tries to sign-up again before verifying the previous attempt

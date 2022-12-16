@@ -91,13 +91,16 @@ def _apply_filters_to_queryset(
 
 
 @sync_to_async
-def create_user(email: str, username: str, full_name: str, password: str | None, lang: str | None = None) -> User:
+def create_user(email: str, username: str, full_name: str, color: int, lang: str, password: str | None) -> User:
     user = User.objects.create(
-        email=email, username=username, full_name=full_name, is_active=False, accepted_terms=True
+        email=email,
+        username=username,
+        full_name=full_name,
+        is_active=False,
+        accepted_terms=True,
+        lang=lang,
+        color=color,
     )
-    if lang:
-        user.lang = lang
-
     if password:
         user.set_password(password)
 

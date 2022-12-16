@@ -39,6 +39,7 @@ random.seed(0)
 ################################
 # Users
 NUM_USERS = 10
+NUM_USER_COLORS = 8
 # Projects
 NUM_PROJECT_COLORS = 8
 # Workspaces
@@ -129,17 +130,19 @@ def _create_user(index: int) -> User:
     username = f"user{index}"
     email = f"{username}@taiga.demo"
     full_name = fake.name()
-    user = User.objects.create(username=username, email=email, full_name=full_name, is_active=True)
+    color = fake.random_int(min=1, max=NUM_USER_COLORS)
+    user = User.objects.create(username=username, email=email, full_name=full_name, color=color, is_active=True)
     user.set_password("123123")
     user.save()
     return user
 
 
 @sync_to_async
-def _create_user_with_kwargs(username: str, full_name: str, email: str | None = None) -> User:
+def _create_user_with_kwargs(username: str, full_name: str, email: str | None = None, color: int | None = None) -> User:
     if not email:
         email = f"{username}@taiga.demo"
-    user = User.objects.create(username=username, email=email, full_name=full_name, is_active=True)
+    color = color or fake.random_int(min=1, max=NUM_USER_COLORS)
+    user = User.objects.create(username=username, email=email, full_name=full_name, color=color, is_active=True)
     user.set_password("123123")
     user.save()
     return user

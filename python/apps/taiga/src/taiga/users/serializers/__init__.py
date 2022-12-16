@@ -14,6 +14,7 @@ from taiga.projects.invitations.serializers.related import ProjectInvitationSumm
 class UserBaseSerializer(BaseModel):
     username: str
     full_name: str
+    color: int
     # photo: str  # TODO
     # big_photo: str  # TODO
     # gravatar_id: str  # TODO

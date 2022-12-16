@@ -94,6 +94,7 @@ async def create_user(form: CreateUserValidator) -> User:
     return await users_services.create_user(
         email=form.email,
         full_name=form.full_name,
+        color=form.color,
         password=form.password,
         lang=form.lang,
         project_invitation_token=form.project_invitation_token,

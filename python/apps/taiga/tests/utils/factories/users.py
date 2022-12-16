@@ -14,6 +14,7 @@ class UserFactory(Factory):
     username = factory.Sequence(lambda n: f"user{n}")
     email = factory.LazyAttribute(lambda obj: f"{obj.username}@email.com")
     full_name = factory.Sequence(lambda n: f"Test User {n}")
+    color = factory.Faker("pyint", min_value=1, max_value=8)
     password = factory.django.Password("123123")
     is_active = True
 

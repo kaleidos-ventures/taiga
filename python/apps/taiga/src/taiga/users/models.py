@@ -10,6 +10,7 @@ from typing import Iterable, TypeAlias, Union
 
 from taiga.base.db import models, validators
 from taiga.base.db.users import AbstractBaseUser, AnonymousUser, UserManager
+from taiga.base.utils.colors import generate_random_color
 from taiga.conf import settings
 
 AnyUser: TypeAlias = Union[AnonymousUser, "User"]
@@ -30,6 +31,7 @@ class User(models.BaseModel, AbstractBaseUser):
         validators=[validators.RegexValidator(re.compile(r"^[\w.-]+$"), "Enter a valid username.", "invalid")],
     )
     email = models.LowerEmailField(max_length=255, null=False, blank=False, unique=True, verbose_name="email address")
+    color = models.IntegerField(null=False, blank=True, default=generate_random_color, verbose_name="color")
     is_active = models.BooleanField(
         null=False,
         blank=True,

@@ -25,9 +25,10 @@ async def test_create_user_ok(tqmanager):
     email = "email@email.com"
     username = "email"
     full_name = "Full Name"
+    color = 8
     password = "CorrectP4ssword$"
     lang = "es-ES"
-    user = f.build_user(id=1, email=email, username=username, full_name=full_name, lang=lang)
+    user = f.build_user(id=1, email=email, username=username, full_name=full_name, color=color, lang=lang)
 
     accept_project_invitation = True
     project_invitation_token = "eyJ0Token"
@@ -43,6 +44,7 @@ async def test_create_user_ok(tqmanager):
         await services.create_user(
             email=email,
             full_name=full_name,
+            color=color,
             password=password,
             accept_project_invitation=accept_project_invitation,
             project_invitation_token=project_invitation_token,
@@ -50,7 +52,7 @@ async def test_create_user_ok(tqmanager):
         )
 
         fake_users_repo.create_user.assert_awaited_once_with(
-            email=email, username=username, full_name=full_name, password=password, lang=lang
+            email=email, username=username, full_name=full_name, color=color, password=password, lang=lang
         )
         assert len(tqmanager.pending_jobs) == 1
         job = tqmanager.pending_jobs[0]
@@ -71,8 +73,11 @@ async def test_create_user_default_instance_lang(tqmanager):
     full_name = "Full Name"
     password = "CorrectP4ssword$"
     lang = None
+    color = 1
     default_instance_lang = settings.LANG
-    user = f.build_user(id=1, email=email, username=username, full_name=full_name, lang=default_instance_lang)
+    user = f.build_user(
+        id=1, email=email, username=username, full_name=full_name, lang=default_instance_lang, color=color
+    )
 
     accept_project_invitation = True
     project_invitation_token = "eyJ0Token"
@@ -92,10 +97,16 @@ async def test_create_user_default_instance_lang(tqmanager):
             accept_project_invitation=accept_project_invitation,
             project_invitation_token=project_invitation_token,
             lang=lang,
+            color=color,
         )
 
         fake_users_repo.create_user.assert_awaited_once_with(
-            email=email, username=username, full_name=full_name, password=password, lang=default_instance_lang
+            email=email,
+            username=username,
+            full_name=full_name,
+            color=color,
+            password=password,
+            lang=default_instance_lang,
         )
         assert len(tqmanager.pending_jobs) == 1
         job = tqmanager.pending_jobs[0]
@@ -114,7 +125,8 @@ async def test_create_user_unverified(tqmanager):
     email = "email@email.com"
     username = "email"
     full_name = "Full Name"
-    user = f.build_user(id=1, email=email, username=username, full_name=full_name, is_active=False)
+    color = 7
+    user = f.build_user(id=1, email=email, username=username, full_name=full_name, is_active=False, color=color)
 
     with (
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
@@ -146,7 +158,7 @@ async def test_create_user_email_exists():
 
 
 ##########################################################
-# get_users_as_dict yms
+# get_users_as_dict
 ##########################################################
 
 

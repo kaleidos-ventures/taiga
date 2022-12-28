@@ -10,7 +10,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <tg-ui-svg-sprite src="/assets/icons/sprite.svg"></tg-ui-svg-sprite>
   <div class="app-content">
     <tg-navigation *ngIf="header$ | async"></tg-navigation>
-    <div class="main-area">
+    <div
+      tabindex="0"
+      id="fallback-main-area-focus">
       <router-outlet></router-outlet>
     </div>
   </div>

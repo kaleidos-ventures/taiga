@@ -42,11 +42,12 @@
     "discover": "Discover",
     "help": "Help",
     "notification": "Notification",
-    "notification_desc": "{{ notification }} notifications",
+    "notification_desc": "{notifications, plural, =0 {no notifications} one {1 notification} other {# notifications}}",
     "user_avatar": "User Avatar",
     "create_account": "Create account",
     "log_in": "Log in",
-    "new_tab": "Opens in a new tab"
+    "new_tab": "Opens in a new tab",
+    "skip_to_content": "Skip to content"
   },
   "navigation_projects": {
     "pinned": "Pinned projects",
@@ -92,7 +93,7 @@
     "invalid_token_toast_message": "Invalid token.",
     "invitation_no_longer_valid": "The invitation is no longer valid.",
     "project_invitation_no_longer_valid": "The invitation to {{ name }} is no longer valid.",
-
+    "modify_story_permission": "You no longer have permissions to modify stories",
     "you_dont_have_permission_to_see": "You don't have permission to see the project."
   }
 }

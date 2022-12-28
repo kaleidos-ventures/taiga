@@ -18,6 +18,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         type="button">
       </a>
     </div>
+    <div class="accesibility-help">
+      <button
+        tuiButton
+        (click)="scrollToMainArea()">
+        {{ t('skip_to_content') }}
+      </button>
+    </div>
     <div class="right">
       <div class="actions">
         <a
@@ -50,6 +57,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         icon="taiga-logo"
         type="button">
       </a>
+      <div class="accesibility-help">
+        <button
+          tuiButton
+          (click)="scrollToMainArea()">
+          {{ t('skip_to_content') }}
+        </button>
+      </div>
       <tui-hosted-dropdown
         [tuiDropdownMaxHeight]="800"
         [content]="projectsDropdown"

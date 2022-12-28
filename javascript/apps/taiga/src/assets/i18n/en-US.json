@@ -46,7 +46,8 @@
     "user_avatar": "User Avatar",
     "create_account": "Create account",
     "log_in": "Log in",
-    "new_tab": "Opens in a new tab"
+    "new_tab": "Opens in a new tab",
+    "skip_to_content": "Skip to content"
   },
   "navigation_projects": {
     "pinned": "Pinned projects",

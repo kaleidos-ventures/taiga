@@ -5,6 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
+@import "tools/typography.css";
 
 :host {
   align-items: center;
@@ -14,6 +15,30 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   min-block-size: 3rem;
   padding-block: 0;
   padding-inline: var(--spacing-16);
+  position: relative;
+  z-index: var(--fourth-layer);
+}
+
+.accesibility-help {
+  & button {
+    @mixin font-heading-4;
+
+    block-size: 44px;
+    color: var(--color-secondary);
+    display: flex;
+    inset-block-start: 0.5rem;
+    inset-inline-start: 0.5rem;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    white-space: nowrap;
+    z-index: var(--fourth-layer);
+
+    &:focus {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
 }
 
 .home-button {

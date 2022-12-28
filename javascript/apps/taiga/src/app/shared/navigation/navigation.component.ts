@@ -6,11 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { map } from 'rxjs';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { AuthService } from '~/app/modules/auth/services/auth.service';
 @Component({
   selector: 'tg-navigation',
   templateUrl: './navigation.component.html',
@@ -25,4 +25,24 @@ export class NavigationComponent {
   public logged$ = this.user$.pipe(map(() => this.authService.isLogged()));
 
   constructor(private store: Store, private authService: AuthService) {}
+
+  public scrollToMainArea() {
+    const ele = document.getElementById('main-area-focus');
+    if (ele) {
+      window.scrollTo(ele.offsetLeft, ele.offsetTop);
+      ele.focus();
+    } else {
+      const def = document.getElementById('fallback-main-area-focus');
+      if (def) {
+        window.scrollTo(def.offsetLeft, def.offsetTop);
+        def.focus();
+      } else {
+        const mainTag = document.querySelector('main');
+        if (mainTag) {
+          window.scrollTo(mainTag.offsetLeft, mainTag.offsetTop);
+          mainTag.focus();
+        }
+      }
+    }
+  }
 }

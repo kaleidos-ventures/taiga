@@ -35,13 +35,13 @@ function createLocalFiles(codes) {
             const p = file.replace(defaultSourceLang, local);
 
             // create files in english
-            // fs.writeFileSync(p, data, { encoding: 'utf8', flag: 'w' });
+            fs.writeFileSync(p, data, { encoding: 'utf8', flag: 'w' });
 
             if (fs.existsSync(p)) {
               console.log('exists ' + p);
             } else {
               console.log('write', p);
-              fs.writeFileSync(p, '', { encoding: 'utf8', flag: 'w' });
+              // fs.writeFileSync(p, '', { encoding: 'utf8', flag: 'w' });
             }
           });
         });

@@ -11,10 +11,10 @@ from uuid import UUID
 
 from taiga.base.api import Pagination
 from taiga.projects.projects.models import Project
-from taiga.stories import events as stories_events
-from taiga.stories import repositories as stories_repositories
-from taiga.stories.models import Story
-from taiga.stories.services import exceptions as ex
+from taiga.stories.stories import events as stories_events
+from taiga.stories.stories import repositories as stories_repositories
+from taiga.stories.stories.models import Story
+from taiga.stories.stories.services import exceptions as ex
 from taiga.users.models import User
 from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.models import WorkflowStatus

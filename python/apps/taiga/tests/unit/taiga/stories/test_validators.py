@@ -7,7 +7,7 @@
 
 import pytest
 from pydantic import ValidationError
-from taiga.stories.validators import ReorderStoriesValidator, ReorderValidator
+from taiga.stories.stories.validators import ReorderStoriesValidator, ReorderValidator
 
 #######################################################
 # ReorderValidator

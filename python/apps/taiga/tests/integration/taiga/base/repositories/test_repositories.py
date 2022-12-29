@@ -8,7 +8,7 @@ from unittest.async_case import IsolatedAsyncioTestCase
 
 import pytest
 from taiga.base.repositories import neighbors as neighbors_repositories
-from taiga.stories.models import Story
+from taiga.stories.stories.models import Story
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)

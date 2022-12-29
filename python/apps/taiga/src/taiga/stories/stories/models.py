@@ -40,6 +40,13 @@ class Story(models.BaseModel, ProjectReferenceMixin, VersionedMixin, CreatedMeta
         on_delete=models.CASCADE,
         verbose_name="status",
     )
+    # assignees = models.ManyToManyField(
+    #     "users.User",
+    #     related_name="assigned_stories",
+    #     through="stories.StoryAssigned",
+    #     through_fields=("project", "user"),
+    #     verbose_name="members",
+    # )
 
     class Meta:
         verbose_name = "story"

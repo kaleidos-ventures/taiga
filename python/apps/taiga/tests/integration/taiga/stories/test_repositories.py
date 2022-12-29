@@ -7,7 +7,7 @@
 
 import pytest
 from asgiref.sync import sync_to_async
-from taiga.stories import repositories
+from taiga.stories.stories import repositories
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db

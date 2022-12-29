@@ -13,7 +13,7 @@ from taiga.base.db.models import QuerySet
 from taiga.base.occ import repositories as occ_repositories
 from taiga.base.repositories import neighbors as neighbors_repositories
 from taiga.base.repositories.neighbors import Neighbor
-from taiga.stories.models import Story
+from taiga.stories.stories.models import Story
 
 ##########################################################
 # filters and querysets

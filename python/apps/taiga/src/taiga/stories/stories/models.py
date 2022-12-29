@@ -40,20 +40,20 @@ class Story(models.BaseModel, ProjectReferenceMixin, VersionedMixin, CreatedMeta
         on_delete=models.CASCADE,
         verbose_name="status",
     )
-    # assignees = models.ManyToManyField(
-    #     "users.User",
-    #     related_name="assigned_stories",
-    #     through="stories.StoryAssigned",
-    #     through_fields=("project", "user"),
-    #     verbose_name="members",
-    # )
+    assignees = models.ManyToManyField(
+        "users.User",
+        related_name="assigned_stories",
+        through="assignees.StoryAssignees",
+        through_fields=("story", "user"),
+        verbose_name="assignees",
+    )
 
     class Meta:
         verbose_name = "story"
         verbose_name_plural = "stories"
         constraints = ProjectReferenceMixin.Meta.constraints
         indexes = ProjectReferenceMixin.Meta.indexes
-        ordering = ["project", "workflow", "status", "order"]
+        ordering = ["project", "workflow", "order"]
 
     def __str__(self) -> str:
         return f"#{self.ref} {self.title}"

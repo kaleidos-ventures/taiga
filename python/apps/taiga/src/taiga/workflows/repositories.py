@@ -122,24 +122,38 @@ create_workflow = sync_to_async(create_workflow_sync)
 
 
 ##########################################################
-# Workflow - get workflows
+# Workflow - list workflows
 ##########################################################
 
 
 @sync_to_async
-def get_workflows(
+def list_workflows(
     filters: WorkflowListFilters = {},
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],
     order_by: WorkflowOrderBy = ["order"],
-) -> list[WorkflowSchema] | None:
+) -> list[Workflow] | None:
     qs = _apply_filters_to_workflow_queryset_list(qs=DEFAULT_QUERYSET_WORKFLOW, filters=filters)
     qs = _apply_prefetch_related_to_workflow_queryset(qs=qs, prefetch_related=prefetch_related)
     qs = _apply_order_by_to_workflow_queryset(order_by=order_by, qs=qs)
 
-    dt_workflows = []
-    for workflow in qs:
-        dt_workflows.append(_get_workflow_dt(workflow))
-    return dt_workflows
+    return list(qs)
+
+
+@sync_to_async
+def list_workflows_dt(
+    filters: WorkflowListFilters = {},
+    prefetch_related: WorkflowPrefetchRelated = ["statuses"],
+    order_by: WorkflowOrderBy = ["order"],
+) -> list[WorkflowSchema] | None:
+    workflows = list_workflows(
+        filters=filters,
+        prefetch_related=prefetch_related,
+        order_by=order_by
+    )
+    if workflows:
+        return [_get_workflow_dt(workflow) for workflow in workflows]
+
+    return None
 
 
 ##########################################################
@@ -151,12 +165,27 @@ def get_workflows(
 def get_workflow(
     filters: WorkflowFilters = {},
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],
-) -> WorkflowSchema | None:
+) -> Workflow | None:
     qs = _apply_filters_to_workflow_queryset(qs=DEFAULT_QUERYSET_WORKFLOW, filters=filters)
     qs = _apply_prefetch_related_to_workflow_queryset(qs=qs, prefetch_related=prefetch_related)
 
     try:
-        return _get_workflow_dt(qs.get())
+        return qs.get()
+    except Workflow.DoesNotExist:
+        return None
+
+
+@sync_to_async
+def get_workflow_dt(
+    filters: WorkflowFilters = {},
+    prefetch_related: WorkflowPrefetchRelated = ["statuses"],
+) -> WorkflowSchema | None:
+    try:
+        return _get_workflow_dt(
+            get_workflow(
+                filters=filters,
+                prefetch_related=prefetch_related
+        )
     except Workflow.DoesNotExist:
         return None
 

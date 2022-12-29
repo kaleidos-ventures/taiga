@@ -12,7 +12,12 @@ from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.schemas import WorkflowSchema
 
 
-async def get_workflows(project_id: UUID) -> list[WorkflowSchema]:
+##########################################################
+# Workflow - list
+##########################################################
+
+
+async def list_workflows_dt(project_id: UUID) -> list[WorkflowSchema]:
     return await workflows_repositories.get_workflows(
         filters={
             "project_id": project_id,
@@ -20,8 +25,22 @@ async def get_workflows(project_id: UUID) -> list[WorkflowSchema]:
     )
 
 
-async def get_workflow(project_id: UUID, workflow_slug: str) -> WorkflowSchema | None:
+##########################################################
+# Workflow - get
+##########################################################
+
+
+async def get_workflow(project_id: UUID, workflow_slug: str) -> Workflow | None:
     return await workflows_repositories.get_workflow(
+        filters={
+            "project_id": project_id,
+            "slug": workflow_slug,
+        },
+    )
+
+
+async def get_workflow_dt(project_id: UUID, workflow_slug: str) -> WorkflowSchema | None:
+    return await workflows_repositories.get_workflow_dt(
         filters={
             "project_id": project_id,
             "slug": workflow_slug,

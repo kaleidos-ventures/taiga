@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "taiga.projects.memberships",
     "taiga.workflows",
     "taiga.stories.stories",
+    "taiga.stories.assignees",
     # 3-party
     "easy_thumbnails",
 ]

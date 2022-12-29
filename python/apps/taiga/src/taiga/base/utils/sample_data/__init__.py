@@ -21,8 +21,8 @@ from taiga.projects.memberships.models import ProjectMembership
 from taiga.projects.projects import services as projects_services
 from taiga.projects.projects.models import Project
 from taiga.projects.roles.models import ProjectRole
-from taiga.stories import repositories as stories_repositories
-from taiga.stories.models import Story
+from taiga.stories.stories import repositories as stories_repositories
+from taiga.stories.stories.models import Story
 from taiga.users.models import User
 from taiga.workflows.models import Workflow, WorkflowStatus
 from taiga.workspaces.memberships import repositories as ws_memberships_repositories

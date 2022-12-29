@@ -18,10 +18,10 @@ from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm
 from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
-from taiga.stories import services as stories_services
-from taiga.stories.models import Story
-from taiga.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer, StorySerializer
-from taiga.stories.validators import ReorderStoriesValidator, StoryValidator, UpdateStoryValidator
+from taiga.stories.stories import services as stories_services
+from taiga.stories.stories.models import Story
+from taiga.stories.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer, StorySerializer
+from taiga.stories.stories.validators import ReorderStoriesValidator, StoryValidator, UpdateStoryValidator
 from taiga.workflows.api import get_workflow_or_404
 
 # PERMISSIONS

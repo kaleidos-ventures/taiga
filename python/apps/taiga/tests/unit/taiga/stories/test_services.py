@@ -10,8 +10,8 @@ from unittest.mock import patch
 
 import pytest
 from taiga.base.repositories.neighbors import Neighbor
-from taiga.stories import services
-from taiga.stories.services import exceptions as ex
+from taiga.stories.stories import services
+from taiga.stories.stories.services import exceptions as ex
 from taiga.workflows.schemas import WorkflowSchema
 from tests.utils import factories as f
 
@@ -28,8 +28,8 @@ async def test_create_story_ok():
     story = f.build_story()
 
     with (
-        patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
-        patch("taiga.stories.services.stories_events", autospec=True) as fake_stories_events,
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
     ):
         fake_stories_repo.create_story.return_value = story
         fake_stories_repo.get_stories.return_value = None
@@ -79,7 +79,7 @@ async def test_get_detailed_story_ok():
     story3 = f.build_story(ref=3, project=story1.project, workflow=story1.workflow, status=story1.status)
     neighbors = Neighbor(prev=story1, next=story3)
 
-    with patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
+    with patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
         fake_stories_repo.get_story.return_value = story2
         fake_stories_repo.get_story_neighbors.return_value = neighbors
 
@@ -103,7 +103,7 @@ async def test_get_detailed_story_no_neighbors():
     story1 = f.build_story(ref=1)
     neighbors = Neighbor(prev=None, next=None)
 
-    with patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
+    with patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
         fake_stories_repo.get_story.return_value = story1
         fake_stories_repo.get_story_neighbors.return_value = neighbors
 
@@ -126,7 +126,7 @@ async def test_get_detailed_story_no_neighbors():
 async def test_get_detailed_story_no_story():
     project = f.build_project()
 
-    with patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
+    with patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
         fake_stories_repo.get_story.return_value = None
 
         story = await services.get_detailed_story(project_id=project.id, ref=42)
@@ -148,7 +148,7 @@ async def test_get_detailed_story_no_story():
 async def test_get_paginated_stories_by_workflow():
     story = f.build_story()
 
-    with (patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo,):
+    with (patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,):
         fake_stories_repo.get_total_stories.return_value = 1
         fake_stories_repo.get_stories.return_value = [story]
 
@@ -173,7 +173,7 @@ async def test_get_paginated_stories_by_workflow():
 
 async def test_calculate_offset() -> None:
     target_status = f.build_workflow_status()
-    with (patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo,):
+    with (patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,):
         # No reorder
         latest_story = f.build_story(status=target_status, order=36)
         fake_stories_repo.get_stories.return_value = [latest_story]
@@ -225,9 +225,9 @@ async def test_calculate_offset() -> None:
 async def test_reorder_stories_ok():
 
     with (
-        patch("taiga.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
-        patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
-        patch("taiga.stories.services.stories_events", autospec=True) as fake_stories_events,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
     ):
         target_status = f.build_workflow_status()
         fake_workflows_repo.get_status.return_value = target_status
@@ -254,7 +254,7 @@ async def test_reorder_stories_ok():
 
 async def test_reorder_story_workflowstatus_does_not_exist():
     with (
-        patch("taiga.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
         pytest.raises(ex.InvalidStatusError),
     ):
         fake_workflows_repo.get_status.return_value = None
@@ -270,8 +270,8 @@ async def test_reorder_story_workflowstatus_does_not_exist():
 
 async def test_reorder_story_story_ref_does_not_exist():
     with (
-        patch("taiga.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
-        patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         pytest.raises(ex.InvalidStoryRefError),
     ):
         target_status = f.build_workflow_status()
@@ -290,8 +290,8 @@ async def test_reorder_story_story_ref_does_not_exist():
 
 async def test_reorder_story_not_all_stories_exist():
     with (
-        patch("taiga.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
-        patch("taiga.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         pytest.raises(ex.InvalidStoryRefError),
     ):
         target_status = f.build_workflow_status()

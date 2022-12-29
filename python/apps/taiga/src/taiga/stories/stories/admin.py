@@ -7,7 +7,7 @@
 
 
 from taiga.base.db import admin
-from taiga.stories.models import Story
+from taiga.stories.stories.models import Story
 
 
 @admin.register(Story)

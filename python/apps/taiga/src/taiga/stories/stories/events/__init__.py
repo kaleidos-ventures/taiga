@@ -9,9 +9,9 @@ from typing import Any
 
 from taiga.events import events_manager
 from taiga.projects.projects.models import Project
-from taiga.stories.events.content import CreateStoryContent, ReorderStoriesContent, UpdateStoryContent
-from taiga.stories.models import Story
-from taiga.stories.serializers import ReorderStoriesSerializer, StorySerializer
+from taiga.stories.stories.events.content import CreateStoryContent, ReorderStoriesContent, UpdateStoryContent
+from taiga.stories.stories.models import Story
+from taiga.stories.stories.serializers import ReorderStoriesSerializer, StorySerializer
 from taiga.workflows.models import WorkflowStatus
 
 CREATE_STORY = "stories.create"

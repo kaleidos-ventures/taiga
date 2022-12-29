@@ -8,7 +8,7 @@
 from datetime import datetime
 
 from taiga.base.serializers import BaseModel
-from taiga.stories.serializers.nested import StoryNeighborSerializer
+from taiga.stories.stories.serializers.nested import StoryNeighborSerializer
 from taiga.users.serializers.nested import UserNestedSerializer
 from taiga.workflows.serializers.nested import WorkflowNestedSerializer, WorkflowStatusNestedSerializer
 

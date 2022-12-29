@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import BaseModel
-from taiga.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer, StorySerializer
+from taiga.stories.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer, StorySerializer
 
 
 class CreateStoryContent(BaseModel):

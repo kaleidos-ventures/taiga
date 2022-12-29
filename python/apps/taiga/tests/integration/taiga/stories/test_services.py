@@ -9,7 +9,7 @@ from decimal import Decimal
 
 import pytest
 from asgiref.sync import sync_to_async
-from taiga.stories import repositories, services
+from taiga.stories.stories import repositories, services
 from taiga.workflows import repositories as workflows_repositories
 from tests.utils import factories as f
 

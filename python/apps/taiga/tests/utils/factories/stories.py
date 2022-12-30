@@ -10,6 +10,10 @@ from asgiref.sync import sync_to_async
 
 from .base import Factory, factory
 
+####################################################
+# Story
+####################################################
+
 
 class StoryFactory(Factory):
     title = factory.Sequence(lambda n: f"Story {n}")
@@ -30,3 +34,25 @@ def create_story(**kwargs):
 
 def build_story(**kwargs):
     return StoryFactory.build(**kwargs)
+
+
+####################################################
+# StoryAssignee
+####################################################
+
+
+class StoryAssigneeFactory(Factory):
+    story = factory.SubFactory("tests.utils.factories.StoryFactory")
+    user = factory.SubFactory("tests.utils.factories.UserFactory")
+
+    class Meta:
+        model = "assignees.StoryAssignees"
+
+
+@sync_to_async
+def create_story_assignees(**kwargs):
+    return StoryAssigneeFactory.create(**kwargs)
+
+
+def build_story_assignees(**kwargs):
+    return StoryAssigneeFactory.build(**kwargs)

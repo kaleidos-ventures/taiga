@@ -37,6 +37,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
+/* stylelint-disable-next-line at-rule-no-unknown */
 @container (inline-size > 280px) {
   /* FIX: !important https://github.com/angular/angular/issues/48264 */
   .status-field {

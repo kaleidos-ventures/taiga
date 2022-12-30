@@ -165,7 +165,6 @@ export class ProjectMembersListComponent {
       }
       return { email: member.email };
     }
-
     return member.user;
   }
 

@@ -27,6 +27,7 @@ describe('InvitationService', () => {
         user: {
           username: 'user2',
           fullName: 'Jorge Sullivan',
+          color: 1,
         },
         role: { isAdmin: false, name: 'General', slug: 'general' },
       },
@@ -36,7 +37,7 @@ describe('InvitationService', () => {
       },
     ];
     const newInvitation = {
-      user: { username: 'user3', fullName: 'Jorge Sullivan' },
+      user: { username: 'user3', fullName: 'Jorge Sullivan', color: 2 },
       role: { isAdmin: false, name: 'General', slug: 'general' },
       email: 'user3@taiga.demo',
     };
@@ -54,6 +55,7 @@ describe('InvitationService', () => {
         user: {
           username: 'user2',
           fullName: 'Jorge Sullivan',
+          color: 1,
         },
         role: { isAdmin: false, name: 'General', slug: 'general' },
       },
@@ -62,6 +64,7 @@ describe('InvitationService', () => {
         user: {
           username: 'user3',
           fullName: 'Jorge Sullivan',
+          color: 2,
         },
         role: { isAdmin: false, name: 'General', slug: 'general' },
       },
@@ -85,10 +88,12 @@ describe('InvitationService', () => {
     const user1 = {
       username: 'jablonki',
       fullName: 'Jabłoński Černý',
+      color: 1,
     };
     const user2 = {
       username: 'doroic',
       fullName: 'Ðorðić Æbeltoft',
+      color: 2,
     };
     const usersList = [user1, user2];
     const text = user1.username.substring(0, 2);

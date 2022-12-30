@@ -49,7 +49,6 @@ export class UserCardComponent implements OnChanges {
         this.fullName = this.user.fullName;
       }
     }
-
     if (this.textToHighlight) {
       if (this.fullName) {
         this.fullNameHighlight = this.stringHighlighted(
@@ -70,6 +69,10 @@ export class UserCardComponent implements OnChanges {
         this.usernameHighlight = '';
       }
     }
+  }
+
+  public setColor(color: number | undefined) {
+    return color ? color : 0;
   }
 
   public stringHighlighted(textToHighlight: string, text: string) {

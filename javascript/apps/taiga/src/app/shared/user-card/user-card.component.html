@@ -11,10 +11,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <tg-user-avatar
     class="top"
     *ngIf="fullName"
+    [color]="setColor(user.color)"
     [class.disabled]="disabled"
     [rounded]="true"
     type="light"
     [user]="user"></tg-user-avatar>
+
   <img
     *ngIf="!fullName"
     src="assets/images/avatar.svg"

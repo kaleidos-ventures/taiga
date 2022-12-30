@@ -89,7 +89,6 @@ export class ProjectMembersComponent {
       if (state.hasMoreMembers) {
         state.invitations = [];
       }
-
       const membersAndInvitations = [
         ...state.members,
         ...state.invitations.filter(
@@ -265,6 +264,7 @@ export class ProjectMembersComponent {
         user: {
           username: user.username,
           fullName: user.fullName,
+          color: user.color,
         },
         role: {
           isAdmin: project.userIsAdmin,

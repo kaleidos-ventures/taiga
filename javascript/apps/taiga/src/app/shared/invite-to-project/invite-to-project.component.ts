@@ -50,6 +50,7 @@ import {
 interface InvitationForm {
   fullName: string;
   username?: string;
+  color: number;
   roles: string;
   email?: string;
 }
@@ -264,8 +265,12 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
       const data = it.value as InvitationForm;
       return {
         user:
-          data.username && data.fullName
-            ? { username: data.username, fullName: data.fullName }
+          data.username && data.fullName && data.color
+            ? {
+                username: data.username,
+                fullName: data.fullName,
+                color: data.color,
+              }
             : undefined,
         email: data.email || '',
         role: {
@@ -276,8 +281,12 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     });
     const tempInvitation = {
       user:
-        user.username && user.fullName
-          ? { username: user.username, fullName: user.fullName }
+        user.username && user.fullName && user.color
+          ? {
+              username: user.username,
+              fullName: user.fullName,
+              color: user.color,
+            }
           : undefined,
       email: user.email || '',
       role: {

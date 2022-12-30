@@ -37,7 +37,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [invitationOrMember]="member"
                 [roles]="vm.roles"
                 [isMember]="true"
-                [isSelf]="member.user.username === vm.user?.username"></tg-members-role-select>
+                [isSelf]="
+                  member.user.username === vm.user?.username
+                "></tg-members-role-select>
             </tg-ui-dtable-cell>
             <tg-ui-dtable-cell class="action-column"> </tg-ui-dtable-cell>
           </tg-ui-dtable-row>

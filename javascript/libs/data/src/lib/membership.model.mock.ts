@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randBoolean, randFirstName, randUserName } from '@ngneat/falso';
+import { rand, randBoolean, randFirstName, randUserName } from '@ngneat/falso';
 import { Membership } from './membership.model';
 
 export const MembershipMockFactory = (): Membership => {
@@ -14,6 +14,7 @@ export const MembershipMockFactory = (): Membership => {
     user: {
       username: '@' + randUserName(),
       fullName: randFirstName(),
+      color: rand([1, 2, 3, 4, 5, 7, 8]),
     },
     role: {
       isAdmin: randBoolean(),

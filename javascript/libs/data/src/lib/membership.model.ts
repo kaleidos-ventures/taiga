@@ -11,6 +11,7 @@ export interface Membership {
   user: {
     username: string;
     fullName: string;
+    color: number;
   };
   role: {
     isAdmin: boolean;

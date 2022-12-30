@@ -13,7 +13,7 @@ export interface User {
   acceptedTerms: boolean;
   bigPhoto: string | null;
   bio: string;
-  color: string;
+  color: number;
   dateJoined: string;
   email: string;
   fullName: string;

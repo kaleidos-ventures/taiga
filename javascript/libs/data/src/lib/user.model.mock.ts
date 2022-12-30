@@ -7,18 +7,18 @@
  */
 
 import {
-  randNumber,
-  randUuid,
+  rand,
+  randAvatar,
+  randBoolean,
   randEmail,
   randFirstName,
-  randAvatar,
-  randHex,
-  randParagraph,
-  randBoolean,
-  randUserName,
-  randLocale,
   randJobArea,
+  randLocale,
+  randNumber,
+  randParagraph,
   randPastDate,
+  randUserName,
+  randUuid,
 } from '@ngneat/falso';
 
 import { User } from './user.model';
@@ -28,7 +28,7 @@ export const UserMockFactory = (): User => {
     acceptedTerms: randBoolean(),
     bigPhoto: randAvatar(),
     bio: randParagraph({ length: 3 }).join('\n'),
-    color: randHex(),
+    color: rand([1, 2, 3, 4, 5, 7, 8]),
     dateJoined: randPastDate().toDateString(),
     email: randEmail(),
     fullName: randFirstName(),

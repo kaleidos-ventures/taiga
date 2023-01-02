@@ -6,19 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import BaseModel
+from taiga.stories.assignees.serializers import StoryAssigneeSerializer
 
 
-class StoryNestedSerializer(BaseModel):
-    ref: int
-    title: str
-
-    class Config:
-        orm_mode = True
-
-
-class StoryNeighborSerializer(BaseModel):
-    ref: int
-    title: str
-
-    class Config:
-        orm_mode = True
+class CreateStoryAssigneeContent(BaseModel):
+    story_assignee: StoryAssigneeSerializer

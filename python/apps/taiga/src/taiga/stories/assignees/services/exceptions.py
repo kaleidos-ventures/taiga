@@ -5,20 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializers import BaseModel
+
+from taiga.base.services.exceptions import TaigaServiceException
 
 
-class StoryNestedSerializer(BaseModel):
-    ref: int
-    title: str
-
-    class Config:
-        orm_mode = True
+class IsNotMemberError(TaigaServiceException):
+    ...
 
 
-class StoryNeighborSerializer(BaseModel):
-    ref: int
-    title: str
-
-    class Config:
-        orm_mode = True
+class NotViewStoryPermissionError(TaigaServiceException):
+    ...

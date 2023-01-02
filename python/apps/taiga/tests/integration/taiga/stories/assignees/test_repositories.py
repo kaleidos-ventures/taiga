@@ -21,7 +21,22 @@ async def test_create_story_assignee_ok() -> None:
     user = await f.create_user()
     story = await f.create_story()
 
-    story_assignee = await repositories.create_story_assignee(story=story, user=user)
+    story_assignee, created = await repositories.create_story_assignee(story=story, user=user)
 
     assert story_assignee.user == user
     assert story_assignee.story == story
+
+
+##########################################################
+# get_story_assignee
+##########################################################
+
+
+async def test_get_story_assignee() -> None:
+    story_assignee = await f.create_story_assignee()
+    story_assignee_test = await repositories.get_story_assignee(
+        filters={"story_id": story_assignee.story.id, "username": story_assignee.user.username},
+        select_related=["story", "user"],
+    )
+    assert story_assignee.user.username == story_assignee_test.user.username
+    assert story_assignee.story.id == story_assignee_test.story.id

@@ -21,7 +21,7 @@ from taiga.projects.memberships.models import ProjectMembership
 from taiga.projects.projects import services as projects_services
 from taiga.projects.projects.models import Project
 from taiga.projects.roles.models import ProjectRole
-from taiga.stories.assignees import services as story_assignees_services
+from taiga.stories.assignees import repositories as story_assignees_repositories
 from taiga.stories.stories import repositories as stories_repositories
 from taiga.stories.stories.models import Story
 from taiga.users.models import User
@@ -372,7 +372,7 @@ async def _create_stories(
             status = story.status.slug.lower()
             if status in PROB_STORY_ASSIGNEES.keys() and fake.random_number(digits=2) < PROB_STORY_ASSIGNEES[status]:
                 for random_member in fake.random_elements(elements=members, unique=True):
-                    await story_assignees_services.create_story_assignee(story=story, user=random_member)
+                    await story_assignees_repositories.create_story_assignee(story=story, user=random_member)
 
 
 async def _create_story(status: WorkflowStatus, owner: User, order: Decimal, title: str | None = None) -> Story:

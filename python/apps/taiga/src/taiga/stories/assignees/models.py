@@ -8,7 +8,7 @@
 from taiga.base.db import models
 
 
-class StoryAssignees(models.BaseModel):
+class StoryAssignee(models.BaseModel):
     user = models.ForeignKey(
         "users.User",
         null=False,
@@ -43,4 +43,4 @@ class StoryAssignees(models.BaseModel):
         return f"{self.story} - {self.user}"
 
     def __repr__(self) -> str:
-        return f"<StoryAssignees {self.story} {self.user}>"
+        return f"<StoryAssignee {self.story} {self.user}>"

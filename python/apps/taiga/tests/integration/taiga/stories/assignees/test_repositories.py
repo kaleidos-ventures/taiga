@@ -13,7 +13,7 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
-# create_story_assignees
+# create_story_assignee
 ##########################################################
 
 
@@ -21,7 +21,7 @@ async def test_create_story_assignee_ok() -> None:
     user = await f.create_user()
     story = await f.create_story()
 
-    story_assignee = await repositories.create_story_assignees(story=story, user=user)
+    story_assignee = await repositories.create_story_assignee(story=story, user=user)
 
     assert story_assignee.user == user
     assert story_assignee.story == story

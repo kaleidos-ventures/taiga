@@ -46,13 +46,13 @@ class StoryAssigneeFactory(Factory):
     user = factory.SubFactory("tests.utils.factories.UserFactory")
 
     class Meta:
-        model = "assignees.StoryAssignees"
+        model = "stories_assignees.StoryAssignee"
 
 
 @sync_to_async
-def create_story_assignees(**kwargs):
+def create_story_assignee(**kwargs):
     return StoryAssigneeFactory.create(**kwargs)
 
 
-def build_story_assignees(**kwargs):
+def build_story_assignee(**kwargs):
     return StoryAssigneeFactory.build(**kwargs)

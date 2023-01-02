@@ -15,24 +15,24 @@ pytestmark = pytest.mark.django_db
 
 
 #######################################################
-# create_story_assignees
+# create_story_assignee
 #######################################################
 
 
 async def test_create_story_assignee_ok():
     user = f.build_user()
     story = f.build_story()
-    story_assignee = f.build_story_assignees()
+    story_assignee = f.build_story_assignee()
 
     with (
         patch(
             "taiga.stories.assignees.services.story_assignees_repositories", autospec=True
         ) as fake_story_assignee_repo,
     ):
-        fake_story_assignee_repo.create_story_assignees.return_value = story_assignee
+        fake_story_assignee_repo.create_story_assignee.return_value = story_assignee
 
-        await services.create_story_assignees(story=story, user=user)
-        fake_story_assignee_repo.create_story_assignees.assert_awaited_once_with(
+        await services.create_story_assignee(story=story, user=user)
+        fake_story_assignee_repo.create_story_assignee.assert_awaited_once_with(
             story=story,
             user=user,
         )

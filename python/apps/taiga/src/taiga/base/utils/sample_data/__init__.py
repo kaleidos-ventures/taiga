@@ -372,7 +372,7 @@ async def _create_stories(
             status = story.status.slug.lower()
             if status in PROB_STORY_ASSIGNEES.keys() and fake.random_number(digits=2) < PROB_STORY_ASSIGNEES[status]:
                 for random_member in fake.random_elements(elements=members, unique=True):
-                    await story_assignees_services.create_story_assignees(story=story, user=random_member)
+                    await story_assignees_services.create_story_assignee(story=story, user=random_member)
 
 
 async def _create_story(status: WorkflowStatus, owner: User, order: Decimal, title: str | None = None) -> Story:

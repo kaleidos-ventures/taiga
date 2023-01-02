@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.stories.assignees import repositories as story_assignees_repositories
-from taiga.stories.assignees.models import StoryAssignees
+from taiga.stories.assignees.models import StoryAssignee
 from taiga.stories.stories.models import Story
 from taiga.users.models import User
 
@@ -15,5 +15,5 @@ from taiga.users.models import User
 ##########################################################
 
 
-async def create_story_assignees(story: Story, user: User) -> StoryAssignees:
-    return await story_assignees_repositories.create_story_assignees(story=story, user=user)
+async def create_story_assignee(story: Story, user: User) -> StoryAssignee:
+    return await story_assignees_repositories.create_story_assignee(story=story, user=user)

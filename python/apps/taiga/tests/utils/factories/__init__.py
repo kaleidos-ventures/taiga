@@ -24,9 +24,9 @@ from .stories import (  # noqa
     StoryAssigneeFactory,
     StoryFactory,
     build_story,
-    build_story_assignees,
+    build_story_assignee,
     create_story,
-    create_story_assignees,
+    create_story_assignee,
 )
 from .users import AuthDataFactory, UserFactory, build_auth_data, build_user, create_auth_data, create_user  # noqa
 from .workflows import (  # noqa

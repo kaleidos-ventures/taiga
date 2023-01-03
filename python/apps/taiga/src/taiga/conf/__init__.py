@@ -17,6 +17,7 @@ from taiga.conf.emails import EmailSettings
 from taiga.conf.events import EventsSettings
 from taiga.conf.images import ImageSettings
 from taiga.conf.logs import LOGGING_CONFIG
+from taiga.conf.tasksqueue import TaskQueueSettings
 from taiga.conf.tokens import TokensSettings
 
 _BASE_DIR = Path(__file__).resolve().parent.parent.parent  # is 'src'
@@ -89,6 +90,7 @@ class Settings(BaseSettings):
     EMAIL: EmailSettings = EmailSettings()
     EVENTS: EventsSettings = EventsSettings()
     IMAGES: ImageSettings = ImageSettings()
+    TASKQUEUE: TaskQueueSettings = TaskQueueSettings()
     TOKENS: TokensSettings = TokensSettings()
 
     @validator("UUID_NODE", pre=False)

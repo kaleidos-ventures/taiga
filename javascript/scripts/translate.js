@@ -22,8 +22,6 @@ function createLocalFiles(codes) {
     glob(
       `./apps/taiga/src/assets/i18n/**/${defaultSourceLang}.json`,
       (error, files) => {
-        console.log(files);
-
         files.forEach(async (file) => {
           const data = fs.readFileSync(file, 'utf8');
 

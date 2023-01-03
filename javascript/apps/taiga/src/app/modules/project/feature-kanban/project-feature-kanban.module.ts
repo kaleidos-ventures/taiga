@@ -14,6 +14,7 @@ import { RouterModule } from '@angular/router';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import {
+  TuiHintModule,
   TuiLinkModule,
   TuiScrollbarModule,
   TuiSvgModule,
@@ -59,6 +60,7 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
   imports: [
     TuiAutoFocusModule,
     TuiLinkModule,
+    TuiHintModule,
     HasPermissionDirective,
     TitleComponent,
     CommonTemplateModule,

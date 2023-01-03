@@ -21,5 +21,11 @@
     "create_story_button": "Create Story",
     "max_length": "Character limit has been reached.",
     "story_title_placeholder": "Start writing a Story title..."
+  },
+  "story_card": {
+    "unassigned": "Not assigned",
+    "story_not_assigned": "Story not assigned to anyone.",
+    "assign": "Assign",
+    "assign_key": "Press enter to assign."
   }
 }

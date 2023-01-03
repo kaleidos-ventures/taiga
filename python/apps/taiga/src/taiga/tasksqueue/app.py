@@ -16,7 +16,6 @@ from taiga.base.utils.tests import is_test_running
 from taiga.conf import settings
 
 from .logging import setup_logging
-from .utils import autodiscover
 
 ROOT_PACKAGE: Final = "taiga"
 TASKS_MODULE_NAME: Final = "tasks"
@@ -38,7 +37,7 @@ def initialize_app() -> App:
             json_loads=json.loads,
         )
 
-    return App(connector=connector, import_paths=autodiscover(ROOT_PACKAGE, TASKS_MODULE_NAME))
+    return App(connector=connector, import_paths=settings.TASKQUEUE.TASKS_MODULES_PATHS)
 
 
 app = initialize_app()

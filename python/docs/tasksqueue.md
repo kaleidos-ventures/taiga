@@ -8,9 +8,8 @@ To manage tasks in the background we use the tasks queue system library [Procras
 
 All the code is in the package `taiga.tasksqueue`.
 
-> **IMPORTANT:** There are three disclaimers:
+> **IMPORTANT:** There are two disclaimers:
 > - `taiga.tasksqueue` is a wrapper over procrastinate. We implement the minimal interface according to our needs. We can extend it when required.
-> - defined tasks of any package must be in a `tasks.py` file. This is necessary so that task autodiscover can find and load them when the workers are initialized.
 > - our taskqueue wrapper is async by default so we change the interface regarding Procrastinate. For example: `open()` method in procrastinate is called `open_sync()` in Taiga and `open_async()` method in procrastinate is called `open()` in Taiga.
 
 ## About tasks
@@ -26,6 +25,22 @@ from taiga.tasksqueue.manager import manager as tqmanager
 def sample_task(arg1: int, arg2: int) -> None:
     ...
 ```
+
+If the file containing the new task is not included in the list of modules with tasks in the settings (`taiga.conf.taskqueue`), it must be added:
+
+```python
+# ...in taiga.conf.taskqueue...
+
+class TaskQueueSettings(BaseSettings):
+    ...
+    TASKS_MODULES_PATHS: set[str] = {
+        ...
+        "mypackage.tasks",
+        ...
+    }
+    ...
+```
+
 
 And you have to call it like this:
 

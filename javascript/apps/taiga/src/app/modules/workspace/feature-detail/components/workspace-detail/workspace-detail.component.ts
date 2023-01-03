@@ -13,6 +13,7 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -153,7 +154,8 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private store: Store,
     private userStorageService: UserStorageService,
-    private state: RxState<WorkspaceDetailState>
+    private state: RxState<WorkspaceDetailState>,
+    private location: Location
   ) {
     this.state.set({
       rejectedInvites: [],
@@ -279,6 +281,11 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       .subscribe((eventResponse) => {
         this.invitationRevokedEvent(eventResponse.event.content.project);
       });
+
+    this.state.hold(this.state.select('workspace'), (workspace) => {
+      workspace &&
+        this.location.go(`workspace/${workspace.id}/${workspace.slug}`);
+    });
   }
 
   public invitationRevokedEvent(projectId: string) {

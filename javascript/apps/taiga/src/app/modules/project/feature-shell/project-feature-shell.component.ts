@@ -7,6 +7,7 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
+import { Location } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -79,7 +80,8 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       project: Project;
       showBannerOnRevoke: boolean;
     }>,
-    private userStorageService: UserStorageService
+    private userStorageService: UserStorageService,
+    private location: Location
   ) {
     this.watchProject();
     this.state.connect(
@@ -93,6 +95,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     );
 
     this.state.hold(this.state.select('project'), (project) => {
+      this.location.go(`project/${project.id}/${project.slug}`);
       this.subscribedProject = project.id;
       this.unsubscribeFromProjectEvents();
       this.wsService

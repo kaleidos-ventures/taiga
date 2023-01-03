@@ -25,10 +25,10 @@ import { RxState } from '@rx-angular/state';
 import { Membership, Project } from '@taiga/data';
 import { distinctUntilChanged, map } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { filterNil } from '~/app/shared/utils/operators';
-import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
 
 export interface StoryState {
@@ -67,6 +67,9 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
   }
 
   public readonly model$ = this.state.select();
+
+  // Just Papier-mâché, remove when users available
+  public assignedUsers = [];
 
   public get nativeElement() {
     return this.el.nativeElement as HTMLElement;
@@ -124,7 +127,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     }
   }
 
-  public toggleAssingUser(event: MouseEvent) {
+  public toggleAssignUser(event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
 

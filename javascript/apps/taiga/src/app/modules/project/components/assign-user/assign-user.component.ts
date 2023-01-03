@@ -11,23 +11,36 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  OnInit,
   Output,
 } from '@angular/core';
-import { RxState } from '@rx-angular/state';
-import { Membership, User } from '@taiga/data';
-import { map, Subject } from 'rxjs';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
-import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
-import Diacritics from 'diacritic';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
+import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import {
+  TuiHintModule,
+  TuiLinkModule,
+  TuiScrollbarModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
+import { TuiToggleModule } from '@taiga-ui/kit';
+import { Membership, User } from '@taiga/data';
+import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import Diacritics from 'diacritic';
+import { map, Subject } from 'rxjs';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { initAssignUser } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectMembers } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { TuiAutoFocusModule } from '@taiga-ui/cdk';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { filterNil } from '~/app/shared/utils/operators';
-import { FormsModule } from '@angular/forms';
-import { TuiScrollbarModule } from '@taiga-ui/core';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
+import { filterNil } from '~/app/shared/utils/operators';
 
 interface AssignComponentState {
   members: Membership[];
@@ -43,14 +56,20 @@ interface AssignComponentState {
     UserAvatarComponent,
     TuiAutoFocusModule,
     FormsModule,
+    ReactiveFormsModule,
+    TuiLinkModule,
     TuiScrollbarModule,
+    TuiToggleModule,
+    TuiSvgModule,
+    TuiHintModule,
     UserCardComponent,
+    InputsModule,
   ],
   templateUrl: './assign-user.component.html',
   styleUrls: ['./assign-user.component.css'],
   providers: [RxState],
 })
-export class AssignUserComponent {
+export class AssignUserComponent implements OnInit {
   @Output()
   public requestClose = new EventEmitter<void>();
 
@@ -69,6 +88,8 @@ export class AssignUserComponent {
   public onEsc() {
     this.requestClose.next();
   }
+
+  public viewOnly = false;
 
   // TODO: The project members that cannot access stories should appear as a disabled list item with a label that informs of the situation.
   public readonly model$ = this.state.select().pipe(
@@ -114,15 +135,23 @@ export class AssignUserComponent {
   );
 
   public readonly search$ = new Subject<string>();
-  public searchText = '';
+
+  public searchTextForm!: FormGroup;
 
   constructor(
     private store: Store,
-    private state: RxState<AssignComponentState>
+    private state: RxState<AssignComponentState>,
+    private fb: FormBuilder
   ) {
     this.store.dispatch(initAssignUser());
 
     this.initState();
+  }
+
+  public ngOnInit(): void {
+    this.searchTextForm = this.fb.group({
+      searchText: '',
+    });
   }
 
   public initState() {
@@ -146,7 +175,9 @@ export class AssignUserComponent {
   }
 
   public onAssign(member: Membership) {
-    this.searchText = '';
+    this.searchTextForm.setValue({
+      searchText: '',
+    });
     this.search$.next('');
 
     this.assign.next(member);

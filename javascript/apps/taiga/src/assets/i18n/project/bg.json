@@ -6,6 +6,11 @@
   },
   "assign_user": {
     "title": "Assigned users",
-    "add": "Add assignees"
+    "unassigned": "Story not assigned",
+    "add": "Add assignees",
+    "remove-assignee": "Remove assignee",
+    "add-assignee": "Add assignee",
+    "no-members": "No members left",
+    "search-members": "Search members"
   }
 }

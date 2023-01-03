@@ -98,7 +98,14 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     );
 
     this.state.hold(this.state.select('project'), (project) => {
-      this.location.go(`project/${project.id}/${project.slug}`);
+      const url = window.location.href;
+      if (
+        !url.includes('/kanban') &&
+        !url.includes('/stories') &&
+        !url.includes('/settings')
+      ) {
+        this.location.go(`project/${project.id}/${project.slug}`);
+      }
       this.subscribedProject = project.id;
       this.unsubscribeFromProjectEvents();
       this.wsService

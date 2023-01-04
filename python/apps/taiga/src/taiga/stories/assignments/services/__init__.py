@@ -9,18 +9,18 @@ from uuid import UUID
 
 from taiga.permissions import services as permissions_services
 from taiga.projects.memberships import repositories as pj_memberships_repositories
-from taiga.stories.assignees import events as stories_assignees_events
-from taiga.stories.assignees import repositories as story_assignees_repositories
-from taiga.stories.assignees.models import StoryAssignee
-from taiga.stories.assignees.services import exceptions as ex
+from taiga.stories.assignments import events as stories_assignments_events
+from taiga.stories.assignments import repositories as story_assignments_repositories
+from taiga.stories.assignments.models import StoryAssignment
+from taiga.stories.assignments.services import exceptions as ex
 from taiga.stories.stories.models import Story
 
 ##########################################################
-# create story assignee
+# create story assignment
 ##########################################################
 
 
-async def create_story_assignee(project_id: UUID, story: Story, username: str) -> StoryAssignee:
+async def create_story_assignment(project_id: UUID, story: Story, username: str) -> StoryAssignment:
     pj_membership = await pj_memberships_repositories.get_project_membership(
         filters={"project_id": project_id, "username": username}
     )
@@ -33,8 +33,8 @@ async def create_story_assignee(project_id: UUID, story: Story, username: str) -
     if has_perm is False:
         raise ex.NotViewStoryPermissionError(f"{username} does not have permission to view story")
 
-    story_assignee, created = await story_assignees_repositories.create_story_assignee(story=story, user=user)
+    story_assignment, created = await story_assignments_repositories.create_story_assignment(story=story, user=user)
     if created:
-        await stories_assignees_events.emit_event_when_story_assignee_is_created(story_assignee=story_assignee)
+        await stories_assignments_events.emit_event_when_story_assignment_is_created(story_assignment=story_assignment)
 
-    return story_assignee
+    return story_assignment

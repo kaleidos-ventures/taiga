@@ -2428,10 +2428,10 @@
 			]
 		},
 		{
-			"name": "projects.{p}.stories.{ref}.assignees",
+			"name": "projects.{p}.stories.{ref}.assignments",
 			"item": [
 				{
-					"name": "200.projects.{p}.stories.{ref}.assignees",
+					"name": "200.projects.{p}.stories.{ref}.assignments",
 					"event": [
 						{
 							"listen": "test",
@@ -2494,7 +2494,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/assignees",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/assignments",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -2504,7 +2504,7 @@
 								"{{pj-id}}",
 								"stories",
 								"{{story_ref}}",
-								"assignees"
+								"assignments"
 							]
 						}
 					},

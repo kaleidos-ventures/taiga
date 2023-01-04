@@ -6,13 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import BaseModel
-from taiga.stories.stories.serializers.nested import StoryNestedSerializer
-from taiga.users.serializers.nested import UserNestedSerializer
+from taiga.base.validators import StrNotEmpty
 
 
-class StoryAssigneeSerializer(BaseModel):
-    user: UserNestedSerializer
-    story: StoryNestedSerializer
-
-    class Config:
-        orm_mode = True
+class StoryAssignmentValidator(BaseModel):
+    username: StrNotEmpty

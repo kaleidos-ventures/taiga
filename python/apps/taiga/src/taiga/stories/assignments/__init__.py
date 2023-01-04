@@ -7,4 +7,4 @@
 
 
 # Force this config to override the default label
-default_app_config = "taiga.stories.assignees.apps.StoryAssigneeConfig"
+default_app_config = "taiga.stories.assignments.apps.StoryAssignmentConfig"

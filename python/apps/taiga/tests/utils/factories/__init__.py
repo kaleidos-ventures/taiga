@@ -21,12 +21,12 @@ from .projects import (  # noqa
     create_simple_project,
 )
 from .stories import (  # noqa
-    StoryAssigneeFactory,
+    StoryAssignmentFactory,
     StoryFactory,
     build_story,
-    build_story_assignee,
+    build_story_assignment,
     create_story,
-    create_story_assignee,
+    create_story_assignment,
 )
 from .users import AuthDataFactory, UserFactory, build_auth_data, build_user, create_auth_data, create_user  # noqa
 from .workflows import (  # noqa

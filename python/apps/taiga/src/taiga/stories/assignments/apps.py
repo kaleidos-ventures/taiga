@@ -10,6 +10,6 @@ from django.apps import AppConfig
 
 
 # Override the default label to avoid duplicates
-class StoryAssigneeConfig(AppConfig):
-    name = "taiga.stories.assignees"
-    label = "stories_assignees"
+class StoryAssignmentConfig(AppConfig):
+    name = "taiga.stories.assignments"
+    label = "stories_assignments"

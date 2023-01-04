@@ -21,7 +21,7 @@ from taiga.projects.memberships.models import ProjectMembership
 from taiga.projects.projects import services as projects_services
 from taiga.projects.projects.models import Project
 from taiga.projects.roles.models import ProjectRole
-from taiga.stories.assignees import repositories as story_assignees_repositories
+from taiga.stories.assignments import repositories as story_assignments_repositories
 from taiga.stories.stories import repositories as stories_repositories
 from taiga.stories.stories.models import Story
 from taiga.users.models import User
@@ -51,7 +51,7 @@ NUM_WORKFLOWS_COLORS = 4
 # Stories
 NUM_STORIES_PER_WORKFLOW = (0, 30)  # (min, max) by default
 STORY_TITLE_MAX_SIZE = ((80,) * 3) + ((120,) * 6) + (490,)  # 80 (30%), 120 (60%), 490 (10%)
-PROB_STORY_ASSIGNEES = {  # 0-99 prob of a story to be assigned by its workflow status
+PROB_STORY_ASSIGNMENTS = {  # 0-99 prob of a story to be assigned by its workflow status
     "new": 10,
     "ready": 40,
     "in-progress": 80,
@@ -370,9 +370,12 @@ async def _create_stories(
         for i in range(num_stories_to_create):
             story = await _create_story(status=random.choice(statuses), owner=random.choice(members), order=Decimal(i))
             status = story.status.slug.lower()
-            if status in PROB_STORY_ASSIGNEES.keys() and fake.random_number(digits=2) < PROB_STORY_ASSIGNEES[status]:
+            if (
+                status in PROB_STORY_ASSIGNMENTS.keys()
+                and fake.random_number(digits=2) < PROB_STORY_ASSIGNMENTS[status]
+            ):
                 for random_member in fake.random_elements(elements=members, unique=True):
-                    await story_assignees_repositories.create_story_assignee(story=story, user=random_member)
+                    await story_assignments_repositories.create_story_assignment(story=story, user=random_member)
 
 
 async def _create_story(status: WorkflowStatus, owner: User, order: Decimal, title: str | None = None) -> Story:

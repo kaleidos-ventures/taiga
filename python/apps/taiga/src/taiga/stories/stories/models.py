@@ -42,8 +42,8 @@ class Story(models.BaseModel, ProjectReferenceMixin, VersionedMixin, CreatedMeta
     )
     assignees = models.ManyToManyField(
         "users.User",
-        related_name="assigned_stories",
-        through="stories_assignees.StoryAssignee",
+        related_name="stories",
+        through="stories_assignments.StoryAssignment",
         through_fields=("story", "user"),
         verbose_name="assignees",
     )

@@ -37,22 +37,22 @@ def build_story(**kwargs):
 
 
 ####################################################
-# StoryAssignee
+# StoryAssignment
 ####################################################
 
 
-class StoryAssigneeFactory(Factory):
+class StoryAssignmentFactory(Factory):
     story = factory.SubFactory("tests.utils.factories.StoryFactory")
     user = factory.SubFactory("tests.utils.factories.UserFactory")
 
     class Meta:
-        model = "stories_assignees.StoryAssignee"
+        model = "stories_assignments.StoryAssignment"
 
 
 @sync_to_async
-def create_story_assignee(**kwargs):
-    return StoryAssigneeFactory.create(**kwargs)
+def create_story_assignment(**kwargs):
+    return StoryAssignmentFactory.create(**kwargs)
 
 
-def build_story_assignee(**kwargs):
-    return StoryAssigneeFactory.build(**kwargs)
+def build_story_assignment(**kwargs):
+    return StoryAssignmentFactory.build(**kwargs)

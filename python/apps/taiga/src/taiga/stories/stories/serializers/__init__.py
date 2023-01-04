@@ -18,6 +18,7 @@ class StorySerializer(BaseModel):
     title: str
     status: WorkflowStatusNestedSerializer
     version: int
+    assignees: list[UserNestedSerializer]
 
     class Config:
         orm_mode = True
@@ -33,6 +34,7 @@ class StoryDetailSerializer(BaseModel):
     prev: StoryNeighborSerializer | None
     next: StoryNeighborSerializer | None
     version: int
+    assignees: list[UserNestedSerializer]
 
 
 class ReorderSerializer(BaseModel):

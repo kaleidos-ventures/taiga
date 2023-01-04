@@ -52,11 +52,11 @@ async def test_get_story() -> None:
 
 
 ##########################################################
-# get_stories
+# list_stories
 ##########################################################
 
 
-async def test_get_stories() -> None:
+async def test_list_stories() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow_1 = await sync_to_async(project.workflows.first)()
@@ -68,14 +68,14 @@ async def test_get_stories() -> None:
     await f.create_story(project=project, workflow=workflow_1, status=status_1)
     await f.create_story(project=project, workflow=workflow_2, status=status_2)
 
-    stories = await repositories.get_stories(filters={"project_id": project.id})
+    stories = await repositories.list_stories(filters={"project_id": project.id})
     assert len(stories) == 3
     assert stories[0].title and stories[0].ref and stories[0].status
-    stories = await repositories.get_stories(filters={"workflow_id": workflow_1.id})
+    stories = await repositories.list_stories(filters={"workflow_id": workflow_1.id})
     assert len(stories) == 2
-    stories = await repositories.get_stories(filters={"workflow_id": workflow_2.id})
+    stories = await repositories.list_stories(filters={"workflow_id": workflow_2.id})
     assert len(stories) == 1
-    stories = await repositories.get_stories(filters={"workflow_id": workflow_1.id, "refs": [story1.ref]})
+    stories = await repositories.list_stories(filters={"workflow_id": workflow_1.id, "refs": [story1.ref]})
     assert len(stories) == 1
 
 
@@ -198,11 +198,11 @@ async def test_get_total_stories() -> None:
 
 
 ##########################################################
-# misc - get_stories_to_reorder
+# misc - list_stories_to_reorder
 ##########################################################
 
 
-async def test_get_stories_to_reorder() -> None:
+async def test_list_stories_to_reorder() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
@@ -212,21 +212,21 @@ async def test_get_stories_to_reorder() -> None:
     story2 = await f.create_story(project=project, workflow=workflow, status=status)
     story3 = await f.create_story(project=project, workflow=workflow, status=status)
 
-    stories = await repositories.get_stories_to_reorder(
+    stories = await repositories.list_stories_to_reorder(
         filters={"status_id": status.id, "refs": [story1.ref, story2.ref, story3.ref]}
     )
     assert stories[0].ref == story1.ref
     assert stories[1].ref == story2.ref
     assert stories[2].ref == story3.ref
 
-    stories = await repositories.get_stories_to_reorder(
+    stories = await repositories.list_stories_to_reorder(
         filters={"status_id": status.id, "refs": [story1.ref, story3.ref, story2.ref]}
     )
     assert stories[0].ref == story1.ref
     assert stories[1].ref == story3.ref
     assert stories[2].ref == story2.ref
 
-    stories = await repositories.get_stories_to_reorder(
+    stories = await repositories.list_stories_to_reorder(
         filters={"status_id": status.id, "refs": [story3.ref, story1.ref, story2.ref]}
     )
     assert stories[0].ref == story3.ref

@@ -20,6 +20,7 @@ from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.stories.stories import services as stories_services
 from taiga.stories.stories.models import Story
+from taiga.stories.stories.schemas import StorySchema
 from taiga.stories.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer, StorySerializer
 from taiga.stories.stories.validators import ReorderStoriesValidator, StoryValidator, UpdateStoryValidator
 from taiga.workflows.api import get_workflow_or_404
@@ -41,7 +42,7 @@ REORDER_STORIES = HasPerm("modify_story")
     "/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.create",
     summary="Create an story",
-    response_model=StorySerializer,
+    response_model=StoryDetailSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_story(
@@ -49,7 +50,7 @@ async def create_story(
     form: StoryValidator,
     project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
-) -> Story:
+) -> dict[str, Any]:
     """
     Creates a story in the given project workflow
     """
@@ -75,15 +76,15 @@ async def list_stories(
     pagination_params: PaginationQuery = Depends(),
     project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
-) -> list[Story]:
+) -> list[StorySchema]:
     """
     List all the stories for a project workflow
     """
     project = await get_project_or_404(project_id)
-    workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)  # noqa
+    await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
     await check_permissions(permissions=LIST_STORIES, user=request.user, obj=project)
 
-    pagination, stories = await stories_services.get_paginated_stories_by_workflow(
+    pagination, stories = await stories_services.list_paginated_stories(
         project_id=project_id,
         workflow_slug=workflow_slug,
         offset=pagination_params.offset,

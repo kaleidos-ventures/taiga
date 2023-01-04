@@ -15,3 +15,10 @@ from taiga.projects.invitations.models import ProjectInvitation
 class VerificationInfoSchema:
     auth: AccessWithRefreshTokenSchema
     project_invitation: ProjectInvitation | None
+
+
+@dataclass
+class UserBaseSchema:
+    username: str
+    full_name: str | None
+    color: int

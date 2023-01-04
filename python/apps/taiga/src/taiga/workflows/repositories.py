@@ -138,7 +138,7 @@ def get_workflows(
 
     dt_workflows = []
     for workflow in qs:
-        dt_workflows.append(_get_workflow_dt(workflow))
+        dt_workflows.append(get_workflow_dt(workflow))
     return dt_workflows
 
 
@@ -156,7 +156,7 @@ def get_workflow(
     qs = _apply_prefetch_related_to_workflow_queryset(qs=qs, prefetch_related=prefetch_related)
 
     try:
-        return _get_workflow_dt(qs.get())
+        return get_workflow_dt(qs.get())
     except Workflow.DoesNotExist:
         return None
 
@@ -166,18 +166,13 @@ def get_workflow(
 ##########################################################
 
 
-def _get_workflow_dt(workflow: Workflow) -> WorkflowSchema:
+def get_workflow_dt(workflow: Workflow) -> WorkflowSchema:
     return WorkflowSchema(
         id=workflow.id,
         name=workflow.name,
         slug=workflow.slug,
         order=workflow.order,
-        statuses=[
-            WorkflowStatusSchema(
-                id=status.id, name=status.name, slug=status.slug, order=status.order, color=status.color
-            )
-            for status in workflow.statuses.all()
-        ],
+        statuses=[get_workflow_status_dt(status) for status in workflow.statuses.all()],
     )
 
 
@@ -247,3 +242,12 @@ def get_status(filters: WorkflowStatusFilters = {}) -> WorkflowStatus | None:
         return qs.get()
     except WorkflowStatus.DoesNotExist:
         return None
+
+
+##########################################################
+# WorkflowStatus - misc
+##########################################################
+
+
+def get_workflow_status_dt(ws: WorkflowStatus) -> WorkflowStatusSchema:
+    return WorkflowStatusSchema(id=ws.id, name=ws.name, slug=ws.slug, order=ws.order, color=ws.color)

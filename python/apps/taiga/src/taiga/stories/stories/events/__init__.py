@@ -10,8 +10,7 @@ from typing import Any
 from taiga.events import events_manager
 from taiga.projects.projects.models import Project
 from taiga.stories.stories.events.content import CreateStoryContent, ReorderStoriesContent, UpdateStoryContent
-from taiga.stories.stories.models import Story
-from taiga.stories.stories.serializers import ReorderStoriesSerializer, StorySerializer
+from taiga.stories.stories.serializers import ReorderStoriesSerializer
 from taiga.workflows.models import WorkflowStatus
 
 CREATE_STORY = "stories.create"
@@ -19,11 +18,11 @@ UPDATE_STORY = "stories.update"
 REORDER_STORIES = "stories.reorder"
 
 
-async def emit_event_when_story_is_created(story: Story) -> None:
+async def emit_event_when_story_is_created(project: Project, story: dict[str, Any]) -> None:
     await events_manager.publish_on_project_channel(
-        project=story.project,
+        project=project,
         type=CREATE_STORY,
-        content=CreateStoryContent(story=StorySerializer.from_orm(story)),
+        content=CreateStoryContent(story=story),
     )
 
 

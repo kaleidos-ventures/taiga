@@ -14,6 +14,10 @@ from taiga.base.occ import repositories as occ_repositories
 from taiga.base.repositories import neighbors as neighbors_repositories
 from taiga.base.repositories.neighbors import Neighbor
 from taiga.stories.stories.models import Story
+from taiga.stories.stories.schemas import StorySchema
+from taiga.users import repositories as users_repositories
+from taiga.users.models import User
+from taiga.workflows import repositories as workflows_repositories
 
 ##########################################################
 # filters and querysets
@@ -75,6 +79,17 @@ def _apply_select_related_to_queryset(
     return qs.select_related(*select_related_data)
 
 
+StoryPrefetchRelated = list[
+    Literal[
+        "assignees",
+    ]
+]
+
+
+def _apply_prefetch_related_to_queryset(qs: QuerySet[Story], prefetch_related: StoryPrefetchRelated) -> QuerySet[Story]:
+    return qs.prefetch_related(*prefetch_related)
+
+
 StoryOrderBy = list[
     Literal[
         "order",
@@ -114,13 +129,72 @@ def create_story(
 
 
 ##########################################################
+# list stories
+##########################################################
+
+
+def list_stories_sync(
+    filters: StoryFilters = {},
+    order_by: StoryOrderBy = ["order"],
+    offset: int | None = None,
+    limit: int | None = None,
+    select_related: StorySelectRelated = ["status"],
+    prefetch_related: StoryPrefetchRelated = [],
+) -> list[Story]:
+
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
+    qs = _apply_prefetch_related_to_queryset(qs=qs, prefetch_related=prefetch_related)
+    qs = _apply_order_by_to_queryset(qs=qs, order_by=order_by)
+
+    if limit is not None and offset is not None:
+        limit += offset
+
+    return list(qs[offset:limit])
+
+
+list_stories = sync_to_async(list_stories_sync)
+
+
+@sync_to_async
+def list_stories_dt(
+    filters: StoryFilters = {},
+    order_by: StoryOrderBy = ["order"],
+    offset: int | None = None,
+    limit: int | None = None,
+    select_related: StorySelectRelated = ["status"],
+    prefetch_related: StoryPrefetchRelated = ["assignees"],
+) -> list[StorySchema]:
+
+    stories = list_stories_sync(
+        filters=filters,
+        order_by=order_by,
+        offset=offset,
+        limit=limit,
+        select_related=select_related,
+        prefetch_related=prefetch_related,
+    )
+
+    stories_dt = []
+    for story in stories:
+        stories_dt.append(get_story_dt(story))
+
+    return stories_dt
+
+
+##########################################################
 # get story
 ##########################################################
 
 
-def get_story_sync(filters: StoryFilters = {}, select_related: StorySelectRelated = ["status"]) -> Story | None:
+def get_story_sync(
+    filters: StoryFilters = {},
+    select_related: StorySelectRelated = ["status"],
+    prefetch_related: StoryPrefetchRelated = ["assignees"],
+) -> Story | None:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
+    qs = _apply_prefetch_related_to_queryset(qs=qs, prefetch_related=prefetch_related)
 
     try:
         return qs.get()
@@ -129,29 +203,6 @@ def get_story_sync(filters: StoryFilters = {}, select_related: StorySelectRelate
 
 
 get_story = sync_to_async(get_story_sync)
-
-
-##########################################################
-# get stories
-##########################################################
-
-
-@sync_to_async
-def get_stories(
-    filters: StoryFilters = {},
-    order_by: StoryOrderBy = ["order"],
-    offset: int | None = None,
-    limit: int | None = None,
-    select_related: StorySelectRelated = ["status"],
-) -> list[Story]:
-    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
-    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
-    qs = _apply_order_by_to_queryset(qs=qs, order_by=order_by)
-
-    if limit is not None and offset is not None:
-        limit += offset
-
-    return list(qs[offset:limit])
 
 
 ##########################################################
@@ -199,9 +250,9 @@ def get_story_neighbors(story: Story, filters: StoryFilters = {}) -> Neighbor[St
 
 
 @sync_to_async
-def get_stories_to_reorder(filters: StoryFilters = {}) -> list[Story]:
+def list_stories_to_reorder(filters: StoryFilters = {}) -> list[Story]:
     """
-    This method is very similar to "get_stories" except this has to keep
+    This method is very similar to "list_stories" except this has to keep
     the order of the input references.
     """
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
@@ -212,3 +263,18 @@ def get_stories_to_reorder(filters: StoryFilters = {}) -> list[Story]:
         result[refs.index(story.ref)] = story  # type: ignore[call-overload]
 
     return result  # type: ignore[return-value]
+
+
+def get_story_dt(story: Story) -> StorySchema:
+    return StorySchema(
+        ref=story.ref,
+        title=story.title,
+        status=workflows_repositories.get_workflow_status_dt(story.status),
+        version=story.version,
+        assignees=[users_repositories.get_user_base_dt(user) for user in story.assignees.all()],
+    )
+
+
+@sync_to_async
+def get_story_assignees(story: Story) -> list[User]:
+    return list(story.assignees.all())

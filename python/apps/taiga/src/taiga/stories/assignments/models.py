@@ -13,7 +13,7 @@ class StoryAssignment(models.BaseModel):
         "users.User",
         null=False,
         blank=False,
-        related_name="stories_assignments",
+        related_name="story_assignments",
         on_delete=models.CASCADE,
         verbose_name="user",
     )
@@ -21,7 +21,7 @@ class StoryAssignment(models.BaseModel):
         "stories.Story",
         null=False,
         blank=False,
-        related_name="assigned_users",
+        related_name="story_assignments",
         on_delete=models.CASCADE,
         verbose_name="story",
     )
@@ -36,10 +36,10 @@ class StoryAssignment(models.BaseModel):
         indexes = [
             models.Index(fields=["story", "user"]),
         ]
-        ordering = ["story", "user"]
+        ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return f"<StoryAssignment Story #{self.story.ref} User: {self.user.username}>"
+        return f"User {self.user.username} assigned to story #{self.story.ref}"
 
     def __repr__(self) -> str:
         return f"<StoryAssignment Story #{self.story.ref} User: {self.user.username}>"

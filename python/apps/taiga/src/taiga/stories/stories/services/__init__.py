@@ -14,6 +14,7 @@ from taiga.projects.projects.models import Project
 from taiga.stories.stories import events as stories_events
 from taiga.stories.stories import repositories as stories_repositories
 from taiga.stories.stories.models import Story
+from taiga.stories.stories.schemas import StorySchema
 from taiga.stories.stories.services import exceptions as ex
 from taiga.users.models import User
 from taiga.workflows import repositories as workflows_repositories
@@ -29,13 +30,15 @@ DEFAULT_PRE_ORDER = Decimal(0)  # default pre_position when adding a story at th
 ##########################################################
 
 
-async def create_story(project: Project, workflow: WorkflowSchema, title: str, status_slug: str, user: User) -> Story:
+async def create_story(
+    project: Project, workflow: WorkflowSchema, title: str, status_slug: str, user: User
+) -> dict[str, Any]:
     try:
         workflow_status = next(status for status in workflow.statuses if status.slug == status_slug)
     except StopIteration:
         raise ex.InvalidStatusError("The provided status is not valid.")
 
-    latest_story = await stories_repositories.get_stories(
+    latest_story = await stories_repositories.list_stories(
         filters={"status_id": workflow_status.id}, order_by=["-order"], offset=0, limit=1
     )
 
@@ -50,9 +53,40 @@ async def create_story(project: Project, workflow: WorkflowSchema, title: str, s
         order=order,
     )
 
-    await stories_events.emit_event_when_story_is_created(story=story)
+    # Get detailed story
+    complete_story = cast(
+        dict[str, None],
+        await get_detailed_story(project_id=story.project.id, ref=story.ref),
+    )
 
-    return story
+    await stories_events.emit_event_when_story_is_created(project=project, story=complete_story)
+
+    return complete_story
+
+
+##########################################################
+# list stories
+##########################################################
+
+
+async def list_paginated_stories(
+    project_id: UUID, workflow_slug: str, offset: int, limit: int
+) -> tuple[Pagination, list[StorySchema]]:
+    total_stories = await stories_repositories.get_total_stories(
+        filters={"workflow_slug": workflow_slug, "project_id": project_id}
+    )
+
+    stories = await stories_repositories.list_stories_dt(
+        filters={"workflow_slug": workflow_slug, "project_id": project_id},
+        offset=offset,
+        limit=limit,
+        select_related=["created_by", "project", "workflow", "status"],
+        prefetch_related=["assignees"],
+    )
+
+    pagination = Pagination(offset=offset, limit=limit, total=total_stories)
+
+    return pagination, stories
 
 
 ##########################################################
@@ -71,10 +105,12 @@ async def get_detailed_story(project_id: UUID, ref: int) -> dict[str, Any] | Non
     story = await stories_repositories.get_story(
         filters={"ref": ref, "project_id": project_id},
         select_related=["created_by", "project", "workflow", "status", "workspace"],
+        prefetch_related=["assignees"],
     )
     if not story:
         return None
 
+    assignees = await stories_repositories.get_story_assignees(story)
     neighbors = await stories_repositories.get_story_neighbors(story=story, filters={"workflow_id": story.workflow_id})
 
     return {
@@ -87,31 +123,8 @@ async def get_detailed_story(project_id: UUID, ref: int) -> dict[str, Any] | Non
         "version": story.version,
         "prev": neighbors.prev,
         "next": neighbors.next,
+        "assignees": assignees,
     }
-
-
-##########################################################
-# get stories
-##########################################################
-
-
-async def get_paginated_stories_by_workflow(
-    project_id: UUID, workflow_slug: str, offset: int, limit: int
-) -> tuple[Pagination, list[Story]]:
-    total_stories = await stories_repositories.get_total_stories(
-        filters={"workflow_slug": workflow_slug, "project_id": project_id}
-    )
-
-    stories = await stories_repositories.get_stories(
-        filters={"workflow_slug": workflow_slug, "project_id": project_id},
-        offset=offset,
-        limit=limit,
-        select_related=["created_by", "project", "workflow", "status"],
-    )
-
-    pagination = Pagination(offset=offset, limit=limit, total=total_stories)
-
-    return pagination, stories
 
 
 ##########################################################
@@ -159,7 +172,7 @@ async def _validate_and_process_values_to_update(story: Story, values: dict[str,
             output["status"] = status
 
             # Calculate new order
-            latest_story = await stories_repositories.get_stories(
+            latest_story = await stories_repositories.list_stories(
                 filters={"status_id": status.id}, order_by=["-order"], offset=0, limit=1
             )
             output["order"] = DEFAULT_ORDER_OFFSET + (latest_story[0].order if latest_story else 0)
@@ -182,7 +195,7 @@ async def _calculate_offset(
     total_slots = total_stories_to_reorder + 1
 
     if not reorder_story:
-        latest_story = await stories_repositories.get_stories(
+        latest_story = await stories_repositories.list_stories(
             filters={"status_id": target_status.id}, order_by=["-order"], offset=0, limit=1
         )
         if latest_story:
@@ -245,7 +258,7 @@ async def reorder_stories(
         reorder_place = None
 
     # check all stories "to reorder" exist
-    stories_to_reorder = await stories_repositories.get_stories_to_reorder(
+    stories_to_reorder = await stories_repositories.list_stories_to_reorder(
         filters={"workflow_id": workflow.id, "refs": stories_refs}
     )
     if len(stories_to_reorder) < len(stories_refs):

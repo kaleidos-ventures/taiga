@@ -25,7 +25,7 @@ async def test_not_reorder_in_empty_status() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    workflow_schema = await sync_to_async(workflows_repositories._get_workflow_dt)(workflow=workflow)
+    workflow_schema = await sync_to_async(workflows_repositories.get_workflow_dt)(workflow=workflow)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -50,9 +50,9 @@ async def test_not_reorder_in_empty_status() -> None:
     # | -------- | -------- |
     # | story1   | story2   |
     # |          | story3   |
-    stories = await repositories.get_stories(filters={"status_id": status_1.id})
+    stories = await repositories.list_stories(filters={"status_id": status_1.id})
     assert stories[0].ref == story1.ref
-    stories = await repositories.get_stories(filters={"status_id": status_2.id})
+    stories = await repositories.list_stories(filters={"status_id": status_2.id})
     assert stories[0].ref == story2.ref
     assert stories[0].order == Decimal(100)
     assert stories[1].ref == story3.ref
@@ -63,7 +63,7 @@ async def test_not_reorder_in_populated_status() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    workflow_schema = await sync_to_async(workflows_repositories._get_workflow_dt)(workflow=workflow)
+    workflow_schema = await sync_to_async(workflows_repositories.get_workflow_dt)(workflow=workflow)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -84,9 +84,9 @@ async def test_not_reorder_in_populated_status() -> None:
     # | -------- | -------- |
     # | story1   | story3   |
     # |          | story2   |
-    stories = await repositories.get_stories(filters={"status_id": status_1.id})
+    stories = await repositories.list_stories(filters={"status_id": status_1.id})
     assert stories[0].ref == story1.ref
-    stories = await repositories.get_stories(filters={"status_id": status_2.id})
+    stories = await repositories.list_stories(filters={"status_id": status_2.id})
     assert stories[0].ref == story3.ref
     assert stories[1].ref == story2.ref
     assert stories[1].order == story3.order + 100
@@ -96,7 +96,7 @@ async def test_after_in_the_end() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    workflow_schema = await sync_to_async(workflows_repositories._get_workflow_dt)(workflow=workflow)
+    workflow_schema = await sync_to_async(workflows_repositories.get_workflow_dt)(workflow=workflow)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -121,9 +121,9 @@ async def test_after_in_the_end() -> None:
     # | -------- | -------- |
     # | story1   | story3   |
     # |          | story2   |
-    stories = await repositories.get_stories(filters={"status_id": status_1.id})
+    stories = await repositories.list_stories(filters={"status_id": status_1.id})
     assert stories[0].ref == story1.ref
-    stories = await repositories.get_stories(filters={"status_id": status_2.id})
+    stories = await repositories.list_stories(filters={"status_id": status_2.id})
     assert stories[0].ref == story3.ref
     assert stories[1].ref == story2.ref
     assert stories[1].order == story3.order + 100
@@ -133,7 +133,7 @@ async def test_after_in_the_middle() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    workflow_schema = await sync_to_async(workflows_repositories._get_workflow_dt)(workflow=workflow)
+    workflow_schema = await sync_to_async(workflows_repositories.get_workflow_dt)(workflow=workflow)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -159,9 +159,9 @@ async def test_after_in_the_middle() -> None:
     # |          | story2   |
     # |          | story1   |
     # |          | story3   |
-    stories = await repositories.get_stories(filters={"status_id": status_1.id})
+    stories = await repositories.list_stories(filters={"status_id": status_1.id})
     assert len(stories) == 0
-    stories = await repositories.get_stories(filters={"status_id": status_2.id})
+    stories = await repositories.list_stories(filters={"status_id": status_2.id})
     assert stories[0].ref == story2.ref
     assert stories[1].ref == story1.ref
     assert stories[1].order == story2.order + ((story3.order - story2.order) / 2)
@@ -172,7 +172,7 @@ async def test_before_in_the_beginning() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    workflow_schema = await sync_to_async(workflows_repositories._get_workflow_dt)(workflow=workflow)
+    workflow_schema = await sync_to_async(workflows_repositories.get_workflow_dt)(workflow=workflow)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -198,9 +198,9 @@ async def test_before_in_the_beginning() -> None:
     # |          | story1   |
     # |          | story2   |
     # |          | story3   |
-    stories = await repositories.get_stories(filters={"status_id": status_1.id})
+    stories = await repositories.list_stories(filters={"status_id": status_1.id})
     assert len(stories) == 0
-    stories = await repositories.get_stories(filters={"status_id": status_2.id})
+    stories = await repositories.list_stories(filters={"status_id": status_2.id})
     assert stories[0].ref == story1.ref
     assert stories[0].order == story2.order / 2
     assert stories[1].ref == story2.ref
@@ -211,7 +211,7 @@ async def test_before_in_the_middle() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    workflow_schema = await sync_to_async(workflows_repositories._get_workflow_dt)(workflow=workflow)
+    workflow_schema = await sync_to_async(workflows_repositories.get_workflow_dt)(workflow=workflow)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -237,9 +237,9 @@ async def test_before_in_the_middle() -> None:
     # |          | story2   |
     # |          | story1   |
     # |          | story3   |
-    stories = await repositories.get_stories(filters={"status_id": status_1.id})
+    stories = await repositories.list_stories(filters={"status_id": status_1.id})
     assert len(stories) == 0
-    stories = await repositories.get_stories(filters={"status_id": status_2.id})
+    stories = await repositories.list_stories(filters={"status_id": status_2.id})
     assert stories[0].ref == story2.ref
     assert stories[1].ref == story1.ref
     assert stories[1].order == story2.order + ((story3.order - story2.order) / 2)

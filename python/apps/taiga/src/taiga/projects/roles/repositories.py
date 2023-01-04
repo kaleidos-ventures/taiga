@@ -20,22 +20,7 @@ from taiga.projects.roles.models import ProjectRole
 DEFAULT_QUERYSET = ProjectRole.objects.all()
 
 
-class ProjectRoleListFilters(TypedDict, total=False):
-    project_id: UUID
-
-
-def _apply_filters_to_queryset_list(
-    qs: QuerySet[ProjectRole],
-    filters: ProjectRoleListFilters = {},
-) -> QuerySet[ProjectRole]:
-    filter_data = dict(filters.copy())
-
-    qs = qs.filter(**filter_data)
-    return qs
-
-
 class ProjectRoleFilters(TypedDict, total=False):
-    memberships_project_id: UUID
     project_id: UUID
     slug: str
     user_id: UUID
@@ -50,11 +35,7 @@ def _apply_filters_to_queryset(
     if "user_id" in filter_data:
         filter_data["memberships__user_id"] = filter_data.pop("user_id")
 
-    if "memberships_project_id" in filter_data:
-        filter_data["memberships__project_id"] = filter_data.pop("memberships_project_id")
-
-    qs = qs.filter(**filter_data)
-    return qs
+    return qs.filter(**filter_data)
 
 
 ProjectRoleSelectRelated = list[
@@ -68,13 +49,7 @@ def _apply_select_related_to_queryset(
     qs: QuerySet[ProjectRole],
     select_related: ProjectRoleSelectRelated,
 ) -> QuerySet[ProjectRole]:
-    select_related_data = []
-
-    for key in select_related:
-        select_related_data.append(key)
-
-    qs = qs.select_related(*select_related_data)
-    return qs
+    return qs.select_related(*select_related)
 
 
 ##########################################################
@@ -111,11 +86,11 @@ create_project_role = sync_to_async(create_project_role_sync)
 
 @sync_to_async
 def get_project_roles(
-    filters: ProjectRoleListFilters = {},
+    filters: ProjectRoleFilters = {},
     offset: int | None = None,
     limit: int | None = None,
 ) -> list[ProjectRole]:
-    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = qs.annotate(num_members=Count("memberships"))
 
     if limit is not None and offset is not None:

@@ -41,33 +41,11 @@ from taiga.users.tokens import VerifyUserToken
 DEFAULT_QUERYSET = User.objects.all()
 
 
-class UserListFilters(TypedDict, total=False):
-    usernames: list[str]
-    emails: list[str]
-    is_active: bool
-
-
-def _apply_filters_to_queryset_list(
-    qs: QuerySet[User],
-    filters: UserListFilters = {},
-) -> QuerySet[User]:
-    filter_data = dict(filters.copy())
-
-    if "usernames" in filter_data:
-        usernames = filter_data.pop("usernames")
-        qs = qs.filter(reduce(or_, (Q(username=username) for username in usernames)))  # type: ignore[attr-defined]
-
-    if "emails" in filter_data:
-        emails = filter_data.pop("emails")
-        qs = qs.filter(reduce(or_, (Q(email__iexact=email) for email in emails)))  # type: ignore[attr-defined]
-
-    qs = qs.filter(**filter_data)
-    return qs
-
-
 class UserFilters(TypedDict, total=False):
     id: UUID
     email: str
+    emails: list[str]
+    usernames: list[str]
     username_or_email: str
     is_active: bool
 
@@ -78,12 +56,19 @@ def _apply_filters_to_queryset(
 ) -> QuerySet[User]:
     filter_data = dict(filters.copy())
 
+    if "emails" in filter_data:
+        emails = filter_data.pop("emails")
+        qs = qs.filter(reduce(or_, (Q(email__iexact=email) for email in emails)))  # type: ignore[attr-defined]
+
+    if "usernames" in filter_data:
+        usernames = filter_data.pop("usernames")
+        qs = qs.filter(reduce(or_, (Q(username__iexact=username) for username in usernames)))  # type: ignore[attr-defined]
+
     if "username_or_email" in filter_data:
         username_or_email = filter_data.pop("username_or_email")
         qs = qs.filter(Q(username__iexact=username_or_email) | Q(email__iexact=username_or_email))
 
-    qs = qs.filter(**filter_data)
-    return qs
+    return qs.filter(**filter_data)
 
 
 ##########################################################
@@ -116,11 +101,11 @@ def create_user(email: str, username: str, full_name: str, color: int, lang: str
 
 @sync_to_async
 def get_users(
-    filters: UserListFilters = {},
+    filters: UserFilters = {},
     offset: int | None = None,
     limit: int | None = None,
 ) -> list[User]:
-    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
 
     if limit is not None and offset is not None:
         limit += offset
@@ -350,8 +335,7 @@ def _apply_filters_to_auth_data_queryset(
     qs: QuerySet[AuthData],
     filters: AuthDataFilters = {},
 ) -> QuerySet[AuthData]:
-    qs = qs.filter(**filters)
-    return qs
+    return qs.filter(**filters)
 
 
 class AuthDataListFilters(TypedDict, total=False):
@@ -362,8 +346,7 @@ def _apply_filters_to_auth_data_queryset_list(
     qs: QuerySet[AuthData],
     filters: AuthDataListFilters = {},
 ) -> QuerySet[AuthData]:
-    qs = qs.filter(**filters)
-    return qs
+    return qs.filter(**filters)
 
 
 AuthDataSelectRelated = list[Literal["user"]]
@@ -373,8 +356,7 @@ def _apply_select_related_to_auth_data_queryset(
     qs: QuerySet[AuthData],
     select_related: AuthDataSelectRelated,
 ) -> QuerySet[AuthData]:
-    qs = qs.select_related(*select_related)
-    return qs
+    return qs.select_related(*select_related)
 
 
 ##########################################################

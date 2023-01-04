@@ -52,7 +52,7 @@ async def test_get_workspace_projects_for_user_member():
         fake_ws_roles_repo.get_workspace_role.return_value = MagicMock(is_admin=False)
         await services.get_workspace_projects_for_user(workspace=workspace, user=user)
         fake_projects_repo.get_projects.assert_awaited_once_with(
-            filters={"workspace_id": workspace.id, "member_id": user.id},
+            filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user.id},
             prefetch_related=["workspace"],
         )
 

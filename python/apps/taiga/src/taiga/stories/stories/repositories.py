@@ -47,9 +47,6 @@ def _apply_filters_to_queryset(
     if "workflow_slug" in filters:
         filter_data["workflow__slug"] = filter_data.pop("workflow_slug")
 
-    if "project_id" in filters:
-        filter_data["project__id"] = filter_data.pop("project_id")
-
     return qs.filter(**filter_data)
 
 

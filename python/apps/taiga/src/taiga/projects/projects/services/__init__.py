@@ -39,7 +39,7 @@ async def get_workspace_projects_for_user(workspace: Workspace, user: User) -> l
         return await get_projects(workspace_id=workspace.id)
 
     return await projects_repositories.get_projects(
-        filters={"workspace_id": workspace.id, "member_id": user.id},
+        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user.id},
         prefetch_related=["workspace"],
     )
 

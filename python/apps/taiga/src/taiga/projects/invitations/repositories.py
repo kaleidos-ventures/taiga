@@ -23,35 +23,14 @@ from taiga.users.models import User
 DEFAULT_QUERYSET = ProjectInvitation.objects.all()
 
 
-class ProjectInvitationListFilters(TypedDict, total=False):
-    project_id: UUID
-    user: User
-    status: ProjectInvitationStatus
-    statuses: list[ProjectInvitationStatus]
-
-
-def _apply_filters_to_queryset_list(
-    qs: QuerySet[ProjectInvitation],
-    filters: ProjectInvitationListFilters = {},
-) -> QuerySet[ProjectInvitation]:
-    filter_data = dict(filters.copy())
-
-    if "project_id" in filter_data:
-        filter_data["project__id"] = filter_data.pop("project_id")
-
-    if "statuses" in filter_data:
-        filter_data["status__in"] = filter_data.pop("statuses")
-
-    qs = qs.filter(**filter_data)
-    return qs
-
-
 class ProjectInvitationFilters(TypedDict, total=False):
     id: UUID
+    user: User
     username_or_email: str
-    statuses: list[str]
     project: Project
     project_id: UUID
+    status: ProjectInvitationStatus
+    statuses: list[ProjectInvitationStatus]
 
 
 def _apply_filters_to_queryset(
@@ -66,14 +45,10 @@ def _apply_filters_to_queryset(
         by_email = Q(user__isnull=True, email__iexact=username_or_email)
         qs = qs.filter(by_user | by_email)
 
-    if "project_id" in filter_data:
-        filter_data["project__id"] = filter_data.pop("project_id")
-
     if "statuses" in filter_data:
         filter_data["status__in"] = filter_data.pop("statuses")
 
-    qs = qs.filter(**filter_data)
-    return qs
+    return qs.filter(**filter_data)
 
 
 ProjectInvitationSelectRelated = list[
@@ -98,8 +73,7 @@ def _apply_select_related_to_queryset(
         else:
             select_related_data.append(key)
 
-    qs = qs.select_related(*select_related_data)
-    return qs
+    return qs.select_related(*select_related_data)
 
 
 ProjectInvitationOrderBy = list[
@@ -122,8 +96,7 @@ def _apply_order_by_to_queryset(
         else:
             order_by_data.append(key)
 
-    qs = qs.order_by(*order_by_data)
-    return qs
+    return qs.order_by(*order_by_data)
 
 
 ##########################################################
@@ -165,13 +138,13 @@ def get_project_invitation(
 
 @sync_to_async
 def get_project_invitations(
-    filters: ProjectInvitationListFilters = {},
+    filters: ProjectInvitationFilters = {},
     offset: int | None = None,
     limit: int | None = None,
     select_related: ProjectInvitationSelectRelated = ["project", "user", "role"],
     order_by: ProjectInvitationOrderBy = ["full_name", "email"],
 ) -> list[ProjectInvitation]:
-    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
     qs = _apply_order_by_to_queryset(order_by=order_by, qs=qs)
 
@@ -209,7 +182,7 @@ def update_user_projects_invitations(user: User) -> None:
 
 @sync_to_async
 def get_total_project_invitations(
-    filters: ProjectInvitationListFilters = {},
+    filters: ProjectInvitationFilters = {},
 ) -> int:
-    qs = _apply_filters_to_queryset_list(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     return qs.count()

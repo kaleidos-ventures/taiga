@@ -47,9 +47,7 @@ def _apply_filters_to_queryset(
     qs: QuerySet[Workspace],
     filters: WorkspaceFilters = {},
 ) -> QuerySet[Workspace]:
-    filter_data = dict(filters.copy())
-    qs = qs.filter(**filter_data)
-    return qs
+    return qs.filter(**filters)
 
 
 ##########################################################

@@ -6,8 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import BaseModel
-from taiga.stories.assignees.serializers import StoryAssigneeSerializer
+from taiga.stories.assignments.serializers import StoryAssignmentSerializer
 
 
-class CreateStoryAssigneeContent(BaseModel):
-    story_assignee: StoryAssigneeSerializer
+class CreateStoryAssignmentContent(BaseModel):
+    story_assignment: StoryAssignmentSerializer

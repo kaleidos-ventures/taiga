@@ -8,12 +8,12 @@
 from taiga.base.db import models
 
 
-class StoryAssignee(models.BaseModel):
+class StoryAssignment(models.BaseModel):
     user = models.ForeignKey(
         "users.User",
         null=False,
         blank=False,
-        related_name="assigned_stories",
+        related_name="stories_assignments",
         on_delete=models.CASCADE,
         verbose_name="user",
     )
@@ -28,9 +28,8 @@ class StoryAssignee(models.BaseModel):
     created_at = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="created at")
 
     class Meta:
-        db_table = "stories_assignees"
-        verbose_name = "story assignee"
-        verbose_name_plural = "story assignees"
+        verbose_name = "story assignment"
+        verbose_name_plural = "story assignments"
         constraints = [
             models.UniqueConstraint(fields=["story", "user"], name="%(app_label)s_%(class)s_unique_story_user"),
         ]
@@ -40,7 +39,7 @@ class StoryAssignee(models.BaseModel):
         ordering = ["story", "user"]
 
     def __str__(self) -> str:
-        return f"{self.story} - {self.user}"
+        return f"<StoryAssignment Story #{self.story.ref} User: {self.user.username}>"
 
     def __repr__(self) -> str:
-        return f"<StoryAssignee {self.story} {self.user}>"
+        return f"<StoryAssignment Story #{self.story.ref} User: {self.user.username}>"

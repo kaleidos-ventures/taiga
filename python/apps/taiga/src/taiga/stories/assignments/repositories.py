@@ -10,7 +10,7 @@ from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import QuerySet
-from taiga.stories.assignees.models import StoryAssignee
+from taiga.stories.assignments.models import StoryAssignment
 from taiga.stories.stories.models import Story
 from taiga.users.models import User
 
@@ -18,18 +18,18 @@ from taiga.users.models import User
 # filters and querysets
 ##########################################################
 
-DEFAULT_QUERYSET = StoryAssignee.objects.all()
+DEFAULT_QUERYSET = StoryAssignment.objects.all()
 
 
-class StoryAssigneeFilters(TypedDict, total=False):
+class StoryAssignmentFilters(TypedDict, total=False):
     story_id: UUID
     username: str
 
 
 def _apply_filters_to_queryset(
-    qs: QuerySet[StoryAssignee],
-    filters: StoryAssigneeFilters = {},
-) -> QuerySet[StoryAssignee]:
+    qs: QuerySet[StoryAssignment],
+    filters: StoryAssignmentFilters = {},
+) -> QuerySet[StoryAssignment]:
     filter_data = dict(filters.copy())
 
     if "story_id" in filter_data:
@@ -42,7 +42,7 @@ def _apply_filters_to_queryset(
     return qs
 
 
-StoryAssigneeSelectRelated = list[
+StoryAssignmentSelectRelated = list[
     Literal[
         "story",
         "user",
@@ -51,9 +51,9 @@ StoryAssigneeSelectRelated = list[
 
 
 def _apply_select_related_to_queryset(
-    qs: QuerySet[StoryAssignee],
-    select_related: StoryAssigneeSelectRelated,
-) -> QuerySet[StoryAssignee]:
+    qs: QuerySet[StoryAssignment],
+    select_related: StoryAssignmentSelectRelated,
+) -> QuerySet[StoryAssignment]:
     select_related_data = []
 
     for key in select_related:
@@ -64,30 +64,30 @@ def _apply_select_related_to_queryset(
 
 
 ##########################################################
-# create story assignee
+# create story assignment
 ##########################################################
 
 
 @sync_to_async
-def create_story_assignee(story: Story, user: User) -> tuple[StoryAssignee, bool]:
-    return StoryAssignee.objects.select_related("story", "user").get_or_create(story=story, user=user)
+def create_story_assignment(story: Story, user: User) -> tuple[StoryAssignment, bool]:
+    return StoryAssignment.objects.select_related("story", "user").get_or_create(story=story, user=user)
 
 
 ##########################################################
-# get story assignee
+# get story assignment
 ##########################################################
 
 
-def get_story_assignee_sync(
-    filters: StoryAssigneeFilters = {}, select_related: StoryAssigneeSelectRelated = ["story", "user"]
-) -> StoryAssignee | None:
+def get_story_assignment_sync(
+    filters: StoryAssignmentFilters = {}, select_related: StoryAssignmentSelectRelated = ["story", "user"]
+) -> StoryAssignment | None:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
 
     try:
         return qs.get()
-    except StoryAssignee.DoesNotExist:
+    except StoryAssignment.DoesNotExist:
         return None
 
 
-get_story_assignee = sync_to_async(get_story_assignee_sync)
+get_story_assignment = sync_to_async(get_story_assignment_sync)

@@ -231,9 +231,13 @@ async def test_get_workspace_projects_for_user_1():
     # user7 is not a pj-member and ws-members are not allowed
     await f.create_project(workspace=workspace, owner=user6)
 
-    res = await repositories.get_projects(filters={"workspace_id": workspace.id, "member_id": user6.id})
+    res = await repositories.get_projects(
+        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user6.id}
+    )
     assert len(res) == 6
-    res = await repositories.get_projects(filters={"workspace_id": workspace.id, "member_id": user7.id})
+    res = await repositories.get_projects(
+        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user7.id}
+    )
     assert len(res) == 5
 
 
@@ -248,9 +252,13 @@ async def test_get_projects_2():
     # user7 is not a pj-member and ws-members are not allowed
     await f.create_project(workspace=workspace, owner=user6)
 
-    res = await repositories.get_projects(filters={"workspace_id": workspace.id, "member_id": user6.id})
+    res = await repositories.get_projects(
+        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user6.id}
+    )
     assert len(res) == 1
-    res = await repositories.get_projects(filters={"workspace_id": workspace.id, "member_id": user7.id})
+    res = await repositories.get_projects(
+        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user7.id}
+    )
     assert len(res) == 0
 
 
@@ -263,9 +271,13 @@ async def test_get_workspace_projects_for_user_3():
     ws_member_role = await _get_ws_member_role(workspace=workspace)
     await f.create_workspace_membership(user=user7, workspace=workspace, role=ws_member_role)
 
-    res = await repositories.get_projects(filters={"workspace_id": workspace.id, "member_id": user6.id})
+    res = await repositories.get_projects(
+        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user6.id}
+    )
     assert len(res) == 0
-    res = await repositories.get_projects(filters={"workspace_id": workspace.id, "member_id": user7.id})
+    res = await repositories.get_projects(
+        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user7.id}
+    )
     assert len(res) == 0
 
 
@@ -278,9 +290,13 @@ async def test_get_workspace_projects_for_user_4():
     # user7 is not a pj-member or ws-member but ws-members are allowed
     await f.create_project(workspace=workspace, owner=user6)
 
-    res = await repositories.get_projects(filters={"workspace_id": workspace.id, "member_id": user6.id})
+    res = await repositories.get_projects(
+        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user6.id}
+    )
     assert len(res) == 1
-    res = await repositories.get_projects(filters={"workspace_id": workspace.id, "member_id": user7.id})
+    res = await repositories.get_projects(
+        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user7.id}
+    )
     assert len(res) == 0
 
 
@@ -329,7 +345,9 @@ async def test_get_total_projects_in_ws_for_admin() -> None:
     await f.create_project(workspace=ws, owner=other_user)
     await f.create_project(workspace=ws, owner=user1)
 
-    res = await repositories.get_total_projects(filters={"member_id": user1.id, "workspace_id": ws.id})
+    res = await repositories.get_total_projects(
+        filters={"project_or_workspace_member_id": user1.id, "workspace_id": ws.id}
+    )
     assert res == 2
 
 
@@ -345,7 +363,9 @@ async def test_get_total_projects_in_ws_for_member() -> None:
     pj1.workspace_member_permissions = ["view_project"]
     await _save_project(project=pj1)
 
-    res = await repositories.get_total_projects(filters={"member_id": user1.id, "workspace_id": ws.id})
+    res = await repositories.get_total_projects(
+        filters={"project_or_workspace_member_id": user1.id, "workspace_id": ws.id}
+    )
     assert res == 1
 
 
@@ -362,5 +382,7 @@ async def test_get_total_projects_in_ws_for_guest() -> None:
     pj_general_role = await _get_pj_member_role(project=pj2)
     await f.create_project_membership(user=user1, project=pj2, role=pj_general_role)
 
-    res = await repositories.get_total_projects(filters={"member_id": user1.id, "workspace_id": ws.id})
+    res = await repositories.get_total_projects(
+        filters={"project_or_workspace_member_id": user1.id, "workspace_id": ws.id}
+    )
     assert res == 2

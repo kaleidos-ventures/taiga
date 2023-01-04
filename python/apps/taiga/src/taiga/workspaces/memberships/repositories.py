@@ -32,9 +32,7 @@ def _apply_filters_to_queryset(
     qs: QuerySet[WorkspaceMembership],
     filters: WorkspaceMembershipFilters = {},
 ) -> QuerySet[WorkspaceMembership]:
-    filter_data = dict(filters.copy())
-    qs = qs.filter(**filter_data)
-    return qs
+    return qs.filter(**filters)
 
 
 WorkspaceMembershipSelectRelated = list[
@@ -50,13 +48,7 @@ def _apply_select_related_to_queryset(
     qs: QuerySet[WorkspaceMembership],
     select_related: WorkspaceMembershipSelectRelated,
 ) -> QuerySet[WorkspaceMembership]:
-    select_related_data = []
-
-    for key in select_related:
-        select_related_data.append(key)
-
-    qs = qs.select_related(*select_related_data)
-    return qs
+    return qs.select_related(*select_related)
 
 
 ##########################################################

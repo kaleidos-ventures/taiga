@@ -73,7 +73,7 @@ async def test_get_project_role_for_user_admin():
     role = await sync_to_async(project.roles.get)(slug="admin")
 
     assert (
-        await repositories.get_project_role(filters={"user_id": user.id, "memberships_project_id": project.id}) == role
+        await repositories.get_project_role(filters={"user_id": user.id, "project_id": project.id}) == role
     )
 
 
@@ -84,7 +84,7 @@ async def test_get_project_role_for_user_member():
     await memberships_repositories.create_project_membership(user=user, project=project, role=role)
 
     assert (
-        await repositories.get_project_role(filters={"user_id": user.id, "memberships_project_id": project.id}) == role
+        await repositories.get_project_role(filters={"user_id": user.id, "project_id": project.id}) == role
     )
 
 
@@ -93,7 +93,7 @@ async def test_get_project_role_for_user_none():
     project = await f.create_project()
 
     assert (
-        await repositories.get_project_role(filters={"user_id": user.id, "memberships_project_id": project.id}) is None
+        await repositories.get_project_role(filters={"user_id": user.id, "project_id": project.id}) is None
     )
 
 

@@ -21,6 +21,9 @@ AuthorizableObj = Project | Workspace
 
 
 async def is_project_admin(user: AnyUser, obj: Any) -> bool:
+    if user.is_anonymous:
+        return False
+
     project = await _get_object_project(obj)
     if project is None:
         return False
@@ -28,13 +31,14 @@ async def is_project_admin(user: AnyUser, obj: Any) -> bool:
     if user.is_superuser:
         return True
 
-    role = await pj_roles_repositories.get_project_role(
-        filters={"user_id": user.id, "memberships_project_id": project.id}
-    )
+    role = await pj_roles_repositories.get_project_role(filters={"user_id": user.id, "project_id": project.id})
     return role.is_admin if role else False
 
 
 async def is_workspace_admin(user: AnyUser, obj: Any) -> bool:
+    if user.is_anonymous:
+        return False
+
     workspace = await _get_object_workspace(obj)
     if workspace is None:
         return False
@@ -109,9 +113,10 @@ def _get_object_project(obj: Any) -> Project | None:
 
 
 async def get_user_project_role_info(user: AnyUser, project: Project) -> tuple[bool, bool, list[str]]:
-    role = await pj_roles_repositories.get_project_role(
-        filters={"user_id": user.id, "memberships_project_id": project.id}
-    )
+    if user.is_anonymous:
+        return False, False, []
+
+    role = await pj_roles_repositories.get_project_role(filters={"user_id": user.id, "project_id": project.id})
     if role:
         return role.is_admin, True, role.permissions
 
@@ -119,6 +124,9 @@ async def get_user_project_role_info(user: AnyUser, project: Project) -> tuple[b
 
 
 async def get_user_workspace_role_info(user: AnyUser, workspace: Workspace) -> tuple[bool, bool, list[str]]:
+    if user.is_anonymous:
+        return False, False, []
+
     role = await ws_roles_repositories.get_workspace_role(filters={"user_id": user.id, "workspace_id": workspace.id})
     if role:
         return role.is_admin, True, role.permissions

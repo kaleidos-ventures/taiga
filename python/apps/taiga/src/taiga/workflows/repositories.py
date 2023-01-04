@@ -14,30 +14,11 @@ from taiga.projects.projects.models import Project
 from taiga.workflows.models import Workflow, WorkflowStatus
 from taiga.workflows.schemas import WorkflowSchema, WorkflowStatusSchema
 
-DEFAULT_QUERYSET_WORKFLOW = Workflow.objects.all()
-DEFAULT_QUERYSET_WORKFLOW_STATUS = WorkflowStatus.objects.all()
-
-
 ##########################################################
 # Workflow - filters and querysets
 ##########################################################
 
-
-class WorkflowListFilters(TypedDict, total=False):
-    project_id: UUID
-
-
-def _apply_filters_to_workflow_queryset_list(
-    qs: QuerySet[Workflow],
-    filters: WorkflowListFilters = {},
-) -> QuerySet[Workflow]:
-    filter_data = dict(filters.copy())
-
-    if "project_id" in filter_data:
-        filter_data["project__id"] = filter_data.pop("project_id")
-
-    qs = qs.filter(**filter_data)
-    return qs
+DEFAULT_QUERYSET_WORKFLOW = Workflow.objects.all()
 
 
 class WorkflowFilters(TypedDict, total=False):
@@ -49,13 +30,7 @@ def _apply_filters_to_workflow_queryset(
     qs: QuerySet[Workflow],
     filters: WorkflowFilters = {},
 ) -> QuerySet[Workflow]:
-    filter_data = dict(filters.copy())
-
-    if "project_id" in filter_data:
-        filter_data["project__id"] = filter_data.pop("project_id")
-
-    qs = qs.filter(**filter_data)
-    return qs
+    return qs.filter(**filters)
 
 
 WorkflowPrefetchRelated = list[
@@ -69,13 +44,7 @@ def _apply_prefetch_related_to_workflow_queryset(
     qs: QuerySet[Workflow],
     prefetch_related: WorkflowPrefetchRelated,
 ) -> QuerySet[Workflow]:
-    prefetch_related_data = []
-
-    for key in prefetch_related:
-        prefetch_related_data.append(key)
-
-    qs = qs.prefetch_related(*prefetch_related_data)
-    return qs
+    return qs.prefetch_related(*prefetch_related)
 
 
 WorkflowOrderBy = list[
@@ -89,13 +58,7 @@ def _apply_order_by_to_workflow_queryset(
     qs: QuerySet[Workflow],
     order_by: WorkflowOrderBy,
 ) -> QuerySet[Workflow]:
-    order_by_data = []
-
-    for key in order_by:
-        order_by_data.append(key)
-
-    qs = qs.order_by(*order_by_data)
-    return qs
+    return qs.order_by(*order_by)
 
 
 ##########################################################
@@ -128,11 +91,11 @@ create_workflow = sync_to_async(create_workflow_sync)
 
 @sync_to_async
 def get_workflows(
-    filters: WorkflowListFilters = {},
+    filters: WorkflowFilters = {},
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],
     order_by: WorkflowOrderBy = ["order"],
 ) -> list[WorkflowSchema] | None:
-    qs = _apply_filters_to_workflow_queryset_list(qs=DEFAULT_QUERYSET_WORKFLOW, filters=filters)
+    qs = _apply_filters_to_workflow_queryset(qs=DEFAULT_QUERYSET_WORKFLOW, filters=filters)
     qs = _apply_prefetch_related_to_workflow_queryset(qs=qs, prefetch_related=prefetch_related)
     qs = _apply_order_by_to_workflow_queryset(order_by=order_by, qs=qs)
 
@@ -180,6 +143,8 @@ def get_workflow_dt(workflow: Workflow) -> WorkflowSchema:
 # WorkflowStatus - filters and querysets
 ##########################################################
 
+DEFAULT_QUERYSET_WORKFLOW_STATUS = WorkflowStatus.objects.all()
+
 
 class WorkflowStatusFilters(TypedDict, total=False):
     slug: str
@@ -198,10 +163,9 @@ def _apply_filters_to_workflow_status_queryset(
         filter_data["workflow__slug"] = filter_data.pop("workflow_slug")
 
     if "project_id" in filter_data:
-        filter_data["workflow__project__id"] = filter_data.pop("project_id")
+        filter_data["workflow__project_id"] = filter_data.pop("project_id")
 
-    qs = qs.filter(**filter_data)
-    return qs
+    return qs.filter(**filter_data)
 
 
 ##########################################################

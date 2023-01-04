@@ -32,7 +32,7 @@ async def get_workspace(id: UUID) -> Workspace | None:
 async def get_workspace_detail(id: UUID, user_id: UUID | None) -> Workspace | None:
     user_workspace_role_name = await ws_roles_services.get_workspace_role_name(workspace_id=id, user_id=user_id)
     user_projects_count = await projects_repositories.get_total_projects(
-        filters={"workspace_id": id, "member_id": user_id},
+        filters={"workspace_id": id, "project_or_workspace_member_id": user_id},
     )
     return await workspaces_repositories.get_workspace_detail(
         filters={"id": id},

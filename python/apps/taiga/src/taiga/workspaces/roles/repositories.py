@@ -38,8 +38,7 @@ def _apply_filters_to_queryset(
     if "workspace_id" in filter_data:
         filter_data["memberships__workspace_id"] = filter_data.pop("workspace_id")
 
-    qs = qs.filter(**filter_data)
-    return qs
+    return qs.filter(**filter_data)
 
 
 ##########################################################

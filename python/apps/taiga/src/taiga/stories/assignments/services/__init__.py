@@ -7,7 +7,6 @@
 
 from uuid import UUID
 
-from taiga.permissions import services as permissions_services
 from taiga.projects.memberships import repositories as pj_memberships_repositories
 from taiga.stories.assignments import events as stories_assignments_events
 from taiga.stories.assignments import repositories as story_assignments_repositories
@@ -22,16 +21,12 @@ from taiga.stories.stories.models import Story
 
 async def create_story_assignment(project_id: UUID, story: Story, username: str) -> StoryAssignment:
     pj_membership = await pj_memberships_repositories.get_project_membership(
-        filters={"project_id": project_id, "username": username}
+        filters={"project_id": project_id, "username": username, "permissions": ["view_story"]}
     )
     if pj_membership is None:
-        raise ex.IsNotMemberError(f"{username} is not member of this project")
+        raise ex.InvalidAssignmentError(f"{username} is not member or not have permissions")
 
     user = pj_membership.user
-
-    has_perm = await permissions_services.user_has_perm(user=user, perm="view_story", obj=story)
-    if has_perm is False:
-        raise ex.NotViewStoryPermissionError(f"{username} does not have permission to view story")
 
     story_assignment, created = await story_assignments_repositories.create_story_assignment(story=story, user=user)
     if created:

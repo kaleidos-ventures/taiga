@@ -9,9 +9,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <ng-container *ngIf="model$ | async as vm">
     <tg-project-navigation [project]="vm.project"></tg-project-navigation>
     <main
-      class="project-main"
       id="main-area-focus"
-      tabindex="0">
+      aria-labelledby="main-area-title"
+      class="project-main">
       <tg-ui-context-notification
         [@slideInOut]
         [@.disabled]="animationDisabled"

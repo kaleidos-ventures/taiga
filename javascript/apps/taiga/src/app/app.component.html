@@ -11,7 +11,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <div class="app-content">
     <tg-navigation *ngIf="header$ | async"></tg-navigation>
     <div
-      tabindex="0"
+      aria-labelledby="main-area-title"
       id="fallback-main-area-focus">
       <router-outlet></router-outlet>
     </div>

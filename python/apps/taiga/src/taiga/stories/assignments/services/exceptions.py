@@ -9,9 +9,5 @@
 from taiga.base.services.exceptions import TaigaServiceException
 
 
-class IsNotMemberError(TaigaServiceException):
-    ...
-
-
-class NotViewStoryPermissionError(TaigaServiceException):
+class InvalidAssignmentError(TaigaServiceException):
     ...

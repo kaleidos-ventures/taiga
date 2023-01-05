@@ -41,6 +41,7 @@ class ProjectMembershipFilters(TypedDict, total=False):
     username: str
     user_id: UUID
     workspace_id: UUID
+    permissions: list[str]
 
 
 def _apply_filters_to_queryset(
@@ -57,6 +58,9 @@ def _apply_filters_to_queryset(
 
     if "workspace_id" in filter_data:
         filter_data["project__workspace_id"] = filter_data.pop("workspace_id")
+
+    if "permissions" in filter_data:
+        filter_data["role__permissions__contains"] = filter_data.pop("permissions")
 
     qs = qs.filter(**filter_data)
     return qs

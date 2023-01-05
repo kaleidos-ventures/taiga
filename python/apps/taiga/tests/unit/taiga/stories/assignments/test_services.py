@@ -33,7 +33,7 @@ async def test_create_story_assignment_not_member():
         patch(
             "taiga.stories.assignments.services.story_assignments_repositories", autospec=True
         ) as fake_story_assignment_repo,
-        pytest.raises(ex.IsNotMemberError),
+        pytest.raises(ex.InvalidAssignmentError),
     ):
         await services.create_story_assignment(project_id=story.project.id, story=story, username=user.username)
         fake_story_assignment_repo.create_story_assignment.assert_not_awaited()
@@ -43,7 +43,7 @@ async def test_create_story_assignment_user_without_view_story_permission():
     user = f.build_user()
     project = f.build_project()
     role = f.build_project_role(project=project, permissions=list(NO_VIEW_STORY_PERMISSIONS), is_admin=False)
-    membership = f.build_project_membership(user=user, project=project, role=role)
+    f.build_project_membership(user=user, project=project, role=role)
     story = f.build_story(project=project)
     f.build_story_assignment(story=story, user=user)
 
@@ -51,17 +51,15 @@ async def test_create_story_assignment_user_without_view_story_permission():
         patch(
             "taiga.stories.assignments.services.pj_memberships_repositories", autospec=True
         ) as fake_pj_memberships_repo,
-        patch("taiga.stories.assignments.services.permissions_services", autospec=True) as fake_permissions_services,
         patch(
             "taiga.stories.assignments.services.story_assignments_repositories", autospec=True
         ) as fake_story_assignment_repo,
         patch(
             "taiga.stories.assignments.services.stories_assignments_events", autospec=True
         ) as fake_stories_assignments_events,
-        pytest.raises(ex.NotViewStoryPermissionError),
+        pytest.raises(ex.InvalidAssignmentError),
     ):
-        fake_pj_memberships_repo.get_project_membership.return_value = membership
-        fake_permissions_services.user_has_perm.return_value = False
+        fake_pj_memberships_repo.get_project_membership.return_value = None
         fake_story_assignment_repo.create_story_assignment.return_value = None, False
 
         await services.create_story_assignment(project_id=story.project.id, story=story, username=user.username)
@@ -81,7 +79,6 @@ async def test_create_story_assignment_ok():
         patch(
             "taiga.stories.assignments.services.pj_memberships_repositories", autospec=True
         ) as fake_pj_memberships_repo,
-        patch("taiga.stories.assignments.services.permissions_services", autospec=True) as fake_permissions_services,
         patch(
             "taiga.stories.assignments.services.story_assignments_repositories", autospec=True
         ) as fake_story_assignment_repo,
@@ -90,7 +87,6 @@ async def test_create_story_assignment_ok():
         ) as fake_stories_assignments_events,
     ):
         fake_pj_memberships_repo.get_project_membership.return_value = membership
-        fake_permissions_services.user_has_perm.return_value = True
         fake_story_assignment_repo.create_story_assignment.return_value = story_assignment, True
 
         await services.create_story_assignment(project_id=project.id, story=story, username=user.username)
@@ -115,7 +111,6 @@ async def test_create_story_assignment_already_assignment():
         patch(
             "taiga.stories.assignments.services.pj_memberships_repositories", autospec=True
         ) as fake_pj_memberships_repo,
-        patch("taiga.stories.assignments.services.permissions_services", autospec=True) as fake_permissions_services,
         patch(
             "taiga.stories.assignments.services.story_assignments_repositories", autospec=True
         ) as fake_story_assignment_repo,
@@ -124,7 +119,6 @@ async def test_create_story_assignment_already_assignment():
         ) as fake_stories_assignments_events,
     ):
         fake_pj_memberships_repo.get_project_membership.return_value = membership
-        fake_permissions_services.user_has_perm.return_value = True
         fake_story_assignment_repo.create_story_assignment.return_value = story_assignment, True
 
         await services.create_story_assignment(project_id=project.id, story=story, username=user.username)

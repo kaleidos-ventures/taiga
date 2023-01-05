@@ -71,6 +71,10 @@ export const KanbanActions = createActionGroup({
       storyRef: Story['ref'];
       member: Membership['user'];
     }>(),
+    'Assigned Member Event': props<{
+      storyRef: Story['ref'];
+      member: Membership['user'];
+    }>(),
     'UnAssign Member': props<{
       storyRef: Story['ref'];
       member: Membership['user'];

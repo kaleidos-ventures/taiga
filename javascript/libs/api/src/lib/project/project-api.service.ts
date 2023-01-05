@@ -443,7 +443,15 @@ export class ProjectApiService {
   ) {
     console.log('assing', projectId, storyRef, user);
 
-    return of({});
+    return this.http.post<{
+      user: User['username' | 'fullName' | 'color'];
+      story: Story['ref' | 'title'];
+    }>(
+      `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}/assignments`,
+      {
+        username: user,
+      }
+    );
   }
 
   public unAssingStory(

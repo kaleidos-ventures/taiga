@@ -38,7 +38,7 @@ import {
   selectLoadingWorkflows,
   selectWorkflows,
 } from './data-access/+state/selectors/kanban.selectors';
-import { KanbanReorderEvent } from './kanban.model';
+import { KanbanAssignEvent, KanbanReorderEvent } from './kanban.model';
 
 interface ComponentState {
   loadingWorkflows: KanbanState['loadingWorkflows'];
@@ -237,6 +237,19 @@ export class ProjectFeatureKanbanComponent {
       .subscribe((msg) => {
         this.store.dispatch(
           KanbanEventsActions.updateStory({ story: msg.event.content.story })
+        );
+      });
+
+    this.wsService
+      .projectEvents<KanbanAssignEvent>('stories_assignments.create')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        const response = eventResponse.event.content.storyAssignment;
+        this.store.dispatch(
+          KanbanActions.assignedMemberEvent({
+            member: response.user,
+            storyRef: response.story.ref,
+          })
         );
       });
   }

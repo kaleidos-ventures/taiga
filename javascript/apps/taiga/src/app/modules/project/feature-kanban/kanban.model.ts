@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Status, Story } from '@taiga/data';
+import { Membership, Status, Story } from '@taiga/data';
 import { SetOptional } from 'type-fest';
 
 interface BaseStory extends Story {
@@ -45,5 +45,12 @@ export interface KanbanReorderEvent {
     } | null;
     status: Status;
     stories: Story['ref'][];
+  };
+}
+
+export interface KanbanAssignEvent {
+  storyAssignment: {
+    story: Story;
+    user: Membership['user'];
   };
 }

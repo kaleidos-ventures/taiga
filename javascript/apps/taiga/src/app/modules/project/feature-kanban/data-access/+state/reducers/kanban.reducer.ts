@@ -7,16 +7,7 @@
  */
 
 import { createFeature, createReducer, on } from '@ngrx/store';
-import { Status, Workflow } from '@taiga/data';
-import { immerReducer } from '~/app/shared/utils/store';
-import {
-  KanbanActions,
-  KanbanApiActions,
-  KanbanEventsActions,
-} from '../actions/kanban.actions';
-
-import { Story } from '@taiga/data';
-
+import { Status, Story, Workflow } from '@taiga/data';
 import {
   KanbanStory,
   KanbanStoryA11y,
@@ -24,6 +15,12 @@ import {
 } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { DropCandidate } from '~/app/shared/drag/drag.model';
+import { immerReducer } from '~/app/shared/utils/store';
+import {
+  KanbanActions,
+  KanbanApiActions,
+  KanbanEventsActions,
+} from '../actions/kanban.actions';
 import {
   addStory,
   findStory,
@@ -576,20 +573,27 @@ export const reducer = createReducer(
 
     return state;
   }),
-  on(KanbanActions.assignMember, (state, { member, storyRef }): KanbanState => {
-    state = replaceStory(state, (it) => {
-      if (it.ref === storyRef) {
-        return {
-          ...it,
-          assignees: [...it.assignees, member],
-        };
-      }
+  on(
+    KanbanActions.assignMember,
+    KanbanActions.assignedMemberEvent,
+    (state, { member, storyRef }): KanbanState => {
+      state = replaceStory(state, (it) => {
+        console.log('here');
+        const unassigned = !it.assignees.find(
+          (assignee) => assignee.username === member.username
+        );
+        if (it.ref === storyRef && unassigned) {
+          return {
+            ...it,
+            assignees: [...it.assignees, member],
+          };
+        }
+        return it;
+      });
 
-      return it;
-    });
-
-    return state;
-  }),
+      return state;
+    }
+  ),
   on(
     KanbanActions.unassignMember,
     (state, { member, storyRef }): KanbanState => {

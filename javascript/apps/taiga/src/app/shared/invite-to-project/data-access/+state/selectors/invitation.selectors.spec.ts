@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Contact, Permissions, Role } from '@taiga/data';
 import {
   selectMemberRolesOrdered,
   selectUsersToInvite,
@@ -13,9 +14,8 @@ import {
 
 describe('invite selectors', () => {
   it('member roles ordered', () => {
-    const roles = [
+    const roles: Role[] = [
       {
-        id: '120',
         isAdmin: false,
         name: 'General',
         numMembers: 1,
@@ -26,11 +26,10 @@ describe('invite selectors', () => {
           'delete_story',
           'modify_story',
           'view_story',
-        ],
+        ] as Permissions[],
         slug: 'general',
       },
       {
-        id: '123',
         isAdmin: true,
         name: 'Administrator',
         numMembers: 1,
@@ -46,14 +45,13 @@ describe('invite selectors', () => {
           'delete_task',
           'modify_task',
           'view_task',
-        ],
+        ] as Permissions[],
         slug: 'admin',
       },
     ];
     const membersRoles = selectMemberRolesOrdered.projector(roles);
     expect(membersRoles).toEqual([
       {
-        id: '123',
         isAdmin: true,
         name: 'Administrator',
         numMembers: 1,
@@ -73,7 +71,6 @@ describe('invite selectors', () => {
         slug: 'admin',
       },
       {
-        id: '120',
         isAdmin: false,
         name: 'General',
         numMembers: 1,
@@ -92,9 +89,8 @@ describe('invite selectors', () => {
 
   it('users to invite', () => {
     const userIdentifier = ['user1', 'test2@test.com'];
-    const rolesOrdered = [
+    const rolesOrdered: Role[] = [
       {
-        id: '123',
         isAdmin: true,
         name: 'Administrator',
         numMembers: 1,
@@ -110,11 +106,10 @@ describe('invite selectors', () => {
           'delete_task',
           'modify_task',
           'view_task',
-        ],
+        ] as Permissions[],
         slug: 'admin',
       },
       {
-        id: '120',
         isAdmin: false,
         name: 'General',
         numMembers: 1,
@@ -125,11 +120,11 @@ describe('invite selectors', () => {
           'delete_story',
           'modify_story',
           'view_story',
-        ],
+        ] as Permissions[],
         slug: 'general',
       },
     ];
-    const contacts = [
+    const contacts: Contact[] = [
       {
         username: 'user1',
         fullName: 'user one',
@@ -137,7 +132,8 @@ describe('invite selectors', () => {
     ];
     const userToInvite = selectUsersToInvite(userIdentifier).projector(
       rolesOrdered,
-      contacts
+      contacts,
+      []
     );
     expect(userToInvite).toEqual([
       {

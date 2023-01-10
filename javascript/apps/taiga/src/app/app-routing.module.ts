@@ -8,7 +8,6 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
 import { LogoutComponent } from './modules/auth/components/logout/logout.component';
 import { AuthFeatureLoginGuard } from './modules/auth/feature-login/auth-feature-login.guard';
 import { AuthGuard } from './modules/auth/guards/auth.guard';
@@ -138,11 +137,9 @@ const routes: Routes = [
 @NgModule({
   declarations: [],
   imports: [
-    QuicklinkModule,
     RouterModule.forRoot(routes, {
       paramsInheritanceStrategy: 'always',
       initialNavigation: 'enabledBlocking',
-      preloadingStrategy: QuicklinkStrategy,
       anchorScrolling: 'enabled',
       onSameUrlNavigation: 'reload',
     }),

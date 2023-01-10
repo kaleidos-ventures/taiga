@@ -37,22 +37,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
-/* stylelint-disable-next-line at-rule-no-unknown */
 @container (inline-size > 280px) {
-  /* FIX: !important https://github.com/angular/angular/issues/48264 */
   .status-field {
     align-items: center;
-    display: flex !important;
+    display: flex;
     justify-content: space-between;
-  }
 
-  label {
-    inline-size: 30%;
-    margin: 0 !important;
-  }
+    & ::ng-deep {
+      & label {
+        inline-size: 30%;
+        margin: 0;
+      }
 
-  .input-container {
-    inline-size: 70%;
+      & .input-container {
+        min-inline-size: 70%;
+      }
+    }
   }
 }
 

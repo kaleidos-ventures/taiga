@@ -16,11 +16,13 @@ Most of the `KanbanVirtualScrollStrategy` code is based in other `VirtualScrollS
 
 [Issue](https://github.com/angular/components/issues/10113). Angular have an experimental support for dynamic heights. We probably must use it when it's stable.
 
-## Kanban keyboard navigation
+## Kanban status keyboard navigation
 
-`KanbanKeyboardNavigationDirective` capture arrow left/right keyboard events no navigate horizontally between statuses. Because we use virtual scroll the status is not always visible so is going to wait until is render to move the focus & scroll.
+`KanbanStatusKeyboardNavigationDirective` capture arrow left/right keyboard events no navigate horizontally between statuses. Because we use virtual scroll the status is not always visible so is going to wait until is render to move the focus & scroll.
 
-We also capture keyboard arrows to move between stories. When the user navigate between story in different statuses, we make a live announce with the new status title.
+## Kanban story keyboard navigation
+
+`KanbanStatusKeyboardNavigationDirective` capture keyboard arrows to move between stories. When the user navigate between story in different statuses, we make a live announce with the new status title.
 
 ## Horizontal scroll with drag & drop
 

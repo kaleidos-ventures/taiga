@@ -50,8 +50,25 @@ def list_languages() -> None:
     console.print(table)
 
 
+def _extract_messages() -> None:
+    src_path = ROOT_DIR.parent  # src/
+
+    with set_working_directory(src_path):
+        extract_cmd = babel_cli.extract_messages()
+        extract_cmd.mapping_file = str(src_path.joinpath("../babel.cfg"))
+        extract_cmd.output_file = str(TRANSLATION_DIRECTORY.joinpath("messages.pot"))
+        extract_cmd.input_paths = "./"
+        extract_cmd.finalize_options()
+        extract_cmd.run()
+
+
 @cli.command(help="Add a new language to the catalog if it does not exist")
 def add_language(locale_code: str) -> None:
+    catalog_file = TRANSLATION_DIRECTORY.joinpath("messages.pot")
+
+    if not catalog_file.exists():
+        _extract_messages()
+
     if locale_code not in i18n.global_languages:
         pprint.print(f"[red]Language code '{locale_code}' does not exist[/red]")
         pprint.print(f"Valid Language code are: [green]{'[/green], [green]'.join(i18n.global_languages)}[/green]")
@@ -62,7 +79,7 @@ def add_language(locale_code: str) -> None:
         raise typer.Exit()
 
     cmd = babel_cli.init_catalog()
-    cmd.input_file = str(TRANSLATION_DIRECTORY.joinpath("messages.pot"))
+    cmd.input_file = str(catalog_file)
     cmd.output_dir = str(TRANSLATION_DIRECTORY)
     cmd.locale = locale_code.replace("-", "_")
     cmd.finalize_options()
@@ -72,15 +89,7 @@ def add_language(locale_code: str) -> None:
 
 @cli.command(help="Update catalog (code to .po)")
 def update_catalog() -> None:
-    src_path = ROOT_DIR.parent  # src/
-
-    with set_working_directory(src_path):
-        extract_cmd = babel_cli.extract_messages()
-        extract_cmd.mapping_file = str(src_path.joinpath("../babel.cfg"))
-        extract_cmd.output_file = str(TRANSLATION_DIRECTORY.joinpath("messages.pot"))
-        extract_cmd.input_paths = "./"
-        extract_cmd.finalize_options()
-        extract_cmd.run()
+    _extract_messages()
 
     cmd = babel_cli.update_catalog()
     cmd.input_file = str(TRANSLATION_DIRECTORY.joinpath("messages.pot"))

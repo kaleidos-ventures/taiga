@@ -20,7 +20,7 @@ import {
   selectCurrentProject,
   selectCurrentProjectId,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
+import { KanbanStatusComponentSlideInTime } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
 import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { AppService } from '~/app/services/app.service';
@@ -145,7 +145,7 @@ export class KanbanEffects {
   public newStoryByEventAnimation$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(KanbanEventsActions.newStory),
-      delay(KanbanStatusComponent.slideInTime + 1),
+      delay(KanbanStatusComponentSlideInTime + 1),
       map((action) => {
         return KanbanActions.timeoutAnimationEventNewStory({
           ref: action.story.ref,

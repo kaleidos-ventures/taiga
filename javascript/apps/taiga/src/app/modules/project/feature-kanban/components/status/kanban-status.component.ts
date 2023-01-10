@@ -53,6 +53,8 @@ import { filterNil } from '~/app/shared/utils/operators';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
 import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
 
+export const KanbanStatusComponentSlideInTime = 300;
+
 export interface KanbanComponentState {
   stories: KanbanStory[];
   visible: boolean;
@@ -84,7 +86,7 @@ export interface KanbanComponentState {
           transform: 'translateY(100%)',
         }),
         animate(
-          `${KanbanStatusComponent.slideInTime}ms ease-out`,
+          `${KanbanStatusComponentSlideInTime}ms ease-out`,
           style({
             opacity: 1,
             transform: 'translateY(0%)',
@@ -166,7 +168,6 @@ export class KanbanStatusComponent
     })
   );
 
-  public static slideInTime = 300;
   public color = '';
 
   public get columnSize() {

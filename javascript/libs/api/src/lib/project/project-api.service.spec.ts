@@ -63,15 +63,10 @@ describe('ProjectApiService', () => {
       reorder,
     };
 
-    const url = `${ConfigServiceMock.apiUrl}/projects/${data.project.slug}/workflows/${data.workflow.slug}/stories/reorder`;
+    const url = `${ConfigServiceMock.apiUrl}/projects/${data.project.id}/workflows/${data.workflow.slug}/stories/reorder`;
 
     spectator.service
-      .moveStory(
-        data.story,
-        data.project.slug,
-        data.workflow.slug,
-        data.reorder
-      )
+      .moveStory(data.story, data.project.id, data.workflow.slug, data.reorder)
       .subscribe();
 
     const req = spectator.expectOne(url, HttpMethod.POST);

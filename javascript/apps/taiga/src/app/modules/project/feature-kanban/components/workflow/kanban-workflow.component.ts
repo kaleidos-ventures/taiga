@@ -23,16 +23,16 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Story, Workflow } from '@taiga/data';
 import { filter, Observable } from 'rxjs';
+import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { selectDragging } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
-import { KanbanKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
+import { KanbanStatusKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { DropCandidate } from '~/app/shared/drag/drag.model';
 import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service';
 import { DragService } from '~/app/shared/drag/services/drag.service';
 import { KineticScrollService } from '~/app/shared/scroll/kinetic-scroll.service';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
-import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +43,7 @@ import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban
   providers: [KineticScrollService, RxState],
 })
 export class KanbanWorkflowComponent
-  implements KanbanKeyboardNavigation, AfterViewInit, OnDestroy
+  implements KanbanStatusKeyboardNavigation, AfterViewInit, OnDestroy
 {
   @Input()
   public workflow!: Workflow;

@@ -39,7 +39,8 @@ import { KanbanStoryComponent } from './components/story/kanban-story.component'
 import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
 import { KanbanVirtualScrollDirective } from './custom-scroll-strategy/kanban-scroll-strategy';
 import { DataAccessKanbanModule } from './data-access/kanban-data-access.module';
-import { KanbanKeyboardNavigationDirective } from './directives/kanban-workflow-keyboard-navigation/kanban-keyboard-navigation.directive';
+import { KanbanStatusKeyboardNavigationDirective } from './directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
+import { KanbanStoryKeyboardNavigationDirective } from './directives/kanban-story-keyboard-navigation/kanban-story-keyboard-navigation.directive';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
 
 @NgModule({
@@ -47,7 +48,8 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     ProjectFeatureKanbanComponent,
     KanbanStatusComponent,
     KanbanWorkflowComponent,
-    KanbanKeyboardNavigationDirective,
+    KanbanStoryKeyboardNavigationDirective,
+    KanbanStatusKeyboardNavigationDirective,
     KanbanStoryComponent,
     KanbanCreateStoryInlineComponent,
     StatusScrollDynamicHeightDirective,

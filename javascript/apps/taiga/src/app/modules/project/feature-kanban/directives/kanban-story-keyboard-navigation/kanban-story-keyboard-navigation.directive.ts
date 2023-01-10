@@ -19,7 +19,6 @@ import { TranslocoService } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Status, Workflow } from '@taiga/data';
-import { Observable } from 'rxjs';
 import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
 import { KanbanWorkflowComponent } from '~/app/modules/project/feature-kanban/components/workflow/kanban-workflow.component';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
@@ -32,7 +31,6 @@ import {
   KanbanStory,
   KanbanStoryA11y,
 } from '~/app/modules/project/feature-kanban/kanban.model';
-import { inViewport } from '~/app/shared/utils/in-viewport';
 import {
   focusRef,
   getNextHorizontalStory,
@@ -40,9 +38,9 @@ import {
   getNextVerticalStory,
   getStatusFromStoryElement,
   scrollAndFocus,
-} from './kanban-keyboard-navigation.helpers';
+} from './kanban-story-keyboard-navigation.helpers';
 
-export interface KanbanStatusKeyboardNavigation {
+export interface KanbanStoryKeyboardNavigation {
   nativeElement: HTMLElement;
 }
 
@@ -55,9 +53,9 @@ export interface KanbanKeyboardNavigation {
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: '[tgKanbanKeyboardNavigation]',
+  selector: '[tgKanbanStoryKeyboardNavigation]',
 })
-export class KanbanKeyboardNavigationDirective implements OnInit {
+export class KanbanStoryKeyboardNavigationDirective implements OnInit {
   @ViewChild(KanbanVirtualScrollDirective)
   public kanbanVirtualScroll!: KanbanVirtualScrollDirective;
 
@@ -67,9 +65,7 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
     current: HTMLElement,
     key: 'ArrowRight' | 'ArrowLeft'
   ): void {
-    if (current.tagName === 'TG-KANBAN-STATUS') {
-      this.statusNavigation(current, key);
-    } else if (current.classList.contains('story-kanban-ref-focus')) {
+    if (current.classList.contains('story-kanban-ref-focus')) {
       if (this.currentDraggedStory.ref) {
         this.storyNavigationHorizontalA11y(current, key);
       } else {
@@ -156,7 +152,8 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
         'kanban.position_live_announce',
         {
           storyIndex: newIndex + 1,
-          totalStories: Object.keys(this.state.get('Stories')[statusData.slug]).length,
+          totalStories: Object.keys(this.state.get('Stories')[statusData.slug])
+            .length,
         }
       );
 
@@ -332,8 +329,8 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
         'kanban.position_live_announce',
         {
           storyIndex: storyIndex + 1,
-          totalStories:
-            Object.keys(this.state.get('Stories')[statusData.slug]).length,
+          totalStories: Object.keys(this.state.get('Stories')[statusData.slug])
+            .length,
         }
       );
 
@@ -366,7 +363,7 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
 
     const horizontalNavData = getNextHorizontalStory(el, nextStatusEl!);
 
-    if (horizontalNavData) {
+    if (horizontalNavData && nextStatusEl) {
       const nextStatusName =
         horizontalNavData.nextStatus.querySelector<HTMLElement>(
           '.name'
@@ -396,89 +393,5 @@ export class KanbanKeyboardNavigationDirective implements OnInit {
           }
         );
     }
-  }
-
-  private statusNavigation(el: HTMLElement, key: 'ArrowRight' | 'ArrowLeft') {
-    const {
-      cdkScrollable,
-      workflow,
-      kanbanStatusComponents,
-      statusColumnSize,
-    } = this.kanbanWorkflowComponent;
-
-    const focusedComponent = kanbanStatusComponents.find((component) => {
-      return component.nativeElement === el;
-    });
-
-    let currentTabIndex = workflow.statuses.findIndex((status) => {
-      return status === focusedComponent?.status;
-    });
-
-    if (key === 'ArrowRight') {
-      currentTabIndex++;
-    } else {
-      currentTabIndex--;
-    }
-
-    if (currentTabIndex < 0) {
-      currentTabIndex = workflow.statuses.length - 1;
-    } else if (currentTabIndex > workflow.statuses.length - 1) {
-      currentTabIndex = 0;
-    }
-
-    const status = workflow.statuses[currentTabIndex];
-    const position = currentTabIndex * statusColumnSize;
-    const viewportSize = cdkScrollable.getViewportSize();
-
-    // get the component if it is rendered
-    const component = kanbanStatusComponents.find((component) => {
-      return component.status === status;
-    });
-
-    if (component) {
-      if (!inViewport(component.nativeElement)) {
-        if (key === 'ArrowRight') {
-          // scroll only the enough to the status to be visible
-          cdkScrollable.scrollTo({
-            left: statusColumnSize - (viewportSize - position),
-          });
-        } else {
-          cdkScrollable.scrollTo({ left: position });
-        }
-      }
-
-      component.nativeElement.focus();
-    } else {
-      cdkScrollable.scrollTo({ left: position });
-
-      this.safeGetStatusComponent(status, kanbanStatusComponents).subscribe(
-        (component) => {
-          component.nativeElement.focus();
-        }
-      );
-    }
-  }
-
-  // wait until the status column is rendered
-  private safeGetStatusComponent(
-    status: Status,
-    components: QueryList<KanbanStatusComponent>
-  ): Observable<KanbanStatusComponent> {
-    return new Observable((subscriber) => {
-      const searchComponent = () => {
-        const component = components.find((component) => {
-          return component.status === status;
-        });
-
-        if (component) {
-          subscriber.next(component);
-          subscriber.complete();
-        } else {
-          requestAnimationFrame(searchComponent);
-        }
-      };
-
-      searchComponent();
-    });
   }
 }

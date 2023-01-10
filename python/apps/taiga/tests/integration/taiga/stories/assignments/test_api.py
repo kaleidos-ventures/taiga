@@ -54,3 +54,54 @@ async def test_create_story_assignment_ok(client):
     client.login(pj_admin)
     response = client.post(f"/projects/{project.b64id}/stories/{story.ref}/assignments", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
+
+
+##########################################################
+# DELETE /projects/<id>/stories/<ref>/assignments/<username>
+##########################################################
+
+
+async def test_delete_story_assignment_invalid_story(client):
+    pj_admin = await f.create_user()
+    project = await f.create_project(owner=pj_admin)
+    story = await f.create_story(project=project)
+    await f.create_story_assignment(story=story, user=pj_admin)
+
+    client.login(pj_admin)
+    response = client.delete(f"/projects/{project.b64id}/stories/{WRONG_REF}/assignments/{pj_admin.username}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_story_assignment_user_without_permissions(client):
+    user = await f.create_user()
+    pj_admin = await f.create_user()
+    project = await f.create_project(owner=pj_admin)
+    story = await f.create_story(project=project)
+    await f.create_story_assignment(story=story, user=pj_admin)
+
+    client.login(user)
+    response = client.delete(f"/projects/{project.b64id}/stories/{story.ref}/assignments/{pj_admin.username}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_delete_story_assignment_user_not_assigned(client):
+    user = await f.create_user()
+    pj_admin = await f.create_user()
+    project = await f.create_project(owner=pj_admin)
+    story = await f.create_story(project=project)
+    await f.create_story_assignment(story=story, user=pj_admin)
+
+    client.login(pj_admin)
+    response = client.delete(f"/projects/{project.b64id}/stories/{story.ref}/assignments/{user.username}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_story_assignment_ok(client):
+    pj_admin = await f.create_user()
+    project = await f.create_project(owner=pj_admin)
+    story = await f.create_story(project=project)
+    await f.create_story_assignment(story=story, user=pj_admin)
+
+    client.login(pj_admin)
+    response = client.delete(f"/projects/{project.b64id}/stories/{story.ref}/assignments/{pj_admin.username}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text

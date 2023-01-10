@@ -375,3 +375,39 @@ Content for:
       }
   }
   ```
+
+#### `stories_assignments.create`
+
+It happens when a new story assignment has been created.
+
+Content for:
+- user channel:
+  ```
+  {
+      "story_assignment": {... "story_assignment object" ...}
+  }
+  ```
+- project channel:
+  ```
+  {
+      "story_assignment": {... "story_assignment object" ...}
+  }
+  ```
+
+#### `stories_assignments.delete`
+
+It happens when a story assignment has been deleted.
+
+Content for:
+- user channel:
+  ```
+  {
+      "story": {... "story object" ...}
+  }
+  ```
+- project channel:
+  ```
+  {
+      "story": {... "story object" ...}
+  }
+  ```

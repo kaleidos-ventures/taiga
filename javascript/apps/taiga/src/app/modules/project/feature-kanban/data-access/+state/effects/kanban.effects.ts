@@ -167,7 +167,7 @@ export class KanbanEffects {
             status: story.currentPosition.status,
           };
           return this.projectApiService
-            .moveStory(storyData, project.slug, workflow.slug, reorder)
+            .moveStory(storyData, project.id, workflow.slug, reorder)
             .pipe(
               map((reorder) => {
                 return KanbanApiActions.moveStorySuccess({

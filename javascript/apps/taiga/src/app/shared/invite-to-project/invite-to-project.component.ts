@@ -529,4 +529,8 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     this.cleanFormBeforeClose();
     this.closeModal.emit();
   }
+
+  public removeFocus() {
+    this.emailInput?.nativeFocusableElement?.blur();
+  }
 }

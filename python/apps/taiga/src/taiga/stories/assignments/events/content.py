@@ -7,7 +7,12 @@
 
 from taiga.base.serializers import BaseModel
 from taiga.stories.assignments.serializers import StoryAssignmentSerializer
+from taiga.stories.stories.serializers.nested import StoryNestedSerializer
 
 
 class CreateStoryAssignmentContent(BaseModel):
     story_assignment: StoryAssignmentSerializer
+
+
+class DeleteStoryAssignmentContent(BaseModel):
+    story: StoryNestedSerializer

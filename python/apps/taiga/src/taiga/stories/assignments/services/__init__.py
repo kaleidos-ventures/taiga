@@ -33,3 +33,18 @@ async def create_story_assignment(project_id: UUID, story: Story, username: str)
         await stories_assignments_events.emit_event_when_story_assignment_is_created(story_assignment=story_assignment)
 
     return story_assignment
+
+
+##########################################################
+# delete story assignment
+##########################################################
+
+
+async def delete_story_assignment(story: Story, username: str) -> bool:
+    story_assigment_deleted = await story_assignments_repositories.delete_story_assignment(
+        filters={"story_id": story.id, "username": username}
+    )
+    if story_assigment_deleted > 0:
+        await stories_assignments_events.emit_event_when_story_assignment_is_deleted(story=story, username=username)
+        return True
+    return False

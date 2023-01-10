@@ -64,18 +64,12 @@ def create_story_assignment(story: Story, user: User) -> tuple[StoryAssignment, 
 
 
 ##########################################################
-# get story assignment
+# delete story assignment
 ##########################################################
 
 
 @sync_to_async
-def get_story_assignment(
-    filters: StoryAssignmentFilters = {}, select_related: StoryAssignmentSelectRelated = ["story", "user"]
-) -> StoryAssignment | None:
+def delete_story_assignment(filters: StoryAssignmentFilters = {}) -> int:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
-    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
-
-    try:
-        return qs.get()
-    except StoryAssignment.DoesNotExist:
-        return None
+    count, _ = qs.delete()
+    return count

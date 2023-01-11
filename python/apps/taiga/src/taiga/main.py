@@ -18,7 +18,6 @@ from taiga.conf import settings
 from taiga.exceptions.api import handlers
 from taiga.exceptions.api.middlewares import UnexpectedExceptionMiddleware
 from taiga.routers.loader import load_routes
-from taiga.tasksqueue.middlewares import TaskQueueMiddleware
 
 api = FastAPI(
     title=__title__,
@@ -34,9 +33,6 @@ api = FastAPI(
 
 # DB connections middleware
 api.add_middleware(DBConnectionMiddleware)
-
-# TaskQueue middleware
-api.add_middleware(TaskQueueMiddleware)
 
 # Catch unexpected exceptions middleware
 api.add_middleware(UnexpectedExceptionMiddleware)

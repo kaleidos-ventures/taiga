@@ -203,3 +203,11 @@ class TasksQueueManager:
 
 
 manager = TasksQueueManager(app)
+
+
+async def connect_taskqueue_manager() -> None:
+    await manager.open()
+
+
+async def disconnect_taskqueue_manager() -> None:
+    await manager.close()

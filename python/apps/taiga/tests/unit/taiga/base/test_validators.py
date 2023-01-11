@@ -16,14 +16,14 @@ from taiga.base.validators import B64UUID, LanguageCode
 #####################################################################
 
 
-class TestsLanguageCodeValidator(BaseModel):
+class LanguageCodeValidator(BaseModel):
     language: LanguageCode
 
 
 def test_languagecode_validator_with_available_language() -> None:
     lang = "en-US"
 
-    validator = TestsLanguageCodeValidator(language=lang)
+    validator = LanguageCodeValidator(language=lang)
     assert validator.language == lang
 
 
@@ -33,7 +33,7 @@ def test_languagecode_validator_with_available_language() -> None:
 )
 def test_languagecode_validator_with_unavailable_language(lang: str | None) -> None:
     with pytest.raises(ValidationError):
-        TestsLanguageCodeValidator(language=lang)
+        LanguageCodeValidator(language=lang)
 
 
 #####################################################################
@@ -41,7 +41,7 @@ def test_languagecode_validator_with_unavailable_language(lang: str | None) -> N
 #####################################################################
 
 
-class TestsB64UUID(BaseModel):
+class B64UUIDValidator(BaseModel):
     b64id: B64UUID
 
 
@@ -55,5 +55,5 @@ class TestsB64UUID(BaseModel):
     ],
 )
 def test_b64id(b64id: str | None, result: UUID | None):
-    validator = TestsB64UUID(b64id=b64id)
+    validator = B64UUIDValidator(b64id=b64id)
     assert validator.b64id == result

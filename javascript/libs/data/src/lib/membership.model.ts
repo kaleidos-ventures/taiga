@@ -6,13 +6,11 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { User } from './user.model';
+
 export interface Membership {
   id?: string;
-  user: {
-    username: string;
-    fullName: string;
-    color: number;
-  };
+  user: Pick<User, 'username' | 'fullName' | 'color'>;
   role: {
     isAdmin: boolean;
     name?: string;

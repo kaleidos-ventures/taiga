@@ -13,25 +13,25 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { RxState } from '@rx-angular/state';
-import { Membership, User } from '@taiga/data';
-import { map, Subject } from 'rxjs';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
-import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
-import Diacritics from 'diacritic';
+import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
+import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { TuiScrollbarModule } from '@taiga-ui/core';
+import { Membership, Story, User } from '@taiga/data';
+import Diacritics from 'diacritic';
+import { map, startWith, Subject } from 'rxjs';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { initAssignUser } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectMembers } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { TuiAutoFocusModule } from '@taiga-ui/cdk';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { filterNil } from '~/app/shared/utils/operators';
-import { FormsModule } from '@angular/forms';
-import { TuiScrollbarModule } from '@taiga-ui/core';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
+import { filterNil } from '~/app/shared/utils/operators';
 
 interface AssignComponentState {
-  members: Membership[];
-  assigned: Membership[];
+  members: Membership['user'][];
+  assigned: Story['assignees'];
   search: string;
   currentUser: User;
 }
@@ -55,13 +55,13 @@ export class AssignUserComponent {
   public requestClose = new EventEmitter<void>();
 
   @Output()
-  public assign = new EventEmitter<Membership>();
+  public assign = new EventEmitter<Membership['user']>();
 
   @Output()
-  public unassign = new EventEmitter<Membership>();
+  public unassign = new EventEmitter<Membership['user']>();
 
   @Input()
-  public set assigned(members: Membership[]) {
+  public set assigned(members: Story['assignees']) {
     this.state.set({ assigned: members });
   }
 
@@ -74,16 +74,16 @@ export class AssignUserComponent {
   public readonly model$ = this.state.select().pipe(
     map((state) => {
       const currentUserMember = state.members.find((member) => {
-        return member.user.username === state.currentUser.username;
+        return member.username === state.currentUser.username;
       });
 
       const members = state.members.filter((member) => {
-        if (member.user.username === state.currentUser.username) {
+        if (member.username === state.currentUser.username) {
           return false;
         }
 
         const assigned = state.assigned.find(
-          (assigned) => assigned.user.username === member.user.username
+          (assigned) => assigned.username === member.username
         );
 
         if (assigned) {
@@ -99,7 +99,7 @@ export class AssignUserComponent {
 
       // current user on top
       const currentUserAssigned = state.assigned.find(
-        (assigned) => assigned.user.username === state.currentUser.username
+        (assigned) => assigned.username === state.currentUser.username
       );
 
       if (currentUserMember && !currentUserAssigned) {
@@ -130,30 +130,39 @@ export class AssignUserComponent {
       'currentUser',
       this.store.select(selectUser).pipe(filterNil())
     );
-    this.state.connect('members', this.store.select(selectMembers));
+    this.state.connect(
+      'members',
+      this.store.select(selectMembers).pipe(
+        filterNil(),
+        map((members) => {
+          return members.map((member) => member.user);
+        }),
+        startWith([])
+      )
+    );
     this.state.connect('search', this.search$);
   }
 
-  public checkMemberSearch(search: string, member: Membership) {
+  public checkMemberSearch(search: string, member: Membership['user']) {
     const rgx = new RegExp(
       `${this.normalizeText(search.replace(/^@/, ''))}`,
       'gi'
     );
-    const fullname = this.normalizeText(member.user.fullName);
-    const username = this.normalizeText(member.user.username.replace(/^@/, ''));
+    const fullname = this.normalizeText(member.fullName);
+    const username = this.normalizeText(member.username.replace(/^@/, ''));
 
     return rgx.test(fullname) || rgx.test(username);
   }
 
-  public onAssign(member: Membership) {
+  public onAssign(member: Membership['user']) {
     this.searchText = '';
     this.search$.next('');
 
     this.assign.next(member);
   }
 
-  public trackByMember(_index: number, member: Membership) {
-    return member.user.username;
+  public trackByMember(_index: number, member: Membership['user']) {
+    return member.username;
   }
 
   private normalizeText(text: string) {

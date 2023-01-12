@@ -147,3 +147,75 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     font-weight: var(--font-weight-medium);
   }
 }
+
+.assigned-button-perm,
+.assigned-button-noperm {
+  background: none;
+  border: none;
+  border-radius: 15px;
+  display: inline-flex;
+  padding: 0;
+
+  &:hover {
+    background-color: var(--color-gray30);
+
+    & .assigned-user-avatar {
+      /* stylelint-disable-next-line max-nesting-depth */
+      &::ng-deep tui-avatar {
+        border: 2px solid var(--color-gray30);
+      }
+
+      /* stylelint-disable-next-line max-nesting-depth */
+      &:hover {
+        /* stylelint-disable-next-line max-nesting-depth */
+        &::ng-deep tui-avatar {
+          border: 2px solid var(--color-white);
+        }
+      }
+    }
+
+    & .assigned-user-avatar-extra {
+      border: 2px solid var(--color-gray30);
+
+      &:hover {
+        border: 2px solid var(--color-white);
+      }
+    }
+  }
+}
+
+.assigned-users-list {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.assigned-user-avatar {
+  &::ng-deep tui-avatar {
+    block-size: var(--spacing-32);
+    border: 2px solid var(--color-white);
+    inline-size: var(--spacing-32);
+  }
+
+  &:hover {
+    z-index: var(--first-layer);
+  }
+}
+
+.assigned-user-avatar:not(:last-child) {
+  margin-inline-start: -6px;
+}
+
+.assigned-user-avatar-extra {
+  background: var(--color-gray20);
+  block-size: var(--spacing-32);
+  border: 2px solid var(--color-white);
+  border-radius: 50%;
+  display: grid;
+  inline-size: var(--spacing-32);
+  margin-inline-start: -6px;
+  place-items: center;
+
+  &:hover {
+    z-index: var(--first-layer);
+  }
+}

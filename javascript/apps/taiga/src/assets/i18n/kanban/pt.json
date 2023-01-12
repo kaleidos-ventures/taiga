@@ -26,6 +26,8 @@
     "unassigned": "Not assigned",
     "story_not_assigned": "Story not assigned to anyone.",
     "assign": "Assign",
-    "assign_key": "Press enter to assign."
+    "assign_key": "Press enter to assign.",
+    "assigned_list": "Assigned users: {{users}}",
+    "more_assigned": "{{assigneesNum}} assignees more"
   }
 }

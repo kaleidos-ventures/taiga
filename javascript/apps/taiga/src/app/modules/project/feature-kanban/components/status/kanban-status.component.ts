@@ -46,12 +46,12 @@ import {
   KanbanStory,
   KanbanStoryA11y,
 } from '~/app/modules/project/feature-kanban/kanban.model';
+import { selectStory } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service';
 import { filterNil } from '~/app/shared/utils/operators';
-import { selectStory } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
-import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
+import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
 
 export interface KanbanComponentState {
   stories: KanbanStory[];

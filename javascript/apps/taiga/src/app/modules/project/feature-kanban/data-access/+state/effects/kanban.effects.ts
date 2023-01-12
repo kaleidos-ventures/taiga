@@ -277,11 +277,7 @@ export class KanbanEffects {
       pessimisticUpdate({
         run: (action, project) => {
           return this.projectApiService
-            .assingStory(
-              project.id,
-              action.storyRef,
-              action.member.user.username
-            )
+            .assingStory(project.id, action.storyRef, action.member.username)
             .pipe(
               map(() => {
                 return KanbanApiActions.assignMemberSuccess();
@@ -304,11 +300,7 @@ export class KanbanEffects {
       pessimisticUpdate({
         run: (action, project) => {
           return this.projectApiService
-            .unAssingStory(
-              project.id,
-              action.storyRef,
-              action.member.user.username
-            )
+            .unAssingStory(project.id, action.storyRef, action.member.username)
             .pipe(
               map(() => {
                 return KanbanApiActions.unassignMemberSuccess();

@@ -19,11 +19,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tg-user-avatar
           size="m"
           class="no-border"
-          [user]="assignedUser.user"
+          [user]="assignedUser"
           type="light"
           [rounded]="true"
           aria-hidden="true"></tg-user-avatar>
-        {{ assignedUser.user.fullName }} - {{ assignedUser.user.username }}
+        {{ assignedUser.fullName }} - {{ assignedUser.username }}
         <button (click)="unassign.next(assignedUser)">delete</button>
       </li>
     </ul>
@@ -41,8 +41,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <li *ngFor="let member of vm.members; trackBy: trackByMember">
           <tg-user-card
             (click)="onAssign(member)"
-            [user]="member.user"
-            [isSelf]="vm.currentUser.username === member.user.username"
+            [user]="member"
+            [isSelf]="vm.currentUser.username === member.username"
             [navigateToUser]="false">
           </tg-user-card>
         </li>

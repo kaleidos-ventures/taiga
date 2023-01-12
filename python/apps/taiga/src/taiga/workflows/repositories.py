@@ -119,7 +119,7 @@ list_workflows = sync_to_async(list_workflows_sync)
 
 
 @sync_to_async
-def list_workflows_dt(
+def list_workflows_schemas(
     filters: WorkflowFilters = {},
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],
     order_by: WorkflowOrderBy = ["order"],
@@ -152,7 +152,7 @@ get_workflow = sync_to_async(get_workflow_sync)
 
 
 @sync_to_async
-def get_workflow_dt(
+def get_workflow_schema(
     filters: WorkflowFilters = {},
     select_related: WorkflowSelectRelated = [],
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],

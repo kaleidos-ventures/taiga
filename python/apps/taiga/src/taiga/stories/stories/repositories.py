@@ -154,7 +154,7 @@ list_stories = sync_to_async(list_stories_sync)
 
 
 @sync_to_async
-def list_stories_dt(
+def list_stories_schemas(
     filters: StoryFilters = {},
     order_by: StoryOrderBy = ["order"],
     offset: int | None = None,
@@ -172,11 +172,11 @@ def list_stories_dt(
         prefetch_related=prefetch_related,
     )
 
-    stories_dt = []
+    stories_schemas = []
     for story in stories:
-        stories_dt.append(get_story_dt(story))
+        stories_schemas.append(story_to_schema(story))
 
-    return stories_dt
+    return stories_schemas
 
 
 ##########################################################
@@ -262,13 +262,13 @@ def list_stories_to_reorder(filters: StoryFilters = {}) -> list[Story]:
     return result  # type: ignore[return-value]
 
 
-def get_story_dt(story: Story) -> StorySchema:
+def story_to_schema(story: Story) -> StorySchema:
     return StorySchema(
         ref=story.ref,
         title=story.title,
         status=workflows_repositories.workflow_status_to_schema(story.status),
         version=story.version,
-        assignees=[users_repositories.get_user_base_dt(user) for user in story.assignees.all()],
+        assignees=[users_repositories.user_base_to_schema(user) for user in story.assignees.all()],
     )
 
 

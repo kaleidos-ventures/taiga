@@ -62,7 +62,8 @@ def _apply_filters_to_queryset(
 
     if "usernames" in filter_data:
         usernames = filter_data.pop("usernames")
-        qs = qs.filter(reduce(or_, (Q(username__iexact=username) for username in usernames)))  # type: ignore[attr-defined]
+        filter_tmp = reduce(or_, (Q(username__iexact=username) for username in usernames))  # type: ignore[attr-defined]
+        qs = qs.filter(filter_tmp)
 
     if "username_or_email" in filter_data:
         username_or_email = filter_data.pop("username_or_email")
@@ -180,7 +181,7 @@ def clean_expired_users() -> None:
     )
 
 
-def get_user_base_dt(user: User) -> UserBaseSchema:
+def user_base_to_schema(user: User) -> UserBaseSchema:
     return UserBaseSchema(username=user.username, full_name=user.full_name, color=user.color)
 
 

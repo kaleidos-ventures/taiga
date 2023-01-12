@@ -69,7 +69,7 @@ async def test_create_story_invalid_status():
         fake_workflows_repo.get_status.return_value = None
         await services.create_story(
             project_id=story.project_id,
-            workflow=build_worklow_dt(story),
+            workflow=build_workflow_schema(story),
             title=story.title,
             status_slug="invalid_slug",
             user=user,
@@ -94,7 +94,7 @@ async def test_list_paginated_stories():
         fake_stories_repo.get_total_stories.assert_awaited_once_with(
             filters={"project_id": story.project.id, "workflow_slug": story.workflow.slug}
         )
-        fake_stories_repo.list_stories_dt.assert_awaited_once_with(
+        fake_stories_repo.list_stories_schemas.assert_awaited_once_with(
             offset=0,
             limit=10,
             select_related=["created_by", "project", "workflow", "status"],
@@ -534,7 +534,7 @@ async def test_reorder_story_not_all_stories_exist():
 #######################################################
 
 
-def build_worklow_dt(story):
+def build_workflow_schema(story):
     return WorkflowSchema(
         id=story.workflow.id,
         name=story.workflow.name,

@@ -19,9 +19,9 @@ async def test_list_workflows_ok():
     workflows = [f.build_workflow()]
 
     with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
-        fake_workflows_repo.list_workflows_dt.return_value = workflows
-        await services.list_workflows_dt(project_id="id")
-        fake_workflows_repo.list_workflows_dt.assert_awaited_once_with(
+        fake_workflows_repo.list_workflows_schemas.return_value = workflows
+        await services.list_workflows_schemas(project_id="id")
+        fake_workflows_repo.list_workflows_schemas.assert_awaited_once_with(
             filters={"project_id": "id"},
             prefetch_related=["statuses"],
         )

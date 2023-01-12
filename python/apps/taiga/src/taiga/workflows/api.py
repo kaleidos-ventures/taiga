@@ -42,7 +42,7 @@ async def list_workflows(
     """
     project = await get_project_or_404(id)
     await check_permissions(permissions=LIST_WORKFLOWS, user=request.user, obj=project)
-    return await workflows_services.list_workflows_dt(project_id=id)
+    return await workflows_services.list_workflows_schemas(project_id=id)
 
 
 @routes.projects.get(
@@ -62,7 +62,7 @@ async def get_workflow(
     """
     workflow = await get_workflow_or_404(project_id=id, workflow_slug=workflow_slug)
     await check_permissions(permissions=GET_WORKFLOW, user=request.user, obj=workflow)
-    return await workflows_services.get_workflow_dt(
+    return await workflows_services.get_workflow_schema(
         project_id=id, workflow_slug=workflow_slug
     )  # type: ignore[return-value]
 

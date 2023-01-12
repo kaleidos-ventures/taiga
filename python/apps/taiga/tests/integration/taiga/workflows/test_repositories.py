@@ -56,10 +56,12 @@ async def test_create_workflow_status():
 ##########################################################
 
 
-async def test_list_workflows_dt_ok() -> None:
+async def test_list_workflows_schemas_ok() -> None:
     project = await f.create_project()
 
-    workflows = await repositories.list_workflows_dt(filters={"project_id": project.id}, prefetch_related=["statuses"])
+    workflows = await repositories.list_workflows_schemas(
+        filters={"project_id": project.id}, prefetch_related=["statuses"]
+    )
 
     assert len(workflows) == 1
     assert len(workflows[0].statuses) == 4

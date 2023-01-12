@@ -74,7 +74,7 @@ async def list_paginated_stories(
         filters={"workflow_slug": workflow_slug, "project_id": project_id}
     )
 
-    stories = await stories_repositories.list_stories_dt(
+    stories = await stories_repositories.list_stories_schemas(
         filters={"workflow_slug": workflow_slug, "project_id": project_id},
         offset=offset,
         limit=limit,

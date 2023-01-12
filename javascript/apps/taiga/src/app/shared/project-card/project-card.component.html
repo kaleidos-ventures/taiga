@@ -21,10 +21,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         data-test="create-project-card"
         class="project-item-link">
         <ng-container *ngIf="firstProject">
-          {{ t('project.create_first_project') }}
+          {{ t('common_project.create_first_project') }}
         </ng-container>
         <ng-container *ngIf="!firstProject">
-          {{ t('project.create_new_project') }}
+          {{ t('common_project.create_new_project') }}
         </ng-container>
       </a>
     </div>
@@ -62,7 +62,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         *ngIf="invitationStatus !== 'accepted'"
         appearance="us-header-button"
         [attr.aria-label]="t('commons.close')"
-        [tuiHint]="t('project.card.close_card')"
+        [tuiHint]="t('common_project.card.close_card')"
         icon="close"
         type="button"></button>
       <div
@@ -73,7 +73,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [@itemSlideOutAnimation]
           *ngIf="invitationStatus !== 'accepted'">
           <tg-ui-badge
-            [label]="t('project.card.pending_invitation') | capitalize"
+            [label]="t('common_project.card.pending_invitation') | capitalize"
             icon="clock"
             color="gray">
           </tg-ui-badge>
@@ -102,7 +102,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           (click)="acceptInvite.next({ id: project.id, name: project.name })"
           appearance="primary"
           type="button">
-          {{ t('project.card.accept_invite') }}
+          {{ t('common_project.card.accept_invite') }}
         </button>
         <p
           class="project-card-description"

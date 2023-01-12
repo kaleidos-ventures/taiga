@@ -69,7 +69,7 @@
     "project_settings": "Project settings",
     "collapse_menu": "Collapse menu"
   },
-  "project": {
+  "common_project": {
     "create_first_project": "Create your first project",
     "create_new_project": "Add a project",
     "card": {

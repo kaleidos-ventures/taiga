@@ -8,18 +8,10 @@
 from taiga.base.serializers import BaseModel
 
 
-class BaseProjectRoleSerializer(BaseModel):
+class ProjectRoleNestedSerializer(BaseModel):
     name: str
     slug: str
     is_admin: bool
-
-    class Config:
-        orm_mode = True
-
-
-class ProjectRoleSerializer(BaseProjectRoleSerializer):
-    order: int
-    num_members: int = 0
     permissions: list[str]
 
     class Config:

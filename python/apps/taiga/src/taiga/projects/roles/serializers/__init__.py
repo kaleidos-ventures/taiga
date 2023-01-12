@@ -6,13 +6,15 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import BaseModel
-from taiga.projects.roles.serializers.nested import ProjectRoleNestedSerializer
-from taiga.users.serializers.nested import UserNestedSerializer
 
 
-class ProjectMembershipSerializer(BaseModel):
-    user: UserNestedSerializer
-    role: ProjectRoleNestedSerializer
+class ProjectRoleSerializer(BaseModel):
+    name: str
+    slug: str
+    is_admin: bool
+    order: int
+    num_members: int = 0
+    permissions: list[str]
 
     class Config:
         orm_mode = True

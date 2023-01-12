@@ -11,7 +11,7 @@ from pydantic import EmailStr, validator
 from taiga.base.serializers import BaseModel
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects.serializers.related import ProjectSmallSummarySerializer
-from taiga.projects.roles.serializers import BaseProjectRoleSerializer
+from taiga.projects.roles.serializers.nested import ProjectRoleNestedSerializer
 from taiga.users.serializers.nested import UserNestedSerializer
 
 
@@ -30,7 +30,7 @@ class ProjectInvitationSerializer(BaseModel):
     id: UUID
     project: ProjectSmallSummarySerializer
     user: UserNestedSerializer | None
-    role: BaseProjectRoleSerializer
+    role: ProjectRoleNestedSerializer
     email: EmailStr
 
     class Config:
@@ -40,7 +40,7 @@ class ProjectInvitationSerializer(BaseModel):
 class PrivateEmailProjectInvitationSerializer(BaseModel):
     id: UUID
     user: UserNestedSerializer | None
-    role: BaseProjectRoleSerializer
+    role: ProjectRoleNestedSerializer
     email: EmailStr | None
 
     class Config:

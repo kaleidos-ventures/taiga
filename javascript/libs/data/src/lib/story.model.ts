@@ -7,8 +7,8 @@
  */
 
 import { Status } from './status.model';
+import { User } from './user.model';
 import { Workflow } from './workflow.model';
-import { Membership } from './membership.model';
 
 export interface Story {
   ref: number;
@@ -16,7 +16,7 @@ export interface Story {
   title: string;
   slug: string;
   status: Pick<Status, 'slug' | 'color' | 'name'>;
-  assignedTo: Membership[];
+  assignees: Pick<User, 'username' | 'fullName' | 'color'>[];
 }
 
 export interface StoryDetail extends Story {

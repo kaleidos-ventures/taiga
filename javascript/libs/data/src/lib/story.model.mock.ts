@@ -36,7 +36,7 @@ export const StoryMockFactory = (
     title: randText({ charCount: titleCount }),
     slug: randSlug(),
     status: statuses[Math.floor(Math.random() * statuses.length)],
-    assignedTo: [],
+    assignees: [],
   };
 };
 
@@ -70,6 +70,6 @@ export const StoryDetailMockFactory = (
       fullName: randFullName(),
     },
     createdAt: randPastDate().toString(),
-    assignedTo: [],
+    assignees: [],
   };
 };

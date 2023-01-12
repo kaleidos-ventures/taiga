@@ -33,12 +33,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             <tg-user-avatar
               size="m"
               class="no-border"
-              [user]="assignedUser.user"
+              [user]="assignedUser"
               type="light"
               [rounded]="true"
               aria-hidden="true"></tg-user-avatar>
             <span class="user-identifier">{{
-              assignedUser.user.fullName || assignedUser.user.username
+              assignedUser.fullName || assignedUser.username
             }}</span>
           </div>
           <tui-svg
@@ -82,8 +82,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               (click)="onAssign(member)">
               <tg-user-card
                 class="card"
-                [user]="member.user"
-                [isSelf]="vm.currentUser.username === member.user.username"
+                [user]="member"
+                [isSelf]="vm.currentUser.username === member.username"
                 [navigateToUser]="false">
               </tg-user-card>
               <tui-svg

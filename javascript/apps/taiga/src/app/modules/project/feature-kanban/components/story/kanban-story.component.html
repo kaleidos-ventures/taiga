@@ -27,14 +27,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             })
           : null
       "
-      [attr.title]="
-        t('kanban.story_title', {
-          ref: story.ref,
-          title: story.title,
-          position: index + 1,
-          total: total
-        })
-      "
       class="story-kanban-ref-focus">
       <div class="story-title">
         <div class="draggable-icon">
@@ -43,30 +35,129 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <div class="ref">{{ story.ref }}</div>
         <div class="text">{{ story.title }}</div>
       </div>
-      <div
-        class="assign-user"
-        [tuiDropdown]="assignUser"
-        [tuiDropdownMinHeight]="272"
-        [tuiDropdownMaxHeight]="530"
-        [tuiDropdownManual]="vm.showAssignUser"
-        (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)">
-        <button (click)="toggleAssingUser($event)">assign</button>
+      <div class="story-body">
+        <ng-container
+          *hasPermission="
+            ['modify'];
+            entity: 'story';
+            else: noAssignPermissionsTpl
+          ">
+          <div
+            class="assign-user"
+            [tuiDropdown]="assignUser"
+            [tuiDropdownMinHeight]="272"
+            [tuiDropdownMaxHeight]="530"
+            [tuiDropdownManual]="vm.showAssignUser"
+            (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)">
+            <button
+              (click)="toggleAssignUser($event)"
+              [tuiHint]="!vm.assignees.length ? unassignedTooltip : null"
+              [tuiHintDirection]="'bottom-right'"
+              [ngClass]="{
+                'unassigned-button-perm': !vm.assignees.length,
+                'assigned-button-perm': vm.assignees.length
+              }">
+              <ng-template
+                *ngIf="
+                  vm.assignees.length;
+                  then displayUsersTpl;
+                  else assignBtnTpl
+                ">
+              </ng-template>
+            </button>
+          </div>
+        </ng-container>
       </div>
     </a>
-    <!--
-  User can modify to add users:
 
-    *hasPermission="
-    ['create'];
-    entity: 'modify';
-  "> -->
+    <!-- Assigned users temaplate -->
+
+    <ng-template #displayUsersTpl>
+      <div
+        class="assigned-users-list"
+        [attr.aria-label]="
+          t('kanban.story_card.assigned_list', {
+            users: assignedListA11y
+          })
+        ">
+        <tg-user-avatar
+          *ngFor="
+            let assigned of reversedAssignees | slice: -3;
+            trackBy: trackByIndex
+          "
+          size="m"
+          class="assigned-user-avatar"
+          [color]="assigned.color"
+          [user]="assigned"
+          type="light"
+          [rounded]="true"
+          aria-hidden="true"
+          [tuiHint]="assigned.fullName"
+          [tuiHintDirection]="'bottom-right'"></tg-user-avatar>
+      </div>
+      <div
+        class="assigned-user-avatar-extra"
+        *ngIf="vm.assignees.length > 3"
+        [tuiHint]="moreAssignedTooltip"
+        [tuiHintDirection]="'bottom-right'">
+        {{ restAssigneesLenght }}
+      </div>
+    </ng-template>
+
+    <!-- Assign button template - user with permissions -->
+
+    <ng-template #assignBtnTpl>
+      <div [attr.aria-label]="t('kanban.story_card.assign_key')">
+        {{ t('kanban.story_card.assign') }}
+      </div>
+    </ng-template>
+
+    <!-- Assign button template - user with permissions -->
 
     <ng-template #assignUser>
       <tg-assign-user
-        [assigned]="story.assignedTo"
+        [assigned]="vm.assignees"
         (assign)="assign($event)"
         (unassign)="unassign($event)"
         (requestClose)="closeAssignDropdown()"></tg-assign-user>
+    </ng-template>
+
+    <!-- Assign elements - no permissions -->
+
+    <ng-template #noAssignPermissionsTpl>
+      <div
+        *ngIf="!vm.assignees.length"
+        [tuiHint]="unassignedTooltip"
+        [tuiHintDirection]="'bottom-right'"
+        class="unassigned-button-noperm"
+        aria-labelledby="unassigned-tooltip">
+        {{ t('kanban.story_card.unassigned') }}
+      </div>
+      <div
+        *ngIf="vm.assignees.length"
+        class="assigned-button-noperm">
+        <ng-container *ngTemplateOutlet="displayUsersTpl"></ng-container>
+      </div>
+    </ng-template>
+
+    <ng-template #unassignedTooltip>
+      <p
+        id="unassigned-tooltip"
+        aria-hidden="true">
+        {{ t('kanban.story_card.story_not_assigned') }}
+      </p>
+    </ng-template>
+
+    <ng-template #moreAssignedTooltip>
+      <p
+        id="more-assigned-tooltip"
+        aria-hidden="true">
+        {{
+          t('kanban.story_card.more_assigned', {
+            assigneesNum: vm.assignees.length - 3
+          })
+        }}
+      </p>
     </ng-template>
   </ng-container>
 </ng-container>

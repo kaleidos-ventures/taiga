@@ -33,6 +33,20 @@ def _apply_filters_to_workflow_queryset(
     return qs.filter(**filters)
 
 
+WorkflowSelectRelated = list[
+    Literal[
+        "project",
+    ]
+]
+
+
+def _apply_select_related_to_workflow_queryset(
+    qs: QuerySet[Workflow],
+    select_related: WorkflowSelectRelated,
+) -> QuerySet[Workflow]:
+    return qs.select_related(*select_related)
+
+
 WorkflowPrefetchRelated = list[
     Literal[
         "statuses",
@@ -89,20 +103,29 @@ create_workflow = sync_to_async(create_workflow_sync)
 ##########################################################
 
 
-@sync_to_async
-def get_workflows(
+def list_workflows_sync(
     filters: WorkflowFilters = {},
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],
     order_by: WorkflowOrderBy = ["order"],
-) -> list[WorkflowSchema] | None:
+) -> list[Workflow]:
     qs = _apply_filters_to_workflow_queryset(qs=DEFAULT_QUERYSET_WORKFLOW, filters=filters)
     qs = _apply_prefetch_related_to_workflow_queryset(qs=qs, prefetch_related=prefetch_related)
     qs = _apply_order_by_to_workflow_queryset(order_by=order_by, qs=qs)
 
-    dt_workflows = []
-    for workflow in qs:
-        dt_workflows.append(get_workflow_dt(workflow))
-    return dt_workflows
+    return list(qs)
+
+
+list_workflows = sync_to_async(list_workflows_sync)
+
+
+@sync_to_async
+def list_workflows_dt(
+    filters: WorkflowFilters = {},
+    prefetch_related: WorkflowPrefetchRelated = ["statuses"],
+    order_by: WorkflowOrderBy = ["order"],
+) -> list[WorkflowSchema]:
+    workflows = list_workflows_sync(filters=filters, prefetch_related=prefetch_related, order_by=order_by)
+    return [workflow_to_schema(workflow) for workflow in workflows]
 
 
 ##########################################################
@@ -110,18 +133,35 @@ def get_workflows(
 ##########################################################
 
 
-@sync_to_async
-def get_workflow(
+def get_workflow_sync(
     filters: WorkflowFilters = {},
+    select_related: WorkflowSelectRelated = [],
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],
-) -> WorkflowSchema | None:
+) -> Workflow | None:
     qs = _apply_filters_to_workflow_queryset(qs=DEFAULT_QUERYSET_WORKFLOW, filters=filters)
+    qs = _apply_select_related_to_workflow_queryset(qs=qs, select_related=select_related)
     qs = _apply_prefetch_related_to_workflow_queryset(qs=qs, prefetch_related=prefetch_related)
 
     try:
-        return get_workflow_dt(qs.get())
+        return qs.get()
     except Workflow.DoesNotExist:
         return None
+
+
+get_workflow = sync_to_async(get_workflow_sync)
+
+
+@sync_to_async
+def get_workflow_dt(
+    filters: WorkflowFilters = {},
+    select_related: WorkflowSelectRelated = [],
+    prefetch_related: WorkflowPrefetchRelated = ["statuses"],
+) -> WorkflowSchema | None:
+    workflow = get_workflow_sync(filters=filters, select_related=select_related, prefetch_related=prefetch_related)
+    if workflow:
+        return workflow_to_schema(workflow)
+
+    return None
 
 
 ##########################################################
@@ -129,13 +169,13 @@ def get_workflow(
 ##########################################################
 
 
-def get_workflow_dt(workflow: Workflow) -> WorkflowSchema:
+def workflow_to_schema(workflow: Workflow) -> WorkflowSchema:
     return WorkflowSchema(
         id=workflow.id,
         name=workflow.name,
         slug=workflow.slug,
         order=workflow.order,
-        statuses=[get_workflow_status_dt(status) for status in workflow.statuses.all()],
+        statuses=[workflow_status_to_schema(status) for status in workflow.statuses.all()],
     )
 
 
@@ -213,5 +253,5 @@ def get_status(filters: WorkflowStatusFilters = {}) -> WorkflowStatus | None:
 ##########################################################
 
 
-def get_workflow_status_dt(ws: WorkflowStatus) -> WorkflowStatusSchema:
+def workflow_status_to_schema(ws: WorkflowStatus) -> WorkflowStatusSchema:
     return WorkflowStatusSchema(id=ws.id, name=ws.name, slug=ws.slug, order=ws.order, color=ws.color)

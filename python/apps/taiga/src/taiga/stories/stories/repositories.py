@@ -266,7 +266,7 @@ def get_story_dt(story: Story) -> StorySchema:
     return StorySchema(
         ref=story.ref,
         title=story.title,
-        status=workflows_repositories.get_workflow_status_dt(story.status),
+        status=workflows_repositories.workflow_status_to_schema(story.status),
         version=story.version,
         assignees=[users_repositories.get_user_base_dt(user) for user in story.assignees.all()],
     )

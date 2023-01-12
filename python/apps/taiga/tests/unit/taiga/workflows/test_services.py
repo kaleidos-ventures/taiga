@@ -11,14 +11,31 @@ from taiga.workflows import services
 from tests.utils import factories as f
 
 #######################################################
-# get_workflows
+# list_workflows
 #######################################################
 
 
-async def test_get_workflows_ok():
+async def test_list_workflows_ok():
     workflows = [f.build_workflow()]
 
     with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
-        fake_workflows_repo.get_workflows.return_value = workflows
-        await services.get_workflows(project_id="id")
-        fake_workflows_repo.get_workflows.assert_awaited_once()
+        fake_workflows_repo.list_workflows_dt.return_value = workflows
+        await services.list_workflows_dt(project_id="id")
+        fake_workflows_repo.list_workflows_dt.assert_awaited_once_with(
+            filters={"project_id": "id"},
+            prefetch_related=["statuses"],
+        )
+
+
+#######################################################
+# get_workflow
+#######################################################
+
+
+async def test_get_workflow_ok():
+    workflow = f.build_workflow()
+
+    with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
+        fake_workflows_repo.get_workflow.return_value = workflow
+        await services.get_workflow(project_id="id", workflow_slug="main")
+        fake_workflows_repo.get_workflow.assert_awaited_once()

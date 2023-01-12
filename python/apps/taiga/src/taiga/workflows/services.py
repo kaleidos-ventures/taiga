@@ -9,21 +9,43 @@
 from uuid import UUID
 
 from taiga.workflows import repositories as workflows_repositories
+from taiga.workflows.models import Workflow
 from taiga.workflows.schemas import WorkflowSchema
 
+##########################################################
+# list workflows
+##########################################################
 
-async def get_workflows(project_id: UUID) -> list[WorkflowSchema]:
-    return await workflows_repositories.get_workflows(
+
+async def list_workflows_dt(project_id: UUID) -> list[WorkflowSchema]:
+    return await workflows_repositories.list_workflows_dt(
         filters={
             "project_id": project_id,
         },
+        prefetch_related=["statuses"],
     )
 
 
-async def get_workflow(project_id: UUID, workflow_slug: str) -> WorkflowSchema | None:
+##########################################################
+# get workflow
+##########################################################
+
+
+async def get_workflow(project_id: UUID, workflow_slug: str) -> Workflow | None:
     return await workflows_repositories.get_workflow(
         filters={
             "project_id": project_id,
             "slug": workflow_slug,
         },
+        select_related=["project"],
+    )
+
+
+async def get_workflow_dt(project_id: UUID, workflow_slug: str) -> WorkflowSchema | None:
+    return await workflows_repositories.get_workflow_dt(
+        filters={
+            "project_id": project_id,
+            "slug": workflow_slug,
+        },
+        prefetch_related=["statuses"],
     )

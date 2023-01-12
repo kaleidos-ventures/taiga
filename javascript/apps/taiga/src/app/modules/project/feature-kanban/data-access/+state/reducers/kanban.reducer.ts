@@ -22,6 +22,7 @@ import {
   KanbanStoryA11y,
   PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
+import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { DropCandidate } from '~/app/shared/drag/drag.model';
 import {
   addStory,
@@ -31,7 +32,6 @@ import {
   replaceStory,
   setIntialPosition,
 } from './kanban.reducer.helpers';
-import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 
 export interface KanbanState {
   loadingWorkflows: boolean;
@@ -581,7 +581,7 @@ export const reducer = createReducer(
       if (it.ref === storyRef) {
         return {
           ...it,
-          assignedTo: [...it.assignedTo, member],
+          assignees: [...it.assignees, member],
         };
       }
 
@@ -597,8 +597,8 @@ export const reducer = createReducer(
         if (it.ref === storyRef) {
           return {
             ...it,
-            assignedTo: it.assignedTo.filter(
-              (storyUser) => storyUser.user.username !== member.user.username
+            assignees: it.assignees.filter(
+              (storyUser) => storyUser.username !== member.username
             ),
           };
         }

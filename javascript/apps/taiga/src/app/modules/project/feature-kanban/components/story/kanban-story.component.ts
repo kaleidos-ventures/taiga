@@ -22,19 +22,22 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Membership, Project } from '@taiga/data';
+import { Membership, Project, Story, User } from '@taiga/data';
 import { distinctUntilChanged, map } from 'rxjs';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { filterNil } from '~/app/shared/utils/operators';
-import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
 
 export interface StoryState {
   isA11yDragInProgress: boolean;
   project: Project;
   showAssignUser: boolean;
+  assignees: Story['assignees'];
+  currentUser: User;
 }
 
 @UntilDestroy()
@@ -66,6 +69,10 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     return this.story.ref;
   }
 
+  public assignedListA11y = '';
+  public reversedAssignees: Membership['user'][] = [];
+  public restAssigneesLenght = '';
+
   public readonly model$ = this.state.select();
 
   public get nativeElement() {
@@ -82,6 +89,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     private kabanStatus: KanbanStatusComponent
   ) {
     this.state.set({
+      assignees: [],
       showAssignUser: false,
     });
   }
@@ -98,6 +106,16 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())
     );
+    this.state.connect(
+      'currentUser',
+      this.store.select(selectUser).pipe(filterNil())
+    );
+
+    this.state.hold(this.state.select('currentUser'), () => {
+      this.setAssigneesInState();
+      this.setAssignedListA11y();
+      this.calculateRestAssignes();
+    });
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -106,6 +124,45 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
         this.scrollToDragStoryIfNotVisible();
       });
     }
+
+    if (changes.story && this.state.get('currentUser')) {
+      this.setAssigneesInState();
+      this.setAssignedListA11y();
+      this.calculateRestAssignes();
+    }
+  }
+
+  public setAssigneesInState() {
+    const assignees: Membership['user'][] = [];
+
+    const currentUserMember = this.story.assignees.find((member) => {
+      return member.username === this.state.get('currentUser').username;
+    });
+
+    const members = this.story.assignees.filter((member) => {
+      if (member.username === this.state.get('currentUser').username) {
+        return false;
+      }
+
+      return true;
+    });
+
+    if (currentUserMember) {
+      assignees.push(currentUserMember);
+    }
+    members.forEach((member) => assignees.push(member));
+
+    // Required for styling reasons (inverted flex)
+    this.reversedAssignees = assignees.reverse();
+
+    this.state.set({ assignees });
+  }
+
+  public setAssignedListA11y() {
+    this.assignedListA11y = this.state
+      .get('assignees')
+      .map((assigned) => assigned.fullName)
+      .join(', ');
   }
 
   public openStory(event: MouseEvent) {
@@ -124,7 +181,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     }
   }
 
-  public toggleAssingUser(event: MouseEvent) {
+  public toggleAssignUser(event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -133,7 +190,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     });
   }
 
-  public assign(member: Membership) {
+  public assign(member: Membership['user']) {
     if (this.story.ref) {
       this.store.dispatch(
         KanbanActions.assignMember({ member, storyRef: this.story.ref })
@@ -141,7 +198,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     }
   }
 
-  public unassign(member: Membership) {
+  public unassign(member: Membership['user']) {
     if (this.story.ref) {
       this.store.dispatch(
         KanbanActions.unassignMember({ member, storyRef: this.story.ref })
@@ -157,6 +214,19 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
 
   public closeAssignDropdown() {
     this.state.set({ showAssignUser: false });
+  }
+
+  public trackByIndex(index: number) {
+    return index;
+  }
+
+  public calculateRestAssignes() {
+    const restAssigneesLenght = this.state.get('assignees').length - 3;
+    if (restAssigneesLenght < 99) {
+      this.restAssigneesLenght = `${restAssigneesLenght}+`;
+    } else {
+      this.restAssigneesLenght = '...';
+    }
   }
 
   private scrollToDragStoryIfNotVisible() {

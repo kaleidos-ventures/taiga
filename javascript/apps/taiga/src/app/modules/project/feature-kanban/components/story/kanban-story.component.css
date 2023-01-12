@@ -38,15 +38,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     box-shadow: 3px 4px 4px rgba(0, 138, 168, 0.15);
   }
 
-  &:focus-within {
-    border-color: var(--color-secondary);
-    outline: solid 1px var(--color-secondary);
-
-    & .story-title {
-      outline: none;
-    }
-  }
-
   &:hover.dragging .story-kanban-ref-focus {
     cursor: grabbing;
   }
@@ -73,6 +64,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   transition: inset 0.2s;
 }
 
+.story-kanban-ref-focus {
+  display: block;
+
+  &:focus {
+    border-color: var(--color-secondary);
+    outline: solid 2px var(--color-secondary);
+
+    & .story-title {
+      outline: none;
+    }
+  }
+}
+
 .ref {
   color: var(--color-secondary);
   font-weight: 500;
@@ -91,13 +95,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .story-title {
   @mixin font-inline;
 
-  background-color: transparent;
-  border: none;
-  box-sizing: border-box;
   display: flex;
-  line-height: 21px;
+  line-height: 1.5;
   padding: var(--spacing-8);
-  text-align: start;
+  padding-block-end: 0;
 
   &:hover {
     cursor: pointer;
@@ -112,5 +113,109 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & tui-svg {
     fill: var(--color-secondary50);
     inline-size: 5px;
+  }
+}
+
+.story-body {
+  padding: var(--spacing-8);
+  padding-block-start: 0;
+}
+
+.unassigned-button-perm,
+.unassigned-button-noperm {
+  @mixin font-small;
+
+  border-radius: 4px;
+  color: var(--color-gray80);
+  display: inline-block;
+  padding-block: var(--spacing-4);
+  padding-inline: var(--spacing-8);
+
+  &:hover {
+    background-color: var(--color-gray20);
+  }
+}
+
+.unassigned-button-perm {
+  appearance: none;
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  cursor: pointer;
+
+  &:hover {
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.assigned-button-perm,
+.assigned-button-noperm {
+  background: none;
+  border: none;
+  border-radius: 15px;
+  display: inline-flex;
+  padding: 0;
+
+  &:hover {
+    background-color: var(--color-gray30);
+
+    & .assigned-user-avatar {
+      /* stylelint-disable-next-line max-nesting-depth */
+      &::ng-deep tui-avatar {
+        border: 2px solid var(--color-gray30);
+      }
+
+      /* stylelint-disable-next-line max-nesting-depth */
+      &:hover {
+        /* stylelint-disable-next-line max-nesting-depth */
+        &::ng-deep tui-avatar {
+          border: 2px solid var(--color-white);
+        }
+      }
+    }
+
+    & .assigned-user-avatar-extra {
+      border: 2px solid var(--color-gray30);
+
+      &:hover {
+        border: 2px solid var(--color-white);
+      }
+    }
+  }
+}
+
+.assigned-users-list {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.assigned-user-avatar {
+  &::ng-deep tui-avatar {
+    block-size: var(--spacing-32);
+    border: 2px solid var(--color-white);
+    inline-size: var(--spacing-32);
+  }
+
+  &:hover {
+    z-index: var(--first-layer);
+  }
+}
+
+.assigned-user-avatar:not(:last-child) {
+  margin-inline-start: -6px;
+}
+
+.assigned-user-avatar-extra {
+  background: var(--color-gray20);
+  block-size: var(--spacing-32);
+  border: 2px solid var(--color-white);
+  border-radius: 50%;
+  display: grid;
+  inline-size: var(--spacing-32);
+  margin-inline-start: -6px;
+  place-items: center;
+
+  &:hover {
+    z-index: var(--first-layer);
   }
 }

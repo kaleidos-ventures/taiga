@@ -346,8 +346,6 @@ export class ProjectApiService {
         map((stories) => {
           // TODO: API
           return stories.map((story) => {
-            story.assignedTo = [];
-
             return story;
           });
         })

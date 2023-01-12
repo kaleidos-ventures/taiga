@@ -67,8 +67,14 @@ export const KanbanActions = createActionGroup({
       status?: Story['status']['slug'];
     }>(),
     'Load stories complete': emptyProps(),
-    'Assign Member': props<{ storyRef: Story['ref']; member: Membership }>(),
-    'UnAssign Member': props<{ storyRef: Story['ref']; member: Membership }>(),
+    'Assign Member': props<{
+      storyRef: Story['ref'];
+      member: Membership['user'];
+    }>(),
+    'UnAssign Member': props<{
+      storyRef: Story['ref'];
+      member: Membership['user'];
+    }>(),
   },
 });
 

@@ -14,6 +14,7 @@ import { RouterModule } from '@angular/router';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import {
+  TuiHintModule,
   TuiLinkModule,
   TuiScrollbarModule,
   TuiSvgModule,
@@ -31,6 +32,7 @@ import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
 import { ResizeEventModule } from '~/app/shared/resize/resize.module';
 import { TitleComponent } from '~/app/shared/title/title.component';
+import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { AssignUserComponent } from '../components/assign-user/assign-user.component';
 import { KanbanCreateStoryInlineComponent } from './components/create-story-inline/kanban-create-story-inline.component';
 import { KanbanStatusComponent } from './components/status/kanban-status.component';
@@ -59,8 +61,10 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
   exports: [ProjectFeatureKanbanComponent],
 
   imports: [
+    UserAvatarComponent,
     TuiAutoFocusModule,
     TuiLinkModule,
+    TuiHintModule,
     HasPermissionDirective,
     TitleComponent,
     CommonTemplateModule,

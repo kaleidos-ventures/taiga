@@ -41,3 +41,4 @@ testem.log
 Thumbs.db
 
 /apps/taiga/src/assets/config.json
+apps/taiga/src/assets/i18n/i18n-cache-busting.json

@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import cast
 from uuid import UUID
 
 from fastapi import Query
@@ -62,9 +63,9 @@ async def get_workflow(
     """
     workflow = await get_workflow_or_404(project_id=id, workflow_slug=workflow_slug)
     await check_permissions(permissions=GET_WORKFLOW, user=request.user, obj=workflow)
-    return await workflows_services.get_workflow_schema(
-        project_id=id, workflow_slug=workflow_slug
-    )  # type: ignore[return-value]
+    return cast(
+        WorkflowSchema, await workflows_services.get_workflow_schema(project_id=id, workflow_slug=workflow_slug)
+    )
 
 
 async def get_workflow_or_404(project_id: UUID, workflow_slug: str) -> Workflow:

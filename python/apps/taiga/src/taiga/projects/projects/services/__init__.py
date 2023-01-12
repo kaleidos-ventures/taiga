@@ -25,33 +25,9 @@ from taiga.workspaces.roles import repositories as ws_roles_repositories
 from taiga.workspaces.workspaces import services as workspaces_services
 from taiga.workspaces.workspaces.models import Workspace
 
-
-async def get_projects(workspace_id: UUID) -> list[Project]:
-    return await projects_repositories.get_projects(
-        filters={"workspace_id": workspace_id},
-        prefetch_related=["workspace"],
-    )
-
-
-async def get_workspace_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
-    role = await ws_roles_repositories.get_workspace_role(filters={"user_id": user.id, "workspace_id": workspace.id})
-    if role and role.is_admin:
-        return await get_projects(workspace_id=workspace.id)
-
-    return await projects_repositories.get_projects(
-        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user.id},
-        prefetch_related=["workspace"],
-    )
-
-
-async def get_workspace_invited_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
-    return await projects_repositories.get_projects(
-        filters={
-            "workspace_id": workspace.id,
-            "invitee_id": user.id,
-            "invitation_status": ProjectInvitationStatus.PENDING,
-        }
-    )
+##########################################################
+# create project
+##########################################################
 
 
 async def create_project(
@@ -85,6 +61,51 @@ async def create_project(
     await pj_memberships_repositories.create_project_membership(user=owner, project=project, role=owner_role)
 
     return project
+
+
+##########################################################
+# list projects
+##########################################################
+
+
+async def list_projects(workspace_id: UUID) -> list[Project]:
+    return await projects_repositories.list_projects(
+        filters={"workspace_id": workspace_id},
+        prefetch_related=["workspace"],
+    )
+
+
+async def list_workspace_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
+    role = await ws_roles_repositories.get_workspace_role(filters={"user_id": user.id, "workspace_id": workspace.id})
+    if role and role.is_admin:
+        return await list_projects(workspace_id=workspace.id)
+
+    return await projects_repositories.list_projects(
+        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user.id},
+        prefetch_related=["workspace"],
+    )
+
+
+async def list_workspace_invited_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
+    return await projects_repositories.list_projects(
+        filters={
+            "workspace_id": workspace.id,
+            "invitee_id": user.id,
+            "invitation_status": ProjectInvitationStatus.PENDING,
+        }
+    )
+
+
+async def list_workspace_member_permissions(project: Project) -> list[str]:
+    if not await projects_repositories.project_is_in_premium_workspace(project):
+        raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be seen")
+
+    return project.workspace_member_permissions or []
+
+
+##########################################################
+# get project
+##########################################################
 
 
 async def get_project(id: UUID) -> Project | None:
@@ -139,14 +160,9 @@ async def get_project_detail(project: Project, user: AnyUser) -> Project:
     return project
 
 
-async def get_logo_thumbnail_url(thumbnailer_size: str, logo_relative_path: str) -> str | None:
-    if logo_relative_path:
-        return await get_thumbnail_url(logo_relative_path, thumbnailer_size)
-    return None
-
-
-get_logo_small_thumbnail_url = partial(get_logo_thumbnail_url, settings.IMAGES.THUMBNAIL_PROJECT_LOGO_SMALL)
-get_logo_large_thumbnail_url = partial(get_logo_thumbnail_url, settings.IMAGES.THUMBNAIL_PROJECT_LOGO_LARGE)
+##########################################################
+# update project
+##########################################################
 
 
 async def update_project_public_permissions(project: Project, permissions: list[str]) -> list[str]:
@@ -183,8 +199,16 @@ async def update_project_workspace_member_permissions(project: Project, permissi
     return project.workspace_member_permissions
 
 
-async def get_workspace_member_permissions(project: Project) -> list[str]:
-    if not await projects_repositories.project_is_in_premium_workspace(project):
-        raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be seen")
+##########################################################
+# misc
+##########################################################
 
-    return project.workspace_member_permissions or []
+
+async def get_logo_thumbnail_url(thumbnailer_size: str, logo_relative_path: str) -> str | None:
+    if logo_relative_path:
+        return await get_thumbnail_url(logo_relative_path, thumbnailer_size)
+    return None
+
+
+get_logo_small_thumbnail_url = partial(get_logo_thumbnail_url, settings.IMAGES.THUMBNAIL_PROJECT_LOGO_SMALL)
+get_logo_large_thumbnail_url = partial(get_logo_thumbnail_url, settings.IMAGES.THUMBNAIL_PROJECT_LOGO_LARGE)

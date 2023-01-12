@@ -113,12 +113,12 @@ def create_project(
 
 
 ##########################################################
-# Project - get projects
+# Project - list projects
 ##########################################################
 
 
 @sync_to_async
-def get_projects(
+def list_projects(
     filters: ProjectFilters = {},
     prefetch_related: ProjectPrefetchRelated = [],
     order_by: ProjectOrderBy = ["-created_at"],

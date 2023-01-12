@@ -9,7 +9,7 @@ from uuid import UUID
 
 import pytest
 from pydantic import ValidationError
-from taiga.projects.projects.validators import ProjectValidator
+from taiga.projects.projects.api.validators import ProjectValidator
 from tests.unit.utils import check_validation_errors
 from tests.utils.images import invalid_image_upload_file, text_upload_file
 

@@ -18,9 +18,9 @@ from taiga.permissions import CanViewProject, HasPerm, IsAuthenticated, IsProjec
 from taiga.permissions import services as permissions_services
 from taiga.projects.invitations.permissions import HasPendingProjectInvitation
 from taiga.projects.projects import services as projects_services
+from taiga.projects.projects.api.validators import PermissionsValidator, ProjectValidator
 from taiga.projects.projects.models import Project
 from taiga.projects.projects.serializers import ProjectSerializer, ProjectSummarySerializer
-from taiga.projects.projects.validators import PermissionsValidator, ProjectValidator
 from taiga.routers import routes
 from taiga.workspaces.workspaces.api import get_workspace_or_404
 
@@ -52,7 +52,7 @@ async def list_workspace_projects(
 
     await check_permissions(permissions=LIST_WORKSPACE_PROJECTS, user=request.user, obj=workspace)
 
-    return await projects_services.get_workspace_projects_for_user(workspace=workspace, user=request.user)
+    return await projects_services.list_workspace_projects_for_user(workspace=workspace, user=request.user)
 
 
 @routes.workspaces.get(
@@ -72,7 +72,7 @@ async def list_workspace_invited_projects(
 
     await check_permissions(permissions=LIST_WORKSPACE_INVITED_PROJECTS, user=request.user, obj=workspace)
 
-    return await projects_services.get_workspace_invited_projects_for_user(workspace=workspace, user=request.user)
+    return await projects_services.list_workspace_invited_projects_for_user(workspace=workspace, user=request.user)
 
 
 @routes.projects.post(
@@ -121,12 +121,12 @@ async def get_project(request: AuthRequest, id: B64UUID = Query("", description=
 
 @routes.projects.get(
     "/{id}/public-permissions",
-    name="project.public-permissions.get",
-    summary="Get project public permissions",
+    name="project.public-permissions.list",
+    summary="List project public permissions",
     response_model=list[str],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def get_project_public_permissions(
+async def list_project_public_permissions(
     request: AuthRequest, id: B64UUID = Query(None, description="the project id (B64UUID)")
 ) -> list[str]:
     """
@@ -160,12 +160,12 @@ async def update_project_public_permissions(
 
 @routes.projects.get(
     "/{id}/workspace-member-permissions",
-    name="project.workspace-member-permissions.get",
-    summary="Get project workspace member permissions",
+    name="project.workspace-member-permissions.list",
+    summary="List project workspace member permissions",
     response_model=list[str],
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def get_project_workspace_member_permissions(
+async def list_project_workspace_member_permissions(
     request: AuthRequest, id: B64UUID = Query(None, description="the project id (B64UUID)")
 ) -> list[str]:
     """
@@ -175,7 +175,7 @@ async def get_project_workspace_member_permissions(
     project = await get_project_or_404(id)
     await check_permissions(permissions=GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
 
-    return await projects_services.get_workspace_member_permissions(project=project)
+    return await projects_services.list_workspace_member_permissions(project=project)
 
 
 @routes.projects.put(
@@ -200,7 +200,7 @@ async def update_project_workspace_member_permissions(
 
 @routes.my.get(
     "/projects/{id}/permissions",
-    name="my.projects.permissions",
+    name="my.projects.permissions.list",
     summary="List my project permissions",
     response_model=list[str],
     responses=ERROR_404,

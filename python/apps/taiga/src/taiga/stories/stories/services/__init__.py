@@ -18,8 +18,7 @@ from taiga.stories.stories.schemas import StorySchema
 from taiga.stories.stories.services import exceptions as ex
 from taiga.users.models import User
 from taiga.workflows import repositories as workflows_repositories
-from taiga.workflows.models import WorkflowStatus
-from taiga.workflows.schemas import WorkflowSchema
+from taiga.workflows.models import Workflow, WorkflowStatus
 
 DEFAULT_ORDER_OFFSET = Decimal(100)  # default offset when adding a story
 DEFAULT_PRE_ORDER = Decimal(0)  # default pre_position when adding a story at the beginning
@@ -31,11 +30,10 @@ DEFAULT_PRE_ORDER = Decimal(0)  # default pre_position when adding a story at th
 
 
 async def create_story(
-    project: Project, workflow: WorkflowSchema, title: str, status_slug: str, user: User
+    project_id: UUID, workflow: Workflow, title: str, status_slug: str, user: User
 ) -> dict[str, Any]:
-    try:
-        workflow_status = next(status for status in workflow.statuses if status.slug == status_slug)
-    except StopIteration:
+    workflow_status = await workflows_repositories.get_status(filters={"slug": status_slug, "workflow_id": workflow.id})
+    if not workflow_status:
         raise ex.InvalidStatusError("The provided status is not valid.")
 
     latest_story = await stories_repositories.list_stories(
@@ -46,7 +44,7 @@ async def create_story(
 
     story = await stories_repositories.create_story(
         title=title,
-        project_id=project.id,
+        project_id=project_id,
         workflow_id=workflow.id,
         status_id=workflow_status.id,
         user_id=user.id,
@@ -56,10 +54,10 @@ async def create_story(
     # Get detailed story
     complete_story = cast(
         dict[str, None],
-        await get_detailed_story(project_id=story.project.id, ref=story.ref),
+        await get_detailed_story(project_id=project_id, ref=story.ref),
     )
 
-    await stories_events.emit_event_when_story_is_created(project=project, story=complete_story)
+    await stories_events.emit_event_when_story_is_created(project=story.project, story=complete_story)
 
     return complete_story
 
@@ -230,7 +228,7 @@ async def _calculate_offset(
 
 async def reorder_stories(
     project: Project,
-    workflow: WorkflowSchema,
+    workflow: Workflow,
     target_status_slug: str,
     stories_refs: list[int],
     reorder: dict[str, Any] | None = None,

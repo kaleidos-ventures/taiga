@@ -54,12 +54,11 @@ async def create_story(
     """
     Creates a story in the given project workflow
     """
-    project = await get_project_or_404(project_id)
-    await check_permissions(permissions=CREATE_STORY, user=request.user, obj=project)
     workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
+    await check_permissions(permissions=CREATE_STORY, user=request.user, obj=workflow)
 
     return await stories_services.create_story(
-        title=form.title, project=project, workflow=workflow, status_slug=form.status, user=request.user
+        title=form.title, project_id=project_id, workflow=workflow, status_slug=form.status, user=request.user
     )
 
 
@@ -161,12 +160,11 @@ async def reorder_stories(
     """
     Reorder one or more stories; it may change priority and/or status
     """
-    project = await get_project_or_404(project_id)
     workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
-    await check_permissions(permissions=REORDER_STORIES, user=request.user, obj=project)
+    await check_permissions(permissions=REORDER_STORIES, user=request.user, obj=workflow)
 
     resp = await stories_services.reorder_stories(
-        project=project,
+        project=workflow.project,
         workflow=workflow,
         target_status_slug=form.status,
         stories_refs=form.stories,

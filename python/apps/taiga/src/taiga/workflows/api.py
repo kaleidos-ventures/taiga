@@ -17,6 +17,7 @@ from taiga.permissions import HasPerm
 from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.workflows import services as workflows_services
+from taiga.workflows.models import Workflow
 from taiga.workflows.schemas import WorkflowSchema
 from taiga.workflows.serializers import WorkflowSerializer
 
@@ -41,7 +42,7 @@ async def list_workflows(
     """
     project = await get_project_or_404(id)
     await check_permissions(permissions=LIST_WORKFLOWS, user=request.user, obj=project)
-    return await workflows_services.get_workflows(project_id=id)
+    return await workflows_services.list_workflows_dt(project_id=id)
 
 
 @routes.projects.get(
@@ -59,13 +60,14 @@ async def get_workflow(
     """
     Get the details of a workflow
     """
-    project = await get_project_or_404(id)
     workflow = await get_workflow_or_404(project_id=id, workflow_slug=workflow_slug)
-    await check_permissions(permissions=GET_WORKFLOW, user=request.user, obj=project)
-    return workflow
+    await check_permissions(permissions=GET_WORKFLOW, user=request.user, obj=workflow)
+    return await workflows_services.get_workflow_dt(
+        project_id=id, workflow_slug=workflow_slug
+    )  # type: ignore[return-value]
 
 
-async def get_workflow_or_404(project_id: UUID, workflow_slug: str) -> WorkflowSchema:
+async def get_workflow_or_404(project_id: UUID, workflow_slug: str) -> Workflow:
     workflow = await workflows_services.get_workflow(project_id=project_id, workflow_slug=workflow_slug)
     if workflow is None:
         raise ex.NotFoundError(f"Workflow {workflow_slug} does not exist")

@@ -22,29 +22,35 @@ from tests.utils import factories as f
 
 async def test_create_story_ok():
     user = f.build_user()
-    story = f.build_story()
+    status = f.build_workflow_status()
+    story = f.build_story(status=status, workflow=status.workflow)
 
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
     ):
         fake_stories_repo.create_story.return_value = story
+        fake_workflows_repo.get_status.return_value = status
         fake_stories_repo.list_stories.return_value = None
 
         complete_story = await services.create_story(
-            project=story.project,
-            workflow=build_worklow_dt(story),
+            project_id=story.project_id,
+            workflow=status.workflow,
             title=story.title,
-            status_slug=story.status.slug,
+            status_slug=status.slug,
             user=user,
         )
         fake_stories_repo.create_story.assert_awaited_once_with(
             title=story.title,
             project_id=story.project.id,
-            workflow_id=story.workflow.id,
-            status_id=story.status.id,
+            workflow_id=status.workflow.id,
+            status_id=status.id,
             user_id=user.id,
             order=Decimal(100),
+        )
+        fake_workflows_repo.get_status.assert_awaited_once_with(
+            filters={"slug": status.slug, "workflow_id": status.workflow.id}
         )
         fake_stories_events.emit_event_when_story_is_created.assert_awaited_once_with(
             project=story.project, story=complete_story
@@ -53,17 +59,47 @@ async def test_create_story_ok():
 
 async def test_create_story_invalid_status():
     user = f.build_user()
-    story1 = f.build_story()
-    story2 = f.build_story()
+    story = f.build_story()
 
-    with (pytest.raises(ex.InvalidStatusError)):
+    with (
+        pytest.raises(ex.InvalidStatusError),
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
 
+        fake_workflows_repo.get_status.return_value = None
         await services.create_story(
-            project=story1.project,
-            workflow=build_worklow_dt(story1),
-            title=story1.title,
-            status_slug=story2.status.slug,
+            project_id=story.project_id,
+            workflow=build_worklow_dt(story),
+            title=story.title,
+            status_slug="invalid_slug",
             user=user,
+        )
+
+
+#######################################################
+# list_paginated_stories
+#######################################################
+
+
+async def test_list_paginated_stories():
+    story = f.build_story()
+
+    with (patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,):
+        fake_stories_repo.get_total_stories.return_value = 1
+        fake_stories_repo.list_stories.return_value = [story]
+
+        await services.list_paginated_stories(
+            project_id=story.project.id, workflow_slug=story.workflow.slug, offset=0, limit=10
+        )
+        fake_stories_repo.get_total_stories.assert_awaited_once_with(
+            filters={"project_id": story.project.id, "workflow_slug": story.workflow.slug}
+        )
+        fake_stories_repo.list_stories_dt.assert_awaited_once_with(
+            offset=0,
+            limit=10,
+            select_related=["created_by", "project", "workflow", "status"],
+            filters={"project_id": story.project.id, "workflow_slug": story.workflow.slug},
+            prefetch_related=["assignees"],
         )
 
 
@@ -140,33 +176,6 @@ async def test_get_detailed_story_no_story():
         fake_stories_repo.get_story_neighbors.assert_not_awaited()
 
         assert story is None
-
-
-#######################################################
-# list_paginated_stories
-#######################################################
-
-
-async def test_list_paginated_stories():
-    story = f.build_story()
-
-    with (patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,):
-        fake_stories_repo.get_total_stories.return_value = 1
-        fake_stories_repo.list_stories.return_value = [story]
-
-        await services.list_paginated_stories(
-            project_id=story.project.id, workflow_slug=story.workflow.slug, offset=0, limit=10
-        )
-        fake_stories_repo.get_total_stories.assert_awaited_once_with(
-            filters={"project_id": story.project.id, "workflow_slug": story.workflow.slug}
-        )
-        fake_stories_repo.list_stories_dt.assert_awaited_once_with(
-            offset=0,
-            limit=10,
-            select_related=["created_by", "project", "workflow", "status"],
-            filters={"project_id": story.project.id, "workflow_slug": story.workflow.slug},
-            prefetch_related=["assignees"],
-        )
 
 
 #######################################################

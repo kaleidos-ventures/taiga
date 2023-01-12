@@ -52,14 +52,14 @@ async def test_create_workflow_status():
 
 
 ##########################################################
-# get_workflows
+# list_workflows
 ##########################################################
 
 
-async def test_get_workflows_ok() -> None:
+async def test_list_workflows_dt_ok() -> None:
     project = await f.create_project()
 
-    workflows = await repositories.get_workflows(filters={"project_id": project.id})
+    workflows = await repositories.list_workflows_dt(filters={"project_id": project.id}, prefetch_related=["statuses"])
 
     assert len(workflows) == 1
     assert len(workflows[0].statuses) == 4
@@ -68,7 +68,7 @@ async def test_get_workflows_ok() -> None:
 
 async def test_get_project_without_workflows_ok() -> None:
     project = await f.create_simple_project()
-    workflows = await repositories.get_workflows(filters={"project_id": project.id})
+    workflows = await repositories.list_workflows(filters={"project_id": project.id})
 
     assert len(workflows) == 0
 
@@ -80,7 +80,7 @@ async def test_get_project_without_workflows_ok() -> None:
 
 async def test_get_workflow_ok() -> None:
     project = await f.create_project()
-    workflows = await _get_workflows(project=project)
+    workflows = await _list_workflows(project=project)
     workflow = await repositories.get_workflow(filters={"project_id": project.id, "slug": workflows[0].slug})
     assert workflow is not None
     assert hasattr(workflow, "id")
@@ -98,5 +98,5 @@ async def test_get_project_without_workflow_ok() -> None:
 
 
 @sync_to_async
-def _get_workflows(project: Project) -> list[Workflow]:
+def _list_workflows(project: Project) -> list[Workflow]:
     return list(project.workflows.all())

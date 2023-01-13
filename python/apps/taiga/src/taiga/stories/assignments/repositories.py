@@ -38,19 +38,20 @@ def _apply_filters_to_queryset(
     return qs.filter(**filter_data)
 
 
-StoryAssignmentSelectRelated = list[
-    Literal[
-        "story",
-        "user",
-    ]
-]
+StoryAssignmentSelectRelated = list[Literal["story", "user", "story_project"]]
 
 
 def _apply_select_related_to_queryset(
     qs: QuerySet[StoryAssignment],
     select_related: StoryAssignmentSelectRelated,
 ) -> QuerySet[StoryAssignment]:
-    return qs.select_related(*select_related)
+    select_related_data = []
+    for sr in select_related:
+        if sr == "story_project":
+            select_related_data.append("story__project")
+        else:
+            select_related_data.append(sr)
+    return qs.select_related(*select_related_data)
 
 
 ##########################################################
@@ -61,6 +62,24 @@ def _apply_select_related_to_queryset(
 @sync_to_async
 def create_story_assignment(story: Story, user: User) -> tuple[StoryAssignment, bool]:
     return StoryAssignment.objects.select_related("story", "user").get_or_create(story=story, user=user)
+
+
+##########################################################
+# get story assignment
+##########################################################
+
+
+@sync_to_async
+def get_story_assignment(
+    filters: StoryAssignmentFilters = {}, select_related: StoryAssignmentSelectRelated = ["story", "user"]
+) -> StoryAssignment | None:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
+
+    try:
+        return qs.get()
+    except StoryAssignment.DoesNotExist:
+        return None
 
 
 ##########################################################

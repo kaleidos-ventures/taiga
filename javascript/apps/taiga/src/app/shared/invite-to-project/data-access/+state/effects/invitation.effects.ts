@@ -27,6 +27,7 @@ import { InvitationService } from '~/app/services/invitation.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { filterNil } from '~/app/shared/utils/operators';
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
 import * as InvitationActions from '../actions/invitation.action';
 
 @Injectable()
@@ -183,7 +184,7 @@ export class InvitationEffects {
         );
         return this.invitationApiService
           .searchUser({
-            text: this.invitationService.normalizeText(action.searchUser.text),
+            text: UtilsService.normalizeText(action.searchUser.text),
             project: action.searchUser.project,
             offset: 0,
             // to show 6 results at least and being possible to get the current user in the list we always will ask for 7 + the matched users that are on the list

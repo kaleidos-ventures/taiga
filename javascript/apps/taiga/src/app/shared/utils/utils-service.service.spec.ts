@@ -37,4 +37,13 @@ describe('UtilsService', () => {
       },
     });
   });
+
+  it('get text normalized', () => {
+    const normalizedText = UtilsService.normalizeText(
+      'Jabłoński Meißner Æbeltoft Černý Ðorðić Łapiński Iлｔèｒｎåｔïｏｎɑｌíƶａｔï߀ԉ ą ć ę ł ń ó ś ź ż ä ö ü ß'
+    );
+    expect(normalizedText).toEqual(
+      'jablonski meissner aebeltoft cerny dordic lapinski internationalization a c e l n o s z z a o u ss'
+    );
+  });
 });

@@ -7,26 +7,29 @@
  */
 
 import { HttpClient } from '@angular/common/http';
-import {
-  TRANSLOCO_LOADER,
-  Translation,
-  TranslocoLoader,
-  TRANSLOCO_CONFIG,
-  translocoConfig,
-  TranslocoModule,
-} from '@ngneat/transloco';
 import { Injectable, NgModule } from '@angular/core';
+import {
+  Translation,
+  translocoConfig,
+  TranslocoLoader,
+  TranslocoModule,
+  TRANSLOCO_CONFIG,
+  TRANSLOCO_LOADER,
+} from '@ngneat/transloco';
 import { TranslocoMessageFormatModule } from '@ngneat/transloco-messageformat';
-import { environment } from '~/environments/environment';
 import cacheBusting from '~/assets/i18n/i18n-cache-busting.json';
+import { environment } from '~/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TranslocoHttpLoader implements TranslocoLoader {
   constructor(private http: HttpClient) {}
 
   public getTranslation(lang: keyof typeof cacheBusting) {
-    // eslint-disable-next-line
-    return this.http.get<Translation>(`/assets/i18n/${lang}.json?v=${cacheBusting[lang]}`);
+    /* eslint-disable */
+    return this.http.get<Translation>(
+      `/assets/i18n/${lang}.json?v=${cacheBusting[lang]}`
+    );
+    /* eslint-enable */
   }
 }
 

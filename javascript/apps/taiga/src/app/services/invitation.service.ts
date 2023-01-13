@@ -7,7 +7,7 @@
  */
 import { Injectable } from '@angular/core';
 import { Contact, Invitation } from '@taiga/data';
-import Diacritics from 'diacritic';
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 @Injectable({
   providedIn: 'root',
@@ -51,8 +51,11 @@ export class InvitationService {
 
   public matchUsersFromList(list: Contact[], textToMatch: string) {
     return list.filter((it: Contact) => {
-      const rgx = new RegExp(`^${this.normalizeText(textToMatch)}`, 'g');
-      const fullname = this.normalizeText(it.fullName);
+      const rgx = new RegExp(
+        `^${UtilsService.normalizeText(textToMatch)}`,
+        'g'
+      );
+      const fullname = UtilsService.normalizeText(it.fullName);
       const username = it.username;
       const matches =
         fullname.split(' ')?.map((part: string) => {
@@ -62,11 +65,5 @@ export class InvitationService {
       matches?.push(rgx.test(username));
       return matches?.includes(true);
     });
-  }
-
-  public normalizeText(text: string) {
-    // normalize texts with uppercase/accent marks "Álava" -> 'alava'
-    const partialNormalize = Diacritics.clean(text).toLowerCase();
-    return partialNormalize.normalize('NFD').replace(/[Ð-ð]/g, 'd');
   }
 }

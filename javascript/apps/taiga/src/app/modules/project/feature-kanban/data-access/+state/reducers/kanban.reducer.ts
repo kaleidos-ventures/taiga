@@ -596,6 +596,7 @@ export const reducer = createReducer(
   ),
   on(
     KanbanActions.unassignMember,
+    KanbanActions.unassignedMemberEvent,
     (state, { member, storyRef }): KanbanState => {
       state = replaceStory(state, (it) => {
         if (it.ref === storyRef) {

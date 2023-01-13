@@ -11,6 +11,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Status } from '@taiga/data';
+import Diacritics from 'diacritic';
 import { take } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
@@ -95,5 +96,11 @@ export class UtilsService {
     };
 
     return colors[colorNumber];
+  }
+
+  public static normalizeText(text: string) {
+    // normalize texts with uppercase/accent marks "Álava" -> 'alava'
+    const partialNormalize = Diacritics.clean(text).toLowerCase();
+    return partialNormalize.normalize('NFD').replace(/[Ð-ð]/g, 'd');
   }
 }

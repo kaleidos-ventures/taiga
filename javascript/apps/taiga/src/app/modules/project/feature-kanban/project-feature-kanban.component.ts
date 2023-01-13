@@ -252,6 +252,19 @@ export class ProjectFeatureKanbanComponent {
           })
         );
       });
+
+    this.wsService
+      .projectEvents<KanbanAssignEvent>('stories_assignments.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        const response = eventResponse.event.content.storyAssignment;
+        this.store.dispatch(
+          KanbanActions.unassignedMemberEvent({
+            member: response.user,
+            storyRef: response.story.ref,
+          })
+        );
+      });
   }
 
   private checkInviteModalStatus() {

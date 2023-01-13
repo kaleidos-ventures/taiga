@@ -11,8 +11,8 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { User } from '@taiga/data';
-import { InvitationService } from '~/app/services/invitation.service';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 @Component({
   selector: 'tg-user-card',
@@ -34,10 +34,7 @@ export class UserCardComponent implements OnChanges {
 
   public fullName?: string;
 
-  constructor(
-    private invitationService: InvitationService,
-    private translocoService: TranslocoService
-  ) {}
+  constructor(private translocoService: TranslocoService) {}
 
   public ngOnChanges(changes: SimpleChanges) {
     if (changes.user || changes.isSelf) {
@@ -77,13 +74,13 @@ export class UserCardComponent implements OnChanges {
 
   public stringHighlighted(textToHighlight: string, text: string) {
     const rgx = new RegExp(
-      `^${this.invitationService.normalizeText(textToHighlight)}`,
+      `^${UtilsService.normalizeText(textToHighlight)}`,
       'g'
     );
 
     const finalText: string[] = [];
     text.split(' ').forEach((part) => {
-      if (this.invitationService.normalizeText(part).match(rgx)) {
+      if (UtilsService.normalizeText(part).match(rgx)) {
         finalText.push(
           `<span class="strong">${part.substring(
             0,

@@ -100,13 +100,4 @@ describe('InvitationService', () => {
     const usersMatch = spectator.service.matchUsersFromList(usersList, text);
     expect(usersMatch).toEqual([user1]);
   });
-
-  it('get text normalized', () => {
-    const normalizedText = spectator.service.normalizeText(
-      'Jabłoński Meißner Æbeltoft Černý Ðorðić Łapiński Iлｔèｒｎåｔïｏｎɑｌíƶａｔï߀ԉ ą ć ę ł ń ó ś ź ż ä ö ü ß'
-    );
-    expect(normalizedText).toEqual(
-      'jablonski meissner aebeltoft cerny dordic lapinski internationalization a c e l n o s z z a o u ss'
-    );
-  });
 });

@@ -24,7 +24,7 @@ import {
   User,
   Workflow,
 } from '@taiga/data';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 export interface MembersResponse {
@@ -441,8 +441,6 @@ export class ProjectApiService {
     storyRef: Story['ref'],
     user: User['username']
   ) {
-    console.log('assing', projectId, storyRef, user);
-
     return this.http.post<{
       user: User['username' | 'fullName' | 'color'];
       story: Story['ref' | 'title'];
@@ -459,8 +457,8 @@ export class ProjectApiService {
     storyRef: Story['ref'],
     user: User['username']
   ) {
-    console.log('unassing', projectId, storyRef, user);
-
-    return of({});
+    return this.http.delete(
+      `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}/assignments/${user}`
+    );
   }
 }

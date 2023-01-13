@@ -32,7 +32,6 @@ import {
 import { TuiToggleModule } from '@taiga-ui/kit';
 import { Membership, Story, User } from '@taiga/data';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import Diacritics from 'diacritic';
 import { map, Subject } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { initAssignUser } from '~/app/modules/project/data-access/+state/actions/project.actions';
@@ -41,6 +40,7 @@ import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { filterNil } from '~/app/shared/utils/operators';
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 interface AssignComponentState {
   members: Membership['user'][];
@@ -173,11 +173,13 @@ export class AssignUserComponent implements OnInit {
 
   public checkMemberSearch(search: string, member: Membership['user']) {
     const rgx = new RegExp(
-      `${this.normalizeText(search.replace(/^@/, ''))}`,
+      `${UtilsService.normalizeText(search.replace(/^@/, ''))}`,
       'gi'
     );
-    const fullname = this.normalizeText(member.fullName);
-    const username = this.normalizeText(member.username.replace(/^@/, ''));
+    const fullname = UtilsService.normalizeText(member.fullName);
+    const username = UtilsService.normalizeText(
+      member.username.replace(/^@/, '')
+    );
 
     return rgx.test(fullname) || rgx.test(username);
   }
@@ -193,10 +195,5 @@ export class AssignUserComponent implements OnInit {
 
   public trackByMember(_index: number, member: Membership['user']) {
     return member.username;
-  }
-
-  private normalizeText(text: string) {
-    const partialNormalize = Diacritics.clean(text).toLowerCase();
-    return partialNormalize.normalize('NFD').replace(/[Ð-ð]/g, 'd');
   }
 }

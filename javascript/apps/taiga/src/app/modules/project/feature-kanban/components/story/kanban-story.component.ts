@@ -98,7 +98,9 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     this.state.connect(
       'isA11yDragInProgress',
       this.store.select(selectActiveA11yDragDropStory).pipe(
-        map((it) => it.ref === this.story.ref),
+        map((it) => {
+          return it.ref ? it.ref === this.story.ref : false;
+        }),
         distinctUntilChanged()
       )
     );
@@ -135,11 +137,11 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
   public setAssigneesInState() {
     const assignees: Membership['user'][] = [];
 
-    const currentUserMember = this.story.assignees.find((member) => {
+    const currentUserMember = this.state.get('assignees').find((member) => {
       return member.username === this.state.get('currentUser').username;
     });
 
-    const members = this.story.assignees.filter((member) => {
+    const members = this.state.get('assignees').filter((member) => {
       if (member.username === this.state.get('currentUser').username) {
         return false;
       }
@@ -154,8 +156,6 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
 
     // Required for styling reasons (inverted flex)
     this.reversedAssignees = assignees.reverse();
-
-    this.state.set({ assignees });
   }
 
   public setAssignedListA11y() {

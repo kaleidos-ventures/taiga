@@ -154,7 +154,7 @@ describe('ButtonComponent', () => {
 
     // trigger emission from all selectors
     store.refreshState();
-    spectator.component.detectChanges();
+    spectator.detectChanges();
 
     // This test checks that the input attribute name becomes a class in the component structure
     expect(spectator.query('div')).toHaveClass('example');

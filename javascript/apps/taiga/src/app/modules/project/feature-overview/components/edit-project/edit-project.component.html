@@ -1,0 +1,120 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <tg-ui-modal
+    class="edit-project-modal"
+    [open]="showEditProjectModal"
+    [width]="500"
+    (requestClose)="close()">
+    <h1 class="title">
+      {{ t('common_project.forms.project_details') }}
+    </h1>
+    <form
+      class="project-form"
+      #formTpl="ngForm"
+      [formGroup]="form"
+      (ngSubmit)="submit()">
+      <!-- Project name -->
+      <tg-ui-input [label]="t('common_project.forms.project_name')">
+        <input
+          formControlName="name"
+          data-test="input-name"
+          inputRef
+          tuiAutoFocus
+          maxlength="80" />
+        <ng-container inputError>
+          <tg-ui-error
+            [enabled]="formTpl.submitted"
+            data-test="name-required-error"
+            error="required">
+            {{ t('common_project.forms.project_name_error') }}
+          </tg-ui-error>
+        </ng-container>
+      </tg-ui-input>
+
+      <!-- Project description -->
+      <tg-ui-textarea
+        [label]="t('common_project.forms.project_description')"
+        [optional]="true">
+        <tui-text-area
+          class="general-textarea"
+          formControlName="description"
+          data-test="input-description"
+          [expandable]="true"
+          [maxLength]="200">
+          {{ t('common_project.forms.project_description_placeholder') }}
+        </tui-text-area>
+        <tg-ui-error
+          inputError
+          [enabled]="formTpl.submitted"
+          data-test="description-maxlength-error"
+          error="maxlength">
+          {{ t('common_project.forms.max_length_error') }}
+        </tg-ui-error>
+      </tg-ui-textarea>
+
+      <!-- Image upload  -->
+      <tg-ui-image-upload
+        [color]="project.color"
+        [control]="logo"
+        [title]="form.get('name')!.value"
+        [label]="t('common_project.forms.project_icon')"
+        [formatError]="t('common_project.forms.format_error')"
+        [tip]="t('common_project.forms.choose_image_tip')"
+        [initialImage]="project.logoSmall"
+        accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg, image/svg+xml">
+      </tg-ui-image-upload>
+
+      <div class="actions">
+        <button
+          type="button"
+          (click)="close()"
+          data-test="cancel-edit-project"
+          tuiLink>
+          {{ t('commons.cancel') }}
+        </button>
+        <button
+          data-test="submit-edit-project"
+          tuiButton
+          type="submit"
+          appearance="primary">
+          {{ t('commons.save_changes') }}
+        </button>
+      </div>
+    </form>
+  </tg-ui-modal>
+
+  <tg-ui-modal
+    class="confirm-close"
+    [open]="showConfirmEditProjectModal"
+    [width]="500"
+    (requestClose)="showConfirmEditProjectModal = false">
+    <h1 class="title">{{ t('discard_changes.title') }}</h1>
+    <p class="confirm-close-description">
+      {{ t('discard_changes.description') }}
+    </p>
+    <div class="actions">
+      <button
+        type="button"
+        (click)="keepEditing()"
+        data-test="cancel-confirm-edit-project"
+        tuiLink>
+        {{ t('discard_changes.cancel') }}
+      </button>
+      <button
+        (click)="discard()"
+        data-test="submit-confirm-edit-project"
+        tuiButton
+        type="button"
+        appearance="primary">
+        {{ t('discard_changes.confirm') }}
+      </button>
+    </div>
+  </tg-ui-modal>
+</ng-container>

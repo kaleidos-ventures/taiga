@@ -18,7 +18,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Membership, Project } from '@taiga/data';
-import { filter, merge } from 'rxjs';
+import { distinctUntilChanged, filter, merge } from 'rxjs';
 import {
   selectCurrentProject,
   selectShowBannerOnRevoke,
@@ -97,27 +97,32 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       this.store.select(selectShowBannerOnRevoke).pipe(filterNil())
     );
 
-    this.state.hold(this.state.select('project'), (project) => {
-      const url = window.location.href;
-      if (
-        !url.includes('/kanban') &&
-        !url.includes('/stories') &&
-        !url.includes('/settings')
-      ) {
-        this.location.go(`project/${project.id}/${project.slug}`);
-      }
-      this.subscribedProject = project.id;
-      this.unsubscribeFromProjectEvents();
-      this.wsService
-        .command('subscribe_to_project_events', { project: project.id })
-        .subscribe();
+    this.state.hold(
+      this.state
+        .select('project')
+        .pipe(distinctUntilChanged((prev, curr) => prev.id === curr.id)),
+      (project) => {
+        const url = window.location.href;
+        if (
+          !url.includes('/kanban') &&
+          !url.includes('/stories') &&
+          !url.includes('/settings')
+        ) {
+          this.location.go(`project/${project.id}/${project.slug}`);
+        }
+        this.subscribedProject = project.id;
+        this.unsubscribeFromProjectEvents();
+        this.wsService
+          .command('subscribe_to_project_events', { project: project.id })
+          .subscribe();
 
-      this.store.dispatch(
-        setNotificationClosed({
-          notificationClosed: !this.showPendingInvitationNotification,
-        })
-      );
-    });
+        this.store.dispatch(
+          setNotificationClosed({
+            notificationClosed: !this.showPendingInvitationNotification,
+          })
+        );
+      }
+    );
   }
 
   public get showPendingInvitationNotification() {

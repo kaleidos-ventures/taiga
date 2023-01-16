@@ -17,7 +17,7 @@ import { Invitation, Membership, Project, User } from '@taiga/data';
 import { ModalModule } from '@taiga/ui/modal';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { Subject } from 'rxjs';
-import { delay, map, take } from 'rxjs/operators';
+import { delay, distinctUntilChanged, map, take } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
@@ -139,9 +139,14 @@ export class ProjectMembersComponent {
     }>,
     private wsService: WsService
   ) {
-    this.state.hold(this.state.select('project'), () => {
-      this.store.dispatch(initMembers());
-    });
+    this.state.hold(
+      this.state
+        .select('project')
+        .pipe(distinctUntilChanged((prev, curr) => prev.id === curr.id)),
+      () => {
+        this.store.dispatch(initMembers());
+      }
+    );
 
     this.state.connect(
       'hasMoreMembers',

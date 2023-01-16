@@ -24,9 +24,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </tg-ui-avatar>
         <button
           class="remove-image-button"
-          (click)="control.value ? removeImage() : displayImageUploader()"
+          (click)="hasImage() ? removeImage() : displayImageUploader()"
           tuiIconButton
-          [icon]="control.value ? 'close' : 'plus'"
+          [icon]="hasImage() ? 'close' : 'plus'"
           [attr.title]="t('image_upload.choose_image')"
           type="button"
           appearance="tertiary"></button>
@@ -42,10 +42,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           tuiButton
           type="button"
           appearance="tertiary">
-          <ng-container *ngIf="!control.value">
+          <ng-container *ngIf="!hasImage()">
             {{ t('image_upload.choose_image') }}
           </ng-container>
-          <ng-container *ngIf="control.value">
+          <ng-container *ngIf="hasImage()">
             {{ t('image_upload.change_image') }}
           </ng-container>
         </button>

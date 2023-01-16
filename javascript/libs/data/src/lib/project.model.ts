@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import type { Merge } from 'type-fest';
 import { Milestone } from './milestone.model';
 import { Workspace } from './workspace.model';
 
@@ -16,7 +17,7 @@ export interface Project {
   logo: string;
   name: string;
   slug: string;
-  description: string;
+  description: string | null;
   color: number;
   workspace: Pick<
     Workspace,
@@ -36,3 +37,8 @@ export interface ProjectCreation {
   color: number;
   logo?: File;
 }
+
+export type EditProject = Merge<
+  Pick<Project, 'id' | 'name' | 'logo' | 'description'>,
+  { logo?: File }
+>;

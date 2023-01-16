@@ -64,6 +64,9 @@ export class ModalComponent implements AfterViewInit {
   public big = false;
 
   @Input()
+  public width = 715;
+
+  @Input()
   public set open(value: boolean) {
     this.open$.next(value);
   }

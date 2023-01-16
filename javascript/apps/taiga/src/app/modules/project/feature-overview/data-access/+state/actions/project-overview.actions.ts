@@ -7,7 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { Invitation, Membership } from '@taiga/data';
+import { EditProject, Invitation, Membership, Project } from '@taiga/data';
 
 export const initProjectOverview = createAction('[Project overview] init');
 export const initMembers = createAction('[Project overview] init members');
@@ -49,4 +49,18 @@ export const updateMemberModalList = createAction(
 
 export const updateMembersInfo = createAction(
   '[Project overview][ws] update members info'
+);
+
+export const editProject = createAction(
+  '[Project overview] edit project',
+  props<{
+    project: EditProject;
+  }>()
+);
+
+export const editProjectSuccess = createAction(
+  '[Project overview][api] edit project successs',
+  props<{
+    project: Project;
+  }>()
 );

@@ -22,7 +22,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <h1
       class="new-step-title"
       id="main-area-title">
-      {{ t('new_project.second_step.project_details') }}
+      {{ t('common_project.forms.project_details') }}
     </h1>
     <form
       class="template-project-form"
@@ -61,7 +61,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </ng-template>
 
       <!-- Project name -->
-      <tg-ui-input [label]="t('new_project.second_step.project_name')">
+      <tg-ui-input [label]="t('common_project.forms.project_name')">
         <input
           formControlName="name"
           data-test="input-name"
@@ -73,14 +73,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [enabled]="form.submitted"
             data-test="name-required-error"
             error="required">
-            {{ t('new_project.second_step.project_name_error') }}
+            {{ t('common_project.forms.project_name_error') }}
           </tg-ui-error>
         </ng-container>
       </tg-ui-input>
 
       <!-- Project description -->
       <tg-ui-textarea
-        [label]="t('new_project.second_step.project_description')"
+        [label]="t('common_project.forms.project_description')"
         [optional]="true">
         <tui-text-area
           class="general-textarea"
@@ -88,14 +88,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           data-test="input-description"
           [expandable]="true"
           [maxLength]="200">
-          {{ t('new_project.second_step.project_description_placeholder') }}
+          {{ t('common_project.forms.project_description_placeholder') }}
         </tui-text-area>
         <tg-ui-error
           inputError
           [enabled]="form.submitted"
           data-test="description-maxlength-error"
           error="maxlength">
-          {{ t('new_project.second_step.max_length_error') }}
+          {{ t('common_project.forms.max_length_error') }}
         </tg-ui-error>
       </tg-ui-textarea>
 
@@ -104,9 +104,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [color]="templateProjectForm.get('color')?.value"
         [control]="logo"
         [title]="templateProjectForm.get('name')?.value"
-        [label]="t('new_project.second_step.project_icon')"
-        [formatError]="t('new_project.second_step.format_error')"
-        [tip]="t('new_project.second_step.choose_image_tip')"
+        [label]="t('common_project.forms.project_icon')"
+        [formatError]="t('common_project.forms.format_error')"
+        [tip]="t('common_project.forms.choose_image_tip')"
         accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg, image/svg+xml">
       </tg-ui-image-upload>
 

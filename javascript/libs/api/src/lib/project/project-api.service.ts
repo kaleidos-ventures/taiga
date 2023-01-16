@@ -12,6 +12,7 @@ import { ApiUtilsService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 import {
   Contact,
+  EditProject,
   Invitation,
   Membership,
   Project,
@@ -60,8 +61,28 @@ export class ProjectApiService {
       logo: project.logo,
       description: project.description,
     };
+
     const formData = ApiUtilsService.buildFormData(form);
     return this.http.post<Project>(`${this.config.apiUrl}/projects`, formData);
+  }
+
+  public editProject(project: EditProject) {
+    const data = {
+      name: project.name,
+      description: project.description,
+      logo: project.logo,
+    };
+
+    if (data.logo === undefined) {
+      delete data.logo;
+    }
+
+    const formData = ApiUtilsService.buildFormData(data);
+
+    return this.http.patch<Project>(
+      `${this.config.apiUrl}/projects/${project.id}`,
+      formData
+    );
   }
 
   public getMemberRoles(id: Project['id']) {

@@ -96,6 +96,17 @@ The content inside an `ts-ui-modal` is always rendered, so is a good practice av
 </tg-ui-modal>
 ```
 
+# Set modal width
+
+```html
+<tg-ui-modal
+  [open]="isModalOpen"
+  (requestClose)="isModalOpen = false"
+  [width]="500">
+  <tg-child-component *ngIf="isModalOpen"></tg-child-component>
+</tg-ui-modal>
+```
+
 # Accesibility
 
 ## Focus: The basics

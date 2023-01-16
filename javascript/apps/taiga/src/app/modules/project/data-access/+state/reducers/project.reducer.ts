@@ -10,6 +10,10 @@ import { createFeature, createReducer, on } from '@ngrx/store';
 import { Membership, Project } from '@taiga/data';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { immerReducer } from '~/app/shared/utils/store';
+import {
+  editProject,
+  editProjectSuccess,
+} from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import * as ProjectActions from '../actions/project.actions';
 
 export const projectFeatureKey = 'project';
@@ -78,7 +82,24 @@ export const reducer = createReducer(
 
       return state;
     }
-  )
+  ),
+  on(editProject, (state, { project }): ProjectState => {
+    state.projects[project.id] = {
+      ...state.projects[project.id],
+      ...project,
+      logo: state.projects[project.id].logo,
+    };
+
+    return state;
+  }),
+  on(editProjectSuccess, (state, { project }): ProjectState => {
+    state.projects[project.id] = {
+      ...state.projects[project.id],
+      ...project,
+    };
+
+    return state;
+  })
 );
 
 export const projectFeature = createFeature({

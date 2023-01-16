@@ -141,5 +141,6 @@ tui-text-area {
     @mixin font-small;
 
     color: var(--color-gray70);
+    margin-inline-start: var(--spacing-8);
   }
 }

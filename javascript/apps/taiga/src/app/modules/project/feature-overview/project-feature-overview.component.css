@@ -18,6 +18,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   align-items: center;
   display: flex;
   gap: var(--spacing-16);
+  max-inline-size: 1400px;
+  padding-inline-end: var(--spacing-8);
+}
+
+.edit-project-info {
+  margin-inline-start: auto;
 }
 
 .project-name {
@@ -37,24 +43,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: grid;
   flex-grow: 1;
   gap: var(--spacing-16);
-  grid-template: 169px 1fr 1fr / 1fr 1fr minmax(392px, 528px);
-  grid-template-areas:
-    "main main description"
-    "main main members"
-    "main main members"
-    "main main .";
+  grid-template: minmax(0, auto) 1fr 1fr / 1fr 1fr minmax(392px, 528px);
   max-inline-size: 1400px;
   padding-block-start: var(--spacing-16);
 
   @media only screen and (max-width: 1279px) {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
     gap: var(--spacing-16);
-    grid-template: inherit;
-    grid-template-areas:
-      "members"
-      "description"
-      "main";
     max-inline-size: 100%;
     padding-block-start: var(--spacing-16);
   }
@@ -66,23 +63,23 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & > .project-main {
     align-self: flex-start;
-    grid-area: main;
+    grid-column: 1 / 3;
+    grid-row: 1 / -1;
 
     /* fake height */
     min-block-size: 500px;
 
     @media only screen and (max-width: 1279px) {
-      min-inline-size: 0;
+      inline-size: 100%;
     }
-  }
-
-  & > .project-description {
-    grid-area: description;
   }
 
   & > .project-members {
     align-self: flex-start;
-    grid-area: members;
+
+    @media only screen and (max-width: 1279px) {
+      inline-size: 100%;
+    }
   }
 }
 
@@ -93,6 +90,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .project-about {
   @mixin font-inline;
 
+  color: var(--color-gray100);
   line-height: 21px;
   margin: 0;
   margin-block-end: var(--spacing-8);
@@ -126,4 +124,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     inline-size: 100%;
     text-align: end;
   }
+}
+
+.empty-description {
+  color: var(--color-gray70);
+  font-style: italic;
+}
+
+.description-edit-project-action {
+  display: inline;
+  font-style: italic;
+  font-weight: var(--font-weight-regular);
+  text-decoration: underline;
 }

@@ -18,15 +18,17 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Invitation, Project, User } from '@taiga/data';
-import { filter } from 'rxjs';
+import { EditProject, Invitation, Project, User } from '@taiga/data';
+import { distinctUntilChanged, filter } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { selectNotificationClosed } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
+
 import {
+  editProject,
   initProjectOverview,
   resetOverview,
 } from './data-access/+state/actions/project-overview.actions';
@@ -62,6 +64,7 @@ export class ProjectFeatureOverviewComponent
 
   public showDescription = false;
   public hideOverflow = false;
+  public showEditProjectModal = false;
 
   constructor(
     private store: Store,
@@ -85,13 +88,18 @@ export class ProjectFeatureOverviewComponent
       this.store.select(selectNotificationClosed)
     );
 
-    this.state.hold(this.state.select('project'), () => {
-      this.showDescription = false;
-      this.hideOverflow = false;
-      this.store.dispatch(initProjectOverview());
+    this.state.hold(
+      this.state
+        .select('project')
+        .pipe(distinctUntilChanged((prev, curr) => prev.id === curr.id)),
+      () => {
+        this.showDescription = false;
+        this.hideOverflow = false;
+        this.store.dispatch(initProjectOverview());
 
-      this.cd.markForCheck();
-    });
+        this.cd.markForCheck();
+      }
+    );
 
     if (this.state.get('user')) {
       this.wsService
@@ -166,6 +174,11 @@ export class ProjectFeatureOverviewComponent
 
   public toggleShowDescription() {
     this.hideOverflow = !this.hideOverflow;
+  }
+
+  public submitEditProject(project: EditProject) {
+    this.showEditProjectModal = false;
+    this.store.dispatch(editProject({ project }));
   }
 
   public ngAfterViewChecked() {

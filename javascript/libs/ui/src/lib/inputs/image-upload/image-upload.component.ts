@@ -51,9 +51,10 @@ export class ImageUploadComponent implements OnChanges {
   @Input() public title = '';
   @Input() public color = 0;
   @Input() public accept?: string;
-  @Input() public control!: FormControl;
+  @Input() public control!: FormControl<File | null | string>;
   @Input() public id = `upload-${nextId++}`;
   @Input() public formatError = 'Invalid format';
+  @Input() public initialImage = '';
 
   @ViewChild('imageUpload')
   public imageUpload!: ElementRef<HTMLInputElement>;
@@ -76,13 +77,15 @@ export class ImageUploadComponent implements OnChanges {
       this.fieldService.form = this.form;
       this.fieldService.id = this.id;
 
-      if (this.control.value && this.control.valid) {
+      if (this.controlValue instanceof File && this.control.valid) {
         const path = URL.createObjectURL(this.controlValue);
         this.safeImageUrl = this.getSafeUrl(path);
+      } else {
+        this.safeImageUrl = this.initialImage;
       }
 
       this.control.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-        if (this.controlValue && this.control.valid) {
+        if (this.controlValue instanceof File && this.control.valid) {
           if (this.controlValue.type === 'image/gif') {
             const path = URL.createObjectURL(this.controlValue);
 
@@ -105,7 +108,15 @@ export class ImageUploadComponent implements OnChanges {
   }
 
   public get controlValue() {
-    return this.control.value as File;
+    return this.control.value;
+  }
+
+  public hasImage() {
+    if (this.control.value || this.control.dirty) {
+      return !!this.control.value;
+    }
+
+    return !!this.initialImage;
   }
 
   public getSafeUrl(path: string) {
@@ -155,6 +166,7 @@ export class ImageUploadComponent implements OnChanges {
     this.imageSelected.emit();
     this.imageUpload.nativeElement.value = '';
     this.control.setValue('');
+    this.control.markAsDirty();
   }
 
   public getGifFrame(url: string): Promise<string> {

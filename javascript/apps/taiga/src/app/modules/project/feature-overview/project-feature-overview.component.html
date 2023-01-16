@@ -27,15 +27,45 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             data-test="project-name">
             {{ vm.project.name }}
           </h1>
+
+          <button
+            data-test="edit-project"
+            *ngIf="vm.project.userIsAdmin"
+            class="edit-project-info"
+            tuiLink
+            (click)="showEditProjectModal = true"
+            icon="pen"
+            iconAlign="left">
+            {{ t('project_overview.edit_project_info') }}
+          </button>
         </div>
         <div class="project-content-inner">
           <section class="project-main"></section>
-          <section class="project-description">
-            <h2 class="project-about">{{ t('project_overview.about') }}</h2>
+          <section
+            class="project-description"
+            data-test="project-description"
+            *ngIf="vm.project.userIsAdmin || vm.project.description?.length">
+            <h2 class="project-about">
+              {{ t('project_overview.about') }}
+            </h2>
             <div
               [class.hide]="hideOverflow"
               class="description">
-              <p #descriptionOverflow>{{ vm.project.description }}</p>
+              <ng-container *ngIf="vm.project.description?.length">
+                <p #descriptionOverflow>{{ vm.project.description }}</p>
+              </ng-container>
+              <ng-container *ngIf="!vm.project.description?.length">
+                <p class="empty-description">
+                  <button
+                    data-test="add-description"
+                    class="description-edit-project-action"
+                    tuiLink
+                    (click)="showEditProjectModal = true">
+                    {{ t('project_overview.action_add_description') }}
+                  </button>
+                  {{ t('project_overview.action_add_description_continue') }}
+                </p>
+              </ng-container>
             </div>
             <div class="actions">
               <a
@@ -63,6 +93,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </section>
         </div>
       </div>
+
+      <tg-edit-project
+        *ngIf="showEditProjectModal"
+        [show]="showEditProjectModal"
+        (submitProject)="submitEditProject($event)"
+        (closeModal)="showEditProjectModal = false"
+        [project]="vm.project">
+      </tg-edit-project>
     </ng-container>
   </ng-container>
 </ng-container>

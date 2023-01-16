@@ -8,17 +8,19 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { pessimisticUpdate } from '@nrwl/angular';
+import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY, of, zip } from 'rxjs';
-import { catchError, exhaustMap, filter, map } from 'rxjs/operators';
+import { catchError, exhaustMap, filter, map, tap } from 'rxjs/operators';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
+import { selectRouteParams } from '~/app/router-selectors';
 import { AppService } from '~/app/services/app.service';
-import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
-import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
 import {
@@ -225,12 +227,52 @@ export class ProjectOverviewEffects {
     );
   });
 
+  public formUpdateProject$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectOverviewActions.editProject),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.projectApiService.editProject(action.project).pipe(
+            map((project) => {
+              return ProjectOverviewActions.editProjectSuccess({ project });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status === 403) {
+            this.appService.toastNotification({
+              message: 'errors.admin_permission',
+              status: TuiNotification.Error,
+            });
+          } else {
+            this.appService.toastSaveChangesError(httpResponse);
+          }
+        },
+      })
+    );
+  });
+
+  public updateUrlOnEditProjectSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(ProjectOverviewActions.editProjectSuccess),
+        concatLatestFrom(() => this.store.select(selectRouteParams)),
+        filter(([{ project }, router]) => {
+          return project.id === router.id && router.slug !== project.slug;
+        }),
+        tap(([{ project }]) => {
+          void this.router.navigate(['project', project.id, project.slug]);
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(
     private store: Store,
     private actions$: Actions,
     private projectApiService: ProjectApiService,
     private appService: AppService,
-    private wsService: WsService,
-    private revokeInvitationService: RevokeInvitationService
+    private router: Router
   ) {}
 }

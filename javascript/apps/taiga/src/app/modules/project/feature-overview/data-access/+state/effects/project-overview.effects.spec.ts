@@ -21,8 +21,12 @@ import { cold, hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
+import { selectRouteParams } from '~/app/router-selectors';
+import { AppService } from '~/app/services/app.service';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
+  editProject,
+  editProjectSuccess,
   fetchMembersSuccess,
   initMembers,
   nextMembersPage,
@@ -55,7 +59,7 @@ describe('ProjectOverviewEffects', () => {
       }),
     ],
     imports: [getTranslocoModule()],
-    mocks: [ProjectApiService, Router],
+    mocks: [ProjectApiService, Router, AppService],
   });
 
   beforeEach(() => {
@@ -207,6 +211,105 @@ describe('ProjectOverviewEffects', () => {
           MEMBERS_PAGE_SIZE
         );
       });
+    });
+
+    it('Project edit - success', () => {
+      const project = ProjectMockFactory();
+      const effects = spectator.inject(ProjectOverviewEffects);
+      const projectApiService = spectator.inject(ProjectApiService);
+
+      projectApiService.editProject.mockReturnValue(
+        cold('-b|', { b: project })
+      );
+
+      actions$ = hot('-a', {
+        a: editProject({
+          project: {
+            id: project.id,
+            name: project.name,
+            description: project.description,
+          },
+        }),
+      });
+
+      const expected = cold('--a', {
+        a: editProjectSuccess({ project }),
+      });
+
+      expect(effects.formUpdateProject$).toBeObservable(expected);
+    });
+
+    it('Project edit - error', () => {
+      const project = ProjectMockFactory();
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(ProjectOverviewEffects);
+      const appService = spectator.inject(AppService);
+
+      projectApiService.editProject
+        .mockReturnValueOnce(
+          cold(
+            '-#|',
+            {},
+            {
+              status: 403,
+            }
+          )
+        )
+        .mockReturnValueOnce(
+          cold(
+            '-#|',
+            {},
+            {
+              status: 400,
+            }
+          )
+        );
+
+      const editProjectMock = {
+        project: {
+          id: project.id,
+          name: project.name,
+          description: project.description,
+        },
+      };
+
+      actions$ = hot('-a--b', {
+        a: editProject(editProjectMock),
+        b: editProject(editProjectMock),
+      });
+
+      expect(effects.formUpdateProject$).toSatisfyOnFlush(() => {
+        expect(appService.toastNotification).toHaveBeenCalled();
+        expect(appService.toastSaveChangesError).toHaveBeenCalledWith({
+          status: 400,
+        });
+      });
+    });
+  });
+
+  it('Should update the URL on edit project name', () => {
+    const project = ProjectMockFactory();
+
+    store.overrideSelector(selectRouteParams, {
+      id: project.id,
+      slug: project.slug + '-old',
+    });
+
+    const effects = spectator.inject(ProjectOverviewEffects);
+    const router = spectator.inject(Router);
+
+    actions$ = hot('-a', {
+      a: editProjectSuccess({
+        project,
+      }),
+    });
+
+    expect(effects.updateUrlOnEditProjectSuccess$).toSatisfyOnFlush(() => {
+      expect(router.navigate).toHaveBeenCalledWith([
+        'project',
+        project.id,
+        project.slug,
+      ]);
     });
   });
 });

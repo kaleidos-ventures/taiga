@@ -18,6 +18,8 @@ import { ProjectMembersComponent } from './components/project-members/project-me
 import { DataAccessProjectOverviewModule } from './data-access/project-overview-data-access.module';
 import { ProjectOverviewRoutingModule } from './project-feature-overview-routing.module';
 import { ProjectFeatureOverviewComponent } from './project-feature-overview.component';
+import { EditProjectComponent } from './components/edit-project/edit-project.component';
+import { ModalModule } from '@taiga/ui/modal';
 
 @NgModule({
   imports: [
@@ -31,6 +33,8 @@ import { ProjectFeatureOverviewComponent } from './project-feature-overview.comp
     ProjectMembersListComponent,
     ProjectMembersModalComponent,
     ProjectMembersComponent,
+    EditProjectComponent,
+    ModalModule,
   ],
   declarations: [ProjectFeatureOverviewComponent],
   providers: [

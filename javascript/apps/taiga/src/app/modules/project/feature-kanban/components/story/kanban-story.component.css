@@ -152,12 +152,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .assigned-button-noperm {
   background: none;
   border: none;
-  border-radius: 15px;
+  border-radius: 16px;
   display: inline-flex;
   padding: 0;
 
   &:hover {
     background-color: var(--color-gray30);
+    box-shadow: 1px 2px 2px rgba(216, 222, 233, 0.5);
 
     & .assigned-user-avatar {
       /* stylelint-disable-next-line max-nesting-depth */

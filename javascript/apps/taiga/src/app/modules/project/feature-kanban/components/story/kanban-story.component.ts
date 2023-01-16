@@ -29,6 +29,7 @@ import { selectCurrentProject } from '~/app/modules/project/data-access/+state/s
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { selectActiveA11yDragDropStory } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
+import { PermissionsService } from '~/app/services/permissions.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
 
@@ -38,6 +39,7 @@ export interface StoryState {
   showAssignUser: boolean;
   assignees: Story['assignees'];
   currentUser: User;
+  canEdit: boolean;
 }
 
 @UntilDestroy()
@@ -86,7 +88,8 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     private el: ElementRef,
     @Optional()
     @Inject(KanbanStatusComponent)
-    private kabanStatus: KanbanStatusComponent
+    private kabanStatus: KanbanStatusComponent,
+    private permissionService: PermissionsService
   ) {
     this.state.set({
       assignees: [],
@@ -109,6 +112,10 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     this.state.connect(
       'currentUser',
       this.store.select(selectUser).pipe(filterNil())
+    );
+    this.state.connect(
+      'canEdit',
+      this.permissionService.hasPermissions$('story', ['modify'])
     );
 
     this.state.hold(this.state.select('currentUser'), () => {

@@ -130,10 +130,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: inline-block;
   padding-block: var(--spacing-4);
   padding-inline: var(--spacing-8);
-
-  &:hover {
-    background-color: var(--color-gray20);
-  }
 }
 
 .unassigned-button-perm {
@@ -144,6 +140,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   cursor: pointer;
 
   &:hover {
+    background-color: var(--color-gray20);
     font-weight: var(--font-weight-medium);
   }
 }

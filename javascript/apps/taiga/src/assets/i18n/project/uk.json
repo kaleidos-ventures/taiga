@@ -10,7 +10,9 @@
     "add": "Add assignees",
     "remove-assignee": "Remove assignee",
     "add-assignee": "Add assignee",
-    "no-members": "No members left",
-    "search-members": "Search members"
+    "no-members": "No project members left.",
+    "no-matches": "No matches",
+    "search-members": "Search members",
+    "member-disabled": "This user does not have access to stories, so cannot be assigned."
   }
 }

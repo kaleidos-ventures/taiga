@@ -6,6 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Permissions } from './roles.model';
 import { User } from './user.model';
 
 export interface Membership {
@@ -15,5 +16,6 @@ export interface Membership {
     isAdmin: boolean;
     name?: string;
     slug?: string;
+    permissions?: Permissions[];
   };
 }

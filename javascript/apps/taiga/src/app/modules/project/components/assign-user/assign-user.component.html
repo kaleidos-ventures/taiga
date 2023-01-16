@@ -28,6 +28,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           class="user-row"
           [class.view-only]="viewOnly"
           type="button"
+          [disabled]="viewOnly"
           (click)="unassign.next(assignedUser)">
           <div class="user">
             <tg-user-avatar
@@ -67,6 +68,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <input
             inputRef
             tuiAutoFocus
+            #searchInput
             formControlName="searchText"
             type="search"
             [placeholder]="t('project.assign_user.search-members')"
@@ -76,10 +78,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
       <tui-scrollbar class="scrollbar-members">
         <ul>
-          <li *ngFor="let member of vm.members; trackBy: trackByMember">
+          <li
+            *ngFor="let member of vm.members; trackBy: trackByMember"
+            [class.disabled]="!vm.membersPermissions[member.username].length">
             <button
               class="unassigned-member-row"
               type="button"
+              [disabled]="!vm.membersPermissions[member.username].length"
               (click)="onAssign(member)">
               <tg-user-card
                 class="card"
@@ -88,17 +93,38 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [navigateToUser]="false">
               </tg-user-card>
               <tui-svg
+                *ngIf="vm.membersPermissions[member.username].length"
                 class="assign-btn"
                 [tuiHint]="tooltipAssign"
                 tuiHintDirection="bottom-right"
                 src="plus">
               </tui-svg>
+              <tui-svg
+                *ngIf="!vm.membersPermissions[member.username].length"
+                class="disabled-btn"
+                [tuiHint]="tooltipMemberDisabled"
+                tuiHintDirection="bottom-right"
+                src="help">
+              </tui-svg>
             </button>
           </li>
         </ul>
       </tui-scrollbar>
+      <p
+        class="no-members"
+        *ngIf="!vm.members.length">
+        <ng-container *ngIf="!searchTextForm.get('searchText')?.value">{{
+          t('project.assign_user.no-members')
+        }}</ng-container>
+        <ng-container *ngIf="searchTextForm.get('searchText')?.value">{{
+          t('project.assign_user.no-matches')
+        }}</ng-container>
+      </p>
       <ng-template #tooltipAssign>
         <p>{{ t('project.assign_user.add-assignee') }}</p>
+      </ng-template>
+      <ng-template #tooltipMemberDisabled>
+        <p>{{ t('project.assign_user.member-disabled') }}</p>
       </ng-template>
     </ng-container>
   </ng-container>

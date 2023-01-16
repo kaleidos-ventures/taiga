@@ -8,11 +8,13 @@
 
 import {
   Component,
+  ElementRef,
   EventEmitter,
   HostListener,
   Input,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -30,7 +32,7 @@ import {
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { TuiToggleModule } from '@taiga-ui/kit';
-import { Membership, Story, User } from '@taiga/data';
+import { Membership, Permissions, Story, User } from '@taiga/data';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { map, Subject } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
@@ -44,6 +46,7 @@ import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 interface AssignComponentState {
   members: Membership['user'][];
+  membersPermissions: Record<Membership['user']['username'], Permissions[]>;
   assigned: Story['assignees'];
   search: string;
   currentUser: User;
@@ -70,6 +73,9 @@ interface AssignComponentState {
   providers: [RxState],
 })
 export class AssignUserComponent implements OnInit {
+  @ViewChild('searchInput')
+  public searchInput!: ElementRef;
+
   @Output()
   public requestClose = new EventEmitter<void>();
 
@@ -78,6 +84,9 @@ export class AssignUserComponent implements OnInit {
 
   @Output()
   public unassign = new EventEmitter<Membership['user']>();
+
+  @Input()
+  public viewOnly = false;
 
   @Input()
   public set assigned(members: Story['assignees']) {
@@ -89,9 +98,6 @@ export class AssignUserComponent implements OnInit {
     this.requestClose.next();
   }
 
-  public viewOnly = false;
-
-  // TODO: The project members that cannot access stories should appear as a disabled list item with a label that informs of the situation.
   public readonly model$ = this.state.select().pipe(
     map((state) => {
       const currentUserMember = state.members.find((member) => {
@@ -168,6 +174,22 @@ export class AssignUserComponent implements OnInit {
         })
       )
     );
+    this.state.connect(
+      'membersPermissions',
+      this.store.select(selectMembers).pipe(
+        filterNil(),
+        map((members) => {
+          const permissions: Record<
+            Membership['user']['username'],
+            Permissions[]
+          > = {};
+          members.forEach((member) => {
+            permissions[member.user.username] = member.role.permissions!;
+          });
+          return permissions;
+        })
+      )
+    );
     this.state.connect('search', this.search$);
   }
 
@@ -185,12 +207,8 @@ export class AssignUserComponent implements OnInit {
   }
 
   public onAssign(member: Membership['user']) {
-    this.searchTextForm.setValue({
-      searchText: '',
-    });
-    this.search$.next('');
-
     this.assign.next(member);
+    (this.searchInput.nativeElement as HTMLElement).focus();
   }
 
   public trackByMember(_index: number, member: Membership['user']) {

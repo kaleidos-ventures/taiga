@@ -40,7 +40,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   &.view-only {
-    background-color: none;
+    background-color: initial;
+    cursor: auto;
+
+    &:hover {
+      background-color: initial;
+    }
+
+    & .user-identifier {
+      color: var(--color-gray80);
+    }
   }
 
   & .user {
@@ -116,6 +125,11 @@ ul {
     background-color: var(--color-gray20);
     border: 1px solid var(--color-white);
     cursor: pointer;
+
+    & tg-user-card {
+      --color-user-name: var(--color-gray90);
+      --color-user-name-is-self: var(--color-gray90);
+    }
   }
 
   &:focus-visible {
@@ -142,6 +156,30 @@ ul {
     & .assign-btn {
       display: block;
     }
+  }
+}
+
+.disabled {
+  & .unassigned-member-row {
+    background-color: var(--color-gray10);
+    pointer-events: none;
+
+    & tg-user-card {
+      --color-user-name: var(--color-gray70);
+      --color-user-name-is-self: var(--color-gray70);
+    }
+
+    &::ng-deep img,
+    &::ng-deep tui-avatar {
+      opacity: 0.5;
+    }
+  }
+
+  & .disabled-btn {
+    block-size: var(--spacing-32);
+    color: var(--color-gray60);
+    inline-size: var(--spacing-32);
+    padding: var(--spacing-8);
   }
 }
 

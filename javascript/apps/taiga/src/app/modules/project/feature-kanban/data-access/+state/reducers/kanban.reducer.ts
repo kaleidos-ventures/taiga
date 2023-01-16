@@ -578,7 +578,6 @@ export const reducer = createReducer(
     KanbanActions.assignedMemberEvent,
     (state, { member, storyRef }): KanbanState => {
       state = replaceStory(state, (it) => {
-        console.log('here');
         const unassigned = !it.assignees.find(
           (assignee) => assignee.username === member.username
         );

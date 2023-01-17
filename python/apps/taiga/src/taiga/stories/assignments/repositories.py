@@ -22,6 +22,9 @@ DEFAULT_QUERYSET = StoryAssignment.objects.all()
 
 
 class StoryAssignmentFilters(TypedDict, total=False):
+    id: UUID
+    ref: int
+    project_id: UUID
     story_id: UUID
     username: str
 
@@ -31,6 +34,12 @@ def _apply_filters_to_queryset(
     filters: StoryAssignmentFilters = {},
 ) -> QuerySet[StoryAssignment]:
     filter_data = dict(filters.copy())
+
+    if "ref" in filter_data:
+        filter_data["story__ref"] = filter_data.pop("ref")
+
+    if "project_id" in filter_data:
+        filter_data["story__project_id"] = filter_data.pop("project_id")
 
     if "username" in filter_data:
         filter_data["user__username"] = filter_data.pop("username")

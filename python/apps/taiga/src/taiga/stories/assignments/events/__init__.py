@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.events import events_manager
-from taiga.stories.assignments.events.content import StoryAssignmentContent
+from taiga.stories.assignments.events.content import CreateStoryAssignmentContent, DeleteStoryAssignmentContent
 from taiga.stories.assignments.models import StoryAssignment
 from taiga.stories.assignments.serializers import StoryAssignmentSerializer
 
@@ -18,13 +18,13 @@ async def emit_event_when_story_assignment_is_created(story_assignment: StoryAss
     await events_manager.publish_on_user_channel(
         user=story_assignment.user,
         type=CREATE_STORY_ASSIGNMENT,
-        content=StoryAssignmentContent(story_assignment=StoryAssignmentSerializer.from_orm(story_assignment)),
+        content=CreateStoryAssignmentContent(story_assignment=StoryAssignmentSerializer.from_orm(story_assignment)),
     )
 
     await events_manager.publish_on_project_channel(
         project=story_assignment.story.project,
         type=CREATE_STORY_ASSIGNMENT,
-        content=StoryAssignmentContent(story_assignment=StoryAssignmentSerializer.from_orm(story_assignment)),
+        content=CreateStoryAssignmentContent(story_assignment=StoryAssignmentSerializer.from_orm(story_assignment)),
     )
 
 
@@ -32,11 +32,11 @@ async def emit_event_when_story_assignment_is_deleted(story_assignment: StoryAss
     await events_manager.publish_on_user_channel(
         user=story_assignment.user,
         type=DELETE_STORY_ASSIGNMENT,
-        content=StoryAssignmentContent(story_assignment=StoryAssignmentSerializer.from_orm(story_assignment)),
+        content=DeleteStoryAssignmentContent(story_assignment=StoryAssignmentSerializer.from_orm(story_assignment)),
     )
 
     await events_manager.publish_on_project_channel(
         project=story_assignment.story.project,
         type=DELETE_STORY_ASSIGNMENT,
-        content=StoryAssignmentContent(story_assignment=StoryAssignmentSerializer.from_orm(story_assignment)),
+        content=DeleteStoryAssignmentContent(story_assignment=StoryAssignmentSerializer.from_orm(story_assignment)),
     )

@@ -9,5 +9,9 @@ from taiga.base.serializers import BaseModel
 from taiga.stories.assignments.serializers import StoryAssignmentSerializer
 
 
-class StoryAssignmentContent(BaseModel):
+class CreateStoryAssignmentContent(BaseModel):
+    story_assignment: StoryAssignmentSerializer
+
+
+class DeleteStoryAssignmentContent(BaseModel):
     story_assignment: StoryAssignmentSerializer

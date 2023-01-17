@@ -36,17 +36,25 @@ async def create_story_assignment(project_id: UUID, story: Story, username: str)
 
 
 ##########################################################
+# get story assignment
+##########################################################
+
+
+async def get_story_assignment(project_id: UUID, ref: int, username: str) -> StoryAssignment | None:
+    return await story_assignments_repositories.get_story_assignment(
+        filters={"project_id": project_id, "ref": ref, "username": username},
+        select_related=["story", "user", "story_project"],
+    )
+
+
+##########################################################
 # delete story assignment
 ##########################################################
 
 
-async def delete_story_assignment(story: Story, username: str) -> bool:
-    story_assignment = await story_assignments_repositories.get_story_assignment(
-        filters={"story_id": story.id, "username": username},
-        select_related=["story", "user", "story_project"],
-    )
+async def delete_story_assignment(story_assignment: StoryAssignment) -> bool:
     story_assignment_deleted = await story_assignments_repositories.delete_story_assignment(
-        filters={"story_id": story.id, "username": username}
+        filters={"id": story_assignment.id}
     )
     if story_assignment_deleted > 0:
         await stories_assignments_events.emit_event_when_story_assignment_is_deleted(story_assignment=story_assignment)

@@ -35,8 +35,12 @@ async def test_create_story_assignment_ok() -> None:
 async def test_get_story_assignment() -> None:
     story_assignment = await f.create_story_assignment()
     story_assignment_test = await repositories.get_story_assignment(
-        filters={"story_id": story_assignment.story.id, "username": story_assignment.user.username},
-        select_related=["story", "user", "story__project"],
+        filters={
+            "project_id": story_assignment.story.project_id,
+            "ref": story_assignment.story.ref,
+            "username": story_assignment.user.username,
+        },
+        select_related=["story", "user", "story_project"],
     )
     assert story_assignment.user.username == story_assignment_test.user.username
     assert story_assignment.story.id == story_assignment_test.story.id

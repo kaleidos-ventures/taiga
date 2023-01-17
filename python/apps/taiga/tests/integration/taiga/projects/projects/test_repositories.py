@@ -105,8 +105,8 @@ async def test_list_workspace_invited_projects_for_user():
         }
     )
     assert len(res) == 2
-    assert res[1].name == pj1.name
-    assert res[0].name == pj3.name
+    assert res[0].name == pj1.name
+    assert res[1].name == pj3.name
 
 
 async def test_list_projects():

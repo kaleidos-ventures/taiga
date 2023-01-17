@@ -6,10 +6,11 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.db import models
+from taiga.base.db.mixins import CreatedAtMetaInfoMixin
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 
 
-class ProjectInvitation(models.BaseModel):
+class ProjectInvitation(models.BaseModel, CreatedAtMetaInfoMixin):
     project = models.ForeignKey(
         "projects.Project",
         null=False,
@@ -44,8 +45,6 @@ class ProjectInvitation(models.BaseModel):
         default=ProjectInvitationStatus.PENDING,
         verbose_name="status",
     )
-    created_at = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="created at")
-
     invited_by = models.ForeignKey(
         "users.User",
         related_name="ihaveinvited+",

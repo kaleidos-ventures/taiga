@@ -6,10 +6,22 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.db import models
+from taiga.base.utils.datetime import aware_utcnow
 
 
-class CreatedMetaInfoMixin(models.Model):
-    created_at = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="created at")
+class CreatedAtMetaInfoMixin(models.Model):
+    created_at = models.DateTimeField(
+        null=False,
+        blank=False,
+        default=aware_utcnow,
+        verbose_name="created at",
+    )
+
+    class Meta:
+        abstract = True
+
+
+class CreatedByMetaInfoMixin(models.Model):
     created_by = models.ForeignKey(
         "users.User",
         null=False,
@@ -18,5 +30,10 @@ class CreatedMetaInfoMixin(models.Model):
         verbose_name="created by",
     )
 
+    class Meta:
+        abstract = True
+
+
+class CreatedMetaInfoMixin(CreatedByMetaInfoMixin, CreatedAtMetaInfoMixin):
     class Meta:
         abstract = True

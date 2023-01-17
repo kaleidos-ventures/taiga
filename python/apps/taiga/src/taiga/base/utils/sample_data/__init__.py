@@ -6,9 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import random
+from datetime import timezone
 from decimal import Decimal
+from uuid import UUID
 
 from asgiref.sync import sync_to_async
+from django.contrib.auth.hashers import make_password
 from faker import Faker
 from fastapi import UploadFile
 from taiga.base.db import transaction
@@ -20,9 +23,9 @@ from taiga.projects.memberships import repositories as pj_memberships_repositori
 from taiga.projects.memberships.models import ProjectMembership
 from taiga.projects.projects import services as projects_services
 from taiga.projects.projects.models import Project
+from taiga.projects.references import get_new_project_reference_id
 from taiga.projects.roles.models import ProjectRole
-from taiga.stories.assignments import repositories as story_assignments_repositories
-from taiga.stories.stories import repositories as stories_repositories
+from taiga.stories.assignments.models import StoryAssignment
 from taiga.stories.stories.models import Story
 from taiga.users.models import User
 from taiga.workflows.models import Workflow, WorkflowStatus
@@ -39,8 +42,10 @@ random.seed(0)
 # CONFIGURATION
 ################################
 # Users
-NUM_USERS = 10
+NUM_USERS = 105
 NUM_USER_COLORS = 8
+PASSWORD = make_password("123123")
+
 # Projects
 NUM_PROJECT_COLORS = 8
 # Workspaces
@@ -57,21 +62,23 @@ PROB_STORY_ASSIGNMENTS = {  # 0-99 prob of a story to be assigned by its workflo
     "in-progress": 80,
     "done": 95,
 }
+PROB_STORY_ASSIGNMENTS_DEFAULT = 25
 
 ################################
 
 
 @transaction.atomic
 async def load_sample_data() -> None:
-    print("Loading sample data.")
-
     # USERS. Create users
-    users = await _create_users()
+    print("  - Creating sample users")
+    all_users = await _create_users()
+    users = all_users[:10]
 
     # WORKSPACES
     # create one basic workspace and one premium workspace per user
     # admin role is created by deault
     # create members roles for premium workspaces
+    print("  - Creating sample workspaces")
     workspaces = []
     for user in users:
         workspace = await _create_workspace(owner=user, is_premium=False)
@@ -80,9 +87,10 @@ async def load_sample_data() -> None:
 
     # create memberships for workspaces
     for workspace in workspaces:
-        await _create_workspace_memberships(workspace=workspace, users=users, except_for=workspace.owner)
+        await _create_workspace_memberships(workspace_id=workspace.id, users=users)
 
     # PROJECTS
+    print("  - Creating sample projets")
     projects = []
     for workspace in workspaces:
         # create one project (kanban) in each workspace with the same owner
@@ -90,17 +98,18 @@ async def load_sample_data() -> None:
         project = await _create_project(workspace=workspace, owner=workspace.owner)
 
         # add other users to different roles (admin and general)
-        await _create_project_memberships(project=project, users=users, except_for=workspace.owner)
-        projects.append(project)
+        await _create_project_memberships(project_id=project.id, users=users)
+        projects.append(await _get_project_with_related_info(project.id))
 
     for project in projects:
         # PROJECT INVITATIONS
         await _create_project_invitations(project=project, users=users)
 
         # STORIES
-        await _create_stories(project=project)
+        await _create_stories(project_id=project.id)
 
     # CUSTOM PROJECTS
+    print("  - Creating scenarios to check permissions")
     custom_owner = users[0]
     workspace = await _create_workspace(owner=custom_owner, name="Custom workspace")
     await _create_empty_project(owner=custom_owner, workspace=workspace)
@@ -109,15 +118,17 @@ async def load_sample_data() -> None:
     await _create_project_membership_scenario()
 
     # CUSTOM SCENARIOS
+    print("  - Creating scenario to check projetct invitations")
     await _create_scenario_with_invitations()
+    print("  - Creating scenario to check user searching")
     await _create_scenario_for_searches()
+    print("  - Creating scenario to check revoke invitations")
     await _create_scenario_for_revoke()
-    await _create_scenario_with_1k_stories(workspace=workspace, owner=custom_owner, users=users)
+    print("  - Creating scenarios to check big kanbans")
+    await _create_scenario_with_1k_stories(workspace=workspace, owner=custom_owner, users=all_users)
     await _create_scenario_with_2k_stories_and_40_workflow_statuses(
-        workspace=workspace, owner=custom_owner, users=users
+        workspace=workspace, owner=custom_owner, users=all_users
     )
-
-    print("Sample data loaded.")
 
 
 ################################
@@ -126,22 +137,26 @@ async def load_sample_data() -> None:
 
 
 async def _create_users() -> list[User]:
-    users = []
-    for i in range(NUM_USERS):
-        user = await _create_user(index=i + 1)
-        users.append(user)
-    return users
+    users = [await _create_user(index=i + 1, save=False) for i in range(NUM_USERS)]
+    await User.objects.abulk_create(users)
+    return [u async for u in User.objects.all().exclude(username="admin").order_by("date_joined")]
 
 
-@sync_to_async
-def _create_user(index: int) -> User:
+async def _create_user(index: int, save: bool = True) -> User:
     username = f"user{index}"
     email = f"{username}@taiga.demo"
     full_name = fake.name()
     color = fake.random_int(min=1, max=NUM_USER_COLORS)
-    user = User.objects.create(username=username, email=email, full_name=full_name, color=color, is_active=True)
-    user.set_password("123123")
-    user.save()
+    user = User(
+        username=username,
+        email=email,
+        full_name=full_name,
+        color=color,
+        is_active=True,
+        password=PASSWORD,
+    )
+    if save:
+        await sync_to_async(user.save)()
     return user
 
 
@@ -157,9 +172,85 @@ def _create_user_with_kwargs(username: str, full_name: str, email: str | None = 
 
 
 ################################
-# ROLES
+# WORKSPACES
 ################################
-# admin and general roles are automatically created with `_create_project`
+
+
+async def _get_workspace_with_related_info(id: UUID) -> Workspace:
+    return await (Workspace.objects.select_related().prefetch_related("roles").aget(id=id))
+
+
+@sync_to_async
+def _create_workspace_role(workspace: Workspace) -> WorkspaceRole:
+    return WorkspaceRole.objects.create(
+        workspace=workspace, name="Members", is_admin=False, permissions=choices.WorkspacePermissions.values
+    )
+
+
+@sync_to_async
+def _get_workspace_admin_role(workspace: Workspace) -> WorkspaceRole:
+    return workspace.roles.get(slug="admin")
+
+
+async def _create_workspace_memberships(workspace_id: UUID, users: list[User]) -> None:
+    workspace = await _get_workspace_with_related_info(workspace_id)
+
+    # get admin and other roles
+    other_roles = [r for r in workspace.roles.all() if r.slug != "admin"]
+    admin_role = await workspace.roles.aget(slug="admin")
+
+    # get users except the owner of the workspace
+    users = [u for u in users if u.id != workspace.owner_id]
+
+    # add 0, 1 or 2 other admins
+    num_admins = random.randint(0, 2)
+    for user in users[:num_admins]:
+        await ws_memberships_repositories.create_workspace_membership(user=user, workspace=workspace, role=admin_role)
+
+    # add other members in the different roles if any
+    if other_roles:
+        for user in users[num_admins:]:
+            role = random.choice(other_roles)
+            await ws_memberships_repositories.create_workspace_membership(user=user, workspace=workspace, role=role)
+
+
+async def _create_workspace(
+    owner: User, name: str | None = None, color: int | None = None, is_premium: bool = False
+) -> Workspace:
+    name = name or fake.bs()[:35]
+    if is_premium:
+        name = f"{name}(P)"
+    color = color or fake.random_int(min=1, max=NUM_WORKSPACE_COLORS)
+
+    workspace = await workspaces_services.create_workspace(name=name, owner=owner, color=color)
+
+    if is_premium:
+        workspace.is_premium = True
+        await sync_to_async(workspace.save)()
+        # create non-admin role
+        await _create_workspace_role(workspace=workspace)
+    return workspace
+
+
+################################
+# PROJECTS
+################################
+
+
+async def _get_project_with_related_info(id: UUID) -> Project:
+    return await (
+        Project.objects.select_related()
+        .prefetch_related(
+            "roles",
+            "members",
+            "memberships",
+            "memberships__user",
+            "memberships__role",
+            "workflows",
+            "workflows__statuses",
+        )
+        .aget(id=id)
+    )
 
 
 @sync_to_async
@@ -171,28 +262,8 @@ def _create_project_role(project: Project, name: str | None = None) -> ProjectRo
 
 
 @sync_to_async
-def _get_project_roles(project: Project) -> list[ProjectRole]:
-    return list(project.roles.all())
-
-
-@sync_to_async
-def _get_project_admin_role(project: Project) -> ProjectRole:
-    return project.roles.get(slug="admin")
-
-
-@sync_to_async
 def _get_project_other_roles(project: Project) -> list[ProjectRole]:
     return list(project.roles.exclude(slug="admin"))
-
-
-@sync_to_async
-def _get_project_memberships(project: Project) -> list[ProjectMembership]:
-    return list(project.memberships.all())
-
-
-@sync_to_async
-def _get_project_memberships_without_owner(project: Project) -> list[ProjectMembership]:
-    return list(project.memberships.exclude(user=project.owner))
 
 
 @sync_to_async
@@ -215,96 +286,6 @@ def _get_membership_role(membership: ProjectMembership) -> ProjectRole:
     return membership.role
 
 
-async def _create_project_memberships(project: Project, users: list[User], except_for: User) -> None:
-    # get admin and other roles
-    admin_role = await _get_project_admin_role(project=project)
-    other_roles = await _get_project_other_roles(project=project)
-
-    # get users except the owner of the project
-    other_users = [user for user in users if user.id != except_for.id]
-    random.shuffle(other_users)
-
-    # add 0, 1 or 2 other admins
-    num_admins = random.randint(0, 2)
-    for _ in range(num_admins):
-        user = other_users.pop(0)
-        await pj_memberships_repositories.create_project_membership(user=user, project=project, role=admin_role)
-
-    # add other members in the different roles
-    num_members = random.randint(0, len(other_users))
-    for _ in range(num_members):
-        user = other_users.pop(0)
-        role = random.choice(other_roles)
-        await pj_memberships_repositories.create_project_membership(user=user, project=project, role=role)
-
-
-@sync_to_async
-def _create_workspace_role(workspace: Workspace) -> WorkspaceRole:
-    return WorkspaceRole.objects.create(
-        workspace=workspace, name="Members", is_admin=False, permissions=choices.WorkspacePermissions.values
-    )
-
-
-@sync_to_async
-def _get_workspace_admin_role(workspace: Workspace) -> WorkspaceRole:
-    return workspace.roles.get(slug="admin")
-
-
-@sync_to_async
-def _get_workspace_other_roles(workspace: Workspace) -> list[WorkspaceRole]:
-    return list(workspace.roles.exclude(slug="admin"))
-
-
-async def _create_workspace_memberships(workspace: Workspace, users: list[User], except_for: User) -> None:
-    # get admin and other roles
-    admin_role = await _get_workspace_admin_role(workspace)
-    other_roles = await _get_workspace_other_roles(workspace)
-
-    # get users except the owner of the project
-    other_users = [user for user in users if user.id != except_for.id]
-    random.shuffle(other_users)
-
-    # add 0, 1 or 2 other admins
-    num_admins = random.randint(0, 2)
-    for _ in range(num_admins):
-        user = other_users.pop(0)
-        await ws_memberships_repositories.create_workspace_membership(user=user, workspace=workspace, role=admin_role)
-
-    # add other members in the different roles if any
-    if other_roles:
-        num_members = random.randint(0, len(other_users))
-        for _ in range(num_members):
-            user = other_users.pop(0)
-            role = random.choice(other_roles)
-            await ws_memberships_repositories.create_workspace_membership(user=user, workspace=workspace, role=role)
-
-
-################################
-# WORKSPACES
-################################
-
-
-async def _create_workspace(
-    owner: User, name: str | None = None, color: int | None = None, is_premium: bool = False
-) -> Workspace:
-    name = name or fake.bs()[:35]
-    if is_premium:
-        name = f"{name}(P)"
-    color = color or fake.random_int(min=1, max=NUM_WORKSPACE_COLORS)
-    workspace = await workspaces_services.create_workspace(name=name, owner=owner, color=color)
-    if is_premium:
-        workspace.is_premium = True
-        # create non-admin role
-        await _create_workspace_role(workspace=workspace)
-        await sync_to_async(workspace.save)()
-    return workspace
-
-
-################################
-# PROJECTS
-################################
-
-
 async def _create_project(
     workspace: Workspace, owner: User, name: str | None = None, description: str | None = None
 ) -> Project:
@@ -313,7 +294,7 @@ async def _create_project(
     with open("src/taiga/base/utils/sample_data/logo.png", "rb") as png_image_file:
         logo_file = UploadFile(file=png_image_file, filename="Logo")
 
-        project = await projects_services.create_project(
+        return await projects_services.create_project(
             name=name,
             description=description,
             color=fake.random_int(min=1, max=NUM_PROJECT_COLORS),
@@ -322,7 +303,82 @@ async def _create_project(
             logo=random.choice([None, logo_file]),
         )
 
-    return project
+
+async def _create_project_memberships(project_id: UUID, users: list[User]) -> None:
+    project = await _get_project_with_related_info(project_id)
+
+    # get admin and other roles
+    other_roles = [r for r in project.roles.all() if r.slug != "admin"]
+    admin_role = await project.roles.aget(slug="admin")
+
+    # get users except the owner of the project
+    users = [u for u in users if u.id != project.owner_id]
+
+    # calculate admin (at least 1/3 of the menmbers) and no admin users
+    # add 0, 1 or 2 other admins
+    num_admins = random.randint(0, len(users) // 3)
+    for user in users[:num_admins]:
+        await pj_memberships_repositories.create_project_membership(user=user, project=project, role=admin_role)
+
+    if other_roles:
+        for user in users[num_admins:]:
+            role = random.choice(other_roles)
+            await pj_memberships_repositories.create_project_membership(user=user, project=project, role=role)
+
+
+async def _create_project_invitations(project: Project, users: list[User]) -> None:
+    # add accepted invitations for project memberships
+    invitations = [
+        ProjectInvitation(
+            user=m.user,
+            project=project,
+            role=m.role,
+            email=m.user.email,
+            status=ProjectInvitationStatus.ACCEPTED,
+            invited_by=project.owner,
+        )
+        for m in project.memberships.all()
+        if m.user_id != project.owner_id
+    ]
+
+    # get no members
+    members = list(project.members.all())
+    no_members = [u for u in users if u not in members]
+    random.shuffle(no_members)
+
+    # get project roles
+    roles = list(project.roles.all())
+
+    # add 0, 1 or 2 pending invitations for registered users
+    num_users = random.randint(0, 2)
+    for user in no_members[:num_users]:
+        invitations.append(
+            ProjectInvitation(
+                user=user,
+                project=project,
+                role=random.choice(roles),
+                email=user.email,
+                status=ProjectInvitationStatus.PENDING,
+                invited_by=project.owner,
+            )
+        )
+
+    # add 0, 1 or 2 pending invitations for unregistered users
+    num_users = random.randint(0, 2)
+    for i in range(num_users):
+        invitations.append(
+            ProjectInvitation(
+                user=None,
+                project=project,
+                role=random.choice(roles),
+                email=f"email-{i}@email.com",
+                status=ProjectInvitationStatus.PENDING,
+                invited_by=project.owner,
+            )
+        )
+
+    # create invitations in bulk
+    await pj_invitations_repositories.create_project_invitations(objs=invitations)
 
 
 #################################
@@ -358,37 +414,76 @@ async def _create_workflow_status(
 
 
 async def _create_stories(
-    project: Project, min_stories: int = NUM_STORIES_PER_WORKFLOW[0], max_stories: int | None = None
+    project_id: UUID, min_stories: int = NUM_STORIES_PER_WORKFLOW[0], max_stories: int | None = None
 ) -> None:
+    project = await _get_project_with_related_info(project_id)
     num_stories_to_create = fake.random_int(
         min=min_stories, max=max_stories or min_stories or NUM_STORIES_PER_WORKFLOW[1]
     )
 
-    members = await _get_project_members(project=project)
-    for workflow in await _get_workflows(project=project):
-        statuses = await _get_workflow_statuses(workflow=workflow)
+    members = list(project.members.all())
+    workflows = list(project.workflows.all())
+
+    # Create stories
+    stories = []
+    for workflow in workflows:
+        statuses = list(workflow.statuses.all())
+
         for i in range(num_stories_to_create):
-            story = await _create_story(status=random.choice(statuses), owner=random.choice(members), order=Decimal(i))
-            status = story.status.slug.lower()
-            if (
-                status in PROB_STORY_ASSIGNMENTS.keys()
-                and fake.random_number(digits=2) < PROB_STORY_ASSIGNMENTS[status]
-            ):
-                for random_member in fake.random_elements(elements=members, unique=True):
-                    await story_assignments_repositories.create_story_assignment(story=story, user=random_member)
+            stories.append(
+                await _create_story(
+                    status=random.choice(statuses),
+                    owner=random.choice(members),
+                    order=Decimal(i),
+                    save=False,
+                )
+            )
+    await Story.objects.abulk_create(stories)
+
+    # Create story assignments
+    story_assignments = []
+    async for story in Story.objects.select_related().filter(project=project):
+
+        if fake.random_number(digits=2) < PROB_STORY_ASSIGNMENTS.get(
+            story.status.slug.lower(), PROB_STORY_ASSIGNMENTS_DEFAULT
+        ):
+            # Sometimes we assign all the members
+            members_sample = (
+                members if fake.boolean(chance_of_getting_true=10) else fake.random_sample(elements=members)
+            )
+            for member in members_sample:
+                story_assignments.append(
+                    StoryAssignment(
+                        story=story,
+                        user=member,
+                        created_at=fake.date_time_between(start_date=story.created_at, tzinfo=timezone.utc),
+                    )
+                )
+
+    await StoryAssignment.objects.abulk_create(story_assignments)
 
 
-async def _create_story(status: WorkflowStatus, owner: User, order: Decimal, title: str | None = None) -> Story:
+async def _create_story(
+    status: WorkflowStatus, owner: User, order: Decimal, title: str | None = None, save: bool = True
+) -> Story:
+    _ref = await sync_to_async(get_new_project_reference_id)(status.workflow.project_id)
     _title = title or fake.text(max_nb_chars=random.choice(STORY_TITLE_MAX_SIZE))
+    _created_at = fake.date_time_between(start_date="-2y", tzinfo=timezone.utc)
 
-    return await stories_repositories.create_story(
+    story = Story(
+        ref=_ref,
         title=_title,
+        order=order,
+        created_at=_created_at,
+        created_by_id=owner.id,
         project_id=status.workflow.project_id,
         workflow_id=status.workflow_id,
         status_id=status.id,
-        user_id=owner.id,
-        order=order,
     )
+    if save:
+        sync_to_async(story.save)()
+
+    return story
 
 
 ################################
@@ -425,7 +520,7 @@ async def _create_project_with_several_roles(owner: User, workspace: Workspace, 
     await _create_project_role(project=project, name="UX/UI")
     await _create_project_role(project=project, name="Developer")
     await _create_project_role(project=project, name="Stakeholder")
-    await _create_project_memberships(project=project, users=users, except_for=project.owner)
+    await _create_project_memberships(project_id=project.id, users=users)
 
 
 async def _create_project_membership_scenario() -> None:
@@ -687,62 +782,6 @@ async def _create_project_membership_scenario() -> None:
 
 
 ################################
-# PROJECT INVITATIONS
-################################
-
-
-async def _create_project_invitations(project: Project, users: list[User]) -> None:
-    # add accepted invitations for project memberships
-    project_owner = await _get_project_owner(project=project)
-    invitations = [
-        ProjectInvitation(
-            user=await _get_membership_user(membership=membership),
-            project=project,
-            role=await _get_membership_role(membership=membership),
-            email=(await _get_membership_user(membership=membership)).email,
-            status=ProjectInvitationStatus.ACCEPTED,
-            invited_by=project_owner,
-        )
-        for membership in await _get_project_memberships_without_owner(project=project)
-    ]
-
-    # get users except the owner and the memberships of the project
-    other_users = [user for user in users if user not in await _get_project_members(project=project)]
-    random.shuffle(other_users)
-
-    # add 0, 1 or 2 pending invitations for registered users
-    num_users = random.randint(0, 2)
-    for user in other_users[:num_users]:
-        invitations.append(
-            ProjectInvitation(
-                user=user,
-                project=project,
-                role=random.choice(await _get_project_roles(project=project)),
-                email=user.email,
-                status=ProjectInvitationStatus.PENDING,
-                invited_by=project_owner,
-            )
-        )
-
-    # add 0, 1 or 2 pending invitations for unregistered users
-    num_users = random.randint(0, 2)
-    for i in range(num_users):
-        invitations.append(
-            ProjectInvitation(
-                user=None,
-                project=project,
-                role=random.choice(await _get_project_roles(project=project)),
-                email=f"email-{i}@email.com",
-                status=ProjectInvitationStatus.PENDING,
-                invited_by=project_owner,
-            )
-        )
-
-    # create invitations in bulk
-    await pj_invitations_repositories.create_project_invitations(objs=invitations)
-
-
-################################
 # CUSTOM SCENARIOS
 ################################
 
@@ -870,8 +909,9 @@ async def _create_scenario_with_1k_stories(workspace: Workspace, users: list[Use
     project = await _create_project(
         name="1k Stories", description="This project contains 1000 stories.", owner=owner, workspace=workspace
     )
-    await _create_project_memberships(project=project, users=users, except_for=project.owner)
-    await _create_stories(project=project, min_stories=1000)
+    await _create_project_memberships(project_id=project.id, users=users)
+
+    await _create_stories(project_id=project.id, min_stories=1000)
 
 
 async def _create_scenario_with_2k_stories_and_40_workflow_statuses(
@@ -886,8 +926,10 @@ async def _create_scenario_with_2k_stories_and_40_workflow_statuses(
         owner=owner,
         workspace=workspace,
     )
-    await _create_project_memberships(project=project, users=users, except_for=project.owner)
+    await _create_project_memberships(project_id=project.id, users=users)
+
     workflow = (await _get_workflows(project=project))[0]
     for i in range(0, 40 - len(await _get_workflow_statuses(workflow=workflow))):
         await _create_workflow_status(workflow=workflow)
-    await _create_stories(project=project, min_stories=2000)
+
+    await _create_stories(project_id=project.id, min_stories=2000)

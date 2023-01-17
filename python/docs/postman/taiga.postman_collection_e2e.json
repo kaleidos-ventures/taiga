@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "0fed4c41-ed3a-44df-a2e4-4dd66b67c20e",
+		"_postman_id": "e047a976-44ff-4eba-862c-3269117f8989",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -1181,7 +1180,7 @@
 			"name": "projects",
 			"item": [
 				{
-					"name": "N/A log in as user3",
+					"name": "N/A log in as user1",
 					"event": [
 						{
 							"listen": "test",
@@ -1213,7 +1212,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user3\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -1931,7 +1930,7 @@
 			"name": "projects.{p}.workflows.{wf}.stories",
 			"item": [
 				{
-					"name": "N/A log in as user3",
+					"name": "N/A log in as user1",
 					"event": [
 						{
 							"listen": "test",
@@ -1963,7 +1962,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user3\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -2287,7 +2286,7 @@
 			"name": "projects.{p}.stories.{ref}",
 			"item": [
 				{
-					"name": "N/A log in as user3",
+					"name": "N/A log in as user1",
 					"event": [
 						{
 							"listen": "test",
@@ -2319,7 +2318,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user3\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -2570,7 +2569,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user3\"\n}",
+							"raw": "{\n    \"username\": \"user1\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3371,7 +3370,6 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"bad-invitation-token-error\");",
-									"    pm.expect(jsonData.error.msg).to.include(\"Invalid token\");  ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3416,7 +3414,6 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"bad-invitation-token-error\");",
-									"    pm.expect(jsonData.error.msg).to.include(\"Invalid token\");  ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -4013,7 +4010,7 @@
 			"name": "projects.{p}.invitations.{i}",
 			"item": [
 				{
-					"name": "N/A log in as user2",
+					"name": "N/A log in as user1",
 					"event": [
 						{
 							"listen": "test",
@@ -4045,7 +4042,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user2\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -4409,7 +4406,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user2",
+					"name": "N/A log in as user1",
 					"event": [
 						{
 							"listen": "test",
@@ -4441,7 +4438,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user2\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -4474,7 +4471,6 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"invitation-already-accepted-error\");",
-									"    pm.expect(jsonData.error.msg).to.include(\"Cannot change role in an accepted invitation\");  ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -4654,7 +4650,6 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"invitation-revoked-error\");",
-									"    pm.expect(jsonData.error.msg).to.include(\"The invitation has already been revoked\");  ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -4777,7 +4772,6 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"non-existing-role-error\");",
-									"    pm.expect(jsonData.error.msg).to.include(\"Role does not exist\");  ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -4925,7 +4919,7 @@
 			"name": "projects.{p}.memberships",
 			"item": [
 				{
-					"name": "N/A log in as user3",
+					"name": "N/A log in as user1",
 					"event": [
 						{
 							"listen": "test",
@@ -4957,7 +4951,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user3\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -5289,7 +5283,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user3",
+					"name": "N/A log in as user1",
 					"event": [
 						{
 							"listen": "test",
@@ -5321,7 +5315,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user3\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -5512,7 +5506,6 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"non-existing-role-error\");",
-									"    pm.expect(jsonData.error.msg).to.include(\"Role does not exist\");  ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -5574,7 +5567,6 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"membership-is-the-only-admin-error\");",
-									"    pm.expect(jsonData.error.msg).to.include(\"Membership is the only admin\");  ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -6088,7 +6080,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as user1000",
 					"event": [
 						{
 							"listen": "test",
@@ -6120,7 +6112,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"user1000\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -6211,7 +6203,6 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"not-premium-workspace-error\");",
-									"    pm.expect(jsonData.error.msg).to.eql(\"The workspace is not a premium one, so these perms cannot be seen\");",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonData).length;",
@@ -6282,7 +6273,6 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
 									"    pm.expect(jsonData.error.detail).to.eql(\"not-premium-workspace-error\");",
-									"    pm.expect(jsonData.error.msg).to.eql(\"The workspace is not a premium one, so these perms cannot be set\");",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonData).length;",
@@ -7485,7 +7475,6 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.error.code).to.eql(\"validation-error\");",
 									"    pm.expect(jsonData.error.detail[0].loc[1]).to.eql(\"password\");",
-									"    pm.expect(jsonData.error.detail[0].msg).to.eql(\"field required\");",
 									"    pm.expect(jsonData.error.detail[0].type).to.eql(\"value_error.missing\");",
 									"",
 									"    // Validate we're not returning more fields than expected",

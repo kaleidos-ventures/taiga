@@ -10,7 +10,7 @@ from typing import Any
 
 from slugify import slugify
 from taiga.base.db import models
-from taiga.base.db.mixins import CreatedMetaInfoMixin
+from taiga.base.db.mixins import CreatedAtMetaInfoMixin, CreatedMetaInfoMixin
 from taiga.base.utils.files import get_file_path
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.uuid import encode_uuid_to_b64str
@@ -123,10 +123,9 @@ class Project(models.BaseModel, CreatedMetaInfoMixin):
         return super().delete(*args, **kwargs)
 
 
-class ProjectTemplate(models.BaseModel):
+class ProjectTemplate(models.BaseModel, CreatedAtMetaInfoMixin):
     name = models.CharField(max_length=250, null=False, blank=False, verbose_name="name")
     slug = models.LowerSlugField(max_length=250, null=False, blank=True, unique=True, verbose_name="slug")
-    created_at = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="created at")
     modified_at = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="modified at")
     default_owner_role = models.CharField(max_length=50, null=False, blank=False, verbose_name="default owner's role")
     roles = models.JSONField(null=True, blank=True, verbose_name="roles")

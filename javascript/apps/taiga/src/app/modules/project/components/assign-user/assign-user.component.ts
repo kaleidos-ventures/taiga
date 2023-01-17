@@ -95,6 +95,9 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
   public ref?: number;
 
   @Input()
+  public width = 0;
+
+  @Input()
   public set assigned(members: Story['assignees']) {
     const currentUser = this.state.get('currentUser');
     const currentUserAssigned = members.find((member) => {
@@ -158,6 +161,12 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
   public readonly search$ = new Subject<string>();
 
   public searchTextForm!: FormGroup;
+  public singleAssigned = 40;
+  public minAssignHeight = 187;
+
+  public getCustomWidth() {
+    return this.width ? this.width : null;
+  }
 
   constructor(
     private store: Store,
@@ -287,6 +296,14 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       );
     }
+  }
+
+  public setWidth() {
+    return this.width > 0 ? `${this.width}px` : null;
+  }
+
+  public setMaxInlineSize() {
+    return this.width > 0 ? 'auto' : null;
   }
 
   public trackByMember(_index: number, member: Membership['user']) {

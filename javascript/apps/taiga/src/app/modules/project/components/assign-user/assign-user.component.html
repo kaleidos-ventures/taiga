@@ -9,172 +9,184 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <div
-      class="assignees-wrapper"
-      data-test="assignees-wrapper">
-      <h2
-        class="assignees-title"
-        tabindex="-1"
-        [ngClass]="{
-          'assignee-title': vm.assigned.length > 0,
-          'unassign-title': vm.assigned.length === 0
-        }">
-        <ng-container *ngIf="vm.assigned.length">{{
-          t('project.assign_user.title')
-        }}</ng-container>
-        <ng-container *ngIf="!vm.assigned.length">{{
-          t('project.assign_user.unassigned')
-        }}</ng-container>
-      </h2>
-    </div>
-    <ul *ngIf="vm.assigned.length">
-      <li
-        class="option"
-        *ngFor="let assignedUser of vm.assigned; trackBy: trackByMember">
-        <button
-          class="user-row"
-          data-test="assigned-member"
-          [class.view-only]="viewOnly"
-          type="button"
-          [attr.aria-label]="
-            t('project.assign_user.unassign-aria', {
-              name: assignedUser.fullName,
-              username: assignedUser.username
-            })
-          "
-          [attr.aria-disabled]="viewOnly"
-          (keydown.enter)="viewOnly ? null : onUnassign($event, assignedUser)"
-          (click)="viewOnly ? null : onUnassign($event, assignedUser)">
-          <div class="user">
-            <tg-user-avatar
-              size="m"
-              class="no-border"
-              [color]="assignedUser.color"
-              [user]="assignedUser"
-              type="light"
-              [rounded]="true"
-              aria-hidden="true"></tg-user-avatar>
-            <span
-              class="user-identifier"
-              *ngIf="vm.currentUser.username !== assignedUser.username">
-              {{ assignedUser.fullName || assignedUser.username }}
-            </span>
-            <span
-              class="user-identifier"
-              *ngIf="vm.currentUser.username === assignedUser.username"
-              [innerHtml]="
-                t('commons.your_user', { name: assignedUser.fullName })
-              ">
-            </span>
-          </div>
-          <tui-svg
-            *ngIf="!viewOnly"
-            class="unassign-btn"
-            [tuiHint]="tooltip"
-            tuiHintDirection="bottom-right"
-            src="close">
-          </tui-svg>
-        </button>
-      </li>
-    </ul>
-
-    <ng-template #tooltip>
-      <p>{{ t('project.assign_user.remove-assignee') }}</p>
-    </ng-template>
-
-    <ng-container *ngIf="!viewOnly">
-      <form
-        class="search-form"
-        [formGroup]="searchTextForm">
-        <tg-ui-input
-          [icon]="'search'"
-          [label]="t('project.assign_user.add')">
-          <input
-            inputRef
-            tuiAutoFocus
-            #searchInput
-            data-test="input-search"
-            formControlName="searchText"
-            type="search"
-            [placeholder]="t('project.assign_user.search-members')"
-            (ngModelChange)="search$.next(searchTextForm.value.searchText)" />
-        </tg-ui-input>
-      </form>
-
-      <tui-scrollbar class="scrollbar-members">
-        <ul>
+      class="assign-user-container"
+      [style.max-inline-size]="setMaxInlineSize()"
+      [style.inline-size]="setWidth()">
+      <div
+        class="assignees-wrapper"
+        data-test="assignees-wrapper">
+        <h2
+          class="assignees-title"
+          tabindex="-1"
+          [ngClass]="{
+            'assignee-title': vm.assigned.length > 0,
+            'unassign-title': vm.assigned.length === 0
+          }">
+          <ng-container *ngIf="vm.assigned.length">{{
+            t('project.assign_user.title')
+          }}</ng-container>
+          <ng-container *ngIf="!vm.assigned.length">{{
+            t('project.assign_user.unassigned')
+          }}</ng-container>
+        </h2>
+      </div>
+      <tui-scrollbar class="assigness-container">
+        <ul *ngIf="vm.assigned.length">
           <li
-            *ngFor="let member of vm.members; trackBy: trackByMember"
             class="option"
-            [class.disabled]="!vm.membersPermissions[member.username].length">
+            *ngFor="let assignedUser of vm.assigned; trackBy: trackByMember">
             <button
-              class="unassigned-member-row"
+              class="user-row"
               data-test="unassigned-member"
+              [class.view-only]="viewOnly"
               type="button"
               [attr.aria-label]="
-                !vm.membersPermissions[member.username].length
-                  ? t('project.assign_user.disabled-user-aria', {
-                      name: member.fullName,
-                      username: member.username
-                    })
-                  : t('project.assign_user.assign-aria', {
-                      name: member.fullName,
-                      username: member.username
-                    })
+                t('project.assign_user.unassign-aria', {
+                  name: assignedUser.fullName,
+                  username: assignedUser.username
+                })
               "
-              [attr.aria-disabled]="
-                !vm.membersPermissions[member.username].length
-              "
+              [attr.aria-disabled]="viewOnly"
               (keydown.enter)="
-                vm.membersPermissions[member.username].length
-                  ? onAssign($event, member)
-                  : null
+                viewOnly ? null : onUnassign($event, assignedUser)
               "
-              (click)="
-                vm.membersPermissions[member.username].length
-                  ? onAssign($event, member)
-                  : null
-              ">
-              <tg-user-card
-                class="card"
-                [user]="member"
-                [isSelf]="vm.currentUser.username === member.username"
-                [navigateToUser]="false">
-              </tg-user-card>
+              (click)="viewOnly ? null : onUnassign($event, assignedUser)">
+              <div class="user">
+                <tg-user-avatar
+                  size="m"
+                  class="no-border"
+                  [color]="assignedUser.color"
+                  [user]="assignedUser"
+                  type="light"
+                  [rounded]="true"
+                  aria-hidden="true"></tg-user-avatar>
+                <span
+                  class="user-identifier"
+                  *ngIf="vm.currentUser.username !== assignedUser.username">
+                  {{ assignedUser.fullName || assignedUser.username }}
+                </span>
+                <span
+                  class="user-identifier"
+                  *ngIf="vm.currentUser.username === assignedUser.username"
+                  [innerHtml]="
+                    t('commons.your_user', { name: assignedUser.fullName })
+                  ">
+                </span>
+              </div>
               <tui-svg
-                *ngIf="vm.membersPermissions[member.username].length"
-                class="assign-btn"
-                [tuiHint]="tooltipAssign"
+                *ngIf="!viewOnly"
+                class="unassign-btn"
+                [tuiHint]="tooltip"
                 tuiHintDirection="bottom-right"
-                src="plus">
-              </tui-svg>
-              <tui-svg
-                *ngIf="!vm.membersPermissions[member.username].length"
-                class="disabled-btn"
-                [tuiHint]="tooltipMemberDisabled"
-                tuiHintDirection="bottom-right"
-                src="help">
+                src="close">
               </tui-svg>
             </button>
           </li>
         </ul>
       </tui-scrollbar>
-      <p
-        data-test="no-members"
-        class="no-members"
-        *ngIf="!vm.members.length">
-        <ng-container *ngIf="!searchTextForm.get('searchText')?.value">{{
-          t('project.assign_user.no-members')
-        }}</ng-container>
-        <ng-container *ngIf="searchTextForm.get('searchText')?.value">{{
-          t('project.assign_user.no-matches')
-        }}</ng-container>
-      </p>
+
       <ng-template #tooltipAssign>
         <p>{{ t('project.assign_user.add-assignee') }}</p>
       </ng-template>
+
       <ng-template #tooltipMemberDisabled>
         <p>{{ t('project.assign_user.member-disabled') }}</p>
       </ng-template>
-    </ng-container>
+
+      <ng-template #tooltip>
+        <p>{{ t('project.assign_user.remove-assignee') }}</p>
+      </ng-template>
+
+      <ng-container *ngIf="!viewOnly">
+        <form
+          class="search-form"
+          [formGroup]="searchTextForm">
+          <tg-ui-input
+            [icon]="'search'"
+            [label]="t('project.assign_user.add')">
+            <input
+              inputRef
+              tuiAutoFocus
+              #searchInput
+              formControlName="searchText"
+              type="search"
+              [placeholder]="t('project.assign_user.search-members')"
+              (ngModelChange)="search$.next(searchTextForm.value.searchText)" />
+          </tg-ui-input>
+        </form>
+        <tui-scrollbar class="assigness-search-container">
+          <tui-scrollbar class="scrollbar-members">
+            <ul>
+              <li
+                class="option"
+                *ngFor="let member of vm.members; trackBy: trackByMember"
+                [class.disabled]="
+                  !vm.membersPermissions[member.username].length
+                ">
+                <button
+                  class="unassigned-member-row"
+                  type="button"
+                  [attr.aria-label]="
+                    !vm.membersPermissions[member.username].length
+                      ? t('project.assign_user.disabled-user-aria', {
+                          name: member.fullName,
+                          username: member.username
+                        })
+                      : t('project.assign_user.assign-aria', {
+                          name: member.fullName,
+                          username: member.username
+                        })
+                  "
+                  [attr.aria-disabled]="
+                    !vm.membersPermissions[member.username].length
+                  "
+                  (keydown.enter)="
+                    vm.membersPermissions[member.username].length
+                      ? onAssign($event, member)
+                      : null
+                  "
+                  (click)="
+                    vm.membersPermissions[member.username].length
+                      ? onAssign($event, member)
+                      : null
+                  ">
+                  <tg-user-card
+                    class="card"
+                    [user]="member"
+                    [isSelf]="vm.currentUser.username === member.username"
+                    [navigateToUser]="false">
+                  </tg-user-card>
+                  <tui-svg
+                    *ngIf="vm.membersPermissions[member.username].length"
+                    class="assign-btn"
+                    [tuiHint]="tooltipAssign"
+                    tuiHintDirection="bottom-right"
+                    src="plus">
+                  </tui-svg>
+                  <tui-svg
+                    *ngIf="!vm.membersPermissions[member.username].length"
+                    class="disabled-btn"
+                    [tuiHint]="tooltipMemberDisabled"
+                    tuiHintDirection="bottom-right"
+                    src="help">
+                  </tui-svg>
+                </button>
+              </li>
+            </ul>
+          </tui-scrollbar>
+          <p
+            data-test="no-members"
+            class="no-members"
+            *ngIf="!vm.members.length">
+            <ng-container *ngIf="!searchTextForm.get('searchText')?.value">{{
+              t('project.assign_user.no-members')
+            }}</ng-container>
+            <ng-container *ngIf="searchTextForm.get('searchText')?.value">{{
+              t('project.assign_user.no-matches')
+            }}</ng-container>
+          </p>
+        </tui-scrollbar>
+      </ng-container>
+    </div>
   </ng-container>
 </ng-container>

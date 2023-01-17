@@ -8,7 +8,11 @@
 
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { StoryDetail, StoryView, Workflow } from '@taiga/data';
-import { KanbanApiActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import {
+  KanbanActions,
+  KanbanApiActions,
+} from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { immerReducer } from '~/app/shared/utils/store';
 
@@ -105,6 +109,31 @@ export const reducer = createReducer(
         state.story.status = action.status;
       }
 
+      return state;
+    }
+  ),
+  on(
+    StoryDetailActions.assignMember,
+    KanbanActions.assignMember,
+    projectEventActions.assignedMemberEvent,
+
+    (state, { storyRef, member }): StoryDetailState => {
+      if (state.story?.ref === storyRef) {
+        state.story?.assignees.push(member);
+      }
+      return state;
+    }
+  ),
+  on(
+    StoryDetailActions.unassignMember,
+    KanbanActions.unassignMember,
+    projectEventActions.unassignedMemberEvent,
+    (state, { storyRef, member }): StoryDetailState => {
+      if (state.story?.ref === storyRef) {
+        state.story.assignees = state.story.assignees.filter((storyUser) => {
+          return storyUser.username !== member.username;
+        });
+      }
       return state;
     }
   )

@@ -7,7 +7,9 @@
  */
 
 import type { Merge } from 'type-fest';
+import { Membership } from './membership.model';
 import { Milestone } from './milestone.model';
+import { Story } from './story.model';
 import { Workspace } from './workspace.model';
 
 export interface Project {
@@ -42,3 +44,9 @@ export type EditProject = Merge<
   Pick<Project, 'id' | 'name' | 'logo' | 'description'>,
   { logo?: File }
 >;
+export interface StoryAssignEvent {
+  storyAssignment: {
+    story: Story;
+    user: Membership['user'];
+  };
+}

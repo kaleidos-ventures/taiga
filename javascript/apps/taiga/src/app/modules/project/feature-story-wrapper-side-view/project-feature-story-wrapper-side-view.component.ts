@@ -20,11 +20,11 @@ import {
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { StoryView } from '@taiga/data';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import {
   selectLoadingStory,
   selectStoryView,
 } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 interface WrapperSideViewState {
   selectedStoryView: StoryView;
   loadingStory: boolean;
@@ -53,8 +53,8 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   public maxInlineSize = '';
 
   public minWidthCollapsed = 440;
-  public minWidthUncollapsed = 472;
-  public widthToForceCollapse = 472;
+  public minWidthUncollapsed = 500;
+  public widthToForceCollapse = 500;
 
   constructor(
     private store: Store,
@@ -90,6 +90,7 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   public onToggleSidebar() {
     this.localStorage.set('story_view_sidebar', !this.sidebarOpen);
     this.sidebarOpen = !this.sidebarOpen;
+    this.minInlineSize = this.calculateMinInlineSize();
   }
 
   public checkIfForceCollapse() {
@@ -111,8 +112,8 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   public calculateMinInlineSize() {
     const quarterWidth = this.kanbanWidth / 4;
     const calculatedMinWidth = this.sidebarOpen
-      ? this.minWidthCollapsed
-      : this.minWidthUncollapsed;
+      ? this.minWidthUncollapsed
+      : this.minWidthCollapsed;
     if (this.kanbanWidth && quarterWidth >= calculatedMinWidth) {
       return `${quarterWidth}px`;
     } else {

@@ -1,0 +1,161 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <div class="field">
+      <label class="field-label">{{ t('common_story.assigned_to') }}</label>
+      <div
+        class="assign-user field-content"
+        (resized)="calculateDropdownWidth($event)">
+        <div
+          class="dropdown-container"
+          [tuiDropdown]="assignUser"
+          [tuiDropdownMinHeight]="272"
+          [tuiDropdownMaxHeight]="532"
+          [tuiDropdownManual]="vm.showAssignUser"
+          [tuiDropdownDirection]="'bottom'"
+          [tuiDropdownAlign]="'right'"
+          (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)"></div>
+        <ng-container *ngIf="story?.assignees">
+          <ng-template
+            *ngIf="
+              story.assignees.length;
+              then displayUsersTpl;
+              else assignBtnTpl
+            ">
+          </ng-template>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Assigned users temaplate -->
+
+    <ng-template #displayUsersTpl>
+      <ul
+        class="assigned-users-list"
+        [attr.aria-label]="
+          t('common_story.assigned_list', {
+            users: assignedListA11y
+          })
+        ">
+        <li
+          class="assigned-user"
+          *ngFor="let assigned of story.assignees; trackBy: trackByIndex">
+          <tg-user-avatar
+            size="l"
+            class="assigned-user-avatar"
+            [color]="assigned.color"
+            [user]="assigned"
+            type="light"
+            [rounded]="true"
+            aria-hidden="true"
+            [tuiHint]="assigned.fullName"
+            [tuiHintDirection]="'bottom-right'"></tg-user-avatar>
+          <label class="assigned-name">
+            {{ assigned.fullName }}
+          </label>
+          <button
+            (click)="unassign(assigned)"
+            [attr.aria-label]="t('commons.next_page')"
+            appearance="tertiary"
+            tuiIconButton
+            icon="close"
+            type="button"></button>
+        </li>
+        <li class="add-assignee">
+          <button
+            tuiButton
+            appearance="tertiary"
+            icon="user-plus"
+            type="button"
+            (click)="toggleAssignUser($event)"
+            [tuiHint]="!story.assignees.length ? unassignedTooltip : null"
+            [tuiHintDirection]="'bottom-right'"
+            [ngClass]="{
+              'unassigned-button-perm': !story.assignees.length,
+              'assigned-button-perm': story.assignees.length
+            }">
+            {{ t('common_story.add_assignee') }}
+          </button>
+        </li>
+      </ul>
+    </ng-template>
+
+    <!-- Assign button template - user with permissions -->
+
+    <ng-template #assignBtnTpl>
+      <div class="not-assigned">
+        <span> {{ t('common_story.not_assigned') }} </span>
+        <button
+          tuiButton
+          appearance="tertiary"
+          icon="user-plus"
+          type="button"
+          (click)="toggleAssignUser($event)"
+          [tuiHint]="!story.assignees.length ? unassignedTooltip : null"
+          [tuiHintDirection]="'bottom-right'"
+          [ngClass]="{
+            'unassigned-button-perm': !story.assignees.length,
+            'assigned-button-perm': story.assignees.length
+          }">
+          {{ t('common_story.assign') }}
+        </button>
+      </div>
+    </ng-template>
+
+    <!-- Assign button template - user with permissions -->
+
+    <ng-template #assignUser>
+      <tg-assign-user
+        [width]="dropdownWidth"
+        [assigned]="story.assignees"
+        (assign)="assign($event)"
+        (unassign)="unassign($event)"
+        (requestClose)="closeAssignDropdown()"></tg-assign-user>
+    </ng-template>
+
+    <!-- Assign elements - no permissions -->
+
+    <ng-template #noAssignPermissionsTpl>
+      <div
+        *ngIf="!story.assignees.length"
+        [tuiHint]="unassignedTooltip"
+        [tuiHintDirection]="'bottom-right'"
+        class="unassigned-button-noperm"
+        aria-labelledby="unassigned-tooltip">
+        {{ t('common_story.unassigned') }}
+      </div>
+      <div
+        *ngIf="story.assignees.length"
+        class="assigned-button-noperm">
+        <ng-container *ngTemplateOutlet="displayUsersTpl"></ng-container>
+      </div>
+    </ng-template>
+
+    <ng-template #unassignedTooltip>
+      <p
+        id="unassigned-tooltip"
+        aria-hidden="true">
+        {{ t('common_story.story_not_assigned') }}
+      </p>
+    </ng-template>
+
+    <ng-template #moreAssignedTooltip>
+      <p
+        id="more-assigned-tooltip"
+        aria-hidden="true">
+        {{
+          t('common_story.more_assigned', {
+            assigneesNum: story.assignees.length - 3
+          })
+        }}
+      </p>
+    </ng-template>
+  </ng-container>
+</ng-container>

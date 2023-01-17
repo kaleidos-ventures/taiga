@@ -10,7 +10,10 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { RxState } from '@rx-angular/state';
 import { Status } from '@taiga/data';
-import { StoryDetailForm, StoryDetailState } from '../story-detail.component';
+import {
+  StoryDetailForm,
+  StoryDetailState,
+} from '~/app/modules/project/story-detail/story-detail.component';
 
 @Component({
   selector: 'tg-story-detail-status',

@@ -38,7 +38,7 @@ import {
   selectLoadingWorkflows,
   selectWorkflows,
 } from './data-access/+state/selectors/kanban.selectors';
-import { KanbanAssignEvent, KanbanReorderEvent } from './kanban.model';
+import { KanbanReorderEvent } from './kanban.model';
 
 interface ComponentState {
   loadingWorkflows: KanbanState['loadingWorkflows'];
@@ -228,41 +228,6 @@ export class ProjectFeatureKanbanComponent {
       .subscribe((event) => {
         this.store.dispatch(
           KanbanEventsActions.reorderStory(event.event.content.reorder)
-        );
-      });
-
-    this.wsService
-      .projectEvents<{ story: StoryDetail }>('stories.update')
-      .pipe(untilDestroyed(this))
-      .subscribe((msg) => {
-        this.store.dispatch(
-          KanbanEventsActions.updateStory({ story: msg.event.content.story })
-        );
-      });
-
-    this.wsService
-      .projectEvents<KanbanAssignEvent>('stories_assignments.create')
-      .pipe(untilDestroyed(this))
-      .subscribe((eventResponse) => {
-        const response = eventResponse.event.content.storyAssignment;
-        this.store.dispatch(
-          KanbanActions.assignedMemberEvent({
-            member: response.user,
-            storyRef: response.story.ref,
-          })
-        );
-      });
-
-    this.wsService
-      .projectEvents<KanbanAssignEvent>('stories_assignments.delete')
-      .pipe(untilDestroyed(this))
-      .subscribe((eventResponse) => {
-        const response = eventResponse.event.content.storyAssignment;
-        this.store.dispatch(
-          KanbanActions.unassignedMemberEvent({
-            member: response.user,
-            storyRef: response.story.ref,
-          })
         );
       });
   }

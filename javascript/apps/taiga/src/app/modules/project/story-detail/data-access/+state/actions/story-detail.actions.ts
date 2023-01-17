@@ -8,6 +8,7 @@
 
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import {
+  Membership,
   Project,
   Story,
   StoryDetail,
@@ -29,6 +30,18 @@ export const StoryDetailActions = createActionGroup({
       story: StoryUpdate;
       projectId: Project['id'];
     }>(),
+    'Assign Member': props<{
+      storyRef: Story['ref'];
+      member: Membership['user'];
+    }>(),
+    'Assigned Member Event': props<{
+      storyRef: Story['ref'];
+      member: Membership['user'];
+    }>(),
+    'UnAssign Member': props<{
+      storyRef: Story['ref'];
+      member: Membership['user'];
+    }>(),
   },
 });
 
@@ -38,6 +51,8 @@ export const StoryDetailApiActions = createActionGroup({
     'Fetch Story Success': props<{ story: StoryDetail }>(),
     'Fetch Workflow Success': props<{ workflow: Workflow }>(),
     'Update Story Success': props<{ story: StoryDetail }>(),
+    'Assign Member Success': emptyProps(),
+    'UnAssign Member Success': emptyProps(),
   },
 });
 
@@ -48,5 +63,6 @@ export const StoryDetailEventsActions = createActionGroup({
     'Update Story Status By Reorder': props<{
       status: StoryDetail['status'];
     }>(),
+    'Assigned Member Event': props<{ story: StoryDetail }>(),
   },
 });

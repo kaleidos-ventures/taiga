@@ -6,8 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createAction, props } from '@ngrx/store';
-import { Membership, Project } from '@taiga/data';
+import { createAction, createActionGroup, props } from '@ngrx/store';
+import { Membership, Project, Story } from '@taiga/data';
 
 export const fetchProjectSuccess = createAction(
   '[Project] fetch success',
@@ -53,3 +53,18 @@ export const updateStoryShowView = createAction(
 export const newProjectMembers = createAction(
   '[Project][ws] New Project Members'
 );
+
+export const projectEventActions = createActionGroup({
+  source: 'Project',
+  events: {
+    'Unassigned Member Event': props<{
+      storyRef: Story['ref'];
+      member: Membership['user'];
+    }>(),
+    'Assigned Member Event': props<{
+      storyRef: Story['ref'];
+      member: Membership['user'];
+    }>(),
+    'Update Story': props<{ story: Story }>(),
+  },
+});

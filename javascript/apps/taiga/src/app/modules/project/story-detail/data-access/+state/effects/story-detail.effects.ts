@@ -6,28 +6,28 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { ProjectApiService } from '@taiga/api';
+import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
+import { TuiNotification } from '@taiga-ui/core';
+import { ProjectApiService } from '@taiga/api';
+import { catchError, concatMap, EMPTY, map, of } from 'rxjs';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { selectWorkflows } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { AppService } from '~/app/services/app.service';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { filterNil } from '~/app/shared/utils/operators';
 import {
   StoryDetailActions,
   StoryDetailApiActions,
 } from '../actions/story-detail.actions';
-import { catchError, concatMap, EMPTY, map, of } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { filterNil } from '~/app/shared/utils/operators';
-import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
-import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
 import {
   selectStory,
   selectWorkflow,
 } from '../selectors/story-detail.selectors';
-import { TuiNotification } from '@taiga-ui/core';
-import { selectWorkflows } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 
 @Injectable()
 export class StoryDetailEffects {
@@ -143,6 +143,52 @@ export class StoryDetailEffects {
               },
             });
           }
+        },
+      })
+    );
+  });
+
+  public assign$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(StoryDetailActions.assignMember),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: (action, project) => {
+          return this.projectApiService
+            .assingStory(project.id, action.storyRef, action.member.username)
+            .pipe(
+              map(() => {
+                return StoryDetailApiActions.assignMemberSuccess();
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.toastSaveChangesError(httpResponse);
+        },
+      })
+    );
+  });
+
+  public unAssign$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(StoryDetailActions.unassignMember),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: (action, project) => {
+          return this.projectApiService
+            .unAssignStory(project.id, action.storyRef, action.member.username)
+            .pipe(
+              map(() => {
+                return StoryDetailApiActions.unassignMemberSuccess();
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.toastSaveChangesError(httpResponse);
         },
       })
     );

@@ -17,7 +17,12 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Membership, Project } from '@taiga/data';
+import {
+  Membership,
+  Project,
+  StoryAssignEvent,
+  StoryDetail,
+} from '@taiga/data';
 import { distinctUntilChanged, filter, merge } from 'rxjs';
 import {
   selectCurrentProject,
@@ -30,6 +35,7 @@ import { filterNil } from '~/app/shared/utils/operators';
 import {
   newProjectMembers,
   permissionsUpdate,
+  projectEventActions,
 } from '../data-access/+state/actions/project.actions';
 import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
 
@@ -164,6 +170,41 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         // new assigne // delete assigne
+      });
+
+    this.wsService
+      .projectEvents<{ story: StoryDetail }>('stories.update')
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => {
+        this.store.dispatch(
+          projectEventActions.updateStory({ story: msg.event.content.story })
+        );
+      });
+
+    this.wsService
+      .projectEvents<StoryAssignEvent>('stories_assignments.create')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        const response = eventResponse.event.content.storyAssignment;
+        this.store.dispatch(
+          projectEventActions.assignedMemberEvent({
+            member: response.user,
+            storyRef: response.story.ref,
+          })
+        );
+      });
+
+    this.wsService
+      .projectEvents<StoryAssignEvent>('stories_assignments.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        const response = eventResponse.event.content.storyAssignment;
+        this.store.dispatch(
+          projectEventActions.unassignedMemberEvent({
+            member: response.user,
+            storyRef: response.story.ref,
+          })
+        );
       });
   }
 

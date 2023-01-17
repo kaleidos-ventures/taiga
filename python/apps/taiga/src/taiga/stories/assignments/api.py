@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 from fastapi import Query, status
 from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import check_permissions
@@ -69,9 +71,17 @@ async def delete_story_assignment(
     """
     Delete a story assignment
     """
-    story = await get_story_or_404(project_id, ref)
-    await check_permissions(permissions=DELETE_STORY_ASSIGNMENT, user=request.user, obj=story)
+    story_assignment = await get_story_assignment_or_404(project_id, ref, username)
+    await check_permissions(permissions=DELETE_STORY_ASSIGNMENT, user=request.user, obj=story_assignment.story)
 
-    is_deleted = await story_assignments_services.delete_story_assignment(story=story, username=username)
-    if not is_deleted:
-        raise ex.NotFoundError(f"{username} is not assigned to story {story.ref}")
+    await story_assignments_services.delete_story_assignment(story_assignment=story_assignment)
+
+
+async def get_story_assignment_or_404(project_id: UUID, ref: int, username: str) -> StoryAssignment:
+    story_assignment = await story_assignments_services.get_story_assignment(
+        project_id=project_id, ref=ref, username=username
+    )
+    if story_assignment is None:
+        raise ex.NotFoundError(f"{username} is not assigned to story {ref}")
+
+    return story_assignment

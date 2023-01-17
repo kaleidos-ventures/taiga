@@ -6,8 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from pydantic import EmailStr, StrictBool, conint, constr, validator
-from taiga.base.serializers import BaseModel
-from taiga.base.validators import LanguageCode
+from taiga.base.validators import BaseModel, LanguageCode
 from taiga.conf import settings
 from taiga.users.validators.mixins import PasswordMixin
 

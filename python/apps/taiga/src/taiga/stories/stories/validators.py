@@ -9,8 +9,7 @@ from typing import Any
 
 from pydantic import ConstrainedStr, conlist, validator
 from pydantic.types import PositiveInt
-from taiga.base.serializers import BaseModel
-from taiga.base.validators import StrNotEmpty
+from taiga.base.validators import BaseModel, StrNotEmpty
 
 
 class Title(ConstrainedStr):

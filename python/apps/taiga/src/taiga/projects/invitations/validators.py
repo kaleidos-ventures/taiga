@@ -6,8 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from pydantic import EmailStr, conlist, root_validator, validator
-from taiga.base.serializers import BaseModel
 from taiga.base.utils.emails import is_email
+from taiga.base.validators import BaseModel
 from taiga.conf import settings
 
 

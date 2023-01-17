@@ -9,14 +9,14 @@ import functools
 
 from slugify import slugify
 from taiga.base.db import models
+from taiga.base.db.mixins import CreatedAtMetaInfoMixin
 from taiga.base.utils.uuid import encode_uuid_to_b64str
 
 
-class Workspace(models.BaseModel):
+class Workspace(models.BaseModel, CreatedAtMetaInfoMixin):
     name = models.CharField(max_length=40, null=False, blank=False, verbose_name="name")
     color = models.IntegerField(null=False, blank=False, default=1, verbose_name="color")
 
-    created_at = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="created at")
     modified_at = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="modified at")
 
     owner = models.ForeignKey(

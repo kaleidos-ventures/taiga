@@ -25,7 +25,7 @@ def as_form(cls: type[BaseModel]) -> type[BaseModel]:
         inspect.Parameter(
             field.alias,
             inspect.Parameter.POSITIONAL_ONLY,
-            default=(Form(field.default) if not field.required else Form(...)),
+            default=(Form(field.default) if not field.required else Form(None)),
         )
         for field in cls.__fields__.values()
     ]

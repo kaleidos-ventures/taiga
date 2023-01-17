@@ -4,6 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+
 from decimal import Decimal
 from typing import Any, Final, Literal, TypedDict
 from uuid import UUID
@@ -107,7 +108,12 @@ def _apply_order_by_to_queryset(qs: QuerySet[Story], order_by: StoryOrderBy) -> 
 
 @sync_to_async
 def create_story(
-    title: str, project_id: UUID, workflow_id: UUID, status_id: UUID, user_id: UUID, order: Decimal
+    title: str,
+    project_id: UUID,
+    workflow_id: UUID,
+    status_id: UUID,
+    user_id: UUID,
+    order: Decimal,
 ) -> Story:
 
     story = Story.objects.create(

@@ -6,9 +6,10 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.db import models
+from taiga.base.db.mixins import CreatedAtMetaInfoMixin
 
 
-class StoryAssignment(models.BaseModel):
+class StoryAssignment(models.BaseModel, CreatedAtMetaInfoMixin):
     user = models.ForeignKey(
         "users.User",
         null=False,
@@ -25,7 +26,6 @@ class StoryAssignment(models.BaseModel):
         on_delete=models.CASCADE,
         verbose_name="story",
     )
-    created_at = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="created at")
 
     class Meta:
         verbose_name = "story assignment"

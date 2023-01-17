@@ -84,9 +84,7 @@ async def get_paginated_pending_project_invitations(
     if user.is_anonymous:
         return pagination, []
 
-    role = await pj_roles_repositories.get_project_role(
-        filters={"user_id": user.id, "project_id": project.id}
-    )
+    role = await pj_roles_repositories.get_project_role(filters={"user_id": user.id, "project_id": project.id})
 
     if role and role.is_admin:
         invitations = await invitations_repositories.get_project_invitations(

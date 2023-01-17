@@ -7,9 +7,10 @@
 
 
 from taiga.base.db import models
+from taiga.base.db.mixins import CreatedAtMetaInfoMixin
 
 
-class ProjectMembership(models.BaseModel):
+class ProjectMembership(models.BaseModel, CreatedAtMetaInfoMixin):
     user = models.ForeignKey(
         "users.User",
         null=False,
@@ -34,7 +35,6 @@ class ProjectMembership(models.BaseModel):
         on_delete=models.CASCADE,
         verbose_name="role",
     )
-    created_at = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="created at")
 
     class Meta:
         verbose_name = "project membership"

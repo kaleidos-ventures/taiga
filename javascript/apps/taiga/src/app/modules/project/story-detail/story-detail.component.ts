@@ -26,16 +26,12 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiButtonComponent } from '@taiga-ui/core';
 import { Project, Status, StoryDetail, StoryView } from '@taiga/data';
-import { filter, map, startWith, take } from 'rxjs';
+import { map, startWith, take } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
-import { KanbanReorderEvent } from '../feature-kanban/kanban.model';
-import {
-  StoryDetailActions,
-  StoryDetailEventsActions,
-} from './data-access/+state/actions/story-detail.actions';
+import { StoryDetailActions } from './data-access/+state/actions/story-detail.actions';
 import {
   selectLoadingWorkflow,
   selectStory,
@@ -177,8 +173,6 @@ export class StoryDetailComponent {
       .subscribe(() => {
         this.initStory();
       });
-
-    this.watchEvents();
   }
 
   public initStory() {
@@ -206,44 +200,6 @@ export class StoryDetailComponent {
     this.state.hold(this.state.select('story'), () => {
       this.fillForm();
     });
-  }
-
-  public watchEvents() {
-    this.state.hold(
-      this.wsService
-        .projectEvents<{ story: StoryDetail }>('stories.update')
-        .pipe(
-          filter(
-            (msg) => msg.event.content.story.ref === this.state.get('story').ref
-          )
-        ),
-      (msg) => {
-        this.store.dispatch(
-          StoryDetailEventsActions.updateStory({
-            story: msg.event.content.story,
-          })
-        );
-      }
-    );
-
-    this.state.hold(
-      this.wsService.projectEvents<KanbanReorderEvent>('stories.reorder').pipe(
-        filter((msg) => {
-          const story = this.state.get('story');
-          return (
-            msg.event.content.reorder.stories.includes(story.ref) &&
-            story.status.slug !== msg.event.content.reorder.status.slug
-          );
-        })
-      ),
-      (msg) => {
-        this.store.dispatch(
-          StoryDetailEventsActions.updateStoryStatusByReorder({
-            status: msg.event.content.reorder.status,
-          })
-        );
-      }
-    );
   }
 
   public fillForm() {

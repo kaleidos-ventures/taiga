@@ -8,8 +8,8 @@
 
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { selectStoryView } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { selectStoryView } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 import { ProjectFeatureStoryWrapperSideViewComponent } from './project-feature-story-wrapper-side-view.component';
 
 describe('ButtonComponent', () => {
@@ -58,7 +58,7 @@ describe('ButtonComponent', () => {
     const calculateMinInlineSize = spectator.component.calculateMinInlineSize();
 
     const expectedMaxInlineSize = `${spectator.component.kanbanWidth / 2}px`;
-    const expectedMinInlineSize = `${spectator.component.minWidthCollapsed}px`;
+    const expectedMinInlineSize = `${spectator.component.minWidthUncollapsed}px`;
 
     expect(calculateMaxInlineSize).toBe(expectedMaxInlineSize);
     expect(calculateMinInlineSize).toBe(expectedMinInlineSize);
@@ -66,7 +66,7 @@ describe('ButtonComponent', () => {
     const calculateMinInlineSizeCollapsed =
       spectator.component.calculateMinInlineSize();
 
-    const expectedMinInlineSizeCollapsed = `${spectator.component.minWidthUncollapsed}px`;
+    const expectedMinInlineSizeCollapsed = `${spectator.component.minWidthCollapsed}px`;
     expect(calculateMaxInlineSize).toBe(expectedMaxInlineSize);
     expect(calculateMinInlineSizeCollapsed).toBe(
       expectedMinInlineSizeCollapsed

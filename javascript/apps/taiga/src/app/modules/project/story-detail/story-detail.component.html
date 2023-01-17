@@ -182,16 +182,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   </span>
                 </div>
               </div>
-
-              <tg-story-detail-status
-                *ngIf="vm.selectedStoryView === 'side-view'"
-                [form]="form"></tg-story-detail-status>
+              <ng-container *ngIf="vm.selectedStoryView === 'side-view'">
+                <tg-story-detail-status [form]="form"></tg-story-detail-status>
+                <tg-story-detail-assign
+                  *ngIf="vm.story"
+                  [story]="vm.story"></tg-story-detail-assign>
+              </ng-container>
             </div>
             <div class="sidebar">
-              <tg-story-detail-status
-                *ngIf="vm.selectedStoryView !== 'side-view'"
-                [form]="form"></tg-story-detail-status>
-
+              <ng-container *ngIf="vm.selectedStoryView !== 'side-view'">
+                <tg-story-detail-status [form]="form"></tg-story-detail-status>
+                <tg-story-detail-assign
+                  *ngIf="vm.story"
+                  [story]="vm.story"></tg-story-detail-assign>
+              </ng-container>
               <button
                 *ngIf="vm.selectedStoryView === 'side-view'"
                 [attr.aria-label]="t('collapse_sidebar')"

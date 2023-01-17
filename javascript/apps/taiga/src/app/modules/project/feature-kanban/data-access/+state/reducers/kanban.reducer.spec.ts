@@ -12,6 +12,7 @@ import {
   StoryMockFactory,
   WorkflowMockFactory,
 } from '@taiga/data';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import {
@@ -501,7 +502,7 @@ describe('Kanban reducer', () => {
         },
         workflows: [workflow],
       },
-      KanbanEventsActions.updateStory({
+      projectEventActions.updateStory({
         story: {
           ...story,
           title: 'new title',
@@ -555,7 +556,7 @@ describe('Kanban reducer', () => {
         },
         workflows: [workflow],
       },
-      KanbanEventsActions.updateStory({
+      projectEventActions.updateStory({
         story: {
           ...story,
           title: 'new title',

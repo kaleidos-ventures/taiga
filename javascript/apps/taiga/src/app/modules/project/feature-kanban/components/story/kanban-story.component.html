@@ -44,9 +44,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           ">
           <div
             class="assign-user"
+            [style.max-height]="'530px'"
             [tuiDropdown]="assignUser"
             [tuiDropdownMinHeight]="272"
-            [tuiDropdownMaxHeight]="530"
+            [tuiDropdownMaxHeight]="532"
             [tuiDropdownOffset]="-30"
             [tuiDropdownManual]="vm.showAssignUser"
             (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)">
@@ -86,10 +87,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         class="assigned-users-list"
         [attr.aria-label]="
           permissions === 'assignPermissions'
-            ? t('kanban.story_card.assigned_list_perm', {
+            ? t('common_story.assigned_list_perm', {
                 users: assignedListA11y
               })
-            : t('kanban.story_card.assigned_list', {
+            : t('common_story.assigned_list', {
                 users: assignedListA11y
               })
         ">
@@ -121,8 +122,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <!-- Assign button template - user with permissions -->
 
     <ng-template #assignBtnTpl>
-      <div [attr.aria-label]="t('kanban.story_card.unassigned_action')">
-        {{ t('kanban.story_card.assign') }}
+      <div [attr.aria-label]="t('common_story.unassigned_action')">
+        {{ t('common_story.assign') }}
       </div>
     </ng-template>
 
@@ -147,13 +148,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [tuiHintDirection]="'bottom-right'"
         class="unassigned-button-noperm"
         aria-labelledby="unassigned-tooltip">
-        {{ t('kanban.story_card.unassigned') }}
+        {{ t('common_story.unassigned') }}
       </div>
       <div
         *ngIf="vm.assignees.length"
         [tuiDropdown]="assignUser"
         [tuiDropdownMinHeight]="272"
-        [tuiDropdownMaxHeight]="530"
+        [tuiDropdownMaxHeight]="532"
         [tuiDropdownOffset]="-30"
         [tuiDropdownManual]="vm.showAssignUser"
         (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)"
@@ -176,7 +177,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <p
         id="unassigned-tooltip"
         aria-hidden="true">
-        {{ t('kanban.story_card.story_not_assigned') }}
+        {{ t('common_story.story_not_assigned') }}
       </p>
     </ng-template>
 
@@ -185,7 +186,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         id="more-assigned-tooltip"
         aria-hidden="true">
         {{
-          t('kanban.story_card.more_assigned', {
+          t('common_story.more_assigned', {
             assigneesNum: vm.assignees.length - 3
           })
         }}

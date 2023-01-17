@@ -8,6 +8,7 @@
 
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { Status, Story, Workflow } from '@taiga/data';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   KanbanStory,
   KanbanStoryA11y,
@@ -552,7 +553,7 @@ export const reducer = createReducer(
 
     return state;
   }),
-  on(KanbanEventsActions.updateStory, (state, { story }): KanbanState => {
+  on(projectEventActions.updateStory, (state, { story }): KanbanState => {
     const oldStory = findStory(state, (it) => it.ref === story.ref);
 
     if (oldStory?.status.slug !== story?.status.slug) {
@@ -575,7 +576,8 @@ export const reducer = createReducer(
   }),
   on(
     KanbanActions.assignMember,
-    KanbanActions.assignedMemberEvent,
+    StoryDetailActions.assignMember,
+    projectEventActions.assignedMemberEvent,
     (state, { member, storyRef }): KanbanState => {
       state = replaceStory(state, (it) => {
         const unassigned = !it.assignees.find(
@@ -595,7 +597,8 @@ export const reducer = createReducer(
   ),
   on(
     KanbanActions.unassignMember,
-    KanbanActions.unassignedMemberEvent,
+    StoryDetailActions.unassignMember,
+    projectEventActions.unassignedMemberEvent,
     (state, { member, storyRef }): KanbanState => {
       state = replaceStory(state, (it) => {
         if (it.ref === storyRef) {

@@ -5,8 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializers import BaseModel
-from taiga.base.validators import StrNotEmpty
+from taiga.base.validators import BaseModel, StrNotEmpty
 
 
 class StoryAssignmentValidator(BaseModel):

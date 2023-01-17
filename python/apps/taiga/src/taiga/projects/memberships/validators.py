@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from pydantic import validator
-from taiga.base.serializers import BaseModel
+from taiga.base.validators import BaseModel
 
 
 class ProjectMembershipValidator(BaseModel):

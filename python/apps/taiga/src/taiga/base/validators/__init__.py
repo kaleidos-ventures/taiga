@@ -5,5 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+
+from taiga.base.validators.base import BaseModel  # noqa
 from taiga.base.validators.fields import B64UUID, LanguageCode, StrNotEmpty  # noqa
 from taiga.base.validators.forms import as_form  # noqa

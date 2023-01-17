@@ -11,7 +11,7 @@ from typing import Any, Callable, Generator
 from fastapi import Form
 from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
-from taiga.base.serializers import BaseModel
+from taiga.base.validators.base import BaseModel
 
 CallableGenerator = Generator[Callable[..., Any], None, None]
 

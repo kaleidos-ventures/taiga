@@ -18,21 +18,59 @@ from taiga.permissions import CanViewProject, HasPerm, IsAuthenticated, IsProjec
 from taiga.permissions import services as permissions_services
 from taiga.projects.invitations.permissions import HasPendingProjectInvitation
 from taiga.projects.projects import services as projects_services
-from taiga.projects.projects.api.validators import PermissionsValidator, ProjectValidator
+from taiga.projects.projects.api.validators import PermissionsValidator, ProjectValidator, UpdateProjectValidator
 from taiga.projects.projects.models import Project
 from taiga.projects.projects.serializers import ProjectSerializer, ProjectSummarySerializer
 from taiga.routers import routes
 from taiga.workspaces.workspaces.api import get_workspace_or_404
 
 # PERMISSIONS
+CREATE_PROJECT = HasPerm("view_workspace")
 LIST_WORKSPACE_PROJECTS = IsAuthenticated()  # HasPerm("view_workspace")
 LIST_WORKSPACE_INVITED_PROJECTS = IsAuthenticated()  # HasPerm("view_workspace")
-CREATE_PROJECT = HasPerm("view_workspace")
 GET_PROJECT = Or(CanViewProject(), HasPendingProjectInvitation())
+UPDATE_PROJECT = IsProjectAdmin()
 GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
-GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
+GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
+
+
+##########################################################
+# create project
+##########################################################
+
+
+@routes.projects.post(
+    "",
+    name="projects.create",
+    summary="Create project",
+    response_model=ProjectSerializer,
+    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+)
+async def create_project(
+    request: AuthRequest,
+    form: ProjectValidator = Depends(ProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
+) -> Project:
+    """
+    Create project for the logged user in a given workspace.
+    """
+    workspace = await get_workspace_or_404(id=form.workspace_id)
+    await check_permissions(permissions=CREATE_PROJECT, user=request.user, obj=workspace)
+    project = await projects_services.create_project(
+        workspace=workspace,
+        name=form.name,
+        description=form.description,
+        color=form.color,
+        owner=request.user,
+        logo=form.logo,
+    )
+    return await projects_services.get_project_detail(project=project, user=request.user)
+
+
+##########################################################
+# list projects
+##########################################################
 
 
 @routes.workspaces.get(
@@ -75,36 +113,14 @@ async def list_workspace_invited_projects(
     return await projects_services.list_workspace_invited_projects_for_user(workspace=workspace, user=request.user)
 
 
-@routes.projects.post(
-    "",
-    name="projects.create",
-    summary="Create project",
-    response_model=ProjectSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
-)
-async def create_project(
-    request: AuthRequest,
-    form: ProjectValidator = Depends(ProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
-) -> Project:
-    """
-    Create project for the logged user in a given workspace.
-    """
-    workspace = await get_workspace_or_404(id=form.workspace_id)
-    await check_permissions(permissions=CREATE_PROJECT, user=request.user, obj=workspace)
-    project = await projects_services.create_project(
-        workspace=workspace,
-        name=form.name,
-        description=form.description,
-        color=form.color,
-        owner=request.user,
-        logo=form.logo,
-    )
-    return await projects_services.get_project_detail(project=project, user=request.user)
+##########################################################
+# get project
+##########################################################
 
 
 @routes.projects.get(
     "/{id}",
-    name="projects.get",
+    name="project.get",
     summary="Get project",
     response_model=ProjectSerializer,
     responses=ERROR_404 | ERROR_422 | ERROR_403,
@@ -138,26 +154,6 @@ async def list_project_public_permissions(
     return project.public_permissions or []
 
 
-@routes.projects.put(
-    "/{id}/public-permissions",
-    name="project.public-permissions.put",
-    summary="Edit project public permissions",
-    response_model=list[str],
-    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
-)
-async def update_project_public_permissions(
-    request: AuthRequest, form: PermissionsValidator, id: B64UUID = Query(None, description="the project id (B64UUID)")
-) -> list[str]:
-    """
-    Edit project public permissions
-    """
-
-    project = await get_project_or_404(id)
-    await check_permissions(permissions=UPDATE_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
-
-    return await projects_services.update_project_public_permissions(project, form.permissions)
-
-
 @routes.projects.get(
     "/{id}/workspace-member-permissions",
     name="project.workspace-member-permissions.list",
@@ -176,6 +172,55 @@ async def list_project_workspace_member_permissions(
     await check_permissions(permissions=GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
 
     return await projects_services.list_workspace_member_permissions(project=project)
+
+
+##########################################################
+# update project
+##########################################################
+
+
+@routes.projects.patch(
+    "/{id}",
+    name="project.update",
+    summary="Update project",
+    response_model=ProjectSerializer,
+    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+)
+async def update_project(
+    request: AuthRequest,
+    id: B64UUID = Query("", description="the project id (B64UUID)"),
+    form: UpdateProjectValidator = Depends(UpdateProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
+) -> Project:
+    """
+    Update project
+    """
+
+    project = await get_project_or_404(id)
+    await check_permissions(permissions=UPDATE_PROJECT, user=request.user, obj=project)
+
+    values = await form.cleaned_dict(request)
+    updated_project = await projects_services.update_project(project=project, values=values)
+    return await projects_services.get_project_detail(project=updated_project, user=request.user)
+
+
+@routes.projects.put(
+    "/{id}/public-permissions",
+    name="project.public-permissions.put",
+    summary="Edit project public permissions",
+    response_model=list[str],
+    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+)
+async def update_project_public_permissions(
+    request: AuthRequest, form: PermissionsValidator, id: B64UUID = Query(None, description="the project id (B64UUID)")
+) -> list[str]:
+    """
+    Edit project public permissions
+    """
+
+    project = await get_project_or_404(id)
+    await check_permissions(permissions=UPDATE_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
+
+    return await projects_services.update_project_public_permissions(project, form.permissions)
 
 
 @routes.projects.put(
@@ -198,6 +243,11 @@ async def update_project_workspace_member_permissions(
     return await projects_services.update_project_workspace_member_permissions(project, form.permissions)
 
 
+##########################################################
+# misc permissions
+##########################################################
+
+
 @routes.my.get(
     "/projects/{id}/permissions",
     name="my.projects.permissions.list",
@@ -213,6 +263,11 @@ async def list_my_project_permissions(
     """
     project = await get_project_or_404(id)
     return await permissions_services.get_user_permissions(user=request.user, obj=project)
+
+
+##########################################################
+# misc get project or 404
+##########################################################
 
 
 async def get_project_or_404(id: UUID) -> Project:

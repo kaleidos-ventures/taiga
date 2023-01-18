@@ -25,7 +25,7 @@ pytestmark = pytest.mark.django_db
 
 
 async def test_create_project():
-    workspace = await f.create_workspace()
+    workspace = f.build_workspace()
 
     with (
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_project_repository,
@@ -45,9 +45,9 @@ async def test_create_project():
 
 
 async def test_create_project_with_logo():
-    workspace = await f.create_workspace()
-    project = await f.create_project(workspace=workspace)
-    role = await f.create_project_role(project=project)
+    workspace = f.build_workspace()
+    project = f.build_project(workspace=workspace)
+    role = f.build_project_role(project=project)
 
     logo: UploadFile = valid_image_upload_file
 
@@ -69,7 +69,7 @@ async def test_create_project_with_logo():
 
 
 async def test_create_project_with_no_logo():
-    workspace = await f.create_workspace()
+    workspace = f.build_workspace()
 
     with (
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_project_repository,
@@ -90,10 +90,14 @@ async def test_create_project_with_no_logo():
 
 
 async def test_list_workspace_projects_for_user_admin():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    user = f.build_user()
+    workspace = f.build_workspace(owner=user)
 
-    with (patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,):
+    with (
+        patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,
+        patch("taiga.projects.projects.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
+    ):
+        fake_ws_roles_repo.get_workspace_role.return_value = MagicMock(is_admin=True)
         await services.list_workspace_projects_for_user(workspace=workspace, user=user)
         fake_projects_repo.list_projects.assert_awaited_once_with(
             filters={"workspace_id": workspace.id},
@@ -102,8 +106,8 @@ async def test_list_workspace_projects_for_user_admin():
 
 
 async def test_list_workspace_projects_for_user_member():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    user = f.build_user()
+    workspace = f.build_workspace(owner=user)
 
     with (
         patch("taiga.projects.projects.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
@@ -123,8 +127,8 @@ async def test_list_workspace_projects_for_user_member():
 
 
 async def test_list_workspace_invited_projects_for_user():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    user = f.build_user()
+    workspace = f.build_workspace(owner=user)
 
     with patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo:
         await services.list_workspace_invited_projects_for_user(workspace=workspace, user=user)
@@ -138,14 +142,27 @@ async def test_list_workspace_invited_projects_for_user():
 
 
 ##########################################################
+# list_workspace_member_permissions
+##########################################################
+
+
+async def test_list_workspace_member_permissions_not_premium():
+    workspace = f.build_workspace(is_premium=False)
+    project = f.build_project(workspace=workspace)
+
+    with pytest.raises(ex.NotPremiumWorkspaceError):
+        await services.list_workspace_member_permissions(project=project)
+
+
+##########################################################
 # get_project_detail
 ##########################################################
 
 
 async def test_get_project_detail():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
-    project = await f.create_project(owner=user, workspace=workspace)
+    user = f.build_user()
+    workspace = f.build_workspace(owner=user)
+    project = f.build_project(owner=user, workspace=workspace)
 
     with (
         patch("taiga.projects.projects.services.permissions_services", autospec=True) as fake_permissions_services,
@@ -171,10 +188,10 @@ async def test_get_project_detail():
 
 async def test_get_project_detail_anonymous():
     anonymous_user = AnonymousUser()
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    user = f.build_user()
+    workspace = f.build_workspace(owner=user)
     permissions = ["add_task", "view_task", "modify_story", "view_story"]
-    project = await (f.create_project(owner=user, workspace=workspace, public_permissions=permissions))
+    project = f.build_project(owner=user, workspace=workspace, public_permissions=permissions)
 
     with (
         patch("taiga.projects.projects.services.permissions_services", autospec=True) as fake_permissions_services,
@@ -201,12 +218,54 @@ async def test_get_project_detail_anonymous():
 
 
 ##########################################################
+# update_project
+##########################################################
+
+
+async def test_update_project_ok(tqmanager):
+    project = f.build_project()
+    values = {"name": "new name", "description": ""}
+
+    with patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_pj_repo:
+        await services.update_project(project=project, values=values)
+        fake_pj_repo.update_project.assert_awaited_once_with(project=project, values=values)
+        assert len(tqmanager.pending_jobs) == 0
+
+
+async def test_update_project_ok_with_logo(tqmanager):
+    project = f.build_project()
+    values = {"name": "new name", "description": "", "logo": valid_image_upload_file}
+
+    with patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_pj_repo:
+        await services.update_project(project=project, values=values)
+        fake_pj_repo.update_project.assert_awaited_once_with(project=project, values=values)
+        assert len(tqmanager.pending_jobs) == 1
+        job = tqmanager.pending_jobs[0]
+        assert "delete_old_logo" in job["task_name"]
+        assert "path" in job["args"]
+        assert valid_image_upload_file.filename in job["args"]["path"]
+
+
+async def test_update_project_name_empty(tqmanager):
+    project = f.build_project()
+    values = {"name": "", "description": "", "logo": valid_image_upload_file}
+
+    with (
+        patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_pj_repo,
+        pytest.raises(ex.TaigaValidationError),
+    ):
+        await services.update_project(project=project, values=values)
+        fake_pj_repo.update_project.assert_not_awaited()
+        assert len(tqmanager.pending_jobs) == 0
+
+
+##########################################################
 # update_project_public_permissions
 ##########################################################
 
 
 async def test_update_project_public_permissions_ok():
-    project = await f.create_project()
+    project = f.build_project()
     permissions = ["add_task", "view_task", "modify_story", "view_story"]
 
     with (
@@ -214,12 +273,14 @@ async def test_update_project_public_permissions_ok():
         patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
     ):
         await services.update_project_public_permissions(project=project, permissions=permissions)
-        fake_project_repository.update_project.assert_awaited_once_with(project=project)
+        fake_project_repository.update_project.assert_awaited_once_with(
+            project=project, values={"public_permissions": permissions}
+        )
         fake_projects_events.emit_event_when_project_permissions_are_updated.assert_awaited_with(project=project)
 
 
 async def test_update_project_public_permissions_not_valid():
-    project = await f.create_project()
+    project = f.build_project()
     not_valid_permissions = ["invalid_permission", "other_not_valid", "add_story"]
 
     with (
@@ -231,7 +292,7 @@ async def test_update_project_public_permissions_not_valid():
 
 
 async def test_update_project_public_permissions_incompatible():
-    project = await f.create_project()
+    project = f.build_project()
     incompatible_permissions = ["view_task"]
 
     with (
@@ -248,8 +309,8 @@ async def test_update_project_public_permissions_incompatible():
 
 
 async def test_update_project_workspace_member_permissions_ok():
-    workspace = await f.create_workspace(is_premium=True)
-    project = await f.create_project(workspace=workspace)
+    workspace = f.build_workspace(is_premium=True)
+    project = f.build_project(workspace=workspace)
     permissions = ["add_task", "view_task", "modify_story", "view_story"]
 
     with (
@@ -257,13 +318,15 @@ async def test_update_project_workspace_member_permissions_ok():
         patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
     ):
         await services.update_project_workspace_member_permissions(project=project, permissions=permissions)
-        fake_project_repository.update_project.assert_awaited_once_with(project=project)
+        fake_project_repository.update_project.assert_awaited_once_with(
+            project=project, values={"workspace_member_permissions": permissions}
+        )
         fake_projects_events.emit_event_when_project_permissions_are_updated.assert_awaited_with(project=project)
 
 
 async def test_update_project_workspace_member_permissions_not_valid():
-    workspace = await f.create_workspace(is_premium=True)
-    project = await f.create_project(workspace=workspace)
+    workspace = f.build_workspace(is_premium=True)
+    project = f.build_project(workspace=workspace)
     not_valid_permissions = ["invalid_permission", "other_not_valid", "add_story"]
 
     with (
@@ -275,8 +338,8 @@ async def test_update_project_workspace_member_permissions_not_valid():
 
 
 async def test_update_project_workspace_member_permissions_incompatible():
-    workspace = await f.create_workspace(is_premium=True)
-    project = await f.create_project(workspace=workspace)
+    workspace = f.build_workspace(is_premium=True)
+    project = f.build_project(workspace=workspace)
     incompatible_permissions = ["view_task"]
 
     with (
@@ -290,8 +353,8 @@ async def test_update_project_workspace_member_permissions_incompatible():
 
 
 async def test_update_project_workspace_member_permissions_not_premium():
-    workspace = await f.create_workspace(is_premium=False)
-    project = await f.create_project(workspace=workspace)
+    workspace = f.build_workspace(is_premium=False)
+    project = f.build_project(workspace=workspace)
     incompatible_permissions = ["view_story"]
 
     with (
@@ -302,16 +365,3 @@ async def test_update_project_workspace_member_permissions_not_premium():
             project=project, permissions=incompatible_permissions
         )
         fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
-
-
-##########################################################
-# get_workspace_member_permissions
-##########################################################
-
-
-async def test_list_workspace_member_permissions_not_premium():
-    workspace = await f.create_workspace(is_premium=False)
-    project = await f.create_project(workspace=workspace)
-
-    with pytest.raises(ex.NotPremiumWorkspaceError):
-        await services.list_workspace_member_permissions(project=project)

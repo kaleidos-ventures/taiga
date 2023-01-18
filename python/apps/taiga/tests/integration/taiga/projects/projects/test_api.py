@@ -203,59 +203,6 @@ async def test_get_project_not_found_error(client):
 
 
 ##########################################################
-# GET /projects/<id>/roles
-##########################################################
-
-
-async def test_get_project_roles_not_found_error(client):
-    user = await f.create_user()
-    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
-
-    client.login(user)
-    response = client.get(f"/projects/{non_existent_id}/roles")
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-async def test_get_project_roles_being_project_admin(client):
-    project = await f.create_project()
-
-    client.login(project.owner)
-    response = client.get(f"/projects/{project.b64id}/roles")
-    assert response.status_code == status.HTTP_200_OK, response.text
-
-
-async def test_get_project_roles_being_general_member(client):
-    project = await f.create_project()
-    general_member_role = await f.create_project_role(
-        permissions=choices.ProjectPermissions.values,
-        is_admin=False,
-        project=project,
-    )
-    user2 = await f.create_user()
-    await f.create_project_membership(user=user2, project=project, role=general_member_role)
-
-    client.login(user2)
-    response = client.get(f"/projects/{project.b64id}/roles")
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-async def test_get_project_roles_being_no_member(client):
-    project = await f.create_project()
-    user2 = await f.create_user()
-
-    client.login(user2)
-    response = client.get(f"/projects/{project.b64id}/roles")
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-async def test_get_project_roles_being_anonymous(client):
-    project = await f.create_project()
-
-    response = client.get(f"/projects/{project.b64id}/roles")
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-##########################################################
 # GET /projects/<id>/public-permissions
 ##########################################################
 
@@ -345,6 +292,61 @@ async def test_get_project_workspace_member_permissions_anonymous_user(client):
     project = await f.create_project()
 
     response = client.get(f"/projects/{project.b64id}/workspace-member-permissions")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+##########################################################
+# PATCH /projects/<id>/
+##########################################################
+
+
+async def test_update_project_ok(client):
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+
+    data = {"name": "New name", "description": "new description"}
+    files = {"logo": ("new-logo.png", create_valid_testing_image(), "image/png")}
+
+    client.login(user)
+    response = client.patch(f"/projects/{project.b64id}", data=data, files=files)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    updated_project = response.json()
+    assert updated_project["name"] == "New name"
+    assert updated_project["description"] == "new description"
+    assert "new-logo.png" in updated_project["logo"]
+
+
+async def test_update_project_delete_description(client):
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+
+    data = {"description": ""}
+
+    client.login(user)
+    response = client.patch(f"/projects/{project.b64id}", data=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    updated_project = response.json()
+    assert updated_project["name"] == project.name
+    assert updated_project["description"] is None
+
+
+async def test_update_project_not_found(client):
+    user = await f.create_user()
+    data = {"name": "new name"}
+
+    client.login(user)
+    response = client.patch("/projects/xxxxxxxxx", data=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_update_project_no_admin(client):
+    user = await f.create_user()
+    other_user = await f.create_user()
+    project = await f.create_project(owner=user)
+
+    data = {"name": "new name"}
+    client.login(other_user)
+    response = client.patch(f"/projects/{project.b64id}", data=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 

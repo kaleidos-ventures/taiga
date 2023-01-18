@@ -14,4 +14,5 @@ class TaskQueueSettings(BaseSettings):
         "taiga.emails.tasks",
         "taiga.tokens.tasks",
         "taiga.users.tasks",
+        "taiga.projects.projects.tasks",
     }

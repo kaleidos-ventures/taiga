@@ -10,6 +10,7 @@ from uuid import uuid1
 import pytest
 from asgiref.sync import sync_to_async
 from django.core.files import File
+from taiga.base.db import models
 from taiga.base.db import sequences as seq
 from taiga.projects import references
 from taiga.projects.invitations.choices import ProjectInvitationStatus
@@ -242,6 +243,32 @@ async def test_get_project_return_none():
 ##########################################################
 
 
+async def test_update_project():
+    project = await f.create_project(name="Project 1")
+    assert project.name == "Project 1"
+    project.name = "New name"
+    project.descripton = "New description"
+    updated_project = await repositories.update_project(project)
+    assert updated_project.name == "New name"
+    assert updated_project.descripton == "New description"
+
+
+async def test_update_project_delete_description():
+    project = await f.create_project(name="Project 1")
+    assert project.name == "Project 1"
+    project.descripton = None
+    updated_project = await repositories.update_project(project)
+    assert updated_project.descripton is None
+
+
+async def test_update_project_delete_logo():
+    project = await f.create_project(name="Project 1")
+    assert project.logo is not None
+    project.logo = None
+    updated_project = await repositories.update_project(project)
+    assert updated_project.logo == models.FileField(None)
+
+
 async def test_update_project_public_permissions():
     project = await f.create_project(name="Project 1")
     project.public_permissions = ["add_story", "view_story", "add_task", "view_task"]
@@ -261,7 +288,7 @@ async def test_update_project_workspace_member_permissions():
 # delete_project
 ##########################################################
 
-# NOTE: this functiomn does not yet exist, but we need to tests sequencie deletions
+# NOTE: this functiomn does not yet exist, but we need to tests sequence deletions
 
 
 async def test_delete_project():

@@ -1833,6 +1833,97 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "200 projects",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    pm.environment.set(\"pj-id\", pm.response.json().id);",
+									"});",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    // Validate response API fields",
+									"    pm.expect(jsonRes).to.have.property(\"logo\");",
+									"    pm.expect(jsonRes).to.have.property(\"logoSmall\");",
+									"    pm.expect(jsonRes).to.have.property(\"logoLarge\");",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
+									"    pm.expect(jsonRes).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes).to.have.property(\"workspace\");",
+									"    pm.expect(jsonRes).to.have.property(\"userIsAdmin\");",
+									"    pm.expect(jsonRes).to.have.property(\"userIsMember\");",
+									"    pm.expect(jsonRes).to.have.property(\"userPermissions\");",
+									"    pm.expect(jsonRes).to.have.property(\"userHasPendingInvitation\");",
+									"",
+									"    pm.expect(jsonRes.description).to.be.eql(\"New description\");",
+									"    pm.expect(jsonRes.name).to.be.eql(\"New name\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "New name",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "New description",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

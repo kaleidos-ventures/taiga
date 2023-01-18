@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+
 from fastapi import UploadFile
 from pydantic import conint, constr, validator
 from taiga.base.utils.images import valid_content_type, valid_image_format
@@ -25,6 +26,25 @@ class ProjectValidator(BaseModel):
     def check_name_not_empty(cls, v: str) -> str:
         assert v != "", "Empty name is not allowed"
         return v
+
+    @validator("logo")
+    def check_content_type(cls, v: UploadFile | None) -> UploadFile | None:
+        if v:
+            assert valid_content_type(v), "Invalid image format"
+        return v
+
+    @validator("logo")
+    def check_image_format(cls, v: UploadFile | None) -> UploadFile | None:
+        if v:
+            assert valid_image_format(v), "Invalid image content"
+        return v
+
+
+@as_form
+class UpdateProjectValidator(BaseModel):
+    name: constr(strip_whitespace=True, max_length=80) | None  # type: ignore
+    description: constr(max_length=220) | None  # type: ignore
+    logo: UploadFile | None
 
     @validator("logo")
     def check_content_type(cls, v: UploadFile | None) -> UploadFile | None:

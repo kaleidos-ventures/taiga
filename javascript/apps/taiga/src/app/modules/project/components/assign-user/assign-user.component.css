@@ -60,6 +60,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & .user-identifier {
     color: var(--color-secondary80);
     margin-inline-start: var(--spacing-12);
+
+    &::ng-deep .is-self {
+      color: var(--color-black);
+      font-weight: var(--font-weight-regular);
+    }
   }
 
   & .unassign-btn {

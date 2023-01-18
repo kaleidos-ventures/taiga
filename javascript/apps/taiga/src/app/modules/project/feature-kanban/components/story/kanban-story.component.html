@@ -47,10 +47,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [tuiDropdown]="assignUser"
             [tuiDropdownMinHeight]="272"
             [tuiDropdownMaxHeight]="530"
+            [tuiDropdownOffset]="-30"
             [tuiDropdownManual]="vm.showAssignUser"
             (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)">
             <button
               (click)="toggleAssignUser($event)"
+              (focus)="displayHintAssignUser()"
+              (focusout)="displayHintAssignUser()"
+              (mouseenter)="displayHintAssignUser()"
+              (mouseleave)="displayHintAssignUser()"
+              [tuiHintManual]="hintAssignUser"
               [tuiHint]="!vm.assignees.length ? unassignedTooltip : null"
               [tuiHintDirection]="'bottom-right'"
               [ngClass]="{
@@ -118,6 +124,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <tg-assign-user
         [assigned]="vm.assignees"
         [viewOnly]="!vm.canEdit"
+        [ref]="story.ref"
         (assign)="assign($event)"
         (unassign)="unassign($event)"
         (requestClose)="closeAssignDropdown()"></tg-assign-user>
@@ -139,6 +146,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [tuiDropdown]="assignUser"
         [tuiDropdownMinHeight]="272"
         [tuiDropdownMaxHeight]="530"
+        [tuiDropdownOffset]="-30"
         [tuiDropdownManual]="vm.showAssignUser"
         (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)"
         class="assigned-button-noperm">

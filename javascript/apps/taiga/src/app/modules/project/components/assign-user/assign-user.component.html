@@ -10,6 +10,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   <ng-container *ngIf="model$ | async as vm">
     <div class="assignees-wrapper">
       <h2
+        class="assignees-title"
+        tabindex="-1"
         [ngClass]="{
           'assignee-title': vm.assigned.length > 0,
           'unassign-title': vm.assigned.length === 0
@@ -28,7 +30,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           class="user-row"
           [class.view-only]="viewOnly"
           type="button"
-          [disabled]="viewOnly"
+          [attr.aria-label]="
+            t('project.assign_user.unassign-aria', {
+              name: assignedUser.fullName,
+              username: assignedUser.username
+            })
+          "
+          [attr.aria-disabled]="viewOnly"
+          (keydown.enter)="viewOnly ? null : unassign.next(assignedUser)"
           (click)="unassign.next(assignedUser)">
           <div class="user">
             <tg-user-avatar
@@ -39,9 +48,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               type="light"
               [rounded]="true"
               aria-hidden="true"></tg-user-avatar>
-            <span class="user-identifier">{{
-              assignedUser.fullName || assignedUser.username
-            }}</span>
+            <span
+              class="user-identifier"
+              *ngIf="vm.currentUser.username !== assignedUser.username">
+              {{ assignedUser.fullName || assignedUser.username }}
+            </span>
+            <span
+              class="user-identifier"
+              *ngIf="vm.currentUser.username === assignedUser.username"
+              [innerHtml]="
+                t('commons.your_user', { name: assignedUser.fullName })
+              ">
+            </span>
           </div>
           <tui-svg
             *ngIf="!viewOnly"
@@ -84,8 +102,30 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             <button
               class="unassigned-member-row"
               type="button"
-              [disabled]="!vm.membersPermissions[member.username].length"
-              (click)="onAssign(member)">
+              [attr.aria-label]="
+                !vm.membersPermissions[member.username].length
+                  ? t('project.assign_user.disabled-user-aria', {
+                      name: member.fullName,
+                      username: member.username
+                    })
+                  : t('project.assign_user.assign-aria', {
+                      name: member.fullName,
+                      username: member.username
+                    })
+              "
+              [attr.aria-disabled]="
+                !vm.membersPermissions[member.username].length
+              "
+              (keydown.enter)="
+                vm.membersPermissions[member.username].length
+                  ? onAssign(member)
+                  : null
+              "
+              (click)="
+                vm.membersPermissions[member.username].length
+                  ? onAssign(member)
+                  : null
+              ">
               <tg-user-card
                 class="card"
                 [user]="member"

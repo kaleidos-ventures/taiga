@@ -7,11 +7,13 @@
  */
 
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
   HostListener,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild,
@@ -72,7 +74,7 @@ interface AssignComponentState {
   styleUrls: ['./assign-user.component.css'],
   providers: [RxState],
 })
-export class AssignUserComponent implements OnInit {
+export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('searchInput')
   public searchInput!: ElementRef;
 
@@ -87,6 +89,9 @@ export class AssignUserComponent implements OnInit {
 
   @Input()
   public viewOnly = false;
+
+  @Input()
+  public ref?: number;
 
   @Input()
   public set assigned(members: Story['assignees']) {
@@ -158,6 +163,25 @@ export class AssignUserComponent implements OnInit {
     this.searchTextForm = this.fb.group({
       searchText: '',
     });
+  }
+
+  public ngAfterViewInit() {
+    requestAnimationFrame(() => {
+      (document.querySelector('.assignees-title') as HTMLElement)?.focus();
+    });
+  }
+
+  public ngOnDestroy() {
+    if (this.ref) {
+      requestAnimationFrame(() => {
+        const mainFocus = document.querySelector(
+          `tg-kanban-story[data-ref='${this.ref!}'] .story-kanban-ref-focus`
+        );
+        if (mainFocus) {
+          (mainFocus as HTMLElement).focus();
+        }
+      });
+    }
   }
 
   public initState() {

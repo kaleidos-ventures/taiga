@@ -96,3 +96,27 @@ async def test_update_project_role_permissions_ok():
         await services.update_project_role_permissions(role=role, permissions=permissions)
         fake_role_repository.update_project_role_permissions.assert_awaited_once()
         fake_roles_events.emit_event_when_project_role_permissions_are_updated.assert_awaited_with(role=role)
+
+
+async def test_update_project_role_permissions_view_story_deleted():
+    role = f.build_project_role()
+    permissions = ["view_project"]
+    user = f.build_user()
+    f.build_project_membership(user=user, project=role.project, role=role)
+    story = f.build_story(project=role.project)
+    f.build_story_assignment(story=story, user=user)
+
+    with (
+        patch("taiga.projects.roles.services.pj_roles_events", autospec=True) as fake_roles_events,
+        patch("taiga.projects.roles.services.pj_roles_repositories", autospec=True) as fake_role_repository,
+        patch("taiga.projects.roles.services.permissions_services", autospec=True) as fake_permissions_service,
+        patch(
+            "taiga.projects.roles.services.story_assignments_repositories", autospec=True
+        ) as fake_story_assignments_repository,
+    ):
+        fake_role_repository.update_project_role_permissions.return_value = role
+        fake_permissions_service.is_view_story_permission_deleted.return_value = True
+        await services.update_project_role_permissions(role=role, permissions=permissions)
+        fake_role_repository.update_project_role_permissions.assert_awaited_once()
+        fake_roles_events.emit_event_when_project_role_permissions_are_updated.assert_awaited_with(role=role)
+        fake_story_assignments_repository.delete_story_assignment.assert_awaited_once_with(filters={"role_id": role.id})

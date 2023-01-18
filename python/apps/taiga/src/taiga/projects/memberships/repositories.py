@@ -21,6 +21,7 @@ from taiga.users.models import User
 
 DEFAULT_QUERYSET = ProjectMembership.objects.all()
 
+
 class ProjectMembershipFilters(TypedDict, total=False):
     project_id: UUID
     username: str

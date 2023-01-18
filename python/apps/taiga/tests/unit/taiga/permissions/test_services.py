@@ -299,3 +299,22 @@ def test_permissions_are_valid(permissions, expected):
 )
 def test_permissions_are_compatible(permissions, expected):
     assert services.permissions_are_compatible(permissions) == expected
+
+
+#####################################################
+# is_view_story_permission_deleted
+#####################################################
+
+
+async def test_is_view_story_permission_deleted_false():
+    old_permissions = ["view_project"]
+    new_permissions = ["view_story"]
+
+    assert await services.is_view_story_permission_deleted(old_permissions, new_permissions) is False
+
+
+async def test_is_view_story_permission_deleted_true():
+    old_permissions = ["view_story"]
+    new_permissions = ["view_project"]
+
+    assert await services.is_view_story_permission_deleted(old_permissions, new_permissions) is True

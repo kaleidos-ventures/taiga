@@ -8,6 +8,7 @@
 from uuid import UUID
 
 from taiga.base.api.pagination import Pagination
+from taiga.permissions import services as permissions_services
 from taiga.projects.memberships import events as memberships_events
 from taiga.projects.memberships import repositories as memberships_repositories
 from taiga.projects.memberships.models import ProjectMembership
@@ -15,6 +16,7 @@ from taiga.projects.memberships.services import exceptions as ex
 from taiga.projects.projects.models import Project
 from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.projects.roles.models import ProjectRole
+from taiga.stories.assignments import repositories as story_assignments_repositories
 
 
 async def get_paginated_project_memberships(
@@ -57,9 +59,25 @@ async def update_project_membership(membership: ProjectMembership, role_slug: st
     if await _is_membership_the_only_admin(membership_role=membership.role, project_role=project_role):
         raise ex.MembershipIsTheOnlyAdminError("Membership is the only admin")
 
+    # Check if new role has view_story permission
+    view_story_is_deleted = False
+    if membership.role.permissions:
+        view_story_is_deleted = await permissions_services.is_view_story_permission_deleted(
+            old_permissions=membership.role.permissions, new_permissions=project_role.permissions
+        )
+
     membership.role = project_role
     updated_membership = await memberships_repositories.update_project_membership(membership=membership)
 
     await memberships_events.emit_event_when_project_membership_is_updated(membership=updated_membership)
 
+    # Unassign stories for user if the new role doesn't have view_story permission
+    if view_story_is_deleted:
+        await story_assignments_repositories.delete_story_assignment(
+            filters={"project_id": membership.project_id, "username": membership.user.username}
+        )
+
     return updated_membership
+
+
+# TODO: when there is a delete_project_membership service, we have to unassign stories too

@@ -11,6 +11,7 @@ from taiga.projects.roles import events as pj_roles_events
 from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.projects.roles.models import ProjectRole
 from taiga.projects.roles.services import exceptions as ex
+from taiga.stories.assignments import repositories as story_assignments_repositories
 
 
 async def get_project_roles(project: Project) -> list[ProjectRole]:
@@ -41,9 +42,20 @@ async def update_project_role_permissions(role: ProjectRole, permissions: list[s
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
+    # Check if new permissions have view_story
+    view_story_is_deleted = False
+    if role.permissions:
+        view_story_is_deleted = await permissions_services.is_view_story_permission_deleted(
+            old_permissions=role.permissions, new_permissions=permissions
+        )
+
     role.permissions = permissions
     project_role_permissions = await (pj_roles_repositories.update_project_role_permissions(role=role))
 
     await pj_roles_events.emit_event_when_project_role_permissions_are_updated(role=role)
+
+    # Unassign stories for user if the new permissions don't have view_story
+    if view_story_is_deleted:
+        await story_assignments_repositories.delete_story_assignment(filters={"role_id": role.id})
 
     return project_role_permissions

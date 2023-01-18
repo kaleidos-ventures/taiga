@@ -108,3 +108,37 @@ async def test_update_project_membership_role_ok():
         fake_membership_events.emit_event_when_project_membership_is_updated.assert_awaited_once_with(
             membership=updated_membership
         )
+
+
+async def test_update_project_membership_role_view_story_deleted():
+    project = f.build_project()
+    user = f.build_user()
+    permissions = ["view_project"]
+    admin_role = f.build_project_role(project=project, is_admin=True)
+    role = f.build_project_role(project=project, is_admin=False, permissions=permissions)
+    membership = f.build_project_membership(user=user, project=project, role=admin_role)
+    with (
+        patch("taiga.projects.memberships.services.pj_roles_repositories", autospec=True) as fake_pj_role_repository,
+        patch(
+            "taiga.projects.memberships.services.memberships_repositories", autospec=True
+        ) as fake_membership_repository,
+        patch("taiga.projects.memberships.services.memberships_events", autospec=True) as fake_membership_events,
+        patch("taiga.projects.memberships.services.permissions_services", autospec=True) as fake_permissions_service,
+        patch(
+            "taiga.projects.memberships.services.story_assignments_repositories", autospec=True
+        ) as fake_story_assignments_repository,
+    ):
+        fake_pj_role_repository.get_project_role.return_value = role
+        fake_permissions_service.is_view_story_permission_deleted.return_value = True
+
+        updated_membership = await services.update_project_membership(membership=membership, role_slug=role.slug)
+        fake_pj_role_repository.get_project_role.assert_awaited_once_with(
+            filters={"project_id": project.id, "slug": role.slug}
+        )
+        fake_membership_repository.update_project_membership.assert_awaited_once_with(membership=membership)
+        fake_membership_events.emit_event_when_project_membership_is_updated.assert_awaited_once_with(
+            membership=updated_membership
+        )
+        fake_story_assignments_repository.delete_story_assignment.assert_awaited_once_with(
+            filters={"project_id": project.id, "username": user.username}
+        )

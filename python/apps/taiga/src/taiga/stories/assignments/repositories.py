@@ -27,6 +27,7 @@ class StoryAssignmentFilters(TypedDict, total=False):
     project_id: UUID
     story_id: UUID
     username: str
+    role_id: UUID
 
 
 def _apply_filters_to_queryset(
@@ -43,6 +44,9 @@ def _apply_filters_to_queryset(
 
     if "username" in filter_data:
         filter_data["user__username"] = filter_data.pop("username")
+
+    if "role_id" in filter_data:
+        filter_data["user__project_memberships__role_id"] = filter_data.pop("role_id")
 
     return qs.filter(**filter_data)
 

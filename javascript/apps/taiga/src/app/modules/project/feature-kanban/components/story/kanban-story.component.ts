@@ -232,7 +232,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     if (restAssigneesLenght < 99) {
       this.restAssigneesLenght = `${restAssigneesLenght}+`;
     } else {
-      this.restAssigneesLenght = '...';
+      this.restAssigneesLenght = '…';
     }
   }
 

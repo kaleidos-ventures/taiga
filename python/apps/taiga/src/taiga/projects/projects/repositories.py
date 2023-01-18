@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -108,6 +108,7 @@ def create_project(
         workspace=workspace,
         color=color,
         owner=owner,
+        created_by_id=owner.id,
         logo=logo,
     )
 
@@ -161,7 +162,10 @@ def get_project(
 
 
 @sync_to_async
-def update_project(project: Project) -> Project:
+def update_project(project: Project, values: dict[str, Any] = {}) -> Project:
+    for attr, value in values.items():
+        setattr(project, attr, value)
+
     project.save()
     return project
 

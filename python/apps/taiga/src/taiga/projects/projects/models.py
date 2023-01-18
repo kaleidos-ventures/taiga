@@ -10,6 +10,7 @@ from typing import Any
 
 from slugify import slugify
 from taiga.base.db import models
+from taiga.base.db.mixins import CreatedMetaInfoMixin
 from taiga.base.utils.files import get_file_path
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.uuid import encode_uuid_to_b64str
@@ -19,7 +20,7 @@ from taiga.projects import references
 get_project_logo_file_path = functools.partial(get_file_path, base_path="project")
 
 
-class Project(models.BaseModel):
+class Project(models.BaseModel, CreatedMetaInfoMixin):
     name = models.CharField(max_length=80, null=False, blank=False, verbose_name="name")
     description = models.CharField(max_length=220, null=True, blank=True, verbose_name="description")
     color = models.IntegerField(default=1, null=False, blank=True, verbose_name="color")
@@ -27,7 +28,6 @@ class Project(models.BaseModel):
         upload_to=get_project_logo_file_path, max_length=500, null=True, blank=True, verbose_name="logo"
     )
 
-    created_at = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="created at")
     modified_at = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="modified at")
 
     workspace = models.ForeignKey(

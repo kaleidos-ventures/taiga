@@ -9,9 +9,13 @@ from uuid import UUID
 
 import pytest
 from pydantic import ValidationError
-from taiga.projects.projects.api.validators import ProjectValidator
+from taiga.projects.projects.api.validators import ProjectValidator, UpdateProjectValidator
 from tests.unit.utils import check_validation_errors
 from tests.utils.images import invalid_image_upload_file, text_upload_file
+
+##########################################################
+# ProjectValidator
+##########################################################
 
 
 def test_validate_create_user_wrong_not_all_required_fields():
@@ -23,7 +27,7 @@ def test_validate_create_user_wrong_not_all_required_fields():
     check_validation_errors(validation_errors, expected_error_fields, expected_error_messages)
 
 
-def test_validate_project_with_empty_name(client):
+def test_validate_project_with_empty_name():
     name = ""
     color = 1
 
@@ -31,7 +35,7 @@ def test_validate_project_with_empty_name(client):
         ProjectValidator(name=name, color=color)
 
 
-def test_validate_project_with_long_name(client):
+def test_validate_project_with_long_name():
     name = "Project ab c de f gh i jk l mn pw r st u vw x yz ab c de f gh i jk l mn pw r st u vw x yz"
     color = 1
     workspace_id = "6JgsbGyoEe2VExhWgGrI2w"
@@ -39,7 +43,7 @@ def test_validate_project_with_long_name(client):
         ProjectValidator(name=name, color=color, workspace_id=workspace_id)
 
 
-def test_validate_project_with_long_description(client):
+def test_validate_project_with_long_description():
     name = "Project test"
     description = (
         "Project Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -54,7 +58,7 @@ def test_validate_project_with_long_description(client):
         ProjectValidator(name=name, description=description, color=color, workspace_id=workspace_id)
 
 
-def test_validate_project_with_invalid_color(client):
+def test_validate_project_with_invalid_color():
     name = "Project test"
     color = 9
     workspace_id = "6JgsbGyoEe2VExhWgGrI2w"
@@ -76,7 +80,7 @@ def test_valid_project():
     assert project.color == color
 
 
-def test_validate_logo_content_type(client):
+def test_validate_logo_content_type():
     name = "Project test"
     color = 1
     logo = text_upload_file
@@ -92,7 +96,7 @@ def test_validate_logo_content_type(client):
     check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)
 
 
-def test_validate_logo_content(client):
+def test_validate_logo_content():
     name = "Project test"
     color = 1
     logo = invalid_image_upload_file
@@ -103,3 +107,18 @@ def test_validate_logo_content(client):
     expected_error_fields = ["logo", "workspaceId"]
     expected_error_messages = ["Invalid image content", "field required"]
     check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)
+
+
+##########################################################
+# UpdateProjectValidator
+##########################################################
+
+
+def test_validate_update_project_ok():
+    name = "new name"
+    description = "new description"
+    patch = UpdateProjectValidator(name=name, description=description)
+
+    assert patch.name == name
+    assert patch.description == description
+    assert patch.logo is None

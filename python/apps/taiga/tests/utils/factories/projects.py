@@ -95,6 +95,8 @@ class ProjectFactory(Factory):
     name = factory.Sequence(lambda n: f"Project {n}")
     description = factory.Sequence(lambda n: f"Description {n}")
     owner = factory.SubFactory("tests.utils.factories.UserFactory")
+    created_at = aware_utcnow()
+    created_by = factory.SubFactory("tests.utils.factories.UserFactory")
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
     logo = valid_image_f
 

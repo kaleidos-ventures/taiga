@@ -213,7 +213,7 @@ async def test_get_users_by_text():
     await f.create_workspace_membership(user=elettescar, workspace=workspace, role=general_member_role)
 
     # electra is a pj-member (from the previous workspace)
-    project = await f.create_project(workspace=workspace, owner=ws_pj_admin)
+    project = await f.create_project(workspace=workspace, owner=ws_pj_admin, created_by=ws_pj_admin)
     general_role = await f.create_project_role(project=project, is_admin=False)
     await f.create_project_membership(user=electra, project=project, role=general_role)
 

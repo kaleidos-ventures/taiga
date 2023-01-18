@@ -4,7 +4,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+
+
 from functools import partial
+from typing import Any
 from uuid import UUID
 
 from fastapi import UploadFile
@@ -17,6 +20,7 @@ from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.memberships import repositories as pj_memberships_repositories
 from taiga.projects.projects import events as projects_events
 from taiga.projects.projects import repositories as projects_repositories
+from taiga.projects.projects import tasks as projects_tasks
 from taiga.projects.projects.models import Project
 from taiga.projects.projects.services import exceptions as ex
 from taiga.projects.roles import repositories as pj_roles_repositories
@@ -165,6 +169,36 @@ async def get_project_detail(project: Project, user: AnyUser) -> Project:
 ##########################################################
 
 
+async def update_project(project: Project, values: dict[str, Any] = {}) -> Project:
+    # Prevent hitting the database with an empty PATCH
+    if len(values) == 0:
+        return project
+
+    if "name" in values:
+        if values.get("name") is None or values.get("name") == "":
+            raise ex.TaigaValidationError("Name cannot be empty")
+
+    file_to_delete = None
+    if "logo" in values:
+        if logo := values.get("logo"):
+            values["logo"] = File(file=logo.file, name=logo.filename)
+        else:
+            values["logo"] = None
+
+        # Mark a file to-delete
+        if project.logo:
+            file_to_delete = project.logo.path
+
+    # Update project
+    project = await projects_repositories.update_project(project=project, values=values)
+
+    # Delete old file if existed
+    if file_to_delete:
+        await projects_tasks.delete_old_logo.defer(path=file_to_delete)
+
+    return project
+
+
 async def update_project_public_permissions(project: Project, permissions: list[str]) -> list[str]:
     if not permissions_services.permissions_are_valid(permissions):
         raise ex.NotValidPermissionsSetError("One or more permissions are not valid. Maybe, there is a typo.")
@@ -172,13 +206,12 @@ async def update_project_public_permissions(project: Project, permissions: list[
     if not permissions_services.permissions_are_compatible(permissions):
         raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
-    project.public_permissions = permissions
-    await projects_repositories.update_project(project=project)
+    await projects_repositories.update_project(project=project, values={"public_permissions": permissions})
 
     # TODO: emit an event to users/project with the new permissions when a change happens?
     await projects_events.emit_event_when_project_permissions_are_updated(project=project)
 
-    return project.public_permissions
+    return permissions
 
 
 async def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:
@@ -191,12 +224,11 @@ async def update_project_workspace_member_permissions(project: Project, permissi
     if not await projects_repositories.project_is_in_premium_workspace(project):
         raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be set")
 
-    project.workspace_member_permissions = permissions
-    await projects_repositories.update_project(project=project)
+    await projects_repositories.update_project(project=project, values={"workspace_member_permissions": permissions})
 
     await projects_events.emit_event_when_project_permissions_are_updated(project=project)
 
-    return project.workspace_member_permissions
+    return permissions
 
 
 ##########################################################

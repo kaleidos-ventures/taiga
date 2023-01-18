@@ -19,3 +19,7 @@ class NotValidPermissionsSetError(TaigaServiceException):
 
 class NotPremiumWorkspaceError(TaigaServiceException):
     ...
+
+
+class TaigaValidationError(TaigaServiceException):
+    ...

@@ -8,12 +8,13 @@
 
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { Membership, Project } from '@taiga/data';
-import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { immerReducer } from '~/app/shared/utils/store';
 import {
   editProject,
-  editProjectSuccess,
+  editProjectSuccess
 } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
+import * as RolesPermissionsActions from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
+import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { immerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/project.actions';
 
 export const projectFeatureKey = 'project';
@@ -99,7 +100,19 @@ export const reducer = createReducer(
     };
 
     return state;
-  })
+  }),
+  on(
+    RolesPermissionsActions.updateRolePermissionsSuccess,
+    (state, { role }): ProjectState => {
+      state.members = state.members.map((member) => {
+        if (member.role.slug === role.slug) {
+          member.role = role;
+        }
+        return member;
+      });
+      return state;
+    }
+  )
 );
 
 export const projectFeature = createFeature({

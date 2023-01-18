@@ -74,6 +74,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
   public assignedListA11y = '';
   public reversedAssignees: Membership['user'][] = [];
   public restAssigneesLenght = '';
+  public hintAssignUser = false;
 
   public readonly model$ = this.state.select();
 
@@ -234,6 +235,10 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     } else {
       this.restAssigneesLenght = '…';
     }
+  }
+
+  public displayHintAssignUser() {
+    this.hintAssignUser = !this.hintAssignUser;
   }
 
   private scrollToDragStoryIfNotVisible() {

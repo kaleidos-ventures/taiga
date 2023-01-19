@@ -16,13 +16,36 @@ from taiga.workspaces.roles import services as ws_roles_services
 from taiga.workspaces.workspaces import repositories as workspaces_repositories
 from taiga.workspaces.workspaces.models import Workspace
 
+##########################################################
+# create workspace
+##########################################################
 
-async def get_user_workspaces_overview(user: User) -> list[Workspace]:
-    return await workspaces_repositories.get_user_workspaces_overview(user=user)
+
+async def create_workspace(name: str, color: int, owner: User) -> Workspace:
+    workspace = await workspaces_repositories.create_workspace(name=name, color=color, owner=owner)
+    role = await ws_roles_repositories.create_workspace_role(
+        name="Administrator",
+        slug="admin",
+        permissions=choices.WorkspacePermissions.values,
+        workspace=workspace,
+        is_admin=True,
+    )
+    await ws_memberships_repositories.create_workspace_membership(user=owner, workspace=workspace, role=role)
+    return workspace
 
 
-async def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
-    return await workspaces_repositories.get_user_workspace_overview(user=user, id=id)
+##########################################################
+# list workspace
+##########################################################
+
+
+async def list_user_workspaces(user: User) -> list[Workspace]:
+    return await workspaces_repositories.list_user_workspaces_overview(user=user)
+
+
+##########################################################
+# get workspace
+##########################################################
 
 
 async def get_workspace(id: UUID) -> Workspace | None:
@@ -50,14 +73,5 @@ async def get_workspace_summary(id: UUID, user_id: UUID | None) -> Workspace | N
     )
 
 
-async def create_workspace(name: str, color: int, owner: User) -> Workspace:
-    workspace = await workspaces_repositories.create_workspace(name=name, color=color, owner=owner)
-    role = await ws_roles_repositories.create_workspace_role(
-        name="Administrator",
-        slug="admin",
-        permissions=choices.WorkspacePermissions.values,
-        workspace=workspace,
-        is_admin=True,
-    )
-    await ws_memberships_repositories.create_workspace_membership(user=owner, workspace=workspace, role=role)
-    return workspace
+async def get_user_workspace(user: User, id: UUID) -> Workspace | None:
+    return await workspaces_repositories.get_user_workspace_overview(user=user, id=id)

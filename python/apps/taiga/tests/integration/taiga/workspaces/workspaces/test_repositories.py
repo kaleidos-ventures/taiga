@@ -456,7 +456,7 @@ async def test_get_user_workspaces_overview_latest_projects():
     # user6 and user7 are NOT pj-member
     await f.create_project(workspace=workspace7)
 
-    res = await repositories.get_user_workspaces_overview(user6)
+    res = await repositories.list_user_workspaces_overview(user6)
 
     assert len(res) == 5  # workspaces
 
@@ -476,7 +476,7 @@ async def test_get_user_workspaces_overview_latest_projects():
         elif ws.name == workspace6.name:
             assert ws.total_projects == 1
 
-    res = await repositories.get_user_workspaces_overview(user7)
+    res = await repositories.list_user_workspaces_overview(user7)
 
     assert len(res) == 5  # workspaces
 
@@ -545,14 +545,14 @@ async def test_get_user_workspaces_overview_invited_projects():
     await f.create_project_invitation(email=user10.email, user=None, project=pj, role=pj_general_role, invited_by=user8)
 
     # user 9
-    res = await repositories.get_user_workspaces_overview(user9)
+    res = await repositories.list_user_workspaces_overview(user9)
 
     assert len(res) == 4  # workspaces
     for ws in res:
         assert len(ws.invited_projects) == 1
 
     # user 10
-    res = await repositories.get_user_workspaces_overview(user10)
+    res = await repositories.list_user_workspaces_overview(user10)
 
     assert len(res) == 2  # workspaces
     for ws in res:

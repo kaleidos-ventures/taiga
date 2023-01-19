@@ -17,6 +17,11 @@ WS_ROLE_NAME_GUEST: Final = "guest"
 WS_ROLE_NAME_NONE: Final = "none"
 
 
+##########################################################
+# misc
+##########################################################
+
+
 async def get_workspace_role_name(
     workspace_id: UUID,
     user_id: UUID | None,

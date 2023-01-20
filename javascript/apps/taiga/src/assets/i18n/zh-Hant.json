@@ -34,7 +34,8 @@
     "tasks": "Tasks",
     "stories": "Stories",
     "sprints": "Sprints",
-    "your_user": "{{ name }} <strong class='is-self'>(You)</strong>"
+    "your_user": "{{ name }} <strong class='is-self'>(You)</strong>",
+    "save_changes": "Save changes"
   },
   "navigation": {
     "go_home": "Go to home",
@@ -76,6 +77,17 @@
       "accept_invite": "Accept invitation",
       "pending_invitation": "Pending invitation",
       "close_card": "Close card"
+    },
+    "forms": {
+      "project_details": "Project details",
+      "project_name": "Project name",
+      "project_name_error": "Project name can’t be empty",
+      "project_description": "Project description",
+      "project_description_placeholder": "Add a short description to help others better understand your project.",
+      "project_icon": "Project icon",
+      "max_length_error": "Project description must be 200 characters or fewer",
+      "choose_image_tip": "Allowed formats: gif, png, jpg, svg and webp",
+      "format_error": "The file format is not allowed. Allowed formats: gif, png, jpg, svg or webp"
     }
   },
   "errors": {
@@ -94,6 +106,13 @@
     "invitation_no_longer_valid": "The invitation is no longer valid.",
     "project_invitation_no_longer_valid": "The invitation to {{ name }} is no longer valid.",
     "modify_story_permission": "You no longer have permissions to modify stories",
-    "you_dont_have_permission_to_see": "You don't have permission to see the project."
+    "you_dont_have_permission_to_see": "You don't have permission to see the project.",
+    "admin_permission": "You  are no longer admin on this project"
+  },
+  "discard_changes": {
+    "title": "Discard changes?",
+    "description": "You will loose the changes you have made.",
+    "confirm": "Yes, discard",
+    "cancel": "No, keep editing"
   }
 }

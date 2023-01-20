@@ -26,8 +26,10 @@
     "assign": "Assign",
     "unassigned": "Not assigned",
     "story_not_assigned": "Story not assigned to anyone.",
-    "assign_key": "{{kanban.story_card.story_not_assigned}}. Press enter to assign.",
+    "assign_key": "Press enter to add or remove assignees.",
+    "unassigned_action": "{{kanban.story_card.story_not_assigned}}. {{kanban.story_card.assign_key}}",
     "assigned_list": "Assigned users: {{users}}",
+    "assigned_list_perm": "{{kanban.story_card.assigned_list}}. {{kanban.story_card.assign_key}}",
     "more_assigned": "{{assigneesNum}} assignees more"
   }
 }

@@ -10,7 +10,7 @@ import { createFeature, createReducer, on } from '@ngrx/store';
 import { Membership, Project } from '@taiga/data';
 import {
   editProject,
-  editProjectSuccess
+  editProjectSuccess,
 } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import * as RolesPermissionsActions from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';

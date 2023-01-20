@@ -51,6 +51,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [tuiDropdownManual]="vm.showAssignUser"
             (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)">
             <button
+              data-test="assign-btn"
               (click)="toggleAssignUser($event)"
               (focus)="displayHintAssignUser()"
               (focusout)="displayHintAssignUser()"

@@ -473,7 +473,7 @@ export class ProjectApiService {
     );
   }
 
-  public unAssingStory(
+  public unAssignStory(
     projectId: Project['id'],
     storyRef: Story['ref'],
     user: User['username']

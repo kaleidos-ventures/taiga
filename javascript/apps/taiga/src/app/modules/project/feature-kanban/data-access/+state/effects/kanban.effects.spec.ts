@@ -6,13 +6,14 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { randNumber } from '@ngneat/falso';
+import { randFirstName, randNumber, randUserName } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { ProjectApiService } from '@taiga/api';
 import {
+  Membership,
   ProjectMockFactory,
   StatusMockFactory,
   StoryMockFactory,
@@ -294,5 +295,65 @@ describe('ProjectEffects', () => {
         }
       );
     });
+  });
+
+  it('assign story', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(KanbanEffects);
+    const story = StoryMockFactory();
+    const user: Membership['user'] = {
+      fullName: randFirstName(),
+      username: randUserName(),
+      color: randNumber(),
+    };
+
+    projectApiService.assingStory.mockReturnValue(
+      cold('-b|', { b: { story, user } })
+    );
+
+    actions$ = hot('-a', {
+      a: KanbanActions.assignMember({
+        storyRef: story.ref,
+        member: user,
+      }),
+    });
+
+    const expected = cold('--a', {
+      a: KanbanApiActions.assignMemberSuccess(),
+    });
+
+    expect(effects.assign$).toBeObservable(expected);
+  });
+
+  it('unassign story', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(KanbanEffects);
+    const project = ProjectMockFactory();
+    const story = StoryMockFactory();
+    const user: Membership['user'] = {
+      fullName: randFirstName(),
+      username: randUserName(),
+      color: randNumber(),
+    };
+    story.assignees = [user];
+
+    projectApiService.unAssignStory.mockReturnValue(
+      cold('-b|', { b: undefined })
+    );
+
+    store.overrideSelector(selectCurrentProject, project);
+
+    actions$ = hot('-a', {
+      a: KanbanActions.unassignMember({
+        storyRef: story.ref,
+        member: user,
+      }),
+    });
+
+    const expected = cold('--a', {
+      a: KanbanApiActions.unassignMemberSuccess(),
+    });
+
+    expect(effects.unAssign$).toBeObservable(expected);
   });
 });

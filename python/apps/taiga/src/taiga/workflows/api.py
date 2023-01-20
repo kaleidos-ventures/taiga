@@ -5,7 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import cast
 from uuid import UUID
 
 from fastapi import Query
@@ -19,12 +18,16 @@ from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.workflows import services as workflows_services
 from taiga.workflows.models import Workflow
-from taiga.workflows.schemas import WorkflowSchema
 from taiga.workflows.serializers import WorkflowSerializer
 
 # PERMISSIONS
 LIST_WORKFLOWS = HasPerm("view_story")
 GET_WORKFLOW = HasPerm("view_story")
+
+
+################################################
+# list workflows
+################################################
 
 
 @routes.projects.get(
@@ -37,13 +40,18 @@ GET_WORKFLOW = HasPerm("view_story")
 async def list_workflows(
     request: Request,
     id: B64UUID = Query(None, description="the project id (B64UUID)"),
-) -> list[WorkflowSchema]:
+) -> list[WorkflowSerializer]:
     """
     List the workflows of a project
     """
     project = await get_project_or_404(id)
     await check_permissions(permissions=LIST_WORKFLOWS, user=request.user, obj=project)
-    return await workflows_services.list_workflows_schemas(project_id=id)
+    return await workflows_services.list_workflows(project_id=id)
+
+
+################################################
+# get workflow
+################################################
 
 
 @routes.projects.get(
@@ -57,15 +65,19 @@ async def get_workflow(
     request: Request,
     id: B64UUID = Query(None, description="the project id (B64UUID)"),
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
-) -> WorkflowSchema:
+) -> WorkflowSerializer:
     """
     Get the details of a workflow
     """
+    # TODO: The Postman's entry is missing
     workflow = await get_workflow_or_404(project_id=id, workflow_slug=workflow_slug)
     await check_permissions(permissions=GET_WORKFLOW, user=request.user, obj=workflow)
-    return cast(
-        WorkflowSchema, await workflows_services.get_workflow_schema(project_id=id, workflow_slug=workflow_slug)
-    )
+    return await workflows_services.get_detailed_workflow(project_id=id, workflow_slug=workflow_slug)
+
+
+################################################
+# misc
+################################################
 
 
 async def get_workflow_or_404(project_id: UUID, workflow_slug: str) -> Workflow:

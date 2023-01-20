@@ -12,7 +12,6 @@ from asgiref.sync import sync_to_async
 from taiga.base.db.models import QuerySet
 from taiga.projects.projects.models import Project
 from taiga.workflows.models import Workflow, WorkflowStatus
-from taiga.workflows.schemas import WorkflowSchema, WorkflowStatusSchema
 
 ##########################################################
 # Workflow - filters and querysets
@@ -103,7 +102,8 @@ create_workflow = sync_to_async(create_workflow_sync)
 ##########################################################
 
 
-def list_workflows_sync(
+@sync_to_async
+def list_workflows(
     filters: WorkflowFilters = {},
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],
     order_by: WorkflowOrderBy = ["order"],
@@ -115,25 +115,13 @@ def list_workflows_sync(
     return list(qs)
 
 
-list_workflows = sync_to_async(list_workflows_sync)
-
-
-@sync_to_async
-def list_workflows_schemas(
-    filters: WorkflowFilters = {},
-    prefetch_related: WorkflowPrefetchRelated = ["statuses"],
-    order_by: WorkflowOrderBy = ["order"],
-) -> list[WorkflowSchema]:
-    workflows = list_workflows_sync(filters=filters, prefetch_related=prefetch_related, order_by=order_by)
-    return [workflow_to_schema(workflow) for workflow in workflows]
-
-
 ##########################################################
 # Workflow - get workflow
 ##########################################################
 
 
-def get_workflow_sync(
+@sync_to_async
+def get_workflow(
     filters: WorkflowFilters = {},
     select_related: WorkflowSelectRelated = [],
     prefetch_related: WorkflowPrefetchRelated = ["statuses"],
@@ -146,37 +134,6 @@ def get_workflow_sync(
         return qs.get()
     except Workflow.DoesNotExist:
         return None
-
-
-get_workflow = sync_to_async(get_workflow_sync)
-
-
-@sync_to_async
-def get_workflow_schema(
-    filters: WorkflowFilters = {},
-    select_related: WorkflowSelectRelated = [],
-    prefetch_related: WorkflowPrefetchRelated = ["statuses"],
-) -> WorkflowSchema | None:
-    workflow = get_workflow_sync(filters=filters, select_related=select_related, prefetch_related=prefetch_related)
-    if workflow:
-        return workflow_to_schema(workflow)
-
-    return None
-
-
-##########################################################
-# Workflow - misc
-##########################################################
-
-
-def workflow_to_schema(workflow: Workflow) -> WorkflowSchema:
-    return WorkflowSchema(
-        id=workflow.id,
-        name=workflow.name,
-        slug=workflow.slug,
-        order=workflow.order,
-        statuses=[workflow_status_to_schema(status) for status in workflow.statuses.all()],
-    )
 
 
 ##########################################################
@@ -253,5 +210,6 @@ def get_status(filters: WorkflowStatusFilters = {}) -> WorkflowStatus | None:
 ##########################################################
 
 
-def workflow_status_to_schema(ws: WorkflowStatus) -> WorkflowStatusSchema:
-    return WorkflowStatusSchema(id=ws.id, name=ws.name, slug=ws.slug, order=ws.order, color=ws.color)
+@sync_to_async
+def list_workflow_statuses(workflow: Workflow) -> list[WorkflowStatus]:
+    return list(workflow.statuses.all())

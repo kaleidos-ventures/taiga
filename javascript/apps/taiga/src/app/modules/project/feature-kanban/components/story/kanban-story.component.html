@@ -63,13 +63,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 'unassigned-button-perm': !vm.assignees.length,
                 'assigned-button-perm': vm.assignees.length
               }">
-              <ng-template
-                *ngIf="
-                  vm.assignees.length;
-                  then displayUsersTpl;
-                  else assignBtnTpl
-                ">
-              </ng-template>
+              <ng-container
+                [ngTemplateOutlet]="
+                  vm.assignees.length ? displayUsersTpl : assignBtnTpl
+                "
+                [ngTemplateOutletContext]="{
+                  $implicit: 'assignPermissions'
+                }"></ng-container>
             </button>
           </div>
         </ng-container>
@@ -78,13 +78,19 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     <!-- Assigned users temaplate -->
 
-    <ng-template #displayUsersTpl>
+    <ng-template
+      #displayUsersTpl
+      let-permissions>
       <div
         class="assigned-users-list"
         [attr.aria-label]="
-          t('kanban.story_card.assigned_list', {
-            users: assignedListA11y
-          })
+          permissions === 'assignPermissions'
+            ? t('kanban.story_card.assigned_list_perm', {
+                users: assignedListA11y
+              })
+            : t('kanban.story_card.assigned_list', {
+                users: assignedListA11y
+              })
         ">
         <tg-user-avatar
           *ngFor="
@@ -103,6 +109,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
       <div
         class="assigned-user-avatar-extra"
+        aria-hidden="true"
         *ngIf="vm.assignees.length > 3"
         [tuiHint]="moreAssignedTooltip"
         [tuiHintDirection]="'bottom-right'">
@@ -113,7 +120,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <!-- Assign button template - user with permissions -->
 
     <ng-template #assignBtnTpl>
-      <div [attr.aria-label]="t('kanban.story_card.assign_key')">
+      <div [attr.aria-label]="t('kanban.story_card.unassigned_action')">
         {{ t('kanban.story_card.assign') }}
       </div>
     </ng-template>
@@ -155,7 +162,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [ngClass]="{
             'assigned-button-perm': vm.assignees.length
           }">
-          <ng-container *ngTemplateOutlet="displayUsersTpl"></ng-container>
+          <ng-container
+            [ngTemplateOutlet]="displayUsersTpl"
+            [ngTemplateOutletContext]="{
+              $implicit: 'noAssignPermissions'
+            }"></ng-container>
         </button>
       </div>
     </ng-template>

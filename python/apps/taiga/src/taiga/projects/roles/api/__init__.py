@@ -13,9 +13,9 @@ from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import IsProjectAdmin
 from taiga.projects.projects.api import get_project_or_404
-from taiga.projects.projects.api.validators import PermissionsValidator
 from taiga.projects.projects.models import Project
 from taiga.projects.roles import services as roles_services
+from taiga.projects.roles.api.validators import PermissionsValidator
 from taiga.projects.roles.models import ProjectRole
 from taiga.projects.roles.serializers import ProjectRoleSerializer
 from taiga.projects.roles.services import exceptions as services_ex

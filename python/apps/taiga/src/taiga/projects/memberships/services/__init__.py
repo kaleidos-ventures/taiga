@@ -60,11 +60,9 @@ async def update_project_membership(membership: ProjectMembership, role_slug: st
         raise ex.MembershipIsTheOnlyAdminError("Membership is the only admin")
 
     # Check if new role has view_story permission
-    view_story_is_deleted = False
-    if membership.role.permissions:
-        view_story_is_deleted = await permissions_services.is_view_story_permission_deleted(
-            old_permissions=membership.role.permissions, new_permissions=project_role.permissions
-        )
+    view_story_is_deleted = await permissions_services.is_view_story_permission_deleted(
+        old_permissions=membership.role.permissions, new_permissions=project_role.permissions
+    )
 
     membership.role = project_role
     updated_membership = await memberships_repositories.update_project_membership(membership=membership)

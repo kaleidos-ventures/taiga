@@ -286,15 +286,16 @@ def test_permissions_are_valid(permissions, expected):
 @pytest.mark.parametrize(
     "permissions, expected",
     [
-        (["add_story", "modify_story", "comment_story"], False),
-        (["comment_story", "view_story"], True),
-        (["comment_task", "view_story"], False),
-        (["modify_task", "comment_story"], False),
-        (["view_story", "comment_story", "view_story"], True),
-        (["view_story", "modify_story", "comment_story"], True),
-        (["view_story", "view_story"], True),
-        (["view_story"], True),
-        (["view_task", "comment_story"], False),
+        (["view_project", "add_story", "modify_story", "comment_story"], False),
+        (["view_project", "comment_story", "view_story"], True),
+        (["view_project", "comment_task", "view_story"], False),
+        (["view_project", "modify_task", "comment_story"], False),
+        (["view_project", "view_story", "comment_story", "view_story"], True),
+        (["view_project", "view_story", "modify_story", "comment_story"], True),
+        (["view_project", "view_story", "view_story"], True),
+        (["view_story"], False),
+        (["view_project", "view_story"], True),
+        (["view_project", "view_task", "comment_story"], False),
     ],
 )
 def test_permissions_are_compatible(permissions, expected):

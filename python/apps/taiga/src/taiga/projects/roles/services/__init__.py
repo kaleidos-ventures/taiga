@@ -43,11 +43,9 @@ async def update_project_role_permissions(role: ProjectRole, permissions: list[s
         raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
 
     # Check if new permissions have view_story
-    view_story_is_deleted = False
-    if role.permissions:
-        view_story_is_deleted = await permissions_services.is_view_story_permission_deleted(
-            old_permissions=role.permissions, new_permissions=permissions
-        )
+    view_story_is_deleted = await permissions_services.is_view_story_permission_deleted(
+        old_permissions=role.permissions, new_permissions=permissions
+    )
 
     role.permissions = permissions
     project_role_permissions = await (pj_roles_repositories.update_project_role_permissions(role=role))

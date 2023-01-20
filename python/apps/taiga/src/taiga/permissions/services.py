@@ -180,6 +180,10 @@ def permissions_are_valid(permissions: list[str]) -> bool:
 
 
 def permissions_are_compatible(permissions: list[str]) -> bool:
+    # a user cannot see story if she has no access to project
+    if "view_project" not in permissions and set.intersection(set(permissions), set(["view_story"])):
+        return False
+
     # a user cannot see tasks if she has no access to stories
     if "view_story" not in permissions and set.intersection(set(permissions), set(["view_task"])):
         return False

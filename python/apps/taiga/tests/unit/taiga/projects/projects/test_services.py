@@ -266,7 +266,7 @@ async def test_update_project_name_empty(tqmanager):
 
 async def test_update_project_public_permissions_ok():
     project = f.build_project()
-    permissions = ["add_task", "view_task", "modify_story", "view_story"]
+    permissions = ["view_project", "add_task", "view_task", "modify_story", "view_story"]
 
     with (
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_project_repository,
@@ -311,7 +311,7 @@ async def test_update_project_public_permissions_incompatible():
 async def test_update_project_workspace_member_permissions_ok():
     workspace = f.build_workspace(is_premium=True)
     project = f.build_project(workspace=workspace)
-    permissions = ["add_task", "view_task", "modify_story", "view_story"]
+    permissions = ["view_project", "add_task", "view_task", "modify_story", "view_story"]
 
     with (
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_project_repository,
@@ -355,7 +355,7 @@ async def test_update_project_workspace_member_permissions_incompatible():
 async def test_update_project_workspace_member_permissions_not_premium():
     workspace = f.build_workspace(is_premium=False)
     project = f.build_project(workspace=workspace)
-    incompatible_permissions = ["view_story"]
+    incompatible_permissions = ["view_project", "view_story"]
 
     with (
         patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,

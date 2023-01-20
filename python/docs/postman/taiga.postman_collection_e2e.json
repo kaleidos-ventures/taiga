@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "280851f9-94de-4508-88e0-2cbc3d20ce7f",
+		"_postman_id": "808d9cff-7077-47d9-a1cf-c02352ef6502",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -1529,7 +1530,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_story\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_project\",\n        \"view_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1647,7 +1648,8 @@
 									"    var jsonRes = pm.response.json();",
 									"",
 									"    // Validate response API fields",
-									"    pm.expect(jsonRes.length).to.eql(2);",
+									"    pm.expect(jsonRes.length).to.eql(3);",
+									"    pm.expect(jsonRes).to.include('view_project');",
 									"    pm.expect(jsonRes).to.include('view_story');",
 									"    pm.expect(jsonRes).to.include('modify_story');",
 									"});"
@@ -1671,7 +1673,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_project\",\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1711,7 +1713,8 @@
 									"    var jsonRes = pm.response.json();",
 									"",
 									"    // Validate response API fields",
-									"    pm.expect(jsonRes.length).to.eql(2);",
+									"    pm.expect(jsonRes.length).to.eql(3);",
+									"    pm.expect(jsonRes).to.include('view_project');",
 									"    pm.expect(jsonRes).to.include('view_story');",
 									"    pm.expect(jsonRes).to.include('modify_story');",
 									"});"
@@ -5913,7 +5916,8 @@
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
-									"    pm.expect(jsonRes.length).to.eql(2);",
+									"    pm.expect(jsonRes.length).to.eql(3);",
+									"    pm.expect(jsonRes).to.include('view_project');",
 									"    pm.expect(jsonRes).to.include('view_story');",
 									"    pm.expect(jsonRes).to.include('modify_story');",
 									"});"
@@ -5937,7 +5941,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_project\",\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -5975,7 +5979,8 @@
 									"});",
 									"pm.test(\"Response JSON is correct\", function () {",
 									"    var jsonRes = pm.response.json();",
-									"    pm.expect(jsonRes.length).to.eql(2);",
+									"    pm.expect(jsonRes.length).to.eql(3);",
+									"    pm.expect(jsonRes).to.include('view_project');",
 									"    pm.expect(jsonRes).to.include('view_story');",
 									"    pm.expect(jsonRes).to.include('modify_story');",
 									"});"
@@ -6302,7 +6307,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_project\",\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -7134,7 +7139,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"wrong_permission\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_project\",\n        \"wrong_permission\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -7311,7 +7316,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"wrong_permission\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_project\",\n        \"wrong_permission\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"

@@ -86,7 +86,7 @@ async def test_update_project_role_permissions_not_valid_permissions():
 
 async def test_update_project_role_permissions_ok():
     role = f.build_project_role()
-    permissions = ["view_story"]
+    permissions = ["view_project", "view_story"]
 
     with (
         patch("taiga.projects.roles.services.pj_roles_events", autospec=True) as fake_roles_events,

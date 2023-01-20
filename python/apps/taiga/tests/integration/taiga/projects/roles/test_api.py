@@ -20,7 +20,7 @@ pytestmark = pytest.mark.django_db
 async def test_update_project_role_permissions_anonymous_user(client):
     project = await f.create_project()
     role_slug = "general"
-    data = {"permissions": ["view_story"]}
+    data = {"permissions": ["view_project", "view_story"]}
 
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
@@ -29,7 +29,7 @@ async def test_update_project_role_permissions_anonymous_user(client):
 
 async def test_update_project_role_permissions_project_not_found(client):
     user = await f.create_user()
-    data = {"permissions": ["view_story"]}
+    data = {"permissions": ["view_project", "view_story"]}
     non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
     client.login(user)
@@ -40,7 +40,7 @@ async def test_update_project_role_permissions_project_not_found(client):
 
 async def test_update_project_role_permissions_role_not_found(client):
     project = await f.create_project()
-    data = {"permissions": ["view_story"]}
+    data = {"permissions": ["view_project", "view_story"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.b64id}/roles/role-slug/permissions", json=data)
@@ -51,7 +51,7 @@ async def test_update_project_role_permissions_role_not_found(client):
 async def test_update_project_role_permissions_user_without_permission(client):
     user = await f.create_user()
     project = await f.create_project()
-    data = {"permissions": ["view_story"]}
+    data = {"permissions": ["view_project", "view_story"]}
 
     client.login(user)
     response = client.put(f"/projects/{project.b64id}/roles/role-slug/permissions", json=data)
@@ -62,7 +62,7 @@ async def test_update_project_role_permissions_user_without_permission(client):
 async def test_update_project_role_permissions_role_admin(client):
     project = await f.create_project()
     role_slug = "admin"
-    data = {"permissions": ["view_story"]}
+    data = {"permissions": ["view_project", "view_story"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
@@ -73,7 +73,7 @@ async def test_update_project_role_permissions_role_admin(client):
 async def test_update_project_role_permissions_incompatible_permissions(client):
     project = await f.create_project()
     role_slug = "general"
-    data = {"permissions": ["view_task"]}
+    data = {"permissions": ["view_project", "view_task"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
@@ -84,7 +84,7 @@ async def test_update_project_role_permissions_incompatible_permissions(client):
 async def test_update_project_role_permissions_not_valid_permissions(client):
     project = await f.create_project()
     role_slug = "general"
-    data = {"permissions": ["not_valid", "foo"]}
+    data = {"permissions": ["view_project", "not_valid", "foo"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
@@ -95,7 +95,7 @@ async def test_update_project_role_permissions_not_valid_permissions(client):
 async def test_update_project_role_permissions_ok(client):
     project = await f.create_project()
     role_slug = "general"
-    data = {"permissions": ["view_story"]}
+    data = {"permissions": ["view_project", "view_story"]}
 
     client.login(project.owner)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)

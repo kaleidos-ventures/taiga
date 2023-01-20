@@ -67,7 +67,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [label]="t('common_project.forms.project_icon')"
         [formatError]="t('common_project.forms.format_error')"
         [tip]="t('common_project.forms.choose_image_tip')"
-        [initialImage]="project.logoSmall"
+        [initialImage]="project.logoLarge"
         accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg, image/svg+xml">
       </tg-ui-image-upload>
 
@@ -94,7 +94,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     class="confirm-close"
     [open]="showConfirmEditProjectModal"
     [width]="500"
-    (requestClose)="showConfirmEditProjectModal = false">
+    (requestClose)="discard()">
     <h1 class="title">{{ t('discard_changes.title') }}</h1>
     <p class="confirm-close-description">
       {{ t('discard_changes.description') }}

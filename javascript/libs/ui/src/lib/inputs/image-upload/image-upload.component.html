@@ -27,7 +27,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           (click)="hasImage() ? removeImage() : displayImageUploader()"
           tuiIconButton
           [icon]="hasImage() ? 'close' : 'plus'"
-          [attr.title]="t('image_upload.choose_image')"
+          [attr.title]="
+            hasImage()
+              ? t('image_upload.remove_image')
+              : t('image_upload.choose_image')
+          "
           type="button"
           appearance="tertiary"></button>
       </div>

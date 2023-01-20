@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -59,7 +59,7 @@ describe('ProjectOverviewEffects', () => {
       }),
     ],
     imports: [getTranslocoModule()],
-    mocks: [ProjectApiService, Router, AppService],
+    mocks: [ProjectApiService, Location, AppService],
   });
 
   beforeEach(() => {
@@ -296,7 +296,7 @@ describe('ProjectOverviewEffects', () => {
     });
 
     const effects = spectator.inject(ProjectOverviewEffects);
-    const router = spectator.inject(Router);
+    const location = spectator.inject(Location);
 
     actions$ = hot('-a', {
       a: editProjectSuccess({
@@ -305,11 +305,9 @@ describe('ProjectOverviewEffects', () => {
     });
 
     expect(effects.updateUrlOnEditProjectSuccess$).toSatisfyOnFlush(() => {
-      expect(router.navigate).toHaveBeenCalledWith([
-        'project',
-        project.id,
-        project.slug,
-      ]);
+      expect(location.replaceState).toHaveBeenCalledWith(
+        `project/${project.id}/${project.slug}`
+      );
     });
   });
 });

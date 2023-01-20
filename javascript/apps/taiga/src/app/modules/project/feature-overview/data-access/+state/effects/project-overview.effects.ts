@@ -6,9 +6,9 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { pessimisticUpdate } from '@nrwl/angular';
@@ -261,7 +261,7 @@ export class ProjectOverviewEffects {
           return project.id === router.id && router.slug !== project.slug;
         }),
         tap(([{ project }]) => {
-          void this.router.navigate(['project', project.id, project.slug]);
+          this.location.replaceState(`project/${project.id}/${project.slug}`);
         })
       );
     },
@@ -273,6 +273,6 @@ export class ProjectOverviewEffects {
     private actions$: Actions,
     private projectApiService: ProjectApiService,
     private appService: AppService,
-    private router: Router
+    private location: Location
   ) {}
 }

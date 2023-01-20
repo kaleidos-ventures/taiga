@@ -26,6 +26,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   position: relative;
 
   &:hover {
+    & tg-ui-avatar {
+      opacity: 60%;
+    }
+
     & .remove-image-button {
       visibility: visible;
     }

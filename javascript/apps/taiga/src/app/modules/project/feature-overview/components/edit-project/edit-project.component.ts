@@ -99,6 +99,7 @@ export class EditProjectComponent implements OnInit {
   public fillForm(project: Project) {
     this.form.patchValue({
       ...project,
+      description: project.description ?? '',
       logo: null,
     });
   }
@@ -122,6 +123,8 @@ export class EditProjectComponent implements OnInit {
       if (data.logo === null) {
         delete data.logo;
       }
+
+      console.log(data);
 
       this.submitProject.next(data as EditProject);
     }

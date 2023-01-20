@@ -52,7 +52,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .close {
-  inset-block-start: var(--spacing-20);
-  inset-inline-end: var(--spacing-20);
+  inset-block-start: var(--spacing-8);
+  inset-inline-end: var(--spacing-8);
   position: absolute;
 }

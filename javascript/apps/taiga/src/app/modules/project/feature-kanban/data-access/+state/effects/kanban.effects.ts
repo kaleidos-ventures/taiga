@@ -300,7 +300,7 @@ export class KanbanEffects {
       pessimisticUpdate({
         run: (action, project) => {
           return this.projectApiService
-            .unAssingStory(project.id, action.storyRef, action.member.username)
+            .unAssignStory(project.id, action.storyRef, action.member.username)
             .pipe(
               map(() => {
                 return KanbanApiActions.unassignMemberSuccess();

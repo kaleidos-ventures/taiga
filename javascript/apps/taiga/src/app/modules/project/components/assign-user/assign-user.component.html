@@ -8,7 +8,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
-    <div class="assignees-wrapper">
+    <div
+      class="assignees-wrapper"
+      data-test="assignees-wrapper">
       <h2
         class="assignees-title"
         tabindex="-1"
@@ -28,6 +30,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <li *ngFor="let assignedUser of vm.assigned; trackBy: trackByMember">
         <button
           class="user-row"
+          data-test="assigned-member"
           [class.view-only]="viewOnly"
           type="button"
           [attr.aria-label]="
@@ -87,6 +90,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             inputRef
             tuiAutoFocus
             #searchInput
+            data-test="input-search"
             formControlName="searchText"
             type="search"
             [placeholder]="t('project.assign_user.search-members')"
@@ -101,6 +105,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [class.disabled]="!vm.membersPermissions[member.username].length">
             <button
               class="unassigned-member-row"
+              data-test="unassigned-member"
               type="button"
               [attr.aria-label]="
                 !vm.membersPermissions[member.username].length
@@ -151,6 +156,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </ul>
       </tui-scrollbar>
       <p
+        data-test="no-members"
         class="no-members"
         *ngIf="!vm.members.length">
         <ng-container *ngIf="!searchTextForm.get('searchText')?.value">{{

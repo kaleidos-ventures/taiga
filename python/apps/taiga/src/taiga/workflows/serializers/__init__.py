@@ -4,11 +4,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+from uuid import UUID
 
 from taiga.base.serializers import BaseModel
 
 
 class WorkflowStatusSerializer(BaseModel):
+    id: UUID
     name: str
     slug: str
     color: int
@@ -19,6 +21,7 @@ class WorkflowStatusSerializer(BaseModel):
 
 
 class WorkflowSerializer(BaseModel):
+    id: UUID
     name: str
     slug: str
     order: int

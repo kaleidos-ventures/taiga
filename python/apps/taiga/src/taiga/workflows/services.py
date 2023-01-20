@@ -6,24 +6,34 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 
+from typing import cast
 from uuid import UUID
 
 from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.models import Workflow
-from taiga.workflows.schemas import WorkflowSchema
+from taiga.workflows.serializers import WorkflowSerializer
+from taiga.workflows.serializers import services as serializers_services
 
 ##########################################################
 # list workflows
 ##########################################################
 
 
-async def list_workflows_schemas(project_id: UUID) -> list[WorkflowSchema]:
-    return await workflows_repositories.list_workflows_schemas(
+async def list_workflows(project_id: UUID) -> list[WorkflowSerializer]:
+    workflows = await workflows_repositories.list_workflows(
         filters={
             "project_id": project_id,
         },
         prefetch_related=["statuses"],
     )
+
+    return [
+        serializers_services.serialize_workflow(
+            workflow=workflow,
+            workflow_statuses=await workflows_repositories.list_workflow_statuses(workflow=workflow),
+        )
+        for workflow in workflows
+    ]
 
 
 ##########################################################
@@ -41,11 +51,17 @@ async def get_workflow(project_id: UUID, workflow_slug: str) -> Workflow | None:
     )
 
 
-async def get_workflow_schema(project_id: UUID, workflow_slug: str) -> WorkflowSchema | None:
-    return await workflows_repositories.get_workflow_schema(
-        filters={
-            "project_id": project_id,
-            "slug": workflow_slug,
-        },
-        prefetch_related=["statuses"],
+async def get_detailed_workflow(project_id: UUID, workflow_slug: str) -> WorkflowSerializer:
+    workflow = cast(
+        Workflow,
+        await workflows_repositories.get_workflow(
+            filters={
+                "project_id": project_id,
+                "slug": workflow_slug,
+            },
+            select_related=["project"],
+        ),
+    )
+    return serializers_services.serialize_workflow(
+        workflow=workflow, workflow_statuses=await workflows_repositories.list_workflow_statuses(workflow=workflow)
     )

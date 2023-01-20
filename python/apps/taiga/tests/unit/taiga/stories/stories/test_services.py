@@ -12,7 +12,7 @@ import pytest
 from taiga.base.repositories.neighbors import Neighbor
 from taiga.stories.stories import services
 from taiga.stories.stories.services import exceptions as ex
-from taiga.workflows.schemas import WorkflowSchema
+from taiga.workflows.serializers import WorkflowSerializer, WorkflowStatusSerializer
 from tests.utils import factories as f
 
 #######################################################
@@ -77,7 +77,7 @@ async def test_create_story_invalid_status():
         fake_workflows_repo.get_status.return_value = None
         await services.create_story(
             project=story.project,
-            workflow=build_workflow_schema(story),
+            workflow=build_workflow_serializer(story),
             title=story.title,
             status_slug="invalid_slug",
             user=user,
@@ -530,11 +530,17 @@ async def test_reorder_story_not_all_stories_exist():
 #######################################################
 
 
-def build_workflow_schema(story):
-    return WorkflowSchema(
+def build_workflow_serializer(story):
+    return WorkflowSerializer(
         id=story.workflow.id,
         name=story.workflow.name,
         slug=story.workflow.slug,
         order=story.workflow.order,
-        statuses=[story.status],
+        statuses=[build_status_serializer(story.status)],
+    )
+
+
+def build_status_serializer(status):
+    return WorkflowStatusSerializer(
+        id=status.id, name=status.name, slug=status.slug, color=status.color, order=status.order
     )

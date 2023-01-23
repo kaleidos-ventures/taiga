@@ -27,7 +27,7 @@ DELETE_STORY_ASSIGNMENT = HasPerm("modify_story")
 
 
 ################################################
-# STORY ASSIGNMENT
+# assign story (create assignment)
 ################################################
 
 
@@ -55,6 +55,11 @@ async def create_story_assignment(
     )
 
 
+################################################
+# unassign story (delete assginment)
+################################################
+
+
 @routes.projects.delete(
     "/{project_id}/stories/{ref}/assignments/{username}",
     name="project.story.assignments.delete",
@@ -75,6 +80,11 @@ async def delete_story_assignment(
     await check_permissions(permissions=DELETE_STORY_ASSIGNMENT, user=request.user, obj=story_assignment.story)
 
     await story_assignments_services.delete_story_assignment(story_assignment=story_assignment)
+
+
+################################################
+# misc get story assignment or 404
+################################################
 
 
 async def get_story_assignment_or_404(project_id: UUID, ref: int, username: str) -> StoryAssignment:

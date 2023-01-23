@@ -24,23 +24,28 @@ async def test_create_story_ok():
     user = f.build_user()
     status = f.build_workflow_status()
     story = f.build_story(status=status, workflow=status.workflow)
+    neighbors = Neighbor(next=f.build_story(), prev=f.build_story())
 
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
     ):
-        fake_stories_repo.create_story.return_value = story
         fake_workflows_repo.get_status.return_value = status
         fake_stories_repo.list_stories.return_value = None
+        fake_stories_repo.create_story.return_value = story
+        fake_stories_repo.get_story.return_value = story
+        fake_stories_repo.list_story_neighbors.return_value = neighbors
+        fake_stories_repo.list_story_assignees.return_value = []
 
         complete_story = await services.create_story(
-            project_id=story.project_id,
+            project=story.project,
             workflow=status.workflow,
             title=story.title,
             status_slug=status.slug,
             user=user,
         )
+
         fake_stories_repo.create_story.assert_awaited_once_with(
             title=story.title,
             project_id=story.project.id,
@@ -51,6 +56,9 @@ async def test_create_story_ok():
         )
         fake_workflows_repo.get_status.assert_awaited_once_with(
             filters={"slug": status.slug, "workflow_id": status.workflow.id}
+        )
+        fake_stories_repo.list_stories.assert_awaited_once_with(
+            filters={"status_id": status.id}, order_by=["-order"], offset=0, limit=1
         )
         fake_stories_events.emit_event_when_story_is_created.assert_awaited_once_with(
             project=story.project, story=complete_story
@@ -68,7 +76,7 @@ async def test_create_story_invalid_status():
 
         fake_workflows_repo.get_status.return_value = None
         await services.create_story(
-            project_id=story.project_id,
+            project=story.project,
             workflow=build_workflow_schema(story),
             title=story.title,
             status_slug="invalid_slug",
@@ -83,10 +91,14 @@ async def test_create_story_invalid_status():
 
 async def test_list_paginated_stories():
     story = f.build_story()
+    neighbors = Neighbor(next=f.build_story(), prev=f.build_story())
 
     with (patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,):
         fake_stories_repo.get_total_stories.return_value = 1
         fake_stories_repo.list_stories.return_value = [story]
+        fake_stories_repo.get_story.return_value = story
+        fake_stories_repo.list_story_assignees.return_value = []
+        fake_stories_repo.list_story_neighbors.return_value = neighbors
 
         await services.list_paginated_stories(
             project_id=story.project.id, workflow_slug=story.workflow.slug, offset=0, limit=10
@@ -94,7 +106,7 @@ async def test_list_paginated_stories():
         fake_stories_repo.get_total_stories.assert_awaited_once_with(
             filters={"project_id": story.project.id, "workflow_slug": story.workflow.slug}
         )
-        fake_stories_repo.list_stories_schemas.assert_awaited_once_with(
+        fake_stories_repo.list_stories.assert_awaited_once_with(
             offset=0,
             limit=10,
             select_related=["created_by", "project", "workflow", "status"],
@@ -116,7 +128,8 @@ async def test_get_detailed_story_ok():
 
     with patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
         fake_stories_repo.get_story.return_value = story2
-        fake_stories_repo.get_story_neighbors.return_value = neighbors
+        fake_stories_repo.list_story_neighbors.return_value = neighbors
+        fake_stories_repo.list_story_assignees.return_value = [f.build_user()]
 
         story = await services.get_detailed_story(project_id=story2.project_id, ref=story2.ref)
 
@@ -126,13 +139,13 @@ async def test_get_detailed_story_ok():
             prefetch_related=["assignees"],
         )
 
-        fake_stories_repo.get_story_neighbors.assert_awaited_once_with(
+        fake_stories_repo.list_story_neighbors.assert_awaited_once_with(
             story=story2, filters={"workflow_id": story2.workflow_id}
         )
 
-        assert story["ref"] == story2.ref
-        assert story["prev"] == story1
-        assert story["next"] == story3
+        assert story.ref == story2.ref
+        assert story.prev.ref == story1.ref
+        assert story.next.ref == story3.ref
 
 
 async def test_get_detailed_story_no_neighbors():
@@ -141,7 +154,8 @@ async def test_get_detailed_story_no_neighbors():
 
     with patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
         fake_stories_repo.get_story.return_value = story1
-        fake_stories_repo.get_story_neighbors.return_value = neighbors
+        fake_stories_repo.list_story_neighbors.return_value = neighbors
+        fake_stories_repo.list_story_assignees.return_value = [f.build_user()]
 
         story = await services.get_detailed_story(project_id=story1.project_id, ref=story1.ref)
 
@@ -151,31 +165,13 @@ async def test_get_detailed_story_no_neighbors():
             prefetch_related=["assignees"],
         )
 
-        fake_stories_repo.get_story_neighbors.assert_awaited_once_with(
+        fake_stories_repo.list_story_neighbors.assert_awaited_once_with(
             story=story1, filters={"workflow_id": story1.workflow_id}
         )
 
-        assert story["ref"] == story1.ref
-        assert story["prev"] is None
-        assert story["next"] is None
-
-
-async def test_get_detailed_story_no_story():
-    project = f.build_project()
-
-    with patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo:
-        fake_stories_repo.get_story.return_value = None
-
-        story = await services.get_detailed_story(project_id=project.id, ref=42)
-
-        fake_stories_repo.get_story.assert_awaited_once_with(
-            filters={"ref": 42, "project_id": project.id},
-            select_related=["created_by", "project", "workflow", "status", "workspace"],
-            prefetch_related=["assignees"],
-        )
-        fake_stories_repo.get_story_neighbors.assert_not_awaited()
-
-        assert story is None
+        assert story.ref == story1.ref
+        assert story.prev is None
+        assert story.next is None
 
 
 #######################################################
@@ -407,14 +403,14 @@ async def test_calculate_offset() -> None:
         prev_st = f.build_story(status=target_status, order=150)
 
         # after
-        fake_stories_repo.get_story_neighbors.return_value = Neighbor(next=next_st, prev=None)
+        fake_stories_repo.list_story_neighbors.return_value = Neighbor(next=next_st, prev=None)
         offset, pre_order = await services._calculate_offset(
             total_stories_to_reorder=1, target_status=target_status, reorder_story=reord_st, reorder_place="after"
         )
         assert pre_order == reord_st.order
         assert offset == Decimal(25)
 
-        fake_stories_repo.get_story_neighbors.return_value = Neighbor(next=None, prev=None)
+        fake_stories_repo.list_story_neighbors.return_value = Neighbor(next=None, prev=None)
         offset, pre_order = await services._calculate_offset(
             total_stories_to_reorder=1, target_status=target_status, reorder_story=reord_st, reorder_place="after"
         )
@@ -422,14 +418,14 @@ async def test_calculate_offset() -> None:
         assert offset == Decimal(100)
 
         # before
-        fake_stories_repo.get_story_neighbors.return_value = Neighbor(next=None, prev=prev_st)
+        fake_stories_repo.list_story_neighbors.return_value = Neighbor(next=None, prev=prev_st)
         offset, pre_order = await services._calculate_offset(
             total_stories_to_reorder=1, target_status=target_status, reorder_story=reord_st, reorder_place="before"
         )
         assert pre_order == prev_st.order
         assert offset == Decimal(50)
 
-        fake_stories_repo.get_story_neighbors.return_value = Neighbor(next=None, prev=None)
+        fake_stories_repo.list_story_neighbors.return_value = Neighbor(next=None, prev=None)
         offset, pre_order = await services._calculate_offset(
             total_stories_to_reorder=1, target_status=target_status, reorder_story=reord_st, reorder_place="before"
         )

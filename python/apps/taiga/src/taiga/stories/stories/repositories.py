@@ -15,10 +15,7 @@ from taiga.base.occ import repositories as occ_repositories
 from taiga.base.repositories import neighbors as neighbors_repositories
 from taiga.base.repositories.neighbors import Neighbor
 from taiga.stories.stories.models import Story
-from taiga.stories.stories.schemas import StorySchema
-from taiga.users import repositories as users_repositories
 from taiga.users.models import User
-from taiga.workflows import repositories as workflows_repositories
 
 ##########################################################
 # filters and querysets
@@ -116,7 +113,7 @@ def create_story(
     order: Decimal,
 ) -> Story:
 
-    story = Story.objects.create(
+    return Story.objects.create(
         title=title,
         project_id=project_id,
         workflow_id=workflow_id,
@@ -125,18 +122,14 @@ def create_story(
         order=order,
     )
 
-    return get_story_sync(
-        filters={"id": story.id},
-        select_related=["project", "workflow", "status", "workspace"],
-    )  # type: ignore[return-value]
-
 
 ##########################################################
 # list stories
 ##########################################################
 
 
-def list_stories_sync(
+@sync_to_async
+def list_stories(
     filters: StoryFilters = {},
     order_by: StoryOrderBy = ["order"],
     offset: int | None = None,
@@ -154,35 +147,6 @@ def list_stories_sync(
         limit += offset
 
     return list(qs[offset:limit])
-
-
-list_stories = sync_to_async(list_stories_sync)
-
-
-@sync_to_async
-def list_stories_schemas(
-    filters: StoryFilters = {},
-    order_by: StoryOrderBy = ["order"],
-    offset: int | None = None,
-    limit: int | None = None,
-    select_related: StorySelectRelated = ["status"],
-    prefetch_related: StoryPrefetchRelated = ["assignees"],
-) -> list[StorySchema]:
-
-    stories = list_stories_sync(
-        filters=filters,
-        order_by=order_by,
-        offset=offset,
-        limit=limit,
-        select_related=select_related,
-        prefetch_related=prefetch_related,
-    )
-
-    stories_schemas = []
-    for story in stories:
-        stories_schemas.append(story_to_schema(story))
-
-    return stories_schemas
 
 
 ##########################################################
@@ -245,7 +209,7 @@ def get_total_stories(filters: StoryFilters = {}) -> int:
 
 
 @sync_to_async
-def get_story_neighbors(story: Story, filters: StoryFilters = {}) -> Neighbor[Story]:
+def list_story_neighbors(story: Story, filters: StoryFilters = {}) -> Neighbor[Story]:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = _apply_order_by_to_queryset(qs=qs, order_by=["status", "order"])
 
@@ -268,16 +232,6 @@ def list_stories_to_reorder(filters: StoryFilters = {}) -> list[Story]:
     return result  # type: ignore[return-value]
 
 
-def story_to_schema(story: Story) -> StorySchema:
-    return StorySchema(
-        ref=story.ref,
-        title=story.title,
-        status=workflows_repositories.workflow_status_to_schema(story.status),
-        version=story.version,
-        assignees=[users_repositories.user_base_to_schema(user) for user in story.assignees.all()],
-    )
-
-
 @sync_to_async
-def get_story_assignees(story: Story) -> list[User]:
+def list_story_assignees(story: Story) -> list[User]:
     return list(story.assignees.all())

@@ -111,11 +111,11 @@ async def test_update_story_error() -> None:
 
 
 ##########################################################
-# misc - get_story_neighbors
+# misc - list_story_neighbors
 ##########################################################
 
 
-async def test_get_story_neighbors() -> None:
+async def test_list_story_neighbors() -> None:
     pj_admin = await f.create_user()
     project = await f.create_project(owner=pj_admin)
 
@@ -128,15 +128,15 @@ async def test_get_story_neighbors() -> None:
     story3 = await f.create_story(project=project, workflow=workflow1, status=status11)
     await f.create_story(project=project, workflow=workflow1, status=status12)
 
-    neighbors = await repositories.get_story_neighbors(story=story1, filters={"status_id": status11.id})
+    neighbors = await repositories.list_story_neighbors(story=story1, filters={"status_id": status11.id})
     assert neighbors.prev is None
     assert neighbors.next.ref == story2.ref
 
-    neighbors = await repositories.get_story_neighbors(story=story2, filters={"status_id": status11.id})
+    neighbors = await repositories.list_story_neighbors(story=story2, filters={"status_id": status11.id})
     assert neighbors.prev.ref == story1.ref
     assert neighbors.next.ref == story3.ref
 
-    neighbors = await repositories.get_story_neighbors(story=story3, filters={"status_id": status11.id})
+    neighbors = await repositories.list_story_neighbors(story=story3, filters={"status_id": status11.id})
     assert neighbors.prev.ref == story2.ref
     assert neighbors.next is None
 
@@ -151,19 +151,19 @@ async def test_get_story_neighbors() -> None:
     story2 = await f.create_story(project=project, workflow=workflow2, status=status22)
     story3 = await f.create_story(project=project, workflow=workflow2, status=status23)
 
-    neighbors = await repositories.get_story_neighbors(story=story1, filters={"workflow_id": workflow2.id})
+    neighbors = await repositories.list_story_neighbors(story=story1, filters={"workflow_id": workflow2.id})
     assert neighbors.prev is None
     assert neighbors.next.ref == story2.ref
 
-    neighbors = await repositories.get_story_neighbors(story=story1, filters={"status_id": status21.id})
+    neighbors = await repositories.list_story_neighbors(story=story1, filters={"status_id": status21.id})
     assert neighbors.prev is None
     assert neighbors.next is None
 
-    neighbors = await repositories.get_story_neighbors(story=story2, filters={"workflow_id": workflow2.id})
+    neighbors = await repositories.list_story_neighbors(story=story2, filters={"workflow_id": workflow2.id})
     assert neighbors.prev.ref == story1.ref
     assert neighbors.next.ref == story3.ref
 
-    neighbors = await repositories.get_story_neighbors(story=story3, filters={"workflow_id": workflow2.id})
+    neighbors = await repositories.list_story_neighbors(story=story3, filters={"workflow_id": workflow2.id})
     assert neighbors.prev.ref == story2.ref
     assert neighbors.next is None
 

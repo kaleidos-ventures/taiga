@@ -5,20 +5,17 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Any
-
 from taiga.events import events_manager
 from taiga.projects.projects.models import Project
 from taiga.stories.stories.events.content import CreateStoryContent, ReorderStoriesContent, UpdateStoryContent
-from taiga.stories.stories.serializers import ReorderStoriesSerializer
-from taiga.workflows.models import WorkflowStatus
+from taiga.stories.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer
 
 CREATE_STORY = "stories.create"
 UPDATE_STORY = "stories.update"
 REORDER_STORIES = "stories.reorder"
 
 
-async def emit_event_when_story_is_created(project: Project, story: dict[str, Any]) -> None:
+async def emit_event_when_story_is_created(project: Project, story: StoryDetailSerializer) -> None:
     await events_manager.publish_on_project_channel(
         project=project,
         type=CREATE_STORY,
@@ -26,7 +23,9 @@ async def emit_event_when_story_is_created(project: Project, story: dict[str, An
     )
 
 
-async def emit_event_when_story_is_updated(project: Project, story: dict[str, Any], updates_attrs: list[str]) -> None:
+async def emit_event_when_story_is_updated(
+    project: Project, story: StoryDetailSerializer, updates_attrs: list[str]
+) -> None:
     await events_manager.publish_on_project_channel(
         project=project,
         type=UPDATE_STORY,
@@ -37,17 +36,9 @@ async def emit_event_when_story_is_updated(project: Project, story: dict[str, An
     )
 
 
-async def emit_when_stories_are_reordered(
-    project: Project, status: WorkflowStatus, stories: list[int], reorder: dict[str, Any] | None = None
-) -> None:
+async def emit_when_stories_are_reordered(project: Project, reorder: ReorderStoriesSerializer) -> None:
     await events_manager.publish_on_project_channel(
         project=project,
         type=REORDER_STORIES,
-        content=ReorderStoriesContent(
-            reorder=ReorderStoriesSerializer(
-                status=status,
-                stories=stories,
-                reorder=reorder,
-            )
-        ),
+        content=ReorderStoriesContent(reorder=reorder),
     )

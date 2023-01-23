@@ -150,9 +150,10 @@ export class EditProjectComponent implements OnInit {
   }
 
   private hasChanges() {
+    const projectDescription = this.project.description ?? '';
     if (
       this.form.value.name !== this.project.name ||
-      this.form.value.description !== this.project.description
+      this.form.value.description !== projectDescription
     ) {
       return true;
     }

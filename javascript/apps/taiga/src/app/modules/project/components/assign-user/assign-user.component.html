@@ -27,7 +27,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </h2>
     </div>
     <ul *ngIf="vm.assigned.length">
-      <li *ngFor="let assignedUser of vm.assigned; trackBy: trackByMember">
+      <li
+        class="option"
+        *ngFor="let assignedUser of vm.assigned; trackBy: trackByMember">
         <button
           class="user-row"
           data-test="assigned-member"
@@ -40,8 +42,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             })
           "
           [attr.aria-disabled]="viewOnly"
-          (keydown.enter)="viewOnly ? null : unassign.next(assignedUser)"
-          (click)="unassign.next(assignedUser)">
+          (keydown.enter)="viewOnly ? null : onUnassign($event, assignedUser)"
+          (click)="viewOnly ? null : onUnassign($event, assignedUser)">
           <div class="user">
             <tg-user-avatar
               size="m"
@@ -102,6 +104,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <ul>
           <li
             *ngFor="let member of vm.members; trackBy: trackByMember"
+            class="option"
             [class.disabled]="!vm.membersPermissions[member.username].length">
             <button
               class="unassigned-member-row"
@@ -123,12 +126,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               "
               (keydown.enter)="
                 vm.membersPermissions[member.username].length
-                  ? onAssign(member)
+                  ? onAssign($event, member)
                   : null
               "
               (click)="
                 vm.membersPermissions[member.username].length
-                  ? onAssign(member)
+                  ? onAssign($event, member)
                   : null
               ">
               <tg-user-card

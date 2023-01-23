@@ -85,6 +85,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 ul {
   margin: 0;
   padding: 0;
+
+  & .option {
+    margin-block-end: var(--spacing-4);
+  }
 }
 
 .assignees-wrapper {

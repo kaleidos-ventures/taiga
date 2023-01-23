@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
   AfterViewInit,
   Component,
@@ -24,6 +24,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { TranslocoService } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
@@ -95,7 +96,19 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input()
   public set assigned(members: Story['assignees']) {
-    this.state.set({ assigned: members });
+    const currentUser = this.state.get('currentUser');
+    const currentUserAssigned = members.find((member) => {
+      return member.username === currentUser.username;
+    });
+    const assignedMembers = members
+      .filter((member) => member.username !== currentUser.username)
+      .reverse();
+
+    // current user on top
+    if (currentUserAssigned) {
+      assignedMembers.unshift(currentUser);
+    }
+    this.state.set({ assigned: assignedMembers });
   }
 
   @HostListener('document:keydown.escape')
@@ -105,15 +118,7 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public readonly model$ = this.state.select().pipe(
     map((state) => {
-      const currentUserMember = state.members.find((member) => {
-        return member.username === state.currentUser.username;
-      });
-
       const members = state.members.filter((member) => {
-        if (member.username === state.currentUser.username) {
-          return false;
-        }
-
         const assigned = state.assigned.find(
           (assigned) => assigned.username === member.username
         );
@@ -130,11 +135,16 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
       });
 
       // current user on top
-      const currentUserAssigned = state.assigned.find(
-        (assigned) => assigned.username === state.currentUser.username
-      );
-
-      if (currentUserMember && !currentUserAssigned) {
+      const currentUserMember = members.find((member) => {
+        return member.username === state.currentUser.username;
+      });
+      if (currentUserMember) {
+        members.filter((member) => {
+          if (member.username === state.currentUser.username) {
+            return false;
+          }
+          return true;
+        });
         members.unshift(currentUserMember);
       }
 
@@ -152,7 +162,9 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private store: Store,
     private state: RxState<AssignComponentState>,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private liveAnnouncer: LiveAnnouncer,
+    private translocoService: TranslocoService
   ) {
     this.store.dispatch(initAssignUser());
 
@@ -230,9 +242,51 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
     return rgx.test(fullname) || rgx.test(username);
   }
 
-  public onAssign(member: Membership['user']) {
+  public onAssign(event: Event, member: Membership['user']) {
     this.assign.next(member);
-    (this.searchInput.nativeElement as HTMLElement).focus();
+    if (event.type === 'keydown') {
+      const announcement = this.translocoService.translate(
+        'project.assign_user.assigned-aria',
+        {
+          name: member.fullName,
+        }
+      );
+      this.liveAnnouncer.announce(announcement, 'assertive').then(
+        () => {
+          setTimeout(() => {
+            (this.searchInput.nativeElement as HTMLElement).focus();
+            this.liveAnnouncer.clear();
+          }, 50);
+        },
+        () => {
+          // error
+        }
+      );
+    } else {
+      (this.searchInput.nativeElement as HTMLElement).focus();
+    }
+  }
+
+  public onUnassign(event: Event, assignedUser: Membership['user']) {
+    this.unassign.next(assignedUser);
+    if (event.type === 'keydown') {
+      const announcement = this.translocoService.translate(
+        'project.assign_user.unassigned-aria',
+        {
+          name: assignedUser.fullName,
+        }
+      );
+      this.liveAnnouncer.announce(announcement, 'assertive').then(
+        () => {
+          setTimeout(() => {
+            this.liveAnnouncer.clear();
+          }, 50);
+        },
+        () => {
+          // error
+        }
+      );
+    }
   }
 
   public trackByMember(_index: number, member: Membership['user']) {

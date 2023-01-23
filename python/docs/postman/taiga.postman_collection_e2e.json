@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e047a976-44ff-4eba-862c-3269117f8989",
+		"_postman_id": "280851f9-94de-4508-88e0-2cbc3d20ce7f",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -2545,6 +2545,8 @@
 									"    pm.expect(jsonRes.user).to.have.property(\"color\");",
 									"    numOfReturnedFields = Object.keys(jsonRes.user).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"",
+									"    pm.environment.set(\"username\", \"user1\");",
 									"});"
 								],
 								"type": "text/javascript"

@@ -103,12 +103,15 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
         .pipe(distinctUntilChanged((prev, curr) => prev.id === curr.id)),
       (project) => {
         const url = window.location.href;
+        const newUrl = `project/${project.id}/${project.slug}`;
+
         if (
           !url.includes('/kanban') &&
           !url.includes('/stories') &&
-          !url.includes('/settings')
+          !url.includes('/settings') &&
+          !url.endsWith(newUrl) // location go when the url doesn't match
         ) {
-          this.location.go(`project/${project.id}/${project.slug}`);
+          this.location.go(newUrl);
         }
         this.subscribedProject = project.id;
         this.unsubscribeFromProjectEvents();

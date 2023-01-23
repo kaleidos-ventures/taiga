@@ -13,7 +13,7 @@ from taiga.users.serializers.nested import UserNestedSerializer
 from taiga.workflows.serializers.nested import WorkflowNestedSerializer, WorkflowStatusNestedSerializer
 
 
-class StorySerializer(BaseModel):
+class StorySummarySerializer(BaseModel):
     ref: int
     title: str
     status: WorkflowStatusNestedSerializer

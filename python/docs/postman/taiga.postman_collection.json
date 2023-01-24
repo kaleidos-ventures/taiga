@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "6f54020e-a13a-4065-a9ef-45594a8e13ce",
+		"_postman_id": "402ea276-cc25-4ad8-868f-950dcd5ca835",
 		"name": "taiga-next",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -943,7 +944,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_us\",\n        \"modify_us\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1048,7 +1049,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_us\",\n        \"modify_us\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1336,12 +1337,7 @@
 									"type": "default",
 									"disabled": true
 								}
-							],
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							]
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}",

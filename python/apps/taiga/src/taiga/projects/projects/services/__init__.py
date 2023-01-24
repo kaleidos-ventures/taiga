@@ -200,12 +200,6 @@ async def update_project(project: Project, values: dict[str, Any] = {}) -> Proje
 
 
 async def update_project_public_permissions(project: Project, permissions: list[str]) -> list[str]:
-    if not permissions_services.permissions_are_valid(permissions):
-        raise ex.NotValidPermissionsSetError("One or more permissions are not valid. Maybe, there is a typo.")
-
-    if not permissions_services.permissions_are_compatible(permissions):
-        raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
-
     await projects_repositories.update_project(project=project, values={"public_permissions": permissions})
 
     # TODO: emit an event to users/project with the new permissions when a change happens?
@@ -215,12 +209,6 @@ async def update_project_public_permissions(project: Project, permissions: list[
 
 
 async def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:
-    if not permissions_services.permissions_are_valid(permissions):
-        raise ex.NotValidPermissionsSetError("One or more permissions are not valid. Maybe, there is a typo.")
-
-    if not permissions_services.permissions_are_compatible(permissions):
-        raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
-
     if not await projects_repositories.project_is_in_premium_workspace(project):
         raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be set")
 

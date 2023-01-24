@@ -60,30 +60,6 @@ async def test_update_project_role_permissions_is_admin():
         fake_roles_events.emit_event_when_project_role_permissions_are_updated.assert_not_awaited()
 
 
-async def test_update_project_role_permissions_incompatible_permissions():
-    role = f.build_project_role(is_admin=False)
-    permissions = ["view_task"]
-
-    with (
-        patch("taiga.projects.roles.services.pj_roles_events", autospec=True) as fake_roles_events,
-        pytest.raises(ex.IncompatiblePermissionsSetError),
-    ):
-        await services.update_project_role_permissions(role=role, permissions=permissions)
-        fake_roles_events.emit_event_when_project_role_permissions_are_updated.assert_not_awaited()
-
-
-async def test_update_project_role_permissions_not_valid_permissions():
-    role = f.build_project_role(is_admin=False)
-    permissions = ["not_valid", "foo", "bar"]
-
-    with (
-        patch("taiga.projects.roles.services.pj_roles_events", autospec=True) as fake_roles_events,
-        pytest.raises(ex.NotValidPermissionsSetError),
-    ):
-        await services.update_project_role_permissions(role=role, permissions=permissions)
-        fake_roles_events.emit_event_when_project_role_permissions_are_updated.assert_not_awaited()
-
-
 async def test_update_project_role_permissions_ok():
     role = f.build_project_role()
     permissions = ["view_story"]

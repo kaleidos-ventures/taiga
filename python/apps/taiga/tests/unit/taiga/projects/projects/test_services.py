@@ -279,30 +279,6 @@ async def test_update_project_public_permissions_ok():
         fake_projects_events.emit_event_when_project_permissions_are_updated.assert_awaited_with(project=project)
 
 
-async def test_update_project_public_permissions_not_valid():
-    project = f.build_project()
-    not_valid_permissions = ["invalid_permission", "other_not_valid", "add_story"]
-
-    with (
-        patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
-        pytest.raises(ex.NotValidPermissionsSetError),
-    ):
-        await services.update_project_public_permissions(project=project, permissions=not_valid_permissions)
-        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
-
-
-async def test_update_project_public_permissions_incompatible():
-    project = f.build_project()
-    incompatible_permissions = ["view_task"]
-
-    with (
-        patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
-        pytest.raises(ex.IncompatiblePermissionsSetError),
-    ):
-        await services.update_project_public_permissions(project=project, permissions=incompatible_permissions)
-        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
-
-
 ##########################################################
 # update_project_workspace_member_permissions
 ##########################################################
@@ -322,34 +298,6 @@ async def test_update_project_workspace_member_permissions_ok():
             project=project, values={"workspace_member_permissions": permissions}
         )
         fake_projects_events.emit_event_when_project_permissions_are_updated.assert_awaited_with(project=project)
-
-
-async def test_update_project_workspace_member_permissions_not_valid():
-    workspace = f.build_workspace(is_premium=True)
-    project = f.build_project(workspace=workspace)
-    not_valid_permissions = ["invalid_permission", "other_not_valid", "add_story"]
-
-    with (
-        patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
-        pytest.raises(ex.NotValidPermissionsSetError),
-    ):
-        await services.update_project_workspace_member_permissions(project=project, permissions=not_valid_permissions)
-        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
-
-
-async def test_update_project_workspace_member_permissions_incompatible():
-    workspace = f.build_workspace(is_premium=True)
-    project = f.build_project(workspace=workspace)
-    incompatible_permissions = ["view_task"]
-
-    with (
-        patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
-        pytest.raises(ex.IncompatiblePermissionsSetError),
-    ):
-        await services.update_project_workspace_member_permissions(
-            project=project, permissions=incompatible_permissions
-        )
-        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
 
 
 async def test_update_project_workspace_member_permissions_not_premium():

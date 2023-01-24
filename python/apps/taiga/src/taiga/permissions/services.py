@@ -175,26 +175,6 @@ async def get_user_permissions_for_workspace(workspace_role_permissions: list[st
     return workspace_role_permissions
 
 
-def permissions_are_valid(permissions: list[str]) -> bool:
-    return set.issubset(set(permissions), set(choices.ProjectPermissions))
-
-
-def permissions_are_compatible(permissions: list[str]) -> bool:
-    # a user cannot see tasks if she has no access to stories
-    if "view_story" not in permissions and set.intersection(set(permissions), set(["view_task"])):
-        return False
-
-    # a user cannot edit a story if she has no view permission
-    if "view_story" not in permissions and set.intersection(set(permissions), choices.EditStoryPermissions):
-        return False
-
-    # a user cannot edit a task if she has no view permission
-    if "view_task" not in permissions and set.intersection(set(permissions), choices.EditTaskPermissions):
-        return False
-
-    return True
-
-
 async def is_view_story_permission_deleted(old_permissions: list[str], new_permissions: list[str]) -> bool:
     if "view_story" in old_permissions and "view_story" not in new_permissions:
         return True

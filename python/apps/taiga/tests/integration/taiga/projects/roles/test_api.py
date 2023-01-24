@@ -78,7 +78,7 @@ async def test_update_project_role_permissions_incompatible_permissions(client):
     client.login(project.owner)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 async def test_update_project_role_permissions_not_valid_permissions(client):
@@ -89,7 +89,7 @@ async def test_update_project_role_permissions_not_valid_permissions(client):
     client.login(project.owner)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 async def test_update_project_role_permissions_ok(client):

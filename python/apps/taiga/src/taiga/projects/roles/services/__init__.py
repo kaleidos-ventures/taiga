@@ -36,12 +36,6 @@ async def update_project_role_permissions(role: ProjectRole, permissions: list[s
     if role.is_admin:
         raise ex.NonEditableRoleError("Cannot edit permissions in an admin role")
 
-    if not permissions_services.permissions_are_valid(permissions):
-        raise ex.NotValidPermissionsSetError("One or more permissions are not valid. Maybe, there is a typo.")
-
-    if not permissions_services.permissions_are_compatible(permissions):
-        raise ex.IncompatiblePermissionsSetError("Given permissions are incompatible")
-
     # Check if new permissions have view_story
     view_story_is_deleted = False
     if role.permissions:

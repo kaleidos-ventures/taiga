@@ -48,6 +48,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: flex;
   inline-size: 100%;
   justify-content: space-between;
+  padding-block: 0;
   padding-inline: var(--spacing-8) 0;
 
   &:focus-visible {
@@ -143,6 +144,7 @@ ul {
   display: flex;
   inline-size: 100%;
   justify-content: space-between;
+  padding-block: 0;
   padding-inline: 0;
 
   &:hover {

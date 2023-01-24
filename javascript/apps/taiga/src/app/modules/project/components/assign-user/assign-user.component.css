@@ -171,7 +171,7 @@ ul {
 .disabled {
   & .unassigned-member-row {
     background-color: var(--color-gray10);
-    pointer-events: none;
+    cursor: auto;
 
     & tg-user-card {
       --color-user-name: var(--color-gray70);
@@ -187,6 +187,7 @@ ul {
   & .disabled-btn {
     block-size: var(--spacing-32);
     color: var(--color-gray60);
+    cursor: pointer;
     inline-size: var(--spacing-32);
     padding: var(--spacing-8);
   }

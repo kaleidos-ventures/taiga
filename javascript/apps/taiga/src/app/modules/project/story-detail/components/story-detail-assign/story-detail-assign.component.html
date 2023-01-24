@@ -11,6 +11,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <div class="field">
       <label class="field-label">{{ t('common_story.assigned_to') }}</label>
       <div
+        *hasPermission="
+          ['modify'];
+          entity: 'story';
+          else: noAssignPermissionsTpl
+        "
         class="assign-user field-content"
         (resized)="calculateDropdownWidth($event)">
         <div
@@ -61,6 +66,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             {{ assigned.fullName }}
           </label>
           <button
+            *hasPermission="['modify']; entity: 'story'"
             (click)="unassign(assigned)"
             [attr.aria-label]="t('commons.next_page')"
             appearance="tertiary"
@@ -68,7 +74,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             icon="close"
             type="button"></button>
         </li>
-        <li class="add-assignee">
+        <li
+          class="add-assignee"
+          *hasPermission="['modify']; entity: 'story'">
           <button
             tuiButton
             appearance="tertiary"

@@ -24,10 +24,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .modal-content {
+  --modal-width: 715px;
   --modal-max-height: 90vh;
 
   background-color: var(--color-white);
   border-radius: 5px;
+  inline-size: var(--modal-width);
   margin-block: 0;
   margin-inline: auto;
   max-block-size: var(--modal-max-height);

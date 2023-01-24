@@ -259,49 +259,6 @@ async def test_get_user_permissions_for_workspace():
 
 
 #####################################################
-# permissions_are_valid
-#####################################################
-
-
-@pytest.mark.parametrize(
-    "permissions, expected",
-    [
-        (["comment_story", "view_story"], True),
-        (["comment_story", "not_valid"], False),
-        (["non_existent"], False),
-        (["view_story", "comment_story", "view_task"], True),
-        (["view_story", "foo"], False),
-        (["view_story", "view_task"], True),
-    ],
-)
-def test_permissions_are_valid(permissions, expected):
-    assert services.permissions_are_valid(permissions) == expected
-
-
-#####################################################
-# permissions_are_compatible
-#####################################################
-
-
-@pytest.mark.parametrize(
-    "permissions, expected",
-    [
-        (["add_story", "modify_story", "comment_story"], False),
-        (["comment_story", "view_story"], True),
-        (["comment_task", "view_story"], False),
-        (["modify_task", "comment_story"], False),
-        (["view_story", "comment_story", "view_story"], True),
-        (["view_story", "modify_story", "comment_story"], True),
-        (["view_story", "view_story"], True),
-        (["view_story"], True),
-        (["view_task", "comment_story"], False),
-    ],
-)
-def test_permissions_are_compatible(permissions, expected):
-    assert services.permissions_are_compatible(permissions) == expected
-
-
-#####################################################
 # is_view_story_permission_deleted
 #####################################################
 

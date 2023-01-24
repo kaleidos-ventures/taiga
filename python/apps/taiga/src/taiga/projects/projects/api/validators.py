@@ -10,6 +10,7 @@ from fastapi import UploadFile
 from pydantic import conint, constr, validator
 from taiga.base.utils.images import valid_content_type, valid_image_format
 from taiga.base.validators import B64UUID, BaseModel, as_form
+from taiga.permissions.validators import Permissions
 
 
 @as_form
@@ -60,4 +61,4 @@ class UpdateProjectValidator(BaseModel):
 
 
 class PermissionsValidator(BaseModel):
-    permissions: list[str]
+    permissions: Permissions

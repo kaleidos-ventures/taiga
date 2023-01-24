@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "280851f9-94de-4508-88e0-2cbc3d20ce7f",
+		"_postman_id": "a6159e64-d55f-44f0-8fdd-9baf71bbb673",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -7091,7 +7092,7 @@
 					"response": []
 				},
 				{
-					"name": "400 bad-request perm",
+					"name": "422 bad-request perm",
 					"event": [
 						{
 							"listen": "test",
@@ -7101,12 +7102,13 @@
 									"",
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(400);",
+									"    pm.response.to.have.status(422);",
 									"});",
 									"pm.test(\"Error JSON is correct\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
-									"    pm.expect(jsonData.error.detail).to.eql(\"not-valid-permissions-set-error\");",
+									"    pm.expect(jsonData.error.code).to.eql(\"validation-error\");",
+									"    pm.expect(jsonData.error.detail[0].loc[1]).to.eql(\"permissions\");",
+									"    pm.expect(jsonData.error.detail[0].type).to.eql(\"assertion_error\");",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonData).length;",
@@ -7311,7 +7313,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"wrong_permission\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_project\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"

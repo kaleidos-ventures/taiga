@@ -16,9 +16,9 @@ from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_4
 from taiga.permissions import HasPerm
 from taiga.routers import routes
 from taiga.stories.assignments import services as story_assignments_services
+from taiga.stories.assignments.api.validators import StoryAssignmentValidator
 from taiga.stories.assignments.models import StoryAssignment
 from taiga.stories.assignments.serializers import StoryAssignmentSerializer
-from taiga.stories.assignments.validators import StoryAssignmentValidator
 from taiga.stories.stories.api import get_story_or_404
 
 # PERMISSIONS

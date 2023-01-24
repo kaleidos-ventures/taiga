@@ -101,7 +101,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   .field {
     align-items: center;
     display: flex;
-    justify-content: space-between;
 
     & .field-content {
       max-inline-size: 70%;

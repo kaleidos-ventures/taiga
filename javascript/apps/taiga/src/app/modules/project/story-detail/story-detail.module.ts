@@ -20,6 +20,7 @@ import {
 } from '@taiga-ui/core';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
 import { StatusColorPipe } from '~/app/shared/pipes/status-color/status-color.pipe';
@@ -51,6 +52,7 @@ import { StoryDetailComponent } from './story-detail.component';
     AssignUserComponent,
     TuiActiveZoneModule,
     ResizeEventModule,
+    HasPermissionDirective,
   ],
   declarations: [
     StoryDetailComponent,

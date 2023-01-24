@@ -6,20 +6,24 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import itertools
+import logging
 from asyncio import Queue
-from typing import TYPE_CHECKING, AsyncGenerator, ClassVar, Final, Iterator
+from typing import TYPE_CHECKING, AsyncGenerator, ClassVar, Final, Iterator, cast
 
 from fastapi import WebSocket
 from pydantic import ValidationError
 from starlette.authentication import AuthCredentials
 from taiga.auth.services import authenticate
 from taiga.auth.services.exceptions import BadAuthTokenError, UnauthorizedUserError
-from taiga.events.actions import parse_action_from_text
-from taiga.events.responses import Response, SystemResponse
+from taiga.events.actions import parse_action_from_obj, parse_action_from_text
+from taiga.events.responses import EventResponse, Response, SystemResponse
 from taiga.users.models import AnonymousUser, AnyUser
 
 if TYPE_CHECKING:
     from taiga.events.manager import EventsManager
+
+
+logger = logging.getLogger(__name__)
 
 
 class Unsubscribed(Exception):
@@ -99,4 +103,18 @@ class Subscriber:
 
     async def sending_handler(self) -> None:
         async for response in self:
+            if response.type == "event":
+                event = cast(EventResponse, response).event
+                if event.type == "action":
+                    try:
+                        action = parse_action_from_obj(event.content)
+                    except ValidationError as e:
+                        logger.error(
+                            f"Recived invalid action: '{event}'.",
+                            extra={"action": "subscriver.sending_handler", "event": event, "error": e.errors()},
+                        )
+                    else:
+                        await action.run(subscriber=self)
+                    finally:
+                        continue
             await self._websocket.send_text(response.json(by_alias=True))

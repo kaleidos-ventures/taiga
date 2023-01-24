@@ -8,7 +8,7 @@
 from typing import Any
 
 from pydantic import AnyHttpUrl, BaseModel, validator
-from taiga.base.utils.asyncio import run_async_as_sync
+from taiga.base.utils.concurrency import run_async_as_sync
 from taiga.projects.projects.services import get_logo_large_thumbnail_url, get_logo_small_thumbnail_url
 
 

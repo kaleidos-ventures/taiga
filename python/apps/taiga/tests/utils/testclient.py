@@ -6,11 +6,17 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient as TestClientBase
 from taiga.auth.tokens import AccessToken
-from taiga.base.utils.asyncio import run_async_as_sync
-from taiga.main import api
+from taiga.base.utils.concurrency import run_async_as_sync
+from taiga.events import app as events_app
+from taiga.main import api as api_app
 from taiga.users.models import User
+
+test_app = FastAPI()
+test_app.mount("/events/", app=events_app)
+test_app.mount("/", app=api_app)
 
 
 class TestClient(TestClientBase):
@@ -24,7 +30,7 @@ class TestClient(TestClientBase):
 
 @pytest.fixture
 def client() -> TestClient:
-    return TestClient(api)
+    return TestClient(test_app)
 
 
 @pytest.fixture

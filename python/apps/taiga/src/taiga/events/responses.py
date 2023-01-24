@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 class Response(BaseModel, ABC):
     _types: ClassVar[dict[str, type]] = {}
     _discriminator: Final = "type"
+    type: str
 
     def __init_subclass__(cls, type: str | None = None):
         cls._types[type or cls.__name__.lower()] = cls

@@ -8,7 +8,7 @@
 import logging
 
 from fastapi import FastAPI, WebSocket
-from starlette.concurrency import run_until_first_complete
+from taiga.base.utils.concurrency import run_until_first_complete
 from taiga.base.utils.tests import is_test_running
 from taiga.events.logging import setup_logging
 from taiga.events.manager import manager

@@ -8,7 +8,7 @@
 import logging
 
 import typer
-from taiga.base.utils.asyncio import run_async_as_sync
+from taiga.base.utils.concurrency import run_async_as_sync
 from taiga.tokens.services import clean_expired_tokens
 
 logger = logging.getLogger(__name__)

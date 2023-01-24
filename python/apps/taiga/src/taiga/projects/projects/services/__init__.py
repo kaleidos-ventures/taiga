@@ -14,6 +14,7 @@ from fastapi import UploadFile
 from taiga.base.db.models import File
 from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
+from taiga.events.actions import event_handlers as actions_events
 from taiga.permissions import services as permissions_services
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.memberships import repositories as pj_memberships_repositories
@@ -203,6 +204,8 @@ async def update_project_public_permissions(project: Project, permissions: list[
 
     # TODO: emit an event to users/project with the new permissions when a change happens?
     await projects_events.emit_event_when_project_permissions_are_updated(project=project)
+    if not permissions:
+        await actions_events.emit_event_action_to_check_project_subscription(project_b64id=project.b64id)
 
     return permissions
 
@@ -214,6 +217,8 @@ async def update_project_workspace_member_permissions(project: Project, permissi
     await projects_repositories.update_project(project=project, values={"workspace_member_permissions": permissions})
 
     await projects_events.emit_event_when_project_permissions_are_updated(project=project)
+    if not permissions:
+        await actions_events.emit_event_action_to_check_project_subscription(project_b64id=project.b64id)
 
     return permissions
 

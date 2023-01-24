@@ -8,7 +8,7 @@
 from abc import ABC
 from typing import TYPE_CHECKING, Any, ClassVar, Final
 
-from pydantic import parse_raw_as
+from pydantic import parse_obj_as, parse_raw_as
 from taiga.base.serializers import BaseModel
 
 if TYPE_CHECKING:
@@ -16,7 +16,11 @@ if TYPE_CHECKING:
     from taiga.events.subscriber import Subscriber
 
 
-__all__ = ["Action", "parse_action_from_text"]
+__all__ = [
+    "Action",
+    "parse_action_from_text",
+    "parse_action_from_obj",
+]
 
 
 class Action(BaseModel, ABC):
@@ -44,3 +48,7 @@ class Action(BaseModel, ABC):
 
 def parse_action_from_text(text: str) -> Action:
     return parse_raw_as(Action, text)
+
+
+def parse_action_from_obj(obj: Any) -> Action:
+    return parse_obj_as(Action, obj)

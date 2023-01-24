@@ -7,5 +7,6 @@
 
 from .auth import *  # noqa
 from .base import *  # noqa
+from .event_handlers import *  # noqa
 from .generic import *  # noqa
 from .projects import *  # noqa

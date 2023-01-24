@@ -192,6 +192,34 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
   }
   ```
 
+### `check_project_events_subscription`
+
+- Request:
+  ```json
+  {
+        "command": "check_project_events_subscription",
+        "project": "<project_id>"
+  }
+  ```
+- Response OK:
+  ```
+  no response send
+  ```
+- Response ERROR:
+  ```json
+  {
+      "type": "action",
+      "action": {
+          "command": "check_project_events_subscription",
+          "project": "<project_id>"
+      },
+      "status": "error",
+      "content": {
+          "detail": "lost-permissions"
+      }
+  }
+  ```
+
 
 ## Events
 
@@ -233,7 +261,11 @@ projectinvitations.update
 userstories.delete
 ```
 
-We may also have other actions if required; for example: `projectinvitations.revoke`
+We may have other actions if required; for example: `projectinvitations.revoke`.
+
+We may also have events that affect only a subset of atributes of an object; for example `projects.permissions.update`.
+
+We can send actions inside an event. The type must be `action` and the content should be an action described above.
 
 
 #### `projectinvitations.create`
@@ -323,6 +355,29 @@ Content for:
   ```
   null
   ```
+
+#### `projectroles.update`
+
+It happens when project role (permissions or name) is updated.
+
+Content for:
+- project channel:
+  ```
+  {
+      ... "detailed project role object" ...
+  }
+  ```
+
+#### `projects.permissions.update`
+
+It happens when project public permissions are updated.
+
+Content for:
+- project channel:
+  ```
+  null
+  ```
+
 
 #### `stories.create`
 

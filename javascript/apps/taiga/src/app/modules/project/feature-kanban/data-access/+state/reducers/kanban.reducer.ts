@@ -586,7 +586,7 @@ export const reducer = createReducer(
         if (it.ref === storyRef && unassigned) {
           return {
             ...it,
-            assignees: [...it.assignees, member],
+            assignees: [member, ...it.assignees],
           };
         }
         return it;

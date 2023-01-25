@@ -119,7 +119,7 @@ export const reducer = createReducer(
 
     (state, { storyRef, member }): StoryDetailState => {
       if (state.story?.ref === storyRef) {
-        state.story?.assignees.push(member);
+        state.story?.assignees.unshift(member);
       }
       return state;
     }

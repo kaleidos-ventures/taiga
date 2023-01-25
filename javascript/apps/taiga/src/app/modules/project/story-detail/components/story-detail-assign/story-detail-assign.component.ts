@@ -6,15 +6,23 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Membership, Project, Status, Story, User } from '@taiga/data';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { StoryDetailForm } from '~/app/modules/project/story-detail/story-detail.component';
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
+import { filterNil } from '~/app/shared/utils/operators';
 
 export interface StoryState {
   isA11yDragInProgress: boolean;
@@ -29,7 +37,7 @@ export interface StoryState {
   styleUrls: ['./story-detail-assign.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StoryDetailAssignComponent {
+export class StoryDetailAssignComponent implements OnChanges {
   @Input()
   public form!: FormGroup<StoryDetailForm>;
 
@@ -41,7 +49,31 @@ export class StoryDetailAssignComponent {
   public restAssigneesLenght = '';
   public dropdownWidth = 0;
 
-  constructor(private state: RxState<StoryState>, private store: Store) {}
+  constructor(private state: RxState<StoryState>, private store: Store) {
+    this.state.connect(
+      'currentUser',
+      this.store.select(selectUser).pipe(filterNil())
+    );
+  }
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes.story) {
+      const currentUser = this.state.get('currentUser');
+      const currentUserAssigned = this.story.assignees.find((assignees) => {
+        return assignees.username === currentUser.username;
+      });
+      const assignedMembers = this.story.assignees.filter(
+        (member) => member.username !== currentUser.username
+      );
+
+      // current user on top
+      if (currentUserAssigned) {
+        assignedMembers.unshift(currentUser);
+      }
+
+      this.state.set({ assignees: assignedMembers });
+    }
+  }
 
   public trackByStatus(_index: number, status: Status) {
     return status.slug;

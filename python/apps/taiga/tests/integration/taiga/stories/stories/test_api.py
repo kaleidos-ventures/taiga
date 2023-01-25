@@ -31,65 +31,6 @@ WRONG_REF = 9999
 
 
 ##########################################################
-# GET /projects/<slug>/workflows/<slug>/stories
-##########################################################
-
-
-async def test_list_workflow_stories_ok(client):
-    pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
-    workflow = await f.create_workflow(project=project)
-    workflow_status = await f.create_workflow_status(workflow=workflow)
-    await f.create_story(project=project, workflow=workflow, status=workflow_status)
-    await f.create_story(project=project, workflow=workflow, status=workflow_status)
-
-    client.login(pj_admin)
-    response = client.get(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories")
-    assert response.status_code == status.HTTP_200_OK, response.text
-    assert response.json()
-
-
-async def test_list_workflow_stories_ok_with_pagination(client):
-    pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
-    workflow = await f.create_workflow(project=project)
-    workflow_status = await f.create_workflow_status(workflow=workflow)
-    await f.create_story(project=project, workflow=workflow, status=workflow_status)
-    await f.create_story(project=project, workflow=workflow, status=workflow_status)
-
-    offset = 0
-    limit = 1
-
-    client.login(pj_admin)
-    response = client.get(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories?offset={offset}&limit={limit}")
-    assert response.status_code == status.HTTP_200_OK, response.text
-    assert response.json()
-
-    assert len(response.json()) == 1
-    assert response.headers["Pagination-Offset"] == "0"
-    assert response.headers["Pagination-Limit"] == "1"
-    assert response.headers["Pagination-Total"] == "2"
-
-
-async def test_list_story_invalid_project(client):
-    pj_admin = await f.create_user()
-    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
-
-    client.login(pj_admin)
-    response = client.get(f"/projects/{non_existent_id}/workflows/{WRONG_SLUG}/stories")
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-async def test_list_story_invalid_workflow(client):
-    pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
-
-    client.login(pj_admin)
-    response = client.get(f"/projects/{project.b64id}/workflows/{WRONG_SLUG}/stories")
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-##########################################################
 # POST /projects/<slug>/workflows/<slug>/stories
 ##########################################################
 
@@ -226,50 +167,62 @@ async def test_create_story_user_has_valid_perm_ko(client):
 
 
 ##########################################################
-# POST /projects/<slug>/workflows/<slug>/stories/reorder
+# GET /projects/<slug>/workflows/<slug>/stories
 ##########################################################
 
 
-async def test_reorder_stories_with_reorder_ok(client):
+async def test_list_workflow_stories_ok(client):
     pj_admin = await f.create_user()
-    pj = await f.create_project(owner=pj_admin)
-    workflow = await sync_to_async(pj.workflows.first)()
-    status_new = await sync_to_async(workflow.statuses.first)()
-    s1 = await f.create_story(project=pj, workflow=workflow, status=status_new)
-    await f.create_story(project=pj, workflow=workflow, status=status_new)
-    s3 = await f.create_story(project=pj, workflow=workflow, status=status_new)
+    project = await f.create_project(owner=pj_admin)
+    workflow = await f.create_workflow(project=project)
+    workflow_status = await f.create_workflow_status(workflow=workflow)
+    await f.create_story(project=project, workflow=workflow, status=workflow_status)
+    await f.create_story(project=project, workflow=workflow, status=workflow_status)
 
-    data = {"status": "new", "stories": [s1.ref], "reorder": {"place": "before", "ref": s3.ref}}
     client.login(pj_admin)
-    response = client.post(f"/projects/{pj.b64id}/workflows/main/stories/reorder", json=data)
-
+    response = client.get(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories")
     assert response.status_code == status.HTTP_200_OK, response.text
-    res = response.json()
-    assert "status" in res
-    assert "reorder" in res
-    assert "stories" in res
-    assert res["stories"] == [s1.ref]
+    assert response.json()
 
 
-async def test_reorder_stories_without_reorder_ok(client):
+async def test_list_workflow_stories_ok_with_pagination(client):
     pj_admin = await f.create_user()
-    pj = await f.create_project(owner=pj_admin)
-    workflow = await sync_to_async(pj.workflows.first)()
-    status_new = await sync_to_async(workflow.statuses.first)()
-    s1 = await f.create_story(project=pj, workflow=workflow, status=status_new)
-    await f.create_story(project=pj, workflow=workflow, status=status_new)
-    await f.create_story(project=pj, workflow=workflow, status=status_new)
+    project = await f.create_project(owner=pj_admin)
+    workflow = await f.create_workflow(project=project)
+    workflow_status = await f.create_workflow_status(workflow=workflow)
+    await f.create_story(project=project, workflow=workflow, status=workflow_status)
+    await f.create_story(project=project, workflow=workflow, status=workflow_status)
 
-    data = {"status": status_new.slug, "stories": [s1.ref]}
+    offset = 0
+    limit = 1
+
     client.login(pj_admin)
-    response = client.post(f"/projects/{pj.b64id}/workflows/main/stories/reorder", json=data)
-
+    response = client.get(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories?offset={offset}&limit={limit}")
     assert response.status_code == status.HTTP_200_OK, response.text
-    res = response.json()
-    assert "status" in res
-    assert "reorder" in res
-    assert "stories" in res
-    assert res["stories"] == [s1.ref]
+    assert response.json()
+
+    assert len(response.json()) == 1
+    assert response.headers["Pagination-Offset"] == "0"
+    assert response.headers["Pagination-Limit"] == "1"
+    assert response.headers["Pagination-Total"] == "2"
+
+
+async def test_list_story_invalid_project(client):
+    pj_admin = await f.create_user()
+    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
+
+    client.login(pj_admin)
+    response = client.get(f"/projects/{non_existent_id}/workflows/{WRONG_SLUG}/stories")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_list_story_invalid_workflow(client):
+    pj_admin = await f.create_user()
+    project = await f.create_project(owner=pj_admin)
+
+    client.login(pj_admin)
+    response = client.get(f"/projects/{project.b64id}/workflows/{WRONG_SLUG}/stories")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
 ##########################################################
@@ -349,3 +302,85 @@ async def test_update_story_invalid_ref(client):
     client.login(project.owner)
     response = client.patch(f"/projects/{project.b64id}/stories/1000000", json=data)
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+##########################################################
+# POST /projects/<slug>/workflows/<slug>/stories/reorder
+##########################################################
+
+
+async def test_reorder_stories_with_reorder_ok(client):
+    pj_admin = await f.create_user()
+    pj = await f.create_project(owner=pj_admin)
+    workflow = await sync_to_async(pj.workflows.first)()
+    status_new = await sync_to_async(workflow.statuses.first)()
+    s1 = await f.create_story(project=pj, workflow=workflow, status=status_new)
+    await f.create_story(project=pj, workflow=workflow, status=status_new)
+    s3 = await f.create_story(project=pj, workflow=workflow, status=status_new)
+
+    data = {"status": "new", "stories": [s1.ref], "reorder": {"place": "before", "ref": s3.ref}}
+    client.login(pj_admin)
+    response = client.post(f"/projects/{pj.b64id}/workflows/main/stories/reorder", json=data)
+
+    assert response.status_code == status.HTTP_200_OK, response.text
+    res = response.json()
+    assert "status" in res
+    assert "reorder" in res
+    assert "stories" in res
+    assert res["stories"] == [s1.ref]
+
+
+async def test_reorder_stories_without_reorder_ok(client):
+    pj_admin = await f.create_user()
+    pj = await f.create_project(owner=pj_admin)
+    workflow = await sync_to_async(pj.workflows.first)()
+    status_new = await sync_to_async(workflow.statuses.first)()
+    s1 = await f.create_story(project=pj, workflow=workflow, status=status_new)
+    await f.create_story(project=pj, workflow=workflow, status=status_new)
+    await f.create_story(project=pj, workflow=workflow, status=status_new)
+
+    data = {"status": status_new.slug, "stories": [s1.ref]}
+    client.login(pj_admin)
+    response = client.post(f"/projects/{pj.b64id}/workflows/main/stories/reorder", json=data)
+
+    assert response.status_code == status.HTTP_200_OK, response.text
+    res = response.json()
+    assert "status" in res
+    assert "reorder" in res
+    assert "stories" in res
+    assert res["stories"] == [s1.ref]
+
+
+##########################################################
+# DELETE /projects/<slug>/stories/<ref>
+##########################################################
+
+
+async def test_delete_story_invalid_story(client):
+    pj_admin = await f.create_user()
+    project = await f.create_project(owner=pj_admin)
+
+    client.login(pj_admin)
+    response = client.delete(f"/projects/{project.b64id}/stories/{WRONG_REF}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_story_user_without_permissions(client):
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    project = await f.create_project(owner=user1)
+    story = await f.create_story(project=project)
+
+    client.login(user2)
+    response = client.delete(f"/projects/{project.b64id}/stories/{story.ref}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_delete_story_ok(client):
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+    story = await f.create_story(project=project)
+
+    client.login(user)
+    response = client.delete(f"/projects/{project.b64id}/stories/{story.ref}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text

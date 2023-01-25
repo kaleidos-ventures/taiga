@@ -178,12 +178,12 @@ async def test_delete_story_assignment_fail():
             "taiga.stories.assignments.services.stories_assignments_events", autospec=True
         ) as fake_stories_assignments_events,
     ):
-        fake_story_assignment_repo.delete_story_assignment.return_value = 0
+        fake_story_assignment_repo.delete_stories_assignments.return_value = 0
 
         await services.delete_story_assignment(story_assignment=story_assignment)
         fake_stories_assignments_events.emit_event_when_story_assignment_is_deleted.assert_not_awaited()
 
-        fake_story_assignment_repo.delete_story_assignment.assert_awaited_once_with(
+        fake_story_assignment_repo.delete_stories_assignments.assert_awaited_once_with(
             filters={"id": story_assignment.id},
         )
 
@@ -201,13 +201,13 @@ async def test_delete_story_assignment_ok():
             "taiga.stories.assignments.services.stories_assignments_events", autospec=True
         ) as fake_stories_assignments_events,
     ):
-        fake_story_assignment_repo.delete_story_assignment.return_value = 1
+        fake_story_assignment_repo.delete_stories_assignments.return_value = 1
 
         await services.delete_story_assignment(story_assignment=story_assignment)
         fake_stories_assignments_events.emit_event_when_story_assignment_is_deleted.assert_awaited_once_with(
             story_assignment=story_assignment
         )
 
-        fake_story_assignment_repo.delete_story_assignment.assert_awaited_once_with(
+        fake_story_assignment_repo.delete_stories_assignments.assert_awaited_once_with(
             filters={"id": story_assignment.id},
         )

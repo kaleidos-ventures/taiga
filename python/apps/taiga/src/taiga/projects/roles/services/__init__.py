@@ -50,6 +50,6 @@ async def update_project_role_permissions(role: ProjectRole, permissions: list[s
 
     # Unassign stories for user if the new permissions don't have view_story
     if view_story_is_deleted:
-        await story_assignments_repositories.delete_story_assignment(filters={"role_id": role.id})
+        await story_assignments_repositories.delete_stories_assignments(filters={"role_id": role.id})
 
     return project_role_permissions

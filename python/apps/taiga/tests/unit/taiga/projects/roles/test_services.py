@@ -95,4 +95,6 @@ async def test_update_project_role_permissions_view_story_deleted():
         await services.update_project_role_permissions(role=role, permissions=permissions)
         fake_role_repository.update_project_role_permissions.assert_awaited_once()
         fake_roles_events.emit_event_when_project_role_permissions_are_updated.assert_awaited_with(role=role)
-        fake_story_assignments_repository.delete_story_assignment.assert_awaited_once_with(filters={"role_id": role.id})
+        fake_story_assignments_repository.delete_stories_assignments.assert_awaited_once_with(
+            filters={"role_id": role.id}
+        )

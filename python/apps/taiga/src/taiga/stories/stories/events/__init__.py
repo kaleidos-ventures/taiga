@@ -7,12 +7,18 @@
 
 from taiga.events import events_manager
 from taiga.projects.projects.models import Project
-from taiga.stories.stories.events.content import CreateStoryContent, ReorderStoriesContent, UpdateStoryContent
+from taiga.stories.stories.events.content import (
+    CreateStoryContent,
+    DeleteStoryContent,
+    ReorderStoriesContent,
+    UpdateStoryContent,
+)
 from taiga.stories.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer
 
 CREATE_STORY = "stories.create"
 UPDATE_STORY = "stories.update"
 REORDER_STORIES = "stories.reorder"
+DELETE_STORY = "stories.delete"
 
 
 async def emit_event_when_story_is_created(project: Project, story: StoryDetailSerializer) -> None:
@@ -41,4 +47,15 @@ async def emit_when_stories_are_reordered(project: Project, reorder: ReorderStor
         project=project,
         type=REORDER_STORIES,
         content=ReorderStoriesContent(reorder=reorder),
+    )
+
+
+async def emit_event_when_story_is_deleted(
+    project: Project,
+    ref: int,
+) -> None:
+    await events_manager.publish_on_project_channel(
+        project=project,
+        type=DELETE_STORY,
+        content=DeleteStoryContent(ref=ref),
     )

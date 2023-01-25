@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "a6159e64-d55f-44f0-8fdd-9baf71bbb673",
+		"_postman_id": "8608cba2-3c88-4cf3-880f-10c762b6cd75",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -2508,12 +2507,125 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "200.projects.{p}.stories.{ref}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"stories",
+								"{{story_ref}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
 			"name": "projects.{p}.stories.{ref}.assignments",
 			"item": [
+				{
+					"name": "N/A 200.projects.{p}.workflows.{wf}.stories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    pm.environment.set(\"story_ref\", jsonRes.ref);",
+									"    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"done\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows",
+								"{{wf-slug}}",
+								"stories"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "200.projects.{p}.stories.{ref}.assignments",
 					"event": [

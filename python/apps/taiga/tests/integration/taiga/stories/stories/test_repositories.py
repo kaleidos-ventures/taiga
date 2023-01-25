@@ -7,6 +7,7 @@
 
 import pytest
 from asgiref.sync import sync_to_async
+from taiga.stories.assignments.models import StoryAssignment
 from taiga.stories.stories import repositories
 from tests.utils import factories as f
 
@@ -34,21 +35,6 @@ async def test_create_story_ok() -> None:
     )
 
     assert story.title == "test_create_story_ok"
-
-
-##########################################################
-# get_story
-##########################################################
-
-
-async def test_get_story() -> None:
-    story1 = await f.create_story()
-    story = await repositories.get_story(
-        filters={"project_id": story1.project.id, "workflow_id": story1.workflow.id, "ref": story1.ref}
-    )
-    assert story1.ref == story.ref
-    assert story1.title == story.title
-    assert story1.id == story.id
 
 
 ##########################################################
@@ -80,6 +66,21 @@ async def test_list_stories() -> None:
 
 
 ##########################################################
+# get_story
+##########################################################
+
+
+async def test_get_story() -> None:
+    story1 = await f.create_story()
+    story = await repositories.get_story(
+        filters={"project_id": story1.project.id, "workflow_id": story1.workflow.id, "ref": story1.ref}
+    )
+    assert story1.ref == story.ref
+    assert story1.title == story.title
+    assert story1.id == story.id
+
+
+##########################################################
 # update_story
 ##########################################################
 
@@ -108,6 +109,21 @@ async def test_update_story_error() -> None:
         current_version=story.version + 1,
         values={"title": "new title"},
     )
+
+
+##########################################################
+# delete stories
+##########################################################
+
+
+async def test_delete_stories() -> None:
+    user = await f.create_user()
+    story = await f.create_story()
+    await f.create_story_assignment(user=user, story=story)
+    assert await sync_to_async(StoryAssignment.objects.filter(story_id=story.id, user_id=user.id).count)() == 1
+    deleted = await repositories.delete_stories(filters={"id": story.id})
+    assert deleted == 2  # deleted story and assignment
+    assert await sync_to_async(StoryAssignment.objects.filter(story_id=story.id, user_id=user.id).count)() == 0
 
 
 ##########################################################

@@ -338,7 +338,7 @@ Content for:
 
 #### `stories.update`
 
-It happens when an story has been updated.
+It happens when a story has been updated.
 
 Content for:
 - project channel:
@@ -375,6 +375,19 @@ Content for:
       }
   }
   ```
+
+#### `stories.delete`
+
+It happens when a story has been deleted.
+
+Content for:
+- project channel:
+  ```
+  {
+      "ref": "story ref (int)"
+  }
+  ```
+
 
 #### `stories_assignments.create`
 

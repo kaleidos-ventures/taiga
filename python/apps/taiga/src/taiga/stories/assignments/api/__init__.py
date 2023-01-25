@@ -12,7 +12,7 @@ from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
+from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm
 from taiga.routers import routes
 from taiga.stories.assignments import services as story_assignments_services
@@ -64,7 +64,7 @@ async def create_story_assignment(
     "/{project_id}/stories/{ref}/assignments/{username}",
     name="project.story.assignments.delete",
     summary="Delete story assignment",
-    responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
+    responses=ERROR_404 | ERROR_403,
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_story_assignment(

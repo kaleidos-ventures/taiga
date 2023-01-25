@@ -47,13 +47,13 @@ async def test_get_story_assignment() -> None:
 
 
 ##########################################################
-# delete_story_assignment
+# delete_stories_assignments
 ##########################################################
 
 
-async def test_delete_story_assignment() -> None:
+async def test_delete_stories_assignments() -> None:
     story_assignment = await f.create_story_assignment()
-    story_assignment_deleted = await repositories.delete_story_assignment(
+    deleted = await repositories.delete_stories_assignments(
         filters={"story_id": story_assignment.story.id, "username": story_assignment.user.username},
     )
-    assert story_assignment_deleted == 1
+    assert deleted == 1

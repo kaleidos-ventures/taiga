@@ -197,6 +197,18 @@ def bulk_update_stories(objs_to_update: list[Story], fields_to_update: list[str]
 
 
 ##########################################################
+# delete story
+##########################################################
+
+
+@sync_to_async
+def delete_stories(filters: StoryFilters = {}) -> int:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    count, _ = qs.delete()
+    return count
+
+
+##########################################################
 # misc
 ##########################################################
 

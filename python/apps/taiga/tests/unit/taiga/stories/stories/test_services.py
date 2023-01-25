@@ -257,7 +257,9 @@ async def test_update_story_error_wrong_version():
         fake_stories_events.emit_event_when_story_is_updated.assert_not_awaited()
 
 
-# Validator
+#######################################################
+# validate_and_process_values_to_update
+#######################################################
 
 
 async def test_validate_and_process_values_to_update_ok_without_status():
@@ -434,7 +436,7 @@ async def test_calculate_offset() -> None:
 
 
 #######################################################
-# reorde_stories
+# update reorder_stories
 #######################################################
 
 
@@ -522,6 +524,45 @@ async def test_reorder_story_not_all_stories_exist():
             workflow=f.build_workflow(),
             stories_refs=[13, 54, 2],
             reorder={"place": "after", "ref": reorder_story.ref},
+        )
+
+
+#######################################################
+# delete story
+#######################################################
+
+
+async def test_delete_story_fail():
+    story = f.build_story()
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_story_repo,
+        patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+    ):
+        fake_story_repo.delete_stories.return_value = 0
+
+        await services.delete_story(story=story)
+        fake_stories_events.emit_event_when_story_is_deleted.assert_not_awaited()
+        fake_story_repo.delete_stories.assert_awaited_once_with(
+            filters={"id": story.id},
+        )
+
+
+async def test_delete_story_ok():
+    story = f.build_story()
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_story_repo,
+        patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+    ):
+        fake_story_repo.delete_stories.return_value = 1
+
+        await services.delete_story(story=story)
+        fake_stories_events.emit_event_when_story_is_deleted.assert_awaited_once_with(
+            project=story.project, ref=story.ref
+        )
+        fake_story_repo.delete_stories.assert_awaited_once_with(
+            filters={"id": story.id},
         )
 
 

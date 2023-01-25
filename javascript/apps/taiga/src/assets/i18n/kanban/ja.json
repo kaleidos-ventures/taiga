@@ -7,7 +7,7 @@
   "create_story_permission": "You no longer have permissions to create stories",
   "lost_kanban_access": "You no longer have permissions to access this content.",
   "story_title": "{{ref}} {{title}}. Position {{position}} of {{total}}",
-  "story_title_a11y": "{{ref}} {{title}}. Position {{position}} of {{total}}. Press Spacebar to Reorder",
+  "story_title_a11y": "Position {{position}} of {{total}}. Press Spacebar to Reorder.",
   "status_live_announce": "Status {{ status }}",
   "story_created": "{{title}} created.",
   "position_live_announce": "New position {{ storyIndex }} of {{totalStories}}",

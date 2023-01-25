@@ -183,7 +183,7 @@ async def _validate_and_process_values_to_update(story: Story, values: dict[str,
 
 
 ##########################################################
-# reorder stories
+# update reorder stories
 ##########################################################
 
 
@@ -296,3 +296,17 @@ async def reorder_stories(
     await stories_events.emit_when_stories_are_reordered(project=project, reorder=reorder_story_serializer)
 
     return reorder_story_serializer
+
+
+##########################################################
+# delete story
+##########################################################
+
+
+async def delete_story(story: Story) -> bool:
+    deleted = await stories_repositories.delete_stories(filters={"id": story.id})
+    if deleted > 0:
+        await stories_events.emit_event_when_story_is_deleted(project=story.project, ref=story.ref)
+        return True
+
+    return False

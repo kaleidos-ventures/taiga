@@ -53,10 +53,8 @@ async def get_story_assignment(project_id: UUID, ref: int, username: str) -> Sto
 
 
 async def delete_story_assignment(story_assignment: StoryAssignment) -> bool:
-    story_assignment_deleted = await story_assignments_repositories.delete_story_assignment(
-        filters={"id": story_assignment.id}
-    )
-    if story_assignment_deleted > 0:
+    deleted = await story_assignments_repositories.delete_stories_assignments(filters={"id": story_assignment.id})
+    if deleted > 0:
         await stories_assignments_events.emit_event_when_story_assignment_is_deleted(story_assignment=story_assignment)
         return True
     return False

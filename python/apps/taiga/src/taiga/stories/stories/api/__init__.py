@@ -7,7 +7,7 @@
 
 from uuid import UUID
 
-from fastapi import Depends, Query
+from fastapi import Depends, Query, status
 from starlette.responses import Response
 from taiga.base.api import AuthRequest, PaginationQuery, set_pagination
 from taiga.base.api.permissions import check_permissions
@@ -28,6 +28,7 @@ GET_STORY = HasPerm("view_story")
 CREATE_STORY = HasPerm("add_story")
 UPDATE_STORY = HasPerm("modify_story")
 REORDER_STORIES = HasPerm("modify_story")
+DELETE_STORY = HasPerm("delete_story")
 
 
 ################################################
@@ -152,7 +153,7 @@ async def update_story(
 
 
 ################################################
-# reorder stories
+# update - reorder stories
 ################################################
 
 
@@ -182,6 +183,32 @@ async def reorder_stories(
         stories_refs=form.stories,
         reorder=form.get_reorder_dict(),
     )
+
+
+################################################
+# delete story
+################################################
+
+
+@routes.projects.delete(
+    "/{project_id}/stories/{ref}",
+    name="project.stories.delete",
+    summary="Delete story",
+    responses=ERROR_404 | ERROR_403,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_story(
+    request: AuthRequest,
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
+    ref: int = Query(None, description="the unique story reference within a project (str)"),
+) -> None:
+    """
+    Delete a story
+    """
+    story = await get_story_or_404(project_id=project_id, ref=ref)
+    await check_permissions(permissions=DELETE_STORY, user=request.user, obj=story)
+
+    await stories_services.delete_story(story=story)
 
 
 ################################################

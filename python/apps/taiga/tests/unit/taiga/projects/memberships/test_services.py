@@ -139,6 +139,6 @@ async def test_update_project_membership_role_view_story_deleted():
         fake_membership_events.emit_event_when_project_membership_is_updated.assert_awaited_once_with(
             membership=updated_membership
         )
-        fake_story_assignments_repository.delete_story_assignment.assert_awaited_once_with(
+        fake_story_assignments_repository.delete_stories_assignments.assert_awaited_once_with(
             filters={"project_id": project.id, "username": user.username}
         )

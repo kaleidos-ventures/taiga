@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "402ea276-cc25-4ad8-868f-950dcd5ca835",
+		"_postman_id": "95fc3869-a038-4735-84fb-c63e1c37c655",
 		"name": "taiga-next",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -499,7 +498,7 @@
 			"name": "workspaces",
 			"item": [
 				{
-					"name": "new workspace",
+					"name": "create workspace",
 					"event": [
 						{
 							"listen": "test",
@@ -680,7 +679,7 @@
 			"name": "projects",
 			"item": [
 				{
-					"name": "new project",
+					"name": "create project",
 					"event": [
 						{
 							"listen": "test",
@@ -944,7 +943,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_us\",\n        \"modify_us\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1049,7 +1048,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_us\",\n        \"modify_us\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1337,7 +1336,12 @@
 									"type": "default",
 									"disabled": true
 								}
-							]
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}",
@@ -1770,10 +1774,10 @@
 			]
 		},
 		{
-			"name": "project stories",
+			"name": "stories",
 			"item": [
 				{
-					"name": "new story",
+					"name": "create story",
 					"event": [
 						{
 							"listen": "test",
@@ -1832,7 +1836,7 @@
 					"response": []
 				},
 				{
-					"name": "get stories",
+					"name": "list stories",
 					"event": [
 						{
 							"listen": "test",
@@ -1996,6 +2000,54 @@
 					"response": []
 				},
 				{
+					"name": "delete story",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"   pm.environment.set(\"story_version\", pm.response.json().version);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"stories",
+								"{{story_ref}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "reorder stories",
 					"event": [
 						{
@@ -2055,7 +2107,7 @@
 					"response": []
 				},
 				{
-					"name": "new story assignment",
+					"name": "create story assignment",
 					"event": [
 						{
 							"listen": "test",

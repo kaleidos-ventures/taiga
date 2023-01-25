@@ -101,7 +101,7 @@ def get_story_assignment(
 
 
 @sync_to_async
-def delete_story_assignment(filters: StoryAssignmentFilters = {}) -> int:
+def delete_stories_assignments(filters: StoryAssignmentFilters = {}) -> int:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     count, _ = qs.delete()
     return count

@@ -20,3 +20,7 @@ class UpdateStoryContent(BaseModel):
 
 class ReorderStoriesContent(BaseModel):
     reorder: ReorderStoriesSerializer
+
+
+class DeleteStoryContent(BaseModel):
+    ref: int

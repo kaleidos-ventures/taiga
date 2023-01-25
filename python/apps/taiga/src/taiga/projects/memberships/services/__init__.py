@@ -73,7 +73,7 @@ async def update_project_membership(membership: ProjectMembership, role_slug: st
 
     # Unassign stories for user if the new role doesn't have view_story permission
     if view_story_is_deleted:
-        await story_assignments_repositories.delete_story_assignment(
+        await story_assignments_repositories.delete_stories_assignments(
             filters={"project_id": membership.project_id, "username": membership.user.username}
         )
 

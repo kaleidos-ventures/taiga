@@ -159,9 +159,8 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
       assignees.push(currentUserMember);
     }
     members.forEach((member) => assignees.push(member));
-
     // Required for styling reasons (inverted flex)
-    this.reversedAssignees = assignees.reverse();
+    this.reversedAssignees = [...assignees].reverse();
 
     this.state.set({ assignees });
   }

@@ -62,14 +62,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   aria-hidden="true"></tg-user-avatar>
                 <span
                   class="user-identifier"
-                  *ngIf="vm.currentUser.username !== assignedUser.username">
-                  {{ assignedUser.fullName || assignedUser.username }}
-                </span>
-                <span
-                  class="user-identifier"
-                  *ngIf="vm.currentUser.username === assignedUser.username"
                   [innerHtml]="
-                    t('commons.your_user', { name: assignedUser.fullName })
+                    vm.currentUser.username === assignedUser.username
+                      ? t('commons.your_user', { name: assignedUser.fullName })
+                      : assignedUser.fullName || assignedUser.username
                   ">
                 </span>
               </div>

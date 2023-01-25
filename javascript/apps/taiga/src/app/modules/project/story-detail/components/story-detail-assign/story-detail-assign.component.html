@@ -30,7 +30,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <ng-container *ngIf="story?.assignees">
           <ng-template
             *ngIf="
-              story.assignees.length;
+              vm.assignees.length;
               then displayUsersTpl;
               else assignBtnTpl
             ">
@@ -51,23 +51,28 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         ">
         <li
           class="assigned-user"
-          *ngFor="let assigned of story.assignees; trackBy: trackByIndex">
+          *ngFor="let assignedUser of vm.assignees; trackBy: trackByIndex">
           <tg-user-avatar
             size="l"
             class="assigned-user-avatar"
-            [color]="assigned.color"
-            [user]="assigned"
+            [color]="assignedUser.color"
+            [user]="assignedUser"
             type="light"
             [rounded]="true"
             aria-hidden="true"
-            [tuiHint]="assigned.fullName"
+            [tuiHint]="assignedUser.fullName"
             [tuiHintDirection]="'bottom-right'"></tg-user-avatar>
-          <label class="assigned-name">
-            {{ assigned.fullName }}
+          <label
+            class="assigned-name"
+            [innerHtml]="
+              vm.currentUser.username === assignedUser.username
+                ? t('commons.your_user', { name: assignedUser.fullName })
+                : assignedUser.fullName || assignedUser.username
+            ">
           </label>
           <button
             *hasPermission="['modify']; entity: 'story'"
-            (click)="unassign(assigned)"
+            (click)="unassign(assignedUser)"
             [attr.aria-label]="t('commons.next_page')"
             appearance="tertiary"
             tuiIconButton
@@ -83,11 +88,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             icon="user-plus"
             type="button"
             (click)="toggleAssignUser($event)"
-            [tuiHint]="!story.assignees.length ? unassignedTooltip : null"
+            [tuiHint]="!vm.assignees.length ? unassignedTooltip : null"
             [tuiHintDirection]="'bottom-right'"
             [ngClass]="{
-              'unassigned-button-perm': !story.assignees.length,
-              'assigned-button-perm': story.assignees.length
+              'unassigned-button-perm': !vm.assignees.length,
+              'assigned-button-perm': vm.assignees.length
             }">
             {{ t('common_story.add_assignee') }}
           </button>
@@ -122,7 +127,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <ng-template #assignUser>
       <tg-assign-user
         [width]="dropdownWidth"
-        [assigned]="story.assignees"
+        [assigned]="vm.assignees"
         (assign)="assign($event)"
         (unassign)="unassign($event)"
         (requestClose)="closeAssignDropdown()"></tg-assign-user>

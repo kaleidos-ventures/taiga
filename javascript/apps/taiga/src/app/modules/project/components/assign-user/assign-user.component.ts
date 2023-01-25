@@ -103,9 +103,9 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
     const currentUserAssigned = members.find((member) => {
       return member.username === currentUser.username;
     });
-    const assignedMembers = members
-      .filter((member) => member.username !== currentUser.username)
-      .reverse();
+    const assignedMembers = members.filter(
+      (member) => member.username !== currentUser.username
+    );
 
     // current user on top
     if (currentUserAssigned) {

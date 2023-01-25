@@ -9,7 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <div class="field">
-      <label class="field-label">{{ t('common_story.assigned_to') }}</label>
+      <span class="field-label">{{ t('common_story.assigned_to') }}</span>
       <div
         *hasPermission="
           ['modify'];
@@ -44,11 +44,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <ng-template #displayUsersTpl>
       <ul
         class="assigned-users-list"
-        [attr.aria-label]="
-          t('common_story.assigned_list', {
-            users: assignedListA11y
-          })
-        ">
+        [attr.aria-label]="t('common_story.assigned_members')">
         <li
           class="assigned-user"
           *ngFor="let assignedUser of vm.assignees; trackBy: trackByIndex">
@@ -73,31 +69,36 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <button
             *hasPermission="['modify']; entity: 'story'"
             (click)="unassign(assignedUser)"
-            [attr.aria-label]="t('commons.next_page')"
+            [attr.aria-label]="
+              t('project.assign_user.unassign-aria', {
+                name: assignedUser.fullName,
+                username: assignedUser.username
+              })
+            "
             appearance="tertiary"
             tuiIconButton
             icon="close"
             type="button"></button>
         </li>
-        <li
-          class="add-assignee"
-          *hasPermission="['modify']; entity: 'story'">
-          <button
-            tuiButton
-            appearance="tertiary"
-            icon="user-plus"
-            type="button"
-            (click)="toggleAssignUser($event)"
-            [tuiHint]="!vm.assignees.length ? unassignedTooltip : null"
-            [tuiHintDirection]="'bottom-right'"
-            [ngClass]="{
-              'unassigned-button-perm': !vm.assignees.length,
-              'assigned-button-perm': vm.assignees.length
-            }">
-            {{ t('common_story.add_assignee') }}
-          </button>
-        </li>
       </ul>
+      <div
+        class="add-assignee"
+        *hasPermission="['modify']; entity: 'story'">
+        <button
+          tuiButton
+          appearance="tertiary"
+          icon="user-plus"
+          type="button"
+          (click)="toggleAssignUser($event)"
+          [tuiHint]="!vm.assignees.length ? unassignedTooltip : null"
+          [tuiHintDirection]="'bottom-right'"
+          [ngClass]="{
+            'unassigned-button-perm': !vm.assignees.length,
+            'assigned-button-perm': vm.assignees.length
+          }">
+          {{ t('common_story.add_assignee') }}
+        </button>
+      </div>
     </ng-template>
 
     <!-- Assign button template - user with permissions -->
@@ -113,6 +114,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           (click)="toggleAssignUser($event)"
           [tuiHint]="!story.assignees.length ? unassignedTooltip : null"
           [tuiHintDirection]="'bottom-right'"
+          [attr.aria-label]="t('common_story.story_not_assigned_enter')"
           [ngClass]="{
             'unassigned-button-perm': !story.assignees.length,
             'assigned-button-perm': story.assignees.length

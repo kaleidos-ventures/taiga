@@ -13,9 +13,11 @@
     "no-members": "No project members left.",
     "no-matches": "No matches",
     "search-members": "Search members",
-    "member-disabled": "This user does not have access to stories, so cannot be assigned.",
+    "member-disabled": "This user does not have access to stories.",
     "unassign-aria": "{{ name }} {{ username }}. Enter to unassign.",
+    "unassigned-aria": "{{ name }} unassigned.",
     "assign-aria": "{{ name }} {{ username }}. Enter to assign.",
-    "disabled-user-aria": "{{ name }} {{ username }}. This user does not have access to stories, so cannot be assigned."
+    "assigned-aria": "{{ name }} assigned.",
+    "disabled-user-aria": "{{ name }} {{ username }}. This user does not have access to stories."
   }
 }

@@ -5,9 +5,12 @@
  *
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
-import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
-  AfterViewInit,
+  A11yModule,
+  InputModalityDetector,
+  LiveAnnouncer,
+} from '@angular/cdk/a11y';
+import {
   Component,
   ElementRef,
   EventEmitter,
@@ -27,7 +30,7 @@ import {
 import { TranslocoService } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { TuiAutoFocusModule, TuiFocusTrapModule } from '@taiga-ui/cdk';
 import {
   TuiHintModule,
   TuiLinkModule,
@@ -61,6 +64,7 @@ interface AssignComponentState {
     CommonTemplateModule,
     UserAvatarComponent,
     TuiAutoFocusModule,
+    TuiFocusTrapModule,
     FormsModule,
     ReactiveFormsModule,
     TuiLinkModule,
@@ -70,12 +74,13 @@ interface AssignComponentState {
     TuiHintModule,
     UserCardComponent,
     InputsModule,
+    A11yModule,
   ],
   templateUrl: './assign-user.component.html',
   styleUrls: ['./assign-user.component.css'],
   providers: [RxState],
 })
-export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AssignUserComponent implements OnInit, OnDestroy {
   @ViewChild('searchInput')
   public searchInput!: ElementRef;
 
@@ -121,7 +126,7 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public readonly model$ = this.state.select().pipe(
     map((state) => {
-      const members = state.members.filter((member) => {
+      let members = state.members.filter((member) => {
         const assigned = state.assigned.find(
           (assigned) => assigned.username === member.username
         );
@@ -142,12 +147,9 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
         return member.username === state.currentUser.username;
       });
       if (currentUserMember) {
-        members.filter((member) => {
-          if (member.username === state.currentUser.username) {
-            return false;
-          }
-          return true;
-        });
+        members = members.filter(
+          (member) => member.username !== state.currentUser.username
+        );
         members.unshift(currentUserMember);
       }
 
@@ -169,6 +171,7 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   constructor(
+    private inputModalityDetector: InputModalityDetector,
     private store: Store,
     private state: RxState<AssignComponentState>,
     private fb: FormBuilder,
@@ -186,20 +189,16 @@ export class AssignUserComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  public ngAfterViewInit() {
-    requestAnimationFrame(() => {
-      (document.querySelector('.assignees-title') as HTMLElement)?.focus();
-    });
-  }
-
   public ngOnDestroy() {
     if (this.ref) {
       requestAnimationFrame(() => {
-        const mainFocus = document.querySelector(
-          `tg-kanban-story[data-ref='${this.ref!}'] .story-kanban-ref-focus`
-        );
-        if (mainFocus) {
-          (mainFocus as HTMLElement).focus();
+        if (this.inputModalityDetector.mostRecentModality === 'keyboard') {
+          const mainFocus = document.querySelector(
+            `tg-kanban-story[data-ref='${this.ref!}'] .story-kanban-ref-focus`
+          );
+          if (mainFocus) {
+            (mainFocus as HTMLElement).focus();
+          }
         }
       });
     }

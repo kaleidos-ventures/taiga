@@ -7,10 +7,11 @@
  */
 
 import { Directive, HostListener } from '@angular/core';
-import { KanbanStoryComponent } from './kanban-story.component';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { filter, switchMap, take } from 'rxjs';
+import { PermissionsService } from '~/app/services/permissions.service';
 import { A11yDragService } from '~/app/shared/drag/services/a11yDrag.service';
-import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
+import { KanbanStoryComponent } from './kanban-story.component';
 
 @UntilDestroy()
 @Directive({
@@ -19,20 +20,26 @@ import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
 })
 export class A11yDragStoryDirective {
   @HostListener('keydown.space.prevent', ['$event'])
-  public dragA11yStart(e: KeyboardEvent) {
-    if (!this.a11yDragService.inProgress) {
-      e.stopPropagation();
-      this.a11yDragService
-        .dragStart(this.story.ref)
-        .pipe(untilDestroyed(this.kanbanWorkflowComponent))
-        .subscribe();
-    }
+  public dragA11yStart() {
+    this.permissionService
+      .hasPermissions$('story', ['modify'])
+      .pipe(
+        take(1),
+        filter(
+          (hasModifyPermissions) =>
+            !this.a11yDragService.inProgress && hasModifyPermissions
+        ),
+        switchMap(() => {
+          return this.a11yDragService.dragStart(this.story.ref);
+        })
+      )
+      .subscribe();
   }
 
   constructor(
     private a11yDragService: A11yDragService,
     private kanbanStoryComponent: KanbanStoryComponent,
-    private kanbanWorkflowComponent: KanbanWorkflowComponent
+    private permissionService: PermissionsService
   ) {}
 
   public get story() {

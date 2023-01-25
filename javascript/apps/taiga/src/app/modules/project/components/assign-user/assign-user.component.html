@@ -9,6 +9,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <div
+      cdkTrapFocus
+      role="dialog"
+      id="assign-user-dialog"
+      aria-labelledby="assign-user-dialog-label"
+      aria-modal="true"
       class="assign-user-container"
       [style.max-inline-size]="setMaxInlineSize()"
       [style.inline-size]="setWidth()">
@@ -16,8 +21,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         class="assignees-wrapper"
         data-test="assignees-wrapper">
         <h2
+          id="assign-user-dialog-label"
           class="assignees-title"
-          tabindex="-1"
           [ngClass]="{
             'assignee-title': vm.assigned.length > 0,
             'unassign-title': vm.assigned.length === 0
@@ -34,8 +39,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <ul *ngIf="vm.assigned.length">
           <li
             class="option"
-            *ngFor="let assignedUser of vm.assigned; trackBy: trackByMember">
+            *ngFor="
+              let assignedUser of vm.assigned;
+              index as i;
+              trackBy: trackByMember
+            ">
             <button
+              [tuiAutoFocus]="i === 0 && !viewOnly"
+              tabindex="0"
               class="user-row"
               data-test="unassigned-member"
               [class.view-only]="viewOnly"
@@ -105,8 +116,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             [icon]="'search'"
             [label]="t('project.assign_user.add')">
             <input
+              [tuiAutoFocus]="vm.assigned.length === 0"
               inputRef
-              tuiAutoFocus
               #searchInput
               formControlName="searchText"
               type="search"

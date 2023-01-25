@@ -330,7 +330,7 @@ async def test_get_total_projects_in_ws_for_member() -> None:
     await f.create_workspace_membership(user=user1, workspace=ws, role=ws_member_role)
 
     pj1 = await f.create_project(workspace=ws, owner=admin)
-    pj1.workspace_member_permissions = ["view_project"]
+    pj1.workspace_member_permissions = ["view_story"]
     await _save_project(project=pj1)
 
     res = await repositories.get_total_projects(

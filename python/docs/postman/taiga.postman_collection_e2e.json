@@ -7313,7 +7313,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_project\"\n    ]\n}",
+							"raw": "{\n    \"permissions\": [\n        \"view_story\"\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"

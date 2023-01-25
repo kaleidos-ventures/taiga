@@ -27,9 +27,6 @@ class EditTaskPermissions(TextChoices):
 # these may be changed by a project admin
 # also, permissions for ws-admins
 class ProjectPermissions(TextChoices):
-    # Global permissions
-    VIEW_PROJECT = "view_project", "View project"
-
     # Story permissions
     ADD_STORY = "add_story", "Add story"
     COMMENT_STORY = "comment_story", "Comment story"

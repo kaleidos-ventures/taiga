@@ -11,12 +11,11 @@ from fastapi import Depends, Query, Response
 from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api.pagination import PaginationQuery
-from taiga.base.api.permissions import Or, check_permissions
+from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import CanViewProject, IsProjectAdmin
-from taiga.projects.invitations.permissions import HasPendingProjectInvitation
 from taiga.projects.memberships import services as memberships_services
 from taiga.projects.memberships.models import ProjectMembership
 from taiga.projects.memberships.serializers import ProjectMembershipSerializer
@@ -25,7 +24,7 @@ from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 
 # PERMISSIONS
-GET_PROJECT_MEMBERSHIPS = Or(CanViewProject(), HasPendingProjectInvitation())
+GET_PROJECT_MEMBERSHIPS = CanViewProject()
 UPDATE_PROJECT_MEMBERSHIP = IsProjectAdmin()
 
 

@@ -15,7 +15,6 @@ from taiga.base.db.models import File
 from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
 from taiga.permissions import services as permissions_services
-from taiga.projects.invitations import services as pj_invitations_services
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.memberships import repositories as pj_memberships_repositories
 from taiga.projects.projects import events as projects_events
@@ -158,7 +157,7 @@ async def get_project_detail(project: Project, user: AnyUser) -> Project:
     project.user_has_pending_invitation = (  # type: ignore[attr-defined]
         False
         if user.is_anonymous
-        else await (pj_invitations_services.has_pending_project_invitation_for_user(user=user, project=project))
+        else await (permissions_services.has_pending_project_invitation(user=user, project=project))
     )
 
     return project

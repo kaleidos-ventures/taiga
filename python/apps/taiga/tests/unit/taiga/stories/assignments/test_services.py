@@ -14,9 +14,7 @@ from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
 
-NO_VIEW_STORY_PERMISSIONS = {
-    "view_project",
-}
+NO_VIEW_STORY_PERMISSIONS = {}
 
 
 #######################################################

@@ -9,13 +9,14 @@ from typing import Any
 
 from asgiref.sync import sync_to_async
 from taiga.permissions import choices
+from taiga.projects.invitations import repositories as pj_invitations_repositories
+from taiga.projects.invitations.choices import ProjectInvitationStatus
+from taiga.projects.memberships import repositories as pj_memberships_repositories
 from taiga.projects.projects.models import Project
 from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.users.models import AnyUser
 from taiga.workspaces.roles import repositories as ws_roles_repositories
 from taiga.workspaces.workspaces.models import Workspace
-
-MIN_PROJECT_MEMBER_PERMISSIONS = [choices.ProjectPermissions.VIEW_PROJECT.value]
 
 AuthorizableObj = Project | Workspace
 
@@ -50,12 +51,33 @@ async def is_workspace_admin(user: AnyUser, obj: Any) -> bool:
     return role.is_admin if role else False
 
 
+async def is_project_member(user: AnyUser, project: Project) -> bool:
+    if user.is_anonymous:
+        return False
+
+    return await pj_memberships_repositories.exist_project_membership(
+        filters={"project_id": project.id, "user_id": user.id}
+    )
+
+
 async def user_has_perm(user: AnyUser, perm: str | None, obj: Any) -> bool:
     return perm in await get_user_permissions(user=user, obj=obj)
 
 
 async def user_can_view_project(user: AnyUser, obj: Any) -> bool:
-    # TODO: this method it's NOT considering users with a pending invitation (this scenario should be included here)
+    project = await _get_object_project(obj)
+    if not project:
+        return False
+
+    if await is_workspace_admin(user=user, obj=project.workspace):
+        return True
+
+    if await is_project_member(user=user, project=project):
+        return True
+
+    if await has_pending_project_invitation(user=user, project=project):
+        return True
+
     return len(await get_user_permissions(user=user, obj=obj)) > 0
 
 
@@ -73,6 +95,7 @@ async def get_user_permissions(user: AnyUser, obj: Any) -> list[str]:
         is_project_admin, is_project_member, project_role_permissions = await get_user_project_role_info(
             user=user, project=project
         )
+
         user_permissions = await get_user_permissions_for_project(
             is_project_admin=is_project_admin,
             is_workspace_admin=is_workspace_admin,
@@ -134,6 +157,16 @@ async def get_user_workspace_role_info(user: AnyUser, workspace: Workspace) -> t
     return False, False, []
 
 
+async def has_pending_project_invitation(user: AnyUser, project: Project) -> bool:
+    if user.is_anonymous:
+        return False
+
+    invitation = await pj_invitations_repositories.get_project_invitation(
+        filters={"user": user, "project": project, "status": ProjectInvitationStatus.PENDING}
+    )
+    return bool(invitation)
+
+
 async def get_user_permissions_for_project(
     is_project_admin: bool,
     is_workspace_admin: bool,
@@ -160,8 +193,7 @@ async def get_user_permissions_for_project(
     elif is_workspace_admin:
         return choices.ProjectPermissions.values
     elif is_project_member:
-        # a project member will always view the project she's member of, no matter her role's permissions
-        return list(set(project_role_permissions) | set(MIN_PROJECT_MEMBER_PERMISSIONS))
+        return project_role_permissions
     elif is_workspace_member:
         return project.workspace_member_permissions or []
     elif is_authenticated:

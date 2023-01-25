@@ -10,13 +10,12 @@ from uuid import UUID
 from fastapi import Query
 from fastapi.params import Depends
 from taiga.base.api import AuthRequest
-from taiga.base.api.permissions import Or, check_permissions
+from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import CanViewProject, HasPerm, IsAuthenticated, IsProjectAdmin
 from taiga.permissions import services as permissions_services
-from taiga.projects.invitations.permissions import HasPendingProjectInvitation
 from taiga.projects.projects import services as projects_services
 from taiga.projects.projects.api.validators import PermissionsValidator, ProjectValidator, UpdateProjectValidator
 from taiga.projects.projects.models import Project
@@ -28,7 +27,7 @@ from taiga.workspaces.workspaces.api import get_workspace_or_404
 CREATE_PROJECT = HasPerm("view_workspace")
 LIST_WORKSPACE_PROJECTS = IsAuthenticated()  # HasPerm("view_workspace")
 LIST_WORKSPACE_INVITED_PROJECTS = IsAuthenticated()  # HasPerm("view_workspace")
-GET_PROJECT = Or(CanViewProject(), HasPendingProjectInvitation())
+GET_PROJECT = CanViewProject()
 UPDATE_PROJECT = IsProjectAdmin()
 GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()

@@ -76,7 +76,7 @@ async def test_update_project_role_permissions_ok():
 
 async def test_update_project_role_permissions_view_story_deleted():
     role = f.build_project_role()
-    permissions = ["view_project"]
+    permissions = []
     user = f.build_user()
     f.build_project_membership(user=user, project=role.project, role=role)
     story = f.build_story(project=role.project)

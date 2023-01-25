@@ -15,7 +15,7 @@ CallableGenerator = Generator[Callable[..., Any], None, None]
 class Permissions(list[str]):
     @classmethod
     def __modify_schema__(cls, field_schema: dict[str, Any]) -> None:
-        field_schema["example"] = ["view_project"]
+        field_schema["example"] = ["view_story"]
         field_schema["format"] = None
 
     @classmethod

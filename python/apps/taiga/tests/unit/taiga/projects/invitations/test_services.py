@@ -794,26 +794,6 @@ def test_is_project_invitation_for_this_user_ok_different_email() -> None:
 
 
 #######################################################
-# has_pending_project_invitation_for_user
-#######################################################
-
-
-async def test_has_pending_project_invitation_for_user() -> None:
-    user = f.build_user()
-    project = f.build_project()
-
-    with (patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_projects_repo,):
-        invitation = f.build_project_invitation(email=user.email, user=user, project=project)
-        fake_projects_repo.get_project_invitation.return_value = invitation
-        res = await services.has_pending_project_invitation_for_user(project=project, user=user)
-        assert res is True
-
-        fake_projects_repo.get_project_invitation.return_value = None
-        res = await services.has_pending_project_invitation_for_user(project=project, user=user)
-        assert res is False
-
-
-#######################################################
 # update_user_projects_invitations
 #######################################################
 

@@ -113,7 +113,7 @@ async def test_update_project_membership_role_ok():
 async def test_update_project_membership_role_view_story_deleted():
     project = f.build_project()
     user = f.build_user()
-    permissions = ["view_project"]
+    permissions = []
     admin_role = f.build_project_role(project=project, is_admin=True)
     role = f.build_project_role(project=project, is_admin=False, permissions=permissions)
     membership = f.build_project_membership(user=user, project=project, role=admin_role)

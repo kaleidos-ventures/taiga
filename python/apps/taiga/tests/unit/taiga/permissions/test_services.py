@@ -75,6 +75,25 @@ async def test_is_workspace_admin_being_workspace_member():
 
 
 #####################################################
+# is_project_member
+#####################################################
+
+
+async def test_is_project_member_not_being_project_member():
+    user = await f.create_user()
+    project = await f.create_project()
+    is_member = await services.is_project_member(user=user, project=project)
+    assert is_member is False
+
+
+async def test_is_project_member_being_project_member():
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+    is_member = await services.is_project_member(user=user, project=project)
+    assert is_member is True
+
+
+#####################################################
 # get_user_permissions
 #####################################################
 
@@ -162,9 +181,83 @@ async def test_user_has_perm_with_workspace_ok():
 #####################################################
 
 
-async def test_user_can_view_project_ok():
+async def test_user_can_view_project_without_project():
     user = await f.create_user()
-    project = await f.create_project(owner=user)
+
+    with patch("taiga.permissions.services.get_user_permissions"):
+        assert await services.user_can_view_project(user=user, obj=None) is False
+        services.get_user_permissions.assert_not_awaited()
+
+
+async def test_user_can_view_project_being_a_workspace_admin():
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+    project = await f.create_project(workspace=workspace)
+
+    with (
+        patch("taiga.permissions.services.is_workspace_admin", return_value=True),
+        patch("taiga.permissions.services.get_user_permissions"),
+    ):
+        assert await services.user_can_view_project(user=user, obj=project) is True
+        services.is_workspace_admin.assert_awaited_once_with(user=user, obj=workspace)
+        services.get_user_permissions.assert_not_awaited()
+
+
+async def test_user_can_view_project_being_a_project_member():
+    user = await f.create_user()
+    project = await f.create_project()
+    general_member_role = await f.create_project_role(
+        project=project,
+        is_admin=False,
+    )
+    await f.create_project_membership(user=user, project=project, role=general_member_role)
+
+    with (
+        patch("taiga.permissions.services.is_project_member", return_value=True),
+        patch("taiga.permissions.services.get_user_permissions"),
+    ):
+        assert await services.user_can_view_project(user=user, obj=project) is True
+        services.is_project_member.assert_awaited_once_with(user=user, project=project)
+        services.get_user_permissions.assert_not_awaited()
+
+
+async def test_user_can_view_project_having_a_pending_invitation():
+    user = await f.create_user()
+    project = await f.create_project()
+    general_member_role = await f.create_project_role(
+        project=project,
+        is_admin=False,
+    )
+    await f.create_project_invitation(user=user, project=project, role=general_member_role)
+
+    with (
+        patch("taiga.permissions.services.has_pending_project_invitation", return_value=True),
+        patch("taiga.permissions.services.get_user_permissions"),
+    ):
+        assert await services.user_can_view_project(user=user, obj=project) is True
+        services.has_pending_project_invitation.assert_awaited_once_with(user=user, project=project)
+        services.get_user_permissions.assert_not_awaited()
+
+
+async def test_user_can_view_project_being_a_workspace_member():
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+    general_member_role = await f.create_workspace_role(
+        workspace=workspace,
+        is_admin=False,
+    )
+    await f.create_workspace_membership(user=user, workspace=workspace, role=general_member_role)
+    project = await f.create_project(workspace=workspace)
+    perms = choices.WorkspacePermissions.values
+
+    with patch("taiga.permissions.services.get_user_permissions", return_value=perms):
+        assert await services.user_can_view_project(user=user, obj=project) is True
+        services.get_user_permissions.assert_awaited_once_with(user=user, obj=project)
+
+
+async def test_user_can_view_project_being_other_user_with_permission():
+    user = await f.create_user()
+    project = await f.create_project()
     perms = ["view_story"]
 
     with patch("taiga.permissions.services.get_user_permissions", return_value=perms):
@@ -172,22 +265,13 @@ async def test_user_can_view_project_ok():
         services.get_user_permissions.assert_awaited_once_with(user=user, obj=project)
 
 
-async def test_user_can_view_project_without_project():
+async def test_user_can_view_project_being_other_user_without_permission():
     user = await f.create_user()
-    no_perms = []
-
-    with patch("taiga.permissions.services.get_user_permissions", return_value=no_perms):
-        assert await services.user_can_view_project(user=user, obj=None) is False
-        services.get_user_permissions.assert_awaited_once_with(user=user, obj=None)
-
-
-async def test_user_can_view_project_being_a_team_member():
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
-    perms = choices.EditStoryPermissions.values
+    project = await f.create_project()
+    perms = []
 
     with patch("taiga.permissions.services.get_user_permissions", return_value=perms):
-        assert await services.user_can_view_project(user=user, obj=project) is True
+        assert await services.user_can_view_project(user=user, obj=project) is False
         services.get_user_permissions.assert_awaited_once_with(user=user, obj=project)
 
 
@@ -217,6 +301,26 @@ async def get_user_workspace_role_info():
         fake_repository.get_workspace_role_for_user.assert_awaited_once()
 
 
+#######################################################
+# has_pending_project_invitation
+#######################################################
+
+
+async def test_has_pending_project_invitation() -> None:
+    user = f.build_user()
+    project = f.build_project()
+
+    with (patch("taiga.permissions.services.pj_invitations_repositories", autospec=True)) as fake_pj_invitations_repo:
+        invitation = f.build_project_invitation(email=user.email, user=user, project=project)
+        fake_pj_invitations_repo.get_project_invitation.return_value = invitation
+        res = await services.has_pending_project_invitation(project=project, user=user)
+        assert res is True
+
+        fake_pj_invitations_repo.get_project_invitation.return_value = None
+        res = await services.has_pending_project_invitation(project=project, user=user)
+        assert res is False
+
+
 #####################################################
 # get_user_permissions_for_project
 #####################################################
@@ -231,12 +335,10 @@ async def test_get_user_permissions_for_project():
     params = [False, True, False, False, False, [], project]
     assert await services.get_user_permissions_for_project(*params) == choices.ProjectPermissions.values
 
-    params = [False, False, True, False, True, ["view_story", "view_project"], project]
-    # a project member will always view the project she's member of, no matter her role's permissions
+    params = [False, False, True, False, True, ["view_story"], project]
     res = await services.get_user_permissions_for_project(*params)
     assert "view_story" in res
-    assert "view_project" in res
-    assert len(res) == 2
+    assert len(res) == 1
 
     params = [False, False, False, True, False, [], project]
     assert await services.get_user_permissions_for_project(*params) == project.workspace_member_permissions
@@ -264,7 +366,7 @@ async def test_get_user_permissions_for_workspace():
 
 
 async def test_is_view_story_permission_deleted_false():
-    old_permissions = ["view_project"]
+    old_permissions = []
     new_permissions = ["view_story"]
 
     assert await services.is_view_story_permission_deleted(old_permissions, new_permissions) is False
@@ -272,6 +374,6 @@ async def test_is_view_story_permission_deleted_false():
 
 async def test_is_view_story_permission_deleted_true():
     old_permissions = ["view_story"]
-    new_permissions = ["view_project"]
+    new_permissions = []
 
     assert await services.is_view_story_permission_deleted(old_permissions, new_permissions) is True

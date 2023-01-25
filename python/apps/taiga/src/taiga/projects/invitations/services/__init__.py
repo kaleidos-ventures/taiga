@@ -321,13 +321,6 @@ def is_project_invitation_for_this_user(invitation: ProjectInvitation, user: Use
     return emails.are_the_same(user.email, invitation.email)
 
 
-async def has_pending_project_invitation_for_user(project: Project, user: User) -> bool:
-    invitation = await invitations_repositories.get_project_invitation(
-        filters={"user": user, "project": project, "status": ProjectInvitationStatus.PENDING}
-    )
-    return bool(invitation)
-
-
 async def update_user_projects_invitations(user: User) -> None:
     await invitations_repositories.update_user_projects_invitations(user=user)
     invitations = await invitations_repositories.get_project_invitations(

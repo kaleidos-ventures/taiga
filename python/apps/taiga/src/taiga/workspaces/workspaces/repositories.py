@@ -216,13 +216,9 @@ def get_workspace(
 @sync_to_async
 def get_workspace_detail(
     user_id: UUID | None,
-    user_workspace_role_name: str,
-    user_projects_count: int,
     filters: WorkspaceFilters = {},
 ) -> Workspace | None:
     qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
-    qs = qs.annotate(user_role=Value(user_workspace_role_name, output_field=CharField()))
-    qs = qs.annotate(total_projects=Value(user_projects_count, output_field=IntegerField()))
     qs = qs.annotate(has_projects=Exists(Project.objects.filter(workspace=OuterRef("pk"))))
     qs = qs.annotate(
         user_is_owner=Case(When(owner_id=user_id, then=Value(True)), default=Value(False), output_field=BooleanField())

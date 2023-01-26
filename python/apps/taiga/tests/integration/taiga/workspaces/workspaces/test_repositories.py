@@ -91,27 +91,19 @@ async def test_get_workspace_detail_premium_projects_ws_member():
     # assert workspace1 - user8
     res_ws = await repositories.get_workspace_detail(
         user_id=user8.id,
-        user_workspace_role_name="admin",
-        user_projects_count=7,
         filters={"id": workspace1.id},
     )
     assert res_ws == workspace1
-    assert res_ws.total_projects == 7
     assert res_ws.user_is_owner is True
     assert res_ws.has_projects is True
-    assert res_ws.user_role == "admin"
     # assert workspace1 - user9
     res_ws = await repositories.get_workspace_detail(
         user_id=user9.id,
-        user_workspace_role_name="member",
-        user_projects_count=5,
         filters={"id": workspace1.id},
     )
     assert res_ws == workspace1
-    assert res_ws.total_projects == 5
     assert res_ws.user_is_owner is False
     assert res_ws.has_projects is True
-    assert res_ws.user_role == "member"
 
 
 async def test_get_workspace_detail_premium_no_projects():
@@ -126,27 +118,19 @@ async def test_get_workspace_detail_premium_no_projects():
     # assert workspace3 - user10
     res_ws = await repositories.get_workspace_detail(
         user_id=user10.id,
-        user_workspace_role_name="admin",
-        user_projects_count=0,
         filters={"id": workspace3.id},
     )
     assert res_ws == workspace3
-    assert res_ws.total_projects == 0
     assert res_ws.user_is_owner is True
     assert res_ws.has_projects is False
-    assert res_ws.user_role == "admin"
     # assert workspace3 - user11
     res_ws = await repositories.get_workspace_detail(
         user_id=user11.id,
-        user_workspace_role_name="member",
-        user_projects_count=0,
         filters={"id": workspace3.id},
     )
     assert res_ws == workspace3
-    assert res_ws.total_projects == 0
     assert res_ws.user_is_owner is False
     assert res_ws.has_projects is False
-    assert res_ws.user_role == "member"
 
 
 async def test_get_workspace_detail_no_premium_no_projects():
@@ -156,15 +140,11 @@ async def test_get_workspace_detail_no_premium_no_projects():
     workspace4 = await f.create_workspace(name="workspace4", owner=user12, is_premium=False)
     res_ws = await repositories.get_workspace_detail(
         user_id=user12.id,
-        user_workspace_role_name="admin",
-        user_projects_count=0,
         filters={"id": workspace4.id},
     )
     assert res_ws == workspace4
-    assert res_ws.total_projects == 0
     assert res_ws.user_is_owner is True
     assert res_ws.has_projects is False
-    assert res_ws.user_role == "admin"
 
 
 async def test_get_workspace_detail_premium_projects_no_ws_member():
@@ -191,27 +171,19 @@ async def test_get_workspace_detail_premium_projects_no_ws_member():
     # assert workspace5 - user13
     res_ws = await repositories.get_workspace_detail(
         user_id=user13.id,
-        user_workspace_role_name="admin",
-        user_projects_count=4,
         filters={"id": workspace5.id},
     )
     assert res_ws == workspace5
-    assert res_ws.total_projects == 4
     assert res_ws.user_is_owner is True
     assert res_ws.has_projects is True
-    assert res_ws.user_role == "admin"
     # assert workspace5 - user14
     res_ws = await repositories.get_workspace_detail(
         user_id=user14.id,
-        user_workspace_role_name="guest",
-        user_projects_count=3,
         filters={"id": workspace5.id},
     )
     assert res_ws == workspace5
-    assert res_ws.total_projects == 3
     assert res_ws.user_is_owner is False
     assert res_ws.has_projects is True
-    assert res_ws.user_role == "guest"
 
 
 async def test_get_workspace_detail_premium_no_projects_no_ws_member():
@@ -226,27 +198,19 @@ async def test_get_workspace_detail_premium_no_projects_no_ws_member():
     # assert workspace6 - user15
     res_ws = await repositories.get_workspace_detail(
         user_id=user15.id,
-        user_workspace_role_name="admin",
-        user_projects_count=1,
         filters={"id": workspace6.id},
     )
     assert res_ws == workspace6
-    assert res_ws.total_projects == 1
     assert res_ws.user_is_owner is True
     assert res_ws.has_projects is True
-    assert res_ws.user_role == "admin"
     # assert workspace6 - user16
     res_ws = await repositories.get_workspace_detail(
         user_id=user16.id,
-        user_workspace_role_name="none",
-        user_projects_count=0,
         filters={"id": workspace6.id},
     )
     assert res_ws == workspace6
-    assert res_ws.total_projects == 0
     assert res_ws.user_is_owner is False
     assert res_ws.has_projects is True
-    assert res_ws.user_role == "none"
 
 
 async def test_get_workspace_detail_no_ws_members():
@@ -261,27 +225,19 @@ async def test_get_workspace_detail_no_ws_members():
     # assert workspace7 - user17
     res_ws = await repositories.get_workspace_detail(
         user_id=user17.id,
-        user_workspace_role_name="none",
-        user_projects_count=0,
         filters={"id": workspace7.id},
     )
     assert res_ws == workspace7
-    assert res_ws.total_projects == 0
     assert res_ws.user_is_owner is False
     assert res_ws.has_projects is True
-    assert res_ws.user_role == "none"
     # assert workspace7 - user18
     res_ws = await repositories.get_workspace_detail(
         user_id=user18.id,
-        user_workspace_role_name="none",
-        user_projects_count=0,
         filters={"id": workspace7.id},
     )
     assert res_ws == workspace7
-    assert res_ws.total_projects == 0
     assert res_ws.user_is_owner is False
     assert res_ws.has_projects is True
-    assert res_ws.user_role == "none"
 
 
 ##########################################################

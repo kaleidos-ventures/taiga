@@ -7,7 +7,7 @@
 
 from taiga.base.serializers import UUIDB64, BaseModel
 from taiga.projects.projects.serializers.mixins import ProjectLogoMixin
-from taiga.workspaces.workspaces.serializers.related import WorkspaceSummarySerializer
+from taiga.workspaces.workspaces.serializers.nested import WorkspaceNestedSerializer
 
 
 class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
@@ -27,7 +27,7 @@ class ProjectDetailSerializer(BaseModel, ProjectLogoMixin):
     slug: str
     description: str | None = None
     color: int | None = None
-    workspace: WorkspaceSummarySerializer
+    workspace: WorkspaceNestedSerializer
 
     # User related fields
     user_is_admin: bool

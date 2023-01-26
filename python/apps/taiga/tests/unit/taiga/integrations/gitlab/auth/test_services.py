@@ -11,7 +11,7 @@ import pytest
 from taiga.conf import settings
 from taiga.integrations.gitlab import exceptions as ex
 from taiga.integrations.gitlab.auth import services
-from taiga.integrations.gitlab.schemas import GitlabUserProfileSchema
+from taiga.integrations.gitlab.services import GitlabUserProfile
 
 ##########################################################
 # gitlab_login
@@ -29,7 +29,7 @@ async def test_gitlab_login_ok():
         ) as fake_integrations_auth_services,
     ):
         fake_gitlab_services.get_access_to_gitlab.return_value = "access_token"
-        fake_gitlab_services.get_user_info_from_gitlab.return_value = GitlabUserProfileSchema(
+        fake_gitlab_services.get_user_info_from_gitlab.return_value = GitlabUserProfile(
             email="email@test.com", full_name="Full Name", gitlab_id="1", bio="Bio"
         )
         await services.gitlab_login(code="code", redirect_uri="https://redirect.uri", lang="es-ES")

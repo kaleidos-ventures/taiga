@@ -4,11 +4,11 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+from dataclasses import dataclass
 from typing import Final
 
 import httpx
 from taiga.conf import settings
-from taiga.integrations.github.schemas import GithubUserProfileSchema
 
 ACCESS_TOKEN_URL: Final[str] = "https://github.com/login/oauth/access_token"
 EMAILS_API_URL: Final[str] = "https://api.github.com/user/emails"
@@ -16,6 +16,14 @@ USER_API_URL: Final[str] = "https://api.github.com/user"
 HEADERS: Final[dict[str, str]] = {
     "Accept": "application/json",
 }
+
+
+@dataclass
+class GithubUserProfile:
+    github_id: str
+    email: str
+    full_name: str
+    bio: str
 
 
 async def get_access_to_github(code: str) -> str | None:
@@ -36,7 +44,7 @@ async def get_access_to_github(code: str) -> str | None:
     return data.get("access_token", None)
 
 
-async def get_user_info_from_github(access_token: str) -> GithubUserProfileSchema | None:
+async def get_user_info_from_github(access_token: str) -> GithubUserProfile | None:
     headers = HEADERS.copy()
     headers["Authorization"] = f"token {access_token}"
 
@@ -57,7 +65,7 @@ async def get_user_info_from_github(access_token: str) -> GithubUserProfileSchem
             primary_email = e["email"]
             break
 
-    return GithubUserProfileSchema(
+    return GithubUserProfile(
         email=primary_email,
         github_id=user_profile.get("id"),
         full_name=full_name,

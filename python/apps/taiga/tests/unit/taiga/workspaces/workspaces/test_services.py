@@ -47,7 +47,9 @@ async def test_get_workspace():
 
 async def test_get_workspace_detail():
     user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace(name="test", owner=user)
+    workspace.has_projects = True
+    workspace.user_is_owner = True
 
     with (
         patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
@@ -56,21 +58,20 @@ async def test_get_workspace_detail():
     ):
         fake_ws_roles_services.get_workspace_role_name.return_value = "admin"
         fake_projects_repo.get_total_projects.return_value = 1
+        fake_workspaces_repo.get_workspace_detail.return_value = workspace
         await services.get_workspace_detail(id=workspace.id, user_id=user.id)
         fake_workspaces_repo.get_workspace_detail.assert_awaited_with(
             user_id=user.id,
-            user_workspace_role_name="admin",
-            user_projects_count=1,
             filters={"id": workspace.id},
         )
 
 
 ##########################################################
-# get_workspace_summary
+# get_workspace_nested
 ##########################################################
 
 
-async def test_get_workspace_summary():
+async def get_workspace_nestedy():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
 

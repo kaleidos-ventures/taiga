@@ -135,7 +135,7 @@ async def get_project_detail(project: Project, user: AnyUser) -> ProjectDetailSe
     ) = await permissions_services.get_user_workspace_role_info(user=user, workspace=project.workspace)
 
     user_id = None if user.is_anonymous else user.id
-    workspace = await workspaces_services.get_workspace_summary(id=project.workspace_id, user_id=user_id)
+    workspace = await workspaces_services.get_workspace_nested(id=project.workspace_id, user_id=user_id)
 
     user_permissions = await permissions_services.get_user_permissions_for_project(
         is_project_admin=is_project_admin,

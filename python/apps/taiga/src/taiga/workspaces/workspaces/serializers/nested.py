@@ -8,7 +8,7 @@
 from taiga.base.serializers import UUIDB64, BaseModel
 
 
-class WorkspaceSummarySerializer(BaseModel):
+class WorkspaceNestedSerializer(BaseModel):
     id: UUIDB64
     name: str
     slug: str

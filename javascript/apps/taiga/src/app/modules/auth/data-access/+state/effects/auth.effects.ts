@@ -140,7 +140,9 @@ export class AuthEffects {
                       }),
                       catchError((httpResponse: HttpErrorResponse) => {
                         const error = httpResponse;
-                        if (nextProjectId) {
+                        if (error.status === 403) {
+                          void this.router.navigate(['/']);
+                        } else if (nextProjectId) {
                           return this.projectApiService
                             .getProject(nextProjectId)
                             .pipe(

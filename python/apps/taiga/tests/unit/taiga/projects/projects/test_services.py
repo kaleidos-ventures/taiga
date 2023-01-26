@@ -14,7 +14,7 @@ from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects import services
 from taiga.projects.projects.services import exceptions as ex
 from taiga.users.models import AnonymousUser
-from taiga.workspaces.workspaces.serializers.related import WorkspaceSummarySerializer
+from taiga.workspaces.workspaces.serializers.nested import WorkspaceNestedSerializer
 from tests.utils import factories as f
 from tests.utils.images import valid_image_upload_file
 
@@ -174,7 +174,7 @@ async def test_get_project_detail():
         fake_permissions_services.get_user_workspace_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_permissions_for_project.return_value = []
         fake_permissions_services.has_pending_project_invitation.return_value = True
-        fake_workspaces_services.get_workspace_summary.return_value = WorkspaceSummarySerializer(
+        fake_workspaces_services.get_workspace_nested.return_value = WorkspaceNestedSerializer(
             id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin", is_premium=True
         )
         await services.get_project_detail(project=project, user=user)
@@ -191,7 +191,7 @@ async def test_get_project_detail():
             project=project,
         )
         fake_permissions_services.has_pending_project_invitation.assert_awaited_once_with(user=user, project=project)
-        fake_workspaces_services.get_workspace_summary.assert_awaited_once_with(id=workspace.id, user_id=user.id)
+        fake_workspaces_services.get_workspace_nested.assert_awaited_once_with(id=workspace.id, user_id=user.id)
 
 
 async def test_get_project_detail_anonymous():
@@ -208,7 +208,7 @@ async def test_get_project_detail_anonymous():
         fake_permissions_services.get_user_workspace_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_permissions_for_project.return_value = []
         fake_permissions_services.has_pending_project_invitation.return_value = False
-        fake_workspaces_services.get_workspace_summary.return_value = WorkspaceSummarySerializer(
+        fake_workspaces_services.get_workspace_nested.return_value = WorkspaceNestedSerializer(
             id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin", is_premium=True
         )
         await services.get_project_detail(project=project, user=user)
@@ -225,7 +225,7 @@ async def test_get_project_detail_anonymous():
             project=project,
         )
         fake_permissions_services.has_pending_project_invitation.assert_not_awaited()
-        fake_workspaces_services.get_workspace_summary.assert_awaited_once_with(id=workspace.id, user_id=user.id)
+        fake_workspaces_services.get_workspace_nested.assert_awaited_once_with(id=workspace.id, user_id=user.id)
 
 
 ##########################################################

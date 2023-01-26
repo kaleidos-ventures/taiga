@@ -8,10 +8,9 @@
 from typing import Any
 
 from fastapi import status
-from taiga.base.serializers import BaseModel
 
-http_response_dict = dict[int | str, dict[str, type[BaseModel] | type[list[BaseModel]]]]
+Responses_t = dict[int | str, dict[str, Any]]
 
 
-def http_status_200(model: type[BaseModel] | type[list[Any]]) -> http_response_dict:
+def http_status_200(model: Any) -> Responses_t:
     return {status.HTTP_200_OK: {"model": model}}

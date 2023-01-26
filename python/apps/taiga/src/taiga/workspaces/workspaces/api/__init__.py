@@ -4,11 +4,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
 from uuid import UUID
 
 from fastapi import Query
-from taiga.base.api import AuthRequest
+from taiga.base.api import AuthRequest, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
@@ -25,32 +24,42 @@ LIST_MY_WORKSPACES = IsAuthenticated()
 GET_MY_WORKSPACE = IsAuthenticated()
 GET_WORKSPACE = HasPerm("view_workspace")
 
+# HTTP 200 RESPONSES
+WORKSPACE_DETAIL_200 = responses.http_status_200(model=WorkspaceDetailSerializer)
+LIST_WORKSPACE_DETAIL_200 = responses.http_status_200(model=list[WorkspaceDetailSerializer])
+
+
+##########################################################
+# create workspace
+##########################################################
+
 
 @routes.workspaces.post(
     "",
     name="workspaces.post",
     summary="Create workspace",
-    response_model=WorkspaceSerializer,
-    responses=ERROR_422 | ERROR_403,
+    responses=WORKSPACE_DETAIL_200 | ERROR_422 | ERROR_403,
 )
-async def create_workspace(form: WorkspaceValidator, request: AuthRequest) -> Workspace:
+async def create_workspace(form: WorkspaceValidator, request: AuthRequest) -> WorkspaceSerializer:
     """
     Create a new workspace for the logged user.
     """
     workspace = await workspaces_services.create_workspace(name=form.name, color=form.color, owner=request.user)
-    return await workspaces_services.get_workspace_detail(
-        id=workspace.id, user_id=request.user.id  # type: ignore[return-value]
-    )
+    return await workspaces_services.get_workspace_detail(id=workspace.id, user_id=request.user.id)
+
+
+##########################################################
+# list workspaces
+##########################################################
 
 
 @routes.my.get(
     "/workspaces",
     name="my.workspaces.list",
     summary="List the overview of the workspaces to which I belong",
-    response_model=list[WorkspaceDetailSerializer],
-    responses=ERROR_403,
+    responses=LIST_WORKSPACE_DETAIL_200 | ERROR_403,
 )
-async def list_my_workspaces(request: AuthRequest) -> list[Workspace]:
+async def list_my_workspaces(request: AuthRequest) -> list[WorkspaceDetailSerializer]:
     """
     List the workspaces overviews of the logged user.
     """
@@ -58,36 +67,37 @@ async def list_my_workspaces(request: AuthRequest) -> list[Workspace]:
     return await workspaces_services.list_user_workspaces(user=request.user)
 
 
+##########################################################
+# get workspace
+##########################################################
+
+
 @routes.workspaces.get(
     "/{id}",
     name="workspaces.get",
     summary="Get workspace",
-    response_model=WorkspaceSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=WORKSPACE_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def get_workspace(
     request: AuthRequest, id: B64UUID = Query("", description="the workspace id(B64UUID)")
-) -> Workspace:
+) -> WorkspaceSerializer:
     """
     Get workspace detail by id.
     """
     workspace = await get_workspace_or_404(id=id)
     await check_permissions(permissions=GET_WORKSPACE, user=request.user, obj=workspace)
-    return await workspaces_services.get_workspace_detail(
-        id=workspace.id, user_id=request.user.id  # type: ignore[return-value]
-    )
+    return await workspaces_services.get_workspace_detail(id=workspace.id, user_id=request.user.id)
 
 
 @routes.my.get(
     "/workspaces/{id}",
     name="my.workspaces.get",
     summary="Get the overview of a workspace to which I belong",
-    response_model=WorkspaceDetailSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=WORKSPACE_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def get_my_workspace(
     request: AuthRequest, id: B64UUID = Query("", description="the workspace id(B64UUID)")
-) -> Workspace:
+) -> WorkspaceDetailSerializer:
     """
     Get the workspaces overview for the logged user.
     """

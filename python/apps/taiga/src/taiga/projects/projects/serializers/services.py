@@ -7,12 +7,12 @@
 
 from taiga.projects.projects.models import Project
 from taiga.projects.projects.serializers import ProjectDetailSerializer
-from taiga.workspaces.workspaces.serializers.related import WorkspaceSummarySerializer
+from taiga.workspaces.workspaces.serializers.nested import WorkspaceNestedSerializer
 
 
 def serialize_project_detail(
     project: Project,
-    workspace: WorkspaceSummarySerializer,
+    workspace: WorkspaceNestedSerializer,
     user_is_admin: bool,
     user_is_member: bool,
     user_has_pending_invitation: bool,

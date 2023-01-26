@@ -14,7 +14,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -28,6 +27,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiAutoFocusModule, TuiFocusTrapModule } from '@taiga-ui/cdk';
@@ -38,6 +38,7 @@ import {
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { TuiToggleModule } from '@taiga-ui/kit';
+import { ShortcutsService } from '@taiga/core';
 import { Membership, Permissions, Story, User } from '@taiga/data';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { map, Subject } from 'rxjs';
@@ -57,6 +58,7 @@ interface AssignComponentState {
   search: string;
   currentUser: User;
 }
+@UntilDestroy()
 @Component({
   selector: 'tg-assign-user',
   standalone: true,
@@ -120,11 +122,6 @@ export class AssignUserComponent implements OnInit, OnDestroy {
     this.state.set({ assigned: assignedMembers });
   }
 
-  @HostListener('document:keydown.escape')
-  public onEsc() {
-    this.requestClose.next();
-  }
-
   public readonly model$ = this.state.select().pipe(
     map((state) => {
       let members = state.members.filter((member) => {
@@ -177,7 +174,8 @@ export class AssignUserComponent implements OnInit, OnDestroy {
     private state: RxState<AssignComponentState>,
     private fb: FormBuilder,
     private liveAnnouncer: LiveAnnouncer,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    public shortcutsService: ShortcutsService
   ) {
     this.store.dispatch(initAssignUser());
 
@@ -185,6 +183,8 @@ export class AssignUserComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.setCloseShortcut();
+
     this.searchTextForm = this.fb.group({
       searchText: '',
     });
@@ -203,6 +203,7 @@ export class AssignUserComponent implements OnInit, OnDestroy {
         }
       });
     }
+    this.shortcutsService.undoLastScope();
   }
 
   public initState() {
@@ -312,5 +313,15 @@ export class AssignUserComponent implements OnInit, OnDestroy {
 
   public trackByMember(_index: number, member: Membership['user']) {
     return member.username;
+  }
+
+  public setCloseShortcut() {
+    this.shortcutsService.setScope('assign-user');
+    this.shortcutsService
+      .task('assign-user.close')
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.requestClose.next();
+      });
   }
 }

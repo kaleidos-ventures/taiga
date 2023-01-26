@@ -17,4 +17,9 @@ export default [
     defaultKey: 'esc',
     scope: 'side-view',
   },
+  {
+    task: 'assign-user.close',
+    defaultKey: 'esc',
+    scope: 'assign-user',
+  },
 ];

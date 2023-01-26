@@ -30,7 +30,7 @@ import {
 import { TranslocoService } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiAutoFocusModule, TuiFocusTrapModule } from '@taiga-ui/cdk';
+import { TuiFocusTrapModule } from '@taiga-ui/cdk';
 import {
   TuiHintModule,
   TuiLinkModule,
@@ -45,6 +45,7 @@ import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth
 import { initAssignUser } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectMembers } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -63,7 +64,7 @@ interface AssignComponentState {
   imports: [
     CommonTemplateModule,
     UserAvatarComponent,
-    TuiAutoFocusModule,
+    AutoFocusDirective,
     TuiFocusTrapModule,
     FormsModule,
     ReactiveFormsModule,

@@ -24,6 +24,12 @@ from taiga.workspaces.workspaces.serializers.nested import WorkspaceNestedSerial
 ##########################################################
 
 
+async def create_workspace_api(name: str, color: int, owner: User) -> WorkspaceSerializer:
+    workspace = await create_workspace(name=name, color=color, owner=owner)
+    return await get_workspace_detail(id=workspace.id, user_id=owner.id)
+
+
+#  TODO: review this method after the sample_data refactor
 async def create_workspace(name: str, color: int, owner: User) -> Workspace:
     workspace = await workspaces_repositories.create_workspace(name=name, color=color, owner=owner)
     role = await ws_roles_repositories.create_workspace_role(
@@ -58,18 +64,18 @@ async def get_workspace(id: UUID) -> Workspace | None:
     return await workspaces_repositories.get_workspace(filters={"id": id})
 
 
-async def get_workspace_detail(id: UUID, user_id: UUID | None) -> WorkspaceSerializer | None:
-    workspace = await workspaces_repositories.get_workspace_detail(filters={"id": id}, user_id=user_id)
-    if workspace:
-        return serializers_services.serialize_workspace(
-            workspace=workspace,
-            user_role=await ws_roles_services.get_workspace_role_name(workspace_id=id, user_id=user_id),
-            total_projects=await projects_repositories.get_total_projects(
-                filters={"workspace_id": id, "project_or_workspace_member_id": user_id}
-            ),
-        )
-
-    return None
+async def get_workspace_detail(id: UUID, user_id: UUID | None) -> WorkspaceSerializer:
+    workspace = cast(
+        Workspace,
+        await workspaces_repositories.get_workspace_detail(filters={"id": id}, user_id=user_id),
+    )
+    return serializers_services.serialize_workspace(
+        workspace=workspace,
+        user_role=await ws_roles_services.get_workspace_role_name(workspace_id=id, user_id=user_id),
+        total_projects=await projects_repositories.get_total_projects(
+            filters={"workspace_id": id, "project_or_workspace_member_id": user_id}
+        ),
+    )
 
 
 async def get_workspace_nested(id: UUID, user_id: UUID | None) -> WorkspaceNestedSerializer:

@@ -44,8 +44,7 @@ async def create_workspace(form: WorkspaceValidator, request: AuthRequest) -> Wo
     """
     Create a new workspace for the logged user.
     """
-    workspace = await workspaces_services.create_workspace(name=form.name, color=form.color, owner=request.user)
-    return await workspaces_services.get_workspace_detail(id=workspace.id, user_id=request.user.id)
+    return await workspaces_services.create_workspace_api(name=form.name, color=form.color, owner=request.user)
 
 
 ##########################################################

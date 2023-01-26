@@ -5,17 +5,25 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from dataclasses import dataclass
 from typing import Final
 
 import httpx
 from taiga.conf import settings
-from taiga.integrations.google.schemas import GoogleUserProfileSchema
 
 HEADERS: Final[dict[str, str]] = {
     "Accept": "application/json",
 }
 ACCESS_TOKEN_URL: Final[str] = "https://oauth2.googleapis.com/token"
 USER_API_URL: Final[str] = "https://openidconnect.googleapis.com/v1/userinfo"
+
+
+@dataclass
+class GoogleUserProfile:
+    google_id: str
+    email: str
+    full_name: str
+    bio: str
 
 
 async def get_access_to_google(code: str, redirect_uri: str) -> str | None:
@@ -44,7 +52,7 @@ async def get_access_to_google(code: str, redirect_uri: str) -> str | None:
     return data.get("access_token", None)
 
 
-async def get_user_info_from_google(access_token: str) -> GoogleUserProfileSchema | None:
+async def get_user_info_from_google(access_token: str) -> GoogleUserProfile | None:
     headers = HEADERS.copy()
     headers["Authorization"] = f"Bearer {access_token}"
 
@@ -56,7 +64,7 @@ async def get_user_info_from_google(access_token: str) -> GoogleUserProfileSchem
 
     user_profile = response_user.json()
 
-    return GoogleUserProfileSchema(
+    return GoogleUserProfile(
         email=user_profile.get("email"),
         google_id=user_profile.get("sub"),
         full_name=user_profile.get("name"),

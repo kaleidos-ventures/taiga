@@ -4,15 +4,23 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
+from dataclasses import dataclass
 from typing import Final
 
 import httpx
 from taiga.conf import settings
-from taiga.integrations.gitlab.schemas import GitlabUserProfileSchema
 
 HEADERS: Final[dict[str, str]] = {
     "Accept": "application/json",
 }
+
+
+@dataclass
+class GitlabUserProfile:
+    gitlab_id: str
+    email: str
+    full_name: str
+    bio: str
 
 
 async def get_access_to_gitlab(code: str, redirect_uri: str) -> str | None:
@@ -37,7 +45,7 @@ async def get_access_to_gitlab(code: str, redirect_uri: str) -> str | None:
     return data.get("access_token", None)
 
 
-async def get_user_info_from_gitlab(access_token: str) -> GitlabUserProfileSchema | None:
+async def get_user_info_from_gitlab(access_token: str) -> GitlabUserProfile | None:
     USER_API_URL: Final[str] = f"{settings.GITLAB_URL}/api/v4/user"
 
     headers = HEADERS.copy()
@@ -52,7 +60,7 @@ async def get_user_info_from_gitlab(access_token: str) -> GitlabUserProfileSchem
     user_profile = response_user.json()
     full_name = user_profile.get("name") or user_profile.get("username")
 
-    return GitlabUserProfileSchema(
+    return GitlabUserProfile(
         email=user_profile.get("email"),
         gitlab_id=user_profile.get("id"),
         full_name=full_name,

@@ -9,6 +9,7 @@
 import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostBinding,
@@ -90,7 +91,8 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     @Optional()
     @Inject(KanbanStatusComponent)
     private kabanStatus: KanbanStatusComponent,
-    private permissionService: PermissionsService
+    private permissionService: PermissionsService,
+    private cd: ChangeDetectorRef
   ) {
     this.state.set({
       assignees: [],
@@ -217,6 +219,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     if (!active) {
       this.closeAssignDropdown();
     }
+    this.cd.detectChanges();
   }
 
   public closeAssignDropdown() {

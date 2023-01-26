@@ -116,6 +116,7 @@ export class AssignUserComponent implements OnInit, OnDestroy {
     if (currentUserAssigned) {
       assignedMembers.unshift(currentUser);
     }
+
     this.state.set({ assigned: assignedMembers });
   }
 
@@ -251,6 +252,8 @@ export class AssignUserComponent implements OnInit, OnDestroy {
   }
 
   public onAssign(event: Event, member: Membership['user']) {
+    event.preventDefault();
+    event.stopPropagation();
     this.assign.next(member);
     if (event.type === 'keydown') {
       const announcement = this.translocoService.translate(
@@ -276,6 +279,8 @@ export class AssignUserComponent implements OnInit, OnDestroy {
   }
 
   public onUnassign(event: Event, assignedUser: Membership['user']) {
+    event.preventDefault();
+    event.stopPropagation();
     this.unassign.next(assignedUser);
     if (event.type === 'keydown') {
       const announcement = this.translocoService.translate(

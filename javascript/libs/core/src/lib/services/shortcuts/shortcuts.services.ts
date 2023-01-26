@@ -16,6 +16,8 @@ import shortcuts from './shortcuts';
   providedIn: 'root',
 })
 export class ShortcutsService {
+  public scopes: string[] = [];
+
   public task(taskName: string, options: Parameters<typeof hotkeys>[1] = {}) {
     const subject = new Subject();
     const shortcut = shortcuts.find((it) => it.task === taskName);
@@ -48,10 +50,21 @@ export class ShortcutsService {
 
   public setScope(scope: string) {
     hotkeys.setScope(scope);
+    this.scopes.push(scope);
   }
 
   public deleteScope(scope: string) {
     hotkeys.deleteScope(scope);
+  }
+
+  public undoLastScope() {
+    this.scopes.pop();
+
+    hotkeys.setScope(this.scopes[this.scopes.length - 1]);
+  }
+
+  public getScope() {
+    return hotkeys.getScope();
   }
 
   public resetScope() {

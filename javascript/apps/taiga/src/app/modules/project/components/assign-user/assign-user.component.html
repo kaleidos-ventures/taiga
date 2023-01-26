@@ -21,6 +21,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         class="assignees-wrapper"
         data-test="assignees-wrapper">
         <h2
+          tuiAutoFocus
+          tabindex="-1"
           id="assign-user-dialog-label"
           class="assignees-title"
           [ngClass]="{
@@ -45,8 +47,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               trackBy: trackByMember
             ">
             <button
-              [tuiAutoFocus]="i === 0 && !viewOnly"
-              tabindex="0"
               class="user-row"
               data-test="unassigned-member"
               [class.view-only]="viewOnly"

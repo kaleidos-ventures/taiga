@@ -7,26 +7,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 */
 /* stylelint-disable declaration-no-important */
 
-@keyframes show-dropdown {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
 tui-dropdown {
   --tui-radius-m: 3px;
 
-  /*
-  Setting UI_ANIMATION_OPTIONS duration to 0 causes the dropdow to show up in wrong position for some ms. Doing this animation fix the problem, another way will be use a fixed width in this element.
-  */
-  animation-duration: 0.25s;
-  animation-name: show-dropdown;
   border: 1px solid var(--color-gray50) !important;
   box-shadow: 0.25rem 0.25rem 0.5rem 0 rgba(46, 52, 64, 0.1) !important;
   margin-block-start: -4px;
-  transition: none !important;
 }

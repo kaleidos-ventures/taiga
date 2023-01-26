@@ -6,27 +6,9 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
 
-@keyframes show-hint {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
 tui-hint {
   @mixin font-inline;
 
   --tui-primary: var(--color-gray100);
   --tui-radius-l: 4px;
-
-  /*
-  Setting UI_ANIMATION_OPTIONS duration to 0 causes the hint to show up in wrong position for some ms. Doing this animation fix the problem.
-  */
-  animation-duration: 0.25s;
-  animation-name: show-hint;
-  /* stylelint-disable-next-line declaration-no-important */
-  transition: none !important;
 }

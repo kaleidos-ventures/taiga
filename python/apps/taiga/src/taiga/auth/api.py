@@ -44,10 +44,10 @@ async def refresh(form: RefreshTokenValidator) -> AccessTokenWithRefreshSerializ
     """
     Get an access and refresh token using a refresh token.
     """
-    data = await auth_services.refresh(token=form.refresh)
-    if not data:
+    if not (refresh_token := await auth_services.refresh(token=form.refresh)):
         raise ex.AuthorizationError()
-    return AccessTokenWithRefreshSerializer(token=data.token, refresh=data.refresh)
+
+    return refresh_token
 
 
 @routes.auth.post(

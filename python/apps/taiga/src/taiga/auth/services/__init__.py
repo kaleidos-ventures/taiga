@@ -6,6 +6,8 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.auth.schemas import AccessWithRefreshTokenSchema
+from taiga.auth.serializers import AccessTokenWithRefreshSerializer
+from taiga.auth.serializers import services as serializers_services
 from taiga.auth.services import exceptions as ex
 from taiga.auth.tokens import AccessToken, RefreshToken
 from taiga.tokens.exceptions import TokenError
@@ -22,7 +24,7 @@ async def login(username: str, password: str) -> AccessWithRefreshTokenSchema | 
     return await create_auth_credentials(user=user)
 
 
-async def refresh(token: str) -> AccessWithRefreshTokenSchema | None:
+async def refresh(token: str) -> AccessTokenWithRefreshSerializer | None:
     # Create a refresh token from a token code
     try:
         refresh_token = await RefreshToken.create(token)
@@ -33,7 +35,7 @@ async def refresh(token: str) -> AccessWithRefreshTokenSchema | None:
     await refresh_token.denylist()
     new_refresh_token = refresh_token.regenerate()
 
-    return AccessWithRefreshTokenSchema(token=str(new_refresh_token.access_token), refresh=str(new_refresh_token))
+    return serializers_services.serialize_access_refresh_token(new_refresh_token)
 
 
 async def authenticate(token: str) -> tuple[list[str], User]:

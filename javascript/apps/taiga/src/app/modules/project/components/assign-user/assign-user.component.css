@@ -117,6 +117,10 @@ ul {
   flex: 1 0 auto;
   max-block-size: 290px;
   overflow: auto;
+
+  &.no-assigness-title {
+    max-block-size: 336px;
+  }
 }
 
 .assigness-search-container {

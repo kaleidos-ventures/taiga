@@ -21,6 +21,7 @@ import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { StoryDetailForm } from '~/app/modules/project/story-detail/story-detail.component';
+import { PermissionsService } from '~/app/services/permissions.service';
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { filterNil } from '~/app/shared/utils/operators';
 
@@ -30,6 +31,7 @@ export interface StoryState {
   showAssignUser: boolean;
   assignees: Story['assignees'];
   currentUser: User;
+  canEdit: boolean;
 }
 @Component({
   selector: 'tg-story-detail-assign',
@@ -49,10 +51,18 @@ export class StoryDetailAssignComponent implements OnChanges {
   public restAssigneesLenght = '';
   public dropdownWidth = 0;
 
-  constructor(private state: RxState<StoryState>, private store: Store) {
+  constructor(
+    private state: RxState<StoryState>,
+    private store: Store,
+    private permissionService: PermissionsService
+  ) {
     this.state.connect(
       'currentUser',
       this.store.select(selectUser).pipe(filterNil())
+    );
+    this.state.connect(
+      'canEdit',
+      this.permissionService.hasPermissions$('story', ['modify'])
     );
   }
 

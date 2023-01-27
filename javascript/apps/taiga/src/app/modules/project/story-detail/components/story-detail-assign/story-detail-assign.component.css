@@ -29,17 +29,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     margin-block-end: var(--spacing-8);
   }
 
+  & .assigned-button-noperm {
+    flex: 1 1 auto;
+  }
+
   & .field-label {
     align-self: flex-start;
     color: var(--color-gray80);
+    display: block;
     flex-shrink: 0;
-    font-weight: var(--font-weight-medium);
+    inline-size: 100%;
     line-height: 32px;
-    min-inline-size: 0;
+    margin-block-end: var(--spacing-4);
     padding-inline-end: var(--spacing-8);
 
-    &[for]:not(.readonly) {
-      cursor: pointer;
+    &:not(.readonly) {
+      font-weight: var(--font-weight-medium);
     }
   }
 
@@ -102,10 +107,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
+.unassigned-button-noperm {
+  color: var(--color-gray80);
+  font-style: italic;
+  line-height: 32px;
+}
+
 @container (inline-size > 280px) {
   .field {
     align-items: center;
     display: flex;
+
+    & .field-label {
+      margin-block-end: 0;
+      max-inline-size: 30%;
+      min-inline-size: 0;
+    }
 
     & .field-content {
       max-inline-size: 70%;

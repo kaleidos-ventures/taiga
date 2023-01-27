@@ -289,60 +289,17 @@ async def test_get_workspace_detail_no_ws_members():
 ##########################################################
 
 
-async def test_get_workspace_summary_admin():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
-    res = await repositories.get_workspace_summary(
-        user_workspace_role_name="admin",
-        filters={"id": workspace.id},
-    )
-
-    assert res.name == workspace.name
-    assert res.user_role == "admin"
-
-
-async def test_get_workspace_summary_member():
-    user = await f.create_user()
-    workspace = await f.create_workspace()
-    ws_member_role = await _get_ws_member_role(workspace=workspace)
-    await f.create_workspace_membership(user=user, workspace=workspace, role=ws_member_role)
-    res = await repositories.get_workspace_summary(
-        user_workspace_role_name="member",
-        filters={"id": workspace.id},
-    )
-
-    assert res.name == workspace.name
-    assert res.user_role == "member"
-
-
-async def test_get_workspace_summary_guest():
-    user = await f.create_user()
-    workspace = await f.create_workspace()
-    await f.create_project(owner=user, workspace=workspace)
-    res = await repositories.get_workspace_summary(
-        user_workspace_role_name="guest",
-        filters={"id": workspace.id},
-    )
-
-    assert res.name == workspace.name
-    assert res.user_role == "guest"
-
-
-async def test_get_workspace_summary_none():
+async def test_get_workspace_summary():
     workspace = await f.create_workspace()
     res = await repositories.get_workspace_summary(
-        user_workspace_role_name="none",
         filters={"id": workspace.id},
     )
-
     assert res.name == workspace.name
-    assert res.user_role == "none"
 
 
 async def test_get_workspace_summary_non_existing():
     non_existing_ws_id = uuid.uuid1()
     res = await repositories.get_workspace_summary(
-        user_workspace_role_name="none",
         filters={"id": non_existing_ws_id},
     )
 

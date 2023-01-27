@@ -200,9 +200,7 @@ class I18N:
         :return a list of locale codes
         :rtype list[str]
         """
-        locale_ids = [
-            get_locale_code(loc_id) for loc_id in localedata.locale_identifiers()  # type: ignore[no-untyped-call]
-        ]
+        locale_ids = [get_locale_code(loc_id) for loc_id in localedata.locale_identifiers()]
         locale_ids.sort()
         return locale_ids
 

@@ -9,7 +9,7 @@ from taiga.base.serializers import UUIDB64, BaseModel
 from taiga.projects.projects.serializers import ProjectLogoMixin
 
 
-class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
+class ProjectNestedSerializer(BaseModel, ProjectLogoMixin):
     id: UUIDB64
     name: str
     slug: str
@@ -20,7 +20,7 @@ class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
         orm_mode = True
 
 
-class ProjectSmallSummarySerializer(BaseModel):
+class ProjectSmallNestedSerializer(BaseModel):
     id: UUIDB64
     name: str
     slug: str

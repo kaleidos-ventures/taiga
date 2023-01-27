@@ -79,9 +79,12 @@ async def test_get_workspace_summary():
         patch("taiga.workspaces.workspaces.services.ws_roles_services", autospec=True) as fake_ws_roles_services,
     ):
         fake_ws_roles_services.get_workspace_role_name.return_value = "admin"
+        fake_workspaces_repo.get_workspace_summary.return_value = workspace
+
         await services.get_workspace_summary(id=workspace.id, user_id=user.id)
+
+        fake_ws_roles_services.get_workspace_role_name.assert_awaited_with(workspace_id=workspace.id, user_id=user.id)
         fake_workspaces_repo.get_workspace_summary.assert_awaited_with(
-            user_workspace_role_name="admin",
             filters={"id": workspace.id},
         )
 

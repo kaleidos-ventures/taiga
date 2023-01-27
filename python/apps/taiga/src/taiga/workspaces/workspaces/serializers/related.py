@@ -14,6 +14,3 @@ class WorkspaceSummarySerializer(BaseModel):
     slug: str
     user_role: str
     is_premium: bool
-
-    class Config:
-        orm_mode = True

@@ -59,6 +59,20 @@ def _apply_filters_to_project_queryset(
     return qs.filter(**filter_data)
 
 
+ProjectSelectRelated = list[
+    Literal[
+        "workspace",
+    ]
+]
+
+
+def _apply_select_related_to_project_queryset(
+    qs: QuerySet[Project],
+    select_related: ProjectSelectRelated,
+) -> QuerySet[Project]:
+    return qs.select_related(*select_related)
+
+
 ProjectPrefetchRelated = list[
     Literal[
         "workspace",
@@ -145,9 +159,11 @@ def list_projects(
 @sync_to_async
 def get_project(
     filters: ProjectFilters = {},
+    select_related: ProjectSelectRelated = ["workspace"],
     prefetch_related: ProjectPrefetchRelated = ["workspace"],
 ) -> Project | None:
     qs = _apply_filters_to_project_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_project_queryset(qs=qs, select_related=select_related)
     qs = _apply_prefetch_related_to_project_queryset(qs=qs, prefetch_related=prefetch_related)
 
     try:
@@ -181,12 +197,6 @@ def get_total_projects(
 ) -> int:
     qs = _apply_filters_to_project_queryset(filters=filters, qs=DEFAULT_QUERYSET)
     return qs.distinct().count()
-
-
-@sync_to_async
-def project_is_in_premium_workspace(project: Project) -> bool:
-    # TODO: this method should be solved in the service with a "select_related" query
-    return project.workspace.is_premium
 
 
 ##########################################################

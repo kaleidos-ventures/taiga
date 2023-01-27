@@ -9,7 +9,7 @@ from uuid import UUID
 
 from fastapi import Query
 from fastapi.params import Depends
-from taiga.base.api import AuthRequest
+from taiga.base.api import AuthRequest, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
@@ -19,7 +19,7 @@ from taiga.permissions import services as permissions_services
 from taiga.projects.projects import services as projects_services
 from taiga.projects.projects.api.validators import PermissionsValidator, ProjectValidator, UpdateProjectValidator
 from taiga.projects.projects.models import Project
-from taiga.projects.projects.serializers import ProjectSerializer, ProjectSummarySerializer
+from taiga.projects.projects.serializers import ProjectDetailSerializer, ProjectSummarySerializer
 from taiga.routers import routes
 from taiga.workspaces.workspaces.api import get_workspace_or_404
 
@@ -34,6 +34,9 @@ UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 
+# HTTP 200 RESPONSES
+PROJECT_DETAIL_200 = responses.http_status_200(model=ProjectDetailSerializer)
+
 
 ##########################################################
 # create project
@@ -44,13 +47,12 @@ UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
     "",
     name="projects.create",
     summary="Create project",
-    response_model=ProjectSerializer,
-    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=PROJECT_DETAIL_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_project(
     request: AuthRequest,
     form: ProjectValidator = Depends(ProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
-) -> Project:
+) -> ProjectDetailSerializer:
     """
     Create project for the logged user in a given workspace.
     """
@@ -86,9 +88,7 @@ async def list_workspace_projects(
     List projects of a workspace visible by the user.
     """
     workspace = await get_workspace_or_404(id=workspace_id)
-
     await check_permissions(permissions=LIST_WORKSPACE_PROJECTS, user=request.user, obj=workspace)
-
     return await projects_services.list_workspace_projects_for_user(workspace=workspace, user=request.user)
 
 
@@ -106,9 +106,7 @@ async def list_workspace_invited_projects(
     Get all the invitations to projects that  a user has in a workspace
     """
     workspace = await get_workspace_or_404(id=workspace_id)
-
     await check_permissions(permissions=LIST_WORKSPACE_INVITED_PROJECTS, user=request.user, obj=workspace)
-
     return await projects_services.list_workspace_invited_projects_for_user(workspace=workspace, user=request.user)
 
 
@@ -121,10 +119,11 @@ async def list_workspace_invited_projects(
     "/{id}",
     name="project.get",
     summary="Get project",
-    response_model=ProjectSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=PROJECT_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def get_project(request: AuthRequest, id: B64UUID = Query("", description="the project id (B64UUID)")) -> Project:
+async def get_project(
+    request: AuthRequest, id: B64UUID = Query("", description="the project id (B64UUID)")
+) -> ProjectDetailSerializer:
     """
     Get project detail by id.
     """
@@ -182,14 +181,13 @@ async def list_project_workspace_member_permissions(
     "/{id}",
     name="project.update",
     summary="Update project",
-    response_model=ProjectSerializer,
-    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=PROJECT_DETAIL_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def update_project(
     request: AuthRequest,
     id: B64UUID = Query("", description="the project id (B64UUID)"),
     form: UpdateProjectValidator = Depends(UpdateProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
-) -> Project:
+) -> ProjectDetailSerializer:
     """
     Update project
     """

@@ -236,11 +236,9 @@ def get_workspace_detail(
 
 @sync_to_async
 def get_workspace_summary(
-    user_workspace_role_name: str,
     filters: WorkspaceFilters = {},
 ) -> Workspace | None:
     qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
-    qs = qs.annotate(user_role=Value(user_workspace_role_name, output_field=CharField()))
     try:
         return qs.get()
     except Workspace.DoesNotExist:

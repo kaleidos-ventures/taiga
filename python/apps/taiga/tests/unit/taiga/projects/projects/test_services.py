@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+import uuid
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -13,6 +14,7 @@ from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects import services
 from taiga.projects.projects.services import exceptions as ex
 from taiga.users.models import AnonymousUser
+from taiga.workspaces.workspaces.serializers.related import WorkspaceSummarySerializer
 from tests.utils import factories as f
 from tests.utils.images import valid_image_upload_file
 
@@ -166,51 +168,64 @@ async def test_get_project_detail():
 
     with (
         patch("taiga.projects.projects.services.permissions_services", autospec=True) as fake_permissions_services,
-        patch(
-            "taiga.projects.projects.services.pj_memberships_repositories", autospec=True
-        ) as fake_pj_memberships_repositories,
         patch("taiga.projects.projects.services.workspaces_services", autospec=True) as fake_workspaces_services,
     ):
         fake_permissions_services.get_user_project_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_workspace_role_info.return_value = (True, True, [])
-        fake_permissions_services.get_user_permissions_for_project.return_value = (True, True, [])
-        fake_workspaces_services.get_workspace_summary.return_value = workspace
+        fake_permissions_services.get_user_permissions_for_project.return_value = []
+        fake_permissions_services.has_pending_project_invitation.return_value = True
+        fake_workspaces_services.get_workspace_summary.return_value = WorkspaceSummarySerializer(
+            id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin", is_premium=True
+        )
         await services.get_project_detail(project=project, user=user)
 
-        fake_permissions_services.get_user_project_role_info.assert_awaited_once()
-        fake_permissions_services.get_user_workspace_role_info.assert_awaited_once()
-        fake_permissions_services.get_user_permissions_for_project.assert_awaited_once()
-        fake_workspaces_services.get_workspace_summary.assert_awaited_once()
-        fake_permissions_services.has_pending_project_invitation.assert_awaited_once()
-        fake_pj_memberships_repositories.exist_project_membership.assert_awaited_once()
+        fake_permissions_services.get_user_project_role_info.assert_awaited_once_with(project=project, user=user)
+        fake_permissions_services.get_user_workspace_role_info.assert_awaited_once_with(user=user, workspace=workspace)
+        fake_permissions_services.get_user_permissions_for_project.assert_awaited_once_with(
+            is_authenticated=True,
+            is_project_admin=True,
+            is_workspace_admin=True,
+            is_project_member=True,
+            is_workspace_member=True,
+            project_role_permissions=[],
+            project=project,
+        )
+        fake_permissions_services.has_pending_project_invitation.assert_awaited_once_with(user=user, project=project)
+        fake_workspaces_services.get_workspace_summary.assert_awaited_once_with(id=workspace.id, user_id=user.id)
 
 
 async def test_get_project_detail_anonymous():
-    anonymous_user = AnonymousUser()
-    user = f.build_user()
-    workspace = f.build_workspace(owner=user)
+    user = AnonymousUser()
+    workspace = f.build_workspace()
     permissions = ["add_task", "view_task", "modify_story", "view_story"]
-    project = f.build_project(owner=user, workspace=workspace, public_permissions=permissions)
+    project = f.build_project(workspace=workspace, public_permissions=permissions)
 
     with (
         patch("taiga.projects.projects.services.permissions_services", autospec=True) as fake_permissions_services,
-        patch(
-            "taiga.projects.projects.services.pj_memberships_repositories", autospec=True
-        ) as fake_pj_memberships_repositories,
         patch("taiga.projects.projects.services.workspaces_services", autospec=True) as fake_workspaces_services,
     ):
         fake_permissions_services.get_user_project_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_workspace_role_info.return_value = (True, True, [])
-        fake_permissions_services.get_user_permissions_for_project.return_value = (True, True, [])
-        fake_workspaces_services.get_workspace_summary.return_value = workspace
-        await services.get_project_detail(project=project, user=anonymous_user)
+        fake_permissions_services.get_user_permissions_for_project.return_value = []
+        fake_permissions_services.has_pending_project_invitation.return_value = False
+        fake_workspaces_services.get_workspace_summary.return_value = WorkspaceSummarySerializer(
+            id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin", is_premium=True
+        )
+        await services.get_project_detail(project=project, user=user)
 
-        fake_permissions_services.get_user_project_role_info.assert_awaited_once()
-        fake_permissions_services.get_user_workspace_role_info.assert_awaited_once()
-        fake_permissions_services.get_user_permissions_for_project.assert_awaited_once()
-        fake_workspaces_services.get_workspace_summary.assert_awaited_once()
+        fake_permissions_services.get_user_project_role_info.assert_awaited_once_with(project=project, user=user)
+        fake_permissions_services.get_user_workspace_role_info.assert_awaited_once_with(user=user, workspace=workspace)
+        fake_permissions_services.get_user_permissions_for_project.assert_awaited_once_with(
+            is_authenticated=False,
+            is_project_admin=True,
+            is_workspace_admin=True,
+            is_project_member=True,
+            is_workspace_member=True,
+            project_role_permissions=[],
+            project=project,
+        )
         fake_permissions_services.has_pending_project_invitation.assert_not_awaited()
-        fake_pj_memberships_repositories.exist_project_membership.assert_awaited_once()
+        fake_workspaces_services.get_workspace_summary.assert_awaited_once_with(id=workspace.id, user_id=user.id)
 
 
 ##########################################################

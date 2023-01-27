@@ -10,7 +10,7 @@ from uuid import UUID
 from pydantic import EmailStr, validator
 from taiga.base.serializers import BaseModel
 from taiga.projects.invitations.choices import ProjectInvitationStatus
-from taiga.projects.projects.serializers.related import ProjectSmallSummarySerializer
+from taiga.projects.projects.serializers.nested import ProjectSmallNestedSerializer
 from taiga.projects.roles.serializers.nested import ProjectRoleNestedSerializer
 from taiga.users.serializers.nested import UserNestedSerializer
 
@@ -20,7 +20,7 @@ class PublicProjectInvitationSerializer(BaseModel):
     email: EmailStr
     existing_user: bool
     available_logins: list[str]
-    project: ProjectSmallSummarySerializer
+    project: ProjectSmallNestedSerializer
 
     class Config:
         orm_mode = True
@@ -28,7 +28,7 @@ class PublicProjectInvitationSerializer(BaseModel):
 
 class ProjectInvitationSerializer(BaseModel):
     id: UUID
-    project: ProjectSmallSummarySerializer
+    project: ProjectSmallNestedSerializer
     user: UserNestedSerializer | None
     role: ProjectRoleNestedSerializer
     email: EmailStr

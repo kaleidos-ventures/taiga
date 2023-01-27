@@ -21,7 +21,7 @@ class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
         orm_mode = True
 
 
-class ProjectSerializer(BaseModel, ProjectLogoMixin):
+class ProjectDetailSerializer(BaseModel, ProjectLogoMixin):
     id: UUIDB64
     name: str
     slug: str

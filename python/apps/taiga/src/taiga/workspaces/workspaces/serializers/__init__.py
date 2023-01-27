@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import UUIDB64, BaseModel
-from taiga.projects.projects.serializers.related import ProjectSummarySerializer
+from taiga.projects.projects.serializers.nested import ProjectNestedSerializer
 
 
 class WorkspaceDetailSerializer(BaseModel):
@@ -14,8 +14,8 @@ class WorkspaceDetailSerializer(BaseModel):
     name: str
     slug: str
     color: int
-    latest_projects: list[ProjectSummarySerializer]
-    invited_projects: list[ProjectSummarySerializer]
+    latest_projects: list[ProjectNestedSerializer]
+    invited_projects: list[ProjectNestedSerializer]
     total_projects: int
     has_projects: bool
     is_premium: bool

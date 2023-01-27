@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from typing import cast
 from uuid import UUID
 
 from taiga.permissions import choices
@@ -15,6 +16,7 @@ from taiga.workspaces.roles import repositories as ws_roles_repositories
 from taiga.workspaces.roles import services as ws_roles_services
 from taiga.workspaces.workspaces import repositories as workspaces_repositories
 from taiga.workspaces.workspaces.models import Workspace
+from taiga.workspaces.workspaces.serializers.related import WorkspaceSummarySerializer
 
 ##########################################################
 # create workspace
@@ -65,11 +67,23 @@ async def get_workspace_detail(id: UUID, user_id: UUID | None) -> Workspace | No
     )
 
 
-async def get_workspace_summary(id: UUID, user_id: UUID | None) -> Workspace | None:
+# TODO: change this name to `get_workspace_nested`
+async def get_workspace_summary(id: UUID, user_id: UUID | None) -> WorkspaceSummarySerializer:
+    # TODO: this service should be improved
     user_workspace_role_name = await ws_roles_services.get_workspace_role_name(workspace_id=id, user_id=user_id)
-    return await workspaces_repositories.get_workspace_summary(
-        filters={"id": id},
-        user_workspace_role_name=user_workspace_role_name,
+    workspace = cast(
+        Workspace,
+        await workspaces_repositories.get_workspace_summary(
+            filters={"id": id},
+        ),
+    )
+    # TODO: take this code to a workspaces/serializers/services.py
+    return WorkspaceSummarySerializer(
+        id=workspace.id,
+        name=workspace.name,
+        slug=workspace.slug,
+        user_role=user_workspace_role_name,
+        is_premium=workspace.is_premium,
     )
 
 

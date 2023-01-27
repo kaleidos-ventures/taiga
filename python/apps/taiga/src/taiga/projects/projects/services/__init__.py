@@ -22,6 +22,8 @@ from taiga.projects.projects import events as projects_events
 from taiga.projects.projects import repositories as projects_repositories
 from taiga.projects.projects import tasks as projects_tasks
 from taiga.projects.projects.models import Project
+from taiga.projects.projects.serializers import ProjectDetailSerializer
+from taiga.projects.projects.serializers import services as serializers_services
 from taiga.projects.projects.services import exceptions as ex
 from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.users.models import AnyUser, User
@@ -50,10 +52,11 @@ async def create_project(
         workspace=workspace, name=name, description=description, color=color, owner=owner, logo=logo_file
     )
 
+    # apply template
     template = await projects_repositories.get_project_template(filters={"slug": settings.DEFAULT_PROJECT_TEMPLATE})
     await projects_repositories.apply_template_to_project(template=template, project=project)
 
-    # assign the owner to the project as the default owner role (should be 'admin')
+    # assign the owner to the project as the default role for owner (should be 'admin')
     owner_role = await (
         pj_roles_repositories.get_project_role(filters={"project_id": project.id, "slug": template.default_owner_role})
     )
@@ -61,7 +64,6 @@ async def create_project(
         owner_role = await (
             pj_roles_repositories.get_project_roles(filters={"project_id": project.id}, offset=0, limit=1)[0]
         )
-
     await pj_memberships_repositories.create_project_membership(user=owner, project=project, role=owner_role)
 
     return project
@@ -101,7 +103,7 @@ async def list_workspace_invited_projects_for_user(workspace: Workspace, user: U
 
 
 async def list_workspace_member_permissions(project: Project) -> list[str]:
-    if not await projects_repositories.project_is_in_premium_workspace(project):
+    if not project.workspace.is_premium:
         raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be seen")
 
     return project.workspace_member_permissions or []
@@ -113,55 +115,53 @@ async def list_workspace_member_permissions(project: Project) -> list[str]:
 
 
 async def get_project(id: UUID) -> Project | None:
-    return await projects_repositories.get_project(filters={"id": id})
+    return await projects_repositories.get_project(
+        filters={"id": id},
+        select_related=["workspace"],
+    )
 
 
-async def get_project_detail(project: Project, user: AnyUser) -> Project:
-    # TODO: This function needs to be refactored. A Project model object is modified by adding new attributes.
-    #       This should be done with a dataclass (for example) that clearly defines and types the content.
+async def get_project_detail(project: Project, user: AnyUser) -> ProjectDetailSerializer:
     (
         is_project_admin,
         is_project_member,
         project_role_permissions,
     ) = await permissions_services.get_user_project_role_info(user=user, project=project)
-    (is_workspace_admin, is_workspace_member, _) = await permissions_services.get_user_workspace_role_info(
-        user=user, workspace=project.workspace
+
+    (
+        is_workspace_admin,
+        is_workspace_member,
+        _,
+    ) = await permissions_services.get_user_workspace_role_info(user=user, workspace=project.workspace)
+
+    user_id = None if user.is_anonymous else user.id
+    workspace = await workspaces_services.get_workspace_summary(id=project.workspace_id, user_id=user_id)
+
+    user_permissions = await permissions_services.get_user_permissions_for_project(
+        is_project_admin=is_project_admin,
+        is_workspace_admin=is_workspace_admin,
+        is_project_member=is_project_member,
+        is_workspace_member=is_workspace_member,
+        is_authenticated=user.is_authenticated,
+        project_role_permissions=project_role_permissions,
+        project=project,
     )
 
-    workspace = await workspaces_services.get_workspace_summary(
-        id=project.workspace.id,
-        user_id=user.id,  # type: ignore[arg-type]
-    )
-    if not workspace:
-        # this should never happen
-        raise NotImplementedError
-
-    project.workspace = workspace
-
-    # User related fields
-    project.user_permissions = (  # type: ignore[attr-defined]
-        await permissions_services.get_user_permissions_for_project(
-            is_project_admin=is_project_admin,
-            is_workspace_admin=is_workspace_admin,
-            is_project_member=is_project_member,
-            is_workspace_member=is_workspace_member,
-            is_authenticated=user.is_authenticated,
-            project_role_permissions=project_role_permissions,
-            project=project,
-        )
-    )
-
-    project.user_is_admin = is_project_admin  # type: ignore[attr-defined]
-    project.user_is_member = await pj_memberships_repositories.exist_project_membership(  # type: ignore[attr-defined]
-        filters={"project_id": project.id, "user_id": user.id}
-    )
-    project.user_has_pending_invitation = (  # type: ignore[attr-defined]
+    user_has_pending_invitation = (
         False
         if user.is_anonymous
+        # TODO: `has_pending_project_invitation` belongs to project, no to permissions
         else await (permissions_services.has_pending_project_invitation(user=user, project=project))
     )
 
-    return project
+    return serializers_services.serialize_project_detail(
+        project=project,
+        workspace=workspace,
+        user_is_admin=is_project_admin,
+        user_is_member=is_project_member,
+        user_permissions=user_permissions,
+        user_has_pending_invitation=user_has_pending_invitation,
+    )
 
 
 ##########################################################
@@ -211,11 +211,10 @@ async def update_project_public_permissions(project: Project, permissions: list[
 
 
 async def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:
-    if not await projects_repositories.project_is_in_premium_workspace(project):
+    if not project.workspace.is_premium:
         raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be set")
 
     await projects_repositories.update_project(project=project, values={"workspace_member_permissions": permissions})
-
     await projects_events.emit_event_when_project_permissions_are_updated(project=project)
     if not permissions:
         await actions_events.emit_event_action_to_check_project_subscription(project_b64id=project.b64id)

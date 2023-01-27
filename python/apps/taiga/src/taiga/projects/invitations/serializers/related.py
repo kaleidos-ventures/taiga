@@ -7,12 +7,12 @@
 
 from taiga.base.serializers import BaseModel
 from taiga.projects.invitations.choices import ProjectInvitationStatus
-from taiga.projects.projects.serializers.related import ProjectSmallSummarySerializer
+from taiga.projects.projects.serializers.nested import ProjectSmallNestedSerializer
 
 
 class ProjectInvitationSummaryVerifyUserSerializer(BaseModel):
     status: ProjectInvitationStatus
-    project: ProjectSmallSummarySerializer
+    project: ProjectSmallNestedSerializer
 
     class Config:
         orm_mode = True

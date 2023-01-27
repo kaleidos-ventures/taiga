@@ -18,6 +18,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [style.max-inline-size]="setMaxInlineSize()"
       [style.inline-size]="setWidth()">
       <div
+        *ngIf="!hideAssigned"
         class="assignees-wrapper"
         data-test="assignees-wrapper">
         <h2
@@ -37,7 +38,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           }}</ng-container>
         </h2>
       </div>
-      <tui-scrollbar class="assigness-container">
+      <tui-scrollbar
+        class="assigness-container"
+        [class.no-assigness-title]="hideAssigned">
         <ul *ngIf="vm.assigned.length">
           <li
             class="option"

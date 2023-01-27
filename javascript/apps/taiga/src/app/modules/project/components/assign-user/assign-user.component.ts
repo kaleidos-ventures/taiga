@@ -106,6 +106,9 @@ export class AssignUserComponent implements OnInit, OnDestroy {
   public width = 0;
 
   @Input()
+  public hideAssigned = false;
+
+  @Input()
   public set assigned(members: Story['assignees']) {
     const currentUser = this.state.get('currentUser');
     const currentUserAssigned = members.find((member) => {

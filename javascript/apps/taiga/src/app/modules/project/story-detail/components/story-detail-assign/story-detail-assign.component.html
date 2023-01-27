@@ -9,7 +9,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <div class="field">
-      <span class="field-label">{{ t('common_story.assigned_to') }}</span>
+      <span
+        class="field-label"
+        [class.readonly]="!vm.canEdit"
+        >{{ t('common_story.assigned_to') }}</span
+      >
       <div
         *hasPermission="
           ['modify'];
@@ -128,6 +132,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     <ng-template #assignUser>
       <tg-assign-user
+        [hideAssigned]="true"
         [width]="dropdownWidth"
         [assigned]="vm.assignees"
         (assign)="assign($event)"

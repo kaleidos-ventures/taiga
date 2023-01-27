@@ -45,7 +45,6 @@
     "help": "Help",
     "notification": "Notification",
     "notification_desc": "{notifications, plural, =0 {no notifications} one {1 notification} other {# notifications}}",
-    "user_avatar": "User Avatar",
     "create_account": "Create account",
     "log_in": "Log in",
     "new_tab": "Opens in a new tab",

@@ -128,13 +128,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [(open)]="openUserDropdown">
           <button
             class="avatar-dropdown-button"
-            [attr.aria-label]="t('user_avatar')"
+            [attr.aria-label]="user.fullName"
             type="button"
             data-test="user-settings">
             <tg-user-avatar
+              aria-hidden="true"
               [color]="user.color"
               [rounded]="true"
-              [attr.title]="t('user_avatar')"></tg-user-avatar>
+              [attr.title]="user.fullName"></tg-user-avatar>
           </button>
         </tui-hosted-dropdown>
       </div>

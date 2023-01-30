@@ -115,7 +115,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [attr.aria-label]="t('story_options')"
                 icon="more-vertical"
                 appearance="tertiary"
-                class="delete-story"
                 tuiIconButton
                 type="button"
                 tuiHintDirection="top-right"
@@ -160,6 +159,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             <tui-data-list class="story-options-list">
               <button
                 class="story-option"
+                *hasPermission="['modify']; entity: 'story'"
                 tuiOption
                 type="button"
                 (click)="deleteStoryConfirmModal()">

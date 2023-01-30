@@ -154,6 +154,17 @@ export class KanbanEffects {
     );
   });
 
+  public deleteStoryByEvent$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanEventsActions.deleteStory),
+      map((action) => {
+        return KanbanActions.deleteStory({
+          ref: action.ref,
+        });
+      })
+    );
+  });
+
   public moveStoryKeyboard$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(KanbanActions.dropStoryA11y),

@@ -154,12 +154,12 @@ export class StoryDetailEffects {
       pessimisticUpdate({
         run: (action) => {
           return this.projectApiService
-            .deleteStory(action.project.id, action.story.ref)
+            .deleteStory(action.project.id, action.ref)
             .pipe(
               map(() => {
                 return StoryDetailApiActions.deleteStorySuccess({
                   project: action.project,
-                  story: action.story,
+                  ref: action.ref,
                 });
               })
             );
@@ -185,8 +185,8 @@ export class StoryDetailEffects {
       return this.actions$.pipe(
         ofType(StoryDetailApiActions.deleteStorySuccess),
         map((action) => {
-          void this.router.navigate([
-            `/project/${action.project.id}/${action.project.slug}/stories/${action.story.ref}`,
+          return void this.router.navigate([
+            `/project/${action.project.id}/${action.project.slug}/kanban`,
           ]);
         })
       );

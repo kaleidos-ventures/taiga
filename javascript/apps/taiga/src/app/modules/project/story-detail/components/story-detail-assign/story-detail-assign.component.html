@@ -47,11 +47,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     <ng-template #displayUsersTpl>
       <ul
+        #assignedMemberList
+        tabindex="0"
         class="assigned-users-list"
         [attr.aria-label]="t('common_story.assigned_members')">
         <li
           class="assigned-user"
-          *ngFor="let assignedUser of vm.assignees; trackBy: trackByIndex">
+          *ngFor="
+            let assignedUser of vm.assignees;
+            trackBy: trackByIndex;
+            index as i
+          ">
           <tg-user-avatar
             size="l"
             class="assigned-user-avatar"
@@ -71,8 +77,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             ">
           </label>
           <button
+            #assigned
             *hasPermission="['modify']; entity: 'story'"
-            (click)="unassign(assignedUser)"
+            (keydown.enter)="unassignFromList($event, assignedUser)"
+            (click)="unassignFromList($event, assignedUser)"
             [attr.aria-label]="
               t('project.assign_user.unassign-aria', {
                 name: assignedUser.fullName,
@@ -111,8 +119,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div class="not-assigned">
         <span> {{ t('common_story.not_assigned') }} </span>
         <button
+          #addAssignee
           tuiButton
           appearance="tertiary"
+          id="add-assignee"
           icon="user-plus"
           type="button"
           (click)="toggleAssignUser($event)"

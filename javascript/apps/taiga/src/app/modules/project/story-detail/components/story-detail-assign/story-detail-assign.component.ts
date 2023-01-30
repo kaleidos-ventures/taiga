@@ -6,14 +6,21 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   Input,
   OnChanges,
+  QueryList,
   SimpleChanges,
+  ViewChild,
+  ViewChildren,
+  ViewContainerRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { TranslocoService } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Membership, Project, Status, Story, User } from '@taiga/data';
@@ -46,6 +53,15 @@ export class StoryDetailAssignComponent implements OnChanges {
   @Input()
   public story!: KanbanStory;
 
+  @ViewChildren('assigned', { read: ViewContainerRef })
+  public listedAssigneds!: QueryList<ViewContainerRef>;
+
+  @ViewChild('assignedMemberList')
+  public assignedMemberList!: ElementRef<HTMLElement>;
+
+  @ViewChild('addAssignee', { read: ElementRef, static: false })
+  public addAssignee!: ElementRef<HTMLElement>;
+
   public model$ = this.state.select();
   public assignedListA11y = '';
   public restAssigneesLenght = '';
@@ -54,7 +70,9 @@ export class StoryDetailAssignComponent implements OnChanges {
   constructor(
     private state: RxState<StoryState>,
     private store: Store,
-    private permissionService: PermissionsService
+    private permissionService: PermissionsService,
+    private translocoService: TranslocoService,
+    private liveAnnouncer: LiveAnnouncer
   ) {
     this.state.connect(
       'currentUser',
@@ -115,6 +133,40 @@ export class StoryDetailAssignComponent implements OnChanges {
       this.store.dispatch(
         StoryDetailActions.unassignMember({ member, storyRef: this.story.ref })
       );
+    }
+  }
+
+  public unassignFromList(event: Event, member: Membership['user']) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (this.story.ref) {
+      this.store.dispatch(
+        StoryDetailActions.unassignMember({ member, storyRef: this.story.ref })
+      );
+      if (event.type === 'keydown') {
+        const announcement = this.translocoService.translate(
+          'common_story.unassigned-aria',
+          {
+            name: member.fullName,
+          }
+        );
+        this.liveAnnouncer.announce(announcement, 'assertive').then(
+          () => {
+            setTimeout(() => {
+              if (this.listedAssigneds.length) {
+                this.assignedMemberList.nativeElement.focus();
+              } else {
+                requestAnimationFrame(() => {
+                  this.addAssignee.nativeElement.focus();
+                });
+              }
+            }, 50);
+          },
+          () => {
+            // error
+          }
+        );
+      }
     }
   }
 

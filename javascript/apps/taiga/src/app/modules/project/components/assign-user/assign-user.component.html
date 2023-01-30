@@ -18,10 +18,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [style.max-inline-size]="setMaxInlineSize()"
       [style.inline-size]="setWidth()">
       <div
-        *ngIf="!hideAssigned"
         class="assignees-wrapper"
+        [class.visually-hidden]="hideAssigned"
         data-test="assignees-wrapper">
         <h2
+          #assignUserLabel
           tgAutoFocus
           tabindex="-1"
           id="assign-user-dialog-label"
@@ -41,7 +42,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <tui-scrollbar
         class="assigness-container"
         [class.no-assigness-title]="hideAssigned">
-        <ul *ngIf="vm.assigned.length">
+        <ul
+          #assignedList
+          *ngIf="vm.assigned.length"
+          tabindex="-1"
+          [attr.aria-label]="t('project.assign_user.title')">
           <li
             class="option"
             *ngFor="

@@ -15,7 +15,6 @@
     "search-members": "Search members",
     "member-disabled": "This user does not have access to stories.",
     "unassign-aria": "{{ name }} {{ username }}. Enter to unassign.",
-    "unassigned-aria": "{{ name }} unassigned.",
     "assign-aria": "{{ name }} {{ username }}. Enter to assign.",
     "assigned-aria": "{{ name }} assigned.",
     "disabled-user-aria": "{{ name }} {{ username }}. This user does not have access to stories."

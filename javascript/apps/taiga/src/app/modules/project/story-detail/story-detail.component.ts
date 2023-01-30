@@ -22,6 +22,7 @@ import {
 import { FormControl, FormGroup } from '@angular/forms';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiButtonComponent } from '@taiga-ui/core';
@@ -98,6 +99,8 @@ export class StoryDetailComponent {
   public collapsedSet = false;
   public linkCopied = false;
   public dropdownState = false;
+  public storyOptionsState = false;
+  public showDeleteStoryConfirm = false;
   public hintShown = false;
   public storyViewOptions: { id: StoryView; translation: string }[] = [
     {
@@ -138,7 +141,8 @@ export class StoryDetailComponent {
     private location: Location,
     private permissionService: PermissionsService,
     private wsService: WsService,
-    private state: RxState<StoryDetailState>
+    private state: RxState<StoryDetailState>,
+    private actions$: Actions
   ) {
     this.state.connect(
       'project',
@@ -318,5 +322,23 @@ export class StoryDetailComponent {
     } else {
       (this.storyRef.nativeElement as HTMLElement).focus();
     }
+  }
+
+  public closeDeleteStoryConfirmModal() {
+    this.showDeleteStoryConfirm = false;
+  }
+
+  public deleteStoryConfirmModal() {
+    this.storyOptionsState = false;
+    this.showDeleteStoryConfirm = true;
+  }
+
+  public deleteStory() {
+    this.store.dispatch(
+      StoryDetailActions.deleteStory({
+        story: this.state.get('story'),
+        project: this.state.get('project'),
+      })
+    );
   }
 }

@@ -615,7 +615,12 @@ export const reducer = createReducer(
 
       return state;
     }
-  )
+  ),
+  on(StoryDetailActions.deleteStory, (state, { story }): KanbanState => {
+    state = removeStory(state, (it) => it.ref === story.ref);
+
+    return state;
+  })
 );
 
 export const kanbanFeature = createFeature({

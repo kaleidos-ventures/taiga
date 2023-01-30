@@ -148,6 +148,52 @@ export class StoryDetailEffects {
     );
   });
 
+  public deleteStory$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(StoryDetailActions.deleteStory),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.projectApiService
+            .deleteStory(action.project.id, action.story.ref)
+            .pipe(
+              map(() => {
+                return StoryDetailApiActions.deleteStorySuccess({
+                  project: action.project,
+                  story: action.story,
+                });
+              })
+            );
+        },
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          this.appService.errorManagement(httpResponse, {
+            any: {
+              type: 'toast',
+              options: {
+                label: 'errors.generic_toast_label',
+                message: 'errors.generic_toast_message',
+                status: TuiNotification.Error,
+              },
+            },
+          });
+        },
+      })
+    );
+  });
+
+  public deleteStoryRedirect$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(StoryDetailApiActions.deleteStorySuccess),
+        map((action) => {
+          void this.router.navigate([
+            `/project/${action.project.id}/${action.project.slug}/stories/${action.story.ref}`,
+          ]);
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   public assign$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(StoryDetailActions.assignMember),

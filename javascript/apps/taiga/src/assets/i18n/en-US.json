@@ -128,6 +128,7 @@
     "not_assigned": "Not assigned",
     "add_assignee": "Add assignee",
     "story_not_assigned_enter": "{{common_story.story_not_assigned}} Press enter to assign",
-    "assigned_members": "Assigned members"
+    "assigned_members": "Assigned members",
+    "unassigned-aria": "{{ name }} unassigned."
   }
 }

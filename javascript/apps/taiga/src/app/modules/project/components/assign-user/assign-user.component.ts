@@ -87,6 +87,12 @@ export class AssignUserComponent implements OnInit, OnDestroy {
   @ViewChild('searchInput')
   public searchInput!: ElementRef;
 
+  @ViewChild('assignUserLabel', { read: ElementRef, static: false })
+  public assignUserLabel!: ElementRef<HTMLElement>;
+
+  @ViewChild('assignedList', { read: ElementRef, static: false })
+  public assignedList!: ElementRef<HTMLElement>;
+
   @Output()
   public requestClose = new EventEmitter<void>();
 
@@ -289,7 +295,7 @@ export class AssignUserComponent implements OnInit, OnDestroy {
     this.unassign.next(assignedUser);
     if (event.type === 'keydown') {
       const announcement = this.translocoService.translate(
-        'project.assign_user.unassigned-aria',
+        'common_story.unassigned-aria',
         {
           name: assignedUser.fullName,
         }
@@ -297,7 +303,11 @@ export class AssignUserComponent implements OnInit, OnDestroy {
       this.liveAnnouncer.announce(announcement, 'assertive').then(
         () => {
           setTimeout(() => {
-            this.liveAnnouncer.clear();
+            if (this.state.get('assigned').length) {
+              this.assignedList.nativeElement.focus();
+            } else {
+              this.assignUserLabel.nativeElement.focus();
+            }
           }, 50);
         },
         () => {

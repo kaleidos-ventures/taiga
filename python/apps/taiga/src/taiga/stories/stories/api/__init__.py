@@ -9,7 +9,7 @@ from uuid import UUID
 
 from fastapi import Depends, Query, status
 from starlette.responses import Response
-from taiga.base.api import AuthRequest, PaginationQuery, set_pagination
+from taiga.base.api import AuthRequest, PaginationQuery, responses, set_pagination
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
@@ -31,6 +31,12 @@ REORDER_STORIES = HasPerm("modify_story")
 DELETE_STORY = HasPerm("delete_story")
 
 
+# HTTP 200 RESPONSES
+STORY_DETAIL_200 = responses.http_status_200(model=StoryDetailSerializer)
+LIST_STORY_SUMMARY_200 = responses.http_status_200(model=list[StorySummarySerializer])
+REORDER_STORIES_200 = responses.http_status_200(model=ReorderStoriesSerializer)
+
+
 ################################################
 # create story
 ################################################
@@ -40,8 +46,7 @@ DELETE_STORY = HasPerm("delete_story")
     "/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.create",
     summary="Create an story",
-    response_model=StoryDetailSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=STORY_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_story(
     request: AuthRequest,
@@ -69,8 +74,7 @@ async def create_story(
     "/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.list",
     summary="List stories",
-    response_model=list[StorySummarySerializer],
-    responses=ERROR_404 | ERROR_403,
+    responses=LIST_STORY_SUMMARY_200 | ERROR_404 | ERROR_403,
 )
 async def list_stories(
     request: AuthRequest,
@@ -106,8 +110,7 @@ async def list_stories(
     "/{project_id}/stories/{ref}",
     name="project.stories.get",
     summary="Get story",
-    response_model=StoryDetailSerializer,
-    responses=ERROR_404 | ERROR_403,
+    responses=STORY_DETAIL_200 | ERROR_404 | ERROR_403,
 )
 async def get_story(
     request: AuthRequest,
@@ -132,8 +135,7 @@ async def get_story(
     "/{project_id}/stories/{ref}",
     name="project.stories.update",
     summary="Update story",
-    response_model=StoryDetailSerializer,
-    responses=ERROR_404 | ERROR_403,
+    responses=STORY_DETAIL_200 | ERROR_404 | ERROR_403,
 )
 async def update_story(
     request: AuthRequest,
@@ -161,8 +163,7 @@ async def update_story(
     "/{project_id}/workflows/{workflow_slug}/stories/reorder",
     name="project.stories.reorder",
     summary="Reorder stories",
-    response_model=ReorderStoriesSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=REORDER_STORIES_200 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def reorder_stories(
     request: AuthRequest,

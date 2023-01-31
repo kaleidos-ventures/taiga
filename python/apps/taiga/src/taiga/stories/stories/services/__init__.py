@@ -58,7 +58,7 @@ async def create_story(
     )
 
     # Get detailed story
-    detailed_story = await get_detailed_story(project_id=project.id, ref=story.ref)
+    detailed_story = await get_story_detail(project_id=project.id, ref=story.ref)
 
     # Emit event
     await stories_events.emit_event_when_story_is_created(project=project, story=detailed_story)
@@ -113,7 +113,7 @@ async def get_story(project_id: UUID, ref: int) -> Story | None:
     )
 
 
-async def get_detailed_story(project_id: UUID, ref: int) -> StoryDetailSerializer:
+async def get_story_detail(project_id: UUID, ref: int) -> StoryDetailSerializer:
     story = cast(
         Story,
         await stories_repositories.get_story(
@@ -148,7 +148,7 @@ async def update_story(
         raise ex.UpdatingStoryWithWrongVersionError("Updating a story with the wrong version.")
 
     # Get detailed story
-    detailed_story = await get_detailed_story(project_id=story.project_id, ref=story.ref)
+    detailed_story = await get_story_detail(project_id=story.project_id, ref=story.ref)
 
     # Emit event
     await stories_events.emit_event_when_story_is_updated(

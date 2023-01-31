@@ -123,7 +123,7 @@ async def get_story(
     story = await get_story_or_404(project_id=project_id, ref=ref)
     await check_permissions(permissions=GET_STORY, user=request.user, obj=story)
 
-    return await stories_services.get_detailed_story(project_id=project_id, ref=ref)
+    return await stories_services.get_story_detail(project_id=project_id, ref=ref)
 
 
 ################################################

@@ -120,7 +120,7 @@ async def test_list_paginated_stories():
 #######################################################
 
 
-async def test_get_detailed_story_ok():
+async def test_get_story_detail_ok():
     story1 = f.build_story(ref=1)
     story2 = f.build_story(ref=2, project=story1.project, workflow=story1.workflow, status=story1.status)
     story3 = f.build_story(ref=3, project=story1.project, workflow=story1.workflow, status=story1.status)
@@ -131,7 +131,7 @@ async def test_get_detailed_story_ok():
         fake_stories_repo.list_story_neighbors.return_value = neighbors
         fake_stories_repo.list_story_assignees.return_value = [f.build_user()]
 
-        story = await services.get_detailed_story(project_id=story2.project_id, ref=story2.ref)
+        story = await services.get_story_detail(project_id=story2.project_id, ref=story2.ref)
 
         fake_stories_repo.get_story.assert_awaited_once_with(
             filters={"ref": story2.ref, "project_id": story2.project_id},
@@ -148,7 +148,7 @@ async def test_get_detailed_story_ok():
         assert story.next.ref == story3.ref
 
 
-async def test_get_detailed_story_no_neighbors():
+async def test_get_story_detail_no_neighbors():
     story1 = f.build_story(ref=1)
     neighbors = Neighbor(prev=None, next=None)
 
@@ -157,7 +157,7 @@ async def test_get_detailed_story_no_neighbors():
         fake_stories_repo.list_story_neighbors.return_value = neighbors
         fake_stories_repo.list_story_assignees.return_value = [f.build_user()]
 
-        story = await services.get_detailed_story(project_id=story1.project_id, ref=story1.ref)
+        story = await services.get_story_detail(project_id=story1.project_id, ref=story1.ref)
 
         fake_stories_repo.get_story.assert_awaited_once_with(
             filters={"ref": story1.ref, "project_id": story1.project_id},
@@ -193,12 +193,12 @@ async def test_update_story_ok():
         patch(
             "taiga.stories.stories.services._validate_and_process_values_to_update", autospec=True
         ) as fake_validate_and_process,
-        patch("taiga.stories.stories.services.get_detailed_story", autospec=True) as fake_get_detailed_story,
+        patch("taiga.stories.stories.services.get_story_detail", autospec=True) as fake_get_story_detail,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
     ):
         fake_validate_and_process.return_value = values
         fake_stories_repo.update_story.return_value = True
-        fake_get_detailed_story.return_value = detailed_story
+        fake_get_story_detail.return_value = detailed_story
 
         updated_story = await services.update_story(
             story=story,
@@ -215,7 +215,7 @@ async def test_update_story_ok():
             current_version=story.version,
             values=values,
         )
-        fake_get_detailed_story.assert_awaited_once_with(
+        fake_get_story_detail.assert_awaited_once_with(
             project_id=story.project_id,
             ref=story.ref,
         )
@@ -236,7 +236,7 @@ async def test_update_story_error_wrong_version():
         patch(
             "taiga.stories.stories.services._validate_and_process_values_to_update", autospec=True
         ) as fake_validate_and_process,
-        patch("taiga.stories.stories.services.get_detailed_story", autospec=True) as fake_get_detailed_story,
+        patch("taiga.stories.stories.services.get_story_detail", autospec=True) as fake_get_story_detail,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
     ):
         fake_validate_and_process.return_value = values
@@ -253,7 +253,7 @@ async def test_update_story_error_wrong_version():
             current_version=story.version,
             values=values,
         )
-        fake_get_detailed_story.assert_not_awaited()
+        fake_get_story_detail.assert_not_awaited()
         fake_stories_events.emit_event_when_story_is_updated.assert_not_awaited()
 
 

@@ -7,6 +7,7 @@
 
 from taiga.base.serializers import BaseModel
 from taiga.stories.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer
+from taiga.users.serializers.nested import UserNestedSerializer
 
 
 class CreateStoryContent(BaseModel):
@@ -24,3 +25,4 @@ class ReorderStoriesContent(BaseModel):
 
 class DeleteStoryContent(BaseModel):
     ref: int
+    deleted_by: UserNestedSerializer

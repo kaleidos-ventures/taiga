@@ -208,7 +208,7 @@ async def delete_story(
     story = await get_story_or_404(project_id=project_id, ref=ref)
     await check_permissions(permissions=DELETE_STORY, user=request.user, obj=story)
 
-    await stories_services.delete_story(story=story)
+    await stories_services.delete_story(story=story, deleted_by=request.user)
 
 
 ################################################

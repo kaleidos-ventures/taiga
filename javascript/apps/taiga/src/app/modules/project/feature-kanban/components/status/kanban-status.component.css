@@ -16,18 +16,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     border-radius: 4px;
     outline: none;
   }
-
-  &::ng-deep tui-scroll-controls {
-    & .t-thumb {
-      border: 0.15rem solid transparent;
-      /* stylelint-disable-next-line declaration-no-important */
-      inline-size: 0.25rem !important;
-    }
-
-    & .t-bar_vertical {
-      inline-size: var(--spacing-8);
-    }
-  }
 }
 
 .selected-story {

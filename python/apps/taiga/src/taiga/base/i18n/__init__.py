@@ -98,20 +98,19 @@ class I18N:
         :return a `babel.Translations` instance
         :rtype babel.Translations
         """
-
-        locale = self._get_locale(code)
-        if not locale:
+        new_locale = self._get_locale(code)
+        if not new_locale:
             raise UnknownLocaleIdentifierError(code)
+        self.locale = new_locale
 
-        translations = self._translations_cache.get(str(locale), None)
-
+        translations = self._translations_cache.get(str(self.locale), None)
         if translations is None:
             fallback_translations = self._translations_cache.get(
                 str(FALLBACK_LOCALE), Translations.load(TRANSLATION_DIRECTORY, [FALLBACK_LOCALE])
             )
-            translations = Translations.load(TRANSLATION_DIRECTORY, [locale, FALLBACK_LOCALE])
+            translations = Translations.load(TRANSLATION_DIRECTORY, [self.locale, FALLBACK_LOCALE])
             translations.add_fallback(fallback_translations)
-            self._translations_cache[str(locale)] = translations
+            self._translations_cache[str(self.locale)] = translations
 
         return translations
 
@@ -201,9 +200,7 @@ class I18N:
         :return a list of locale codes
         :rtype list[str]
         """
-        locale_ids = [
-            get_locale_code(loc_id) for loc_id in localedata.locale_identifiers()  # type: ignore [no-untyped-call]
-        ]
+        locale_ids = [get_locale_code(loc_id) for loc_id in localedata.locale_identifiers()]
         locale_ids.sort()
         return locale_ids
 

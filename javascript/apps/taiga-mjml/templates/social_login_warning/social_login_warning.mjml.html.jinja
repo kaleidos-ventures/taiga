@@ -26,7 +26,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <mj-text css-class="dm-text"
             mj-class="padding-top-32 padding-bottom-32 font-body">
             <ul class="list list-no-bullets">
-                <li><strong>{% trans %}emails.social_login_warning.time{% endtrans %}</strong> {{login_time | format_datetime}}</li>
+                <li><strong>{% trans %}emails.social_login_warning.time{% endtrans %}</strong> {{ login_time | format_datetime("long") }}</li>
             </ul>
           </mj-text>
           <mj-text css-class="dm-text"

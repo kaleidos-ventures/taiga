@@ -427,8 +427,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                                   <a href="https://taiga.io/">
                                     <img alt="Taiga logo" class="light-image" align="left" padding="0" width="100" src="{{ 'emails/logo-light-mode.png' | static_url }}" />
                                     <!--[if !mso]><! -->
-                                    <div class="dark-image-wrapper" style="mso-hide: all; display: none;"><img alt="Taiga logo" style="display: none;" class="dark-image" align="left" padding="0" width="100" src="{{ 'emails/logo-dark-mode.png' | static_url }}" /></div>
-                                    <!--<![endif]-->
+                                    <div class="dark-image-wrapper" style="mso-hide: all; display: none;"><img alt="Taiga logo" style="display: none;" class="dark-image" align="left" padding="0" width="100" src="{{ 'emails/logo-dark-mode.png' | static_url }}" /></div><!--<![endif]-->
                                   </a>
                                 </td>
                               </tr>
@@ -465,7 +464,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-top:32px;padding-bottom:32px;word-break:break-word;">
                                   <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">
                                     <ul class="list list-no-bullets">
-                                      <li><strong>{% trans %}emails.social_login_warning.time{% endtrans %}</strong> {{login_time | format_datetime}}</li>
+                                      <li><strong>{% trans %}emails.social_login_warning.time{% endtrans %}</strong> {{ login_time | format_datetime("long") }}</li>
                                     </ul>
                                   </div>
                                 </td>

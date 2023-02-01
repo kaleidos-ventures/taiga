@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 {% trans method=login_method %}emails.social_login_warning.method{% endtrans %}
 
-{% trans %}emails.social_login_warning.time{% endtrans %}: {{login_time | format_datetime}}
+{% trans %}emails.social_login_warning.time{% endtrans %}: {{ login_time | format_datetime("long") }}
 
 {% trans support_email=settings.SUPPORT_EMAIL %}emails.social_login_warning.not_you{% endtrans %}
 

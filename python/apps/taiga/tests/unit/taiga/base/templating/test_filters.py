@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 from jinja2 import Environment, select_autoescape
+from taiga.base.i18n import i18n
 from taiga.base.templating.filters import load_filters
 
 env = Environment(autoescape=select_autoescape())
@@ -58,35 +59,55 @@ def test_wbr_split_with_custom_size(text, size, result):
 @pytest.mark.parametrize(
     "value, result",
     [
-        ("2022-06-22T14:53:07.351464+02:00", "22/06/2022 14:53:07 (UTC+02:00)"),
+        ("2022-06-22T14:53:07.351464+02:00", "June 22, 2022 at 2:53:07 PM +0200"),
         (
             datetime(2022, 6, 22, 14, 53, 7, 351464, tzinfo=timezone(timedelta(hours=2))),
-            "22/06/2022 14:53:07 (UTC+02:00)",
+            "June 22, 2022 at 2:53:07 PM +0200",
         ),
     ],
 )
 def test_format_datetime_with_default_format(value, result):
     context = {"value": value}
-
     template = "{{ value | format_datetime }}"
-    assert env.from_string(template).render(**context) == result
+
+    with i18n.use("en-US"):
+        assert env.from_string(template).render(**context) == result
 
 
 @pytest.mark.parametrize(
     "value, format, result",
     [
-        ("2022-06-22T14:53:07.351464+02:00", "%b %d, %Y", "Jun 22, 2022"),
-        (datetime(2022, 6, 22, 14, 53, 7, 351464, tzinfo=timezone(timedelta(hours=2))), "%b %d, %Y", "Jun 22, 2022"),
+        (
+            "2022-06-22T14:53:07.351464+02:00",
+            "yyyy.MM.dd G 'at' HH:mm:ss zzz",
+            "2022.06.22 AD at 14:53:07 +0200",
+        ),
+        (
+            "2022-06-22T14:53:07.351464+02:00",
+            "long",
+            "June 22, 2022 at 2:53:07 PM +0200",
+        ),
+        (
+            datetime(2022, 6, 22, 14, 53, 7, 351464, tzinfo=timezone(timedelta(hours=2))),
+            "yyyy.MM.dd G 'at' HH:mm:ss zzz",
+            "2022.06.22 AD at 14:53:07 +0200",
+        ),
+        (
+            datetime(2022, 6, 22, 14, 53, 7, 351464, tzinfo=timezone(timedelta(hours=2))),
+            "short",
+            "6/22/22, 2:53 PM",
+        ),
     ],
 )
 def test_format_datetime_with_custom_format(value, format, result):
     context = {"value": value, "format": format}
 
-    template = "{{ value | format_datetime(format) }}"
-    assert env.from_string(template).render(**context) == result
+    with i18n.use("en-US"):
+        template = "{{ value | format_datetime(format) }}"
+        assert env.from_string(template).render(**context) == result
 
-    template = "{{ value | format_datetime(format=format) }}"
-    assert env.from_string(template).render(**context) == result
+        template = "{{ value | format_datetime(format=format) }}"
+        assert env.from_string(template).render(**context) == result
 
 
 #########################################################################################

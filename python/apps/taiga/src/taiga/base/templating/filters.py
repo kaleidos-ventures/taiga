@@ -6,10 +6,12 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from datetime import datetime
+from typing import Literal
 from urllib.parse import urljoin
 
 from jinja2 import Environment
 from markupsafe import Markup
+from taiga.base.i18n.formatings import datetime as fmt_datetime
 from taiga.conf import settings
 
 
@@ -39,24 +41,25 @@ def _do_wbr_split(text: str, size: int = 70) -> Markup:
     return Markup("<wbr>").join([text[x : x + size] for x in range(0, len(text), size)])
 
 
-def _format_datetime(value: str | datetime, format: str = "%d/%m/%G %H:%M:%S (%Z)") -> str:
+def _format_datetime(value: str | datetime, format: Literal["full", "long", "mediim", "short"] | str = "long") -> str:
     """
     This filter is used to formatting datetime objects or string with a date in iso format.
-    The default format is ``%x %X (%Z)`` but it can be overweite.
+    The default format is ``long`` but it can be overweite.
 
     .. sourcecode:: jinja
         <p>{{ '2022-06-22T14:53:07.351464+20:00' | format_datetime }}</p>
         <p>{{ datetime.now() | format_datetime("%b %d, %Y") }}</p>
 
     .. sourcecode:: html
-        <p>22/06/2022 14:53:07 (UTC+02:00)</p>
+        <p>February 1, 2023 at 12:15:59 PM UTC</p>
         <p>Jun 22, 2022</p>
     """
     if isinstance(value, str):
         dt = datetime.fromisoformat(value)
     else:
         dt = value
-    return dt.strftime(format)
+
+    return fmt_datetime.format_datetime(dt, format=format)
 
 
 def _static_url(file_path: str) -> str:

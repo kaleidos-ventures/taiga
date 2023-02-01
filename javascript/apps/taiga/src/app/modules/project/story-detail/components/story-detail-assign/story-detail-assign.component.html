@@ -20,13 +20,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           entity: 'story';
           else: noAssignPermissionsTpl
         "
-        class="assign-user field-content"
+        class="field-content"
         (resized)="calculateDropdownWidth($event)">
         <div
           class="dropdown-container"
           [tuiDropdown]="assignUser"
           [tuiDropdownMinHeight]="272"
-          [tuiDropdownMaxHeight]="532"
+          [tuiDropdownMaxHeight]="466"
           [tuiDropdownManual]="vm.showAssignUser"
           [tuiDropdownDirection]="'bottom'"
           [tuiDropdownAlign]="'right'"
@@ -46,53 +46,55 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     <!-- Assigned users temaplate -->
 
     <ng-template #displayUsersTpl>
-      <ul
-        #assignedMemberList
-        tabindex="-1"
-        class="assigned-users-list"
-        [attr.aria-label]="t('common_story.assigned_members')">
-        <li
-          class="assigned-user"
-          *ngFor="
-            let assignedUser of vm.assignees;
-            trackBy: trackByIndex;
-            index as i
-          ">
-          <tg-user-avatar
-            size="l"
-            class="assigned-user-avatar"
-            [color]="assignedUser.color"
-            [user]="assignedUser"
-            type="light"
-            [rounded]="true"
-            aria-hidden="true"
-            [tuiHint]="assignedUser.fullName"
-            [tuiHintDirection]="'bottom-right'"></tg-user-avatar>
-          <label
-            class="assigned-name"
-            [innerHtml]="
-              vm.currentUser.username === assignedUser.username
-                ? t('commons.your_user', { name: assignedUser.fullName })
-                : assignedUser.fullName || assignedUser.username
+      <tui-scrollbar class="assign-user">
+        <ul
+          #assignedMemberList
+          tabindex="-1"
+          class="assigned-users-list"
+          [attr.aria-label]="t('common_story.assigned_members')">
+          <li
+            class="assigned-user"
+            *ngFor="
+              let assignedUser of vm.assignees;
+              trackBy: trackByIndex;
+              index as i
             ">
-          </label>
-          <button
-            #assigned
-            *hasPermission="['modify']; entity: 'story'"
-            (keydown.enter)="unassignFromList($event, assignedUser)"
-            (click)="unassignFromList($event, assignedUser)"
-            [attr.aria-label]="
-              t('project.assign_user.unassign-aria', {
-                name: assignedUser.fullName,
-                username: assignedUser.username
-              })
-            "
-            appearance="tertiary"
-            tuiIconButton
-            icon="close"
-            type="button"></button>
-        </li>
-      </ul>
+            <tg-user-avatar
+              size="l"
+              class="assigned-user-avatar"
+              [color]="assignedUser.color"
+              [user]="assignedUser"
+              type="light"
+              [rounded]="true"
+              aria-hidden="true"
+              [tuiHint]="assignedUser.fullName"
+              [tuiHintDirection]="'bottom-right'"></tg-user-avatar>
+            <label
+              class="assigned-name"
+              [innerHtml]="
+                vm.currentUser.username === assignedUser.username
+                  ? t('commons.your_user', { name: assignedUser.fullName })
+                  : assignedUser.fullName || assignedUser.username
+              ">
+            </label>
+            <button
+              #assigned
+              *hasPermission="['modify']; entity: 'story'"
+              (keydown.enter)="unassignFromList($event, assignedUser)"
+              (click)="unassignFromList($event, assignedUser)"
+              [attr.aria-label]="
+                t('project.assign_user.unassign-aria', {
+                  name: assignedUser.fullName,
+                  username: assignedUser.username
+                })
+              "
+              appearance="tertiary"
+              tuiIconButton
+              icon="close"
+              type="button"></button>
+          </li>
+        </ul>
+      </tui-scrollbar>
       <div
         class="add-assignee"
         *hasPermission="['modify']; entity: 'story'">
@@ -142,7 +144,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
     <ng-template #assignUser>
       <tg-assign-user
-        [hideAssigned]="true"
+        [storyDropdown]="true"
         [width]="dropdownWidth"
         [assigned]="vm.assignees"
         (assign)="assign($event)"

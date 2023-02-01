@@ -112,7 +112,7 @@ export class AssignUserComponent implements OnInit, OnDestroy {
   public width = 0;
 
   @Input()
-  public hideAssigned = false;
+  public storyDropdown = false;
 
   @Input()
   public set assigned(members: Story['assignees']) {

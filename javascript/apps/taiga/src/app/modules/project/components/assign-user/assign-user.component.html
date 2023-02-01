@@ -9,6 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <div
+      [class.story-dropdown]="storyDropdown"
       cdkTrapFocus
       role="dialog"
       id="assign-user-dialog"
@@ -19,7 +20,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       [style.inline-size]="setWidth()">
       <div
         class="assignees-wrapper"
-        [class.visually-hidden]="hideAssigned"
+        [class.story-title]="storyDropdown"
+        [class.visually-hidden]="storyDropdown && vm.assigned.length > 0"
         data-test="assignees-wrapper">
         <h2
           #assignUserLabel
@@ -39,9 +41,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           }}</ng-container>
         </h2>
       </div>
-      <tui-scrollbar
-        class="assigness-container"
-        [class.no-assigness-title]="hideAssigned">
+      <tui-scrollbar class="assigness-container">
         <ul
           #assignedList
           *ngIf="vm.assigned.length"

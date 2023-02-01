@@ -533,6 +533,7 @@ async def test_reorder_story_not_all_stories_exist():
 
 
 async def test_delete_story_fail():
+    user = f.build_user()
     story = f.build_story()
 
     with (
@@ -541,7 +542,7 @@ async def test_delete_story_fail():
     ):
         fake_story_repo.delete_stories.return_value = 0
 
-        await services.delete_story(story=story)
+        await services.delete_story(story=story, deleted_by=user)
         fake_stories_events.emit_event_when_story_is_deleted.assert_not_awaited()
         fake_story_repo.delete_stories.assert_awaited_once_with(
             filters={"id": story.id},
@@ -549,6 +550,7 @@ async def test_delete_story_fail():
 
 
 async def test_delete_story_ok():
+    user = f.build_user()
     story = f.build_story()
 
     with (
@@ -557,9 +559,9 @@ async def test_delete_story_ok():
     ):
         fake_story_repo.delete_stories.return_value = 1
 
-        await services.delete_story(story=story)
+        await services.delete_story(story=story, deleted_by=user)
         fake_stories_events.emit_event_when_story_is_deleted.assert_awaited_once_with(
-            project=story.project, ref=story.ref
+            project=story.project, ref=story.ref, deleted_by=user
         )
         fake_story_repo.delete_stories.assert_awaited_once_with(
             filters={"id": story.id},

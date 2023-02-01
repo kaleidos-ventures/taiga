@@ -385,6 +385,7 @@ Content for:
   ```
   {
       "ref": "story ref (int)"
+      "deleted_by": {... basic user info ...}
   }
   ```
 

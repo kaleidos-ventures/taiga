@@ -9,9 +9,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 tui-scroll-controls {
   & .t-bar_vertical {
+    inline-size: var(--spacing-12) !important;
+
     & .t-thumb {
       background: rgba(196, 196, 196, 1);
-      inline-size: 0.5rem !important;
+      border: 0.15rem solid transparent;
+      inline-size: 0.25rem !important;
       opacity: 1;
 
       &:hover {

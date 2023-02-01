@@ -3,39 +3,7 @@ name: Front - e2e
 on: workflow_dispatch
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    # Install front
-    - name: Node 16
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
-        cache: 'npm'
-        cache-dependency-path: javascript/package-lock.json
-
-    - name: cache npm ci
-      uses: actions/cache@v2
-      id: cache
-      with:
-        path: |
-          ./javascript/node_modules
-          ~/.cache
-        key: ${{ runner.os }}-node-${{ hashFiles('./javascript/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-
-    - name: Install dependencies
-      working-directory: ./javascript
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: npm ci
-      shell: bash
-
   e2e-test:
-    needs: setup
     runs-on: ubuntu-latest
 
     strategy:
@@ -55,19 +23,19 @@ jobs:
         options: '--health-cmd "pg_isready" --health-interval 5s --health-timeout 5s --health-retries 6 --health-start-period 20s'
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Postgres restore fixture
       run: |
         pg_restore --no-privileges --no-owner --dbname="postgres://postgres:postgres@localhost:5432/taiga" "./.github/sql-fixtures/fixtures.sql"
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Enable cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cache-back
       with:
         path: ${{ env.pythonLocation }}
@@ -96,29 +64,23 @@ jobs:
         TAIGA_ACCESS_TOKEN_LIFETIME: 1000000
 
     - name: Node 16
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: '16'
         cache: 'npm'
         cache-dependency-path: javascript/package-lock.json
 
-    - name: cache npm ci
-      uses: actions/cache@v2
-      id: cache
-      with:
-        path: |
-          ./javascript/node_modules
-          ~/.cache
-        key: ${{ runner.os }}-node-${{ hashFiles('./javascript/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+    - name: Install dependencies
+      working-directory: ./javascript
+      run: npm ci
+      shell: bash
 
     - name: Default config
       working-directory: ./javascript
       run: npm run default-config
 
     - name: Cypress run
-      uses: cypress-io/github-action@v2
+      uses: cypress-io/github-action@v3
       # complete logs
       # env:
       #   DEBUG: cypress:*

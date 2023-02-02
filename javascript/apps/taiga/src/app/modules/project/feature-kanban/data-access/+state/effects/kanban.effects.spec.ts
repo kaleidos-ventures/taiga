@@ -30,7 +30,11 @@ import {
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanStoryA11y } from '~/app/modules/project/feature-kanban/kanban.model';
 import { AppService } from '~/app/services/app.service';
-import { KanbanActions, KanbanApiActions } from '../actions/kanban.actions';
+import {
+  KanbanActions,
+  KanbanApiActions,
+  KanbanEventsActions,
+} from '../actions/kanban.actions';
 import { selectCurrentWorkflowSlug } from '../selectors/kanban.selectors';
 import { KanbanEffects } from './kanban.effects';
 
@@ -355,5 +359,25 @@ describe('ProjectEffects', () => {
     });
 
     expect(effects.unAssign$).toBeObservable(expected);
+  });
+
+  it('delete story', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(KanbanEffects);
+    const story = StoryMockFactory();
+
+    projectApiService.deleteStory.mockReturnValue(cold('-b|', { b: story }));
+
+    const ref = randNumber();
+
+    actions$ = hot('-a', {
+      a: KanbanEventsActions.deleteStory({ ref }),
+    });
+
+    const expected = cold('-a', {
+      a: KanbanActions.deleteStory({ ref }),
+    });
+
+    expect(effects.deleteStoryByEvent$).toBeObservable(expected);
   });
 });

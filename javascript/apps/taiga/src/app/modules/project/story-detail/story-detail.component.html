@@ -114,6 +114,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <button
                 [attr.aria-label]="t('story_options')"
                 icon="more-vertical"
+                data-test="story-options"
                 appearance="tertiary"
                 tuiIconButton
                 type="button"
@@ -156,8 +157,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </tui-data-list>
           </ng-template>
           <ng-template #storyOptions>
-            <tui-data-list class="story-options-list">
+            <tui-data-list
+              class="story-options-list"
+              data-test="story-options-list">
               <button
+                data-test="delete-story-button"
                 class="story-option"
                 *hasPermission="['modify']; entity: 'story'"
                 tuiOption
@@ -234,12 +238,13 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </div>
         </tui-scrollbar>
         <tg-ui-modal
-          class="delete-story-confirm"
           [width]="500"
           [open]="showDeleteStoryConfirm"
           (requestClose)="closeDeleteStoryConfirmModal()">
           <ng-container>
-            <h3 class="delete-story-confirm-title">
+            <h3
+              class="delete-story-confirm-title"
+              data-test="delete-story-confirm-title">
               {{ t('delete.confirm') }}
             </h3>
             <p class="delete-story-confirm-question">
@@ -254,6 +259,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 {{ t('delete.cancel') }}
               </button>
               <button
+                data-test="delete-story-confirm-button"
                 appearance="destructive"
                 tuiButton
                 icon="trash"

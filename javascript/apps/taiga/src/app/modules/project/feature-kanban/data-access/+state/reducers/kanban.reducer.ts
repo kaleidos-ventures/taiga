@@ -616,11 +616,15 @@ export const reducer = createReducer(
       return state;
     }
   ),
-  on(StoryDetailActions.deleteStory, (state, { story }): KanbanState => {
-    state = removeStory(state, (it) => it.ref === story.ref);
+  on(
+    KanbanActions.deleteStory,
+    StoryDetailActions.deleteStory,
+    (state, { ref }): KanbanState => {
+      state = removeStory(state, (it) => it.ref === ref);
 
-    return state;
-  })
+      return state;
+    }
+  )
 );
 
 export const kanbanFeature = createFeature({

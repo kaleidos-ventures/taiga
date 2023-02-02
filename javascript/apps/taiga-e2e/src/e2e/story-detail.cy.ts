@@ -17,6 +17,10 @@ import {
   navigateToProjectInWS,
 } from '../support/helpers/project.helpers';
 import { SelectHelper } from '../support/helpers/select.helper';
+import {
+  confirmDeleteStory,
+  deleteStory,
+} from '../support/helpers/story-detail.helpers';
 import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
 
 const workspace = WorkspaceMockFactory();
@@ -65,5 +69,16 @@ describe('StoryDetail', () => {
 
     readyColumn.find('tg-kanban-story').should('have.length', 1);
     newColumn.find('tg-kanban-story').should('have.length', 0);
+  });
+
+  it('delete story', () => {
+    const readyColumnBefore = getStatusColumn('ready');
+    readyColumnBefore.find('tg-kanban-story').should('have.length', 1);
+
+    deleteStory();
+    confirmDeleteStory();
+
+    const readyColumnAfter = getStatusColumn('ready');
+    readyColumnAfter.find('tg-kanban-story').should('have.length', 0);
   });
 });

@@ -178,6 +178,13 @@ export class StoryDetailAssignComponent implements OnChanges {
 
   public closeAssignDropdown() {
     this.state.set({ showAssignUser: false });
+    if (this.listedAssigneds.length) {
+      this.assignedMemberList.nativeElement.focus();
+    } else {
+      requestAnimationFrame(() => {
+        this.addAssignee.nativeElement.focus();
+      });
+    }
   }
 
   public calculateDropdownWidth(event: ResizedEvent) {

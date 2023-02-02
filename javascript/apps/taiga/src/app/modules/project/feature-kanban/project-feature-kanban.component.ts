@@ -16,7 +16,7 @@ import { RxState } from '@rx-angular/state';
 import { TuiNotification } from '@taiga-ui/core';
 import { ShortcutsService } from '@taiga/core';
 import { Project, Story, StoryDetail, StoryView } from '@taiga/data';
-import { filter, map, startWith } from 'rxjs';
+import { combineLatest, filter, map, startWith } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
@@ -67,13 +67,6 @@ export class ProjectFeatureKanbanComponent {
         state.workflows?.find((workflow) => {
           return workflow.statuses.length;
         }) ?? true;
-
-      this.setCloseShortcut();
-      if (state.storyView === 'side-view') {
-        this.shortcutsService.setScope('side-view');
-      } else {
-        this.shortcutsService.deleteScope('side-view');
-      }
 
       return {
         ...state,
@@ -127,6 +120,20 @@ export class ProjectFeatureKanbanComponent {
       this.store.select(selectStory).pipe(filterNil())
     );
 
+    this.state.hold(
+      combineLatest([
+        this.state.select('storyView'),
+        this.state.select('showStoryDetail'),
+      ]),
+      ([storyView, showStoryDetail]) => {
+        if (showStoryDetail && storyView === 'side-view') {
+          this.setCloseShortcut();
+          this.shortcutsService.setScope('side-view');
+        } else {
+          this.shortcutsService.deleteScope('side-view');
+        }
+      }
+    );
     this.state.connect('storyView', this.store.select(selectStoryView));
     this.state.connect('workflows', this.store.select(selectWorkflows));
     this.events();

@@ -24,10 +24,18 @@ import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiButtonComponent } from '@taiga-ui/core';
-import { Project, Status, StoryDetail, StoryView } from '@taiga/data';
+import { TuiButtonComponent, TuiNotification } from '@taiga-ui/core';
+import {
+  Project,
+  Status,
+  Story,
+  StoryDetail,
+  StoryView,
+  User,
+} from '@taiga/data';
 import { map, startWith, take } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -98,6 +106,8 @@ export class StoryDetailComponent {
   public collapsedSet = false;
   public linkCopied = false;
   public dropdownState = false;
+  public storyOptionsState = false;
+  public showDeleteStoryConfirm = false;
   public hintShown = false;
   public storyViewOptions: { id: StoryView; translation: string }[] = [
     {
@@ -138,7 +148,8 @@ export class StoryDetailComponent {
     private location: Location,
     private permissionService: PermissionsService,
     private wsService: WsService,
-    private state: RxState<StoryDetailState>
+    private state: RxState<StoryDetailState>,
+    private appService: AppService
   ) {
     this.state.connect(
       'project',
@@ -173,6 +184,8 @@ export class StoryDetailComponent {
       .subscribe(() => {
         this.initStory();
       });
+
+    this.events();
   }
 
   public initStory() {
@@ -199,6 +212,18 @@ export class StoryDetailComponent {
 
     this.state.hold(this.state.select('story'), () => {
       this.fillForm();
+    });
+
+    this.state.hold(this.state.select('canEdit'), (canEditPermission) => {
+      if (!canEditPermission && this.showDeleteStoryConfirm) {
+        this.appService.toastNotification({
+          label: 'errors.generic_toast_label',
+          message: 'errors.modify_story_permission',
+          status: TuiNotification.Error,
+          autoClose: true,
+        });
+        this.showDeleteStoryConfirm = false;
+      }
     });
   }
 
@@ -318,5 +343,41 @@ export class StoryDetailComponent {
     } else {
       (this.storyRef.nativeElement as HTMLElement).focus();
     }
+  }
+
+  public closeDeleteStoryConfirmModal() {
+    this.showDeleteStoryConfirm = false;
+  }
+
+  public deleteStoryConfirmModal() {
+    this.storyOptionsState = false;
+    this.showDeleteStoryConfirm = true;
+  }
+
+  public deleteStory() {
+    this.store.dispatch(
+      StoryDetailActions.deleteStory({
+        ref: this.state.get('story').ref,
+        project: this.state.get('project'),
+      })
+    );
+  }
+
+  private events() {
+    this.wsService
+      .projectEvents<{ ref: Story['ref']; deletedBy: Partial<User> }>(
+        'stories.delete'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => {
+        this.appService.toastNotification({
+          label: 'errors.entity_no_longer_exists',
+          paramsLabel: { entity: 'story' },
+          message: 'errors.user_deleted_entity',
+          paramsMessage: { user: msg.event.content.deletedBy.fullName },
+          status: TuiNotification.Error,
+          autoClose: false,
+        });
+      });
   }
 }

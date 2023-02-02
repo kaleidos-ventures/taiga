@@ -19,6 +19,7 @@ import {
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { ModalModule } from '@taiga/ui/modal';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
@@ -53,6 +54,7 @@ import { StoryDetailComponent } from './story-detail.component';
     TuiActiveZoneModule,
     ResizeEventModule,
     HasPermissionDirective,
+    ModalModule,
   ],
   declarations: [
     StoryDetailComponent,

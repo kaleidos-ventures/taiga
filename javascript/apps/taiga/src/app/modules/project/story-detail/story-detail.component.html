@@ -107,12 +107,20 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 [tuiHint]="t('change_view')"
                 (click)="(!dropdownState)"></button>
             </tui-hosted-dropdown>
-            <button
-              [attr.aria-label]="t('story_options')"
-              icon="more-vertical"
-              appearance="tertiary"
-              tuiIconButton
-              type="button"></button>
+            <tui-hosted-dropdown
+              [tuiDropdownAlign]="'right'"
+              [content]="storyOptions"
+              [(open)]="storyOptionsState">
+              <button
+                [attr.aria-label]="t('story_options')"
+                icon="more-vertical"
+                data-test="story-options"
+                appearance="tertiary"
+                tuiIconButton
+                type="button"
+                tuiHintDirection="top-right"
+                (click)="(storyOptionsState)"></button>
+            </tui-hosted-dropdown>
             <button
               *ngIf="vm.selectedStoryView !== 'full-view'"
               [attr.aria-label]="t('close')"
@@ -145,6 +153,27 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   }}</span>
                 </span>
                 <span class="shortcut">{{ t('ctrl_x') }}</span>
+              </button>
+            </tui-data-list>
+          </ng-template>
+          <ng-template #storyOptions>
+            <tui-data-list
+              class="story-options-list"
+              data-test="story-options-list">
+              <button
+                data-test="delete-story-button"
+                class="story-option"
+                *hasPermission="['modify']; entity: 'story'"
+                tuiOption
+                type="button"
+                (click)="deleteStoryConfirmModal()">
+                <tui-svg
+                  aria-hidden="true"
+                  class="story-option-icon"
+                  src="trash"></tui-svg>
+                <span class="story-option-name">{{
+                  t('delete.delete_story')
+                }}</span>
               </button>
             </tui-data-list>
           </ng-template>
@@ -208,6 +237,39 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </div>
           </div>
         </tui-scrollbar>
+        <tg-ui-modal
+          [width]="500"
+          [open]="showDeleteStoryConfirm"
+          (requestClose)="closeDeleteStoryConfirmModal()">
+          <ng-container>
+            <h3
+              class="delete-story-confirm-title"
+              data-test="delete-story-confirm-title">
+              {{ t('delete.confirm') }}
+            </h3>
+            <p class="delete-story-confirm-question">
+              {{ t('delete.confirm_info') }}
+            </p>
+            <div class="delete-story-confirm-actions-area">
+              <button
+                appearance="button-form"
+                tuiButton
+                (click)="closeDeleteStoryConfirmModal()"
+                type="button">
+                {{ t('delete.cancel') }}
+              </button>
+              <button
+                data-test="delete-story-confirm-button"
+                appearance="destructive"
+                tuiButton
+                icon="trash"
+                (click)="deleteStory()"
+                type="button">
+                {{ t('delete.confirm_action') }}
+              </button>
+            </div>
+          </ng-container>
+        </tg-ui-modal>
       </div>
     </form>
   </ng-container>

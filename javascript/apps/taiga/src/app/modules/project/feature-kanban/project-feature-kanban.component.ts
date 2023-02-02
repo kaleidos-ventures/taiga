@@ -230,6 +230,15 @@ export class ProjectFeatureKanbanComponent {
           KanbanEventsActions.reorderStory(event.event.content.reorder)
         );
       });
+
+    this.wsService
+      .projectEvents<{ ref: Story['ref'] }>('stories.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => {
+        this.store.dispatch(
+          KanbanEventsActions.deleteStory({ ref: msg.event.content.ref })
+        );
+      });
   }
 
   private checkInviteModalStatus() {

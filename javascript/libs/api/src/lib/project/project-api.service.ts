@@ -430,6 +430,12 @@ export class ProjectApiService {
     );
   }
 
+  public deleteStory(projectId: Project['id'], storyRef: Story['ref']) {
+    return this.http.delete<StoryDetail>(
+      `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}`
+    );
+  }
+
   public getAllMembers(projectId: Project['id']): Observable<Membership[]> {
     return new Observable((subscriber) => {
       const limit = 100;

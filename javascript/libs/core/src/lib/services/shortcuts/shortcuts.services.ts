@@ -50,6 +50,7 @@ export class ShortcutsService {
 
   public setScope(scope: string) {
     hotkeys.setScope(scope);
+    this.setFilter();
     this.scopes.push(scope);
   }
 
@@ -59,8 +60,8 @@ export class ShortcutsService {
 
   public undoLastScope() {
     this.scopes.pop();
-
     hotkeys.setScope(this.scopes[this.scopes.length - 1]);
+    this.setFilter();
   }
 
   public getScope() {
@@ -69,5 +70,14 @@ export class ShortcutsService {
 
   public resetScope() {
     hotkeys.setScope('all');
+    this.setFilter();
+  }
+
+  public setFilter() {
+    // this make it work on inputs and textarea but not on select
+    hotkeys.filter = function (event) {
+      const tagName = (event.target as HTMLElement).tagName;
+      return tagName === 'SELECT' ? false : true;
+    };
   }
 }

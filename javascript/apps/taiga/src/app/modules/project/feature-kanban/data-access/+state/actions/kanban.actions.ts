@@ -67,6 +67,9 @@ export const KanbanActions = createActionGroup({
       status?: Story['status']['slug'];
     }>(),
     'Load stories complete': emptyProps(),
+    'Delete Story': props<{
+      ref: Story['ref'];
+    }>(),
     'Assign Member': props<{
       storyRef: Story['ref'];
       member: Membership['user'];
@@ -109,5 +112,6 @@ export const KanbanEventsActions = createActionGroup({
   events: {
     'New Story': props<{ story: Story }>(),
     'Reorder Story': props<KanbanReorderEvent['reorder']>(),
+    'Delete Story': props<{ ref: Story['ref'] }>(),
   },
 });

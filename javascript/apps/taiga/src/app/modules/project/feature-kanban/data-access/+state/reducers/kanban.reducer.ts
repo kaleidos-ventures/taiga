@@ -615,6 +615,15 @@ export const reducer = createReducer(
 
       return state;
     }
+  ),
+  on(
+    KanbanActions.deleteStory,
+    StoryDetailActions.deleteStory,
+    (state, { ref }): KanbanState => {
+      state = removeStory(state, (it) => it.ref === ref);
+
+      return state;
+    }
   )
 );
 

@@ -270,4 +270,48 @@ describe('StoryDetailEffects', () => {
       expect(appService.toastNotification).toHaveBeenCalled();
     });
   });
+
+  it('delete Story', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const project = ProjectMockFactory();
+    const effects = spectator.inject(StoryDetailEffects);
+    const story = StoryDetailMockFactory();
+    const storyDelete = {
+      ref: story.ref,
+      project,
+    };
+
+    projectApiService.deleteStory.mockReturnValue(cold('-b|', { b: story }));
+
+    actions$ = hot('-a', {
+      a: StoryDetailActions.deleteStory(storyDelete),
+    });
+
+    const expected = cold('--a', {
+      a: StoryDetailApiActions.deleteStorySuccess(storyDelete),
+    });
+
+    expect(effects.deleteStory$).toBeObservable(expected);
+  });
+
+  it('delete Story - redirect', () => {
+    const router = spectator.inject(Router);
+    const project = ProjectMockFactory();
+    const effects = spectator.inject(StoryDetailEffects);
+    const story = StoryDetailMockFactory();
+    const storyDelete = {
+      ref: story.ref,
+      project,
+    };
+
+    actions$ = hot('-a', {
+      a: StoryDetailApiActions.deleteStorySuccess(storyDelete),
+    });
+
+    expect(effects.deleteStoryRedirect$).toSatisfyOnFlush(() => {
+      expect(router.navigate).toHaveBeenCalledWith([
+        `/project/${project.id}/${project.slug}/kanban`,
+      ]);
+    });
+  });
 });

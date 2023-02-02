@@ -183,12 +183,30 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 }
 
-.view-options-list {
-  block-size: 112px;
+@define-mixin option-list {
   border: 0;
   inline-size: 238px;
   /* stylelint-disable-next-line declaration-no-important */
   padding: var(--spacing-8) !important;
+}
+
+@define-mixin option-icon {
+  block-size: var(--spacing-16);
+  fill: var(--color-secondary);
+  inline-size: var(--spacing-16);
+  margin-inline-end: var(--spacing-8);
+}
+
+@define-mixin option-name {
+  @mixin font-inline;
+
+  color: var(--color-gray100);
+}
+
+.view-options-list {
+  @mixin option-list;
+
+  block-size: 112px;
 
   & .view-option {
     align-items: center;
@@ -196,16 +214,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & .option-name {
-    @mixin font-inline;
-
-    color: var(--color-gray100);
+    @mixin option-name;
   }
 
   & .option-icon {
-    block-size: var(--spacing-16);
-    fill: var(--color-secondary);
-    inline-size: var(--spacing-16);
-    margin-inline-end: var(--spacing-8);
+    @mixin option-icon;
   }
 
   & .shortcut {
@@ -224,4 +237,49 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-gray100);
     }
   }
+}
+
+.story-options-list {
+  @mixin option-list;
+}
+
+.story-option {
+  justify-content: flex-start;
+
+  &:hover {
+    & .story-option-name {
+      color: var(--color-secondary);
+    }
+  }
+}
+
+.story-option-icon {
+  @mixin option-icon;
+}
+
+.story-option-name {
+  @mixin option-name;
+}
+
+.delete-story-confirm-title {
+  @mixin font-heading-3;
+
+  color: var(--color-gray100);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  margin-block-end: var(--spacing-24);
+}
+
+.delete-story-confirm-question {
+  @mixin font-paragraph;
+
+  color: var(--color-gray80);
+  margin: 0;
+  margin-block-end: var(--spacing-24);
+}
+
+.delete-story-confirm-actions-area {
+  display: flex;
+  gap: var(--spacing-16);
+  justify-content: flex-end;
 }

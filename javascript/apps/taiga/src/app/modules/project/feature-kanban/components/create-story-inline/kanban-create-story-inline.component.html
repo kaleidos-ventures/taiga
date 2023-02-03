@@ -14,20 +14,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     (submit)="submit()"
     #createstoryForm="ngForm">
     <tg-ui-input
-      [accessibleLabel]="t('kanban.create_story_form.story_title_label')">
+      [accessibleLabel]="t('common_story.create_story_form.story_title_label')">
       <input
         formControlName="title"
         data-test="story-title"
         #title
         inputRef
         [maxlength]="maxLength"
-        [placeholder]="t('kanban.create_story_form.story_title_placeholder')" />
+        [placeholder]="
+          t('common_story.create_story_form.story_title_placeholder')
+        " />
       <ng-container inputError>
         <tg-ui-error error="required">{{
-          t('kanban.create_story_form.title_story_required')
+          t('common_story.create_story_form.title_story_required')
         }}</tg-ui-error>
         <tg-ui-error error="pattern">{{
-          t('kanban.create_story_form.title_story_required')
+          t('common_story.create_story_form.title_story_required')
         }}</tg-ui-error>
       </ng-container>
     </tg-ui-input>
@@ -35,7 +37,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       *ngIf="form.get('title')!.value?.length === maxLength"
       aria-live="assertive"
       class="max-length">
-      {{ t('kanban.create_story_form.max_length') }}
+      {{ t('common_story.create_story_form.max_length') }}
     </div>
     <div class="actions">
       <button
@@ -43,7 +45,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         data-test="story-create"
         appearance="primary"
         type="submit">
-        {{ t('kanban.create_story_form.create_story_button') }}
+        {{ t('common_story.create_story_form.create_story_button') }}
       </button>
 
       <button

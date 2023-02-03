@@ -63,14 +63,3 @@ export const StoryDetailApiActions = createActionGroup({
     'UnAssign Member Success': emptyProps(),
   },
 });
-
-export const StoryDetailEventsActions = createActionGroup({
-  source: 'StoryDetail Event',
-  events: {
-    'Update Story': props<{ story: StoryDetail }>(),
-    'Update Story Status By Reorder': props<{
-      status: StoryDetail['status'];
-    }>(),
-    'Assigned Member Event': props<{ story: StoryDetail }>(),
-  },
-});

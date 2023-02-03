@@ -28,12 +28,15 @@ export class FormDirective {
   @HostListener('submit')
   public formSubmit() {
     if (this.focusInvalidInput) {
-      const invalidControl = this.nativeElement.querySelector(
-        '.ng-invalid'
-      ) as HTMLElement;
+      const invalidControl =
+        this.nativeElement.querySelector<HTMLElement>('.ng-invalid');
 
       if (invalidControl) {
-        invalidControl.focus();
+        if (invalidControl.tagName === 'TUI-TEXT-AREA') {
+          invalidControl.querySelector('textarea')?.focus();
+        } else {
+          invalidControl.focus();
+        }
       }
     }
   }

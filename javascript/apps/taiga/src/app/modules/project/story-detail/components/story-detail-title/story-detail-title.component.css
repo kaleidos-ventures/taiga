@@ -1,0 +1,111 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@import "tools/typography.css";
+
+:host {
+  display: block;
+  margin-block-end: var(--spacing-20);
+  padding: var(--spacing-8);
+
+  &.conflict {
+    background: repeating-linear-gradient(
+      -45deg,
+      #e2e6ee,
+      #e2e6ee 2px,
+      #eff0f5 2px,
+      #eff0f5 10px
+    );
+    border: 2px solid var(--color-gray40);
+    border-radius: 3px;
+    opacity: 0.8;
+  }
+
+  &:not(.conflict) {
+    & .title-wrapper {
+      cursor: pointer;
+    }
+  }
+
+  &:not(.edit) {
+    &:hover {
+      background-color: var(--color-gray20);
+    }
+  }
+}
+
+.title-wrapper {
+  position: relative;
+}
+
+.title {
+  @mixin font-heading-3;
+
+  margin: 0;
+}
+
+.edit-title {
+  inset-block-start: -4px;
+  inset-inline-end: -4px;
+  position: absolute;
+}
+
+.edit-title-field {
+  margin-block-end: var(--spacing-20);
+  position: relative;
+}
+
+.edit-field-actions {
+  display: flex;
+  gap: var(--spacing-8);
+  inset-block-end: var(--spacing-8);
+  inset-inline-end: var(--spacing-8);
+  position: absolute;
+}
+
+.shape-outside-text {
+  block-size: 32px;
+  inline-size: 32px;
+  shape-outside: inset(0 0 0 0);
+}
+
+.max-length {
+  @mixin font-small;
+
+  color: var(--color-gray80);
+  display: block;
+  padding-inline-start: var(--spacing-4);
+}
+
+tg-ui-textarea {
+  &::ng-deep {
+    & .t-counter {
+      display: none;
+    }
+
+    & .input-container {
+      position: relative;
+    }
+
+    /* stylelint-disable-next-line selector-max-type */
+    & label.t-content {
+      padding-block-end: var(--spacing-40);
+    }
+  }
+}
+
+tui-text-area {
+  /* stylelint-disable-next-line declaration-no-important */
+  --tui-textarea-height: var(--spacing-24) !important;
+
+  font-size: var(--font-size-heading-3);
+}
+
+tg-field-conflict {
+  margin-block-start: var(--spacing-8);
+}

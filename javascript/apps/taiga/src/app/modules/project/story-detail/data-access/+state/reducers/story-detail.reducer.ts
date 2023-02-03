@@ -19,7 +19,6 @@ import { immerReducer } from '~/app/shared/utils/store';
 import {
   StoryDetailActions,
   StoryDetailApiActions,
-  StoryDetailEventsActions,
 } from '../actions/story-detail.actions';
 
 export interface StoryDetailState {
@@ -84,29 +83,16 @@ export const reducer = createReducer(
       return state;
     }
   ),
-  on(
-    StoryDetailEventsActions.updateStory,
-    (state, { story }): StoryDetailState => {
-      state.story = story;
+  on(projectEventActions.updateStory, (state, { story }): StoryDetailState => {
+    state.story = story;
 
-      return state;
-    }
-  ),
+    return state;
+  }),
   on(
     KanbanApiActions.moveStorySuccess,
     (state, { reorder }): StoryDetailState => {
       if (state.story && reorder.stories.includes(state.story.ref)) {
         state.story.status = reorder.status;
-      }
-
-      return state;
-    }
-  ),
-  on(
-    StoryDetailEventsActions.updateStoryStatusByReorder,
-    (state, action): StoryDetailState => {
-      if (state.story) {
-        state.story.status = action.status;
       }
 
       return state;

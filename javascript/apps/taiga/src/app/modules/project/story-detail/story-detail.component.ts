@@ -39,6 +39,7 @@ import { selectCurrentProject } from '~/app/modules/project/data-access/+state/s
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
+import { HasChangesService } from '~/app/shared/utils/has-changes.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { StoryDetailActions } from './data-access/+state/actions/story-detail.actions';
 import {
@@ -58,9 +59,13 @@ export interface StoryDetailState {
   loadingStatuses: boolean;
   canEdit: boolean;
   canDelete: boolean;
+  fieldFocus: boolean;
+  fieldEdit: boolean;
+  showDiscardChangesModal: boolean;
 }
 
 export interface StoryDetailForm {
+  title: FormControl<StoryDetail['title']>;
   status: FormControl<StoryDetail['status']>;
 }
 
@@ -75,6 +80,7 @@ export interface StoryDetailForm {
       provide: TRANSLOCO_SCOPE,
       useValue: 'story',
     },
+    HasChangesService,
   ],
 })
 export class StoryDetailComponent {
@@ -101,7 +107,12 @@ export class StoryDetailComponent {
 
   @HostListener('window:popstate')
   public onPopState() {
-    this.closeStory(this.state.get('story').ref);
+    this.closeStory();
+  }
+
+  @HostListener('window:beforeunload')
+  public unloadHandler() {
+    return !this.hasChangesService.check();
   }
 
   public storyRef!: ElementRef;
@@ -114,15 +125,15 @@ export class StoryDetailComponent {
   public storyViewOptions: { id: StoryView; translation: string }[] = [
     {
       id: 'modal-view',
-      translation: 'modal_view',
+      translation: 'story.modal_view',
     },
     {
       id: 'side-view',
-      translation: 'side_panel_view',
+      translation: 'story.side_panel_view',
     },
     {
       id: 'full-view',
-      translation: 'full_width_view',
+      translation: 'story.full_width_view',
     },
   ];
   public resetCopyLinkTimeout?: ReturnType<typeof setTimeout>;
@@ -153,7 +164,8 @@ export class StoryDetailComponent {
     private state: RxState<StoryDetailState>,
     private appService: AppService,
     private router: Router,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private hasChangesService: HasChangesService
   ) {
     this.state.connect(
       'project',
@@ -200,6 +212,7 @@ export class StoryDetailComponent {
     const story = this.state.get('story');
 
     this.form = new FormGroup<StoryDetailForm>({
+      title: new FormControl(story.title, { nonNullable: true }),
       status: new FormControl(story.status, { nonNullable: true }),
     });
 
@@ -212,6 +225,7 @@ export class StoryDetailComponent {
               ref: this.state.get('story').ref,
               version: this.state.get('story').version,
               status: form.status.slug,
+              title: form.title,
             },
           })
         );
@@ -246,6 +260,7 @@ export class StoryDetailComponent {
       this.form.patchValue(
         {
           status: story.status,
+          title: story.title,
         },
         { emitEvent: false, onlySelf: true }
       );
@@ -323,7 +338,9 @@ export class StoryDetailComponent {
     );
   }
 
-  public closeStory(ref: number | undefined) {
+  public closeStory() {
+    const ref = this.state.get('story').ref;
+
     this.store.dispatch(StoryDetailActions.leaveStoryDetail());
     this.location.replaceState(
       `project/${this.state.get('project').id}/${
@@ -339,6 +356,14 @@ export class StoryDetailComponent {
           (mainFocus as HTMLElement).focus();
         }
       });
+    }
+  }
+
+  public requestCloseStory() {
+    if (this.hasChangesService.check()) {
+      this.state.set({ showDiscardChangesModal: true });
+    } else {
+      this.closeStory();
     }
   }
 
@@ -375,6 +400,24 @@ export class StoryDetailComponent {
     );
   }
 
+  public titleFocus(focus: boolean) {
+    this.state.set({ fieldFocus: focus });
+  }
+
+  public titleEdit(edit: boolean) {
+    this.state.set({ fieldEdit: edit });
+  }
+
+  public discard() {
+    this.state.set({ showDiscardChangesModal: false });
+
+    this.closeStory();
+  }
+
+  public keepEditing() {
+    this.state.set({ showDiscardChangesModal: false });
+  }
+
   private events() {
     this.wsService
       .projectEvents<{ ref: Story['ref']; deletedBy: Partial<User> }>(
@@ -402,7 +445,7 @@ export class StoryDetailComponent {
         } else {
           const next = this.state.get('story').next?.ref;
           const prev = this.state.get('story').next?.ref;
-          this.closeStory(next || prev);
+          this.closeStory();
 
           if (!next && !prev) {
             const workflowSlug = this.state.get('story').workflow.slug;

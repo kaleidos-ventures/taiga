@@ -21,6 +21,7 @@ import {
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { ModalModule } from '@taiga/ui/modal';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
@@ -32,6 +33,11 @@ import { StoryDetailAssignComponent } from './components/story-detail-assign/sto
 import { StoryDetailStatusComponent } from './components/story-detail-status/story-detail-status.component';
 import { DataAccessStoryDetailModule } from './data-access/story-detail-data-access.module';
 import { StoryDetailComponent } from './story-detail.component';
+import { StoryDetailTitleComponent } from './components/story-detail-title/story-detail-title.component';
+import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
+import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
+import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
+import { FieldConflictComponent } from '../components/field-conflict/field-conflict.component';
 
 @NgModule({
   imports: [
@@ -55,11 +61,17 @@ import { StoryDetailComponent } from './story-detail.component';
     ResizeEventModule,
     HasPermissionDirective,
     ModalModule,
+    AutoFocusDirective,
+    RestoreFocusDirective,
+    RestoreFocusTargetDirective,
+    DiscardChangesModalComponent,
+    FieldConflictComponent,
   ],
   declarations: [
     StoryDetailComponent,
     StoryDetailStatusComponent,
     StoryDetailAssignComponent,
+    StoryDetailTitleComponent,
   ],
   exports: [StoryDetailComponent],
 })

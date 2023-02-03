@@ -53,7 +53,7 @@ describe('edit project', () => {
     fillEditProject(project.name, null);
 
     cy.getBySel('cancel-edit-project').click();
-    cy.getBySel('submit-confirm-edit-project').click();
+    cy.getBySel('confirm-edit').click();
 
     cy.getBySel('project-name').should('not.contain', project.name);
   });

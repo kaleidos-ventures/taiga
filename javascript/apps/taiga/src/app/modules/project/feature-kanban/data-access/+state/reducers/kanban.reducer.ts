@@ -16,6 +16,7 @@ import {
 } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { DropCandidate } from '~/app/shared/drag/drag.model';
+import { pick } from '~/app/shared/utils/pick';
 import { immerReducer } from '~/app/shared/utils/store';
 import {
   KanbanActions,
@@ -550,6 +551,17 @@ export const reducer = createReducer(
         });
       }
     }
+
+    state = replaceStory(state, (it) => {
+      if (it.ref === story.ref) {
+        return {
+          ...it,
+          ...pick(story, ['title']),
+        };
+      }
+
+      return it;
+    });
 
     return state;
   }),

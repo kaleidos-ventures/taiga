@@ -12,10 +12,19 @@ import { Subject } from 'rxjs';
 import { finalize, share } from 'rxjs/operators';
 import shortcuts from './shortcuts';
 
+hotkeys.filter = function (event) {
+  const tagName = (event.target as HTMLElement).tagName;
+  return tagName === 'SELECT' ? false : true;
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class ShortcutsService {
+  public static shortcuts = shortcuts;
+
+  private debug = false;
+
   public scopes: string[] = [];
 
   public task(taskName: string, options: Parameters<typeof hotkeys>[1] = {}) {
@@ -37,7 +46,6 @@ export class ShortcutsService {
       return subject.pipe(
         finalize(() => {
           hotkeys.unbind(shortcut.defaultKey, shortcut.scope);
-          this.deleteScope(shortcut.scope);
         }),
         share()
       );
@@ -50,18 +58,48 @@ export class ShortcutsService {
 
   public setScope(scope: string) {
     hotkeys.setScope(scope);
-    this.setFilter();
     this.scopes.push(scope);
+
+    if (this.debug) {
+      console.log('setScope', scope);
+    }
   }
 
   public deleteScope(scope: string) {
     hotkeys.deleteScope(scope);
+
+    this.scopes = this.scopes.filter((it) => it !== scope);
+
+    if (this.debug) {
+      console.log('deleteScope', scope);
+    }
   }
 
   public undoLastScope() {
+    if (this.debug) {
+      console.log('undoLastScope', this.scopes);
+    }
+
     this.scopes.pop();
     hotkeys.setScope(this.scopes[this.scopes.length - 1]);
-    this.setFilter();
+
+    if (this.debug) {
+      console.log('undoLastScope set', this.scopes[this.scopes.length - 1]);
+    }
+  }
+
+  public undoScope(scope: string) {
+    if (this.debug) {
+      console.log('undoScope', this.scopes);
+    }
+
+    this.scopes = this.scopes.filter((it) => it !== scope);
+
+    hotkeys.setScope(this.scopes[this.scopes.length - 1]);
+
+    if (this.debug) {
+      console.log('undoScope set', this.scopes[this.scopes.length - 1]);
+    }
   }
 
   public getScope() {
@@ -70,14 +108,9 @@ export class ShortcutsService {
 
   public resetScope() {
     hotkeys.setScope('all');
-    this.setFilter();
-  }
 
-  public setFilter() {
-    // this make it work on inputs and textarea but not on select
-    hotkeys.filter = function (event) {
-      const tagName = (event.target as HTMLElement).tagName;
-      return tagName === 'SELECT' ? false : true;
-    };
+    if (this.debug) {
+      console.log('resetScope');
+    }
   }
 }

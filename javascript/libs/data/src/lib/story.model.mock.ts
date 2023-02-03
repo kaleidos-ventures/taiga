@@ -14,7 +14,7 @@ import {
   randText,
   randUser,
 } from '@ngneat/falso';
-import { Status, StatusMockFactory } from '..';
+import { Status, StatusMockFactory, UserMockFactory } from '..';
 import { Story, StoryDetail } from './story.model';
 
 export const StoryMockFactory = (
@@ -53,6 +53,8 @@ export const StoryDetailMockFactory = (
     titleCount = 10;
   }
 
+  const user = UserMockFactory();
+
   return {
     ref: randNumber({ min: 1, max: 999 }),
     version: randNumber(),
@@ -71,5 +73,11 @@ export const StoryDetailMockFactory = (
     },
     createdAt: randPastDate().toString(),
     assignees: [],
+    titleUpdatedAt: randPastDate().toString(),
+    titleUpdatedBy: {
+      username: user.username,
+      fullName: user.fullName,
+      color: user.color,
+    },
   };
 };

@@ -10,8 +10,10 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
+  OnDestroy,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -22,6 +24,7 @@ import { ModalService } from '@taiga/ui/modal/services/modal.service';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { pairwise, startWith } from 'rxjs/operators';
+import { v4 } from 'uuid';
 
 /*
 Usage example:
@@ -39,7 +42,7 @@ Usage example:
   styleUrls: ['./modal.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ModalComponent implements AfterViewInit {
+export class ModalComponent implements AfterViewInit, OnDestroy {
   public open$ = new BehaviorSubject<boolean>(false);
 
   @Output()
@@ -79,11 +82,13 @@ export class ModalComponent implements AfterViewInit {
   public domPortalContent!: PolymorpheusContent<HTMLElement>;
 
   public modalSubscription$?: Subscription;
+  public id = v4();
 
   constructor(
     public modalService: ModalService,
     public dialogService: TuiDialogService,
-    public shortcutsService: ShortcutsService
+    public shortcutsService: ShortcutsService,
+    public el: ElementRef
   ) {}
 
   public ngAfterViewInit() {
@@ -96,22 +101,37 @@ export class ModalComponent implements AfterViewInit {
           this.processClose();
         }
       });
+
+    this.shortcutsService
+      .task('modal.close', {
+        scope: `modal-${this.id}`,
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        const topModal = Array.from(
+          document.querySelectorAll('tg-ui-modal-wrapper')
+        ).pop();
+
+        const modal = document.getElementById(this.id);
+
+        // closes the last open modal
+        if (modal && topModal && topModal.contains(modal)) {
+          this.close();
+        }
+      });
   }
 
   public close() {
     this.requestClose.next();
   }
 
+  public ngOnDestroy(): void {
+    if (this.open) {
+      this.processClose();
+    }
+  }
+
   private processOpen() {
-    this.shortcutsService.setScope('modal');
-
-    this.shortcutsService
-      .task('modal.close')
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.close();
-      });
-
     this.modalService
       .open(this.domPortalContent, {})
       .pipe(untilDestroyed(this))
@@ -120,10 +140,12 @@ export class ModalComponent implements AfterViewInit {
           this.closed.next();
         },
       });
+
+    this.shortcutsService.setScope(`modal-${this.id}`);
   }
 
   private processClose() {
     this.modalService.getContext().completeWith(null);
-    this.shortcutsService.deleteScope('modal');
+    this.shortcutsService.undoScope(`modal-${this.id}`);
   }
 }

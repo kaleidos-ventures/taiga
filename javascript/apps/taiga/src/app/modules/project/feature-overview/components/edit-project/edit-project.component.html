@@ -90,31 +90,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </form>
   </tg-ui-modal>
 
-  <tg-ui-modal
-    class="confirm-close"
+  <tg-discard-changes-modal
     [open]="showConfirmEditProjectModal"
-    [width]="500"
-    (requestClose)="discard()">
-    <h1 class="title">{{ t('discard_changes.title') }}</h1>
-    <p class="confirm-close-description">
-      {{ t('discard_changes.description') }}
-    </p>
-    <div class="actions">
-      <button
-        type="button"
-        (click)="keepEditing()"
-        data-test="cancel-confirm-edit-project"
-        tuiLink>
-        {{ t('discard_changes.cancel') }}
-      </button>
-      <button
-        (click)="discard()"
-        data-test="submit-confirm-edit-project"
-        tuiButton
-        type="button"
-        appearance="primary">
-        {{ t('discard_changes.confirm') }}
-      </button>
-    </div>
-  </tg-ui-modal>
+    (discard)="discard()"
+    (cancel)="keepEditing()"></tg-discard-changes-modal>
 </ng-container>

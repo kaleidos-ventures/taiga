@@ -223,3 +223,27 @@ textarea {
     cursor: grab !important;
   }
 }
+
+/* float: inline-(start|end) polyfill */
+
+/* stylelint-disable liberty/use-logical-spec */
+body[dir="ltr"] {
+  & .float-inline-start {
+    float: left;
+  }
+
+  & .float-inline-end {
+    float: right;
+  }
+}
+
+body[dir="rtl"] {
+  & .float-inline-start {
+    float: right;
+  }
+
+  & .float-inline-end {
+    float: left;
+  }
+}
+/* stylelint-enable liberty/use-logical-spec */

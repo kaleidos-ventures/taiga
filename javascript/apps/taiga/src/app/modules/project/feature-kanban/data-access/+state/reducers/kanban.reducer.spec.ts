@@ -9,6 +9,7 @@
 import { randUuid } from '@ngneat/falso';
 import {
   StatusMockFactory,
+  StoryDetailMockFactory,
   StoryMockFactory,
   WorkflowMockFactory,
 } from '@taiga/data';
@@ -467,7 +468,7 @@ describe('Kanban reducer', () => {
     const workflow = WorkflowMockFactory();
     const status = StatusMockFactory();
     const status2 = StatusMockFactory();
-    const story = StoryMockFactory([status]);
+    const story = StoryDetailMockFactory([status]);
 
     workflow.statuses = [status, status2];
 
@@ -521,7 +522,7 @@ describe('Kanban reducer', () => {
     const workflow = WorkflowMockFactory();
     const status = StatusMockFactory();
     const status2 = StatusMockFactory();
-    const story = StoryMockFactory([status]);
+    const story = StoryDetailMockFactory([status]);
 
     workflow.statuses = [status, status2];
 

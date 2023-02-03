@@ -6,7 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
-<ng-container *transloco="let t; read: 'story'">
+<ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <form
       *ngIf="form"
@@ -26,21 +26,23 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               #storyRef
               tabindex="0"
               [attr.aria-label]="
-                t('story_sr', {
+                t('story.story_sr', {
                   storyRef: vm.story.ref,
                   storyTitle: vm.story.title
                 })
               "
               class="story-ref story-detail-focus"
-              [innerHtml]="t('story', { storyRef: vm.story.ref })"></span>
+              [innerHtml]="t('story.story', { storyRef: vm.story.ref })"></span>
             <button
-              [attr.aria-label]="t('copy_story')"
+              [attr.aria-label]="t('story.copy_story')"
               [icon]="linkCopied ? 'check' : 'link'"
               appearance="tertiary"
               [class.copied]="linkCopied"
               class="copy-link"
               tuiIconButton
-              [tuiHint]="linkCopied ? t('link_copied') : t('click_to_copy')"
+              [tuiHint]="
+                linkCopied ? t('story.link_copied') : t('story.click_to_copy')
+              "
               [tuiHintManual]="hintShown"
               type="button"
               (click)="getStoryLink()"
@@ -57,7 +59,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               [disabled]="!vm.story.prev"
               [attr.aria-label]="
                 vm.story.prev
-                  ? t('previous_story', {
+                  ? t('story.previous_story', {
                       story: vm.story.prev!.title
                     })
                   : null
@@ -67,7 +69,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               class="chevron"
               tuiIconButton
               tuiHintDirection="top-right"
-              [tuiHint]="t('previous')"
+              [tuiHint]="t('story.previous')"
               (click)="navigateToPreviousStory(vm.story.prev!.ref)"
               type="button"></button>
             <button
@@ -75,7 +77,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               [disabled]="!vm.story.next"
               [attr.aria-label]="
                 vm.story.next
-                  ? t('next_story', {
+                  ? t('story.next_story', {
                       story: vm.story.next!.title
                     })
                   : null
@@ -85,7 +87,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               class="chevron"
               tuiIconButton
               tuiHintDirection="top-right"
-              [tuiHint]="t('next')"
+              [tuiHint]="t('story.next')"
               (click)="navigateToNextStory(vm.story.next!.ref)"
               type="button"></button>
             <tui-hosted-dropdown
@@ -94,7 +96,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               [(open)]="dropdownState">
               <button
                 [attr.aria-label]="
-                  t('change_view_sr', {
+                  t('story.change_view_sr', {
                     currentView: t(getCurrentViewTranslation)
                   })
                 "
@@ -104,7 +106,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 tuiIconButton
                 type="button"
                 tuiHintDirection="top-right"
-                [tuiHint]="t('change_view')"
+                [tuiHint]="t('story.change_view')"
                 (click)="(!dropdownState)"></button>
             </tui-hosted-dropdown>
             <tui-hosted-dropdown
@@ -112,7 +114,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               [content]="storyOptions"
               [(open)]="storyOptionsState">
               <button
-                [attr.aria-label]="t('story_options')"
+                [attr.aria-label]="t('story.story_options')"
                 icon="more-vertical"
                 data-test="story-options"
                 appearance="tertiary"
@@ -123,10 +125,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </tui-hosted-dropdown>
             <button
               *ngIf="vm.selectedStoryView !== 'full-view'"
-              [attr.aria-label]="t('close')"
+              [attr.aria-label]="t('story.close')"
               icon="close"
               appearance="us-header-button"
-              (click)="closeStory(vm.story?.ref)"
+              (click)="requestCloseStory()"
               tuiIconButton
               class="close-button"
               type="button"></button>
@@ -152,7 +154,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                     t(viewOption.translation)
                   }}</span>
                 </span>
-                <span class="shortcut">{{ t('ctrl_x') }}</span>
+                <span class="shortcut">{{ t('story.ctrl_x') }}</span>
               </button>
             </tui-data-list>
           </ng-template>
@@ -172,13 +174,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   class="story-option-icon"
                   src="trash"></tui-svg>
                 <span class="story-option-name">{{
-                  t('delete.delete_story')
+                  t('story.delete.delete_story')
                 }}</span>
               </button>
             </tui-data-list>
           </ng-template>
         </div>
-        <tui-scrollbar class="scrollbar-content">
+        <tui-scrollbar
+          class="scrollbar-content"
+          [class.field-focus]="vm.fieldFocus"
+          [class.field-edit]="vm.fieldEdit">
           <div
             class="story-content"
             [class]="vm.selectedStoryView"
@@ -186,7 +191,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               !sidebarOpen && vm.selectedStoryView === 'side-view'
             ">
             <div class="main-content">
-              <h1 class="title">{{ vm.story.title }}</h1>
+              <tg-story-detail-title
+                [form]="form"
+                [story]="vm.story"
+                (focusChange)="titleFocus($event)"
+                (editChange)="titleEdit($event)"></tg-story-detail-title>
               <div class="creation-info">
                 <tg-user-avatar
                   size="m"
@@ -204,7 +213,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                     [title]="vm.story.createdAt | date: 'medium'"
                     class="creation-info-date">
                     {{
-                      t('story_date_distance', {
+                      t('story.story_date_distance', {
                         dateDistance: vm.story.createdAt | dateDistance
                       })
                     }}
@@ -247,10 +256,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             <h3
               class="delete-story-confirm-title"
               data-test="delete-story-confirm-title">
-              {{ t('delete.confirm') }}
+              {{ t('story.delete.confirm') }}
             </h3>
             <p class="delete-story-confirm-question">
-              {{ t('delete.confirm_info') }}
+              {{ t('story.delete.confirm_info') }}
             </p>
             <div class="delete-story-confirm-actions-area">
               <button
@@ -258,7 +267,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 tuiButton
                 (click)="closeDeleteStoryConfirmModal()"
                 type="button">
-                {{ t('delete.cancel') }}
+                {{ t('story.delete.cancel') }}
               </button>
               <button
                 data-test="delete-story-confirm-button"
@@ -267,12 +276,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                 icon="trash"
                 (click)="deleteStory()"
                 type="button">
-                {{ t('delete.confirm_action') }}
+                {{ t('story.delete.confirm_action') }}
               </button>
             </div>
           </ng-container>
         </tg-ui-modal>
       </div>
     </form>
+
+    <tg-discard-changes-modal
+      [open]="vm.showDiscardChangesModal"
+      (discard)="discard()"
+      (cancel)="keepEditing()"></tg-discard-changes-modal>
   </ng-container>
 </ng-container>

@@ -29,6 +29,7 @@ import {
 import { AppService } from '~/app/services/app.service';
 import { ModalModule } from '@taiga/ui/modal';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
 
 @Component({
   selector: 'tg-edit-project',
@@ -46,6 +47,7 @@ import { TuiAutoFocusModule } from '@taiga-ui/cdk';
     TuiLinkModule,
     ModalModule,
     TuiAutoFocusModule,
+    DiscardChangesModalComponent,
   ],
 })
 export class EditProjectComponent implements OnInit {
@@ -123,8 +125,6 @@ export class EditProjectComponent implements OnInit {
       if (data.logo === null) {
         delete data.logo;
       }
-
-      console.log(data);
 
       this.submitProject.next(data as EditProject);
     }

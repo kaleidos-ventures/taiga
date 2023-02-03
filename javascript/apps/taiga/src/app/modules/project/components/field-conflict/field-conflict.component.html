@@ -1,0 +1,87 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container
+  *transloco="let t"
+  tgShortcut="conflict.close"
+  (tgShortcutAction)="cancel.next()">
+  <div (tgOutsideClick)="cancel.next()">
+    <ng-container *ngIf="!copyView">
+      <p
+        class="title"
+        tgAutoFocus
+        tabindex="-1">
+        <tui-svg
+          class="alert-icon"
+          src="alert"></tui-svg>
+        {{ t('field_conflict.title') }}
+      </p>
+      <p
+        class="description"
+        [innerHtml]="
+          t('field_conflict.description', { user: username, fieldName: field })
+        "></p>
+      <div class="actions">
+        <button
+          class="copy-link"
+          tuiButton
+          appearance="tertiary"
+          [class.copied]="copied"
+          [icon]="copied ? 'check' : 'duplicate'"
+          [cdkCopyToClipboard]="copyValue"
+          (click)="copy()">
+          <ng-container *ngIf="copied">
+            {{ t('field_conflict.copied') }}
+          </ng-container>
+          <ng-container *ngIf="!copied">
+            {{ t('field_conflict.copy') }}
+          </ng-container>
+        </button>
+        <button
+          tuiButton
+          appearance="primary"
+          (click)="acceptNewVersion()">
+          {{ t('field_conflict.see_new_version') }}
+        </button>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="copyView">
+      <p
+        class="copy-title"
+        tgAutoFocus
+        tabindex="-1">
+        {{ t('field_conflict.copy_title') }}
+      </p>
+      <p class="copy-description">{{ t('field_conflict.copy_descripcion') }}</p>
+      <div class="actions">
+        <button
+          type="button"
+          (click)="accept.next()"
+          data-test="cancel-edit"
+          tuiLink>
+          {{ t('field_conflict.dismiss') }}
+        </button>
+        <button
+          class="copy-link"
+          tuiButton
+          appearance="primary"
+          [class.copied]="copied"
+          [icon]="copied ? 'check' : 'duplicate'"
+          [cdkCopyToClipboard]="copyValue"
+          (click)="copyAfterAccept()">
+          <ng-container *ngIf="copied">
+            {{ t('field_conflict.copied') }}
+          </ng-container>
+          <ng-container *ngIf="!copied">
+            {{ t('field_conflict.copy') }}
+          </ng-container>
+        </button>
+      </div>
+    </ng-container>
+  </div>
+</ng-container>

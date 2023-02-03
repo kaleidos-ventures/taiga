@@ -10,6 +10,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 @import "tools/typography.css";
 
 :host {
+  --tui-error-fill-night: var(--color-red);
+
   display: block;
 
   &.invalid.show-errors {
@@ -21,19 +23,49 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       & tui-wrapper::after {
         color: var(--color-red) !important;
       }
+
+      & [data-appearance="textfield"] {
+        --color-gray40: var(--color-red);
+        --tui-base-03: var(--color-red);
+      }
+
+      & tui-text-area .t-content {
+        background: var(--color-red10);
+      }
+
+      &._focused {
+        /* stylelint-disable-next-line max-nesting-depth */
+        &::after {
+          color: var(--color-red);
+        }
+      }
+    }
+  }
+}
+
+:host.invalid.show-errors:focus-within {
+  &.update-on-submit.submitted::ng-deep,
+  &.update-on-blur.dirty::ng-deep,
+  &.update-on-change.dirty::ng-deep,
+  &.update-on-blur.touched::ng-deep,
+  &.update-on-change.touched::ng-deep {
+    & tui-text-area .t-content {
+      background-color: var(--color-white);
     }
   }
 }
 
 tui-text-area {
-  --tui-error-bg-night: var(--color-red40);
-
   & ::ng-deep {
     & .placeholder {
       --tui-text-01: var(--color-gray60);
       --tui-text-02: var(--color-gray60);
     }
   }
+}
+
+.input-container {
+  margin-block-end: var(--spacing-4);
 }
 
 :host::ng-deep {

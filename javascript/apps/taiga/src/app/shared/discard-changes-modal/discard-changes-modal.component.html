@@ -1,0 +1,39 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <tg-ui-modal
+    class="confirm-close"
+    [open]="open"
+    [width]="500"
+    (requestClose)="cancel.next()">
+    <h1 class="title">
+      {{ t('discard_changes.title') }}
+    </h1>
+    <p class="confirm-close-description">
+      {{ t('discard_changes.description') }}
+    </p>
+    <div class="actions">
+      <button
+        type="button"
+        (click)="cancel.next()"
+        data-test="cancel-edit"
+        tuiLink>
+        {{ t('discard_changes.cancel') }}
+      </button>
+      <button
+        (click)="discard.next()"
+        data-test="confirm-edit"
+        tuiButton
+        type="button"
+        appearance="primary">
+        {{ t('discard_changes.confirm') }}
+      </button>
+    </div>
+  </tg-ui-modal>
+</ng-container>

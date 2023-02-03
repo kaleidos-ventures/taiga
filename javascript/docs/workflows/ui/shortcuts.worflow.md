@@ -44,6 +44,9 @@ this.shortcutsService.resetScope();
 
 // return to the previous scope
 this.shortcutsService.undoLastScope();
+
+// remove scope and go to the previous one
+this.shortcutsService.undoScope('scope');
 ```
 
 In this example we listen `tooltip.close` when Tooltip is instanced but we only want to listen this task when the tooltip is open so we're responsible to activate the scope and disable it when not needed.

@@ -36,9 +36,10 @@
     "sprints": "Sprints",
     "your_user": "{{ name }} <strong class='is-self'>(You)</strong>",
     "save_changes": "Save changes",
-    "next_page": "Next page",
     "modify": "modify",
-    "delete": "delete"
+    "delete": "delete",
+    "save": "Save",
+    "next_page": "Next page"
   },
   "navigation": {
     "go_home": "Go to home",
@@ -132,6 +133,26 @@
     "add_assignee": "Add assignee",
     "story_not_assigned_enter": "{{common_story.story_not_assigned}} Press enter to assign",
     "assigned_members": "Assigned members",
-    "unassigned-aria": "{{ name }} unassigned."
+    "unassigned-aria": "{{ name }} unassigned.",
+    "create_story_form": {
+      "story_title_label": "Story title",
+      "title_story_required": "Story title can’t be empty.",
+      "create_story_button": "Create Story",
+      "max_length": "Character limit has been reached.",
+      "story_title_placeholder": "Start writing a Story title..."
+    }
+  },
+  "field_conflict": {
+    "title": "Watch out! There is a new version of the title.",
+    "description": "While you were editing the {{fieldName}}, <strong>{{user}}</strong> saved a new version. Check it out and then you can edit it if you want.",
+    "copy": "Copy to clipboard",
+    "copied": "Copied to clipboard!",
+    "see_new_version": "See new version",
+    "dismiss": "Dismiss",
+    "copy_title": "Do you want to copy your changes?",
+    "copy_descripcion": "So you can use them later.",
+    "fields": {
+      "title": "title"
+    }
   }
 }

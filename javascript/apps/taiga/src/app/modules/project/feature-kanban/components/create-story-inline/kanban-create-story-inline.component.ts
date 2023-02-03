@@ -18,12 +18,16 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { Status, Workflow } from '@taiga/data';
 import { v4 } from 'uuid';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
+import {
+  StoryTitleMaxLength,
+  StoryTitleValidation,
+} from '~/app/shared/story/title-validation';
 
 @Component({
   selector: 'tg-create-story-inline',
@@ -51,17 +55,10 @@ export class KanbanCreateStoryInlineComponent implements AfterViewInit {
     this.cancelSubmit();
   }
 
-  public maxLength = 500;
+  public maxLength = StoryTitleMaxLength;
 
   public form = this.fb.nonNullable.group({
-    title: [
-      '',
-      [
-        Validators.required,
-        Validators.maxLength(this.maxLength),
-        Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/),
-      ],
-    ],
+    title: ['', StoryTitleValidation],
   });
 
   public submitted = false;

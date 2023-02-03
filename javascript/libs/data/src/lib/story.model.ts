@@ -31,12 +31,15 @@ export interface StoryDetail extends Story {
   };
   createdBy: createdBy;
   createdAt: string;
+  titleUpdatedAt: string;
+  titleUpdatedBy: Pick<User, 'username' | 'fullName' | 'color'>;
 }
 
 export interface StoryUpdate {
   ref: Story['ref'];
   version: Story['version'];
   status?: Story['status']['slug'];
+  title?: Story['title'];
 }
 
 export interface createdBy {

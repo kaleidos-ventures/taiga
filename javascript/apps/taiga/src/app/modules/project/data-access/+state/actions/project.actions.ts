@@ -7,7 +7,7 @@
  */
 
 import { createAction, createActionGroup, props } from '@ngrx/store';
-import { Membership, Project, Story } from '@taiga/data';
+import { Membership, Project, Story, StoryDetail } from '@taiga/data';
 
 export const fetchProjectSuccess = createAction(
   '[Project] fetch success',
@@ -60,7 +60,7 @@ export const newProjectMembers = createAction(
 );
 
 export const projectEventActions = createActionGroup({
-  source: 'Project',
+  source: 'Project ws',
   events: {
     'Unassigned Member Event': props<{
       storyRef: Story['ref'];
@@ -70,6 +70,6 @@ export const projectEventActions = createActionGroup({
       storyRef: Story['ref'];
       member: Membership['user'];
     }>(),
-    'Update Story': props<{ story: Story }>(),
+    'Update Story': props<{ story: StoryDetail }>(),
   },
 });

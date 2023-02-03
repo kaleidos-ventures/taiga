@@ -22,4 +22,14 @@ export default [
     defaultKey: 'esc',
     scope: 'assign-user',
   },
-];
+  {
+    task: 'edit-field.close',
+    defaultKey: 'esc',
+    scope: 'edit-field',
+  },
+  {
+    task: 'conflict.close',
+    defaultKey: 'esc',
+    scope: 'conflict',
+  },
+] as const;

@@ -1,0 +1,103 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <div
+      *ngIf="!vm.conflict && !vm.edit"
+      class="title-wrapper"
+      (click)="editTitle()">
+      <div class="shape-outside-text float-inline-end"></div>
+      <h1 class="title">{{ vm.story.title }}</h1>
+      <button
+        *ngIf="!vm.conflict"
+        tgRestoreFocusTarget="edit-title"
+        (click)="editTitle()"
+        class="edit-title"
+        [attr.aria-label]="t('story.edit_title')"
+        appearance="tertiary"
+        tuiIconButton
+        icon="pen"
+        type="button"></button>
+    </div>
+    <div
+      *ngIf="vm.conflict"
+      tgRestoreFocus="edit-title"
+      class="title-wrapper">
+      <div class="shape-outside-text float-inline-end"></div>
+      <h1 class="title">{{ titleForm.get('title')!.value }}</h1>
+      <tg-field-conflict
+        *ngIf="vm.conflict"
+        [username]="vm.story.titleUpdatedBy.fullName"
+        [field]="t('field_conflict.fields.title')"
+        [copyValue]="titleForm.get('title')!.value"
+        (cancel)="cancelConflict()"
+        (accept)="acceptConflict()"></tg-field-conflict>
+    </div>
+    <div
+      *ngIf="vm.edit && !vm.conflict"
+      class="edit-title-field"
+      tgRestoreFocus="edit-title"
+      [tgRestoreFocusActive]="!vm.conflict">
+      <form
+        #formTpl="ngForm"
+        [formGroup]="titleForm"
+        [showFormErrors]="formTpl.submitted"
+        (ngSubmit)="save()">
+        <tg-ui-textarea>
+          <tui-text-area
+            class="general-textarea"
+            (keydown.code.enter)="onEnter($event)"
+            tgAutoFocus
+            formControlName="title"
+            [maxLength]="maxLength"
+            [expandable]="true"
+            [tuiTextfieldLabelOutside]="true"
+            (focusedChange)="focusChange.next($event)">
+          </tui-text-area>
+
+          <div class="edit-field-actions">
+            <button
+              (click)="cancelEditTitle()"
+              tuiButton
+              type="button"
+              appearance="tertiary">
+              {{ t('commons.cancel') }}
+            </button>
+            <button
+              tuiButton
+              type="submit"
+              appearance="primary">
+              {{ t('commons.save') }}
+            </button>
+          </div>
+
+          <ng-container inputError>
+            <tg-ui-error error="required">{{
+              t('common_story.create_story_form.title_story_required')
+            }}</tg-ui-error>
+            <tg-ui-error error="pattern">{{
+              t('common_story.create_story_form.title_story_required')
+            }}</tg-ui-error>
+
+            <div
+              *ngIf="(titleForm.get('title')!.value?.length ?? 0) >= maxLength"
+              aria-live="assertive"
+              class="max-length">
+              {{ t('common_story.create_story_form.max_length') }}
+            </div>
+          </ng-container>
+        </tg-ui-textarea>
+      </form>
+      <tg-discard-changes-modal
+        [open]="showConfirmEditTitleModal"
+        (discard)="discard()"
+        (cancel)="keepEditing()"></tg-discard-changes-modal>
+    </div>
+  </ng-container>
+</ng-container>

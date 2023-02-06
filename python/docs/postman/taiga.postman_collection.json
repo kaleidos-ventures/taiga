@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "95fc3869-a038-4735-84fb-c63e1c37c655",
+		"_postman_id": "7fb8ef82-24a0-427f-8808-b98f17c5555a",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -755,7 +755,7 @@
 					"response": []
 				},
 				{
-					"name": "project by id",
+					"name": "get project",
 					"event": [
 						{
 							"listen": "test",
@@ -783,6 +783,119 @@
 							]
 						},
 						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "description",
+									"value": "New description",
+									"description": "Empty description to delete it",
+									"type": "default"
+								},
+								{
+									"key": "name",
+									"value": "New name",
+									"type": "default"
+								},
+								{
+									"key": "logo",
+									"description": "Use this field to add / modify logo",
+									"type": "file",
+									"src": "bot.png"
+								},
+								{
+									"key": "logo",
+									"value": "",
+									"description": "Use this field to delete logo",
+									"type": "default",
+									"disabled": true
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -1289,69 +1402,6 @@
 								"projects",
 								"{{pj-id}}",
 								"workflows"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "update project",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "description",
-									"value": "New description",
-									"description": "Empty description to delete it",
-									"type": "default"
-								},
-								{
-									"key": "name",
-									"value": "New name",
-									"type": "default"
-								},
-								{
-									"key": "logo",
-									"description": "Use this field to add / modify logo",
-									"type": "file",
-									"src": "bot.png"
-								},
-								{
-									"key": "logo",
-									"value": "",
-									"description": "Use this field to delete logo",
-									"type": "default",
-									"disabled": true
-								}
-							],
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-id}}"
 							]
 						}
 					},

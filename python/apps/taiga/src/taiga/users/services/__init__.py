@@ -17,6 +17,7 @@ from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
 from taiga.projects.invitations import services as invitations_services
 from taiga.projects.invitations.services import exceptions as invitations_ex
+from taiga.projects.projects.models import Project
 from taiga.tokens import exceptions as tokens_ex
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
@@ -186,6 +187,12 @@ async def get_users_usernames_as_dict(
 ) -> dict[str, User]:
     users = await users_repositories.get_users(filters={"is_active": True, "usernames": usernames})
     return {u.username: u for u in users}
+
+
+async def list_guests_in_workspace_for_project(
+    project: Project,
+) -> list[User]:
+    return await users_repositories.get_users(filters={"guest_in_ws_for_project": project})
 
 
 #####################################################################

@@ -285,21 +285,18 @@ async def test_update_project_workspace_member_permissions():
 
 
 ##########################################################
-# delete_project
+# delete_projects
 ##########################################################
 
-# NOTE: this functiomn does not yet exist, but we need to tests sequence deletions
 
-
-async def test_delete_project():
-    workspace = await f.create_workspace()
-    project = await repositories.create_project(
-        name="My test project", description="", color=3, owner=workspace.owner, workspace=workspace
-    )
+async def test_delete_projects():
+    project = await f.create_project()
+    await f.create_project_invitation(project=project)
     seqname = references.get_project_references_seqname(project.id)
 
     assert await _seq_exists(seqname)
-    await _delete_project(project)
+    deleted = await repositories.delete_projects(filters={"id": project.id})
+    assert deleted == 10 # 1 project, 1 workflow, 4 statuses, 1 invitation, 1 membership, 2 roles
     assert not await _seq_exists(seqname)
 
 
@@ -385,11 +382,6 @@ def _get_pj_member_role(project: Project) -> ProjectRole:
 @sync_to_async
 def _save_project(project: Project) -> Project:
     return project.save()
-
-
-@sync_to_async
-def _delete_project(project: Project) -> Project:
-    return project.delete()
 
 
 @sync_to_async

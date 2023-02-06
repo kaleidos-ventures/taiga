@@ -339,3 +339,49 @@ async def test_update_project_workspace_member_permissions_not_premium():
             project=project, permissions=incompatible_permissions
         )
         fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
+
+
+##########################################################
+# delete_project
+##########################################################
+
+
+async def test_delete_project_fail():
+    user = f.build_user()
+    project = f.build_project()
+
+    with (
+        patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,
+        patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
+        patch("taiga.projects.projects.services.users_services", autospec=True) as fake_users_services,
+    ):
+        fake_projects_repo.delete_projects.return_value = 0
+        fake_users_services.list_guests_in_workspace_for_project.return_value = []
+
+        await services.delete_project(project=project, deleted_by=user)
+
+        fake_projects_events.emit_event_when_project_is_deleted.assert_not_awaited()
+        fake_projects_repo.delete_projects.assert_awaited_once_with(
+            filters={"id": project.id},
+        )
+
+
+async def test_delete_project_ok():
+    user = f.build_user()
+    project = f.build_project()
+
+    with (
+        patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,
+        patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
+        patch("taiga.projects.projects.services.users_services", autospec=True) as fake_users_services,
+    ):
+        fake_projects_repo.delete_projects.return_value = 1
+        fake_users_services.list_guests_in_workspace_for_project.return_value = []
+
+        await services.delete_project(project=project, deleted_by=user)
+        fake_projects_events.emit_event_when_project_is_deleted.assert_awaited_once_with(
+            workspace=project.workspace, project=project, deleted_by=user, guests=[]
+        )
+        fake_projects_repo.delete_projects.assert_awaited_once_with(
+            filters={"id": project.id},
+        )

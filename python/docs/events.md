@@ -268,6 +268,20 @@ We may also have events that affect only a subset of atributes of an object; for
 We can send actions inside an event. The type must be `action` and the content should be an action described above.
 
 
+#### `projects.delete`
+
+It happens when a project is deleted
+
+Content for:
+- workspace channel:
+  ```
+  {
+      "name": "project name (str)",
+      "deleted_by": {... basic user info ...}
+  }
+  ```
+
+
 #### `projectinvitations.create`
 
 It happens when a new project invitation is created.

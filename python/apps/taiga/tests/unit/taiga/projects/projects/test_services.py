@@ -26,6 +26,21 @@ pytestmark = pytest.mark.django_db
 ##########################################################
 
 
+async def test_create_project_api():
+    workspace = f.build_workspace()
+
+    with (
+        patch("taiga.projects.projects.services.create_project") as fake_create_project,
+        patch("taiga.projects.projects.services.get_project_detail") as fake_get_project_detail,
+    ):
+        await services.create_project_api(
+            workspace=workspace, name="n", description="d", color=2, owner=workspace.owner
+        )
+
+        fake_create_project.assert_awaited_once()
+        fake_get_project_detail.assert_awaited_once()
+
+
 async def test_create_project():
     workspace = f.build_workspace()
 

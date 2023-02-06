@@ -37,3 +37,21 @@ class CreatedByMetaInfoMixin(models.Model):
 class CreatedMetaInfoMixin(CreatedByMetaInfoMixin, CreatedAtMetaInfoMixin):
     class Meta:
         abstract = True
+
+
+class TitleUpdatedMetaInfoMixin(models.Model):
+    title_updated_by = models.ForeignKey(
+        "users.User",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name="title updated by",
+    )
+    title_updated_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="title updated at",
+    )
+
+    class Meta:
+        abstract = True

@@ -118,7 +118,7 @@ async def get_story_detail(project_id: UUID, ref: int) -> StoryDetailSerializer:
         Story,
         await stories_repositories.get_story(
             filters={"ref": ref, "project_id": project_id},
-            select_related=["created_by", "project", "workflow", "status", "workspace"],
+            select_related=["created_by", "project", "workflow", "status", "workspace", "title_updated_by"],
             prefetch_related=["assignees"],
         ),
     )

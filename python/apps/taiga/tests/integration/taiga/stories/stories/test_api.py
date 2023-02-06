@@ -283,6 +283,18 @@ async def test_update_story_unprotected_attribute_ok(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
+async def test_update_story_protected_attribute_ok(client):
+    project = await f.create_project()
+    workflow = await project.workflows.afirst()
+    status1 = await workflow.statuses.afirst()
+    story = await f.create_story(project=project, workflow=workflow, status=status1)
+
+    data = {"version": story.version, "title": "title updated"}
+    client.login(project.owner)
+    response = client.patch(f"/projects/{project.b64id}/stories/{story.ref}", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
 async def test_update_story_protected_attribute_error_with_invalid_version(client):
     project = await f.create_project()
     workflow = await project.workflows.afirst()

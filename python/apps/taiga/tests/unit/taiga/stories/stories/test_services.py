@@ -135,7 +135,7 @@ async def test_get_story_detail_ok():
 
         fake_stories_repo.get_story.assert_awaited_once_with(
             filters={"ref": story2.ref, "project_id": story2.project_id},
-            select_related=["created_by", "project", "workflow", "status", "workspace"],
+            select_related=["created_by", "project", "workflow", "status", "workspace", "title_updated_by"],
             prefetch_related=["assignees"],
         )
 
@@ -161,7 +161,7 @@ async def test_get_story_detail_no_neighbors():
 
         fake_stories_repo.get_story.assert_awaited_once_with(
             filters={"ref": story1.ref, "project_id": story1.project_id},
-            select_related=["created_by", "project", "workflow", "status", "workspace"],
+            select_related=["created_by", "project", "workflow", "status", "workspace", "title_updated_by"],
             prefetch_related=["assignees"],
         )
 

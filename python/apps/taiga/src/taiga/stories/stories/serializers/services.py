@@ -31,6 +31,8 @@ def serialize_story_detail(
         assignees=assignees,
         prev=neighbors.prev,
         next=neighbors.next,
+        title_updated_by=story.title_updated_by,
+        title_updated_at=story.title_updated_at,
     )
 
 

@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "8608cba2-3c88-4cf3-880f-10c762b6cd75",
+		"_postman_id": "5455e2bd-1934-4257-a579-b00adb66404d",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -2007,9 +2008,11 @@
 									"    pm.expect(jsonRes).to.have.property(\"prev\");",
 									"    pm.expect(jsonRes).to.have.property(\"next\");",
 									"    pm.expect(jsonRes).to.have.property(\"assignees\");",
+									"    pm.expect(jsonRes).to.have.property(\"titleUpdatedBy\");",
+									"    pm.expect(jsonRes).to.have.property(\"titleUpdatedAt\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(10);",
+									"    pm.expect(numOfReturnedFields).to.equal(12);",
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
@@ -2359,9 +2362,11 @@
 									"    pm.expect(jsonRes).to.have.property(\"prev\");",
 									"    pm.expect(jsonRes).to.have.property(\"next\");",
 									"    pm.expect(jsonRes).to.have.property(\"assignees\");",
+									"    pm.expect(jsonRes).to.have.property(\"titleUpdatedBy\");",
+									"    pm.expect(jsonRes).to.have.property(\"titleUpdatedAt\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(10);",
+									"    pm.expect(numOfReturnedFields).to.equal(12);",
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
@@ -2441,10 +2446,12 @@
 									"    pm.expect(jsonRes).to.have.property(\"prev\");",
 									"    pm.expect(jsonRes).to.have.property(\"next\");",
 									"    pm.expect(jsonRes).to.have.property(\"assignees\");",
+									"    pm.expect(jsonRes).to.have.property(\"titleUpdatedBy\");",
+									"    pm.expect(jsonRes).to.have.property(\"titleUpdatedAt\");",
 									"    ",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(10);",
+									"    pm.expect(numOfReturnedFields).to.equal(12);",
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",

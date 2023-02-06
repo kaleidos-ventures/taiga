@@ -117,11 +117,6 @@ class Project(models.BaseModel, CreatedMetaInfoMixin):
 
         references.create_project_references_sequence(project_id=self.id)
 
-    def delete(self, *args: Any, **kwargs: Any) -> tuple[int, dict[str, int]]:
-        references.delete_project_references_sequence(project_id=self.id)
-
-        return super().delete(*args, **kwargs)
-
 
 class ProjectTemplate(models.BaseModel, CreatedAtMetaInfoMixin):
     name = models.CharField(max_length=250, null=False, blank=False, verbose_name="name")

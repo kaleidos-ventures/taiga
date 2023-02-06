@@ -28,6 +28,7 @@ from taiga.base.db.users import django_update_last_login
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.memberships.models import ProjectMembership
+from taiga.projects.projects.models import Project
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import AuthData, User
 from taiga.users.schemas import UserBaseSchema
@@ -48,6 +49,7 @@ class UserFilters(TypedDict, total=False):
     usernames: list[str]
     username_or_email: str
     is_active: bool
+    guest_in_ws_for_project: Project
 
 
 def _apply_filters_to_queryset(
@@ -68,6 +70,15 @@ def _apply_filters_to_queryset(
     if "username_or_email" in filter_data:
         username_or_email = filter_data.pop("username_or_email")
         qs = qs.filter(Q(username__iexact=username_or_email) | Q(email__iexact=username_or_email))
+
+    if "guest_in_ws_for_project" in filter_data:
+        project = filter_data.pop("guest_in_ws_for_project")
+        pj_members = Q(projects=project)
+        pj_invitees = Q(
+            project_invitations__project=project, project_invitations__status=ProjectInvitationStatus.PENDING
+        )
+        qs = qs.filter(pj_members | pj_invitees)
+        qs = qs.exclude(workspaces=project.workspace).distinct()  # type: ignore[attr-defined]
 
     return qs.filter(**filter_data)
 

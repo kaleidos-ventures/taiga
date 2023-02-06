@@ -7,7 +7,7 @@
 
 from uuid import UUID
 
-from fastapi import Query
+from fastapi import Query, status
 from fastapi.params import Depends
 from taiga.base.api import AuthRequest, responses
 from taiga.base.api.permissions import check_permissions
@@ -33,6 +33,7 @@ GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
+DELETE_PROJECT = IsProjectAdmin()
 
 # HTTP 200 RESPONSES
 PROJECT_DETAIL_200 = responses.http_status_200(model=ProjectDetailSerializer)
@@ -235,6 +236,31 @@ async def update_project_workspace_member_permissions(
     await check_permissions(permissions=UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
 
     return await projects_services.update_project_workspace_member_permissions(project, form.permissions)
+
+
+##########################################################
+# delete project
+##########################################################
+
+@routes.projects.delete(
+    "/{id}",
+    name="projects.delete",
+    summary="Delete project",
+    responses=ERROR_404 | ERROR_403,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_project(
+    request: AuthRequest,
+    id: B64UUID = Query(None, description="the project id (B64UUID)"),
+) -> None:
+    """
+    Delete a project
+    """
+    project = await get_project_or_404(id)
+    await check_permissions(permissions=DELETE_PROJECT, user=request.user, obj=project)
+
+    await projects_services.delete_project(project=project, deleted_by=request.user)
+
 
 
 ##########################################################

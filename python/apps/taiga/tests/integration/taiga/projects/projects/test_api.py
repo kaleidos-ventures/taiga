@@ -518,6 +518,38 @@ async def test_update_project_workspace_member_permissions_anonymous_user(client
 
 
 ##########################################################
+# DELETE /projects/<id>
+##########################################################
+
+
+async def test_delete_project_invalid(client):
+    pj_admin = await f.create_user()
+
+    client.login(pj_admin)
+    response = client.delete(f"/projects/INVALID_PJ_ID")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_project_user_without_permissions(client):
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    project = await f.create_project(owner=user1)
+
+    client.login(user2)
+    response = client.delete(f"/projects/{project.b64id}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_delete_project_ok(client):
+    user = await f.create_user()
+    project = await f.create_project(owner=user)
+
+    client.login(user)
+    response = client.delete(f"/projects/{project.b64id}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+##########################################################
 # GET /my/projects/<id>/permissions
 ##########################################################
 

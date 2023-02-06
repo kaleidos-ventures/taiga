@@ -113,6 +113,30 @@ async def test_get_users_by_emails():
     assert user3 not in users
 
 
+async def test_get_guests_in_ws_for_project():
+    admin = await f.create_user()
+    member = await f.create_user()
+    invitee = await f.create_user()
+    workspace = await f.create_workspace(owner=admin)
+    project = await f.create_project(owner=admin, workspace=workspace)
+    general_role = await f.create_project_role(project=project, is_admin=False)
+    await f.create_project_membership(user=member, project=project, role=general_role)
+    await f.create_project_invitation(
+        email=invitee.email,
+        user=invitee,
+        project=project,
+        role=general_role,
+        status=ProjectInvitationStatus.PENDING,
+        invited_by=admin,
+    )
+
+    users = await users_repositories.get_users(filters={"guest_in_ws_for_project": project})
+
+    assert len(users) == 2
+    assert invitee in users
+    assert member in users
+
+
 ##########################################################
 # get_user
 ##########################################################

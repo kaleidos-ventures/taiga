@@ -26,6 +26,7 @@ from taiga.projects.projects.serializers import ProjectDetailSerializer
 from taiga.projects.projects.serializers import services as serializers_services
 from taiga.projects.projects.services import exceptions as ex
 from taiga.projects.roles import repositories as pj_roles_repositories
+from taiga.users import services as users_services
 from taiga.users.models import AnyUser, User
 from taiga.workspaces.roles import repositories as ws_roles_repositories
 from taiga.workspaces.workspaces import services as workspaces_services
@@ -239,6 +240,23 @@ async def update_project_workspace_member_permissions(project: Project, permissi
         await actions_events.emit_event_action_to_check_project_subscription(project_b64id=project.b64id)
 
     return permissions
+
+
+##########################################################
+# delete project
+##########################################################
+
+
+async def delete_project(project: Project, deleted_by: AnyUser) -> bool:
+    guests = await users_services.list_guests_in_workspace_for_project(project=project)
+    deleted = await projects_repositories.delete_projects(filters={"id": project.id})
+    if deleted > 0:
+        await projects_events.emit_event_when_project_is_deleted(
+            workspace=project.workspace, project=project, deleted_by=deleted_by, guests=guests
+        )
+        return True
+
+    return False
 
 
 ##########################################################

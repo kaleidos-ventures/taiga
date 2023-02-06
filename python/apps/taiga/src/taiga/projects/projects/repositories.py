@@ -10,6 +10,7 @@ from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import File, Q, QuerySet
+from taiga.projects import references
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects.models import Project, ProjectTemplate
 from taiga.projects.roles import repositories as pj_roles_repositories
@@ -184,6 +185,21 @@ def update_project(project: Project, values: dict[str, Any] = {}) -> Project:
 
     project.save()
     return project
+
+
+##########################################################
+# delete project
+##########################################################
+
+
+@sync_to_async
+def delete_projects(filters: ProjectFilters = {}) -> int:
+    qs = _apply_filters_to_project_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    references.delete_project_references_sequences(
+        project_ids=list(qs.values_list('id', flat=True))
+    )
+    count, _ = qs.delete()
+    return count
 
 
 ##########################################################

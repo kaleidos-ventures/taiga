@@ -43,6 +43,11 @@ export const permissionsUpdate = createAction(
   props<{ id: Project['id'] }>()
 );
 
+export const permissionsUpdateSuccess = createAction(
+  '[Project][ws] permission update success',
+  props<{ project: Project }>()
+);
+
 export const updateStoryShowView = createAction(
   '[Story] Update show view',
   props<{

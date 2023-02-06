@@ -102,6 +102,15 @@ export const reducer = createReducer(
     return state;
   }),
   on(
+    ProjectActions.permissionsUpdateSuccess,
+    (state, { project }): ProjectState => {
+      state.projects[project.id] = project;
+      state.currentProjectId = project.id;
+
+      return state;
+    }
+  ),
+  on(
     RolesPermissionsActions.updateRolePermissionsSuccess,
     (state, { role }): ProjectState => {
       state.members = state.members.map((member) => {

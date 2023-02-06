@@ -25,6 +25,7 @@ import {
   fetchProject,
   fetchProjectSuccess,
   permissionsUpdate,
+  permissionsUpdateSuccess,
 } from '../actions/project.actions';
 import { ProjectEffects } from './project.effects';
 
@@ -104,7 +105,7 @@ describe('ProjectEffects', () => {
     actions$ = hot('-a', { a: permissionsUpdate({ id }) });
 
     const expected = cold('--a', {
-      a: fetchProjectSuccess({ project }),
+      a: permissionsUpdateSuccess({ project }),
     });
 
     expect(effects.permissionsUpdate$).toBeObservable(expected);

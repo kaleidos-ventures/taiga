@@ -17,8 +17,7 @@ def get_project_references_seqname(id: UUID) -> str:
 
 def create_project_references_sequence(project_id: UUID) -> None:
     seqname = get_project_references_seqname(project_id)
-    if not seq.exists(seqname):
-        seq.create(seqname)
+    seq.create(seqname)
 
 
 def get_new_project_reference_id(project_id: UUID) -> int:
@@ -30,9 +29,6 @@ def get_new_project_reference_id(project_id: UUID) -> int:
         return seq.next_value(seqname)
 
 
-def delete_project_references_sequence(project_id: UUID) -> bool:
-    seqname = get_project_references_seqname(project_id)
-    if seq.exists(seqname):
-        seq.delete(seqname)
-        return True
-    return False
+def delete_project_references_sequences(project_ids: list[UUID]) -> None:
+    seqnames = [get_project_references_seqname(project_id) for project_id in project_ids]
+    seq.delete(seqnames)

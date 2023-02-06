@@ -26,7 +26,7 @@ def test_sequences_common_life_cycle():
     assert seq.next_value(seqname) == 3
 
     # Delete sequence
-    seq.delete(seqname)
+    seq.delete([seqname])
     assert not seq.exists(seqname)
 
 
@@ -45,7 +45,7 @@ def test_create_with_custom_start_value():
     assert seq.next_value(seqname) == 44
 
     # Delete sequence
-    seq.delete(seqname)
+    seq.delete([seqname])
     assert not seq.exists(seqname)
 
 
@@ -71,5 +71,5 @@ def test_change_sequences_value():
     assert seq.next_value(seqname) == 3
 
     # Delete sequence
-    seq.delete(seqname)
+    seq.delete([seqname])
     assert not seq.exists(seqname)

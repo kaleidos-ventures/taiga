@@ -26,7 +26,7 @@ def create(seqname: str, start: int = 1) -> None:
     :param int start: the value at which the sequence will start (`1` by default)
     :type start: int
     """
-    sql = "CREATE SEQUENCE {} START %s;".format(seqname)
+    sql = "CREATE SEQUENCE IF NOT EXISTS {} START %s;".format(seqname)
 
     with closing(connection.cursor()) as cursor:
         cursor.execute(sql, [start])
@@ -108,13 +108,13 @@ def set_value(seqname: str, value: int) -> None:
 
 
 @transaction.atomic
-def delete(seqname: str) -> None:
+def delete(seqnames: list[str]) -> None:
     """
-    Delete a sequence.
+    Delete a list of sequences.
 
-    :param seqname: the name of the sequence
-    :type seqname: str
+    :param seqnames: the name of the sequences
+    :type seqnames: list[str]
     """
-    sql = "DROP SEQUENCE {};".format(seqname)
+    sql = "DROP SEQUENCE IF EXISTS {};".format(", ".join(seqnames))
     with closing(connection.cursor()) as cursor:
         cursor.execute(sql)

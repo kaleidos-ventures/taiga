@@ -57,5 +57,5 @@ def test_delete_project_references_sequence():
 
     refs.create_project_references_sequence(project_id)
 
-    assert refs.delete_project_references_sequence(project_id)
-    assert not refs.delete_project_references_sequence(project_id)
+    refs.delete_project_references_sequences([project_id])
+    assert not seq.exists(refs.get_project_references_seqname(project_id))

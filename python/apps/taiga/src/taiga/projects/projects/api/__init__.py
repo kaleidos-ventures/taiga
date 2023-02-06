@@ -58,7 +58,7 @@ async def create_project(
     """
     workspace = await get_workspace_or_404(id=form.workspace_id)
     await check_permissions(permissions=CREATE_PROJECT, user=request.user, obj=workspace)
-    project = await projects_services.create_project(
+    return await projects_services.create_project_api(
         workspace=workspace,
         name=form.name,
         description=form.description,
@@ -66,7 +66,6 @@ async def create_project(
         owner=request.user,
         logo=form.logo,
     )
-    return await projects_services.get_project_detail(project=project, user=request.user)
 
 
 ##########################################################
@@ -191,13 +190,11 @@ async def update_project(
     """
     Update project
     """
-
     project = await get_project_or_404(id)
     await check_permissions(permissions=UPDATE_PROJECT, user=request.user, obj=project)
 
     values = await form.cleaned_dict(request)
-    updated_project = await projects_services.update_project(project=project, values=values)
-    return await projects_services.get_project_detail(project=updated_project, user=request.user)
+    return await projects_services.update_project_api(project=project, user=request.user, values=values)
 
 
 @routes.projects.put(

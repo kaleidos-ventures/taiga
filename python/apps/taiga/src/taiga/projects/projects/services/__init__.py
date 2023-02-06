@@ -36,6 +36,20 @@ from taiga.workspaces.workspaces.models import Workspace
 ##########################################################
 
 
+async def create_project_api(
+    workspace: Workspace,
+    name: str,
+    description: str | None,
+    color: int | None,
+    owner: User,
+    logo: UploadFile | None = None,
+) -> ProjectDetailSerializer:
+    project = await create_project(
+        workspace=workspace, name=name, description=description, color=color, owner=owner, logo=logo
+    )
+    return await get_project_detail(project=project, user=owner)
+
+
 async def create_project(
     workspace: Workspace,
     name: str,
@@ -169,6 +183,11 @@ async def get_project_detail(project: Project, user: AnyUser) -> ProjectDetailSe
 ##########################################################
 
 
+async def update_project_api(project: Project, user: User, values: dict[str, Any] = {}) -> ProjectDetailSerializer:
+    updated_project = await update_project(project=project, values=values)
+    return await get_project_detail(project=updated_project, user=user)
+
+
 async def update_project(project: Project, values: dict[str, Any] = {}) -> Project:
     # Prevent hitting the database with an empty PATCH
     if len(values) == 0:
@@ -190,13 +209,13 @@ async def update_project(project: Project, values: dict[str, Any] = {}) -> Proje
             file_to_delete = project.logo.path
 
     # Update project
-    project = await projects_repositories.update_project(project=project, values=values)
+    updated_project = await projects_repositories.update_project(project=project, values=values)
 
     # Delete old file if existed
     if file_to_delete:
         await projects_tasks.delete_old_logo.defer(path=file_to_delete)
 
-    return project
+    return updated_project
 
 
 async def update_project_public_permissions(project: Project, permissions: list[str]) -> list[str]:

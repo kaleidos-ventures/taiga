@@ -65,7 +65,7 @@ export class ProjectEffects {
         run: (action) => {
           return this.projectApiService.getProject(action.id).pipe(
             map((project) => {
-              return ProjectActions.fetchProjectSuccess({ project });
+              return ProjectActions.permissionsUpdateSuccess({ project });
             })
           );
         },

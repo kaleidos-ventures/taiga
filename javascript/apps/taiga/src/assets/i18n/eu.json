@@ -99,7 +99,7 @@
     "public_permissions": "There was a problem loading public permissions",
     "workspace_permissions": "There was a problem loading workspace  permissions",
     "resend_email": "There was a problem reseind your email",
-    "save_changes": "An error ocurred while saving your changes",
+    "save_changes": "An error occurred while saving your changes",
     "generic_toast_label": "Something went wrong!",
     "generic_toast_message": "Try again in a few minutes.",
     "invalid_token_toast_message": "Invalid token.",
@@ -107,7 +107,9 @@
     "project_invitation_no_longer_valid": "The invitation to {{ name }} is no longer valid.",
     "modify_story_permission": "You no longer have permissions to modify stories",
     "you_dont_have_permission_to_see": "You don't have permission to see the project.",
-    "admin_permission": "You  are no longer admin on this project"
+    "admin_permission": "You  are no longer admin on this project",
+    "entity_no_longer_exists": "This {{entity}} no longer exists",
+    "user_deleted_entity": "{{user}} has deleted it, so you cannot edit it anymore."
   },
   "discard_changes": {
     "title": "Discard changes?",

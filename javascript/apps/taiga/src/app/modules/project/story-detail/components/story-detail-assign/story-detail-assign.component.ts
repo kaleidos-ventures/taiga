@@ -23,11 +23,14 @@ import { FormGroup } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
+import { TuiNotification } from '@taiga-ui/core';
 import { Membership, Project, Status, Story, User } from '@taiga/data';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
+import { selectPermissionsError } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
 import { StoryDetailForm } from '~/app/modules/project/story-detail/story-detail.component';
+import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -39,6 +42,7 @@ export interface StoryState {
   assignees: Story['assignees'];
   currentUser: User;
   canEdit: boolean;
+  permissionsError: boolean;
 }
 @Component({
   selector: 'tg-story-detail-assign',
@@ -72,7 +76,8 @@ export class StoryDetailAssignComponent implements OnChanges {
     private store: Store,
     private permissionService: PermissionsService,
     private translocoService: TranslocoService,
-    private liveAnnouncer: LiveAnnouncer
+    private liveAnnouncer: LiveAnnouncer,
+    private appService: AppService
   ) {
     this.state.connect(
       'currentUser',
@@ -81,6 +86,11 @@ export class StoryDetailAssignComponent implements OnChanges {
     this.state.connect(
       'canEdit',
       this.permissionService.hasPermissions$('story', ['modify'])
+    );
+
+    this.state.connect(
+      'permissionsError',
+      this.store.select(selectPermissionsError)
     );
   }
 
@@ -115,9 +125,17 @@ export class StoryDetailAssignComponent implements OnChanges {
     event.preventDefault();
     event.stopPropagation();
 
-    this.state.set('showAssignUser', ({ showAssignUser }) => {
-      return !showAssignUser;
-    });
+    if (this.state.get('canEdit')) {
+      this.state.set('showAssignUser', ({ showAssignUser }) => {
+        return !showAssignUser;
+      });
+    } else {
+      this.state.set({ permissionsError: true });
+      this.appService.toastNotification({
+        message: 'errors.modify_story_permission',
+        status: TuiNotification.Error,
+      });
+    }
   }
 
   public assign(member: Membership['user']) {

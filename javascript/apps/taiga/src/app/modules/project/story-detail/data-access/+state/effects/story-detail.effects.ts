@@ -218,8 +218,16 @@ export class StoryDetailEffects {
               })
             );
         },
-        onError: (_, httpResponse: HttpErrorResponse) => {
-          this.appService.toastSaveChangesError(httpResponse);
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status !== 403) {
+            this.appService.errorManagement(httpResponse);
+          }
+
+          return StoryDetailApiActions.assignMemberError({
+            status: httpResponse.status,
+            ref: action.storyRef,
+            member: action.member,
+          });
         },
       })
     );
@@ -241,8 +249,21 @@ export class StoryDetailEffects {
               })
             );
         },
-        onError: (_, httpResponse: HttpErrorResponse) => {
-          this.appService.toastSaveChangesError(httpResponse);
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status !== 403) {
+            this.appService.errorManagement(httpResponse);
+          }
+
+          this.appService.toastNotification({
+            message: 'errors.modify_story_permission',
+            status: TuiNotification.Error,
+          });
+
+          return StoryDetailApiActions.unassignMemberError({
+            status: httpResponse.status,
+            ref: action.storyRef,
+            member: action.member,
+          });
         },
       })
     );

@@ -18,7 +18,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         *hasPermission="
           ['modify'];
           entity: 'story';
-          else: noAssignPermissionsTpl
+          else: noAssignPermissionsTpl;
+          canLosePermissions: false
         "
         class="field-content"
         (resized)="calculateDropdownWidth($event)">
@@ -69,17 +70,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               aria-hidden="true"
               [tuiHint]="assignedUser.fullName"
               [tuiHintDirection]="'bottom-right'"></tg-user-avatar>
-            <label
+            <span
               class="assigned-name"
               [innerHtml]="
                 vm.currentUser.username === assignedUser.username
                   ? t('commons.your_user', { name: assignedUser.fullName })
                   : assignedUser.fullName || assignedUser.username
               ">
-            </label>
+            </span>
+            {{ vm.permissionsError }}
             <button
               #assigned
-              *hasPermission="['modify']; entity: 'story'"
+              *hasPermission="
+                ['modify'];
+                entity: 'story';
+                canLosePermissions: vm.permissionsError
+              "
               (keydown.enter)="unassignFromList($event, assignedUser)"
               (click)="unassignFromList($event, assignedUser)"
               [attr.aria-label]="
@@ -97,7 +103,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </tui-scrollbar>
       <div
         class="add-assignee"
-        *hasPermission="['modify']; entity: 'story'">
+        *hasPermission="
+          ['modify'];
+          entity: 'story';
+          canLosePermissions: vm.permissionsError
+        ">
         <button
           tuiButton
           appearance="tertiary"

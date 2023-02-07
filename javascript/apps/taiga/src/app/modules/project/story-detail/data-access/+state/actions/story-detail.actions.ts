@@ -38,6 +38,10 @@ export const StoryDetailActions = createActionGroup({
       storyRef: Story['ref'];
       member: Membership['user'];
     }>(),
+    'Assign Member Error': props<{
+      storyRef: Story['ref'];
+      member: Membership['user'];
+    }>(),
     'Assigned Member Event': props<{
       storyRef: Story['ref'];
       member: Membership['user'];
@@ -60,7 +64,17 @@ export const StoryDetailApiActions = createActionGroup({
       ref: Story['ref'];
     }>(),
     'Assign Member Success': emptyProps(),
+    'Assign Member Error': props<{
+      status: number;
+      ref: Story['ref'];
+      member: Membership['user'];
+    }>(),
     'UnAssign Member Success': emptyProps(),
+    'Unassign Member Error': props<{
+      status: number;
+      ref: Story['ref'];
+      member: Membership['user'];
+    }>(),
   },
 });
 

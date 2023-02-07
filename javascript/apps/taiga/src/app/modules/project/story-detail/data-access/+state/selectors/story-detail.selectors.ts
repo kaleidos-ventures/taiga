@@ -15,4 +15,5 @@ export const {
   selectWorkflow,
   selectLoadingWorkflow,
   selectStoryDetailState,
+  selectPermissionsError,
 } = storyDetailFeature;

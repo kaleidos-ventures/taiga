@@ -28,6 +28,7 @@ export interface StoryDetailState {
   loadingStory: boolean;
   loadingWorkflow: boolean;
   storyView: StoryView;
+  permissionsError: boolean;
 }
 
 export const initialStoryDetailState: StoryDetailState = {
@@ -36,6 +37,7 @@ export const initialStoryDetailState: StoryDetailState = {
   loadingStory: false,
   loadingWorkflow: false,
   storyView: LocalStorageService.get('story_view') || 'modal-view',
+  permissionsError: false,
 };
 
 export const reducer = createReducer(
@@ -121,6 +123,20 @@ export const reducer = createReducer(
       if (state.story?.ref === storyRef) {
         state.story?.assignees.unshift(member);
       }
+      return state;
+    }
+  ),
+  on(
+    StoryDetailApiActions.assignMemberError,
+    StoryDetailApiActions.unassignMemberError,
+    (state, { status, ref, member }): StoryDetailState => {
+      if (status === 403) {
+        state.permissionsError = true;
+        if (state.story?.ref === ref) {
+          state.story?.assignees.unshift(member);
+        }
+      }
+
       return state;
     }
   ),

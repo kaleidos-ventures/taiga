@@ -14,7 +14,7 @@ import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { catchError, concatMap, EMPTY, map, of } from 'rxjs';
+import { catchError, concatMap, EMPTY, map, of, tap } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { selectWorkflows } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { AppService } from '~/app/services/app.service';
@@ -164,7 +164,7 @@ export class StoryDetailEffects {
               })
             );
         },
-        onError: (action, httpResponse: HttpErrorResponse) => {
+        onError: (_, httpResponse: HttpErrorResponse) => {
           this.appService.errorManagement(httpResponse, {
             any: {
               type: 'toast',
@@ -184,8 +184,16 @@ export class StoryDetailEffects {
     () => {
       return this.actions$.pipe(
         ofType(StoryDetailApiActions.deleteStorySuccess),
-        map((action) => {
-          return void this.router.navigate([
+        tap((action) => {
+          this.appService.toastNotification({
+            message: 'delete.confirm_delete',
+            paramsMessage: { ref: action.ref },
+            status: TuiNotification.Info,
+            scope: 'story',
+            autoClose: true,
+            closeOnNavigation: false,
+          });
+          void this.router.navigate([
             `/project/${action.project.id}/${action.project.slug}/kanban`,
           ]);
         })

@@ -108,7 +108,7 @@
     "modify_story_permission": "You no longer have permissions to modify stories",
     "you_dont_have_permission_to_see": "You don't have permission to see the project.",
     "admin_permission": "You  are no longer admin on this project",
-    "entity_no_longer_exists": "This {{entity}} no longer exists",
+    "entity_no_longer_exists": "This {{entity}} no longer exists.",
     "user_deleted_entity": "{{user}} has deleted it, so you cannot edit it anymore."
   },
   "discard_changes": {

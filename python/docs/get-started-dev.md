@@ -1,9 +1,10 @@
 # Get started (for developers)
 
-> **NOTE:** You need:
+## Pre-installation requirements:
 >
 > - python >= 3.10. You can use [pyenv](https://github.com/pyenv/pyenv) tool to manage different python versions or install it in your OS.
 > - postgresql >= 13.x.
+> - [psycopg2](https://www.psycopg.org/docs/install.html). It also requires either python-dev o python-dev3, and libpq-dev packages.
 > - [Optional] redis >= 6.2. You can use `memory` PubSub backend instead.
 
 Create a virtualenv in `python/` directory and activate it

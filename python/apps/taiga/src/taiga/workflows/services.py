@@ -51,7 +51,7 @@ async def get_workflow(project_id: UUID, workflow_slug: str) -> Workflow | None:
     )
 
 
-async def get_detailed_workflow(project_id: UUID, workflow_slug: str) -> WorkflowSerializer:
+async def get_workflow_detail(project_id: UUID, workflow_slug: str) -> WorkflowSerializer:
     workflow = cast(
         Workflow,
         await workflows_repositories.get_workflow(

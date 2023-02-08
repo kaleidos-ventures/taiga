@@ -8,7 +8,7 @@
 from uuid import UUID
 
 from fastapi import Query
-from taiga.base.api import Request
+from taiga.base.api import Request, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
@@ -24,6 +24,10 @@ from taiga.workflows.serializers import WorkflowSerializer
 LIST_WORKFLOWS = HasPerm("view_story")
 GET_WORKFLOW = HasPerm("view_story")
 
+# HTTP 200 RESPONSES
+WORKFLOW_200 = responses.http_status_200(model=WorkflowSerializer)
+LIST_WORKFLOW_200 = responses.http_status_200(model=list[WorkflowSerializer])
+
 
 ################################################
 # list workflows
@@ -34,8 +38,7 @@ GET_WORKFLOW = HasPerm("view_story")
     "/{id}/workflows",
     name="project.workflow.list",
     summary="List workflows",
-    response_model=list[WorkflowSerializer],
-    responses=ERROR_404 | ERROR_403,
+    responses=LIST_WORKFLOW_200 | ERROR_404 | ERROR_403,
 )
 async def list_workflows(
     request: Request,
@@ -58,8 +61,7 @@ async def list_workflows(
     "/{id}/workflows/{workflow_slug}",
     name="project.workflow.get",
     summary="Get project workflow",
-    response_model=WorkflowSerializer,
-    responses=ERROR_404 | ERROR_403,
+    responses=WORKFLOW_200 | ERROR_404 | ERROR_403,
 )
 async def get_workflow(
     request: Request,
@@ -72,7 +74,7 @@ async def get_workflow(
     # TODO: The Postman's entry is missing
     workflow = await get_workflow_or_404(project_id=id, workflow_slug=workflow_slug)
     await check_permissions(permissions=GET_WORKFLOW, user=request.user, obj=workflow)
-    return await workflows_services.get_detailed_workflow(project_id=id, workflow_slug=workflow_slug)
+    return await workflows_services.get_workflow_detail(project_id=id, workflow_slug=workflow_slug)
 
 
 ################################################

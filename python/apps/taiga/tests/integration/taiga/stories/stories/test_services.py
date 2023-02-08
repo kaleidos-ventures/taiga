@@ -25,9 +25,7 @@ async def test_not_reorder_in_empty_status() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_detailed_workflow(
-        project_id=project.id, workflow_slug=workflow.slug
-    )
+    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -65,9 +63,7 @@ async def test_not_reorder_in_populated_status() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_detailed_workflow(
-        project_id=project.id, workflow_slug=workflow.slug
-    )
+    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -100,9 +96,7 @@ async def test_after_in_the_end() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_detailed_workflow(
-        project_id=project.id, workflow_slug=workflow.slug
-    )
+    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -139,9 +133,7 @@ async def test_after_in_the_middle() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_detailed_workflow(
-        project_id=project.id, workflow_slug=workflow.slug
-    )
+    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -180,9 +172,7 @@ async def test_before_in_the_beginning() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_detailed_workflow(
-        project_id=project.id, workflow_slug=workflow.slug
-    )
+    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -221,9 +211,7 @@ async def test_before_in_the_middle() -> None:
     admin = await f.create_user()
     project = await f.create_project(owner=admin)
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_detailed_workflow(
-        project_id=project.id, workflow_slug=workflow.slug
-    )
+    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 

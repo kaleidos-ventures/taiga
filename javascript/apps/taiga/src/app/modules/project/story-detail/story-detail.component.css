@@ -265,7 +265,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   @mixin font-heading-3;
 
   color: var(--color-gray100);
-  font-weight: var(--font-weight-bold);
   margin: 0;
   margin-block-end: var(--spacing-24);
 }

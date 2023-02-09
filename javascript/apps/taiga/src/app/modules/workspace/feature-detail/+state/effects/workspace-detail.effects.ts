@@ -13,6 +13,7 @@ import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { WorkspaceApiService } from '@taiga/api';
 import { timer, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { AppService } from '~/app/services/app.service';
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
 
@@ -77,6 +78,28 @@ export class WorkspaceDetailEffects {
                 project,
                 invitations,
                 role: action.role,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
+  public projectDeleted$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(projectEventActions.projectDeleted),
+      pessimisticUpdate({
+        run: (action) => {
+          return zip(
+            this.workspaceApiService.fetchWorkspace(action.workspaceId),
+            timer(300)
+          ).pipe(
+            map(([workspace]) => {
+              return WorkspaceActions.fetchWorkspaceSuccess({
+                workspace: workspace,
               });
             })
           );

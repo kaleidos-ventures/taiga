@@ -8,18 +8,25 @@
 
 import { NgModule } from '@angular/core';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import {
+  TuiDataListModule,
+  TuiHintModule,
+  TuiLinkModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { ModalModule } from '@taiga/ui/modal';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { TitleComponent } from '~/app/shared/title/title.component';
+import { DeleteProjectComponent } from './components/delete-project/delete-project.component';
+import { EditProjectComponent } from './components/edit-project/edit-project.component';
 import { ProjectMembersListComponent } from './components/project-members-list/project-members-list.component';
 import { ProjectMembersModalComponent } from './components/project-members-modal/project-members-modal.component';
 import { ProjectMembersComponent } from './components/project-members/project-members.component';
 import { DataAccessProjectOverviewModule } from './data-access/project-overview-data-access.module';
 import { ProjectOverviewRoutingModule } from './project-feature-overview-routing.module';
 import { ProjectFeatureOverviewComponent } from './project-feature-overview.component';
-import { EditProjectComponent } from './components/edit-project/edit-project.component';
-import { ModalModule } from '@taiga/ui/modal';
 
 @NgModule({
   imports: [
@@ -35,6 +42,10 @@ import { ModalModule } from '@taiga/ui/modal';
     ProjectMembersComponent,
     EditProjectComponent,
     ModalModule,
+    DropdownModule,
+    TuiHintModule,
+    TuiDataListModule,
+    DeleteProjectComponent,
   ],
   declarations: [ProjectFeatureOverviewComponent],
   providers: [

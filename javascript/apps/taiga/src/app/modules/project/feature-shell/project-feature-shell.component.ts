@@ -22,6 +22,7 @@ import {
   Project,
   StoryAssignEvent,
   StoryDetail,
+  User,
 } from '@taiga/data';
 import { distinctUntilChanged, filter, merge } from 'rxjs';
 import {
@@ -205,6 +206,31 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
             storyRef: response.story.ref,
           })
         );
+      });
+    this.wsService
+      .projectEvents<{
+        project: string;
+        workspace: string;
+        name: string;
+        deleted_by: User;
+      }>('projects.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        console.log('event');
+        console.log(eventResponse);
+
+        const project = this.state.get('project');
+        if (eventResponse.event.content.project === project.id) {
+          console.log('event in');
+          this.store.dispatch(
+            projectEventActions.projectDeleted({
+              projectId: eventResponse.event.content.project,
+              workspaceId: eventResponse.event.content.workspace,
+              name: eventResponse.event.content.name,
+              error: true,
+            })
+          );
+        }
       });
   }
 

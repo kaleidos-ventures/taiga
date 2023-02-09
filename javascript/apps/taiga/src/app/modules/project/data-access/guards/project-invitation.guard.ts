@@ -91,13 +91,22 @@ export class ProjectInvitationGuard implements CanActivate {
           return of(true);
         }),
         catchError((httpResponse: HttpErrorResponse) => {
-          if (this.authService.isLogged()) {
+          if (httpResponse.status === 404) {
+            void this.router.navigate(['/404']);
+          } else if (this.authService.isLogged()) {
             void this.router.navigate(['/']);
           } else {
             void this.router.navigate(['/login']);
           }
+          let message;
+          if (httpResponse.status === 404) {
+            message = 'errors.generic_deleted_project';
+          } else {
+            message = 'errors.invalid_token_toast_message';
+          }
+
           this.appService.toastNotification({
-            message: 'errors.invalid_token_toast_message',
+            message: message,
             status: TuiNotification.Error,
             closeOnNavigation: false,
           });

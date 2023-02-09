@@ -40,6 +40,11 @@ export const fetchWorkspaceSuccess = createAction(
   props<{ workspace: Workspace }>()
 );
 
+export const deleteWorkspaceProjectSuccess = createAction(
+  '[WorkspaceList] Delete workspace project Success',
+  props<{ workspace: Workspace; projectId: Project['id'] }>()
+);
+
 export const createWorkspace = createAction(
   '[WorkspaceList] Create new workspace',
   props<{
@@ -75,6 +80,11 @@ export const fetchWorkspaceProjectsSuccess = createAction(
 
 export const invitationRevokedEvent = createAction(
   '[Workspace] revoked invitation event, update workspace',
+  props<{ workspace: Workspace }>()
+);
+
+export const projectDeletedEvent = createAction(
+  '[Workspace] deleted project, update workspace',
   props<{ workspace: Workspace }>()
 );
 

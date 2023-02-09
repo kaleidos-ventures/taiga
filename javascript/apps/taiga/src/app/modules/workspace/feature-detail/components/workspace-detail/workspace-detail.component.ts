@@ -24,9 +24,10 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Project, Workspace, WorkspaceProject } from '@taiga/data';
+import { Project, User, Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { map, pairwise, take } from 'rxjs/operators';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   fetchWorkspace,
   invitationDetailCreateEvent,
@@ -47,7 +48,6 @@ import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
-
 interface ViewDetailModel {
   projects: WorkspaceProject[];
   workspace: Workspace | null;
@@ -164,6 +164,44 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  public workspaceEventSubscription() {
+    const workspace = this.state.get('workspace');
+    if (workspace) {
+      this.wsService
+        .command('unsubscribe_from_workspace_events', {
+          workspace: workspace.id,
+        })
+        .subscribe();
+
+      this.wsService
+        .command('subscribe_to_workspace_events', {
+          workspace: workspace.id,
+        })
+        .subscribe();
+
+      this.wsService
+        .events<{
+          project: string;
+          workspace: string;
+          name: string;
+          deleted_by: User;
+        }>({
+          channel: `workspaces.${workspace.id}`,
+          type: 'projects.delete',
+        })
+        .pipe(untilDestroyed(this))
+        .subscribe((eventResponse) => {
+          this.store.dispatch(
+            projectEventActions.projectDeleted({
+              projectId: eventResponse.event.content.project,
+              workspaceId: eventResponse.event.content.workspace,
+              name: eventResponse.event.content.name,
+            })
+          );
+        });
+    }
+  }
+
   public ngOnInit(): void {
     const rejectedInvites = this.getRejectedInvites();
 
@@ -200,7 +238,6 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
               });
             });
           }
-
           invitations = invitations.filter((invitation) => {
             return !state.rejectedInvites.includes(invitation.id);
           });
@@ -283,6 +320,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       });
 
     this.state.hold(this.state.select('workspace'), (workspace) => {
+      this.workspaceEventSubscription();
       workspace &&
         this.location.go(`workspace/${workspace.id}/${workspace.slug}`);
     });

@@ -166,6 +166,32 @@ export const reducer = createReducer(
       return state;
     }
   ),
+
+  on(
+    WorkspaceActions.deleteWorkspaceProjectSuccess,
+    (state, { workspace, projectId }): WorkspaceState => {
+      const workspaceIndex = state.workspaces.findIndex((workspaceItem) => {
+        return workspaceItem.id === workspace.id;
+      });
+
+      if (workspaceIndex && state.workspaces[workspaceIndex]) {
+        state.workspaces[workspaceIndex].invitedProjects = state.workspaces[
+          workspaceIndex
+        ].invitedProjects.filter(
+          (invitedProject) => invitedProject.id !== projectId
+        );
+      }
+
+      if (workspaceIndex && state.workspaceProjects[workspace.id]) {
+        state.workspaceProjects[workspace.id] = state.workspaceProjects[
+          workspace.id
+        ].filter((project) => {
+          return project.id !== projectId;
+        });
+      }
+      return state;
+    }
+  ),
   on(WorkspaceActions.resetWorkspace, (state): WorkspaceState => {
     state = {
       ...initialState,
@@ -203,6 +229,6 @@ export const reducer = createReducer(
 );
 
 export const workspaceFeature = createFeature({
-  name: 'workspaceList',
+  name: 'workspace',
   reducer: immerReducer(reducer),
 });

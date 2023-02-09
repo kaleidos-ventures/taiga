@@ -92,7 +92,12 @@
       "max_length_error": "Project description must be 200 characters or fewer",
       "choose_image_tip": "Allowed formats: gif, png, jpg, svg and webp",
       "format_error": "The file format is not allowed. Allowed formats: gif, png, jpg, svg or webp"
-    }
+    },
+    "delete_modal_title": "Delete {{projectTitle}}",
+    "delete_modal_warning": "<strong class='bold'>Warning;</strong> This action cannot be undone.",
+    "delete_modal_text": "This action will delete the project, along with all the stories and attachments in it.",
+    "delete_modal_delete": "Yes, delete project",
+    "delete_modal_refuse": "No, keep project"
   },
   "errors": {
     "please_refresh": "Please refresh the page or try again in a few minutes",
@@ -111,7 +116,11 @@
     "project_invitation_no_longer_valid": "The invitation to {{ name }} is no longer valid.",
     "lose_story_permissions": "You no longer have permissions to {{permission}} stories",
     "you_dont_have_permission_to_see": "You don't have permission to see the project.",
-    "admin_permission": "You  are no longer admin on this project"
+    "admin_permission": "You  are no longer admin on this project",
+    "entity_no_longer_exists": "This {{entity}} no longer exists.",
+    "user_deleted_entity": "{{user}} has deleted it, so you cannot edit it anymore.",
+    "deleted_project": "Project {{name}} has been deleted",
+    "generic_deleted_project": "Project has been deleted"
   },
   "discard_changes": {
     "title": "Discard changes?",

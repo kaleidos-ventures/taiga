@@ -7,7 +7,7 @@
  */
 
 import { createAction, createActionGroup, props } from '@ngrx/store';
-import { Membership, Project, Story, StoryDetail } from '@taiga/data';
+import { Membership, Project, Story, StoryDetail, User } from '@taiga/data';
 
 export const fetchProjectSuccess = createAction(
   '[Project] fetch success',
@@ -59,6 +59,22 @@ export const newProjectMembers = createAction(
   '[Project][ws] New Project Members'
 );
 
+export const deleteProject = createAction(
+  '[Project] delete project',
+  props<{
+    id: Project['id'];
+    name: Project['name'];
+  }>()
+);
+
+export const deleteProjectSuccess = createAction(
+  '[Project][api] delete project successs',
+  props<{
+    name: Project['name'];
+    error?: boolean;
+  }>()
+);
+
 export const projectEventActions = createActionGroup({
   source: 'Project ws',
   events: {
@@ -71,5 +87,12 @@ export const projectEventActions = createActionGroup({
       member: Membership['user'];
     }>(),
     'Update Story': props<{ story: StoryDetail }>(),
+    'Project Deleted': props<{
+      projectId: string;
+      workspaceId: string;
+      name: string;
+      deleted_by?: User;
+      error?: boolean;
+    }>(),
   },
 });

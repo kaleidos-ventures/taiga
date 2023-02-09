@@ -5,6 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2021-present Kaleidos Ventures SL
 */
+/* stylelint-disable declaration-no-important */
 
 @import "tools/typography.css";
 
@@ -136,4 +137,67 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   font-style: italic;
   font-weight: var(--font-weight-regular);
   text-decoration: underline;
+}
+
+.separator {
+  background: var(--color-gray30);
+  margin-inline: var(--spacing-8);
+}
+
+.view-options-list {
+  border: 0;
+  inline-size: 238px;
+  padding: var(--spacing-8) !important;
+
+  & .view-option {
+    align-items: center;
+    display: flex;
+  }
+
+  & .option-name {
+    @mixin font-inline;
+
+    color: var(--color-gray100);
+    transition: ease-in-out 0.3s color;
+  }
+
+  & .option-icon {
+    block-size: var(--spacing-16);
+    fill: var(--color-secondary);
+    inline-size: var(--spacing-16);
+    margin-inline-end: var(--spacing-8);
+  }
+
+  & .shortcut {
+    @mixin font-small;
+
+    color: var(--color-gray80);
+  }
+
+  & .view-option-btn:hover,
+  & .view-option-btn.selected {
+    & .option-name {
+      color: var(--color-secondary);
+    }
+
+    & .shortcut {
+      color: var(--color-gray100);
+    }
+  }
+
+  & .view-option-delete {
+    & .option-name {
+      color: var(--color-red);
+    }
+
+    & .option-icon {
+      fill: var(--color-red);
+    }
+  }
+
+  & .view-option-delete:hover {
+    & .option-name {
+      color: var(--color-red80);
+    }
+  }
 }

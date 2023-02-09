@@ -14,12 +14,14 @@ import {
   trigger,
 } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { User } from '@ngneat/falso';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Workspace } from '@taiga/data';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   fetchWorkspace,
   initWorkspaceList,
@@ -211,6 +213,29 @@ export class WorkspaceComponent implements OnDestroy {
           project: eventResponse.event.content.project,
           workspace: eventResponse.event.content.workspace,
         });
+      });
+
+    this.wsService
+      .userEvents<{
+        project: string;
+        workspace: string;
+        name: string;
+        deleted_by: User;
+      }>('projects.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.eventsSubject.next({
+          event: 'projects.delete',
+          project: eventResponse.event.content.project,
+          workspace: eventResponse.event.content.workspace,
+        });
+        this.store.dispatch(
+          projectEventActions.projectDeleted({
+            projectId: eventResponse.event.content.project,
+            workspaceId: eventResponse.event.content.workspace,
+            name: eventResponse.event.content.name,
+          })
+        );
       });
   }
 

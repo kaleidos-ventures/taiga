@@ -6,6 +6,12 @@
   "edit_project_info": "Edit project info",
   "action_add_description": "Add a short description",
   "action_add_description_continue": "to help others better understand your project.",
+  "project_actions": "Project actions",
+  "edit_project": "Edit project",
+  "delete_project": "Delete project",
+  "duplicate": "Duplicate",
+  "share": "Share",
+  "save_template": "Save as a template",
   "members": {
     "title": "Members",
     "view_all": "View all members",

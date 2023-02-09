@@ -120,15 +120,24 @@ export class ProjectInvitationCTAGuard implements CanActivate {
             })
           );
         }),
-        catchError(() => {
+        catchError((httpResponse: HttpErrorResponse) => {
+          let message;
+          if (httpResponse.status === 404) {
+            message = 'errors.generic_deleted_project';
+          } else {
+            message = 'errors.invalid_token_toast_message';
+          }
+
           this.appService.toastNotification({
-            message: 'errors.invalid_token_toast_message',
+            message: message,
             status: TuiNotification.Error,
             autoClose: false,
             closeOnNavigation: false,
           });
 
-          if (this.authService.isLogged()) {
+          if (httpResponse.status === 404) {
+            return of(this.router.parseUrl('/404'));
+          } else if (this.authService.isLogged()) {
             return of(this.router.parseUrl('/'));
           }
 

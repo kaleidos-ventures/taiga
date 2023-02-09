@@ -1,0 +1,54 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <tg-ui-modal
+    class="delete-project-modal"
+    [open]="showDeleteProjectModal"
+    [width]="500"
+    (requestClose)="close()">
+    <div
+      role="dialog"
+      aria-labelledby="delete-project"
+      aria-modal="true">
+      <h1
+        class="title"
+        id="delete-project">
+        {{
+          t('common_project.delete_modal_title', {
+            projectTitle: project.name
+          })
+        }}
+      </h1>
+      <tg-ui-context-notification
+        class="warning-notification"
+        alertLevel="polite"
+        status="error">
+        <span [innerHtml]="t('common_project.delete_modal_warning')"></span>
+      </tg-ui-context-notification>
+      <p class="text">{{ t('common_project.delete_modal_text') }}</p>
+      <div class="actions">
+        <button
+          type="button"
+          (click)="close()"
+          data-test="cancel-edit-project"
+          tuiLink>
+          {{ t('common_project.delete_modal_refuse') }}
+        </button>
+        <button
+          data-test="submit-edit-project"
+          tuiButton
+          icon="trash"
+          (click)="submit()"
+          appearance="destructive">
+          {{ t('common_project.delete_modal_delete') }}
+        </button>
+      </div>
+    </div>
+  </tg-ui-modal>
+</ng-container>

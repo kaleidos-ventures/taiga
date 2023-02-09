@@ -20,6 +20,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -149,7 +150,8 @@ export class StoryDetailComponent {
     private permissionService: PermissionsService,
     private wsService: WsService,
     private state: RxState<StoryDetailState>,
-    private appService: AppService
+    private appService: AppService,
+    private router: Router
   ) {
     this.state.connect(
       'project',
@@ -371,13 +373,21 @@ export class StoryDetailComponent {
       .pipe(untilDestroyed(this))
       .subscribe((msg) => {
         this.appService.toastNotification({
-          label: 'errors.entity_no_longer_exists',
-          paramsLabel: { entity: 'story' },
-          message: 'errors.user_deleted_entity',
-          paramsMessage: { user: msg.event.content.deletedBy.fullName },
+          message: 'delete.confirm_delete_event',
+          paramsMessage: {
+            ref: msg.event.content.ref,
+            username: msg.event.content.deletedBy.username,
+          },
           status: TuiNotification.Error,
-          autoClose: false,
+          scope: 'story',
+          autoClose: true,
+          closeOnNavigation: false,
         });
+        void this.router.navigate([
+          `/project/${this.state.get('project').id}/${
+            this.state.get('project').slug
+          }/kanban`,
+        ]);
       });
   }
 }

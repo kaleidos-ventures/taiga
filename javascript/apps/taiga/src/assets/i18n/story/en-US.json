@@ -28,6 +28,7 @@
     "confirm_info": "All story information will be permanently deleted. There is no undo.",
     "confirm_action": "Yes, delete",
     "cancel": "{{commons.cancel}}",
-    "confirm_delete": "Story #{{ref}} has been deleted"
+    "confirm_delete": "Story #{{ref}} has been deleted",
+    "confirm_delete_event": "{{username}} has deleted the story #{{ref}}"
   }
 }

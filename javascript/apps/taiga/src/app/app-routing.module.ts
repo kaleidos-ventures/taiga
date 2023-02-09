@@ -126,6 +126,16 @@ const routes: Routes = [
     },
   },
   {
+    path: '404',
+    loadChildren: () =>
+      import('./modules/errors/404/error-404.module').then(
+        (m) => m.Error404Module
+      ),
+    data: {
+      noHeader: true,
+    },
+  },
+  {
     path: 'user-settings',
     loadChildren: () =>
       import(

@@ -27,18 +27,21 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             data-test="project-name">
             {{ vm.project.name }}
           </h1>
-
-          <button
-            data-test="edit-project"
+          <tui-hosted-dropdown
             *ngIf="vm.project.userIsAdmin"
             class="edit-project-info"
-            appearance="tertiary"
-            tuiButton
-            (click)="showEditProjectModal = true"
-            icon="pen"
-            iconAlign="left">
-            {{ t('project_overview.edit_project_info') }}
-          </button>
+            [tuiDropdownAlign]="'left'"
+            [content]="projectActionsDropdown"
+            [(open)]="projectActionsDropdownState">
+            <button
+              [attr.aria-label]="'Open edit menu'"
+              icon="more-vertical"
+              appearance="tertiary"
+              tuiIconButton
+              type="button"
+              tuiHintDirection="top-right"
+              [tuiHint]="t('project_overview.project_actions')"></button>
+          </tui-hosted-dropdown>
         </div>
         <div class="project-content-inner">
           <section class="project-main"></section>
@@ -102,6 +105,91 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         (closeModal)="showEditProjectModal = false"
         [project]="vm.project">
       </tg-edit-project>
+
+      <tg-delete-project
+        *ngIf="showDeleteProjectModal"
+        [show]="showDeleteProjectModal"
+        (submitDelete)="submitDeleteProject()"
+        (closeModal)="showDeleteProjectModal = false"
+        [project]="vm.project">
+      </tg-delete-project>
     </ng-container>
   </ng-container>
+
+  <ng-template #projectActionsDropdown>
+    <tui-data-list class="view-options-list">
+      <button
+        class="view-option-btn"
+        tuiOption
+        type="button"
+        (click)="showEditProjectModal = true">
+        <span class="view-option">
+          <tui-svg
+            aria-hidden="true"
+            class="option-icon"
+            src="pen"></tui-svg>
+          <span class="option-name">{{
+            t('project_overview.edit_project')
+          }}</span>
+        </span>
+      </button>
+      <button
+        class="view-option-btn"
+        tuiOption
+        type="button"
+        (click)="showEditProjectModal = true">
+        <span class="view-option">
+          <tui-svg
+            aria-hidden="true"
+            class="option-icon"
+            src="duplicate"></tui-svg>
+          <span class="option-name">{{ t('project_overview.duplicate') }}</span>
+        </span>
+      </button>
+      <button
+        class="view-option-btn"
+        tuiOption
+        type="button">
+        <span class="view-option">
+          <tui-svg
+            aria-hidden="true"
+            class="option-icon"
+            src="folder"></tui-svg>
+          <span class="option-name">{{ t('project_overview.share') }}</span>
+        </span>
+      </button>
+      <button
+        class="view-option-btn"
+        tuiOption
+        type="button">
+        <span class="view-option">
+          <tui-svg
+            aria-hidden="true"
+            class="option-icon"
+            src="folder"></tui-svg>
+          <span class="option-name">{{
+            t('project_overview.save_template')
+          }}</span>
+        </span>
+      </button>
+    </tui-data-list>
+    <hr class="separator" />
+    <tui-data-list class="view-options-list">
+      <button
+        class="view-option-btn view-option-delete"
+        tuiOption
+        type="button"
+        (click)="showDeleteProjectModal = true">
+        <span class="view-option">
+          <tui-svg
+            aria-hidden="true"
+            class="option-icon"
+            src="trash"></tui-svg>
+          <span class="option-name">{{
+            t('project_overview.delete_project')
+          }}</span>
+        </span>
+      </button>
+    </tui-data-list>
+  </ng-template>
 </ng-container>

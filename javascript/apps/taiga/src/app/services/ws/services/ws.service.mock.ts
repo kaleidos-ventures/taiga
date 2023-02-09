@@ -12,4 +12,7 @@ export const WsServiceMock = {
   events: () => {
     return of(null);
   },
+  command: () => {
+    return of(null);
+  },
 };

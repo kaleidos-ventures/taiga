@@ -20,22 +20,25 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   SimpleChanges,
 } from '@angular/core';
 import { randUserName } from '@ngneat/falso';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Project, Workspace, WorkspaceProject } from '@taiga/data';
+import { Project, User, Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   acceptInvitationEvent,
   fetchWorkspaceInvitationsSuccess,
   fetchWorkspaceProjects,
   invitationCreateEvent,
   invitationRevokedEvent,
+  projectDeletedEvent,
   setWorkspaceListRejectedInvites,
 } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import {
@@ -43,6 +46,7 @@ import {
   selectRejectedInvites,
   selectWorkspaceProject,
 } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
+import { WsService } from '~/app/services/ws';
 import { acceptInvitationId } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
 import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
@@ -143,7 +147,7 @@ export interface WorkspaceItemState {
   ],
 })
 export class WorkspaceItemComponent
-  implements OnInit, OnChanges, AfterViewInit
+  implements OnInit, OnChanges, AfterViewInit, OnDestroy
 {
   @Input()
   public workspace!: Workspace;
@@ -175,7 +179,8 @@ export class WorkspaceItemComponent
     private store: Store,
     private state: RxState<WorkspaceItemState>,
     private userStorageService: UserStorageService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private wsService: WsService
   ) {
     this.state.set({
       rejectedInvites: [],
@@ -229,7 +234,6 @@ export class WorkspaceItemComponent
         if (state.loadingWorkspaces.includes(this.workspace.id)) {
           this.animationDisabled = true;
         }
-
         let invitations = state.invitations;
         let projects = state.workspaceProjects;
         // ignore previously accepted invitations
@@ -298,6 +302,8 @@ export class WorkspaceItemComponent
           skeletonToShow = 0;
         }
 
+        state.slideOutActive = false;
+
         const workspacesSkeletonList = state.loadingWorkspaces;
 
         if (!state.loadingWorkspaces.includes(this.workspace.id)) {
@@ -324,6 +330,46 @@ export class WorkspaceItemComponent
 
   public ngAfterViewInit() {
     this.state.set({ slideOutActive: false });
+    if (this.workspace.userRole !== 'guest') {
+      this.wsService
+        .command('subscribe_to_workspace_events', {
+          workspace: this.workspace.id,
+        })
+        .subscribe();
+    }
+    this.wsService
+      .events<{
+        project: string;
+        workspace: string;
+        name: string;
+        deleted_by: User;
+      }>({
+        channel: `workspaces.${this.workspace.id}`,
+        type: 'projects.delete',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.wsEvent(
+          'projects.delete',
+          eventResponse.event.content.project,
+          eventResponse.event.content.workspace
+        );
+        this.store.dispatch(
+          projectEventActions.projectDeleted({
+            projectId: eventResponse.event.content.project,
+            workspaceId: eventResponse.event.content.workspace,
+            name: eventResponse.event.content.name,
+          })
+        );
+      });
+  }
+
+  public ngOnDestroy(): void {
+    this.wsService
+      .command('unsubscribe_from_workspace_events', {
+        workspace: this.workspace.id,
+      })
+      .subscribe();
   }
 
   public newProjectAnimationStart(
@@ -363,9 +409,25 @@ export class WorkspaceItemComponent
         this.membershipCreateEvent(projectId);
       } else if (event === 'projectinvitations.revoke') {
         this.invitationRevokedEvent(projectId);
+      } else if (event === 'projects.delete') {
+        this.projectDeletedEvent(projectId);
       }
     }
     this.cd.detectChanges();
+  }
+
+  public projectDeletedEvent(projectId: string) {
+    const invitations = [...this.state.get('invitations')];
+    const workspaceInvitations = invitations.filter(
+      (workspaceInvitation) => workspaceInvitation.id !== projectId
+    );
+    const newWorkspace = { ...this.workspace };
+    newWorkspace.invitedProjects = workspaceInvitations;
+    this.store.dispatch(
+      projectDeletedEvent({
+        workspace: newWorkspace,
+      })
+    );
   }
 
   public invitationRevokedEvent(project: string) {

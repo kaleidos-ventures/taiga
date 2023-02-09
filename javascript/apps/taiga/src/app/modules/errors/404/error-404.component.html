@@ -1,0 +1,36 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <div class="error-wrapper">
+    <div class="error-container">
+      <a
+        [routerLink]="['/']"
+        [attr.aria-label]="t('navigation.go_home')">
+        <img
+          src="/assets/images/LogoTaiga.svg"
+          alt="" />
+      </a>
+      <h1 class="error-title">{{ t('errors_page.404.title') }}</h1>
+      <p
+        class="error-paragraph"
+        [innerHtml]="t('errors_page.404.text')"></p>
+      <button
+        appearance="primary"
+        tuiButton
+        (click)="backHome()"
+        type="button">
+        {{ t('errors_page.404.call_for_action') }}
+      </button>
+    </div>
+    <img
+      class="error-background-image"
+      src="https://media.tenor.com/VBTAFdK3d1MAAAAd/dog-cute.gif"
+      alt="" />
+  </div>
+</ng-container>

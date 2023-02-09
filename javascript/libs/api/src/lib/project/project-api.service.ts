@@ -85,6 +85,10 @@ export class ProjectApiService {
     );
   }
 
+  public deleteProject(id: Project['id']) {
+    return this.http.delete<Project>(`${this.config.apiUrl}/projects/${id}`);
+  }
+
   public getMemberRoles(id: Project['id']) {
     return this.http.get<Role[]>(`${this.config.apiUrl}/projects/${id}/roles`);
   }

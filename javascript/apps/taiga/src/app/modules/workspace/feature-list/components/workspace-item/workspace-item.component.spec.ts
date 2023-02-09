@@ -6,17 +6,10 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import {
-  createComponentFactory,
-  createServiceFactory,
-  Spectator,
-  SpectatorService,
-} from '@ngneat/spectator/jest';
-import { provideMockActions } from '@ngrx/effects/testing';
-import { Action, MemoizedSelector } from '@ngrx/store';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MemoizedSelector } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { RxState } from '@rx-angular/state';
-import { ConfigService } from '@taiga/core';
 import {
   Project,
   WorkspaceAdminMockFactory,
@@ -40,10 +33,6 @@ import {
   WorkspaceItemState,
 } from './workspace-item.component';
 describe('WorkspaceItem', () => {
-  let actions$: Observable<Action>;
-  let spectatorWs: SpectatorService<WsService>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let service: WsService;
   let mockState: RxState<WorkspaceItemState> = new RxState();
 
   const wsEvent$ = {
@@ -60,7 +49,8 @@ describe('WorkspaceItem', () => {
     invitation: {
       acceptedInvite: [],
     },
-    workspaceList: {
+    workspace: {
+      rejectedInvites: [],
       loadingWorkspaces: [],
       workspaceProjects: {
         [workspaceItem.id]: workspaceItem.latestProjects,
@@ -72,15 +62,6 @@ describe('WorkspaceItem', () => {
 
   let spectator: Spectator<WorkspaceItemComponent>;
 
-  const createService = createServiceFactory({
-    service: WsService,
-    providers: [
-      provideMockActions(() => actions$),
-      provideMockStore({}),
-      { provide: ConfigService, useValue: {} },
-    ],
-  });
-
   const createComponent = createComponentFactory({
     component: WorkspaceItemComponent,
     imports: [],
@@ -91,13 +72,11 @@ describe('WorkspaceItem', () => {
         useValue: mockState,
       },
     ],
-    mocks: [UserStorageService],
+    mocks: [UserStorageService, WsService],
   });
   let store: MockStore;
 
   beforeEach(() => {
-    spectatorWs = createService();
-    service = spectatorWs.inject(WsService);
     mockState = new RxState();
   });
 
@@ -117,7 +96,9 @@ describe('WorkspaceItem', () => {
         detectChanges: false,
       });
       store = spectator.inject(MockStore);
-
+      const service = spectator.inject(WsService);
+      service.command.mockReturnValue(new Observable());
+      service.events.mockReturnValue(new Observable());
       mockRejectInviteSelect = store.overrideSelector(
         selectRejectedInvites,
         []
@@ -196,8 +177,7 @@ describe('WorkspaceItem', () => {
       spectator.component.rejectProjectInvite(id);
 
       requestAnimationFrame(() => {
-        spectator.component.model$.subscribe(({ slideOutActive }) => {
-          expect(slideOutActive).toBeTruthy();
+        spectator.component.model$.subscribe(() => {
           expect(Object.keys(spectator.component.reorder).length).toEqual(3);
           expect(
             (spectator.component.reorder[
@@ -357,6 +337,9 @@ describe('WorkspaceItem', () => {
         },
         detectChanges: false,
       });
+      const service = spectator.inject(WsService);
+      service.command.mockReturnValue(new Observable());
+      service.events.mockReturnValue(new Observable());
       store = spectator.inject(MockStore);
     });
 
@@ -468,6 +451,9 @@ describe('WorkspaceItem', () => {
         },
         detectChanges: false,
       });
+      const service = spectator.inject(WsService);
+      service.command.mockReturnValue(new Observable());
+      service.events.mockReturnValue(new Observable());
       store = spectator.inject(MockStore);
     });
 

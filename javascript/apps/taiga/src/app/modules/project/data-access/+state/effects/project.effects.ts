@@ -23,6 +23,7 @@ import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectActions from '../actions/project.actions';
+import { projectEventActions } from '../actions/project.actions';
 import {
   selectCurrentProject,
   selectMembers,
@@ -205,6 +206,62 @@ export class ProjectEffects {
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
           this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
+  public deleteProject$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.deleteProject),
+      fetch({
+        run: (action) => {
+          return this.projectApiService.deleteProject(action.id).pipe(
+            map(() => {
+              return ProjectActions.deleteProjectSuccess({
+                name: action.name,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status === 403) {
+            this.appService.toastNotification({
+              message: 'errors.admin_permission',
+              status: TuiNotification.Error,
+            });
+          } else {
+            this.appService.toastSaveChangesError(httpResponse);
+          }
+        },
+      })
+    );
+  });
+
+  public deleteProjectSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(ProjectActions.deleteProjectSuccess),
+        tap((action) => {
+          void this.router.navigate(['/']);
+          void this.appService.toastNotification({
+            message: 'errors.deleted_project',
+            paramsMessage: { name: action.name },
+            status: action.error ? TuiNotification.Error : TuiNotification.Info,
+          });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  public deleteProjectEvent$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(projectEventActions.projectDeleted),
+      map((action) => {
+        return ProjectActions.deleteProjectSuccess({
+          name: action.name,
+          error: action.error,
+        });
       })
     );
   });

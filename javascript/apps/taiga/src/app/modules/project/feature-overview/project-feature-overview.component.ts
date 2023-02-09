@@ -22,6 +22,7 @@ import { EditProject, Invitation, Project, User } from '@taiga/data';
 import { distinctUntilChanged, filter } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { deleteProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { selectNotificationClosed } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { WsService } from '~/app/services/ws';
@@ -65,6 +66,8 @@ export class ProjectFeatureOverviewComponent
   public showDescription = false;
   public hideOverflow = false;
   public showEditProjectModal = false;
+  public showDeleteProjectModal = false;
+  public projectActionsDropdownState = false;
 
   constructor(
     private store: Store,
@@ -179,6 +182,11 @@ export class ProjectFeatureOverviewComponent
   public submitEditProject(project: EditProject) {
     this.showEditProjectModal = false;
     this.store.dispatch(editProject({ project }));
+  }
+
+  public submitDeleteProject() {
+    const project = this.state.get('project');
+    this.store.dispatch(deleteProject({ id: project.id, name: project.name }));
   }
 
   public ngAfterViewChecked() {

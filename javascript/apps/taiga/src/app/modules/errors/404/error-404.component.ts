@@ -11,11 +11,11 @@ import { Router } from '@angular/router';
 import { ConfigService } from '@taiga/core';
 
 @Component({
-  selector: 'tg-error-403',
-  templateUrl: './error-403.component.html',
-  styleUrls: ['./error-403.component.css'],
+  selector: 'tg-error-404',
+  templateUrl: './error-404.component.html',
+  styleUrls: ['./error-404.component.css'],
 })
-export class Error403Component {
+export class Error404Component {
   constructor(private router: Router, public config: ConfigService) {}
 
   public backHome() {

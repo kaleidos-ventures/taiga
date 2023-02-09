@@ -7,16 +7,10 @@
  */
 
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import {
-  createComponentFactory,
-  createServiceFactory,
-  Spectator,
-  SpectatorService,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { ConfigService } from '@taiga/core';
 import { WorkspaceMemberMockFactory, WorkspaceProject } from '@taiga/data';
 import { Observable, of } from 'rxjs';
 import {
@@ -28,14 +22,10 @@ import { WsService } from '~/app/services/ws';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { WorkspaceDetailComponent } from './workspace-detail.component';
 
-describe('ButtonComponent', () => {
+describe('WorkspaceDetailComponent', () => {
   let spectator: Spectator<WorkspaceDetailComponent>;
-  let spectatorWs: SpectatorService<WsService>;
   let store: MockStore;
   let actions$: Observable<Action>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let service: WsService;
-  // const mockState: RxState<WorkspaceDetailState> = new RxState();
 
   const workspaceItemMember = WorkspaceMemberMockFactory();
 
@@ -44,25 +34,18 @@ describe('ButtonComponent', () => {
       acceptedInvite: [],
       invitations: [],
     },
-    workspace: {
+    workspaceDetail: {
       projects: workspaceItemMember.latestProjects,
       workspace: workspaceItemMember,
       creatingWorkspaceDetail: false,
     },
   };
 
-  const createService = createServiceFactory({
-    service: WsService,
-    providers: [
-      provideMockActions(() => actions$),
-      { provide: ConfigService, useValue: {} },
-    ],
-  });
-
   const createComponent = createComponentFactory({
     component: WorkspaceDetailComponent,
     imports: [],
     providers: [
+      provideMockActions(() => actions$),
       provideMockStore({ initialState }),
       {
         provide: ActivatedRoute,
@@ -71,18 +54,22 @@ describe('ButtonComponent', () => {
         },
       },
     ],
-    mocks: [UserStorageService],
+    mocks: [UserStorageService, WsService],
+    detectChanges: false,
   });
 
   beforeEach(() => {
-    spectatorWs = createService();
-    service = spectatorWs.inject(WsService);
-
     spectator = createComponent();
+    const service = spectator.inject(WsService);
+    service.command.mockReturnValue(new Observable());
+    service.events.mockReturnValue(new Observable());
+    service.userEvents.mockReturnValue(new Observable());
     store = spectator.inject(MockStore);
   });
 
   it('Invitation revoked via event', (done) => {
+    spectator.detectChanges();
+
     const projectToRevoke = workspaceItemMember.invitedProjects[0].id;
     const dispatchSpy = jest.spyOn(store, 'dispatch');
     const action = invitationDetailRevokedEvent({
@@ -97,6 +84,8 @@ describe('ButtonComponent', () => {
   });
 
   it('Membership created via event', (done) => {
+    spectator.detectChanges();
+
     const projectToPromote = workspaceItemMember.invitedProjects[0].id;
     const dispatchSpy = jest.spyOn(store, 'dispatch');
     const action = acceptInvitationEvent({
@@ -111,6 +100,8 @@ describe('ButtonComponent', () => {
   });
 
   it('Invitation created via event', (done) => {
+    spectator.detectChanges();
+
     const projectToInvite = workspaceItemMember.invitedProjects[0].id;
     const workspaceId = workspaceItemMember.id;
     const workspaceRole = workspaceItemMember.userRole;
@@ -129,6 +120,8 @@ describe('ButtonComponent', () => {
   });
 
   it('refresh invitation', (done) => {
+    spectator.detectChanges();
+
     const newInvitations = workspaceItemMember.invitedProjects;
     const idNewInvitation = newInvitations[0].id;
     const oldInvitations = [...newInvitations];
@@ -147,6 +140,8 @@ describe('ButtonComponent', () => {
   });
 
   it('getSiblings: check that return same amounf of project to show', (done) => {
+    spectator.detectChanges();
+
     let siblings: WorkspaceProject[] | undefined;
     const newInvitations = workspaceItemMember.invitedProjects;
     store.setState({
@@ -155,7 +150,7 @@ describe('ButtonComponent', () => {
         invitations: newInvitations,
         acceptedInvite: [],
       },
-      workspace: {
+      workspaceDetail: {
         workspaceProjects: workspaceItemMember.latestProjects,
         workspaceInvitedProjects: newInvitations,
       },
@@ -175,6 +170,8 @@ describe('ButtonComponent', () => {
 
   it('getSiblings: check that sibling are on the same line', (done) => {
     let siblings: WorkspaceProject[] | undefined;
+    spectator.detectChanges();
+
     const newInvitations = workspaceItemMember.invitedProjects;
     store.setState({
       ...initialState,
@@ -182,7 +179,7 @@ describe('ButtonComponent', () => {
         invitations: newInvitations,
         acceptedInvite: [],
       },
-      workspace: {
+      workspaceDetail: {
         workspaceProjects: workspaceItemMember.latestProjects,
         workspaceInvitedProjects: newInvitations,
       },
@@ -232,6 +229,8 @@ describe('ButtonComponent', () => {
   });
 
   it('animateLeavingInvitationSiblings: check that invitation is entering on reorder', (done) => {
+    spectator.detectChanges();
+
     const newInvitations = workspaceItemMember.invitedProjects;
     store.setState({
       ...initialState,
@@ -239,11 +238,13 @@ describe('ButtonComponent', () => {
         invitations: newInvitations,
         acceptedInvite: [],
       },
-      workspace: {
+      workspaceDetail: {
+        ...initialState.workspaceDetail,
         workspaceProjects: workspaceItemMember.latestProjects,
         workspaceInvitedProjects: newInvitations,
       },
     });
+
     spectator.detectChanges();
 
     spectator.component.amountOfProjectsToShow = 4;

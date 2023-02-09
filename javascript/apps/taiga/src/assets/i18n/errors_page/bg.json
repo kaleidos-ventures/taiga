@@ -10,5 +10,10 @@
     "title": "You are forbidden",
     "text": "The cheese forbid you from going forward",
     "call_for_action": "Take me home"
+  },
+  "404": {
+    "title": "This page does not exist",
+    "text": "You may want to go home",
+    "call_for_action": "Take me home Helicopter dog"
   }
 }

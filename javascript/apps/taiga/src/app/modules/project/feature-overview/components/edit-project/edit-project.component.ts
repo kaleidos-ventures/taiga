@@ -15,20 +15,25 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { EditProject, Project } from '@taiga/data';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { ImageUploadModule } from '@taiga/ui/inputs/image-upload/image-upload.module';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
+import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import {
   TuiButtonModule,
   TuiLinkModule,
   TuiNotification,
 } from '@taiga-ui/core';
-import { AppService } from '~/app/services/app.service';
+import { EditProject, Project } from '@taiga/data';
+import { ImageUploadModule } from '@taiga/ui/inputs/image-upload/image-upload.module';
+import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { ModalModule } from '@taiga/ui/modal';
-import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { AppService } from '~/app/services/app.service';
 import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
 
 @Component({

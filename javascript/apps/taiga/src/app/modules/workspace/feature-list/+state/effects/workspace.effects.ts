@@ -15,6 +15,7 @@ import { WorkspaceApiService } from '@taiga/api';
 import { Project, Workspace } from '@taiga/data';
 import { timer, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { AppService } from '~/app/services/app.service';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import * as WorkspaceActions from '../actions/workspace.actions';
@@ -162,6 +163,29 @@ export class WorkspaceEffects {
             map(([workspace]) => {
               return WorkspaceActions.fetchWorkspaceSuccess({
                 workspace: workspace,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
+  public projectDeleted$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(projectEventActions.projectDeleted),
+      pessimisticUpdate({
+        run: (action) => {
+          return zip(
+            this.workspaceApiService.fetchWorkspace(action.workspaceId),
+            timer(300)
+          ).pipe(
+            map(([workspace]) => {
+              return WorkspaceActions.deleteWorkspaceProjectSuccess({
+                workspace: workspace,
+                projectId: action.projectId,
               });
             })
           );

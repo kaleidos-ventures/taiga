@@ -5,10 +5,13 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.base.serializers import BaseModel
+
+from taiga.base.serializers import UUIDB64, BaseModel
 from taiga.users.serializers.nested import UserNestedSerializer
 
 
 class DeleteProjectContent(BaseModel):
+    id: UUIDB64
     name: str
+    workspace_id: UUIDB64
     deleted_by: UserNestedSerializer

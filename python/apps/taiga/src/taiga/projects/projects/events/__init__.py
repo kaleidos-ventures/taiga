@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+
 from taiga.events import events_manager
 from taiga.projects.projects.events.content import DeleteProjectContent
 from taiga.projects.projects.models import Project
@@ -31,12 +32,20 @@ async def emit_event_when_project_is_deleted(
 ) -> None:
     # for ws-members, both in the home page and in the ws-detail
     await events_manager.publish_on_workspace_channel(
-        workspace=workspace, type=PROJECT_DELETE, content=DeleteProjectContent(name=project.name, deleted_by=deleted_by)
+        workspace=workspace,
+        type=PROJECT_DELETE,
+        content=DeleteProjectContent(
+            id=project.id, name=project.name, deleted_by=deleted_by, workspace_id=workspace.id
+        ),
     )
 
     # for anyuser in the project detail
     await events_manager.publish_on_project_channel(
-        project=project, type=PROJECT_DELETE, content=DeleteProjectContent(name=project.name, deleted_by=deleted_by)
+        project=project,
+        type=PROJECT_DELETE,
+        content=DeleteProjectContent(
+            id=project.id, name=project.name, deleted_by=deleted_by, workspace_id=workspace.id
+        ),
     )
 
     # for ws-guests (pj-members or pj-invitees) in the home page,
@@ -45,5 +54,7 @@ async def emit_event_when_project_is_deleted(
         await events_manager.publish_on_user_channel(
             user=guest,
             type=PROJECT_DELETE,
-            content=DeleteProjectContent(name=project.name, deleted_by=deleted_by),
+            content=DeleteProjectContent(
+                id=project.id, name=project.name, deleted_by=deleted_by, workspace_id=workspace.id
+            ),
         )

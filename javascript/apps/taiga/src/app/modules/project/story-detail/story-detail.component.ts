@@ -21,7 +21,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -152,7 +152,8 @@ export class StoryDetailComponent {
     private wsService: WsService,
     private state: RxState<StoryDetailState>,
     private appService: AppService,
-    private router: Router
+    private router: Router,
+    private translocoService: TranslocoService
   ) {
     this.state.connect(
       'project',
@@ -225,20 +226,15 @@ export class StoryDetailComponent {
       if (!canDeletePermission && this.showDeleteStoryConfirm) {
         this.appService.toastNotification({
           label: 'errors.generic_toast_label',
-          message: 'errors.modify_story_permission',
+          message: 'errors.lose_story_permissions',
+          paramsMessage: {
+            permission: this.translocoService.translate('commons.delete'),
+          },
           status: TuiNotification.Error,
           autoClose: true,
           closeOnNavigation: false,
         });
-        if (this.state.get('selectedStoryView') == 'full-view') {
-          void this.router.navigate([
-            `/project/${this.state.get('project').id}/${
-              this.state.get('project').slug
-            }/kanban`,
-          ]);
-        } else {
-          this.closeStory(this.state.get('story').ref);
-        }
+        this.closeDeleteStoryConfirmModal();
       }
     });
   }
@@ -397,11 +393,31 @@ export class StoryDetailComponent {
           autoClose: true,
           closeOnNavigation: false,
         });
-        void this.router.navigate([
-          `/project/${this.state.get('project').id}/${
-            this.state.get('project').slug
-          }/kanban`,
-        ]);
+        if (this.state.get('selectedStoryView') == 'full-view') {
+          void this.router.navigate([
+            `/project/${this.state.get('project').id}/${
+              this.state.get('project').slug
+            }/kanban`,
+          ]);
+        } else {
+          const next = this.state.get('story').next?.ref;
+          const prev = this.state.get('story').next?.ref;
+          this.closeStory(next || prev);
+
+          if (!next && !prev) {
+            const workflowSlug = this.state.get('story').workflow.slug;
+            if (workflowSlug) {
+              requestAnimationFrame(() => {
+                const mainFocus = document.querySelector(
+                  `tg-kanban-status[data-slug='${workflowSlug}']`
+                );
+                if (mainFocus) {
+                  (mainFocus as HTMLElement).focus();
+                }
+              });
+            }
+          }
+        }
       });
   }
 }

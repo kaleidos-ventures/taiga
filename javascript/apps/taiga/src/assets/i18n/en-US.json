@@ -36,7 +36,9 @@
     "sprints": "Sprints",
     "your_user": "{{ name }} <strong class='is-self'>(You)</strong>",
     "save_changes": "Save changes",
-    "next_page": "Next page"
+    "next_page": "Next page",
+    "modify": "modify",
+    "delete": "delete"
   },
   "navigation": {
     "go_home": "Go to home",
@@ -106,7 +108,7 @@
     "invalid_token_toast_message": "Invalid token.",
     "invitation_no_longer_valid": "The invitation is no longer valid.",
     "project_invitation_no_longer_valid": "The invitation to {{ name }} is no longer valid.",
-    "modify_story_permission": "You no longer have permissions to modify stories",
+    "lose_story_permissions": "You no longer have permissions to {{permission}} stories",
     "you_dont_have_permission_to_see": "You don't have permission to see the project.",
     "admin_permission": "You  are no longer admin on this project"
   },

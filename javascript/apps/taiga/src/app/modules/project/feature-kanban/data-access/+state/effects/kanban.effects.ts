@@ -8,6 +8,7 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { TranslocoService } from '@ngneat/transloco';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
@@ -256,7 +257,10 @@ export class KanbanEffects {
         filter((error) => error.errorStatus === 403),
         tap(() => {
           this.appService.toastNotification({
-            message: 'errors.modify_story_permission',
+            message: 'errors.lose_story_permission',
+            paramsMessage: {
+              permissions: this.translocoService.translate('commons.modify'),
+            },
             status: TuiNotification.Error,
           });
         })
@@ -330,6 +334,7 @@ export class KanbanEffects {
     private actions$: Actions,
     private store: Store,
     private projectApiService: ProjectApiService,
-    private kanbanScrollManagerService: KanbanScrollManagerService
+    private kanbanScrollManagerService: KanbanScrollManagerService,
+    private translocoService: TranslocoService
   ) {}
 }

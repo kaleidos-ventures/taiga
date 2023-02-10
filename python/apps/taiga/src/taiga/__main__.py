@@ -91,12 +91,29 @@ def serve(host: str = typer.Option("0.0.0.0", "--host", "-h"), port: int = typer
     _run_api(host=host, port=port, reload=False)
 
 
-@cli.command(help="Load sample data.")
+@cli.command(help="Load complete sample data")
 def sampledata() -> None:
     from taiga.base.utils.concurrency import run_async_as_sync
-    from taiga.base.utils.sample_data import load_sample_data
+    from taiga.base.utils.sample_data import load_demo_data, load_test_data
 
-    run_async_as_sync(load_sample_data())
+    run_async_as_sync(load_test_data())
+    run_async_as_sync(load_demo_data())
+
+
+@cli.command(help="Load test data")
+def testdata() -> None:
+    from taiga.base.utils.concurrency import run_async_as_sync
+    from taiga.base.utils.sample_data import load_test_data
+
+    run_async_as_sync(load_test_data())
+
+
+@cli.command(help="Load demo data")
+def demodata() -> None:
+    from taiga.base.utils.concurrency import run_async_as_sync
+    from taiga.base.utils.sample_data import load_demo_data
+
+    run_async_as_sync(load_demo_data())
 
 
 class Verbosity(str, Enum):

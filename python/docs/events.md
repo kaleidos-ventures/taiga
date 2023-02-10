@@ -109,7 +109,7 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
   ```json
   {
       "command": "subscribe_to_project_events",
-      "project": "project_id"
+      "project": "<project_id>"
   }
   ```
 - Response OK:
@@ -118,11 +118,11 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
       "type": "action",
       "action": {
           "command": "subscribe_to_project_events",
-          "project": "project_id"
+          "project": "<project_id>"
       },
       "status": "ok",
       "content": {
-          "channel": "projects.project_id"
+          "channel": "projects.<project_id>"
       }
   }
   ```
@@ -160,7 +160,7 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
       },
       "status": "ok",
       "content": {
-          "channel": "users.username"
+          "channel": "projects.<project_id>"
       }
   }
   ```
@@ -220,6 +220,122 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
   }
   ```
 
+### `subscribe_to_workspace_events`
+
+- Request:
+  ```json
+  {
+      "command": "subscribe_to_workspace_events",
+      "workspace": "<workspace_id>"
+  }
+  ```
+- Response OK:
+  ```json
+  {
+      "type": "action",
+      "action": {
+          "command": "subscribe_to_workspace_events",
+          "workspace": "<workspace_id>"
+      },
+      "status": "ok",
+      "content": {
+          "channel": "workspaces.<workspace_id>"
+      }
+  }
+  ```
+- Response ERROR:
+  ```json
+  {
+      "type": "action",
+      "action": {
+          "command": "subscribe_to_workspace_events",
+          "workspace": "<workspace_id>"
+      },
+      "status": "error",
+      "content": {
+          "detail": "not-allowed"
+      }
+  }
+  ```
+
+### `unsubscribe_from_workspace_events`
+
+- Request:
+  ```json
+  {
+        "command": "unsubscribe_from_workspace_events",
+        "workspace": "<workspace_id>"
+  }
+  ```
+- Response OK:
+  ```json
+  {
+      "type": "action",
+      "action": {
+          "command": "unsubscribe_from_workspace_events",
+          "workspace": "<workspace_id>"
+      },
+      "status": "ok",
+      "content": {
+          "channel": "workspaces.<workspace_id>"
+      }
+  }
+  ```
+- Response ERROR:
+  ```json
+  {
+      "type": "action",
+      "action": {
+          "command": "unsubscribe_from_workspace_events",
+          "workspace": "<workspace_id>"
+      },
+      "status": "error",
+      "content": {
+          "detail": "not-subscribed"
+      }
+  }
+  ```
+  ```json
+  {
+      "type": "action",
+      "action": {
+          "command": "unsubscribe_from_workspace_events",
+          "workspace": "<workspace_id>"
+      },
+      "status": "error",
+      "content": {
+          "detail": "not-allowed"
+      }
+  }
+  ```
+
+### `check_workspace_events_subscription`
+
+- Request:
+  ```json
+  {
+        "command": "check_workspace_events_subscription",
+        "workspace": "<workspace_id>"
+  }
+  ```
+- Response OK:
+  ```
+  no response send
+  ```
+- Response ERROR:
+  ```json
+  {
+      "type": "action",
+      "action": {
+          "command": "check_workspace_events_subscription",
+          "workspace": "<workspace_id>"
+      },
+      "status": "error",
+      "content": {
+          "detail": "lost-permissions"
+      }
+  }
+  ```
 
 ## Events
 

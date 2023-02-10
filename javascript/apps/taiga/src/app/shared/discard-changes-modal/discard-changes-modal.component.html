@@ -12,28 +12,35 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [open]="open"
     [width]="500"
     (requestClose)="cancel.next()">
-    <h1 class="title">
-      {{ t('discard_changes.title') }}
-    </h1>
-    <p class="confirm-close-description">
-      {{ t('discard_changes.description') }}
-    </p>
-    <div class="actions">
-      <button
-        type="button"
-        (click)="cancel.next()"
-        data-test="cancel-edit"
-        tuiLink>
-        {{ t('discard_changes.cancel') }}
-      </button>
-      <button
-        (click)="discard.next()"
-        data-test="confirm-edit"
-        tuiButton
-        type="button"
-        appearance="primary">
-        {{ t('discard_changes.confirm') }}
-      </button>
+    <div
+      role="dialog"
+      aria-labelledby="discard-changes"
+      aria-modal="true">
+      <h1
+        class="title"
+        id="discard-changes">
+        {{ t('discard_changes.title') }}
+      </h1>
+      <p class="confirm-close-description">
+        {{ t('discard_changes.description') }}
+      </p>
+      <div class="actions">
+        <button
+          type="button"
+          (click)="cancel.next()"
+          data-test="cancel-edit"
+          tuiLink>
+          {{ t('discard_changes.cancel') }}
+        </button>
+        <button
+          (click)="discard.next()"
+          data-test="confirm-edit"
+          tuiButton
+          type="button"
+          appearance="primary">
+          {{ t('discard_changes.confirm') }}
+        </button>
+      </div>
     </div>
   </tg-ui-modal>
 </ng-container>

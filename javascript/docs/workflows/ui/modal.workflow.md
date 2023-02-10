@@ -10,6 +10,8 @@ When the first element to focus is a text it must have a `tabindex="0"`. If the 
   (requestClose)="triggerWhenModalClosed()">
   <ng-container>
     <div
+      role="dialog"
+      aria-modal="true"
       aria-describedby="aria_description"
       aria-labelledby="arial_label">
       <h1 id="aria_label">Modal Title</h1>
@@ -24,7 +26,7 @@ When the first element to focus is a text it must have a `tabindex="0"`. If the 
 </tg-ui-modal>
 ```
 
-## Modal donde podemos definir un foco al cerrar
+## Modal where we can define a focus element after close
 
 While `elementFocus` is null we will keep the basic focus functionality that goes back to the last focusable element before opening the modal. **_Always have to go back to something_**.
 
@@ -35,6 +37,8 @@ While `elementFocus` is null we will keep the basic focus functionality that go
   [elementFocus]="HTMLelementVariable">
   <ng-container>
     <div
+      role="dialog"
+      aria-modal="true"
       aria-describedby="aria_description"
       aria-labelledby="arial_label">
       <h1 id="aria_label">Modal Title</h1>

@@ -11,7 +11,7 @@ from taiga.users.serializers.nested import UserNestedSerializer
 
 
 class DeleteProjectContent(BaseModel):
-    id: UUIDB64
+    project: UUIDB64
     name: str
-    workspace_id: UUIDB64
+    workspace: UUIDB64
     deleted_by: UserNestedSerializer

@@ -276,6 +276,8 @@ Content for:
 - workspace channel:
   ```
   {
+      "project": "project_id",
+      "workspace": "workspace_id",
       "name": "project name (str)",
       "deleted_by": {... basic user info ...}
   }

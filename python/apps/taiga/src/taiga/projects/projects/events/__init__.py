@@ -35,7 +35,7 @@ async def emit_event_when_project_is_deleted(
         workspace=workspace,
         type=PROJECT_DELETE,
         content=DeleteProjectContent(
-            id=project.id, name=project.name, deleted_by=deleted_by, workspace_id=workspace.id
+            project=project.id, name=project.name, deleted_by=deleted_by, workspace=workspace.id
         ),
     )
 
@@ -44,7 +44,7 @@ async def emit_event_when_project_is_deleted(
         project=project,
         type=PROJECT_DELETE,
         content=DeleteProjectContent(
-            id=project.id, name=project.name, deleted_by=deleted_by, workspace_id=workspace.id
+            project=project.id, name=project.name, deleted_by=deleted_by, workspace=workspace.id
         ),
     )
 
@@ -55,6 +55,6 @@ async def emit_event_when_project_is_deleted(
             user=guest,
             type=PROJECT_DELETE,
             content=DeleteProjectContent(
-                id=project.id, name=project.name, deleted_by=deleted_by, workspace_id=workspace.id
+                project=project.id, name=project.name, deleted_by=deleted_by, workspace=workspace.id
             ),
         )

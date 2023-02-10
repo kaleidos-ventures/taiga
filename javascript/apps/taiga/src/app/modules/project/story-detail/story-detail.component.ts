@@ -57,6 +57,7 @@ export interface StoryDetailState {
   statuses: Status[];
   loadingStatuses: boolean;
   canEdit: boolean;
+  canDelete: boolean;
 }
 
 export interface StoryDetailForm {
@@ -179,6 +180,10 @@ export class StoryDetailComponent {
       'canEdit',
       this.permissionService.hasPermissions$('story', ['modify'])
     );
+    this.state.connect(
+      'canDelete',
+      this.permissionService.hasPermissions$('story', ['delete'])
+    );
 
     this.state
       .select('story')
@@ -216,15 +221,24 @@ export class StoryDetailComponent {
       this.fillForm();
     });
 
-    this.state.hold(this.state.select('canEdit'), (canEditPermission) => {
-      if (!canEditPermission && this.showDeleteStoryConfirm) {
+    this.state.hold(this.state.select('canDelete'), (canDeletePermission) => {
+      if (!canDeletePermission && this.showDeleteStoryConfirm) {
         this.appService.toastNotification({
           label: 'errors.generic_toast_label',
           message: 'errors.modify_story_permission',
           status: TuiNotification.Error,
           autoClose: true,
+          closeOnNavigation: false,
         });
-        this.showDeleteStoryConfirm = false;
+        if (this.state.get('selectedStoryView') == 'full-view') {
+          void this.router.navigate([
+            `/project/${this.state.get('project').id}/${
+              this.state.get('project').slug
+            }/kanban`,
+          ]);
+        } else {
+          this.closeStory(this.state.get('story').ref);
+        }
       }
     });
   }

@@ -6,9 +6,11 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.events.actions.projects import CheckProjectEventsSubscriptionAction
+from taiga.events.actions.workspaces import CheckWorkspaceEventsSubscriptionAction
 
 __all__ = [
     "emit_event_action_to_check_project_subscription",
+    "emit_event_action_to_check_workspace_subscription",
 ]
 
 
@@ -19,4 +21,14 @@ async def emit_event_action_to_check_project_subscription(project_b64id: str) ->
         project=project_b64id,
         type="action",
         content=CheckProjectEventsSubscriptionAction(project=project_b64id),
+    )
+
+
+async def emit_event_action_to_check_workspace_subscription(workspace_b64id: str) -> None:
+    from taiga.events import events_manager
+
+    await events_manager.publish_on_workspace_channel(
+        workspace=workspace_b64id,
+        type="action",
+        content=CheckWorkspaceEventsSubscriptionAction(workspace=workspace_b64id),
     )

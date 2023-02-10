@@ -7,8 +7,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t">
-  <div class="wrapper">
-    <h1 class="modal-title">
+  <div
+    class="wrapper"
+    role="dialog"
+    aria-labelledby="invite-modal"
+    aria-modal="true">
+    <h1
+      class="modal-title"
+      id="invite-modal">
       {{ t('invitation_modal.title', { project: project.name }) }}
     </h1>
     <form

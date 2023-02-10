@@ -9,6 +9,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslocoService } from '@ngneat/transloco';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
@@ -128,7 +129,10 @@ export class StoryDetailEffects {
         onError: (action, httpResponse: HttpErrorResponse) => {
           if (httpResponse.status === 403) {
             this.appService.toastNotification({
-              message: 'errors.modify_story_permission',
+              message: 'errors.lose_story_permissions',
+              paramsMessage: {
+                permission: this.translocoService.translate('commons.modify'),
+              },
               status: TuiNotification.Error,
             });
           } else {
@@ -254,6 +258,7 @@ export class StoryDetailEffects {
     private router: Router,
     private actions$: Actions,
     private projectApiService: ProjectApiService,
-    private appService: AppService
+    private appService: AppService,
+    private translocoService: TranslocoService
   ) {}
 }

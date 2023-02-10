@@ -30,6 +30,7 @@ import {
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanStoryA11y } from '~/app/modules/project/feature-kanban/kanban.model';
 import { AppService } from '~/app/services/app.service';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
   KanbanActions,
   KanbanApiActions,
@@ -49,6 +50,7 @@ describe('ProjectEffects', () => {
       provideMockActions(() => actions$),
       provideMockStore({ initialState: {} }),
     ],
+    imports: [getTranslocoModule()],
     mocks: [ProjectApiService, AppService],
   });
 

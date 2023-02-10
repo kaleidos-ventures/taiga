@@ -24,6 +24,7 @@ import { selectCurrentProject } from '~/app/modules/project/data-access/+state/s
 import { selectWorkflows } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { AppService } from '~/app/services/app.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
   StoryDetailActions,
   StoryDetailApiActions,
@@ -45,7 +46,7 @@ describe('StoryDetailEffects', () => {
       provideMockActions(() => actions$),
       provideMockStore({ initialState: {} }),
     ],
-    imports: [],
+    imports: [getTranslocoModule()],
     mocks: [ProjectApiService, AppService, Router, LocalStorageService],
   });
 

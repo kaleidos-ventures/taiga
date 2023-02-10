@@ -328,7 +328,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             type="button"
             [class.collapsed]="collapseText"
             (click)="toggleCollapse()"
-            class="button-collapse">
+            class="button-collapse"
+            [attr.aria-label]="
+              collapsed
+                ? t('main_project_navigation.expand_menu')
+                : t('main_project_navigation.collapse_menu')
+            ">
             <span
               *ngIf="!collapsed"
               class="button-collapse-text"

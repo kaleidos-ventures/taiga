@@ -20,12 +20,14 @@
   "full_width_view": "Full width view",
   "ctrl_x": "Ctrl + X",
   "collapse_sidebar": "Collapse sidebar",
+  "expand_sidebar": "Expand sidebar",
   "status": "Status",
   "delete": {
     "delete_story": "Delete Story",
     "confirm": "Are you sure you want to delete this story?",
     "confirm_info": "All story information will be permanently deleted. There is no undo.",
-    "confirm_action": "Yes, delete.",
-    "cancel": "{{commons.cancel}}"
+    "confirm_action": "Yes, delete",
+    "cancel": "{{commons.cancel}}",
+    "confirm_delete": "Story #{{ref}} has been deleted"
   }
 }

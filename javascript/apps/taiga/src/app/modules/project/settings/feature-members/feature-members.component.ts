@@ -40,6 +40,7 @@ interface ComponentState {
 export class ProjectsSettingsFeatureMembersComponent {
   public model$ = this.state.select();
   public invitePeopleModal = false;
+  public selectedTab = 1;
 
   constructor(
     private store: Store,
@@ -78,6 +79,10 @@ export class ProjectsSettingsFeatureMembersComponent {
     this.store.dispatch(
       membersActions.updateMembersList({ eventType: 'create' })
     );
+  }
+
+  public handleA11y(tab: number) {
+    this.selectedTab = tab;
   }
 
   public initWSsubscriptions() {

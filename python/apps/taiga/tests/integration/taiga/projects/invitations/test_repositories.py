@@ -267,8 +267,10 @@ async def test_update_project_invitation():
     assert invitation.role == old_role
 
     new_role = await f.create_project_role(project=project)
-    invitation.role = new_role
-    updated_invitation = await repositories.update_project_invitation(invitation=invitation)
+    updated_invitation = await repositories.update_project_invitation(
+        invitation=invitation,
+        values={"role": new_role},
+    )
     assert updated_invitation.role == new_role
 
 

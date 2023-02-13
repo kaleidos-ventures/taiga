@@ -8,7 +8,7 @@
 from pydantic import EmailStr
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.serializers import BaseModel
-from taiga.projects.invitations.serializers.related import ProjectInvitationSummaryVerifyUserSerializer
+from taiga.projects.invitations.serializers.nested import ProjectInvitationNestedSerializer
 
 
 class UserBaseSerializer(BaseModel):
@@ -38,7 +38,7 @@ class UserSearchSerializer(UserBaseSerializer):
 
 class VerificationInfoSerializer(BaseModel):
     auth: AccessTokenWithRefreshSerializer
-    project_invitation: ProjectInvitationSummaryVerifyUserSerializer | None
+    project_invitation: ProjectInvitationNestedSerializer | None
 
     class Config:
         orm_mode = True

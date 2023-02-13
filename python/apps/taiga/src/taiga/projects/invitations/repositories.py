@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -160,7 +160,10 @@ def get_project_invitations(
 
 
 @sync_to_async
-def update_project_invitation(invitation: ProjectInvitation) -> ProjectInvitation:
+def update_project_invitation(invitation: ProjectInvitation, values: dict[str, Any]) -> ProjectInvitation:
+    for attr, value in values.items():
+        setattr(invitation, attr, value)
+
     invitation.save()
     return invitation
 

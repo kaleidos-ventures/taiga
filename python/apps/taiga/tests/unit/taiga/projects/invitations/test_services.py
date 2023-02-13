@@ -128,7 +128,7 @@ async def test_get_public_project_invitation_error_invitation_not_exists():
 
 
 #######################################################
-# get_paginated_pending_project_invitations
+# list_paginated_pending_project_invitations
 #######################################################
 
 
@@ -143,7 +143,7 @@ async def test_get_project_invitations_ok_admin():
         fake_invitations_repo.get_project_invitations.return_value = [invitation]
         fake_pj_roles_repo.get_project_role.return_value = role_admin
 
-        pagination, invitations = await services.get_paginated_pending_project_invitations(
+        pagination, invitations = await services.list_paginated_pending_project_invitations(
             project=invitation.project, user=invitation.project.owner, offset=0, limit=10
         )
 
@@ -175,7 +175,7 @@ async def test_get_project_invitations_ok_not_admin():
         fake_invitations_repo.get_project_invitations.return_value = [invitation]
         fake_pj_roles_repo.get_project_role.return_value = not_admin_role
 
-        pagination, invitations = await services.get_paginated_pending_project_invitations(
+        pagination, invitations = await services.list_paginated_pending_project_invitations(
             project=invitation.project, user=invitation.user, offset=0, limit=10
         )
 
@@ -593,10 +593,12 @@ async def tests_accept_project_invitation() -> None:
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
         fake_invitations_repo.update_project_invitation.return_value = invitation
-        accepted_invitation = await services.accept_project_invitation(invitation=invitation)
+        await services.accept_project_invitation(invitation=invitation)
 
-        assert accepted_invitation.status == ProjectInvitationStatus.ACCEPTED
-        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(invitation=invitation)
+        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(
+            invitation=invitation,
+            values={"status": ProjectInvitationStatus.ACCEPTED},
+        )
         fake_memberships_repo.create_project_membership.assert_awaited_once_with(project=project, role=role, user=user)
         fake_invitations_events.emit_event_when_project_invitation_is_accepted.assert_awaited_once_with(
             invitation=invitation
@@ -826,17 +828,22 @@ async def test_resend_project_invitation_by_username_ok() -> None:
     user = f.build_user()
     created_at = aware_utcnow() - timedelta(days=1)  # to avoid time spam
     invitation = f.build_project_invitation(project=project, user=user, email=user.email, created_at=created_at)
+    now = aware_utcnow()
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch(
             "taiga.projects.invitations.services.send_project_invitation_email", autospec=True
         ) as fake_send_project_invitation_email,
+        patch("taiga.projects.invitations.services.aware_utcnow") as fake_aware_utcnow,
     ):
+        fake_aware_utcnow.return_value = now
         fake_send_project_invitation_email.return_value = None
         fake_invitations_repo.update_project_invitation.return_value = invitation
         await services.resend_project_invitation(invitation=invitation, resent_by=owner)
-        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(invitation=invitation)
+        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(
+            invitation=invitation, values={"num_emails_sent": 2, "resent_at": now, "resent_by": owner}
+        )
         fake_send_project_invitation_email.assert_awaited_once_with(invitation=invitation, is_resend=True)
 
 
@@ -846,17 +853,22 @@ async def test_resend_project_invitation_by_user_email_ok() -> None:
     user = f.build_user()
     created_at = aware_utcnow() - timedelta(days=1)  # to avoid time spam
     invitation = f.build_project_invitation(project=project, user=user, email=user.email, created_at=created_at)
+    now = aware_utcnow()
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch(
             "taiga.projects.invitations.services.send_project_invitation_email", autospec=True
         ) as fake_send_project_invitation_email,
+        patch("taiga.projects.invitations.services.aware_utcnow") as fake_aware_utcnow,
     ):
+        fake_aware_utcnow.return_value = now
         fake_send_project_invitation_email.return_value = None
         fake_invitations_repo.update_project_invitation.return_value = invitation
         await services.resend_project_invitation(invitation=invitation, resent_by=owner)
-        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(invitation=invitation)
+        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(
+            invitation=invitation, values={"num_emails_sent": 2, "resent_at": now, "resent_by": owner}
+        )
         fake_send_project_invitation_email.assert_awaited_once_with(invitation=invitation, is_resend=True)
 
 
@@ -866,17 +878,22 @@ async def test_resend_project_invitation_by_email_ok() -> None:
     email = "user-test@email.com"
     created_at = aware_utcnow() - timedelta(days=1)  # to avoid time spam
     invitation = f.build_project_invitation(project=project, user=None, email=email, created_at=created_at)
+    now = aware_utcnow()
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch(
             "taiga.projects.invitations.services.send_project_invitation_email", autospec=True
         ) as fake_send_project_invitation_email,
+        patch("taiga.projects.invitations.services.aware_utcnow") as fake_aware_utcnow,
     ):
+        fake_aware_utcnow.return_value = now
         fake_send_project_invitation_email.return_value = None
         fake_invitations_repo.update_project_invitation.return_value = invitation
         await services.resend_project_invitation(invitation=invitation, resent_by=owner)
-        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(invitation=invitation)
+        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(
+            invitation=invitation, values={"num_emails_sent": 2, "resent_at": now, "resent_by": owner}
+        )
         fake_send_project_invitation_email.assert_awaited_once_with(invitation=invitation, is_resend=True)
 
 
@@ -983,14 +1000,20 @@ async def test_revoke_project_invitation_ok() -> None:
     project = f.build_project()
     user = f.build_user()
     invitation = f.build_project_invitation(project=project, user=user, email=user.email)
+    now = aware_utcnow()
 
     with (
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+        patch("taiga.projects.invitations.services.aware_utcnow") as fake_aware_utcnow,
     ):
+        fake_aware_utcnow.return_value = now
         fake_invitations_repo.update_project_invitation.return_value = invitation
         await services.revoke_project_invitation(invitation=invitation, revoked_by=project.owner)
-        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(invitation=invitation)
+        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(
+            invitation=invitation,
+            values={"status": ProjectInvitationStatus.REVOKED, "revoked_at": now, "revoked_by": project.owner},
+        )
         fake_invitations_events.emit_event_when_project_invitation_is_revoked.assert_awaited_once_with(
             invitation=invitation
         )
@@ -1115,7 +1138,9 @@ async def test_update_project_invitation_role_ok():
         fake_pj_roles_repo.get_project_role.assert_awaited_once_with(
             filters={"project_id": project.id, "slug": admin_role.slug}
         )
-        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(invitation=invitation)
+        fake_invitations_repo.update_project_invitation.assert_awaited_once_with(
+            invitation=invitation, values={"role": admin_role}
+        )
         fake_invitations_events.emit_event_when_project_invitation_is_updated.assert_awaited_once_with(
             invitation=updated_invitation
         )

@@ -10,7 +10,7 @@ from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects.serializers.nested import ProjectSmallNestedSerializer
 
 
-class ProjectInvitationSummaryVerifyUserSerializer(BaseModel):
+class ProjectInvitationNestedSerializer(BaseModel):
     status: ProjectInvitationStatus
     project: ProjectSmallNestedSerializer
 

@@ -7,7 +7,7 @@
 
 import pytest
 from pydantic import ValidationError
-from taiga.projects.invitations.validators import ProjectInvitationsValidator, ProjectInvitationValidator
+from taiga.projects.invitations.api.validators import ProjectInvitationsValidator, ProjectInvitationValidator
 from tests.unit.utils import check_validation_errors
 
 

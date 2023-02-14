@@ -59,7 +59,7 @@ async def create_project(
     """
     workspace = await get_workspace_or_404(id=form.workspace_id)
     await check_permissions(permissions=CREATE_PROJECT, user=request.user, obj=workspace)
-    return await projects_services.create_project_api(
+    return await projects_services.create_project(
         workspace=workspace,
         name=form.name,
         description=form.description,
@@ -195,7 +195,7 @@ async def update_project(
     await check_permissions(permissions=UPDATE_PROJECT, user=request.user, obj=project)
 
     values = await form.cleaned_dict(request)
-    return await projects_services.update_project_api(project=project, user=request.user, values=values)
+    return await projects_services.update_project(project=project, user=request.user, values=values)
 
 
 @routes.projects.put(
@@ -242,6 +242,7 @@ async def update_project_workspace_member_permissions(
 # delete project
 ##########################################################
 
+
 @routes.projects.delete(
     "/{id}",
     name="projects.delete",
@@ -260,7 +261,6 @@ async def delete_project(
     await check_permissions(permissions=DELETE_PROJECT, user=request.user, obj=project)
 
     await projects_services.delete_project(project=project, deleted_by=request.user)
-
 
 
 ##########################################################

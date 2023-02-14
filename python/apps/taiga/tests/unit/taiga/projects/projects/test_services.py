@@ -26,22 +26,20 @@ pytestmark = pytest.mark.django_db
 ##########################################################
 
 
-async def test_create_project_api():
+async def test_create_project():
     workspace = f.build_workspace()
 
     with (
-        patch("taiga.projects.projects.services.create_project") as fake_create_project,
+        patch("taiga.projects.projects.services._create_project") as fake_create_project,
         patch("taiga.projects.projects.services.get_project_detail") as fake_get_project_detail,
     ):
-        await services.create_project_api(
-            workspace=workspace, name="n", description="d", color=2, owner=workspace.owner
-        )
+        await services.create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
 
         fake_create_project.assert_awaited_once()
         fake_get_project_detail.assert_awaited_once()
 
 
-async def test_create_project():
+async def test_internal_create_project():
     workspace = f.build_workspace()
 
     with (
@@ -76,7 +74,7 @@ async def test_create_project_with_logo():
         fake_project_repository.create_project.return_value = project
         fake_pj_roles_repository.get_project_role.return_value = role
 
-        await services.create_project(
+        await services._create_project(
             workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=logo
         )
 
@@ -94,7 +92,7 @@ async def test_create_project_with_no_logo():
         patch("taiga.projects.projects.services.pj_memberships_repositories", autospec=True),
     ):
         fake_project_repository.create_project.return_value = await f.create_project()
-        await services.create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
+        await services._create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
 
         fake_project_repository.create_project.assert_awaited_once_with(
             workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=None
@@ -253,7 +251,7 @@ async def test_update_project_ok(tqmanager):
     values = {"name": "new name", "description": ""}
 
     with patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_pj_repo:
-        await services.update_project(project=project, values=values)
+        await services._update_project(project=project, values=values)
         fake_pj_repo.update_project.assert_awaited_once_with(project=project, values=values)
         assert len(tqmanager.pending_jobs) == 0
 
@@ -263,7 +261,7 @@ async def test_update_project_ok_with_logo(tqmanager):
     values = {"name": "new name", "description": "", "logo": valid_image_upload_file}
 
     with patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_pj_repo:
-        await services.update_project(project=project, values=values)
+        await services._update_project(project=project, values=values)
         fake_pj_repo.update_project.assert_awaited_once_with(project=project, values=values)
         assert len(tqmanager.pending_jobs) == 1
         job = tqmanager.pending_jobs[0]
@@ -280,7 +278,7 @@ async def test_update_project_name_empty(tqmanager):
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_pj_repo,
         pytest.raises(ex.TaigaValidationError),
     ):
-        await services.update_project(project=project, values=values)
+        await services._update_project(project=project, values=values)
         fake_pj_repo.update_project.assert_not_awaited()
         assert len(tqmanager.pending_jobs) == 0
 

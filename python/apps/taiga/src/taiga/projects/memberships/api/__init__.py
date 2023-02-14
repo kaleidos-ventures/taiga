@@ -17,9 +17,9 @@ from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import CanViewProject, IsProjectAdmin
 from taiga.projects.memberships import services as memberships_services
+from taiga.projects.memberships.api.validators import ProjectMembershipValidator
 from taiga.projects.memberships.models import ProjectMembership
 from taiga.projects.memberships.serializers import ProjectMembershipSerializer
-from taiga.projects.memberships.validators import ProjectMembershipValidator
 from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 
@@ -28,14 +28,14 @@ GET_PROJECT_MEMBERSHIPS = CanViewProject()
 UPDATE_PROJECT_MEMBERSHIP = IsProjectAdmin()
 
 
-################################################
-# MEMBERSHIPS
-################################################
+##########################################################
+# list project memberships
+##########################################################
 
 
 @routes.projects.get(
     "/{id}/memberships",
-    name="project.memberships.get",
+    name="project.memberships.list",
     summary="Get project memberships",
     response_model=list[ProjectMembershipSerializer],
     responses=ERROR_404 | ERROR_422,
@@ -53,13 +53,18 @@ async def get_project_memberships(
     project = await get_project_or_404(id)
     await check_permissions(permissions=GET_PROJECT_MEMBERSHIPS, user=request.user, obj=project)
 
-    pagination, memberships = await memberships_services.get_paginated_project_memberships(
+    pagination, memberships = await memberships_services.list_paginated_project_memberships(
         project=project, offset=pagination_params.offset, limit=pagination_params.limit
     )
 
     api_pagination.set_pagination(response=response, pagination=pagination)
 
     return memberships
+
+
+##########################################################
+# update project membership
+##########################################################
 
 
 @routes.projects.patch(
@@ -86,7 +91,7 @@ async def update_project_membership(
 
 
 ################################################
-# COMMONS
+# misc
 ################################################
 
 

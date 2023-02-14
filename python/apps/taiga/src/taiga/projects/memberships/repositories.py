@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -97,18 +97,18 @@ def create_project_membership(user: User, project: Project, role: ProjectRole) -
 
 
 ##########################################################
-# get project memberships
+# list project memberships
 ##########################################################
 
 
 @sync_to_async
-def get_project_memberships(
+def list_project_memberships(
     filters: ProjectMembershipFilters = {},
     select_related: ProjectMembershipSelectRelated = ["user", "role"],
     order_by: ProjectMembershipOrderBy = ["full_name"],
     offset: int | None = None,
     limit: int | None = None,
-) -> list[ProjectMembership] | None:
+) -> list[ProjectMembership]:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
     qs = _apply_order_by_to_queryset(order_by=order_by, qs=qs)
@@ -144,7 +144,10 @@ def get_project_membership(
 
 
 @sync_to_async
-def update_project_membership(membership: ProjectMembership) -> ProjectMembership:
+def update_project_membership(membership: ProjectMembership, values: dict[str, Any] = {}) -> ProjectMembership:
+    for attr, value in values.items():
+        setattr(membership, attr, value)
+
     membership.save()
     return membership
 

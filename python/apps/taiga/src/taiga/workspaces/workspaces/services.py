@@ -24,13 +24,13 @@ from taiga.workspaces.workspaces.serializers.nested import WorkspaceNestedSerial
 ##########################################################
 
 
-async def create_workspace_api(name: str, color: int, owner: User) -> WorkspaceSerializer:
-    workspace = await create_workspace(name=name, color=color, owner=owner)
+async def create_workspace(name: str, color: int, owner: User) -> WorkspaceSerializer:
+    workspace = await _create_workspace(name=name, color=color, owner=owner)
     return await get_workspace_detail(id=workspace.id, user_id=owner.id)
 
 
 #  TODO: review this method after the sample_data refactor
-async def create_workspace(name: str, color: int, owner: User) -> Workspace:
+async def _create_workspace(name: str, color: int, owner: User) -> Workspace:
     workspace = await workspaces_repositories.create_workspace(name=name, color=color, owner=owner)
     role = await ws_roles_repositories.create_workspace_role(
         name="Administrator",

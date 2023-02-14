@@ -37,7 +37,7 @@ from taiga.workspaces.workspaces.models import Workspace
 ##########################################################
 
 
-async def create_project_api(
+async def create_project(
     workspace: Workspace,
     name: str,
     description: str | None,
@@ -45,13 +45,13 @@ async def create_project_api(
     owner: User,
     logo: UploadFile | None = None,
 ) -> ProjectDetailSerializer:
-    project = await create_project(
+    project = await _create_project(
         workspace=workspace, name=name, description=description, color=color, owner=owner, logo=logo
     )
     return await get_project_detail(project=project, user=owner)
 
 
-async def create_project(
+async def _create_project(
     workspace: Workspace,
     name: str,
     description: str | None,
@@ -184,12 +184,12 @@ async def get_project_detail(project: Project, user: AnyUser) -> ProjectDetailSe
 ##########################################################
 
 
-async def update_project_api(project: Project, user: User, values: dict[str, Any] = {}) -> ProjectDetailSerializer:
-    updated_project = await update_project(project=project, values=values)
+async def update_project(project: Project, user: User, values: dict[str, Any] = {}) -> ProjectDetailSerializer:
+    updated_project = await _update_project(project=project, values=values)
     return await get_project_detail(project=updated_project, user=user)
 
 
-async def update_project(project: Project, values: dict[str, Any] = {}) -> Project:
+async def _update_project(project: Project, values: dict[str, Any] = {}) -> Project:
     # Prevent hitting the database with an empty PATCH
     if len(values) == 0:
         return project

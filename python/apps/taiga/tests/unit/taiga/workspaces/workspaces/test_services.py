@@ -106,7 +106,7 @@ async def test_create_workspace():
             "taiga.workspaces.workspaces.services.ws_memberships_repositories", autospec=True
         ) as fake_ws_memberships_repo,
     ):
-        await services.create_workspace(name=name, color=color, owner=user)
+        await services._create_workspace(name=name, color=color, owner=user)
         fake_workspaces_repo.create_workspace.assert_awaited_once()
         fake_ws_roles_repo.create_workspace_role.assert_awaited_once()
         fake_ws_memberships_repo.create_workspace_membership.assert_awaited_once()
@@ -119,11 +119,11 @@ async def test_create_workspace_detail():
     color = 5
     with (
         patch(
-            "taiga.workspaces.workspaces.services.create_workspace", return_value=workspace, autospec=True
+            "taiga.workspaces.workspaces.services._create_workspace", return_value=workspace, autospec=True
         ) as fake_create_method,
         patch("taiga.workspaces.workspaces.services.get_workspace_detail", autospec=True) as fake_serializer_method,
     ):
         fake_create_method.return_value = workspace
-        await services.create_workspace_api(name=name, color=color, owner=user)
+        await services.create_workspace(name=name, color=color, owner=user)
         fake_create_method.assert_awaited_with(name=name, color=color, owner=user)
         fake_serializer_method.assert_awaited_with(id=workspace.id, user_id=user.id)

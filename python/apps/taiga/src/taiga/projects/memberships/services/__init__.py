@@ -18,11 +18,15 @@ from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.projects.roles.models import ProjectRole
 from taiga.stories.assignments import repositories as story_assignments_repositories
 
+##########################################################
+# list project memberships
+##########################################################
 
-async def get_paginated_project_memberships(
+
+async def list_paginated_project_memberships(
     project: Project, offset: int, limit: int
 ) -> tuple[Pagination, list[ProjectMembership]]:
-    memberships = await memberships_repositories.get_project_memberships(
+    memberships = await memberships_repositories.list_project_memberships(
         filters={"project_id": project.id}, offset=offset, limit=limit
     )
     total_memberships = await memberships_repositories.get_total_project_memberships(filters={"project_id": project.id})
@@ -32,20 +36,20 @@ async def get_paginated_project_memberships(
     return pagination, memberships
 
 
+##########################################################
+# get project memebership
+##########################################################
+
+
 async def get_project_membership(project_id: UUID, username: str) -> ProjectMembership:
     return await memberships_repositories.get_project_membership(
         filters={"project_id": project_id, "username": username}
     )
 
 
-async def _is_membership_the_only_admin(membership_role: ProjectRole, project_role: ProjectRole) -> bool:
-    if membership_role.is_admin and not project_role.is_admin:
-        num_admins = await memberships_repositories.get_total_project_memberships(
-            filters={"role_id": membership_role.id}
-        )
-        return True if num_admins == 1 else False
-    else:
-        return False
+##########################################################
+# update
+##########################################################
 
 
 async def update_project_membership(membership: ProjectMembership, role_slug: str) -> ProjectMembership:
@@ -66,8 +70,10 @@ async def update_project_membership(membership: ProjectMembership, role_slug: st
             old_permissions=membership.role.permissions, new_permissions=project_role.permissions
         )
 
-    membership.role = project_role
-    updated_membership = await memberships_repositories.update_project_membership(membership=membership)
+    updated_membership = await memberships_repositories.update_project_membership(
+        membership=membership,
+        values={"role": project_role},
+    )
 
     await memberships_events.emit_event_when_project_membership_is_updated(membership=updated_membership)
 
@@ -81,3 +87,18 @@ async def update_project_membership(membership: ProjectMembership, role_slug: st
 
 
 # TODO: when there is a delete_project_membership service, we have to unassign stories too
+
+
+##########################################################
+# misc
+##########################################################
+
+
+async def _is_membership_the_only_admin(membership_role: ProjectRole, project_role: ProjectRole) -> bool:
+    if membership_role.is_admin and not project_role.is_admin:
+        num_admins = await memberships_repositories.get_total_project_memberships(
+            filters={"role_id": membership_role.id}
+        )
+        return True if num_admins == 1 else False
+    else:
+        return False

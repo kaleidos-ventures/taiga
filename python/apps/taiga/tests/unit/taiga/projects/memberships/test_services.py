@@ -16,17 +16,17 @@ pytestmark = pytest.mark.django_db
 
 
 #######################################################
-# get_paginated_project_memberships
+# list_paginated_project_memberships
 #######################################################
 
 
-async def test_get_paginated_project_memberships():
+async def test_list_paginated_project_memberships():
     project = f.build_project()
     with patch(
         "taiga.projects.memberships.services.memberships_repositories", autospec=True
     ) as fake_membership_repository:
-        await services.get_paginated_project_memberships(project=project, offset=0, limit=10)
-        fake_membership_repository.get_project_memberships.assert_awaited_once()
+        await services.list_paginated_project_memberships(project=project, offset=0, limit=10)
+        fake_membership_repository.list_project_memberships.assert_awaited_once()
         fake_membership_repository.get_total_project_memberships.assert_awaited_once()
 
 
@@ -104,7 +104,9 @@ async def test_update_project_membership_role_ok():
             filters={"project_id": project.id, "slug": admin_role.slug}
         )
         fake_membership_repository.get_total_project_memberships.assert_not_awaited()
-        fake_membership_repository.update_project_membership.assert_awaited_once_with(membership=membership)
+        fake_membership_repository.update_project_membership.assert_awaited_once_with(
+            membership=membership, values={"role": admin_role}
+        )
         fake_membership_events.emit_event_when_project_membership_is_updated.assert_awaited_once_with(
             membership=updated_membership
         )
@@ -135,7 +137,9 @@ async def test_update_project_membership_role_view_story_deleted():
         fake_pj_role_repository.get_project_role.assert_awaited_once_with(
             filters={"project_id": project.id, "slug": role.slug}
         )
-        fake_membership_repository.update_project_membership.assert_awaited_once_with(membership=membership)
+        fake_membership_repository.update_project_membership.assert_awaited_once_with(
+            membership=membership, values={"role": role}
+        )
         fake_membership_events.emit_event_when_project_membership_is_updated.assert_awaited_once_with(
             membership=updated_membership
         )

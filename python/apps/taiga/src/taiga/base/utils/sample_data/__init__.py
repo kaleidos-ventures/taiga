@@ -222,7 +222,7 @@ async def _create_workspace(
         name = f"{name}(P)"
     color = color or fake.random_int(min=1, max=NUM_WORKSPACE_COLORS)
 
-    workspace = await workspaces_services.create_workspace(name=name, owner=owner, color=color)
+    workspace = await workspaces_services._create_workspace(name=name, owner=owner, color=color)
 
     if is_premium:
         workspace.is_premium = True
@@ -294,7 +294,7 @@ async def _create_project(
     with open("src/taiga/base/utils/sample_data/logo.png", "rb") as png_image_file:
         logo_file = UploadFile(file=png_image_file, filename="Logo")
 
-        return await projects_services.create_project(
+        return await projects_services._create_project(
             name=name,
             description=description,
             color=fake.random_int(min=1, max=NUM_PROJECT_COLORS),
@@ -492,7 +492,7 @@ async def _create_story(
 
 
 async def _create_empty_project(owner: User, workspace: Workspace) -> None:
-    await projects_services.create_project(
+    await projects_services._create_project(
         name="Empty project",
         description=fake.paragraph(nb_sentences=2),
         color=fake.random_int(min=1, max=NUM_PROJECT_COLORS),
@@ -791,15 +791,15 @@ async def _create_scenario_with_invitations() -> None:
     user901 = await _create_user(901)
 
     # user900 is admin of several workspaces
-    ws1 = await workspaces_services.create_workspace(name="ws1 for admins", owner=user900, color=2)
-    ws2 = await workspaces_services.create_workspace(name="ws2 for members allowed(p)", owner=user900, color=2)
+    ws1 = await workspaces_services._create_workspace(name="ws1 for admins", owner=user900, color=2)
+    ws2 = await workspaces_services._create_workspace(name="ws2 for members allowed(p)", owner=user900, color=2)
     ws2.is_premium = True
     await sync_to_async(ws2.save)()
-    ws3 = await workspaces_services.create_workspace(name="ws3 for members not allowed(p)", owner=user900, color=2)
+    ws3 = await workspaces_services._create_workspace(name="ws3 for members not allowed(p)", owner=user900, color=2)
     ws3.is_premium = True
     await sync_to_async(ws3.save)()
-    await workspaces_services.create_workspace(name="ws4 for guests", owner=user900, color=2)
-    ws5 = await workspaces_services.create_workspace(name="ws5 lots of projects", owner=user900, color=2)
+    await workspaces_services._create_workspace(name="ws4 for guests", owner=user900, color=2)
+    ws5 = await workspaces_services._create_workspace(name="ws5 lots of projects", owner=user900, color=2)
 
     # user901 is admin of ws1
     ws_admin_role = await _get_workspace_admin_role(workspace=ws1)
@@ -858,7 +858,7 @@ async def _create_scenario_for_searches() -> None:
     await _create_user_with_kwargs(username="elmarv", full_name="Joanna Marinari")
 
     # user800 is admin of ws1
-    ws1 = await workspaces_services.create_workspace(name="ws for searches(p)", owner=user800, color=2)
+    ws1 = await workspaces_services._create_workspace(name="ws for searches(p)", owner=user800, color=2)
     ws1.is_premium = True
     await sync_to_async(ws1.save)()
 
@@ -887,7 +887,7 @@ async def _create_scenario_for_revoke() -> None:
         username="pruebastaiga4", full_name="Pruebas Taiga 4", email="pruebastaiga+4@gmail.com"
     )
 
-    ws = await workspaces_services.create_workspace(name="ws for revoking(p)", owner=user1, color=2)
+    ws = await workspaces_services._create_workspace(name="ws for revoking(p)", owner=user1, color=2)
     ws.is_premium = True
     await sync_to_async(ws.save)()
 

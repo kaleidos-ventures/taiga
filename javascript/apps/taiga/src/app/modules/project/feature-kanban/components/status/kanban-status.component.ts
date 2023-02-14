@@ -262,7 +262,7 @@ export class KanbanStatusComponent
     this.store.dispatch(KanbanActions.closeCreateStoryForm());
     requestAnimationFrame(() => {
       (this.createStoryWrapper?.nativeElement as HTMLElement)
-        .querySelector('button')
+        ?.querySelector('button')
         ?.focus();
     });
   }

@@ -10,6 +10,7 @@ from uuid import UUID
 from fastapi import Depends, Query, Response, status
 from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
+from taiga.base.api import responses
 from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
@@ -25,7 +26,6 @@ from taiga.projects.invitations.api.validators import (
 )
 from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.invitations.permissions import IsProjectInvitationRecipient
-from taiga.projects.invitations.schemas import CreateProjectInvitationsSchema, PublicProjectInvitationSchema
 from taiga.projects.invitations.serializers import (
     CreateProjectInvitationsSerializer,
     ProjectInvitationSerializer,
@@ -43,6 +43,11 @@ REVOKE_PROJECT_INVITATION = IsProjectAdmin()
 UPDATE_PROJECT_INVITATION = IsProjectAdmin()
 
 
+# HTTP 200 RESPONSES
+CREATE_PROJECT_INVITATIONS_200 = responses.http_status_200(model=CreateProjectInvitationsSerializer)
+PUBLIC_PROJECT_INVITATION_200 = responses.http_status_200(model=PublicProjectInvitationSerializer)
+
+
 ##########################################################
 # create project invitations
 ##########################################################
@@ -52,14 +57,13 @@ UPDATE_PROJECT_INVITATION = IsProjectAdmin()
     "/{id}/invitations",
     name="project.invitations.create",
     summary="Create project invitations",
-    response_model=CreateProjectInvitationsSerializer,
-    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=CREATE_PROJECT_INVITATIONS_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_project_invitations(
     request: AuthRequest,
     form: ProjectInvitationsValidator,
     id: B64UUID = Query(None, description="the project id (B64UUID)"),
-) -> CreateProjectInvitationsSchema:
+) -> CreateProjectInvitationsSerializer:
     """
     Create invitations to a project for a list of users (identified either by their username or their email, and the
     role they'll take in the project). In case of receiving several invitations for the same user, just the first
@@ -116,12 +120,11 @@ async def list_project_invitations(
     "/invitations/{token}",
     name="project.invitations.get",
     summary="Get public information about a project invitation",
-    response_model=PublicProjectInvitationSerializer,
-    responses=ERROR_400 | ERROR_404 | ERROR_422,
+    responses=PUBLIC_PROJECT_INVITATION_200 | ERROR_400 | ERROR_404 | ERROR_422,
 )
 async def get_public_project_invitation(
     token: str = Query(None, description="the project invitation token (str)")
-) -> PublicProjectInvitationSchema:
+) -> PublicProjectInvitationSerializer:
     """
     Get public information about a project invitation
     """

@@ -19,7 +19,8 @@ from taiga.projects.invitations import events as invitations_events
 from taiga.projects.invitations import repositories as invitations_repositories
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.invitations.models import ProjectInvitation
-from taiga.projects.invitations.schemas import CreateProjectInvitationsSchema, PublicProjectInvitationSchema
+from taiga.projects.invitations.serializers import CreateProjectInvitationsSerializer, PublicProjectInvitationSerializer
+from taiga.projects.invitations.serializers import services as serializers_services
 from taiga.projects.invitations.services import exceptions as ex
 from taiga.projects.invitations.tokens import ProjectInvitationToken
 from taiga.projects.memberships import repositories as memberships_repositories
@@ -40,7 +41,7 @@ async def create_project_invitations(
     project: Project,
     invitations: list[dict[str, str]],
     invited_by: User,
-) -> CreateProjectInvitationsSchema:
+) -> CreateProjectInvitationsSerializer:
     # create two lists with roles_slug and the emails received (either directly by the invitation's email, or by the
     # invited username's email)
     already_members = 0
@@ -157,7 +158,9 @@ async def create_project_invitations(
             project=project, invitations=invitations_to_send_list
         )
 
-    return CreateProjectInvitationsSchema(invitations=list(invitations_to_send_list), already_members=already_members)
+    return serializers_services.serialize_create_project_invitations(
+        invitations=list(invitations_to_send_list), already_members=already_members
+    )
 
 
 ##########################################################
@@ -214,17 +217,14 @@ async def get_project_invitation(token: str) -> ProjectInvitation | None:
     )
 
 
-async def get_public_project_invitation(token: str) -> PublicProjectInvitationSchema | None:
+async def get_public_project_invitation(token: str) -> PublicProjectInvitationSerializer | None:
     if invitation := await get_project_invitation(token=token):
 
-        return PublicProjectInvitationSchema(
-            status=invitation.status,
-            email=invitation.email,
-            existing_user=invitation.user is not None,
-            available_logins=(
-                await auth_services.get_available_user_logins(user=invitation.user) if invitation.user else []
-            ),
-            project=invitation.project,
+        available_logins = (
+            await auth_services.get_available_user_logins(user=invitation.user) if invitation.user else []
+        )
+        return serializers_services.serialize_public_project_invitation(
+            invitation=invitation, available_logins=available_logins
         )
 
     return None

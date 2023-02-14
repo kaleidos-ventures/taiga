@@ -19,10 +19,11 @@ def test_project_logo_mixin_serializer_with_logo():
     project = f.build_project()
 
     with (
-        patch("taiga.projects.projects.serializers.mixins.projects_services", autospec=True) as fake_projects_services
+        patch("taiga.projects.projects.services.get_logo_small_thumbnail_url", autospec=True) as fake_get_logo_small,
+        patch("taiga.projects.projects.services.get_logo_large_thumbnail_url", autospec=True) as fake_get_logo_large,
     ):
-        fake_projects_services.get_logo_large_thumbnail_url.return_value = "large_logo.png"
-        fake_projects_services.get_logo_small_thumbnail_url.return_value = "small_logo.png"
+        fake_get_logo_small.return_value = "small_logo.png"
+        fake_get_logo_large.return_value = "large_logo.png"
 
         data = serializers.ProjectLogoMixin(logo=project.logo)
 
@@ -30,13 +31,14 @@ def test_project_logo_mixin_serializer_with_logo():
         assert data.logo_small == "small_logo.png"
         assert data.logo_large == "large_logo.png"
 
-        fake_projects_services.get_logo_small_thumbnail_url.assert_awaited_once_with(project.logo)
-        fake_projects_services.get_logo_large_thumbnail_url.assert_awaited_once_with(project.logo)
+        fake_get_logo_small.assert_awaited_once_with(project.logo)
+        fake_get_logo_large.assert_awaited_once_with(project.logo)
 
 
 def test_project_logo_mixin_serializer_without_logo():
     with (
-        patch("taiga.projects.projects.serializers.mixins.projects_services", autospec=True) as fake_projects_services,
+        patch("taiga.projects.projects.services.get_logo_small_thumbnail_url", autospec=True) as fake_get_logo_small,
+        patch("taiga.projects.projects.services.get_logo_large_thumbnail_url", autospec=True) as fake_get_logo_large,
     ):
         data = serializers.ProjectLogoMixin(logo=None)
 
@@ -44,5 +46,5 @@ def test_project_logo_mixin_serializer_without_logo():
         assert data.logo_small is None
         assert data.logo_large is None
 
-        fake_projects_services.get_logo_small_thumbnail_url.assert_not_awaited()
-        fake_projects_services.get_logo_large_thumbnail_url.assert_not_awaited()
+        fake_get_logo_small.assert_not_awaited()
+        fake_get_logo_large.assert_not_awaited()

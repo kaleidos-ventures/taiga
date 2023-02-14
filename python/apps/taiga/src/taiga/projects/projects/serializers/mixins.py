@@ -9,7 +9,6 @@ from typing import Any
 
 from pydantic import AnyHttpUrl, BaseModel, validator
 from taiga.base.utils.concurrency import run_async_as_sync
-from taiga.projects.projects import services as projects_services
 
 
 class ProjectLogoMixin(BaseModel):
@@ -30,7 +29,8 @@ class ProjectLogoMixin(BaseModel):
 
         if not logo:
             return None
-        return run_async_as_sync(projects_services.get_logo_small_thumbnail_url(logo))
+        from taiga.projects.projects.services import get_logo_small_thumbnail_url
+        return run_async_as_sync(get_logo_small_thumbnail_url(logo))
 
     @validator("logo_large", always=True)
     def get_logo_large(cls, v: str | None, values: dict[str, str | None]) -> str | None:
@@ -38,4 +38,5 @@ class ProjectLogoMixin(BaseModel):
 
         if not logo:
             return None
-        return run_async_as_sync(projects_services.get_logo_large_thumbnail_url(logo))
+        from taiga.projects.projects.services import get_logo_large_thumbnail_url
+        return run_async_as_sync(get_logo_large_thumbnail_url(logo))

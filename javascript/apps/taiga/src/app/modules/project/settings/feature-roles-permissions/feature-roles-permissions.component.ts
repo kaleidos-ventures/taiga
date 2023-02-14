@@ -12,6 +12,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostListener,
   OnDestroy,
   OnInit,
   QueryList,
@@ -27,11 +28,13 @@ import { Project, Role } from '@taiga/data';
 import { fromEvent } from 'rxjs';
 import {
   auditTime,
+  debounceTime,
   filter,
   map,
   pairwise,
   switchMap,
   take,
+  tap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -70,6 +73,31 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   @ViewChildren('fragment')
   public fragments!: QueryList<ElementRef>;
 
+  @HostListener('window:beforeunload')
+  public unloadHandler() {
+    if (this.form.dirty) {
+      this.state
+        .select('memberRoles')
+        .pipe(filterNil(), take(1))
+        .subscribe((roles) => {
+          roles
+            .filter((role) => !role.isAdmin)
+            .forEach((role) => {
+              this.saveMembers(role);
+            });
+        });
+
+      return false;
+    } else if (this.publicForm.dirty) {
+      this.savePublic();
+      return false;
+    } else if (this.workspaceForm.dirty) {
+      this.saveWorkspace();
+      return false;
+    }
+    return true;
+  }
+
   public readonly model$ = this.state.select().pipe(
     map((model) => {
       const admin = model.memberRoles?.find((it) => it.isAdmin);
@@ -85,8 +113,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
   public form = this.fb.group({});
   public publicForm = this.fb.group({});
   public workspaceForm = this.fb.group({});
-
-  private readonly defaultFragment = 'member-permissions-settings';
 
   public get nativeElement() {
     return this.el.nativeElement as HTMLElement;
@@ -222,7 +248,11 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     const form = this.getRoleForm(role);
 
     form.valueChanges
-      .pipe(untilDestroyed(this), auditTime(100))
+      .pipe(
+        untilDestroyed(this),
+        tap(() => this.form.markAsDirty()),
+        debounceTime(10000)
+      )
       .subscribe(() => {
         this.saveMembers(role);
       });
@@ -230,7 +260,11 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   public watchPublicForm() {
     this.publicForm.valueChanges
-      .pipe(untilDestroyed(this), auditTime(100))
+      .pipe(
+        untilDestroyed(this),
+        tap(() => this.publicForm.markAsDirty()),
+        debounceTime(10000)
+      )
       .subscribe(() => {
         this.savePublic();
       });
@@ -238,7 +272,11 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   public watchWorkspaceForm() {
     this.workspaceForm.valueChanges
-      .pipe(untilDestroyed(this), auditTime(100))
+      .pipe(
+        untilDestroyed(this),
+        tap(() => this.workspaceForm.markAsDirty()),
+        debounceTime(10000)
+      )
       .subscribe(() => {
         this.saveWorkspace();
       });
@@ -300,6 +338,8 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
         permissions,
       })
     );
+
+    this.form.markAsPristine();
   }
 
   public savePublic() {
@@ -314,6 +354,8 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
         permissions,
       })
     );
+
+    this.publicForm.markAsPristine();
   }
 
   public saveWorkspace() {
@@ -328,6 +370,8 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
         permissions,
       })
     );
+
+    this.workspaceForm.markAsPristine();
   }
 
   public watchFragment() {

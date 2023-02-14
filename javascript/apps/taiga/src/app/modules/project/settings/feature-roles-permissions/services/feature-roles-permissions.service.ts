@@ -8,15 +8,15 @@
 
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { SettingsPermission } from '../models/settings-permission.model';
+import { Entity, EntityPermission, Role } from '@taiga/data';
+import { PermissionsService } from '~/app/services/permissions.service';
 import {
   Conflict,
   EntityConflictPermission,
   PermissionConflict,
   TextConflict,
 } from '../models/modal-permission.model';
-import { Entity, EntityPermission, Role } from '@taiga/data';
-import { PermissionsService } from '~/app/services/permissions.service';
+import { SettingsPermission } from '../models/settings-permission.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsSettingsFeatureRolesPermissionsService {
@@ -113,6 +113,8 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
     if (!this.hasComments(entity) && formGroup.get('comment')?.enabled) {
       formGroup.get('comment')?.disable();
     }
+
+    formGroup.markAsDirty();
   }
 
   public formPermissionState(formGroup: FormGroup): SettingsPermission {

@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
 from taiga.base.serializers import UUIDB64, BaseModel
-from taiga.projects.projects.serializers import ProjectLogoMixin
+from taiga.projects.projects.serializers.mixins import ProjectLogoMixin
 
 
 class ProjectNestedSerializer(BaseModel, ProjectLogoMixin):

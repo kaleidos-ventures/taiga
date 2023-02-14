@@ -43,30 +43,14 @@ class FixtureFormat(str, Enum):
 ######################################
 
 
-@cli.command(help="Runs the command-line client for specified database, or the default database if none is provided.")
-def db_shell() -> None:
+@cli.command(help="Runs the command-line client for the database.")
+def shell() -> None:
     call_django_command("dbshell")
 
 
 ######################################
 # DB MIGRATIONS
 ######################################
-
-
-@cli.command(help="Drop Taiga migrations files")
-def drop_migrations(
-    verbosity: Verbosity = typer.Option(
-        "1",
-        "--verbosity",
-        help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
-    ),
-) -> None:
-    # Drop all migrations except taiga.base.db
-    src_dir = Path(settings.BASE_DIR)
-    for migrations_dir in src_dir.glob("taiga/**/**/*[!db]/migrations/"):
-        if verbosity > Verbosity.v1:
-            pprint.print(f"- Delete [bold white]{migrations_dir.relative_to(settings.BASE_DIR.parent)}[/bold white]")
-        shutil.rmtree(migrations_dir)
 
 
 @cli.command(help="Initialize Taiga migrations")
@@ -87,32 +71,6 @@ def init_migrations(
         app_label=app_labels,
         interactive=interactive,
         verbosity=verbosity,
-    )
-
-
-@cli.command(help="Updates database schema. Manages both apps with migrations and those without.")
-def migrate(
-    fake: bool = typer.Option(False, "--fake/ ", help="Mark migrations as run without actually running them."),
-    plan: bool = typer.Option(False, "--plan/ ", help="Shows a list of the migration actions that will be performed."),
-    run_syncdb: bool = typer.Option(False, "--syncdb/ ", help="Allows creating tables for apps without migrations."),
-    interactive: bool = typer.Option(True, " /--no-input", help="Tells to NOT prompt the user for input of any kind."),
-    verbosity: Verbosity = typer.Option(
-        "1",
-        "--verbosity",
-        help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
-    ),
-    app_label: str = typer.Argument("", help="App label of an application to synchronize the state."),
-    migration_name: str = typer.Argument("", help="Database state will be brought to the state after that migration. "),
-) -> None:
-    call_django_command(
-        "migrate",
-        app_label=app_label,
-        migration_name=migration_name,
-        fake=fake,
-        plan=plan,
-        run_syncdb=run_syncdb,
-        interactive=interactive,
-        verbosity=int(verbosity.value),
     )
 
 
@@ -215,20 +173,46 @@ def show_migrations(
     )
 
 
-@cli.command(help="Installs the named fixture(s) in the database.")
-def load_fixtures(
+@cli.command(help="Updates database schema. Manages both apps with migrations and those without.")
+def migrate(
+    fake: bool = typer.Option(False, "--fake/ ", help="Mark migrations as run without actually running them."),
+    plan: bool = typer.Option(False, "--plan/ ", help="Shows a list of the migration actions that will be performed."),
+    run_syncdb: bool = typer.Option(False, "--syncdb/ ", help="Allows creating tables for apps without migrations."),
+    interactive: bool = typer.Option(True, " /--no-input", help="Tells to NOT prompt the user for input of any kind."),
     verbosity: Verbosity = typer.Option(
         "1",
         "--verbosity",
         help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
     ),
-    fixture: list[str] = typer.Argument(..., help="Fixture labels."),
+    app_label: str = typer.Argument("", help="App label of an application to synchronize the state."),
+    migration_name: str = typer.Argument("", help="Database state will be brought to the state after that migration. "),
 ) -> None:
     call_django_command(
-        "loaddata",
-        fixture,
+        "migrate",
+        app_label=app_label,
+        migration_name=migration_name,
+        fake=fake,
+        plan=plan,
+        run_syncdb=run_syncdb,
+        interactive=interactive,
         verbosity=int(verbosity.value),
     )
+
+
+@cli.command(help="Drop Taiga migrations files")
+def drop_migrations(
+    verbosity: Verbosity = typer.Option(
+        "1",
+        "--verbosity",
+        help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
+    ),
+) -> None:
+    # Drop all migrations except taiga.base.db
+    src_dir = Path(settings.BASE_DIR)
+    for migrations_dir in src_dir.glob("taiga/**/**/*[!db]/migrations/"):
+        if verbosity > Verbosity.v1:
+            pprint.print(f"- Delete [bold white]{migrations_dir.relative_to(settings.BASE_DIR.parent)}[/bold white]")
+        shutil.rmtree(migrations_dir)
 
 
 ######################################
@@ -271,5 +255,21 @@ def dump_fixtures(
         format=format,
         indent=indent,
         primary_keys=primary_keys,
+        verbosity=int(verbosity.value),
+    )
+
+
+@cli.command(help="Installs the named fixture(s) in the database.")
+def load_fixtures(
+    verbosity: Verbosity = typer.Option(
+        "1",
+        "--verbosity",
+        help="Verbosity level; 0=minimal output, 1=normal output, " "2=verbose output, 3=very verbose output.",
+    ),
+    fixture: list[str] = typer.Argument(..., help="Fixture labels."),
+) -> None:
+    call_django_command(
+        "loaddata",
+        fixture,
         verbosity=int(verbosity.value),
     )

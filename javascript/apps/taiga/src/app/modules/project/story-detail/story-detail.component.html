@@ -237,7 +237,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               <button
                 *ngIf="vm.selectedStoryView === 'side-view'"
                 [attr.aria-label]="
-                  sidebarOpen ? t('collapse_sidebar') : t('expand_sidebar')
+                  sidebarOpen
+                    ? t('story.collapse_sidebar')
+                    : t('story.expand_sidebar')
                 "
                 [icon]="sidebarOpen ? 'chevrons-right' : 'chevrons-left'"
                 appearance="tertiary"

@@ -32,6 +32,7 @@ import {
   HasChangesService,
 } from '~/app/shared/utils/has-changes.service';
 import { StoryDetail } from '@taiga/data';
+import { auditTime } from 'rxjs';
 
 export interface StoryDetailTitleState {
   story: StoryDetail;
@@ -103,6 +104,17 @@ export class StoryDetailTitleComponent implements OnChanges, HasChanges {
       .subscribe(() => {
         this.cancelEditTitle();
         this.cd.detectChanges();
+      });
+
+    this.titleForm
+      .get('title')
+      ?.valueChanges.pipe(auditTime(200), untilDestroyed(this))
+      .subscribe((title) => {
+        const titleWithoutBreakLines = title.replace(/(\r\n|\n|\r)/gm, ' ');
+
+        if (title !== titleWithoutBreakLines) {
+          this.titleForm.get('title')?.setValue(titleWithoutBreakLines);
+        }
       });
   }
 

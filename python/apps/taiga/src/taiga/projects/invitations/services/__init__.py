@@ -60,7 +60,7 @@ async def create_project_invitations(
     # emails =    ['user1@taiga.demo']  |  emails_roles =    ['general']
     # usernames = ['user3']             |  usernames_roles = ['admin']
 
-    project_roles_dict = await pj_roles_services.get_project_roles_as_dict(project=project)
+    project_roles_dict = await pj_roles_services.list_project_roles_as_dict(project=project)
     # project_roles_dict = {'admin': <Role: Administrator>, 'general': <Role: General>}
     project_roles_slugs = project_roles_dict.keys()
     wrong_roles_slugs = set(emails_roles + usernames_roles) - project_roles_slugs

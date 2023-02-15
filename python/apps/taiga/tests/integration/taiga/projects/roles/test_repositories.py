@@ -35,13 +35,13 @@ async def test_create_project_roles():
 
 
 ##########################################################
-# get_project_roles
+# list_project_roles
 ##########################################################
 
 
-async def test_get_project_roles_return_roles():
+async def test_list_project_roles_return_roles():
     project = await f.create_project()
-    res = await repositories.get_project_roles(filters={"project_id": project.id})
+    res = await repositories.list_project_roles(filters={"project_id": project.id})
     assert len(res) == 2
 
 
@@ -98,6 +98,8 @@ async def test_get_project_role_for_user_none():
 
 async def test_update_project_role_permissions():
     role = await f.create_project_role()
-    role.permissions = ["view_story"]
-    role = await repositories.update_project_role_permissions(role)
-    assert "view_story" in role.permissions
+    updated_role = await repositories.update_project_role_permissions(
+        role=role,
+        values={"permissions": ["view_story"]},
+    )
+    assert "view_story" in updated_role.permissions

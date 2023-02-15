@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from uuid import UUID
+
 from fastapi import Query
 from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import check_permissions
@@ -14,7 +16,6 @@ from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_4
 from taiga.permissions import IsProjectAdmin
 from taiga.projects.projects.api import get_project_or_404
 from taiga.projects.projects.api.validators import PermissionsValidator
-from taiga.projects.projects.models import Project
 from taiga.projects.roles import services as roles_services
 from taiga.projects.roles.models import ProjectRole
 from taiga.projects.roles.serializers import ProjectRoleSerializer
@@ -22,32 +23,42 @@ from taiga.projects.roles.services import exceptions as services_ex
 from taiga.routers import routes
 
 # PERMISSIONS
-GET_PROJECT_ROLES = IsProjectAdmin()
+LIST_PROJECT_ROLES = IsProjectAdmin()
 UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
 
 
+##########################################################
+# list roles
+##########################################################
+
+
 @routes.projects.get(
-    "/{id}/roles",
-    name="project.permissions.get",
+    "/{project_id}/roles",
+    name="project.roles.list",
     summary="Get project roles permissions",
     response_model=list[ProjectRoleSerializer],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def get_project_roles(
-    request: AuthRequest, id: B64UUID = Query(None, description="the project id (B64UUID)")
+async def list_project_roles(
+    request: AuthRequest, project_id: B64UUID = Query(None, description="the project id (B64UUID)")
 ) -> list[ProjectRole]:
     """
     Get project roles and permissions
     """
 
-    project = await get_project_or_404(id)
-    await check_permissions(permissions=GET_PROJECT_ROLES, user=request.user, obj=project)
-    return await roles_services.get_project_roles(project=project)
+    project = await get_project_or_404(project_id)
+    await check_permissions(permissions=LIST_PROJECT_ROLES, user=request.user, obj=project)
+    return await roles_services.list_project_roles(project=project)
+
+
+##########################################################
+# update project role permissions
+##########################################################
 
 
 @routes.projects.put(
-    "/{id}/roles/{role_slug}/permissions",
-    name="project.permissions.put",
+    "/{project_id}/roles/{role_slug}/permissions",
+    name="project.roles.permissions.put",
     summary="Edit project roles permissions",
     response_model=ProjectRoleSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
@@ -55,27 +66,32 @@ async def get_project_roles(
 async def update_project_role_permissions(
     request: AuthRequest,
     form: PermissionsValidator,
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     role_slug: str = Query(None, description="the role slug (str)"),
 ) -> ProjectRole:
     """
     Edit project roles permissions
     """
 
-    project = await get_project_or_404(id)
-    await check_permissions(permissions=UPDATE_PROJECT_ROLE_PERMISSIONS, user=request.user, obj=project)
-    role = await get_project_role_or_404(project=project, slug=role_slug)
+    role = await get_project_role_or_404(project_id=project_id, slug=role_slug)
+    await check_permissions(permissions=UPDATE_PROJECT_ROLE_PERMISSIONS, user=request.user, obj=role)
 
     try:
         await roles_services.update_project_role_permissions(role, form.permissions)
     except services_ex.NonEditableRoleError as exc:
+        # change the bad-request into a forbidden error
         raise ex.ForbiddenError(str(exc))
 
-    return await get_project_role_or_404(project=project, slug=role_slug)
+    return role
 
 
-async def get_project_role_or_404(project: Project, slug: str) -> ProjectRole:
-    role = await roles_services.get_project_role(project=project, slug=slug)
+##########################################################
+# misc
+##########################################################
+
+
+async def get_project_role_or_404(project_id: UUID, slug: str) -> ProjectRole:
+    role = await roles_services.get_project_role(project_id=project_id, slug=slug)
     if role is None:
         raise ex.NotFoundError(f"Role {slug} does not exist")
 

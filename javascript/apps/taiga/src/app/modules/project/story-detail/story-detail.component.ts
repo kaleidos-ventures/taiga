@@ -28,17 +28,19 @@ import { RxState } from '@rx-angular/state';
 import { TuiButtonComponent, TuiNotification } from '@taiga-ui/core';
 import {
   Project,
+  Role,
   Status,
   Story,
   StoryDetail,
   StoryView,
   User,
 } from '@taiga/data';
-import { map, startWith, take } from 'rxjs';
+import { map, pairwise, startWith, take } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
+import { PermissionUpdateNotificationService } from '~/app/shared/permission-update-notification/permission-update-notification.service';
 import { HasChangesService } from '~/app/shared/utils/has-changes.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { StoryDetailActions } from './data-access/+state/actions/story-detail.actions';
@@ -141,6 +143,7 @@ export class StoryDetailComponent {
   public form: FormGroup<StoryDetailForm> | null = null;
 
   public model$ = this.state.select();
+  public project$ = this.store.select(selectCurrentProject);
 
   public get getCurrentViewTranslation() {
     const index = this.storyViewOptions.findIndex(
@@ -165,7 +168,8 @@ export class StoryDetailComponent {
     private appService: AppService,
     private router: Router,
     private translocoService: TranslocoService,
-    private hasChangesService: HasChangesService
+    private hasChangesService: HasChangesService,
+    private permissionUpdateNotificationService: PermissionUpdateNotificationService
   ) {
     this.state.connect(
       'project',
@@ -460,6 +464,22 @@ export class StoryDetailComponent {
               });
             }
           }
+        }
+      });
+
+    this.wsService
+      .projectEvents<Role>('projectroles.update')
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        if (this.state.get('selectedStoryView') === 'full-view') {
+          this.project$
+            .pipe(filterNil(), pairwise(), take(1))
+            .subscribe(([prev, next]) => {
+              this.permissionUpdateNotificationService.notifyLosePermissions(
+                prev,
+                next
+              );
+            });
         }
       });
   }

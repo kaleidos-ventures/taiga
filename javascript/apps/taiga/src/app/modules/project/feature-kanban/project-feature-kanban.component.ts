@@ -15,12 +15,13 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiNotification } from '@taiga-ui/core';
 import { ShortcutsService } from '@taiga/core';
-import { Project, Story, StoryDetail, StoryView } from '@taiga/data';
-import { combineLatest, filter, map, startWith } from 'rxjs';
+import { Project, Role, Story, StoryDetail, StoryView } from '@taiga/data';
+import { combineLatest, filter, map, pairwise, startWith, take } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
+import { PermissionUpdateNotificationService } from '~/app/shared/permission-update-notification/permission-update-notification.service';
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -85,7 +86,8 @@ export class ProjectFeatureKanbanComponent {
     private appService: AppService,
     private location: Location,
     public shortcutsService: ShortcutsService,
-    public routeHistoryService: RouteHistoryService
+    public routeHistoryService: RouteHistoryService,
+    public permissionUpdateNotificationService: PermissionUpdateNotificationService
   ) {
     const canViewPage = this.permissionService.hasPermissions('story', [
       'view',
@@ -245,6 +247,20 @@ export class ProjectFeatureKanbanComponent {
         this.store.dispatch(
           KanbanEventsActions.deleteStory({ ref: msg.event.content.ref })
         );
+      });
+
+    this.wsService
+      .projectEvents<Role>('projectroles.update')
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.project$
+          .pipe(filterNil(), pairwise(), take(1))
+          .subscribe(([prev, next]) => {
+            this.permissionUpdateNotificationService.notifyLosePermissions(
+              prev,
+              next
+            );
+          });
       });
   }
 

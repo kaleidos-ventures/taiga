@@ -31,7 +31,6 @@ from taiga.projects.memberships.models import ProjectMembership
 from taiga.projects.projects.models import Project
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import AuthData, User
-from taiga.users.schemas import UserBaseSchema
 from taiga.users.tokens import VerifyUserToken
 
 ##########################################################
@@ -190,10 +189,6 @@ def clean_expired_users() -> None:
         .exclude(id__in=OutstandingToken.objects.filter(token_type=VerifyUserToken.token_type).values_list("object_id"))
         .delete()
     )
-
-
-def user_base_to_schema(user: User) -> UserBaseSchema:
-    return UserBaseSchema(username=user.username, full_name=user.full_name, color=user.color)
 
 
 ##########################################################

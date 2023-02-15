@@ -7,7 +7,7 @@
 
 
 from taiga.auth import services as auth_services
-from taiga.auth.schemas import AccessWithRefreshTokenSchema
+from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.utils import datetime
 from taiga.base.utils.colors import generate_random_color
 from taiga.conf import settings
@@ -20,7 +20,7 @@ from taiga.users import services as users_services
 
 async def social_login(
     email: str, full_name: str, social_key: str, social_id: str, bio: str, lang: str | None = None
-) -> AccessWithRefreshTokenSchema:
+) -> AccessTokenWithRefreshSerializer:
     # check if the user exists and already has social login with the requested system
     auth_data = await users_repositories.get_auth_data(filters={"key": social_key, "value": social_id})
     if auth_data:

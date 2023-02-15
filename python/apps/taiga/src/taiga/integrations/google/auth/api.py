@@ -5,22 +5,24 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth.schemas import AccessWithRefreshTokenSchema
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
+from taiga.base.api import responses
 from taiga.exceptions.api.errors import ERROR_400, ERROR_422
 from taiga.integrations.google.auth import services as auth_google_services
 from taiga.integrations.google.auth.validators import GoogleLoginValidator
 from taiga.routers import routes
+
+# HTTP 200 RESPONSES
+ACCESS_TOKEN_200 = responses.http_status_200(model=AccessTokenWithRefreshSerializer)
 
 
 @routes.unauth.post(
     "/google",
     name="auth.google",
     summary="Login / register with Google",
-    response_model=AccessTokenWithRefreshSerializer,
-    responses=ERROR_400 | ERROR_422,
+    responses=ACCESS_TOKEN_200 | ERROR_400 | ERROR_422,
 )
-async def google_login(form: GoogleLoginValidator) -> AccessWithRefreshTokenSchema:
+async def google_login(form: GoogleLoginValidator) -> AccessTokenWithRefreshSerializer:
     """
     Get an access and refresh token using a Google authorization.
     For a non-existing user, this process registers a new user as well.

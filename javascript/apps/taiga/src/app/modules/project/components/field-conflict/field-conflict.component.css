@@ -11,6 +11,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   border-radius: 4px;
   box-shadow: 0 4px 8px -2px rgba(23, 28, 36, 0.25),
     0 0 1px rgba(23, 28, 36, 0.31);
+  container-type: inline-size;
   display: block;
   padding: var(--spacing-16);
 }
@@ -41,9 +42,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   color: var(--color-warning50);
 }
 
-.description {
-  margin-inline: auto;
-  max-inline-size: 520px;
+@container (inline-size > 350px) {
+  .description {
+    padding-inline-start: var(--spacing-32);
+  }
 }
 
 .copy-description,

@@ -164,9 +164,12 @@ export class StoryDetailTitleComponent implements OnChanges, HasChanges {
     return this.state.get('story').title !== this.titleForm.get('title')!.value;
   }
 
-  public cancelConflict() {
+  public cancelConflict(hasBeenCopied: boolean) {
     this.setConflict(false);
-    this.setEdit(false);
+
+    if (hasBeenCopied) {
+      this.setEdit(false);
+    }
   }
 
   public acceptConflict() {

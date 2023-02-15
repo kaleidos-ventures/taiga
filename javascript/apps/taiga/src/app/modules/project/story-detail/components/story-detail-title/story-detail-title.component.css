@@ -10,7 +10,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 :host {
   display: block;
-  margin-block-end: var(--spacing-20);
+  margin-block-end: var(--spacing-16);
   padding: var(--spacing-8);
 
   &.conflict {
@@ -23,7 +23,18 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     );
     border: 2px solid var(--color-gray40);
     border-radius: 3px;
-    opacity: 0.8;
+
+    & .title {
+      color: var(--color-gray70);
+    }
+
+    & .title-wrapper {
+      padding: var(--spacing-8);
+    }
+  }
+
+  &.edit {
+    padding: 0;
   }
 
   &:not(.conflict) {
@@ -56,7 +67,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 }
 
 .edit-title-field {
-  margin-block-end: var(--spacing-20);
   position: relative;
 }
 
@@ -96,6 +106,17 @@ tg-ui-textarea {
     & label.t-content {
       padding-block-end: var(--spacing-40);
     }
+
+    & .t-input {
+      /* stylelint-disable-next-line declaration-no-important */
+      padding-inline: var(--spacing-8) !important;
+    }
+
+    /* stylelint-disable-next-line selector-max-type */
+    & tui-scrollbar {
+      /* stylelint-disable-next-line declaration-no-important */
+      margin-block-end: 0 !important;
+    }
   }
 }
 
@@ -104,6 +125,12 @@ tui-text-area {
   --tui-textarea-height: var(--spacing-24) !important;
 
   font-size: var(--font-size-heading-3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.1;
+
+  &:focus-within {
+    box-shadow: 3px 4px 4px 0 rgba(0, 138, 168, 0.15);
+  }
 }
 
 tg-field-conflict {

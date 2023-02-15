@@ -47,7 +47,7 @@ export class FieldConflictComponent {
   public copyValue!: string;
 
   @Output()
-  public cancel = new EventEmitter<void>();
+  public cancel = new EventEmitter<boolean>();
 
   @Output()
   public accept = new EventEmitter<void>();

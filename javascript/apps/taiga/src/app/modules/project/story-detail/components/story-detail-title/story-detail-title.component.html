@@ -36,7 +36,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [username]="vm.story.titleUpdatedBy.fullName"
         [field]="t('field_conflict.fields.title')"
         [copyValue]="titleForm.get('title')!.value"
-        (cancel)="cancelConflict()"
+        (cancel)="cancelConflict($event)"
         (accept)="acceptConflict()"></tg-field-conflict>
     </div>
     <div
@@ -53,6 +53,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <tui-text-area
             class="general-textarea"
             (keydown.code.enter)="onEnter($event)"
+            (keydown.code.shift.enter)="onEnter($event)"
             tgAutoFocus
             formControlName="title"
             [maxLength]="maxLength"

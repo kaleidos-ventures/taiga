@@ -77,7 +77,7 @@ async def _create_project(
     )
     if not owner_role:
         owner_role = await (
-            pj_roles_repositories.get_project_roles(filters={"project_id": project.id}, offset=0, limit=1)[0]
+            pj_roles_repositories.list_project_roles(filters={"project_id": project.id}, offset=0, limit=1)[0]
         )
     await pj_memberships_repositories.create_project_membership(user=owner, project=project, role=owner_role)
 

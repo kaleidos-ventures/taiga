@@ -13,6 +13,22 @@ from taiga.projects.roles.services import exceptions as ex
 from tests.utils import factories as f
 
 #######################################################
+# list_project_roles_as_dict
+#######################################################
+
+
+async def test_list_project_roles_as_dict():
+    role = f.build_project_role(is_admin=True)
+
+    with patch("taiga.projects.roles.services.pj_roles_repositories", autospec=True) as fake_role_repository:
+        fake_role_repository.list_project_roles.return_value = [role]
+        ret = await services.list_project_roles_as_dict(project=role.project)
+
+        fake_role_repository.list_project_roles.assert_awaited_once_with(filters={"project_id": role.project_id})
+        assert ret[role.slug] == role
+
+
+#######################################################
 # get_project_role
 #######################################################
 
@@ -23,24 +39,8 @@ async def test_get_project_role():
 
     with patch("taiga.projects.roles.services.pj_roles_repositories", autospec=True) as fake_role_repository:
         fake_role_repository.get_project_role.return_value = f.build_project_role()
-        await services.get_project_role(project=project, slug=slug)
+        await services.get_project_role(project_id=project.id, slug=slug)
         fake_role_repository.get_project_role.assert_awaited_once()
-
-
-#######################################################
-# get_project_roles_as_dict
-#######################################################
-
-
-async def test_get_project_roles_as_dict():
-    role = f.build_project_role(is_admin=True)
-
-    with patch("taiga.projects.roles.services.pj_roles_repositories", autospec=True) as fake_role_repository:
-        fake_role_repository.get_project_roles.return_value = [role]
-        ret = await services.get_project_roles_as_dict(project=role.project)
-
-        fake_role_repository.get_project_roles.assert_awaited_once_with(filters={"project_id": role.project_id})
-        assert ret[role.slug] == role
 
 
 #######################################################

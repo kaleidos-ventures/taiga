@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -53,7 +53,7 @@ def _apply_select_related_to_queryset(
 
 
 ##########################################################
-# create workflow
+# create project role
 ##########################################################
 
 
@@ -80,12 +80,12 @@ create_project_role = sync_to_async(create_project_role_sync)
 
 
 ##########################################################
-# get project roles
+# list project roles
 ##########################################################
 
 
 @sync_to_async
-def get_project_roles(
+def list_project_roles(
     filters: ProjectRoleFilters = {},
     offset: int | None = None,
     limit: int | None = None,
@@ -125,6 +125,9 @@ def get_project_role(
 
 
 @sync_to_async
-def update_project_role_permissions(role: ProjectRole) -> ProjectRole:
+def update_project_role_permissions(role: ProjectRole, values: dict[str, Any] = {}) -> ProjectRole:
+    for attr, value in values.items():
+        setattr(role, attr, value)
+
     role.save()
     return role

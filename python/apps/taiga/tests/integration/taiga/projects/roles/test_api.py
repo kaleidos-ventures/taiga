@@ -13,6 +13,13 @@ pytestmark = pytest.mark.django_db
 
 
 #########################################################################
+# GET /projects/<project_id>/roles
+#########################################################################
+
+# TODO: missing tests
+
+
+#########################################################################
 # PUT /projects/<project_id>/roles/<role_slug>/permissions
 #########################################################################
 
@@ -54,7 +61,7 @@ async def test_update_project_role_permissions_user_without_permission(client):
     data = {"permissions": ["view_story"]}
 
     client.login(user)
-    response = client.put(f"/projects/{project.b64id}/roles/role-slug/permissions", json=data)
+    response = client.put(f"/projects/{project.b64id}/roles/general/permissions", json=data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 

@@ -7,10 +7,10 @@
 
 from fastapi import Depends, Query, Response
 from taiga.auth import services as auth_services
-from taiga.auth.schemas import AccessWithRefreshTokenSchema
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.api import Request
 from taiga.base.api import pagination as api_pagination
+from taiga.base.api import responses
 from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
@@ -20,7 +20,6 @@ from taiga.permissions import IsAuthenticated
 from taiga.routers import routes
 from taiga.users import services as users_services
 from taiga.users.models import User
-from taiga.users.schemas import VerificationInfoSchema
 from taiga.users.serializers import UserSearchSerializer, UserSerializer, VerificationInfoSerializer
 from taiga.users.validators import (
     CreateUserValidator,
@@ -33,6 +32,11 @@ from taiga.users.validators import (
 # PERMISSIONS
 LIST_USERS = IsAuthenticated()
 GET_USERS_BY_TEXT = IsAuthenticated()
+
+
+# HTTP 200 RESPONSES
+ACCESS_TOKEN_200 = responses.http_status_200(model=AccessTokenWithRefreshSerializer)
+VERIFICATION_INFO_200 = responses.http_status_200(model=VerificationInfoSerializer)
 
 
 #####################################################################
@@ -106,10 +110,9 @@ async def create_user(form: CreateUserValidator) -> User:
     "/verify",
     name="users.verify",
     summary="Verify the account of a new signup user",
-    response_model=VerificationInfoSerializer,
-    responses=ERROR_400 | ERROR_422,
+    responses=VERIFICATION_INFO_200 | ERROR_400 | ERROR_422,
 )
-async def verify_user(form: VerifyTokenValidator) -> VerificationInfoSchema:
+async def verify_user(form: VerifyTokenValidator) -> VerificationInfoSerializer:
     """
     Verify the account of a new signup user.
     """
@@ -192,10 +195,12 @@ async def verify_reset_password_token(token: str) -> bool:
     "/reset-password/{token}",
     name="users.reset-password-change",
     summary="Reset user password",
-    response_model=AccessTokenWithRefreshSerializer,
-    responses=ERROR_400 | ERROR_422,
+    responses=ACCESS_TOKEN_200 | ERROR_400 | ERROR_422,
 )
-async def reset_password(token: str, form: ResetPasswordValidator) -> AccessWithRefreshTokenSchema:
+async def reset_password(
+    token: str,
+    form: ResetPasswordValidator,
+) -> AccessTokenWithRefreshSerializer:
     """
     Reset user password
     """

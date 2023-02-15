@@ -5,7 +5,8 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-from taiga.auth.schemas import AccessWithRefreshTokenSchema
+from taiga.auth.serializers import AccessTokenWithRefreshSerializer
+from taiga.auth.serializers import services as serializers_services
 from taiga.auth.services import exceptions as ex
 from taiga.auth.tokens import AccessToken, RefreshToken
 from taiga.tokens.exceptions import TokenError
@@ -13,7 +14,7 @@ from taiga.users import repositories as users_repositories
 from taiga.users.models import User
 
 
-async def login(username: str, password: str) -> AccessWithRefreshTokenSchema | None:
+async def login(username: str, password: str) -> AccessTokenWithRefreshSerializer | None:
     user = await users_repositories.get_user(filters={"username_or_email": username, "is_active": True})
 
     if not user or not await users_repositories.check_password(user=user, password=password):
@@ -22,7 +23,7 @@ async def login(username: str, password: str) -> AccessWithRefreshTokenSchema | 
     return await create_auth_credentials(user=user)
 
 
-async def refresh(token: str) -> AccessWithRefreshTokenSchema | None:
+async def refresh(token: str) -> AccessTokenWithRefreshSerializer | None:
     # Create a refresh token from a token code
     try:
         refresh_token = await RefreshToken.create(token)
@@ -33,7 +34,9 @@ async def refresh(token: str) -> AccessWithRefreshTokenSchema | None:
     await refresh_token.denylist()
     new_refresh_token = refresh_token.regenerate()
 
-    return AccessWithRefreshTokenSchema(token=str(new_refresh_token.access_token), refresh=str(new_refresh_token))
+    return serializers_services.serialize_access_token_with_refresh(
+        token=str(new_refresh_token.access_token), refresh=str(new_refresh_token)
+    )
 
 
 async def authenticate(token: str) -> tuple[list[str], User]:
@@ -66,7 +69,7 @@ async def deny_refresh_token(user: User, token: str) -> None:
     await refresh_token.denylist()
 
 
-async def create_auth_credentials(user: User) -> AccessWithRefreshTokenSchema:
+async def create_auth_credentials(user: User) -> AccessTokenWithRefreshSerializer:
     """
     This function create new auth credentiasl (an access token and a refresh token) for one user.
     It will also update the date of the user's last login.
@@ -75,7 +78,9 @@ async def create_auth_credentials(user: User) -> AccessWithRefreshTokenSchema:
 
     refresh_token = await RefreshToken.create_for_object(user)
 
-    return AccessWithRefreshTokenSchema(token=str(refresh_token.access_token), refresh=str(refresh_token))
+    return serializers_services.serialize_access_token_with_refresh(
+        token=str(refresh_token.access_token), refresh=str(refresh_token)
+    )
 
 
 async def get_available_user_logins(user: User) -> list[str]:

@@ -95,6 +95,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               [content]="changeView"
               [(open)]="dropdownState">
               <button
+                role="menu"
+                aria-haspopup="true"
+                [attr.aria-expanded]="dropdownState"
+                tabindex="0"
                 [attr.aria-label]="
                   t('story.change_view_sr', {
                     currentView: t(getCurrentViewTranslation)
@@ -114,6 +118,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               [content]="storyOptions"
               [(open)]="storyOptionsState">
               <button
+                role="menu"
+                aria-haspopup="true"
+                [attr.aria-expanded]="storyOptionsState"
+                tabindex="0"
                 [attr.aria-label]="t('story.story_options')"
                 icon="more-vertical"
                 data-test="story-options"
@@ -134,12 +142,16 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               type="button"></button>
           </div>
           <ng-template #changeView>
-            <tui-data-list class="view-options-list">
+            <tui-data-list
+              class="view-options-list"
+              [attr.aria-label]="t('story.change_view')">
               <button
                 *ngFor="
                   let viewOption of storyViewOptions;
                   trackBy: trackByIndex
                 "
+                role="menuitem"
+                [attr.aria-checked]="viewOption.id === vm.selectedStoryView"
                 class="view-option-btn"
                 [class.selected]="viewOption.id === vm.selectedStoryView"
                 tuiOption
@@ -161,8 +173,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           <ng-template #storyOptions>
             <tui-data-list
               class="story-options-list"
-              data-test="story-options-list">
+              data-test="story-options-list"
+              [attr.aria-label]="t('story.story_options')">
               <button
+                role="menuitem"
                 data-test="delete-story-button"
                 class="story-option"
                 *hasPermission="['delete']; entity: 'story'"

@@ -7,8 +7,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 
 <ng-container *transloco="let t; read: 'navigation_user'">
-  <div class="user">
+  <div
+    class="user"
+    role="group">
     <a
+      role="menuitem"
       href="#"
       class="user-inner">
       <tg-user-avatar
@@ -20,46 +23,56 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       </div>
     </a>
   </div>
-  <ul>
-    <li>
+  <ul
+    class="user"
+    role="group">
+    <li role="none">
       <a
+        role="menuitem"
         href="#"
         class="user-link">
         {{ t('user_profile') }}
       </a>
     </li>
-    <li>
+    <li role="none">
       <a
+        role="menuitem"
         [routerLink]="['user-settings', 'profile']"
         (click)="requestClose.emit()"
         class="user-link">
         {{ t('edit_profile') }}
       </a>
     </li>
-    <li>
+    <li role="none">
       <a
+        role="menuitem"
         href="#"
         class="user-link">
         {{ t('account_settings') }}
       </a>
     </li>
-    <li>
+    <li role="none">
       <a
+        role="menuitem"
         [routerLink]="['user-settings', 'preferences']"
         (click)="requestClose.emit()"
         class="user-link">
         {{ t('preferences') }}
       </a>
     </li>
-    <li>
+    <li role="none">
       <a
+        role="menuitem"
         href="#"
         class="user-link">
         {{ t('accessibility_settings') }}
       </a>
     </li>
-    <li class="log-out">
+    <li
+      role="none"
+      class="log-out">
       <button
+        role="menuitem"
         [routerLink]="['/logout']"
         (click)="requestClose.emit()"
         data-test="log-out"

@@ -112,7 +112,7 @@ export const createStoryRequest = (
   projectId: Project['id'],
   story: Partial<Story>,
   statusSlug: Status['slug']
-): Promise<Cypress.Response<Project>> => {
+): Promise<Cypress.Response<Story>> => {
   return request(
     'POST',
     `/projects/${projectId}/workflows/${workspaceSlug}/stories`,
@@ -121,4 +121,21 @@ export const createStoryRequest = (
       status: statusSlug,
     }
   );
+};
+
+export const updateStoryRequest = (
+  projectId: Project['id'],
+  ref: Story['ref'],
+  storyUpdate: Partial<Story>
+): Promise<Cypress.Response<Story>> => {
+  return request<Story>(
+    'GET',
+    `/projects/${projectId}/stories/${ref}`,
+    undefined
+  ).then((response) => {
+    return request('PATCH', `/projects/${projectId}/stories/${ref}`, {
+      version: response.body.version,
+      ...storyUpdate,
+    });
+  });
 };

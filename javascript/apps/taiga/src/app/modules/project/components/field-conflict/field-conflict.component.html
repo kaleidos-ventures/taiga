@@ -29,6 +29,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       <div class="actions">
         <button
           class="copy-link"
+          data-test="copy-title"
           tuiButton
           appearance="tertiary"
           [class.copied]="copied"
@@ -43,6 +44,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </ng-container>
         </button>
         <button
+          data-test="see-new-version"
           tuiButton
           appearance="primary"
           (click)="acceptNewVersion()">
@@ -62,7 +64,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <button
           type="button"
           (click)="accept.next()"
-          data-test="cancel-edit"
+          data-test="dismiss"
           tuiLink>
           {{ t('field_conflict.dismiss') }}
         </button>

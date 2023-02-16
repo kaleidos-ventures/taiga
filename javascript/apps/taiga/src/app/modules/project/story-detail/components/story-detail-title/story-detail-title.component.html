@@ -13,9 +13,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       class="title-wrapper"
       (click)="editTitle()">
       <div class="shape-outside-text float-inline-end"></div>
-      <h1 class="title">{{ vm.story.title }}</h1>
+      <h1
+        data-test="story-detail-title"
+        class="title">
+        {{ vm.story.title }}
+      </h1>
       <button
         *ngIf="!vm.conflict"
+        data-test="edit-title"
         tgRestoreFocusTarget="edit-title"
         (click)="editTitle()"
         class="edit-title"
@@ -51,6 +56,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         (ngSubmit)="save()">
         <tg-ui-textarea>
           <tui-text-area
+            data-test="edit-title-textarea"
             class="general-textarea"
             (keydown.code.enter)="onEnter($event)"
             (keydown.code.shift.enter)="onEnter($event)"
@@ -64,6 +70,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
           <div class="edit-field-actions">
             <button
+              data-test="edit-title-cancel"
               (click)="cancelEditTitle()"
               tuiButton
               type="button"
@@ -71,6 +78,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
               {{ t('commons.cancel') }}
             </button>
             <button
+              data-test="edit-title-save"
               tuiButton
               type="submit"
               appearance="primary">

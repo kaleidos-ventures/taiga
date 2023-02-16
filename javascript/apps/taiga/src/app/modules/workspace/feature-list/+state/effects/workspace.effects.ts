@@ -8,17 +8,19 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { WorkspaceApiService } from '@taiga/api';
 import { Project, Workspace } from '@taiga/data';
 import { timer, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { AppService } from '~/app/services/app.service';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import * as WorkspaceActions from '../actions/workspace.actions';
+import { workspaceEventActions } from '../actions/workspace.actions';
+import { selectWorkspaceState } from '../selectors/workspace.selectors';
 
 @Injectable()
 export class WorkspaceEffects {
@@ -175,23 +177,40 @@ export class WorkspaceEffects {
 
   public projectDeleted$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(projectEventActions.projectDeleted),
+      ofType(workspaceEventActions.projectDeleted),
+      concatLatestFrom(() => [this.store.select(selectWorkspaceState)]),
       pessimisticUpdate({
-        run: (action) => {
-          return zip(
-            this.workspaceApiService.fetchWorkspace(action.workspaceId),
-            timer(300)
-          ).pipe(
-            map(([workspace]) => {
-              return WorkspaceActions.deleteWorkspaceProjectSuccess({
-                workspace: workspace,
-                projectId: action.projectId,
-              });
-            })
-          );
+        run: (action, workspaceState) => {
+          const workspace = workspaceState.workspaces.find((workspace) => {
+            return workspace.id === action.workspaceId;
+          });
+
+          // Check if there are any active projects or invitations on the workspace, and if you're a guest user, it will prevent you from attempting to fetch the workspace and simply deleting it.
+          if (
+            workspace &&
+            workspace.invitedProjects.length + workspace.totalProjects - 1 <=
+              0 &&
+            workspace.userRole !== 'guest'
+          ) {
+            return WorkspaceActions.deleteWorkspace({
+              workspaceId: action.workspaceId,
+            });
+          } else {
+            return zip(
+              this.workspaceApiService.fetchWorkspace(action.workspaceId)
+            ).pipe(
+              map(([workspace]) => {
+                return WorkspaceActions.deleteWorkspaceProjectSuccess({
+                  workspace: workspace,
+                  projectId: action.projectId,
+                });
+              })
+            );
+          }
         },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.errorManagement(httpResponse),
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          return this.appService.errorManagement(httpResponse);
+        },
       })
     );
   });
@@ -200,6 +219,7 @@ export class WorkspaceEffects {
     private userStorageService: UserStorageService,
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService,
-    private appService: AppService
+    private appService: AppService,
+    private store: Store
   ) {}
 }

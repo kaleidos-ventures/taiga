@@ -18,10 +18,11 @@ export const {
   selectWorkspaceProjects,
   selectLoadingWorkspaces,
   selectRejectedInvites,
+  selectWorkspaceState,
 } = workspaceFeature;
 
-export const selectWorkspaceProject = (workspaceSlug: Workspace['slug']) => {
+export const selectWorkspaceProject = (worskpaceId: Workspace['id']) => {
   return createSelector(selectWorkspaceProjects, (workspaces) => {
-    return workspaces[workspaceSlug] ?? [];
+    return workspaces[worskpaceId] ?? [];
   });
 };

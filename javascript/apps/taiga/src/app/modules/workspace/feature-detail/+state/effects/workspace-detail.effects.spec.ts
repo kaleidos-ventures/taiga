@@ -10,6 +10,7 @@ import { randUuid } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 import { WorkspaceApiService } from '@taiga/api';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
@@ -27,7 +28,10 @@ describe('WorkspaceEffects', () => {
 
   const createService = createServiceFactory({
     service: WorkspaceDetailEffects,
-    providers: [provideMockActions(() => actions$)],
+    providers: [
+      provideMockActions(() => actions$),
+      provideMockStore({ initialState: {} }),
+    ],
     mocks: [WorkspaceApiService, AppService],
   });
 

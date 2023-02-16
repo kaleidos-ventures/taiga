@@ -6,7 +6,7 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createAction, props } from '@ngrx/store';
+import { createAction, createActionGroup, props } from '@ngrx/store';
 import { Project, User, Workspace } from '@taiga/data';
 
 export const initWorkspaceList = createAction(
@@ -43,6 +43,11 @@ export const fetchWorkspaceSuccess = createAction(
 export const deleteWorkspaceProjectSuccess = createAction(
   '[WorkspaceList] Delete workspace project Success',
   props<{ workspace: Workspace; projectId: Project['id'] }>()
+);
+
+export const deleteWorkspace = createAction(
+  '[WorkspaceList] Delete workspace',
+  props<{ workspaceId: Workspace['id'] }>()
 );
 
 export const createWorkspace = createAction(
@@ -116,3 +121,16 @@ export const acceptInvitationEvent = createAction(
 );
 
 export const resetWorkspace = createAction('[WorkspaceList] reset');
+
+export const workspaceEventActions = createActionGroup({
+  source: 'Workspace ws',
+  events: {
+    'Project Deleted': props<{
+      projectId: string;
+      workspaceId: string;
+      name: string;
+      deleted_by?: User;
+      error?: boolean;
+    }>(),
+  },
+});

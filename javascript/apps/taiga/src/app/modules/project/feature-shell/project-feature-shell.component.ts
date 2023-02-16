@@ -216,12 +216,8 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       }>('projects.delete')
       .pipe(untilDestroyed(this))
       .subscribe((eventResponse) => {
-        console.log('event');
-        console.log(eventResponse);
-
         const project = this.state.get('project');
         if (eventResponse.event.content.project === project.id) {
-          console.log('event in');
           this.store.dispatch(
             projectEventActions.projectDeleted({
               projectId: eventResponse.event.content.project,

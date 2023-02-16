@@ -8,25 +8,29 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { WorkspaceApiService } from '@taiga/api';
 import { timer, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { workspaceDetailEventActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import { AppService } from '~/app/services/app.service';
-import * as WorkspaceActions from '../actions/workspace-detail.actions';
+import * as WorkspaceDetailActions from '../actions/workspace-detail.actions';
 
 @Injectable()
 export class WorkspaceDetailEffects {
   public loadWorkspace$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceActions.fetchWorkspace),
+      ofType(WorkspaceDetailActions.fetchWorkspace),
       fetch({
         run: (action) => {
           return this.workspaceApiService.fetchWorkspaceDetail(action.id).pipe(
             map((workspace) => {
-              return WorkspaceActions.fetchWorkspaceSuccess({ workspace });
+              return WorkspaceDetailActions.fetchWorkspaceSuccess({
+                workspace,
+              });
             })
           );
         },
@@ -38,7 +42,7 @@ export class WorkspaceDetailEffects {
 
   public loadWorkspaceProjects$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceActions.fetchWorkspace),
+      ofType(WorkspaceDetailActions.fetchWorkspace),
       fetch({
         run: (action) => {
           return zip(
@@ -47,7 +51,7 @@ export class WorkspaceDetailEffects {
             timer(1000)
           ).pipe(
             map(([projects, invitedProjects]) => {
-              return WorkspaceActions.fetchWorkspaceProjectsSuccess({
+              return WorkspaceDetailActions.fetchWorkspaceProjectsSuccess({
                 projects,
                 invitedProjects,
               });
@@ -62,7 +66,7 @@ export class WorkspaceDetailEffects {
 
   public invitationDetailCreateEvent$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceActions.invitationDetailCreateEvent),
+      ofType(WorkspaceDetailActions.invitationDetailCreateEvent),
       pessimisticUpdate({
         run: (action) => {
           return zip(
@@ -73,12 +77,14 @@ export class WorkspaceDetailEffects {
             timer(300)
           ).pipe(
             map(([project, invitations]) => {
-              return WorkspaceActions.fetchWorkspaceDetailInvitationsSuccess({
-                projectId: action.projectId,
-                project,
-                invitations,
-                role: action.role,
-              });
+              return WorkspaceDetailActions.fetchWorkspaceDetailInvitationsSuccess(
+                {
+                  projectId: action.projectId,
+                  project,
+                  invitations,
+                  role: action.role,
+                }
+              );
             })
           );
         },
@@ -90,7 +96,7 @@ export class WorkspaceDetailEffects {
 
   public projectDeleted$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(projectEventActions.projectDeleted),
+      ofType(workspaceDetailEventActions.projectDeleted),
       pessimisticUpdate({
         run: (action) => {
           return zip(
@@ -98,7 +104,7 @@ export class WorkspaceDetailEffects {
             timer(300)
           ).pipe(
             map(([workspace]) => {
-              return WorkspaceActions.fetchWorkspaceSuccess({
+              return WorkspaceDetailActions.fetchWorkspaceSuccess({
                 workspace: workspace,
               });
             })
@@ -113,6 +119,8 @@ export class WorkspaceDetailEffects {
   constructor(
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService,
-    private appService: AppService
+    private appService: AppService,
+    private store: Store,
+    private router: Router
   ) {}
 }

@@ -13,19 +13,24 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { User } from '@ngneat/falso';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Workspace } from '@taiga/data';
 import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { filter, map, switchMap, take } from 'rxjs/operators';
 import {
   fetchWorkspace,
   initWorkspaceList,
   resetWorkspace,
+  workspaceEventActions,
 } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import {
   selectCreateFormHasError,
@@ -95,7 +100,7 @@ import {
     ]),
   ],
 })
-export class WorkspaceComponent implements OnDestroy {
+export class WorkspaceComponent implements OnDestroy, OnInit {
   public eventsSubject: Subject<{
     event: string;
     project: string;
@@ -214,7 +219,9 @@ export class WorkspaceComponent implements OnDestroy {
           workspace: eventResponse.event.content.workspace,
         });
       });
+  }
 
+  public ngOnInit(): void {
     this.wsService
       .userEvents<{
         project: string;
@@ -222,20 +229,36 @@ export class WorkspaceComponent implements OnDestroy {
         name: string;
         deleted_by: User;
       }>('projects.delete')
-      .pipe(untilDestroyed(this))
-      .subscribe((eventResponse) => {
-        this.eventsSubject.next({
-          event: 'projects.delete',
-          project: eventResponse.event.content.project,
-          workspace: eventResponse.event.content.workspace,
-        });
-        this.store.dispatch(
-          projectEventActions.projectDeleted({
-            projectId: eventResponse.event.content.project,
-            workspaceId: eventResponse.event.content.workspace,
-            name: eventResponse.event.content.name,
-          })
+      .pipe(
+        untilDestroyed(this),
+        switchMap((eventResponse) => {
+          return this.state.select('workspaceList').pipe(
+            filter((workspaceList) => !!workspaceList.length),
+            take(1),
+            map((workspaceList) => {
+              return { eventResponse, workspaceList };
+            })
+          );
+        })
+      )
+      .subscribe(({ eventResponse, workspaceList }) => {
+        const workspace = workspaceList.find(
+          (it) => it.id === eventResponse.event.content.workspace
         );
+        if (workspace?.userRole === 'guest') {
+          this.eventsSubject.next({
+            event: 'projects.delete',
+            project: eventResponse.event.content.project,
+            workspace: eventResponse.event.content.workspace,
+          });
+          this.store.dispatch(
+            workspaceEventActions.projectDeleted({
+              projectId: eventResponse.event.content.project,
+              workspaceId: eventResponse.event.content.workspace,
+              name: eventResponse.event.content.name,
+            })
+          );
+        }
       });
   }
 

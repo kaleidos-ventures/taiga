@@ -18,12 +18,16 @@ export class SelectHelper {
       cy.getBySel(this.option).eq(optionIndex).should('be.visible');
       cy.getBySel(this.option).eq(optionIndex).click({ force: true });
     } else {
-      cy.get('tui-data-list button').eq(optionIndex).should('be.visible');
-      cy.get('tui-data-list button').eq(optionIndex).click({ force: true });
+      cy.get('tui-data-list').within(() => {
+        cy.get('button')
+          .eq(optionIndex)
+          .should('be.visible')
+          .click({ force: true });
+      });
     }
   }
 
   public toggleDropdown() {
-    cy.getBySel(this.el).find('input').click();
+    cy.getBySel(this.el).find('tui-hosted-dropdown').click();
   }
 }

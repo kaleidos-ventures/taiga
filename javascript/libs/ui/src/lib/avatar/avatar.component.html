@@ -12,5 +12,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   [rounded]="rounded"
   [size]="size"
   [avatarUrl]="avatarUrl"
-  [text]="setAvatarName(name)">
+  [text]="avatarUrl ? '' : setAvatarName(name)">
 </tui-avatar>

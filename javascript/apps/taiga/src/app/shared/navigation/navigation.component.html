@@ -69,6 +69,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         [content]="projectsDropdown"
         [(open)]="openProjectsDropdown">
         <button
+          role="menu"
+          aria-haspopup="true"
+          [attr.aria-expanded]="openProjectsDropdown"
+          tabindex="0"
           appearance="main-nav"
           tuiButton
           icon="folder"
@@ -127,6 +131,10 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           [content]="userDropdown"
           [(open)]="openUserDropdown">
           <button
+            role="menu"
+            aria-haspopup="true"
+            [attr.aria-expanded]="openUserDropdown"
+            tabindex="0"
             class="avatar-dropdown-button"
             [attr.aria-label]="user.fullName"
             type="button"

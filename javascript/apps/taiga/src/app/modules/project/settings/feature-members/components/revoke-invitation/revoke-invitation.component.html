@@ -12,6 +12,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [(open)]="dropdownState">
     <button
       #cancel
+      aria-haspopup="true"
+      [attr.aria-expanded]="dropdownState"
       data-test="revoke-invitation"
       class="revoke-invitation-btn row-action"
       tuiLink

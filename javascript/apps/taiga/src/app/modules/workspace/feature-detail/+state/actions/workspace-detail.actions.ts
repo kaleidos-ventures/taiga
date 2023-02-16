@@ -6,8 +6,8 @@
  * Copyright (c) 2021-present Kaleidos Ventures SL
  */
 
-import { createAction, props } from '@ngrx/store';
-import { Project, Workspace } from '@taiga/data';
+import { createAction, createActionGroup, props } from '@ngrx/store';
+import { Project, User, Workspace } from '@taiga/data';
 
 export const fetchWorkspace = createAction(
   '[Workspace] Fetch',
@@ -49,3 +49,16 @@ export const invitationDetailRevokedEvent = createAction(
   '[Workspace Detail] revoked invitation event, update workspace',
   props<{ projectId: Project['id'] }>()
 );
+
+export const workspaceDetailEventActions = createActionGroup({
+  source: 'ws detail',
+  events: {
+    'Project Deleted': props<{
+      projectId: string;
+      workspaceId: string;
+      name: string;
+      deleted_by?: User;
+      error?: boolean;
+    }>(),
+  },
+});

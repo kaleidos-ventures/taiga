@@ -27,12 +27,12 @@ import { RxState } from '@rx-angular/state';
 import { Project, User, Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { map, pairwise, take } from 'rxjs/operators';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   fetchWorkspace,
   invitationDetailCreateEvent,
   invitationDetailRevokedEvent,
   resetWorkspace,
+  workspaceDetailEventActions,
 } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import {
   selectCreatingWorkspaceDetail,
@@ -192,7 +192,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
         .pipe(untilDestroyed(this))
         .subscribe((eventResponse) => {
           this.store.dispatch(
-            projectEventActions.projectDeleted({
+            workspaceDetailEventActions.projectDeleted({
               projectId: eventResponse.event.content.project,
               workspaceId: eventResponse.event.content.workspace,
               name: eventResponse.event.content.name,

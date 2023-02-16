@@ -8,9 +8,9 @@
 
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
+import { workspaceDetailEventActions } from '../actions/workspace-detail.actions';
 
 export interface WorkspaceDetailState {
   workspace: Workspace | null;
@@ -98,7 +98,7 @@ export const reducer = createReducer(
     }
   ),
   on(
-    projectEventActions.projectDeleted,
+    workspaceDetailEventActions.projectDeleted,
     (state, { projectId }): WorkspaceDetailState => {
       state.workspaceInvitedProjects = state.workspaceInvitedProjects.filter(
         (project) => {

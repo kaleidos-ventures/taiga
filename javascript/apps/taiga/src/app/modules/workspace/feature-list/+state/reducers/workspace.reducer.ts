@@ -225,6 +225,15 @@ export const reducer = createReducer(
       });
       return state;
     }
+  ),
+  on(
+    WorkspaceActions.deleteWorkspace,
+    (state, { workspaceId }): WorkspaceState => {
+      state.workspaces = state.workspaces.filter((it) => {
+        return it.id !== workspaceId;
+      });
+      return state;
+    }
   )
 );
 

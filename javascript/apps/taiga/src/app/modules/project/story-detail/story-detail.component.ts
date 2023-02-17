@@ -35,7 +35,7 @@ import {
   StoryView,
   User,
 } from '@taiga/data';
-import { map, pairwise, startWith, take } from 'rxjs';
+import { map, merge, pairwise, startWith, take } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
@@ -467,8 +467,10 @@ export class StoryDetailComponent {
         }
       });
 
-    this.wsService
-      .projectEvents<Role>('projectroles.update')
+    merge(
+      this.wsService.projectEvents<Role>('projectroles.update'),
+      this.wsService.userEvents<Role>('projectmemberships.update')
+    )
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         if (this.state.get('selectedStoryView') === 'full-view') {

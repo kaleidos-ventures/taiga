@@ -257,11 +257,13 @@ export class KanbanEffects {
         filter((error) => error.errorStatus === 403),
         tap(() => {
           this.appService.toastNotification({
-            message: 'errors.lose_story_permission',
+            message: 'errors.lose_story_permissions',
             paramsMessage: {
-              permissions: this.translocoService.translate('commons.modify'),
+              permission: this.translocoService.translate('commons.modify'),
             },
             status: TuiNotification.Error,
+            autoClose: true,
+            closeOnNavigation: false,
           });
         })
       );

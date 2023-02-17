@@ -8,10 +8,10 @@
 from pydantic import EmailStr, StrictBool, conint, constr, validator
 from taiga.base.validators import BaseModel, LanguageCode
 from taiga.conf import settings
-from taiga.users.validators.mixins import PasswordMixin
+from taiga.users.api.validators.mixins import PasswordMixin
 
 #####################################################################
-# User Profile
+# User
 #####################################################################
 
 

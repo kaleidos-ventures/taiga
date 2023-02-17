@@ -304,8 +304,8 @@ async def test_create_project_invitations_already_member(tqmanager):
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role.slug: role}
-        fake_users_services.get_users_emails_as_dict.return_value = {user2.email: user2}
-        fake_users_services.get_users_usernames_as_dict.return_value = {}
+        fake_users_services.list_users_emails_as_dict.return_value = {user2.email: user2}
+        fake_users_services.list_users_usernames_as_dict.return_value = {}
         fake_memberships_repo.get_project_members.return_value = [user2]
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user)
@@ -334,8 +334,8 @@ async def test_create_project_invitations_with_pending_invitations(tqmanager):
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation.return_value = invitation
-        fake_users_services.get_users_emails_as_dict.return_value = {}
-        fake_users_services.get_users_usernames_as_dict.return_value = {}
+        fake_users_services.list_users_emails_as_dict.return_value = {}
+        fake_users_services.list_users_usernames_as_dict.return_value = {}
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user)
 
@@ -364,8 +364,8 @@ async def test_create_project_invitations_with_pending_invitations_time_spam(tqm
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation.return_value = invitation
-        fake_users_services.get_users_emails_as_dict.return_value = {}
-        fake_users_services.get_users_usernames_as_dict.return_value = {}
+        fake_users_services.list_users_emails_as_dict.return_value = {}
+        fake_users_services.list_users_usernames_as_dict.return_value = {}
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user)
 
@@ -400,8 +400,8 @@ async def test_create_project_invitations_with_revoked_invitations(tqmanager):
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation.return_value = invitation
-        fake_users_services.get_users_emails_as_dict.return_value = {}
-        fake_users_services.get_users_usernames_as_dict.return_value = {}
+        fake_users_services.list_users_emails_as_dict.return_value = {}
+        fake_users_services.list_users_usernames_as_dict.return_value = {}
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user)
 
@@ -435,8 +435,8 @@ async def test_create_project_invitations_with_revoked_invitations_time_spam(tqm
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation.return_value = invitation
-        fake_users_services.get_users_emails_as_dict.return_value = {}
-        fake_users_services.get_users_usernames_as_dict.return_value = {}
+        fake_users_services.list_users_emails_as_dict.return_value = {}
+        fake_users_services.list_users_usernames_as_dict.return_value = {}
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user)
 
@@ -465,15 +465,15 @@ async def test_create_project_invitations_by_emails(tqmanager):
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
-        fake_users_services.get_users_emails_as_dict.return_value = {user2.email: user2}
-        fake_users_services.get_users_usernames_as_dict.return_value = {}
+        fake_users_services.list_users_emails_as_dict.return_value = {user2.email: user2}
+        fake_users_services.list_users_usernames_as_dict.return_value = {}
         fake_invitations_repo.get_project_invitation.return_value = None
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user1)
 
         fake_pj_roles_services.list_project_roles_as_dict.assert_awaited_once_with(project=project)
-        fake_users_services.get_users_emails_as_dict.assert_awaited_once()
-        fake_users_services.get_users_usernames_as_dict.assert_not_awaited()
+        fake_users_services.list_users_emails_as_dict.assert_awaited_once()
+        fake_users_services.list_users_usernames_as_dict.assert_not_awaited()
         fake_invitations_repo.create_project_invitations.assert_awaited_once()
 
         assert len(tqmanager.pending_jobs) == 2
@@ -500,8 +500,8 @@ async def test_create_project_invitations_by_usernames(tqmanager):
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
-        fake_users_services.get_users_emails_as_dict.return_value = {}
-        fake_users_services.get_users_usernames_as_dict.return_value = {user2.username: user2, user3.username: user3}
+        fake_users_services.list_users_emails_as_dict.return_value = {}
+        fake_users_services.list_users_usernames_as_dict.return_value = {user2.username: user2, user3.username: user3}
         fake_invitations_repo.get_project_invitation.return_value = None
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user1)
@@ -537,8 +537,8 @@ async def test_create_project_invitations_duplicated_email_username(tqmanager):
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role1.slug: role1, role2.slug: role2}
-        fake_users_services.get_users_emails_as_dict.return_value = {user3.email: user3, user4.email: user4}
-        fake_users_services.get_users_usernames_as_dict.return_value = {
+        fake_users_services.list_users_emails_as_dict.return_value = {user3.email: user3, user4.email: user4}
+        fake_users_services.list_users_usernames_as_dict.return_value = {
             user2.username: user2,
             user3.username: user3,
             user4.username: user4,
@@ -548,8 +548,8 @@ async def test_create_project_invitations_duplicated_email_username(tqmanager):
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user1)
 
         fake_pj_roles_services.list_project_roles_as_dict.assert_awaited_once_with(project=project)
-        fake_users_services.get_users_emails_as_dict.assert_awaited_once()
-        fake_users_services.get_users_usernames_as_dict.assert_awaited_once()
+        fake_users_services.list_users_emails_as_dict.assert_awaited_once()
+        fake_users_services.list_users_usernames_as_dict.assert_awaited_once()
         fake_invitations_repo.create_project_invitations.assert_awaited_once()
 
         assert len(tqmanager.pending_jobs) == 3
@@ -570,8 +570,8 @@ async def test_create_project_invitations_invalid_username(tqmanager):
         pytest.raises(NonExistingUsernameError),
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role.slug: role}
-        fake_users_services.get_users_emails_as_dict.return_value = {}
-        fake_users_services.get_users_usernames_as_dict.return_value = {}
+        fake_users_services.list_users_emails_as_dict.return_value = {}
+        fake_users_services.list_users_usernames_as_dict.return_value = {}
 
         await services.create_project_invitations(project=project, invitations=invitations, invited_by=user1)
 

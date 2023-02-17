@@ -6,7 +6,7 @@
 # Copyright (c) 2021-present Kaleidos Ventures SL
 from functools import reduce
 from operator import or_
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -106,12 +106,12 @@ def create_user(email: str, username: str, full_name: str, color: int, lang: str
 
 
 ##########################################################
-# get users
+# list users
 ##########################################################
 
 
 @sync_to_async
-def get_users(
+def list_users(
     filters: UserFilters = {},
     offset: int | None = None,
     limit: int | None = None,
@@ -125,101 +125,26 @@ def get_users(
 
 
 ##########################################################
-# get user
+# list users - search
 ##########################################################
 
 
 @sync_to_async
-def get_user(
-    filters: UserFilters = {},
-) -> User | None:
-    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
-    try:
-        return qs.get()
-    except User.DoesNotExist:
-        return None
-
-
-##########################################################
-# update user
-##########################################################
-
-
-@sync_to_async
-def update_user(user: User) -> None:
-    user.save()
-
-
-##########################################################
-# misc
-##########################################################
-
-
-@sync_to_async
-def user_exists(
-    filters: UserFilters = {},
-) -> bool:
-    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
-    return qs.exists()
-
-
-@sync_to_async
-def check_password(user: User, password: str) -> bool:
-    return user.password != "" and user.check_password(password)
-
-
-@sync_to_async
-def change_password(user: User, password: str) -> None:
-    user.set_password(password)
-    user.save()
-
-
-@sync_to_async
-def update_last_login(user: User) -> None:
-    django_update_last_login(User, user)
-
-
-@sync_to_async
-def clean_expired_users() -> None:
-    # delete all users that are not currently active (is_active=False)
-    # and have never verified the account (date_verification=None)
-    # and don't have an outstanding token associated (exclude)
-    (
-        User.objects.filter(is_active=False, date_verification=None)
-        .exclude(id__in=OutstandingToken.objects.filter(token_type=VerifyUserToken.token_type).values_list("object_id"))
-        .delete()
-    )
-
-
-##########################################################
-# user/s search
-##########################################################
-
-
-@sync_to_async
-def get_users_by_text(
+def list_users_by_text(
     text_search: str = "",
     project_id: UUID | None = None,
     exclude_inactive: bool = True,
     offset: int = 0,
     limit: int = 0,
 ) -> list[User]:
-    qs = _get_users_by_text_qs(text_search=text_search, project_id=project_id, exclude_inactive=exclude_inactive)
+    qs = _list_users_by_text_qs(text_search=text_search, project_id=project_id, exclude_inactive=exclude_inactive)
     if limit:
         return list(qs[offset : offset + limit])
 
     return list(qs)
 
 
-@sync_to_async
-def get_total_users_by_text(
-    text_search: str = "", project_id: UUID | None = None, exclude_inactive: bool = True
-) -> int:
-    qs = _get_users_by_text_qs(text_search=text_search, project_id=project_id, exclude_inactive=exclude_inactive)
-    return qs.count()
-
-
-def _get_users_by_text_qs(
+def _list_users_by_text_qs(
     text_search: str = "", project_id: UUID | None = None, exclude_inactive: bool = True
 ) -> QuerySet[User]:
     """
@@ -237,7 +162,7 @@ def _get_users_by_text_qs(
         users_qs &= users_qs.exclude(is_active=False)
 
     if text_search:
-        users_matching_full_text_search = _get_users_by_fullname_or_username(text_search, users_qs)
+        users_matching_full_text_search = _list_users_by_fullname_or_username(text_search, users_qs)
         users_qs = users_matching_full_text_search
 
     if project_id:
@@ -293,7 +218,7 @@ def _sort_queryset_if_unsorted(users_qs: QuerySet[User], text_search: str) -> Qu
     return users_qs
 
 
-def _get_users_by_fullname_or_username(text_search: str, user_qs: QuerySet[User]) -> QuerySet[User]:
+def _list_users_by_fullname_or_username(text_search: str, user_qs: QuerySet[User]) -> QuerySet[User]:
     """
     This method searches for users matching a text in their full names and usernames (being accent and case
     insensitive) and order the results according to:
@@ -323,6 +248,85 @@ def _get_users_by_fullname_or_username(text_search: str, user_qs: QuerySet[User]
     )
 
     return full_text_matching_users
+
+
+##########################################################
+# get user
+##########################################################
+
+
+@sync_to_async
+def get_user(
+    filters: UserFilters = {},
+) -> User | None:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    try:
+        return qs.get()
+    except User.DoesNotExist:
+        return None
+
+
+##########################################################
+# update user
+##########################################################
+
+
+@sync_to_async
+def update_user(user: User, values: dict[str, Any] = {}) -> User:
+    for attr, value in values.items():
+        setattr(user, attr, value)
+
+    user.save()
+    return user
+
+
+##########################################################
+# misc
+##########################################################
+
+
+@sync_to_async
+def user_exists(
+    filters: UserFilters = {},
+) -> bool:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    return qs.exists()
+
+
+@sync_to_async
+def check_password(user: User, password: str) -> bool:
+    return user.password != "" and user.check_password(password)
+
+
+@sync_to_async
+def change_password(user: User, password: str) -> None:
+    user.set_password(password)
+    user.save()
+
+
+@sync_to_async
+def update_last_login(user: User) -> None:
+    django_update_last_login(User, user)
+
+
+@sync_to_async
+def clean_expired_users() -> None:
+    # delete all users that are not currently active (is_active=False)
+    # and have never verified the account (date_verification=None)
+    # and don't have an outstanding token associated (exclude)
+    (
+        User.objects.filter(is_active=False, date_verification=None)
+        .exclude(id__in=OutstandingToken.objects.filter(token_type=VerifyUserToken.token_type).values_list("object_id"))
+        .delete()
+    )
+
+
+@sync_to_async
+def get_total_users_by_text(
+    text_search: str = "", project_id: UUID | None = None, exclude_inactive: bool = True
+) -> int:
+    qs = _list_users_by_text_qs(text_search=text_search, project_id=project_id, exclude_inactive=exclude_inactive)
+    return qs.count()
 
 
 ##########################################################
@@ -377,12 +381,12 @@ def create_auth_data(user: User, key: str, value: str, extra: dict[str, str] = {
 
 
 ##########################################################
-# get auths data
+# list auths data
 ##########################################################
 
 
 @sync_to_async
-def get_auths_data(
+def list_auths_data(
     filters: AuthDataListFilters = {},
     select_related: AuthDataSelectRelated = ["user"],
 ) -> list[AuthData]:

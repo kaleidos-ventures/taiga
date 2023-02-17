@@ -7,7 +7,7 @@
 
 import pytest
 from pydantic import ValidationError
-from taiga.users.validators import CreateUserValidator, UpdateUserValidator
+from taiga.users.api.validators import CreateUserValidator, UpdateUserValidator
 from tests.unit.utils import check_validation_errors
 
 ###############################################

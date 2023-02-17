@@ -246,41 +246,50 @@ async def test_get_project_return_none():
 async def test_update_project():
     project = await f.create_project(name="Project 1")
     assert project.name == "Project 1"
-    project.name = "New name"
-    project.descripton = "New description"
-    updated_project = await repositories.update_project(project)
+    updated_project = await repositories.update_project(
+        project=project,
+        values={"name": "New name", "description": "New description"},
+    )
     assert updated_project.name == "New name"
-    assert updated_project.descripton == "New description"
+    assert updated_project.description == "New description"
 
 
 async def test_update_project_delete_description():
     project = await f.create_project(name="Project 1")
     assert project.name == "Project 1"
-    project.descripton = None
-    updated_project = await repositories.update_project(project)
-    assert updated_project.descripton is None
+    updated_project = await repositories.update_project(
+        project,
+        values={"description": None},
+    )
+    assert updated_project.description is None
 
 
 async def test_update_project_delete_logo():
     project = await f.create_project(name="Project 1")
     assert project.logo is not None
-    project.logo = None
-    updated_project = await repositories.update_project(project)
+    updated_project = await repositories.update_project(
+        project,
+        values={"logo": None},
+    )
     assert updated_project.logo == models.FileField(None)
 
 
 async def test_update_project_public_permissions():
     project = await f.create_project(name="Project 1")
-    project.public_permissions = ["add_story", "view_story", "add_task", "view_task"]
-    await repositories.update_project(project)
+    await repositories.update_project(
+        project,
+        values={"public_permissions": ["add_story", "view_story", "add_task", "view_task"]},
+    )
     assert len(project.public_permissions) == 4
     assert len(project.anon_permissions) == 2
 
 
 async def test_update_project_workspace_member_permissions():
     project = await f.create_project(name="Project 1")
-    project.workspace_member_permissions = ["add_story", "view_story", "add_task", "view_task"]
-    await repositories.update_project(project)
+    await repositories.update_project(
+        project,
+        values={"workspace_member_permissions": ["add_story", "view_story", "add_task", "view_task"]},
+    )
     assert len(project.workspace_member_permissions) == 4
 
 
@@ -296,7 +305,7 @@ async def test_delete_projects():
 
     assert await _seq_exists(seqname)
     deleted = await repositories.delete_projects(filters={"id": project.id})
-    assert deleted == 10 # 1 project, 1 workflow, 4 statuses, 1 invitation, 1 membership, 2 roles
+    assert deleted == 10  # 1 project, 1 workflow, 4 statuses, 1 invitation, 1 membership, 2 roles
     assert not await _seq_exists(seqname)
 
 

@@ -204,7 +204,7 @@ async def test_get_available_user_logins_registered():
     available_user_logins = [f.build_auth_data(user=user, key="google"), f.build_auth_data(user=user, key="gitlab")]
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repositories:
-        fake_users_repositories.get_auths_data.return_value = available_user_logins
+        fake_users_repositories.list_auths_data.return_value = available_user_logins
 
         ret = await auth_serv.get_available_user_logins(user)
         assert available_user_logins[0].key in ret
@@ -217,7 +217,7 @@ async def test_get_available_user_logins_no_registered():
     available_user_logins = [f.build_auth_data(user=user, key="google"), f.build_auth_data(user=user, key="gitlab")]
 
     with patch("taiga.auth.services.users_repositories", autospec=True) as fake_users_repositories:
-        fake_users_repositories.get_auths_data.return_value = available_user_logins
+        fake_users_repositories.list_auths_data.return_value = available_user_logins
 
         ret = await auth_serv.get_available_user_logins(user)
         assert available_user_logins[0].key in ret

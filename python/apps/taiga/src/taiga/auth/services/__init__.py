@@ -84,7 +84,7 @@ async def create_auth_credentials(user: User) -> AccessTokenWithRefreshSerialize
 
 
 async def get_available_user_logins(user: User) -> list[str]:
-    available_social_user_logins = await users_repositories.get_auths_data(filters={"user_id": user.id})
+    available_social_user_logins = await users_repositories.list_auths_data(filters={"user_id": user.id})
     available_user_logins = [x.key for x in available_social_user_logins]
 
     if user.password:

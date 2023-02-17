@@ -18,55 +18,6 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
-# GET /my/user
-##########################################################
-
-
-async def test_my_user_error_no_authenticated_user(client):
-    response = client.get("/my/user")
-
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-
-async def test_my_user_success(client):
-    user = await f.create_user()
-
-    client.login(user)
-    response = client.get("/my/user")
-
-    assert response.status_code == status.HTTP_200_OK
-    assert "email" in response.json().keys()
-
-
-##########################################################
-# PUT /my/user
-##########################################################
-
-
-async def test_update_my_user_error_no_authenticated_user(client):
-    data = {
-        "fullName": "Ada Lovelace",
-        "lang": "es-ES",
-    }
-    response = client.put("/my/user", json=data)
-
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-
-async def test_update_my_user_success(client):
-    user = await f.create_user()
-    data = {
-        "fullName": "Ada Lovelace",
-        "lang": "es-ES",
-    }
-
-    client.login(user)
-    response = client.put("/my/user", json=data)
-
-    assert response.status_code == status.HTTP_200_OK, response.text
-
-
-##########################################################
 # POST /users
 ##########################################################
 
@@ -175,7 +126,7 @@ async def test_verify_user_error_used_token(client):
 #####################################################################
 
 
-async def test_get_users_by_text_anonymous(client):
+async def test_list_users_by_text_anonymous(client):
     text = "text_to_search"
     project_id = "6JgsbGyoEe2VExhWgGrI2w"
     offset = 0
@@ -185,7 +136,7 @@ async def test_get_users_by_text_anonymous(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_get_users_by_text(client):
+async def test_list_users_by_text(client):
     user = await f.create_user()
     user2 = await f.create_user()
     client.login(user)
@@ -203,7 +154,7 @@ async def test_get_users_by_text(client):
     assert response.headers["Pagination-Total"] == "1"
 
 
-async def test_get_users_by_text_no_results(client):
+async def test_list_users_by_text_no_results(client):
     user = await f.create_user()
     await f.create_user()
     client.login(user)
@@ -219,6 +170,55 @@ async def test_get_users_by_text_no_results(client):
     assert response.headers["Pagination-Offset"] == "0"
     assert response.headers["Pagination-Limit"] == "10"
     assert response.headers["Pagination-Total"] == "0"
+
+
+##########################################################
+# GET /my/user
+##########################################################
+
+
+async def test_my_user_error_no_authenticated_user(client):
+    response = client.get("/my/user")
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+async def test_my_user_success(client):
+    user = await f.create_user()
+
+    client.login(user)
+    response = client.get("/my/user")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert "email" in response.json().keys()
+
+
+##########################################################
+# PUT /my/user
+##########################################################
+
+
+async def test_update_my_user_error_no_authenticated_user(client):
+    data = {
+        "fullName": "Ada Lovelace",
+        "lang": "es-ES",
+    }
+    response = client.put("/my/user", json=data)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+async def test_update_my_user_success(client):
+    user = await f.create_user()
+    data = {
+        "fullName": "Ada Lovelace",
+        "lang": "es-ES",
+    }
+
+    client.login(user)
+    response = client.put("/my/user", json=data)
+
+    assert response.status_code == status.HTTP_200_OK, response.text
 
 
 ##########################################################

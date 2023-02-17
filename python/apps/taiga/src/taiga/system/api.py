@@ -10,10 +10,14 @@ from taiga.base.i18n.schemas import LanguageSchema
 from taiga.routers import routes
 from taiga.system.serializers import LanguageSerializer
 
+################################################
+# list languages info
+################################################
+
 
 @routes.system.get(
     "/languages",
-    name="system.languages",
+    name="system.languages.list",
     summary="List system available languages",
     response_model=list[LanguageSerializer],
 )

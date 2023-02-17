@@ -13,7 +13,7 @@ pytestmark = pytest.mark.django_db(transaction=True)
 
 
 ##########################################################
-# system/languages
+# GET /system/languages
 ##########################################################
 
 

@@ -67,6 +67,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     [content]="adminInformation"
     [(open)]="dropdownState">
     <button
+      aria-controls="admin-dialog-info"
+      [attr.aria-expanded]="dropdownState"
       class="disabled-select"
       tuiButton
       iconRight="help"
@@ -78,9 +80,14 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   </tui-hosted-dropdown>
   <ng-template #adminInformation>
     <div
+      tuiAutoFocus
+      tabindex="-1"
+      id="admin-dialog-info"
       class="admin-dialog"
       data-test="admin-dialog">
-      <p class="admin-dialog-title">{{ t('members.admin_dialog_title') }}</p>
+      <p class="admin-dialog-title">
+        {{ t('members.admin_dialog_title') }}
+      </p>
       <p class="admin-dialog-description">
         {{ t('members.admin_dialog_description') }}
       </p>

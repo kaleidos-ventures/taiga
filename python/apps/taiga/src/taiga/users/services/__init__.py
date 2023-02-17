@@ -27,7 +27,7 @@ from taiga.users.services import exceptions as ex
 from taiga.users.tokens import ResetPasswordToken, VerifyUserToken
 
 #####################################################################
-# User Profile
+# create user
 #####################################################################
 
 
@@ -70,21 +70,9 @@ async def create_user(
     return user
 
 
-async def update_user(user: User, full_name: str, lang: str) -> User:
-    user.full_name = full_name
-    user.lang = lang
-    await users_repositories.update_user(user=user)
-    return user
-
-
-async def generate_username(email: str) -> str:
-    username = slugify(email.split("@")[0])
-    suffix = ""
-    while True:
-        potential = f"{username}{suffix}"
-        if not await users_repositories.user_exists(filters={"username": potential}):
-            return potential
-        suffix = generate_int_suffix()
+#####################################################################
+# verify user
+#####################################################################
 
 
 async def _send_verify_user_email(
@@ -113,9 +101,7 @@ async def _generate_verify_user_token(
 
 
 async def verify_user(user: User) -> None:
-    user.is_active = True
-    user.date_verification = aware_utcnow()
-    await users_repositories.update_user(user=user)
+    await users_repositories.update_user(user=user, values={"is_active": True, "date_verification": aware_utcnow()})
 
 
 async def verify_user_from_token(token: str) -> VerificationInfoSerializer:
@@ -167,37 +153,65 @@ async def verify_user_from_token(token: str) -> VerificationInfoSerializer:
     return serializers_services.serialize_verification_info(auth=auth, project_invitation=project_invitation)
 
 
-async def clean_expired_users() -> None:
-    await users_repositories.clean_expired_users()
-
-
 #####################################################################
-# get users
+# list users
 #####################################################################
 
 
-async def get_users_emails_as_dict(
+async def list_users_emails_as_dict(
     emails: list[str],
 ) -> dict[str, User]:
-    users = await users_repositories.get_users(filters={"is_active": True, "emails": emails})
+    users = await users_repositories.list_users(filters={"is_active": True, "emails": emails})
     return {u.email: u for u in users}
 
 
-async def get_users_usernames_as_dict(
+async def list_users_usernames_as_dict(
     usernames: list[str],
 ) -> dict[str, User]:
-    users = await users_repositories.get_users(filters={"is_active": True, "usernames": usernames})
+    users = await users_repositories.list_users(filters={"is_active": True, "usernames": usernames})
     return {u.username: u for u in users}
 
 
 async def list_guests_in_workspace_for_project(
     project: Project,
 ) -> list[User]:
-    return await users_repositories.get_users(filters={"guest_in_ws_for_project": project})
+    return await users_repositories.list_users(filters={"guest_in_ws_for_project": project})
+
+
+# search users
+async def list_paginated_users_by_text(
+    offset: int,
+    limit: int,
+    text: str | None = None,
+    project_id: UUID | None = None,
+) -> tuple[Pagination, list[User]]:
+
+    total_users = await users_repositories.get_total_users_by_text(text_search=text, project_id=project_id)
+
+    users = await users_repositories.list_users_by_text(
+        text_search=text, project_id=project_id, offset=offset, limit=limit
+    )
+
+    pagination = Pagination(offset=offset, limit=limit, total=total_users)
+
+    return pagination, users
 
 
 #####################################################################
-# Reset Password
+# update user
+#####################################################################
+
+
+async def update_user(user: User, full_name: str, lang: str) -> User:
+    updated_user = await users_repositories.update_user(
+        user=user,
+        values={"full_name": full_name, "lang": lang},
+    )
+    return updated_user
+
+
+#####################################################################
+# reset password
 #####################################################################
 
 
@@ -251,23 +265,19 @@ async def reset_password(token: str, password: str) -> User | None:
 
 
 #####################################################################
-# User Search
+# misc
 #####################################################################
 
 
-async def get_paginated_users_by_text(
-    offset: int,
-    limit: int,
-    text: str | None = None,
-    project_id: UUID | None = None,
-) -> tuple[Pagination, list[User]]:
+async def generate_username(email: str) -> str:
+    username = slugify(email.split("@")[0])
+    suffix = ""
+    while True:
+        potential = f"{username}{suffix}"
+        if not await users_repositories.user_exists(filters={"username": potential}):
+            return potential
+        suffix = generate_int_suffix()
 
-    total_users = await users_repositories.get_total_users_by_text(text_search=text, project_id=project_id)
 
-    users = await users_repositories.get_users_by_text(
-        text_search=text, project_id=project_id, offset=offset, limit=limit
-    )
-
-    pagination = Pagination(offset=offset, limit=limit, total=total_users)
-
-    return pagination, users
+async def clean_expired_users() -> None:
+    await users_repositories.clean_expired_users()

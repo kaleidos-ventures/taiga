@@ -69,14 +69,14 @@ async def create_project_invitations(
 
     users_emails_dict: dict[str, Any] = {}
     if len(emails) > 0:
-        users_emails_dict = await users_services.get_users_emails_as_dict(emails=emails)
+        users_emails_dict = await users_services.list_users_emails_as_dict(emails=emails)
     # users_emails_dict = {
     #   'user1@taiga.demo': <User: Norma Fisher>,
     #   'user3@taiga.demo': <User: Elisabeth Woods>,
     # }
     users_usernames_dict: dict[str, Any] = {}
     if len(usernames) > 0:
-        users_usernames_dict = await users_services.get_users_usernames_as_dict(usernames=usernames)
+        users_usernames_dict = await users_services.list_users_usernames_as_dict(usernames=usernames)
         # users_usernames_dict = {
         #   'user3': <User: Elizabeth Woods>,
         # }

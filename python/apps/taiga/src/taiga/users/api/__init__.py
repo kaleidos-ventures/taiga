@@ -19,19 +19,18 @@ from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_422
 from taiga.permissions import IsAuthenticated
 from taiga.routers import routes
 from taiga.users import services as users_services
-from taiga.users.models import User
-from taiga.users.serializers import UserSearchSerializer, UserSerializer, VerificationInfoSerializer
-from taiga.users.validators import (
+from taiga.users.api.validators import (
     CreateUserValidator,
     RequestResetPasswordValidator,
     ResetPasswordValidator,
     UpdateUserValidator,
     VerifyTokenValidator,
 )
+from taiga.users.models import User
+from taiga.users.serializers import UserSearchSerializer, UserSerializer, VerificationInfoSerializer
 
 # PERMISSIONS
-LIST_USERS = IsAuthenticated()
-GET_USERS_BY_TEXT = IsAuthenticated()
+LIST_USERS_BY_TEXT = IsAuthenticated()
 
 
 # HTTP 200 RESPONSES
@@ -40,48 +39,8 @@ VERIFICATION_INFO_200 = responses.http_status_200(model=VerificationInfoSerializ
 
 
 #####################################################################
-# User Profile
+# create user
 #####################################################################
-
-
-@routes.my.get(
-    "/user",
-    name="my.user",
-    summary="Get authenticated user profile",
-    response_model=UserSerializer,
-    responses=ERROR_401,
-)
-async def get_my_user(request: Request) -> User:
-    """
-    Get the profile of the current authenticated user (according to the auth token in the request headers).
-    """
-    if request.user.is_anonymous:
-        # NOTE: We force a 401 instead of using the permissions system (which would return a 403)
-        raise ex.AuthorizationError("User is anonymous")
-
-    return request.user
-
-
-@routes.my.put(
-    "/user",
-    name="my.user.update",
-    summary="Update authenticated user profile",
-    response_model=UserSerializer,
-    responses=ERROR_401 | ERROR_400 | ERROR_422,
-)
-async def update_my_user(request: Request, form: UpdateUserValidator) -> User:
-    """
-    Update the profile of the current authenticated user (according to the auth token in the request headers).
-    """
-    if request.user.is_anonymous:
-        # NOTE: We force a 401 instead of using the permissions system (which would return a 403)
-        raise ex.AuthorizationError("User is anonymous")
-
-    return await users_services.update_user(
-        user=request.user,
-        full_name=form.full_name,
-        lang=form.lang,
-    )
 
 
 @routes.unauth_users.post(
@@ -106,6 +65,11 @@ async def create_user(form: CreateUserValidator) -> User:
     )
 
 
+#####################################################################
+# create user verify
+#####################################################################
+
+
 @routes.unauth_users.post(
     "/verify",
     name="users.verify",
@@ -120,17 +84,17 @@ async def verify_user(form: VerifyTokenValidator) -> VerificationInfoSerializer:
 
 
 #####################################################################
-# User Search
+# list users (search)
 #####################################################################
 
 
 @routes.users.get(
     "/search",
-    name="users",
+    name="users.search",
     summary="List all users matching a full text search, ordered (when provided) by their project closeness",
     response_model=list[UserSearchSerializer],
 )
-async def get_users_by_text(
+async def list_users_by_text(
     request: Request,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
@@ -143,9 +107,9 @@ async def get_users_by_text(
         2nd. members of the project's workspace / members of the project's organization (if any)
         3rd. rest of users (the priority for this group is not too important)
     """
-    await check_permissions(permissions=GET_USERS_BY_TEXT, user=request.user)
+    await check_permissions(permissions=LIST_USERS_BY_TEXT, user=request.user)
 
-    pagination, users = await users_services.get_paginated_users_by_text(
+    pagination, users = await users_services.list_paginated_users_by_text(
         text=text,
         project_id=project,
         offset=pagination_params.offset,
@@ -158,7 +122,57 @@ async def get_users_by_text(
 
 
 #####################################################################
-# Reset Password
+# get user
+#####################################################################
+
+
+@routes.my.get(
+    "/user",
+    name="my.user",
+    summary="Get authenticated user",
+    response_model=UserSerializer,
+    responses=ERROR_401,
+)
+async def get_my_user(request: Request) -> User:
+    """
+    Get the current authenticated user (according to the auth token in the request headers).
+    """
+    if request.user.is_anonymous:
+        # NOTE: We force a 401 instead of using the permissions system (which would return a 403)
+        raise ex.AuthorizationError("User is anonymous")
+
+    return request.user
+
+
+#####################################################################
+# update user
+#####################################################################
+
+
+@routes.my.put(
+    "/user",
+    name="my.user.update",
+    summary="Update authenticated user",
+    response_model=UserSerializer,
+    responses=ERROR_401 | ERROR_400 | ERROR_422,
+)
+async def update_my_user(request: Request, form: UpdateUserValidator) -> User:
+    """
+    Update the current authenticated user (according to the auth token in the request headers).
+    """
+    if request.user.is_anonymous:
+        # NOTE: We force a 401 instead of using the permissions system (which would return a 403)
+        raise ex.AuthorizationError("User is anonymous")
+
+    return await users_services.update_user(
+        user=request.user,
+        full_name=form.full_name,
+        lang=form.lang,
+    )
+
+
+#####################################################################
+# reset user password
 #####################################################################
 
 
@@ -175,6 +189,11 @@ async def request_reset_password(form: RequestResetPasswordValidator) -> bool:
     """
     await users_services.request_reset_password(email=form.email)
     return True
+
+
+#####################################################################
+# reset user password verify
+#####################################################################
 
 
 @routes.unauth_users.get(

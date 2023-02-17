@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
+from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -158,72 +159,25 @@ async def test_create_user_email_exists():
 
 
 ##########################################################
-# get_users_as_dict
-##########################################################
-
-
-async def test_get_users_as_dict_with_emails():
-    user1 = f.build_user(email="one@taiga.demo", username="one")
-    user2 = f.build_user(email="two@taiga.demo", username="two")
-    user3 = f.build_user(email="three@taiga.demo", username="three")
-
-    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
-        fake_users_repo.get_users.return_value = [user1, user2, user3]
-
-        emails = [user1.email, user2.email, user3.email]
-        users = await services.get_users_emails_as_dict(emails=emails)
-
-        fake_users_repo.get_users.assert_called_once_with(filters={"is_active": True, "emails": emails})
-        assert users == {"one@taiga.demo": user1, "two@taiga.demo": user2, "three@taiga.demo": user3}
-
-
-async def test_get_users_as_dict_with_usernames():
-    user1 = f.build_user(email="one@taiga.demo", username="one")
-    user2 = f.build_user(email="two@taiga.demo", username="two")
-    user3 = f.build_user(email="three@taiga.demo", username="three")
-
-    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
-        fake_users_repo.get_users.return_value = [user1, user2, user3]
-
-        usernames = [user1.username, user2.username, user3.username]
-        users = await services.get_users_usernames_as_dict(usernames=usernames)
-
-        fake_users_repo.get_users.assert_called_once_with(filters={"is_active": True, "usernames": usernames})
-        assert users == {"one": user1, "two": user2, "three": user3}
-
-
-##########################################################
-# update_user
-##########################################################
-
-
-async def test_update_user_ok(tqmanager):
-    user = f.build_user(id=1, full_name="Full Name", lang="es-ES")
-    new_full_name = "New Full Name"
-    new_lang = "en-US"
-
-    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
-        await services.update_user(
-            user=user,
-            full_name=new_full_name,
-            lang=new_lang,
-        )
-
-        fake_users_repo.update_user.assert_awaited_once_with(user=user)
-
-
-##########################################################
 # verify_user
 ##########################################################
 
 
 async def test_verify_user():
     user = f.build_user(is_active=False)
+    now = datetime.now(timezone.utc)
 
-    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
+    with (
+        patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
+        patch("taiga.users.services.aware_utcnow") as fake_aware_utcnow,
+    ):
 
+        fake_aware_utcnow.return_value = now
         await services.verify_user(user=user)
-        fake_users_repo.update_user.assert_awaited_with(user=user)
+        fake_users_repo.update_user.assert_awaited_with(
+            user=user,
+            values={"is_active": True, "date_verification": now},
+        )
 
 
 ##########################################################
@@ -422,17 +376,6 @@ async def test_verify_user_error_project_invitation_token(exception):
 
 
 ##########################################################
-# clean_expired_users
-##########################################################
-
-
-async def test_clean_expired_users():
-    with patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo:
-        await services.clean_expired_users()
-        fake_users_repo.clean_expired_users.assert_awaited_once()
-
-
-##########################################################
 # _generate_verify_user_token
 ##########################################################
 
@@ -468,8 +411,83 @@ async def test_generate_verify_ok_with_project_invitation_accepting(
         assert str(token) == verify_user_token_str
 
 
+##########################################################
+# list_users_as_dict
+##########################################################
+
+
+async def test_list_users_as_dict_with_emails():
+    user1 = f.build_user(email="one@taiga.demo", username="one")
+    user2 = f.build_user(email="two@taiga.demo", username="two")
+    user3 = f.build_user(email="three@taiga.demo", username="three")
+
+    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
+        fake_users_repo.list_users.return_value = [user1, user2, user3]
+
+        emails = [user1.email, user2.email, user3.email]
+        users = await services.list_users_emails_as_dict(emails=emails)
+
+        fake_users_repo.list_users.assert_called_once_with(filters={"is_active": True, "emails": emails})
+        assert users == {"one@taiga.demo": user1, "two@taiga.demo": user2, "three@taiga.demo": user3}
+
+
+async def test_list_users_as_dict_with_usernames():
+    user1 = f.build_user(email="one@taiga.demo", username="one")
+    user2 = f.build_user(email="two@taiga.demo", username="two")
+    user3 = f.build_user(email="three@taiga.demo", username="three")
+
+    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
+        fake_users_repo.list_users.return_value = [user1, user2, user3]
+
+        usernames = [user1.username, user2.username, user3.username]
+        users = await services.list_users_usernames_as_dict(usernames=usernames)
+
+        fake_users_repo.list_users.assert_called_once_with(filters={"is_active": True, "usernames": usernames})
+        assert users == {"one": user1, "two": user2, "three": user3}
+
+
 #####################################################################
-# Reset Password
+# list_paginated_usrs_by_text (search users)
+#####################################################################
+
+
+async def test_list_paginated_users_by_text_ok():
+    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
+        fake_users_repo.list_users_by_text.return_value = []
+
+        pagination, users = await services.list_paginated_users_by_text(
+            text="text", project_id="id", offset=9, limit=10
+        )
+
+        fake_users_repo.list_users_by_text.assert_awaited_with(text_search="text", project_id="id", offset=9, limit=10)
+
+        assert users == []
+
+
+##########################################################
+# update_user
+##########################################################
+
+
+async def test_update_user_ok(tqmanager):
+    user = f.build_user(id=1, full_name="Full Name", lang="es-ES")
+    new_full_name = "New Full Name"
+    new_lang = "en-US"
+
+    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
+        await services.update_user(
+            user=user,
+            full_name=new_full_name,
+            lang=new_lang,
+        )
+
+        fake_users_repo.update_user.assert_awaited_once_with(
+            user=user, values={"full_name": new_full_name, "lang": new_lang}
+        )
+
+
+#####################################################################
+# reset password
 #####################################################################
 
 
@@ -670,17 +688,12 @@ async def test_reset_password_ok_without_user():
         assert ret is None
 
 
-#####################################################################
-# User Search
-#####################################################################
+##########################################################
+# misc - clean_expired_users
+##########################################################
 
 
-async def test_get_paginated_users_by_text_ok():
-    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
-        fake_users_repo.get_users_by_text.return_value = []
-
-        pagination, users = await services.get_paginated_users_by_text(text="text", project_id="id", offset=9, limit=10)
-
-        fake_users_repo.get_users_by_text.assert_awaited_with(text_search="text", project_id="id", offset=9, limit=10)
-
-        assert users == []
+async def test_clean_expired_users():
+    with patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo:
+        await services.clean_expired_users()
+        fake_users_repo.clean_expired_users.assert_awaited_once()

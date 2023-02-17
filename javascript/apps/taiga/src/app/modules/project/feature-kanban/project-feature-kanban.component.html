@@ -23,7 +23,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             <ng-container *ngIf="!vm.isEmpty">
               <ng-container
                 *ngFor="let workflow of vm.workflows; trackBy: trackBySlug">
-                <tg-kanban-workflow [workflow]="workflow"></tg-kanban-workflow>
+                <tg-kanban-workflow
+                  role="grid"
+                  [workflow]="workflow"></tg-kanban-workflow>
               </ng-container>
             </ng-container>
 

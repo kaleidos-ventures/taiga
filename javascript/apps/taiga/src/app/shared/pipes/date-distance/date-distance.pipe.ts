@@ -29,7 +29,7 @@ export class DateDistancePipe implements PipeTransform {
     const yearsDistance = Math.abs(differenceInYears(createdAt, new Date()));
 
     // Less than 60 sec -> now
-    // between 60 sec and 6 days -> about {relativeTime} ago
+    // between 60 sec and 6 days -> {relativeTime} ago
     // between 6 days and 1 year -> MONTH DAY
     // More than 1 year -> MONTH DAY YEAR
 
@@ -45,7 +45,7 @@ export class DateDistancePipe implements PipeTransform {
         return `${distance} ${agoString}`;
       }
     } else {
-      return format(createdAt, 'MMM d yyyy');
+      return format(createdAt, 'MMM d, yyyy');
     }
   }
 }

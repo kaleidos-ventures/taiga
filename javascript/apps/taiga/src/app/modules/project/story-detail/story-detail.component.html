@@ -222,15 +222,12 @@ Copyright (c) 2021-present Kaleidos Ventures SL
                   <span class="creation-info-fullname">
                     {{ vm.story.createdBy.fullName }}
                   </span>
+                  <span>∙</span>
                   <span
                     *ngIf="vm.story.createdAt"
                     [title]="vm.story.createdAt | date: 'medium'"
                     class="creation-info-date">
-                    {{
-                      t('story.story_date_distance', {
-                        dateDistance: vm.story.createdAt | dateDistance
-                      })
-                    }}
+                    {{ vm.story.createdAt | dateDistance }}
                   </span>
                 </div>
               </div>

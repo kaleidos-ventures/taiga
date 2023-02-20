@@ -75,8 +75,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-ok80);
     }
 
-    &::ng-deep svg {
-      fill: var(--color-ok60);
+    &::ng-deep tui-svg {
+      color: var(--color-ok60);
     }
   }
 }

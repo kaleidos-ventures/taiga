@@ -79,7 +79,11 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   }
 
   & .t-icon {
+    align-items: center;
     color: var(--color-secondary) !important;
+    display: flex;
+    justify-content: center;
+    opacity: 1 !important;
   }
 
   & .icon_rotated {

@@ -50,8 +50,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
 
     /* stylelint-disable-next-line selector-max-type */
-    & .t-right svg {
-      fill: var(--color-gray50);
+    & .t-right tui-svg {
+      color: var(--color-gray50);
     }
   }
 }

@@ -17,19 +17,20 @@ import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { Store, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TUI_IS_CYPRESS } from '@taiga-ui/cdk';
+import { NgDompurifySanitizer } from '@tinkoff/ng-dompurify';
 import {
   TuiAlertModule,
   TuiNotificationModule,
   TuiRootModule,
+  tuiSvgOptionsProvider,
   TUI_ANIMATIONS_DURATION,
-  TUI_SVG_SRC_PROCESSOR,
+  TUI_SANITIZER,
 } from '@taiga-ui/core';
 import { TUI_ENGLISH_LANGUAGE, TUI_LANGUAGE } from '@taiga-ui/i18n';
 import { tuiToggleOptionsProvider } from '@taiga-ui/kit';
 import { ApiModule, SystemApiService } from '@taiga/api';
 import { ConfigService, CoreModule, coreActions } from '@taiga/core';
 import { PROMPT_PROVIDER } from '@taiga/ui/modal/services/modal.service';
-import { SvgSpriteModule } from '@taiga/ui/svg-sprite';
 import { paramCase } from 'change-case';
 import { of } from 'rxjs';
 import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
@@ -45,6 +46,7 @@ import { TranslocoRootModule } from './transloco/transloco-root.module';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
+  tuiIconCheckLarge: 'check',
   tuiIconCloseLarge: 'close',
   tuiIconInfo: 'info',
   notificationInfo: 'info',
@@ -62,7 +64,6 @@ export function prefersReducedMotion(): boolean {
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    SvgSpriteModule,
     DataAccessAuthModule,
     ErrorsModule,
     ApiModule,
@@ -158,16 +159,17 @@ export function prefersReducedMotion(): boolean {
         };
       },
     },
-    {
-      provide: TUI_SVG_SRC_PROCESSOR,
-      useFactory: () => {
-        return (src: string): string => {
-          const name = altIconName[src] ?? src;
-          const fileName = paramCase(name);
+    tuiSvgOptionsProvider({
+      path: (src: string): string => {
+        const name = altIconName[src] ?? src;
+        const fileName = paramCase(name);
 
-          return `assets/icons/sprite.svg#${fileName}`;
-        };
+        return `assets/icons/${fileName}.svg#${fileName}`;
       },
+    }),
+    {
+      provide: TUI_SANITIZER,
+      useClass: NgDompurifySanitizer,
     },
     {
       provide: TUI_LANGUAGE,

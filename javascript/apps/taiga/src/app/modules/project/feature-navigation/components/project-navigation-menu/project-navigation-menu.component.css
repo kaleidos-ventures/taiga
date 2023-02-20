@@ -205,7 +205,7 @@ ul {
 
     & .chevron {
       block-size: var(--spacing-16);
-      fill: var(--color-primary);
+      color: var(--color-primary);
       inline-size: var(--spacing-16);
       margin-inline-start: auto;
       transform: rotate(180deg);
@@ -280,7 +280,7 @@ ul {
 
   & .arrow {
     block-size: 1rem;
-    fill: var(--color-gray60);
+    color: var(--color-gray60);
     inline-size: 1rem;
     margin-inline-start: auto;
     opacity: 0;

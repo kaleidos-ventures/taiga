@@ -46,7 +46,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   margin-block-start: var(--spacing-16);
 
   & .add-icon {
-    fill: var(--color-gray50);
+    color: var(--color-gray50);
     margin-block-start: var(--spacing-4);
   }
 

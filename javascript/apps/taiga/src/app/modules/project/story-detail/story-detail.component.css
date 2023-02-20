@@ -166,8 +166,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     background-color: transparent;
   }
 
-  &::ng-deep svg {
-    fill: var(--color-gray70);
+  & tui-svg {
+    color: var(--color-gray70);
   }
 }
 
@@ -177,8 +177,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       background-color: var(--color-ok10);
     }
 
-    &::ng-deep svg {
-      fill: var(--color-ok);
+    & tui-svg {
+      color: var(--color-ok);
     }
   }
 }
@@ -192,7 +192,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 @define-mixin option-icon {
   block-size: var(--spacing-16);
-  fill: var(--color-secondary);
+  color: var(--color-secondary);
   inline-size: var(--spacing-16);
   margin-inline-end: var(--spacing-8);
 }

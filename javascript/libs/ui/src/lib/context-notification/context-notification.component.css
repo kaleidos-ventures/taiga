@@ -46,7 +46,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   & .close-button {
     align-self: start;
     block-size: var(--spacing-24);
-    fill: var(--color-info80);
+    color: var(--color-info80);
     inline-size: var(--spacing-24);
     margin-inline-start: var(--spacing-8);
   }

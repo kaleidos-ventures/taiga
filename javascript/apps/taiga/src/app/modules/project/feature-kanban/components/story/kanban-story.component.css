@@ -111,7 +111,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   transform: translate(-4px, 1px);
 
   & tui-svg {
-    fill: var(--color-secondary50);
+    color: var(--color-secondary50);
     inline-size: 5px;
   }
 }

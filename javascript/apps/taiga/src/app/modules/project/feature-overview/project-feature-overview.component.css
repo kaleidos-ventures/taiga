@@ -163,7 +163,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .option-icon {
     block-size: var(--spacing-16);
-    fill: var(--color-secondary);
+    color: var(--color-secondary);
     inline-size: var(--spacing-16);
     margin-inline-end: var(--spacing-8);
   }
@@ -191,7 +191,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
 
     & .option-icon {
-      fill: var(--color-red);
+      color: var(--color-red);
     }
   }
 

@@ -69,15 +69,15 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .icon {
     block-size: 1rem;
-    fill: var(--color-secondary);
+    color: var(--color-secondary);
     inline-size: 1rem;
   }
 
   & .password-visibility {
     & tui-svg {
       block-size: 1rem;
+      color: var(--color-gray80);
       display: block;
-      fill: var(--color-gray80);
       inline-size: 1rem;
     }
   }

@@ -15,8 +15,10 @@ import { Config } from '@taiga/data';
 function init() {
   void import('./app/app.module').then((m) => {
     platformBrowserDynamic()
-      // https://github.com/Tinkoff/taiga-ui/issues/3514
-      .bootstrapModule(m.AppModule, { ngZoneEventCoalescing: false })
+      .bootstrapModule(m.AppModule, {
+        ngZoneEventCoalescing: true,
+        ngZoneRunCoalescing: true,
+      })
       .catch((err) => console.error(err));
   });
 }

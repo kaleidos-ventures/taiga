@@ -18,7 +18,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & tui-svg {
     block-size: var(--spacing-16);
-    fill: var(--color-gray60);
+    color: var(--color-gray60);
     inline-size: var(--spacing-16);
     margin-inline-end: var(--spacing-4);
   }

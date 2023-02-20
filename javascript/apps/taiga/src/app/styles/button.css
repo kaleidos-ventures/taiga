@@ -101,8 +101,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  & svg {
-    fill: var(--color-secondary);
+  & tui-svg {
+    color: var(--color-secondary);
   }
 
   & .notification-counter {
@@ -143,8 +143,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       color: var(--color-secondary90);
 
       /* stylelint-disable */
-      & svg {
-        fill: var(--color-secondary90);
+      & tui-svg {
+        color: var(--color-secondary90);
       }
       /* stylelint-enable */
 
@@ -155,8 +155,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  & svg {
-    fill: var(--color-secondary);
+  & & tui-svg {
+    color: var(--color-secondary);
   }
 
   & .notification-counter {
@@ -196,8 +196,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  & svg {
-    fill: var(--color-white);
+  & tui-svg {
+    color: var(--color-white);
   }
 
   &[disabled] {
@@ -221,8 +221,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  & svg {
-    fill: var(--color-gray80);
+  & tui-svg {
+    color: var(--color-gray80);
   }
 
   &[disabled] {
@@ -248,8 +248,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  & svg {
-    fill: var(--color-gray80);
+  & tui-svg {
+    color: var(--color-gray80);
   }
 
   &[disabled]:not([loading]) {
@@ -271,8 +271,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     text-align: center;
   }
 
-  &[loading].loading-done svg {
-    fill: var(--color-ok50);
+  &[loading].loading-done tui-svg {
+    color: var(--color-ok50);
   }
 
   &.large[data-tui-host-size="l"] {
@@ -506,7 +506,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   & .t-icon {
     block-size: 1rem;
-    fill: var(--color-secondary);
+    color: var(--color-secondary);
     inline-size: 1rem;
     /* stylelint-disable-next-line declaration-no-important */
     margin-block-start: 0 !important;
@@ -522,8 +522,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
       transition: color 0.1s ease-in-out;
     }
 
-    & svg {
-      fill: var(--color-secondary90);
+    & tui-svg {
+      color: var(--color-secondary90);
       transition: fill 0.1s ease-in-out;
     }
   }
@@ -534,8 +534,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   display: inline-flex;
 
   &:hover {
-    & svg {
-      fill: var(--color-secondary90);
+    & tui-svg {
+      color: var(--color-secondary90);
     }
   }
 
@@ -545,7 +545,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     margin-inline-start: var(--spacing-4);
   }
 
-  & svg {
-    fill: var(--color-secondary);
+  & tui-svg {
+    color: var(--color-secondary);
   }
 }

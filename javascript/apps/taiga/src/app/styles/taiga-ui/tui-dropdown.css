@@ -13,4 +13,8 @@ tui-dropdown {
   border: 1px solid var(--color-gray50) !important;
   box-shadow: 0.25rem 0.25rem 0.5rem 0 rgba(46, 52, 64, 0.1) !important;
   margin-block-start: -4px;
+
+  & .t-checkmark {
+    visibility: hidden;
+  }
 }

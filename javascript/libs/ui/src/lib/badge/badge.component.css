@@ -53,6 +53,5 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 .badge-icon {
   block-size: var(--spacing-16);
   color: var(--badge-icon, --color-gray80);
-  fill: var(--badge-icon, --color-gray80);
   inline-size: var(--spacing-16);
 }

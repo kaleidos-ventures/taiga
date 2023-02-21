@@ -9,6 +9,8 @@
 import random
 from datetime import timezone
 from decimal import Decimal
+from pathlib import Path
+from typing import Final
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -35,6 +37,10 @@ from taiga.workspaces.workspaces.models import Workspace
 fake: Faker = Faker()
 Faker.seed(0)
 random.seed(0)
+
+
+MEDIA_DIR: Final[Path] = Path(__file__).parent.joinpath("media")
+PROJECT_LOGOS_DIR: Final[Path] = MEDIA_DIR.joinpath("projects")
 
 
 ################################
@@ -117,16 +123,16 @@ async def create_project(
 ) -> Project:
     name = name or fake.catch_phrase()
     description = description or fake.paragraph(nb_sentences=2)
-    with open("src/taiga/base/utils/sample_data/media/logo.png", "rb") as png_image_file:
-        logo_file = UploadFile(file=png_image_file, filename="Logo")
+    logo = random.choice(list(PROJECT_LOGOS_DIR.iterdir()))
 
+    with logo.open("rb") as file:
         return await projects_services._create_project(
             name=name,
             description=description,
             color=fake.random_int(min=1, max=constants.NUM_PROJECT_COLORS),
             owner=owner,
             workspace=workspace,
-            logo=random.choice([None, logo_file]),
+            logo=UploadFile(file=file, filename=logo.name),
         )
 
 

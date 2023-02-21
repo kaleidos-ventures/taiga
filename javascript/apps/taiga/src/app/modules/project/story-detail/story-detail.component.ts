@@ -242,16 +242,6 @@ export class StoryDetailComponent {
 
     this.state.hold(this.state.select('canDelete'), (canDeletePermission) => {
       if (!canDeletePermission && this.showDeleteStoryConfirm) {
-        this.appService.toastNotification({
-          label: 'errors.generic_toast_label',
-          message: 'errors.lose_story_permissions',
-          paramsMessage: {
-            permission: this.translocoService.translate('commons.delete'),
-          },
-          status: TuiNotification.Error,
-          autoClose: true,
-          closeOnNavigation: false,
-        });
         this.closeDeleteStoryConfirmModal();
       }
     });

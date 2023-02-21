@@ -10,7 +10,7 @@
 			"name": "auth",
 			"item": [
 				{
-					"name": "200 auth.token (user1)",
+					"name": "200 auth.token (1user)",
 					"event": [
 						{
 							"listen": "test",
@@ -53,7 +53,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -153,7 +153,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -186,7 +186,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -278,7 +278,7 @@
 			"name": "users",
 			"item": [
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -311,7 +311,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -668,7 +668,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"user1@taiga.demo\"\n}",
+							"raw": "{\n  \"email\": \"1user@taiga.demo\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -799,7 +799,7 @@
 			"name": "workspaces",
 			"item": [
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -831,7 +831,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -986,7 +986,7 @@
 			"name": "workspaces.{w}.projects",
 			"item": [
 				{
-					"name": "N/A log in as user1000",
+					"name": "N/A log in as 1000user",
 					"event": [
 						{
 							"listen": "test",
@@ -1018,7 +1018,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1000\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1000user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -1181,7 +1181,7 @@
 			"name": "projects",
 			"item": [
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -1213,7 +1213,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -1986,7 +1986,7 @@
 			"name": "projects.{p}.workflows.{wf}.stories",
 			"item": [
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -2018,7 +2018,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -2420,7 +2420,7 @@
 			"name": "projects.{p}.stories.{ref}",
 			"item": [
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -2452,7 +2452,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -2797,7 +2797,7 @@
 									"    numOfReturnedFields = Object.keys(jsonRes.user).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(3);",
 									"",
-									"    pm.environment.set(\"username\", \"user1\");",
+									"    pm.environment.set(\"username\", \"1user\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2822,7 +2822,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\"\n}",
+							"raw": "{\n    \"username\": \"1user\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2986,7 +2986,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user1000@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"1000user@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3042,7 +3042,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"usernameOrEmail\": \"user1000\"\n}",
+							"raw": "{\n  \"usernameOrEmail\": \"1000user\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3362,7 +3362,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user1000",
+					"name": "N/A log in as 1000user",
 					"event": [
 						{
 							"listen": "test",
@@ -3394,7 +3394,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1000\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1000user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -3558,7 +3558,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user1001",
+					"name": "N/A log in as 1001user",
 					"event": [
 						{
 							"listen": "test",
@@ -3590,7 +3590,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1001\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1001user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -3708,7 +3708,7 @@
 			"name": "projects.{p}.invitations.revoke",
 			"item": [
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -3740,7 +3740,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -3952,7 +3952,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user1001@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"username\": \"user9\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"1001user@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"username\": \"9user\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4008,7 +4008,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"usernameOrEmail\": \"user1001@taiga.demo\"}",
+							"raw": "{\"usernameOrEmail\": \"1001user@taiga.demo\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4065,7 +4065,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"usernameOrEmail\": \"user9\"}",
+							"raw": "{\"usernameOrEmail\": \"9user\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4235,7 +4235,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"username\": \"user9\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"username\": \"9user\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4263,7 +4263,7 @@
 			"name": "projects.{p}.invitations.{i}",
 			"item": [
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -4295,7 +4295,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -4539,7 +4539,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user4@taiga.demo\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"4user@taiga.demo\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4562,7 +4562,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user4",
+					"name": "N/A log in as 4user",
 					"event": [
 						{
 							"listen": "test",
@@ -4594,7 +4594,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user4\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"4user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -4659,7 +4659,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -4691,7 +4691,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -4986,7 +4986,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"username\": \"user3\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"username\": \"3user\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -5172,7 +5172,7 @@
 			"name": "projects.{p}.memberships",
 			"item": [
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -5204,7 +5204,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -5416,7 +5416,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user4@taiga.demo\",\n      \"roleSlug\": \"general\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"4user@taiga.demo\",\n      \"roleSlug\": \"general\"\n    },\n    {\n      \"email\": \"user-test@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -5439,7 +5439,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user4",
+					"name": "N/A log in as 4user",
 					"event": [
 						{
 							"listen": "test",
@@ -5471,7 +5471,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user4\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"4user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -5536,7 +5536,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -5568,7 +5568,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -5788,7 +5788,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/user4",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/4user",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -5797,7 +5797,7 @@
 								"projects",
 								"{{pj-id}}",
 								"memberships",
-								"user4"
+								"4user"
 							]
 						}
 					},
@@ -5936,7 +5936,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/user4",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/4user",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -5945,7 +5945,7 @@
 								"projects",
 								"{{pj-id}}",
 								"memberships",
-								"user4"
+								"4user"
 							]
 						}
 					},
@@ -6044,7 +6044,7 @@
 			"name": "projects.{p}.workspace_member_permissions",
 			"item": [
 				{
-					"name": "N/A log in as user1000",
+					"name": "N/A log in as 1000user",
 					"event": [
 						{
 							"listen": "test",
@@ -6076,7 +6076,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1000\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1000user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -6333,7 +6333,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user1000",
+					"name": "N/A log in as 1000user",
 					"event": [
 						{
 							"listen": "test",
@@ -6365,7 +6365,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1000\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1000user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -6581,7 +6581,7 @@
 			"name": "my",
 			"item": [
 				{
-					"name": "N/A log in as user900",
+					"name": "N/A log in as 900user",
 					"event": [
 						{
 							"listen": "test",
@@ -6613,7 +6613,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user900\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"900user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -6848,7 +6848,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user901@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    }\n  ]\n}",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"901user@taiga.demo\",\n      \"roleSlug\": \"admin\"\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -6871,7 +6871,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user901",
+					"name": "N/A log in as 901user",
 					"event": [
 						{
 							"listen": "test",
@@ -6903,7 +6903,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user901\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"901user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -7155,7 +7155,7 @@
 			"name": "errors (main)",
 			"item": [
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -7195,7 +7195,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -7467,7 +7467,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user2",
+					"name": "N/A log in as 2user",
 					"event": [
 						{
 							"listen": "test",
@@ -7498,7 +7498,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user2\",\n    \"password\": \"123123\"\n}",
+							"raw": "{\n    \"username\": \"2user\",\n    \"password\": \"123123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -7588,7 +7588,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A log in as user1",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -7628,7 +7628,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -7807,7 +7807,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -7860,7 +7860,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",

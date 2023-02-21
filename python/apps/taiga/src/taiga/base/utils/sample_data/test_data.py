@@ -117,7 +117,7 @@ async def _create_users() -> list[User]:
 
 
 async def _create_user(index: int, save: bool = True) -> User:
-    username = f"user{index}"
+    username = f"{index}user"
     email = f"{username}@taiga.demo"
     full_name = fake.name()
     color = fake.random_int(min=1, max=constants.NUM_USER_COLORS)

@@ -36,7 +36,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user1001\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1001user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -399,7 +399,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"user1@taiga.demo\"\n}",
+							"raw": "{\n  \"email\": \"1user@taiga.demo\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1446,7 +1446,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"user6@taiga.demo\",\n      \"roleSlug\": \"general\"\n    },\n    {\n      \"username\": \"user3\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"new_user@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}\n",
+							"raw": "{\n  \"invitations\": [\n    {\n      \"email\": \"6user@taiga.demo\",\n      \"roleSlug\": \"general\"\n    },\n    {\n      \"username\": \"3user\",\n      \"roleSlug\": \"admin\"\n    },\n    {\n      \"email\": \"new_user@example.com\",\n      \"roleSlug\": \"general\"\n    }\n  ]\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1544,7 +1544,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"usernameOrEmail\": \"user3\"\n}",
+							"raw": "{\n    \"usernameOrEmail\": \"3user\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1746,7 +1746,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"usernameOrEmail\": \"user1@taiga.demo\"\n}",
+							"raw": "{\n    \"usernameOrEmail\": \"1user@taiga.demo\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2190,7 +2190,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user6\"\n}",
+							"raw": "{\n    \"username\": \"6user\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

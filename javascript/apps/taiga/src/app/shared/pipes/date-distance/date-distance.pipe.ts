@@ -13,7 +13,7 @@ import {
   differenceInSeconds,
   differenceInYears,
   format,
-  formatDistanceToNow,
+  formatDistanceToNowStrict,
   parseISO,
 } from 'date-fns';
 
@@ -40,7 +40,7 @@ export class DateDistancePipe implements PipeTransform {
         if (secondsDistance <= 60) {
           return this.translocoService.translate('story.now');
         }
-        const distance = formatDistanceToNow(createdAt);
+        const distance = formatDistanceToNowStrict(createdAt);
         const agoString = this.translocoService.translate('story.ago');
         return `${distance} ${agoString}`;
       }

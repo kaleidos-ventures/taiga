@@ -126,13 +126,18 @@ async def create_project(
     logo = random.choice(list(PROJECT_LOGOS_DIR.iterdir()))
 
     with logo.open("rb") as file:
+        logo_file = (
+            UploadFile(file=file, filename=logo.name)
+            if fake.boolean(chance_of_getting_true=constants.PROB_PROJECT_WITH_LOGO)
+            else None
+        )
         return await projects_services._create_project(
             name=name,
             description=description,
             color=fake.random_int(min=1, max=constants.NUM_PROJECT_COLORS),
             owner=owner,
             workspace=workspace,
-            logo=UploadFile(file=file, filename=logo.name),
+            logo=logo_file,
         )
 
 

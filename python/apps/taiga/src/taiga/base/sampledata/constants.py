@@ -18,6 +18,7 @@ NUM_WORKSPACE_COLORS = 8
 
 # Projects
 NUM_PROJECT_COLORS = 8
+PROB_PROJECT_WITH_LOGO = 70  # 0-100
 
 # Stories
 STORY_TITLE_MAX_SIZE = ((80,) * 3) + ((120,) * 6) + (490,)  # 80 (30%), 120 (60%), 490 (10%)

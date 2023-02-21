@@ -190,7 +190,7 @@ export class WorkspaceEffects {
             workspace &&
             workspace.invitedProjects.length + workspace.totalProjects - 1 <=
               0 &&
-            workspace.userRole !== 'guest'
+            workspace.userRole === 'guest'
           ) {
             return WorkspaceActions.deleteWorkspace({
               workspaceId: action.workspaceId,

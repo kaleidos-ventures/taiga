@@ -30,6 +30,7 @@ class ProjectLogoMixin(BaseModel):
         if not logo:
             return None
         from taiga.projects.projects.services import get_logo_small_thumbnail_url
+
         return run_async_as_sync(get_logo_small_thumbnail_url(logo))
 
     @validator("logo_large", always=True)
@@ -39,4 +40,5 @@ class ProjectLogoMixin(BaseModel):
         if not logo:
             return None
         from taiga.projects.projects.services import get_logo_large_thumbnail_url
+
         return run_async_as_sync(get_logo_large_thumbnail_url(logo))

@@ -433,7 +433,7 @@ export class StoryDetailComponent {
           message: 'delete.confirm_delete_event',
           paramsMessage: {
             ref: msg.event.content.ref,
-            username: msg.event.content.deletedBy.username,
+            username: msg.event.content.deletedBy.fullName,
           },
           status: TuiNotification.Error,
           scope: 'story',

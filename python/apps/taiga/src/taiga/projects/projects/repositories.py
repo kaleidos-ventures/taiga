@@ -195,9 +195,7 @@ def update_project(project: Project, values: dict[str, Any] = {}) -> Project:
 @sync_to_async
 def delete_projects(filters: ProjectFilters = {}) -> int:
     qs = _apply_filters_to_project_queryset(qs=DEFAULT_QUERYSET, filters=filters)
-    references.delete_project_references_sequences(
-        project_ids=list(qs.values_list('id', flat=True))
-    )
+    references.delete_project_references_sequences(project_ids=list(qs.values_list("id", flat=True)))
     count, _ = qs.delete()
     return count
 

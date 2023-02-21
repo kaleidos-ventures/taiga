@@ -526,7 +526,7 @@ async def test_delete_project_invalid(client):
     pj_admin = await f.create_user()
 
     client.login(pj_admin)
-    response = client.delete(f"/projects/INVALID_PJ_ID")
+    response = client.delete("/projects/INVALID_PJ_ID")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 

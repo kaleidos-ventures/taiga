@@ -205,7 +205,8 @@ export class AssignUserComponent implements OnInit, OnDestroy {
       requestAnimationFrame(() => {
         if (this.inputModalityDetector.mostRecentModality === 'keyboard') {
           const mainFocus = document.querySelector(
-            `tg-kanban-story[data-ref='${this.ref!}'] .story-kanban-ref-focus`
+            `tg-kanban-story[data-ref='${this
+              .ref!}'] .story-kanban-ref-focus .story-title`
           );
           if (mainFocus) {
             (mainFocus as HTMLElement).focus();

@@ -344,7 +344,7 @@ export class StoryDetailComponent {
     if (ref) {
       requestAnimationFrame(() => {
         const mainFocus = document.querySelector(
-          `tg-kanban-story[data-ref='${ref}'] .story-kanban-ref-focus`
+          `tg-kanban-story[data-ref='${ref}'] .story-kanban-ref-focus .story-title`
         );
         if (mainFocus) {
           (mainFocus as HTMLElement).focus();

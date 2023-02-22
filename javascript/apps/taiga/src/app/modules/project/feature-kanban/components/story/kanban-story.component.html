@@ -7,18 +7,22 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 -->
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
-    <a
-      [href]="
-        '/project/' +
-        vm.project.id +
-        '/' +
-        vm.project.slug +
-        '/stories/' +
-        story.ref
-      "
-      (click)="openStory($event)"
-      class="story-kanban-ref-focus">
-      <div class="story-title">
+    <div
+      class="story-kanban-ref-focus"
+      [class.has-focus]="cardHasFocus">
+      <a
+        class="story-title"
+        [href]="
+          '/project/' +
+          vm.project.id +
+          '/' +
+          vm.project.slug +
+          '/stories/' +
+          story.ref
+        "
+        (click)="openStory($event)"
+        (focus)="handleCardFocus(true)"
+        (blur)="handleCardFocus(false)">
         <div class="draggable-icon">
           <tui-svg src="draggable"></tui-svg>
         </div>
@@ -38,7 +42,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             </span>
           </ng-container>
         </div>
-      </div>
+      </a>
       <div class="story-body">
         <ng-container
           *hasPermission="
@@ -80,7 +84,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
           </div>
         </ng-container>
       </div>
-    </a>
+    </div>
 
     <!-- Assigned users temaplate -->
 

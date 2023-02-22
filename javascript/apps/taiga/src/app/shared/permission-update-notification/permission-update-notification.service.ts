@@ -34,9 +34,14 @@ export class PermissionUpdateNotificationService {
         ['create', 'delete', 'modify'],
         'OR'
       );
+      const hasStoryViewPermissions = this.permissionService.hasPermissions(
+        'story',
+        ['view'],
+        'OR'
+      );
       if (hasStoryPermissions) {
         this.notify('edit_story_lost_some_permission');
-      } else {
+      } else if (hasStoryViewPermissions) {
         this.notify('edit_story_lost_permission');
       }
     }

@@ -54,11 +54,12 @@ describe('PermissionUpdateNotificationServiceService', () => {
         'story_delete',
       ];
       const currentProject = ProjectMockFactory();
-      currentProject.userPermissions = ['story_create', 'story_modify'];
+      currentProject.userPermissions = ['view_story'];
       const permissionsService = spectator.inject(PermissionsService);
       spectator.service.notify = jest.fn();
 
-      permissionsService.hasPermissions.mockReturnValue(false);
+      permissionsService.hasPermissions.mockReturnValueOnce(false);
+      permissionsService.hasPermissions.mockReturnValueOnce(true);
 
       spectator.service.notifyLosePermissions(previousProject, currentProject);
       expect(spectator.service.notify).toHaveBeenCalledWith(

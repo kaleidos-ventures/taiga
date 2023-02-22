@@ -4,7 +4,3 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
-
-
-from taiga.base.utils.sample_data.demo_data import load_demo_data  # noqa
-from taiga.base.utils.sample_data.test_data import load_test_data  # noqa

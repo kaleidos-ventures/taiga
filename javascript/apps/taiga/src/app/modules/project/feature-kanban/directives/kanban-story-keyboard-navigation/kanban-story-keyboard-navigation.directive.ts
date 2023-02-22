@@ -235,7 +235,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
       );
 
       const el = nextStory.querySelector<HTMLElement>(
-        '.story-kanban-ref-focus'
+        '.story-kanban-ref-focus .story-title'
       );
       if (status?.cdkScrollable && el) {
         const nextRef = nextStory.dataset.ref;
@@ -343,7 +343,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
             horizontalNavData.nextStatus
               .querySelectorAll('tg-kanban-story')
               [storyIndex].querySelector<HTMLElement>(
-                '.story-kanban-ref-focus'
+                '.story-kanban-ref-focus .story-title'
               )!
               .focus();
           }, 100);
@@ -382,7 +382,9 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
             setTimeout(() => {
               if (horizontalNavData.nextStory) {
                 horizontalNavData.nextStory
-                  .querySelector<HTMLElement>('.story-kanban-ref-focus')!
+                  .querySelector<HTMLElement>(
+                    '.story-kanban-ref-focus .story-title'
+                  )!
                   .focus();
                 this.liveAnnouncer.clear();
               }

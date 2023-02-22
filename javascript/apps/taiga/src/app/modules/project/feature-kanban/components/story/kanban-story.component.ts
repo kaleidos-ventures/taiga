@@ -76,6 +76,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
   public reversedAssignees: Membership['user'][] = [];
   public restAssigneesLenght = '';
   public hintAssignUser = false;
+  public cardHasFocus = false;
 
   public readonly model$ = this.state.select();
 
@@ -174,8 +175,13 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
       .join(', ');
   }
 
+  public handleCardFocus(value: boolean) {
+    this.cardHasFocus = value;
+  }
+
   public openStory(event: MouseEvent) {
     event.preventDefault();
+    event.stopPropagation();
 
     if (this.story.ref) {
       this.location.go(

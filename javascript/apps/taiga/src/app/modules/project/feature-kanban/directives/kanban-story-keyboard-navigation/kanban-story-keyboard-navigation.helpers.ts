@@ -125,7 +125,7 @@ export function getStatusFromStoryElement(
 export function focusRef(ref: string) {
   document
     .querySelector<HTMLElement>(
-      `tg-kanban-story[data-ref='${ref}'] .story-kanban-ref-focus`
+      `tg-kanban-story[data-ref='${ref}'] .story-kanban-ref-focus .story-title`
     )
     ?.focus();
 }

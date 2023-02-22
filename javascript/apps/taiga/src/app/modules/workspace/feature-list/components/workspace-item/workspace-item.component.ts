@@ -31,7 +31,6 @@ import { RxState } from '@rx-angular/state';
 import { Project, User, Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   acceptInvitationEvent,
   fetchWorkspaceInvitationsSuccess,
@@ -40,6 +39,7 @@ import {
   invitationRevokedEvent,
   projectDeletedEvent,
   setWorkspaceListRejectedInvites,
+  workspaceEventActions,
 } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import {
   selectLoadingWorkspaces,
@@ -355,7 +355,7 @@ export class WorkspaceItemComponent
           eventResponse.event.content.workspace
         );
         this.store.dispatch(
-          projectEventActions.projectDeleted({
+          workspaceEventActions.projectDeleted({
             projectId: eventResponse.event.content.project,
             workspaceId: eventResponse.event.content.workspace,
             name: eventResponse.event.content.name,

@@ -8,10 +8,10 @@
 
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { Contact, Invitation, Membership, Role } from '@taiga/data';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import * as RolesPermissionsActions from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import * as WorkspaceActions from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
+import { workspaceEventActions } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as InvitationActions from '../actions/invitation.action';
 
@@ -127,7 +127,7 @@ export const reducer = createReducer(
     return state;
   }),
   on(
-    projectEventActions.projectDeleted,
+    workspaceEventActions.projectDeleted,
     (state, { projectId }): InvitationState => {
       state.acceptedInvite = state.acceptedInvite.filter((invitation) => {
         return invitation !== projectId;

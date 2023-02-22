@@ -29,7 +29,7 @@ async def create_workspace(name: str, color: int, owner: User) -> WorkspaceSeria
     return await get_workspace_detail(id=workspace.id, user_id=owner.id)
 
 
-#  TODO: review this method after the sample_data refactor
+#  TODO: review this method after the sampledata refactor
 async def _create_workspace(name: str, color: int, owner: User) -> Workspace:
     workspace = await workspaces_repositories.create_workspace(name=name, color=color, owner=owner)
     role = await ws_roles_repositories.create_workspace_role(

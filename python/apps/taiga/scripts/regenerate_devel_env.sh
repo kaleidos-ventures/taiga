@@ -56,12 +56,12 @@ else
   python -m taiga db load-fixtures initial_user
   echo "-> Load initial project_templates (kanban)"
   python -m taiga db load-fixtures initial_project_templates
-  echo "-> Generate complete sample data"
+  echo "-> Generate sampledata (test and demo data)"
   python -m taiga sampledata
   # echo "-> Generate test data"
-  # python -m taiga testdata
+  # python -m taiga sampledata --no-demo
   # echo "-> Generate demo data"
-  # python -m taiga demodata
+  # python -m taiga sampledata --no-test
   echo "-> Compile translations"
   python -m taiga i18n compile-catalog
 fi

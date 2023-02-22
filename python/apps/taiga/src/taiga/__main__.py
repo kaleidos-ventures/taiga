@@ -29,6 +29,7 @@ from taiga import __version__
 from taiga.base.db.commands import cli as db_cli
 from taiga.base.django.commands import call_django_command
 from taiga.base.i18n.commands import cli as i18n_cli
+from taiga.base.sampledata.commands import cli as sampledata_cli
 from taiga.emails.commands import cli as emails_cli
 from taiga.tasksqueue.commands import cli as tasksqueue_cli
 from taiga.tasksqueue.commands import run_worker
@@ -63,6 +64,7 @@ def main(
 cli.add_typer(db_cli, name="db")
 cli.add_typer(emails_cli, name="emails")
 cli.add_typer(i18n_cli, name="i18n")
+cli.add_typer(sampledata_cli, name="sampledata")
 cli.add_typer(tasksqueue_cli, name="tasksqueue")
 cli.add_typer(tokens_cli, name="tokens")
 cli.add_typer(users_cli, name="users")
@@ -89,31 +91,6 @@ def devserve(
 @cli.command(help="Run a Taiga server.")
 def serve(host: str = typer.Option("0.0.0.0", "--host", "-h"), port: int = typer.Option(8000, "--port", "-p")) -> None:
     _run_api(host=host, port=port, reload=False)
-
-
-@cli.command(help="Load complete sample data")
-def sampledata() -> None:
-    from taiga.base.utils.concurrency import run_async_as_sync
-    from taiga.base.utils.sample_data import load_demo_data, load_test_data
-
-    run_async_as_sync(load_test_data())
-    run_async_as_sync(load_demo_data())
-
-
-@cli.command(help="Load test data")
-def testdata() -> None:
-    from taiga.base.utils.concurrency import run_async_as_sync
-    from taiga.base.utils.sample_data import load_test_data
-
-    run_async_as_sync(load_test_data())
-
-
-@cli.command(help="Load demo data")
-def demodata() -> None:
-    from taiga.base.utils.concurrency import run_async_as_sync
-    from taiga.base.utils.sample_data import load_demo_data
-
-    run_async_as_sync(load_demo_data())
 
 
 class Verbosity(str, Enum):

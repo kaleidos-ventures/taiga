@@ -9,7 +9,7 @@ import random
 from uuid import UUID
 
 from taiga.base.db import transaction
-from taiga.base.utils.sample_data import factories
+from taiga.base.sampledata import factories
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
 from taiga.workspaces.memberships import repositories as ws_memberships_repositories

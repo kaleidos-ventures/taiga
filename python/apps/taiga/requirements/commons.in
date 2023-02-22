@@ -28,7 +28,7 @@ PyJWT # For auth
 cryptography # For auth
 
 # Utils & tools
-faker # For sample_data
+faker # For sampledata
 pyhumps # For transform texts: camelCase/snake_case
 python-json-logger # JSON logger
 python-slugify # To generate slugs

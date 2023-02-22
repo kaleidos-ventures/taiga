@@ -16,7 +16,7 @@ from uuid import UUID
 from asgiref.sync import sync_to_async
 from faker import Faker
 from fastapi import UploadFile
-from taiga.base.utils.sample_data import constants
+from taiga.base.sampledata import constants
 from taiga.permissions import choices
 from taiga.projects.invitations import repositories as pj_invitations_repositories
 from taiga.projects.invitations.choices import ProjectInvitationStatus

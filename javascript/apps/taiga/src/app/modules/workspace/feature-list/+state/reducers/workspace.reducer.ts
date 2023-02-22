@@ -120,9 +120,15 @@ export const reducer = createReducer(
           return project.id === projectId;
         });
 
-        state.workspaces[currentWorkspaceIndex].invitedProjects.unshift(
-          invitationToAdd[0]
-        );
+        const existInside = state.workspaces[
+          currentWorkspaceIndex
+        ].invitedProjects.findIndex((it) => it.id === invitationToAdd[0].id);
+
+        if (existInside < 0) {
+          state.workspaces[currentWorkspaceIndex].invitedProjects.unshift(
+            invitationToAdd[0]
+          );
+        }
       } else {
         const projectToAdd = project.filter((project) => {
           return project.id === projectId;
@@ -174,21 +180,22 @@ export const reducer = createReducer(
         return workspaceItem.id === workspace.id;
       });
 
-      if (workspaceIndex && state.workspaces[workspaceIndex]) {
+      if (workspaceIndex >= 0 && state.workspaces[workspaceIndex]) {
         state.workspaces[workspaceIndex].invitedProjects = state.workspaces[
           workspaceIndex
-        ].invitedProjects.filter(
-          (invitedProject) => invitedProject.id !== projectId
-        );
+        ].invitedProjects.filter((invitedProject) => {
+          return invitedProject.id !== projectId;
+        });
       }
 
-      if (workspaceIndex && state.workspaceProjects[workspace.id]) {
+      if (workspaceIndex >= 0 && state.workspaceProjects[workspace.id]) {
         state.workspaceProjects[workspace.id] = state.workspaceProjects[
           workspace.id
         ].filter((project) => {
           return project.id !== projectId;
         });
       }
+
       return state;
     }
   ),

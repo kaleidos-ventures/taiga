@@ -8,28 +8,40 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
-    <div
-      *ngIf="!vm.conflict && !vm.edit"
-      class="title-wrapper"
-      (click)="editTitle()">
-      <div class="shape-outside-text float-inline-end"></div>
+    <ng-container
+      *ngIf="vm.hasPermissionToEdit; else titleWithouPermissionsToEdit">
+      <div
+        *ngIf="!vm.conflict && !vm.edit"
+        class="title-wrapper"
+        (click)="editTitle()">
+        <div class="shape-outside-text float-inline-end"></div>
+        <h1
+          data-test="story-detail-title"
+          class="title">
+          {{ vm.story.title }}
+        </h1>
+        <button
+          *ngIf="!vm.conflict"
+          data-test="edit-title"
+          tgRestoreFocusTarget="edit-title"
+          (click)="editTitle()"
+          class="edit-title"
+          [attr.aria-label]="t('story.edit_title')"
+          appearance="tertiary"
+          tuiIconButton
+          icon="pen"
+          type="button"></button>
+      </div>
+    </ng-container>
+
+    <ng-template #titleWithouPermissionsToEdit>
       <h1
         data-test="story-detail-title"
         class="title">
         {{ vm.story.title }}
       </h1>
-      <button
-        *ngIf="!vm.conflict"
-        data-test="edit-title"
-        tgRestoreFocusTarget="edit-title"
-        (click)="editTitle()"
-        class="edit-title"
-        [attr.aria-label]="t('story.edit_title')"
-        appearance="tertiary"
-        tuiIconButton
-        icon="pen"
-        type="button"></button>
-    </div>
+    </ng-template>
+
     <div
       *ngIf="vm.conflict"
       tgRestoreFocus="edit-title"

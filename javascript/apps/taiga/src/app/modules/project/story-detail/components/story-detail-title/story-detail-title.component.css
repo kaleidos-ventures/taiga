@@ -43,7 +43,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     }
   }
 
-  &:not(.edit) {
+  &.has-permission-to-edit:not(.edit) {
     &:hover {
       background-color: var(--color-gray20);
     }

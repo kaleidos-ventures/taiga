@@ -33,12 +33,14 @@ import {
 } from '~/app/shared/utils/has-changes.service';
 import { StoryDetail } from '@taiga/data';
 import { auditTime } from 'rxjs';
+import { PermissionsService } from '~/app/services/permissions.service';
 
 export interface StoryDetailTitleState {
   story: StoryDetail;
   editedStory: StoryDetail;
   conflict: boolean;
   edit: boolean;
+  hasPermissionToEdit: boolean;
 }
 
 @UntilDestroy()
@@ -69,6 +71,11 @@ export class StoryDetailTitleComponent implements OnChanges, HasChanges {
     return this.state.get('edit');
   }
 
+  @HostBinding('class.has-permission-to-edit')
+  public get hasPermissionToEdit() {
+    return this.state.get('hasPermissionToEdit');
+  }
+
   @Input()
   public set story(story: StoryDetail) {
     this.state.set({ story });
@@ -94,7 +101,8 @@ export class StoryDetailTitleComponent implements OnChanges, HasChanges {
     private hasChangesService: HasChangesService,
     private state: RxState<StoryDetailTitleState>,
     private shortcutsService: ShortcutsService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private hasPermissions: PermissionsService
   ) {
     this.hasChangesService.addComponent(this);
 
@@ -116,6 +124,17 @@ export class StoryDetailTitleComponent implements OnChanges, HasChanges {
           this.titleForm.get('title')?.setValue(titleWithoutBreakLines);
         }
       });
+
+    this.state.connect(
+      'hasPermissionToEdit',
+      this.hasPermissions.hasPermissions$('story', ['modify'])
+    );
+
+    this.state.hold(this.state.select('hasPermissionToEdit'), () => {
+      if (this.state.get('edit')) {
+        this.discard();
+      }
+    });
   }
 
   public editTitle() {

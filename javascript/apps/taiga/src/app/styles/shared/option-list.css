@@ -1,0 +1,27 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+@define-mixin option-list $size: 238px {
+  border: 0;
+  inline-size: $size;
+  /* stylelint-disable-next-line declaration-no-important */
+  padding: var(--spacing-8) !important;
+}
+
+@define-mixin option-icon {
+  block-size: var(--spacing-16);
+  color: var(--color-secondary);
+  inline-size: var(--spacing-16);
+  margin-inline-end: var(--spacing-8);
+}
+
+@define-mixin option-name {
+  @mixin font-inline;
+
+  color: var(--color-gray100);
+}

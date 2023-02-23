@@ -40,6 +40,24 @@ Copyright (c) 2023-present Kaleidos INC
               [label]="t('commons.owner') | capitalize"
               size="s"
               color="primary"></tg-ui-badge>
+            <tui-hosted-dropdown
+              [tuiDropdownAlign]="'right'"
+              [content]="workspaceOptions"
+              [(open)]="displayWorkspaceOptions">
+              <button
+                class="display-workspace-options"
+                role="menu"
+                aria-haspopup="true"
+                [attr.aria-expanded]="displayWorkspaceOptions"
+                tabindex="0"
+                [attr.aria-label]="t('workspace.workspace_options')"
+                icon="more-vertical"
+                data-test="workspace-options"
+                appearance="tertiary"
+                tuiIconButton
+                type="button"
+                (click)="(displayWorkspaceOptionsModal)"></button>
+            </tui-hosted-dropdown>
           </div>
         </div>
         <div class="workspace-detail-actions">
@@ -152,6 +170,40 @@ Copyright (c) 2023-present Kaleidos INC
           </tg-project-card>
         </div>
       </div>
+      <ng-template #workspaceOptions>
+        <tui-data-list
+          class="workspace-options-list"
+          data-test="workspace-options-list"
+          [attr.aria-label]="t('workspace.workspace_options')">
+          <button
+            role="menuitem"
+            data-test="edit-ws-title-button"
+            class="edit-ws-option"
+            tuiOption
+            type="button"
+            (click)="editWorkspaceModal()">
+            <tui-svg
+              aria-hidden="true"
+              class="edit-ws-option-icon"
+              src="pen"></tui-svg>
+            <span class="edit-ws-option-name">{{
+              t('workspace.edit_workspace_name')
+            }}</span>
+          </button>
+        </tui-data-list>
+      </ng-template>
+      <tg-ui-modal
+        [width]="500"
+        [open]="vm.editingWorkspace"
+        (requestClose)="closeEditWorkspaceModal()">
+        <ng-container>
+          <tg-workspace-detail-edit
+            [workspace]="vm.workspace"
+            *ngIf="vm.editingWorkspace"
+            (update)="updateWorkspace($event)"
+            (cancelEdit)="closeEditWorkspaceModal()"></tg-workspace-detail-edit>
+        </ng-container>
+      </tg-ui-modal>
     </ng-container>
   </ng-container>
 </ng-container>

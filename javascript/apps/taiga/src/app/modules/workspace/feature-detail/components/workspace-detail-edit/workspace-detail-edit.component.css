@@ -1,0 +1,14 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+*/
+
+.edit-ws-actions-area {
+  display: flex;
+  gap: var(--spacing-16);
+  justify-content: flex-end;
+  margin-block-start: var(--spacing-24);
+}

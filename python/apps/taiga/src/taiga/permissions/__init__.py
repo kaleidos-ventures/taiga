@@ -62,7 +62,7 @@ class IsWorkspaceAdmin(PermissionComponent):
     async def is_authorized(self, user: "AnyUser", obj: Any = None) -> bool:
         from taiga.permissions import services as permissions_services
 
-        return await permissions_services.is_workspace_admin(user, obj)
+        return await permissions_services.is_workspace_admin(user=user, obj=obj)
 
 
 class IsObjectOwner(PermissionComponent):

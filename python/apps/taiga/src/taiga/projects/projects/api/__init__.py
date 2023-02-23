@@ -14,7 +14,7 @@ from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
-from taiga.permissions import CanViewProject, HasPerm, IsAuthenticated, IsProjectAdmin
+from taiga.permissions import CanViewProject, HasPerm, IsAuthenticated, IsProjectAdmin, IsWorkspaceAdmin
 from taiga.permissions import services as permissions_services
 from taiga.projects.projects import services as projects_services
 from taiga.projects.projects.api.validators import PermissionsValidator, ProjectValidator, UpdateProjectValidator
@@ -33,7 +33,7 @@ GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
-DELETE_PROJECT = IsProjectAdmin()
+DELETE_PROJECT = IsProjectAdmin() | IsWorkspaceAdmin()
 
 # HTTP 200 RESPONSES
 PROJECT_DETAIL_200 = responses.http_status_200(model=ProjectDetailSerializer)

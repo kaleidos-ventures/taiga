@@ -540,11 +540,22 @@ async def test_delete_project_user_without_permissions(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_delete_project_ok(client):
+async def test_delete_project_being_proj_admin(client):
     user = await f.create_user()
     project = await f.create_project(owner=user)
 
     client.login(user)
+    response = client.delete(f"/projects/{project.b64id}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+async def test_delete_project_being_ws_admin(client):
+    user_ws_admin = await f.create_user()
+    ws = await f.create_workspace(owner=user_ws_admin)
+    user_proj_admin = await f.create_user()
+    project = await f.create_project(workspace=ws, owner=user_proj_admin)
+
+    client.login(user_ws_admin)
     response = client.delete(f"/projects/{project.b64id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 

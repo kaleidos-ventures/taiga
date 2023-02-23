@@ -15,5 +15,13 @@
   "less_projects": "Less projects",
   "more_projects": "{{ projects }} more projects",
   "placehoder_no_access": "You don't have access to any projects in this workspace yet. <br /> Check with your workspace admin.",
-  "placehoder_no_projects": "There are no projects in the workspace."
+  "placehoder_no_projects": "There are no projects in the workspace.",
+  "workspace_options": "Workspace options",
+  "edit_workspace_name": "Edit workspace name",
+  "edit": {
+    "title": "Workspace details",
+    "name": "Workspace name",
+    "name_required": "Workspace name can’t be empty",
+    "name_placeholder": "Add workspace name"
+  }
 }

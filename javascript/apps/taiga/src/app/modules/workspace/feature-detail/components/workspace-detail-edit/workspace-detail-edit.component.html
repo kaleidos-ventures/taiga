@@ -1,0 +1,60 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2021-present Kaleidos Ventures SL
+-->
+
+<ng-container *transloco="let t">
+  <div
+    role="dialog"
+    aria-labelledby="edit-ws"
+    aria-modal="true">
+    <h3
+      id="edit-ws"
+      class="edit-ws-title"
+      data-test="edit-ws-title">
+      {{ t('workspace.edit.title') }}
+    </h3>
+    <form
+      [formGroup]="nameForm"
+      (submit)="submit()">
+      <tg-ui-input [label]="t('workspace.edit.name')">
+        <input
+          formControlName="name"
+          data-test="story-title"
+          #title
+          inputRef
+          [maxlength]="maxLength"
+          [placeholder]="t('workspace.edit.name_placeholder')" />
+        <ng-container inputError>
+          <tg-ui-error error="required">{{
+            t('workspace.edit.name_required')
+          }}</tg-ui-error>
+          <tg-ui-error error="pattern">{{
+            t('workspace.edit.name_required')
+          }}</tg-ui-error>
+        </ng-container>
+      </tg-ui-input>
+      <div class="edit-ws-actions-area">
+        <button
+          data-test="edit-ws-cancel-button"
+          appearance="button-form"
+          tuiButton
+          (click)="cancel()"
+          type="button">
+          {{ t('commons.cancel') }}
+        </button>
+        <button
+          data-test="edit-ws-confirm-button"
+          appearance="primary"
+          tuiButton
+          (click)="submit()"
+          type="button">
+          {{ t('commons.save_changes') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-container>

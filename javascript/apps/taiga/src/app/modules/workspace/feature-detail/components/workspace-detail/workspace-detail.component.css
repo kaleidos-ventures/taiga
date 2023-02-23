@@ -8,6 +8,7 @@ Copyright (c) 2023-present Kaleidos INC
 
 @import "tools/typography.css";
 @import "../../../styles/workspace.shared";
+@import "shared/option-list.css";
 
 :host {
   block-size: 100%;
@@ -66,4 +67,34 @@ Copyright (c) 2023-present Kaleidos INC
 
 tg-project-card {
   z-index: 2;
+}
+
+.display-workspace-options {
+  &::ng-deep .t-wrapper {
+    background: none;
+  }
+}
+
+.workspace-options-list {
+  @mixin option-list;
+
+  & .edit-ws-option-name {
+    @mixin option-name;
+  }
+
+  & .edit-ws-option-icon {
+    @mixin option-icon;
+  }
+
+  & .edit-ws-option {
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+
+    &:hover {
+      & .edit-ws-option-name {
+        color: var(--color-secondary);
+      }
+    }
+  }
 }

@@ -58,6 +58,7 @@ interface ViewDetailModel {
 
   invitations: WorkspaceProject[];
   newInvitations: string[];
+  editingWorkspace: boolean;
 }
 
 export interface WorkspaceDetailState {
@@ -72,6 +73,7 @@ export interface WorkspaceDetailState {
   newInvitations: string[];
   rejectedInvites: string[];
   acceptedInvites: string[];
+  editingWorkspace: boolean;
 }
 
 @UntilDestroy()
@@ -145,6 +147,8 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
   public reorder: Record<string, string> = {};
 
+  public displayWorkspaceOptions = false;
+
   public get gridClass() {
     return `grid-items-${this.amountOfProjectsToShow}`;
   }
@@ -161,6 +165,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       rejectedInvites: [],
       projectSiblingToAnimate: [],
       invitations: [],
+      editingWorkspace: false,
     });
   }
 
@@ -557,5 +562,22 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
         invitations: addedInvitations,
       });
     }
+  }
+
+  public displayWorkspaceOptionsModal() {
+    this.displayWorkspaceOptions = true;
+  }
+
+  public editWorkspaceModal() {
+    this.state.set({ editingWorkspace: true });
+  }
+
+  public closeEditWorkspaceModal() {
+    this.state.set({ editingWorkspace: false });
+  }
+
+  public updateWorkspace(workspace: Partial<Workspace>) {
+    console.log('send data to backend!', workspace);
+    this.closeEditWorkspaceModal();
   }
 }

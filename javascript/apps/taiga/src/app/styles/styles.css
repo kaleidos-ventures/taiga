@@ -7,19 +7,23 @@ Copyright (c) 2023-present Kaleidos INC
 */
 
 /*
-This layer holds any **global** settings for your project. This layer should only house settings that need to be accessed from anywhere. Settings like custom properties. This ensures this layer stays simple and slim, and means that most settings can be found alongside the code that uses them, making finding things far simpler. Examples of global settings might be things like the base font size, colour palettes, config and so on.
+FOLDERS
+token: Design tokens. It usually includes custom properties or mixins. Does not produce specific CSS.
+tools: Similar to tokens, but for specific items. Does not produce specific CSS.
+taiga-UI: Specific styles to override taiga UI styles. Produces specific CSS.
+shared: Specific styles that are shared by multiple elements across the site. Could produce specific CSS.
 */
 
 /* ANGULAR CDK */
 @import "@angular/cdk/overlay-prebuilt.css";
 
 /* CUSTOM GLOBAL STYLES */
-@import "swatches.css";
-@import "typography.css";
-@import "spacing.css";
-@import "z-index.css";
+@import "tokens/swatches.css";
+@import "tokens/typography.css";
+@import "tokens/spacing.css";
+@import "tokens/z-index.css";
 @import "generic.css";
 @import "taiga-ui/taiga-ui.css";
-@import "button.css";
-@import "accesibility.css";
-@import "skeleton.css";
+@import "shared/button.css";
+@import "shared/accesibility.css";
+@import "tools/skeleton.css";

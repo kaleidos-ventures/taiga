@@ -53,6 +53,8 @@ const altIconName: Record<string, string> = {
   tuiIconCancel: 'alert',
   tuiIconAttention: 'alert',
   tuiIconCheckCircle: 'check',
+  tuiIconAlertCircle: 'alert',
+  tuiIconXCircle: 'alert',
 };
 
 export function prefersReducedMotion(): boolean {

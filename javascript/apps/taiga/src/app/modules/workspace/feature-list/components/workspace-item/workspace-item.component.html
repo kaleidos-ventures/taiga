@@ -95,7 +95,8 @@ Copyright (c) 2023-present Kaleidos INC
       <tg-project-card
         *ngIf="
           workspace.latestProjects.length === 0 &&
-          workspace.userRole === 'admin'
+          workspace.userRole === 'admin' &&
+          vm.projects.length === 0
         "
         [workspace]="workspace"
         [acceptedInvites]="vm.acceptedInvites"

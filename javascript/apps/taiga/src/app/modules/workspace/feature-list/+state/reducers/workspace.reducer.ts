@@ -11,6 +11,7 @@ import { Project, Workspace, WorkspaceProject } from '@taiga/data';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state//actions/invitation.action';
 import { immerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace.actions';
+import { workspaceEventActions } from '../actions/workspace.actions';
 
 export interface WorkspaceState {
   workspaces: Workspace[];
@@ -133,6 +134,11 @@ export const reducer = createReducer(
         const projectToAdd = project.filter((project) => {
           return project.id === projectId;
         });
+        if (state.workspaces[currentWorkspaceIndex].latestProjects.length < 5) {
+          state.workspaces[currentWorkspaceIndex].latestProjects.unshift(
+            projectToAdd[0]
+          );
+        }
         state.workspaces[currentWorkspaceIndex].totalProjects++;
         state.workspaceProjects[workspaceId].unshift(projectToAdd[0]);
       }
@@ -175,25 +181,37 @@ export const reducer = createReducer(
 
   on(
     WorkspaceActions.deleteWorkspaceProjectSuccess,
-    (state, { workspace, projectId }): WorkspaceState => {
-      const workspaceIndex = state.workspaces.findIndex((workspaceItem) => {
-        return workspaceItem.id === workspace.id;
-      });
-
-      if (workspaceIndex >= 0 && state.workspaces[workspaceIndex]) {
-        state.workspaces[workspaceIndex].invitedProjects = state.workspaces[
-          workspaceIndex
-        ].invitedProjects.filter((invitedProject) => {
-          return invitedProject.id !== projectId;
+    (state, { updatedWorkspace, projectId }): WorkspaceState => {
+      if (updatedWorkspace) {
+        const workspaceIndex = state.workspaces.findIndex((workspaceItem) => {
+          return workspaceItem.id === updatedWorkspace.id;
         });
-      }
 
-      if (workspaceIndex >= 0 && state.workspaceProjects[workspace.id]) {
-        state.workspaceProjects[workspace.id] = state.workspaceProjects[
-          workspace.id
-        ].filter((project) => {
-          return project.id !== projectId;
-        });
+        if (workspaceIndex >= 0 && state.workspaces[workspaceIndex]) {
+          state.workspaces[workspaceIndex].invitedProjects = state.workspaces[
+            workspaceIndex
+          ].invitedProjects.filter((invitedProject) => {
+            return invitedProject.id !== projectId;
+          });
+
+          state.workspaces[workspaceIndex].latestProjects = state.workspaces[
+            workspaceIndex
+          ].latestProjects.filter((project) => {
+            return project.id !== projectId;
+          });
+        }
+
+        if (
+          workspaceIndex >= 0 &&
+          state.workspaceProjects[updatedWorkspace.id]
+        ) {
+          state.workspaceProjects[updatedWorkspace.id] =
+            state.workspaceProjects[updatedWorkspace.id].filter((project) => {
+              return project.id !== projectId;
+            });
+          state.workspaces[workspaceIndex].totalProjects =
+            state.workspaceProjects[updatedWorkspace.id].length;
+        }
       }
 
       return state;
@@ -234,11 +252,21 @@ export const reducer = createReducer(
     }
   ),
   on(
-    WorkspaceActions.deleteWorkspace,
+    workspaceEventActions.projectDeleted,
     (state, { workspaceId }): WorkspaceState => {
-      state.workspaces = state.workspaces.filter((it) => {
-        return it.id !== workspaceId;
+      const workspace = state.workspaces.find((workspace) => {
+        return workspace.id === workspaceId;
       });
+      if (
+        workspace &&
+        workspace.invitedProjects.length + workspace.totalProjects - 1 <= 0 &&
+        workspace.userRole === 'guest'
+      ) {
+        state.workspaces = state.workspaces.filter((it) => {
+          return it.id !== workspaceId;
+        });
+      }
+
       return state;
     }
   )

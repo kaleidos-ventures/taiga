@@ -37,7 +37,6 @@ import {
   fetchWorkspaceProjects,
   invitationCreateEvent,
   invitationRevokedEvent,
-  projectDeletedEvent,
   setWorkspaceListRejectedInvites,
   workspaceEventActions,
 } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
@@ -349,11 +348,6 @@ export class WorkspaceItemComponent
       })
       .pipe(untilDestroyed(this))
       .subscribe((eventResponse) => {
-        this.wsEvent(
-          'projects.delete',
-          eventResponse.event.content.project,
-          eventResponse.event.content.workspace
-        );
         this.store.dispatch(
           workspaceEventActions.projectDeleted({
             projectId: eventResponse.event.content.project,
@@ -409,25 +403,9 @@ export class WorkspaceItemComponent
         this.membershipCreateEvent(projectId);
       } else if (event === 'projectinvitations.revoke') {
         this.invitationRevokedEvent(projectId);
-      } else if (event === 'projects.delete') {
-        this.projectDeletedEvent(projectId);
       }
     }
     this.cd.detectChanges();
-  }
-
-  public projectDeletedEvent(projectId: string) {
-    const invitations = [...this.state.get('invitations')];
-    const workspaceInvitations = invitations.filter(
-      (workspaceInvitation) => workspaceInvitation.id !== projectId
-    );
-    const newWorkspace = { ...this.workspace };
-    newWorkspace.invitedProjects = workspaceInvitations;
-    this.store.dispatch(
-      projectDeletedEvent({
-        workspace: newWorkspace,
-      })
-    );
   }
 
   public invitationRevokedEvent(project: string) {

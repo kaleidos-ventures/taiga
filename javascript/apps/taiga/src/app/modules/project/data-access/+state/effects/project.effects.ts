@@ -240,7 +240,10 @@ export class ProjectEffects {
   public deleteProjectSuccess$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(ProjectActions.deleteProjectSuccess),
+        ofType(
+          ProjectActions.deleteProjectSuccess,
+          projectEventActions.projectDeleted
+        ),
         tap((action) => {
           void this.router.navigate(['/']);
           void this.appService.toastNotification({
@@ -253,18 +256,6 @@ export class ProjectEffects {
     },
     { dispatch: false }
   );
-
-  public deleteProjectEvent$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(projectEventActions.projectDeleted),
-      map((action) => {
-        return ProjectActions.deleteProjectSuccess({
-          name: action.name,
-          error: action.error,
-        });
-      })
-    );
-  });
 
   constructor(
     private actions$: Actions,

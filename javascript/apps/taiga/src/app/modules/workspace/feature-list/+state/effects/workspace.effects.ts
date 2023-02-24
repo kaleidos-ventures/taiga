@@ -188,25 +188,27 @@ export class WorkspaceEffects {
           // Check if there are any active projects or invitations on the workspace, and if you're a guest user, it will prevent you from attempting to fetch the workspace and simply deleting it.
           if (
             workspace &&
-            workspace.invitedProjects.length + workspace.totalProjects - 1 <=
-              0 &&
-            workspace.userRole === 'guest'
+            !(
+              workspace.invitedProjects.length + workspace.totalProjects - 1 <=
+                0 && workspace.userRole === 'guest'
+            )
           ) {
-            return WorkspaceActions.deleteWorkspace({
-              workspaceId: action.workspaceId,
-            });
-          } else {
             return zip(
               this.workspaceApiService.fetchWorkspace(action.workspaceId)
             ).pipe(
               map(([workspace]) => {
                 return WorkspaceActions.deleteWorkspaceProjectSuccess({
-                  workspace: workspace,
+                  updatedWorkspace: workspace,
+                  workspaceId: action.workspaceId,
                   projectId: action.projectId,
                 });
               })
             );
           }
+          return WorkspaceActions.deleteWorkspaceProjectSuccess({
+            workspaceId: action.workspaceId,
+            projectId: action.projectId,
+          });
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
           return this.appService.errorManagement(httpResponse);

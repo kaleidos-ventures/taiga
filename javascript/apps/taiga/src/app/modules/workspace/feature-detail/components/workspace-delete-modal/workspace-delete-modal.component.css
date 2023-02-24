@@ -1,0 +1,33 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import "tools/typography.css";
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.title {
+  @mixin font-heading-3;
+
+  margin-block: 0 var(--spacing-24);
+}
+
+.warning-notification {
+  display: block;
+  margin-block-end: var(--spacing-24);
+
+  &::ng-deep .wrapper {
+    inline-size: 100%;
+  }
+
+  &::ng-deep .number-projects {
+    font-weight: var(--font-weight-medium);
+  }
+}

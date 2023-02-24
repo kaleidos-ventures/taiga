@@ -1,0 +1,44 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <tg-ui-modal
+    class="delete-workspace-modal"
+    [open]="showDeleteWorkspaceModal"
+    [width]="500"
+    (requestClose)="close()">
+    <div
+      role="dialog"
+      aria-labelledby="delete-workspace"
+      aria-modal="true">
+      <h1
+        class="title"
+        id="delete-workspace">
+        {{ t('workspace.delete.modal_title') }}
+      </h1>
+      <tg-ui-context-notification
+        class="warning-notification"
+        alertLevel="polite"
+        status="warning">
+        <span
+          [innerHtml]="
+            t('workspace.delete.modal_warning', { totalProjects: projects })
+          "></span>
+      </tg-ui-context-notification>
+      <div class="actions">
+        <button
+          type="button"
+          tuiButton
+          appearance="tertiary"
+          (click)="close()">
+          {{ t('workspace.delete.modal_understood') }}
+        </button>
+      </div>
+    </div>
+  </tg-ui-modal>
+</ng-container>

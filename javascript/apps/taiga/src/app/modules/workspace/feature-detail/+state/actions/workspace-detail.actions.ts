@@ -62,3 +62,13 @@ export const workspaceDetailEventActions = createActionGroup({
     }>(),
   },
 });
+
+export const deleteWorkspace = createAction(
+  '[Workspace] Delete',
+  props<{ id: Workspace['id']; name: Workspace['name'] }>()
+);
+
+export const deleteWorkspaceSuccess = createAction(
+  '[Workspace] Delete success',
+  props<{ id: Workspace['id']; name: Workspace['name'] }>()
+);

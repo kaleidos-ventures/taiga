@@ -24,14 +24,20 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   template: `
     <tui-root>
       <div style="width: 500px">
-        <form [formGroup]="form" (submit)="submit()">
+        <form
+          [formGroup]="form"
+          (submit)="submit()">
           <tg-ui-select [label]="label">
-            <tui-select tuiTextfieldSize="l" formControlName="example">
+            <tui-select
+              tuiTextfieldSize="l"
+              formControlName="example">
               <tui-data-list-wrapper
                 *tuiDataList
                 [items]="items"></tui-data-list-wrapper>
             </tui-select>
-            <tg-ui-error inputError error="required">
+            <tg-ui-error
+              inputError
+              error="required">
               Field mandatory
             </tg-ui-error>
           </tg-ui-select>

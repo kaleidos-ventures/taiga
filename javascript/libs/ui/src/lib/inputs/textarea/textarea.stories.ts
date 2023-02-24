@@ -24,8 +24,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   template: `
     <tui-root>
       <div style="width: 500px">
-        <form [formGroup]="form" (submit)="submit()">
-          <tg-ui-textarea [label]="label" [optional]="optional">
+        <form
+          [formGroup]="form"
+          (submit)="submit()">
+          <tg-ui-textarea
+            [label]="label"
+            [optional]="optional">
             <tui-text-area
               formControlName="example"
               [readOnly]="readOnly"
@@ -34,7 +38,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
               {{ placeholder }}
             </tui-text-area>
             <tg-ui-error error="required"> Field mandatory </tg-ui-error>
-            <tg-ui-error inputError error="maxlength">
+            <tg-ui-error
+              inputError
+              error="maxlength">
               Maximun length 140
             </tg-ui-error>
           </tg-ui-textarea>

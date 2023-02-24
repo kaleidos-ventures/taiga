@@ -23,5 +23,12 @@
     "name": "Workspace name",
     "name_required": "Workspace name can’t be empty",
     "name_placeholder": "Add workspace name"
+  },
+  "delete": {
+    "delete_workspace": "Delete workspace",
+    "deleted_worspace": "The workspace {{ name }} has been deleted",
+    "modal_title": "You cannot delete a workspace that has projects in it",
+    "modal_warning": "This workspace has { totalProjects, plural, one {<strong class='number-projects'>#</strong> project} other {<strong class='number-projects'>#</strong> projects} }. <br /> Delete the { totalProjects, plural, one {project} other {projects} } first and try again.",
+    "modal_understood": "Ok, understood"
   }
 }

@@ -46,6 +46,12 @@ export class WorkspaceApiService {
       );
   }
 
+  public deleteWorkspace(id: Workspace['id']) {
+    return this.http.delete<Workspace>(
+      `${this.config.apiUrl}/workspaces/${id}`
+    );
+  }
+
   public fetchWorkspaceProjects(id: Workspace['id']) {
     return this.http.get<Project[]>(
       `${this.config.apiUrl}/workspaces/${id}/projects`

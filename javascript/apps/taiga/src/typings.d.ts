@@ -7,5 +7,5 @@
  */
 
 declare module 'diacritic' {
-  export = { clean(input: string): string; };
+  export function clean(input: string): string;
 }

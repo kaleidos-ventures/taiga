@@ -263,6 +263,20 @@ async def test_get_workspace_summary_non_existing():
 
 
 ##########################################################
+# update workspace
+##########################################################
+
+
+async def test_update_workspace():
+    workspace = await f.create_workspace()
+    updated_workspace = await repositories.update_workspace(
+        workspace=workspace,
+        values={"name": "New name"},
+    )
+    assert updated_workspace.name == "New name"
+
+
+##########################################################
 # misc - get_user_workspaces_overview
 ##########################################################
 

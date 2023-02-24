@@ -6,7 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from itertools import chain
-from typing import Callable, Iterable, TypedDict
+from typing import Any, Callable, Iterable, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -359,3 +359,17 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
         )
     except Workspace.DoesNotExist:
         return None  # There is no workspace with this id for this user
+
+
+##########################################################
+# update workspace
+##########################################################
+
+
+@sync_to_async
+def update_workspace(workspace: Workspace, values: dict[str, Any] = {}) -> Workspace:
+    for attr, value in values.items():
+        setattr(workspace, attr, value)
+
+    workspace.save()
+    return workspace

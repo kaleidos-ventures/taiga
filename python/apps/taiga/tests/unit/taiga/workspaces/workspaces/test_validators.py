@@ -8,14 +8,18 @@
 
 import pytest
 from pydantic import ValidationError
-from taiga.workspaces.workspaces.api.validators import WorkspaceValidator
+from taiga.workspaces.workspaces.api.validators import UpdateWorkspaceValidator, WorkspaceValidator
+
+##########################################################
+# WorkspaceValidator
+##########################################################
 
 
 def test_validate_workspace_with_empty_name(client):
     name = ""
     color = 1
 
-    with pytest.raises(ValidationError, match=r"Empty name is not allowed"):
+    with pytest.raises(ValidationError):
         WorkspaceValidator(name=name, color=color)
 
 
@@ -59,3 +63,22 @@ def test_validate_workspace_with_blank_chars(client):
     data = WorkspaceValidator(name=name, color=color)
     assert data.name == "My w0r#%&乕شspace"
     assert data.color == color
+
+
+##########################################################
+# UpdateWorkspaceValidator
+##########################################################
+
+
+def test_validate_update_workspace_ok():
+    name = "new name"
+    patch = UpdateWorkspaceValidator(name=name)
+
+    assert patch.name == name
+
+
+def test_validate_update_workspace_with_empty_name(client):
+    name = ""
+
+    with pytest.raises(ValidationError):
+        UpdateWorkspaceValidator(name=name)

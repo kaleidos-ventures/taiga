@@ -11,11 +11,11 @@ from taiga.base.api import AuthRequest, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
-from taiga.permissions import HasPerm, IsAuthenticated
+from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
+from taiga.permissions import HasPerm, IsAuthenticated, IsWorkspaceAdmin
 from taiga.routers import routes
 from taiga.workspaces.workspaces import services as workspaces_services
-from taiga.workspaces.workspaces.api.validators import WorkspaceValidator
+from taiga.workspaces.workspaces.api.validators import UpdateWorkspaceValidator, WorkspaceValidator
 from taiga.workspaces.workspaces.models import Workspace
 from taiga.workspaces.workspaces.serializers import WorkspaceDetailSerializer, WorkspaceSerializer
 
@@ -23,8 +23,10 @@ from taiga.workspaces.workspaces.serializers import WorkspaceDetailSerializer, W
 LIST_MY_WORKSPACES = IsAuthenticated()
 GET_MY_WORKSPACE = IsAuthenticated()
 GET_WORKSPACE = HasPerm("view_workspace")
+UPDATE_WORKSPACE = IsWorkspaceAdmin()
 
 # HTTP 200 RESPONSES
+WORKSPACE_200 = responses.http_status_200(model=WorkspaceSerializer)
 WORKSPACE_DETAIL_200 = responses.http_status_200(model=WorkspaceDetailSerializer)
 LIST_WORKSPACE_DETAIL_200 = responses.http_status_200(model=list[WorkspaceDetailSerializer])
 
@@ -105,6 +107,32 @@ async def get_my_workspace(
     if workspace_overview is None:
         raise ex.NotFoundError(f"Workspace {id} does not exist")
     return workspace_overview
+
+
+##########################################################
+# update workspace
+##########################################################
+
+
+@routes.workspaces.patch(
+    "/{id}",
+    name="workspace.update",
+    summary="Update workspace",
+    responses=WORKSPACE_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+)
+async def update_workspace(
+    request: AuthRequest,
+    form: UpdateWorkspaceValidator,
+    id: B64UUID = Query("", description="the workspace id(B64UUID)"),
+) -> WorkspaceSerializer:
+    """
+    Update workspace
+    """
+    workspace = await get_workspace_or_404(id)
+    await check_permissions(permissions=UPDATE_WORKSPACE, user=request.user, obj=workspace)
+
+    values = form.dict(exclude_unset=True)
+    return await workspaces_services.update_workspace(workspace=workspace, user=request.user, values=values)
 
 
 ##########################################################

@@ -121,7 +121,7 @@
     "user_deleted_entity": "{{user}} has deleted it, so you cannot edit it anymore.",
     "deleted_project": "Project {{name}} has been deleted",
     "generic_deleted_project": "Project has been deleted",
-    "deleted_workspace": "Workspace {{name}} has been deleted"
+    "deleted_workspace": "The workspace {{name}} has been deleted"
   },
   "discard_changes": {
     "title": "Discard changes?",

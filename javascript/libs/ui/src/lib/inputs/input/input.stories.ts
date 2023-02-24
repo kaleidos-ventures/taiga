@@ -22,18 +22,27 @@ import { InputComponent } from './input.component';
   selector: 'tg-ui-forms',
   template: `
     <div class="container">
-      <form [formGroup]="form" (submit)="submit()" #exampleForm="ngForm">
-        <tg-ui-input [icon]="iconSvg" [label]="label">
+      <form
+        [formGroup]="form"
+        (submit)="submit()"
+        #exampleForm="ngForm">
+        <tg-ui-input
+          [icon]="iconSvg"
+          [label]="label">
           <input
             formControlName="example"
             inputRef
             [attr.readOnly]="readOnly"
             [placeholder]="placeholder" />
-          <tg-ui-error inputError error="required">
+          <tg-ui-error
+            inputError
+            error="required">
             Field mandatory
           </tg-ui-error>
         </tg-ui-input>
-        <tg-ui-input [icon]="iconSvg" [label]="label">
+        <tg-ui-input
+          [icon]="iconSvg"
+          [label]="label">
           <input
             formControlName="email"
             inputRef

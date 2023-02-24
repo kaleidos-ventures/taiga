@@ -14,10 +14,11 @@ import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { WorkspaceApiService } from '@taiga/api';
 import { timer, zip } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { workspaceDetailEventActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import { AppService } from '~/app/services/app.service';
 import * as WorkspaceDetailActions from '../actions/workspace-detail.actions';
+import { TuiNotification } from '@taiga-ui/core';
 
 @Injectable()
 export class WorkspaceDetailEffects {
@@ -115,6 +116,57 @@ export class WorkspaceDetailEffects {
       })
     );
   });
+
+  public deleteWorkspace$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceDetailActions.deleteWorkspace),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.workspaceApiService.deleteWorkspace(action.id).pipe(
+            map(() => {
+              return WorkspaceDetailActions.deleteWorkspaceSuccess({
+                id: action.id,
+                name: action.name,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.errorManagement(httpResponse, {
+            any: {
+              type: 'toast',
+              options: {
+                label: 'errors.generic_toast_label',
+                message: 'errors.generic_toast_message',
+                status: TuiNotification.Error,
+              },
+            },
+          });
+          void this.router.navigate(['/']);
+        },
+      })
+    );
+  });
+
+  public deleteWorkspaceSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(WorkspaceDetailActions.deleteWorkspaceSuccess),
+        tap((action) => {
+          this.appService.toastNotification({
+            message: 'delete.deleted_worspace',
+            paramsMessage: { name: action.name },
+            status: TuiNotification.Info,
+            scope: 'workspace',
+            autoClose: true,
+            closeOnNavigation: false,
+          });
+          void this.router.navigate(['/']);
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   constructor(
     private actions$: Actions,

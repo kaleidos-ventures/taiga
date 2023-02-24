@@ -22,7 +22,9 @@ Copyright (c) 2023-present Kaleidos INC
           </tg-ui-avatar>
         </div>
         <div class="workspace-detail-title-wrapper">
-          <div class="workspace-detail-title-route">Workspace/</div>
+          <div class="workspace-detail-title-route">
+            {{ t('commons.workspace') }}/
+          </div>
           <div class="workspace-detail-title-container">
             <h3
               class="workspace-detail-title"
@@ -41,7 +43,8 @@ Copyright (c) 2023-present Kaleidos INC
               size="s"
               color="primary"></tg-ui-badge>
             <tui-hosted-dropdown
-              [tuiDropdownAlign]="'right'"
+              *ngIf="vm.workspace.userRole === 'admin'"
+              [tuiDropdownAlign]="'left'"
               [content]="workspaceOptions"
               [(open)]="displayWorkspaceOptions">
               <button
@@ -60,7 +63,7 @@ Copyright (c) 2023-present Kaleidos INC
             </tui-hosted-dropdown>
           </div>
         </div>
-        <div class="workspace-detail-actions">
+        <div class="workspace-detail-back">
           <a
             tuiButton
             type="button"
@@ -178,16 +181,31 @@ Copyright (c) 2023-present Kaleidos INC
           <button
             role="menuitem"
             data-test="edit-ws-title-button"
-            class="edit-ws-option"
+            class="ws-option"
             tuiOption
             type="button"
             (click)="editWorkspaceModal()">
             <tui-svg
               aria-hidden="true"
-              class="edit-ws-option-icon"
+              class="ws-option-icon"
               src="pen"></tui-svg>
-            <span class="edit-ws-option-name">{{
+            <span class="ws-option-name">{{
               t('workspace.edit_workspace_name')
+            }}</span>
+          </button>
+          <hr class="separator" />
+          <button
+            class="ws-option delete"
+            role="menuitem"
+            tuiOption
+            type="button"
+            (click)="handleDeleteProject()">
+            <tui-svg
+              class="ws-option-icon"
+              aria-hidden="true"
+              src="trash"></tui-svg>
+            <span class="ws-option-name delete">{{
+              t('workspace.delete.delete_workspace')
             }}</span>
           </button>
         </tui-data-list>
@@ -204,6 +222,11 @@ Copyright (c) 2023-present Kaleidos INC
             (cancelEdit)="closeEditWorkspaceModal()"></tg-workspace-detail-edit>
         </ng-container>
       </tg-ui-modal>
+      <tg-delete-workspace
+        *ngIf="showDeleteWorkspaceModal"
+        [show]="showDeleteWorkspaceModal"
+        (closeModal)="showDeleteWorkspaceModal = false"
+        [projects]="vm.workspace.totalProjects"></tg-delete-workspace>
     </ng-container>
   </ng-container>
 </ng-container>

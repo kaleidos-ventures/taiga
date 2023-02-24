@@ -30,6 +30,7 @@ import { workspaceDetailFeature } from './+state/reducers/workspace-detail.reduc
 import { WorkspaceDetailEditComponent } from './components/workspace-detail-edit/workspace-detail-edit.component';
 import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-skeleton/workspace-detail-skeleton.component';
 import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
+import { DeleteWorkspaceComponent } from './components/workspace-delete-modal/workspace-delete-modal.component';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
 
 @NgModule({
@@ -45,14 +46,17 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     AvatarModule,
     CommonTemplateModule,
     BadgeModule,
+    DropdownModule,
+    TuiDataListModule,
+    TuiSvgModule,
     StoreModule.forFeature(workspaceDetailFeature),
     EffectsModule.forFeature([WorkspaceDetailEffects]),
     ProjectCardComponent,
+    DeleteWorkspaceComponent,
     ResizeEventModule,
     WorkspacePageRoutingModule,
     SkeletonsModule,
     CapitalizePipeModule,
-    DropdownModule,
     TuiDataListModule,
     TuiSvgModule,
     HasPermissionDirective,

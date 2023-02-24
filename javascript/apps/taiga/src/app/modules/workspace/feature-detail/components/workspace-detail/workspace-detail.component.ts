@@ -33,6 +33,7 @@ import {
   invitationDetailRevokedEvent,
   resetWorkspace,
   workspaceDetailEventActions,
+  deleteWorkspace,
 } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import {
   selectCreatingWorkspaceDetail,
@@ -148,6 +149,8 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   public reorder: Record<string, string> = {};
 
   public displayWorkspaceOptions = false;
+
+  public showDeleteWorkspaceModal = false;
 
   public get gridClass() {
     return `grid-items-${this.amountOfProjectsToShow}`;
@@ -579,5 +582,19 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   public updateWorkspace(workspace: Partial<Workspace>) {
     console.log('send data to backend!', workspace);
     this.closeEditWorkspaceModal();
+  }
+
+  public handleDeleteProject() {
+    const workspace = this.state.get('workspace');
+    if (workspace?.hasProjects) {
+      this.showDeleteWorkspaceModal = true;
+    } else {
+      this.store.dispatch(
+        deleteWorkspace({
+          id: workspace!.id,
+          name: workspace!.name,
+        })
+      );
+    }
   }
 }

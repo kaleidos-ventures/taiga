@@ -78,23 +78,42 @@ tg-project-card {
 .workspace-options-list {
   @mixin option-list;
 
-  & .edit-ws-option-name {
+  & .ws-option-name {
     @mixin option-name;
   }
 
-  & .edit-ws-option-icon {
+  & .ws-option-icon {
     @mixin option-icon;
   }
 
-  & .edit-ws-option {
+  & .ws-option {
     align-items: center;
     display: flex;
     justify-content: flex-start;
 
     &:hover {
-      & .edit-ws-option-name {
+      & .ws-option-name {
         color: var(--color-secondary);
+      }
+
+      & .delete {
+        color: var(--color-red80);
+      }
+    }
+
+    &.delete {
+      & .ws-option-name {
+        color: var(--color-red);
+      }
+
+      & .ws-option-icon {
+        color: var(--color-red);
       }
     }
   }
+}
+
+.separator {
+  background: var(--color-gray30);
+  margin-block: var(--spacing-8);
 }

@@ -10,6 +10,10 @@ from uuid import UUID
 
 from taiga.base.db import transaction
 from taiga.base.sampledata import factories
+from taiga.projects.invitations import repositories as pj_invitations_repositories
+from taiga.projects.invitations.choices import ProjectInvitationStatus
+from taiga.projects.invitations.models import ProjectInvitation
+from taiga.projects.projects.models import Project
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
 from taiga.workspaces.memberships import repositories as ws_memberships_repositories
@@ -17,35 +21,28 @@ from taiga.workspaces.memberships import repositories as ws_memberships_reposito
 
 @transaction.atomic
 async def load_demo_data() -> None:
-    # USERS. Create users
-    users = []
-    usernames = ["usera0", "userb0", "userc0", "userd0", "usere0", "userf0", "userg0"]
-    for username in usernames:
-        user = await factories.create_user_with_kwargs(username=username)
-        users.append(user)
-
     # CUSTOM SCENARIOS
     print("  - Creating scenario to freelance user working for herself")
-    await _create_scenario_freelance_working_for_herself(users=users)
+    await _create_scenario_freelance_working_for_herself()
     print("  - Creating scenario to freelance user working for others")
-    await _create_scenario_freelance_working_for_others(users=users)
+    await _create_scenario_freelance_working_for_others()
     print("  - Creating scenario to user in society working for others")
-    await _create_scenario_user_in_society_working_for_others(users=users)
+    await _create_scenario_user_in_society_working_for_others()
     print("  - Creating scenario to manager in society working for others")
-    await _create_scenario_manager_in_society_working_for_others(users=users)
+    await _create_scenario_manager_in_society_working_for_others()
     print("  - Creating scenario to manager in society with big client")
-    await _create_scenario_manager_in_society_with_big_client(users=users)
+    await _create_scenario_manager_in_society_with_big_client()
     print("  - Creating scenario to manager in society with own product")
-    await _create_scenario_manager_in_society_with_own_product(users=users)
+    await _create_scenario_manager_in_society_with_own_product()
     print("  - Creating scenario to manager in big society with own product")
-    await _create_scenario_manager_in_big_society_with_own_product(users=users)
+    await _create_scenario_manager_in_big_society_with_own_product()
 
 
-async def _create_scenario_freelance_working_for_herself(users: list[User]) -> None:
+async def _create_scenario_freelance_working_for_herself() -> None:
     # USERS
-    usera0 = users[0]
+    usera0 = await factories.create_user_with_kwargs(username="usera0")
     usera1 = await factories.create_user_with_kwargs(username="usera1")
-    userd0 = users[3]
+    userd0 = await factories.create_user_with_kwargs(username="userd0")
 
     # WORKSPACES
     # admin role is created by default
@@ -78,22 +75,22 @@ async def _create_scenario_freelance_working_for_herself(users: list[User]) -> N
 
     for project in projects:
         # PROJECT INVITATIONS
-        await factories.create_project_invitations(project=project, users=users)
+        await _create_accepted_project_invitations(project=project)
 
         # STORIES
         await factories.create_stories(project_id=project.id)
 
 
-async def _create_scenario_freelance_working_for_others(users: list[User]) -> None:
+async def _create_scenario_freelance_working_for_others() -> None:
     # USERS
-    userb0 = users[1]
+    userb0 = await factories.create_user_with_kwargs(username="userb0")
     userb1 = await factories.create_user_with_kwargs(username="userb1")
     userb2 = await factories.create_user_with_kwargs(username="userb2")
     userb3 = await factories.create_user_with_kwargs(username="userb3")
     usera1 = await users_repositories.get_user(filters={"username_or_email": "usera1"})
-    userd0 = users[3]
+    userd0 = await users_repositories.get_user(filters={"username_or_email": "userd0"})
     userd1 = await factories.create_user_with_kwargs(username="userd1")
-    userf0 = users[5]
+    userf0 = await factories.create_user_with_kwargs(username="userf0")
 
     # WORKSPACES
     # admin role is created by default
@@ -156,15 +153,15 @@ async def _create_scenario_freelance_working_for_others(users: list[User]) -> No
 
     for project in projects:
         # PROJECT INVITATIONS
-        await factories.create_project_invitations(project=project, users=users)
+        await _create_accepted_project_invitations(project=project)
 
         # STORIES
         await factories.create_stories(project_id=project.id)
 
 
-async def _create_scenario_user_in_society_working_for_others(users: list[User]) -> None:
+async def _create_scenario_user_in_society_working_for_others() -> None:
     # USERS
-    userc0 = users[2]
+    userc0 = await factories.create_user_with_kwargs(username="userc0")
 
     # WORKSPACES
     # admin role is created by default
@@ -184,17 +181,14 @@ async def _create_scenario_user_in_society_working_for_others(users: list[User])
         projects.append(await factories.get_project_with_related_info(proj.id))
 
     for project in projects:
-        # PROJECT INVITATIONS
-        await factories.create_project_invitations(project=project, users=users)
-
         # STORIES
         await factories.create_stories(project_id=project.id)
 
 
-async def _create_scenario_manager_in_society_working_for_others(users: list[User]) -> None:
+async def _create_scenario_manager_in_society_working_for_others() -> None:
     # USERS
-    userd0 = users[3]
-    userc0 = users[2]
+    userd0 = await users_repositories.get_user(filters={"username_or_email": "userd0"})
+    userc0 = await users_repositories.get_user(filters={"username_or_email": "userc0"})
     # usersdx total 150
     usersdx = [
         await factories.create_user_with_kwargs(username=f"userd{i+1}") for i in range(1, 150)
@@ -252,23 +246,23 @@ async def _create_scenario_manager_in_society_working_for_others(users: list[Use
     projects.append(await factories.get_project_with_related_info(proj.id))
 
     for project in projects:
-        # PROJECT MEMBERSHIPS
         if project.name != "TODO":
+            # PROJECT MEMBERSHIPS
             num_members = random.randint(0, 150)
             if num_members > 0:
                 await factories.create_project_memberships(project_id=project.id, users=usersdx[:num_members])
 
-        # PROJECT INVITATIONS
-        await factories.create_project_invitations(project=project, users=users + usersdx)
+            # PROJECT INVITATIONS
+            await factories.create_project_invitations(project=project, users=usersdx)
 
         # STORIES
         await factories.create_stories(project_id=project.id)
 
 
-async def _create_scenario_manager_in_society_with_big_client(users: list[User]) -> None:
+async def _create_scenario_manager_in_society_with_big_client() -> None:
     # USERS
-    usere0 = users[4]
-    userc0 = users[2]
+    usere0 = await factories.create_user_with_kwargs(username="usere0")
+    userc0 = await users_repositories.get_user(filters={"username_or_email": "userc0"})
     usere1 = await factories.create_user_with_kwargs(username="usere1")
     # usersex total 50
     usersex = [
@@ -344,22 +338,26 @@ async def _create_scenario_manager_in_society_with_big_client(users: list[User])
     projects.append(await factories.get_project_with_related_info(proj.id))
 
     for project in projects:
-        # PROJECT MEMBERSHIPS
         if project.workspace.name != "Personal":
+            # PROJECT MEMBERSHIPS
             num_members = random.randint(0, 50)
             if num_members > 0:
                 await factories.create_project_memberships(project_id=project.id, users=usersex[:num_members])
 
-        # PROJECT INVITATIONS
-        await factories.create_project_invitations(project=project, users=users + usersex)
+            # PROJECT INVITATIONS
+            await factories.create_project_invitations(project=project, users=usersex)
+
+        if project.name == "Birthday party":
+            # PROJECT INVITATIONS
+            await _create_accepted_project_invitations(project=project)
 
         # STORIES
         await factories.create_stories(project_id=project.id)
 
 
-async def _create_scenario_manager_in_society_with_own_product(users: list[User]) -> None:
+async def _create_scenario_manager_in_society_with_own_product() -> None:
     # USERS
-    userf0 = users[5]
+    userf0 = await users_repositories.get_user(filters={"username_or_email": "userf0"})
     userf1 = await factories.create_user_with_kwargs(username="userf1")
     userf2 = await factories.create_user_with_kwargs(username="userf2")
     userf3 = await factories.create_user_with_kwargs(username="userf3")
@@ -406,22 +404,22 @@ async def _create_scenario_manager_in_society_with_own_product(users: list[User]
         projects.append(await factories.get_project_with_related_info(proj.id))
 
     for project in projects:
-        # PROJECT MEMBERSHIPS
         if project.workspace.name != "Personal":
+            # PROJECT MEMBERSHIPS
             num_members = random.randint(0, 40)
             if num_members > 0:
                 await factories.create_project_memberships(project_id=project.id, users=usersfx[:num_members])
 
-        # PROJECT INVITATIONS
-        await factories.create_project_invitations(project=project, users=users + usersfx)
+            # PROJECT INVITATIONS
+            await factories.create_project_invitations(project=project, users=usersfx)
 
         # STORIES
         await factories.create_stories(project_id=project.id)
 
 
-async def _create_scenario_manager_in_big_society_with_own_product(users: list[User]) -> None:
+async def _create_scenario_manager_in_big_society_with_own_product() -> None:
     # USERS
-    userg0 = users[6]
+    userg0 = await factories.create_user_with_kwargs(username="userg0")
     # usersgx total 100
     usersgx = [await factories.create_user_with_kwargs(username=f"userg{i+1}") for i in range(0, 100)]
 
@@ -481,7 +479,7 @@ async def _create_scenario_manager_in_big_society_with_own_product(users: list[U
         await factories.create_project_memberships(project_id=project.id, users=usersgx[:num_members])
 
         # PROJECT INVITATIONS
-        await factories.create_project_invitations(project=project, users=users + usersgx)
+        await factories.create_project_invitations(project=project, users=usersgx)
 
         # STORIES
         await factories.create_stories(project_id=project.id)
@@ -499,3 +497,22 @@ async def _create_workspace_memberships(workspace_id: UUID, users: list[User], r
     # add ws members
     for user in users:
         await ws_memberships_repositories.create_workspace_membership(user=user, workspace=workspace, role=role)
+
+
+async def _create_accepted_project_invitations(project: Project) -> None:
+    # add accepted invitations for project memberships
+    invitations = [
+        ProjectInvitation(
+            user=m.user,
+            project=project,
+            role=m.role,
+            email=m.user.email,
+            status=ProjectInvitationStatus.ACCEPTED,
+            invited_by=project.owner,
+        )
+        for m in project.memberships.all()
+        if m.user_id != project.owner_id
+    ]
+
+    # create invitations in bulk
+    await pj_invitations_repositories.create_project_invitations(objs=invitations)

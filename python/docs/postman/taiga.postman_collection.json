@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "b63370a0-e9e7-4ab7-9c14-31fd741ae783",
+		"_postman_id": "dfcb7120-722e-4634-a41d-085008d2f958",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"_exporter_id": "3299216"
 	},
 	"item": [
 		{
@@ -692,6 +692,56 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"name\": \"New name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"workspaces",
+								"{{ws-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}",
 							"options": {
 								"raw": {
 									"language": "json"

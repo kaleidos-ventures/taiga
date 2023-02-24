@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 import pytest
 from taiga.workspaces.workspaces import services
+from taiga.workspaces.workspaces.services import exceptions as ex
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -110,7 +111,7 @@ async def test_get_workspace_detail():
 ##########################################################
 
 
-async def get_workspace_nestedy():
+async def get_workspace_nested():
     user = await f.create_user()
     workspace = await f.create_workspace(owner=user)
 
@@ -142,3 +143,62 @@ async def test_update_workspace_ok(tqmanager):
         await services._update_workspace(workspace=workspace, values=values)
         fake_workspaces_repo.update_workspace.assert_awaited_once_with(workspace=workspace, values=values)
         assert len(tqmanager.pending_jobs) == 0
+
+
+##########################################################
+# delete_workspace
+##########################################################
+
+
+async def test_delete_workspace_without_projects():
+    workspace = await f.create_workspace()
+
+    with (
+        patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
+        patch("taiga.workspaces.workspaces.services.projects_repositories", autospec=True) as fake_projects_repo,
+        patch("taiga.workspaces.workspaces.services.workspaces_events", autospec=True) as fake_workspaces_events,
+    ):
+        fake_projects_repo.get_total_projects.return_value = 0
+        fake_workspaces_repo.delete_workspaces.return_value = 4
+
+        ret = await services.delete_workspace(workspace=workspace, deleted_by=workspace.owner)
+
+        fake_projects_repo.get_total_projects.assert_awaited_with(filters={"workspace_id": workspace.id})
+        fake_workspaces_repo.delete_workspaces.assert_awaited_with(filters={"id": workspace.id})
+        fake_workspaces_events.emit_event_when_workspace_is_deleted.assert_awaited()
+        assert ret is True
+
+
+async def test_delete_workspace_with_projects():
+    workspace = await f.create_workspace()
+
+    with (
+        patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
+        patch("taiga.workspaces.workspaces.services.projects_repositories", autospec=True) as fake_projects_repo,
+        patch("taiga.workspaces.workspaces.services.workspaces_events", autospec=True) as fake_workspaces_events,
+        pytest.raises(ex.WorkspaceHasProjects),
+    ):
+        fake_projects_repo.get_total_projects.return_value = 1
+        await services.delete_workspace(workspace=workspace, deleted_by=workspace.owner)
+
+        fake_workspaces_repo.delete_workspaces.assert_not_awaited()
+        fake_workspaces_events.emit_event_when_workspace_is_deleted.assert_not_awaited()
+
+
+async def test_delete_workspace_not_deleted_in_db():
+    workspace = await f.create_workspace()
+
+    with (
+        patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
+        patch("taiga.workspaces.workspaces.services.projects_repositories", autospec=True) as fake_projects_repo,
+        patch("taiga.workspaces.workspaces.services.workspaces_events", autospec=True) as fake_workspaces_events,
+    ):
+        fake_projects_repo.get_total_projects.return_value = 0
+        fake_workspaces_repo.delete_workspaces.return_value = 0
+        ret = await services.delete_workspace(workspace=workspace, deleted_by=workspace.owner)
+
+        fake_projects_repo.get_total_projects.assert_awaited_with(filters={"workspace_id": workspace.id})
+        fake_workspaces_repo.delete_workspaces.assert_awaited_with(filters={"id": workspace.id})
+        fake_workspaces_events.emit_event_when_workspace_is_deleted.assert_not_awaited()
+
+        assert ret is False

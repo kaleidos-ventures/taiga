@@ -373,3 +373,17 @@ def update_workspace(workspace: Workspace, values: dict[str, Any] = {}) -> Works
 
     workspace.save()
     return workspace
+
+
+
+##########################################################
+# delete workspace
+##########################################################
+
+
+@sync_to_async
+def delete_workspaces(filters: WorkspaceFilters = {}) -> int:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    count, _ = qs.delete()
+    return count
+

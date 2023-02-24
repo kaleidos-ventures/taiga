@@ -487,6 +487,29 @@ async def test_get_user_workspaces_overview_invited_projects():
 
 
 ##########################################################
+# delete_workspace
+##########################################################
+
+
+async def test_delete_workspaces_without_ws_members():
+    workspace = await f.create_workspace()
+
+    num_deleted_wss = await repositories.delete_workspaces(filters={"id": workspace.id})
+    assert num_deleted_wss == 4  # 1 workspace, 2 ws_roles (admin/member), 1 ws_memberships (admin-ws.owner)
+
+
+async def test_delete_workspaces_with_ws_members():
+    workspace = await f.create_workspace()
+
+    ws_member = await f.create_user()
+    ws_member_role = await _get_ws_member_role(workspace=workspace)
+    await f.create_workspace_membership(user=ws_member, workspace=workspace, role=ws_member_role)
+
+    num_deleted_wss = await repositories.delete_workspaces(filters={"id": workspace.id})
+    assert num_deleted_wss == 5  # 1 workspace, 2 ws_roles, 2 ws_memberships (ws.owner, ws_member)
+
+
+##########################################################
 # misc - get_user_workspace_overview
 ##########################################################
 

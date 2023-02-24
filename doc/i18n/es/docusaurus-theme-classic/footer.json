@@ -40,7 +40,7 @@
     "description": "The label of footer link with label=GitHub linking to https://github.com/kaleidos-ventures/taiga"
   },
   "copyright": {
-    "message": "Copyright © 2021 Kaleidos Ventures SL.",
+    "message": "Copyright © 2023 Kaleidos INC.",
     "description": "The footer copyright"
   }
 }

@@ -92,7 +92,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Kaleidos Ventures SL.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Kaleidos INC.`,
     },
   },
   presets: [

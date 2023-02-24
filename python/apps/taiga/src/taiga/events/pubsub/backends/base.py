@@ -3,7 +3,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# Copyright (c) 2021-present Kaleidos Ventures SL
+# Copyright (c) 2023-present Kaleidos INC
 
 # The code is partially taken (and modified) from brodcaster v. 0.2.0
 # (https://github.com/encode/broadcaster/tree/435c35eefcf54192331a44881caf626a5993b2f0)

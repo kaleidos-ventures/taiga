@@ -14,6 +14,7 @@ from taiga.users.models import User
 from taiga.workspaces.memberships import repositories as ws_memberships_repositories
 from taiga.workspaces.roles import repositories as ws_roles_repositories
 from taiga.workspaces.roles import services as ws_roles_services
+from taiga.workspaces.workspaces import events as workspaces_events
 from taiga.workspaces.workspaces import repositories as workspaces_repositories
 from taiga.workspaces.workspaces.models import Workspace
 from taiga.workspaces.workspaces.serializers import WorkspaceDetailSerializer, WorkspaceSerializer
@@ -119,3 +120,24 @@ async def _update_workspace(workspace: Workspace, values: dict[str, Any] = {}) -
         raise ex.TaigaValidationError("Name cannot be null")
 
     return await workspaces_repositories.update_workspace(workspace=workspace, values=values)
+
+
+
+##########################################################
+# delete workspace
+##########################################################
+
+
+async def delete_workspace(workspace: Workspace, deleted_by: User) -> bool:
+    ws_total_projects = await projects_repositories.get_total_projects(filters={"workspace_id": workspace.id})
+    if ws_total_projects:
+        raise ex.WorkspaceHasProjects(
+            f"This workspace has {ws_total_projects} projects. Delete the projects and try again."
+        )
+
+    deleted = await workspaces_repositories.delete_workspaces(filters={"id": workspace.id})
+    if deleted > 0:
+        await workspaces_events.emit_event_when_workspace_is_deleted(workspace=workspace, deleted_by=deleted_by)
+        return True
+
+    return False

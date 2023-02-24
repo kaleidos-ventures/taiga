@@ -6,7 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 from uuid import UUID
 
-from fastapi import Query
+from fastapi import Query, status
 from taiga.base.api import AuthRequest, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
@@ -23,6 +23,7 @@ from taiga.workspaces.workspaces.serializers import WorkspaceDetailSerializer, W
 LIST_MY_WORKSPACES = IsAuthenticated()
 GET_MY_WORKSPACE = IsAuthenticated()
 GET_WORKSPACE = HasPerm("view_workspace")
+DELETE_WORKSPACE = IsWorkspaceAdmin()
 UPDATE_WORKSPACE = IsWorkspaceAdmin()
 
 # HTTP 200 RESPONSES
@@ -133,6 +134,32 @@ async def update_workspace(
 
     values = form.dict(exclude_unset=True)
     return await workspaces_services.update_workspace(workspace=workspace, user=request.user, values=values)
+
+
+##########################################################
+# delete workspace
+##########################################################
+
+
+@routes.workspaces.delete(
+    "/{id}",
+    name="workspace.delete",
+    summary="Delete workspace",
+    responses=ERROR_400 | ERROR_404 | ERROR_403,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_workspace(
+    request: AuthRequest,
+    id: B64UUID = Query(None, description="the workspace id (B64UUID)"),
+) -> None:
+    """
+    Delete a workspace
+    """
+    workspace = await get_workspace_or_404(id=id)
+    await check_permissions(permissions=DELETE_WORKSPACE, user=request.user, obj=workspace)
+
+    await workspaces_services.delete_workspace(workspace=workspace, deleted_by=request.user)
+
 
 
 ##########################################################

@@ -192,3 +192,50 @@ async def test_update_workspace_no_admin(client):
     client.login(other_user)
     response = client.patch(f"/workspaces/{workspace.b64id}", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+#############################################################
+#  DELETE /workspaces/<id>
+#############################################################
+
+
+async def test_delete_workspace_being_ws_admin(client):
+    workspace = await f.create_workspace()
+
+    client.login(workspace.owner)
+    response = client.delete(f"/workspaces/{workspace.b64id}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+async def test_delete_workspace_being_ws_member(client):
+    workspace = await f.create_workspace()
+    general_member_role = await f.create_workspace_role(
+        permissions=choices.WorkspacePermissions.values,
+        is_admin=False,
+        workspace=workspace,
+    )
+    ws_member = await f.create_user()
+    await f.create_workspace_membership(user=ws_member, workspace=workspace, role=general_member_role)
+
+    client.login(ws_member)
+    response = client.delete(f"/workspaces/{workspace.b64id}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_delete_workspace_being_external_user(client):
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+
+    client.login(user)
+    response = client.delete(f"/workspaces/{workspace.b64id}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_delete_workspace_not_found(client):
+    user = await f.create_user()
+    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
+
+    client.login(user)
+    response = client.delete(f"/workspaces/{non_existent_id}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+

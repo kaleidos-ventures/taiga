@@ -4,7 +4,8 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2023-present Kaleidos INC
-from typing import cast
+
+from typing import Any, cast
 from uuid import UUID
 
 from taiga.permissions import choices
@@ -18,6 +19,7 @@ from taiga.workspaces.workspaces.models import Workspace
 from taiga.workspaces.workspaces.serializers import WorkspaceDetailSerializer, WorkspaceSerializer
 from taiga.workspaces.workspaces.serializers import services as serializers_services
 from taiga.workspaces.workspaces.serializers.nested import WorkspaceNestedSerializer
+from taiga.workspaces.workspaces.services import exceptions as ex
 
 ##########################################################
 # create workspace
@@ -96,3 +98,24 @@ async def get_user_workspace(user: User, id: UUID) -> WorkspaceDetailSerializer 
     if workspace:
         return serializers_services.serialize_workspace_detail(workspace=workspace)
     return None
+
+
+##########################################################
+# update workspace
+##########################################################
+
+
+async def update_workspace(workspace: Workspace, user: User, values: dict[str, Any] = {}) -> WorkspaceSerializer:
+    updated_workspace = await _update_workspace(workspace=workspace, values=values)
+    return await get_workspace_detail(id=updated_workspace.id, user_id=user.id)
+
+
+async def _update_workspace(workspace: Workspace, values: dict[str, Any] = {}) -> Workspace:
+    # Prevent hitting the database with an empty PATCH
+    if not values:
+        return workspace
+
+    if "name" in values and values["name"] is None:
+        raise ex.TaigaValidationError("Name cannot be null")
+
+    return await workspaces_repositories.update_workspace(workspace=workspace, values=values)

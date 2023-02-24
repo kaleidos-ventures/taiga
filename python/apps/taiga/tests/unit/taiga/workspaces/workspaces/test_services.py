@@ -16,6 +16,45 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
+# create_workspace
+##########################################################
+
+
+async def test_create_workspace():
+    user = await f.create_user()
+    name = "workspace1"
+    color = 5
+    with (
+        patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
+        patch("taiga.workspaces.workspaces.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
+        patch(
+            "taiga.workspaces.workspaces.services.ws_memberships_repositories", autospec=True
+        ) as fake_ws_memberships_repo,
+    ):
+        await services._create_workspace(name=name, color=color, owner=user)
+        fake_workspaces_repo.create_workspace.assert_awaited_once()
+        fake_ws_roles_repo.create_workspace_role.assert_awaited_once()
+        fake_ws_memberships_repo.create_workspace_membership.assert_awaited_once()
+
+
+async def test_create_workspace_detail():
+    workspace = await f.create_workspace()
+    user = await f.create_user()
+    name = "workspace1"
+    color = 5
+    with (
+        patch(
+            "taiga.workspaces.workspaces.services._create_workspace", return_value=workspace, autospec=True
+        ) as fake_create_method,
+        patch("taiga.workspaces.workspaces.services.get_workspace_detail", autospec=True) as fake_serializer_method,
+    ):
+        fake_create_method.return_value = workspace
+        await services.create_workspace(name=name, color=color, owner=user)
+        fake_create_method.assert_awaited_with(name=name, color=color, owner=user)
+        fake_serializer_method.assert_awaited_with(id=workspace.id, user_id=user.id)
+
+
+##########################################################
 # get_user_workspaces_overview
 ##########################################################
 
@@ -91,39 +130,15 @@ async def get_workspace_nestedy():
 
 
 ##########################################################
-# create_workspace
+# update_workspace
 ##########################################################
 
 
-async def test_create_workspace():
-    user = await f.create_user()
-    name = "workspace1"
-    color = 5
-    with (
-        patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
-        patch("taiga.workspaces.workspaces.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
-        patch(
-            "taiga.workspaces.workspaces.services.ws_memberships_repositories", autospec=True
-        ) as fake_ws_memberships_repo,
-    ):
-        await services._create_workspace(name=name, color=color, owner=user)
-        fake_workspaces_repo.create_workspace.assert_awaited_once()
-        fake_ws_roles_repo.create_workspace_role.assert_awaited_once()
-        fake_ws_memberships_repo.create_workspace_membership.assert_awaited_once()
+async def test_update_workspace_ok(tqmanager):
+    workspace = f.build_workspace()
+    values = {"name": "new name"}
 
-
-async def test_create_workspace_detail():
-    workspace = await f.create_workspace()
-    user = await f.create_user()
-    name = "workspace1"
-    color = 5
-    with (
-        patch(
-            "taiga.workspaces.workspaces.services._create_workspace", return_value=workspace, autospec=True
-        ) as fake_create_method,
-        patch("taiga.workspaces.workspaces.services.get_workspace_detail", autospec=True) as fake_serializer_method,
-    ):
-        fake_create_method.return_value = workspace
-        await services.create_workspace(name=name, color=color, owner=user)
-        fake_create_method.assert_awaited_with(name=name, color=color, owner=user)
-        fake_serializer_method.assert_awaited_with(id=workspace.id, user_id=user.id)
+    with patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo:
+        await services._update_workspace(workspace=workspace, values=values)
+        fake_workspaces_repo.update_workspace.assert_awaited_once_with(workspace=workspace, values=values)
+        assert len(tqmanager.pending_jobs) == 0

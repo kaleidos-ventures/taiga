@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "7fb8ef82-24a0-427f-8808-b98f17c5555a",
+		"_postman_id": "b63370a0-e9e7-4ab7-9c14-31fd741ae783",
 		"name": "taiga-next",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -672,6 +673,44 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "update workspace",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"workspaces",
+								"{{ws-id}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -849,12 +888,7 @@
 									"type": "default",
 									"disabled": true
 								}
-							],
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							]
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}",

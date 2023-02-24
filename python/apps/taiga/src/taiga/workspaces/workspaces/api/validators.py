@@ -5,15 +5,21 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from pydantic import conint, constr, validator
+
+from pydantic import ConstrainedStr, conint
 from taiga.base.validators import BaseModel
 
 
+class Name(ConstrainedStr):
+    strip_whitespace = True
+    min_length = 1
+    max_length = 40
+
+
 class WorkspaceValidator(BaseModel):
-    name: constr(strip_whitespace=True, max_length=40)  # type: ignore
+    name: Name
     color: conint(gt=0, lt=9)  # type: ignore
 
-    @validator("name")
-    def check_name_not_empty(cls, v: str) -> str:
-        assert v != "", "Empty name is not allowed"
-        return v
+
+class UpdateWorkspaceValidator(BaseModel):
+    name: Name | None

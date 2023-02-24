@@ -155,3 +155,40 @@ async def test_get_workspace_not_found_error(client):
     client.login(user)
     response = client.get(f"/workspaces/{non_existent_id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+##########################################################
+# PATCH /workspaces/<id>/
+##########################################################
+
+
+async def test_update_workspace_ok(client):
+    user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+    data = {"name": "New name"}
+
+    client.login(user)
+    response = client.patch(f"/workspaces/{workspace.b64id}", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    updated_workspace = response.json()
+    assert updated_workspace["name"] == "New name"
+
+
+async def test_update_workspace_not_found(client):
+    user = await f.create_user()
+    data = {"name": "new name"}
+
+    client.login(user)
+    response = client.patch("/workspaces/xxxxxxxxx", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_update_workspace_no_admin(client):
+    user = await f.create_user()
+    other_user = await f.create_user()
+    workspace = await f.create_workspace(owner=user)
+
+    data = {"name": "new name"}
+    client.login(other_user)
+    response = client.patch(f"/workspaces/{workspace.b64id}", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text

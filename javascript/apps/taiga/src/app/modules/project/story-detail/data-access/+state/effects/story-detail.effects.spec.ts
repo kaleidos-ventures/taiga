@@ -192,6 +192,7 @@ describe('StoryDetailEffects', () => {
 
     store.overrideSelector(selectCurrentProject, project);
     store.overrideSelector(selectStory, story);
+    localStorageService.get.mockReturnValue('side-view');
 
     actions$ = hot('-a', {
       a: StoryDetailActions.updateStoryViewMode({
@@ -205,6 +206,33 @@ describe('StoryDetailEffects', () => {
         'story_view',
         'full-view'
       );
+    });
+  });
+
+  it('updateStoryViewMode from full-view', () => {
+    const router = spectator.inject(Router);
+    const localStorageService = spectator.inject(LocalStorageService);
+    const project = ProjectMockFactory();
+    const effects = spectator.inject(StoryDetailEffects);
+    const story = StoryDetailMockFactory();
+
+    store.overrideSelector(selectCurrentProject, project);
+    store.overrideSelector(selectStory, story);
+    localStorageService.get.mockReturnValue('full-view');
+
+    actions$ = hot('-a', {
+      a: StoryDetailActions.updateStoryViewMode({
+        storyView: 'full-view',
+        previousStoryView: 'modal-view',
+      }),
+    });
+
+    expect(effects.updateStoryViewMode$).toSatisfyOnFlush(() => {
+      expect(localStorageService.set).toHaveBeenCalledWith(
+        'story_view',
+        'full-view'
+      );
+      // reload the view only if the user is leaving full-view
       expect(router.navigate).toHaveBeenCalledWith([
         `/project/${project.id}/${project.slug}/stories/${story.ref}`,
       ]);

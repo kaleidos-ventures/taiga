@@ -65,7 +65,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
     current: HTMLElement,
     key: 'ArrowRight' | 'ArrowLeft'
   ): void {
-    if (current.classList.contains('story-kanban-ref-focus')) {
+    if (current.classList.contains('story-title')) {
       if (this.currentDraggedStory.ref) {
         this.storyNavigationHorizontalA11y(current, key);
       } else {
@@ -80,7 +80,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
     current: HTMLElement,
     key: 'ArrowUp' | 'ArrowDown'
   ): void {
-    if (current.classList.contains('story-kanban-ref-focus')) {
+    if (current.classList.contains('story-title')) {
       if (this.currentDraggedStory.ref) {
         this.storyNavigationVerticalA11y(current, key);
       } else {

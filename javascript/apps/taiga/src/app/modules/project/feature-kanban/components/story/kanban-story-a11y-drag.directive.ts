@@ -20,7 +20,7 @@ import { KanbanStoryComponent } from './kanban-story.component';
 })
 export class A11yDragStoryDirective {
   @HostListener('keydown.space.prevent', ['$event'])
-  public dragA11yStart() {
+  public dragA11yStart(event: KeyboardEvent) {
     this.permissionService
       .hasPermissions$('story', ['modify'])
       .pipe(
@@ -30,6 +30,9 @@ export class A11yDragStoryDirective {
             !this.a11yDragService.inProgress && hasModifyPermissions
         ),
         switchMap(() => {
+          // prevent running A11yDragService, events, keydown space event
+          event.stopImmediatePropagation();
+
           return this.a11yDragService.dragStart(this.story.ref);
         })
       )

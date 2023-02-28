@@ -17,9 +17,11 @@ export function getNextVerticalStory(
   let nextStory: HTMLElement;
 
   if (key === 'ArrowDown') {
-    nextStory = el.parentElement?.nextElementSibling as HTMLElement;
+    nextStory = el.closest('tg-kanban-story')
+      ?.nextElementSibling as HTMLElement;
   } else {
-    nextStory = el.parentElement?.previousElementSibling as HTMLElement;
+    nextStory = el.closest('tg-kanban-story')
+      ?.previousElementSibling as HTMLElement;
   }
 
   return nextStory;

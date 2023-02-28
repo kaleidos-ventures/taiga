@@ -10,6 +10,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   OnInit,
   Output,
@@ -24,14 +25,17 @@ import {
 
 @UntilDestroy()
 @Component({
-  selector: 'tg-workspace-detail-edit',
-  templateUrl: './workspace-detail-edit.component.html',
-  styleUrls: ['./workspace-detail-edit.component.css'],
+  selector: 'tg-workspace-detail-edit-modal',
+  templateUrl: './workspace-detail-edit-modal.component.html',
+  styleUrls: ['./workspace-detail-edit-modal.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WorkspaceDetailEditComponent implements OnInit {
+export class WorkspaceDetailEditModalComponent implements OnInit {
   @Input()
   public workspace!: Workspace;
+
+  @Input()
+  public open = false;
 
   @Output()
   public update = new EventEmitter();
@@ -39,7 +43,16 @@ export class WorkspaceDetailEditComponent implements OnInit {
   @Output()
   public cancelEdit = new EventEmitter();
 
+  @HostListener('window:beforeunload')
+  public unloadHandler() {
+    if (this.nameForm.dirty) {
+      return false;
+    }
+    return true;
+  }
+
   public maxLength = WorkspaceNameMaxLength;
+  public showConfirmEditProjectModal = false;
 
   public nameForm = new FormGroup({
     name: new FormControl('', {
@@ -53,11 +66,25 @@ export class WorkspaceDetailEditComponent implements OnInit {
   }
 
   public submit() {
-    console.log('submit');
-    this.update.emit(this.nameForm.value);
+    if (this.nameForm.valid) {
+      this.update.emit(this.nameForm.value);
+    }
   }
 
   public cancel() {
+    if (this.nameForm.dirty) {
+      this.showConfirmEditProjectModal = true;
+    } else {
+      this.cancelEdit.emit();
+    }
+  }
+
+  public discardChanges() {
+    this.showConfirmEditProjectModal = false;
     this.cancelEdit.emit();
+  }
+
+  public keepEditing() {
+    this.showConfirmEditProjectModal = false;
   }
 }

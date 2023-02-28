@@ -63,6 +63,21 @@ export const workspaceDetailEventActions = createActionGroup({
   },
 });
 
+export const updateWorkspace = createAction(
+  '[Workspace] Update',
+  props<{ currentWorkspace: Workspace; nextWorkspace: Partial<Workspace> }>()
+);
+
+export const updateWorkspaceSuccess = createAction(
+  '[Workspace] Update success',
+  props<{ workspace: Partial<Workspace> }>()
+);
+
+export const updateWorkspaceError = createAction(
+  '[Workspace] Update error',
+  props<{ workspace: Workspace }>()
+);
+
 export const deleteWorkspace = createAction(
   '[Workspace] Delete',
   props<{ id: Workspace['id']; name: Workspace['name'] }>()

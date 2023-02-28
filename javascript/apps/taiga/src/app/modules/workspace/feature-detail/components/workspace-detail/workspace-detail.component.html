@@ -210,18 +210,13 @@ Copyright (c) 2023-present Kaleidos INC
           </button>
         </tui-data-list>
       </ng-template>
-      <tg-ui-modal
-        [width]="500"
+      <tg-workspace-detail-edit-modal
+        *ngIf="vm.editingWorkspace"
+        [workspace]="vm.workspace"
         [open]="vm.editingWorkspace"
-        (requestClose)="closeEditWorkspaceModal()">
-        <ng-container>
-          <tg-workspace-detail-edit
-            [workspace]="vm.workspace"
-            *ngIf="vm.editingWorkspace"
-            (update)="updateWorkspace($event)"
-            (cancelEdit)="closeEditWorkspaceModal()"></tg-workspace-detail-edit>
-        </ng-container>
-      </tg-ui-modal>
+        (update)="updateWorkspace($event)"
+        (cancelEdit)="closeEditWorkspaceModal()">
+      </tg-workspace-detail-edit-modal>
       <tg-delete-workspace
         *ngIf="showDeleteWorkspaceModal"
         [show]="showDeleteWorkspaceModal"

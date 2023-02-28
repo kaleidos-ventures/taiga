@@ -22,7 +22,8 @@
     "title": "Workspace details",
     "name": "Workspace name",
     "name_required": "Workspace name can’t be empty",
-    "name_placeholder": "Add workspace name"
+    "name_placeholder": "Add workspace name",
+    "changes_canceled": "Changes canceled"
   },
   "delete": {
     "delete_workspace": "Delete workspace",

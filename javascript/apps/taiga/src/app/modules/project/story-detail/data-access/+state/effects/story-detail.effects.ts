@@ -103,10 +103,14 @@ export class StoryDetailEffects {
           this.store.select(selectStory).pipe(filterNil()),
         ]),
         map(([action, project, story]) => {
+          const previousStoryView = this.localStorage.get('story_view');
           this.localStorage.set('story_view', action.storyView);
-          void this.router.navigate([
-            `/project/${project.id}/${project.slug}/stories/${story.ref}`,
-          ]);
+
+          if (previousStoryView === 'full-view') {
+            void this.router.navigate([
+              `/project/${project.id}/${project.slug}/stories/${story.ref}`,
+            ]);
+          }
         })
       );
     },

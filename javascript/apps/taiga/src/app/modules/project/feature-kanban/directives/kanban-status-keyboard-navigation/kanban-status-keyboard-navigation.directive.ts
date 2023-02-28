@@ -50,13 +50,15 @@ export class KanbanStatusKeyboardNavigationDirective implements OnInit {
   @ViewChild(KanbanVirtualScrollDirective)
   public kanbanVirtualScroll!: KanbanVirtualScrollDirective;
 
-  @HostListener('keydown.arrowRight.prevent', ['$event.target', '$event.key'])
-  @HostListener('keydown.arrowLeft.prevent', ['$event.target', '$event.key'])
+  @HostListener('keydown.arrowRight', ['$event', '$event.target', '$event.key'])
+  @HostListener('keydown.arrowLeft', ['$event', '$event.target', '$event.key'])
   public onKeyDownArrow(
+    event: KeyboardEvent,
     current: HTMLElement,
     key: 'ArrowRight' | 'ArrowLeft'
   ): void {
     if (current.tagName === 'TG-KANBAN-STATUS') {
+      event.preventDefault();
       this.statusNavigation(current, key);
     }
   }

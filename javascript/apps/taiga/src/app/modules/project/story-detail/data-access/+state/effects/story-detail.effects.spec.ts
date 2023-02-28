@@ -184,7 +184,6 @@ describe('StoryDetailEffects', () => {
   });
 
   it('updateStoryViewMode', () => {
-    const router = spectator.inject(Router);
     const localStorageService = spectator.inject(LocalStorageService);
     const project = ProjectMockFactory();
     const effects = spectator.inject(StoryDetailEffects);

@@ -11,14 +11,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { fetch, pessimisticUpdate } from '@nrwl/angular';
+import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
+import { TuiNotification } from '@taiga-ui/core';
 import { WorkspaceApiService } from '@taiga/api';
 import { timer, zip } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { workspaceDetailEventActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import { AppService } from '~/app/services/app.service';
 import * as WorkspaceDetailActions from '../actions/workspace-detail.actions';
-import { TuiNotification } from '@taiga-ui/core';
 
 @Injectable()
 export class WorkspaceDetailEffects {
@@ -113,6 +113,30 @@ export class WorkspaceDetailEffects {
         },
         onError: (_, httpResponse: HttpErrorResponse) =>
           this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
+  public updateWorkspace$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceDetailActions.updateWorkspace),
+      optimisticUpdate({
+        run: ({ currentWorkspace, nextWorkspace }) => {
+          return this.workspaceApiService
+            .updateWorkspace(currentWorkspace.id, nextWorkspace)
+            .pipe(
+              map(() => {
+                return WorkspaceDetailActions.updateWorkspaceSuccess({
+                  workspace: nextWorkspace,
+                });
+              })
+            );
+        },
+        undoAction: ({ currentWorkspace }) => {
+          return WorkspaceDetailActions.updateWorkspaceError({
+            workspace: currentWorkspace,
+          });
+        },
       })
     );
   });

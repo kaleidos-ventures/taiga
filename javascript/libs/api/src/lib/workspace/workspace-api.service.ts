@@ -46,6 +46,10 @@ export class WorkspaceApiService {
       );
   }
 
+  public updateWorkspace(id: Workspace['id'], workspace: Partial<Workspace>) {
+    return this.http.patch(`${this.config.apiUrl}/workspaces/${id}`, workspace);
+  }
+
   public deleteWorkspace(id: Workspace['id']) {
     return this.http.delete<Workspace>(
       `${this.config.apiUrl}/workspaces/${id}`

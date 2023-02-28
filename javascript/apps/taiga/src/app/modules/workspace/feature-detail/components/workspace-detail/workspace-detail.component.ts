@@ -13,6 +13,7 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -21,6 +22,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -28,12 +30,13 @@ import { Project, User, Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { map, pairwise, take } from 'rxjs/operators';
 import {
+  deleteWorkspace,
   fetchWorkspace,
   invitationDetailCreateEvent,
   invitationDetailRevokedEvent,
   resetWorkspace,
+  updateWorkspace,
   workspaceDetailEventActions,
-  deleteWorkspace,
 } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import {
   selectCreatingWorkspaceDetail,
@@ -162,7 +165,9 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     private store: Store,
     private userStorageService: UserStorageService,
     private state: RxState<WorkspaceDetailState>,
-    private location: Location
+    private location: Location,
+    private liveAnnouncer: LiveAnnouncer,
+    private translocoService: TranslocoService
   ) {
     this.state.set({
       rejectedInvites: [],
@@ -576,12 +581,28 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   }
 
   public closeEditWorkspaceModal() {
-    this.state.set({ editingWorkspace: false });
+    const announcement = this.translocoService.translate(
+      'workspace.edit.changes_canceled'
+    );
+
+    this.liveAnnouncer.announce(announcement, 'assertive').then(
+      () => {
+        this.state.set({ editingWorkspace: false });
+      },
+      () => {
+        // error
+      }
+    );
   }
 
-  public updateWorkspace(workspace: Partial<Workspace>) {
-    console.log('send data to backend!', workspace);
+  public updateWorkspace(workspaceUpdate: Partial<Workspace>) {
+    const currentWorkspace = this.state.get('workspace');
     this.closeEditWorkspaceModal();
+    if (currentWorkspace) {
+      this.store.dispatch(
+        updateWorkspace({ currentWorkspace, nextWorkspace: workspaceUpdate })
+      );
+    }
   }
 
   public handleDeleteProject() {

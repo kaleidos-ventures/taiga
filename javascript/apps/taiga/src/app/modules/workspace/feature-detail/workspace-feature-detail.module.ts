@@ -20,6 +20,7 @@ import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
+import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
@@ -27,17 +28,17 @@ import { ResizeEventModule } from '~/app/shared/resize/resize.module';
 import { TitleDirective } from '~/app/shared/title/title.directive';
 import { WorkspaceDetailEffects } from './+state/effects/workspace-detail.effects';
 import { workspaceDetailFeature } from './+state/reducers/workspace-detail.reducer';
-import { WorkspaceDetailEditComponent } from './components/workspace-detail-edit/workspace-detail-edit.component';
+import { DeleteWorkspaceComponent } from './components/workspace-delete-modal/workspace-delete-modal.component';
+import { WorkspaceDetailEditModalComponent } from './components/workspace-detail-edit-modal/workspace-detail-edit-modal.component';
 import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-skeleton/workspace-detail-skeleton.component';
 import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
-import { DeleteWorkspaceComponent } from './components/workspace-delete-modal/workspace-delete-modal.component';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
 
 @NgModule({
   declarations: [
     WorkspaceDetailComponent,
     WorkspaceDetailSkeletonComponent,
-    WorkspaceDetailEditComponent,
+    WorkspaceDetailEditModalComponent,
   ],
   imports: [
     TitleDirective,
@@ -63,6 +64,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     ModalModule,
     ReactiveFormsModule,
     InputsModule,
+    DiscardChangesModalComponent,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

@@ -98,6 +98,27 @@ export const reducer = createReducer(
     }
   ),
   on(
+    WorkspaceActions.updateWorkspaceSuccess,
+    (state, { workspace }): WorkspaceDetailState => {
+      if (state.workspace && workspace.name) {
+        state.workspace = {
+          ...state.workspace,
+          name: workspace.name,
+        };
+      }
+
+      return state;
+    }
+  ),
+  on(
+    WorkspaceActions.updateWorkspaceError,
+    (state, { workspace }): WorkspaceDetailState => {
+      state.workspace = workspace;
+
+      return state;
+    }
+  ),
+  on(
     workspaceDetailEventActions.projectDeleted,
     (state, { projectId }): WorkspaceDetailState => {
       state.workspaceInvitedProjects = state.workspaceInvitedProjects.filter(

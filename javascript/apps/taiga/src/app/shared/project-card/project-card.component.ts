@@ -26,13 +26,14 @@ import {
 import { RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TuiHintModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiDataListModule, TuiHintModule, TuiSvgModule } from '@taiga-ui/core';
 import { Project, Workspace } from '@taiga/data';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { distinctUntilChanged, map, skip } from 'rxjs/operators';
 import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
 import { CommonTemplateModule } from '../common-template.module';
+import { DropdownModule } from '../dropdown/dropdown.module';
 import { DataAccessInvitationToProjectModule } from '../invite-to-project/data-access/+state/invite-to-project-data-access.module';
 import { InviteToProjectModule } from '../invite-to-project/invite-to-project.module';
 import { CapitalizePipeModule } from '../pipes/capitalize/capitalize.pipe.module';
@@ -56,6 +57,8 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
     DataAccessInvitationToProjectModule,
     BadgeModule,
     CapitalizePipeModule,
+    TuiDataListModule,
+    DropdownModule,
   ],
   animations: [
     trigger('invitationAccepted', [
@@ -133,6 +136,9 @@ export class ProjectCardComponent implements OnInit {
   public workspace!: Workspace;
 
   @Input()
+  public hasActions = false;
+
+  @Input()
   public firstProject = false;
 
   @Input()
@@ -153,6 +159,17 @@ export class ProjectCardComponent implements OnInit {
     id: Project['id'];
   }>();
 
+  @Output()
+  public openModal = new EventEmitter<string>();
+
+  @Output()
+  public projectToDelete = new EventEmitter<
+    Pick<
+      Project,
+      'id' | 'name' | 'slug' | 'description' | 'color' | 'logoSmall'
+    >
+  >();
+
   @HostBinding('attr.data-invite-status')
   public invitationStatus: 'accepted' | null = null;
 
@@ -160,6 +177,7 @@ export class ProjectCardComponent implements OnInit {
 
   public invitationStatus$ = this.store.select(selectAcceptedInvite);
   public rejectedByAdmin = false;
+  public projectActionsDropdownState = false;
 
   public animationAcceptedInvitation: 'done' | null = null;
 
@@ -207,5 +225,12 @@ export class ProjectCardComponent implements OnInit {
 
   public invitationAccepted() {
     this.animationAcceptedInvitation = 'done';
+  }
+
+  public openModalEvent(modalName: string) {
+    if (this.project) {
+      this.projectToDelete.next(this.project);
+    }
+    this.openModal.next(modalName);
   }
 }

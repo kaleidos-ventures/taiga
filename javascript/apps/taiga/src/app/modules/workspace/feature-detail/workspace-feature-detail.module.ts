@@ -18,6 +18,7 @@ import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { ModalModule } from '@taiga/ui/modal';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
+import { DeleteProjectComponent } from '~/app/modules/project/feature-overview/components/delete-project/delete-project.component';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
@@ -65,6 +66,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     ReactiveFormsModule,
     InputsModule,
     DiscardChangesModalComponent,
+    DeleteProjectComponent,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

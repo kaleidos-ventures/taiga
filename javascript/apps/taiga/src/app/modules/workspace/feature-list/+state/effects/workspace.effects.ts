@@ -12,7 +12,7 @@ import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
-import { WorkspaceApiService } from '@taiga/api';
+import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
 import { Project, Workspace } from '@taiga/data';
 import { timer, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -197,7 +197,7 @@ export class WorkspaceEffects {
               this.workspaceApiService.fetchWorkspace(action.workspaceId)
             ).pipe(
               map(([workspace]) => {
-                return WorkspaceActions.deleteWorkspaceProjectSuccess({
+                return WorkspaceActions.projectDeletedSuccess({
                   updatedWorkspace: workspace,
                   workspaceId: action.workspaceId,
                   projectId: action.projectId,
@@ -205,7 +205,7 @@ export class WorkspaceEffects {
               })
             );
           }
-          return WorkspaceActions.deleteWorkspaceProjectSuccess({
+          return WorkspaceActions.projectDeletedSuccess({
             workspaceId: action.workspaceId,
             projectId: action.projectId,
           });
@@ -219,6 +219,8 @@ export class WorkspaceEffects {
 
   constructor(
     private userStorageService: UserStorageService,
+    private projectApiService: ProjectApiService,
+
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService,
     private appService: AppService,

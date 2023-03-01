@@ -180,7 +180,7 @@ export const reducer = createReducer(
   ),
 
   on(
-    WorkspaceActions.deleteWorkspaceProjectSuccess,
+    WorkspaceActions.projectDeletedSuccess,
     (state, { updatedWorkspace, projectId }): WorkspaceState => {
       if (updatedWorkspace) {
         const workspaceIndex = state.workspaces.findIndex((workspaceItem) => {

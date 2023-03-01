@@ -31,6 +31,7 @@ import { Observable } from 'rxjs';
 import { map, pairwise, take } from 'rxjs/operators';
 import {
   deleteWorkspace,
+  deleteWorkspaceProject,
   fetchWorkspace,
   invitationDetailCreateEvent,
   invitationDetailRevokedEvent,
@@ -154,6 +155,8 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   public displayWorkspaceOptions = false;
 
   public showDeleteWorkspaceModal = false;
+  public deleteProjectModal = false;
+  public projectToDelete!: Project;
 
   public get gridClass() {
     return `grid-items-${this.amountOfProjectsToShow}`;
@@ -632,7 +635,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  public handleDeleteProject() {
+  public handleDeleteWorkspace() {
     const workspace = this.state.get('workspace');
     if (workspace?.hasProjects) {
       this.showDeleteWorkspaceModal = true;
@@ -641,6 +644,35 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
         deleteWorkspace({
           id: workspace!.id,
           name: workspace!.name,
+        })
+      );
+    }
+  }
+
+  public setProjectToDelete(
+    projectToDelete: Pick<
+      Project,
+      'id' | 'name' | 'slug' | 'description' | 'color' | 'logoSmall'
+    >
+  ) {
+    this.projectToDelete = projectToDelete as Project;
+  }
+
+  public openModal(modalName: string) {
+    if (modalName === 'deleteModal') {
+      this.deleteProjectModal = true;
+    }
+  }
+
+  public submitDeleteProject() {
+    const workspace = this.state.get('workspace');
+    if (workspace) {
+      console.log('submit delete');
+      this.deleteProjectModal = false;
+      this.store.dispatch(
+        deleteWorkspaceProject({
+          projectName: this.projectToDelete.name,
+          projectId: this.projectToDelete.id,
         })
       );
     }

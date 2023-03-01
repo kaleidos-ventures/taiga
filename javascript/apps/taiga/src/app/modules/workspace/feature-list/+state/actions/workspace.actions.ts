@@ -40,7 +40,7 @@ export const fetchWorkspaceSuccess = createAction(
   props<{ workspace: Workspace }>()
 );
 
-export const deleteWorkspaceProjectSuccess = createAction(
+export const projectDeletedSuccess = createAction(
   '[WorkspaceList] Delete workspace project Success',
   props<{
     updatedWorkspace?: Workspace;

@@ -10,10 +10,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
-import { WorkspaceApiService } from '@taiga/api';
+import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
 import { timer, zip } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { workspaceDetailEventActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
@@ -192,20 +191,64 @@ export class WorkspaceDetailEffects {
     { dispatch: false }
   );
 
-  public workspaceDeleted$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(workspaceDetailEventActions.workspaceDeleted),
-        tap((action) => {
-          this.appService.toastNotification({
-            message: 'delete.deleted_worspace',
-            paramsMessage: { name: action.name },
-            status: TuiNotification.Error,
-            scope: 'workspace',
-            autoClose: true,
-            closeOnNavigation: false,
+  public workspaceDeleted$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceDetailEventActions.workspaceDeleted),
+      tap((action) => {
+        this.appService.toastNotification({
+          message: 'delete.deleted_worspace',
+          paramsMessage: { name: action.name },
+          status: TuiNotification.Error,
+          scope: 'workspace',
+          autoClose: true,
+          closeOnNavigation: false,
+        });
+        void this.router.navigate(['/']);
+      })
+    );
+  });
+
+  public deleteWorkspaceProject$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(WorkspaceDetailActions.deleteWorkspaceProject),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.projectApiService.deleteProject(action.projectId).pipe(
+            map(() => {
+              return WorkspaceDetailActions.deleteWorkspaceProjectSuccess({
+                projectId: action.projectId,
+                projectName: action.projectName,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.errorManagement(httpResponse, {
+            any: {
+              type: 'toast',
+              options: {
+                label: 'errors.generic_toast_label',
+                message: 'errors.generic_toast_message',
+                status: TuiNotification.Error,
+              },
+            },
           });
           void this.router.navigate(['/']);
+        },
+      })
+    );
+  });
+
+  public deleteWorkspaceProjectSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(WorkspaceDetailActions.deleteWorkspaceProjectSuccess),
+        tap((action) => {
+          void this.appService.toastNotification({
+            message: 'errors.deleted_project',
+            paramsMessage: { name: action.projectName },
+            status: TuiNotification.Info,
+          });
         })
       );
     },
@@ -215,8 +258,8 @@ export class WorkspaceDetailEffects {
   constructor(
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService,
+    private projectApiService: ProjectApiService,
     private appService: AppService,
-    private store: Store,
     private router: Router
   ) {}
 }

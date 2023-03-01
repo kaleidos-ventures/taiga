@@ -139,6 +139,38 @@ export const reducer = createReducer(
       }
       return state;
     }
+  ),
+  on(
+    WorkspaceActions.deleteWorkspaceProjectSuccess,
+    (state, { projectId }): WorkspaceDetailState => {
+      if (state.workspace) {
+        if (state.projects) {
+          state.projects = state.projects.filter((projects) => {
+            return projects.id !== projectId;
+          });
+        }
+        if (state.workspace.invitedProjects) {
+          state.workspaceInvitedProjects =
+            state.workspaceInvitedProjects.filter((invitedProject) => {
+              return invitedProject.id !== projectId;
+            });
+        }
+        if (state.workspace.latestProjects) {
+          state.workspace.latestProjects =
+            state.workspace.latestProjects.filter((project) => {
+              return project.id !== projectId;
+            });
+        }
+        if (state.workspaceProjects[state.workspace.id]) {
+          state.workspaceProjects[state.workspace.id] = state.workspaceProjects[
+            state.workspace.id
+          ].filter((project) => {
+            return project.id !== projectId;
+          });
+        }
+      }
+      return state;
+    }
   )
 );
 

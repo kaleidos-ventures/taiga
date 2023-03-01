@@ -68,7 +68,7 @@ export interface StoryDetailState {
 
 export interface StoryDetailForm {
   title: FormControl<StoryDetail['title']>;
-  status: FormControl<StoryDetail['status']>;
+  status: FormControl<StoryDetail['status']['name']>;
 }
 
 @UntilDestroy()
@@ -217,18 +217,22 @@ export class StoryDetailComponent {
 
     this.form = new FormGroup<StoryDetailForm>({
       title: new FormControl(story.title, { nonNullable: true }),
-      status: new FormControl(story.status, { nonNullable: true }),
+      status: new FormControl(story.status.name, { nonNullable: true }),
     });
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((form) => {
-      if (form.status) {
+      const status = this.state
+        .get('statuses')
+        .find((status) => status.name === form.status);
+
+      if (status) {
         this.store.dispatch(
           StoryDetailActions.updateStory({
             projectId: this.state.get('project').id,
             story: {
               ref: this.state.get('story').ref,
               version: this.state.get('story').version,
-              status: form.status.slug,
+              status: status.slug,
               title: form.title,
             },
           })
@@ -253,7 +257,7 @@ export class StoryDetailComponent {
     if (this.form) {
       this.form.patchValue(
         {
-          status: story.status,
+          status: story.status.name,
           title: story.title,
         },
         { emitEvent: false, onlySelf: true }

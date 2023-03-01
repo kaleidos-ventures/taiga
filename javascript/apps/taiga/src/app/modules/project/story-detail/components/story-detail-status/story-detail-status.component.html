@@ -32,8 +32,8 @@ Copyright (c) 2023-present Kaleidos INC
             *ngFor="let status of vm.statuses; trackBy: trackByStatus"
             tuiOption
             size="s"
-            [class.active-option]="status.slug === form.value.status?.slug"
-            [value]="status">
+            [class.active-option]="status.name === form.value.status"
+            [value]="status.name">
             <div class="status-option">
               <div
                 class="status-color"
@@ -49,11 +49,11 @@ Copyright (c) 2023-present Kaleidos INC
       let-status>
       <div
         class="status-option status-option-value"
-        [style.background-color]="status.color | statusColor: 30">
+        [style.background-color]="vm.story.status.color | statusColor: 30">
         <div
           class="status-color"
-          [style.border-color]="status.color | statusColor"></div>
-        <div class="status-name">{{ status.name }}</div>
+          [style.border-color]="vm.story.status.color | statusColor"></div>
+        <div class="status-name">{{ vm.story.status.name }}</div>
       </div>
     </ng-template>
   </ng-container>

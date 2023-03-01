@@ -23,3 +23,8 @@ export const editWorkspaceModalSubmit = () => {
   cy.getBySel('edit-name-confirm-button').click();
   cy.getBySel('edit-ws-modal').should('not.exist');
 };
+
+export const clickDeleteWorkspace = () => {
+  cy.getBySel('workspace-options').click();
+  cy.getBySel('delete-ws-button').click();
+};

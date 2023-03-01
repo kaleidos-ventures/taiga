@@ -185,3 +185,21 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
     totalProjects: numProjects * 2,
   };
 };
+
+export const EmptyWorkspaceAdminMockFactory = (): Workspace => {
+  const workspace: Workspace = {
+    id: randUuid(),
+    slug: randSlug(),
+    name: randDepartment(),
+    color: randNumber(),
+    hasProjects: true,
+    userRole: 'admin',
+    isPremium: true,
+    userIsOwner: true,
+    invitedProjects: [],
+    latestProjects: [],
+    totalProjects: 0,
+  };
+
+  return workspace;
+};

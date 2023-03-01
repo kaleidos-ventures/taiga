@@ -7,9 +7,15 @@
  */
 
 import { randAnimal, randText } from '@ngneat/falso';
-import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
+import {
+  EmptyWorkspaceAdminMockFactory,
+  ProjectMockFactory,
+  WorkspaceAdminMockFactory,
+  WorkspaceMockFactory,
+} from '@taiga/data';
 import { createFullProjectInWSRequest } from '../support/helpers/project.helpers';
 import {
+  clickDeleteWorkspace,
   displayEditWorkspaceModal,
   editWorkspaceModalName,
   editWorkspaceModalSubmit,
@@ -66,7 +72,7 @@ describe('Workspace list', () => {
   });
 });
 
-describe('Workspace detail', () => {
+describe('Workspace detail [guest]', () => {
   const workspace = WorkspaceMockFactory();
 
   beforeEach(() => {
@@ -103,7 +109,6 @@ describe('Workspace detail', () => {
     displayEditWorkspaceModal();
     const name = randText({ charCount: 60 }).trim();
     const name40char = name.slice(0, 40);
-    console.log(name);
     editWorkspaceModalName(name);
     editWorkspaceModalSubmit();
     cy.getBySel('workspace-detail-name')
@@ -113,7 +118,7 @@ describe('Workspace detail', () => {
     cy.getBySel('workspace-detail-name')
       .invoke('text')
       .then((text) => text.trim())
-      .should('to.have.string', name40char);
+      .should('to.have.string', name40char.trim());
   });
 
   it('Edit workspace name - unsaved', () => {
@@ -123,5 +128,40 @@ describe('Workspace detail', () => {
     // type("{esc}") not working - workaround
     cy.get('body').trigger('keydown', { keyCode: 27 });
     cy.getBySel('discard-changes-modal').should('be.visible');
+  });
+});
+
+describe('Workspace detail [admin]', () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit('/');
+    cy.initAxe();
+  });
+
+  it('Delete empty workspace', () => {
+    const workspaceEmpty = EmptyWorkspaceAdminMockFactory();
+    createWorkspaceRequest(workspaceEmpty.name)
+      .then((request) => {
+        cy.visit(`/workspace/${request.body.id}/${request.body.slug}`);
+      })
+      .catch(console.error);
+    clickDeleteWorkspace();
+    cy.get('tui-notification').should('exist');
+  });
+
+  it('Open warning modal when try to delete workspace with projects', () => {
+    const workspace = WorkspaceAdminMockFactory();
+    const project = ProjectMockFactory();
+    createWorkspaceRequest(workspace.name)
+      .then((request) => {
+        void createFullProjectInWSRequest(request.body.id, project.name);
+      })
+      .catch(console.error);
+    cy.getBySel('workspace-item-title').first().click();
+    cy.getBySel('workspace-detail-name').should('be.visible');
+    cy.getBySel('project-card-name').should('be.visible');
+
+    clickDeleteWorkspace();
+    cy.getBySel('delete-workspace-modal-title').should('be.visible');
   });
 });

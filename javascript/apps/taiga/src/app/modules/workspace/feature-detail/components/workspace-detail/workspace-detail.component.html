@@ -108,7 +108,10 @@ Copyright (c) 2023-present Kaleidos INC
             !vm.creatingWorkspaceDetail
           ">
           <tg-project-card
+            (projectToDelete)="setProjectToDelete($event)"
+            (openModal)="openModal($event)"
             [workspace]="vm.workspace"
+            [hasActions]="true"
             variant="placeholder"
             [firstProject]="true">
           </tg-project-card>
@@ -133,9 +136,12 @@ Copyright (c) 2023-present Kaleidos INC
           [@reorder]="reorder[invitation.id]"
           (@reorder.done)="reorderDone($event)">
           <tg-project-card
+            (projectToDelete)="setProjectToDelete($event)"
+            (openModal)="openModal($event)"
             variant="invitation"
             (rejectInvite)="rejectProjectInvite($event)"
             (acceptInvite)="acceptProjectInvite($event.id, $event.name)"
+            [hasActions]="true"
             [workspace]="vm.workspace"
             [project]="invitation">
           </tg-project-card>
@@ -163,11 +169,20 @@ Copyright (c) 2023-present Kaleidos INC
           "
           [@reorder]="reorder[project.id]"
           (@reorder.done)="reorderDone($event)">
-          <tg-project-card [project]="project"> </tg-project-card>
+          <tg-project-card
+            (projectToDelete)="setProjectToDelete($event)"
+            (openModal)="openModal($event)"
+            [hasActions]="true"
+            [project]="project"
+            [workspace]="vm.workspace">
+          </tg-project-card>
         </div>
         <div
           *ngIf="vm.projects.length > 0 && vm.workspace.userRole === 'admin'">
           <tg-project-card
+            (projectToDelete)="setProjectToDelete($event)"
+            (openModal)="openModal($event)"
+            [hasActions]="true"
             [workspace]="vm.workspace"
             variant="placeholder">
           </tg-project-card>
@@ -199,7 +214,7 @@ Copyright (c) 2023-present Kaleidos INC
             role="menuitem"
             tuiOption
             type="button"
-            (click)="handleDeleteProject()">
+            (click)="handleDeleteWorkspace()">
             <tui-svg
               class="ws-option-icon"
               aria-hidden="true"
@@ -224,4 +239,12 @@ Copyright (c) 2023-present Kaleidos INC
         [projects]="vm.workspace.totalProjects"></tg-delete-workspace>
     </ng-container>
   </ng-container>
+
+  <tg-delete-project
+    *ngIf="deleteProjectModal"
+    [show]="deleteProjectModal"
+    (submitDelete)="submitDeleteProject()"
+    (closeModal)="deleteProjectModal = false"
+    [project]="projectToDelete">
+  </tg-delete-project>
 </ng-container>

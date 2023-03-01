@@ -6,12 +6,13 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { Router } from '@angular/router';
 import { randUuid } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
-import { WorkspaceApiService } from '@taiga/api';
+import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
 import { WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
@@ -32,7 +33,7 @@ describe('WorkspaceEffects', () => {
       provideMockActions(() => actions$),
       provideMockStore({ initialState: {} }),
     ],
-    mocks: [WorkspaceApiService, AppService],
+    mocks: [WorkspaceApiService, AppService, ProjectApiService, Router],
   });
 
   beforeEach(() => {

@@ -90,3 +90,19 @@ export const deleteWorkspaceSuccess = createAction(
   '[Workspace] Delete success',
   props<{ id: Workspace['id']; name: Workspace['name'] }>()
 );
+
+export const deleteWorkspaceProject = createAction(
+  '[Workspace Detail] Delete workspace project',
+  props<{
+    projectName: Project['name'];
+    projectId: Project['id'];
+  }>()
+);
+
+export const deleteWorkspaceProjectSuccess = createAction(
+  '[Workspace Detail] Delete workspace project Success',
+  props<{
+    projectName: Project['name'];
+    projectId: Project['id'];
+  }>()
+);

@@ -176,12 +176,6 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     const workspace = this.state.get('workspace');
     if (workspace) {
       this.wsService
-        .command('unsubscribe_from_workspace_events', {
-          workspace: workspace.id,
-        })
-        .subscribe();
-
-      this.wsService
         .command('subscribe_to_workspace_events', {
           workspace: workspace.id,
         })
@@ -203,6 +197,24 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
             workspaceDetailEventActions.projectDeleted({
               projectId: eventResponse.event.content.project,
               workspaceId: eventResponse.event.content.workspace,
+              name: eventResponse.event.content.name,
+            })
+          );
+        });
+
+      this.wsService
+        .events<{
+          workspace: string;
+          name: string;
+          deletedBy: { username: string; fullName: string; color: number };
+        }>({
+          channel: `workspaces.${workspace.id}`,
+          type: 'workspaces.delete',
+        })
+        .pipe(untilDestroyed(this))
+        .subscribe((eventResponse) => {
+          this.store.dispatch(
+            workspaceDetailEventActions.workspaceDeleted({
               name: eventResponse.event.content.name,
             })
           );
@@ -328,10 +340,15 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       });
 
     this.state.hold(this.state.select('workspace'), (workspace) => {
-      this.workspaceEventSubscription();
       workspace &&
         this.location.go(`workspace/${workspace.id}/${workspace.slug}`);
     });
+    this.state
+      .select('workspace')
+      .pipe(filterNil(), take(1))
+      .subscribe(() => {
+        this.workspaceEventSubscription();
+      });
   }
 
   public invitationRevokedEvent(projectId: string) {
@@ -470,6 +487,16 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy() {
+    this.state
+      .select('workspace')
+      .pipe(filterNil(), take(1))
+      .subscribe(() => {
+        this.wsService
+          .command('unsubscribe_from_workspace_events', {
+            workspace: this.state.get('workspace')!.id,
+          })
+          .subscribe();
+      });
     this.store.dispatch(resetWorkspace());
   }
 

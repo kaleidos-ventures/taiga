@@ -356,6 +356,24 @@ export class WorkspaceItemComponent
           })
         );
       });
+
+    this.wsService
+      .events<{
+        workspace: string;
+        name: string;
+        deletedBy: { username: string; fullName: string; color: number };
+      }>({
+        channel: `workspaces.${this.workspace.id}`,
+        type: 'workspaces.delete',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          workspaceEventActions.workspaceDeleted({
+            workspaceId: eventResponse.event.content.workspace,
+          })
+        );
+      });
   }
 
   public ngOnDestroy(): void {

@@ -168,6 +168,26 @@ export class WorkspaceDetailEffects {
     { dispatch: false }
   );
 
+  public workspaceDeleted$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(workspaceDetailEventActions.workspaceDeleted),
+        tap((action) => {
+          this.appService.toastNotification({
+            message: 'delete.deleted_worspace',
+            paramsMessage: { name: action.name },
+            status: TuiNotification.Error,
+            scope: 'workspace',
+            autoClose: true,
+            closeOnNavigation: false,
+          });
+          void this.router.navigate(['/']);
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService,

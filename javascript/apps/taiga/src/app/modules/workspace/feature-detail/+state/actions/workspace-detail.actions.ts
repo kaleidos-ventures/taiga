@@ -60,6 +60,9 @@ export const workspaceDetailEventActions = createActionGroup({
       deleted_by?: User;
       error?: boolean;
     }>(),
+    'Workspace deleted': props<{
+      name: Workspace['name'];
+    }>(),
   },
 });
 

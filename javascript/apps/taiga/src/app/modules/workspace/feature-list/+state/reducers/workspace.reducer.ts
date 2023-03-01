@@ -269,6 +269,15 @@ export const reducer = createReducer(
 
       return state;
     }
+  ),
+  on(
+    WorkspaceActions.workspaceEventActions.workspaceDeleted,
+    (state, { workspaceId }): WorkspaceState => {
+      state.workspaces = state.workspaces.filter((it) => {
+        return it.id !== workspaceId;
+      });
+      return state;
+    }
   )
 );
 

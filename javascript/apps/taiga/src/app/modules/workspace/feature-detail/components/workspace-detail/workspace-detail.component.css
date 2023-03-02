@@ -30,32 +30,32 @@ Copyright (c) 2023-present Kaleidos INC
   margin-inline-end: var(--spacing-16);
 }
 
-.workspace-detail-title-wrapper {
+.workspace-detail-name-wrapper {
   display: flex;
   flex: 1 0 auto;
   flex-direction: column;
   justify-content: center;
 
-  & .workspace-detail-title-route {
+  & .workspace-detail-name-route {
     margin: 0;
   }
 
-  & .workspace-detail-title {
+  & .workspace-detail-name {
     margin: 0;
   }
 }
 
-.workspace-detail-title-container {
+.workspace-detail-name-container {
   align-items: center;
   display: flex;
   gap: var(--spacing-16);
 }
 
-.workspace-detail-title {
+.workspace-detail-name {
   @mixin text-overflow;
 }
 
-.workspace-detail-title-route {
+.workspace-detail-name-route {
   @mixin text-overflow;
   @mixin font-small;
 

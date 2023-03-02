@@ -598,7 +598,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   public updateWorkspace(workspaceUpdate: Partial<Workspace>) {
     const currentWorkspace = this.state.get('workspace');
     this.closeEditWorkspaceModal();
-    if (currentWorkspace) {
+    if (currentWorkspace && currentWorkspace?.name !== workspaceUpdate.name) {
       this.store.dispatch(
         updateWorkspace({ currentWorkspace, nextWorkspace: workspaceUpdate })
       );

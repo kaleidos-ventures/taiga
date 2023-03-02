@@ -34,7 +34,7 @@ Copyright (c) 2023-present Kaleidos INC
     white-space: nowrap;
     z-index: var(--fourth-layer);
 
-    &::ng-deep .t-wrapper {
+    &::ng-deep [tuiWrapper] {
       outline: solid 1px var(--color-secondary);
       /* stylelint-disable-next-line declaration-no-important */
       padding-inline: var(--spacing-16) !important;

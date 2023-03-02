@@ -9,6 +9,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 @import "tools/typography.css";
+@import "taiga-ui/mixins/wrapper.css";
 
 :host {
   display: inline-block;
@@ -78,19 +79,19 @@ Copyright (c) 2023-present Kaleidos INC
   }
 
   &::ng-deep {
-    & .link .t-content {
-      color: var(--color-info80) !important;
-    }
-
     & .link {
       font-weight: var(--font-weight-medium);
       text-decoration: underline;
+
+      @mixin wrapper-content {
+color: var(--color-info80) !important;
+      }
     }
 
-    & .close-button .t-wrapper {
+    & .close-button [tuiWrapper] {
       color: var(--color-info80) !important;
 
-      &:hover {
+      @mixin wrapper-hover {
         background: var(--color-info30);
       }
     }
@@ -124,10 +125,10 @@ Copyright (c) 2023-present Kaleidos INC
       text-decoration: underline;
     }
 
-    & .close-button .t-wrapper {
+    & .close-button [tuiWrapper] {
       color: var(--color-ok80) !important;
 
-      &:hover {
+      @mixin wrapper-hover {
         background: var(--color-ok30);
       }
     }
@@ -161,10 +162,10 @@ Copyright (c) 2023-present Kaleidos INC
       text-decoration: underline;
     }
 
-    & .close-button .t-wrapper {
+    & .close-button [tuiWrapper] {
       color: var(--color-red80) !important;
 
-      &:hover {
+      @mixin wrapper-hover {
         background: var(--color-red30);
       }
     }
@@ -198,10 +199,10 @@ Copyright (c) 2023-present Kaleidos INC
       text-decoration: underline;
     }
 
-    & .close-button .t-wrapper {
+    & .close-button [tuiWrapper] {
       color: var(--color-warning80) !important;
 
-      &:hover {
+      @mixin wrapper-hover {
         background: var(--color-warning30);
       }
     }
@@ -235,10 +236,10 @@ Copyright (c) 2023-present Kaleidos INC
       text-decoration: underline;
     }
 
-    & .close-button .t-wrapper {
+    & .close-button [tuiWrapper] {
       color: var(--color-notice80) !important;
 
-      &:hover {
+      @mixin wrapper-hover {
         background: var(--color-notice30);
       }
     }

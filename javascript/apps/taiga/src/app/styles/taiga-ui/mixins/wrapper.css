@@ -1,0 +1,63 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+/* Using: https://github.com/Tinkoff/taiga-ui/blob/main/projects/core/styles/mixins/wrapper.scss */
+
+@define-mixin wrapper-hover {
+  @media (hover: hover) {
+    &:hover:not(._no-hover),
+    &[data-state="hover"] {
+      @mixin-content;
+    }
+  }
+}
+
+@define-mixin wrapper-active {
+  &:active:not(._no-active),
+  &[data-state="active"],
+  &[data-state="active"]:hover {
+    @mixin-content;
+  }
+}
+
+@define-mixin wrapper-disabled {
+  &:disabled:disabled,
+  &[data-state="disabled"][data-state="disabled"] {
+    @mixin-content;
+  }
+}
+
+@define-mixin wrapper-focus {
+  &:focus-visible:focus-visible {
+    @mixin-content;
+  }
+
+  &._focused._focused {
+    @mixin-content;
+  }
+}
+
+@define-mixin wrapper-invalid {
+  &:invalid:invalid,
+  &._invalid._invalid {
+    @mixin-content;
+  }
+}
+
+/* Custom */
+@define-mixin button-dropdown-expanded {
+  &[aria-expanded="true"] [tuiWrapper] {
+    @mixin-content;
+  }
+}
+
+@define-mixin wrapper-content {
+  & .t-content {
+    @mixin-content;
+  }
+}

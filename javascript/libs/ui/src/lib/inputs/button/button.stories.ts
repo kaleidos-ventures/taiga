@@ -491,7 +491,7 @@ export const USHeaderButton = ConfigureTemplate({
   <div class="story-flex">
     <label class="story-label">Default</label>
     <button
-      appearance="us-header-button"
+      appearance="action-button"
       tuiIconButton
       icon="{{icon}}"
       type="button">
@@ -502,7 +502,7 @@ export const USHeaderButton = ConfigureTemplate({
   <div class="story-flex">
     <label class="story-label">Blocked US</label>
     <button
-      appearance="us-header-button"
+      appearance="action-button"
       blocked
       tuiIconButton
       icon="{{icon}}"

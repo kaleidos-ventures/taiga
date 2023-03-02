@@ -70,7 +70,7 @@ tg-project-card {
 }
 
 .display-workspace-options {
-  &::ng-deep .t-wrapper {
+  &::ng-deep [tuiWrapper] {
     background: none;
   }
 }

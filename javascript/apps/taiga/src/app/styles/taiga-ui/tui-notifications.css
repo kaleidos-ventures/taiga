@@ -191,7 +191,7 @@ tui-notification {
 }
 
 .no-header {
-  & tui-notifications-host .t-wrapper {
+  & tui-notifications-host [tuiWrapper] {
     padding-block-start: var(--spacing-16) !important;
   }
 

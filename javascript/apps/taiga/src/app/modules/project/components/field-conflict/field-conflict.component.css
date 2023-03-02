@@ -70,7 +70,7 @@ Copyright (c) 2023-present Kaleidos INC
 
 .copy-link {
   &.copied {
-    &::ng-deep .t-wrapper {
+    &::ng-deep [tuiWrapper] {
       background-color: var(--color-ok10);
       color: var(--color-ok80);
     }

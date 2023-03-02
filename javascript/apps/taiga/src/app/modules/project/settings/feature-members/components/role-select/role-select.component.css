@@ -8,6 +8,7 @@ Copyright (c) 2023-present Kaleidos INC
 /* stylelint-disable selector-max-compound-selectors */
 
 @import "tools/typography.css";
+@import "taiga-ui/mixins/wrapper.css";
 
 .select-container {
   max-inline-size: 209px;
@@ -35,17 +36,17 @@ Copyright (c) 2023-present Kaleidos INC
   min-inline-size: 209px;
   opacity: 1;
 
-  &::ng-deep .t-wrapper {
+  &::ng-deep [tuiWrapper] {
     @mixin font-inline;
 
-    background-color: var(--color-gray10);
-    color: var(--color-gray100);
-    /* stylelint-disable-next-line declaration-no-important */
+    /* stylelint-disable declaration-no-important */
+    background-color: var(--color-gray10) !important;
+    color: var(--color-gray100) !important;
     padding-block: 0 !important;
-    /* stylelint-disable-next-line declaration-no-important */
+    /* stylelint-disable-enable declaration-no-important */
     padding-inline: var(--spacing-16) !important;
 
-    & .t-content {
+    @mixin wrapper-content {
       justify-content: space-between;
     }
 

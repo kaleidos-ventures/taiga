@@ -7,6 +7,7 @@ Copyright (c) 2023-present Kaleidos INC
 */
 
 @import "tools/typography.css";
+@import "taiga-ui/mixins/wrapper.css";
 
 /* stylelint-disable selector-max-type */
 /* stylelint-disable declaration-no-important */
@@ -20,7 +21,7 @@ Copyright (c) 2023-present Kaleidos INC
 
   transition-duration: 100ms !important;
 
-  & .t-wrapper {
+  & [tuiWrapper] {
     border-radius: 4px;
     font-weight: var(--font-weight-medium);
     padding-block: 0 !important;
@@ -28,7 +29,7 @@ Copyright (c) 2023-present Kaleidos INC
     transition: none;
   }
 
-  &.large .t-wrapper {
+  &.large [tuiWrapper] {
     padding-block: 0 !important;
     padding-inline: var(--spacing-16) !important;
   }
@@ -65,26 +66,31 @@ Copyright (c) 2023-present Kaleidos INC
     }
   }
 
-  &[tuiIconButton] .t-wrapper {
+  &[tuiIconButton] [tuiWrapper] {
     padding: 0 !important;
   }
 }
 
 [data-appearance="tertiary"]:is(button, a) {
-  & .t-wrapper {
+  @mixin button-dropdown-expanded {
+    background: var(--color-gray30);
+    color: var(--color-secondary);
+  }
+
+  & [tuiWrapper] {
     background: var(--color-gray10);
     color: var(--color-secondary);
 
-    &:hover {
+    @mixin wrapper-hover {
       background: var(--color-gray30);
       color: var(--color-secondary90);
     }
 
-    &[disabled] {
+    @mixin wrapper-disabled {
       opacity: 50%;
     }
 
-    &._focused {
+    @mixin wrapper-focus {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -109,27 +115,28 @@ Copyright (c) 2023-present Kaleidos INC
     margin-inline-start: var(--spacing-4);
     pointer-events: none;
   }
-
-  &[disabled] {
-    opacity: 50%;
-  }
 }
 
 [data-appearance="main-nav"]:is(button, a) {
-  & .t-wrapper {
+  @mixin button-dropdown-expanded {
+    background: var(--color-white);
+    color: var(--color-secondary90);
+  }
+
+  & [tuiWrapper] {
     background: var(--color-gray10);
     color: var(--color-secondary);
 
-    &:hover {
+    @mixin wrapper-hover {
       background: var(--color-white);
       color: var(--color-secondary90);
     }
 
-    &[disabled] {
+    @mixin wrapper-disabled {
       opacity: 50%;
     }
 
-    &._focused {
+    @mixin wrapper-focus {
       background: var(--color-white);
       color: var(--color-secondary90);
 
@@ -144,10 +151,6 @@ Copyright (c) 2023-present Kaleidos INC
     }
   }
 
-  & & tui-svg {
-    color: var(--color-secondary);
-  }
-
   & .notification-counter {
     align-items: center;
     background: var(--color-red);
@@ -161,40 +164,32 @@ Copyright (c) 2023-present Kaleidos INC
     margin-inline-start: var(--spacing-4);
     pointer-events: none;
   }
-
-  &[disabled] {
-    opacity: 50%;
-  }
 }
 
 [data-appearance="destructive"]:is(button, a) {
-  & .t-wrapper {
+  & [tuiWrapper] {
     background: var(--color-red);
     color: var(--color-white);
 
-    &:hover {
+    @mixin wrapper-hover {
       background: var(--color-red80);
       color: var(--color-white);
     }
 
-    &._focused {
+    @mixin wrapper-focus {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
       }
     }
-  }
 
-  &:active:not(._no-active) {
-    background-color: var(--tui-link-hover);
-  }
+    @mixin wrapper-disabled {
+      opacity: 50%;
+    }
 
-  & tui-svg {
-    color: var(--color-white);
-  }
-
-  &[disabled] {
-    opacity: 50%;
+    @mixin wrapper-active {
+      background-color: var(--tui-link-hover);
+    }
   }
 }
 
@@ -205,24 +200,20 @@ Copyright (c) 2023-present Kaleidos INC
   --tui-secondary-text: var(--color-gray80);
   --tui-link-hover: var(--color-gray90);
 
-  & .t-wrapper {
+  & [tuiWrapper] {
     background-color: var(--color-gray30);
     color: var(--color-gray80);
 
-    &._focused {
+    @mixin wrapper-focus {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
       }
     }
-  }
 
-  & tui-svg {
-    color: var(--color-gray80);
-  }
-
-  &[disabled] {
-    opacity: 50%;
+    @mixin wrapper-disabled {
+      opacity: 50%;
+    }
   }
 }
 
@@ -233,33 +224,32 @@ Copyright (c) 2023-present Kaleidos INC
   --tui-primary-text: var(--color-gray90);
   --tui-link-hover: var(--color-gray90);
 
-  & .t-wrapper {
+  & [tuiWrapper] {
     color: var(--color-gray80);
 
-    &._focused {
+    @mixin wrapper-focus {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
       }
     }
 
-    &[data-state="pressed"] {
-      background-color: var(--color-primary40);
+    @mixin wrapper-hover {
+      background: var(--color-primary40);
+      color: var(--color-secondary90);
     }
   }
 
-  & tui-svg {
-    color: var(--color-gray80);
-  }
-
-  &[disabled]:not([loading]) {
-    opacity: 50%;
+  &:not([loading]) [tuiWrapper] {
+    @mixin wrapper-disabled {
+      opacity: 50%;
+    }
   }
 
   &[loading] {
     &.loading-start,
     &.loading-in-progress {
-      & .t-wrapper {
+      & [tuiWrapper] {
         background-color: var(--color-primary40);
       }
     }
@@ -277,7 +267,7 @@ Copyright (c) 2023-present Kaleidos INC
   &.large[data-tui-host-size="l"] {
     block-size: 44px;
 
-    & .t-wrapper {
+    & [tuiWrapper] {
       line-height: 1rem;
       padding-block: var(--spacing-12) !important;
       padding-inline: var(--spacing-16) !important;
@@ -288,17 +278,17 @@ Copyright (c) 2023-present Kaleidos INC
 [data-appearance="home-button"]:is(button, a) {
   transition-duration: 100ms !important;
 
-  & .t-wrapper {
+  & [tuiWrapper] {
     background: none;
     color: var(--color-gray100);
     transition: none;
 
-    &:hover {
+    @mixin wrapper-hover {
       background: none;
       color: var(--color-secondary);
     }
 
-    &._focused {
+    @mixin wrapper-focus {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -319,18 +309,18 @@ Copyright (c) 2023-present Kaleidos INC
 
   transition-duration: 100ms !important;
 
-  & .t-wrapper {
+  & [tuiWrapper] {
     background: none;
     color: var(--color-secondary);
     font-weight: var(--font-weight-medium);
     padding: var(--spacing-8) !important;
     transition: none;
 
-    &:hover {
+    @mixin wrapper-hover {
       background: var(--color-gray20);
     }
 
-    &._focused {
+    @mixin wrapper-focus {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
@@ -339,91 +329,57 @@ Copyright (c) 2023-present Kaleidos INC
   }
 }
 
-[data-appearance="action-button"]:is(button, a) {
+[data-appearance="action-button"]:is(button, a),
+[data-appearance="action-button-2"]:is(button, a) {
   transition-duration: 100ms !important;
 
-  & .t-wrapper {
-    background: none;
-    color: var(--color-gray60);
-    font-weight: var(--font-weight-medium);
-    padding: var(--spacing-8) !important;
-    transition: none;
-
-    &:hover {
-      background: var(--color-gray20);
-      color: var(--color-secondary90);
-    }
-
-    &._focused {
-      &::after {
-        border-color: var(--color-secondary);
-        border-width: 1px;
-      }
-    }
-
-    &[data-state="pressed"] {
-      background: var(--color-gray20);
-    }
-  }
-}
-
-[data-appearance="us-header-button"]:is(button, a) {
-  transition-duration: 100ms !important;
-
-  & .t-wrapper {
+  & [tuiWrapper] {
     background: none;
     color: var(--color-gray60);
     font-weight: var(--font-weight-medium);
     padding: var(--spacing-4) !important;
     transition: none;
 
-    &:hover {
+    @mixin wrapper-hover {
       background: var(--color-gray20);
       color: var(--color-secondary90);
     }
 
-    &._focused {
+    @mixin wrapper-focus {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
       }
     }
-
-    &[data-state="pressed"] {
-      background: var(--color-gray20);
-    }
   }
+}
 
-  & .t-wrapper[data-state="hovered"] {
-    background: var(--color-warning20);
-    color: var(--color-warning80);
+[data-appearance="action-button-2"]:is(button, a) {
+  & [tuiWrapper] {
+    padding: var(--spacing-8) !important;
   }
 }
 
 [data-appearance="nav-icon-button"]:is(button, a) {
   transition-duration: 100ms !important;
 
-  & .t-wrapper {
+  & [tuiWrapper] {
     background: none;
     color: var(--color-secondary);
     font-weight: var(--font-weight-medium);
     padding: var(--spacing-4) !important;
     transition: none;
 
-    &:hover {
+    @mixin wrapper-hover {
       background: var(--color-gray20);
       color: var(--color-secondary90);
     }
 
-    &._focused {
+    @mixin wrapper-focus {
       &::after {
         border-color: var(--color-secondary);
         border-width: 1px;
       }
-    }
-
-    &[data-state="pressed"] {
-      background: var(--color-gray20);
     }
   }
 
@@ -447,7 +403,7 @@ Copyright (c) 2023-present Kaleidos INC
   transition-duration: 100ms !important;
 
   &.small {
-    & .t-content {
+    @mixin wrapper-content {
       font-size: var(--font-size-small);
       line-height: 1.15rem;
     }
@@ -457,7 +413,7 @@ Copyright (c) 2023-present Kaleidos INC
     border-radius: 0;
     outline: none;
 
-    & .t-content {
+    @mixin wrapper-content {
       background: none !important;
       outline: solid 1px var(--color-secondary);
     }
@@ -471,7 +427,7 @@ Copyright (c) 2023-present Kaleidos INC
       border-radius: 4px;
       outline: solid 1px var(--color-secondary);
 
-      & .t-content {
+      @mixin wrapper-content {
         outline: none;
       }
     }
@@ -480,13 +436,13 @@ Copyright (c) 2023-present Kaleidos INC
   &.empty {
     pointer-events: none;
 
-    & .t-content {
+    @mixin wrapper-content {
       color: var(--color-gray70);
       font-weight: var(--font-weight-regular);
     }
   }
 
-  & .t-content {
+  @mixin wrapper-content {
     @mixin font-paragraph;
 
     color: var(--color-secondary);
@@ -506,7 +462,7 @@ Copyright (c) 2023-present Kaleidos INC
   }
 
   &:hover {
-    & .t-content {
+    @mixin wrapper-content {
       color: var(--color-secondary90);
       transition: color 0.1s ease-in-out;
     }
@@ -539,6 +495,6 @@ Copyright (c) 2023-present Kaleidos INC
   }
 }
 
-[tuiwrapper][data-appearance="icon"] {
+[tuiWrapper][data-appearance="icon"] {
   opacity: 1;
 }

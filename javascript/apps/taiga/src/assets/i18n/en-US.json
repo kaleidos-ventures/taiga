@@ -102,7 +102,8 @@
     "delete_project": "Delete project",
     "duplicate": "Duplicate",
     "share": "Share",
-    "save_template": "Save as a template"
+    "save_template": "Save as a template",
+    "open_edit_menu": "Open edit menu"
   },
   "errors": {
     "please_refresh": "Please refresh the page or try again in a few minutes",

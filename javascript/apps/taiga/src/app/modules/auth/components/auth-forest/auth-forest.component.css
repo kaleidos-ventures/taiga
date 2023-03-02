@@ -8,6 +8,7 @@ Copyright (c) 2023-present Kaleidos INC
 
 img {
   max-block-size: 100vh;
+  pointer-events: none;
   position: absolute;
   transition: transform 0.2s ease-in-out;
 

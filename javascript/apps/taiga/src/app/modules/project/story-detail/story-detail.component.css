@@ -163,7 +163,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .copy-link:not(:hover) {
-  &::ng-deep .t-wrapper {
+  &::ng-deep [tuiWrapper] {
     background-color: transparent;
   }
 
@@ -174,7 +174,7 @@ Copyright (c) 2023-present Kaleidos INC
 
 .copy-link {
   &.copied {
-    &::ng-deep .t-wrapper {
+    &::ng-deep [tuiWrapper] {
       background-color: var(--color-ok10);
     }
 
@@ -295,7 +295,7 @@ Copyright (c) 2023-present Kaleidos INC
         background: var(--color-gray20);
       }
 
-      & button .t-wrapper {
+      & button [tuiWrapper] {
         background: var(--color-gray20);
         transition: none;
       }

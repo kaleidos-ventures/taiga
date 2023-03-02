@@ -9,7 +9,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
-import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiLinkModule, TuiSvgModule, TuiDataListModule } from '@taiga-ui/core';
 import { TuiAvatarModule, TuiBadgedContentModule } from '@taiga-ui/kit';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { CommonTemplateModule } from '../common-template.module';
@@ -24,6 +24,7 @@ import { NavigationComponent } from './navigation.component';
     TuiAvatarModule,
     TuiLinkModule,
     TuiSvgModule,
+    TuiDataListModule,
     CommonTemplateModule,
     UserAvatarComponent,
     TuiAutoFocusModule,

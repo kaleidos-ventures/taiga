@@ -7,13 +7,14 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 
 <ng-container *transloco="let t; read: 'navigation_user'">
-  <div
-    class="user"
-    role="group">
+  <tui-data-list
+    class="profile-options-list"
+    role="menu">
     <a
+      tuiOption
       role="menuitem"
       href="#"
-      class="user-inner">
+      class="user">
       <tg-user-avatar
         size="xl"
         [rounded]="true"></tg-user-avatar>
@@ -22,64 +23,54 @@ Copyright (c) 2023-present Kaleidos INC
         <span class="user-mail">{{ user.email }}</span>
       </div>
     </a>
-  </div>
-  <ul
-    class="user"
-    role="group">
-    <li role="none">
-      <a
-        role="menuitem"
-        href="#"
-        class="user-link">
-        {{ t('user_profile') }}
-      </a>
-    </li>
-    <li role="none">
-      <a
-        role="menuitem"
-        [routerLink]="['user-settings', 'profile']"
-        (click)="requestClose.emit()"
-        class="user-link">
-        {{ t('edit_profile') }}
-      </a>
-    </li>
-    <li role="none">
-      <a
-        role="menuitem"
-        href="#"
-        class="user-link">
-        {{ t('account_settings') }}
-      </a>
-    </li>
-    <li role="none">
-      <a
-        role="menuitem"
-        [routerLink]="['user-settings', 'preferences']"
-        (click)="requestClose.emit()"
-        class="user-link">
-        {{ t('preferences') }}
-      </a>
-    </li>
-    <li role="none">
-      <a
-        role="menuitem"
-        href="#"
-        class="user-link">
-        {{ t('accessibility_settings') }}
-      </a>
-    </li>
-    <li
-      role="none"
-      class="log-out">
-      <button
-        role="menuitem"
-        [routerLink]="['/logout']"
-        (click)="requestClose.emit()"
-        data-test="log-out"
-        tuiLink
-        class="user-link">
-        {{ t('log_out') }}
-      </button>
-    </li>
-  </ul>
+    <hr class="separator" />
+    <a
+      tuiOption
+      role="menuitem"
+      href="#"
+      class="user-link">
+      {{ t('user_profile') }}
+    </a>
+    <a
+      tuiOption
+      role="menuitem"
+      [routerLink]="['user-settings', 'profile']"
+      (click)="requestClose.emit()"
+      class="user-link">
+      {{ t('edit_profile') }}
+    </a>
+    <a
+      tuiOption
+      role="menuitem"
+      href="#"
+      class="user-link">
+      {{ t('account_settings') }}
+    </a>
+    <a
+      tuiOption
+      role="menuitem"
+      [routerLink]="['user-settings', 'preferences']"
+      (click)="requestClose.emit()"
+      class="user-link">
+      {{ t('preferences') }}
+    </a>
+    <a
+      tuiOption
+      role="menuitem"
+      href="#"
+      class="user-link">
+      {{ t('accessibility_settings') }}
+    </a>
+    <hr class="separator" />
+    <button
+      tuiOption
+      role="menuitem"
+      type="button"
+      [routerLink]="['/logout']"
+      (click)="requestClose.emit()"
+      data-test="log-out"
+      class="user-link log-out">
+      {{ t('log_out') }}
+    </button>
+  </tui-data-list>
 </ng-container>

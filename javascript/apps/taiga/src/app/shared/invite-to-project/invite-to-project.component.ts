@@ -321,6 +321,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
         return {
           fullName: user.get('fullName')?.value as string,
           username: user.get('username')?.value as string,
+          color: user.get('color')?.value as string,
           userIsAddedToList: true,
         };
       });

@@ -67,6 +67,7 @@ export class UserToInviteComponent {
       fullName: (this.user.value as Partial<User>).fullName,
       username: (this.user.value as Partial<User>).username,
       email: (this.user.value as Partial<User>).email,
+      color: (this.user.value as Partial<User>).color,
     };
   }
 

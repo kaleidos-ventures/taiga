@@ -140,6 +140,24 @@ export class WorkspaceDetailEffects {
     );
   });
 
+  public updateWorkspaceSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(WorkspaceDetailActions.updateWorkspaceSuccess),
+        tap(() => {
+          this.appService.toastNotification({
+            message: 'edit.changes_saved',
+            status: TuiNotification.Success,
+            scope: 'workspace',
+            autoClose: true,
+            closeOnNavigation: false,
+          });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   public deleteWorkspace$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(WorkspaceDetailActions.deleteWorkspace),

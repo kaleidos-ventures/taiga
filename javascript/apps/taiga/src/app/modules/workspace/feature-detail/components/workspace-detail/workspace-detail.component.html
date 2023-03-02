@@ -21,13 +21,14 @@ Copyright (c) 2023-present Kaleidos INC
             [name]="vm.workspace.name">
           </tg-ui-avatar>
         </div>
-        <div class="workspace-detail-title-wrapper">
-          <div class="workspace-detail-title-route">
+        <div class="workspace-detail-name-wrapper">
+          <div class="workspace-detail-name-route">
             {{ t('commons.workspace') }}/
           </div>
-          <div class="workspace-detail-title-container">
+          <div class="workspace-detail-name-container">
             <h3
-              class="workspace-detail-title"
+              data-test="workspace-detail-name"
+              class="workspace-detail-name"
               tgTitle>
               {{ vm.workspace.name }}
             </h3>
@@ -195,7 +196,7 @@ Copyright (c) 2023-present Kaleidos INC
           [attr.aria-label]="t('workspace.workspace_options')">
           <button
             role="menuitem"
-            data-test="edit-ws-title-button"
+            data-test="edit-ws-button"
             class="ws-option"
             tuiOption
             type="button"

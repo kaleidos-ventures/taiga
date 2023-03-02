@@ -118,7 +118,7 @@ function isInViewport(el: string) {
 
 Cypress.Commands.add('isInViewport', isInViewport);
 
-function login(username = 'user1', password = '123123') {
+function login(username = '1user', password = '123123') {
   cy.session([username, password], () => {
     cy.visit('/login');
     cy.getBySel('login-username').type(username);

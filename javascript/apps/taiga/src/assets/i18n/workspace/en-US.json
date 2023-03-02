@@ -23,6 +23,7 @@
     "name": "Workspace name",
     "name_required": "Workspace name can’t be empty",
     "name_placeholder": "Add workspace name",
+    "changes_saved": "Changes saved",
     "changes_canceled": "Changes canceled"
   },
   "delete": {

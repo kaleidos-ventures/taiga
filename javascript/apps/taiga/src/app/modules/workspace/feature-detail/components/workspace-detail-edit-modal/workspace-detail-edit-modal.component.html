@@ -13,6 +13,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     (requestClose)="cancel()">
     <div
       role="dialog"
+      data-test="edit-ws-modal"
       aria-labelledby="edit-ws"
       aria-modal="true">
       <h3
@@ -27,15 +28,17 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         <tg-ui-input [label]="t('workspace.edit.name')">
           <input
             formControlName="name"
-            data-test="story-title"
+            data-test="story-name"
             #title
             inputRef
             [maxlength]="maxLength"
             [placeholder]="t('workspace.edit.name_placeholder')" />
           <ng-container inputError>
-            <tg-ui-error error="required">{{
-              t('workspace.edit.name_required')
-            }}</tg-ui-error>
+            <tg-ui-error
+              error="required"
+              data-test="edit-name-required-error"
+              >{{ t('workspace.edit.name_required') }}</tg-ui-error
+            >
             <tg-ui-error error="pattern">{{
               t('workspace.edit.name_required')
             }}</tg-ui-error>
@@ -43,7 +46,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         </tg-ui-input>
         <div class="edit-ws-actions-area">
           <button
-            data-test="edit-ws-cancel-button"
+            data-test="edit-name-cancel-button"
             appearance="button-form"
             tuiButton
             (click)="cancel()"
@@ -51,7 +54,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
             {{ t('commons.cancel') }}
           </button>
           <button
-            data-test="edit-ws-confirm-button"
+            data-test="edit-name-confirm-button"
             appearance="primary"
             tuiButton
             (click)="submit()"

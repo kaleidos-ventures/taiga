@@ -54,12 +54,15 @@ export class WorkspaceDetailEditModalComponent implements OnInit {
   public maxLength = WorkspaceNameMaxLength;
   public showConfirmEditProjectModal = false;
 
-  public nameForm = new FormGroup({
-    name: new FormControl('', {
-      nonNullable: true,
-      validators: WorkspaceNameValidation,
-    }),
-  });
+  public nameForm = new FormGroup(
+    {
+      name: new FormControl('', {
+        nonNullable: true,
+        validators: WorkspaceNameValidation,
+      }),
+    },
+    { updateOn: 'submit' }
+  );
 
   public ngOnInit() {
     this.nameForm.get('name')?.setValue(this.workspace.name);

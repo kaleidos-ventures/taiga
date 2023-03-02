@@ -549,3 +549,7 @@ Copyright (c) 2023-present Kaleidos INC
     color: var(--color-secondary);
   }
 }
+
+[tuiwrapper][data-appearance="icon"] {
+  opacity: 1;
+}

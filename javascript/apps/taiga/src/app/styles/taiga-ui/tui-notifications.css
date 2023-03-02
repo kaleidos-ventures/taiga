@@ -22,6 +22,7 @@ tui-alert-host {
 
   /* stylelint-disable-next-line selector-max-type */
   & .t-notifications-wrapper tui-alert {
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
     inline-size: 410px;
     margin-block-start: var(--spacing-64);
     margin-inline-end: var(--spacing-16);
@@ -48,7 +49,7 @@ tui-notification {
   }
 
   & .t-close {
-    inset-block-start: calc(var(--spacing-16) + 2px) !important;
+    inset-block-start: var(--spacing-16) !important;
     inset-inline-end: var(--spacing-16) !important;
 
     & .t-icon {
@@ -63,7 +64,7 @@ tui-notification {
   & .t-icon {
     block-size: var(--spacing-16) !important;
     inline-size: var(--spacing-16) !important;
-    margin-block-start: calc(var(--spacing-16) + 2px);
+    margin-block-start: var(--spacing-16);
   }
 
   & .t-content {

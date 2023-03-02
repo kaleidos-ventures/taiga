@@ -100,10 +100,10 @@ export const reducer = createReducer(
   on(
     WorkspaceActions.updateWorkspaceSuccess,
     (state, { workspace }): WorkspaceDetailState => {
-      if (state.workspace && workspace.name) {
+      if (state.workspace && workspace) {
         state.workspace = {
           ...state.workspace,
-          name: workspace.name,
+          ...workspace,
         };
       }
 

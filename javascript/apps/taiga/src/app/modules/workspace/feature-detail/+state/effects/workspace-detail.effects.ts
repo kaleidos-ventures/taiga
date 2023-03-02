@@ -124,9 +124,9 @@ export class WorkspaceDetailEffects {
           return this.workspaceApiService
             .updateWorkspace(currentWorkspace.id, nextWorkspace)
             .pipe(
-              map(() => {
+              map((workspace) => {
                 return WorkspaceDetailActions.updateWorkspaceSuccess({
-                  workspace: nextWorkspace,
+                  workspace,
                 });
               })
             );

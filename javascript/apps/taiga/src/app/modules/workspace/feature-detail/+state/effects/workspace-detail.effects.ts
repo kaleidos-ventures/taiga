@@ -209,22 +209,26 @@ export class WorkspaceDetailEffects {
     { dispatch: false }
   );
 
-  public workspaceDeleted$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(workspaceDetailEventActions.workspaceDeleted),
-      tap((action) => {
-        this.appService.toastNotification({
-          message: 'delete.deleted_worspace',
-          paramsMessage: { name: action.name },
-          status: TuiNotification.Error,
-          scope: 'workspace',
-          autoClose: true,
-          closeOnNavigation: false,
-        });
-        void this.router.navigate(['/']);
-      })
-    );
-  });
+  public workspaceDeleted$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(workspaceDetailEventActions.workspaceDeleted),
+        tap((action) => {
+          console.log('kick del detalle al usuario');
+          this.appService.toastNotification({
+            message: 'delete.deleted_worspace',
+            paramsMessage: { name: action.name },
+            status: TuiNotification.Error,
+            scope: 'workspace',
+            autoClose: true,
+            closeOnNavigation: false,
+          });
+          void this.router.navigate(['/']);
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   public deleteWorkspaceProject$ = createEffect(() => {
     return this.actions$.pipe(

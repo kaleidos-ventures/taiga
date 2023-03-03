@@ -110,6 +110,12 @@ tg-project-card {
         color: var(--color-red);
       }
     }
+
+    &.delete:hover {
+      & .ws-option-name {
+        color: var(--color-red80);
+      }
+    }
   }
 }
 

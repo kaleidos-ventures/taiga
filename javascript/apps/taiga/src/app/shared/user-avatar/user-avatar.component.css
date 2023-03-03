@@ -7,6 +7,8 @@ Copyright (c) 2023-present Kaleidos INC
 */
 
 :host {
+  --color-border: var(--color-gray20);
+
   &.no-border {
     &::ng-deep tui-avatar {
       border: none;
@@ -14,6 +16,6 @@ Copyright (c) 2023-present Kaleidos INC
   }
 
   &::ng-deep tui-avatar {
-    border: 2px solid var(--color-gray20);
+    border: 2px solid var(--color-border);
   }
 }

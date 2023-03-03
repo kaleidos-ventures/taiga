@@ -637,7 +637,8 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
 
   public handleDeleteWorkspace() {
     const workspace = this.state.get('workspace');
-    if (workspace?.hasProjects) {
+    const projects = this.state.get('projects');
+    if (projects.length) {
       this.showDeleteWorkspaceModal = true;
     } else {
       this.store.dispatch(

@@ -6,81 +6,84 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 -->
 
-<ng-container *transloco="let t; read: 'navigation_projects'">
+<ng-container *transloco="let t">
   <ng-container *ngIf="latestProjects$ | async as latestProjects">
-    <ul
-      role="group"
+    <tui-data-list
+      tgAutoFocus
+      tabindex="-1"
       class="pinned-projects"
-      [attr.aria-label]="t('recent_projects')">
-      <ng-container *ngIf="latestProjects.length">
-        <li
-          *ngFor="
-            let project of latestProjects;
-            trackBy: trackByProject;
-            let i = index
-          "
-          role="none">
-          <a
-            role="menuitem"
-            class="project"
-            [routerLink]="['/project', project.id, project.slug]"
-            [attr.data-test]="'recent-project-' + i">
-            <div class="project-image">
-              <tg-ui-avatar
-                type="light"
-                [color]="project.color"
-                [avatarUrl]="project.logoSmall"
-                [name]="project.name">
-              </tg-ui-avatar>
-            </div>
-            <div class="project-data">
-              <span class="project-name">{{ project.name }} </span>
-              <span class="project-workspace">{{
-                project.workspace.name
-              }}</span>
-            </div>
-          </a>
-        </li>
+      [attr.aria-label]="
+        latestProjects.length
+          ? t('navigation_projects.recent_projects') +
+            t('commons.down_to_navigate')
+          : t('navigation_projects.recent_projects') +
+            t('navigation_projects.empty_recent_projects') +
+            t('commons.down_to_navigate')
+      "
+      role="menu">
+      <span
+        [attr.aria-label]="
+          latestProjects.length
+            ? t('navigation_projects.recent_projects')
+            : t('navigation_projects.recent_projects') +
+              t('navigation_projects.empty_recent_projects')
+        "
+        class="menu-title"
+        >{{ t('navigation_projects.recent_projects') }}</span
+      >
+      <a
+        *ngFor="
+          let project of latestProjects;
+          trackBy: trackByProject;
+          let i = index
+        "
+        tuiOption
+        [routerLink]="['/project', project.id, project.slug]"
+        role="menuitem"
+        href="#"
+        class="project">
+        <div class="project-image">
+          <tg-ui-avatar
+            type="light"
+            [color]="project.color"
+            [avatarUrl]="project.logoSmall"
+            [name]="project.name">
+          </tg-ui-avatar>
+        </div>
+        <div class="project-data">
+          <span class="project-name">{{ project.name }} </span>
+          <span class="project-workspace">{{ project.workspace.name }}</span>
+          <span class="visually-hidden">{{ t('commons.project') }}</span>
+        </div>
+      </a>
+      <ng-container *ngIf="!latestProjects.length">
+        <p class="empty-recent">
+          {{ t('navigation_projects.empty_recent_projects') }}
+        </p>
       </ng-container>
-    </ul>
-
-    <ng-container *ngIf="!latestProjects.length">
-      <p class="empty-recent">{{ t('empty_recent_projects') }}</p>
-    </ng-container>
-
-    <a
-      role="menuitem"
-      class="view-projects"
-      href="">
-      {{ t('view_projects') }}
-    </a>
-    <a
-      role="menuitem"
-      class="new-project"
-      tuiButton
-      [routerLink]="['/new-project']"
-      type="button"
-      icon="plus">
-      {{ t('new_project') }}
-    </a>
-    <ul
-      role="group"
-      class="organizations"
-      [attr.aria-label]="'commons.organizations' | transloco">
-      <li role="none">
-        <a
+      <a
+        tuiOption
+        role="menuitem"
+        class="view-projects"
+        href="">
+        {{ t('navigation_projects.view_projects') }}
+      </a>
+      <a
+        tuiOption
+        class="project-action"
+        role="menuitem"
+        [routerLink]="['/new-project']">
+        <button
           role="menuitem"
-          href=""
-          >Kaleidos INC</a
-        >
-      </li>
-      <li role="none">
-        <a
-          role="menuitem"
-          href=""
-          >Kaleidos Open Source organization</a
-        >
-      </li>
-    </ul>
+          appearance="primary"
+          class="new-project"
+          tuiButton
+          tabIndex="-1"
+          type="button"
+          icon="plus">
+          {{ t('navigation_projects.new_project') }}
+        </button>
+      </a>
+    </tui-data-list>
   </ng-container>
 </ng-container>

@@ -6,9 +6,16 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 -->
 
-<ng-container *transloco="let t; read: 'navigation_user'">
+<ng-container *transloco="let t">
   <tui-data-list
+    tgAutoFocus
+    tabindex="-1"
     class="profile-options-list"
+    [attr.aria-label]="
+      user.fullName +
+      t('navigation_user.user_menu') +
+      t('commons.down_to_navigate')
+    "
     role="menu">
     <a
       tuiOption
@@ -29,7 +36,7 @@ Copyright (c) 2023-present Kaleidos INC
       role="menuitem"
       href="#"
       class="user-link">
-      {{ t('user_profile') }}
+      {{ t('navigation_user.user_profile') }}
     </a>
     <a
       tuiOption
@@ -37,14 +44,14 @@ Copyright (c) 2023-present Kaleidos INC
       [routerLink]="['user-settings', 'profile']"
       (click)="requestClose.emit()"
       class="user-link">
-      {{ t('edit_profile') }}
+      {{ t('navigation_user.edit_profile') }}
     </a>
     <a
       tuiOption
       role="menuitem"
       href="#"
       class="user-link">
-      {{ t('account_settings') }}
+      {{ t('navigation_user.account_settings') }}
     </a>
     <a
       tuiOption
@@ -52,14 +59,14 @@ Copyright (c) 2023-present Kaleidos INC
       [routerLink]="['user-settings', 'preferences']"
       (click)="requestClose.emit()"
       class="user-link">
-      {{ t('preferences') }}
+      {{ t('navigation_user.preferences') }}
     </a>
     <a
       tuiOption
       role="menuitem"
       href="#"
       class="user-link">
-      {{ t('accessibility_settings') }}
+      {{ t('navigation_user.accessibility_settings') }}
     </a>
     <hr class="separator" />
     <button
@@ -70,7 +77,7 @@ Copyright (c) 2023-present Kaleidos INC
       (click)="requestClose.emit()"
       data-test="log-out"
       class="user-link log-out">
-      {{ t('log_out') }}
+      {{ t('navigation_user.log_out') }}
     </button>
   </tui-data-list>
 </ng-container>

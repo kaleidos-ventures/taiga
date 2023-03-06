@@ -17,6 +17,7 @@ import {
 import { AvatarModule } from '@taiga/ui/avatar';
 import { ModalModule } from '@taiga/ui/modal';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { DeleteProjectComponent } from './components/delete-project/delete-project.component';
@@ -46,6 +47,7 @@ import { ProjectFeatureOverviewComponent } from './project-feature-overview.comp
     TuiHintModule,
     TuiDataListModule,
     DeleteProjectComponent,
+    AutoFocusDirective,
   ],
   declarations: [ProjectFeatureOverviewComponent],
   providers: [

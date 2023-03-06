@@ -18,16 +18,15 @@ Copyright (c) 2023-present Kaleidos INC
 ul {
   margin: 0;
   padding: 0;
+}
 
-  &::before {
-    border-block-end: 1px solid var(--color-gray30);
-    color: var(--color-gray80);
-    content: attr(aria-label);
-    display: block;
-    font-size: var(--font-size-small);
-    padding-block-end: var(--spacing-8);
-    text-transform: uppercase;
-  }
+.menu-title {
+  border-block-end: 1px solid var(--color-gray30);
+  color: var(--color-gray80);
+  display: block;
+  font-size: var(--font-size-small);
+  padding-block-end: var(--spacing-8);
+  text-transform: uppercase;
 }
 
 li {
@@ -41,8 +40,19 @@ li {
 }
 
 .pinned-projects {
-  border-block-end: 1px solid var(--color-gray30);
-  margin-block-end: var(--spacing-16);
+  border: 0;
+
+  & .project-action {
+    inline-size: 100%;
+
+    /* stylelint-disable-next-line declaration-no-important */
+    padding: 0 !important;
+
+    & button {
+      /* stylelint-disable-next-line declaration-no-important */
+      padding: 0 !important;
+    }
+  }
 }
 
 .project-name {
@@ -54,8 +64,7 @@ li {
   flex-direction: column;
   font-weight: var(--font-weight-medium);
   justify-content: space-between;
-  max-inline-size: calc(100% - var(--spacing-8));
-  padding-inline: var(--spacing-12) var(--spacing-16);
+  max-inline-size: calc(100% - var(--spacing-44));
 
   & span {
     display: block;
@@ -80,6 +89,11 @@ li {
   block-size: 32px;
   box-sizing: content-box;
   display: flex;
+  gap: var(--spacing-12);
+  inline-size: auto;
+  justify-content: flex-start;
+  max-inline-size: 100%;
+  overflow: hidden;
   padding: var(--spacing-8);
 
   &:hover {
@@ -88,11 +102,6 @@ li {
     & .project-name {
       color: var(--color-secondary80);
     }
-  }
-
-  &:focus-visible {
-    border-block-end: 0;
-    outline: 1px solid var(--color-secondary);
   }
 }
 
@@ -105,34 +114,10 @@ li {
 }
 
 .view-projects {
+  color: var(--color-secondary);
   display: inline-block;
   font-weight: var(--font-weight-semibold);
   margin-block-end: 1rem;
-}
-
-.new-project {
-  inline-size: 100%;
-}
-
-.organizations {
-  margin-block-start: 1rem;
-
-  & a {
-    background-color: var(--color-white);
-    color: var(--color-gray80);
-    display: block;
-    padding: var(--spacing-8);
-
-    &:hover {
-      background-color: var(--color-gray20);
-      color: var(--color-secondary80);
-    }
-
-    &:focus-visible {
-      border-block-end: 0;
-      outline: 1px solid var(--color-secondary);
-    }
-  }
 }
 
 .empty-recent {
@@ -141,4 +126,5 @@ li {
   display: block;
   margin-block-end: var(--spacing-16);
   padding-block-end: var(--spacing-16);
+  padding-block-start: var(--spacing-16);
 }

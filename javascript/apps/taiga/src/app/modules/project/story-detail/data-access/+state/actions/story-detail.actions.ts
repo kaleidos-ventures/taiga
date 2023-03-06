@@ -46,6 +46,10 @@ export const StoryDetailActions = createActionGroup({
       storyRef: Story['ref'];
       member: Membership['user'];
     }>(),
+    'Unassign Members': props<{
+      storyRef: Story['ref'];
+      members: Membership[];
+    }>(),
   },
 });
 

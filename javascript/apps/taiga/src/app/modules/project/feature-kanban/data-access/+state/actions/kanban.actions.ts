@@ -78,6 +78,9 @@ export const KanbanActions = createActionGroup({
       storyRef: Story['ref'];
       member: Membership['user'];
     }>(),
+    'Remove Members': props<{
+      members: Membership[];
+    }>(),
   },
 });
 

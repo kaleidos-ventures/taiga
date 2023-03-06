@@ -8,6 +8,7 @@
 
 import { randUuid } from '@ngneat/falso';
 import {
+  MembershipMockFactory,
   StatusMockFactory,
   StoryDetailMockFactory,
   StoryMockFactory,
@@ -515,6 +516,64 @@ describe('Kanban reducer', () => {
     expect(state.stories[status.slug].length).toEqual(3);
     expect(state.stories[status2.slug][1].ref).toEqual(stories[0].ref);
     expect(state.stories[status2.slug][1].title).toEqual('new title');
+  });
+
+  it('remove members by event', () => {
+    const { initialKanbanState } = kanbanReducer;
+    const status = StatusMockFactory();
+    const status2 = StatusMockFactory();
+
+    const workflow = WorkflowMockFactory();
+    workflow.statuses = [status, status2];
+
+    const assignee1 = MembershipMockFactory();
+    const assignee2 = MembershipMockFactory();
+
+    const stories: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status]),
+        assignees: [
+          {
+            color: assignee1.user.color,
+            fullName: assignee1.user.fullName,
+            username: assignee1.user.username,
+          },
+          {
+            color: assignee2.user.color,
+            fullName: assignee2.user.fullName,
+            username: assignee2.user.username,
+          },
+        ],
+      },
+    ];
+
+    const stories2: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status2]),
+        assignees: [
+          {
+            color: assignee2.user.color,
+            fullName: assignee2.user.fullName,
+            username: assignee2.user.username,
+          },
+        ],
+      },
+    ];
+
+    const state = kanbanReducer.kanbanFeature.reducer(
+      {
+        ...initialKanbanState,
+        stories: {
+          [status.slug]: stories,
+          [status2.slug]: stories2,
+        },
+        workflows: [workflow],
+      },
+      KanbanActions.removeMembers({ members: [assignee2] })
+    );
+
+    expect(state.stories[status.slug][0].assignees.length).toEqual(1);
+    expect(state.stories[status2.slug][0].assignees.length).toEqual(0);
   });
 
   it('update story title by event', () => {

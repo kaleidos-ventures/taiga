@@ -16,6 +16,7 @@ import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
@@ -168,7 +169,30 @@ export class ProjectEffects {
         return !members.length;
       }),
       fetch({
-        run: (action, project) => {
+        run: (_, project) => {
+          return this.projectApiService.getAllMembers(project.id).pipe(
+            map((members) => {
+              return ProjectActions.fetchProjectMembersSuccess({
+                members,
+              });
+            })
+          );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) =>
+          this.appService.errorManagement(httpResponse),
+      })
+    );
+  });
+
+  public fetchProjectMembers$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.initKanban, ProjectActions.fetchProjectMembers),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+        this.store.select(selectMembers),
+      ]),
+      fetch({
+        run: (_, project) => {
           return this.projectApiService.getAllMembers(project.id).pipe(
             map((members) => {
               return ProjectActions.fetchProjectMembersSuccess({

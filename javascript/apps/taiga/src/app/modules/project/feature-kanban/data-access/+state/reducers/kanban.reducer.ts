@@ -636,7 +636,21 @@ export const reducer = createReducer(
 
       return state;
     }
-  )
+  ),
+  on(KanbanActions.removeMembers, (state, { members }): KanbanState => {
+    members.map((member) => {
+      state = replaceStory(state, (it) => {
+        return {
+          ...it,
+          assignees: it.assignees.filter(
+            (storyUser) => storyUser.username !== member.user.username
+          ),
+        };
+      });
+    });
+
+    return state;
+  })
 );
 
 export const kanbanFeature = createFeature({

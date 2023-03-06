@@ -21,6 +21,8 @@ export const fetchProject = createAction(
 
 export const initAssignUser = createAction('[Project] init assign user');
 
+export const fetchProjectMembers = createAction('[Project] fetch members');
+
 export const fetchProjectMembersSuccess = createAction(
   '[Project] fetch members success',
   props<{ members: Membership[] }>()

@@ -15,7 +15,15 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiNotification } from '@taiga-ui/core';
 import { ShortcutsService } from '@taiga/core';
-import { Project, Role, Story, StoryDetail, StoryView } from '@taiga/data';
+import {
+  Membership,
+  Permissions,
+  Project,
+  Role,
+  Story,
+  StoryDetail,
+  StoryView,
+} from '@taiga/data';
 import {
   combineLatest,
   filter,
@@ -25,7 +33,11 @@ import {
   startWith,
   take,
 } from 'rxjs';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
+import {
+  selectCurrentProject,
+  selectMembers,
+} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
@@ -57,6 +69,7 @@ interface ComponentState {
   storyView: StoryView;
   project: Project;
   selectedStory: StoryDetail;
+  members: Membership[];
 }
 
 @UntilDestroy()
@@ -115,6 +128,10 @@ export class ProjectFeatureKanbanComponent {
     this.state.connect(
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())
+    );
+    this.state.connect(
+      'members',
+      this.store.select(selectMembers).pipe(filterNil())
     );
     this.state.connect(
       'showStoryDetail',
@@ -262,7 +279,7 @@ export class ProjectFeatureKanbanComponent {
       this.wsService.userEvents<Role>('projectmemberships.update')
     )
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
+      .subscribe((permissions) => {
         this.project$
           .pipe(filterNil(), pairwise(), take(1))
           .subscribe(([prev, next]) => {
@@ -271,7 +288,25 @@ export class ProjectFeatureKanbanComponent {
               next
             );
           });
+        this.store.dispatch(ProjectActions.fetchProjectMembers());
+        this.unassignRoleMembersWithoutPermissions(permissions.event.content);
       });
+  }
+
+  private unassignRoleMembersWithoutPermissions(role: Role) {
+    if (!role.permissions.includes(Permissions.viewStory)) {
+      const members = this.state.get('members');
+
+      const membersWithoutViewPermissions = members.filter((member) => {
+        return member.role.name === role.name;
+      });
+
+      this.store.dispatch(
+        KanbanActions.removeMembers({
+          members: membersWithoutViewPermissions,
+        })
+      );
+    }
   }
 
   private checkInviteModalStatus() {

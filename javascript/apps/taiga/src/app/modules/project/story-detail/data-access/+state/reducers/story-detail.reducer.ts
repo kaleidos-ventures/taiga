@@ -122,6 +122,19 @@ export const reducer = createReducer(
       }
       return state;
     }
+  ),
+  on(
+    StoryDetailActions.unassignMembers,
+    (state, { storyRef, members }): StoryDetailState => {
+      if (state.story?.ref === storyRef) {
+        state.story.assignees = state.story.assignees.filter((assignee) => {
+          return !members.some(
+            (member) => member.user.fullName === assignee.fullName
+          );
+        });
+      }
+      return state;
+    }
   )
 );
 

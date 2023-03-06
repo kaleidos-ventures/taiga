@@ -21,14 +21,27 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslocoService } from '@ngneat/transloco';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Membership, Project, Status, Story, User } from '@taiga/data';
+import {
+  Membership,
+  Permissions,
+  Project,
+  Role,
+  Status,
+  Story,
+  User,
+} from '@taiga/data';
+import { merge } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { selectMembers } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { StoryDetailForm } from '~/app/modules/project/story-detail/story-detail.component';
 import { PermissionsService } from '~/app/services/permissions.service';
+import { WsService } from '~/app/services/ws';
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { filterNil } from '~/app/shared/utils/operators';
 
@@ -39,7 +52,9 @@ export interface StoryState {
   assignees: Story['assignees'];
   currentUser: User;
   canEdit: boolean;
+  members: Membership[];
 }
+@UntilDestroy()
 @Component({
   selector: 'tg-story-detail-assign',
   templateUrl: './story-detail-assign.component.html',
@@ -72,7 +87,8 @@ export class StoryDetailAssignComponent implements OnChanges {
     private store: Store,
     private permissionService: PermissionsService,
     private translocoService: TranslocoService,
-    private liveAnnouncer: LiveAnnouncer
+    private liveAnnouncer: LiveAnnouncer,
+    private wsService: WsService
   ) {
     this.state.connect(
       'currentUser',
@@ -82,6 +98,12 @@ export class StoryDetailAssignComponent implements OnChanges {
       'canEdit',
       this.permissionService.hasPermissions$('story', ['modify'])
     );
+    this.state.connect(
+      'members',
+      this.store.select(selectMembers).pipe(filterNil())
+    );
+
+    this.events();
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -189,5 +211,36 @@ export class StoryDetailAssignComponent implements OnChanges {
 
   public calculateDropdownWidth(event: ResizedEvent) {
     this.dropdownWidth = event.newRect.width;
+  }
+
+  private events() {
+    merge(
+      this.wsService.projectEvents<Role>('projectroles.update'),
+      this.wsService.userEvents<Role>('projectmemberships.update')
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe((permissions) => {
+        this.store.dispatch(ProjectActions.fetchProjectMembers());
+        this.unassignRoleMembersWithoutPermissions(permissions.event.content);
+      });
+  }
+
+  private unassignRoleMembersWithoutPermissions(role: Role) {
+    if (!role.permissions.includes(Permissions.viewStory)) {
+      const members = this.state.get('members');
+
+      const membersWithoutViewPermissions = members.filter((member) => {
+        return member.role.name === role.name;
+      });
+
+      if (this.story.ref) {
+        this.store.dispatch(
+          StoryDetailActions.unassignMembers({
+            storyRef: this.story.ref,
+            members: membersWithoutViewPermissions,
+          })
+        );
+      }
+    }
   }
 }

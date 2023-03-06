@@ -84,7 +84,7 @@ Copyright (c) 2023-present Kaleidos INC
       text-decoration: underline;
 
       @mixin wrapper-content {
-color: var(--color-info80) !important;
+        color: var(--color-info80) !important;
       }
     }
 

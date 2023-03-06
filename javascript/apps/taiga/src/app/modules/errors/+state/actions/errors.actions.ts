@@ -19,6 +19,11 @@ export const forbidenError = createAction(
   props<{ error: ErrorsState['forbidenError'] }>()
 );
 
+export const notFoundError = createAction(
+  '[Errors] Not Found error',
+  props<{ error: ErrorsState['notFoundError'] }>()
+);
+
 export const revokedError = createAction(
   '[Errors] Revoked error',
   props<{ error: ErrorsState['unexpectedError'] }>()

@@ -39,5 +39,17 @@ export class ErrorsEffects {
     { dispatch: false }
   );
 
+  public notFoundError$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(ErrorActions.notFoundError),
+        map(() => {
+          void this.router.navigateByUrl('/404', { skipLocationChange: true });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(private router: Router, private actions$: Actions) {}
 }

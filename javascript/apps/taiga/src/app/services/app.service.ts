@@ -17,6 +17,7 @@ import { forkJoin, of } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import {
   forbidenError,
+  notFoundError,
   unexpectedError,
 } from '../modules/errors/+state/actions/errors.actions';
 
@@ -74,7 +75,13 @@ export class AppService {
           error: this.formatHttpErrorResponse(error),
         })
       );
-    } else if (status === 500 || status === 400 || status === 404) {
+    } else if (status === 404) {
+      return this.store.dispatch(
+        notFoundError({
+          error: this.formatHttpErrorResponse(error),
+        })
+      );
+    } else if (status === 500 || status === 400) {
       return this.store.dispatch(
         unexpectedError({
           error: this.formatHttpErrorResponse(error),

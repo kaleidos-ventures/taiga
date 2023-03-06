@@ -17,6 +17,9 @@ export interface ErrorsState {
   forbidenError: {
     message: string;
   };
+  notFoundError: {
+    message: string;
+  };
 }
 
 export const initialState: ErrorsState = {
@@ -24,6 +27,9 @@ export const initialState: ErrorsState = {
     message: '',
   },
   forbidenError: {
+    message: '',
+  },
+  notFoundError: {
     message: '',
   },
 };
@@ -42,6 +48,11 @@ export const reducer = createReducer(
   }),
   on(ErrorsActions.revokedError, (state, { error }): ErrorsState => {
     state.unexpectedError.message = error.message;
+
+    return state;
+  }),
+  on(ErrorsActions.notFoundError, (state, { error }): ErrorsState => {
+    state.notFoundError.message = error.message;
 
     return state;
   })

@@ -26,6 +26,10 @@
       "yes": "Yes, quit",
       "no": "No, keep editing"
     },
+    "open_action_menu": "Open action menu",
+    "down_to_navigate": "Use down arrow key to navigate",
+    "updown_to_navigate": "Use up and down arrow key to navigate",
+    "press_enter_to_open_menu": "Press enter to open",
     "roles": {
       "admin": "Admin",
       "member": "Member",
@@ -61,6 +65,7 @@
     "new_project": "New project"
   },
   "navigation_user": {
+    "user_menu": "User menu",
     "user_profile": "See Profile",
     "edit_profile": "Edit profile",
     "preferences": "Preferences",

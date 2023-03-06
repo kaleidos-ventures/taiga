@@ -5,12 +5,12 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2023-present Kaleidos INC
 -->
-<ng-container *transloco="let t; read: 'navigation'">
+<ng-container *transloco="let t">
   <ng-container *ngIf="(logged$ | async) === false">
     <div class="left">
       <a
         appearance="home-button"
-        [attr.aria-label]="t('go_home')"
+        [attr.aria-label]="t('navigation.go_home')"
         [routerLink]="['/']"
         class="home-button"
         tuiIconButton
@@ -33,7 +33,7 @@ Copyright (c) 2023-present Kaleidos INC
           appearance="secondary"
           tuiButton
           type="submit">
-          {{ t('log_in') }}
+          {{ t('navigation.log_in') }}
         </a>
         <a
           [routerLink]="['/signup']"
@@ -41,7 +41,7 @@ Copyright (c) 2023-present Kaleidos INC
           appearance="primary"
           tuiButton
           type="submit">
-          {{ t('create_account') }}
+          {{ t('navigation.create_account') }}
         </a>
       </div>
     </div>
@@ -50,7 +50,7 @@ Copyright (c) 2023-present Kaleidos INC
     <div class="left">
       <a
         appearance="home-button"
-        [attr.aria-label]="t('go_home')"
+        [attr.aria-label]="t('navigation.go_home')"
         [routerLink]="['/']"
         class="home-button"
         tuiIconButton
@@ -61,7 +61,7 @@ Copyright (c) 2023-present Kaleidos INC
         <button
           tuiButton
           (click)="scrollToMainArea()">
-          {{ t('skip_to_content') }}
+          {{ t('navigation.skip_to_content') }}
         </button>
       </div>
       <tui-hosted-dropdown
@@ -72,6 +72,9 @@ Copyright (c) 2023-present Kaleidos INC
           role="menu"
           aria-haspopup="true"
           [attr.aria-expanded]="openProjectsDropdown"
+          [attr.aria-label]="
+            t('commons.projects') + t('commons.down_to_navigate')
+          "
           tabindex="0"
           appearance="main-nav"
           tuiButton
@@ -86,20 +89,20 @@ Copyright (c) 2023-present Kaleidos INC
       <div class="actions">
         <button
           appearance="nav-icon-button"
-          [attr.aria-label]="t('search')"
+          [attr.aria-label]="t('navigation.search')"
           tuiIconButton
           icon="search"
           type="button"></button>
         <button
           appearance="nav-icon-button"
           tuiIconButton
-          [attr.aria-label]="t('discover')"
+          [attr.aria-label]="t('navigation.discover')"
           icon="discover"
           type="button"></button>
         <button
           appearance="nav-icon-button"
           tuiIconButton
-          [attr.aria-label]="t('help')"
+          [attr.aria-label]="t('navigation.help')"
           icon="help"
           type="button"></button>
         <tui-badged-content
@@ -109,7 +112,7 @@ Copyright (c) 2023-present Kaleidos INC
           size="s">
           <button
             appearance="nav-icon-button"
-            [attr.aria-label]="t('notification')"
+            [attr.aria-label]="t('navigation.notification')"
             aria-describedby="aria-notifications-description"
             tuiIconButton
             icon="bell"
@@ -119,7 +122,7 @@ Copyright (c) 2023-present Kaleidos INC
           id="aria-notifications-description"
           class="visually-hidden">
           {{
-            t('notification_desc', {
+            t('navigation.notification_desc', {
               notifications: 24
             })
           }}

@@ -9,10 +9,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
-import { TuiLinkModule, TuiSvgModule, TuiDataListModule } from '@taiga-ui/core';
+import { TuiDataListModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiAvatarModule, TuiBadgedContentModule } from '@taiga-ui/kit';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { CommonTemplateModule } from '../common-template.module';
+import { AutoFocusDirective } from '../directives/auto-focus/auto-focus.directive';
 import { DropdownModule } from '../dropdown/dropdown.module';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 import { NavigationProjectsComponent } from './navigation-projects/navigation-projects.component';
@@ -32,6 +33,7 @@ import { NavigationComponent } from './navigation.component';
     AvatarModule,
     DropdownModule,
     TuiBadgedContentModule,
+    AutoFocusDirective,
   ],
   declarations: [
     NavigationComponent,

@@ -12,6 +12,10 @@ tui-data-list {
   border-radius: 3px;
   padding: var(--spacing-4) !important;
 
+  &:focus {
+    outline: none;
+  }
+
   /* stylelint-disable-next-line selector-max-type */
   & a,
   & button {

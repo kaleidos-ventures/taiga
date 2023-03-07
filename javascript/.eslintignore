@@ -1,0 +1,2 @@
+node_modules
+apps/taiga-e2e/cypress.config.ts

@@ -20,24 +20,22 @@ WRONG_REF = 9999
 
 
 async def test_create_story_assignment_invalid_story(client):
-    pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
+    project = await f.create_project()
     await f.create_story(project=project)
 
-    data = {"username": pj_admin.username}
+    data = {"username": project.created_by.username}
 
-    client.login(pj_admin)
+    client.login(project.created_by)
     response = client.post(f"/projects/{project.b64id}/stories/{WRONG_REF}/assignments", json=data)
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
 async def test_create_story_assignment_user_without_permissions(client):
-    user = await f.create_user()
-    pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
+    project = await f.create_project()
     story = await f.create_story(project=project)
+    user = await f.create_user()
 
-    data = {"username": pj_admin.username}
+    data = {"username": project.created_by.username}
 
     client.login(user)
     response = client.post(f"/projects/{project.b64id}/stories/{story.ref}/assignments", json=data)
@@ -45,13 +43,12 @@ async def test_create_story_assignment_user_without_permissions(client):
 
 
 async def test_create_story_assignment_ok(client):
-    pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
+    project = await f.create_project()
     story = await f.create_story(project=project)
 
-    data = {"username": pj_admin.username}
+    data = {"username": project.created_by.username}
 
-    client.login(pj_admin)
+    client.login(project.created_by)
     response = client.post(f"/projects/{project.b64id}/stories/{story.ref}/assignments", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
 
@@ -63,7 +60,7 @@ async def test_create_story_assignment_ok(client):
 
 async def test_delete_story_assignment_invalid_story(client):
     pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
+    project = await f.create_project(created_by=pj_admin)
     story = await f.create_story(project=project)
     await f.create_story_assignment(story=story, user=pj_admin)
 
@@ -75,7 +72,7 @@ async def test_delete_story_assignment_invalid_story(client):
 async def test_delete_story_assignment_user_without_permissions(client):
     user = await f.create_user()
     pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
+    project = await f.create_project(created_by=pj_admin)
     story = await f.create_story(project=project)
     await f.create_story_assignment(story=story, user=pj_admin)
 
@@ -87,7 +84,7 @@ async def test_delete_story_assignment_user_without_permissions(client):
 async def test_delete_story_assignment_user_not_assigned(client):
     user = await f.create_user()
     pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
+    project = await f.create_project(created_by=pj_admin)
     story = await f.create_story(project=project)
     await f.create_story_assignment(story=story, user=pj_admin)
 
@@ -98,7 +95,7 @@ async def test_delete_story_assignment_user_not_assigned(client):
 
 async def test_delete_story_assignment_ok(client):
     pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
+    project = await f.create_project(created_by=pj_admin)
     story = await f.create_story(project=project)
     await f.create_story_assignment(story=story, user=pj_admin)
 

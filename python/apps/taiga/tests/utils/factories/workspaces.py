@@ -59,7 +59,7 @@ def build_workspace_membership(**kwargs):
 
 class WorkspaceFactory(Factory):
     name = factory.Sequence(lambda n: f"workspace {n}")
-    owner = factory.SubFactory("tests.utils.factories.UserFactory")
+    created_by = factory.SubFactory("tests.utils.factories.UserFactory")
     is_premium = False
 
     class Meta:
@@ -88,7 +88,7 @@ def create_workspace(**kwargs):
         workspace=workspace,
     )
 
-    WorkspaceMembershipFactory.create(user=workspace.owner, workspace=workspace, role=admin_role)
+    WorkspaceMembershipFactory.create(user=workspace.created_by, workspace=workspace, role=admin_role)
 
     return workspace
 

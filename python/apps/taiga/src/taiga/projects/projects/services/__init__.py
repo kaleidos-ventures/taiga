@@ -42,13 +42,13 @@ async def create_project(
     name: str,
     description: str | None,
     color: int | None,
-    owner: User,
+    created_by: User,
     logo: UploadFile | None = None,
 ) -> ProjectDetailSerializer:
     project = await _create_project(
-        workspace=workspace, name=name, description=description, color=color, owner=owner, logo=logo
+        workspace=workspace, name=name, description=description, color=color, created_by=created_by, logo=logo
     )
-    return await get_project_detail(project=project, user=owner)
+    return await get_project_detail(project=project, user=created_by)
 
 
 async def _create_project(
@@ -56,7 +56,7 @@ async def _create_project(
     name: str,
     description: str | None,
     color: int | None,
-    owner: User,
+    created_by: User,
     logo: UploadFile | None = None,
 ) -> Project:
     logo_file = None
@@ -64,22 +64,16 @@ async def _create_project(
         logo_file = File(file=logo.file, name=logo.filename)
 
     project = await projects_repositories.create_project(
-        workspace=workspace, name=name, description=description, color=color, owner=owner, logo=logo_file
+        workspace=workspace, name=name, description=description, color=color, created_by=created_by, logo=logo_file
     )
 
     # apply template
     template = await projects_repositories.get_project_template(filters={"slug": settings.DEFAULT_PROJECT_TEMPLATE})
     await projects_repositories.apply_template_to_project(template=template, project=project)
 
-    # assign the owner to the project as the default role for owner (should be 'admin')
-    owner_role = await (
-        pj_roles_repositories.get_project_role(filters={"project_id": project.id, "slug": template.default_owner_role})
-    )
-    if not owner_role:
-        owner_role = await (
-            pj_roles_repositories.list_project_roles(filters={"project_id": project.id}, offset=0, limit=1)[0]
-        )
-    await pj_memberships_repositories.create_project_membership(user=owner, project=project, role=owner_role)
+    # assign 'created_by' to the project as 'admin' role
+    admin_role = await (pj_roles_repositories.get_project_role(filters={"project_id": project.id, "slug": "admin"}))
+    await pj_memberships_repositories.create_project_membership(user=created_by, project=project, role=admin_role)
 
     return project
 

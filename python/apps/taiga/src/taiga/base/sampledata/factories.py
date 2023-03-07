@@ -80,14 +80,14 @@ def create_workspace_role(workspace: Workspace) -> WorkspaceRole:
 
 
 async def create_workspace(
-    owner: User, name: str | None = None, color: int | None = None, is_premium: bool = False
+    created_by: User, name: str | None = None, color: int | None = None, is_premium: bool = False
 ) -> Workspace:
     name = name or fake.bs()[:35]
     if is_premium:
         name = f"{name}(P)"
     color = color or fake.random_int(min=1, max=constants.NUM_WORKSPACE_COLORS)
 
-    workspace = await workspaces_services._create_workspace(name=name, owner=owner, color=color)
+    workspace = await workspaces_services._create_workspace(name=name, color=color, created_by=created_by)
 
     if is_premium:
         workspace.is_premium = True
@@ -119,7 +119,7 @@ async def get_project_with_related_info(id: UUID) -> Project:
 
 
 async def create_project(
-    workspace: Workspace, owner: User, name: str | None = None, description: str | None = None
+    workspace: Workspace, created_by: User, name: str | None = None, description: str | None = None
 ) -> Project:
     name = name or fake.catch_phrase()
     description = description or fake.paragraph(nb_sentences=2)
@@ -135,7 +135,7 @@ async def create_project(
             name=name,
             description=description,
             color=fake.random_int(min=1, max=constants.NUM_PROJECT_COLORS),
-            owner=owner,
+            created_by=created_by,
             workspace=workspace,
             logo=logo_file,
         )
@@ -148,8 +148,8 @@ async def create_project_memberships(project_id: UUID, users: list[User]) -> Non
     other_roles = [r for r in project.roles.all() if r.slug != "admin"]
     admin_role = await project.roles.aget(slug="admin")
 
-    # get users except the owner of the project
-    users = [u for u in users if u.id != project.owner_id]
+    # get users except the creator of the project
+    users = [u for u in users if u.id != project.created_by_id]
 
     # calculate admin (at least 1/3 of the members) and no admin users
     num_admins = random.randint(0, len(users) // 3)
@@ -175,10 +175,10 @@ async def create_project_invitations(project: Project, users: list[User]) -> Non
             role=m.role,
             email=m.user.email,
             status=ProjectInvitationStatus.ACCEPTED,
-            invited_by=project.owner,
+            invited_by=project.created_by,
         )
         for m in project.memberships.all()
-        if m.user_id != project.owner_id
+        if m.user_id != project.created_by_id
     ]
 
     # get no members
@@ -199,7 +199,7 @@ async def create_project_invitations(project: Project, users: list[User]) -> Non
                 role=random.choice(roles),
                 email=user.email,
                 status=ProjectInvitationStatus.PENDING,
-                invited_by=project.owner,
+                invited_by=project.created_by,
             )
         )
 
@@ -213,7 +213,7 @@ async def create_project_invitations(project: Project, users: list[User]) -> Non
                 role=random.choice(roles),
                 email=f"email-{i}@email.com",
                 status=ProjectInvitationStatus.PENDING,
-                invited_by=project.owner,
+                invited_by=project.created_by,
             )
         )
 
@@ -245,7 +245,7 @@ async def create_stories(
             stories.append(
                 await _create_story(
                     status=random.choice(statuses),
-                    owner=random.choice(members),
+                    created_by=random.choice(members),
                     order=Decimal(i),
                     save=False,
                 )
@@ -276,7 +276,7 @@ async def create_stories(
 
 
 async def _create_story(
-    status: WorkflowStatus, owner: User, order: Decimal, title: str | None = None, save: bool = True
+    status: WorkflowStatus, created_by: User, order: Decimal, title: str | None = None, save: bool = True
 ) -> Story:
     _ref = await sync_to_async(get_new_project_reference_id)(status.workflow.project_id)
     _title = title or fake.text(max_nb_chars=random.choice(constants.STORY_TITLE_MAX_SIZE))
@@ -287,7 +287,7 @@ async def _create_story(
         title=_title,
         order=order,
         created_at=_created_at,
-        created_by_id=owner.id,
+        created_by_id=created_by.id,
         project_id=status.workflow.project_id,
         workflow_id=status.workflow_id,
         status_id=status.id,

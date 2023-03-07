@@ -40,10 +40,10 @@ async def test_create_project_membership():
 
 
 async def test_list_project_memberships():
-    owner = await f.create_user()
+    admin = await f.create_user()
     user1 = await f.create_user()
     user2 = await f.create_user()
-    project = await f.create_project(owner=owner)
+    project = await f.create_project(created_by=admin)
     role = await f.create_project_role(project=project)
     await repositories.create_project_membership(user=user1, project=project, role=role)
     await repositories.create_project_membership(user=user2, project=project, role=role)
@@ -58,9 +58,8 @@ async def test_list_project_memberships():
 
 
 async def test_get_project_membership():
-    owner = await f.create_user()
     user = await f.create_user()
-    project = await f.create_project(owner=owner)
+    project = await f.create_project()
     role = await f.create_project_role(project=project)
     membership = await repositories.create_project_membership(user=user, project=project, role=role)
 
@@ -74,9 +73,8 @@ async def test_get_project_membership():
 
 
 async def test_update_project_membership():
-    owner = await f.create_user()
     user = await f.create_user()
-    project = await f.create_project(owner=owner)
+    project = await f.create_project()
     role = await f.create_project_role(project=project)
     membership = await repositories.create_project_membership(user=user, project=project, role=role)
 
@@ -110,10 +108,10 @@ async def test_get_project_members():
 
 
 async def test_get_total_project_memberships():
-    owner = await f.create_user()
+    admin = await f.create_user()
     user1 = await f.create_user()
     user2 = await f.create_user()
-    project = await f.create_project(owner=owner)
+    project = await f.create_project(created_by=admin)
     role = await f.create_project_role(project=project)
     await repositories.create_project_membership(user=user1, project=project, role=role)
     await repositories.create_project_membership(user=user2, project=project, role=role)
@@ -128,15 +126,15 @@ async def test_get_total_project_memberships():
 
 
 async def test_exist_project_membership():
-    owner = await f.create_user()
+    admin = await f.create_user()
     user1 = await f.create_user()
     user2 = await f.create_user()
-    project = await f.create_project(owner=owner)
+    project = await f.create_project(created_by=admin)
     role = await f.create_project_role(project=project)
     await repositories.create_project_membership(user=user1, project=project, role=role)
 
-    owner_is_member = await repositories.exist_project_membership(
-        filters={"project_id": project.id, "user_id": owner.id}
+    admin_is_member = await repositories.exist_project_membership(
+        filters={"project_id": project.id, "user_id": admin.id}
     )
     user1_is_member = await repositories.exist_project_membership(
         filters={"project_id": project.id, "user_id": user1.id}
@@ -145,6 +143,6 @@ async def test_exist_project_membership():
         filters={"project_id": project.id, "user_id": user2.id}
     )
 
-    assert owner_is_member is True
+    assert admin_is_member is True
     assert user1_is_member is True
     assert user2_is_member is False

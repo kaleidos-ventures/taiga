@@ -60,7 +60,7 @@ async def test_update_project_membership_role_non_existing_role():
 async def test_update_project_membership_role_only_one_admin():
     project = f.build_project()
     admin_role = f.build_project_role(project=project, is_admin=True)
-    membership = f.build_project_membership(user=project.owner, project=project, role=admin_role)
+    membership = f.build_project_membership(user=project.created_by, project=project, role=admin_role)
     general_role = f.build_project_role(project=project, is_admin=False)
     with (
         patch("taiga.projects.memberships.services.pj_roles_repositories", autospec=True) as fake_pj_role_repository,

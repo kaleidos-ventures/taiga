@@ -28,8 +28,7 @@ async def test_get_workspace_role_name_none():
 
 
 async def test_get_workspace_role_name_admin():
-    user = f.build_user()
-    workspace = f.build_workspace(owner=user)
+    workspace = f.build_workspace()
     role = f.build_workspace_role(is_admin=True)
     ws_membership = f.build_workspace_membership(role=role)
 
@@ -37,16 +36,15 @@ async def test_get_workspace_role_name_admin():
         patch("taiga.workspaces.roles.services.ws_memberships_repositories", autospec=True) as fake_ws_memberships_repo,
     ):
         fake_ws_memberships_repo.get_workspace_membership.return_value = ws_membership
-        name = await services.get_workspace_role_name(workspace_id=workspace.id, user_id=user.id)
+        name = await services.get_workspace_role_name(workspace_id=workspace.id, user_id=workspace.created_by.id)
         assert name == "admin"
         fake_ws_memberships_repo.get_workspace_membership.assert_awaited_with(
-            filters={"workspace_id": workspace.id, "user_id": user.id}, select_related=["role"]
+            filters={"workspace_id": workspace.id, "user_id": workspace.created_by.id}, select_related=["role"]
         )
 
 
 async def test_get_workspace_role_name_member():
-    user = f.build_user()
-    workspace = f.build_workspace(owner=user)
+    workspace = f.build_workspace()
     role = f.build_workspace_role(is_admin=False)
     ws_membership = f.build_workspace_membership(role=role)
 
@@ -54,16 +52,15 @@ async def test_get_workspace_role_name_member():
         patch("taiga.workspaces.roles.services.ws_memberships_repositories", autospec=True) as fake_ws_memberships_repo,
     ):
         fake_ws_memberships_repo.get_workspace_membership.return_value = ws_membership
-        name = await services.get_workspace_role_name(workspace_id=workspace.id, user_id=user.id)
+        name = await services.get_workspace_role_name(workspace_id=workspace.id, user_id=workspace.created_by.id)
         assert name == "member"
         fake_ws_memberships_repo.get_workspace_membership.assert_awaited_with(
-            filters={"workspace_id": workspace.id, "user_id": user.id}, select_related=["role"]
+            filters={"workspace_id": workspace.id, "user_id": workspace.created_by.id}, select_related=["role"]
         )
 
 
 async def test_get_workspace_role_name_guest():
-    user = f.build_user()
-    workspace = f.build_workspace(owner=user)
+    workspace = f.build_workspace()
 
     with (
         patch("taiga.workspaces.roles.services.ws_memberships_repositories", autospec=True) as fake_ws_memberships_repo,
@@ -71,19 +68,18 @@ async def test_get_workspace_role_name_guest():
     ):
         fake_ws_memberships_repo.get_workspace_membership.return_value = None
         fake_pj_memberships_repo.exist_project_membership.return_value = True
-        name = await services.get_workspace_role_name(workspace_id=workspace.id, user_id=user.id)
+        name = await services.get_workspace_role_name(workspace_id=workspace.id, user_id=workspace.created_by.id)
         assert name == "guest"
         fake_ws_memberships_repo.get_workspace_membership.assert_awaited_with(
-            filters={"workspace_id": workspace.id, "user_id": user.id}, select_related=["role"]
+            filters={"workspace_id": workspace.id, "user_id": workspace.created_by.id}, select_related=["role"]
         )
         fake_pj_memberships_repo.exist_project_membership.assert_awaited_with(
-            filters={"project__workspace_id": workspace.id, "user_id": user.id},
+            filters={"project__workspace_id": workspace.id, "user_id": workspace.created_by.id},
         )
 
 
 async def test_get_workspace_role_name_all_none():
-    user = f.build_user()
-    workspace = f.build_workspace(owner=user)
+    workspace = f.build_workspace()
 
     with (
         patch("taiga.workspaces.roles.services.ws_memberships_repositories", autospec=True) as fake_ws_memberships_repo,
@@ -91,11 +87,11 @@ async def test_get_workspace_role_name_all_none():
     ):
         fake_ws_memberships_repo.get_workspace_membership.return_value = None
         fake_pj_memberships_repo.exist_project_membership.return_value = False
-        name = await services.get_workspace_role_name(workspace_id=workspace.id, user_id=user.id)
+        name = await services.get_workspace_role_name(workspace_id=workspace.id, user_id=workspace.created_by.id)
         assert name == "none"
         fake_ws_memberships_repo.get_workspace_membership.assert_awaited_with(
-            filters={"workspace_id": workspace.id, "user_id": user.id}, select_related=["role"]
+            filters={"workspace_id": workspace.id, "user_id": workspace.created_by.id}, select_related=["role"]
         )
         fake_pj_memberships_repo.exist_project_membership.assert_awaited_with(
-            filters={"project__workspace_id": workspace.id, "user_id": user.id},
+            filters={"project__workspace_id": workspace.id, "user_id": workspace.created_by.id},
         )

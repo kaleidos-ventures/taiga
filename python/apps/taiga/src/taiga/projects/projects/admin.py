@@ -59,7 +59,7 @@ class ProjectInvitationInline(admin.TabularInline[ProjectInvitation, Project]):
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin[Project]):
     fieldsets = (
-        (None, {"fields": (("id", "b64id"), "workspace", "name", "owner")}),
+        (None, {"fields": (("id", "b64id"), "workspace", "name", "created_by")}),
         (
             "Extra info",
             {"classes": ("collapse",), "fields": ("color", "logo", ("created_at", "modified_at"))},
@@ -67,15 +67,12 @@ class ProjectAdmin(admin.ModelAdmin[Project]):
         ("Permissions", {"fields": ("workspace_member_permissions", "public_permissions")}),
     )
     readonly_fields = ("id", "b64id", "created_at", "modified_at")
-    list_display = ["b64id", "name", "workspace", "owner", "public_user_can_view", "anon_user_can_view"]
-    list_filter = ("workspace", "owner")
+    list_display = ["b64id", "name", "workspace", "created_by", "public_user_can_view", "anon_user_can_view"]
+    list_filter = ("workspace", "created_by")
     search_fields = [
         "id",
         "name",
         "workspace__name",
-        "owner__username",
-        "owner__email",
-        "owner__full_name",
     ]
     ordering = ("name",)
     inlines = [ProjectRoleInline, ProjectMembershipInline, ProjectInvitationInline]

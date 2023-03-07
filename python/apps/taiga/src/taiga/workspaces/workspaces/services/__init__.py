@@ -27,14 +27,14 @@ from taiga.workspaces.workspaces.services import exceptions as ex
 ##########################################################
 
 
-async def create_workspace(name: str, color: int, owner: User) -> WorkspaceSerializer:
-    workspace = await _create_workspace(name=name, color=color, owner=owner)
-    return await get_workspace_detail(id=workspace.id, user_id=owner.id)
+async def create_workspace(name: str, color: int, created_by: User) -> WorkspaceSerializer:
+    workspace = await _create_workspace(name=name, color=color, created_by=created_by)
+    return await get_workspace_detail(id=workspace.id, user_id=created_by.id)
 
 
 #  TODO: review this method after the sampledata refactor
-async def _create_workspace(name: str, color: int, owner: User) -> Workspace:
-    workspace = await workspaces_repositories.create_workspace(name=name, color=color, owner=owner)
+async def _create_workspace(name: str, color: int, created_by: User) -> Workspace:
+    workspace = await workspaces_repositories.create_workspace(name=name, color=color, created_by=created_by)
     role = await ws_roles_repositories.create_workspace_role(
         name="Administrator",
         slug="admin",
@@ -42,7 +42,7 @@ async def _create_workspace(name: str, color: int, owner: User) -> Workspace:
         workspace=workspace,
         is_admin=True,
     )
-    await ws_memberships_repositories.create_workspace_membership(user=owner, workspace=workspace, role=role)
+    await ws_memberships_repositories.create_workspace_membership(user=created_by, workspace=workspace, role=role)
     return workspace
 
 
@@ -120,7 +120,6 @@ async def _update_workspace(workspace: Workspace, values: dict[str, Any] = {}) -
         raise ex.TaigaValidationError("Name cannot be null")
 
     return await workspaces_repositories.update_workspace(workspace=workspace, values=values)
-
 
 
 ##########################################################

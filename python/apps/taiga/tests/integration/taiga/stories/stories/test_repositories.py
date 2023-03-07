@@ -43,8 +43,7 @@ async def test_create_story_ok() -> None:
 
 
 async def test_list_stories() -> None:
-    admin = await f.create_user()
-    project = await f.create_project(owner=admin)
+    project = await f.create_project()
     workflow_1 = await sync_to_async(project.workflows.first)()
     status_1 = await sync_to_async(workflow_1.statuses.first)()
     workflow_2 = await f.create_workflow(project=project)
@@ -132,8 +131,7 @@ async def test_delete_stories() -> None:
 
 
 async def test_list_story_neighbors() -> None:
-    pj_admin = await f.create_user()
-    project = await f.create_project(owner=pj_admin)
+    project = await f.create_project()
 
     # same status for all stories
     workflow1 = await sync_to_async(project.workflows.first)()
@@ -190,8 +188,7 @@ async def test_list_story_neighbors() -> None:
 
 
 async def test_get_total_stories() -> None:
-    admin = await f.create_user()
-    project = await f.create_project(owner=admin)
+    project = await f.create_project()
     workflow_1 = await sync_to_async(project.workflows.first)()
     status_1 = await sync_to_async(workflow_1.statuses.first)()
     workflow_2 = await f.create_workflow(project=project)
@@ -219,8 +216,7 @@ async def test_get_total_stories() -> None:
 
 
 async def test_list_stories_to_reorder() -> None:
-    admin = await f.create_user()
-    project = await f.create_project(owner=admin)
+    project = await f.create_project()
     workflow = await sync_to_async(project.workflows.first)()
     status = await sync_to_async(workflow.statuses.first)()
 

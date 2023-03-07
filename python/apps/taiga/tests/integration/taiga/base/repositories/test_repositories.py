@@ -21,7 +21,7 @@ pytestmark = pytest.mark.django_db(transaction=True)
 class GetObjectNeighbors(IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.pj_admin = await f.create_user()
-        self.project = await f.create_project(owner=self.pj_admin)
+        self.project = await f.create_project(created_by=self.pj_admin)
         self.workflow_1 = await f.create_workflow(project=self.project)
         self.status_11 = await self.workflow_1.statuses.afirst()
         self.status_12 = await self.workflow_1.statuses.alast()

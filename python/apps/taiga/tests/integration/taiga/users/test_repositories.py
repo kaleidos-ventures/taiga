@@ -114,11 +114,10 @@ async def test_list_users_by_emails():
 
 
 async def test_get_guests_in_ws_for_project():
-    admin = await f.create_user()
     member = await f.create_user()
     invitee = await f.create_user()
-    workspace = await f.create_workspace(owner=admin)
-    project = await f.create_project(owner=admin, workspace=workspace)
+    workspace = await f.create_workspace()
+    project = await f.create_project(created_by=workspace.created_by, workspace=workspace)
     general_role = await f.create_project_role(project=project, is_admin=False)
     await f.create_project_membership(user=member, project=project, role=general_role)
     await f.create_project_invitation(
@@ -127,7 +126,7 @@ async def test_get_guests_in_ws_for_project():
         project=project,
         role=general_role,
         status=ProjectInvitationStatus.PENDING,
-        invited_by=admin,
+        invited_by=project.created_by,
     )
 
     users = await users_repositories.list_users(filters={"guest_in_ws_for_project": project})
@@ -153,14 +152,14 @@ async def test_list_users_by_text():
     inactive_user = await f.create_user(is_active=False, username="inactive", full_name="Inactive User")
 
     # elettescar is ws-member
-    workspace = await f.create_workspace(is_premium=True, owner=ws_pj_admin, color=2)
+    workspace = await f.create_workspace(is_premium=True, created_by=ws_pj_admin, color=2)
     general_member_role = await f.create_workspace_role(
         permissions=choices.WorkspacePermissions.choices, is_admin=False, workspace=workspace
     )
     await f.create_workspace_membership(user=elettescar, workspace=workspace, role=general_member_role)
 
     # electra is a pj-member (from the previous workspace)
-    project = await f.create_project(workspace=workspace, owner=ws_pj_admin, created_by=ws_pj_admin)
+    project = await f.create_project(workspace=workspace, created_by=ws_pj_admin)
     general_role = await f.create_project_role(project=project, is_admin=False)
     await f.create_project_membership(user=electra, project=project, role=general_role)
 

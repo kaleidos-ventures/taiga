@@ -54,10 +54,9 @@ async def test_my_workspaces_being_anonymous(client):
 
 
 async def test_my_workspaces_success(client):
-    user = await f.create_user()
-    await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
 
-    client.login(user)
+    client.login(workspace.created_by)
     response = client.get("/my/workspaces")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
@@ -76,10 +75,9 @@ async def test_my_workspace_being_anonymous(client):
 
 
 async def test_my_workspace_success(client):
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
 
-    client.login(user)
+    client.login(workspace.created_by)
     response = client.get(f"/my/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json()["name"] == workspace.name
@@ -109,10 +107,9 @@ async def test_my_workspace_not_found_error_because_there_is_no_relation(client)
 
 
 async def test_get_workspace_being_workspace_admin(client):
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
 
-    client.login(user)
+    client.login(workspace.created_by)
     response = client.get(f"/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
@@ -163,11 +160,10 @@ async def test_get_workspace_not_found_error(client):
 
 
 async def test_update_workspace_ok(client):
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
     data = {"name": "New name"}
 
-    client.login(user)
+    client.login(workspace.created_by)
     response = client.patch(f"/workspaces/{workspace.b64id}", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
     updated_workspace = response.json()
@@ -184,9 +180,8 @@ async def test_update_workspace_not_found(client):
 
 
 async def test_update_workspace_no_admin(client):
-    user = await f.create_user()
     other_user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
 
     data = {"name": "new name"}
     client.login(other_user)
@@ -202,7 +197,7 @@ async def test_update_workspace_no_admin(client):
 async def test_delete_workspace_being_ws_admin(client):
     workspace = await f.create_workspace()
 
-    client.login(workspace.owner)
+    client.login(workspace.created_by)
     response = client.delete(f"/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
@@ -238,4 +233,3 @@ async def test_delete_workspace_not_found(client):
     client.login(user)
     response = client.delete(f"/workspaces/{non_existent_id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-

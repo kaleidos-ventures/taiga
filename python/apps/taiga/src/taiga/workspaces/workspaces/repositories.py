@@ -56,8 +56,8 @@ def _apply_filters_to_queryset(
 
 
 @sync_to_async
-def create_workspace(name: str, color: int, owner: User) -> Workspace:
-    return Workspace.objects.create(name=name, color=color, owner=owner)
+def create_workspace(name: str, color: int, created_by: User) -> Workspace:
+    return Workspace.objects.create(name=name, color=color, created_by=created_by)
 
 
 ##########################################################
@@ -86,7 +86,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
         total_projects = len(projects_ids)
         projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_at")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
-        user_is_owner = Workspace.objects.get(id=ws_id).owner.id == user.id
+        user_is_owner = Workspace.objects.get(id=ws_id).created_by.id == user.id
         invited_projects_qs = Project.objects.filter(
             Q(invitations__user_id=user.id)
             | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email)),
@@ -221,7 +221,9 @@ def get_workspace_detail(
     qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
     qs = qs.annotate(has_projects=Exists(Project.objects.filter(workspace=OuterRef("pk"))))
     qs = qs.annotate(
-        user_is_owner=Case(When(owner_id=user_id, then=Value(True)), default=Value(False), output_field=BooleanField())
+        user_is_owner=Case(
+            When(created_by_id=user_id, then=Value(True)), default=Value(False), output_field=BooleanField()
+        )
     )
 
     try:
@@ -245,7 +247,9 @@ def get_workspace_summary(
 def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
     # Generic annotations:
     has_projects = Exists(Project.objects.filter(workspace=OuterRef("pk")))
-    user_is_owner = Case(When(owner_id=user.id, then=Value(True)), default=Value(False), output_field=BooleanField())
+    user_is_owner = Case(
+        When(created_by_id=user.id, then=Value(True)), default=Value(False), output_field=BooleanField()
+    )
     user_role: Callable[[str], Value] = lambda role_name: Value(role_name, output_field=CharField())
 
     # Generic prefetch
@@ -375,7 +379,6 @@ def update_workspace(workspace: Workspace, values: dict[str, Any] = {}) -> Works
     return workspace
 
 
-
 ##########################################################
 # delete workspace
 ##########################################################
@@ -386,4 +389,3 @@ def delete_workspaces(filters: WorkspaceFilters = {}) -> int:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     count, _ = qs.delete()
     return count
-

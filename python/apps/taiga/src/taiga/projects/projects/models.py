@@ -10,7 +10,7 @@ from typing import Any
 
 from slugify import slugify
 from taiga.base.db import models
-from taiga.base.db.mixins import CreatedAtMetaInfoMixin, CreatedMetaInfoMixin
+from taiga.base.db.mixins import CreatedAtMetaInfoMixin, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin
 from taiga.base.utils.files import get_file_path
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.uuid import encode_uuid_to_b64str
@@ -20,15 +20,13 @@ from taiga.projects import references
 get_project_logo_file_path = functools.partial(get_file_path, base_path="project")
 
 
-class Project(models.BaseModel, CreatedMetaInfoMixin):
+class Project(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin):
     name = models.CharField(max_length=80, null=False, blank=False, verbose_name="name")
     description = models.CharField(max_length=220, null=True, blank=True, verbose_name="description")
     color = models.IntegerField(default=1, null=False, blank=True, verbose_name="color")
     logo = models.FileField(
         upload_to=get_project_logo_file_path, max_length=500, null=True, blank=True, verbose_name="logo"
     )
-
-    modified_at = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="modified at")
 
     workspace = models.ForeignKey(
         "workspaces.Workspace",
@@ -37,15 +35,6 @@ class Project(models.BaseModel, CreatedMetaInfoMixin):
         related_name="projects",
         on_delete=models.SET_NULL,
         verbose_name="workspace",
-    )
-
-    owner = models.ForeignKey(
-        "users.User",
-        null=False,
-        blank=False,
-        related_name="owned_projects",
-        on_delete=models.SET_NULL,
-        verbose_name="owner",
     )
 
     members = models.ManyToManyField(
@@ -118,11 +107,9 @@ class Project(models.BaseModel, CreatedMetaInfoMixin):
         references.create_project_references_sequence(project_id=self.id)
 
 
-class ProjectTemplate(models.BaseModel, CreatedAtMetaInfoMixin):
+class ProjectTemplate(models.BaseModel, CreatedAtMetaInfoMixin, ModifiedAtMetaInfoMixin):
     name = models.CharField(max_length=250, null=False, blank=False, verbose_name="name")
     slug = models.LowerSlugField(max_length=250, null=False, blank=True, unique=True, verbose_name="slug")
-    modified_at = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="modified at")
-    default_owner_role = models.CharField(max_length=50, null=False, blank=False, verbose_name="default owner's role")
     roles = models.JSONField(null=True, blank=True, verbose_name="roles")
     workflows = models.JSONField(null=True, blank=True, verbose_name="workflows")
 

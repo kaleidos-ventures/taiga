@@ -55,3 +55,15 @@ class TitleUpdatedMetaInfoMixin(models.Model):
 
     class Meta:
         abstract = True
+
+
+class ModifiedAtMetaInfoMixin(models.Model):
+    modified_at = models.DateTimeField(
+        null=False,
+        blank=False,
+        auto_now=True,
+        verbose_name="modified at",
+    )
+
+    class Meta:
+        abstract = True

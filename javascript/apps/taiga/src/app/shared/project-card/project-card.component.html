@@ -61,6 +61,9 @@ Copyright (c) 2023-present Kaleidos INC
           [(open)]="projectActionsDropdownState">
           <button
             [attr.aria-label]="t('common_project.save_template')"
+            role="menu"
+            aria-haspopup="true"
+            [attr.aria-expanded]="projectActionsDropdownState"
             icon="more-horizontal"
             appearance="action-button-2"
             tuiIconButton

@@ -133,7 +133,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public invitations$ = this.store.select(selectInvitations);
   public searchInProgress$ = this.store.select(selectSearchFinished);
   public usersToInvite$!: Observable<Partial<User>[]>;
-  public validInviteIdentifier$!: Observable<RegExpMatchArray>;
+  public validInviteIdentifier$!: Observable<string[]>;
   public emailsWithoutDuplications$!: Observable<string[]>;
   public suggestedUsers: Contact[] = [];
   public suggestionSelected = 0;

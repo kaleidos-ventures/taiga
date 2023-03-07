@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { getSelectors } from '@ngrx/router-store';
+import { getRouterSelectors } from '@ngrx/router-store';
 
 export const {
   selectCurrentRoute,
@@ -18,4 +18,4 @@ export const {
   selectRouteData,
   selectUrl,
   selectTitle,
-} = getSelectors();
+} = getRouterSelectors();

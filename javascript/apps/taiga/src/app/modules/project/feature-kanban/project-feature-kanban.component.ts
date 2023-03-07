@@ -277,5 +277,12 @@ export class ProjectFeatureKanbanComponent {
   private checkInviteModalStatus() {
     const state = window.history.state as { invite: boolean } | undefined;
     this.state.set({ invitePeopleModal: !!state?.invite });
+
+    if (state?.invite) {
+      this.location.replaceState(this.router.url, '', {
+        ...window.history.state,
+        invite: false,
+      });
+    }
   }
 }

@@ -8,7 +8,7 @@
 
 const crypto = require('crypto');
 const fs = require('fs');
-const glob = require('glob');
+const { globSync } = require('glob');
 
 function generateChecksum(str, algorithm, encoding) {
   return crypto
@@ -19,7 +19,7 @@ function generateChecksum(str, algorithm, encoding) {
 
 const result = {};
 
-glob.sync(`apps/taiga/src/assets/i18n/**/*.json`).forEach((path) => {
+globSync(`apps/taiga/src/assets/i18n/**/*.json`).forEach((path) => {
   const [_, lang] = path.split('src/assets/i18n/');
   const content = fs.readFileSync(path, { encoding: 'utf-8' });
   result[lang.replace('.json', '')] = generateChecksum(content);

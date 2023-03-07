@@ -38,6 +38,9 @@ Copyright (c) 2023-present Kaleidos INC
                 t('project_overview.project_actions') +
                 t('commons.press_enter_to_open_menu')
               "
+              role="menu"
+              aria-haspopup="true"
+              [attr.aria-expanded]="projectActionsDropdownState"
               icon="more-vertical"
               appearance="tertiary"
               tuiIconButton

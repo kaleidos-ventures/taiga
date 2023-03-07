@@ -331,6 +331,11 @@ Copyright (c) 2023-present Kaleidos INC
 
 [data-appearance="action-button"]:is(button, a),
 [data-appearance="action-button-2"]:is(button, a) {
+  @mixin button-dropdown-expanded {
+    background: var(--color-gray30);
+    color: var(--color-secondary);
+  }
+
   transition-duration: 100ms !important;
 
   & [tuiWrapper] {

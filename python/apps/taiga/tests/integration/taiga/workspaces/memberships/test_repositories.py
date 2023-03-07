@@ -51,7 +51,7 @@ async def test_create_workspace_membership():
 
 async def test_get_workspace_membership():
     user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace(created_by=user)
 
     membership = await repositories.get_workspace_membership(
         filters={"user_id": user.id, "workspace_id": workspace.id}, select_related=["workspace", "user"]

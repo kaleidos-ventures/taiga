@@ -21,7 +21,7 @@ pytestmark = pytest.mark.django_db
 async def test_get_workflows(client):
     project = await f.create_project()
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.get(f"/projects/{project.b64id}/workflows")
     assert response.status_code == status.HTTP_200_OK, response.text
 
@@ -52,7 +52,7 @@ async def test_get_workflow(client):
     project = await f.create_project()
     workflow = await f.create_workflow(project=project)
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.get(f"/projects/{project.b64id}/workflows/{workflow.slug}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
@@ -61,7 +61,7 @@ async def test_get_workflow_wrong_project_slug(client):
     project = await f.create_project()
     workflow = await f.create_workflow(project=project)
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.get(f"/projects/WRONG_PJ_SLUG/workflows/{workflow.slug}")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
@@ -69,7 +69,7 @@ async def test_get_workflow_wrong_project_slug(client):
 async def test_get_workflow_wrong_workflow_slug(client):
     project = await f.create_project()
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.get(f"/projects/{project.b64id}/workflows/WRONG_W_SLUG")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 

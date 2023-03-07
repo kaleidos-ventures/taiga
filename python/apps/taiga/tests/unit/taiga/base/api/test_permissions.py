@@ -15,7 +15,6 @@ from taiga.permissions import (
     DenyAll,
     HasPerm,
     IsAuthenticated,
-    IsObjectOwner,
     IsProjectAdmin,
     IsSuperUser,
     IsWorkspaceAdmin,
@@ -72,7 +71,7 @@ async def test_check_permission_is_superuser():
 async def test_check_permission_has_perm():
     user1 = await f.create_user()
     user2 = await f.create_user()
-    project1 = await f.create_project(owner=user1)
+    project1 = await f.create_project(created_by=user1)
     project2 = await f.create_project()
     permissions = HasPerm("view_story")
 
@@ -83,29 +82,10 @@ async def test_check_permission_has_perm():
         await check_permissions(permissions=permissions, user=user2, obj=project2)
 
 
-async def test_check_permission_is_owner():
-    user1 = await f.create_user()
-    user2 = await f.create_user()
-    workspace = await f.create_workspace(name="workspace1", owner=user1)
-    project = await f.create_project(owner=user1)
-    permissions = IsObjectOwner()
-
-    # user1 owns project
-    assert await check_permissions(permissions=permissions, user=user1, obj=project) is None
-    # user1 owns workspace
-    assert await check_permissions(permissions=permissions, user=user1, obj=workspace) is None
-    # user2 doesn't own project
-    with pytest.raises(ex.ForbiddenError):
-        await check_permissions(permissions=permissions, user=user2, obj=project)
-    # user2 doesn't own wokspace
-    with pytest.raises(ex.ForbiddenError):
-        await check_permissions(permissions=permissions, user=user2, obj=workspace)
-
-
 async def test_check_permission_is_project_admin():
     user1 = await f.create_user()
     user2 = await f.create_user()
-    project = await f.create_project(owner=user1)
+    project = await f.create_project(created_by=user1)
     permissions = IsProjectAdmin()
 
     # user1 is pj-admin
@@ -118,7 +98,7 @@ async def test_check_permission_is_project_admin():
 async def test_check_permission_is_workspace_admin():
     user1 = await f.create_user()
     user2 = await f.create_user()
-    workspace = await f.create_workspace(name="workspace1", owner=user1)
+    workspace = await f.create_workspace(name="workspace1", created_by=user1)
     permissions = IsWorkspaceAdmin()
 
     # user1 is ws-admin
@@ -131,7 +111,7 @@ async def test_check_permission_is_workspace_admin():
 async def test_check_permission_can_view_project():
     user1 = await f.create_user()
     user2 = await f.create_user()
-    project = await f.create_project(owner=user1)
+    project = await f.create_project(created_by=user1)
     permissions = CanViewProject()
 
     # user is pj-admin
@@ -149,7 +129,7 @@ async def test_check_permission_can_view_project():
 async def test_check_permission_global_perms():
     # user is pj-admin
     user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project(created_by=user)
     permissions = IsProjectAdmin()
 
     # user IsProjectAdmin (true) & globalPerm(AllowAny) (true)
@@ -162,7 +142,7 @@ async def test_check_permission_global_perms():
 async def test_check_permission_enough_perms():
     # user is a pj-admin
     user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project(created_by=user)
     true_permission = IsProjectAdmin()
 
     # user IsProjectAdmin (true) | globalPerm(AllowAny) (true)
@@ -177,7 +157,7 @@ async def test_check_permission_enough_perms():
 async def test_check_permission_operators():
     # user is a pj-admin
     user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project(created_by=user)
 
     permission_true_and = And(IsProjectAdmin(), HasPerm("view_story"))
     permission_false_and = And(IsProjectAdmin(), HasPerm("view_story"), IsSuperUser())

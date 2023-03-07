@@ -257,8 +257,7 @@ async def test_get_project_invitations_all_accepted_users():
 
 
 async def test_update_project_invitation():
-    owner = await f.create_user()
-    project = await f.create_project(owner=owner)
+    project = await f.create_project()
     user = await f.create_user()
     old_role = await f.create_project_role(project=project)
     invitation = await f.create_project_invitation(

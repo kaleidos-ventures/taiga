@@ -23,12 +23,11 @@ pytestmark = pytest.mark.django_db(transaction=True)
 
 
 async def test_create_project_being_workspace_admin(client):
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
     data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
     files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
 
-    client.login(user)
+    client.login(workspace.created_by)
     response = client.post("/projects", data=data, files=files)
     assert response.status_code == status.HTTP_200_OK, response.text
 
@@ -74,7 +73,7 @@ async def test_create_project_validation_error(client):
     workspace = await f.create_workspace()
     data = {"name": "My pro#%&乕شject", "color": 1, "workspace_id": "ws-invalid"}
 
-    client.login(workspace.owner)
+    client.login(workspace.created_by)
     response = client.post("/projects", json=data)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
@@ -85,11 +84,10 @@ async def test_create_project_validation_error(client):
 
 
 async def test_list_workspace_projects_success(client):
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
-    await f.create_project(workspace=workspace, owner=user)
+    workspace = await f.create_workspace()
+    await f.create_project(workspace=workspace, created_by=workspace.created_by)
 
-    client.login(user)
+    client.login(workspace.created_by)
     response = client.get(f"/workspaces/{workspace.b64id}/projects")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
@@ -110,12 +108,11 @@ async def test_list_workspace_projects_workspace_not_found(client):
 
 
 async def test_list_workspace_invited_projects_success(client):
-    user1 = await f.create_user()
-    workspace = await f.create_workspace(owner=user1)
-    project = await f.create_project(workspace=workspace, owner=user1)
+    workspace = await f.create_workspace()
+    project = await f.create_project(workspace=workspace, created_by=workspace.created_by)
     user2 = await f.create_user()
     await f.create_workspace_membership(user=user2, workspace=workspace)
-    await f.create_project_invitation(email=user2.email, user=user2, project=project, invited_by=user1)
+    await f.create_project_invitation(email=user2.email, user=user2, project=project, invited_by=workspace.created_by)
 
     client.login(user2)
     response = client.get(f"/workspaces/{workspace.b64id}/invited-projects")
@@ -140,7 +137,7 @@ async def test_list_workspace_invited_projects_workspace_not_found(client):
 async def test_get_project_being_project_admin(client):
     project = await f.create_project()
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.get(f"/projects/{project.b64id}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
@@ -210,7 +207,7 @@ async def test_get_project_not_found_error(client):
 async def test_get_project_public_permissions_ok(client):
     project = await f.create_project()
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.get(f"/projects/{project.b64id}/public-permissions")
     assert response.status_code == status.HTTP_200_OK, response.text
 
@@ -249,16 +246,16 @@ async def test_get_project_workspace_member_permissions_ok(client):
     workspace = await f.create_workspace(is_premium=True)
     project = await f.create_project(workspace=workspace)
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.get(f"/projects/{project.b64id}/workspace-member-permissions")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
 async def test_get_project_workspace_member_permissions_no_premium(client):
     workspace = await f.create_workspace(is_premium=False)
-    project = await f.create_project(workspace=workspace, owner=workspace.owner)
+    project = await f.create_project(workspace=workspace, created_by=workspace.created_by)
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.get(f"/projects/{project.b64id}/workspace-member-permissions")
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
@@ -301,13 +298,12 @@ async def test_get_project_workspace_member_permissions_anonymous_user(client):
 
 
 async def test_update_project_ok(client):
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project()
 
     data = {"name": "New name", "description": "new description"}
     files = {"logo": ("new-logo.png", create_valid_testing_image(), "image/png")}
 
-    client.login(user)
+    client.login(project.created_by)
     response = client.patch(f"/projects/{project.b64id}", data=data, files=files)
     assert response.status_code == status.HTTP_200_OK, response.text
     updated_project = response.json()
@@ -317,12 +313,11 @@ async def test_update_project_ok(client):
 
 
 async def test_update_project_delete_description(client):
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project()
 
     data = {"description": ""}
 
-    client.login(user)
+    client.login(project.created_by)
     response = client.patch(f"/projects/{project.b64id}", data=data)
     assert response.status_code == status.HTTP_200_OK, response.text
     updated_project = response.json()
@@ -340,9 +335,8 @@ async def test_update_project_not_found(client):
 
 
 async def test_update_project_no_admin(client):
-    user = await f.create_user()
     other_user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project()
 
     data = {"name": "new name"}
     client.login(other_user)
@@ -367,7 +361,7 @@ async def test_update_project_public_permissions_ok(client, permissions):
     project = await f.create_project()
     data = {"permissions": permissions}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/public-permissions", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
 
@@ -394,7 +388,7 @@ async def test_update_project_public_permissions_incompatible(client, permission
     project = await f.create_project()
     data = {"permissions": permissions}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/public-permissions", json=data)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
@@ -403,7 +397,7 @@ async def test_update_project_public_permissions_not_valid(client):
     project = await f.create_project()
     data = {"permissions": ["not_valid"]}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/public-permissions", json=data)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
@@ -446,7 +440,7 @@ async def test_update_project_workspace_member_permissions_ok(client):
     project = await f.create_project(workspace=workspace)
     data = {"permissions": ["view_task", "view_story"]}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
 
@@ -456,7 +450,7 @@ async def test_update_project_workspace_member_permissions_no_premium(client):
     project = await f.create_project(workspace=workspace)
     data = {"permissions": ["view_task", "view_story"]}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
@@ -475,7 +469,7 @@ async def test_update_project_workspace_member_permissions_incompatible(client):
     project = await f.create_project()
     data = {"permissions": ["view_task"]}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
@@ -484,7 +478,7 @@ async def test_update_project_workspace_member_permissions_not_valid(client):
     project = await f.create_project()
     data = {"permissions": ["not_valid"]}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
@@ -531,31 +525,27 @@ async def test_delete_project_invalid(client):
 
 
 async def test_delete_project_user_without_permissions(client):
-    user1 = await f.create_user()
-    user2 = await f.create_user()
-    project = await f.create_project(owner=user1)
+    project = await f.create_project()
+    user = await f.create_user()
 
-    client.login(user2)
+    client.login(user)
     response = client.delete(f"/projects/{project.b64id}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 async def test_delete_project_being_proj_admin(client):
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project()
 
-    client.login(user)
+    client.login(project.created_by)
     response = client.delete(f"/projects/{project.b64id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
 async def test_delete_project_being_ws_admin(client):
-    user_ws_admin = await f.create_user()
-    ws = await f.create_workspace(owner=user_ws_admin)
-    user_proj_admin = await f.create_user()
-    project = await f.create_project(workspace=ws, owner=user_proj_admin)
+    ws = await f.create_workspace()
+    project = await f.create_project(workspace=ws)
 
-    client.login(user_ws_admin)
+    client.login(ws.created_by)
     response = client.delete(f"/projects/{project.b64id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
@@ -568,7 +558,7 @@ async def test_delete_project_being_ws_admin(client):
 async def test_get_my_project_permissions_ok(client):
     project = await f.create_project()
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.get(f"/my/projects/{project.b64id}/permissions")
     assert response.status_code == status.HTTP_200_OK, response.text
 

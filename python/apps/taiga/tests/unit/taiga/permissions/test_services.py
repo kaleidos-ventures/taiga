@@ -26,9 +26,8 @@ async def test_is_project_admin_without_project():
 
 
 async def test_is_project_admin_being_project_admin():
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
-    is_admin = await services.is_project_admin(user=user, obj=project)
+    project = await f.create_project()
+    is_admin = await services.is_project_admin(user=project.created_by, obj=project)
     assert is_admin is True
 
 
@@ -56,9 +55,8 @@ async def test_is_workspace_admin_without_workspace():
 
 
 async def test_is_workspace_admin_being_workspace_admin():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
-    assert await services.is_workspace_admin(user=user, obj=workspace) is True
+    workspace = await f.create_workspace()
+    assert await services.is_workspace_admin(user=workspace.created_by, obj=workspace) is True
 
 
 async def test_is_workspace_admin_being_workspace_member():
@@ -87,9 +85,8 @@ async def test_is_project_member_not_being_project_member():
 
 
 async def test_is_project_member_being_project_member():
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
-    is_member = await services.is_project_member(user=user, project=project)
+    project = await f.create_project()
+    is_member = await services.is_project_member(user=project.created_by, project=project)
     assert is_member is True
 
 
@@ -119,15 +116,14 @@ async def test_get_user_permissions_with_project():
 
 
 async def test_get_user_permissions_with_workspace():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
     perms = choices.WorkspacePermissions.values
 
     with (
         patch("taiga.permissions.services.get_user_permissions_for_workspace", return_value=perms),
         patch("taiga.permissions.services.get_user_permissions_for_project"),
     ):
-        assert await services.get_user_permissions(user=user, obj=workspace) == perms
+        assert await services.get_user_permissions(user=workspace.created_by, obj=workspace) == perms
         services.get_user_permissions_for_workspace.assert_awaited()
         services.get_user_permissions_for_project.assert_not_awaited()
 
@@ -147,33 +143,30 @@ async def test_user_has_perm_without_workspace_and_project():
 
 
 async def test_user_has_perm_without_perm():
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project()
     perm = []
 
     with patch("taiga.permissions.services.get_user_permissions", return_value=[]):
-        assert await services.user_has_perm(user=user, perm=perm, obj=project) is False
-        services.get_user_permissions.assert_awaited_once_with(user=user, obj=project)
+        assert await services.user_has_perm(user=project.created_by, perm=perm, obj=project) is False
+        services.get_user_permissions.assert_awaited_once_with(user=project.created_by, obj=project)
 
 
 async def test_user_has_perm_with_project_ok():
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project()
     perm = "view_story"
 
     with patch("taiga.permissions.services.get_user_permissions", return_value=[perm]):
-        assert await services.user_has_perm(user=user, perm=perm, obj=project) is True
-        services.get_user_permissions.assert_awaited_once_with(user=user, obj=project)
+        assert await services.user_has_perm(user=project.created_by, perm=perm, obj=project) is True
+        services.get_user_permissions.assert_awaited_once_with(user=project.created_by, obj=project)
 
 
 async def test_user_has_perm_with_workspace_ok():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
     perm = "view_story"
 
     with patch("taiga.permissions.services.get_user_permissions", return_value=[perm]):
-        assert await services.user_has_perm(user=user, perm=perm, obj=workspace) is True
-        services.get_user_permissions.assert_awaited_once_with(user=user, obj=workspace)
+        assert await services.user_has_perm(user=workspace.created_by, perm=perm, obj=workspace) is True
+        services.get_user_permissions.assert_awaited_once_with(user=workspace.created_by, obj=workspace)
 
 
 #####################################################
@@ -190,16 +183,15 @@ async def test_user_can_view_project_without_project():
 
 
 async def test_user_can_view_project_being_a_workspace_admin():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
     project = await f.create_project(workspace=workspace)
 
     with (
         patch("taiga.permissions.services.is_workspace_admin", return_value=True),
         patch("taiga.permissions.services.get_user_permissions"),
     ):
-        assert await services.user_can_view_project(user=user, obj=project) is True
-        services.is_workspace_admin.assert_awaited_once_with(user=user, obj=workspace)
+        assert await services.user_can_view_project(user=workspace.created_by, obj=project) is True
+        services.is_workspace_admin.assert_awaited_once_with(user=workspace.created_by, obj=workspace)
         services.get_user_permissions.assert_not_awaited()
 
 
@@ -281,10 +273,9 @@ async def test_user_can_view_project_being_other_user_without_permission():
 
 
 async def get_user_project_role_info():
-    user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project()
     with patch("taiga.permissions.services.pj_roles_repositories", autospec=True) as fake_repository:
-        await get_user_project_role_info(user=user, project=project)
+        await get_user_project_role_info(user=project.created_by, project=project)
         fake_repository.get_project_role.assert_awaited_once()
 
 
@@ -294,10 +285,9 @@ async def get_user_project_role_info():
 
 
 async def get_user_workspace_role_info():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
     with patch("taiga.permissions.services.ws_roles_repositories", autospec=True) as fake_repository:
-        await get_user_workspace_role_info(user=user, workspace=workspace)
+        await get_user_workspace_role_info(user=workspace.created_by, workspace=workspace)
         fake_repository.get_workspace_role_for_user.assert_awaited_once()
 
 

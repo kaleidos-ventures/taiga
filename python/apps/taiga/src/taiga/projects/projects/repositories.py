@@ -111,7 +111,7 @@ def _apply_order_by_to_project_queryset(
 def create_project(
     workspace: Workspace,
     name: str,
-    owner: User,
+    created_by: User,
     description: str | None = None,
     color: int = 1,
     logo: File | None = None,  # type: ignore
@@ -122,8 +122,7 @@ def create_project(
         description=description,
         workspace=workspace,
         color=color,
-        owner=owner,
-        created_by_id=owner.id,
+        created_by=created_by,
         logo=logo,
     )
 

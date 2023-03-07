@@ -94,9 +94,8 @@ def build_project_invitation(**kwargs):
 class ProjectFactory(Factory):
     name = factory.Sequence(lambda n: f"Project {n}")
     description = factory.Sequence(lambda n: f"Description {n}")
-    owner = factory.SubFactory("tests.utils.factories.UserFactory")
-    created_at = aware_utcnow()
     created_by = factory.SubFactory("tests.utils.factories.UserFactory")
+    created_at = aware_utcnow()
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
     logo = valid_image_f
 
@@ -116,14 +115,14 @@ def create_project(**kwargs):
     defaults.update(kwargs)
     workspace = defaults.pop("workspace", None) or f.WorkspaceFactory.create(**defaults)
     defaults["workspace"] = workspace
-    defaults["owner"] = defaults.pop("owner", None) or workspace.owner
+    defaults["created_by"] = defaults.pop("created_by", None) or workspace.created_by
 
     project = ProjectFactory.create(**defaults)
     template = ProjectTemplate.objects.first()
     projects_repositories.apply_template_to_project_sync(project=project, template=template)
 
     admin_role = project.roles.get(is_admin=True)
-    ProjectMembershipFactory.create(user=project.owner, project=project, role=admin_role)
+    ProjectMembershipFactory.create(user=project.created_by, project=project, role=admin_role)
 
     return project
 

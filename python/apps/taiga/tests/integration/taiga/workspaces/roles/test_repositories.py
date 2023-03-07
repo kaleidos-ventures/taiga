@@ -37,7 +37,7 @@ async def test_create_workspace_role():
 
 async def test_get_workspace_role_admin():
     user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace(created_by=user)
     role = await sync_to_async(workspace.roles.get)(slug="admin")
 
     assert (

@@ -49,7 +49,7 @@ async def test_update_project_role_permissions_role_not_found(client):
     project = await f.create_project()
     data = {"permissions": ["view_story"]}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/roles/role-slug/permissions", json=data)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
@@ -71,7 +71,7 @@ async def test_update_project_role_permissions_role_admin(client):
     role_slug = "admin"
     data = {"permissions": ["view_story"]}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
@@ -82,7 +82,7 @@ async def test_update_project_role_permissions_incompatible_permissions(client):
     role_slug = "general"
     data = {"permissions": ["view_task"]}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
@@ -93,7 +93,7 @@ async def test_update_project_role_permissions_not_valid_permissions(client):
     role_slug = "general"
     data = {"permissions": ["not_valid", "foo"]}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
@@ -104,7 +104,7 @@ async def test_update_project_role_permissions_ok(client):
     role_slug = "general"
     data = {"permissions": ["view_story"]}
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)
 
     assert response.status_code == status.HTTP_200_OK, response.text

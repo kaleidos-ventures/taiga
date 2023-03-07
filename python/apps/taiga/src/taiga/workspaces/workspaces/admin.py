@@ -41,14 +41,14 @@ class WorkspaceMembershipInline(admin.TabularInline[WorkspaceMembership, Workspa
 @admin.register(Workspace)
 class WorkspaceAdmin(admin.ModelAdmin[Workspace]):
     fieldsets = (
-        (None, {"fields": (("id", "b64id"), "name", "owner")}),
+        (None, {"fields": (("id", "b64id"), "name", "created_by")}),
         ("Extra info", {"classes": ("collapse",), "fields": ("color", ("created_at", "modified_at"))}),
         ("Permissions", {"fields": ("is_premium",)}),
     )
     readonly_fields = ("id", "b64id", "created_at", "modified_at")
-    list_display = ["b64id", "name", "owner", "is_premium"]
-    list_filter = ("is_premium", "owner")
-    search_fields = ["id", "name", "owner__username", "owner__email", "owner__full_name"]
+    list_display = ["b64id", "name", "created_by", "is_premium"]
+    list_filter = ("is_premium", "created_by")
+    search_fields = ["id", "name"]
     ordering = ("name",)
     inlines = [
         WorkspaceRoleInline,

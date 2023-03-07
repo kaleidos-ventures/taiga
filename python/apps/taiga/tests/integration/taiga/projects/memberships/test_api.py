@@ -66,7 +66,7 @@ async def test_get_project_memberships_wrong_id(client):
     project = await f.create_project()
     non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
-    client.login(project.owner)
+    client.login(project.created_by)
     response = client.get(f"/projects/{non_existent_id}/memberships")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
@@ -86,10 +86,9 @@ async def test_get_project_memberships_not_a_member(client):
 
 
 async def test_update_project_membership_role_membership_not_exist(client):
-    owner = await f.create_user()
-    project = await f.create_project(owner=owner)
+    project = await f.create_project()
 
-    client.login(owner)
+    client.login(project.created_by)
     username = "not_exist"
     data = {"role_slug": "general"}
     response = client.patch(f"projects/{project.b64id}/memberships/{username}", json=data)
@@ -97,8 +96,7 @@ async def test_update_project_membership_role_membership_not_exist(client):
 
 
 async def test_update_project_membership_role_user_without_permission(client):
-    owner = await f.create_user()
-    project = await f.create_project(owner=owner)
+    project = await f.create_project()
     user = await f.create_user()
     general_member_role = await f.create_project_role(
         project=project,
@@ -108,15 +106,14 @@ async def test_update_project_membership_role_user_without_permission(client):
     await f.create_project_membership(user=user, project=project, role=general_member_role)
 
     client.login(user)
-    username = owner.username
+    username = project.created_by.username
     data = {"role_slug": "general"}
     response = client.patch(f"/projects/{project.b64id}/memberships/{username}", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 async def test_update_project_membership_role_ok(client):
-    owner = await f.create_user()
-    project = await f.create_project(owner=owner)
+    project = await f.create_project()
     user = await f.create_user()
     general_member_role = await f.create_project_role(
         project=project,
@@ -125,7 +122,7 @@ async def test_update_project_membership_role_ok(client):
     )
     await f.create_project_membership(user=user, project=project, role=general_member_role)
 
-    client.login(owner)
+    client.login(project.created_by)
     username = user.username
     data = {"role_slug": "admin"}
     response = client.patch(f"projects/{project.b64id}/memberships/{username}", json=data)

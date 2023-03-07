@@ -32,7 +32,7 @@ async def test_create_workspace():
             "taiga.workspaces.workspaces.services.ws_memberships_repositories", autospec=True
         ) as fake_ws_memberships_repo,
     ):
-        await services._create_workspace(name=name, color=color, owner=user)
+        await services._create_workspace(name=name, color=color, created_by=user)
         fake_workspaces_repo.create_workspace.assert_awaited_once()
         fake_ws_roles_repo.create_workspace_role.assert_awaited_once()
         fake_ws_memberships_repo.create_workspace_membership.assert_awaited_once()
@@ -50,8 +50,8 @@ async def test_create_workspace_detail():
         patch("taiga.workspaces.workspaces.services.get_workspace_detail", autospec=True) as fake_serializer_method,
     ):
         fake_create_method.return_value = workspace
-        await services.create_workspace(name=name, color=color, owner=user)
-        fake_create_method.assert_awaited_with(name=name, color=color, owner=user)
+        await services.create_workspace(name=name, color=color, created_by=user)
+        fake_create_method.assert_awaited_with(name=name, color=color, created_by=user)
         fake_serializer_method.assert_awaited_with(id=workspace.id, user_id=user.id)
 
 
@@ -86,8 +86,7 @@ async def test_get_workspace():
 
 
 async def test_get_workspace_detail():
-    user = await f.create_user()
-    workspace = await f.create_workspace(name="test", owner=user)
+    workspace = await f.create_workspace(name="test")
     workspace.has_projects = True
     workspace.user_is_owner = True
 
@@ -99,9 +98,9 @@ async def test_get_workspace_detail():
         fake_ws_roles_services.get_workspace_role_name.return_value = "admin"
         fake_projects_repo.get_total_projects.return_value = 1
         fake_workspaces_repo.get_workspace_detail.return_value = workspace
-        await services.get_workspace_detail(id=workspace.id, user_id=user.id)
+        await services.get_workspace_detail(id=workspace.id, user_id=workspace.created_by.id)
         fake_workspaces_repo.get_workspace_detail.assert_awaited_with(
-            user_id=user.id,
+            user_id=workspace.created_by.id,
             filters={"id": workspace.id},
         )
 
@@ -112,8 +111,7 @@ async def test_get_workspace_detail():
 
 
 async def get_workspace_nested():
-    user = await f.create_user()
-    workspace = await f.create_workspace(owner=user)
+    workspace = await f.create_workspace()
 
     with (
         patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
@@ -122,9 +120,11 @@ async def get_workspace_nested():
         fake_ws_roles_services.get_workspace_role_name.return_value = "admin"
         fake_workspaces_repo.get_workspace_summary.return_value = workspace
 
-        await services.get_workspace_summary(id=workspace.id, user_id=user.id)
+        await services.get_workspace_summary(id=workspace.id, user_id=workspace.created_by.id)
 
-        fake_ws_roles_services.get_workspace_role_name.assert_awaited_with(workspace_id=workspace.id, user_id=user.id)
+        fake_ws_roles_services.get_workspace_role_name.assert_awaited_with(
+            workspace_id=workspace.id, user_id=workspace.created_by.id
+        )
         fake_workspaces_repo.get_workspace_summary.assert_awaited_with(
             filters={"id": workspace.id},
         )
@@ -161,7 +161,7 @@ async def test_delete_workspace_without_projects():
         fake_projects_repo.get_total_projects.return_value = 0
         fake_workspaces_repo.delete_workspaces.return_value = 4
 
-        ret = await services.delete_workspace(workspace=workspace, deleted_by=workspace.owner)
+        ret = await services.delete_workspace(workspace=workspace, deleted_by=workspace.created_by)
 
         fake_projects_repo.get_total_projects.assert_awaited_with(filters={"workspace_id": workspace.id})
         fake_workspaces_repo.delete_workspaces.assert_awaited_with(filters={"id": workspace.id})
@@ -179,7 +179,7 @@ async def test_delete_workspace_with_projects():
         pytest.raises(ex.WorkspaceHasProjects),
     ):
         fake_projects_repo.get_total_projects.return_value = 1
-        await services.delete_workspace(workspace=workspace, deleted_by=workspace.owner)
+        await services.delete_workspace(workspace=workspace, deleted_by=workspace.created_by)
 
         fake_workspaces_repo.delete_workspaces.assert_not_awaited()
         fake_workspaces_events.emit_event_when_workspace_is_deleted.assert_not_awaited()
@@ -195,7 +195,7 @@ async def test_delete_workspace_not_deleted_in_db():
     ):
         fake_projects_repo.get_total_projects.return_value = 0
         fake_workspaces_repo.delete_workspaces.return_value = 0
-        ret = await services.delete_workspace(workspace=workspace, deleted_by=workspace.owner)
+        ret = await services.delete_workspace(workspace=workspace, deleted_by=workspace.created_by)
 
         fake_projects_repo.get_total_projects.assert_awaited_with(filters={"workspace_id": workspace.id})
         fake_workspaces_repo.delete_workspaces.assert_awaited_with(filters={"id": workspace.id})

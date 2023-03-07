@@ -64,7 +64,7 @@ async def create_project(
         name=form.name,
         description=form.description,
         color=form.color,
-        owner=request.user,
+        created_by=request.user,
         logo=form.logo,
     )
 

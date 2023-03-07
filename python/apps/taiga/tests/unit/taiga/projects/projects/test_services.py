@@ -33,7 +33,9 @@ async def test_create_project():
         patch("taiga.projects.projects.services._create_project") as fake_create_project,
         patch("taiga.projects.projects.services.get_project_detail") as fake_get_project_detail,
     ):
-        await services.create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
+        await services.create_project(
+            workspace=workspace, name="n", description="d", color=2, created_by=workspace.created_by
+        )
 
         fake_create_project.assert_awaited_once()
         fake_get_project_detail.assert_awaited_once()
@@ -51,7 +53,9 @@ async def test_internal_create_project():
     ):
         fake_project_repository.create_project.return_value = await f.create_project()
 
-        await services.create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
+        await services.create_project(
+            workspace=workspace, name="n", description="d", color=2, created_by=workspace.created_by
+        )
 
         fake_project_repository.create_project.assert_awaited_once()
         fake_project_repository.get_project_template.assert_awaited_once()
@@ -75,7 +79,7 @@ async def test_create_project_with_logo():
         fake_pj_roles_repository.get_project_role.return_value = role
 
         await services._create_project(
-            workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=logo
+            workspace=workspace, name="n", description="d", color=2, created_by=workspace.created_by, logo=logo
         )
 
         service_file_param = fake_project_repository.create_project.call_args_list[0][1]
@@ -92,10 +96,12 @@ async def test_create_project_with_no_logo():
         patch("taiga.projects.projects.services.pj_memberships_repositories", autospec=True),
     ):
         fake_project_repository.create_project.return_value = await f.create_project()
-        await services._create_project(workspace=workspace, name="n", description="d", color=2, owner=workspace.owner)
+        await services._create_project(
+            workspace=workspace, name="n", description="d", color=2, created_by=workspace.created_by
+        )
 
         fake_project_repository.create_project.assert_awaited_once_with(
-            workspace=workspace, name="n", description="d", color=2, owner=workspace.owner, logo=None
+            workspace=workspace, name="n", description="d", color=2, created_by=workspace.created_by, logo=None
         )
 
 
@@ -105,15 +111,14 @@ async def test_create_project_with_no_logo():
 
 
 async def test_list_workspace_projects_for_user_admin():
-    user = f.build_user()
-    workspace = f.build_workspace(owner=user)
+    workspace = f.build_workspace()
 
     with (
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,
         patch("taiga.projects.projects.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
     ):
         fake_ws_roles_repo.get_workspace_role.return_value = MagicMock(is_admin=True)
-        await services.list_workspace_projects_for_user(workspace=workspace, user=user)
+        await services.list_workspace_projects_for_user(workspace=workspace, user=workspace.created_by)
         fake_projects_repo.list_projects.assert_awaited_once_with(
             filters={"workspace_id": workspace.id},
             prefetch_related=["workspace"],
@@ -121,17 +126,16 @@ async def test_list_workspace_projects_for_user_admin():
 
 
 async def test_list_workspace_projects_for_user_member():
-    user = f.build_user()
-    workspace = f.build_workspace(owner=user)
+    workspace = f.build_workspace()
 
     with (
         patch("taiga.projects.projects.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,
     ):
         fake_ws_roles_repo.get_workspace_role.return_value = MagicMock(is_admin=False)
-        await services.list_workspace_projects_for_user(workspace=workspace, user=user)
+        await services.list_workspace_projects_for_user(workspace=workspace, user=workspace.created_by)
         fake_projects_repo.list_projects.assert_awaited_once_with(
-            filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user.id},
+            filters={"workspace_id": workspace.id, "project_or_workspace_member_id": workspace.created_by.id},
             prefetch_related=["workspace"],
         )
 
@@ -142,15 +146,14 @@ async def test_list_workspace_projects_for_user_member():
 
 
 async def test_list_workspace_invited_projects_for_user():
-    user = f.build_user()
-    workspace = f.build_workspace(owner=user)
+    workspace = f.build_workspace()
 
     with patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo:
-        await services.list_workspace_invited_projects_for_user(workspace=workspace, user=user)
+        await services.list_workspace_invited_projects_for_user(workspace=workspace, user=workspace.created_by)
         fake_projects_repo.list_projects.assert_awaited_once_with(
             filters={
                 "workspace_id": workspace.id,
-                "invitee_id": user.id,
+                "invitee_id": workspace.created_by.id,
                 "invitation_status": ProjectInvitationStatus.PENDING,
             }
         )
@@ -175,9 +178,8 @@ async def test_list_workspace_member_permissions_not_premium():
 
 
 async def test_get_project_detail():
-    user = f.build_user()
-    workspace = f.build_workspace(owner=user)
-    project = f.build_project(owner=user, workspace=workspace)
+    workspace = f.build_workspace()
+    project = f.build_project(created_by=workspace.created_by, workspace=workspace)
 
     with (
         patch("taiga.projects.projects.services.permissions_services", autospec=True) as fake_permissions_services,
@@ -190,10 +192,14 @@ async def test_get_project_detail():
         fake_workspaces_services.get_workspace_nested.return_value = WorkspaceNestedSerializer(
             id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin", is_premium=True
         )
-        await services.get_project_detail(project=project, user=user)
+        await services.get_project_detail(project=project, user=workspace.created_by)
 
-        fake_permissions_services.get_user_project_role_info.assert_awaited_once_with(project=project, user=user)
-        fake_permissions_services.get_user_workspace_role_info.assert_awaited_once_with(user=user, workspace=workspace)
+        fake_permissions_services.get_user_project_role_info.assert_awaited_once_with(
+            project=project, user=workspace.created_by
+        )
+        fake_permissions_services.get_user_workspace_role_info.assert_awaited_once_with(
+            user=workspace.created_by, workspace=workspace
+        )
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once_with(
             is_authenticated=True,
             is_project_admin=True,
@@ -203,8 +209,12 @@ async def test_get_project_detail():
             project_role_permissions=[],
             project=project,
         )
-        fake_permissions_services.has_pending_project_invitation.assert_awaited_once_with(user=user, project=project)
-        fake_workspaces_services.get_workspace_nested.assert_awaited_once_with(id=workspace.id, user_id=user.id)
+        fake_permissions_services.has_pending_project_invitation.assert_awaited_once_with(
+            user=workspace.created_by, project=project
+        )
+        fake_workspaces_services.get_workspace_nested.assert_awaited_once_with(
+            id=workspace.id, user_id=workspace.created_by.id
+        )
 
 
 async def test_get_project_detail_anonymous():

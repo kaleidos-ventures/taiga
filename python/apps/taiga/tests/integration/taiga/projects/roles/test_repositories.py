@@ -69,7 +69,7 @@ async def test_get_project_role_return_none():
 
 async def test_get_project_role_for_user_admin():
     user = await f.create_user()
-    project = await f.create_project(owner=user)
+    project = await f.create_project(created_by=user)
     role = await sync_to_async(project.roles.get)(slug="admin")
 
     assert await repositories.get_project_role(filters={"user_id": user.id, "project_id": project.id}) == role

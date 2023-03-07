@@ -58,7 +58,7 @@ Copyright (c) 2023-present Kaleidos INC
             [tuiDropdownMaxHeight]="502"
             [tuiDropdownOffset]="-30"
             [tuiDropdownManual]="vm.showAssignUser"
-            (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)">
+            (tgOutsideClick)="closeAssignDropdown()">
             <button
               data-test="assign-btn"
               (click)="toggleAssignUser($event)"
@@ -165,7 +165,7 @@ Copyright (c) 2023-present Kaleidos INC
         [tuiDropdownMaxHeight]="502"
         [tuiDropdownOffset]="-30"
         [tuiDropdownManual]="vm.showAssignUser"
-        (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)"
+        (tgOutsideClick)="closeAssignDropdown()"
         class="assigned-button-noperm">
         <button
           (click)="toggleAssignUser($event)"

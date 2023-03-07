@@ -44,6 +44,7 @@ import { DataAccessKanbanModule } from './data-access/kanban-data-access.module'
 import { KanbanStatusKeyboardNavigationDirective } from './directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
 import { KanbanStoryKeyboardNavigationDirective } from './directives/kanban-story-keyboard-navigation/kanban-story-keyboard-navigation.directive';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
+import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     RouterModule,
     DropdownModule,
     AssignUserComponent,
+    OutsideClickDirective,
   ],
   providers: [
     {

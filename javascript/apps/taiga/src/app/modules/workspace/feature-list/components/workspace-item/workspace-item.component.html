@@ -21,17 +21,31 @@ Copyright (c) 2023-present Kaleidos INC
             workspace.userRole === 'admin' || workspace.userRole === 'member'
           "
           data-test="workspace-item-title"
-          [routerLink]="['/workspace/', workspace.id, workspace.slug]"
-          class="workspace-item-title workspace-item-title-active">
-          {{ workspace.name }}
+          [routerLink]="['/workspace/', workspace.id, workspace.slug]">
+          <h2
+            class="workspace-item-title workspace-item-title-active"
+            [attr.aria-label]="
+              t('workspace.a11y.workspace_title', {
+                workspace: workspace.name,
+                role: t('commons.roles.' + workspace.userRole)
+              })
+            ">
+            {{ workspace.name }}
+          </h2>
         </a>
-        <span
+        <h2
           *ngIf="
             workspace.userRole === 'guest' || workspace.userRole === 'none'
           "
-          class="workspace-item-title workspace-guest">
+          class="workspace-item-title workspace-guest"
+          [attr.aria-label]="
+            t('workspace.a11y.workspace_title', {
+              workspace: workspace.name,
+              role: t('commons.roles.' + workspace.userRole)
+            })
+          ">
           {{ workspace.name }}
-        </span>
+        </h2>
       </div>
 
       <tg-ui-badge

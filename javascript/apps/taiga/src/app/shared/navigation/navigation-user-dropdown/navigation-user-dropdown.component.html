@@ -12,9 +12,9 @@ Copyright (c) 2023-present Kaleidos INC
     tabindex="-1"
     class="profile-options-list"
     [attr.aria-label]="
-      user.fullName +
-      t('navigation_user.user_menu') +
-      t('commons.down_to_navigate')
+      t('navigation_user.a11y.user_menu_down_navigate', {
+        userName: user.fullName
+      })
     "
     role="menu">
     <a
@@ -23,6 +23,7 @@ Copyright (c) 2023-present Kaleidos INC
       href="#"
       class="user">
       <tg-user-avatar
+        aria-hidden="true"
         size="xl"
         [rounded]="true"></tg-user-avatar>
       <div class="user-info">

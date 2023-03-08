@@ -32,5 +32,8 @@
     "modal_title": "You cannot delete a workspace that has projects in it",
     "modal_warning": "This workspace has { totalProjects, plural, one {<strong class='number-projects'>#</strong> project} other {<strong class='number-projects'>#</strong> projects} }. <br /> Delete the { totalProjects, plural, one {project} other {projects} } first and try again.",
     "modal_understood": "Ok, understood"
+  },
+  "a11y": {
+    "workspace_title": "{{ workspace }}. Workspace. Role: {{ role }}"
   }
 }

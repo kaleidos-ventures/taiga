@@ -16,5 +16,9 @@
     "invite": "Invite people",
     "accept": "Accept",
     "accept_invitation": "Accept invitation"
+  },
+  "a11y": {
+    "project_action_enter_open_menu": "Project actions. Press enter to open menu",
+    "project_action_up_down_navigate": "Project actions. Press up and down to navigate"
   }
 }

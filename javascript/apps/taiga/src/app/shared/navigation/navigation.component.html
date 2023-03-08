@@ -72,9 +72,7 @@ Copyright (c) 2023-present Kaleidos INC
           role="menu"
           aria-haspopup="true"
           [attr.aria-expanded]="openProjectsDropdown"
-          [attr.aria-label]="
-            t('commons.projects') + t('commons.down_to_navigate')
-          "
+          [attr.aria-label]="t('navigation.a11y.projects_navigate')"
           tabindex="0"
           appearance="main-nav"
           tuiButton
@@ -139,7 +137,11 @@ Copyright (c) 2023-present Kaleidos INC
             [attr.aria-expanded]="openUserDropdown"
             tabindex="0"
             class="avatar-dropdown-button"
-            [attr.aria-label]="user.fullName"
+            [attr.aria-label]="
+              t('navigation.a11y.user_menu_navigate', {
+                userName: user.fullName
+              })
+            "
             type="button"
             data-test="user-settings">
             <tg-user-avatar

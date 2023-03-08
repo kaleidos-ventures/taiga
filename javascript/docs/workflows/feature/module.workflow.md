@@ -31,11 +31,11 @@ npx nx g ./schematics:create-module --name ProjectsDataAccess --path apps/taiga/
 
 ### State
 
-We use [immer](https://github.com/immerjs/immer) to mutate the state with the helper function immerReducer. Here is an example of a full feature state ngrx.
+We use [immer](https://github.com/immerjs/immer) to mutate the state with the helper function createImmerReducer. Here is an example of a full feature state ngrx.
 
 ```ts
-import { immerReducer } from '~/app/shared/utils/store';
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
+import { createFeature, on } from '@ngrx/store';
 
 // todo-list.reducer.ts
 interface TodosState {
@@ -48,7 +48,7 @@ const initialState: TodosState = {
   filter: '',
 };
 
-const reducer = createReducer(
+const reducer = createImmerReducer(
   initialState,
   on(TodoListActions.loadSuccess, (state, { todos }): TodosState => {
     state.todos = todos;
@@ -59,7 +59,7 @@ const reducer = createReducer(
 
 export const todosFeature = createFeature({
   name: 'todos',
-  reducer: immerReducer(reducer),
+  reducer: reducer,
 });
 
 // todo-list.selectors.ts

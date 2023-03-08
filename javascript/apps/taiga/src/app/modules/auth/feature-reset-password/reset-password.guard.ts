@@ -6,36 +6,26 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 import { UsersApiService } from '@taiga/api';
 import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class ResetPasswordGuard implements CanActivate {
-  constructor(
-    private userApiService: UsersApiService,
-    private router: Router
-  ) {}
+export const ResetPasswordGuard: CanActivateFn = (
+  route: ActivatedRouteSnapshot
+) => {
+  const userApiService = inject(UsersApiService);
+  const router = inject(Router);
 
-  public canActivate(route: ActivatedRouteSnapshot) {
-    return this.userApiService
-      .verifyResetPassword(route.params.token as string)
-      .pipe(
-        map(() => {
-          return true;
-        }),
-        catchError(() => {
-          return of(
-            this.router.createUrlTree([
-              '/reset-password',
-              { expiredToken: true },
-            ])
-          );
-        })
+  return userApiService.verifyResetPassword(route.params.token as string).pipe(
+    map(() => {
+      return true;
+    }),
+    catchError(() => {
+      return of(
+        router.createUrlTree(['/reset-password', { expiredToken: true }])
       );
-  }
-}
+    })
+  );
+};

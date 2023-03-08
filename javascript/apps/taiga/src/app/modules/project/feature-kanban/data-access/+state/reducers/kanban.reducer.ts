@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
 import { Status, Story, Workflow } from '@taiga/data';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
@@ -17,7 +17,7 @@ import {
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { DropCandidate } from '~/app/shared/drag/drag.model';
 import { pick } from '~/app/shared/utils/pick';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import {
   KanbanActions,
   KanbanApiActions,
@@ -86,7 +86,7 @@ export const initialKanbanState: KanbanState = {
   hasDropCandidate: false,
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialKanbanState,
   on(KanbanActions.initKanban, (state): KanbanState => {
     state.workflows = null;
@@ -655,5 +655,5 @@ export const reducer = createReducer(
 
 export const kanbanFeature = createFeature({
   name: 'kanban',
-  reducer: immerReducer(reducer),
+  reducer,
 });

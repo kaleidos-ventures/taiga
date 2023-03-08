@@ -153,12 +153,12 @@ export class ApiRestInterceptorService implements HttpInterceptor {
 
             return next.handle(this.authInterceptor(request));
           }),
-          catchError((err) => {
+          catchError((err: HttpErrorResponse) => {
             this.refreshTokenInProgress = false;
 
             void this.router.navigate(['/logout']);
 
-            return throwError(err);
+            return throwError(() => err);
           })
         );
       }

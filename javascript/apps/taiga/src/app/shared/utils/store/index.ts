@@ -5,13 +5,28 @@
  *
  * Copyright (c) 2023-present Kaleidos INC
  */
-
+import {
+  Action,
+  ActionCreator,
+  ActionReducer,
+  createReducer,
+  ReducerTypes,
+} from '@ngrx/store';
 import { produce } from 'immer';
 
-export function immerReducer<State, Next>(
-  reducer: (state: State, next: Next) => State | void
-) {
-  return (state: State | undefined, next: Next) => {
-    return produce(state, (draft: State) => reducer(draft, next)) as State;
+export function immerReducer<T>(
+  reducer: ActionReducer<T, Action>
+): ActionReducer<T, Action> {
+  return (state: T | undefined, next: Action) => {
+    return produce(state, (draft: T) => reducer(draft, next)) as T;
   };
+}
+
+export function createImmerReducer<S>(
+  initialState: S,
+  ...ons: ReducerTypes<S, readonly ActionCreator[]>[]
+) {
+  const reducer = createReducer(initialState, ...ons);
+
+  return immerReducer(reducer);
 }

@@ -6,8 +6,8 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createReducer, on, createFeature } from '@ngrx/store';
-import { immerReducer } from '~/app/shared/utils/store';
+import { on, createFeature } from '@ngrx/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/roles-permissions.actions';
 import { Role } from '@taiga/data';
 
@@ -25,7 +25,7 @@ export const initialState: ProjectState = {
   workspacePermissions: null,
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialState,
   on(
     ProjectActions.fetchMemberRolesSuccess,
@@ -80,5 +80,5 @@ export const reducer = createReducer(
 
 export const rolesPermissionsFeature = createFeature({
   name: 'rolesPermissions',
-  reducer: immerReducer(reducer),
+  reducer: reducer,
 });

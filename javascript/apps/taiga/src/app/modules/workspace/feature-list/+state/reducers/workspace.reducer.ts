@@ -6,10 +6,10 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state//actions/invitation.action';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace.actions';
 import { workspaceEventActions } from '../actions/workspace.actions';
 
@@ -33,7 +33,7 @@ export const initialState: WorkspaceState = {
   rejectedInvites: [],
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialState,
   on(WorkspaceActions.fetchWorkspaceList, (state): WorkspaceState => {
     state.loading = true;
@@ -283,5 +283,5 @@ export const reducer = createReducer(
 
 export const workspaceFeature = createFeature({
   name: 'workspace',
-  reducer: immerReducer(reducer),
+  reducer,
 });

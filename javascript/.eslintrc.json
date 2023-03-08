@@ -41,6 +41,7 @@
         "plugin:ngrx/recommended",
         "prettier"
       ],
+      "plugins": ["deprecation"],
       "rules": {
         "taiga/relative-imports": "error",
         "@typescript-eslint/no-unused-vars": ["error"],
@@ -50,7 +51,8 @@
         "indent": "off",
         "no-multiple-empty-lines": [2, { "max": 1 }],
         "quotes": ["error", "single", { "avoidEscape": true }],
-        "ngrx/no-store-subscription": "off"
+        "ngrx/no-store-subscription": "off",
+        "deprecation/deprecation": "warn"
       }
     },
     {

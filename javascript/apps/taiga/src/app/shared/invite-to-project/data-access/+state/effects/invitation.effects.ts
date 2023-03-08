@@ -217,7 +217,7 @@ export class InvitationEffects {
       }),
       catchError((httpResponse: HttpErrorResponse) => {
         this.appService.errorManagement(httpResponse);
-        return throwError(httpResponse);
+        return throwError(() => httpResponse);
       })
     );
   });

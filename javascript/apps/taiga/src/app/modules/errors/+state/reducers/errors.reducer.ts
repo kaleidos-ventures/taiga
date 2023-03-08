@@ -6,8 +6,8 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createFeature, on } from '@ngrx/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import * as ErrorsActions from '../actions/errors.actions';
 
 export interface ErrorsState {
@@ -34,7 +34,7 @@ export const initialState: ErrorsState = {
   },
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialState,
   on(ErrorsActions.unexpectedError, (state, { error }): ErrorsState => {
     state.unexpectedError.message = error.message;
@@ -60,5 +60,5 @@ export const reducer = createReducer(
 
 export const errorsFeature = createFeature({
   name: 'error',
-  reducer: immerReducer(reducer),
+  reducer,
 });

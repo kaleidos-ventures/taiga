@@ -15,7 +15,6 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -48,8 +47,7 @@ export class AuthFeatureVerifyEmailComponent implements OnInit {
     private store: Store,
     private appService: AppService,
     private actions$: Actions,
-    private cd: ChangeDetectorRef,
-    private router: Router
+    private cd: ChangeDetectorRef
   ) {}
 
   public ngOnInit(): void {
@@ -65,10 +63,6 @@ export class AuthFeatureVerifyEmailComponent implements OnInit {
         }
         this.cd.detectChanges();
       });
-
-    this.router.routeReuseStrategy.shouldReuseRoute = () => {
-      return false;
-    };
   }
 
   public resendEmail() {

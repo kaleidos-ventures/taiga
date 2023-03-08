@@ -6,21 +6,17 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Injectable } from '@angular/core';
-import { CanActivate, Router, UrlTree } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class AuthFeatureLoginGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+export const AuthFeatureLoginGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-  public canActivate(): true | UrlTree {
-    if (this.authService.isLogged()) {
-      return this.router.parseUrl('/');
-    }
-
-    return true;
+  if (authService.isLogged()) {
+    return router.parseUrl('/');
   }
-}
+
+  return true;
+};

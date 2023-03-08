@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
 import { StoryDetail, StoryView, Workflow } from '@taiga/data';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
@@ -14,7 +14,7 @@ import {
   KanbanApiActions,
 } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 
 import {
   StoryDetailActions,
@@ -37,7 +37,7 @@ export const initialStoryDetailState: StoryDetailState = {
   storyView: LocalStorageService.get('story_view') || 'modal-view',
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialStoryDetailState,
   on(StoryDetailActions.initStory, (state): StoryDetailState => {
     state.loadingStory = true;
@@ -140,5 +140,5 @@ export const reducer = createReducer(
 
 export const storyDetailFeature = createFeature({
   name: 'storyDetail',
-  reducer: immerReducer(reducer),
+  reducer,
 });

@@ -6,8 +6,8 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createReducer, on, createFeature } from '@ngrx/store';
-import { immerReducer } from '~/app/shared/utils/store';
+import { on, createFeature } from '@ngrx/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import * as <%= classify(stateFilesName) %>Actions from '../actions/<%= dasherize(stateFilesName) %>.actions';
 
 export const <%= camelize(name) %>Key = '<%= camelize(name) %>';
@@ -20,7 +20,7 @@ export const initialState: <%= classify(name) %>State = {
 
 };
 
-const reducer = createReducer(
+const reducer = createImmerReducer(
   initialState,
   on(<%= classify(stateFilesName) %>Actions.example, (state): <%= classify(name) %>State => {
 
@@ -30,5 +30,5 @@ const reducer = createReducer(
 
 export const <%= camelize(name) %> = createFeature({
   name: '<%= name %>',
-  reducer: immerReducer(reducer),
+  reducer: reducer,
 });

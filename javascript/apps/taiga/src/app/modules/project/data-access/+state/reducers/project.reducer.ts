@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
 import { Membership, Project } from '@taiga/data';
 import {
   editProject,
@@ -14,7 +14,7 @@ import {
 } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import * as RolesPermissionsActions from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/project.actions';
 
 export const projectFeatureKey = 'project';
@@ -33,7 +33,7 @@ export const initialState: ProjectState = {
   members: [],
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialState,
   on(ProjectActions.fetchProjectSuccess, (state, { project }): ProjectState => {
     state.projects[project.id] = project;
@@ -126,5 +126,5 @@ export const reducer = createReducer(
 
 export const projectFeature = createFeature({
   name: 'project',
-  reducer: immerReducer(reducer),
+  reducer,
 });

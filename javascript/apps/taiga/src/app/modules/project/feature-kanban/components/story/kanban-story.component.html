@@ -57,8 +57,7 @@ Copyright (c) 2023-present Kaleidos INC
             [tuiDropdownMinHeight]="272"
             [tuiDropdownMaxHeight]="502"
             [tuiDropdownOffset]="-30"
-            [tuiDropdownManual]="vm.showAssignUser"
-            (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)">
+            [tuiDropdownManual]="vm.showAssignUser">
             <button
               data-test="assign-btn"
               (click)="toggleAssignUser($event)"
@@ -139,6 +138,7 @@ Copyright (c) 2023-present Kaleidos INC
 
     <ng-template #assignUser>
       <tg-assign-user
+        (tgOutsideClick)="closeAssignDropdown()"
         [assigned]="vm.assignees"
         [viewOnly]="!vm.canEdit"
         [ref]="story.ref"
@@ -165,7 +165,6 @@ Copyright (c) 2023-present Kaleidos INC
         [tuiDropdownMaxHeight]="502"
         [tuiDropdownOffset]="-30"
         [tuiDropdownManual]="vm.showAssignUser"
-        (tuiActiveZoneChange)="onAssignUserActiveZoneChange($event)"
         class="assigned-button-noperm">
         <button
           (click)="toggleAssignUser($event)"

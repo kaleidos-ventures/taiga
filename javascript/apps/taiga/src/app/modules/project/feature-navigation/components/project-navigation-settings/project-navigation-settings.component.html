@@ -36,16 +36,6 @@ Copyright (c) 2023-present Kaleidos INC
         <li class="project-settings-menu-item">
           <a
             class="project-settings-menu-anchor"
-            #firstChild
-            routerLink="./settings/project"
-            routerLinkActive="active"
-            fragment="main-area-title">
-            {{ t('commons.project') }}
-          </a>
-        </li>
-        <li class="project-settings-menu-item">
-          <a
-            class="project-settings-menu-anchor"
             routerLink="./settings/members"
             routerLinkActive="active"
             data-test="members-settings">
@@ -97,22 +87,6 @@ Copyright (c) 2023-present Kaleidos INC
               </a>
             </li>
           </ul>
-        </li>
-        <li class="project-settings-menu-item">
-          <a
-            class="project-settings-menu-anchor"
-            routerLink="./settings/integrations"
-            routerLinkActive="active"
-            >{{ t('project_settings.integrations') }}</a
-          >
-        </li>
-        <li class="project-settings-menu-item">
-          <a
-            class="project-settings-menu-anchor"
-            routerLink="./settings/plugins"
-            routerLinkActive="active"
-            >{{ t('project_settings.plugins') }}</a
-          >
         </li>
       </ul>
     </div>

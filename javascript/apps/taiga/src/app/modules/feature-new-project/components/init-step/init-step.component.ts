@@ -64,42 +64,6 @@ export class InitStepComponent implements OnInit, OnChanges {
       ),
       action: () => this.initProject('blank'),
     },
-    {
-      nextStep: 'template',
-      icon: 'template',
-      title: this.translocoService.translate(
-        'new_project.first_step.template_project'
-      ),
-      description: this.translocoService.translate(
-        'new_project.first_step.template_project_description'
-      ),
-      action: () => this.initProject('template'),
-    },
-    {
-      nextStep: 'import',
-      icon: 'import',
-      title: this.translocoService.translate(
-        'new_project.first_step.import_project'
-      ),
-      description: this.translocoService.translate(
-        'new_project.first_step.import_project_description'
-      ),
-      action: () => this.initProject('import'),
-    },
-    {
-      nextStep: 'duplicate',
-      icon: 'duplicate',
-      title: this.translocoService.translate(
-        'new_project.first_step.duplicate_project'
-      ),
-      description: this.translocoService.translate(
-        'new_project.first_step.duplicate_project_description'
-      ),
-      tip: this.translocoService.translate(
-        'new_project.first_step.duplicate_project_tip'
-      ),
-      action: () => this.initProject('duplicate'),
-    },
   ];
 
   public readonlyWorkspace = false;

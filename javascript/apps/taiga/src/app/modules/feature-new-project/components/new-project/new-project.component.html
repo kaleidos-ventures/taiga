@@ -28,35 +28,6 @@ Copyright (c) 2023-present Kaleidos INC
           [workspaces]="workspaceList">
         </tg-template-step>
       </ng-container>
-
-      <!-- Template step -->
-      <ng-container *ngIf="currentStep === 'template'">
-        <ng-template [ngTemplateOutlet]="wip"></ng-template>
-      </ng-container>
-
-      <!-- Import step -->
-      <ng-container *ngIf="currentStep === 'import'">
-        <ng-template [ngTemplateOutlet]="wip"></ng-template>
-      </ng-container>
-
-      <!-- Duplicate step -->
-      <ng-container *ngIf="currentStep === 'duplicate'">
-        <ng-template [ngTemplateOutlet]="wip"></ng-template>
-      </ng-container>
     </div>
   </ng-container>
-
-  <ng-template #wip>
-    <div class="wip-step">
-      <p>WIP</p>
-      <button
-        tuiButton
-        type="button"
-        (click)="currentStep = 'init'"
-        appearance="primary"
-        icon="arrow-left">
-        {{ t('new_project.wip_step.back') }}
-      </button>
-    </div>
-  </ng-template>
 </ng-container>

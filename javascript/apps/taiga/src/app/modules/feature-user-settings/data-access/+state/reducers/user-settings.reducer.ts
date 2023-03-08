@@ -6,9 +6,9 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
 import { Language } from '@taiga/data';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import { userSettingsApiActions } from '../actions/user-settings.actions';
 
 export interface UserSettingsState {
@@ -19,7 +19,7 @@ export const initialUserSettingsState: UserSettingsState = {
   languages: [],
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialUserSettingsState,
   on(
     userSettingsApiActions.fetchLanguagesSuccess,
@@ -33,5 +33,5 @@ export const reducer = createReducer(
 
 export const userSettingsFeature = createFeature({
   name: 'user-settings',
-  reducer: immerReducer(reducer),
+  reducer,
 });

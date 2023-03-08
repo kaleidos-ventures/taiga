@@ -7,12 +7,44 @@
  */
 
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  BaseRouteReuseStrategy,
+  RouteReuseStrategy,
+  RouterModule,
+  Routes,
+} from '@angular/router';
 import { LogoutComponent } from './modules/auth/components/logout/logout.component';
 import { AuthFeatureLoginGuard } from './modules/auth/feature-login/auth-feature-login.guard';
 import { AuthGuard } from './modules/auth/guards/auth.guard';
 import { ProjectInvitationCTAGuard } from './modules/project/data-access/guards/project-invitation-cta.guard';
 import { ProjectInvitationGuard } from './modules/project/data-access/guards/project-invitation.guard';
+
+/*
+Add to your route if you want to control the if the component is reused in the same url:
+
+```json
+data: {
+  reuseComponent: false,
+},
+```
+*/
+export class CustomReuseStrategy extends BaseRouteReuseStrategy {
+  public override shouldReuseRoute(
+    future: ActivatedRouteSnapshot,
+    curr: ActivatedRouteSnapshot
+  ) {
+    if (
+      future.routeConfig === curr.routeConfig &&
+      future.data.reuseComponent !== undefined
+    ) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return future.data.reuseComponent;
+    }
+
+    return future.routeConfig === curr.routeConfig;
+  }
+}
 
 const routes: Routes = [
   {
@@ -154,7 +186,7 @@ const routes: Routes = [
       onSameUrlNavigation: 'reload',
     }),
   ],
-  providers: [],
+  providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

@@ -6,11 +6,11 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
 import { Invitation, Membership } from '@taiga/data';
 import { InvitationService } from '~/app/services/invitation.service';
 import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
 
 export interface ProjectOverviewState {
@@ -43,7 +43,7 @@ export const initialState: ProjectOverviewState = {
   invitationsToAnimate: [],
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialState,
   on(
     ProjectOverviewActions.initProjectOverview,
@@ -228,5 +228,5 @@ export const reducer = createReducer(
 
 export const projectOverviewFeature = createFeature({
   name: 'overview',
-  reducer: immerReducer(reducer),
+  reducer,
 });

@@ -198,15 +198,12 @@ export class WsService {
     this.pingPongInterval = setInterval(() => {
       this.command('ping')
         .pipe(timeout(2000))
-        .subscribe(
-          () => {
-            //
-          },
-          () => {
+        .subscribe({
+          complete: () => {
             console.error('ping pong timeout');
             this.ws.close();
-          }
-        );
+          },
+        });
     }, PING_PONG_INTERVAL);
   }
 

@@ -6,10 +6,10 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
 import { User } from '@taiga/data';
 import { userSettingsActions } from '~/app/modules/feature-user-settings/data-access/+state/actions/user-settings.actions';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import * as AuthActions from '../actions/auth.actions';
 
 export interface AuthState {
@@ -24,7 +24,7 @@ export const initialState: AuthState = {
   showResetPasswordConfirmation: false,
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialState,
   on(AuthActions.logout, (state): AuthState => {
     state.user = null;
@@ -73,5 +73,5 @@ export const reducer = createReducer(
 
 export const authFeature = createFeature({
   name: 'auth',
-  reducer: immerReducer(reducer),
+  reducer: reducer,
 });

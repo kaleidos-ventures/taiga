@@ -95,7 +95,7 @@ describe('ApiRestInterceptor', () => {
           count++;
           const err = new HttpErrorResponse({ status: 401, url: '' });
 
-          return throwError(err);
+          return throwError(() => err);
         } else {
           return of(new HttpResponse({ status: 200 }));
         }
@@ -133,7 +133,7 @@ describe('ApiRestInterceptor', () => {
       handle() {
         const err = new HttpErrorResponse({ status: 401, url: '' });
 
-        return throwError(err);
+        return throwError(() => err);
       },
     };
 
@@ -171,7 +171,7 @@ describe('ApiRestInterceptor', () => {
           count++;
           const err = new HttpErrorResponse({ status: 401, url: '' });
 
-          return throwError(err);
+          return throwError(() => err);
         } else {
           return of(new HttpResponse({ status: 200 }));
         }

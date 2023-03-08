@@ -31,6 +31,7 @@ const routes: Routes = [
     component: AuthFeatureSignUpComponent,
     data: {
       noHeader: true,
+      reuseComponent: false,
     },
   },
   {

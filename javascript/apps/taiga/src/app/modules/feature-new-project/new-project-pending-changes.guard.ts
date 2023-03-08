@@ -6,21 +6,15 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { CanDeactivate } from '@angular/router';
-import { Injectable } from '@angular/core';
+import { CanDeactivateFn } from '@angular/router';
 import { Observable } from 'rxjs';
 
 export interface NewProjectCanDeactivate {
   canDeactivate: () => boolean | Observable<boolean>;
 }
 
-@Injectable({ providedIn: 'root' })
-export class NewProjectPendingChangesGuard
-  implements CanDeactivate<NewProjectCanDeactivate>
-{
-  public canDeactivate(
-    component: NewProjectCanDeactivate
-  ): boolean | Observable<boolean> {
-    return component.canDeactivate();
-  }
-}
+export const NewProjectPendingChangesGuard: CanDeactivateFn<
+  NewProjectCanDeactivate
+> = (component: NewProjectCanDeactivate) => {
+  return component.canDeactivate();
+};

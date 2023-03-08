@@ -6,9 +6,9 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace-detail.actions';
 import { workspaceDetailEventActions } from '../actions/workspace-detail.actions';
 
@@ -30,7 +30,7 @@ export const initialState: WorkspaceDetailState = {
   workspaceInvitedProjects: [],
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialState,
   on(WorkspaceActions.fetchWorkspace, (state): WorkspaceDetailState => {
     state.loading = true;
@@ -176,5 +176,5 @@ export const reducer = createReducer(
 
 export const workspaceDetailFeature = createFeature({
   name: 'workspaceDetail',
-  reducer: immerReducer(reducer),
+  reducer: reducer,
 });

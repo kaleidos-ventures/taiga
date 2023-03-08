@@ -6,13 +6,13 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
 import { Contact, Invitation, Membership, Role } from '@taiga/data';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import * as RolesPermissionsActions from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import * as WorkspaceActions from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { workspaceEventActions } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import * as InvitationActions from '../actions/invitation.action';
 
 export interface InvitationState {
@@ -35,7 +35,7 @@ export const initialState: InvitationState = {
   searchFinished: true,
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialState,
   on(InvitationActions.inviteUsersSuccess, (state, action): InvitationState => {
     const currentInvitations = state.invitations.map((invitation) =>
@@ -140,5 +140,5 @@ export const reducer = createReducer(
 
 export const invitationFeature = createFeature({
   name: 'invitation',
-  reducer: immerReducer(reducer),
+  reducer,
 });

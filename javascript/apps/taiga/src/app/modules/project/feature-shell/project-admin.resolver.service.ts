@@ -6,27 +6,23 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Injectable } from '@angular/core';
-import { Router, Resolve } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, ResolveFn } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { EMPTY, Observable, of } from 'rxjs';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
 import { selectCurrentProject } from '../data-access/+state/selectors/project.selectors';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class ProjectAdminResolver implements Resolve<Observable<unknown>> {
-  constructor(private store: Store, private router: Router) {}
+export const ProjectAdminResolver: ResolveFn<Observable<unknown>> = () => {
+  const store = inject(Store) as Store<object>;
+  const router = inject(Router);
 
-  public resolve() {
-    const project = UtilsService.getState(this.store, selectCurrentProject);
+  const project = UtilsService.getState(store, selectCurrentProject);
 
-    if (!project?.userIsAdmin) {
-      void this.router.navigate(['/']);
-      return EMPTY;
-    }
-
-    return of(null);
+  if (!project?.userIsAdmin) {
+    void router.navigate(['/']);
+    return EMPTY;
   }
-}
+
+  return of(null);
+};

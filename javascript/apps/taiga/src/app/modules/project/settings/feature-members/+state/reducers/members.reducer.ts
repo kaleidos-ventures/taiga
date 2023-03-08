@@ -6,9 +6,9 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
 import { Invitation, Membership, User } from '@taiga/data';
-import { immerReducer } from '~/app/shared/utils/store';
+import { createImmerReducer } from '~/app/shared/utils/store';
 import { membersActions } from '../actions/members.actions';
 
 export type UpdateAnimation = 'create' | 'update';
@@ -47,7 +47,7 @@ export const initialState: MembersState = {
   openRevokeInvitationDialog: null,
 };
 
-export const reducer = createReducer(
+export const reducer = createImmerReducer(
   initialState,
   on(membersActions.initProjectMembers, (state): MembersState => {
     state.members = [];
@@ -193,5 +193,5 @@ export const reducer = createReducer(
 
 export const membersFeature = createFeature({
   name: 'settings-members',
-  reducer: immerReducer(reducer),
+  reducer,
 });

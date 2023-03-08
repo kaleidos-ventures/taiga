@@ -267,7 +267,7 @@ describe('AuthEffects', () => {
     });
 
     authApiService.signUp.mockImplementation(() => {
-      return throwError(httpError);
+      return throwError(() => httpError);
     });
 
     actions$ = hot('-a', { a: signup(signupData) });
@@ -473,7 +473,7 @@ describe('AuthEffects', () => {
     });
 
     authApiService.socialSignUp.mockImplementation(() => {
-      return throwError(httpError);
+      return throwError(() => httpError);
     });
 
     actions$ = hot('-a', { a: socialSignup({ code, social }) });

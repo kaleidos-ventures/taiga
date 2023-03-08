@@ -26,7 +26,6 @@ export interface Workspace {
   hasProjects: boolean;
   userRole: WorkspaceRole;
   isPremium: boolean;
-  userIsOwner: boolean;
 }
 
 export interface WorkspaceCreation {

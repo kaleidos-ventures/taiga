@@ -69,9 +69,6 @@ describe('Workspace List', () => {
     const workspaceItem = WorkspaceMockFactory();
 
     // Mock user role
-    workspaceItem.userIsOwner = false;
-
-    // Mock user role
     workspaceItem.userRole = 'admin';
 
     // Mock latestProjects
@@ -85,32 +82,8 @@ describe('Workspace List', () => {
     expect(spectator.component.checkWsVisibility(workspaceItem)).toBeTruthy();
   });
 
-  it('check WS visibility - owner', () => {
-    const workspaceItem = WorkspaceMockFactory();
-
-    // Mock user role
-    workspaceItem.userIsOwner = true;
-
-    // Mock user role
-    workspaceItem.userRole = 'member';
-
-    // Mock latestProjects
-    workspaceItem.latestProjects = [];
-
-    // Mock rejectedProjects
-    const rejectedInvited: Project['id'][] = [];
-    mockRejectInviteSelect.setResult(rejectedInvited);
-    store.refreshState();
-
-    expect(spectator.component.checkWsVisibility(workspaceItem)).toBeTruthy();
-  });
-
   it('check WS visibility - hasProjects', () => {
     const workspaceItem = WorkspaceMockFactory();
-
-    // Mock user role
-    workspaceItem.userIsOwner = false;
-
     // Mock user role
     workspaceItem.userRole = 'guest';
 
@@ -128,9 +101,6 @@ describe('Workspace List', () => {
 
   it('check WS visibility - hasInvites', () => {
     const workspaceItem = WorkspaceMockFactory();
-
-    // Mock user role
-    workspaceItem.userIsOwner = false;
 
     // Mock user role
     workspaceItem.userRole = 'guest';
@@ -151,10 +121,6 @@ describe('Workspace List', () => {
 
   it('check WS visibility - hasInvites - rejected', () => {
     const workspaceItem = WorkspaceMockFactory();
-
-    // Mock user role
-    workspaceItem.userIsOwner = false;
-
     // Mock user role
     workspaceItem.userRole = 'guest';
 

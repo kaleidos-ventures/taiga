@@ -71,7 +71,6 @@ describe('InitStepComponent', () => {
             hasProjects: true,
             userRole: 'admin',
             isPremium: true,
-            userIsOwner: true,
           },
         ],
       },

@@ -16,13 +16,6 @@ const routes: Routes = [
     component: ProjectsSettingsFeatureSettingsComponent,
     children: [
       {
-        path: 'project',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/settings/feature-project/feature-project.module'
-          ).then((m) => m.ProjectsSettingsFeatureProjectModule),
-      },
-      {
         path: 'members',
         loadChildren: () =>
           import(
@@ -35,20 +28,6 @@ const routes: Routes = [
           import(
             '~/app/modules/project/settings/feature-roles-permissions/feature-roles-permissions.module'
           ).then((m) => m.ProjectsSettingsFeatureRolesPermissionsModule),
-      },
-      {
-        path: 'integrations',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/settings/feature-integrations/feature-integrations.module'
-          ).then((m) => m.ProjectsSettingsFeatureIntegrationsModule),
-      },
-      {
-        path: 'plugins',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/settings/feature-plugins/feature-plugins.module'
-          ).then((m) => m.ProjectsSettingsFeaturePluginsModule),
       },
     ],
   },

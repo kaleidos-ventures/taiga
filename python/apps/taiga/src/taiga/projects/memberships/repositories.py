@@ -104,7 +104,7 @@ def create_project_membership(user: User, project: Project, role: ProjectRole) -
 @sync_to_async
 def list_project_memberships(
     filters: ProjectMembershipFilters = {},
-    select_related: ProjectMembershipSelectRelated = ["user", "role"],
+    select_related: ProjectMembershipSelectRelated = [],
     order_by: ProjectMembershipOrderBy = ["full_name"],
     offset: int | None = None,
     limit: int | None = None,

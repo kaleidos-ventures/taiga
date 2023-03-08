@@ -16,7 +16,11 @@ async def emit_event_when_project_membership_is_updated(membership: ProjectMembe
     await events_manager.publish_on_user_channel(
         user=membership.user,
         type=UPDATE_PROJECT_MEMBERSHIP,
-        content=ProjectMembershipContent(project=membership.project.b64id),
+        content=ProjectMembershipContent(membership=membership),
     )
 
-    await events_manager.publish_on_project_channel(project=membership.project, type=UPDATE_PROJECT_MEMBERSHIP)
+    await events_manager.publish_on_project_channel(
+        project=membership.project,
+        type=UPDATE_PROJECT_MEMBERSHIP,
+        content=ProjectMembershipContent(membership=membership),
+    )

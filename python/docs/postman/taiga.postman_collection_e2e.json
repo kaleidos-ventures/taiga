@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "db2e4d45-e67f-4ed0-9db5-df2444308acf",
+		"_postman_id": "93c46680-b027-4d5d-b29f-ab567580f53b",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -5831,7 +5830,7 @@
 									"    var numOfReturnedFields = Object.keys(membership).length;",
 									"    var numOfReturnedUserFields = Object.keys(membershipUser).length;",
 									"\tvar numOfReturnedRoleFields = Object.keys(membershipRole).length;",
-									"\tpm.expect(numOfReturnedFields).to.equal(2);",
+									"\tpm.expect(numOfReturnedFields).to.equal(3);",
 									"\tpm.expect(numOfReturnedUserFields).to.equal(3);",
 									"\tpm.expect(numOfReturnedRoleFields).to.equal(4);",
 									"});"
@@ -6108,7 +6107,7 @@
 									"    var numOfReturnedFields = Object.keys(membership).length;",
 									"    var numOfReturnedUserFields = Object.keys(membershipUser).length;",
 									"    var numOfReturnedRoleFields = Object.keys(membershipRole).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(2);",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
 									"    pm.expect(numOfReturnedUserFields).to.equal(3);",
 									"    pm.expect(numOfReturnedRoleFields).to.equal(4);",
 									"});// Post-request execution tasks",
@@ -6195,7 +6194,7 @@
 									"    var numOfReturnedFields = Object.keys(membership).length;",
 									"    var numOfReturnedUserFields = Object.keys(membershipUser).length;",
 									"    var numOfReturnedRoleFields = Object.keys(membershipRole).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(2);",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
 									"    pm.expect(numOfReturnedUserFields).to.equal(3);",
 									"    pm.expect(numOfReturnedRoleFields).to.equal(4);",
 									"});// Post-request execution tasks",

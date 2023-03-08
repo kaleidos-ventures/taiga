@@ -6,6 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.base.serializers import BaseModel
+from taiga.projects.projects.serializers.nested import ProjectNestedSerializer
 from taiga.projects.roles.serializers.nested import ProjectRoleNestedSerializer
 from taiga.users.serializers.nested import UserNestedSerializer
 
@@ -13,6 +14,7 @@ from taiga.users.serializers.nested import UserNestedSerializer
 class ProjectMembershipSerializer(BaseModel):
     user: UserNestedSerializer
     role: ProjectRoleNestedSerializer
+    project: ProjectNestedSerializer
 
     class Config:
         orm_mode = True

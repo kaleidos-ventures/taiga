@@ -6,7 +6,8 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.base.serializers import BaseModel
+from taiga.projects.memberships.serializers import ProjectMembershipSerializer
 
 
 class ProjectMembershipContent(BaseModel):
-    project: str
+    membership: ProjectMembershipSerializer

@@ -221,6 +221,13 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     }
   }
 
+  public onAssignUserActiveZoneChange(active: boolean) {
+    if (!active) {
+      this.closeAssignDropdown();
+    }
+    this.cd.detectChanges();
+  }
+
   public closeAssignDropdown() {
     this.state.set({ showAssignUser: false });
   }

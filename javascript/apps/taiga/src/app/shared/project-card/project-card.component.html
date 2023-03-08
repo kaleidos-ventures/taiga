@@ -44,7 +44,14 @@ Copyright (c) 2023-present Kaleidos INC
           class="project-card-link"
           [class.is-admin]="workspace.userRole === 'admin' && hasActions"
           data-test="project-card-name">
-          {{ project.name }}
+          <h3
+            [attr.aria-label]="
+              t('common_project.card.a11y.project_name', {
+                name: project.name
+              })
+            ">
+            {{ project.name }}
+          </h3>
         </a>
         <tui-hosted-dropdown
           *ngIf="workspace.userRole === 'admin' && hasActions"
@@ -106,7 +113,14 @@ Copyright (c) 2023-present Kaleidos INC
             [routerLink]="['/project', project.id, project.slug]"
             class="project-card-link"
             data-test="project-card">
-            {{ project.name }}
+            <h3
+              [attr.aria-label]="
+                t('common_project.card.a11y.project_name', {
+                  name: project.name
+                })
+              ">
+              {{ project.name }}
+            </h3>
           </a>
         </div>
         <button

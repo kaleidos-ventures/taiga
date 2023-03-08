@@ -35,8 +35,7 @@ Copyright (c) 2023-present Kaleidos INC
             [(open)]="projectActionsDropdownState">
             <button
               [attr.aria-label]="
-                t('project_overview.project_actions') +
-                t('commons.press_enter_to_open_menu')
+                t('project_overview.a11y.project_action_enter_open_menu')
               "
               icon="more-vertical"
               appearance="tertiary"
@@ -125,7 +124,7 @@ Copyright (c) 2023-present Kaleidos INC
       tgAutoFocus
       tabindex="-1"
       [attr.aria-label]="
-        t('project_overview.project_actions') + t('commons.updown_to_navigate')
+        t('project_overview.a11y.project_action_up_down_navigate')
       "
       role="menu">
       <button

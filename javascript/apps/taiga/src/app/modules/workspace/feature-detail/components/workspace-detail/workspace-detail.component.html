@@ -26,12 +26,18 @@ Copyright (c) 2023-present Kaleidos INC
             {{ t('commons.workspace') }}/
           </div>
           <div class="workspace-detail-name-container">
-            <h3
+            <h2
+              [attr.aria-label]="
+                t('workspace.a11y.workspace_title', {
+                  workspace: vm.workspace.name,
+                  role: t('commons.roles.' + vm.workspace.userRole)
+                })
+              "
               data-test="workspace-detail-name"
               class="workspace-detail-name"
               tgTitle>
               {{ vm.workspace.name }}
-            </h3>
+            </h2>
             <tg-ui-badge
               *ngIf="vm.workspace.userRole"
               [label]="t('commons.roles.' + vm.workspace.userRole) | capitalize"

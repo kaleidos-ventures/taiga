@@ -26,10 +26,6 @@
       "yes": "Yes, quit",
       "no": "No, keep editing"
     },
-    "open_action_menu": "Open action menu",
-    "down_to_navigate": "Use down arrow key to navigate",
-    "updown_to_navigate": "Use up and down arrow key to navigate",
-    "press_enter_to_open_menu": "Press enter to open",
     "roles": {
       "admin": "Admin",
       "member": "Member",
@@ -55,14 +51,23 @@
     "create_account": "Create account",
     "log_in": "Log in",
     "new_tab": "Opens in a new tab",
-    "skip_to_content": "Skip to content"
+    "skip_to_content": "Skip to content",
+    "a11y": {
+      "projects_navigate": "Projects. Press down to navigate",
+      "user_menu_navigate": "User: {{ userName }}. Press down to navigate"
+    }
   },
   "navigation_projects": {
     "pinned": "Pinned projects",
     "recent_projects": "Recent projects",
     "empty_recent_projects": "You don't have any projects yet",
     "view_projects": "View your projects",
-    "new_project": "New project"
+    "new_project": "New project",
+    "a11y": {
+      "recent_projects": "Recent projects. Press down to navigate.",
+      "recent_projects_empty": "Recent projects. You don't have any projects yet.",
+      "recent_projects_empty_navigate": "Recent projects. You don't have any projects yet. Press down to navigate."
+    }
   },
   "navigation_user": {
     "user_menu": "User menu",
@@ -71,7 +76,10 @@
     "preferences": "Preferences",
     "account_settings": "Account",
     "accessibility_settings": "Accesibility",
-    "log_out": "Log out"
+    "log_out": "Log out",
+    "a11y": {
+      "user_menu_down_navigate": "{{ userName }}. User menu. Press down to navigate"
+    }
   },
   "main_project_navigation": {
     "goto": "Go to",
@@ -85,7 +93,10 @@
     "card": {
       "accept_invite": "Accept invitation",
       "pending_invitation": "Pending invitation",
-      "close_card": "Close card"
+      "close_card": "Close card",
+      "a11y": {
+        "project_name": "{{ name }}. Project"
+      }
     },
     "forms": {
       "project_details": "Project details",

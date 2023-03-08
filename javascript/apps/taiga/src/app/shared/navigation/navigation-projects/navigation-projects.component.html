@@ -14,19 +14,15 @@ Copyright (c) 2023-present Kaleidos INC
       class="pinned-projects"
       [attr.aria-label]="
         latestProjects.length
-          ? t('navigation_projects.recent_projects') +
-            t('commons.down_to_navigate')
-          : t('navigation_projects.recent_projects') +
-            t('navigation_projects.empty_recent_projects') +
-            t('commons.down_to_navigate')
+          ? t('navigation_projects.a11y.recent_projects')
+          : t('navigation_projects.a11y.recent_projects_empty_navigate')
       "
       role="menu">
       <span
         [attr.aria-label]="
           latestProjects.length
             ? t('navigation_projects.recent_projects')
-            : t('navigation_projects.recent_projects') +
-              t('navigation_projects.empty_recent_projects')
+            : t('navigation_projects.a11y.recent_projects_empty')
         "
         class="menu-title"
         >{{ t('navigation_projects.recent_projects') }}</span

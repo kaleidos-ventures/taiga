@@ -397,7 +397,7 @@ Content for:
       "deleted_by": {... basic user info ...}
   }
   ```
-  
+
 
 #### **projects.delete**
 
@@ -487,20 +487,20 @@ Content for:
   ```
 
 #### `projectmemberships.update`
-
 It happens when a project membership role is updated.
 
 Content for:
 - user channel:
   ```
   {
-      "workspace": "workspace_id",
-      "project": "project_id"
+      "membership": {... "project membership object" ...}
   }
   ```
 - project channel:
   ```
-  null
+  {
+      "membership": {... "project membership object" ...}
+  }
   ```
 
 #### `projectroles.update`
@@ -627,4 +627,4 @@ Content for:
       "story": {... "story object" ...}
   }
   ```
-  
+

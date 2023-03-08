@@ -27,7 +27,10 @@ async def list_paginated_project_memberships(
     project: Project, offset: int, limit: int
 ) -> tuple[Pagination, list[ProjectMembership]]:
     memberships = await memberships_repositories.list_project_memberships(
-        filters={"project_id": project.id}, offset=offset, limit=limit
+        filters={"project_id": project.id},
+        select_related=["user", "role", "project"],
+        offset=offset,
+        limit=limit,
     )
     total_memberships = await memberships_repositories.get_total_project_memberships(filters={"project_id": project.id})
 

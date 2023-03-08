@@ -44,11 +44,6 @@ Copyright (c) 2023-present Kaleidos INC
               size="s"
               [color]="vm.workspace.userRole === 'guest' ? 'gray' : 'info'">
             </tg-ui-badge>
-            <tg-ui-badge
-              *ngIf="vm.workspace.userIsOwner"
-              [label]="t('commons.owner') | capitalize"
-              size="s"
-              color="primary"></tg-ui-badge>
             <tui-hosted-dropdown
               *ngIf="vm.workspace.userRole === 'admin'"
               [tuiDropdownAlign]="'left'"

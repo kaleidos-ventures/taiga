@@ -56,20 +56,6 @@ Copyright (c) 2023-present Kaleidos INC
       </tg-ui-badge>
 
       <div class="workspace-item-action">
-        <button
-          appearance="tertiary"
-          tuiButton
-          icon="user"
-          type="button">
-          {{ t('commons.members') }} (1)
-        </button>
-        <button
-          *ngIf="workspace.userRole === 'admin'"
-          appearance="secondary"
-          tuiButton
-          type="button">
-          {{ t('commons.upgrade') }}
-        </button>
         <a
           *ngIf="workspace.userRole === 'admin'"
           data-test="new-project-btn"

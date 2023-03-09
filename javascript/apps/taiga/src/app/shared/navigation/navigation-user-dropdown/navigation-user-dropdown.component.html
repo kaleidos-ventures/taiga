@@ -35,39 +35,10 @@ Copyright (c) 2023-present Kaleidos INC
     <a
       tuiOption
       role="menuitem"
-      href="#"
-      class="user-link">
-      {{ t('navigation_user.user_profile') }}
-    </a>
-    <a
-      tuiOption
-      role="menuitem"
       [routerLink]="['user-settings', 'profile']"
       (click)="requestClose.emit()"
       class="user-link">
       {{ t('navigation_user.edit_profile') }}
-    </a>
-    <a
-      tuiOption
-      role="menuitem"
-      href="#"
-      class="user-link">
-      {{ t('navigation_user.account_settings') }}
-    </a>
-    <a
-      tuiOption
-      role="menuitem"
-      [routerLink]="['user-settings', 'preferences']"
-      (click)="requestClose.emit()"
-      class="user-link">
-      {{ t('navigation_user.preferences') }}
-    </a>
-    <a
-      tuiOption
-      role="menuitem"
-      href="#"
-      class="user-link">
-      {{ t('navigation_user.accessibility_settings') }}
     </a>
     <hr class="separator" />
     <button

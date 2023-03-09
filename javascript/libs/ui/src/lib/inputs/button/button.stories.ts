@@ -514,32 +514,3 @@ export const USHeaderButton = ConfigureTemplate({
   args: baseArgs,
   argTypes: baseArgTypes,
 });
-
-export const NavIconButton = ConfigureTemplate({
-  template: `
-  <div class="story-flex">
-    <label class="story-label">Default</label>
-    <button
-      appearance="nav-icon-button"
-      tuiIconButton
-      icon="{{icon}}"
-      type="button">
-      <span class="visually-hidden">Test2</span>
-      </button>
-  </div>
-  <br>
-  <div class="story-flex">
-    <label class="story-label">Blocked US</label>
-    <button
-      appearance="nav-icon-button"
-      blocked
-      tuiIconButton
-      icon="{{icon}}"
-      type="button">
-      <span class="visually-hidden">Test2</span>
-      </button>
-  </div>
-  `,
-  args: baseArgs,
-  argTypes: baseArgTypes,
-});

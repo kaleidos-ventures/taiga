@@ -8,7 +8,6 @@
 
 import pytest
 from fastapi import status
-from taiga.permissions import choices
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -106,25 +105,10 @@ async def test_my_workspace_not_found_error_because_there_is_no_relation(client)
 #############################################################
 
 
-async def test_get_workspace_being_workspace_admin(client):
+async def test_get_workspace_being_workspace_member(client):
     workspace = await f.create_workspace()
 
     client.login(workspace.created_by)
-    response = client.get(f"/workspaces/{workspace.b64id}")
-    assert response.status_code == status.HTTP_200_OK, response.text
-
-
-async def test_get_workspace_being_workspace_member(client):
-    workspace = await f.create_workspace()
-    general_member_role = await f.create_workspace_role(
-        permissions=choices.WorkspacePermissions.values,
-        is_admin=False,
-        workspace=workspace,
-    )
-    user2 = await f.create_user()
-    await f.create_workspace_membership(user=user2, workspace=workspace, role=general_member_role)
-
-    client.login(user2)
     response = client.get(f"/workspaces/{workspace.b64id}")
     assert response.status_code == status.HTTP_200_OK, response.text
 
@@ -194,7 +178,7 @@ async def test_update_workspace_no_admin(client):
 #############################################################
 
 
-async def test_delete_workspace_being_ws_admin(client):
+async def test_delete_workspace_being_ws_member(client):
     workspace = await f.create_workspace()
 
     client.login(workspace.created_by)
@@ -202,22 +186,7 @@ async def test_delete_workspace_being_ws_admin(client):
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
-async def test_delete_workspace_being_ws_member(client):
-    workspace = await f.create_workspace()
-    general_member_role = await f.create_workspace_role(
-        permissions=choices.WorkspacePermissions.values,
-        is_admin=False,
-        workspace=workspace,
-    )
-    ws_member = await f.create_user()
-    await f.create_workspace_membership(user=ws_member, workspace=workspace, role=general_member_role)
-
-    client.login(ws_member)
-    response = client.delete(f"/workspaces/{workspace.b64id}")
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-async def test_delete_workspace_being_external_user(client):
+async def test_delete_workspace_not_being_ws_member(client):
     user = await f.create_user()
     workspace = await f.create_workspace()
 

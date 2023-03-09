@@ -8,6 +8,7 @@
 from unittest.mock import patch
 
 import pytest
+from taiga.base.db.users import AnonymousUser
 from taiga.permissions import choices, services
 from tests.utils import factories as f
 
@@ -49,27 +50,38 @@ async def test_is_project_admin_being_project_member():
 #####################################################
 
 
+async def test_is_workspace_admin_being_an_anonymous_user():
+    user = AnonymousUser()
+    workspace = await f.create_workspace()
+
+    assert await services.is_workspace_admin(user=user, obj=workspace) is False
+
+
+async def test_is_workspace_admin_being_a_superuser():
+    user = await f.create_user(is_superuser=True)
+    workspace = await f.create_workspace()
+
+    assert await services.is_workspace_admin(user=user, obj=workspace) is True
+
+
 async def test_is_workspace_admin_without_workspace():
     user = await f.create_user()
     assert await services.is_workspace_admin(user=user, obj=None) is False
 
 
-async def test_is_workspace_admin_being_workspace_admin():
-    workspace = await f.create_workspace()
-    assert await services.is_workspace_admin(user=workspace.created_by, obj=workspace) is True
-
-
 async def test_is_workspace_admin_being_workspace_member():
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+    await f.create_workspace_membership(user=user, workspace=workspace)
+
+    assert await services.is_workspace_admin(user=user, obj=workspace) is True
+
+
+async def test_is_workspace_admin_not_being_a_workspace_member():
+    user = await f.create_user()
     workspace = await f.create_workspace()
 
-    user2 = await f.create_user()
-    general_member_role = await f.create_workspace_role(
-        workspace=workspace,
-        is_admin=False,
-    )
-    await f.create_workspace_membership(user=user2, workspace=workspace, role=general_member_role)
-
-    assert await services.is_workspace_admin(user=user2, obj=workspace) is False
+    assert await services.is_workspace_admin(user=user, obj=workspace) is False
 
 
 #####################################################
@@ -182,17 +194,13 @@ async def test_user_can_view_project_without_project():
         services.get_user_permissions.assert_not_awaited()
 
 
-async def test_user_can_view_project_being_a_workspace_admin():
+async def test_user_can_view_project_being_a_workspace_member():
+    user = await f.create_user()
     workspace = await f.create_workspace()
-    project = await f.create_project(workspace=workspace)
 
-    with (
-        patch("taiga.permissions.services.is_workspace_admin", return_value=True),
-        patch("taiga.permissions.services.get_user_permissions"),
-    ):
-        assert await services.user_can_view_project(user=workspace.created_by, obj=project) is True
-        services.is_workspace_admin.assert_awaited_once_with(user=workspace.created_by, obj=workspace)
-        services.get_user_permissions.assert_not_awaited()
+    await f.create_workspace_membership(user=user, workspace=workspace)
+    project = await f.create_project(workspace=workspace)
+    assert await services.user_can_view_project(user=user, obj=project) is True
 
 
 async def test_user_can_view_project_being_a_project_member():
@@ -229,22 +237,6 @@ async def test_user_can_view_project_having_a_pending_invitation():
         assert await services.user_can_view_project(user=user, obj=project) is True
         services.has_pending_project_invitation.assert_awaited_once_with(user=user, project=project)
         services.get_user_permissions.assert_not_awaited()
-
-
-async def test_user_can_view_project_being_a_workspace_member():
-    user = await f.create_user()
-    workspace = await f.create_workspace()
-    general_member_role = await f.create_workspace_role(
-        workspace=workspace,
-        is_admin=False,
-    )
-    await f.create_workspace_membership(user=user, workspace=workspace, role=general_member_role)
-    project = await f.create_project(workspace=workspace)
-    perms = choices.WorkspacePermissions.values
-
-    with patch("taiga.permissions.services.get_user_permissions", return_value=perms):
-        assert await services.user_can_view_project(user=user, obj=project) is True
-        services.get_user_permissions.assert_awaited_once_with(user=user, obj=project)
 
 
 async def test_user_can_view_project_being_other_user_with_permission():
@@ -319,24 +311,21 @@ async def test_has_pending_project_invitation() -> None:
 async def test_get_user_permissions_for_project():
     project = await f.create_project()
 
-    params = [True, False, False, False, False, [], project]
+    params = [True, False, False, False, [], project]
     assert await services.get_user_permissions_for_project(*params) == choices.ProjectPermissions.values
 
-    params = [False, True, False, False, False, [], project]
+    params = [False, True, False, False, [], project]
     assert await services.get_user_permissions_for_project(*params) == choices.ProjectPermissions.values
 
-    params = [False, False, True, False, True, ["view_story"], project]
+    params = [False, False, True, True, ["view_story"], project]
     res = await services.get_user_permissions_for_project(*params)
     assert "view_story" in res
     assert len(res) == 1
 
-    params = [False, False, False, True, False, [], project]
-    assert await services.get_user_permissions_for_project(*params) == project.workspace_member_permissions
-
-    params = [False, False, False, False, True, [], project]
+    params = [False, False, False, True, [], project]
     assert await services.get_user_permissions_for_project(*params) == project.public_permissions
 
-    params = [False, False, False, False, False, [], project]
+    params = [False, False, False, False, [], project]
     assert await services.get_user_permissions_for_project(*params) == project.anon_permissions
 
 

@@ -28,7 +28,7 @@ from taiga.projects.projects.services import exceptions as ex
 from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.users import services as users_services
 from taiga.users.models import AnyUser, User
-from taiga.workspaces.roles import repositories as ws_roles_repositories
+from taiga.workspaces.memberships import repositories as workspace_memberships_repositories
 from taiga.workspaces.workspaces import services as workspaces_services
 from taiga.workspaces.workspaces.models import Workspace
 
@@ -91,12 +91,15 @@ async def list_projects(workspace_id: UUID) -> list[Project]:
 
 
 async def list_workspace_projects_for_user(workspace: Workspace, user: User) -> list[Project]:
-    role = await ws_roles_repositories.get_workspace_role(filters={"user_id": user.id, "workspace_id": workspace.id})
-    if role and role.is_admin:
+    ws_membership = await workspace_memberships_repositories.get_workspace_membership(
+        filters={"workspace_id": workspace.id, "user_id": user.id},
+        select_related=[],
+    )
+    if ws_membership:
         return await list_projects(workspace_id=workspace.id)
 
     return await projects_repositories.list_projects(
-        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user.id},
+        filters={"workspace_id": workspace.id, "project_member_id": user.id},
         prefetch_related=["workspace"],
     )
 
@@ -130,20 +133,15 @@ async def get_project_detail(project: Project, user: AnyUser) -> ProjectDetailSe
         project_role_permissions,
     ) = await permissions_services.get_user_project_role_info(user=user, project=project)
 
-    (
-        is_workspace_admin,
-        is_workspace_member,
-        _,
-    ) = await permissions_services.get_user_workspace_role_info(user=user, workspace=project.workspace)
+    is_workspace_member = await permissions_services.user_is_workspace_member(user=user, workspace=project.workspace)
 
     user_id = None if user.is_anonymous else user.id
     workspace = await workspaces_services.get_workspace_nested(id=project.workspace_id, user_id=user_id)
 
     user_permissions = await permissions_services.get_user_permissions_for_project(
         is_project_admin=is_project_admin,
-        is_workspace_admin=is_workspace_admin,
+        is_workspace_admin=is_workspace_member,
         is_project_member=is_project_member,
-        is_workspace_member=is_workspace_member,
         is_authenticated=user.is_authenticated,
         project_role_permissions=project_role_permissions,
         project=project,

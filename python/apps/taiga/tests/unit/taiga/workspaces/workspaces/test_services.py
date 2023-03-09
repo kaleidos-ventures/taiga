@@ -27,14 +27,12 @@ async def test_create_workspace():
     color = 5
     with (
         patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
-        patch("taiga.workspaces.workspaces.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
         patch(
             "taiga.workspaces.workspaces.services.ws_memberships_repositories", autospec=True
         ) as fake_ws_memberships_repo,
     ):
         await services._create_workspace(name=name, color=color, created_by=user)
         fake_workspaces_repo.create_workspace.assert_awaited_once()
-        fake_ws_roles_repo.create_workspace_role.assert_awaited_once()
         fake_ws_memberships_repo.create_workspace_membership.assert_awaited_once()
 
 
@@ -91,10 +89,8 @@ async def test_get_workspace_detail():
 
     with (
         patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
-        patch("taiga.workspaces.workspaces.services.ws_roles_services", autospec=True) as fake_ws_roles_services,
         patch("taiga.workspaces.workspaces.services.projects_repositories", autospec=True) as fake_projects_repo,
     ):
-        fake_ws_roles_services.get_workspace_role_name.return_value = "admin"
         fake_projects_repo.get_total_projects.return_value = 1
         fake_workspaces_repo.get_workspace_detail.return_value = workspace
         await services.get_workspace_detail(id=workspace.id, user_id=workspace.created_by.id)

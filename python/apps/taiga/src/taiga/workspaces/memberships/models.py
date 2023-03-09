@@ -27,14 +27,6 @@ class WorkspaceMembership(models.BaseModel, CreatedAtMetaInfoMixin):
         on_delete=models.CASCADE,
         verbose_name="workspace",
     )
-    role = models.ForeignKey(
-        "workspaces_roles.WorkspaceRole",
-        null=True,
-        blank=False,
-        related_name="memberships",
-        on_delete=models.CASCADE,
-        verbose_name="role",
-    )
 
     class Meta:
         verbose_name = "workspace membership"

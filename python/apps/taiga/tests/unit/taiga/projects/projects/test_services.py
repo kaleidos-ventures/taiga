@@ -6,7 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 import uuid
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from fastapi import UploadFile
@@ -110,14 +110,10 @@ async def test_create_project_with_no_logo():
 ##########################################################
 
 
-async def test_list_workspace_projects_for_user_admin():
-    workspace = f.build_workspace()
+async def test_list_workspace_projects_for_a_ws_member():
+    workspace = await f.create_workspace()
 
-    with (
-        patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,
-        patch("taiga.projects.projects.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
-    ):
-        fake_ws_roles_repo.get_workspace_role.return_value = MagicMock(is_admin=True)
+    with (patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,):
         await services.list_workspace_projects_for_user(workspace=workspace, user=workspace.created_by)
         fake_projects_repo.list_projects.assert_awaited_once_with(
             filters={"workspace_id": workspace.id},
@@ -125,17 +121,14 @@ async def test_list_workspace_projects_for_user_admin():
         )
 
 
-async def test_list_workspace_projects_for_user_member():
+async def test_list_workspace_projects_not_for_a_ws_member():
     workspace = f.build_workspace()
+    user = f.build_user()
 
-    with (
-        patch("taiga.projects.projects.services.ws_roles_repositories", autospec=True) as fake_ws_roles_repo,
-        patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,
-    ):
-        fake_ws_roles_repo.get_workspace_role.return_value = MagicMock(is_admin=False)
-        await services.list_workspace_projects_for_user(workspace=workspace, user=workspace.created_by)
+    with (patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,):
+        await services.list_workspace_projects_for_user(workspace=workspace, user=user)
         fake_projects_repo.list_projects.assert_awaited_once_with(
-            filters={"workspace_id": workspace.id, "project_or_workspace_member_id": workspace.created_by.id},
+            filters={"workspace_id": workspace.id, "project_member_id": user.id},
             prefetch_related=["workspace"],
         )
 
@@ -165,7 +158,7 @@ async def test_list_workspace_invited_projects_for_user():
 
 
 async def test_get_project_detail():
-    workspace = f.build_workspace()
+    workspace = await f.create_workspace()
     project = f.build_project(created_by=workspace.created_by, workspace=workspace)
 
     with (
@@ -173,8 +166,8 @@ async def test_get_project_detail():
         patch("taiga.projects.projects.services.workspaces_services", autospec=True) as fake_workspaces_services,
     ):
         fake_permissions_services.get_user_project_role_info.return_value = (True, True, [])
-        fake_permissions_services.get_user_workspace_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_permissions_for_project.return_value = []
+        fake_permissions_services.user_is_workspace_member.return_value = True
         fake_permissions_services.has_pending_project_invitation.return_value = True
         fake_workspaces_services.get_workspace_nested.return_value = WorkspaceNestedSerializer(
             id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin"
@@ -184,15 +177,11 @@ async def test_get_project_detail():
         fake_permissions_services.get_user_project_role_info.assert_awaited_once_with(
             project=project, user=workspace.created_by
         )
-        fake_permissions_services.get_user_workspace_role_info.assert_awaited_once_with(
-            user=workspace.created_by, workspace=workspace
-        )
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once_with(
-            is_authenticated=True,
             is_project_admin=True,
             is_workspace_admin=True,
             is_project_member=True,
-            is_workspace_member=True,
+            is_authenticated=True,
             project_role_permissions=[],
             project=project,
         )
@@ -206,7 +195,7 @@ async def test_get_project_detail():
 
 async def test_get_project_detail_anonymous():
     user = AnonymousUser()
-    workspace = f.build_workspace()
+    workspace = await f.create_workspace()
     permissions = ["modify_story", "view_story"]
     project = f.build_project(workspace=workspace, public_permissions=permissions)
 
@@ -215,8 +204,8 @@ async def test_get_project_detail_anonymous():
         patch("taiga.projects.projects.services.workspaces_services", autospec=True) as fake_workspaces_services,
     ):
         fake_permissions_services.get_user_project_role_info.return_value = (True, True, [])
-        fake_permissions_services.get_user_workspace_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_permissions_for_project.return_value = []
+        fake_permissions_services.user_is_workspace_member.return_value = True
         fake_permissions_services.has_pending_project_invitation.return_value = False
         fake_workspaces_services.get_workspace_nested.return_value = WorkspaceNestedSerializer(
             id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin"
@@ -224,13 +213,11 @@ async def test_get_project_detail_anonymous():
         await services.get_project_detail(project=project, user=user)
 
         fake_permissions_services.get_user_project_role_info.assert_awaited_once_with(project=project, user=user)
-        fake_permissions_services.get_user_workspace_role_info.assert_awaited_once_with(user=user, workspace=workspace)
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once_with(
-            is_authenticated=False,
             is_project_admin=True,
             is_workspace_admin=True,
             is_project_member=True,
-            is_workspace_member=True,
+            is_authenticated=False,
             project_role_permissions=[],
             project=project,
         )

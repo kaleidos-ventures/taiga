@@ -17,7 +17,6 @@ from asgiref.sync import sync_to_async
 from faker import Faker
 from fastapi import UploadFile
 from taiga.base.sampledata import constants
-from taiga.permissions import choices
 from taiga.projects.invitations import repositories as pj_invitations_repositories
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.invitations.models import ProjectInvitation
@@ -30,7 +29,6 @@ from taiga.stories.assignments.models import StoryAssignment
 from taiga.stories.stories.models import Story
 from taiga.users.models import User
 from taiga.workflows.models import WorkflowStatus
-from taiga.workspaces.roles.models import WorkspaceRole
 from taiga.workspaces.workspaces import services as workspaces_services
 from taiga.workspaces.workspaces.models import Workspace
 
@@ -68,23 +66,10 @@ def create_user_with_kwargs(
 ################################
 
 
-async def get_workspace_with_related_info(id: UUID) -> Workspace:
-    return await (Workspace.objects.select_related().prefetch_related("roles").aget(id=id))
-
-
-@sync_to_async
-def create_workspace_role(workspace: Workspace) -> WorkspaceRole:
-    return WorkspaceRole.objects.create(
-        workspace=workspace, name="Members", is_admin=False, permissions=choices.WorkspacePermissions.values
-    )
-
-
 async def create_workspace(created_by: User, name: str | None = None, color: int | None = None) -> Workspace:
     name = name or fake.bs()[:35]
     color = color or fake.random_int(min=1, max=constants.NUM_WORKSPACE_COLORS)
-    workspace = await workspaces_services._create_workspace(name=name, color=color, created_by=created_by)
-
-    return workspace
+    return await workspaces_services._create_workspace(name=name, color=color, created_by=created_by)
 
 
 ################################

@@ -64,7 +64,7 @@ class ProjectAdmin(admin.ModelAdmin[Project]):
             "Extra info",
             {"classes": ("collapse",), "fields": ("color", "logo", ("created_at", "modified_at"))},
         ),
-        ("Permissions", {"fields": ("workspace_member_permissions", "public_permissions")}),
+        ("Permissions", {"fields": ("public_permissions")}),
     )
     readonly_fields = ("id", "b64id", "created_at", "modified_at")
     list_display = ["b64id", "name", "workspace", "created_by", "public_user_can_view", "anon_user_can_view"]

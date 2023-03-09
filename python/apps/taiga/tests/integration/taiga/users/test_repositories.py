@@ -8,7 +8,6 @@
 import pytest
 from asgiref.sync import sync_to_async
 from taiga.base.db.exceptions import IntegrityError
-from taiga.permissions import choices
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
@@ -153,10 +152,7 @@ async def test_list_users_by_text():
 
     # elettescar is ws-member
     workspace = await f.create_workspace(created_by=ws_pj_admin, color=2)
-    general_member_role = await f.create_workspace_role(
-        permissions=choices.WorkspacePermissions.choices, is_admin=False, workspace=workspace
-    )
-    await f.create_workspace_membership(user=elettescar, workspace=workspace, role=general_member_role)
+    await f.create_workspace_membership(user=elettescar, workspace=workspace)
 
     # electra is a pj-member (from the previous workspace)
     project = await f.create_project(workspace=workspace, created_by=ws_pj_admin)

@@ -17,8 +17,6 @@ from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects import repositories
 from taiga.projects.projects.models import Project
 from taiga.projects.roles.models import ProjectRole
-from taiga.workspaces.roles.models import WorkspaceRole
-from taiga.workspaces.workspaces.models import Workspace
 from tests.utils import factories as f
 from tests.utils.images import valid_image_f
 
@@ -87,8 +85,7 @@ async def test_list_workspace_invited_projects_for_user():
 
     # workspace, user8(ws-admin), user9(ws-member)
     workspace = await f.create_workspace(created_by=user8)
-    ws_member_role = await _get_ws_member_role(workspace=workspace)
-    await f.create_workspace_membership(user=user9, workspace=workspace, role=ws_member_role)
+    await f.create_workspace_membership(user=user9, workspace=workspace)
     # user8 is a pj-admin of several projects
     pj1 = await f.create_project(workspace=workspace, created_by=user8)
     await f.create_project(workspace=workspace, created_by=user8)
@@ -122,45 +119,24 @@ async def test_list_workspace_projects_for_user_1():
     user6 = await f.create_user()
     user7 = await f.create_user()
 
-    # workspace, user6(ws-admin), user7(ws-member)
+    # workspace, user6(ws-member)
     workspace = await f.create_workspace(created_by=user6)
-    ws_member_role = await _get_ws_member_role(workspace=workspace)
-    await f.create_workspace_membership(user=user7, workspace=workspace, role=ws_member_role)
     # user7 is a pj-admin
     await f.create_project(workspace=workspace, created_by=user7)
     # user7 is pj-member
     pj11 = await f.create_project(workspace=workspace, created_by=user6)
     pj_general_role = await _get_pj_member_role(project=pj11)
     await f.create_project_membership(user=user7, project=pj11, role=pj_general_role)
-    # user7 is pj-member, ws-members have permissions
-    pj12 = await f.create_project(workspace=workspace, created_by=user6)
-    pj_general_role = await _get_pj_member_role(project=pj12)
-    await f.create_project_membership(user=user7, project=pj12, role=pj_general_role)
-    pj_general_role.permissions = []
-    await _save_role(pj_general_role)
-    pj12.workspace_member_permissions = ["view_story"]
-    await _save_project(project=pj12)
-    # user7 is pj-member, ws-members don't have permissions
-    pj13 = await f.create_project(workspace=workspace, created_by=user6)
-    pj_general_role = await _get_pj_member_role(project=pj13)
-    await f.create_project_membership(user=user7, project=pj13, role=pj_general_role)
-    pj_general_role.permissions = []
-    await _save_role(pj_general_role)
-    # user7 is not a pj-member but the project allows 'view_story' to ws-members
+    # user7 is not a pj-member
     pj14 = await f.create_project(workspace=workspace, created_by=user6)
-    pj14.workspace_member_permissions = ["view_story"]
     await _save_project(project=pj14)
-    # user7 is not a pj-member and ws-members are not allowed
-    await f.create_project(workspace=workspace, created_by=user6)
 
-    res = await repositories.list_projects(
-        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user6.id}
-    )
-    assert len(res) == 6
-    res = await repositories.list_projects(
-        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user7.id}
-    )
-    assert len(res) == 5
+    # A ws-member should see every project in her workspaces
+    res = await repositories.list_projects(filters={"workspace_id": workspace.id})
+    assert len(res) == 3
+    # Not ws-member users should see just the projects in which she's a pj-member
+    res = await repositories.list_projects(filters={"workspace_id": workspace.id, "project_member_id": user7.id})
+    assert len(res) == 2
 
 
 async def test_list_projects_2():
@@ -169,18 +145,13 @@ async def test_list_projects_2():
 
     # workspace, user6(ws-admin), user7(ws-member, has_projects: true)
     workspace = await f.create_workspace(created_by=user6)
-    ws_member_role = await _get_ws_member_role(workspace=workspace)
-    await f.create_workspace_membership(user=user7, workspace=workspace, role=ws_member_role)
+    await f.create_workspace_membership(user=user7, workspace=workspace)
     # user7 is not a pj-member and ws-members are not allowed
     await f.create_project(workspace=workspace, created_by=user6)
 
-    res = await repositories.list_projects(
-        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user6.id}
-    )
+    res = await repositories.list_projects(filters={"workspace_id": workspace.id, "project_member_id": user6.id})
     assert len(res) == 1
-    res = await repositories.list_projects(
-        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user7.id}
-    )
+    res = await repositories.list_projects(filters={"workspace_id": workspace.id, "project_member_id": user7.id})
     assert len(res) == 0
 
 
@@ -190,16 +161,11 @@ async def test_list_workspace_projects_for_user_3():
 
     # workspace, user6(ws-admin), user7(ws-member, has_projects: false)
     workspace = await f.create_workspace(created_by=user6)
-    ws_member_role = await _get_ws_member_role(workspace=workspace)
-    await f.create_workspace_membership(user=user7, workspace=workspace, role=ws_member_role)
+    await f.create_workspace_membership(user=user7, workspace=workspace)
 
-    res = await repositories.list_projects(
-        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user6.id}
-    )
+    res = await repositories.list_projects(filters={"workspace_id": workspace.id, "project_member_id": user6.id})
     assert len(res) == 0
-    res = await repositories.list_projects(
-        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user7.id}
-    )
+    res = await repositories.list_projects(filters={"workspace_id": workspace.id, "project_member_id": user7.id})
     assert len(res) == 0
 
 
@@ -212,13 +178,9 @@ async def test_list_workspace_projects_for_user_4():
     # user7 is not a pj-member or ws-member but ws-members are allowed
     await f.create_project(workspace=workspace, created_by=user6)
 
-    res = await repositories.list_projects(
-        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user6.id}
-    )
+    res = await repositories.list_projects(filters={"workspace_id": workspace.id, "project_member_id": user6.id})
     assert len(res) == 1
-    res = await repositories.list_projects(
-        filters={"workspace_id": workspace.id, "project_or_workspace_member_id": user7.id}
-    )
+    res = await repositories.list_projects(filters={"workspace_id": workspace.id, "project_member_id": user7.id})
     assert len(res) == 0
 
 
@@ -311,28 +273,24 @@ async def test_get_total_projects_in_ws_for_admin() -> None:
     await f.create_project(workspace=ws, created_by=other_user)
     await f.create_project(workspace=ws, created_by=user1)
 
-    res = await repositories.get_total_projects(
-        filters={"project_or_workspace_member_id": user1.id, "workspace_id": ws.id}
-    )
+    res = await repositories.get_total_projects(filters={"workspace_id": ws.id})
     assert res == 2
 
 
 async def test_get_total_projects_in_ws_for_member() -> None:
     admin = await f.create_user()
     user1 = await f.create_user()
+
     ws = await f.create_workspace(created_by=admin)
+    await f.create_workspace_membership(user=user1, workspace=ws)
 
-    ws_member_role = await _get_ws_member_role(workspace=ws)
-    await f.create_workspace_membership(user=user1, workspace=ws, role=ws_member_role)
-
+    # user1 is not a pj-member
     pj1 = await f.create_project(workspace=ws, created_by=admin)
-    pj1.workspace_member_permissions = ["view_story"]
     await _save_project(project=pj1)
 
-    res = await repositories.get_total_projects(
-        filters={"project_or_workspace_member_id": user1.id, "workspace_id": ws.id}
-    )
-    assert res == 1
+    res = await repositories.get_total_projects(filters={"project_member_id": user1.id, "workspace_id": ws.id})
+    # Not ws-admin users should see just the projects in which she's a pj-member
+    assert res == 0
 
 
 async def test_get_total_projects_in_ws_for_guest() -> None:
@@ -348,9 +306,7 @@ async def test_get_total_projects_in_ws_for_guest() -> None:
     pj_general_role = await _get_pj_member_role(project=pj2)
     await f.create_project_membership(user=user1, project=pj2, role=pj_general_role)
 
-    res = await repositories.get_total_projects(
-        filters={"project_or_workspace_member_id": user1.id, "workspace_id": ws.id}
-    )
+    res = await repositories.get_total_projects(filters={"project_member_id": user1.id, "workspace_id": ws.id})
     assert res == 2
 
 
@@ -366,11 +322,6 @@ async def test_get_template_return_template():
 ##########################################################
 # utils
 ##########################################################
-
-
-@sync_to_async
-def _get_ws_member_role(workspace: Workspace) -> WorkspaceRole:
-    return workspace.roles.exclude(is_admin=True).first()
 
 
 @sync_to_async

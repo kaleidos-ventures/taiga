@@ -12,13 +12,7 @@ from taiga.base.db.admin.forms import ModelChoiceField
 from taiga.base.db.admin.http import HttpRequest
 from taiga.base.db.models import ForeignKey
 from taiga.workspaces.memberships.models import WorkspaceMembership
-from taiga.workspaces.roles.models import WorkspaceRole
 from taiga.workspaces.workspaces.models import Workspace
-
-
-class WorkspaceRoleInline(admin.TabularInline[WorkspaceRole, Workspace]):
-    model = WorkspaceRole
-    extra = 0
 
 
 class WorkspaceMembershipInline(admin.TabularInline[WorkspaceMembership, Workspace]):
@@ -50,6 +44,5 @@ class WorkspaceAdmin(admin.ModelAdmin[Workspace]):
     search_fields = ["id", "name"]
     ordering = ("name",)
     inlines = [
-        WorkspaceRoleInline,
         WorkspaceMembershipInline,
     ]

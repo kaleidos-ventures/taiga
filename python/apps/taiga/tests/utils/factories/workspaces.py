@@ -6,32 +6,8 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from asgiref.sync import sync_to_async
-from taiga.permissions import choices
 
 from .base import Factory, factory
-
-# WORKSPACE ROLE
-
-
-class WorkspaceRoleFactory(Factory):
-    name = factory.Sequence(lambda n: f"WS Role {n}")
-    slug = factory.Sequence(lambda n: f"test-ws-role-{n}")
-    permissions = choices.WorkspacePermissions.values
-    is_admin = False
-    workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
-
-    class Meta:
-        model = "workspaces_roles.WorkspaceRole"
-
-
-@sync_to_async
-def create_workspace_role(**kwargs):
-    return WorkspaceRoleFactory.create(**kwargs)
-
-
-def build_workspace_role(**kwargs):
-    return WorkspaceRoleFactory.build(**kwargs)
-
 
 # WORKSPACE MEMBERSHIP
 
@@ -39,7 +15,7 @@ def build_workspace_role(**kwargs):
 class WorkspaceMembershipFactory(Factory):
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
-    role = factory.SubFactory("tests.utils.factories.WorkspaceRoleFactory")
+    is_admin = False
 
     class Meta:
         model = "workspaces_memberships.WorkspaceMembership"
@@ -72,22 +48,7 @@ def create_workspace(**kwargs):
     defaults.update(kwargs)
 
     workspace = WorkspaceFactory.create(**defaults)
-    admin_role = WorkspaceRoleFactory.create(
-        name="Administrator",
-        slug="admin",
-        permissions=choices.WorkspacePermissions.values,
-        is_admin=True,
-        workspace=workspace,
-    )
-    WorkspaceRoleFactory.create(
-        name="Members",
-        slug="member",
-        permissions=choices.WorkspacePermissions.values,
-        is_admin=False,
-        workspace=workspace,
-    )
-
-    WorkspaceMembershipFactory.create(user=workspace.created_by, workspace=workspace, role=admin_role)
+    WorkspaceMembershipFactory.create(user=workspace.created_by, workspace=workspace, is_admin=True)
 
     return workspace
 

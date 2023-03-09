@@ -12,4 +12,4 @@ class WorkspaceNestedSerializer(BaseModel):
     id: UUIDB64
     name: str
     slug: str
-    user_role: str
+    user_is_admin: str

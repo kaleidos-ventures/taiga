@@ -53,14 +53,6 @@ class Project(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin):
         verbose_name="public permissions",
     )
 
-    workspace_member_permissions = models.ArrayField(
-        models.TextField(null=False, blank=False, choices=ProjectPermissions.choices),
-        null=True,
-        blank=True,
-        default=list,
-        verbose_name="workspace member permissions",
-    )
-
     class Meta:
         verbose_name = "project"
         verbose_name_plural = "projects"

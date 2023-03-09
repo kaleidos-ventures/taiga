@@ -8,12 +8,10 @@
 from typing import Any, cast
 from uuid import UUID
 
-from taiga.permissions import choices
 from taiga.projects.projects import repositories as projects_repositories
 from taiga.users.models import User
 from taiga.workspaces.memberships import repositories as ws_memberships_repositories
-from taiga.workspaces.roles import repositories as ws_roles_repositories
-from taiga.workspaces.roles import services as ws_roles_services
+from taiga.workspaces.memberships import services as ws_memberships_services
 from taiga.workspaces.workspaces import events as workspaces_events
 from taiga.workspaces.workspaces import repositories as workspaces_repositories
 from taiga.workspaces.workspaces.models import Workspace
@@ -35,14 +33,7 @@ async def create_workspace(name: str, color: int, created_by: User) -> Workspace
 #  TODO: review this method after the sampledata refactor
 async def _create_workspace(name: str, color: int, created_by: User) -> Workspace:
     workspace = await workspaces_repositories.create_workspace(name=name, color=color, created_by=created_by)
-    role = await ws_roles_repositories.create_workspace_role(
-        name="Administrator",
-        slug="admin",
-        permissions=choices.WorkspacePermissions.values,
-        workspace=workspace,
-        is_admin=True,
-    )
-    await ws_memberships_repositories.create_workspace_membership(user=created_by, workspace=workspace, role=role)
+    await ws_memberships_repositories.create_workspace_membership(user=created_by, workspace=workspace, is_admin=True)
     return workspace
 
 
@@ -74,7 +65,7 @@ async def get_workspace_detail(id: UUID, user_id: UUID | None) -> WorkspaceSeria
     )
     return serializers_services.serialize_workspace(
         workspace=workspace,
-        user_role=await ws_roles_services.get_workspace_role_name(workspace_id=id, user_id=user_id),
+        user_is_admin=await ws_memberships_services.get_user_is_admin(workspace_id=id, user_id=user_id),
         total_projects=await projects_repositories.get_total_projects(
             filters={"workspace_id": id, "project_or_workspace_member_id": user_id}
         ),
@@ -83,7 +74,6 @@ async def get_workspace_detail(id: UUID, user_id: UUID | None) -> WorkspaceSeria
 
 async def get_workspace_nested(id: UUID, user_id: UUID | None) -> WorkspaceNestedSerializer:
     # TODO: this service should be improved
-    user_workspace_role_name = await ws_roles_services.get_workspace_role_name(workspace_id=id, user_id=user_id)
     workspace = cast(
         Workspace,
         await workspaces_repositories.get_workspace_summary(
@@ -91,13 +81,17 @@ async def get_workspace_nested(id: UUID, user_id: UUID | None) -> WorkspaceNeste
         ),
     )
 
-    return serializers_services.serialize_nested(workspace=workspace, user_role=user_workspace_role_name)
+    return serializers_services.serialize_nested(
+        workspace=workspace,
+        user_is_admin=await ws_memberships_services.get_user_is_admin(workspace_id=id, user_id=user_id),
+    )
 
 
 async def get_user_workspace(user: User, id: UUID) -> WorkspaceDetailSerializer | None:
     workspace = await workspaces_repositories.get_user_workspace_overview(user=user, id=id)
     if workspace:
         return serializers_services.serialize_workspace_detail(workspace=workspace)
+
     return None
 
 

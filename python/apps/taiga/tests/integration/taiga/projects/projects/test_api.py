@@ -31,13 +31,8 @@ async def test_create_project_being_workspace_admin(client):
 
 async def test_create_project_being_workspace_member(client):
     workspace = await f.create_workspace()
-    general_member_role = await f.create_workspace_role(
-        permissions=choices.WorkspacePermissions.values,
-        is_admin=False,
-        workspace=workspace,
-    )
     user2 = await f.create_user()
-    await f.create_workspace_membership(user=user2, workspace=workspace, role=general_member_role)
+    await f.create_workspace_membership(user=user2, workspace=workspace, is_admin=False)
     data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
     files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
 

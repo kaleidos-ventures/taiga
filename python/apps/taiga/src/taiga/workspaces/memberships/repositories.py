@@ -12,7 +12,6 @@ from asgiref.sync import sync_to_async
 from taiga.base.db.models import QuerySet
 from taiga.users.models import User
 from taiga.workspaces.memberships.models import WorkspaceMembership
-from taiga.workspaces.roles.models import WorkspaceRole
 from taiga.workspaces.workspaces.models import Workspace
 
 ##########################################################
@@ -26,6 +25,7 @@ DEFAULT_QUERYSET = WorkspaceMembership.objects.all()
 class WorkspaceMembershipFilters(TypedDict, total=False):
     workspace_id: UUID
     user_id: UUID
+    is_admin: bool
 
 
 def _apply_filters_to_queryset(
@@ -37,7 +37,6 @@ def _apply_filters_to_queryset(
 
 WorkspaceMembershipSelectRelated = list[
     Literal[
-        "role",
         "user",
         "workspace",
     ]
@@ -57,8 +56,8 @@ def _apply_select_related_to_queryset(
 
 
 @sync_to_async
-def create_workspace_membership(user: User, workspace: Workspace, role: WorkspaceRole) -> WorkspaceMembership:
-    return WorkspaceMembership.objects.create(user=user, workspace=workspace, role=role)
+def create_workspace_membership(user: User, workspace: Workspace, is_admin: bool) -> WorkspaceMembership:
+    return WorkspaceMembership.objects.create(user=user, workspace=workspace, is_admin=is_admin)
 
 
 ##########################################################
@@ -69,7 +68,7 @@ def create_workspace_membership(user: User, workspace: Workspace, role: Workspac
 @sync_to_async
 def get_workspace_membership(
     filters: WorkspaceMembershipFilters = {},
-    select_related: WorkspaceMembershipSelectRelated = ["role"],
+    select_related: WorkspaceMembershipSelectRelated = [],
 ) -> WorkspaceMembership | None:
     qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
     qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)

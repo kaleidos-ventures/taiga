@@ -9,13 +9,14 @@ from typing import Any
 
 from asgiref.sync import sync_to_async
 from taiga.permissions import choices
+from taiga.permissions.choices import WorkspacePermissions
 from taiga.projects.invitations import repositories as pj_invitations_repositories
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.memberships import repositories as pj_memberships_repositories
 from taiga.projects.projects.models import Project
 from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.users.models import AnyUser
-from taiga.workspaces.roles import repositories as ws_roles_repositories
+from taiga.workspaces.memberships import repositories as workspace_memberships_repositories
 from taiga.workspaces.workspaces.models import Workspace
 
 AuthorizableObj = Project | Workspace
@@ -47,8 +48,10 @@ async def is_workspace_admin(user: AnyUser, obj: Any) -> bool:
     if user.is_superuser:
         return True
 
-    role = await ws_roles_repositories.get_workspace_role(filters={"user_id": user.id, "workspace_id": workspace.id})
-    return role.is_admin if role else False
+    ws_membership = await workspace_memberships_repositories.get_workspace_membership(
+        filters={"user_id": user.id, "workspace_id": workspace.id},
+    )
+    return ws_membership.is_admin if ws_membership else False
 
 
 async def is_project_member(user: AnyUser, project: Project) -> bool:
@@ -88,9 +91,7 @@ async def get_user_permissions(user: AnyUser, obj: Any) -> list[str]:
     if not project and not workspace:
         return []
 
-    is_workspace_admin, is_workspace_member, workspace_role_permissions = await get_user_workspace_role_info(
-        user=user, workspace=workspace
-    )
+    is_workspace_admin, is_workspace_member = await get_user_workspace_info(user=user, workspace=workspace)
     if project:
         is_project_admin, is_project_member, project_role_permissions = await get_user_project_role_info(
             user=user, project=project
@@ -100,15 +101,12 @@ async def get_user_permissions(user: AnyUser, obj: Any) -> list[str]:
             is_project_admin=is_project_admin,
             is_workspace_admin=is_workspace_admin,
             is_project_member=is_project_member,
-            is_workspace_member=is_workspace_member,
             is_authenticated=user.is_authenticated,
             project_role_permissions=project_role_permissions,
             project=project,
         )
     elif workspace:
-        user_permissions = await get_user_permissions_for_workspace(
-            workspace_role_permissions=workspace_role_permissions
-        )
+        user_permissions = await get_user_permissions_for_workspace(is_workspace_member, is_workspace_admin)
 
     return user_permissions
 
@@ -146,15 +144,17 @@ async def get_user_project_role_info(user: AnyUser, project: Project) -> tuple[b
     return False, False, []
 
 
-async def get_user_workspace_role_info(user: AnyUser, workspace: Workspace) -> tuple[bool, bool, list[str]]:
+async def get_user_workspace_info(user: AnyUser, workspace: Workspace) -> tuple[bool, bool]:
     if user.is_anonymous:
-        return False, False, []
+        return False, False
 
-    role = await ws_roles_repositories.get_workspace_role(filters={"user_id": user.id, "workspace_id": workspace.id})
-    if role:
-        return role.is_admin, True, role.permissions
+    workspace_membership = await workspace_memberships_repositories.get_workspace_membership(
+        filters={"user_id": user.id, "workspace_id": workspace.id},
+    )
+    if workspace_membership:
+        return workspace_membership.is_admin, True
 
-    return False, False, []
+    return False, False
 
 
 async def has_pending_project_invitation(user: AnyUser, project: Project) -> bool:
@@ -171,7 +171,6 @@ async def get_user_permissions_for_project(
     is_project_admin: bool,
     is_workspace_admin: bool,
     is_project_member: bool,
-    is_workspace_member: bool,
     is_authenticated: bool,
     project_role_permissions: list[str],
     project: Project,
@@ -194,17 +193,18 @@ async def get_user_permissions_for_project(
         return choices.ProjectPermissions.values
     elif is_project_member:
         return project_role_permissions
-    elif is_workspace_member:
-        return project.workspace_member_permissions or []
     elif is_authenticated:
         return project.public_permissions or []
 
     return project.anon_permissions or []
 
 
-async def get_user_permissions_for_workspace(workspace_role_permissions: list[str]) -> list[str]:
-    # TODO review when we do workspaces permissions
-    return workspace_role_permissions
+async def get_user_permissions_for_workspace(is_workspace_member: bool, is_workspace_admin: bool) -> list[str]:
+    workspace_user_permissions = []
+    if is_workspace_member or is_workspace_admin:
+        workspace_user_permissions.append(WorkspacePermissions.VIEW_WORKSPACE.value)
+
+    return workspace_user_permissions
 
 
 async def is_view_story_permission_deleted(old_permissions: list[str], new_permissions: list[str]) -> bool:

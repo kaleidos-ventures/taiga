@@ -12,7 +12,6 @@ from uuid import UUID
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import (
     BooleanField,
-    CharField,
     Coalesce,
     Count,
     Exists,
@@ -69,7 +68,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
     admin_ws_ids = (
         Workspace.objects.filter(
             memberships__user__id=user.id,  # user_is_ws_member
-            memberships__role__is_admin=True,  # user_ws_role_is_admin
+            memberships__is_admin=True,  # user_is_ws_admin
         )
         .order_by("-created_at")
         .values_list("id", flat=True)
@@ -98,7 +97,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             )
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
-            .annotate(user_role=Value("admin", output_field=CharField()))
+            .annotate(user_is_admin=Value(True, output_field=BooleanField()))
         )
         admin_ws = chain(admin_ws, qs)
 
@@ -106,7 +105,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
     member_ws_ids = (
         Workspace.objects.filter(
             memberships__user__id=user.id,  # user_is_ws_member
-            memberships__role__is_admin=False,  # user_ws_role_is_member
+            memberships__is_admin=False,  # user_is_ws_member
         )
         .order_by("-created_at")
         .values_list("id", flat=True)
@@ -114,7 +113,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
     member_ws: Iterable[Workspace] = Workspace.objects.none()
     for ws_id in member_ws_ids:
         pj_in_workspace = Q(workspace_id=ws_id)
-        ws_allowed = ~Q(memberships__user__id=user.id) & Q(workspace_member_permissions__len__gt=0)
+        ws_allowed = ~Q(memberships__user__id=user.id)
         pj_allowed = Q(memberships__user__id=user.id)
         projects_ids = list(
             Project.objects.filter(pj_in_workspace, (ws_allowed | pj_allowed))
@@ -138,7 +137,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             )
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
-            .annotate(user_role=Value("member", output_field=CharField()))
+            .annotate(user_is_admin=Value(False, output_field=BooleanField()))
         )
         member_ws = chain(member_ws, qs)
 
@@ -183,7 +182,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             )
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
-            .annotate(user_role=Value("guest", output_field=CharField()))
+            .annotate(user_is_admin=Value(False, output_field=BooleanField()))
         )
         guest_ws = chain(guest_ws, qs)
 
@@ -236,7 +235,7 @@ def get_workspace_summary(
 def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
     # Generic annotations:
     has_projects = Exists(Project.objects.filter(workspace=OuterRef("pk")))
-    user_role: Callable[[str], Value] = lambda role_name: Value(role_name, output_field=CharField())
+    user_is_admin: Callable[[bool], Value] = lambda is_admin: Value(is_admin, output_field=BooleanField())
 
     # Generic prefetch
     invited_projects_qs = Project.objects.filter(
@@ -254,7 +253,7 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             Workspace.objects.filter(
                 id=id,
                 memberships__user_id=user.id,  # user_is_ws_member
-                memberships__role__is_admin=True,  # user_ws_role_is_admin
+                memberships__is_admin=True,  # user_ws_role_is_admin
             )
             .prefetch_related(
                 Prefetch("projects", queryset=latest_projects_qs, to_attr="latest_projects"),
@@ -262,7 +261,7 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             )
             .annotate(total_projects=Coalesce(total_projects, 0))
             .annotate(has_projects=has_projects)
-            .annotate(user_role=user_role("admin"))
+            .annotate(user_is_admin=user_is_admin(True))
             .get()
         )
     except Workspace.DoesNotExist:
@@ -270,7 +269,7 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
 
     # workspaces where the user is ws-member with all its visible projects
     try:
-        ws_allowed = ~Q(members__id=user.id) & Q(workspace_member_permissions__len__gt=0)
+        ws_allowed = ~Q(members__id=user.id)
         pj_allowed = Q(members__id=user.id)
         total_projects = Subquery(
             Project.objects.filter(Q(workspace_id=OuterRef("id")))
@@ -291,7 +290,7 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             Workspace.objects.filter(
                 id=id,
                 memberships__user__id=user.id,  # user_is_ws_member
-                memberships__role__is_admin=False,  # user_ws_role_is_member
+                memberships__is_admin=False,  # user_ws_role_is_member
             )
             .prefetch_related(
                 Prefetch("projects", queryset=latest_projects_qs, to_attr="latest_projects"),
@@ -299,7 +298,7 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             )
             .annotate(total_projects=Coalesce(total_projects, 0))
             .annotate(has_projects=has_projects)
-            .annotate(user_role=user_role("member"))
+            .annotate(user_is_admin=user_is_admin(False))
             .get()
         )
     except Workspace.DoesNotExist:
@@ -341,7 +340,7 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             )
             .annotate(total_projects=Coalesce(total_projects, 0))
             .annotate(has_projects=has_projects)
-            .annotate(user_role=user_role("guest"))
+            .annotate(user_is_admin=user_is_admin(False))
             .get()
         )
     except Workspace.DoesNotExist:

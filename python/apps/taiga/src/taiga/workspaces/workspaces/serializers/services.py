@@ -10,7 +10,7 @@ from taiga.workspaces.workspaces.serializers import WorkspaceDetailSerializer, W
 from taiga.workspaces.workspaces.serializers.nested import WorkspaceNestedSerializer
 
 
-def serialize_workspace(workspace: Workspace, user_role: str, total_projects: str) -> WorkspaceSerializer:
+def serialize_workspace(workspace: Workspace, user_is_admin: bool, total_projects: str) -> WorkspaceSerializer:
     return WorkspaceSerializer(
         id=workspace.id,
         name=workspace.name,
@@ -18,7 +18,7 @@ def serialize_workspace(workspace: Workspace, user_role: str, total_projects: st
         color=workspace.color,
         total_projects=total_projects,
         has_projects=workspace.has_projects,  # type: ignore[attr-defined]
-        user_role=user_role,
+        user_is_admin=user_is_admin,
     )
 
 
@@ -32,14 +32,14 @@ def serialize_workspace_detail(workspace: Workspace) -> WorkspaceDetailSerialize
         invited_projects=workspace.invited_projects,  # type: ignore[attr-defined]
         total_projects=workspace.total_projects,  # type: ignore[attr-defined]
         has_projects=workspace.has_projects,  # type: ignore[attr-defined]
-        user_role=workspace.user_role,  # type: ignore[attr-defined]
+        user_is_admin=workspace.user_is_admin,  # type: ignore[attr-defined]
     )
 
 
-def serialize_nested(workspace: Workspace, user_role: str) -> WorkspaceNestedSerializer:
+def serialize_nested(workspace: Workspace, user_is_admin: bool) -> WorkspaceNestedSerializer:
     return WorkspaceNestedSerializer(
         id=workspace.id,
         name=workspace.name,
         slug=workspace.slug,
-        user_role=user_role,
+        user_is_admin=user_is_admin,
     )

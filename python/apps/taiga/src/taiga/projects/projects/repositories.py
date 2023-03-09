@@ -48,12 +48,8 @@ def _apply_filters_to_project_queryset(
     # filters for those projects where the user is already a project (or a workspace) member
     if "project_or_workspace_member_id" in filter_data:
         user_id = filter_data.pop("project_or_workspace_member_id")
-        ws_admin = Q(workspace__memberships__user_id=user_id) & Q(workspace__memberships__role__is_admin=True)
-        ws_member_allowed = (
-            Q(workspace__memberships__user_id=user_id)
-            & ~Q(memberships__user_id=user_id)
-            & Q(workspace_member_permissions__len__gt=0)
-        )
+        ws_admin = Q(workspace__memberships__user_id=user_id) & Q(workspace__memberships__is_admin=True)
+        ws_member_allowed = Q(workspace__memberships__user_id=user_id) & ~Q(memberships__user_id=user_id)
         pj_member_allowed = Q(memberships__user_id=user_id)
         qs = qs.filter(ws_admin | ws_member_allowed | pj_member_allowed)
 

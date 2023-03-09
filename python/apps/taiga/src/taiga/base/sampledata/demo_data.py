@@ -6,7 +6,6 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 import random
-from uuid import UUID
 
 from taiga.base.db import transaction
 from taiga.base.sampledata import factories
@@ -17,6 +16,7 @@ from taiga.projects.projects.models import Project
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
 from taiga.workspaces.memberships import repositories as ws_memberships_repositories
+from taiga.workspaces.workspaces.models import Workspace
 
 
 @transaction.atomic
@@ -209,7 +209,7 @@ async def _create_scenario_manager_in_society_working_for_others() -> None:
     for ws in workspaces:
         num_ws_admins = random.randint(0, 10)
         if num_ws_admins > 0:
-            await _create_workspace_memberships(workspace_id=ws.id, users=usersdx[:num_ws_admins], role_slug="admin")
+            await _create_workspace_memberships(workspace=ws, users=usersdx[:num_ws_admins])
 
     # ws "Personal" with no other members
     ws_personal = await factories.create_workspace(created_by=userd0, name="Personal")
@@ -288,7 +288,7 @@ async def _create_scenario_manager_in_society_with_big_client() -> None:
     for ws in workspaces:
         num_ws_admins = random.randint(0, 4)
         if num_ws_admins > 0:
-            await _create_workspace_memberships(workspace_id=ws.id, users=usersex[:num_ws_admins], role_slug="admin")
+            await _create_workspace_memberships(workspace=ws, users=usersex[:num_ws_admins])
 
     # ws "Personal" with no other members
     ws_personal = await factories.create_workspace(created_by=usere0, name="Personal")
@@ -381,7 +381,7 @@ async def _create_scenario_manager_in_society_with_own_product() -> None:
     # userf0 ws-admin
     # ws "Projects" userf1, userf2 and userf3 ws-admins
     ws_projects = await factories.create_workspace(created_by=userf0, name="Projects")
-    await _create_workspace_memberships(workspace_id=ws_projects.id, users=[userf1, userf2, userf3], role_slug="admin")
+    await _create_workspace_memberships(workspace=ws_projects, users=[userf1, userf2, userf3])
     # ws "Personal" with no other members
     ws_personal = await factories.create_workspace(created_by=userf0, name="Personal")
 
@@ -448,7 +448,7 @@ async def _create_scenario_manager_in_big_society_with_own_product() -> None:
     for ws in workspaces:
         num_ws_admins = random.randint(1, 9)
         if num_ws_admins > 0:
-            await _create_workspace_memberships(workspace_id=ws.id, users=usersgx[:num_ws_admins], role_slug="admin")
+            await _create_workspace_memberships(workspace=ws, users=usersgx[:num_ws_admins])
 
     # PROJECTS
     # it applies a template and creates also admin and general roles
@@ -495,18 +495,13 @@ async def _create_scenario_manager_in_big_society_with_own_product() -> None:
         await factories.create_stories(project_id=project.id)
 
 
-async def _create_workspace_memberships(workspace_id: UUID, users: list[User], role_slug: str) -> None:
-    workspace = await factories.get_workspace_with_related_info(workspace_id)
-
-    # get role
-    role = await workspace.roles.aget(slug=role_slug)
-
+async def _create_workspace_memberships(workspace: Workspace, users: list[User]) -> None:
     # get users except the creator of the workspace
     users = [u for u in users if u.id != workspace.created_by_id]
 
     # add ws members
     for user in users:
-        await ws_memberships_repositories.create_workspace_membership(user=user, workspace=workspace, role=role)
+        await ws_memberships_repositories.create_workspace_membership(user=user, workspace=workspace)
 
 
 async def _create_accepted_project_invitations(project: Project) -> None:

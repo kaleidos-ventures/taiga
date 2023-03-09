@@ -8,23 +8,10 @@
 import uuid
 
 import pytest
-from asgiref.sync import sync_to_async
 from taiga.workspaces.memberships import repositories
-from taiga.workspaces.roles.models import WorkspaceRole
-from taiga.workspaces.workspaces.models import Workspace
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)
-
-
-##########################################################
-# utils
-##########################################################
-
-
-@sync_to_async
-def _get_ws_member_role(workspace: Workspace) -> WorkspaceRole:
-    return workspace.roles.exclude(is_admin=True).first()
 
 
 ##########################################################
@@ -35,13 +22,11 @@ def _get_ws_member_role(workspace: Workspace) -> WorkspaceRole:
 async def test_create_workspace_membership():
     user = await f.create_user()
     workspace = await f.create_workspace()
-    ws_role = await _get_ws_member_role(workspace=workspace)
 
-    membership = await repositories.create_workspace_membership(user=user, workspace=workspace, role=ws_role)
+    membership = await repositories.create_workspace_membership(user=user, workspace=workspace)
 
     assert membership.user_id == user.id
     assert membership.workspace_id == workspace.id
-    assert membership.role_id == ws_role.id
 
 
 ##########################################################

@@ -91,13 +91,11 @@ async def test_create_story_user_has_valid_perm_ok(client):
     public_user = await f.create_user()
 
     workspace = await f.create_workspace()
-    ws_role = await f.create_workspace_role(is_admin=False, workspace=workspace)
-    await f.create_workspace_membership(user=ws_member, workspace=workspace, role=ws_role)
+    await f.create_workspace_membership(user=ws_member, workspace=workspace)
 
     project = await f.create_project(
         workspace=workspace,
         public_permissions=list(FULL_PERMISSIONS),
-        workspace_member_permissions=list(FULL_PERMISSIONS),
     )
     pj_role = await f.create_project_role(permissions=list(FULL_PERMISSIONS), is_admin=False, project=project)
     await f.create_project_membership(user=pj_member, project=project, role=pj_role)
@@ -126,13 +124,11 @@ async def test_create_story_user_has_valid_perm_ko(client):
     public_user = await f.create_user()
 
     workspace = await f.create_workspace()
-    ws_role = await f.create_workspace_role(is_admin=False, workspace=workspace)
-    await f.create_workspace_membership(user=ws_member, workspace=workspace, role=ws_role)
+    await f.create_workspace_membership(user=ws_member, workspace=workspace)
 
     project = await f.create_project(
         workspace=workspace,
         public_permissions=list(NO_ADD_STORY_PERMISSIONS),
-        workspace_member_permissions=list(NO_ADD_STORY_PERMISSIONS),
     )
     pj_role = await f.create_project_role(permissions=list(NO_ADD_STORY_PERMISSIONS), is_admin=False, project=project)
     await f.create_project_membership(user=pj_member, project=project, role=pj_role)
@@ -141,10 +137,6 @@ async def test_create_story_user_has_valid_perm_ko(client):
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
     data = {"title": "New story", "status": workflow_status.slug}
-
-    client.login(ws_member)
-    response = client.post(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories", json=data)
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
     client.login(pj_member)
     response = client.post(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories", json=data)

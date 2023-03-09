@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "taiga.users",
     "taiga.tokens",
     "taiga.workspaces.workspaces",
-    "taiga.workspaces.roles",
     "taiga.workspaces.memberships",
     "taiga.projects.projects",
     "taiga.projects.roles",

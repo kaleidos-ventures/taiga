@@ -6,7 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from itertools import chain
-from typing import Any, Callable, Iterable, TypedDict
+from typing import Any, Iterable, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -65,17 +65,16 @@ def create_workspace(name: str, color: int, created_by: User) -> Workspace:
 
 @sync_to_async
 def list_user_workspaces_overview(user: User) -> list[Workspace]:
-    # workspaces where the user is ws-admin with all its projects
-    admin_ws_ids = (
+    # workspaces where the user is ws-member with all its projects
+    ws_member_ids = (
         Workspace.objects.filter(
-            memberships__user__id=user.id,  # user_is_ws_member
-            memberships__role__is_admin=True,  # user_ws_role_is_admin
+            memberships__user_id=user.id,  # user_is_ws_member
         )
         .order_by("-created_at")
         .values_list("id", flat=True)
     )
-    admin_ws: Iterable[Workspace] = Workspace.objects.none()
-    for ws_id in admin_ws_ids:
+    member_ws: Iterable[Workspace] = Workspace.objects.none()
+    for ws_id in ws_member_ids:
         projects_ids = list(
             Project.objects.filter(workspace_id=ws_id)  # pj_in_workspace
             .order_by("-created_at")
@@ -99,46 +98,6 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
             .annotate(user_role=Value("admin", output_field=CharField()))
-        )
-        admin_ws = chain(admin_ws, qs)
-
-    # workspaces where the user is ws-member with all its visible projects
-    member_ws_ids = (
-        Workspace.objects.filter(
-            memberships__user__id=user.id,  # user_is_ws_member
-            memberships__role__is_admin=False,  # user_ws_role_is_member
-        )
-        .order_by("-created_at")
-        .values_list("id", flat=True)
-    )
-    member_ws: Iterable[Workspace] = Workspace.objects.none()
-    for ws_id in member_ws_ids:
-        pj_in_workspace = Q(workspace_id=ws_id)
-        ws_allowed = ~Q(memberships__user__id=user.id) & Q(workspace_member_permissions__len__gt=0)
-        pj_allowed = Q(memberships__user__id=user.id)
-        projects_ids = list(
-            Project.objects.filter(pj_in_workspace, (ws_allowed | pj_allowed))
-            .order_by("-created_at")
-            .values_list("id", flat=True)
-        )
-        total_projects = len(projects_ids)
-        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_at")
-        has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
-        invited_projects_qs = Project.objects.filter(
-            Q(invitations__user_id=user.id)
-            | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email)),
-            invitations__status=ProjectInvitationStatus.PENDING,
-            workspace_id=ws_id,
-        )
-        qs = (
-            Workspace.objects.filter(id=ws_id)
-            .prefetch_related(
-                Prefetch("projects", queryset=projects_qs, to_attr="latest_projects"),
-                Prefetch("projects", queryset=invited_projects_qs, to_attr="invited_projects"),
-            )
-            .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
-            .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
-            .annotate(user_role=Value("member", output_field=CharField()))
         )
         member_ws = chain(member_ws, qs)
 
@@ -187,7 +146,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
         )
         guest_ws = chain(guest_ws, qs)
 
-    result = list(chain(admin_ws, member_ws, guest_ws))
+    result = list(chain(member_ws, member_ws, guest_ws))
     return result
 
 
@@ -236,14 +195,13 @@ def get_workspace_summary(
 def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
     # Generic annotations:
     has_projects = Exists(Project.objects.filter(workspace=OuterRef("pk")))
-    user_role: Callable[[str], Value] = lambda role_name: Value(role_name, output_field=CharField())
 
     # Generic prefetch
     invited_projects_qs = Project.objects.filter(
         invitations__user_id=user.id, invitations__status=ProjectInvitationStatus.PENDING
     )
 
-    # workspaces where the user is admin with all its projects
+    # workspaces where the user is member
     try:
         total_projects: Subquery | Count = Count("projects")
         visible_project_ids_qs = (
@@ -254,7 +212,6 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             Workspace.objects.filter(
                 id=id,
                 memberships__user_id=user.id,  # user_is_ws_member
-                memberships__role__is_admin=True,  # user_ws_role_is_admin
             )
             .prefetch_related(
                 Prefetch("projects", queryset=latest_projects_qs, to_attr="latest_projects"),
@@ -262,44 +219,7 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             )
             .annotate(total_projects=Coalesce(total_projects, 0))
             .annotate(has_projects=has_projects)
-            .annotate(user_role=user_role("admin"))
-            .get()
-        )
-    except Workspace.DoesNotExist:
-        pass  # The workspace selected is not of this kind
-
-    # workspaces where the user is ws-member with all its visible projects
-    try:
-        ws_allowed = ~Q(members__id=user.id) & Q(workspace_member_permissions__len__gt=0)
-        pj_allowed = Q(members__id=user.id)
-        total_projects = Subquery(
-            Project.objects.filter(Q(workspace_id=OuterRef("id")))
-            .filter((ws_allowed | pj_allowed))
-            .values("workspace")
-            .annotate(count=Count("*"))
-            .values("count"),
-            output_field=IntegerField(),
-        )
-        visible_project_ids_qs = (
-            Project.objects.filter(Q(workspace=OuterRef("workspace")))
-            .filter(ws_allowed | pj_allowed)
-            .values_list("id", flat=True)
-            .order_by("-created_at")
-        )
-        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:6])).order_by("-created_at")
-        return (
-            Workspace.objects.filter(
-                id=id,
-                memberships__user__id=user.id,  # user_is_ws_member
-                memberships__role__is_admin=False,  # user_ws_role_is_member
-            )
-            .prefetch_related(
-                Prefetch("projects", queryset=latest_projects_qs, to_attr="latest_projects"),
-                Prefetch("projects", queryset=invited_projects_qs, to_attr="invited_projects"),
-            )
-            .annotate(total_projects=Coalesce(total_projects, 0))
-            .annotate(has_projects=has_projects)
-            .annotate(user_role=user_role("member"))
+            .annotate(user_role=Value("admin", output_field=CharField()))
             .get()
         )
     except Workspace.DoesNotExist:
@@ -341,7 +261,7 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             )
             .annotate(total_projects=Coalesce(total_projects, 0))
             .annotate(has_projects=has_projects)
-            .annotate(user_role=user_role("guest"))
+            .annotate(user_role=Value("guest", output_field=CharField()))
             .get()
         )
     except Workspace.DoesNotExist:

@@ -365,43 +365,6 @@ Copyright (c) 2023-present Kaleidos INC
   }
 }
 
-[data-appearance="nav-icon-button"]:is(button, a) {
-  transition-duration: 100ms !important;
-
-  & [tuiWrapper] {
-    background: none;
-    color: var(--color-secondary);
-    font-weight: var(--font-weight-medium);
-    padding: var(--spacing-4) !important;
-    transition: none;
-
-    @mixin wrapper-hover {
-      background: var(--color-gray20);
-      color: var(--color-secondary90);
-    }
-
-    @mixin wrapper-focus {
-      &::after {
-        border-color: var(--color-secondary);
-        border-width: 1px;
-      }
-    }
-  }
-
-  & svg {
-    block-size: 1.5rem;
-    inline-size: 1.5rem;
-  }
-
-  & ~ .t-content_top {
-    block-size: 1.1rem;
-    box-shadow: none !important;
-    inline-size: 1.1rem;
-    inset-block-start: -0.1rem !important;
-    inset-inline-end: 0.9rem !important;
-  }
-}
-
 [tuiLink]:is(button, a) {
   align-items: center;
   display: flex;

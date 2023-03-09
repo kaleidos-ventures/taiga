@@ -84,48 +84,6 @@ Copyright (c) 2023-present Kaleidos INC
       </tui-hosted-dropdown>
     </div>
     <div class="right">
-      <div class="actions">
-        <button
-          appearance="nav-icon-button"
-          [attr.aria-label]="t('navigation.search')"
-          tuiIconButton
-          icon="search"
-          type="button"></button>
-        <button
-          appearance="nav-icon-button"
-          tuiIconButton
-          [attr.aria-label]="t('navigation.discover')"
-          icon="discover"
-          type="button"></button>
-        <button
-          appearance="nav-icon-button"
-          tuiIconButton
-          [attr.aria-label]="t('navigation.help')"
-          icon="help"
-          type="button"></button>
-        <tui-badged-content
-          class="nav-badged-button"
-          [contentTop]="24"
-          colorTop="var(--color-red)"
-          size="s">
-          <button
-            appearance="nav-icon-button"
-            [attr.aria-label]="t('navigation.notification')"
-            aria-describedby="aria-notifications-description"
-            tuiIconButton
-            icon="bell"
-            type="button"></button>
-        </tui-badged-content>
-        <p
-          id="aria-notifications-description"
-          class="visually-hidden">
-          {{
-            t('navigation.notification_desc', {
-              notifications: 24
-            })
-          }}
-        </p>
-      </div>
       <div class="separator"></div>
       <div class="avatar-holder">
         <tui-hosted-dropdown

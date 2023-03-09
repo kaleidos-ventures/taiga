@@ -46,7 +46,6 @@ import {
   resetPermissions,
   updatePublicPermissions,
   updateRolePermissions,
-  updateWorkspacePermissions,
 } from './+state/actions/roles-permissions.actions';
 import {
   selectMemberRoles,
@@ -90,9 +89,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       return false;
     } else if (this.publicForm.dirty) {
       this.savePublic();
-      return false;
-    } else if (this.workspaceForm.dirty) {
-      this.saveWorkspace();
       return false;
     }
     return true;
@@ -229,19 +225,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
         this.watchPublicForm();
       }
     );
-
-    this.state.hold(
-      this.state.select('workspacePermissions').pipe(take(1)),
-      (permissions = []) => {
-        this.workspaceForm = this.fb.group({});
-        this.createRoleFormControl(
-          permissions,
-          'workspace',
-          this.workspaceForm
-        );
-        this.watchWorkspaceForm();
-      }
-    );
   }
 
   public watchRoleForm(role: Role) {
@@ -267,18 +250,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       )
       .subscribe(() => {
         this.savePublic();
-      });
-  }
-
-  public watchWorkspaceForm() {
-    this.workspaceForm.valueChanges
-      .pipe(
-        untilDestroyed(this),
-        tap(() => this.workspaceForm.markAsDirty()),
-        debounceTime(10000)
-      )
-      .subscribe(() => {
-        this.saveWorkspace();
       });
   }
 
@@ -356,22 +327,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     );
 
     this.publicForm.markAsPristine();
-  }
-
-  public saveWorkspace() {
-    const permissions =
-      this.projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions(
-        this.getworkspacePermissionsForm()
-      );
-
-    this.store.dispatch(
-      updateWorkspacePermissions({
-        project: this.state.get('project').id,
-        permissions,
-      })
-    );
-
-    this.workspaceForm.markAsPristine();
   }
 
   public watchFragment() {

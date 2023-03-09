@@ -62,19 +62,6 @@ Copyright (c) 2023-present Kaleidos INC
                 {{ t('project_settings.member_permissions') }}
               </a>
             </li>
-            <li
-              class="project-settings-submenu-item"
-              *ngIf="project.workspace.isPremium">
-              <a
-                class="project-settings-submenu-anchor"
-                [class.active]="
-                  currentFragment === 'workspace-permissions-settings'
-                "
-                routerLink="./settings/permissions"
-                fragment="workspace-permissions-settings">
-                {{ t('project_settings.workspace_permissions') }}
-              </a>
-            </li>
             <li class="project-settings-submenu-item">
               <a
                 class="project-settings-submenu-anchor"

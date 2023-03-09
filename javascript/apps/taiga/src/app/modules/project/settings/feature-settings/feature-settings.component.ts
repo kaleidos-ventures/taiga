@@ -13,7 +13,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiNotification } from '@taiga-ui/core';
-import { Project } from '@taiga/data';
+import { Membership, Project } from '@taiga/data';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -52,17 +52,7 @@ export class ProjectsSettingsFeatureSettingsComponent {
       .pipe(ofType(ProjectActions.fetchProjectSuccess), untilDestroyed(this))
       .subscribe((action) => {
         if (!action.project.userIsAdmin) {
-          this.appService.toastNotification({
-            message: 'members.no_longer_admin',
-            status: TuiNotification.Warning,
-            scope: 'project_settings',
-            closeOnNavigation: false,
-          });
-          void this.router.navigate([
-            '/project/',
-            action.project.id,
-            action.project.slug,
-          ]);
+          this.userLoseAdminRole(action.project.id, action.project.slug);
         } else if (action.project.userIsAdmin) {
           this.store.dispatch(
             initRolesPermissions({ project: action.project })
@@ -81,7 +71,7 @@ export class ProjectsSettingsFeatureSettingsComponent {
       });
 
     this.wsService
-      .events<{ project: string }>({
+      .events<{ membership: Membership }>({
         channel: `projects.${this.state.get('project').id}`,
         type: 'projectmemberships.update',
       })
@@ -89,5 +79,32 @@ export class ProjectsSettingsFeatureSettingsComponent {
       .subscribe(() => {
         this.store.dispatch(membersActions.updateMemberInfo());
       });
+
+    this.wsService
+      .userEvents<{ membership: Membership }>('projectmemberships.update')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        const response = eventResponse.event.content;
+        if (!response.membership.role.isAdmin) {
+          this.userLoseAdminRole();
+        }
+      });
+  }
+
+  public userLoseAdminRole(
+    projectId?: Project['id'],
+    projectSlug?: Project['slug']
+  ) {
+    this.appService.toastNotification({
+      message: 'members.no_longer_admin',
+      status: TuiNotification.Warning,
+      scope: 'project_settings',
+      closeOnNavigation: false,
+    });
+    void this.router.navigate([
+      '/project/',
+      projectId ?? this.state.get('project').id,
+      projectSlug ?? this.state.get('project').slug,
+    ]);
   }
 }

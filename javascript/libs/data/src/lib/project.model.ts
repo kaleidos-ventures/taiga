@@ -30,6 +30,7 @@ export interface Project {
   userIsMember: boolean;
   userPermissions: string[];
   userHasPendingInvitation: boolean;
+  anonUserCanView?: boolean;
 }
 
 export interface ProjectCreation {

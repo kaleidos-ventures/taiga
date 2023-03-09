@@ -242,7 +242,7 @@ export class ProjectMembersComponent {
       });
 
     this.wsService
-      .events<{ project: string }>({
+      .events<{ membership: Membership }>({
         channel: `projects.${this.state.get('project').id}`,
         type: 'projectmemberships.update',
       })

@@ -27,6 +27,7 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiButtonComponent, TuiNotification } from '@taiga-ui/core';
 import {
+  Membership,
   Project,
   Role,
   Status,
@@ -463,7 +464,9 @@ export class StoryDetailComponent {
 
     merge(
       this.wsService.projectEvents<Role>('projectroles.update'),
-      this.wsService.userEvents<Role>('projectmemberships.update')
+      this.wsService.userEvents<{ membership: Membership }>(
+        'projectmemberships.update'
+      )
     )
       .pipe(untilDestroyed(this))
       .subscribe(() => {

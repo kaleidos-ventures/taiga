@@ -33,7 +33,7 @@ import {
   Story,
   User,
 } from '@taiga/data';
-import { merge } from 'rxjs';
+import { map, merge } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectMembers } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -215,13 +215,17 @@ export class StoryDetailAssignComponent implements OnChanges {
 
   private events() {
     merge(
-      this.wsService.projectEvents<Role>('projectroles.update'),
-      this.wsService.userEvents<Role>('projectmemberships.update')
+      this.wsService
+        .projectEvents<Role>('projectroles.update')
+        .pipe(map((data) => data.event.content)),
+      this.wsService
+        .userEvents<{ membership: Membership }>('projectmemberships.update')
+        .pipe(map((data) => data.event.content.membership.role))
     )
       .pipe(untilDestroyed(this))
       .subscribe((permissions) => {
         this.store.dispatch(ProjectActions.fetchProjectMembers());
-        this.unassignRoleMembersWithoutPermissions(permissions.event.content);
+        this.unassignRoleMembersWithoutPermissions(permissions as Role);
       });
   }
 

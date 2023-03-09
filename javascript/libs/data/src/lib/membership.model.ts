@@ -8,6 +8,7 @@
 
 import { Permissions } from './roles.model';
 import { User } from './user.model';
+import { Project } from './project.model';
 
 export interface Membership {
   id?: string;
@@ -18,4 +19,15 @@ export interface Membership {
     slug?: string;
     permissions?: Permissions[];
   };
+  project?: Pick<
+    Project,
+    | 'id'
+    | 'logoSmall'
+    | 'logoLarge'
+    | 'logo'
+    | 'name'
+    | 'slug'
+    | 'description'
+    | 'color'
+  >;
 }

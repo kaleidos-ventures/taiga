@@ -142,10 +142,13 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
   public watchProject() {
     merge(
       this.wsService
-        .userEvents<{ project: string }>('projectmemberships.update')
+        .userEvents<{ membership: Membership }>('projectmemberships.update')
         .pipe(
           filter((data) => {
-            return data.event.content.project === this.state.get('project').id;
+            return (
+              data.event.content.membership.project!.id ===
+              this.state.get('project').id
+            );
           })
         ),
       this.wsService.projectEvents('projects.permissions.update'),

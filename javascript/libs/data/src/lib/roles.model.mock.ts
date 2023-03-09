@@ -6,13 +6,13 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Role, Permissions } from './roles.model';
 import {
+  randBoolean,
   randDomainSuffix,
   randNumber,
-  randBoolean,
   randWord,
 } from '@ngneat/falso';
+import { Permissions, Role } from './roles.model';
 
 export const RoleMockFactory = (): Role => {
   const role: Role = {

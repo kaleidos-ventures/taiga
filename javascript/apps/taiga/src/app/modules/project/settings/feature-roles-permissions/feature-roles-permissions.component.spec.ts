@@ -25,7 +25,6 @@ import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
   updatePublicPermissions,
   updateRolePermissions,
-  updateWorkspacePermissions,
 } from './+state/actions/roles-permissions.actions';
 import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
@@ -63,14 +62,7 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
     permissionsService = spectator.inject(PermissionsService);
 
     projectsSettingsFeatureRolesPermissionsService.getEntities.andReturn(
-      new Map([
-        ['story', 'Stories'],
-        ['task', 'Tasks'],
-        ['sprint', 'Sprints'],
-        ['issue', 'Issues'],
-        ['epic', 'Epics'],
-        ['wiki', 'Wiki'],
-      ])
+      new Map([['story', 'Stories']])
     );
 
     projectsSettingsFeatureRolesPermissionsService.hasComments.mockReturnValue(
@@ -177,40 +169,6 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
 
       expect(spectator.component.form.get(role.slug)?.disabled).toEqual(true);
     });
-
-    it('story no access', () => {
-      const role = RoleMockFactory();
-
-      role.permissions = ['view_task', 'view_sprints'] as Permissions[];
-
-      permissionsService.formatRawPermissions.andReturn({
-        task: {
-          create: false,
-          modify: false,
-          delete: false,
-          comment: false,
-        },
-        sprint: {
-          create: false,
-          modify: false,
-          delete: false,
-          comment: false,
-        },
-      });
-
-      spectator.component.createRoleFormControl(
-        role.permissions,
-        role.slug,
-        spectator.component.form
-      );
-
-      expect(
-        spectator.component.form.get(role.slug)?.get('task')?.disabled
-      ).toEqual(true);
-      expect(
-        spectator.component.form.get(role.slug)?.get('sprint')?.disabled
-      ).toEqual(true);
-    });
   });
 
   describe('save', () => {
@@ -296,46 +254,6 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
         })
       );
     });
-
-    it('save workspace permissions', () => {
-      const role = RoleMockFactory();
-      const project = ProjectMockFactory();
-
-      const store = spectator.inject(MockStore);
-      store.setState({
-        rolesPermissions: {
-          workspacePermissions: role.permissions,
-        },
-        project: {
-          currentProjectId: project.id,
-          projects: { [project.id]: project },
-        },
-      });
-
-      const projectsSettingsFeatureRolesPermissionsService = spectator.inject(
-        ProjectsSettingsFeatureRolesPermissionsService
-      );
-
-      store.refreshState();
-      spectator.detectChanges();
-
-      const finalPermissions = ['view_story'];
-
-      projectsSettingsFeatureRolesPermissionsService.getRoleFormGroupPermissions.mockReturnValue(
-        finalPermissions
-      );
-
-      const dispatchSpy = jest.spyOn(store, 'dispatch');
-
-      spectator.component.saveWorkspace();
-
-      expect(dispatchSpy).toBeCalledWith(
-        updateWorkspacePermissions({
-          project: project.id,
-          permissions: finalPermissions,
-        })
-      );
-    });
   });
 
   describe('init form', () => {
@@ -409,43 +327,6 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
         spectator.component.publicForm
       );
       expect(watchPublicFormSpy).toHaveBeenCalled();
-    });
-
-    it('workspace permissions', () => {
-      const permissions = ['view_story'];
-      const store = spectator.inject(MockStore);
-
-      store.setState({
-        rolesPermissions: {
-          workspacePermissions: permissions,
-        },
-        project: {
-          projects: {},
-          currentProjectId: 'test',
-        },
-      });
-
-      store.refreshState();
-
-      const createRoleFormSpy = jest.spyOn(
-        spectator.component,
-        'createRoleFormControl'
-      );
-
-      const watchWorkspaceFormSpy = jest.spyOn(
-        spectator.component,
-        'watchWorkspaceForm'
-      );
-
-      spectator.component.ngOnInit();
-      spectator.component.initForm();
-
-      expect(createRoleFormSpy).toHaveBeenCalledWith(
-        permissions,
-        'workspace',
-        spectator.component.workspaceForm
-      );
-      expect(watchWorkspaceFormSpy).toHaveBeenCalled();
     });
   });
 });

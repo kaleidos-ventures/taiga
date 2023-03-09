@@ -12,7 +12,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
 import * as ProjectActions from '../actions/roles-permissions.actions';
 
@@ -76,38 +76,6 @@ export class RolesPermissionsEffects {
     );
   });
 
-  public loadWorkspacePermissions$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(ProjectActions.initRolesPermissions),
-      filter((action) => action.project.workspace.isPremium),
-      fetch({
-        run: (action) => {
-          return this.projectApiService
-            .getworkspacePermissions(action.project.id)
-            .pipe(
-              map((permissions) => {
-                return ProjectActions.fetchWorkspacePermissionsSuccess({
-                  permissions,
-                });
-              })
-            );
-        },
-        onError: (_, httpResponse: HttpErrorResponse) => {
-          this.appService.errorManagement(httpResponse, {
-            500: {
-              type: 'toast',
-              options: {
-                label: 'errors.workspace_permissions',
-                message: 'errors.please_refresh',
-                status: TuiNotification.Error,
-              },
-            },
-          });
-        },
-      })
-    );
-  });
-
   public updateRolePermissions$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(ProjectActions.updateRolePermissions),
@@ -149,39 +117,6 @@ export class RolesPermissionsEffects {
             .pipe(
               map((permissions) => {
                 return ProjectActions.updatePublicPermissionsSuccess({
-                  permissions,
-                });
-              })
-            );
-        },
-        onError: (_, httpResponse: HttpErrorResponse) => {
-          this.appService.errorManagement(httpResponse, {
-            500: {
-              type: 'toast',
-              options: {
-                label: 'errors.save_changes',
-                message: 'errors.please_refresh',
-                status: TuiNotification.Error,
-              },
-            },
-          });
-          ProjectActions.updateRolePermissionsError();
-          return ProjectActions.resetPermissionForm();
-        },
-      })
-    );
-  });
-
-  public updateWorkspacePermissions$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(ProjectActions.updateWorkspacePermissions),
-      pessimisticUpdate({
-        run: (action) => {
-          return this.projectApiService
-            .putworkspacePermissions(action.project, action.permissions)
-            .pipe(
-              map((permissions) => {
-                return ProjectActions.updateWorkspacePermissionsSuccess({
                   permissions,
                 });
               })

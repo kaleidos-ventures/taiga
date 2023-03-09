@@ -18,8 +18,8 @@ import {
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Entity } from '@taiga/data';
-import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
+import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 
 let nextId = 0;
 @UntilDestroy()
@@ -61,7 +61,6 @@ export class RolePermissionRowComponent implements OnChanges {
     if (changes.formGroup) {
       this.formGroup.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.refreshPermission();
-        this.checkRestrictions();
       });
 
       this.refreshPermission();
@@ -82,26 +81,6 @@ export class RolePermissionRowComponent implements OnChanges {
     this.permissionRowModel.toString = function () {
       return this.value;
     };
-  }
-
-  public checkRestrictions() {
-    const storiesState =
-      this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
-        this.getEntityFormGroup('story')
-      );
-
-    if (storiesState === 'no_access') {
-      this.projectsSettingsFeatureRolesPermissionsService.applyPermission(
-        'task',
-        'no_access',
-        this.getEntityFormGroup('task')
-      );
-      this.projectsSettingsFeatureRolesPermissionsService.applyPermission(
-        'sprint',
-        'no_access',
-        this.getEntityFormGroup('sprint')
-      );
-    }
   }
 
   public entityVisible(entity: Entity) {

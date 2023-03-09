@@ -6,10 +6,10 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { on, createFeature } from '@ngrx/store';
+import { createFeature, on } from '@ngrx/store';
+import { Role } from '@taiga/data';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/roles-permissions.actions';
-import { Role } from '@taiga/data';
 
 export const projectFeatureKey = 'project';
 
@@ -40,15 +40,6 @@ export const reducer = createImmerReducer(
     ProjectActions.updatePublicPermissionsSuccess,
     (state, { permissions: publicPermissions }): ProjectState => {
       state.publicPermissions = publicPermissions;
-
-      return state;
-    }
-  ),
-  on(
-    ProjectActions.fetchWorkspacePermissionsSuccess,
-    ProjectActions.updateWorkspacePermissionsSuccess,
-    (state, { permissions }): ProjectState => {
-      state.workspacePermissions = permissions;
 
       return state;
     }

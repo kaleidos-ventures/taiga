@@ -101,10 +101,10 @@ Copyright (c) 2023-present Kaleidos INC
   z-index: var(--first-layer);
 }
 
-.login-link,
-.premium-link {
+.login-link {
   color: var(--color-gray80);
   margin: 0;
+  margin-block-end: var(--spacing-4);
 
   &::ng-deep a {
     font-weight: var(--font-weight-medium);
@@ -119,10 +119,6 @@ Copyright (c) 2023-present Kaleidos INC
   &::ng-deep a {
     font-weight: var(--font-weight-medium);
   }
-}
-
-.login-link {
-  margin-block-end: var(--spacing-4);
 }
 
 .verify {

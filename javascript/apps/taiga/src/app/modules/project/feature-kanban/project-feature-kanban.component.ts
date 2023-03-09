@@ -275,8 +275,12 @@ export class ProjectFeatureKanbanComponent {
       });
 
     merge(
-      this.wsService.projectEvents<Role>('projectroles.update'),
-      this.wsService.userEvents<Role>('projectmemberships.update')
+      this.wsService
+        .projectEvents<Role>('projectroles.update')
+        .pipe(map((data) => data.event.content)),
+      this.wsService
+        .userEvents<{ membership: Membership }>('projectmemberships.update')
+        .pipe(map((data) => data.event.content.membership.role))
     )
       .pipe(untilDestroyed(this))
       .subscribe((permissions) => {
@@ -289,7 +293,7 @@ export class ProjectFeatureKanbanComponent {
             );
           });
         this.store.dispatch(ProjectActions.fetchProjectMembers());
-        this.unassignRoleMembersWithoutPermissions(permissions.event.content);
+        this.unassignRoleMembersWithoutPermissions(permissions as Role);
       });
   }
 

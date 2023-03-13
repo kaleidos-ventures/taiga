@@ -91,7 +91,7 @@ Copyright (c) 2023-present Kaleidos INC
   }
 
   & .assigned-name {
-    @mixin text-overflow;
+    @mixin ellipsis;
 
     color: var(--color-gray80);
     inline-size: 100%;
@@ -204,6 +204,6 @@ Copyright (c) 2023-present Kaleidos INC
   }
 
   & .status-name {
-    @mixin text-overflow;
+    @mixin ellipsis;
   }
 }

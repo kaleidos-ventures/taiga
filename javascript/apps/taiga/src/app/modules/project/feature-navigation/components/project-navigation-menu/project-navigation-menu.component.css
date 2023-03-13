@@ -48,7 +48,7 @@ ul {
 }
 
 .workspace-data-project {
-  @mixin text-overflow;
+  @mixin ellipsis;
 
   display: block;
   margin-block-end: var(--spacing-4);
@@ -61,7 +61,7 @@ ul {
 
 .workspace-data-workspace {
   @mixin font-small;
-  @mixin text-overflow;
+  @mixin ellipsis;
 
   color: var(--color-gray50);
   display: block;
@@ -488,11 +488,11 @@ ul {
     padding-inline: var(--spacing-12) var(--spacing-2);
 
     & .dialog-text {
+      @mixin ellipsis;
+
       font-size: var(--font-size-medium);
       font-weight: var(--font-weight-regular);
-      overflow: hidden;
       text-decoration: none;
-      text-overflow: ellipsis;
     }
   }
 

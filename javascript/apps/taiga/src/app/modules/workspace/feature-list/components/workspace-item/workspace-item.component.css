@@ -35,7 +35,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .workspace-item-title {
-  @mixin text-overflow;
+  @mixin ellipsis;
   @mixin font-heading-4;
 
   color: var(--color-gray100);

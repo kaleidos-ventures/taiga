@@ -16,8 +16,9 @@ import {
   Output,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Workspace } from '@taiga/data';
+import { tap } from 'rxjs';
 import {
   WorkspaceNameMaxLength,
   WorkspaceNameValidation,
@@ -34,17 +35,24 @@ export class WorkspaceDetailEditModalComponent implements OnInit {
   @Input()
   public workspace!: Workspace;
 
-  @Input()
-  public open = false;
-
   @Output()
   public update = new EventEmitter();
 
   @Output()
   public cancelEdit = new EventEmitter();
 
+  @Input()
+  public set open(open: boolean) {
+    this.showEditWorkspaceModal = open;
+
+    if (open) {
+      this.showConfirmEditWorkspaceModal = false;
+    }
+  }
+
   @HostListener('window:beforeunload')
   public unloadHandler() {
+    this.nameForm.updateValueAndValidity();
     if (this.nameForm.dirty) {
       return false;
     }
@@ -52,7 +60,8 @@ export class WorkspaceDetailEditModalComponent implements OnInit {
   }
 
   public maxLength = WorkspaceNameMaxLength;
-  public showConfirmEditProjectModal = false;
+  public showConfirmEditWorkspaceModal = false;
+  public showEditWorkspaceModal = false;
 
   public nameForm = new FormGroup(
     {
@@ -66,28 +75,39 @@ export class WorkspaceDetailEditModalComponent implements OnInit {
 
   public ngOnInit() {
     this.nameForm.get('name')?.setValue(this.workspace.name);
+
+    this.nameForm.valueChanges
+      .pipe(
+        untilDestroyed(this),
+        tap(() => this.nameForm.markAsDirty())
+      )
+      .subscribe();
   }
 
   public submit() {
+    this.nameForm.updateValueAndValidity();
     if (this.nameForm.valid) {
       this.update.emit(this.nameForm.value);
     }
   }
 
   public cancel() {
+    this.nameForm.updateValueAndValidity();
     if (this.nameForm.dirty) {
-      this.showConfirmEditProjectModal = true;
+      this.showConfirmEditWorkspaceModal = true;
+      this.showEditWorkspaceModal = false;
     } else {
       this.cancelEdit.emit();
     }
   }
 
   public discardChanges() {
-    this.showConfirmEditProjectModal = false;
+    this.showConfirmEditWorkspaceModal = false;
     this.cancelEdit.emit();
   }
 
   public keepEditing() {
-    this.showConfirmEditProjectModal = false;
+    this.showConfirmEditWorkspaceModal = false;
+    this.showEditWorkspaceModal = true;
   }
 }

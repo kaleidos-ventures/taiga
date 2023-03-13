@@ -74,7 +74,10 @@ export class ExternalLinkDirective implements AfterViewInit, OnDestroy {
       const use = document.createElement('use');
       svg.appendChild(use);
 
-      use.setAttribute('xlink:href', '/assets/icons/sprite.svg#external-link');
+      use.setAttribute(
+        'xlink:href',
+        '/assets/icons/external-link.svg#external-link'
+      );
       wrapper.innerHTML = svg.outerHTML;
 
       link.appendChild(wrapper);

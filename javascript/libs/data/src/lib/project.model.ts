@@ -21,10 +21,7 @@ export interface Project {
   slug: string;
   description: string | null;
   color: number;
-  workspace: Pick<
-    Workspace,
-    'id' | 'name' | 'slug' | 'color' | 'isPremium' | 'userRole'
-  >;
+  workspace: Pick<Workspace, 'id' | 'name' | 'slug' | 'color' | 'userRole'>;
   milestones: Milestone[];
   userIsAdmin: boolean;
   userIsMember: boolean;

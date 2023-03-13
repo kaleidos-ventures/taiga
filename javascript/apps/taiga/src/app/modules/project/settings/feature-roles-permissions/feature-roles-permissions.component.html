@@ -69,30 +69,6 @@ Copyright (c) 2023-present Kaleidos INC
     </section>
 
     <section
-      *ngIf="vm.workspacePermissions"
-      data-test="workspace-permissions-settings"
-      class="workspace-permissions-settings">
-      <h3
-        #fragment
-        tabindex="-1"
-        class="settings-subtitle"
-        data-fragment="workspace-permissions-settings">
-        {{ t('project_settings.workspace_permissions') }}
-      </h3>
-      <form [formGroup]="workspaceForm">
-        <tg-role-permission-row
-          class="hidden-row-name"
-          *ngIf="getworkspacePermissionsForm()"
-          [formGroup]="getworkspacePermissionsForm()"
-          [hasMembers]="false"
-          [name]="t('project_settings.workspace_permissions')"
-          [numMembers]="0"
-          data-test="role-permission-row">
-        </tg-role-permission-row>
-      </form>
-    </section>
-
-    <section
       *ngIf="vm.publicPermissions"
       data-test="public-permissions-settings"
       class="public-permissions-settings">

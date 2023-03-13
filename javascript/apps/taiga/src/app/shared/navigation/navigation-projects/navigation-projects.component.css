@@ -71,14 +71,14 @@ li {
   }
 
   & .project-name {
-    @mixin text-overflow;
+    @mixin ellipsis;
 
     font-weight: var(--font-weight-medium);
     line-height: 1.4;
   }
 
   & .project-workspace {
-    @mixin text-overflow;
+    @mixin ellipsis;
 
     font-weight: var(--font-weight-regular);
     line-height: 1.2;

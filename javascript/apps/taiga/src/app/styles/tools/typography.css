@@ -59,7 +59,7 @@ Copyright (c) 2023-present Kaleidos INC
   letter-spacing: normal;
 }
 
-@define-mixin text-overflow {
+@define-mixin ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

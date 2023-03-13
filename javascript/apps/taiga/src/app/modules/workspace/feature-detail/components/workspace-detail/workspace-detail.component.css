@@ -52,11 +52,11 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .workspace-detail-name {
-  @mixin text-overflow;
+  @mixin ellipsis;
 }
 
 .workspace-detail-name-route {
-  @mixin text-overflow;
+  @mixin ellipsis;
   @mixin font-small;
 
   color: var(--color-gray70);

@@ -80,7 +80,7 @@ async def test_update_project_role_permissions_role_admin(client):
 async def test_update_project_role_permissions_incompatible_permissions(client):
     project = await f.create_project()
     role_slug = "general"
-    data = {"permissions": ["view_task"]}
+    data = {"permissions": ["modify_story"]}
 
     client.login(project.created_by)
     response = client.put(f"/projects/{project.b64id}/roles/{role_slug}/permissions", json=data)

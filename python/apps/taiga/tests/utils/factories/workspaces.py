@@ -60,7 +60,6 @@ def build_workspace_membership(**kwargs):
 class WorkspaceFactory(Factory):
     name = factory.Sequence(lambda n: f"workspace {n}")
     created_by = factory.SubFactory("tests.utils.factories.UserFactory")
-    is_premium = False
 
     class Meta:
         model = "workspaces.Workspace"

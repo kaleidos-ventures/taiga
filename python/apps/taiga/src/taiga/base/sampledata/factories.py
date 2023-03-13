@@ -79,21 +79,11 @@ def create_workspace_role(workspace: Workspace) -> WorkspaceRole:
     )
 
 
-async def create_workspace(
-    created_by: User, name: str | None = None, color: int | None = None, is_premium: bool = False
-) -> Workspace:
+async def create_workspace(created_by: User, name: str | None = None, color: int | None = None) -> Workspace:
     name = name or fake.bs()[:35]
-    if is_premium:
-        name = f"{name}(P)"
     color = color or fake.random_int(min=1, max=constants.NUM_WORKSPACE_COLORS)
-
     workspace = await workspaces_services._create_workspace(name=name, color=color, created_by=created_by)
 
-    if is_premium:
-        workspace.is_premium = True
-        await sync_to_async(workspace.save)()
-        # create non-admin role
-        await create_workspace_role(workspace=workspace)
     return workspace
 
 

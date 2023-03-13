@@ -31,8 +31,6 @@ GET_PROJECT = CanViewProject()
 UPDATE_PROJECT = IsProjectAdmin()
 GET_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
 UPDATE_PROJECT_PUBLIC_PERMISSIONS = IsProjectAdmin()
-GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
-UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS = IsProjectAdmin()
 DELETE_PROJECT = IsProjectAdmin() | IsWorkspaceAdmin()
 
 # HTTP 200 RESPONSES
@@ -152,26 +150,6 @@ async def list_project_public_permissions(
     return project.public_permissions or []
 
 
-@routes.projects.get(
-    "/{id}/workspace-member-permissions",
-    name="project.workspace-member-permissions.list",
-    summary="List project workspace member permissions",
-    response_model=list[str],
-    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
-)
-async def list_project_workspace_member_permissions(
-    request: AuthRequest, id: B64UUID = Query(None, description="the project id (B64UUID)")
-) -> list[str]:
-    """
-    Get project workspace member permissions
-    """
-
-    project = await get_project_or_404(id)
-    await check_permissions(permissions=GET_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
-
-    return await projects_services.list_workspace_member_permissions(project=project)
-
-
 ##########################################################
 # update project
 ##########################################################
@@ -216,26 +194,6 @@ async def update_project_public_permissions(
     await check_permissions(permissions=UPDATE_PROJECT_PUBLIC_PERMISSIONS, user=request.user, obj=project)
 
     return await projects_services.update_project_public_permissions(project, form.permissions)
-
-
-@routes.projects.put(
-    "/{id}/workspace-member-permissions",
-    name="project.workspace-member-permissions.put",
-    summary="Edit project workspace member permissions",
-    response_model=list[str],
-    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
-)
-async def update_project_workspace_member_permissions(
-    request: AuthRequest, form: PermissionsValidator, id: B64UUID = Query(None, description="the project id (B64UUID)")
-) -> list[str]:
-    """
-    Edit project workspace member permissions
-    """
-
-    project = await get_project_or_404(id)
-    await check_permissions(permissions=UPDATE_PROJECT_WORKSPACE_MEMBER_PERMISSIONS, user=request.user, obj=project)
-
-    return await projects_services.update_project_workspace_member_permissions(project, form.permissions)
 
 
 ##########################################################

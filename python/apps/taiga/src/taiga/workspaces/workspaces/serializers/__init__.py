@@ -18,9 +18,7 @@ class WorkspaceDetailSerializer(BaseModel):
     invited_projects: list[ProjectNestedSerializer]
     total_projects: int
     has_projects: bool
-    is_premium: bool
     user_role: str
-    user_is_owner: bool
 
     class Config:
         orm_mode = True
@@ -31,11 +29,9 @@ class WorkspaceSerializer(BaseModel):
     name: str
     slug: str
     color: int
-    is_premium: bool
     total_projects: int
     has_projects: bool
     user_role: str
-    user_is_owner: bool
 
     class Config:
         orm_mode = True

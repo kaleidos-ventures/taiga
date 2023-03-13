@@ -39,7 +39,6 @@ NOTE: Any URI variable will be noted between brackets `{v}`
 - Names of pre-requisite 'tests', or 'tests' that UNDO data must be notified with the N/A suffix, as their not really testing anything.
 ```
 POST N/A auth.token (user1001)
-PUT N/A projects.{p}.workspace-member-permissions
 ```
 - Folders may contain either a logical group of tests or a group of test that validate the same endpoint. Its names should be descriptive, or reflect the (dot-separated) URI being test.
 

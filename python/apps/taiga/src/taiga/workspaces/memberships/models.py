@@ -29,7 +29,7 @@ class WorkspaceMembership(models.BaseModel, CreatedAtMetaInfoMixin):
     )
     role = models.ForeignKey(
         "workspaces_roles.WorkspaceRole",
-        null=False,
+        null=True,
         blank=False,
         related_name="memberships",
         on_delete=models.CASCADE,

@@ -335,7 +335,6 @@ export class ProjectApiService {
       )
       .pipe(
         map((stories) => {
-          // TODO: API
           return stories.map((story) => {
             return story;
           });

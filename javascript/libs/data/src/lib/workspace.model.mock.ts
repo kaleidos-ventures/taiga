@@ -29,7 +29,7 @@ export const WorkspaceMockFactory = (): Workspace => {
 
   for (let i = 0; i < numProjects; i++) {
     latestProjects.push(
-      ProjectMockFactory(false, {
+      ProjectMockFactory({
         id: workspace.id,
         color: workspace.color,
         slug: workspace.slug,
@@ -41,7 +41,7 @@ export const WorkspaceMockFactory = (): Workspace => {
 
   for (let i = 0; i < numProjects; i++) {
     invitedProjects.push(
-      ProjectMockFactory(false, {
+      ProjectMockFactory({
         id: workspace.id,
         color: workspace.color,
         slug: workspace.slug,
@@ -78,7 +78,7 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
 
   for (let i = 0; i < numProjects; i++) {
     latestProjects.push(
-      ProjectMockFactory(false, {
+      ProjectMockFactory({
         id: workspace.id,
         color: workspace.color,
         slug: workspace.slug,
@@ -89,7 +89,7 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
   }
 
   for (let i = 0; i < numProjects; i++) {
-    const project = ProjectMockFactory(false, {
+    const project = ProjectMockFactory({
       id: workspace.id,
       color: workspace.color,
       slug: workspace.slug,
@@ -130,7 +130,7 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
 
   for (let i = 0; i < numProjects; i++) {
     latestProjects.push(
-      ProjectMockFactory(false, {
+      ProjectMockFactory({
         id: workspace.id,
         color: workspace.color,
         slug: workspace.slug,
@@ -141,7 +141,7 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
   }
 
   for (let i = 0; i < numProjects; i++) {
-    const project = ProjectMockFactory(false, {
+    const project = ProjectMockFactory({
       id: workspace.id,
       color: workspace.color,
       slug: workspace.slug,
@@ -154,7 +154,7 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
 
   // all the invitations are also in the project list if the user is a member & the project has public permissions
   for (let i = 0; i < numProjects; i++) {
-    const project = ProjectMockFactory(false, {
+    const project = ProjectMockFactory({
       id: workspace.id,
       color: workspace.color,
       slug: workspace.slug,

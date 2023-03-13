@@ -41,7 +41,7 @@ describe('ProjectNavigationComponent', () => {
       detectChanges: false,
     });
 
-    spectator.component.project = ProjectMockFactory(true);
+    spectator.component.project = ProjectMockFactory();
   });
 
   it('default', () => {

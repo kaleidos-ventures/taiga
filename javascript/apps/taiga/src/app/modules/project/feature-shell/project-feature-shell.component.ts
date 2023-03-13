@@ -168,14 +168,6 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
         this.store.dispatch(newProjectMembers());
       });
 
-    // todo: not working, made up. Back is going to do this?
-    this.wsService
-      .projectEvents<{ members: Membership[] }>('story.asign.update')
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        // new assigne // delete assigne
-      });
-
     this.wsService
       .projectEvents<{ story: StoryDetail }>('stories.update')
       .pipe(untilDestroyed(this))

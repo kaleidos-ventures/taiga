@@ -17,28 +17,16 @@ import {
   randWord,
 } from '@ngneat/falso';
 import { ProjectCreation, Workspace } from '..';
-import { Milestone } from './milestone.model';
-import { MilestoneMockFactory } from './milestone.model.mock';
 import { Project } from './project.model';
 import { WorkspaceMockFactory } from './workspace.model.mock';
 
-const getMilestones = () => {
-  const milestones: Milestone[] = [];
-  for (let i = 0; i < randNumber(); i++) {
-    milestones.push(MilestoneMockFactory());
-  }
-  return milestones;
-};
-
 export const ProjectMockFactory = (
-  milestones = false,
   workspace?: Pick<Workspace, 'id' | 'color' | 'name' | 'slug' | 'userRole'>
 ): Project => {
   const project = {
     id: randUuid(),
     name: randWord({ length: 3, capitalize: true }).join(' '),
     slug: randSlug(),
-    milestones: milestones ? getMilestones() : [],
     color: randNumber(),
     description: randParagraph({ length: 3 }).join('\n'),
     workspace: workspace ?? WorkspaceMockFactory(),

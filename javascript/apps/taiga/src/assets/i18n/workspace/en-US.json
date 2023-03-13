@@ -18,6 +18,7 @@
   "placehoder_no_projects": "There are no projects in the workspace.",
   "workspace_options": "Workspace options",
   "edit_workspace_name": "Edit workspace name",
+  "workspace_actions": "Workspace actions",
   "edit": {
     "title": "Workspace details",
     "name": "Workspace name",

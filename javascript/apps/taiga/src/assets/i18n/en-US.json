@@ -90,6 +90,7 @@
   "common_project": {
     "create_first_project": "Create your first project",
     "create_new_project": "Add a project",
+    "project_actions": "Project actions",
     "card": {
       "accept_invite": "Accept invitation",
       "pending_invitation": "Pending invitation",

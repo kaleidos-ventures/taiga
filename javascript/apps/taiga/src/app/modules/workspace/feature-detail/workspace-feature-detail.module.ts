@@ -12,7 +12,12 @@ import { RouterModule } from '@angular/router';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { TuiDataListModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import {
+  TuiDataListModule,
+  TuiHintModule,
+  TuiLinkModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { ModalModule } from '@taiga/ui/modal';
@@ -67,6 +72,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     InputsModule,
     DiscardChangesModalComponent,
     DeleteProjectComponent,
+    TuiHintModule,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

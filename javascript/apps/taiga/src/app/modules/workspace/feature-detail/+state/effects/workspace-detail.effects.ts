@@ -255,7 +255,6 @@ export class WorkspaceDetailEffects {
               },
             },
           });
-          void this.router.navigate(['/']);
         },
       })
     );

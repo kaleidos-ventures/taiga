@@ -18,5 +18,14 @@ Copyright (c) 2023-present Kaleidos INC
   &::ng-deep a {
     font-weight: var(--font-weight-medium);
     text-decoration: underline;
+
+    /* stylelint-disable-next-line selector-max-type */
+    &:hover svg {
+      fill: var(--color-secondary90);
+    }
+  }
+
+  &::ng-deep svg {
+    fill: var(--color-secondary);
   }
 }

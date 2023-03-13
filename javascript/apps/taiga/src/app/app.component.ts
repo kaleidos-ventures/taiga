@@ -22,6 +22,7 @@ import { AuthService } from './modules/auth/services/auth.service';
 import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { RouteHistoryService } from './shared/route-history/route-history.service';
 import { filterNil } from './shared/utils/operators';
+import { NavigationService } from './shared/navigation/navigation.service';
 
 @Component({
   selector: 'tg-root',
@@ -41,7 +42,8 @@ export class AppComponent {
     private localStorageService: LocalStorageService,
     private store: Store,
     private routeHistoryService: RouteHistoryService,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private navigationService: NavigationService
   ) {
     this.language();
 
@@ -88,11 +90,7 @@ export class AppComponent {
       )
       .subscribe(() => {
         requestAnimationFrame(() => {
-          const mainFocus = document.querySelector('[mainFocus]');
-
-          if (mainFocus) {
-            (mainFocus as HTMLElement).focus();
-          }
+          this.navigationService.scrollToMainArea();
         });
       });
   }

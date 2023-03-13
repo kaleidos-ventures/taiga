@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { map } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
+import { NavigationService } from './navigation.service';
 @Component({
   selector: 'tg-navigation',
   templateUrl: './navigation.component.html',
@@ -24,28 +25,13 @@ export class NavigationComponent {
   public user$ = this.store.select(selectUser);
   public logged$ = this.user$.pipe(map(() => this.authService.isLogged()));
 
-  constructor(private store: Store, private authService: AuthService) {}
+  constructor(
+    private store: Store,
+    private authService: AuthService,
+    private navigationService: NavigationService
+  ) {}
 
   public scrollToMainArea() {
-    const ele = document.getElementById('main-area-focus');
-    if (ele) {
-      window.scrollTo(ele.offsetLeft, ele.offsetTop);
-      ele.tabIndex = -1;
-      ele.focus();
-    } else {
-      const def = document.getElementById('fallback-main-area-focus');
-      if (def) {
-        window.scrollTo(def.offsetLeft, def.offsetTop);
-        def.tabIndex = -1;
-        def.focus();
-      } else {
-        const mainTag = document.querySelector('main');
-        if (mainTag) {
-          window.scrollTo(mainTag.offsetLeft, mainTag.offsetTop);
-          mainTag.tabIndex = -1;
-          mainTag.focus();
-        }
-      }
-    }
+    this.navigationService.scrollToMainArea();
   }
 }

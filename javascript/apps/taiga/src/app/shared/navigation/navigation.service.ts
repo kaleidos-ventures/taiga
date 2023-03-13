@@ -38,4 +38,27 @@ export class NavigationService {
     this._latestProjects.next(newProjects);
     this.userStorageService.set('recent_projects', newProjects);
   }
+
+  public scrollToMainArea() {
+    const ele = document.getElementById('main-area-focus');
+    if (ele) {
+      window.scrollTo(ele.offsetLeft, ele.offsetTop);
+      ele.tabIndex = -1;
+      ele.focus();
+    } else {
+      const def = document.getElementById('fallback-main-area-focus');
+      if (def) {
+        window.scrollTo(def.offsetLeft, def.offsetTop);
+        def.tabIndex = -1;
+        def.focus();
+      } else {
+        const mainTag = document.querySelector('main');
+        if (mainTag) {
+          window.scrollTo(mainTag.offsetLeft, mainTag.offsetTop);
+          mainTag.tabIndex = -1;
+          mainTag.focus();
+        }
+      }
+    }
+  }
 }

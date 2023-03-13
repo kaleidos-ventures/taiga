@@ -13,4 +13,3 @@ class WorkspaceNestedSerializer(BaseModel):
     name: str
     slug: str
     user_role: str
-    is_premium: bool

@@ -104,7 +104,7 @@ async def list_users_by_text(
     """
     List all the users matching the full-text search criteria, ordering results by their proximity to a project :
         1st. project members of this project
-        2nd. members of the project's workspace / members of the project's organization (if any)
+        2nd. members of the project's workspace
         3rd. rest of users (the priority for this group is not too important)
     """
     await check_permissions(permissions=LIST_USERS_BY_TEXT, user=request.user)

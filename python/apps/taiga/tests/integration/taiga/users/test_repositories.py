@@ -152,7 +152,7 @@ async def test_list_users_by_text():
     inactive_user = await f.create_user(is_active=False, username="inactive", full_name="Inactive User")
 
     # elettescar is ws-member
-    workspace = await f.create_workspace(is_premium=True, created_by=ws_pj_admin, color=2)
+    workspace = await f.create_workspace(created_by=ws_pj_admin, color=2)
     general_member_role = await f.create_workspace_role(
         permissions=choices.WorkspacePermissions.choices, is_admin=False, workspace=workspace
     )

@@ -111,13 +111,6 @@ async def list_workspace_invited_projects_for_user(workspace: Workspace, user: U
     )
 
 
-async def list_workspace_member_permissions(project: Project) -> list[str]:
-    if not project.workspace.is_premium:
-        raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be seen")
-
-    return project.workspace_member_permissions or []
-
-
 ##########################################################
 # get project
 ##########################################################
@@ -217,18 +210,6 @@ async def update_project_public_permissions(project: Project, permissions: list[
     await projects_repositories.update_project(project=project, values={"public_permissions": permissions})
 
     # TODO: emit an event to users/project with the new permissions when a change happens?
-    await projects_events.emit_event_when_project_permissions_are_updated(project=project)
-    if not permissions:
-        await actions_events.emit_event_action_to_check_project_subscription(project_b64id=project.b64id)
-
-    return permissions
-
-
-async def update_project_workspace_member_permissions(project: Project, permissions: list[str]) -> list[str]:
-    if not project.workspace.is_premium:
-        raise ex.NotPremiumWorkspaceError("The workspace is not a premium one, so these perms cannot be set")
-
-    await projects_repositories.update_project(project=project, values={"workspace_member_permissions": permissions})
     await projects_events.emit_event_when_project_permissions_are_updated(project=project)
     if not permissions:
         await actions_events.emit_event_action_to_check_project_subscription(project_b64id=project.b64id)

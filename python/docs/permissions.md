@@ -2,13 +2,13 @@ Applying permissions
 ====================
 
 Glossary:
-_project permissions_: permissions applied to regular entities in the project, such as, user stories, tasks... These are a collection of permissions.
+_project permissions_: permissions applied to regular entities in the project, such as, user stories... These are a collection of permissions.
 _project administration permissions_: permissions applied to administrative actions in a project, such as, add member, modify project. These are all managed behind `IsProjectAdmin` so we don't need a collection of permissions for administrative actions.
 
 Some conventions:
 - Role project admin only have PROJECT_PERMISSIONS
 - HasPerm is used only for actions over objects (project permissions), but not for administrative actions (project administration permissions).
-- Administrative actions are checked with IsProjectAdmin, IsWorkspaceAdmin or IsProjectOwner
+- Administrative actions are checked with IsProjectAdmin, IsWorkspaceAdmin
 
 
 Permissions to see `/my/workspaces` (home page)
@@ -16,9 +16,8 @@ Permissions to see `/my/workspaces` (home page)
 
 This endpoint returns all the projects the user can view; these projects must be "wrapped" by the corresponding workspace, even if the user is not a member of such workspace.
 
-There are three different sets of projects to be seen:
+There are two different sets of projects to be seen:
 - workspaces where the user is admin: the user can view and edit all the projects
-- workspaces where the user is member: these are premium workspaces. The user can view all the projects in the workspace where she is a project member, and all the projects where she is not a project member, but workspace members are allowed in the project.
 - workspaces where the user is not admin or member, but she is member of a project inside the workspace.
 
 

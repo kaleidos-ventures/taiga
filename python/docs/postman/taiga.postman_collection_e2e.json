@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "93c46680-b027-4d5d-b29f-ab567580f53b",
+		"_postman_id": "a79e6c2c-038d-4e49-a220-48b61c258f98",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -869,14 +870,13 @@
 									"",
 									"    // Validate response API fields",
 									"    pm.expect(jsonRes).to.have.property(\"id\");",
-									"    pm.expect(jsonRes).to.have.property(\"isPremium\");",
 									"",
 									"    pm.expect(jsonRes.name).to.be.eql(\"My workspace\");",
 									"    pm.expect(jsonRes.color).to.be.eql(1);",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(9);",
+									"    pm.expect(numOfReturnedFields).to.equal(7);",
 									"",
 									"});"
 								],
@@ -997,14 +997,13 @@
 									"",
 									"    // Validate response API fields",
 									"    pm.expect(jsonRes).to.have.property(\"id\");",
-									"    pm.expect(jsonRes).to.have.property(\"isPremium\");",
 									"",
 									"    pm.expect(jsonRes.name).to.be.eql(\"My workspace\");",
 									"    pm.expect(jsonRes.color).to.be.eql(1);",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(9);",
+									"    pm.expect(numOfReturnedFields).to.equal(7);",
 									"",
 									"});"
 								],
@@ -1069,11 +1068,10 @@
 									"    pm.expect(jsonRes).to.have.property(\"name\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"color\");",
-									"    pm.expect(jsonRes).to.have.property(\"isPremium\");",
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(9);",
+									"    pm.expect(numOfReturnedFields).to.equal(7);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1132,11 +1130,9 @@
 									"    pm.expect(jsonRes).to.have.property(\"name\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"color\");",
-									"    pm.expect(jsonRes).to.have.property(\"isPremium\");",
 									"    pm.expect(jsonRes).to.have.property(\"totalProjects\");",
 									"    pm.expect(jsonRes).to.have.property(\"hasProjects\");",
 									"    pm.expect(jsonRes).to.have.property(\"userRole\");",
-									"    pm.expect(jsonRes).to.have.property(\"userIsOwner\");",
 									"",
 									"    pm.expect(jsonRes.name).to.be.eql(\"New name\");",
 									"});"
@@ -1527,7 +1523,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"});"
@@ -1635,7 +1631,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"});"
@@ -3701,67 +3697,6 @@
 					"response": []
 				},
 				{
-					"name": "N/A my.workspaces",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"pm.test(\"Save project id in environment\", function () {",
-									"    res = pm.response.json();",
-									"    // searching for p48",
-									"    for (var ws of res) {",
-									"        if (ws.latestProjects.length > 0 & ws.isPremium == true & ws.name.includes('uk1-ws-mb')) {",
-									"            for (var pj of ws.latestProjects) {",
-									"                if (pj.name.includes('p48')) {",
-									"                    pm.environment.set(\"pj-id\", pj.id);",
-									"                    break;",
-									"                }",
-									"            }",
-									"        }   ",
-									"    }    ",
-									"});",
-									"",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"my",
-								"workspaces"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "N/A log in as 1001user",
 					"event": [
 						{
@@ -4054,7 +3989,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"});"
@@ -5518,7 +5453,7 @@
 									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"});"
@@ -6297,246 +6232,6 @@
 					"response": []
 				},
 				{
-					"name": "N/A my workspaces",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"pm.test(\"Save projects slugs in environment\", function () {",
-									"    res = pm.response.json();",
-									"    // store a premium project containing latestProjects",
-									"    for (var ws of res) {",
-									"        if (ws.latestProjects.length > 0 & ws.isPremium == true) {",
-									"            pm.environment.set(\"pj-id\", ws.latestProjects[0].id);",
-									"            break;",
-									"        }   ",
-									"    }",
-									"});",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"my",
-								"workspaces"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "200 projects.{p}.workspace-member-permissions",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response JSON is correct\", function () {",
-									"    var jsonRes = pm.response.json();",
-									"    pm.expect(jsonRes.length).to.eql(2);",
-									"    pm.expect(jsonRes).to.include('view_story');",
-									"    pm.expect(jsonRes).to.include('modify_story');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-id}}",
-								"workspace-member-permissions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "200 projects.{p}.workspace-member-permissions",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"",
-									"});",
-									"pm.test(\"Response JSON is correct\", function () {",
-									"    var jsonRes = pm.response.json();",
-									"    pm.expect(jsonRes.length).to.eql(2);",
-									"    pm.expect(jsonRes).to.include('view_story');",
-									"    pm.expect(jsonRes).to.include('modify_story');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-id}}",
-								"workspace-member-permissions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "N/A projects.{p}.workspace-member-permissions",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"// NOTE: This test simply undo the previous changes"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-id}}",
-								"workspace-member-permissions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "N/A log in as 1000user",
 					"event": [
 						{
@@ -6595,9 +6290,9 @@
 									"// Post-request execution tasks",
 									"pm.test(\"Save projects slugs in environment\", function () {",
 									"    res = pm.response.json();",
-									"    // store a not-premium project containing latestProjects",
+									"    // store a project containing latestProjects",
 									"    for (var ws of res) {",
-									"        if (ws.latestProjects.length > 0 & ws.isPremium == false) {",
+									"        if (ws.latestProjects.length > 0) {",
 									"            pm.environment.set(\"pj-id\", ws.latestProjects[0].id);",
 									"            break;",
 									"        }   ",
@@ -6637,143 +6332,6 @@
 							"path": [
 								"my",
 								"workspaces"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "400 projects.{p}.workspace-member-permissions",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(400);",
-									"});",
-									"// WARNING: THIS TEST MAY FAIL DUE TO IT'S NOT VERIFIED THE USER IS A PJ-ADMIN",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
-									"    pm.expect(jsonData.error.detail).to.eql(\"not-premium-workspace-error\");",
-									"",
-									"    // Validate we're not returning more fields than expected",
-									"    var numOfReturnedFields = Object.keys(jsonData).length;",
-									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(1);",
-									"    pm.expect(numOfErrorFields).to.equal(3);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-id}}",
-								"workspace-member-permissions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "400 projects.{p}.workspace-member-permissions",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									"",
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(400);",
-									"});",
-									"// WARNING: THIS TEST MAY FAIL DUE TO IT'S NOT VERIFIED THE USER IS A PJ-ADMIN",
-									"pm.test(\"Error JSON is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.code).to.eql(\"bad-request\");",
-									"    pm.expect(jsonData.error.detail).to.eql(\"not-premium-workspace-error\");",
-									"",
-									"    // Validate we're not returning more fields than expected",
-									"    var numOfReturnedFields = Object.keys(jsonData).length;",
-									"    var numOfErrorFields = Object.keys(jsonData.error).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(1);",
-									"    pm.expect(numOfErrorFields).to.equal(3);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"permissions\": [\n        \"view_story\",\n        \"modify_story\"\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workspace-member-permissions",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-id}}",
-								"workspace-member-permissions"
 							]
 						}
 					},
@@ -7162,7 +6720,7 @@
 									"  ",
 									"            // Validate we're not returning more fields than expected",
 									"            var numOfReturnedFields = Object.keys(ws).length;",
-									"            pm.expect(numOfReturnedFields).to.equal(11);",
+									"            pm.expect(numOfReturnedFields).to.equal(9);",
 									"            numOfReturnedFields = Object.keys(ws.latestProjects[0]).length;",
 									"            pm.expect(numOfReturnedFields).to.equal(8);",
 									"        }",
@@ -7182,7 +6740,7 @@
 									"",
 									"            // Validate we're not returning more fields than expected",
 									"            var numOfReturnedFields = Object.keys(ws).length;",
-									"            pm.expect(numOfReturnedFields).to.equal(11);",
+									"            pm.expect(numOfReturnedFields).to.equal(9);",
 									"            numOfReturnedFields = Object.keys(ws.invitedProjects[0]).length;",
 									"            pm.expect(numOfReturnedFields).to.equal(8);",
 									"",
@@ -7252,12 +6810,10 @@
 									"    pm.expect(jsonRes).to.have.property(\"invitedProjects\");",
 									"    pm.expect(jsonRes).to.have.property(\"totalProjects\");",
 									"    pm.expect(jsonRes).to.have.property(\"hasProjects\");",
-									"    pm.expect(jsonRes).to.have.property(\"isPremium\");",
 									"    pm.expect(jsonRes).to.have.property(\"userRole\");",
-									"    pm.expect(jsonRes).to.have.property(\"userIsOwner\");",
 									"    ",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(11);        ",
+									"    pm.expect(numOfReturnedFields).to.equal(9);        ",
 									"});"
 								],
 								"type": "text/javascript"

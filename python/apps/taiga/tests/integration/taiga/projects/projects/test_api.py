@@ -6,11 +6,8 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 import pytest
-from asgiref.sync import sync_to_async
 from fastapi import status
 from taiga.permissions import choices
-from taiga.projects.projects.models import Project
-from taiga.projects.roles.models import ProjectRole
 from tests.utils import factories as f
 from tests.utils.images import create_valid_testing_image
 
@@ -238,61 +235,6 @@ async def test_get_project_public_permissions_anonymous_user(client):
 
 
 ##########################################################
-# GET /projects/<id>/workspace-member-permissions
-##########################################################
-
-
-async def test_get_project_workspace_member_permissions_ok(client):
-    workspace = await f.create_workspace(is_premium=True)
-    project = await f.create_project(workspace=workspace)
-
-    client.login(project.created_by)
-    response = client.get(f"/projects/{project.b64id}/workspace-member-permissions")
-    assert response.status_code == status.HTTP_200_OK, response.text
-
-
-async def test_get_project_workspace_member_permissions_no_premium(client):
-    workspace = await f.create_workspace(is_premium=False)
-    project = await f.create_project(workspace=workspace, created_by=workspace.created_by)
-
-    client.login(project.created_by)
-    response = client.get(f"/projects/{project.b64id}/workspace-member-permissions")
-    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
-
-
-@sync_to_async
-def _get_role(project: Project) -> ProjectRole:
-    return project.roles.get(slug="general")
-
-
-async def test_get_project_workspace_member_permissions_no_admin(client):
-    project = await f.create_project()
-    user2 = await f.create_user()
-    role = await _get_role(project=project)
-
-    await f.create_project_membership(user=user2, project=project, role=role)
-    client.login(user2)
-    response = client.get(f"/projects/{project.b64id}/workspace-member-permissions")
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-async def test_get_project_workspace_member_permissions_no_member(client):
-    project = await f.create_project()
-    user = await f.create_user()
-
-    client.login(user)
-    response = client.get(f"/projects/{project.b64id}/workspace-member-permissions")
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-async def test_get_project_workspace_member_permissions_anonymous_user(client):
-    project = await f.create_project()
-
-    response = client.get(f"/projects/{project.b64id}/workspace-member-permissions")
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-##########################################################
 # PATCH /projects/<id>/
 ##########################################################
 
@@ -352,9 +294,8 @@ async def test_update_project_no_admin(client):
 @pytest.mark.parametrize(
     "permissions",
     [
-        (["view_task", "view_story"]),
-        (["view_task", "view_story", "comment_story"]),
-        (["view_task", "comment_task", "view_story"]),
+        (["view_story"]),
+        (["view_story", "modify_story"]),
     ],
 )
 async def test_update_project_public_permissions_ok(client, permissions):
@@ -368,7 +309,7 @@ async def test_update_project_public_permissions_ok(client, permissions):
 
 async def test_update_project_public_permissions_project_not_found(client):
     user = await f.create_user()
-    data = {"permissions": ["view_story", "view_task"]}
+    data = {"permissions": ["view_story"]}
     non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
     client.login(user)
@@ -379,9 +320,8 @@ async def test_update_project_public_permissions_project_not_found(client):
 @pytest.mark.parametrize(
     "permissions",
     [
-        (["view_task"]),
-        (["comment_story"]),
-        (["comment_task"]),
+        (["modify_story"]),
+        (["delete_story"]),
     ],
 )
 async def test_update_project_public_permissions_incompatible(client, permissions):
@@ -427,87 +367,6 @@ async def test_update_project_public_permissions_anonymous_user(client):
     data = {"permissions": []}
 
     response = client.put(f"/projects/{project.b64id}/public-permissions", json=data)
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-##########################################################
-# PUT /projects/<id>/workspace-member-permissions
-##########################################################
-
-
-async def test_update_project_workspace_member_permissions_ok(client):
-    workspace = await f.create_workspace(is_premium=True)
-    project = await f.create_project(workspace=workspace)
-    data = {"permissions": ["view_task", "view_story"]}
-
-    client.login(project.created_by)
-    response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
-    assert response.status_code == status.HTTP_200_OK, response.text
-
-
-async def test_update_project_workspace_member_permissions_no_premium(client):
-    workspace = await f.create_workspace(is_premium=False)
-    project = await f.create_project(workspace=workspace)
-    data = {"permissions": ["view_task", "view_story"]}
-
-    client.login(project.created_by)
-    response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
-    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
-
-
-async def test_update_project_workspace_member_permissions_project_not_found(client):
-    user = await f.create_user()
-    data = {"permissions": ["view_task", "view_story"]}
-    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
-
-    client.login(user)
-    response = client.put(f"/projects/{non_existent_id}/workspace-member-permissions", json=data)
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-async def test_update_project_workspace_member_permissions_incompatible(client):
-    project = await f.create_project()
-    data = {"permissions": ["view_task"]}
-
-    client.login(project.created_by)
-    response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-
-
-async def test_update_project_workspace_member_permissions_not_valid(client):
-    project = await f.create_project()
-    data = {"permissions": ["not_valid"]}
-
-    client.login(project.created_by)
-    response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
-
-
-async def test_update_project_workspace_member_permissions_no_admin(client):
-    project = await f.create_project()
-    user2 = await f.create_user()
-    data = {"permissions": []}
-
-    client.login(user2)
-    response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-async def test_update_project_workspace_member_permissions_no_member(client):
-    project = await f.create_project()
-    user = await f.create_user()
-    data = {"permissions": []}
-
-    client.login(user)
-    response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-async def test_update_project_workspace_member_permissions_anonymous_user(client):
-    project = await f.create_project()
-    data = {"permissions": []}
-
-    response = client.put(f"/projects/{project.b64id}/workspace-member-permissions", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 

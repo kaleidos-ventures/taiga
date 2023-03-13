@@ -160,19 +160,6 @@ async def test_list_workspace_invited_projects_for_user():
 
 
 ##########################################################
-# list_workspace_member_permissions
-##########################################################
-
-
-async def test_list_workspace_member_permissions_not_premium():
-    workspace = f.build_workspace(is_premium=False)
-    project = f.build_project(workspace=workspace)
-
-    with pytest.raises(ex.NotPremiumWorkspaceError):
-        await services.list_workspace_member_permissions(project=project)
-
-
-##########################################################
 # get_project_detail
 ##########################################################
 
@@ -190,7 +177,7 @@ async def test_get_project_detail():
         fake_permissions_services.get_user_permissions_for_project.return_value = []
         fake_permissions_services.has_pending_project_invitation.return_value = True
         fake_workspaces_services.get_workspace_nested.return_value = WorkspaceNestedSerializer(
-            id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin", is_premium=True
+            id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin"
         )
         await services.get_project_detail(project=project, user=workspace.created_by)
 
@@ -220,7 +207,7 @@ async def test_get_project_detail():
 async def test_get_project_detail_anonymous():
     user = AnonymousUser()
     workspace = f.build_workspace()
-    permissions = ["add_task", "view_task", "modify_story", "view_story"]
+    permissions = ["modify_story", "view_story"]
     project = f.build_project(workspace=workspace, public_permissions=permissions)
 
     with (
@@ -232,7 +219,7 @@ async def test_get_project_detail_anonymous():
         fake_permissions_services.get_user_permissions_for_project.return_value = []
         fake_permissions_services.has_pending_project_invitation.return_value = False
         fake_workspaces_services.get_workspace_nested.return_value = WorkspaceNestedSerializer(
-            id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin", is_premium=True
+            id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin"
         )
         await services.get_project_detail(project=project, user=user)
 
@@ -300,7 +287,7 @@ async def test_update_project_name_empty(tqmanager):
 
 async def test_update_project_public_permissions_ok():
     project = f.build_project()
-    permissions = ["add_task", "view_task", "modify_story", "view_story"]
+    permissions = ["modify_story", "view_story"]
 
     with (
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_project_repository,
@@ -311,42 +298,6 @@ async def test_update_project_public_permissions_ok():
             project=project, values={"public_permissions": permissions}
         )
         fake_projects_events.emit_event_when_project_permissions_are_updated.assert_awaited_with(project=project)
-
-
-##########################################################
-# update_project_workspace_member_permissions
-##########################################################
-
-
-async def test_update_project_workspace_member_permissions_ok():
-    workspace = f.build_workspace(is_premium=True)
-    project = f.build_project(workspace=workspace)
-    permissions = ["add_task", "view_task", "modify_story", "view_story"]
-
-    with (
-        patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_project_repository,
-        patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
-    ):
-        await services.update_project_workspace_member_permissions(project=project, permissions=permissions)
-        fake_project_repository.update_project.assert_awaited_once_with(
-            project=project, values={"workspace_member_permissions": permissions}
-        )
-        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_awaited_with(project=project)
-
-
-async def test_update_project_workspace_member_permissions_not_premium():
-    workspace = f.build_workspace(is_premium=False)
-    project = f.build_project(workspace=workspace)
-    incompatible_permissions = ["view_story"]
-
-    with (
-        patch("taiga.projects.projects.services.projects_events", autospec=True) as fake_projects_events,
-        pytest.raises(ex.NotPremiumWorkspaceError),
-    ):
-        await services.update_project_workspace_member_permissions(
-            project=project, permissions=incompatible_permissions
-        )
-        fake_projects_events.emit_event_when_project_permissions_are_updated.assert_not_awaited()
 
 
 ##########################################################

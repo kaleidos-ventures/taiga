@@ -48,7 +48,7 @@ async def _create_scenario_freelance_working_for_herself() -> None:
     # admin role is created by default
     # usera0 ws-admin
     # ws "World domination" with no other members
-    workspace = await factories.create_workspace(created_by=usera0, name="World domination", is_premium=False)
+    workspace = await factories.create_workspace(created_by=usera0, name="World domination")
 
     # PROJECTS
     # it applies a template and creates also admin and general roles
@@ -98,11 +98,11 @@ async def _create_scenario_freelance_working_for_others() -> None:
     # admin role is created by default
     # userb0 ws-admin
     # ws "My projects" with no other members
-    ws_my_projects = await factories.create_workspace(created_by=userb0, name="My projects", is_premium=False)
+    ws_my_projects = await factories.create_workspace(created_by=userb0, name="My projects")
     # ws "Projects" with no other members
-    ws_projects = await factories.create_workspace(created_by=userb0, name="Projects", is_premium=False)
+    ws_projects = await factories.create_workspace(created_by=userb0, name="Projects")
     # ws random-name with no other members
-    ws_random_name = await factories.create_workspace(created_by=userb0, is_premium=False)
+    ws_random_name = await factories.create_workspace(created_by=userb0)
 
     # PROJECTS
     # it applies a template and creates also admin and general roles
@@ -171,7 +171,7 @@ async def _create_scenario_user_in_society_working_for_others() -> None:
     # admin role is created by default
     # userc0 ws-admin
     # ws "Personal" with no other members
-    workspace = await factories.create_workspace(created_by=userc0, name="Personal", is_premium=False)
+    workspace = await factories.create_workspace(created_by=userc0, name="Personal")
 
     # PROJECTS
     # it applies a template and creates also admin and general roles
@@ -201,8 +201,8 @@ async def _create_scenario_manager_in_society_working_for_others() -> None:
     # WORKSPACES
     # admin role is created by default
     # userd0 ws-admin
-    ws_internal = await factories.create_workspace(created_by=userd0, name="Internal", is_premium=False)
-    ws_projects = await factories.create_workspace(created_by=userd0, name="Projects", is_premium=False)
+    ws_internal = await factories.create_workspace(created_by=userd0, name="Internal")
+    ws_projects = await factories.create_workspace(created_by=userd0, name="Projects")
 
     workspaces = [ws_internal, ws_projects]
     # ws with ws-admins between 0-10 of usersdx
@@ -212,7 +212,7 @@ async def _create_scenario_manager_in_society_working_for_others() -> None:
             await _create_workspace_memberships(workspace_id=ws.id, users=usersdx[:num_ws_admins], role_slug="admin")
 
     # ws "Personal" with no other members
-    ws_personal = await factories.create_workspace(created_by=userd0, name="Personal", is_premium=False)
+    ws_personal = await factories.create_workspace(created_by=userd0, name="Personal")
 
     # PROJECTS
     # it applies a template and creates also admin and general roles
@@ -278,10 +278,10 @@ async def _create_scenario_manager_in_society_with_big_client() -> None:
     # WORKSPACES
     # admin role is created by default
     # usere0 ws-admin
-    ws_random_name1 = await factories.create_workspace(created_by=usere0, is_premium=False)
-    ws_random_name2 = await factories.create_workspace(created_by=usere0, is_premium=False)
-    ws_random_name3 = await factories.create_workspace(created_by=usere0, is_premium=False)
-    ws_projects = await factories.create_workspace(created_by=usere0, name="Projects", is_premium=False)
+    ws_random_name1 = await factories.create_workspace(created_by=usere0)
+    ws_random_name2 = await factories.create_workspace(created_by=usere0)
+    ws_random_name3 = await factories.create_workspace(created_by=usere0)
+    ws_projects = await factories.create_workspace(created_by=usere0, name="Projects")
 
     workspaces = [ws_random_name1, ws_random_name2, ws_random_name3, ws_projects]
     # ws with ws-admins between 0-4 of usersex
@@ -291,7 +291,7 @@ async def _create_scenario_manager_in_society_with_big_client() -> None:
             await _create_workspace_memberships(workspace_id=ws.id, users=usersex[:num_ws_admins], role_slug="admin")
 
     # ws "Personal" with no other members
-    ws_personal = await factories.create_workspace(created_by=usere0, name="Personal", is_premium=False)
+    ws_personal = await factories.create_workspace(created_by=usere0, name="Personal")
 
     # PROJECTS
     # it applies a template and creates also admin and general roles
@@ -380,10 +380,10 @@ async def _create_scenario_manager_in_society_with_own_product() -> None:
     # admin role is created by default
     # userf0 ws-admin
     # ws "Projects" userf1, userf2 and userf3 ws-admins
-    ws_projects = await factories.create_workspace(created_by=userf0, name="Projects", is_premium=False)
+    ws_projects = await factories.create_workspace(created_by=userf0, name="Projects")
     await _create_workspace_memberships(workspace_id=ws_projects.id, users=[userf1, userf2, userf3], role_slug="admin")
     # ws "Personal" with no other members
-    ws_personal = await factories.create_workspace(created_by=userf0, name="Personal", is_premium=False)
+    ws_personal = await factories.create_workspace(created_by=userf0, name="Personal")
 
     # PROJECTS
     # it applies a template and creates also admin and general roles
@@ -436,12 +436,12 @@ async def _create_scenario_manager_in_big_society_with_own_product() -> None:
     # WORKSPACES
     # admin role is created by default
     # userg0 ws-admin
-    ws_inner = await factories.create_workspace(created_by=userg0, name="Inner", is_premium=False)
-    ws_marketing = await factories.create_workspace(created_by=userg0, name="Marketing & comms", is_premium=False)
-    ws_support = await factories.create_workspace(created_by=userg0, name="Support", is_premium=False)
-    ws_events = await factories.create_workspace(created_by=userg0, name="Events", is_premium=False)
-    ws_mobile = await factories.create_workspace(created_by=userg0, name="Mobile app", is_premium=False)
-    ws_desktop = await factories.create_workspace(created_by=userg0, name="Desktop app", is_premium=False)
+    ws_inner = await factories.create_workspace(created_by=userg0, name="Inner")
+    ws_marketing = await factories.create_workspace(created_by=userg0, name="Marketing & comms")
+    ws_support = await factories.create_workspace(created_by=userg0, name="Support")
+    ws_events = await factories.create_workspace(created_by=userg0, name="Events")
+    ws_mobile = await factories.create_workspace(created_by=userg0, name="Mobile app")
+    ws_desktop = await factories.create_workspace(created_by=userg0, name="Desktop app")
 
     workspaces = [ws_inner, ws_marketing, ws_support, ws_events, ws_mobile, ws_desktop]
     # ws with ws-admins between 1-9 of usersgx

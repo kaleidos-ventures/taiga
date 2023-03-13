@@ -18,12 +18,7 @@
                   "comment_story",
                   "delete_story",
                   "modify_story",
-                  "view_story",
-                  "add_task",
-                  "comment_task",
-                  "delete_task",
-                  "modify_task",
-                  "view_task"
+                  "view_story"
                 ]
             },
             {
@@ -36,12 +31,7 @@
                   "comment_story",
                   "delete_story",
                   "modify_story",
-                  "view_story",
-                  "add_task",
-                  "comment_task",
-                  "delete_task",
-                  "modify_task",
-                  "view_task"
+                  "view_story"
                 ]
             }
         ],

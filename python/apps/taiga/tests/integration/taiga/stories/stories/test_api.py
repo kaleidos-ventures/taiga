@@ -13,11 +13,6 @@ from tests.utils import factories as f
 pytestmark = pytest.mark.django_db(transaction=True)
 
 FULL_PERMISSIONS = {
-    "add_task",
-    "comment_task",
-    "delete_task",
-    "modify_task",
-    "view_task",
     "add_story",
     "comment_story",
     "delete_story",

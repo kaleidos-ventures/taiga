@@ -88,7 +88,6 @@ async def test_get_workspace():
 async def test_get_workspace_detail():
     workspace = await f.create_workspace(name="test")
     workspace.has_projects = True
-    workspace.user_is_owner = True
 
     with (
         patch("taiga.workspaces.workspaces.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,

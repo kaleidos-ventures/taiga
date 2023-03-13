@@ -15,13 +15,6 @@ class EditStoryPermissions(TextChoices):
     MODIFY_STORY = "modify_story", "Modify story"
 
 
-class EditTaskPermissions(TextChoices):
-    ADD_TASK = "add_task", "Add task"
-    COMMENT_TASK = "comment_task", "Comment task"
-    DELETE_TASK = "delete_task", "Delete task"
-    MODIFY_TASK = "modify_task", "Modify task"
-
-
 # possible permissions for members or public members
 # directly applied to default "general" project role
 # these may be changed by a project admin
@@ -33,12 +26,6 @@ class ProjectPermissions(TextChoices):
     DELETE_STORY = "delete_story", "Delete story"
     MODIFY_STORY = "modify_story", "Modify story"
     VIEW_STORY = "view_story", "View story"
-    # Task permissions
-    ADD_TASK = "add_task", "Add task"
-    COMMENT_TASK = "comment_task", "Comment task"
-    DELETE_TASK = "delete_task", "Delete task"
-    MODIFY_TASK = "modify_task", "Modify task"
-    VIEW_TASK = "view_task", "View task"
 
 
 # possible permissions for workspace members

@@ -8,7 +8,6 @@
 
 import type { Merge } from 'type-fest';
 import { Membership } from './membership.model';
-import { Milestone } from './milestone.model';
 import { Story } from './story.model';
 import { Workspace } from './workspace.model';
 
@@ -22,7 +21,6 @@ export interface Project {
   description: string | null;
   color: number;
   workspace: Pick<Workspace, 'id' | 'name' | 'slug' | 'color' | 'userRole'>;
-  milestones: Milestone[];
   userIsAdmin: boolean;
   userIsMember: boolean;
   userPermissions: string[];

@@ -22,9 +22,9 @@ import { Store } from '@ngrx/store';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { Project } from '@taiga/data';
 import { AvatarModule } from '@taiga/ui/avatar';
+import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
-import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 
 interface ProjectMenuDialog {
   hover: boolean;
@@ -188,26 +188,8 @@ export class ProjectNavigationMenuComponent {
       return;
     }
 
-    // TODO WHEN REAL DATA
-    // const children: ProjectMenuDialog['children'] = this.milestones.map((milestone) => {
-    //   return {
-    //     text: milestone.name,
-    //     link: ['http://taiga.io']
-    //   };
-    // });
-
-    // children.unshift({
-    //   text: this.translocoService.translate('common.backlog'),
-    //   link: ['http://taiga.io']
-    // });
-
     this.initDialog(event.target as HTMLElement, 'scrum' /* children */);
   }
-
-  // When milestones available
-  // public get milestones(): Milestone[] {
-  //   return this.project.milestones.filter((milestone) => !milestone.closed).reverse().slice(0, 7);
-  // }
 
   public toggleScrumChildMenu() {
     if (this.collapsed) {

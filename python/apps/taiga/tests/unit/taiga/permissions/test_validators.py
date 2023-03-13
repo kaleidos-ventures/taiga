@@ -24,8 +24,6 @@ class PermissionsValidator(BaseModel):
     [
         ([], []),
         (["comment_story", "view_story"], ["comment_story", "view_story"]),
-        (["view_story", "comment_story", "view_task"], ["view_story", "comment_story", "view_task"]),
-        (["view_story", "view_task"], ["view_story", "view_task"]),
         (["view_story", "view_story"], ["view_story", "view_story"]),
     ],
 )
@@ -44,9 +42,6 @@ def test_permissions_are_valid_and_compatible(permissions: list[str], result: li
         ["non_existent"],
         ["view_story", "foo"],
         ["add_story", "modify_story", "comment_story"],
-        ["comment_task", "view_story"],
-        ["modify_task", "comment_story"],
-        ["view_task", "comment_story"],
     ],
 )
 def test_permissions_are_invalid_or_not_compatible(permissions: list[str] | None) -> None:

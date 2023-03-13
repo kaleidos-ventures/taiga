@@ -43,11 +43,10 @@ class WorkspaceAdmin(admin.ModelAdmin[Workspace]):
     fieldsets = (
         (None, {"fields": (("id", "b64id"), "name", "created_by")}),
         ("Extra info", {"classes": ("collapse",), "fields": ("color", ("created_at", "modified_at"))}),
-        ("Permissions", {"fields": ("is_premium",)}),
     )
     readonly_fields = ("id", "b64id", "created_at", "modified_at")
-    list_display = ["b64id", "name", "created_by", "is_premium"]
-    list_filter = ("is_premium", "created_by")
+    list_display = ["b64id", "name", "created_by"]
+    list_filter = "created_by"  # type: ignore
     search_fields = ["id", "name"]
     ordering = ("name",)
     inlines = [

@@ -25,8 +25,6 @@ class Workspace(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin)
         verbose_name="members",
     )
 
-    is_premium = models.BooleanField(null=False, blank=True, default=False, verbose_name="is premium")
-
     class Meta:
         verbose_name = "workspace"
         verbose_name_plural = "workspaces"

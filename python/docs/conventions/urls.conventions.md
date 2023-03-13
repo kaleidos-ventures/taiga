@@ -27,7 +27,7 @@ PUT   /projects/<pj_id>/roles/<role_slug>/permissions  # update role permissions
 Create endpoints are expected in the first level resource. Examples:
 
 POST /workspaces
-POST /tasks
+POST /stories
 POST /users
 
 ## Routes

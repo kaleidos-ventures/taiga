@@ -12,7 +12,6 @@ from uuid import UUID
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import (
     BooleanField,
-    Case,
     CharField,
     Coalesce,
     Count,
@@ -24,7 +23,6 @@ from taiga.base.db.models import (
     QuerySet,
     Subquery,
     Value,
-    When,
 )
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects.models import Project
@@ -86,7 +84,6 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
         total_projects = len(projects_ids)
         projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_at")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
-        user_is_owner = Workspace.objects.get(id=ws_id).created_by.id == user.id
         invited_projects_qs = Project.objects.filter(
             Q(invitations__user_id=user.id)
             | (Q(invitations__user__isnull=True) & Q(invitations__email__iexact=user.email)),
@@ -102,7 +99,6 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
             .annotate(user_role=Value("admin", output_field=CharField()))
-            .annotate(user_is_owner=Value(user_is_owner, output_field=BooleanField()))
         )
         admin_ws = chain(admin_ws, qs)
 
@@ -143,7 +139,6 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
             .annotate(user_role=Value("member", output_field=CharField()))
-            .annotate(user_is_owner=Value(False, output_field=BooleanField()))
         )
         member_ws = chain(member_ws, qs)
 
@@ -189,7 +184,6 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
             .annotate(user_role=Value("guest", output_field=CharField()))
-            .annotate(user_is_owner=Value(False, output_field=BooleanField()))
         )
         guest_ws = chain(guest_ws, qs)
 
@@ -220,11 +214,6 @@ def get_workspace_detail(
 ) -> Workspace | None:
     qs = _apply_filters_to_queryset(filters=filters, qs=DEFAULT_QUERYSET)
     qs = qs.annotate(has_projects=Exists(Project.objects.filter(workspace=OuterRef("pk"))))
-    qs = qs.annotate(
-        user_is_owner=Case(
-            When(created_by_id=user_id, then=Value(True)), default=Value(False), output_field=BooleanField()
-        )
-    )
 
     try:
         return qs.get()
@@ -247,9 +236,6 @@ def get_workspace_summary(
 def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
     # Generic annotations:
     has_projects = Exists(Project.objects.filter(workspace=OuterRef("pk")))
-    user_is_owner = Case(
-        When(created_by_id=user.id, then=Value(True)), default=Value(False), output_field=BooleanField()
-    )
     user_role: Callable[[str], Value] = lambda role_name: Value(role_name, output_field=CharField())
 
     # Generic prefetch
@@ -277,7 +263,6 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             .annotate(total_projects=Coalesce(total_projects, 0))
             .annotate(has_projects=has_projects)
             .annotate(user_role=user_role("admin"))
-            .annotate(user_is_owner=user_is_owner)
             .get()
         )
     except Workspace.DoesNotExist:
@@ -315,7 +300,6 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             .annotate(total_projects=Coalesce(total_projects, 0))
             .annotate(has_projects=has_projects)
             .annotate(user_role=user_role("member"))
-            .annotate(user_is_owner=user_is_owner)
             .get()
         )
     except Workspace.DoesNotExist:
@@ -358,7 +342,6 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             .annotate(total_projects=Coalesce(total_projects, 0))
             .annotate(has_projects=has_projects)
             .annotate(user_role=user_role("guest"))
-            .annotate(user_is_owner=user_is_owner)
             .get()
         )
     except Workspace.DoesNotExist:

@@ -110,12 +110,6 @@ export class ProjectApiService {
     );
   }
 
-  public getworkspacePermissions(id: Project['id']) {
-    return this.http.get<string[]>(
-      `${this.config.apiUrl}/projects/${id}/workspace-member-permissions`
-    );
-  }
-
   public myContacts(emails: string[]) {
     return this.http.post<Contact[]>(`${this.config.apiUrl}/my/contacts`, {
       emails,
@@ -179,34 +173,6 @@ export class ProjectApiService {
     });
     return this.http.put<string[]>(
       `${this.config.apiUrl}/projects/${id}/public-permissions`,
-      {
-        permissions,
-      }
-    );
-  }
-
-  public putworkspacePermissions(id: Project['id'], permissions: string[]) {
-    permissions = permissions.filter((permission) => {
-      const validPermission = [
-        'add_member',
-        'delete_story',
-        'delete_task',
-        'modify_task',
-        'view_task',
-        'modify_story',
-        'comment_story',
-        'view_story',
-        'add_task',
-        'add_story',
-        'comment_task',
-        'delete_project',
-        'modify_project',
-      ];
-
-      return validPermission.includes(permission);
-    });
-    return this.http.put<string[]>(
-      `${this.config.apiUrl}/projects/${id}/workspace-member-permissions`,
       {
         permissions,
       }

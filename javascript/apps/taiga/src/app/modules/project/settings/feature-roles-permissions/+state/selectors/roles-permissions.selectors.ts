@@ -8,8 +8,5 @@
 
 import { rolesPermissionsFeature } from '../reducers/roles-permissions.reducer';
 
-export const {
-  selectMemberRoles,
-  selectPublicPermissions,
-  selectWorkspacePermissions,
-} = rolesPermissionsFeature;
+export const { selectMemberRoles, selectPublicPermissions } =
+  rolesPermissionsFeature;

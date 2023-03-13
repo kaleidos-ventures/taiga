@@ -50,7 +50,6 @@ import {
 import {
   selectMemberRoles,
   selectPublicPermissions,
-  selectWorkspacePermissions,
 } from './+state/selectors/roles-permissions.selectors';
 import { EntityConflictPermission } from './models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
@@ -108,7 +107,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   public form = this.fb.group({});
   public publicForm = this.fb.group({});
-  public workspaceForm = this.fb.group({});
 
   public get nativeElement() {
     return this.el.nativeElement as HTMLElement;
@@ -120,12 +118,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
 
   public getPublicPermissionsForm() {
     const fg = this.publicForm.get('public') as unknown;
-
-    return fg as FormGroup;
-  }
-
-  public getworkspacePermissionsForm() {
-    const fg = this.workspaceForm.get('workspace') as unknown;
 
     return fg as FormGroup;
   }
@@ -143,7 +135,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     private state: RxState<{
       memberRoles?: Role[];
       publicPermissions?: string[];
-      workspacePermissions?: string[];
       project: Project;
       conflicts: EntityConflictPermission[];
     }>
@@ -184,11 +175,6 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
     this.state.connect(
       'publicPermissions',
       this.store.select(selectPublicPermissions).pipe(filterNil())
-    );
-
-    this.state.connect(
-      'workspacePermissions',
-      this.store.select(selectWorkspacePermissions).pipe(filterNil())
     );
 
     this.state.hold(this.state.select('project'), (project) => {
@@ -335,13 +321,10 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       .pipe(
         untilDestroyed(this),
         withLatestFrom(this.state.select('project')),
-        map(([, project]) => {
-          if (project.workspace.isPremium && this.fragments.length === 3) {
+        map(() => {
+          if (this.fragments.length === 3) {
             return true;
-          } else if (
-            !project.workspace.isPremium &&
-            this.fragments.length === 2
-          ) {
+          } else if (this.fragments.length === 2) {
             return true;
           }
 

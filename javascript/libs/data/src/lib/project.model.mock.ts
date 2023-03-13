@@ -32,10 +32,7 @@ const getMilestones = () => {
 
 export const ProjectMockFactory = (
   milestones = false,
-  workspace?: Pick<
-    Workspace,
-    'id' | 'color' | 'name' | 'slug' | 'isPremium' | 'userRole'
-  >
+  workspace?: Pick<Workspace, 'id' | 'color' | 'name' | 'slug' | 'userRole'>
 ): Project => {
   const project = {
     id: randUuid(),

@@ -16,13 +16,11 @@ export const projectFeatureKey = 'project';
 export interface ProjectState {
   memberRoles: Role[] | null;
   publicPermissions: string[] | null;
-  workspacePermissions: string[] | null;
 }
 
 export const initialState: ProjectState = {
   memberRoles: null,
   publicPermissions: null,
-  workspacePermissions: null,
 };
 
 export const reducer = createImmerReducer(
@@ -47,7 +45,6 @@ export const reducer = createImmerReducer(
   on(ProjectActions.resetPermissions, (state): ProjectState => {
     state.memberRoles = null;
     state.publicPermissions = null;
-    state.workspacePermissions = null;
 
     return state;
   }),

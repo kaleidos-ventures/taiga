@@ -18,7 +18,6 @@ export const WorkspaceMockFactory = (): Workspace => {
     color: randNumber(),
     hasProjects: true,
     userRole: 'guest',
-    isPremium: true,
     invitedProjects: [],
     latestProjects: [],
     totalProjects: randNumber(),
@@ -35,7 +34,6 @@ export const WorkspaceMockFactory = (): Workspace => {
         color: workspace.color,
         slug: workspace.slug,
         name: workspace.name,
-        isPremium: workspace.isPremium,
         userRole: workspace.userRole,
       })
     );
@@ -48,7 +46,6 @@ export const WorkspaceMockFactory = (): Workspace => {
         color: workspace.color,
         slug: workspace.slug,
         name: workspace.name,
-        isPremium: workspace.isPremium,
         userRole: workspace.userRole,
       })
     );
@@ -70,7 +67,6 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
     color: randNumber(),
     hasProjects: true,
     userRole: 'admin',
-    isPremium: true,
     invitedProjects: [],
     latestProjects: [],
     totalProjects: randNumber(),
@@ -87,7 +83,6 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
         color: workspace.color,
         slug: workspace.slug,
         name: workspace.name,
-        isPremium: workspace.isPremium,
         userRole: workspace.userRole,
       })
     );
@@ -99,7 +94,6 @@ export const WorkspaceAdminMockFactory = (): Workspace => {
       color: workspace.color,
       slug: workspace.slug,
       name: workspace.name,
-      isPremium: workspace.isPremium,
       userRole: workspace.userRole,
     });
 
@@ -125,7 +119,6 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
     color: randNumber(),
     hasProjects: true,
     userRole: 'member',
-    isPremium: true,
     invitedProjects: [],
     latestProjects: [],
     totalProjects: randNumber(),
@@ -142,7 +135,6 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
         color: workspace.color,
         slug: workspace.slug,
         name: workspace.name,
-        isPremium: workspace.isPremium,
         userRole: workspace.userRole,
       })
     );
@@ -154,7 +146,6 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
       color: workspace.color,
       slug: workspace.slug,
       name: workspace.name,
-      isPremium: workspace.isPremium,
       userRole: workspace.userRole,
     });
 
@@ -168,7 +159,6 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
       color: workspace.color,
       slug: workspace.slug,
       name: workspace.name,
-      isPremium: workspace.isPremium,
       userRole: workspace.userRole,
     });
 
@@ -191,7 +181,6 @@ export const EmptyWorkspaceAdminMockFactory = (): Workspace => {
     color: randNumber(),
     hasProjects: true,
     userRole: 'admin',
-    isPremium: true,
     invitedProjects: [],
     latestProjects: [],
     totalProjects: 0,

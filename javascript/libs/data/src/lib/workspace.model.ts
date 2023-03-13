@@ -25,7 +25,6 @@ export interface Workspace {
   totalProjects: number;
   hasProjects: boolean;
   userRole: WorkspaceRole;
-  isPremium: boolean;
 }
 
 export interface WorkspaceCreation {

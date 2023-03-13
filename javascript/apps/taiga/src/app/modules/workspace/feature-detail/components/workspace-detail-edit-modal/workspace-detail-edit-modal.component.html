@@ -9,7 +9,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 <ng-container *transloco="let t">
   <tg-ui-modal
     [width]="500"
-    [open]="open"
+    [open]="showEditWorkspaceModal"
     (requestClose)="cancel()">
     <div
       role="dialog"
@@ -65,7 +65,7 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     </div>
   </tg-ui-modal>
   <tg-discard-changes-modal
-    [open]="showConfirmEditProjectModal"
+    [open]="showConfirmEditWorkspaceModal"
     (discard)="discardChanges()"
     (cancel)="keepEditing()"></tg-discard-changes-modal>
 </ng-container>

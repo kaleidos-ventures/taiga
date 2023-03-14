@@ -199,7 +199,7 @@ export class WsService {
       this.command('ping')
         .pipe(timeout(2000))
         .subscribe({
-          complete: () => {
+          error: () => {
             console.error('ping pong timeout');
             this.ws.close();
           },

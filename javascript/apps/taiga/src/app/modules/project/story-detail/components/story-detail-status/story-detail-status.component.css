@@ -54,6 +54,11 @@ Copyright (c) 2023-present Kaleidos INC
       }
     }
   }
+
+  .field {
+    align-items: center;
+    display: flex;
+  }
 }
 
 .status-tui {
@@ -112,5 +117,28 @@ Copyright (c) 2023-present Kaleidos INC
 
   & .status-name {
     @mixin ellipsis;
+  }
+}
+
+.field {
+  inline-size: 100%;
+  justify-content: space-between;
+  max-inline-size: 450px;
+
+  & .field-label {
+    color: var(--color-gray80);
+    display: block;
+    flex-shrink: 0;
+    inline-size: 30%;
+    line-height: 1.5;
+    margin-block-end: var(--spacing-4);
+    padding-inline-end: var(--spacing-8);
+  }
+
+  & .field-container {
+    background-color: var(--color-gray10);
+    inline-size: 100%;
+    padding-block: var(--spacing-4);
+    padding-inline: var(--spacing-4) var(--spacing-8);
   }
 }

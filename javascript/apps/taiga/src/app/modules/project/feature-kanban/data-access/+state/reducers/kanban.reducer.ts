@@ -125,7 +125,7 @@ export const reducer = createImmerReducer(
     return state;
   }),
   on(KanbanActions.createStory, (state, { story }): KanbanState => {
-    if ('tmpId' in story) {
+    if (!state.loadingStories && 'tmpId' in story) {
       state.scrollToStory.push(story.tmpId);
     }
 

@@ -13,6 +13,7 @@ Copyright (c) 2023-present Kaleidos INC
       cdkTrapFocus
       role="dialog"
       id="assign-user-dialog"
+      data-test="assign-user-dialog"
       aria-labelledby="assign-user-dialog-label"
       aria-modal="true"
       class="assign-user-container"
@@ -56,7 +57,7 @@ Copyright (c) 2023-present Kaleidos INC
             ">
             <button
               class="user-row"
-              data-test="unassigned-member"
+              data-test="assigned-member"
               [class.view-only]="viewOnly"
               type="button"
               [attr.aria-label]="
@@ -122,6 +123,7 @@ Copyright (c) 2023-present Kaleidos INC
             <input
               [tgAutoFocus]="vm.assigned.length === 0"
               inputRef
+              data-test="input-search"
               #searchInput
               formControlName="searchText"
               type="search"
@@ -140,6 +142,7 @@ Copyright (c) 2023-present Kaleidos INC
                 ">
                 <button
                   class="unassigned-member-row"
+                  data-test="unassigned-member"
                   type="button"
                   [attr.aria-label]="
                     !vm.membersPermissions[member.username].length

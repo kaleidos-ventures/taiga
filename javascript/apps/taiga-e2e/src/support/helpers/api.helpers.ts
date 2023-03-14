@@ -16,7 +16,7 @@ export function request<T>(
   body: Cypress.RequestBody | undefined,
   options: Partial<Cypress.RequestOptions> = {}
 ): Promise<Cypress.Response<T>> {
-  return new Promise((resolve) => {
+  return new Cypress.Promise((resolve) => {
     cy.window().then((window) => {
       const authStorage = window.localStorage.getItem('auth');
 

@@ -12,7 +12,7 @@ import {
   typeSignUpEmail,
   typeSignUpFullName,
   typeSignUpPassword,
-} from '../support/helpers/signup.helper';
+} from '@test/support/helpers/signup.helper';
 
 describe('Signup (basic)', () => {
   beforeEach(() => {
@@ -72,7 +72,7 @@ describe('Signup (basic)', () => {
   });
 
   it('Signup: email exists', () => {
-    typeSignUpEmail('user1@taiga.demo');
+    typeSignUpEmail('1user@taiga.demo');
     typeSignUpPassword();
     typeSignUpFullName();
     sendSignUpForm();
@@ -80,7 +80,7 @@ describe('Signup (basic)', () => {
   });
 
   it('Signup: case insensitive', () => {
-    typeSignUpEmail('USER1@taiga.demo');
+    typeSignUpEmail('1USER@taiga.demo');
     typeSignUpPassword();
     typeSignUpFullName();
     sendSignUpForm();

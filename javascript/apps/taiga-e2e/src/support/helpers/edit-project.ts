@@ -8,6 +8,18 @@
 
 import { Project } from '@taiga/data';
 
+export const displayProjectActions = () => {
+  cy.getBySel('project-actions').click();
+  cy.getBySel('project-actions-list').should('be.visible');
+};
+
+export const selectEditProjectAction = () => {
+  cy.getBySel('project-actions-list').within(() => {
+    cy.get('button').first().click({ force: true });
+  });
+  cy.getBySel('edit-project-modal').should('be.visible');
+};
+
 export const fillEditProject = (
   projectName?: Project['name'],
   projectDescription?: Project['description']

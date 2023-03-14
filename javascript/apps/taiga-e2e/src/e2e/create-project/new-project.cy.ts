@@ -12,7 +12,7 @@ import {
   addEmailToInvite,
   inviteUsers,
   typeEmailToInvite,
-} from '../support/helpers/invitation.helpers';
+} from '@test/support/helpers/invitation.helpers';
 import {
   cancelProject,
   launchProjectCreationInWS,
@@ -21,8 +21,8 @@ import {
   submitVisible,
   typeProjectDescription,
   typeProjectName,
-} from '../support/helpers/project.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
+} from '@test/support/helpers/project.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
 describe('Workspace Create from Overview', () => {
   let workspace: ReturnType<typeof WorkspaceMockFactory>;

@@ -16,14 +16,19 @@ import {
   openInvitationModal,
   selectRoleAdministrator,
   typeEmailToInvite,
-} from '../support/helpers/invitation.helpers';
+} from '@test/support/helpers/invitation.helpers';
 import {
   launchProjectCreationInWS,
   selectBlankProject,
   submitProject,
   typeProjectName,
-} from '../support/helpers/project.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
+} from '@test/support/helpers/project.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
+
+// 1user@taiga.demo
+// 2user@taiga.demo
+// 3user@taiga.demo
+// 4user@taiga.demo ADMIN
 
 describe('Invite users to project from overview when user is admin', () => {
   let workspace: ReturnType<typeof WorkspaceMockFactory>;
@@ -42,10 +47,10 @@ describe('Invite users to project from overview when user is admin', () => {
     typeProjectName(project.name);
     submitProject();
 
-    typeEmailToInvite('user4@taiga.demo');
+    typeEmailToInvite('4user@taiga.demo');
     addEmailToInvite();
     selectRoleAdministrator();
-    typeEmailToInvite('user2@taiga.demo, user3@taiga.demo');
+    typeEmailToInvite('2user@taiga.demo, 3user@taiga.demo');
     addEmailToInvite();
     inviteUsers();
     cy.getBySel('input-add-invites').should('not.exist');
@@ -56,7 +61,8 @@ describe('Invite users to project from overview when user is admin', () => {
         '/';
       cy.closeToast();
       logout();
-      cy.login('user2', '123123');
+      cy.visit('/login');
+      cy.login('2user', '123123');
       cy.visit(projectUrl);
       cy.getBySel('project-name').should('be.visible');
       acceptInvitationFromProjectOverview();
@@ -71,7 +77,7 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should not allow to add to list a project member when tap enter on keyboard', () => {
     openInvitationModal();
-    typeEmailToInvite('JORGE');
+    typeEmailToInvite('2user');
     cy.getBySel('suggestions-list').should('exist');
     cy.getBySel('info-user').should('exist');
     cy.getBySel('info-user')
@@ -85,7 +91,7 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should show a member in the autocomplete list when we write in caps', () => {
     openInvitationModal();
-    typeEmailToInvite('JORGE');
+    typeEmailToInvite('2USER');
     cy.getBySel('suggestions-list').should('exist');
     cy.getBySel('info-user').should('exist');
     cy.getBySel('info-user')
@@ -98,7 +104,7 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should show a member in the autocomplete list and avoid to added it to the list', () => {
     openInvitationModal();
-    typeEmailToInvite('jorge');
+    typeEmailToInvite('2user');
     cy.getBySel('suggestions-list').should('exist');
     cy.getBySel('info-user').should('exist');
     cy.getBySel('info-user')
@@ -111,7 +117,7 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should add invitation from a member if it is added by the email', () => {
     openInvitationModal();
-    typeEmailToInvite('user2@taiga.demo');
+    typeEmailToInvite('2user@taiga.demo');
     addEmailToInvite();
     cy.getBySel('user-list').should('exist');
   });
@@ -163,7 +169,7 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should add tag pending from an already sent invitation', () => {
     openInvitationModal();
-    typeEmailToInvite('elizabeth woods');
+    typeEmailToInvite('3user');
     cy.getBySel('suggestions-list').should('exist');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('exist');
@@ -174,13 +180,13 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should add tag pending when inviting same person 2 times in a row', () => {
     openInvitationModal();
-    typeEmailToInvite('susan');
+    typeEmailToInvite('7user');
     cy.getBySel('suggestions-list').should('exist');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('not.exist');
     inviteUsers();
     openInvitationModal();
-    typeEmailToInvite('susan');
+    typeEmailToInvite('7user');
     cy.getBySel('suggestions-list').should('exist');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('exist');
@@ -191,7 +197,7 @@ describe('Invite users to project from overview when user is admin', () => {
 
   it('Should considered defined role from the invitation sent before', () => {
     openInvitationModal();
-    typeEmailToInvite('susan wagner');
+    typeEmailToInvite('4user');
     cy.getBySel('suggestions-list').should('exist');
     addEmailToInvite();
     cy.getBySel('pending-tag').should('exist');
@@ -221,10 +227,10 @@ describe('Invite users to project from overview when user is not admin', () => {
     typeProjectName(project.name);
     submitProject();
 
-    typeEmailToInvite('user4@taiga.demo');
+    typeEmailToInvite('4user@taiga.demo');
     addEmailToInvite();
     selectRoleAdministrator();
-    typeEmailToInvite('user2@taiga.demo, user3@taiga.demo');
+    typeEmailToInvite('2user@taiga.demo, 3user@taiga.demo');
     addEmailToInvite();
     inviteUsers();
     cy.getBySel('input-add-invites').should('not.exist');
@@ -235,7 +241,7 @@ describe('Invite users to project from overview when user is not admin', () => {
         '/';
       cy.closeToast();
       logout();
-      cy.login('user2', '123123');
+      cy.login('2user', '123123');
       cy.visit(projectUrl);
       cy.getBySel('project-name').should('be.visible');
       acceptInvitationFromProjectOverview();
@@ -262,14 +268,14 @@ describe('Invitations banner', () => {
     typeProjectName(project.name);
     submitProject();
 
-    typeEmailToInvite('user2@taiga.demo');
+    typeEmailToInvite('2user@taiga.demo');
     addEmailToInvite();
     inviteUsers();
     cy.getBySel('input-add-invites').should('not.exist');
     cy.closeToast();
     logout();
     cy.getBySel('login-username').should('exist');
-    cy.login('user2', '123123');
+    cy.login('2user', '123123');
     cy.visit('/');
   });
 

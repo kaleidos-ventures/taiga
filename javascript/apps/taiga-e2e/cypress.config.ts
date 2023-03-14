@@ -6,8 +6,8 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { defineConfig } from 'cypress';
 import { nxE2EPreset } from '@nrwl/cypress/plugins/cypress-preset';
+import { defineConfig } from 'cypress';
 import setupNodeEvents from './src/plugins/index';
 
 const cypressJsonConfig = {

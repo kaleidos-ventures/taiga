@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { SelectHelper } from '../support/helpers/select.helper';
+import { SelectHelper } from '@test/support/helpers/select.helper';
 
 describe('User preferences', () => {
   beforeEach(() => {

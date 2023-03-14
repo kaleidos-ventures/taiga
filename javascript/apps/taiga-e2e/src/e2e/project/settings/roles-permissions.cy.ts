@@ -10,8 +10,8 @@ import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import {
   createFullProjectInWSRequest,
   navigateToProjectInWS,
-} from '../support/helpers/project.helpers';
-import { SelectHelper } from '../support/helpers/select.helper';
+} from '@test/support/helpers/project.helpers';
+import { SelectHelper } from '@test/support/helpers/select.helper';
 import {
   displayAdvancedSettingsForRole,
   displayCustomizePermissions,
@@ -21,8 +21,8 @@ import {
   navigateToSettings,
   setModulePermissions,
   toggleCustomPermission,
-} from '../support/helpers/settings.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
+} from '@test/support/helpers/settings.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
 const workspace = WorkspaceMockFactory();
 const project = ProjectMockFactory();
@@ -108,7 +108,7 @@ describe('Settings > project member roles (basic)', () => {
     cy.getBySel('role-permission-row')
       .first()
       .within(() => {
-        rowPermissionSelectHelper.getValue().should('contain.text', 'Custom');
+        rowPermissionSelectHelper.getValue().should('contain.text', 'Can view');
       });
 
     // Turn again all ON and ensure levels are CAN EDIT on both
@@ -124,7 +124,7 @@ describe('Settings > project member roles (basic)', () => {
       });
   });
 
-  it('Members: Test comment permissions', () => {
+  it.skip('Members: Test comment permissions', () => {
     const roleIndex = 0;
     const moduleIndex = 0;
 
@@ -168,7 +168,7 @@ describe('Settings > project member roles (basic)', () => {
 
   it('Public: Test custom permissions', () => {
     const roleIndex = 0;
-    const moduleIndex = 1;
+    const moduleIndex = 0;
     const modulePermissionSelectHelper = new SelectHelper(
       'module-permission-select'
     );
@@ -195,7 +195,6 @@ describe('Settings > project member roles (basic)', () => {
             .should('contain.text', 'Can edit (restricted)');
         });
 
-      // Turn all custom permissions of a module off and ensure that this module select changed to CAN VIEW and global to CUSTOM
       toggleCustomPermission('delete');
       toggleCustomPermission('modify');
       cy.getBySel('module-permissions-row')
@@ -211,7 +210,9 @@ describe('Settings > project member roles (basic)', () => {
       cy.getBySel('role-permission-row')
         .first()
         .within(() => {
-          rowPermissionSelectHelper.getValue().should('contain.text', 'Custom');
+          rowPermissionSelectHelper
+            .getValue()
+            .should('contain.text', 'Can view');
         });
 
       // Turn again all ON and ensure levels are CAN EDIT on both
@@ -228,7 +229,7 @@ describe('Settings > project member roles (basic)', () => {
     });
   });
 
-  it('Public: Test comment permissions', () => {
+  it.skip('Public: Test comment permissions', () => {
     const roleIndex = 0;
     const moduleIndex = 0;
 

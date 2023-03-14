@@ -12,15 +12,15 @@ import {
   inviteUsers,
   logout,
   typeEmailToInvite,
-} from '../support/helpers/invitation.helpers';
+} from '@test/support/helpers/invitation.helpers';
 import {
   createProjectWsDetail,
   launchProjectCreationInWS,
   selectBlankProject,
   submitProject,
   typeProjectName,
-} from '../support/helpers/project.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
+} from '@test/support/helpers/project.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
 const wksp = WorkspaceMockFactory();
 const project = ProjectMockFactory();
@@ -37,7 +37,7 @@ describe('Workspace: invitations', () => {
     typeProjectName(project.name);
     submitProject();
 
-    typeEmailToInvite('user2@taiga.demo');
+    typeEmailToInvite('2user@taiga.demo');
     addEmailToInvite();
     inviteUsers();
     cy.getBySel('input-add-invites').should('not.exist');
@@ -47,7 +47,7 @@ describe('Workspace: invitations', () => {
   });
 
   beforeEach(() => {
-    cy.login('user2', '123123');
+    cy.login('2user', '123123');
     cy.visit('/');
   });
 
@@ -81,7 +81,7 @@ describe('Workspace: invitations', () => {
 describe('Workspace admin: invitations', () => {
   const project = ProjectMockFactory();
   beforeEach(() => {
-    cy.login('user900', '123123');
+    cy.login('900user', '123123');
     cy.visit('/');
     cy.initAxe();
   });
@@ -90,19 +90,19 @@ describe('Workspace admin: invitations', () => {
     cy.getBySel('workspace-item').contains('ws1 for admins').click();
     createProjectWsDetail(project.name);
 
-    typeEmailToInvite('user901@taiga.demo');
+    typeEmailToInvite('901user@taiga.demo');
     addEmailToInvite();
     inviteUsers();
     cy.getBySel('input-add-invites').should('not.exist');
     cy.closeToast();
     logout();
     cy.getBySel('login-username').should('exist');
-    cy.login('user901', '123123');
+    cy.login('901user', '123123');
     cy.visit('/');
 
     cy.getBySel('workspace-item').contains('ws1 for admins').click();
     cy.getBySel('project-card-invitation').should('not.exist');
-    cy.getBySel('project-card').contains(project.name).click();
+    cy.getBySel('project-card-name').contains(project.name).click();
     cy.getBySel('logged-user-invitation').should('exist');
     cy.getBySel('member-item').eq(0).should('contain.text', 'Pending');
     cy.getBySel('invitation-accept').should('not.exist');
@@ -118,11 +118,11 @@ describe('Workspace admin: invitations', () => {
     cy.getBySel('close-modal').click();
     logout();
     cy.getBySel('login-username').should('exist');
-    cy.login('user901', '123123');
+    cy.login('901user', '123123');
     cy.visit('/');
 
     cy.getBySel('workspace-item').contains('ws1 for admins').click();
-    cy.getBySel('project-card').contains('no invitation').click();
+    cy.getBySel('project-card-name').contains('no invitation').click();
     cy.getBySel('logged-user-invitation').should('not.exist');
     cy.getBySel('member-item').should('not.contain.text', 'Amy Davidson');
     cy.getBySel('invitation-accept').should('not.exist');

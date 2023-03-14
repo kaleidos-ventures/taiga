@@ -7,13 +7,7 @@
  */
 
 import { randText } from '@ngneat/falso';
-import {
-  InvitationRequest,
-  Project,
-  Status,
-  Story,
-  Workspace,
-} from '@taiga/data';
+import { Project, Status, Story, Workspace } from '@taiga/data';
 import { request } from './api.helpers';
 
 // NAVIGATION
@@ -31,6 +25,11 @@ export const navigateToProjectInWS = (
           cy.getBySel('project-card-name').click();
         });
     });
+};
+
+export const navigateToProjectbyName = (name: string) => {
+  cy.getBySel('project-card').contains(name).click();
+  cy.getBySel('kanban-button').should('be.visible');
 };
 
 // PROJECT CREATION
@@ -65,15 +64,6 @@ export const createFullProjectInWSRequest = (
       form: true,
     }
   );
-};
-
-export const inviteUserWSRequest = (
-  id: string,
-  invitations: InvitationRequest[]
-) => {
-  return request('POST', `/projects/${id}/invitations`, {
-    invitations,
-  });
 };
 
 export const launchProjectCreationInWS = (index: number) => {

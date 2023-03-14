@@ -7,30 +7,26 @@
  */
 
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
-import {
-  createFullProjectInWSRequest,
-  navigateToProjectInWS,
-} from '../support/helpers/project.helpers';
-import { navigateToSettings } from '../support/helpers/settings.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
+import { createFullProjectInWSRequest } from '@test/support/helpers/project.helpers';
+import { navigateToSettings } from '@test/support/helpers/settings.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
 const workspace = WorkspaceMockFactory();
 const project = ProjectMockFactory();
 
 describe('Settings', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login();
-    cy.visit('/');
     createWorkspaceRequest(workspace.name)
       .then((request) => {
-        void createFullProjectInWSRequest(request.body.id, project.name);
+        void createFullProjectInWSRequest(request.body.id, project.name).then(
+          (response) => {
+            cy.visit(`/project/${response.body.id}/${response.body.slug}`);
+            navigateToSettings();
+          }
+        );
       })
       .catch(console.error);
-  });
-
-  beforeEach(() => {
-    navigateToProjectInWS(0, 0);
-    navigateToSettings();
   });
 
   it('Navigating from settings to overview changes the sidebar', () => {

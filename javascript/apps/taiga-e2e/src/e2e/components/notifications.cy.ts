@@ -12,14 +12,14 @@ import {
   addEmailToInvite,
   inviteUsers,
   typeEmailToInvite,
-} from '../support/helpers/invitation.helpers';
+} from '@test/support/helpers/invitation.helpers';
 import {
   launchProjectCreationInWS,
   selectBlankProject,
   submitProject,
   typeProjectName,
-} from '../support/helpers/project.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
+} from '@test/support/helpers/project.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
 const workspace = WorkspaceMockFactory();
 const project = ProjectMockFactory();

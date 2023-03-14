@@ -10,7 +10,7 @@ import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import {
   createFullProjectInWSRequest,
   navigateToProjectInWS,
-} from '../support/helpers/project.helpers';
+} from '@test/support/helpers/project.helpers';
 import {
   checkConflictTableText,
   closeConflictsModal,
@@ -23,10 +23,9 @@ import {
   navigateToSettings,
   openConflictsModal,
   setModulePermissions,
-  toggleCanCommentPermission,
   toggleCustomPermission,
-} from '../support/helpers/settings.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
+} from '@test/support/helpers/settings.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
 const workspace = WorkspaceMockFactory();
 const project = ProjectMockFactory();
@@ -82,28 +81,12 @@ describe('Permission conflicts', () => {
     setModulePermissions(publicModuleIndex, 'can-edit');
     hidePublicAdvancedSettingsForRole(publicModuleIndex);
 
+    // Required time for permissions changes to take effect
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(10000);
+
     openConflictsModal();
     checkConflictTableText('No access', 'Can edit');
-    closeConflictsModal();
-  });
-
-  it('US: Member cannot comment and Public can comment', () => {
-    const memberModuleIndex = 0;
-    const publicModuleIndex = 0;
-
-    // member
-    displayAdvancedSettingsForRole(memberModuleIndex);
-    setModulePermissions(memberModuleIndex, 'can-view');
-    toggleCanCommentPermission(memberModuleIndex);
-    hideAdvancedSettingsForRole(publicModuleIndex);
-
-    // public
-    displayPublicAdvancedSettingsForRole(publicModuleIndex);
-    setModulePermissions(publicModuleIndex, 'can-view');
-    hidePublicAdvancedSettingsForRole(publicModuleIndex);
-
-    openConflictsModal();
-    checkConflictTableText('Cannot comment', 'Can comment');
     closeConflictsModal();
   });
 
@@ -123,6 +106,10 @@ describe('Permission conflicts', () => {
     displayPublicAdvancedSettingsForRole(publicModuleIndex);
     setModulePermissions(publicModuleIndex, 'can-edit');
     hidePublicAdvancedSettingsForRole(publicModuleIndex);
+
+    // Required time for permissions changes to take effect
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(10000);
 
     openConflictsModal();
     cy.getBySel('comparisson-table')

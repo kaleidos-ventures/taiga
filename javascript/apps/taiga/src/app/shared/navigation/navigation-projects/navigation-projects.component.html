@@ -9,6 +9,7 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container *transloco="let t">
   <ng-container *ngIf="latestProjects$ | async as latestProjects">
     <tui-data-list
+      id="navigation-projects"
       tgAutoFocus
       tabindex="-1"
       class="pinned-projects"

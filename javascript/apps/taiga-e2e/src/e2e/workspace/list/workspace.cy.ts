@@ -7,7 +7,7 @@
  */
 
 import { randCompanyName } from '@ngneat/falso';
-import { createWorkspace } from '../support/helpers/workspace.helpers';
+import { createWorkspace } from '@test/support/helpers/workspace.helpers';
 
 describe('Workspace Create', () => {
   beforeEach(() => {

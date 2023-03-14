@@ -62,6 +62,9 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
   @Input()
   public total = 0;
 
+  @HostBinding('attr.data-test')
+  public dataTest = 'kanban-story';
+
   @HostBinding('class.drag-shadow')
   public get dragShadow() {
     return this.story._shadow || this.story._dragging;

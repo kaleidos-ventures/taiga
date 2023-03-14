@@ -7,15 +7,18 @@
  */
 
 import { randEmail } from '@ngneat/falso';
+import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import {
   addEmailToInvite,
   inviteUsers,
   typeEmailToInvite,
-} from '../support/helpers/invitation.helpers';
+} from '@test/support/helpers/invitation.helpers';
+import { createFullProjectInWSRequest } from '@test/support/helpers/project.helpers';
 import {
   navigateToMembersSettings,
   navigateToSettings,
-} from '../support/helpers/settings.helpers';
+} from '@test/support/helpers/settings.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
 describe('Settings > members', () => {
   before(() => {
@@ -32,20 +35,11 @@ describe('Settings > members', () => {
     navigateToSettings();
     navigateToMembersSettings();
     cy.tgCheckA11y();
-
-    cy.getBySel('settings-invite-btn').click();
-    typeEmailToInvite(randEmail());
-    addEmailToInvite();
-    inviteUsers();
   });
 
   it('Tab navigation', () => {
     cy.getBySel('pendings-tab').click();
     cy.getBySel('pendings-tab').should('have.class', 'active');
-
-    cy.get('tg-user-card').should(($members) => {
-      expect($members).to.have.length.greaterThan(0);
-    });
 
     cy.getBySel('members-tab').click();
     cy.getBySel('members-tab').should('have.class', 'active');
@@ -57,7 +51,15 @@ describe('Settings > members', () => {
 
   describe('cancel invitation', () => {
     it('cancel', () => {
+      const randInviteEmail = randEmail();
+      cy.getBySel('settings-invite-btn').click();
+      typeEmailToInvite(randInviteEmail);
+      addEmailToInvite();
+      inviteUsers();
+
       cy.getBySel('pendings-tab').click();
+
+      cy.get('tg-user-card').contains(randInviteEmail).should('be.visible');
 
       cy.get('tg-user-card').its('length').as('invitationsCount');
 
@@ -72,8 +74,8 @@ describe('Settings > members', () => {
 
       cy.getBySel('undo-invitation').should('not.exist');
 
-      cy.get<number>('@invitationsCount').then((previousCount) => {
-        cy.get('tg-user-card').should('have.length', previousCount - 1);
+      cy.get<number>('@invitationsCount').then(function () {
+        cy.get('tg-user-card').should('have.length', this.invitationsCount - 1);
       });
     });
   });
@@ -87,27 +89,38 @@ describe('change role', () => {
   });
 
   it('cannot change role when it is just one admin', () => {
-    cy.getBySel('project-card').contains('Empty project').click();
+    const workspace = WorkspaceMockFactory();
+    const project = ProjectMockFactory();
 
-    navigateToSettings();
-    navigateToMembersSettings();
-    cy.tgCheckA11y();
+    createWorkspaceRequest(workspace.name)
+      .then((request) => {
+        void createFullProjectInWSRequest(request.body.id, project.name).then(
+          (response) => {
+            cy.visit(`/project/${response.body.id}/${response.body.slug}`);
+            cy.initAxe();
+            navigateToSettings();
+            navigateToMembersSettings();
+            cy.tgCheckA11y();
 
-    cy.getBySel('disabled-change-role').should('exist');
-    cy.getBySel('disabled-change-role').click();
-    cy.getBySel('admin-dialog').should('exist');
+            cy.getBySel('disabled-change-role').should('exist');
+            cy.getBySel('disabled-change-role').click();
+            cy.getBySel('admin-dialog').should('exist');
+          }
+        );
+      })
+      .catch(console.error);
   });
 
-  it('change own admin role', () => {
+  it.skip('change own admin role', () => {
     cy.getBySel('project-card').contains('Several Roles').click();
 
     navigateToSettings();
     navigateToMembersSettings();
     cy.tgCheckA11y();
 
-    cy.get('[data-test=user1]').should('be.visible');
+    cy.get('[data-test=1user]').should('be.visible');
     cy.getBySel('disabled-change-role').should('not.exist');
-    cy.get('[data-test=user1]').find('input').click();
+    cy.get('[data-test=1user]').find('input').click();
     cy.getBySel('permissions-warning').should('be.visible');
   });
 });

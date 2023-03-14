@@ -69,8 +69,8 @@ Copyright (c) 2023-present Kaleidos INC
         [content]="projectsDropdown"
         [(open)]="openProjectsDropdown">
         <button
-          role="menu"
-          aria-haspopup="true"
+          aria-controls="navigation-projects"
+          aria-haspopup="menu"
           [attr.aria-expanded]="openProjectsDropdown"
           [attr.aria-label]="t('navigation.a11y.projects_navigate')"
           tabindex="0"
@@ -90,8 +90,8 @@ Copyright (c) 2023-present Kaleidos INC
           [content]="userDropdown"
           [(open)]="openUserDropdown">
           <button
-            role="menu"
-            aria-haspopup="true"
+            aria-controls="profile-options-list"
+            aria-haspopup="menu"
             [attr.aria-expanded]="openUserDropdown"
             tabindex="0"
             class="avatar-dropdown-button"

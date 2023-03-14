@@ -16,19 +16,19 @@ import {
 import {
   getStatusColumn,
   navigateToKanban,
-} from '../support/helpers/kanban.helper';
+} from '@test/support/helpers/kanban.helper';
 import {
   createFullProjectInWSRequest,
   createStoryRequest,
-  updateStoryRequest,
   navigateToProjectInWS,
-} from '../support/helpers/project.helpers';
-import { SelectHelper } from '../support/helpers/select.helper';
+  updateStoryRequest,
+} from '@test/support/helpers/project.helpers';
+import { SelectHelper } from '@test/support/helpers/select.helper';
 import {
   confirmDeleteStory,
   deleteStory,
-} from '../support/helpers/story-detail.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
+} from '@test/support/helpers/story-detail.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
 const workspace = WorkspaceMockFactory();
 const projectMock = ProjectMockFactory();

@@ -4,7 +4,15 @@
     "sourceMap": false,
     "outDir": "../../dist/out-tsc",
     "allowJs": true,
-    "types": ["cypress", "cypress-axe"]
+    "types": ["cypress", "cypress-axe"],
+    "paths": {
+      "@taiga/api": ["libs/api/src/index.ts"],
+      "@taiga/core": ["libs/core/src/index.ts"],
+      "@taiga/data": ["libs/data/src/index.ts"],
+      "@taiga/ui/*": ["libs/ui/src/lib/*"],
+      "@test/*": ["apps/taiga-e2e/src/*"],
+      "~/*": ["apps/taiga/src/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.js", "cypress.config.ts"]
 }

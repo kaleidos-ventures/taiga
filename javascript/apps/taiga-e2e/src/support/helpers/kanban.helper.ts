@@ -14,3 +14,13 @@ export const navigateToKanban = () => {
 export const getStatusColumn = (statusSlug: string) => {
   return cy.getBySel(statusSlug);
 };
+
+export const createStory = (statusSlug: string, title: string) => {
+  const status = getStatusColumn(statusSlug);
+  status.within(() => {
+    cy.getBySel('create-story-title').should('be.visible');
+    cy.getBySel('create-story-title').first().type(title);
+    cy.getBySel('story-create').click();
+    cy.getBySel('story-ref').should('be.visible');
+  });
+};

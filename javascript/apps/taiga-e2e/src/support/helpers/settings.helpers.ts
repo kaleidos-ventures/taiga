@@ -17,7 +17,7 @@ export const navigateToSettings = () => {
 };
 
 export const navigateToMemberPermissionsSettings = () => {
-  cy.getBySel('member-permissions-settings').click();
+  cy.getBySel('member-permissions-settings-submenu-anchor').click();
   cy.getBySel('member-permissions-settings-title').should('be.visible');
 };
 

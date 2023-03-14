@@ -6,11 +6,12 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { getEmailsPreviews } from '../support/helpers/api.helpers';
-import { initEmailCommands } from '../support/helpers/email-commands';
+import { getEmailsPreviews } from '@test/support/helpers/api.helpers';
+import { initEmailCommands } from '@test/support/helpers/email-commands';
 
 describe('reset password', () => {
   before(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     cy.origin('http://localhost:3000', initEmailCommands);
   });
 

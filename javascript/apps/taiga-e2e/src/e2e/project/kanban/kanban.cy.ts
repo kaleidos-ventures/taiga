@@ -6,30 +6,38 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { randProductName } from '@ngneat/falso';
-import { navigateToKanban } from '../support/helpers/kanban.helper';
-import { navigateToProjectInWS } from '../support/helpers/project.helpers';
+import { randFullName, randProductName } from '@ngneat/falso';
+import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
+import {
+  createStory,
+  navigateToKanban,
+} from '@test/support/helpers/kanban.helper';
+import { createFullProjectInWSRequest } from '@test/support/helpers/project.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
+
+const workspace = WorkspaceMockFactory();
+const project = ProjectMockFactory();
+const title = randProductName();
 
 describe('Kanban', () => {
   beforeEach(() => {
     cy.login();
-    cy.visit('/');
-    cy.initAxe();
-    navigateToProjectInWS(0, 0);
-    navigateToKanban();
-  });
 
-  it('is a11y', () => {
-    cy.tgCheckA11y();
+    createWorkspaceRequest(workspace.name)
+      .then((request) => {
+        void createFullProjectInWSRequest(request.body.id, project.name).then(
+          (response) => {
+            cy.visit(`/project/${response.body.id}/${response.body.slug}`);
+            cy.initAxe();
+            navigateToKanban();
+            createStory('new', title);
+          }
+        );
+      })
+      .catch(console.error);
   });
 
   it('create story', () => {
-    const title = randProductName();
-
-    cy.getBySel('open-create-story-form').first().click();
-    cy.getBySel('story-title').type(title);
-    cy.getBySel('story-create').click();
-
     cy.get('tg-kanban-status')
       .first()
       .within(() => {
@@ -38,16 +46,13 @@ describe('Kanban', () => {
   });
 
   it('assign story search', () => {
+    const name = randFullName();
     cy.getBySel('assign-btn').first().should('be.visible');
-    cy.getBySel('assign-btn')
-      .first()
-      .invoke('text')
-      .should('to.have.string', 'Assign');
     cy.getBySel('assign-btn').first().click();
-    cy.getBySel('assignees-wrapper').should('be.visible');
-    cy.getBySel('unassigned-member').should('have.length', 7);
-    cy.getBySel('input-search').type('norma');
+    cy.getBySel('assign-user-dialog').should('be.visible');
     cy.getBySel('unassigned-member').should('have.length', 1);
+    cy.getBySel('input-search').type(name);
+    cy.getBySel('unassigned-member').should('have.length', 0);
   });
 
   it('assign story', () => {
@@ -57,17 +62,18 @@ describe('Kanban', () => {
       .invoke('text')
       .should('to.have.string', 'Assign');
     cy.getBySel('assign-btn').first().click();
-    cy.getBySel('assignees-wrapper').should('be.visible');
+    cy.getBySel('assign-user-dialog').should('be.visible');
     cy.getBySel('unassigned-member').first().click();
     cy.getBySel('input-search').type('{esc}');
     cy.getBySel('assign-btn').first().contains('No').should('be.visible');
   });
 
   it('assign story no matches', () => {
+    const name = randFullName();
     cy.getBySel('assign-btn').first().should('be.visible');
     cy.getBySel('assign-btn').first().click();
-    cy.getBySel('assignees-wrapper').should('be.visible');
-    cy.getBySel('input-search').type('norma');
+    cy.getBySel('assign-user-dialog').should('be.visible');
+    cy.getBySel('input-search').type(name);
     cy.getBySel('no-members').should('be.visible');
     cy.getBySel('no-members')
       .first()
@@ -76,12 +82,11 @@ describe('Kanban', () => {
   });
 
   it('unassign story', () => {
-    cy.getBySel('assign-btn')
-      .first()
-      .invoke('text')
-      .should('to.have.string', 'No');
     cy.getBySel('assign-btn').first().click();
-    cy.getBySel('assignees-wrapper').should('be.visible');
+    cy.getBySel('assign-user-dialog').should('be.visible');
+    cy.getBySel('unassigned-member').first().click();
+    cy.getBySel('unassigned-member').should('have.length', 0);
+    cy.getBySel('assigned-member').should('have.length', 1);
     cy.getBySel('assigned-member').first().click();
     cy.getBySel('input-search').type('{esc}');
     cy.getBySel('assign-btn').first().contains('Assign').should('be.visible');

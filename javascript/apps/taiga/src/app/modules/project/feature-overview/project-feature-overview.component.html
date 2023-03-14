@@ -41,6 +41,7 @@ Copyright (c) 2023-present Kaleidos INC
               aria-haspopup="true"
               [attr.aria-expanded]="projectActionsDropdownState"
               icon="more-vertical"
+              data-test="project-actions"
               appearance="tertiary"
               tuiIconButton
               type="button"
@@ -124,6 +125,7 @@ Copyright (c) 2023-present Kaleidos INC
   <ng-template #projectActionsDropdown>
     <tui-data-list
       class="view-options-list"
+      data-test="project-actions-list"
       tgAutoFocus
       tabindex="-1"
       [attr.aria-label]="
@@ -133,6 +135,7 @@ Copyright (c) 2023-present Kaleidos INC
       <button
         class="view-option-btn"
         tuiOption
+        data-test="edit-project"
         type="button"
         (click)="showEditProjectModal = true">
         <span class="view-option">

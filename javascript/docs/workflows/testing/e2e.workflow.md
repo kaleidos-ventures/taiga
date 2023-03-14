@@ -150,7 +150,7 @@ cy.wait('@loginRequest').should((xhr) => {
 
 ```ts
 import { exampleFixture } from '../fixtures/example.fixture';
-import { getGreeting } from '../support/helpers/app.po';
+import { getGreeting } from '@test/helpers/app.po';
 
 describe('taiga', () => {
   beforeEach(() => {
@@ -178,7 +178,7 @@ The email server should be running `npm run email:serve`
 Setup:
 
 ```ts
-import { initEmailCommands } from '../support/helpers/email-commands';
+import { initEmailCommands } from '@test/helpers/email-commands';
 
 before(() => {
   // this is for using the `initEmailCommands` in the email window

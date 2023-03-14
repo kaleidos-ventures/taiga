@@ -13,14 +13,14 @@ import {
   WorkspaceAdminMockFactory,
   WorkspaceMockFactory,
 } from '@taiga/data';
-import { createFullProjectInWSRequest } from '../support/helpers/project.helpers';
+import { createFullProjectInWSRequest } from '@test/support/helpers/project.helpers';
 import {
   clickDeleteWorkspace,
   displayEditWorkspaceModal,
   editWorkspaceModalName,
   editWorkspaceModalSubmit,
-} from '../support/helpers/workspace-detail.helpers';
-import { createWorkspaceRequest } from '../support/helpers/workspace.helpers';
+} from '@test/support/helpers/workspace-detail.helpers';
+import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
 describe('Workspace list', () => {
   const workspace = WorkspaceMockFactory();

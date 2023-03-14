@@ -11,6 +11,7 @@ Copyright (c) 2023-present Kaleidos INC
   [formGroup]="form">
   <ng-container *ngIf="model$ | async as vm">
     <tg-ui-select
+      *ngIf="vm.canEdit"
       data-test="story-status"
       class="status-field"
       [class.loading]="vm.loadingStatuses"
@@ -56,5 +57,17 @@ Copyright (c) 2023-present Kaleidos INC
         <div class="status-name">{{ vm.story.status.name }}</div>
       </div>
     </ng-template>
+    <div
+      class="field"
+      *ngIf="!vm.canEdit">
+      <span
+        class="field-label"
+        [class.readonly]="!vm.canEdit"
+        >{{ t('status') }}</span
+      >
+      <div class="field-container">
+        <ng-container [ngTemplateOutlet]="statusValue"></ng-container>
+      </div>
+    </div>
   </ng-container>
 </ng-container>

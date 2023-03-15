@@ -64,10 +64,6 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
     projectsSettingsFeatureRolesPermissionsService.getEntities.andReturn(
       new Map([['story', 'Stories']])
     );
-
-    projectsSettingsFeatureRolesPermissionsService.hasComments.mockReturnValue(
-      true
-    );
     permissionsService.formatRawPermissions.mockReturnValue({} as any);
   });
 
@@ -88,7 +84,6 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
           create: true,
           modify: true,
           delete: true,
-          comment: true,
         },
       } as any);
 
@@ -108,7 +103,6 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
             create: true,
             modify: true,
             delete: true,
-            comment: true,
           },
         },
       });
@@ -124,7 +118,6 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
           create: false,
           modify: false,
           delete: false,
-          comment: false,
         },
       });
 
@@ -144,7 +137,6 @@ describe('ProjectSettingsFeatureRolesPermissionsComponent', () => {
             create: false,
             modify: false,
             delete: false,
-            comment: false,
           },
         },
       });

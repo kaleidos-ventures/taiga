@@ -44,7 +44,6 @@ export class RoleAdvanceRowComponent implements OnInit, OnChanges {
 
   public permissionRowModel!: KeyValue<SettingsPermission, string>;
   public previousPermission?: KeyValue<SettingsPermission, string>;
-  public isChildModule = false;
   public rolePermissionContainerId = `role-permission-container-${nextId++}`;
 
   constructor(
@@ -53,10 +52,6 @@ export class RoleAdvanceRowComponent implements OnInit, OnChanges {
   ) {}
 
   public ngOnInit() {
-    const childEntities: Entity[] = ['task', 'sprint'];
-
-    this.isChildModule = childEntities.includes(this.entity.key);
-
     this.refreshPermission();
     this.previousPermission = this.permissionRowModel;
   }

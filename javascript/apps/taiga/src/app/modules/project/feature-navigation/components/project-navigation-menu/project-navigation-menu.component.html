@@ -218,42 +218,6 @@ Copyright (c) 2023-present Kaleidos INC
       [style.height.px]="dialog.mainLinkHeight">
       {{ dialog.text }}
     </button>
-    <div
-      *ngIf="dialog.type === 'scrum'"
-      [attr.href]="dialog.link"
-      cdkTrapFocus
-      [style.min-height.px]="dialog.mainLinkHeight"
-      class="dialog-scrum">
-      <ul class="child-menu">
-        <li class="child-menu-option">
-          <span class="child-menu-option-item child-menu-option-scrum">
-            {{ t('commons.scrum') }}
-          </span>
-        </li>
-        <li class="child-menu-option">
-          <a
-            class="child-menu-option-item"
-            #backlogSubmenu
-            href="">
-            {{ t('commons.backlog') }}
-          </a>
-        </li>
-        <li class="child-menu-option">
-          <a
-            class="child-menu-option-item"
-            href="">
-            Milestone 1
-          </a>
-        </li>
-        <li class="menu-option">
-          <a
-            class="child-menu-option-item"
-            href="">
-            <span class="menu-option-text"> Milestone 1 </span>
-          </a>
-        </li>
-      </ul>
-    </div>
 
     <div
       *ngIf="dialog.type === 'project'"

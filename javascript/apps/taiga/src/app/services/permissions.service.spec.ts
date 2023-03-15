@@ -60,12 +60,7 @@ describe('PermissionsService', () => {
   it('hasPermissions', () => {
     const project = ProjectMockFactory();
 
-    project.userPermissions = [
-      'view_story',
-      'modify_story',
-      'view_issues',
-      'modify_issue',
-    ];
+    project.userPermissions = ['view_story', 'modify_story'];
     project.userIsAdmin = false;
 
     store.setState({
@@ -79,30 +74,15 @@ describe('PermissionsService', () => {
 
     expect(spectator.service.hasPermissions('story', 'view')).toEqual(true);
     expect(spectator.service.hasPermissions('story', 'delete')).toEqual(false);
-    expect(spectator.service.hasPermissions('sprint', 'view')).toEqual(false);
 
     expect(
-      spectator.service.hasPermissions(['story', 'issue'], ['view', 'modify'])
+      spectator.service.hasPermissions(['story'], ['view', 'modify'])
     ).toEqual(true);
     expect(
-      spectator.service.hasPermissions(
-        ['story', 'issue'],
-        ['view', 'modify', 'delete']
-      )
+      spectator.service.hasPermissions(['story'], ['view', 'modify', 'delete'])
     ).toEqual(false);
     expect(
-      spectator.service.hasPermissions(
-        ['story', 'issue', 'sprint'],
-        ['view', 'modify']
-      )
-    ).toEqual(false);
-
-    expect(
-      spectator.service.hasPermissions(
-        ['story', 'issue', 'sprint'],
-        ['view', 'modify'],
-        'OR'
-      )
+      spectator.service.hasPermissions(['story'], ['view', 'modify'], 'OR')
     ).toEqual(true);
   });
 });

@@ -83,21 +83,6 @@ export class RolePermissionRowComponent implements OnChanges {
     };
   }
 
-  public entityVisible(entity: Entity) {
-    if (entity === 'task' || entity === 'sprint') {
-      const storiesState =
-        this.projectsSettingsFeatureRolesPermissionsService.formPermissionState(
-          this.getEntityFormGroup('story')
-        );
-
-      if (storiesState === 'no_access') {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   public getGlobalPermission(): SettingsPermission {
     const entitiesPermissions = Array.from(
       this.projectsSettingsFeatureRolesPermissionsService.getEntities().keys()

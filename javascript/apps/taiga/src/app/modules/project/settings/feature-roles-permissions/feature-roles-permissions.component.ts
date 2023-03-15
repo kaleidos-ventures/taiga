@@ -255,22 +255,11 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
         create: [false],
         modify: [false],
         delete: [false],
-        comment: [false],
       });
-
-      if (
-        !this.projectsSettingsFeatureRolesPermissionsService.hasComments(entity)
-      ) {
-        fb.get('comment')?.disable();
-      }
 
       roleGroup.addControl(entity, fb);
 
       if (!currentPermissions[entity]) {
-        fb.disable();
-      } else if (entity === 'sprint' && !currentPermissions.story) {
-        fb.disable();
-      } else if (entity === 'task' && !currentPermissions.story) {
         fb.disable();
       }
     }

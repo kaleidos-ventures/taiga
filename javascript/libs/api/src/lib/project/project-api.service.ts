@@ -127,15 +127,10 @@ export class ProjectApiService {
       const validPermission = [
         'add_member',
         'delete_story',
-        'delete_task',
-        'modify_task',
-        'view_task',
         'modify_story',
         'comment_story',
         'view_story',
-        'add_task',
         'add_story',
-        'comment_task',
         'delete_project',
         'modify_project',
       ];
@@ -156,15 +151,10 @@ export class ProjectApiService {
       const validPermission = [
         'add_member',
         'delete_story',
-        'delete_task',
-        'modify_task',
-        'view_task',
         'modify_story',
         'comment_story',
         'view_story',
-        'add_task',
         'add_story',
-        'comment_task',
         'delete_project',
         'modify_project',
       ];

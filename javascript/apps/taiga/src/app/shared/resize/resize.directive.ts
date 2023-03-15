@@ -20,6 +20,7 @@ import { ResizedEvent } from './resize.model';
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[resized]',
+  standalone: true,
 })
 export class ResizedDirective implements OnInit, OnDestroy {
   @Output()

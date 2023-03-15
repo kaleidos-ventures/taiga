@@ -116,22 +116,18 @@ Copyright (c) 2023-present Kaleidos INC
       padding: 0;
     }
   }
-
-  &.side-view,
-  &.full-view {
-    block-size: calc(100vh - 48px - 48px);
-  }
-
-  &.modal-view {
-    block-size: calc(100vh - 112px - 48px);
-  }
 }
 
-.sidebar {
+.sidebar-wrapper {
   border-inline-start: solid 1px var(--color-gray30);
-  padding: var(--spacing-24);
-  padding-block-start: var(--spacing-16);
   position: relative;
+
+  & .sidebar {
+    block-size: 100%;
+    padding: var(--spacing-24);
+    padding-block-end: 0;
+    padding-block-start: var(--spacing-16);
+  }
 
   & .sidepanel-icon {
     inset-block-end: 0;
@@ -140,9 +136,11 @@ Copyright (c) 2023-present Kaleidos INC
   }
 }
 
-.main-content {
-  margin-block: var(--spacing-8) var(--spacing-16);
-  margin-inline: var(--spacing-16);
+.main-content-wrapper {
+  & .main-content {
+    margin-block: var(--spacing-8) var(--spacing-16);
+    margin-inline: var(--spacing-16);
+  }
 
   & tg-story-detail-status,
   & tg-story-detail-assign {

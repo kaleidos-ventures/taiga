@@ -83,8 +83,23 @@ export const reducer = createImmerReducer(
       return state;
     }
   ),
+  on(StoryDetailActions.updateStory, (state, { story }): StoryDetailState => {
+    if (state.story) {
+      if (story.title) {
+        state.story.title = story.title;
+      }
+
+      if (story.description) {
+        state.story.description = story.description;
+      }
+    }
+
+    return state;
+  }),
   on(projectEventActions.updateStory, (state, { story }): StoryDetailState => {
-    state.story = story;
+    if (story.ref === state.story?.ref) {
+      state.story = story;
+    }
 
     return state;
   }),

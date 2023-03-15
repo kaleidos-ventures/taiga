@@ -21,7 +21,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -42,6 +42,7 @@ import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
 import { PermissionUpdateNotificationService } from '~/app/shared/permission-update-notification/permission-update-notification.service';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { HasChangesService } from '~/app/shared/utils/has-changes.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { StoryDetailActions } from './data-access/+state/actions/story-detail.actions';
@@ -70,6 +71,7 @@ export interface StoryDetailState {
 export interface StoryDetailForm {
   title: FormControl<StoryDetail['title']>;
   status: FormControl<StoryDetail['status']['name']>;
+  description: FormControl<StoryDetail['description']>;
 }
 
 @UntilDestroy()
@@ -85,10 +87,15 @@ export interface StoryDetailForm {
     },
     HasChangesService,
   ],
+  hostDirectives: [
+    {
+      directive: ResizedDirective,
+    },
+  ],
 })
 export class StoryDetailComponent {
   @Input()
-  public sidebarOpen = false;
+  public sidebarOpen = true;
 
   @ViewChild('nextStory') public nextStory!: TuiButtonComponent;
 
@@ -125,6 +132,8 @@ export class StoryDetailComponent {
   public storyOptionsState = false;
   public showDeleteStoryConfirm = false;
   public hintShown = false;
+  public columnHeight = 0;
+  public storyHeight = 0;
   public storyViewOptions: { id: StoryView; translation: string }[] = [
     {
       id: 'modal-view',
@@ -168,10 +177,15 @@ export class StoryDetailComponent {
     private state: RxState<StoryDetailState>,
     private appService: AppService,
     private router: Router,
-    private translocoService: TranslocoService,
     private hasChangesService: HasChangesService,
-    private permissionUpdateNotificationService: PermissionUpdateNotificationService
+    private permissionUpdateNotificationService: PermissionUpdateNotificationService,
+    private resizedDirective: ResizedDirective
   ) {
+    this.state.hold(this.resizedDirective.resized, () => {
+      this.setHeights();
+      this.cd.detectChanges();
+    });
+
     this.state.connect(
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())
@@ -213,12 +227,33 @@ export class StoryDetailComponent {
     this.events();
   }
 
+  public setHeights() {
+    const selectedStoryView = this.state.get('selectedStoryView');
+    const viewportHeight = window.innerHeight;
+    const headerHeight = 48;
+    const storyHeaderHeight = 32;
+    const modalpadding = 112;
+    const headerMargin = 16;
+
+    if (selectedStoryView === 'modal-view') {
+      this.storyHeight = viewportHeight - modalpadding - headerMargin;
+      this.columnHeight = this.storyHeight - storyHeaderHeight;
+    } else {
+      this.storyHeight = viewportHeight - headerHeight - headerMargin;
+      this.columnHeight = this.storyHeight - storyHeaderHeight;
+      this.storyHeight = viewportHeight - headerHeight - headerMargin;
+    }
+  }
+
   public initStory() {
+    this.state.set({ fieldFocus: false, fieldEdit: false });
+
     const story = this.state.get('story');
 
     this.form = new FormGroup<StoryDetailForm>({
       title: new FormControl(story.title, { nonNullable: true }),
       status: new FormControl(story.status.name, { nonNullable: true }),
+      description: new FormControl(story.description, { nonNullable: true }),
     });
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((form) => {
@@ -233,8 +268,18 @@ export class StoryDetailComponent {
             story: {
               ref: this.state.get('story').ref,
               version: this.state.get('story').version,
-              status: status.slug,
-              title: form.title,
+              status:
+                this.state.get('story').status.slug !== status.slug
+                  ? status.slug
+                  : undefined,
+              title:
+                this.state.get('story').title !== form.title
+                  ? form.title
+                  : undefined,
+              description:
+                this.state.get('story').description !== form.description
+                  ? form.description
+                  : undefined,
             },
           })
         );
@@ -250,6 +295,7 @@ export class StoryDetailComponent {
         this.closeDeleteStoryConfirmModal();
       }
     });
+    this.setHeights();
   }
 
   public fillForm() {
@@ -260,6 +306,7 @@ export class StoryDetailComponent {
         {
           status: story.status.name,
           title: story.title,
+          description: story.description,
         },
         { emitEvent: false, onlySelf: true }
       );
@@ -399,11 +446,11 @@ export class StoryDetailComponent {
     );
   }
 
-  public titleFocus(focus: boolean) {
+  public fieldFocus(focus: boolean) {
     this.state.set({ fieldFocus: focus });
   }
 
-  public titleEdit(edit: boolean) {
+  public fieldEdit(edit: boolean) {
     this.state.set({ fieldEdit: edit });
   }
 

@@ -30,7 +30,7 @@ import { InViewportDirective } from '~/app/shared/directives/in-viewport.directi
 import { DragModule } from '~/app/shared/drag/drag.module';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
-import { ResizeEventModule } from '~/app/shared/resize/resize.module';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { AssignUserComponent } from '../components/assign-user/assign-user.component';
@@ -83,7 +83,7 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     ProjectFeatureStoryWrapperSideViewModule,
     ProjectFeatureStoryWrapperModalViewModule,
     DragDropModule,
-    ResizeEventModule,
+    ResizedDirective,
     RouterModule,
     DropdownModule,
     AssignUserComponent,

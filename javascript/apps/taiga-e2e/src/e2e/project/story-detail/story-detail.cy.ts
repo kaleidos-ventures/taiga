@@ -149,10 +149,92 @@ describe('StoryDetail', () => {
     })
       .then(() => {
         cy.getBySel('edit-title-save').click();
-        cy.getBySel('copy-title').click();
+        cy.getBySel('copy-clipboard-conflict').click();
         cy.getBySel('see-new-version').click();
 
         cy.getBySel('story-detail-title').should('contain.text', conflictTitle);
+      })
+      .catch(() => {
+        console.error('updateStoryRequest error');
+      });
+  });
+
+  it('edit description', () => {
+    cy.getBySel('edit-description').click();
+
+    const newDescription = randText();
+
+    cy.setEditorContent('edit-description', newDescription);
+
+    cy.getBySel('edit-description-save').click();
+
+    cy.getBySel('description-content').should('contain.text', newDescription);
+  });
+
+  it('edit description cancel', () => {
+    cy.getBySel('edit-description').click();
+
+    const newDescription = randText();
+
+    cy.setEditorContent('edit-description', newDescription);
+
+    cy.getBySel('edit-description-cancel').click();
+
+    cy.getBySel('confirm-edit').click();
+
+    cy.getBySel('description-content').should(
+      'not.contain.text',
+      newDescription
+    );
+  });
+
+  it('edit description conflict dismiss', () => {
+    cy.getBySel('edit-description').click();
+
+    const newDescription = randText();
+    const conflictDescription = randText();
+
+    cy.setEditorContent('edit-description', newDescription);
+
+    updateStoryRequest(project.id, story.ref, {
+      description: conflictDescription,
+    })
+      .then(() => {
+        cy.getBySel('edit-description-save').click();
+
+        cy.getBySel('see-new-version').click();
+        cy.getBySel('dismiss').click();
+
+        cy.getBySel('description-content').should(
+          'contain.text',
+          conflictDescription
+        );
+      })
+      .catch(() => {
+        console.error('updateStoryRequest error');
+      });
+  });
+
+  it('edit description conflict copy', () => {
+    cy.getBySel('edit-description').click();
+
+    const newDescription = randText();
+    const conflictDescription = randText();
+
+    cy.setEditorContent('edit-description', newDescription);
+
+    updateStoryRequest(project.id, story.ref, {
+      description: conflictDescription,
+    })
+      .then(() => {
+        cy.getBySel('edit-description-save').click();
+        cy.getBySel('copy-clipboard-conflict').click();
+        cy.getBySel('see-new-version').click();
+
+        cy.getBySel('description-content').should(
+          'contain.text',
+          conflictDescription
+        );
       })
       .catch(() => {
         console.error('updateStoryRequest error');

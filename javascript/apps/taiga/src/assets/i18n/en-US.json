@@ -171,7 +171,7 @@
     }
   },
   "field_conflict": {
-    "title": "Watch out! There is a new version of the title.",
+    "title": "Watch out! There is a new version of the {{ fieldName }}.",
     "description": "While you were editing the {{fieldName}}, <strong>{{user}}</strong> saved a new version. Check it out and then you can edit it if you want.",
     "copy": "Copy to clipboard",
     "copied": "Copied to clipboard!",
@@ -180,7 +180,8 @@
     "copy_title": "Do you want to copy your changes?",
     "copy_descripcion": "So you can use them later.",
     "fields": {
-      "title": "title"
+      "title": "title",
+      "description": "description"
     }
   },
   "pagination": {

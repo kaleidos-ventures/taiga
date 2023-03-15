@@ -21,7 +21,15 @@
         "main": "apps/taiga/src/main.ts",
         "polyfills": "apps/taiga/src/polyfills.ts",
         "tsConfig": "apps/taiga/tsconfig.app.json",
-        "assets": ["apps/taiga/src/favicon.ico", "apps/taiga/src/assets"],
+        "assets": [
+          "apps/taiga/src/favicon.ico",
+          "apps/taiga/src/assets",
+          {
+            "glob": "**/*",
+            "input": "node_modules/tinymce",
+            "output": "/tinymce/"
+          }
+        ],
         "styles": [
           "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less",
           "node_modules/@taiga-ui/core/styles/taiga-ui-fonts.less",

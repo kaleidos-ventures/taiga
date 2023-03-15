@@ -196,73 +196,89 @@ Copyright (c) 2023-present Kaleidos INC
             </tui-data-list>
           </ng-template>
         </div>
-        <tui-scrollbar
+        <div
           class="scrollbar-content"
+          [style.height.px]="columnHeight"
           [class.field-focus]="vm.fieldFocus"
           [class.field-edit]="vm.fieldEdit">
           <div
+            data-js="story-content"
             class="story-content"
-            [class]="vm.selectedStoryView"
             [class.close]="
               !sidebarOpen && vm.selectedStoryView === 'side-view'
             ">
-            <div class="main-content">
-              <tg-story-detail-title
-                [form]="form"
-                [story]="vm.story"
-                (focusChange)="titleFocus($event)"
-                (editChange)="titleEdit($event)"></tg-story-detail-title>
-              <div class="creation-info">
-                <tg-user-avatar
-                  size="m"
-                  class="no-border"
-                  [user]="vm.story.createdBy"
-                  type="light"
-                  [rounded]="true"
-                  aria-hidden="true"></tg-user-avatar>
-                <div>
-                  <span class="creation-info-fullname">
-                    {{ vm.story.createdBy.fullName }}
-                  </span>
-                  <span>∙</span>
-                  <span
-                    *ngIf="vm.story.createdAt"
-                    [title]="vm.story.createdAt | date: 'medium'"
-                    class="creation-info-date">
-                    {{ vm.story.createdAt | dateDistance }}
-                  </span>
+            <div class="main-content-wrapper">
+              <tui-scrollbar
+                [style.height.px]="columnHeight"
+                data-js="story-detail-scroll">
+                <div class="main-content">
+                  <tg-story-detail-title
+                    [form]="form"
+                    [story]="vm.story"
+                    (focusChange)="fieldFocus($event)"
+                    (editChange)="fieldEdit($event)"></tg-story-detail-title>
+                  <div class="creation-info">
+                    <tg-user-avatar
+                      size="m"
+                      class="no-border"
+                      [user]="vm.story.createdBy"
+                      type="light"
+                      [rounded]="true"
+                      aria-hidden="true"></tg-user-avatar>
+                    <div>
+                      <span class="creation-info-fullname">
+                        {{ vm.story.createdBy.fullName }}
+                      </span>
+                      <span>∙</span>
+                      <span
+                        *ngIf="vm.story.createdAt"
+                        [title]="vm.story.createdAt | date: 'medium'"
+                        class="creation-info-date">
+                        {{ vm.story.createdAt | dateDistance }}
+                      </span>
+                    </div>
+                  </div>
+                  <tg-story-detail-description
+                    [form]="form"
+                    [story]="vm.story"
+                    (focusChange)="fieldFocus($event)"
+                    (editChange)="
+                      fieldEdit($event)
+                    "></tg-story-detail-description>
                 </div>
-              </div>
-              <ng-container *ngIf="vm.selectedStoryView === 'side-view'">
-                <tg-story-detail-status [form]="form"></tg-story-detail-status>
-                <tg-story-detail-assign
-                  *ngIf="vm.story"
-                  [story]="vm.story"></tg-story-detail-assign>
-              </ng-container>
+              </tui-scrollbar>
             </div>
-            <div class="sidebar">
-              <ng-container *ngIf="vm.selectedStoryView !== 'side-view'">
-                <tg-story-detail-status [form]="form"></tg-story-detail-status>
-                <tg-story-detail-assign
-                  *ngIf="vm.story"
-                  [story]="vm.story"></tg-story-detail-assign>
-              </ng-container>
-              <button
-                *ngIf="vm.selectedStoryView === 'side-view'"
-                [attr.aria-label]="
-                  sidebarOpen
-                    ? t('story.collapse_sidebar')
-                    : t('story.expand_sidebar')
-                "
-                [icon]="sidebarOpen ? 'chevrons-right' : 'chevrons-left'"
-                appearance="tertiary"
-                class="sidepanel-icon"
-                tuiIconButton
-                (click)="toggleSidebar.next()"
-                type="button"></button>
+            <div class="sidebar-wrapper">
+              <tui-scrollbar [style.height.px]="columnHeight">
+                <div
+                  class="sidebar"
+                  [style.min-height.px]="columnHeight">
+                  <ng-container *ngIf="sidebarOpen">
+                    <tg-story-detail-status
+                      [form]="form"></tg-story-detail-status>
+                    <tg-story-detail-assign
+                      *ngIf="vm.story"
+                      [story]="vm.story"></tg-story-detail-assign>
+                  </ng-container>
+
+                  <button
+                    *ngIf="vm.selectedStoryView === 'side-view'"
+                    [attr.aria-label]="
+                      sidebarOpen
+                        ? t('story.collapse_sidebar')
+                        : t('story.expand_sidebar')
+                    "
+                    [icon]="sidebarOpen ? 'chevrons-right' : 'chevrons-left'"
+                    appearance="tertiary"
+                    class="sidepanel-icon"
+                    tuiIconButton
+                    (click)="toggleSidebar.next()"
+                    type="button"></button>
+                </div>
+              </tui-scrollbar>
             </div>
           </div>
-        </tui-scrollbar>
+        </div>
         <tg-ui-modal
           [width]="500"
           [open]="showDeleteStoryConfirm"

@@ -155,22 +155,6 @@ code {
   line-height: 1.5;
 }
 
-pre {
-  background-color: #f6f6f6;
-  direction: ltr;
-  font-size: 1rem;
-  hyphens: none;
-  line-height: 1.375;
-  margin-block: 0.5rem;
-  margin-inline: 0;
-  padding: 1rem;
-  tab-size: 2;
-  text-align: start;
-  white-space: pre;
-  word-break: normal;
-  word-spacing: normal;
-}
-
 code {
   word-break: break-all;
 }

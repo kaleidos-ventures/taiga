@@ -9,6 +9,7 @@
 import {
   randFullName,
   randNumber,
+  randParagraph,
   randPastDate,
   randSlug,
   randText,
@@ -34,6 +35,7 @@ export const StoryMockFactory = (
     ref: randNumber({ min: 1, max: 999 }),
     version: randNumber(),
     title: randText({ charCount: titleCount }),
+    description: randParagraph(),
     slug: randSlug(),
     status: statuses[Math.floor(Math.random() * statuses.length)],
     assignees: [],
@@ -59,6 +61,7 @@ export const StoryDetailMockFactory = (
     ref: randNumber({ min: 1, max: 999 }),
     version: randNumber(),
     title: randText({ charCount: titleCount }),
+    description: randParagraph(),
     slug: randSlug(),
     status: statuses[Math.floor(Math.random() * statuses.length)],
     workflow: {
@@ -75,6 +78,12 @@ export const StoryDetailMockFactory = (
     assignees: [],
     titleUpdatedAt: randPastDate().toString(),
     titleUpdatedBy: {
+      username: user.username,
+      fullName: user.fullName,
+      color: user.color,
+    },
+    descriptionUpdatedAt: randPastDate().toString(),
+    descriptionUpdatedBy: {
       username: user.username,
       fullName: user.fullName,
       color: user.color,

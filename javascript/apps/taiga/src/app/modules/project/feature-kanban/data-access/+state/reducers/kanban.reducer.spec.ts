@@ -464,6 +464,42 @@ describe('Kanban reducer', () => {
     expect(state.stories[status2.slug][1].ref).toEqual(stories[0].ref);
   });
 
+  it('update story description does not break the kanban story title', () => {
+    const { initialKanbanState } = kanbanReducer;
+    const workflow = WorkflowMockFactory();
+    const status = StatusMockFactory();
+
+    workflow.statuses = [status];
+
+    const stories: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status]),
+      },
+    ];
+    const storyUpdate = {
+      ref: stories[0].ref!,
+      version: 1,
+      title: 'yy',
+      description: 'xxx',
+    };
+
+    const state = kanbanReducer.kanbanFeature.reducer(
+      {
+        ...initialKanbanState,
+        stories: {
+          [status.slug]: stories,
+        },
+        workflows: [workflow],
+      },
+      StoryDetailActions.updateStory({
+        projectId: randUuid(),
+        story: storyUpdate,
+      })
+    );
+
+    expect(state.stories[status.slug][0].title).toEqual('yy');
+  });
+
   it('update story status by event', () => {
     const { initialKanbanState } = kanbanReducer;
     const workflow = WorkflowMockFactory();

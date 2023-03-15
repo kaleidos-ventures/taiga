@@ -8,7 +8,7 @@
 
 import { A11yModule } from '@angular/cdk/a11y';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TuiActiveZoneModule } from '@taiga-ui/cdk';
 import {
@@ -26,7 +26,7 @@ import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
 import { StatusColorPipe } from '~/app/shared/pipes/status-color/status-color.pipe';
-import { ResizeEventModule } from '~/app/shared/resize/resize.module';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { AssignUserComponent } from '../components/assign-user/assign-user.component';
 import { StoryDetailAssignComponent } from './components/story-detail-assign/story-detail-assign.component';
@@ -38,6 +38,12 @@ import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/res
 import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
 import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
 import { FieldConflictComponent } from '../components/field-conflict/field-conflict.component';
+import { StoryDetailDescriptionComponent } from './components/story-detail-description/story-detail-description.component';
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
+import { ClickActionAreaDirective } from '~/app/shared/directives/click-action-area/click-action-area.directive';
+import { SafeHtmlPipe } from '~/app/shared/pipes/safe-html/safe-html.pipe';
+import { StoryDetailScriptionStickyDirective } from './components/story-detail-description/story-detail-description-sticky.directive';
+import { CodeHightlightDirective } from '~/app/shared/directives/code-highlight/code-highlight.directive';
 
 @NgModule({
   imports: [
@@ -53,12 +59,13 @@ import { FieldConflictComponent } from '../components/field-conflict/field-confl
     A11yModule,
     DateDistancePipe,
     InputsModule,
+    FormsModule,
     ReactiveFormsModule,
     DataAccessStoryDetailModule,
     StatusColorPipe,
     AssignUserComponent,
     TuiActiveZoneModule,
-    ResizeEventModule,
+    ResizedDirective,
     HasPermissionDirective,
     ModalModule,
     AutoFocusDirective,
@@ -66,13 +73,22 @@ import { FieldConflictComponent } from '../components/field-conflict/field-confl
     RestoreFocusTargetDirective,
     DiscardChangesModalComponent,
     FieldConflictComponent,
+    EditorModule,
+    ClickActionAreaDirective,
+    SafeHtmlPipe,
+    StoryDetailScriptionStickyDirective,
+    CodeHightlightDirective,
   ],
   declarations: [
     StoryDetailComponent,
     StoryDetailStatusComponent,
     StoryDetailAssignComponent,
     StoryDetailTitleComponent,
+    StoryDetailDescriptionComponent,
   ],
   exports: [StoryDetailComponent],
+  providers: [
+    { provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' },
+  ],
 })
 export class StoryDetailModule {}

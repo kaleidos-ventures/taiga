@@ -19,7 +19,7 @@ Copyright (c) 2023-present Kaleidos INC
         <tui-svg
           class="alert-icon"
           src="alert"></tui-svg>
-        {{ t('field_conflict.title') }}
+        {{ t('field_conflict.title', { fieldName: field }) }}
       </p>
       <p
         class="description"
@@ -29,12 +29,11 @@ Copyright (c) 2023-present Kaleidos INC
       <div class="actions">
         <button
           class="copy-link"
-          data-test="copy-title"
+          data-test="copy-clipboard-conflict"
           tuiButton
           appearance="tertiary"
           [class.copied]="copied"
           [icon]="copied ? 'check' : 'duplicate'"
-          [cdkCopyToClipboard]="copyValue"
           (click)="copy()">
           <ng-container *ngIf="copied">
             {{ t('field_conflict.copied') }}
@@ -74,7 +73,6 @@ Copyright (c) 2023-present Kaleidos INC
           appearance="primary"
           [class.copied]="copied"
           [icon]="copied ? 'check' : 'duplicate'"
-          [cdkCopyToClipboard]="copyValue"
           (click)="copyAfterAccept()">
           <ng-container *ngIf="copied">
             {{ t('field_conflict.copied') }}

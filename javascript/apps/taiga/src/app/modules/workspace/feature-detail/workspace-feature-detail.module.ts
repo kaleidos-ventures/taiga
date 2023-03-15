@@ -33,7 +33,7 @@ import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
-import { ResizeEventModule } from '~/app/shared/resize/resize.module';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { TitleDirective } from '~/app/shared/title/title.directive';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { WorkspaceDetailEffects } from './+state/effects/workspace-detail.effects';
@@ -75,7 +75,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     EffectsModule.forFeature([WorkspaceDetailEffects]),
     ProjectCardComponent,
     DeleteWorkspaceComponent,
-    ResizeEventModule,
+    ResizedDirective,
     WorkspacePageRoutingModule,
     SkeletonsModule,
     CapitalizePipeModule,

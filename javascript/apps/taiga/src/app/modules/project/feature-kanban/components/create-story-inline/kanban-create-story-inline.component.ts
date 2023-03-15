@@ -79,6 +79,7 @@ export class KanbanCreateStoryInlineComponent implements AfterViewInit {
           story: {
             tmpId: v4(),
             title: this.form.get('title')!.value,
+            description: '',
             status: {
               name: this.status.name,
               slug: this.status.slug,

@@ -6,7 +6,6 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { ClipboardModule } from '@angular/cdk/clipboard';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,6 +18,7 @@ import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
 import { ShortcutDirective } from '~/app/shared/directives/shorcut/shorcut.directive';
+import copy from 'copy-to-clipboard';
 
 @Component({
   selector: 'tg-field-conflict',
@@ -26,7 +26,6 @@ import { ShortcutDirective } from '~/app/shared/directives/shorcut/shorcut.direc
   imports: [
     CommonTemplateModule,
     TuiSvgModule,
-    ClipboardModule,
     ShortcutDirective,
     AutoFocusDirective,
     OutsideClickDirective,
@@ -46,6 +45,9 @@ export class FieldConflictComponent {
   @Input()
   public copyValue!: string;
 
+  @Input()
+  public format = 'text/plain';
+
   @Output()
   public cancel = new EventEmitter<boolean>();
 
@@ -64,6 +66,10 @@ export class FieldConflictComponent {
   }
 
   public copy() {
+    copy(this.copyValue, {
+      format: this.format,
+    });
+
     this.copied = true;
   }
 

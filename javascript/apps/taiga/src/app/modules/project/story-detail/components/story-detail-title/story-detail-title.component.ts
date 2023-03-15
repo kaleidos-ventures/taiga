@@ -15,6 +15,7 @@ import {
   HostListener,
   Input,
   OnChanges,
+  OnDestroy,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -31,11 +32,16 @@ import {
   HasChanges,
   HasChangesService,
 } from '~/app/shared/utils/has-changes.service';
-import { StoryDetail } from '@taiga/data';
-import { auditTime } from 'rxjs';
+import { Project, StoryDetail } from '@taiga/data';
+import { auditTime, map } from 'rxjs';
 import { PermissionsService } from '~/app/services/permissions.service';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { Store } from '@ngrx/store';
+import { filterNil } from '~/app/shared/utils/operators';
 
 export interface StoryDetailTitleState {
+  projectId: Project['id'];
   story: StoryDetail;
   editedStory: StoryDetail;
   conflict: boolean;
@@ -51,7 +57,9 @@ export interface StoryDetailTitleState {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
 })
-export class StoryDetailTitleComponent implements OnChanges, HasChanges {
+export class StoryDetailTitleComponent
+  implements OnChanges, HasChanges, OnDestroy
+{
   @Input()
   public form!: FormGroup<StoryDetailForm>;
 
@@ -78,6 +86,13 @@ export class StoryDetailTitleComponent implements OnChanges, HasChanges {
 
   @Input()
   public set story(story: StoryDetail) {
+    if (
+      this.state.get('story')?.ref &&
+      this.state.get('story')?.ref !== story.ref
+    ) {
+      this.saveState();
+    }
+
     this.state.set({ story });
   }
 
@@ -102,9 +117,19 @@ export class StoryDetailTitleComponent implements OnChanges, HasChanges {
     private state: RxState<StoryDetailTitleState>,
     private shortcutsService: ShortcutsService,
     private cd: ChangeDetectorRef,
-    private hasPermissions: PermissionsService
+    private hasPermissions: PermissionsService,
+    private store: Store,
+    private localStorageService: LocalStorageService
   ) {
     this.hasChangesService.addComponent(this);
+
+    this.state.connect(
+      'projectId',
+      this.store.select(selectCurrentProject).pipe(
+        filterNil(),
+        map((project) => project.id)
+      )
+    );
 
     this.shortcutsService
       .task('edit-field.close')
@@ -213,9 +238,54 @@ export class StoryDetailTitleComponent implements OnChanges, HasChanges {
       this.titleForm
         .get('title')!
         .setValue(this.form.get('title')?.value ?? '');
+
+      this.setInitialState();
     }
   }
 
+  public ngOnDestroy() {
+    this.saveState();
+  }
+
+  private getLocalStorageKey() {
+    const projectId = this.state.get('projectId');
+    const storyRef = this.state.get('story').ref;
+
+    return `${projectId}-story${storyRef}-title`;
+  }
+
+  private setInitialState() {
+    const key = this.getLocalStorageKey();
+    const obj =
+      this.localStorageService.get<{
+        edit: boolean;
+        value: string;
+      }>(key) ?? null;
+
+    if (obj && obj.edit) {
+      this.titleForm.get('title')!.setValue(obj.value);
+      this.state.set({ editedStory: this.state.get('story') });
+      this.setEdit(true);
+    }
+  }
+
+  private saveState() {
+    const key = this.getLocalStorageKey();
+
+    if (this.state.get('edit')) {
+      this.localStorageService.set(key, {
+        edit: true,
+        value: this.titleForm.get('title')!.value,
+      });
+    } else {
+      this.removeLocalState();
+    }
+  }
+
+  private removeLocalState() {
+    const key = this.getLocalStorageKey();
+    this.localStorageService.remove(key);
+  }
   private reset() {
     this.setConflict(false);
     this.titleForm.get('title')!.setValue(this.form.get('title')!.value ?? '');
@@ -231,6 +301,7 @@ export class StoryDetailTitleComponent implements OnChanges, HasChanges {
     } else {
       this.shortcutsService.undoScope('edit-field');
       this.focusChange.next(false);
+      this.removeLocalState();
     }
   }
 }

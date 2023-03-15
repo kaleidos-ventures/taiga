@@ -27,14 +27,10 @@ Copyright (c) 2023-present Kaleidos INC
         #dragHandle
         *ngIf="showDragbar()"
         class="dragbar"
-        cdkDrag
-        cdkDragLockAxis="x"
-        cdkDragBoundary=".kanban-cdk-area"
-        (mousedown)="isDragging(true)"
-        (mouseup)="isDragging(false)"
-        (cdkDragStarted)="isDragging(true)"
-        (cdkDragReleased)="isDragging(false)"
-        (cdkDragMoved)="dragMove(dragHandle, $event)"></div>
+        tgStoryWrapperSideViewResize
+        (tgResizeStart)="isDragging(true)"
+        (tgResizeEnd)="isDragging(false)"
+        (tgResizeMove)="dragMove(dragHandle, $event)"></div>
     </div>
   </ng-container>
 </ng-container>

@@ -131,6 +131,37 @@ function login(username = '1user', password = '123123') {
 }
 
 Cypress.Commands.add('login', login);
+
+function setEditorContent(editorId: string, content: string) {
+  cy.get(`#${editorId}`).should('be.visible');
+
+  // wait for tiny init
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(500);
+
+  cy.window().then((win) => {
+    /* eslint-disable */
+    const editor = (win as any).tinyMCE.get(editorId);
+    editor.setContent(content);
+    /* eslint-enable */
+  });
+}
+
+Cypress.Commands.add('setEditorContent', setEditorContent);
+
+function getEditorContent(editorId: string) {
+  cy.get('.tox-tinymce').should('be.visible');
+
+  cy.window().then((win) => {
+    /* eslint-disable */
+    const editor = (win as any).tinyMCE.get(editorId);
+    return editor.getContent();
+    /* eslint-enable */
+  });
+}
+
+Cypress.Commands.add('getEditorContent', getEditorContent);
+
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Cypress {
   interface Chainable {
@@ -146,5 +177,7 @@ declare namespace Cypress {
       selector: string,
       options?: CyGetOptions[1]
     ) => Chainable<JQuery<HTMLElement>>;
+    setEditorContent: typeof setEditorContent;
+    getEditorContent: typeof getEditorContent;
   }
 }

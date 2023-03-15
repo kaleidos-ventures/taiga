@@ -14,6 +14,7 @@ export interface Story {
   ref: number;
   version: number;
   title: string;
+  description: string | null;
   slug: string;
   status: Pick<Status, 'slug' | 'color' | 'name'>;
   assignees: Pick<User, 'username' | 'fullName' | 'color'>[];
@@ -33,6 +34,8 @@ export interface StoryDetail extends Story {
   createdAt: string;
   titleUpdatedAt: string;
   titleUpdatedBy: Pick<User, 'username' | 'fullName' | 'color'>;
+  descriptionUpdatedAt: string;
+  descriptionUpdatedBy: Pick<User, 'username' | 'fullName' | 'color'>;
 }
 
 export interface StoryUpdate {
@@ -40,6 +43,7 @@ export interface StoryUpdate {
   version: Story['version'];
   status?: Story['status']['slug'];
   title?: Story['title'];
+  description?: Story['description'];
 }
 
 export interface createdBy {

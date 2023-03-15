@@ -1,0 +1,111 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import "tools/typography.css";
+
+:host {
+  display: block;
+  margin-block-start: var(--spacing-12);
+
+  &.conflict {
+    background-color: var(--color-gray20);
+
+    & .editor {
+      border: 2px solid var(--color-gray40);
+      border-radius: 3px;
+      min-block-size: 255px;
+    }
+
+    &::ng-deep {
+      & iframe {
+        background: repeating-linear-gradient(
+          -45deg,
+          #e2e6ee,
+          #e2e6ee 2px,
+          #eff0f5 2px,
+          #eff0f5 10px
+        );
+      }
+
+      & .tox-toolbar__primary,
+      & .tox:not(.tox-tinymce-inline) .tox-editor-header,
+      & .tox-toolbar-overlord,
+      & .editor button {
+        background-color: var(--color-gray20);
+      }
+    }
+  }
+
+  &:not(.edit) {
+    border-block-start: 1px solid var(--color-gray10);
+  }
+
+  &.editor-focused {
+    & .editor::ng-deep .tox {
+      border: 2px solid var(--color-secondary);
+      border-radius: 3px;
+    }
+  }
+}
+
+.editor {
+  &::ng-deep {
+    & .tox-statusbar {
+      display: none;
+    }
+  }
+}
+
+.description-wrapper {
+  position: relative;
+}
+
+.edit-description {
+  inset-block-start: var(--spacing-12);
+  inset-inline-end: 2px;
+  position: absolute;
+}
+
+.edit-field-actions {
+  display: flex;
+  gap: var(--spacing-8);
+  inset-block-end: var(--spacing-8);
+  inset-inline-end: var(--spacing-8);
+  position: absolute;
+}
+
+.empty {
+  color: var(--color-gray70);
+  font-size: var(--font-size-medium);
+  font-style: italic;
+  padding-block-start: var(--spacing-16);
+  text-align: center;
+}
+
+.shape-outside-text {
+  block-size: 32px;
+  inline-size: 32px;
+  margin-block-start: var(--spacing-12);
+  shape-outside: inset(0 0 0 0);
+}
+
+.description-content {
+  padding: var(--spacing-16);
+}
+
+.conflict-wrapper {
+  inline-size: 100%;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  padding: var(--spacing-8);
+  position: absolute;
+}
+
+tg-field-conflict {
+  inline-size: 100%;
+}

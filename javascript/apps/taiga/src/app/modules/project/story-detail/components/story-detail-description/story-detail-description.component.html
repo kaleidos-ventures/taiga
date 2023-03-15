@@ -1,0 +1,180 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <ng-container *ngIf="vm.edit">
+      <div class="description-wrapper">
+        <form
+          [formGroup]="descriptionForm"
+          (ngSubmit)="save()">
+          <editor
+            [tgStoryDetailScriptionSticky]="vm.editorReady"
+            id="edit-description"
+            formControlName="description"
+            class="editor"
+            [(ngModel)]="description"
+            (onFocus)="focusIn()"
+            (onBlur)="focusOut()"
+            (onInit)="onInitEditor()"
+            [init]="{
+              language: vm.lan.code,
+              language_url: vm.lan.url,
+              menubar: '',
+              toolbar:
+                'blocks | bold italic underline strikethrough | bullist numlist | link image codesample| emoticons |  alignleft aligncenter alignright | outdent indent | forecolor backcolor removeformat | hr',
+              toolbar_mode: 'sliding',
+              quickbars_selection_toolbar:
+                'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+              contextmenu: 'link image table',
+              template_cdate_format:
+                '[Date Created (CDATE): %m/%d/%Y : %H:%M:%S]',
+              template_mdate_format:
+                '[Date Modified (MDATE): %m/%d/%Y : %H:%M:%S]',
+              plugins: [
+                'advlist',
+                'autolink',
+                'link',
+                'image',
+                'lists',
+                'charmap',
+                'preview',
+                'anchor',
+                'searchreplace',
+                'wordcount',
+                'visualblocks',
+                'visualchars',
+                'code',
+                'fullscreen',
+                'insertdatetime',
+                'media',
+                'table',
+                'emoticons',
+                'template',
+                'help',
+                'preview',
+                'importcss',
+                'autosave',
+                'save',
+                'directionality',
+                'codesample',
+                'nonbreaking',
+                'quickbars',
+                'autoresize'
+              ],
+              codesample_languages: [
+                { text: 'HTML/XML', value: 'markup' },
+                { text: 'JavaScript', value: 'javascript' },
+                { text: 'TypeScript', value: 'typescript' },
+                { text: 'CSS', value: 'css' },
+                { text: 'Diff', value: 'diff' },
+                { text: 'PHP', value: 'php' },
+                { text: 'Ruby', value: 'ruby' },
+                { text: 'Python', value: 'python' },
+                { text: 'Java', value: 'java' },
+                { text: 'C', value: 'c' },
+                { text: 'C#', value: 'csharp' },
+                { text: 'C++', value: 'cpp' }
+              ],
+              block_formats:
+                'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3; Header 4=h4; Header 5=h5; Header 6=h6; Code =code;',
+              icons_url: '/assets/editor/icons.js',
+              icons: 'taiga-icon-pack',
+              promotion: false,
+              branding: false,
+              auto_focus: true,
+              content_css: [
+                '/assets/editor/iframe.css',
+                '/assets/editor/prism.css'
+              ],
+              codesample_global_prismjs: true
+            }"></editor>
+
+          <div
+            class="edit-field-actions"
+            *ngIf="vm.editorReady">
+            <button
+              data-test="edit-description-cancel"
+              (click)="cancelEditDescription()"
+              tuiButton
+              type="button"
+              appearance="tertiary">
+              {{ t('commons.cancel') }}
+            </button>
+            <button
+              data-test="edit-description-save"
+              tuiButton
+              type="submit"
+              appearance="primary">
+              {{ t('commons.save') }}
+            </button>
+          </div>
+        </form>
+
+        <ng-container
+          *ngIf="vm.conflict"
+          tgRestoreFocus="edit-description">
+          <div class="conflict-wrapper">
+            <tg-field-conflict
+              *ngIf="vm.conflict"
+              format="text/html"
+              [username]="vm.story.descriptionUpdatedBy.fullName"
+              [field]="t('field_conflict.fields.description')"
+              [copyValue]="descriptionForm.get('description')!.value"
+              (cancel)="cancelConflict($event)"
+              (accept)="acceptConflict()"></tg-field-conflict>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!vm.edit">
+      <ng-container *ngIf="vm.story.description?.length; else emptyTpl">
+        <div class="description-wrapper">
+          <div class="shape-outside-text float-inline-end"></div>
+          <div
+            tgCodeHightlight
+            data-test="description-content"
+            (tgClickActionArea)="editDescription()"
+            class="description-content"
+            [innerHTML]="vm.story.description ?? '' | safeHtml"></div>
+          <ng-template [ngTemplateOutlet]="editDescriptionBtn"></ng-template>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyTpl>
+        <div class="description-wrapper">
+          <p
+            class="empty"
+            (click)="editDescription()">
+            {{ t('story.empty_description') }}
+          </p>
+          <ng-template [ngTemplateOutlet]="editDescriptionBtn"></ng-template>
+        </div>
+      </ng-template>
+    </ng-container>
+
+    <ng-template #editDescriptionBtn>
+      <button
+        *ngIf="!vm.conflict && vm.hasPermissionToEdit"
+        data-test="edit-description"
+        tgRestoreFocusTarget="edit-description"
+        (click)="editDescription()"
+        class="edit-description"
+        [attr.aria-label]="t('story.edit_description')"
+        appearance="tertiary"
+        tuiIconButton
+        icon="pen"
+        type="button"></button>
+    </ng-template>
+
+    <tg-discard-changes-modal
+      [open]="showConfirmEditDescriptionModal"
+      (discard)="discard()"
+      (cancel)="keepEditing()"></tg-discard-changes-modal>
+  </ng-container>
+</ng-container>

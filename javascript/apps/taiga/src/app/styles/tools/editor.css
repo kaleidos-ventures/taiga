@@ -1,0 +1,349 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+/* stylelint-disable max-nesting-depth */
+/* stylelint-disable no-duplicate-selectors */
+/* stylelint-disable selector-max-type */
+/* stylelint-disable selector-max-compound-selectors */
+@import "tools/typography.css";
+
+body .tox {
+  font-family: "Ubuntu", sans-serif;
+
+  /* Toolbar general buttons */
+
+  & .tox-toolbar__group {
+    &:not(:first-child) {
+      border-inline-end: solid 1px var(--color-gray30);
+      border-inline-start: solid 1px var(--color-gray30);
+    }
+
+    & .tox-tbtn,
+    & .tox-split-button {
+      color: var(--color-black);
+
+      &:focus {
+        background: none;
+        outline: solid 1px var(--color-secondary);
+      }
+
+      &:hover {
+        background: var(--color-gray20);
+      }
+
+      & svg {
+        fill: var(--color-black);
+      }
+    }
+
+    & .tox-tbtn--enabled,
+    & .tox-tbtn--enabled:hover {
+      background: var(--color-gray90);
+      color: var(--color-white);
+
+      & svg {
+        fill: var(--color-white);
+      }
+
+      &:focus {
+        background: var(--color-gray90);
+
+        & svg {
+          fill: var(--color-white);
+        }
+      }
+    }
+  }
+
+  /* Toolbar groupp align buttons */
+
+  & .tox-tiered-menu .tox-collection--toolbar {
+    & .tox-collection__item:focus {
+      outline: solid 1px var(--color-secondary);
+    }
+
+    & .tox-collection__item--enabled {
+      background: var(--color-gray90);
+      color: var(--color-white);
+
+      & svg {
+        fill: var(--color-white);
+      }
+    }
+
+    & .tox-collection__item--active {
+      background: var(--color-gray20);
+
+      & svg {
+        fill: var(--color-black);
+      }
+    }
+
+    & .tox-collection__item--enabled.tox-collection__item--active {
+      background: var(--color-gray90);
+      color: var(--color-white);
+
+      & svg {
+        fill: var(--color-white);
+      }
+    }
+  }
+
+  /* General tox button */
+
+  & .tox-button {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-gray80);
+    font-weight: var(--font-weight-medium);
+
+    &:active:not(:disabled) {
+      background: var(--color-primary40);
+      border-color: var(--color-primary40);
+      color: var(--color-gray90);
+    }
+
+    &:hover:not(:disabled) {
+      background: var(--color-primary40);
+      border-color: var(--color-primary40);
+      color: var(--color-gray90);
+    }
+
+    &.tox-button--icon .tox-icon svg {
+      fill: var(--color-gray90);
+    }
+
+    &.tox-button--secondary {
+      background: var(--color-gray30);
+      border-color: var(--color-gray30);
+      color: var(--color-gray80);
+
+      &:active:not(:disabled) {
+        background: var(--color-gray40);
+        border-color: var(--color-gray40);
+        color: var(--color-gray90);
+      }
+
+      &:hover:not(:disabled) {
+        background: var(--color-gray40);
+        border-color: var(--color-gray40);
+        color: var(--color-gray90);
+      }
+    }
+
+    &.tox-button--naked {
+      background: transparent;
+      border-color: transparent;
+      color: var(--color-gray60);
+
+      & svg {
+        fill: var(--color-gray60);
+      }
+
+      &:active:not(:disabled) {
+        background: var(--color-gray20);
+        border-color: var(--color-gray20);
+        color: var(--color-secondary90);
+
+        & svg {
+          fill: var(--color-secondary90);
+        }
+      }
+
+      &:hover:not(:disabled) {
+        background: var(--color-gray20);
+        border-color: var(--color-gray20);
+        color: var(--color-secondary90);
+
+        & svg {
+          fill: var(--color-secondary90);
+        }
+      }
+    }
+  }
+
+  /* Paragraph-headings selects */
+
+  & .tox-collection--list {
+    & .tox-collection__item--enabled {
+      background: var(--color-gray90);
+
+      & p {
+        /* stylelint-disable-next-line declaration-no-important */
+        color: var(--color-white) !important;
+      }
+
+      & .tox-collection__item-label {
+        color: var(--color-white);
+
+        & * {
+          /* stylelint-disable-next-line declaration-no-important */
+          color: var(--color-white) !important;
+        }
+      }
+
+      & svg {
+        fill: var(--color-white);
+      }
+
+      &.tox-collection__item--active {
+        color: var(--color-gray90);
+
+        & svg {
+          fill: var(--color-gray90);
+        }
+      }
+    }
+
+    & .tox-collection__item--active {
+      background: var(--color-gray20);
+
+      & .tox-collection__item-label * {
+        /* stylelint-disable-next-line declaration-no-important */
+        color: var(--color-gray90) !important;
+      }
+    }
+
+    & .tox-collection__item {
+      padding-block: var(--spacing-8);
+      padding-inline: var(--spacing-4) var(--spacing-8);
+    }
+  }
+
+  /* Emoji menu links */
+
+  & .tox-dialog-wrap .tox-dialog__body-nav-item--active {
+    border-color: var(--color-secondary);
+    color: var(--color-secondary);
+  }
+
+  /* Emoji menu grid button */
+  & .tox-dialog-wrap .tox-collection__group .tox-collection__item {
+    &.tox-collection__item--active:not(.tox-collection__item--state-disabled) {
+      background: var(--color-gray20);
+      border-color: var(--color-primary);
+    }
+  }
+
+  /* Dialog close button */
+
+  & .tox-dialog__header {
+    & .tox-button {
+      background: none;
+      border-color: transparent;
+      color: var(--color-gray80);
+
+      &:active:not(:disabled) {
+        background: none;
+        border-color: transparent;
+        color: var(--color-gray80);
+      }
+
+      &:hover:not(:disabled) {
+        background: none;
+        border-color: transparent;
+        color: var(--color-gray80);
+      }
+
+      &.tox-button--icon .tox-icon svg {
+        fill: var(--color-gray80);
+      }
+    }
+  }
+
+  /* Forms */
+
+  & .tox-selectfield select {
+    background: var(--color-gray10);
+    border: 2px solid var(--color-gray40);
+    border-radius: 3px;
+
+    &:focus {
+      border-color: var(--color-secondary);
+      outline: solid 1px var(--color-secondary);
+    }
+  }
+
+  & .tox-textarea {
+    background: var(--color-gray10);
+    border: 2px solid var(--color-gray40);
+    border-radius: 3px;
+
+    &:focus {
+      border-color: var(--color-secondary);
+      outline: solid 1px var(--color-secondary);
+    }
+  }
+
+  & .tox-textfield {
+    background: var(--color-gray10);
+    border: 2px solid var(--color-gray40);
+    border-radius: 3px;
+
+    &:focus {
+      border-color: var(--color-secondary);
+      outline: solid 1px var(--color-secondary);
+    }
+  }
+
+  & .tox-listboxfield .tox-listbox--select {
+    background: var(--color-gray10);
+    border: 2px solid var(--color-gray40);
+    border-radius: 3px;
+  }
+
+  & .tox-listbox__select-label {
+    @mixin font-paragraph;
+  }
+
+  & .tox-label,
+  & .tox-toolbar-label {
+    @mixin font-paragraph;
+
+    color: var(--color-gray80);
+    font-weight: var(--font-weight-medium);
+    margin-block-end: var(--spacing-4);
+    margin-block-start: var(--spacing-4);
+    margin-inline-start: var(--spacing-4);
+  }
+
+  /* Change color picker button */
+
+  & .tox-swatches__picker-btn:hover {
+    background: var(--color-gray20);
+  }
+
+  /* Modal title */
+
+  & .tox-dialog__title {
+    @mixin font-heading-4;
+  }
+
+  /* toolbar borders */
+  & .tox-toolbar__overflow:nth-child(2) {
+    background: none;
+    border-block-start: solid 1px var(--color-gray30);
+  }
+
+  /* Remove padding on header */
+
+  &:not(.tox-tinymce-inline) .tox-editor-header {
+    padding: 0;
+  }
+
+  & .tox-menubar + .tox-toolbar,
+  & .tox-menubar + .tox-toolbar-overlord {
+    padding-block: 0;
+  }
+}
+
+.sticky .tox-editor-header {
+  inline-size: var(--sticky-header-width);
+  inset-block-start: 20px;
+  position: fixed;
+}

@@ -553,7 +553,7 @@ export const reducer = createImmerReducer(
     }
 
     state = replaceStory(state, (it) => {
-      if (it.ref === story.ref) {
+      if (it.ref === story.ref && story.title) {
         return {
           ...it,
           ...pick(story, ['title']),

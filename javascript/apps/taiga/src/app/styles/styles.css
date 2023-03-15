@@ -27,3 +27,5 @@ shared: Specific styles that are shared by multiple elements across the site. Co
 @import "shared/button.css";
 @import "shared/accesibility.css";
 @import "tools/skeleton.css";
+@import "tools/editor.css";
+@import "tools/editor-results.css";

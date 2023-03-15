@@ -31,7 +31,7 @@ import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
-import { ResizeEventModule } from '~/app/shared/resize/resize.module';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { TitleDirective } from '~/app/shared/title/title.directive';
 import { WorkspaceDetailEffects } from './+state/effects/workspace-detail.effects';
 import { workspaceDetailFeature } from './+state/reducers/workspace-detail.reducer';
@@ -75,7 +75,7 @@ import { PaginationComponent } from '~/app/shared/pagination/pagination.componen
     EffectsModule.forFeature([WorkspaceDetailEffects]),
     ProjectCardComponent,
     DeleteWorkspaceComponent,
-    ResizeEventModule,
+    ResizedDirective,
     WorkspacePageRoutingModule,
     SkeletonsModule,
     CapitalizePipeModule,

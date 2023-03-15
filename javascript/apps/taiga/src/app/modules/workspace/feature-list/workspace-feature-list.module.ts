@@ -28,7 +28,7 @@ import { SkeletonsModule } from 'libs/ui/src/lib/skeletons/skeletons.module';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
-import { ResizeEventModule } from '~/app/shared/resize/resize.module';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { TitleDirective } from '~/app/shared/title/title.directive';
 import { WorkspaceEffects } from './+state/effects/workspace.effects';
 import { workspaceFeature } from './+state/reducers/workspace.reducer';
@@ -63,7 +63,7 @@ import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-rout
     A11yModule,
     TuiTooltipModule,
     TuiHintModule,
-    ResizeEventModule,
+    ResizedDirective,
     ProjectCardComponent,
     WorkspaceFeatureListRoutingModule,
     CapitalizePipeModule,

@@ -1,0 +1,141 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+*::selection {
+  background: #99cbdb;
+  color: rgba(38, 44, 57, 1);
+}
+
+body {
+  color: rgba(80, 92, 116, 1);
+  font-family: "Ubuntu", sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 21px;
+  margin: 15px;
+}
+
+.mce-content-body audio[data-mce-selected],
+.mce-content-body embed[data-mce-selected],
+.mce-content-body img[data-mce-selected],
+.mce-content-body object[data-mce-selected],
+.mce-content-body table[data-mce-selected],
+.mce-content-body video[data-mce-selected] {
+  outline: solid 3px rgba(211, 251, 244, 1);
+}
+
+.mce-content-body div.mce-resizehandle {
+  background-color: rgba(131, 238, 222, 1);
+  border-color: rgba(131, 238, 222, 1);
+}
+
+a {
+  color: rgba(0, 124, 165, 1);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.mce-content-body [data-mce-selected="inline-boundary"] {
+  background-color: rgba(0, 124, 165, 0.1);
+}
+
+ul {
+  margin-block: 0 2.5rem;
+  margin-block-end: 0.5rem;
+  padding-inline-start: 1.4rem;
+}
+
+ol {
+  display: block;
+  list-style-type: decimal;
+  margin-block-end: 1em;
+  margin-block-start: 1em;
+  margin-inline-end: 0;
+  margin-inline-start: 0;
+  padding-inline-start: 40px;
+}
+
+li {
+  margin-block-end: 0.4rem;
+}
+
+hr {
+  background: #eceff4;
+  block-size: 1px;
+  border: none;
+  margin-block: 0.5rem;
+  margin-inline: 0;
+}
+
+p {
+  margin-block-end: 1em;
+  margin-block-start: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Ubuntu", sans-serif;
+  line-height: 1.1;
+  margin-block-start: 0;
+}
+
+h1 {
+  font-size: 2.136rem;
+  font-weight: 500;
+}
+
+h2 {
+  font-size: 1.709rem;
+  font-weight: 500;
+}
+
+h3 {
+  font-size: 1.367rem;
+  font-weight: 500;
+}
+
+h4 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+h5 {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+h6 {
+  font-size: 0.7rem;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+pre {
+  font-family: "Consolas", "Courier", monospace;
+  line-height: 1.5;
+  margin-block-start: 0;
+}
+
+code[class*="language-"],
+pre[class*="language-"],
+.token,
+.language-css .token.string,
+.style .token.string,
+.token.entity,
+.token.operator,
+.token.url {
+  background: none;
+  text-shadow: none;
+}

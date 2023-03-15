@@ -6,7 +6,6 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { CdkDragMove } from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -66,8 +65,8 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
     this.state.connect('loadingStory', this.store.select(selectLoadingStory));
   }
 
-  public dragMove(dragHandle: HTMLElement, event: CdkDragMove<unknown>) {
-    this.sidepanelWidth = window.innerWidth - event.pointerPosition.x;
+  public dragMove(dragHandle: HTMLElement, event: MouseEvent) {
+    this.sidepanelWidth = window.innerWidth - event.clientX;
     dragHandle.style.transform = 'translate(0, 0)';
   }
 

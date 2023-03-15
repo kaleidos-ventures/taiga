@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-export type Entity = 'story' | 'task' | 'sprint' | 'issue' | 'epic' | 'wiki';
+export type Entity = 'story';
 
 export type EntityPermission =
   | 'view'

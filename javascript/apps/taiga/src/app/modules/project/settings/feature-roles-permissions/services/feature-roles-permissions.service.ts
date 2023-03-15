@@ -183,64 +183,53 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
   ) {
     const conflicts: Conflict[] = [];
 
-    (Object.keys(publicPermissions) as Entity[])
-      .filter((permission) => {
-        if (
-          !memberPermissions['story'] &&
-          (permission === 'sprint' || permission === 'task')
-        ) {
-          return false;
-        }
+    (Object.keys(publicPermissions) as Entity[]).forEach((key) => {
+      const publicPermissionKeys = Object.keys(
+        publicPermissions[key]!
+      ) as EntityPermission[];
 
-        return true;
-      })
-      .forEach((key) => {
-        const publicPermissionKeys = Object.keys(
-          publicPermissions[key]!
-        ) as EntityPermission[];
-
-        if (memberPermissions[key]) {
-          const tempMissingPerm: EntityPermission[] = [];
-          publicPermissionKeys.forEach((perm) => {
-            if (!memberPermissions?.[key]?.[perm]) {
-              tempMissingPerm.push(perm);
-            }
-          });
-          if (tempMissingPerm.length) {
-            conflicts.push({
-              name: key,
-              permission: {
-                onlyPublicPermission: tempMissingPerm,
-                public: publicPermissionKeys,
-                member: Object.keys(
-                  memberPermissions[key]!
-                ) as EntityPermission[],
-              },
-              texts: this.generateConflictsTexts({
-                onlyPublicPermission: tempMissingPerm,
-                public: publicPermissionKeys,
-                member: Object.keys(
-                  memberPermissions[key]!
-                ) as EntityPermission[],
-              }),
-            });
+      if (memberPermissions[key]) {
+        const tempMissingPerm: EntityPermission[] = [];
+        publicPermissionKeys.forEach((perm) => {
+          if (!memberPermissions?.[key]?.[perm]) {
+            tempMissingPerm.push(perm);
           }
-        } else {
+        });
+        if (tempMissingPerm.length) {
           conflicts.push({
             name: key,
             permission: {
-              onlyPublicPermission: publicPermissionKeys,
+              onlyPublicPermission: tempMissingPerm,
               public: publicPermissionKeys,
-              member: [],
+              member: Object.keys(
+                memberPermissions[key]!
+              ) as EntityPermission[],
             },
             texts: this.generateConflictsTexts({
-              onlyPublicPermission: publicPermissionKeys,
+              onlyPublicPermission: tempMissingPerm,
               public: publicPermissionKeys,
-              member: [],
+              member: Object.keys(
+                memberPermissions[key]!
+              ) as EntityPermission[],
             }),
           });
         }
-      });
+      } else {
+        conflicts.push({
+          name: key,
+          permission: {
+            onlyPublicPermission: publicPermissionKeys,
+            public: publicPermissionKeys,
+            member: [],
+          },
+          texts: this.generateConflictsTexts({
+            onlyPublicPermission: publicPermissionKeys,
+            public: publicPermissionKeys,
+            member: [],
+          }),
+        });
+      }
+    });
     return conflicts.length ? conflicts : undefined;
   }
 

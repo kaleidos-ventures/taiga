@@ -25,39 +25,6 @@ const mapFormEntitiesPermissions: Record<
     delete: ['delete_story'],
     comment: ['comment_story'],
   },
-  task: {
-    view: ['view_task'],
-    create: ['add_task'],
-    modify: ['modify_task'],
-    delete: ['delete_task'],
-    comment: ['comment_task'],
-  },
-  sprint: {
-    view: ['view_milestones'],
-    create: ['add_milestone'],
-    modify: ['modify_milestone'],
-    delete: ['delete_milestone'],
-  },
-  issue: {
-    view: ['view_issues'],
-    create: ['add_issue'],
-    modify: ['modify_issue'],
-    delete: ['delete_issue'],
-    comment: ['comment_issue'],
-  },
-  epic: {
-    view: ['view_epics'],
-    create: ['add_epic'],
-    modify: ['modify_epic'],
-    delete: ['delete_epic'],
-    comment: ['comment_epic'],
-  },
-  wiki: {
-    view: ['view_wiki_pages', 'view_wiki_links'],
-    create: ['add_wiki_page', 'add_wiki_link'],
-    modify: ['modify_wiki_page', 'modify_wiki_link'],
-    delete: ['delete_wiki_page', 'delete_wiki_link'],
-  },
 };
 
 @Injectable({

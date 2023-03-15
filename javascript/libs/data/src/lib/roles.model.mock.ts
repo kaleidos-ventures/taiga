@@ -29,45 +29,11 @@ export const RoleMockFactory = (): Role => {
 
 const getPermissions = () => {
   const permissions: Permissions[] = [
-    Permissions.addEpic,
-    Permissions.viewEpics,
-    Permissions.modifyEpic,
-    Permissions.commentEpic,
-    Permissions.deleteEpic,
-
-    Permissions.viewMilestones,
-    Permissions.addMilestone,
-    Permissions.modifyMilestone,
-    Permissions.deleteMilestone,
-
     Permissions.viewStory,
     Permissions.addStory,
     Permissions.modifyStory,
     Permissions.commentStory,
     Permissions.deleteStory,
-
-    Permissions.viewTask,
-    Permissions.addTask,
-    Permissions.commentTask,
-    Permissions.modifyTask,
-    Permissions.deleteTask,
-
-    Permissions.viewIssues,
-    Permissions.addIssue,
-    Permissions.commentIssue,
-    Permissions.modifyIssue,
-    Permissions.deleteIsue,
-
-    Permissions.viewWikiLinks,
-    Permissions.addWikiLink,
-    Permissions.modifyWikiLink,
-    Permissions.deleteWikiLink,
-
-    Permissions.viewWikiPages,
-    Permissions.addWikiPage,
-    Permissions.modifyWikiPage,
-    Permissions.commentWikiPage,
-    Permissions.deleteWikiPage,
 
     Permissions.modifyProject,
     Permissions.adminProjectValues,

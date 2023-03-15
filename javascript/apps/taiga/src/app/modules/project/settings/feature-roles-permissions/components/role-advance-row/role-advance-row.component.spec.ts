@@ -8,14 +8,14 @@
 
 import { KeyValue } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import {
   createComponentFactory,
   Spectator,
   SpyObject,
 } from '@ngneat/spectator/jest';
-import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
+import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 
 import { RoleAdvanceRowComponent } from './role-advance-row.component';
 
@@ -82,8 +82,8 @@ describe('RoleAdvanceRowComponent', () => {
     };
 
     spectator.component.entity = {
-      key: 'sprint',
-      value: 'Sprints',
+      key: 'story',
+      value: 'story',
     };
 
     spectator.component.toggleCustomizer();
@@ -113,8 +113,8 @@ describe('RoleAdvanceRowComponent', () => {
     };
 
     spectator.component.entity = {
-      key: 'sprint',
-      value: 'Sprints',
+      key: 'story',
+      value: 'story',
     };
 
     spectator.component.toggleCustomizer();
@@ -146,8 +146,8 @@ describe('RoleAdvanceRowComponent', () => {
     };
 
     spectator.component.entity = {
-      key: 'sprint',
-      value: 'Sprints',
+      key: 'story',
+      value: 'story',
     };
 
     spectator.component.permissionChange(newPermission);

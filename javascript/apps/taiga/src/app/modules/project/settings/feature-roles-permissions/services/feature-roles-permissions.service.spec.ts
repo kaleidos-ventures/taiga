@@ -22,34 +22,6 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
   beforeEach(() => (spectator = createService()));
 
   describe('apply permission to formGroup', () => {
-    it('no access - disable form', () => {
-      const formGroup = new FormGroup({
-        create: new FormControl(false),
-        edit: new FormControl(false),
-        delete: new FormControl(false),
-        comment: new FormControl(false),
-      });
-
-      spectator.service.applyPermission('wiki', 'no_access', formGroup);
-
-      expect(formGroup.disabled).toBeTruthy();
-    });
-
-    it('enable former no access form', () => {
-      const formGroup = new FormGroup({
-        create: new FormControl(false),
-        edit: new FormControl(false),
-        delete: new FormControl(false),
-        comment: new FormControl(false),
-      });
-
-      formGroup.disable();
-
-      spectator.service.applyPermission('wiki', 'edit', formGroup);
-
-      expect(formGroup.disabled).toBeFalsy();
-    });
-
     it('edit - create, modify, delete change to true', () => {
       const formGroup = new FormGroup({
         create: new FormControl(false),
@@ -66,25 +38,6 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         delete: true,
         comment: false,
       });
-    });
-
-    it('modules without comments', () => {
-      const formGroup = new FormGroup({
-        create: new FormControl(false),
-        modify: new FormControl(false),
-        delete: new FormControl(false),
-        comment: new FormControl(false),
-      });
-
-      // stories has comments
-      spectator.service.applyPermission('story', 'edit', formGroup);
-
-      expect(formGroup.get('comment')!.disabled).toBeFalsy();
-
-      // wiki don't have comments
-      spectator.service.applyPermission('wiki', 'edit', formGroup);
-
-      expect(formGroup.get('comment')!.disabled).toBeTruthy();
     });
 
     it('view - create, modify, delete change to false', () => {

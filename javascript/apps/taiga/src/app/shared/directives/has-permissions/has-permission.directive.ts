@@ -23,11 +23,11 @@ import { PermissionsService } from '~/app/services/permissions.service';
 
 // Append this directive to any HTML with conditions:
 // Permission to test (view, edit, etc.)
-// Entity to apply the permission (issue, task, etc.)
+// Entity to apply the permission (story, project, etc.)
 // Operation you want to perform between the permissions query (AND | OR)
 
 // Example
-// <div *hasPermission="['comment']; entity: 'issue'; operation: 'OR'"> Visible </div>
+// <div *hasPermission="['comment']; entity: 'story'; operation: 'OR'"> Visible </div>
 
 // If the conditions are met, the content will be visible, otherwise this node will be removed from the HTML.
 

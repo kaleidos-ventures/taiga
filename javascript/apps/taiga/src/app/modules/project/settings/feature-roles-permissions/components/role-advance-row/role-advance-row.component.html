@@ -9,14 +9,8 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container *transloco="let t">
   <div
     [formGroup]="formGroup"
-    [attr.data-child]="isChildModule"
     class="permission-row-sub">
     <div class="permission-row-title">
-      <tui-svg
-        [tuiHint]="t('project_settings.roles_permissions.stories_child_help')"
-        *ngIf="isChildModule"
-        src="arrow-down-right">
-      </tui-svg>
       <span
         aria-hidden="true"
         [class.customizing]="customizer"
@@ -100,20 +94,6 @@ Copyright (c) 2023-present Kaleidos INC
         </tg-role-customize>
       </div>
     </div>
-    <!-- <div
-      class="permision-row-comment"
-      [class.permision-row-comment-disabled]="!showComment()">
-      <label class="permission-row-switch-title">
-        <span class="label-text">{{
-          t('project_settings.roles_permissions.can_comment')
-        }}</span>
-        <tui-toggle
-          class="permission-can-comment-switch"
-          data-test="permission-can-comment-switch"
-          formControlName="comment">
-        </tui-toggle>
-      </label>
-    </div> -->
   </div>
   <ng-template #tooltip>
     <p>{{ t('project_settings.customize') }}</p>

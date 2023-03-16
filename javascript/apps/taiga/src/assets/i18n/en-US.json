@@ -148,7 +148,7 @@
   },
   "discard_changes": {
     "title": "Discard changes?",
-    "description": "You will loose the changes you have made.",
+    "description": "You will lose the changes you have made.",
     "confirm": "Yes, discard",
     "cancel": "No, keep editing"
   },

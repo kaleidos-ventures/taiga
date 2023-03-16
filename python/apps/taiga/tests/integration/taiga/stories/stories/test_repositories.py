@@ -27,6 +27,7 @@ async def test_create_story_ok() -> None:
 
     story = await repositories.create_story(
         title="test_create_story_ok",
+        description="description",
         project_id=project.id,
         workflow_id=workflow.id,
         status_id=status.id,
@@ -93,7 +94,7 @@ async def test_update_story_success() -> None:
     assert await repositories.update_story(
         id=story.id,
         current_version=story.version,
-        values={"title": "new title"},
+        values={"title": "new title", "description": "new description"},
     )
 
 

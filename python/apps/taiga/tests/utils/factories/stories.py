@@ -17,6 +17,7 @@ from .base import Factory, factory
 
 class StoryFactory(Factory):
     title = factory.Sequence(lambda n: f"Story {n}")
+    description = factory.Sequence(lambda n: f"Description {n}")
     project = factory.SubFactory("tests.utils.factories.ProjectFactory")
     workflow = factory.SubFactory("tests.utils.factories.WorkflowFactory")
     status = factory.SubFactory("tests.utils.factories.WorkflowStatusFactory")

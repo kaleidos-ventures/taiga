@@ -103,10 +103,12 @@ def create_story(
     status_id: UUID,
     user_id: UUID,
     order: Decimal,
+    description: str | None = None,
 ) -> Story:
 
     return Story.objects.create(
         title=title,
+        description=description,
         project_id=project_id,
         workflow_id=workflow_id,
         status_id=status_id,
@@ -170,6 +172,7 @@ get_story = sync_to_async(get_story_sync)
 
 PROTECTED_ATTRS_ON_UPDATE: Final[list[str]] = [
     "title",
+    "description",
 ]
 
 

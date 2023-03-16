@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "dfcb7120-722e-4634-a41d-085008d2f958",
+		"_postman_id": "e0fb6bb4-aaca-4c48-acb1-384b43de5730",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -1840,7 +1840,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"story2\",\n    \"status\": \"new\"\n}",
+							"raw": "{\n    \"title\": \"story2\",\n    \"description\": \"desc\",\n    \"status\": \"new\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2005,7 +2005,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"New title\",\n    \"version\": {{story_version}}\n}",
+							"raw": "{\n    \"title\": \"New title\",\n    \"description\": \"New description\",\n    \"version\": {{story_version}}\n}",
 							"options": {
 								"raw": {
 									"language": "json"

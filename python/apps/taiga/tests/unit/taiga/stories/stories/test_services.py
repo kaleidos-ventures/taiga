@@ -42,12 +42,14 @@ async def test_create_story_ok():
             project=story.project,
             workflow=status.workflow,
             title=story.title,
+            description=story.description,
             status_slug=status.slug,
             user=user,
         )
 
         fake_stories_repo.create_story.assert_awaited_once_with(
             title=story.title,
+            description=story.description,
             project_id=story.project.id,
             workflow_id=status.workflow.id,
             status_id=status.id,
@@ -79,6 +81,7 @@ async def test_create_story_invalid_status():
             project=story.project,
             workflow=build_workflow_serializer(story),
             title=story.title,
+            description=story.description,
             status_slug="invalid_slug",
             user=user,
         )
@@ -181,10 +184,11 @@ async def test_get_story_detail_no_neighbors():
 
 async def test_update_story_ok():
     story = f.build_story()
-    values = {"title": "new title"}
+    values = {"title": "new title", "description": "new description"}
     detailed_story = {
         "ref": story.ref,
-        "title": "new_title",
+        "title": "new title",
+        "description": "new description",
         "version": story.version + 1,
     }
 
@@ -264,7 +268,7 @@ async def test_update_story_error_wrong_version():
 
 async def test_validate_and_process_values_to_update_ok_without_status():
     story = f.build_story()
-    values = {"title": "new_title"}
+    values = {"title": "new title", "description": "new description"}
 
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
@@ -281,7 +285,7 @@ async def test_validate_and_process_values_to_update_ok_without_status():
 async def test_validate_and_process_values_to_update_ok_with_status_empty():
     story = f.build_story()
     status = f.build_workflow_status()
-    values = {"title": "new_title", "status": status.slug}
+    values = {"title": "new title", "description": "new description", "status": status.slug}
 
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
@@ -311,7 +315,7 @@ async def test_validate_and_process_values_to_update_ok_with_status_not_empty():
     story = f.build_story()
     status = f.build_workflow_status()
     story2 = f.build_story(status=status, order=42)
-    values = {"title": "new_title", "status": status.slug}
+    values = {"title": "new title", "description": "new description", "status": status.slug}
 
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
@@ -340,7 +344,7 @@ async def test_validate_and_process_values_to_update_ok_with_status_not_empty():
 async def test_validate_and_process_values_to_update_ok_with_same_status():
     status = f.build_workflow_status()
     story = f.build_story(status=status)
-    values = {"title": "new_title", "status": status.slug}
+    values = {"title": "new title", "description": "new description", "status": status.slug}
 
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
@@ -362,7 +366,7 @@ async def test_validate_and_process_values_to_update_ok_with_same_status():
 
 async def test_validate_and_process_values_to_update_error_wrong_status():
     story = f.build_story()
-    values = {"title": "new_title", "status": "wrong_status"}
+    values = {"title": "new title", "description": "new description", "status": "wrong_status"}
 
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,

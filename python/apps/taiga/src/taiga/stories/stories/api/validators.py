@@ -20,12 +20,14 @@ class Title(ConstrainedStr):
 
 class StoryValidator(BaseModel):
     title: Title
+    description: str | None = None
     status: StrNotEmpty
 
 
 class UpdateStoryValidator(BaseModel):
     version: PositiveInt
     title: Title | None
+    description: str | None
     status: str | None
 
 

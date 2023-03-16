@@ -62,7 +62,12 @@ async def create_story(
     await check_permissions(permissions=CREATE_STORY, user=request.user, obj=workflow)
 
     return await stories_services.create_story(
-        title=form.title, project=workflow.project, workflow=workflow, status_slug=form.status, user=request.user
+        title=form.title,
+        description=form.description,
+        project=workflow.project,
+        workflow=workflow,
+        status_slug=form.status,
+        user=request.user,
     )
 
 

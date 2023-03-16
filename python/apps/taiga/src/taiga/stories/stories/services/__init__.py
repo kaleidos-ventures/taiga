@@ -31,11 +31,7 @@ DEFAULT_PRE_ORDER = Decimal(0)  # default pre_position when adding a story at th
 
 
 async def create_story(
-    project: Project,
-    workflow: Workflow,
-    status_slug: str,
-    user: User,
-    title: str,
+    project: Project, workflow: Workflow, status_slug: str, user: User, title: str, description: str | None
 ) -> StoryDetailSerializer:
     # Validate data
     workflow_status = await workflows_repositories.get_status(filters={"slug": status_slug, "workflow_id": workflow.id})
@@ -50,6 +46,7 @@ async def create_story(
     # Create story
     story = await stories_repositories.create_story(
         title=title,
+        description=description,
         project_id=project.id,
         workflow_id=workflow.id,
         status_id=workflow_status.id,

@@ -27,6 +27,7 @@ class StorySummarySerializer(BaseModel):
 class StoryDetailSerializer(BaseModel):
     ref: int
     title: str
+    description: str | None = None
     status: WorkflowStatusNestedSerializer
     workflow: WorkflowNestedSerializer
     created_by: UserNestedSerializer

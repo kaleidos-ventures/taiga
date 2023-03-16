@@ -74,7 +74,7 @@ async def test_create_story_being_ws_or_pj_admin_ok(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"title": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "description": "Story description", "status": workflow_status.slug}
 
     client.login(workspace.created_by)
     response = client.post(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories", json=data)
@@ -105,7 +105,7 @@ async def test_create_story_user_has_valid_perm_ok(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"title": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "description": "Story description", "status": workflow_status.slug}
 
     client.login(ws_member)
     response = client.post(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories", json=data)
@@ -273,7 +273,7 @@ async def test_update_story_protected_attribute_ok(client):
     status1 = await workflow.statuses.afirst()
     story = await f.create_story(project=project, workflow=workflow, status=status1)
 
-    data = {"version": story.version, "title": "title updated"}
+    data = {"version": story.version, "title": "title updated", "description": "description updated"}
     client.login(project.created_by)
     response = client.patch(f"/projects/{project.b64id}/stories/{story.ref}", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text

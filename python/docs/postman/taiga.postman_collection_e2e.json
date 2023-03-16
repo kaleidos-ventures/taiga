@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a79e6c2c-038d-4e49-a220-48b61c258f98",
+		"_postman_id": "0fd084e6-2fd9-4690-b4d0-3c23cfb53e03",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "9835734"
@@ -2331,6 +2331,7 @@
 									"    // Validate response API contract",
 									"    pm.expect(jsonRes).to.have.property(\"ref\");",
 									"    pm.expect(jsonRes).to.have.property(\"title\");",
+									"    pm.expect(jsonRes).to.have.property(\"description\");",
 									"    pm.expect(jsonRes).to.have.property(\"workflow\");",
 									"    pm.expect(jsonRes).to.have.property(\"status\");",
 									"    pm.expect(jsonRes).to.have.property(\"createdAt\");",
@@ -2343,7 +2344,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"titleUpdatedAt\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(12);",
+									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
@@ -2685,6 +2686,7 @@
 									"    // Validate response API contract",
 									"    pm.expect(jsonRes).to.have.property(\"ref\");",
 									"    pm.expect(jsonRes).to.have.property(\"title\");",
+									"    pm.expect(jsonRes).to.have.property(\"description\");",
 									"    pm.expect(jsonRes).to.have.property(\"workflow\");",
 									"    pm.expect(jsonRes).to.have.property(\"status\");",
 									"    pm.expect(jsonRes).to.have.property(\"createdAt\");",
@@ -2697,7 +2699,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"titleUpdatedAt\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(12);",
+									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
@@ -2769,6 +2771,7 @@
 									"    // Validate response API contract",
 									"    pm.expect(jsonRes).to.have.property(\"ref\");",
 									"    pm.expect(jsonRes).to.have.property(\"title\");",
+									"    pm.expect(jsonRes).to.have.property(\"description\");",
 									"    pm.expect(jsonRes).to.have.property(\"workflow\");",
 									"    pm.expect(jsonRes).to.have.property(\"status\");",
 									"    pm.expect(jsonRes).to.have.property(\"createdAt\");",
@@ -2782,7 +2785,7 @@
 									"    ",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(12);",
+									"    pm.expect(numOfReturnedFields).to.equal(13);",
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
@@ -2823,7 +2826,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"New title\",\n    \"version\": {{story_version}}\n}",
+							"raw": "{\n    \"title\": \"New title\",\n    \"description\": \"New description\",\n    \"version\": {{story_version}}\n}",
 							"options": {
 								"raw": {
 									"language": "json"

@@ -1,0 +1,22 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+<ng-container *ngIf="model$ | async as vm">
+  <ng-container *transloco="let t">
+    <ng-container *ngIf="vm.workspace">
+      <div class="wks-main-content-top">
+        <h2 class="wks-main-content-title">{{ t('commons.people') }}</h2>
+        <a
+          *ngIf="vm.workspace.userRole === 'admin'"
+          appearance="primary"
+          tuiButton>
+          {{ t('workspace.invite_workspace') }}
+        </a>
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-container>

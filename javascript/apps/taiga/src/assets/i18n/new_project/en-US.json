@@ -19,7 +19,6 @@
     "discard_warning": "Closing this window without clicking “create project” will delete the content you’ve added."
   },
   "second_step": {
-    "create_project": "Create project",
     "create_project_in_progress": "Creating",
     "create_project_success": "Created"
   }

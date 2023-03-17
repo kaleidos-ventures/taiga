@@ -21,7 +21,12 @@ Copyright (c) 2023-present Kaleidos INC
             workspace.userRole === 'admin' || workspace.userRole === 'member'
           "
           data-test="workspace-item-title"
-          [routerLink]="['/workspace/', workspace.id, workspace.slug]">
+          [routerLink]="[
+            '/workspace/',
+            workspace.id,
+            workspace.slug,
+            'projects'
+          ]">
           <h2
             class="workspace-item-title workspace-item-title-active"
             [attr.aria-label]="
@@ -64,8 +69,7 @@ Copyright (c) 2023-present Kaleidos INC
           [routerLink]="['/new-project']"
           [queryParams]="{ workspace: workspace.id }"
           tuiButton
-          icon="plus"
-          type="button">
+          icon="plus">
           {{ t('commons.project') }}
         </a>
       </div>

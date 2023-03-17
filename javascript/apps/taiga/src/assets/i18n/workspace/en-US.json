@@ -19,6 +19,7 @@
   "workspace_options": "Workspace options",
   "edit_workspace_name": "Edit workspace name",
   "workspace_actions": "Workspace actions",
+  "invite_workspace": "Invite to workspace",
   "edit": {
     "title": "Workspace details",
     "name": "Workspace name",

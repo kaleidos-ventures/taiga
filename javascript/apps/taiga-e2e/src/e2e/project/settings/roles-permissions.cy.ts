@@ -140,14 +140,6 @@ describe('Settings > project member roles (basic)', () => {
         );
       });
 
-    // Verify that Sprints doesn't have this switch available.
-    cy.getBySel('module-permissions-row')
-      .contains('Sprints')
-      .closest('.permission-row-sub')
-      .within(() => {
-        cy.getBySel('permission-can-comment-switch').should('not.be.visible');
-      });
-
     // Turn the switch OFF for an entity.
     // Change an entity permission level to “can access” → verify that the switch is not available.
     setModulePermissions(moduleIndex, 'no-access');

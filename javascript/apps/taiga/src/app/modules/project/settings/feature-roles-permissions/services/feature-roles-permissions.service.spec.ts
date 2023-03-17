@@ -162,18 +162,6 @@ describe('ProjectsSettingsFeatureRolesPermissionsService', () => {
         delete: new FormControl(true),
         comment: new FormControl(true),
       }),
-      task: new FormGroup({
-        create: new FormControl(true),
-        modify: new FormControl(true),
-        delete: new FormControl(true),
-        comment: new FormControl(true),
-      }),
-      sprint: new FormGroup({
-        create: new FormControl(true),
-        modify: new FormControl(true),
-        delete: new FormControl(true),
-        comment: new FormControl(true),
-      }),
     });
 
     formGroup.get('story')?.disable();

@@ -44,22 +44,35 @@
     "create_account": "Create account",
     "log_in": "Log in",
     "new_tab": "Opens in a new tab",
-    "skip_to_content": "Skip to content"
+    "skip_to_content": "Skip to content",
+    "a11y": {
+      "projects_navigate": "Projects. Press down to navigate",
+      "user_menu_navigate": "User: {{ userName }}. Press down to navigate"
+    }
   },
   "navigation_projects": {
     "pinned": "Pinned projects",
     "recent_projects": "Recent projects",
     "empty_recent_projects": "You don't have any projects yet",
     "view_projects": "View your projects",
-    "new_project": "New project"
+    "new_project": "New project",
+    "a11y": {
+      "recent_projects": "Recent projects. Press down to navigate.",
+      "recent_projects_empty": "Recent projects. You don't have any projects yet.",
+      "recent_projects_empty_navigate": "Recent projects. You don't have any projects yet. Press down to navigate."
+    }
   },
   "navigation_user": {
+    "user_menu": "User menu",
     "user_profile": "See Profile",
     "edit_profile": "Edit profile",
     "preferences": "Preferences",
     "account_settings": "Account",
     "accessibility_settings": "Accesibility",
-    "log_out": "Log out"
+    "log_out": "Log out",
+    "a11y": {
+      "user_menu_down_navigate": "{{ userName }}. User menu. Press down to navigate"
+    }
   },
   "main_project_navigation": {
     "goto": "Go to",
@@ -70,10 +83,14 @@
   "common_project": {
     "create_first_project": "Create your first project",
     "create_new_project": "Add a project",
+    "project_actions": "Project actions",
     "card": {
       "accept_invite": "Accept invitation",
       "pending_invitation": "Pending invitation",
-      "close_card": "Close card"
+      "close_card": "Close card",
+      "a11y": {
+        "project_name": "{{ name }}. Project"
+      }
     },
     "forms": {
       "project_details": "Project details",
@@ -86,11 +103,17 @@
       "choose_image_tip": "Allowed formats: gif, png, jpg, svg and webp",
       "format_error": "The file format is not allowed. Allowed formats: gif, png, jpg, svg or webp"
     },
-    "delete_modal_title": "Delete {{projectTitle}}",
+    "delete_modal_title": "Delete {{projectTitle}}?",
     "delete_modal_warning": "<strong class='bold'>Warning;</strong> This action cannot be undone.",
     "delete_modal_text": "This action will delete the project, along with all the stories and attachments in it.",
     "delete_modal_delete": "Yes, delete project",
-    "delete_modal_refuse": "No, keep project"
+    "delete_modal_refuse": "No, keep project",
+    "edit_project": "Edit project",
+    "delete_project": "Delete project",
+    "duplicate": "Duplicate",
+    "share": "Share",
+    "save_template": "Save as a template",
+    "open_edit_menu": "Open edit menu"
   },
   "errors": {
     "please_refresh": "Please refresh the page or try again in a few minutes",
@@ -112,12 +135,13 @@
     "admin_permission": "You  are no longer admin on this project",
     "entity_no_longer_exists": "This {{entity}} no longer exists.",
     "user_deleted_entity": "{{user}} has deleted it, so you cannot edit it anymore.",
-    "deleted_project": "Project {{name}} has been deleted",
-    "generic_deleted_project": "Project has been deleted"
+    "deleted_project": "Project {{name}} has been deleted.",
+    "generic_deleted_project": "This project has been deleted.",
+    "deleted_workspace": "The workspace {{name}} has been deleted."
   },
   "discard_changes": {
     "title": "Discard changes?",
-    "description": "You will loose the changes you have made.",
+    "description": "You will lose the changes you have made.",
     "confirm": "Yes, discard",
     "cancel": "No, keep editing"
   },

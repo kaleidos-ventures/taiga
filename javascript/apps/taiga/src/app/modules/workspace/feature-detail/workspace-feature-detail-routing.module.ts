@@ -9,8 +9,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
+import { WorkspaceDetailProjectsComponent } from './components/workspace-detail-projects/workspace-detail-projects.component';
+import { WorkspaceDetailPeopleComponent } from './components/workspace-detail-people/workspace-detail-people.component';
 
-const routes: Routes = [{ path: '', component: WorkspaceDetailComponent }];
+const routes: Routes = [
+  {
+    path: '',
+    component: WorkspaceDetailComponent,
+    children: [
+      {
+        path: 'projects',
+        component: WorkspaceDetailProjectsComponent,
+      },
+      {
+        path: 'people',
+        component: WorkspaceDetailPeopleComponent,
+      },
+    ],
+  },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

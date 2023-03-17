@@ -38,6 +38,8 @@ import { DeleteWorkspaceComponent } from './components/workspace-delete-modal/wo
 import { WorkspaceDetailEditModalComponent } from './components/workspace-detail-edit-modal/workspace-detail-edit-modal.component';
 import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-skeleton/workspace-detail-skeleton.component';
 import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
+import { WorkspaceDetailProjectsComponent } from './components/workspace-detail-projects/workspace-detail-projects.component';
+import { WorkspaceDetailPeopleComponent } from './components/workspace-detail-people/workspace-detail-people.component';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
 
 @NgModule({
@@ -45,6 +47,8 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     WorkspaceDetailComponent,
     WorkspaceDetailSkeletonComponent,
     WorkspaceDetailEditModalComponent,
+    WorkspaceDetailProjectsComponent,
+    WorkspaceDetailPeopleComponent,
   ],
   imports: [
     TitleDirective,

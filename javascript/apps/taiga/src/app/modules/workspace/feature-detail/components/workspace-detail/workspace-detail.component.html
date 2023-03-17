@@ -26,7 +26,7 @@ Copyright (c) 2023-present Kaleidos INC
             {{ t('commons.workspace') }}/
           </div>
           <div class="workspace-detail-name-container">
-            <h2
+            <h1
               [attr.aria-label]="
                 t('workspace.a11y.workspace_title', {
                   workspace: vm.workspace.name,
@@ -37,7 +37,7 @@ Copyright (c) 2023-present Kaleidos INC
               class="workspace-detail-name"
               tgTitle>
               {{ vm.workspace.name }}
-            </h2>
+            </h1>
             <tg-ui-badge
               *ngIf="vm.workspace.userRole"
               [label]="t('commons.roles.' + vm.workspace.userRole) | capitalize"
@@ -75,120 +75,6 @@ Copyright (c) 2023-present Kaleidos INC
             iconRight="arrow-right">
             {{ t('workspace.back_to_projects') }}
           </a>
-        </div>
-      </div>
-      <div
-        *ngIf="
-          (loading$ | async) === false &&
-          !vm.workspace.totalProjects &&
-          !vm.invitations.length &&
-          vm.workspace.hasProjects &&
-          vm.workspace.userRole !== 'admin' &&
-          !vm.creatingWorkspaceDetail
-        "
-        class="workspace-message-placeholder detail"
-        [innerHtml]="t('workspace.placehoder_no_access')"></div>
-      <div
-        *ngIf="
-          (loading$ | async) === false &&
-          !vm.workspace.totalProjects &&
-          !vm.invitations.length &&
-          !vm.workspace.hasProjects &&
-          vm.workspace.userRole !== 'admin' &&
-          !vm.creatingWorkspaceDetail
-        "
-        class="workspace-message-placeholder detail"
-        [innerHtml]="t('workspace.placehoder_no_projects')"></div>
-      <div
-        [@.disabled]="animationDisabled"
-        (resized)="onResized($event)"
-        [class]="gridClass"
-        class="workspace-item-card-grid">
-        <div
-          *ngIf="
-            vm.projects.length === 0 &&
-            vm.workspace.userRole === 'admin' &&
-            !vm.creatingWorkspaceDetail
-          ">
-          <tg-project-card
-            (projectToDelete)="setProjectToDelete($event)"
-            (openModal)="openModal($event)"
-            [workspace]="vm.workspace"
-            [hasActions]="true"
-            variant="placeholder"
-            [firstProject]="true">
-          </tg-project-card>
-        </div>
-        <div
-          *ngFor="
-            let invitation of vm.invitations;
-            trackBy: trackByLatestProject
-          "
-          [@cardSlideOut]="vm.slideOutActive ? 'on' : 'off'"
-          (@cardSlideOut.done)="slideOutAnimationDone($event)"
-          [@newProject]="
-            vm.newInvitations.includes(invitation.id) ? 'inprogress' : 'idle'
-          "
-          (@newProject.start)="newProjectAnimationStart($event, invitation)"
-          (@newProject.done)="newProjectAnimationDone($event)"
-          [@newInvitationSibling]="
-            vm.projectSiblingToAnimate.includes(invitation.id)
-              ? 'inprogress'
-              : 'idle'
-          "
-          [@reorder]="reorder[invitation.id]"
-          (@reorder.done)="reorderDone($event)">
-          <tg-project-card
-            (projectToDelete)="setProjectToDelete($event)"
-            (openModal)="openModal($event)"
-            variant="invitation"
-            (rejectInvite)="rejectProjectInvite($event)"
-            (acceptInvite)="acceptProjectInvite($event.id, $event.name)"
-            [hasActions]="true"
-            [workspace]="vm.workspace"
-            [project]="invitation">
-          </tg-project-card>
-        </div>
-        <ng-container *ngIf="vm.creatingWorkspaceDetail">
-          <div
-            *ngFor="
-              let _ of [].constructor(amountOfProjectsToShow);
-              trackBy: trackByIndex
-            ">
-            <tg-ui-card-skeleton></tg-ui-card-skeleton>
-          </div>
-        </ng-container>
-        <div
-          *ngFor="let project of vm.projects; trackBy: trackByLatestProject"
-          [@newProject]="
-            newProjectsToAnimate.includes(project.id) ? 'inprogress' : 'idle'
-          "
-          (@newProject.start)="newProjectAnimationStart($event, project)"
-          (@newProject.done)="newProjectAnimationDone($event)"
-          [@newInvitationSibling]="
-            vm.projectSiblingToAnimate.includes(project.id)
-              ? 'inprogress'
-              : 'idle'
-          "
-          [@reorder]="reorder[project.id]"
-          (@reorder.done)="reorderDone($event)">
-          <tg-project-card
-            (projectToDelete)="setProjectToDelete($event)"
-            (openModal)="openModal($event)"
-            [hasActions]="true"
-            [project]="project"
-            [workspace]="vm.workspace">
-          </tg-project-card>
-        </div>
-        <div
-          *ngIf="vm.projects.length > 0 && vm.workspace.userRole === 'admin'">
-          <tg-project-card
-            (projectToDelete)="setProjectToDelete($event)"
-            (openModal)="openModal($event)"
-            [hasActions]="true"
-            [workspace]="vm.workspace"
-            variant="placeholder">
-          </tg-project-card>
         </div>
       </div>
       <ng-template #workspaceOptions>
@@ -229,6 +115,37 @@ Copyright (c) 2023-present Kaleidos INC
           </button>
         </tui-data-list>
       </ng-template>
+      <div class="workspace-detail">
+        <div class="wks-detail-nav">
+          <nav>
+            <h2 class="wks-detail-title">{{ t('commons.workspace') }}</h2>
+            <ul class="wks-detail-menu">
+              <li class="wks-detail-menu-item">
+                <a
+                  class="wks-detail-menu-anchor"
+                  [class.active]="menuItemActive === 'projects'"
+                  [routerLink]="['./projects']"
+                  (click)="menuItemActive = 'projects'">
+                  {{ t('commons.projects') }}
+                </a>
+              </li>
+              <li class="wks-detail-menu-item">
+                <a
+                  class="wks-detail-menu-anchor"
+                  [class.active]="menuItemActive === 'people'"
+                  [routerLink]="['./people']"
+                  (click)="menuItemActive = 'people'">
+                  {{ t('commons.people') }}
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <main class="wks-detail-main">
+          <router-outlet></router-outlet>
+        </main>
+      </div>
+
       <tg-workspace-detail-edit-modal
         *ngIf="vm.editingWorkspace"
         [workspace]="vm.workspace"
@@ -244,12 +161,4 @@ Copyright (c) 2023-present Kaleidos INC
         [projects]="vm.workspace.totalProjects"></tg-delete-workspace>
     </ng-container>
   </ng-container>
-
-  <tg-delete-project
-    *ngIf="deleteProjectModal"
-    [show]="deleteProjectModal"
-    (submitDelete)="submitDeleteProject()"
-    (closeModal)="deleteProjectModal = false"
-    [project]="projectToDelete">
-  </tg-delete-project>
 </ng-container>

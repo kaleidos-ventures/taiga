@@ -7,10 +7,14 @@ Copyright (c) 2023-present Kaleidos INC
 */
 
 @import "tools/typography.css";
-@import "../../../styles/workspace.shared";
 @import "shared/option-list.css";
+@import "shared/vertical-menu.css";
+
+@mixin vertical-menu wks-detail;
 
 :host {
+  --menu-size: 200px;
+
   block-size: 100%;
   display: flex;
   flex-direction: column;
@@ -122,4 +126,23 @@ tg-project-card {
 .separator {
   background: var(--color-gray30);
   margin-block: var(--spacing-8);
+}
+
+.workspace-detail {
+  display: flex;
+  gap: var(--spacing-12);
+  min-block-size: 100%;
+}
+
+.wks-detail-nav {
+  background-color: var(--color-gray10);
+  block-size: calc(100vh - 48px);
+  max-inline-size: var(--menu-size);
+  min-inline-size: var(--menu-size);
+}
+
+.wks-detail-main {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
 }

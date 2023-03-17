@@ -1,7 +1,6 @@
 {
   "story": "Story<span class='hash' aria-hidden='true'>#</span><span class='ref'>{{ storyRef }}</span>",
   "story_sr": "Story {{ storyRef }}: {{ storyTitle }}",
-  "story_date_distance": "created the story {{ dateDistance }}",
   "now": "now",
   "ago": "ago",
   "copy_story": "Copy story link",

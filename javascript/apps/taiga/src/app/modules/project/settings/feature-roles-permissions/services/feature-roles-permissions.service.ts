@@ -22,10 +22,6 @@ import { SettingsPermission } from '../models/settings-permission.model';
 export class ProjectsSettingsFeatureRolesPermissionsService {
   constructor(private permissionsService: PermissionsService) {}
 
-  public hasComments(entity: Entity) {
-    return !['wiki', 'sprints'].includes(entity);
-  }
-
   public getEntities(): Map<Entity, string> {
     return new Map([['story', 'commons.stories']]);
   }
@@ -103,10 +99,6 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
       formGroup.disable();
     }
 
-    if (!this.hasComments(entity) && formGroup.get('comment')?.enabled) {
-      formGroup.get('comment')?.disable();
-    }
-
     formGroup.markAsDirty();
   }
 
@@ -136,16 +128,6 @@ export class ProjectsSettingsFeatureRolesPermissionsService {
 
     return Object.entries(roleFormValue)
       .filter(([entity]) => !roleForm.get(entity)?.disabled)
-      .filter(([entity]) => {
-        if (
-          roleForm.get('story')?.disabled &&
-          (entity === 'task' || entity === 'sprint')
-        ) {
-          return false;
-        }
-
-        return true;
-      })
       .reduce((acc, [entity, entityPermissions]) => {
         const permission = mapFormEntitiesPermissions[entity as Entity]['view'];
 

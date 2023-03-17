@@ -17,41 +17,35 @@ const fs = require('fs');
 
 const i18Dir = './apps/taiga/src/assets/i18n';
 
-function createLocalFiles(codes) {
-  return new Promise((resolve) => {
-    glob(
-      `./apps/taiga/src/assets/i18n/**/${defaultSourceLang}.json`,
-      (error, files) => {
-        files.forEach(async (file) => {
-          const data = fs.readFileSync(file, 'utf8');
+async function createLocalFiles(codes) {
+  const files = await glob(
+    `./apps/taiga/src/assets/i18n/**/${defaultSourceLang}.json`
+  );
 
-          console.log(data);
+  files.forEach(async (file) => {
+    const data = fs.readFileSync(file, 'utf8');
 
-          Object.values(codes).forEach((local) => {
-            if (local === defaultSourceLang) return;
+    console.log(data);
 
-            const p = file.replace(defaultSourceLang, local);
+    Object.values(codes).forEach((local) => {
+      if (local === defaultSourceLang) return;
 
-            // create files in english
-            fs.writeFileSync(p, data, { encoding: 'utf8', flag: 'w' });
+      const p = file.replace(defaultSourceLang, local);
 
-            if (fs.existsSync(p)) {
-              console.log('exists ' + p);
-            } else {
-              console.log('write', p);
-              // fs.writeFileSync(p, '', { encoding: 'utf8', flag: 'w' });
-            }
-          });
-        });
+      // create files in english
+      fs.writeFileSync(p, data, { encoding: 'utf8', flag: 'w' });
+
+      if (fs.existsSync(p)) {
+        console.log('exists ' + p);
+      } else {
+        console.log('write', p);
+        // fs.writeFileSync(p, '', { encoding: 'utf8', flag: 'w' });
       }
-    );
-
-    resolve();
+    });
   });
 }
-
 async function init() {
-  const response = await fetch('http://localhost:8000/api/v2/system/languages');
+  const response = await fetch('http://127.0.0.1:8000/api/v2/system/languages');
   let codes = {};
   (await response.json()).forEach((it) => {
     codes[it.englishName] = it.code;

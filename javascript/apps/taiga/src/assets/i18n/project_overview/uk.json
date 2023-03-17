@@ -7,11 +7,6 @@
   "action_add_description": "Add a short description",
   "action_add_description_continue": "to help others better understand your project.",
   "project_actions": "Project actions",
-  "edit_project": "Edit project",
-  "delete_project": "Delete project",
-  "duplicate": "Duplicate",
-  "share": "Share",
-  "save_template": "Save as a template",
   "members": {
     "title": "Members",
     "view_all": "View all members",
@@ -21,5 +16,9 @@
     "invite": "Invite people",
     "accept": "Accept",
     "accept_invitation": "Accept invitation"
+  },
+  "a11y": {
+    "project_action_enter_open_menu": "Project actions. Press enter to open menu",
+    "project_action_up_down_navigate": "Project actions. Press up and down to navigate"
   }
 }

@@ -157,6 +157,7 @@ const routes: Routes = [
       noHeader: true,
     },
   },
+
   {
     path: '404',
     loadChildren: () =>
@@ -173,6 +174,10 @@ const routes: Routes = [
       import(
         './modules/feature-user-settings/feature-user-settings.module'
       ).then((m) => m.FeatureUserSettingsModule),
+  },
+  {
+    path: '**',
+    redirectTo: '/404',
   },
 ];
 

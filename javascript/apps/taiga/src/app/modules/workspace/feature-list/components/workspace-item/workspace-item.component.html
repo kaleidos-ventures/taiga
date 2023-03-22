@@ -60,6 +60,7 @@ Copyright (c) 2023-present Kaleidos INC
           *ngIf="workspace.userRole === 'admin'"
           data-test="new-project-btn"
           appearance="primary"
+          [attr.aria-label]="t('workspace.create_project')"
           [routerLink]="['/new-project']"
           [queryParams]="{ workspace: workspace.id }"
           tuiButton

@@ -11,8 +11,52 @@ from uuid import uuid1
 import pytest
 from taiga.workspaces.memberships import services
 from taiga.workspaces.memberships.services import WS_ROLE_NAME_ADMIN, WS_ROLE_NAME_GUEST, WS_ROLE_NAME_NONE
+from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
+
+
+#######################################################
+# list_paginated_workspace_memberships
+#######################################################
+
+
+async def test_list_paginated_workspace_memberships():
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+    workspace_membership = await f.create_workspace_membership(user=user, workspace=workspace)
+    project = await f.create_project(workspace=workspace)
+    offset = 0
+    limit = 10
+
+    with (
+        patch("taiga.workspaces.memberships.services.serializer_services", autospec=True) as fake_serializer_services,
+        patch("taiga.workspaces.memberships.services.projects_repositories", autospec=True) as fake_pj_repositories,
+        patch(
+            "taiga.workspaces.memberships.services.workspace_memberships_repositories", autospec=True
+        ) as fake_ws_membership_repository,
+    ):
+        fake_ws_membership_repository.list_workspace_memberships.return_value = [workspace_membership]
+        fake_pj_repositories.list_projects.return_value = [project]
+
+        await services.list_paginated_workspace_memberships(workspace=workspace, offset=offset, limit=limit)
+        fake_ws_membership_repository.list_workspace_memberships.assert_awaited_once_with(
+            filters={"workspace_id": workspace.id},
+            select_related=["user", "workspace"],
+            offset=offset,
+            limit=limit,
+        )
+        fake_ws_membership_repository.get_total_workspace_memberships.assert_awaited_once_with(
+            filters={"workspace_id": workspace.id}
+        )
+        fake_serializer_services.serialize_workspace_membership_detail.assert_called_once_with(
+            user=user,
+            workspace=workspace,
+            projects=[project],
+        )
+        fake_pj_repositories.list_projects.assert_awaited_once_with(
+            filters={"workspace_id": workspace.id, "project_member_id": user.id}
+        )
 
 
 ##########################################################

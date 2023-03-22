@@ -8,8 +8,20 @@
 from taiga.base.serializers import UUIDB64, BaseModel
 
 
+class WorkspaceSmallNestedSerializer(BaseModel):
+    id: UUIDB64
+    name: str
+    slug: str
+
+    class Config:
+        orm_mode = True
+
+
 class WorkspaceNestedSerializer(BaseModel):
     id: UUIDB64
     name: str
     slug: str
     user_role: str
+
+    class Config:
+        orm_mode = True

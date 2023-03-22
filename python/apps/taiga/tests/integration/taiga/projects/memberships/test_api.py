@@ -14,7 +14,7 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
-# GET /projects/<id>/memberships
+# LIST /projects/<id>/memberships
 ##########################################################
 
 
@@ -62,7 +62,7 @@ async def test_get_project_memberships_with_pagination(client):
     assert response.headers["Pagination-Total"] == "3"
 
 
-async def test_get_project_memberships_wrong_id(client):
+async def test_list_project_memberships_wrong_id(client):
     project = await f.create_project()
     non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
@@ -71,7 +71,7 @@ async def test_get_project_memberships_wrong_id(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_get_project_memberships_not_a_member(client):
+async def test_list_project_memberships_not_a_member(client):
     project = await f.create_project()
     not_a_member = await f.create_user()
 

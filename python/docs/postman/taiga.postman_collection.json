@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "e0fb6bb4-aaca-4c48-acb1-384b43de5730",
+		"_postman_id": "04e8caa8-9825-4e42-ab07-2e96c128091e",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"_exporter_id": "3299216"
 	},
 	"item": [
 		{
@@ -757,6 +757,65 @@
 							"path": [
 								"workspaces",
 								"{{ws-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "workspace memberships",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/memberships?offset={{offset}}&limit={{limit}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"workspaces",
+								"{{ws-id}}",
+								"memberships"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
 							]
 						}
 					},

@@ -24,7 +24,7 @@ from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 
 # PERMISSIONS
-GET_PROJECT_MEMBERSHIPS = CanViewProject()
+LIST_PROJECT_MEMBERSHIPS = CanViewProject()
 UPDATE_PROJECT_MEMBERSHIP = IsProjectAdmin()
 
 
@@ -36,22 +36,22 @@ UPDATE_PROJECT_MEMBERSHIP = IsProjectAdmin()
 @routes.projects.get(
     "/{id}/memberships",
     name="project.memberships.list",
-    summary="Get project memberships",
+    summary="List project memberships",
     response_model=list[ProjectMembershipSerializer],
     responses=ERROR_404 | ERROR_422,
 )
-async def get_project_memberships(
+async def list_project_memberships(
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
     id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> list[ProjectMembership]:
     """
-    Get project memberships
+    List project memberships
     """
 
     project = await get_project_or_404(id)
-    await check_permissions(permissions=GET_PROJECT_MEMBERSHIPS, user=request.user, obj=project)
+    await check_permissions(permissions=LIST_PROJECT_MEMBERSHIPS, user=request.user, obj=project)
 
     pagination, memberships = await memberships_services.list_paginated_project_memberships(
         project=project, offset=pagination_params.offset, limit=pagination_params.limit

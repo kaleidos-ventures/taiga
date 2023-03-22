@@ -8,12 +8,49 @@
 from typing import Final
 from uuid import UUID
 
+from taiga.base.api import Pagination
 from taiga.projects.memberships import repositories as projects_memberships_repositories
+from taiga.projects.projects import repositories as projects_repositories
 from taiga.workspaces.memberships import repositories as workspace_memberships_repositories
+from taiga.workspaces.memberships.serializers import WorkspaceMembershipDetailSerializer
+from taiga.workspaces.memberships.serializers import services as serializer_services
+from taiga.workspaces.workspaces.models import Workspace
 
 WS_ROLE_NAME_ADMIN: Final = "admin"
 WS_ROLE_NAME_GUEST: Final = "guest"
 WS_ROLE_NAME_NONE: Final = "none"
+
+
+##########################################################
+# list workspace memberships
+##########################################################
+
+
+async def list_paginated_workspace_memberships(
+    workspace: Workspace, offset: int, limit: int
+) -> tuple[Pagination, list[WorkspaceMembershipDetailSerializer]]:
+    ws_memberships = await workspace_memberships_repositories.list_workspace_memberships(
+        filters={"workspace_id": workspace.id},
+        select_related=["user", "workspace"],
+        offset=offset,
+        limit=limit,
+    )
+    total_memberships = await workspace_memberships_repositories.get_total_workspace_memberships(
+        filters={"workspace_id": workspace.id}
+    )
+    pagination = Pagination(offset=offset, limit=limit, total=total_memberships)
+    serialized_memberships = [
+        serializer_services.serialize_workspace_membership_detail(
+            user=ws_membership.user,
+            workspace=ws_membership.workspace,
+            projects=await projects_repositories.list_projects(
+                filters={"workspace_id": ws_membership.workspace.id, "project_member_id": ws_membership.user.id},
+            ),
+        )
+        for ws_membership in ws_memberships
+    ]
+
+    return pagination, serialized_memberships
 
 
 ##########################################################

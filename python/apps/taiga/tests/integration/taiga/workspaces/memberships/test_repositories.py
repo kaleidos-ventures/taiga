@@ -30,6 +30,25 @@ async def test_create_workspace_membership():
 
 
 ##########################################################
+# list_workspaces_memberships
+##########################################################
+
+
+async def test_list_project_memberships():
+    admin = await f.create_user()
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    workspace = await f.create_workspace(created_by=admin)
+    await repositories.create_workspace_membership(user=user1, workspace=workspace)
+    await repositories.create_workspace_membership(user=user2, workspace=workspace)
+
+    memberships = await repositories.list_workspace_memberships(
+        filters={"workspace_id": workspace.id}, offset=0, limit=100
+    )
+    assert len(memberships) == 3
+
+
+##########################################################
 # get_workspace_membership
 ##########################################################
 
@@ -50,3 +69,20 @@ async def test_get_workspace_membership_none():
         filters={"user_id": uuid.uuid1(), "workspace_id": uuid.uuid1()}
     )
     assert membership is None
+
+
+##########################################################
+# misc - get_total_project_memberships
+##########################################################
+
+
+async def test_get_total_workspaces_memberships():
+    admin = await f.create_user()
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    workspace = await f.create_workspace(created_by=admin)
+    await repositories.create_workspace_membership(user=user1, workspace=workspace)
+    await repositories.create_workspace_membership(user=user2, workspace=workspace)
+
+    total_memberships = await repositories.get_total_workspace_memberships(filters={"workspace_id": workspace.id})
+    assert total_memberships == 3

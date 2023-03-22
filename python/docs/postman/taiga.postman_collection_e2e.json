@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "3a719338-0ddd-414d-8be6-9110c27620f1",
+		"_postman_id": "5a763800-95a1-4953-9114-3299adf9fb7a",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3299216"
 	},
 	"item": [
 		{
@@ -6174,6 +6175,282 @@
 								"{{pj-id}}",
 								"memberships",
 								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "workspace.{w}.memberships",
+			"item": [
+				{
+					"name": "200 workspaces.{w}.memberships",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    var membership = jsonRes[0];",
+									"",
+									"    pm.response.to.have.header(\"Pagination-Offset\");",
+									"    pm.response.to.have.header(\"Pagination-Limit\");",
+									"    pm.response.to.have.header(\"Pagination-Total\");",
+									"",
+									"    pm.expect(membership).to.have.property(\"user\");",
+									"    pm.expect(membership).to.have.property(\"workspace\");",
+									"    pm.expect(membership).to.have.property(\"projects\");",
+									"",
+									"    var membershipUser = jsonRes[0].user;",
+									"\tvar membershipWorkspace = jsonRes[0].workspace;",
+									"   \tvar membershipProjects = jsonRes[0].projects[0];",
+									"    ",
+									"    pm.expect(membershipWorkspace).to.have.property(\"id\");",
+									"    pm.expect(membershipWorkspace).to.have.property(\"name\");",
+									"    pm.expect(membershipWorkspace).to.have.property(\"slug\");",
+									"",
+									"    pm.expect(membershipUser).to.have.property(\"username\");",
+									"    pm.expect(membershipUser).to.have.property(\"fullName\");",
+									"    pm.expect(membershipUser).to.have.property(\"color\");",
+									"",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(membership).length;",
+									"    var numOfReturnedUserFields = Object.keys(membershipUser).length;",
+									"\tvar numOfReturnedWorkspaceFields = Object.keys(membershipWorkspace).length;",
+									"    ",
+									"\tpm.expect(numOfReturnedFields).not.to.equal(0);",
+									"\tpm.expect(numOfReturnedUserFields).to.equal(3);",
+									"\tpm.expect(numOfReturnedWorkspaceFields).to.equal(3);",
+									"",
+									"    pm.expect( Object.keys(membershipProjects).length).to.equal(8);",
+									"    pm.expect(membershipProjects).to.have.property(\"logo\");",
+									"    pm.expect(membershipProjects).to.have.property(\"logoSmall\");",
+									"    pm.expect(membershipProjects).to.have.property(\"logoLarge\");",
+									"    pm.expect(membershipProjects).to.have.property(\"id\");",
+									"    pm.expect(membershipProjects).to.have.property(\"name\");",
+									"    pm.expect(membershipProjects).to.have.property(\"slug\");",
+									"    pm.expect(membershipProjects).to.have.property(\"description\");",
+									"    pm.expect(membershipProjects).to.have.property(\"color\");",
+									"",
+									"    ",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/memberships?offset={{offset}}&limit={{limit}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"workspaces",
+								"{{ws-id}}",
+								"memberships"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "projects.{p}.workspace_member_permissions",
+			"item": [
+				{
+					"name": "N/A log in as 1000user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    pm.environment.set(\"auth_token\", pm.response.json().token);",
+									"    pm.environment.set(\"refresh_token\", pm.response.json().refresh);",
+									"});",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"1000user\",\n    \"password\": \"123123\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "N/A log in as 1000user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    pm.environment.set(\"auth_token\", pm.response.json().token);",
+									"    pm.environment.set(\"refresh_token\", pm.response.json().refresh);",
+									"});",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"warning": "This is a duplicate header and will be overridden by the Content-Type header generated by Postman.",
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"1000user\",\n    \"password\": \"123123\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "N/A my.workspaces",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Save projects slugs in environment\", function () {",
+									"    res = pm.response.json();",
+									"    // store a project containing latestProjects",
+									"    for (var ws of res) {",
+									"        if (ws.latestProjects.length > 0) {",
+									"            pm.environment.set(\"pj-id\", ws.latestProjects[0].id);",
+									"            break;",
+									"        }   ",
+									"    }    ",
+									"});",
+									"",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"workspaces"
 							]
 						}
 					},

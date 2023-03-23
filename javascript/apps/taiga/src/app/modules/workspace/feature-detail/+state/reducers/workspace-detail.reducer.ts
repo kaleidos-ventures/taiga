@@ -7,10 +7,19 @@
  */
 
 import { createFeature, on } from '@ngrx/store';
-import { Project, Workspace, WorkspaceProject } from '@taiga/data';
+import {
+  WorkspaceMembership,
+  Project,
+  Workspace,
+  WorkspaceProject,
+} from '@taiga/data';
 import { createImmerReducer } from '~/app/shared/utils/store';
-import * as WorkspaceActions from '../actions/workspace-detail.actions';
-import { workspaceDetailEventActions } from '../actions/workspace-detail.actions';
+import {
+  workspaceActions,
+  workspaceDetailActions,
+  workspaceDetailEventActions,
+  workspaceDetailApiActions,
+} from '../actions/workspace-detail.actions';
 
 export interface WorkspaceDetailState {
   workspace: Workspace | null;
@@ -19,6 +28,11 @@ export interface WorkspaceDetailState {
   workspaceProjects: Record<Workspace['id'], WorkspaceProject[]>;
   workspaceInvitedProjects: Project[];
   loading: boolean;
+  members: WorkspaceMembership[];
+  membersLoading: boolean;
+  totalMembers: number;
+  membersOffset: number;
+  animationDisabled: boolean;
 }
 
 export const initialState: WorkspaceDetailState = {
@@ -28,17 +42,22 @@ export const initialState: WorkspaceDetailState = {
   loading: false,
   workspaceProjects: {},
   workspaceInvitedProjects: [],
+  members: [],
+  membersLoading: false,
+  totalMembers: 0,
+  membersOffset: 0,
+  animationDisabled: true,
 };
 
 export const reducer = createImmerReducer(
   initialState,
-  on(WorkspaceActions.fetchWorkspace, (state): WorkspaceDetailState => {
+  on(workspaceActions.fetchWorkspace, (state): WorkspaceDetailState => {
     state.loading = true;
 
     return state;
   }),
   on(
-    WorkspaceActions.fetchWorkspaceSuccess,
+    workspaceActions.fetchWorkspaceSuccess,
     (state, { workspace }): WorkspaceDetailState => {
       state.workspace = workspace;
       state.loading = false;
@@ -47,7 +66,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    WorkspaceActions.fetchWorkspaceProjectsSuccess,
+    workspaceActions.fetchWorkspaceProjectSuccess,
     (state, { projects, invitedProjects }): WorkspaceDetailState => {
       state.projects = projects;
       state.workspaceInvitedProjects = invitedProjects;
@@ -55,7 +74,7 @@ export const reducer = createImmerReducer(
       return state;
     }
   ),
-  on(WorkspaceActions.resetWorkspace, (state): WorkspaceDetailState => {
+  on(workspaceActions.resetWorkspace, (state): WorkspaceDetailState => {
     state.workspace = null;
     state.projects = [];
     state.workspaceInvitedProjects = [];
@@ -64,7 +83,7 @@ export const reducer = createImmerReducer(
     return state;
   }),
   on(
-    WorkspaceActions.invitationDetailRevokedEvent,
+    workspaceDetailEventActions.invitationDetailRevokedEvent,
     (state, { projectId }): WorkspaceDetailState => {
       state.workspaceInvitedProjects = state.workspaceInvitedProjects.filter(
         (project) => {
@@ -76,7 +95,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    WorkspaceActions.fetchWorkspaceDetailInvitationsSuccess,
+    workspaceDetailActions.fetchInvitationsSuccess,
     (
       state,
       { projectId, invitations, project, role }
@@ -98,7 +117,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    WorkspaceActions.updateWorkspaceSuccess,
+    workspaceActions.updateWorkspaceSuccess,
     (state, { workspace }): WorkspaceDetailState => {
       if (state.workspace && workspace) {
         state.workspace = {
@@ -111,7 +130,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    WorkspaceActions.updateWorkspaceError,
+    workspaceActions.updateWorkspaceError,
     (state, { workspace }): WorkspaceDetailState => {
       state.workspace = workspace;
 
@@ -141,7 +160,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    WorkspaceActions.deleteWorkspaceProjectSuccess,
+    workspaceActions.deleteWorkspaceProjectSuccess,
     (state, { projectId }): WorkspaceDetailState => {
       if (state.workspace) {
         if (state.projects) {
@@ -169,6 +188,26 @@ export const reducer = createImmerReducer(
           });
         }
       }
+      return state;
+    }
+  ),
+  on(
+    workspaceDetailApiActions.initWorkspaceMembers,
+    workspaceDetailApiActions.getWorkspaceMembers,
+    (state): WorkspaceDetailState => {
+      state.membersLoading = true;
+
+      return state;
+    }
+  ),
+  on(
+    workspaceDetailApiActions.getWorkspaceMembersSuccess,
+    (state, { members, totalMembers, offset }): WorkspaceDetailState => {
+      state.members = members;
+      state.totalMembers = totalMembers;
+      state.membersOffset = offset;
+      state.membersLoading = false;
+
       return state;
     }
   )

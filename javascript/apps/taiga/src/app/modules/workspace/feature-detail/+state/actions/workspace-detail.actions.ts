@@ -6,52 +6,99 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createAction, createActionGroup, props } from '@ngrx/store';
-import { Project, User, Workspace } from '@taiga/data';
+import { createActionGroup, emptyProps, props } from '@ngrx/store';
+import { Project, User, Workspace, WorkspaceMembership } from '@taiga/data';
 
-export const fetchWorkspace = createAction(
-  '[Workspace] Fetch',
-  props<{ id: Workspace['id'] }>()
-);
+export const workspaceActions = createActionGroup({
+  source: 'Workspace',
+  events: {
+    'Fetch workspace': props<{
+      id: Workspace['id'];
+    }>(),
+    'Fetch workspace success': props<{
+      workspace: Workspace;
+    }>(),
+    'Fetch workspace project success': props<{
+      projects: Project[];
+      invitedProjects: Project[];
+    }>(),
+    'Reset workspace': emptyProps(),
+    'Invitation detail create event': props<{
+      projectId: Project['id'];
+      workspaceId: Workspace['id'];
+      role: string;
+    }>(),
+    'Update workspace': props<{
+      currentWorkspace: Workspace;
+      nextWorkspace: Partial<Workspace>;
+    }>(),
+    'Update workspace success': props<{
+      workspace: Partial<Workspace>;
+    }>(),
+    'Update workspace error': props<{
+      workspace: Workspace;
+    }>(),
+    'Delete workspace': props<{
+      id: Workspace['id'];
+      name: Workspace['name'];
+    }>(),
+    'Delete workspace success': props<{
+      id: Workspace['id'];
+      name: Workspace['name'];
+    }>(),
+    'Delete workspace project': props<{
+      projectName: Project['name'];
+      projectId: Project['id'];
+    }>(),
+    'Delete workspace project success': props<{
+      projectName: Project['name'];
+      projectId: Project['id'];
+    }>(),
+  },
+});
 
-export const fetchWorkspaceSuccess = createAction(
-  '[Workspace] Fetch Success',
-  props<{ workspace: Workspace }>()
-);
+export const workspaceDetailApiActions = createActionGroup({
+  source: 'Workspace detail Api',
+  events: {
+    'Fetch workspace detail invitations success': props<{
+      projectId: Project['id'];
+      invitations: Project[];
+      project: Project[];
+      role: string;
+    }>(),
+    'Init workspace members': props<{
+      id: Workspace['id'];
+      offset: number;
+    }>(),
+    'Get workspace members': props<{
+      id: Workspace['id'];
+      offset: number;
+    }>(),
+    'Get workspace members success': props<{
+      members: WorkspaceMembership[];
+      totalMembers: number;
+      offset: number;
+    }>(),
+  },
+});
 
-export const fetchWorkspaceProjectsSuccess = createAction(
-  '[Workspace] Fetch Projects Success',
-  props<{ projects: Project[]; invitedProjects: Project[] }>()
-);
-
-export const resetWorkspace = createAction('[Workspace] Reset workspace');
-
-export const invitationDetailCreateEvent = createAction(
-  '[Workspace Detail] new invitation event, fetch invitations',
-  props<{
-    projectId: Project['id'];
-    workspaceId: Workspace['id'];
-    role: string;
-  }>()
-);
-
-export const fetchWorkspaceDetailInvitationsSuccess = createAction(
-  '[Workspace Detail API] Fetch workspace detail Invitations success',
-  props<{
-    projectId: Project['id'];
-    invitations: Project[];
-    project: Project[];
-    role: string;
-  }>()
-);
-
-export const invitationDetailRevokedEvent = createAction(
-  '[Workspace Detail] revoked invitation event, update workspace',
-  props<{ projectId: Project['id'] }>()
-);
+export const workspaceDetailActions = createActionGroup({
+  source: 'Workspace detail',
+  events: {
+    'Fetch invitations success': props<{
+      projectId: Project['id'];
+      invitations: Project[];
+      project: Project[];
+      role: string;
+    }>(),
+    'Set members page': props<{
+      offset: number;
+    }>(),
+  },
+});
 
 export const workspaceDetailEventActions = createActionGroup({
-  source: 'ws detail',
+  source: 'Workspace detail ws',
   events: {
     'Project Deleted': props<{
       projectId: string;
@@ -63,46 +110,8 @@ export const workspaceDetailEventActions = createActionGroup({
     'Workspace deleted': props<{
       name: Workspace['name'];
     }>(),
+    'Invitation Detail Revoked Event': props<{
+      projectId: Project['id'];
+    }>(),
   },
 });
-
-export const updateWorkspace = createAction(
-  '[Workspace] Update',
-  props<{ currentWorkspace: Workspace; nextWorkspace: Partial<Workspace> }>()
-);
-
-export const updateWorkspaceSuccess = createAction(
-  '[Workspace] Update success',
-  props<{ workspace: Partial<Workspace> }>()
-);
-
-export const updateWorkspaceError = createAction(
-  '[Workspace] Update error',
-  props<{ workspace: Workspace }>()
-);
-
-export const deleteWorkspace = createAction(
-  '[Workspace] Delete',
-  props<{ id: Workspace['id']; name: Workspace['name'] }>()
-);
-
-export const deleteWorkspaceSuccess = createAction(
-  '[Workspace] Delete success',
-  props<{ id: Workspace['id']; name: Workspace['name'] }>()
-);
-
-export const deleteWorkspaceProject = createAction(
-  '[Workspace Detail] Delete workspace project',
-  props<{
-    projectName: Project['name'];
-    projectId: Project['id'];
-  }>()
-);
-
-export const deleteWorkspaceProjectSuccess = createAction(
-  '[Workspace Detail] Delete workspace project Success',
-  props<{
-    projectName: Project['name'];
-    projectId: Project['id'];
-  }>()
-);

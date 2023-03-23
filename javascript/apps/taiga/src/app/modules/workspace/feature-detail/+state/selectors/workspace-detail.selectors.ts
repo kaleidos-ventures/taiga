@@ -14,4 +14,9 @@ export const {
   selectProjects,
   selectWorkspaceInvitedProjects,
   selectCreatingWorkspaceDetail,
+  selectMembers,
+  selectMembersLoading,
+  selectTotalMembers,
+  selectMembersOffset,
+  selectAnimationDisabled,
 } = workspaceDetailFeature;

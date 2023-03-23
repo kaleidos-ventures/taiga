@@ -22,10 +22,7 @@ import { Project, User, Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { map, pairwise, take } from 'rxjs/operators';
 import {
-  deleteWorkspaceProject,
-  fetchWorkspace,
-  invitationDetailCreateEvent,
-  invitationDetailRevokedEvent,
+  workspaceActions,
   workspaceDetailEventActions,
 } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import {
@@ -265,7 +262,7 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
       const id = params.get('id');
 
       if (id) {
-        this.store.dispatch(fetchWorkspace({ id }));
+        this.store.dispatch(workspaceActions.fetchWorkspace({ id }));
       }
     });
 
@@ -331,7 +328,7 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
 
   public invitationRevokedEvent(projectId: string) {
     this.store.dispatch(
-      invitationDetailRevokedEvent({
+      workspaceDetailEventActions.invitationDetailRevokedEvent({
         projectId,
       })
     );
@@ -344,7 +341,7 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
         this.newProjectsToAnimate.push(projectId);
       }
       this.store.dispatch(
-        invitationDetailCreateEvent({
+        workspaceActions.invitationDetailCreateEvent({
           projectId: projectId,
           workspaceId: workspace.id,
           role: workspace.userRole,
@@ -578,7 +575,7 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
     if (workspace) {
       this.deleteProjectModal = false;
       this.store.dispatch(
-        deleteWorkspaceProject({
+        workspaceActions.deleteWorkspaceProject({
           projectName: this.projectToDelete.name,
           projectId: this.projectToDelete.id,
         })

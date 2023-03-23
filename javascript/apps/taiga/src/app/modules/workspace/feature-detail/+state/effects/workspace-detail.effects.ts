@@ -13,22 +13,27 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
-import { timer, zip } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
-import { workspaceDetailEventActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
+import { timer, zip, EMPTY } from 'rxjs';
+import { map, tap, exhaustMap, catchError } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
-import * as WorkspaceDetailActions from '../actions/workspace-detail.actions';
+import {
+  workspaceActions,
+  workspaceDetailActions,
+  workspaceDetailEventActions,
+  workspaceDetailApiActions,
+} from '../actions/workspace-detail.actions';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 
 @Injectable()
 export class WorkspaceDetailEffects {
   public loadWorkspace$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceDetailActions.fetchWorkspace),
+      ofType(workspaceActions.fetchWorkspace),
       fetch({
         run: (action) => {
           return this.workspaceApiService.fetchWorkspaceDetail(action.id).pipe(
             map((workspace) => {
-              return WorkspaceDetailActions.fetchWorkspaceSuccess({
+              return workspaceActions.fetchWorkspaceSuccess({
                 workspace,
               });
             })
@@ -42,7 +47,7 @@ export class WorkspaceDetailEffects {
 
   public loadWorkspaceProjects$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceDetailActions.fetchWorkspace),
+      ofType(workspaceActions.fetchWorkspace),
       fetch({
         run: (action) => {
           return zip(
@@ -51,7 +56,7 @@ export class WorkspaceDetailEffects {
             timer(1000)
           ).pipe(
             map(([projects, invitedProjects]) => {
-              return WorkspaceDetailActions.fetchWorkspaceProjectsSuccess({
+              return workspaceActions.fetchWorkspaceProjectSuccess({
                 projects,
                 invitedProjects,
               });
@@ -66,7 +71,7 @@ export class WorkspaceDetailEffects {
 
   public invitationDetailCreateEvent$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceDetailActions.invitationDetailCreateEvent),
+      ofType(workspaceActions.invitationDetailCreateEvent),
       pessimisticUpdate({
         run: (action) => {
           return zip(
@@ -77,14 +82,12 @@ export class WorkspaceDetailEffects {
             timer(300)
           ).pipe(
             map(([project, invitations]) => {
-              return WorkspaceDetailActions.fetchWorkspaceDetailInvitationsSuccess(
-                {
-                  projectId: action.projectId,
-                  project,
-                  invitations,
-                  role: action.role,
-                }
-              );
+              return workspaceDetailActions.fetchInvitationsSuccess({
+                projectId: action.projectId,
+                project,
+                invitations,
+                role: action.role,
+              });
             })
           );
         },
@@ -104,7 +107,7 @@ export class WorkspaceDetailEffects {
             timer(300)
           ).pipe(
             map(([workspace]) => {
-              return WorkspaceDetailActions.fetchWorkspaceSuccess({
+              return workspaceActions.fetchWorkspaceSuccess({
                 workspace: workspace,
               });
             })
@@ -118,21 +121,21 @@ export class WorkspaceDetailEffects {
 
   public updateWorkspace$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceDetailActions.updateWorkspace),
+      ofType(workspaceActions.updateWorkspace),
       optimisticUpdate({
         run: ({ currentWorkspace, nextWorkspace }) => {
           return this.workspaceApiService
             .updateWorkspace(currentWorkspace.id, nextWorkspace)
             .pipe(
               map((workspace) => {
-                return WorkspaceDetailActions.updateWorkspaceSuccess({
+                return workspaceActions.updateWorkspaceSuccess({
                   workspace,
                 });
               })
             );
         },
         undoAction: ({ currentWorkspace }) => {
-          return WorkspaceDetailActions.updateWorkspaceError({
+          return workspaceActions.updateWorkspaceError({
             workspace: currentWorkspace,
           });
         },
@@ -143,7 +146,7 @@ export class WorkspaceDetailEffects {
   public updateWorkspaceSuccess$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(WorkspaceDetailActions.updateWorkspaceSuccess),
+        ofType(workspaceActions.updateWorkspaceSuccess),
         tap(() => {
           this.appService.toastNotification({
             message: 'edit.changes_saved',
@@ -160,12 +163,12 @@ export class WorkspaceDetailEffects {
 
   public deleteWorkspace$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceDetailActions.deleteWorkspace),
+      ofType(workspaceActions.deleteWorkspace),
       pessimisticUpdate({
         run: (action) => {
           return this.workspaceApiService.deleteWorkspace(action.id).pipe(
             map(() => {
-              return WorkspaceDetailActions.deleteWorkspaceSuccess({
+              return workspaceActions.deleteWorkspaceSuccess({
                 id: action.id,
                 name: action.name,
               });
@@ -192,7 +195,7 @@ export class WorkspaceDetailEffects {
   public deleteWorkspaceSuccess$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(WorkspaceDetailActions.deleteWorkspaceSuccess),
+        ofType(workspaceActions.deleteWorkspaceSuccess),
         tap((action) => {
           this.appService.toastNotification({
             message: 'delete.deleted_worspace',
@@ -232,12 +235,12 @@ export class WorkspaceDetailEffects {
 
   public deleteWorkspaceProject$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(WorkspaceDetailActions.deleteWorkspaceProject),
+      ofType(workspaceActions.deleteWorkspaceProject),
       pessimisticUpdate({
         run: (action) => {
           return this.projectApiService.deleteProject(action.projectId).pipe(
             map(() => {
-              return WorkspaceDetailActions.deleteWorkspaceProjectSuccess({
+              return workspaceActions.deleteWorkspaceProjectSuccess({
                 projectId: action.projectId,
                 projectName: action.projectName,
               });
@@ -263,7 +266,7 @@ export class WorkspaceDetailEffects {
   public deleteWorkspaceProjectSuccess$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(WorkspaceDetailActions.deleteWorkspaceProjectSuccess),
+        ofType(workspaceActions.deleteWorkspaceProjectSuccess),
         tap((action) => {
           void this.appService.toastNotification({
             message: 'errors.deleted_project',
@@ -275,6 +278,34 @@ export class WorkspaceDetailEffects {
     },
     { dispatch: false }
   );
+
+  public loadWorkspaceMembers$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(
+        ...[
+          workspaceDetailApiActions.initWorkspaceMembers,
+          workspaceDetailApiActions.getWorkspaceMembers,
+        ]
+      ),
+      exhaustMap((action) => {
+        return this.workspaceApiService
+          .getWorkspaceMembers(action.id, action.offset, MEMBERS_PAGE_SIZE)
+          .pipe(
+            map((membersResponse) => {
+              return workspaceDetailApiActions.getWorkspaceMembersSuccess({
+                members: membersResponse.members,
+                totalMembers: membersResponse.totalMembers,
+                offset: action.offset,
+              });
+            }),
+            catchError((httpResponse: HttpErrorResponse) => {
+              this.appService.errorManagement(httpResponse);
+              return EMPTY;
+            })
+          );
+      })
+    );
+  });
 
   constructor(
     private actions$: Actions,

@@ -11,6 +11,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
 import { WorkspaceDetailProjectsComponent } from './components/workspace-detail-projects/workspace-detail-projects.component';
 import { WorkspaceDetailPeopleComponent } from './components/workspace-detail-people/workspace-detail-people.component';
+import { WorkspaceDetailPeopleMembersComponent } from './components/workspace-detail-people-members/workspace-detail-people-members.component';
+import { WorkspaceDetailPeoplePendingComponent } from './components/workspace-detail-people-pending/workspace-detail-people-pending.component';
+import { WorkspaceDetailPeopleNonMembersComponent } from './components/workspace-detail-people-non-members/workspace-detail-people-non-members.component';
 
 const routes: Routes = [
   {
@@ -24,6 +27,20 @@ const routes: Routes = [
       {
         path: 'people',
         component: WorkspaceDetailPeopleComponent,
+        children: [
+          {
+            path: '',
+            component: WorkspaceDetailPeopleMembersComponent,
+          },
+          {
+            path: 'pending',
+            component: WorkspaceDetailPeoplePendingComponent,
+          },
+          {
+            path: 'non-members',
+            component: WorkspaceDetailPeopleNonMembersComponent,
+          },
+        ],
       },
     ],
   },

@@ -20,12 +20,7 @@ import {
 import { cold, hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
-import {
-  fetchWorkspace,
-  fetchWorkspaceSuccess,
-  deleteWorkspace,
-  deleteWorkspaceSuccess,
-} from '../actions/workspace-detail.actions';
+import { workspaceActions } from '../actions/workspace-detail.actions';
 import { WorkspaceDetailEffects } from './workspace-detail.effects';
 
 describe('WorkspaceEffects', () => {
@@ -55,10 +50,10 @@ describe('WorkspaceEffects', () => {
       cold('-b|', { b: workspace })
     );
 
-    actions$ = hot('-a', { a: fetchWorkspace({ id }) });
+    actions$ = hot('-a', { a: workspaceActions.fetchWorkspace({ id }) });
 
     const expected = cold('--a', {
-      a: fetchWorkspaceSuccess({ workspace }),
+      a: workspaceActions.fetchWorkspaceSuccess({ workspace }),
     });
 
     expect(effects.loadWorkspace$).toBeObservable(expected);
@@ -72,11 +67,17 @@ describe('WorkspaceEffects', () => {
     workspaceApiService.deleteWorkspace.mockReturnValue(cold('-b|', {}));
 
     actions$ = hot('-a', {
-      a: deleteWorkspace({ id: workspace.id, name: workspace.name }),
+      a: workspaceActions.deleteWorkspace({
+        id: workspace.id,
+        name: workspace.name,
+      }),
     });
 
     const expected = cold('--a', {
-      a: deleteWorkspaceSuccess({ id: workspace.id, name: workspace.name }),
+      a: workspaceActions.deleteWorkspaceSuccess({
+        id: workspace.id,
+        name: workspace.name,
+      }),
     });
 
     expect(effects.deleteWorkspace$).toBeObservable(expected);

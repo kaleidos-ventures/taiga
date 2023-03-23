@@ -6,13 +6,18 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
-:host {
-  display: block;
-  max-inline-size: 1024px;
-}
+@import "tools/typography.css";
 
-.header {
+.wks-main-content-top {
   align-items: center;
   display: flex;
   justify-content: space-between;
+  padding-block: var(--spacing-8);
+  padding-inline: var(--spacing-16) var(--spacing-8);
+}
+
+.wks-main-content-title {
+  @mixin font-heading-4;
+
+  color: var(--color-gray100);
 }

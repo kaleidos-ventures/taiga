@@ -7,18 +7,18 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 
 <ng-container *ngIf="model$ | async as vm">
-  <ng-container *transloco="let t; read: 'project_settings'">
+  <ng-container *transloco="let t">
     <tg-ui-dtable>
       <tg-ui-dtable-row>
         <tg-ui-dtable-header class="user-column">{{
-          t('members.column_user')
+          t('common_members_tabs.column_user')
         }}</tg-ui-dtable-header>
         <tg-ui-dtable-header>{{
-          t('members.column_role')
+          t('project_settings.members.column_role')
         }}</tg-ui-dtable-header>
         <tg-ui-dtable-header class="column-actions">
           <span class="header-row-action">
-            {{ t('members.column_actions') }}
+            {{ t('common_members_tabs.column_actions') }}
           </span>
         </tg-ui-dtable-header>
       </tg-ui-dtable-row>
@@ -137,7 +137,7 @@ Copyright (c) 2023-present Kaleidos INC
     <p
       *ngIf="!vm.loading && !vm.invitations.length"
       class="empty">
-      {{ t('members.no_pending') }}
+      {{ t('common_members_tabs.no_pending') }}
     </p>
 
     <tg-members-pagination

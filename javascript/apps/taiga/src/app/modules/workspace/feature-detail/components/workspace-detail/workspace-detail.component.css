@@ -130,7 +130,7 @@ tg-project-card {
 
 .workspace-detail {
   display: flex;
-  gap: var(--spacing-12);
+  gap: var(--spacing-16);
   min-block-size: 100%;
 }
 

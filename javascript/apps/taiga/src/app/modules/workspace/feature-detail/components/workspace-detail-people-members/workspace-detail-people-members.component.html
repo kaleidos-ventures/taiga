@@ -1,0 +1,67 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+<ng-container *ngIf="model$ | async as vm">
+  <ng-container *transloco="let t">
+    <ng-container *ngIf="vm.workspace">
+      <p class="tab-description">
+        {{ t('workspace.people.members_description') }}
+      </p>
+      <tg-ui-dtable>
+        <tg-ui-dtable-row>
+          <tg-ui-dtable-header>{{
+            t('common_members_tabs.column_user')
+          }}</tg-ui-dtable-header>
+          <tg-ui-dtable-header>{{ t('commons.projects') }}</tg-ui-dtable-header>
+          <tg-ui-dtable-header class="column-actions">
+            <span class="header-row-action">
+              {{ t('common_members_tabs.column_actions') }}
+            </span>
+          </tg-ui-dtable-header>
+        </tg-ui-dtable-row>
+        <ng-container *ngIf="!vm.loading">
+          <ng-container
+            *ngFor="let member of vm.members; trackBy: trackByIndex">
+            <tg-ui-dtable-row [@.disabled]="vm.animationDisabled">
+              <tg-ui-dtable-cell class="user">
+                <tg-user-card
+                  [user]="member.user"
+                  [navigateToUser]="true"></tg-user-card>
+              </tg-ui-dtable-cell>
+              <tg-ui-dtable-cell> </tg-ui-dtable-cell>
+              <tg-ui-dtable-cell class="action-column"> </tg-ui-dtable-cell>
+            </tg-ui-dtable-row>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="vm.loading">
+          <tg-ui-dtable-row
+            *ngFor="
+              let i of [].constructor(MEMBERS_PAGE_SIZE);
+              trackBy: trackByIndex
+            ">
+            <tg-ui-dtable-cell>
+              <tg-ui-user-skeleton></tg-ui-user-skeleton>
+            </tg-ui-dtable-cell>
+            <tg-ui-dtable-cell></tg-ui-dtable-cell>
+            <tg-ui-dtable-cell></tg-ui-dtable-cell>
+          </tg-ui-dtable-row>
+        </ng-container>
+      </tg-ui-dtable>
+
+      <tg-members-pagination
+        *ngIf="vm.total"
+        [total]="vm.total"
+        [pageStart]="vm.pageStart"
+        [pageEnd]="vm.pageEnd"
+        [hasPreviousPage]="vm.hasPreviousPage"
+        [hasNextPage]="vm.hasNextPage"
+        (next)="next()"
+        (previous)="prev()">
+      </tg-members-pagination>
+    </ng-container>
+  </ng-container>
+</ng-container>

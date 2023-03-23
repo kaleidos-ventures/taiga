@@ -5,7 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2023-present Kaleidos INC
 -->
-<ng-container *transloco="let t; read: 'project_settings'">
+<ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <section class="member-settings">
       <div class="header">
@@ -15,7 +15,7 @@ Copyright (c) 2023-present Kaleidos INC
           mainFocus
           id="main-area-title"
           class="settings-title">
-          {{ t('members.title') }}
+          {{ t('project_settings.members.title') }}
         </h3>
 
         <button
@@ -25,7 +25,7 @@ Copyright (c) 2023-present Kaleidos INC
           tuiButton
           type="submit"
           data-test="settings-invite-btn">
-          {{ t('members.invite') }}
+          {{ t('project_settings.members.invite') }}
         </button>
       </div>
       <tui-tabs role="tablist">
@@ -45,7 +45,7 @@ Copyright (c) 2023-present Kaleidos INC
           <tui-svg
             class="tab-icon"
             src="members"></tui-svg>
-          {{ t('members.members_tab') }}
+          {{ t('common_members_tabs.members_tab') }}
           <span class="count">({{ vm.totalMembers }})</span>
         </a>
         <a
@@ -64,7 +64,7 @@ Copyright (c) 2023-present Kaleidos INC
           <tui-svg
             class="tab-icon"
             src="clock"></tui-svg>
-          {{ t('members.pending_tab') }}
+          {{ t('common_members_tabs.pending_tab') }}
           <span
             class="count"
             *ngIf="vm.totalPending"

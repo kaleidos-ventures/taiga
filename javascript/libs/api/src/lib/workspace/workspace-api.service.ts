@@ -9,8 +9,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
-import { Project, Workspace, WorkspaceCreation } from '@taiga/data';
+import {
+  Project,
+  Workspace,
+  WorkspaceCreation,
+  WorkspaceMembership,
+} from '@taiga/data';
 import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -66,5 +72,31 @@ export class WorkspaceApiService {
     return this.http.get<Project[]>(
       `${this.config.apiUrl}/workspaces/${id}/invited-projects`
     );
+  }
+
+  public getWorkspaceMembers(
+    id: Workspace['id'],
+    offset = 0,
+    limit = 10
+  ): Observable<{ totalMembers: number; members: WorkspaceMembership[] }> {
+    return this.http
+      .get<WorkspaceMembership[]>(
+        `${this.config.apiUrl}/workspaces/${id}/memberships`,
+        {
+          observe: 'response',
+          params: {
+            offset,
+            limit,
+          },
+        }
+      )
+      .pipe(
+        map((response) => {
+          return {
+            totalMembers: Number(response.headers.get('pagination-total')),
+            members: response.body ?? [],
+          };
+        })
+      );
   }
 }

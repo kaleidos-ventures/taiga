@@ -37,5 +37,10 @@
   },
   "a11y": {
     "workspace_title": "{{ workspace }}. Workspace. Role: {{ role }}"
+  },
+  "people": {
+    "members_description": "Workspace members can view and manage all projects in this workspace, create new ones and delete them.",
+    "non_members_description": "People that are part of the projects but not workspace members.",
+    "non_members_empty": "There are no project members who are not members of this workspace."
   }
 }

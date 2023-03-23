@@ -7,7 +7,7 @@ Copyright (c) 2023-present Kaleidos INC
 */
 /* stylelint-disable selector-max-compound-selectors */
 
-@import "../../members-common";
+@import "shared/users-tabs.css";
 @import "tools/typography.css";
 
 .revoke-invitation-btn {

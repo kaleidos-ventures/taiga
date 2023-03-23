@@ -7,6 +7,7 @@
  */
 
 import { Project } from './project.model';
+import { User } from './user.model';
 
 export type WorkspaceProject = Pick<
   Project,
@@ -35,4 +36,21 @@ export interface WorkspaceCreation {
 export interface WorkspaceDetail {
   workspace: Workspace;
   workspaceProject: Project[];
+}
+
+export interface WorkspaceMembership {
+  user: Pick<User, 'username' | 'fullName' | 'color'>;
+  workspace: Pick<WorkspaceProject, 'id' | 'name' | 'slug'>;
+  role: string;
+  projects: Pick<
+    Project,
+    | 'id'
+    | 'logoSmall'
+    | 'logoLarge'
+    | 'logo'
+    | 'name'
+    | 'slug'
+    | 'description'
+    | 'color'
+  >[];
 }

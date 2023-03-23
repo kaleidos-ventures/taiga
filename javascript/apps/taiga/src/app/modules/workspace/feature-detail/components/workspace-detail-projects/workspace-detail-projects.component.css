@@ -6,5 +6,5 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
-@import "tools/typography.css";
 @import "../../../styles/workspace.shared";
+@import "../../../styles/workspace-detail.shared";

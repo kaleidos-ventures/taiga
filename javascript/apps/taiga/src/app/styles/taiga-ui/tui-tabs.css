@@ -16,8 +16,19 @@ tui-tabs {
   --tui-selection: transparent;
 
   /* stylelint-disable selector-max-type */
-  & .tab-link:hover:not(.active) {
-    box-shadow: none;
+  & .tab-link {
+    border: 1px solid transparent;
+    color: var(--color-gray70);
+    font-weight: var(--font-weight-medium);
+    padding-inline: var(--spacing-4);
+
+    &.active tui-svg {
+      color: var(--color-secondary60);
+    }
+
+    &:hover:not(.active) {
+      box-shadow: none;
+    }
   }
 
   & .tab-link._focus-visible {
@@ -25,4 +36,16 @@ tui-tabs {
     box-shadow: none;
   }
   /* stylelint-enable selector-max-type */
+
+  & .count {
+    color: var(--color-gray60);
+    margin-inline-start: var(--spacing-4);
+  }
+
+  & .tab-icon {
+    block-size: var(--spacing-16);
+    color: var(--color-gray60);
+    inline-size: var(--spacing-16);
+    margin-inline-end: var(--spacing-4);
+  }
 }

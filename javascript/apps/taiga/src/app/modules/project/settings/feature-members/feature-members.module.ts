@@ -33,7 +33,7 @@ import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { MembersEffects } from './+state/effects/members.effects';
 import { membersFeature } from './+state/reducers/members.reducer';
 import { MembersListComponent } from './components/members-list/members-list.component';
-import { PaginationComponent } from './components/pagination/pagination.component';
+import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
 import { PendingMembersListComponent } from './components/pending-members-list/pending-members-list.component';
 import { RevokeInvitationComponent } from './components/revoke-invitation/revoke-invitation.component';
 import { RoleSelectComponent } from './components/role-select/role-select.component';
@@ -44,7 +44,6 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     ProjectsSettingsFeatureMembersComponent,
     MembersListComponent,
     PendingMembersListComponent,
-    PaginationComponent,
     RevokeInvitationComponent,
     RoleSelectComponent,
   ],
@@ -78,6 +77,7 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     DynamicTableModule,
     ModalModule,
     InviteToProjectModule,
+    PaginationComponent,
     StoreModule.forFeature(membersFeature),
     EffectsModule.forFeature([MembersEffects]),
     RouterModule.forChild([

@@ -13,12 +13,15 @@ import {
   Input,
   Output,
 } from '@angular/core';
+import { CommonTemplateModule } from '~/app/shared/common-template.module';
 
 @Component({
   selector: 'tg-members-pagination',
+  standalone: true,
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonTemplateModule],
 })
 export class PaginationComponent {
   @Input()

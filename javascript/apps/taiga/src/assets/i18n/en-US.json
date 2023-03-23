@@ -182,5 +182,18 @@
     "fields": {
       "title": "title"
     }
+  },
+  "pagination": {
+    "next_page": "Next page",
+    "previous_page": "Previous page",
+    "page_info": "<span class='page-range'>{pageStart} - {pageEnd}</span> of {total}"
+  },
+  "common_members_tabs": {
+    "members_tab": "Members",
+    "pending_tab": "Pending",
+    "non_members_tab": "Non-members",
+    "column_user": "User",
+    "column_actions": "Actions",
+    "no_pending": "There are no pending invitations to accept."
   }
 }

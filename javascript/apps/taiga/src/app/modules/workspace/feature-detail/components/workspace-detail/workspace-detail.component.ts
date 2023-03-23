@@ -22,12 +22,7 @@ import { RxState } from '@rx-angular/state';
 import { Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
-import {
-  deleteWorkspace,
-  fetchWorkspace,
-  resetWorkspace,
-  updateWorkspace,
-} from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
+import { workspaceActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import {
   selectProjects,
   selectWorkspace,
@@ -81,7 +76,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       const id = params.get('id');
 
       if (id) {
-        this.store.dispatch(fetchWorkspace({ id }));
+        this.store.dispatch(workspaceActions.fetchWorkspace({ id }));
       }
     });
 
@@ -124,7 +119,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
           })
           .subscribe();
       });
-    this.store.dispatch(resetWorkspace());
+    this.store.dispatch(workspaceActions.resetWorkspace());
   }
 
   public displayWorkspaceOptionsModal() {
@@ -142,7 +137,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       this.showDeleteWorkspaceModal = true;
     } else {
       this.store.dispatch(
-        deleteWorkspace({
+        workspaceActions.deleteWorkspace({
           id: workspace!.id,
           name: workspace!.name,
         })
@@ -170,7 +165,10 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     this.closeEditWorkspaceModal();
     if (currentWorkspace && currentWorkspace?.name !== workspaceUpdate.name) {
       this.store.dispatch(
-        updateWorkspace({ currentWorkspace, nextWorkspace: workspaceUpdate })
+        workspaceActions.updateWorkspace({
+          currentWorkspace,
+          nextWorkspace: workspaceUpdate,
+        })
       );
     }
   }

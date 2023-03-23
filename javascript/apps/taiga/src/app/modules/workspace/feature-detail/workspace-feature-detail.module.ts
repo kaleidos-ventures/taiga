@@ -18,6 +18,7 @@ import {
   TuiLinkModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
+import { TuiTabsModule } from '@taiga-ui/kit';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { ModalModule } from '@taiga/ui/modal';
@@ -40,7 +41,13 @@ import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-
 import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
 import { WorkspaceDetailProjectsComponent } from './components/workspace-detail-projects/workspace-detail-projects.component';
 import { WorkspaceDetailPeopleComponent } from './components/workspace-detail-people/workspace-detail-people.component';
+import { WorkspaceDetailPeopleMembersComponent } from './components/workspace-detail-people-members/workspace-detail-people-members.component';
+import { WorkspaceDetailPeoplePendingComponent } from './components/workspace-detail-people-pending/workspace-detail-people-pending.component';
+import { WorkspaceDetailPeopleNonMembersComponent } from './components/workspace-detail-people-non-members/workspace-detail-people-non-members.component';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
+import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
+import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
+import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
 
 @NgModule({
   declarations: [
@@ -49,12 +56,16 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     WorkspaceDetailEditModalComponent,
     WorkspaceDetailProjectsComponent,
     WorkspaceDetailPeopleComponent,
+    WorkspaceDetailPeopleMembersComponent,
+    WorkspaceDetailPeoplePendingComponent,
+    WorkspaceDetailPeopleNonMembersComponent,
   ],
   imports: [
     TitleDirective,
     TuiLinkModule,
     RouterModule,
     AvatarModule,
+    TuiTabsModule,
     CommonTemplateModule,
     BadgeModule,
     DropdownModule,
@@ -77,6 +88,9 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     DiscardChangesModalComponent,
     DeleteProjectComponent,
     TuiHintModule,
+    DynamicTableModule,
+    UserCardComponent,
+    PaginationComponent,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

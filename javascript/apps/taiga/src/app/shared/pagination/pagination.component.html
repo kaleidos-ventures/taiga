@@ -6,12 +6,12 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 -->
 
-<ng-container *transloco="let t; read: 'project_settings'">
+<ng-container *transloco="let t">
   <nav
     role="navigation"
     class="pagination">
     <button
-      [attr.aria-label]="t('members.previous_page')"
+      [attr.aria-label]="t('pagination.previous_page')"
       [disabled]="!hasPreviousPage"
       (click)="previous.emit()"
       appearance="tertiary"
@@ -22,7 +22,7 @@ Copyright (c) 2023-present Kaleidos INC
     <div
       class="page-info"
       [innerHTML]="
-        t('members.page_info', {
+        t('pagination.page_info', {
           pageStart: pageStart,
           pageEnd: pageEnd,
           total: total
@@ -30,7 +30,7 @@ Copyright (c) 2023-present Kaleidos INC
       "></div>
 
     <button
-      [attr.aria-label]="t('members.next_page')"
+      [attr.aria-label]="t('pagination.next_page')"
       [disabled]="!hasNextPage"
       (click)="next.emit()"
       appearance="tertiary"

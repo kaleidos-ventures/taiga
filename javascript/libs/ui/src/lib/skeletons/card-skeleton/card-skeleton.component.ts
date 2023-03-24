@@ -14,7 +14,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrls: ['./card-skeleton.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
-// NOTES
-// Shared angular animations
 export class CardSkeletonComponent {}

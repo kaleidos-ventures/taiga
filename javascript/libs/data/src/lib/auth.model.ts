@@ -33,8 +33,6 @@ export interface SignUpInput {
   lang: Language['code'];
 }
 
-// This interface implements `message` and `msg` since backend provide both options depending on the error
-// According to backend, will be fixed in the future.
 export interface SignUpError {
   error: {
     code: string;

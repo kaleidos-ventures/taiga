@@ -317,7 +317,6 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
         KanbanActions.moveStoryA11y({ story, status: statusData })
       );
 
-      // Live announcement
       const statusNameTranslation = this.translocoService.translate(
         'kanban.status_live_announce',
         {
@@ -378,7 +377,6 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
         )
         .then(
           () => {
-            // #hack, force the announcement to be made before the story title
             setTimeout(() => {
               if (horizontalNavData.nextStory) {
                 horizontalNavData.nextStory

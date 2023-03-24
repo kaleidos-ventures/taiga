@@ -6,8 +6,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
-/* todo fix storybookjs/storybook#15855 */
-
 .story-flex {
   align-items: center;
   display: flex;

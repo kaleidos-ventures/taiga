@@ -68,10 +68,8 @@ describe('Workspace List', () => {
   it('check WS visibility - admin', () => {
     const workspaceItem = WorkspaceMockFactory();
 
-    // Mock user role
     workspaceItem.userRole = 'admin';
 
-    // Mock latestProjects
     workspaceItem.latestProjects = [];
 
     const rejectedInvited: Project['id'][] = [];
@@ -84,14 +82,11 @@ describe('Workspace List', () => {
 
   it('check WS visibility - hasProjects', () => {
     const workspaceItem = WorkspaceMockFactory();
-    // Mock user role
     workspaceItem.userRole = 'guest';
 
-    // Mock latestProjects
     const project = ProjectMockFactory();
     workspaceItem.latestProjects = [project];
 
-    // Mock rejectedProjects
     const rejectedInvited: Project['id'][] = [];
     mockRejectInviteSelect.setResult(rejectedInvited);
     store.refreshState();
@@ -102,13 +97,10 @@ describe('Workspace List', () => {
   it('check WS visibility - hasInvites', () => {
     const workspaceItem = WorkspaceMockFactory();
 
-    // Mock user role
     workspaceItem.userRole = 'guest';
 
-    // Mock latestProjects
     workspaceItem.latestProjects = [];
 
-    // Mock rejectedProjects
     const rejectedInvited: Project['id'][] = [];
     mockRejectInviteSelect.setResult(rejectedInvited);
     store.refreshState();
@@ -121,13 +113,11 @@ describe('Workspace List', () => {
 
   it('check WS visibility - hasInvites - rejected', () => {
     const workspaceItem = WorkspaceMockFactory();
-    // Mock user role
+
     workspaceItem.userRole = 'guest';
 
-    // Mock latestProjects
     workspaceItem.latestProjects = [];
 
-    // Mock rejectedProjects
     const exampleInvite = ProjectMockFactory();
 
     const rejectedInvited: Project['id'][] = [exampleInvite.id];

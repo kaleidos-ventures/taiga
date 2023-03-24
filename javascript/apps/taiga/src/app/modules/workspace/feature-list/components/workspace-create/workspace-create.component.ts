@@ -9,13 +9,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Output,
+  ElementRef,
   EventEmitter,
   OnInit,
+  Output,
   ViewChild,
-  ElementRef,
 } from '@angular/core';
-import { Validators, FormGroup, FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
@@ -39,8 +39,6 @@ export class WorkspaceCreateComponent implements OnInit {
 
   constructor(private store: Store, private fb: FormBuilder) {}
 
-  // #TODO: Add user ID when we have real users on the app
-  public userId = 5;
   public color = 0;
   public createProjectForm!: FormGroup;
   public name = '';
@@ -73,7 +71,6 @@ export class WorkspaceCreateComponent implements OnInit {
         createWorkspace({
           name: this.createProjectForm.get('projectName')!.value as string,
           color: this.color,
-          userId: this.userId,
         })
       );
       this.requestClose.next();

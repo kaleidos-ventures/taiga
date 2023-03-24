@@ -22,7 +22,6 @@ export const openInvitationModal = () => {
 export const logout = () => {
   cy.getBySel('user-settings').should('be.visible').click();
   cy.getBySel('log-out').should('be.visible');
-  // necessary to avoid random detach element from DOM
   cy.getBySel('log-out').click({ force: true });
 };
 

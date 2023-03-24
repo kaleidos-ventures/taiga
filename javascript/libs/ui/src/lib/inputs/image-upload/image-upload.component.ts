@@ -19,8 +19,8 @@ import {
 } from '@angular/core';
 import {
   ControlContainer,
-  FormGroupDirective,
   FormControl,
+  FormGroupDirective,
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
@@ -133,7 +133,6 @@ export class ImageUploadComponent implements OnChanges {
       const img: File = target.files[0];
       this.imageSelected.emit(img);
 
-      // Read the contents of the file;
       const reader = new FileReader();
       reader.readAsDataURL(img);
       reader.onload = () => {

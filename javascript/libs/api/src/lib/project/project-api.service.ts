@@ -121,8 +121,6 @@ export class ProjectApiService {
     roleSlug: Role['slug'],
     permissions: string[]
   ) {
-    // only permission currently supported by back
-    // python/apps/taiga/src/taiga/permissions/choices.py
     permissions = permissions.filter((permission) => {
       const validPermission = [
         'add_member',

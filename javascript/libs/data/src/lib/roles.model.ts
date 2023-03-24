@@ -23,7 +23,6 @@ export enum Permissions {
 }
 
 export interface Role {
-  // readonly id: number;
   name: string;
   slug: string;
   order: number;

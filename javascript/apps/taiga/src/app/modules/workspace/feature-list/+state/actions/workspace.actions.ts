@@ -59,7 +59,6 @@ export const createWorkspace = createAction(
   props<{
     name: Workspace['name'];
     color: Workspace['color'];
-    userId: User['id'];
   }>()
 );
 

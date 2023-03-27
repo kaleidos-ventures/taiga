@@ -175,13 +175,10 @@ async def get_user_permissions_for_project(
     # pj (user is)		ws (user is)	Applied permission role (referred to a project)
     # =================================================================================
     # pj-admin			ws-admin		role-pj-admin.permissions
-    # pj-admin			ws-member		role-pj-admin.permissions
     # pj-admin			no-role			role-pj-admin.permissions
     # pj-member			ws-admin		role-ws-admin [edit permissions over pj]
     # no-role			ws-admin		role-ws-admin [edit permissions over pj]
-    # pj-member			ws-member		role-pj-member.permissions
     # pj-member			no-role			role-pj-member.permissions
-    # no-role			ws-member		pj.workspace-member-permissions
     # no-role			no-role			pj.public-permissions
     # no-logged			no-logged		pj.public-permissions [only view]
     if is_project_admin:

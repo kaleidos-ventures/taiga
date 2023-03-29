@@ -18,7 +18,6 @@ from taiga.projects.projects import repositories
 from taiga.projects.projects.models import Project
 from taiga.projects.roles.models import ProjectRole
 from tests.utils import factories as f
-from tests.utils.images import valid_image_f
 
 pytestmark = pytest.mark.django_db
 
@@ -47,23 +46,24 @@ async def test_create_project_with_non_ASCI_chars():
 
 
 async def test_create_project_with_logo():
+    image_file = f.build_image_file()
     workspace = await f.create_workspace()
     project = await repositories.create_project(
-        name="My proj#%&乕شect",
+        name="My test project",
         description="",
         color=3,
         created_by=workspace.created_by,
         workspace=workspace,
-        logo=valid_image_f,
+        logo=image_file,
     )
-    assert valid_image_f.name in project.logo.name
+    assert project.logo.name.endswith(image_file.name)
     assert await _seq_exists(references.get_project_references_seqname(project.id))
 
 
 async def test_create_project_with_no_logo():
     workspace = await f.create_workspace()
     project = await repositories.create_project(
-        name="My proj#%&乕شect",
+        name="My test project",
         description="",
         color=3,
         created_by=workspace.created_by,
@@ -99,11 +99,11 @@ async def test_list_workspace_invited_projects_for_user():
             "workspace_id": workspace.id,
             "invitee_id": user9.id,
             "invitation_status": ProjectInvitationStatus.PENDING,
-        }
+        },
     )
     assert len(res) == 2
-    assert res[0].name == pj1.name
-    assert res[1].name == pj3.name
+    assert res[0].name == pj3.name
+    assert res[1].name == pj1.name
 
 
 async def test_list_projects():

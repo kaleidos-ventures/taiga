@@ -16,7 +16,7 @@ from tests.utils import factories as f
 
 
 def test_project_logo_mixin_serializer_with_logo():
-    project = f.build_project()
+    project = f.build_project(logo=f.build_image_file())
 
     with (
         patch("taiga.projects.projects.services.get_logo_small_thumbnail_url", autospec=True) as fake_get_logo_small,

@@ -9,17 +9,14 @@ import uuid
 from unittest.mock import patch
 
 import pytest
-from fastapi import UploadFile
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects import services
 from taiga.projects.projects.services import exceptions as ex
 from taiga.users.models import AnonymousUser
 from taiga.workspaces.workspaces.serializers.nested import WorkspaceNestedSerializer
 from tests.utils import factories as f
-from tests.utils.images import valid_image_upload_file
 
 pytestmark = pytest.mark.django_db
-
 
 ##########################################################
 # create_project
@@ -68,7 +65,7 @@ async def test_create_project_with_logo():
     project = f.build_project(workspace=workspace)
     role = f.build_project_role(project=project)
 
-    logo: UploadFile = valid_image_upload_file
+    logo = f.build_image_uploadfile()
 
     with (
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_project_repository,
@@ -240,9 +237,22 @@ async def test_update_project_ok(tqmanager):
         assert len(tqmanager.pending_jobs) == 0
 
 
-async def test_update_project_ok_with_logo(tqmanager):
+async def test_update_project_ok_with_new_logo(tqmanager):
+    new_logo = f.build_image_uploadfile()
     project = f.build_project()
-    values = {"name": "new name", "description": "", "logo": valid_image_upload_file}
+    values = {"name": "new name", "description": "", "logo": new_logo}
+
+    with patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_pj_repo:
+        await services._update_project(project=project, values=values)
+        fake_pj_repo.update_project.assert_awaited_once_with(project=project, values=values)
+        assert len(tqmanager.pending_jobs) == 0
+
+
+async def test_update_project_ok_with_logo_replacement(tqmanager):
+    logo = f.build_image_file()
+    new_logo = f.build_image_uploadfile(name="new_logo")
+    project = f.build_project(logo=logo)
+    values = {"name": "new name", "description": "", "logo": new_logo}
 
     with patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_pj_repo:
         await services._update_project(project=project, values=values)
@@ -251,12 +261,13 @@ async def test_update_project_ok_with_logo(tqmanager):
         job = tqmanager.pending_jobs[0]
         assert "delete_old_logo" in job["task_name"]
         assert "path" in job["args"]
-        assert valid_image_upload_file.filename in job["args"]["path"]
+        assert job["args"]["path"].endswith(logo.name)
 
 
 async def test_update_project_name_empty(tqmanager):
     project = f.build_project()
-    values = {"name": "", "description": "", "logo": valid_image_upload_file}
+    logo = f.build_image_file()
+    values = {"name": "", "description": "", "logo": logo}
 
     with (
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_pj_repo,

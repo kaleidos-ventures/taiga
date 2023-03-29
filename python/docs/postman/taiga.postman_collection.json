@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c6b8fa0a-3d8b-49ff-8f5e-8f4f1e1ad679",
+		"_postman_id": "762ae4ff-43b6-40b7-956f-1f2e1843b5c9",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"_exporter_id": "15018493"
 	},
 	"item": [
 		{
@@ -2628,6 +2628,65 @@
 								"{{story_ref}}",
 								"assignments",
 								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create story mediafiles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/mediafiles",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"stories",
+								"{{story_ref}}",
+								"mediafiles"
 							]
 						}
 					},

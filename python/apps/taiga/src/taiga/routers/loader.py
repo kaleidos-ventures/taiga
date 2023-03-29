@@ -20,6 +20,7 @@ from taiga.projects.roles import api as projects_roles_api  # noqa
 from taiga.routers import routes
 from taiga.routers.routes import tags_metadata
 from taiga.stories.assignments import api as stories_assignments_api  # noqa
+from taiga.stories.mediafiles import api as stories_mediafiles_api  # noqa
 from taiga.stories.stories import api as stories_api  # noqa
 from taiga.system import api as system_api  # noqa
 from taiga.users import api as users_api  # noqa

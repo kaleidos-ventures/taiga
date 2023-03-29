@@ -60,6 +60,8 @@ tomli==2.0.1
     #   pep517
 types-babel==2.11.0.6
     # via -r requirements/devel.in
+types-pillow==9.4.0.19
+    # via -r requirements/devel.in
 types-python-slugify==7.0.0.1
     # via -r requirements/devel.in
 types-pytz==2022.6.0.1

@@ -23,6 +23,8 @@ Copyright (c) 2021-present Kaleidos Ventures SL
         {{ t('workspace.edit.title') }}
       </h3>
       <form
+        *ngIf="nameForm"
+        [showFormErrors]="submitted"
         [formGroup]="nameForm"
         (submit)="submit()">
         <tg-ui-input [label]="t('workspace.edit.name')">

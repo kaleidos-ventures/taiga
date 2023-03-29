@@ -18,7 +18,6 @@ import {
 import { FormControl, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Workspace } from '@taiga/data';
-import { tap } from 'rxjs';
 import {
   WorkspaceNameMaxLength,
   WorkspaceNameValidation,
@@ -52,8 +51,7 @@ export class WorkspaceDetailEditModalComponent implements OnInit {
 
   @HostListener('window:beforeunload')
   public unloadHandler() {
-    this.nameForm.updateValueAndValidity();
-    if (this.nameForm.dirty) {
+    if (this.checkIfNewWSName()) {
       return false;
     }
     return true;
@@ -62,38 +60,37 @@ export class WorkspaceDetailEditModalComponent implements OnInit {
   public maxLength = WorkspaceNameMaxLength;
   public showConfirmEditWorkspaceModal = false;
   public showEditWorkspaceModal = false;
+  public submitted = false;
 
-  public nameForm = new FormGroup(
-    {
-      name: new FormControl('', {
-        nonNullable: true,
-        validators: WorkspaceNameValidation,
-      }),
-    },
-    { updateOn: 'submit' }
-  );
+  public nameForm = new FormGroup({
+    name: new FormControl('', {
+      nonNullable: true,
+      validators: WorkspaceNameValidation,
+    }),
+  });
 
   public ngOnInit() {
-    this.nameForm.get('name')?.setValue(this.workspace.name);
+    this.nameForm.patchValue(
+      {
+        name: this.workspace.name,
+      },
+      { emitEvent: false }
+    );
 
-    this.nameForm.valueChanges
-      .pipe(
-        untilDestroyed(this),
-        tap(() => this.nameForm.markAsDirty())
-      )
-      .subscribe();
+    this.nameForm.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.submitted = false;
+    });
   }
 
   public submit() {
-    this.nameForm.updateValueAndValidity();
-    if (this.nameForm.valid) {
+    this.submitted = true;
+    if (this.checkIfNewWSName() && this.nameForm.valid) {
       this.update.emit(this.nameForm.value);
     }
   }
 
   public cancel() {
-    this.nameForm.updateValueAndValidity();
-    if (this.nameForm.dirty) {
+    if (this.checkIfNewWSName()) {
       this.showConfirmEditWorkspaceModal = true;
       this.showEditWorkspaceModal = false;
     } else {
@@ -109,5 +106,12 @@ export class WorkspaceDetailEditModalComponent implements OnInit {
   public keepEditing() {
     this.showConfirmEditWorkspaceModal = false;
     this.showEditWorkspaceModal = true;
+  }
+
+  public checkIfNewWSName() {
+    return (
+      this.nameForm.dirty &&
+      this.nameForm.get('name')?.value !== this.workspace.name
+    );
   }
 }

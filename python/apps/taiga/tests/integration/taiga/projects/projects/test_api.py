@@ -9,7 +9,6 @@ import pytest
 from fastapi import status
 from taiga.permissions import choices
 from tests.utils import factories as f
-from tests.utils.images import create_valid_testing_image
 
 pytestmark = pytest.mark.django_db(transaction=True)
 
@@ -22,7 +21,7 @@ pytestmark = pytest.mark.django_db(transaction=True)
 async def test_create_project_being_workspace_admin(client):
     workspace = await f.create_workspace()
     data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
-    files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
+    files = {"logo": ("logo.png", f.build_image_file("logo"), "image/png")}
 
     client.login(workspace.created_by)
     response = client.post("/projects", data=data, files=files)
@@ -34,7 +33,7 @@ async def test_create_project_being_workspace_member(client):
     user2 = await f.create_user()
     await f.create_workspace_membership(user=user2, workspace=workspace)
     data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
-    files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
+    files = {"logo": ("logo.png", f.build_image_file("logo"), "image/png")}
 
     client.login(user2)
     response = client.post("/projects", data=data, files=files)
@@ -45,7 +44,7 @@ async def test_create_project_being_no_workspace_member(client):
     workspace = await f.create_workspace()
     user2 = await f.create_user()
     data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
-    files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
+    files = {"logo": ("logo.png", f.build_image_file("logo"), "image/png")}
 
     client.login(user2)
     response = client.post("/projects", data=data, files=files)
@@ -55,7 +54,7 @@ async def test_create_project_being_no_workspace_member(client):
 async def test_create_project_being_anonymous(client):
     workspace = await f.create_workspace()
     data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
-    files = {"logo": ("logo.png", create_valid_testing_image(), "image/png")}
+    files = {"logo": ("logo.png", f.build_image_file("logo"), "image/png")}
 
     response = client.post("/projects", data=data, files=files)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
@@ -238,7 +237,7 @@ async def test_update_project_ok(client):
     project = await f.create_project()
 
     data = {"name": "New name", "description": "new description"}
-    files = {"logo": ("new-logo.png", create_valid_testing_image(), "image/png")}
+    files = {"logo": ("new-logo.png", f.build_image_file("new-logo"), "image/png")}
 
     client.login(project.created_by)
     response = client.patch(f"/projects/{project.b64id}", data=data, files=files)

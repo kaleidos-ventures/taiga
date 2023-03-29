@@ -8,7 +8,8 @@
 from typing import Any, Callable, Generator
 from uuid import UUID
 
-from pydantic import ConstrainedStr
+from pydantic import AnyHttpUrl, AnyUrl, BaseConfig, ConstrainedStr
+from pydantic.fields import ModelField
 from taiga.base.i18n import i18n
 from taiga.base.utils.uuid import decode_b64str_to_uuid
 from taiga.conf import settings
@@ -54,3 +55,9 @@ class B64UUID(UUID):
         except ValueError:
             # if it's not a valid base64 string return None to force a 404 (Not Found) response
             return None
+
+
+class FileField(AnyHttpUrl):
+    @classmethod
+    def validate(cls, value: Any, field: ModelField, config: BaseConfig) -> AnyUrl:
+        return value.url

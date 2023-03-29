@@ -11,13 +11,13 @@ from typing import Any
 from slugify import slugify
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedAtMetaInfoMixin, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin
-from taiga.base.utils.files import get_file_path
+from taiga.base.utils.files import get_obfuscated_file_path
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.uuid import encode_uuid_to_b64str
 from taiga.permissions.choices import ProjectPermissions
 from taiga.projects import references
 
-get_project_logo_file_path = functools.partial(get_file_path, base_path="project")
+get_project_logo_file_path = functools.partial(get_obfuscated_file_path, base_path="project")
 
 
 class Project(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin):

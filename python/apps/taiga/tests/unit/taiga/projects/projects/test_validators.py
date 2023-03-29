@@ -11,7 +11,7 @@ import pytest
 from pydantic import ValidationError
 from taiga.projects.projects.api.validators import ProjectValidator, UpdateProjectValidator
 from tests.unit.utils import check_validation_errors
-from tests.utils.images import invalid_image_upload_file, text_upload_file
+from tests.utils import factories as f
 
 ##########################################################
 # ProjectValidator
@@ -83,7 +83,7 @@ def test_valid_project():
 def test_validate_logo_content_type():
     name = "Project test"
     color = 1
-    logo = text_upload_file
+    logo = f.build_string_uploadfile()
 
     with pytest.raises(ValidationError) as validations_errors:
         ProjectValidator(name=name, color=color, logo=logo)
@@ -99,7 +99,8 @@ def test_validate_logo_content_type():
 def test_validate_logo_content():
     name = "Project test"
     color = 1
-    logo = invalid_image_upload_file
+    logo = f.build_string_uploadfile()
+    logo.content_type = "image/png"
 
     with pytest.raises(ValidationError) as validations_errors:
         ProjectValidator(name=name, color=color, logo=logo)

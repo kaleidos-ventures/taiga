@@ -9,7 +9,8 @@ from typing import Any, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
-from taiga.base.db.models import File, QuerySet
+from taiga.base.db.models import QuerySet
+from taiga.base.utils.files import File
 from taiga.projects import references
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects.models import Project, ProjectTemplate
@@ -106,7 +107,7 @@ def create_project(
     created_by: User,
     description: str | None = None,
     color: int = 1,
-    logo: File | None = None,  # type: ignore
+    logo: File | None = None,
 ) -> Project:
 
     return Project.objects.create(

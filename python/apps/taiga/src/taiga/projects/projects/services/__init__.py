@@ -11,7 +11,7 @@ from typing import Any
 from uuid import UUID
 
 from fastapi import UploadFile
-from taiga.base.db.models import File
+from taiga.base.utils.files import uploadfile_to_file
 from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
 from taiga.events.actions import event_handlers as actions_events
@@ -61,7 +61,7 @@ async def _create_project(
 ) -> Project:
     logo_file = None
     if logo:
-        logo_file = File(file=logo.file, name=logo.filename)
+        logo_file = uploadfile_to_file(file=logo)
 
     project = await projects_repositories.create_project(
         workspace=workspace, name=name, description=description, color=color, created_by=created_by, logo=logo_file
@@ -186,7 +186,7 @@ async def _update_project(project: Project, values: dict[str, Any] = {}) -> Proj
     file_to_delete = None
     if "logo" in values:
         if logo := values.get("logo"):
-            values["logo"] = File(file=logo.file, name=logo.filename)
+            values["logo"] = uploadfile_to_file(file=logo)
         else:
             values["logo"] = None
 

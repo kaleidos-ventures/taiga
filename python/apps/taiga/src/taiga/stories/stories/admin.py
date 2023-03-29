@@ -5,8 +5,8 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-
 from taiga.base.db import admin
+from taiga.mediafiles.admin import MediafileInline
 from taiga.stories.stories.models import Story
 
 
@@ -69,3 +69,4 @@ class StoryAdmin(admin.ModelAdmin[Story]):
         "description_updated_by__full_name",
     ]
     ordering = ("project__name", "workflow__order", "status__order", "order")
+    inlines = [MediafileInline]

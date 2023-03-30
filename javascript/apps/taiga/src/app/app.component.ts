@@ -80,17 +80,19 @@ export class AppComponent {
         filter(() => {
           const navigationState =
             this.router.getCurrentNavigation()?.extras.state;
-
           if (navigationState?.ignoreNextMainFocus) {
             return false;
           }
 
           return true;
-        })
+        }),
+        map(() => this.router.getCurrentNavigation()?.extras.state)
       )
-      .subscribe(() => {
+      .subscribe((e) => {
         requestAnimationFrame(() => {
-          this.navigationService.scrollToMainArea();
+          this.navigationService.scrollToMainArea(
+            e?.ignoreScrollToFocus as boolean
+          );
         });
       });
   }

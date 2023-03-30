@@ -39,26 +39,17 @@ export class NavigationService {
     this.userStorageService.set('recent_projects', newProjects);
   }
 
-  public scrollToMainArea() {
-    const ele = document.getElementById('main-area-focus');
+  public scrollToMainArea(ignoreScrollToFocus = false) {
+    const ele =
+      document.getElementById('main-area-focus') ||
+      document.getElementById('fallback-main-area-focus') ||
+      document.querySelector('main');
     if (ele) {
-      window.scrollTo(ele.offsetLeft, ele.offsetTop);
-      ele.tabIndex = -1;
-      ele.focus();
-    } else {
-      const def = document.getElementById('fallback-main-area-focus');
-      if (def) {
-        window.scrollTo(def.offsetLeft, def.offsetTop);
-        def.tabIndex = -1;
-        def.focus();
-      } else {
-        const mainTag = document.querySelector('main');
-        if (mainTag) {
-          window.scrollTo(mainTag.offsetLeft, mainTag.offsetTop);
-          mainTag.tabIndex = -1;
-          mainTag.focus();
-        }
+      if (!ignoreScrollToFocus) {
+        window.scrollTo(ele.offsetLeft, ele.offsetTop);
       }
+      ele.tabIndex = -1;
+      ele.focus({ preventScroll: !!ignoreScrollToFocus });
     }
   }
 }

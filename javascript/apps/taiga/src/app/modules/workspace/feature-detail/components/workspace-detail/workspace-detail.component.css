@@ -145,4 +145,8 @@ tg-project-card {
   display: flex;
   flex-direction: column;
   inline-size: 100%;
+
+  &:focus-visible {
+    outline: none;
+  }
 }

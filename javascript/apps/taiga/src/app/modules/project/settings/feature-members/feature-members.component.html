@@ -39,6 +39,7 @@ Copyright (c) 2023-present Kaleidos INC
           tuiTab
           data-test="members-tab"
           [routerLink]="['./']"
+          [state]="{ ignoreNextMainFocus: true }"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
           (click)="handleA11y(1)">
@@ -58,6 +59,7 @@ Copyright (c) 2023-present Kaleidos INC
           tuiTab
           data-test="pendings-tab"
           [routerLink]="['./pending']"
+          [state]="{ ignoreNextMainFocus: true }"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
           (click)="handleA11y(2)">
@@ -77,8 +79,7 @@ Copyright (c) 2023-present Kaleidos INC
         [attr.id]="'tabpanel-' + selectedTab"
         [attr.aria-labelledby]="'tab-' + selectedTab"
         class="content"
-        role="tabpanel"
-        tabindex="0">
+        role="tabpanel">
         <router-outlet></router-outlet>
       </div>
     </section>

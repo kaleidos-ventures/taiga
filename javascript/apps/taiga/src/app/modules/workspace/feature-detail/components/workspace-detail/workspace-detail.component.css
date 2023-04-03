@@ -97,7 +97,7 @@ tg-project-card {
 
     &:hover {
       & .ws-option-name {
-        color: var(--color-secondary);
+        color: var(--color-secondary80);
       }
 
       & .delete {

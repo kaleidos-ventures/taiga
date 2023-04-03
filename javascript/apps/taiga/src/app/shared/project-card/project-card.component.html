@@ -151,63 +151,6 @@ Copyright (c) 2023-present Kaleidos INC
   <ng-template #projectActionsDropdown>
     <tui-data-list class="view-options-list">
       <button
-        class="view-option-btn"
-        tuiOption
-        type="button"
-        (click)="openModalEvent('editProject')">
-        <span class="view-option">
-          <tui-svg
-            aria-hidden="true"
-            class="option-icon"
-            src="pen"></tui-svg>
-          <span class="option-name">{{
-            t('common_project.edit_project')
-          }}</span>
-        </span>
-      </button>
-      <!-- <button
-        class="view-option-btn"
-        tuiOption
-        type="button"
-        (click)="openModalEvent('duplicate')">
-        <span class="view-option">
-          <tui-svg
-            aria-hidden="true"
-            class="option-icon"
-            src="duplicate"></tui-svg>
-          <span class="option-name">{{ t('common_project.duplicate') }}</span>
-        </span>
-      </button>
-      <button
-        class="view-option-btn"
-        tuiOption
-        type="button"
-        (click)="openModalEvent('share')">
-        <span class="view-option">
-          <tui-svg
-            aria-hidden="true"
-            class="option-icon"
-            src="folder"></tui-svg>
-          <span class="option-name">{{ t('common_project.share') }}</span>
-        </span>
-      </button>
-      <button
-        class="view-option-btn"
-        tuiOption
-        type="button"
-        (click)="openModalEvent('saveTemplate')">
-        <span class="view-option">
-          <tui-svg
-            aria-hidden="true"
-            class="option-icon"
-            src="folder"></tui-svg>
-          <span class="option-name">{{
-            t('common_project.save_template')
-          }}</span>
-        </span>
-      </button> -->
-      <hr class="separator" />
-      <button
         class="view-option-btn view-option-delete"
         tuiOption
         type="button"

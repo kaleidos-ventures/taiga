@@ -12,6 +12,7 @@ import { RxState } from '@rx-angular/state';
 import {
   selectWorkspace,
   selectTotalMembers,
+  selectTotalNonMembers,
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { Store } from '@ngrx/store';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -20,6 +21,7 @@ import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detai
 interface WorkspaceDetailState {
   workspace: Workspace | null;
   totalMembers: number;
+  totalNonMembers: number;
 }
 @Component({
   selector: 'tg-workspace-detail-people',
@@ -43,13 +45,16 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
       this.store.select(selectWorkspace).pipe(filterNil())
     );
     this.state.connect('totalMembers', this.store.select(selectTotalMembers));
+    this.state.connect(
+      'totalNonMembers',
+      this.store.select(selectTotalNonMembers)
+    );
 
     this.state.hold(this.state.select('workspace'), (workspace) => {
       if (workspace) {
         this.store.dispatch(
-          workspaceDetailApiActions.initWorkspaceMembers({
+          workspaceDetailApiActions.initWorkspacePeople({
             id: workspace.id,
-            offset: 0,
           })
         );
       }

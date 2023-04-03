@@ -279,20 +279,77 @@ export class WorkspaceDetailEffects {
     { dispatch: false }
   );
 
+  public initWorkspacePeople$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceDetailApiActions.initWorkspacePeople),
+      exhaustMap((action) => {
+        return zip(
+          this.workspaceApiService.getWorkspaceMembers(
+            action.id,
+            0,
+            MEMBERS_PAGE_SIZE
+          ),
+          this.workspaceApiService.getWorkspaceNonMembers(
+            action.id,
+            0,
+            MEMBERS_PAGE_SIZE
+          )
+        ).pipe(
+          map((response) => {
+            return workspaceDetailApiActions.initWorkspacePeopleSuccess({
+              members: {
+                members: response[0].members,
+                totalMembers: response[0].totalMembers,
+                offset: 0,
+              },
+              nonMembers: {
+                members: response[1].members,
+                totalMembers: response[1].totalMembers,
+                offset: 0,
+              },
+            });
+          }),
+          catchError((httpResponse: HttpErrorResponse) => {
+            this.appService.errorManagement(httpResponse);
+            return EMPTY;
+          })
+        );
+      })
+    );
+  });
+
   public loadWorkspaceMembers$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(
-        ...[
-          workspaceDetailApiActions.initWorkspaceMembers,
-          workspaceDetailApiActions.getWorkspaceMembers,
-        ]
-      ),
+      ofType(workspaceDetailApiActions.getWorkspaceMembers),
       exhaustMap((action) => {
         return this.workspaceApiService
           .getWorkspaceMembers(action.id, action.offset, MEMBERS_PAGE_SIZE)
           .pipe(
             map((membersResponse) => {
               return workspaceDetailApiActions.getWorkspaceMembersSuccess({
+                members: membersResponse.members,
+                totalMembers: membersResponse.totalMembers,
+                offset: action.offset,
+              });
+            }),
+            catchError((httpResponse: HttpErrorResponse) => {
+              this.appService.errorManagement(httpResponse);
+              return EMPTY;
+            })
+          );
+      })
+    );
+  });
+
+  public loadWorkspaceNonMembers$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceDetailApiActions.getWorkspaceNonMembers),
+      exhaustMap((action) => {
+        return this.workspaceApiService
+          .getWorkspaceNonMembers(action.id, action.offset, MEMBERS_PAGE_SIZE)
+          .pipe(
+            map((membersResponse) => {
+              return workspaceDetailApiActions.getWorkspaceNonMembersSuccess({
                 members: membersResponse.members,
                 totalMembers: membersResponse.totalMembers,
                 offset: action.offset,

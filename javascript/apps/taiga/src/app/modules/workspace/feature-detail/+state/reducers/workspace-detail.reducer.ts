@@ -32,6 +32,10 @@ export interface WorkspaceDetailState {
   membersLoading: boolean;
   totalMembers: number;
   membersOffset: number;
+  nonMembers: WorkspaceMembership[];
+  nonMembersLoading: boolean;
+  totalNonMembers: number;
+  nonMembersOffset: number;
   animationDisabled: boolean;
 }
 
@@ -46,6 +50,10 @@ export const initialState: WorkspaceDetailState = {
   membersLoading: false,
   totalMembers: 0,
   membersOffset: 0,
+  nonMembers: [],
+  nonMembersLoading: false,
+  totalNonMembers: 0,
+  nonMembersOffset: 0,
   animationDisabled: true,
 };
 
@@ -192,10 +200,25 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    workspaceDetailApiActions.initWorkspaceMembers,
+    workspaceDetailApiActions.initWorkspacePeople,
     workspaceDetailApiActions.getWorkspaceMembers,
     (state): WorkspaceDetailState => {
       state.membersLoading = true;
+
+      return state;
+    }
+  ),
+  on(
+    workspaceDetailApiActions.initWorkspacePeopleSuccess,
+    (state, { members, nonMembers }): WorkspaceDetailState => {
+      state.members = members.members;
+      state.totalMembers = members.totalMembers;
+      state.membersOffset = members.offset;
+      state.nonMembers = nonMembers.members;
+      state.totalNonMembers = nonMembers.totalMembers;
+      state.nonMembersOffset = nonMembers.offset;
+      state.membersLoading = false;
+      state.nonMembersLoading = false;
 
       return state;
     }
@@ -207,6 +230,26 @@ export const reducer = createImmerReducer(
       state.totalMembers = totalMembers;
       state.membersOffset = offset;
       state.membersLoading = false;
+
+      return state;
+    }
+  ),
+  on(
+    workspaceDetailApiActions.initWorkspacePeople,
+    workspaceDetailApiActions.getWorkspaceNonMembers,
+    (state): WorkspaceDetailState => {
+      state.nonMembersLoading = true;
+
+      return state;
+    }
+  ),
+  on(
+    workspaceDetailApiActions.getWorkspaceNonMembersSuccess,
+    (state, { members, totalMembers, offset }): WorkspaceDetailState => {
+      state.nonMembers = members;
+      state.totalNonMembers = totalMembers;
+      state.nonMembersOffset = offset;
+      state.nonMembersLoading = false;
 
       return state;
     }

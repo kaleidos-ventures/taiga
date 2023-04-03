@@ -161,6 +161,10 @@ async def update_story(
         values["title_updated_by"] = request.user
         values["title_updated_at"] = aware_utcnow()
 
+    if "description" in values:
+        values["description_updated_by"] = request.user
+        values["description_updated_at"] = aware_utcnow()
+
     return await stories_services.update_story(story=story, current_version=current_version, values=values)
 
 

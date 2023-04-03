@@ -34,6 +34,8 @@ def serialize_story_detail(
         next=neighbors.next,
         title_updated_by=story.title_updated_by,
         title_updated_at=story.title_updated_at,
+        description_updated_by=story.description_updated_by,
+        description_updated_at=story.description_updated_at,
     )
 
 

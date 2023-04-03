@@ -6,12 +6,19 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.base.db import models
-from taiga.base.db.mixins import CreatedMetaInfoMixin, TitleUpdatedMetaInfoMixin
+from taiga.base.db.mixins import CreatedMetaInfoMixin, DescriptionUpdatedMetaInfoMixin, TitleUpdatedMetaInfoMixin
 from taiga.base.occ.models import VersionedMixin
 from taiga.projects.references.mixins import ProjectReferenceMixin
 
 
-class Story(models.BaseModel, ProjectReferenceMixin, VersionedMixin, CreatedMetaInfoMixin, TitleUpdatedMetaInfoMixin):
+class Story(
+    models.BaseModel,
+    ProjectReferenceMixin,
+    VersionedMixin,
+    CreatedMetaInfoMixin,
+    TitleUpdatedMetaInfoMixin,
+    DescriptionUpdatedMetaInfoMixin,
+):
     title = models.CharField(max_length=500, null=False, blank=False, verbose_name="title")
     description = models.TextField(null=True, blank=True, verbose_name="description")
     order = models.DecimalField(

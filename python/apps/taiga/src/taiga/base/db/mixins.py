@@ -57,6 +57,24 @@ class TitleUpdatedMetaInfoMixin(models.Model):
         abstract = True
 
 
+class DescriptionUpdatedMetaInfoMixin(models.Model):
+    description_updated_by = models.ForeignKey(
+        "users.User",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name="description updated by",
+    )
+    description_updated_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="description updated at",
+    )
+
+    class Meta:
+        abstract = True
+
+
 class ModifiedAtMetaInfoMixin(models.Model):
     modified_at = models.DateTimeField(
         null=False,

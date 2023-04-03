@@ -48,7 +48,9 @@ def _apply_filters_to_queryset(
     return qs.filter(**filter_data)
 
 
-StorySelectRelated = list[Literal["created_by", "project", "workflow", "status", "workspace", "title_updated_by"]]
+StorySelectRelated = list[
+    Literal["created_by", "project", "workflow", "status", "workspace", "title_updated_by", "description_updated_by"]
+]
 
 
 def _apply_select_related_to_queryset(

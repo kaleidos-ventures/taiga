@@ -38,6 +38,8 @@ class StoryDetailSerializer(BaseModel):
     assignees: list[UserNestedSerializer]
     title_updated_by: UserNestedSerializer | None
     title_updated_at: datetime | None
+    description_updated_by: UserNestedSerializer | None
+    description_updated_at: datetime | None
 
 
 class ReorderSerializer(BaseModel):

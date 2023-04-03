@@ -27,13 +27,26 @@ class StoryAdmin(admin.ModelAdmin[Story]):
                     "project",
                     "workflow",
                     "status",
+                    "title_updated_by",
+                    "title_updated_at",
+                    "description_updated_by",
+                    "description_updated_at",
                 )
             },
         ),
     )
-    readonly_fields = ("id", "ref", "created_at", "created_by")
+    readonly_fields = (
+        "id",
+        "ref",
+        "created_by",
+        "created_at",
+        "title_updated_by",
+        "title_updated_at",
+        "description_updated_by",
+        "description_updated_at",
+    )
     list_display = ["ref", "title", "description", "project", "workflow", "status", "order"]
-    list_filter = ("project", "created_by", "workflow", "status")
+    list_filter = ("project", "created_by", "workflow", "status", "title_updated_by", "description_updated_by")
     search_fields = [
         "id",
         "ref",
@@ -48,5 +61,11 @@ class StoryAdmin(admin.ModelAdmin[Story]):
         "created_by__username",
         "created_by__email",
         "created_by__full_name",
+        "title_updated_by__username",
+        "title_updated_by__email",
+        "title_updated_by__full_name",
+        "description_updated_by__username",
+        "description_updated_by__email",
+        "description_updated_by__full_name",
     ]
     ordering = ("project__name", "workflow__order", "status__order", "order")

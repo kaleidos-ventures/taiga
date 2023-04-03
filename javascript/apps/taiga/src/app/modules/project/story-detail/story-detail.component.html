@@ -54,42 +54,44 @@ Copyright (c) 2023-present Kaleidos INC
           <div
             class="end"
             [class.no-close]="vm.selectedStoryView === 'full-view'">
-            <button
-              #previousStory
-              [disabled]="!vm.story.prev"
-              [attr.aria-label]="
-                vm.story.prev
-                  ? t('story.previous_story', {
-                      story: vm.story.prev!.title
-                    })
-                  : null
-              "
-              icon="chevron-left"
-              appearance="tertiary"
-              class="chevron"
-              tuiIconButton
-              tuiHintDirection="top-right"
-              [tuiHint]="t('story.previous')"
-              (click)="navigateToPreviousStory(vm.story.prev!.ref)"
-              type="button"></button>
-            <button
-              #nextStory
-              [disabled]="!vm.story.next"
-              [attr.aria-label]="
-                vm.story.next
-                  ? t('story.next_story', {
-                      story: vm.story.next!.title
-                    })
-                  : null
-              "
-              icon="chevron-right"
-              appearance="tertiary"
-              class="chevron"
-              tuiIconButton
-              tuiHintDirection="top-right"
-              [tuiHint]="t('story.next')"
-              (click)="navigateToNextStory(vm.story.next!.ref)"
-              type="button"></button>
+            <div class="navigation-arrow">
+              <button
+                #previousStory
+                [disabled]="!vm.story.prev"
+                [attr.aria-label]="
+                  vm.story.prev
+                    ? t('story.previous_story', {
+                        story: vm.story.prev!.title
+                      })
+                    : null
+                "
+                icon="chevron-left"
+                appearance="tertiary"
+                class="chevron"
+                tuiIconButton
+                tuiHintDirection="top-right"
+                [tuiHint]="t('story.previous')"
+                (click)="navigateToPreviousStory(vm.story.prev!.ref)"
+                type="button"></button>
+              <button
+                #nextStory
+                [disabled]="!vm.story.next"
+                [attr.aria-label]="
+                  vm.story.next
+                    ? t('story.next_story', {
+                        story: vm.story.next!.title
+                      })
+                    : null
+                "
+                icon="chevron-right"
+                appearance="tertiary"
+                class="chevron"
+                tuiIconButton
+                tuiHintDirection="top-right"
+                [tuiHint]="t('story.next')"
+                (click)="navigateToNextStory(vm.story.next!.ref)"
+                type="button"></button>
+            </div>
             <tui-hosted-dropdown
               [tuiDropdownAlign]="'right'"
               [content]="changeView"

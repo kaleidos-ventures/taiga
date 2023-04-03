@@ -71,8 +71,7 @@ Copyright (c) 2023-present Kaleidos INC
 
   & .end {
     column-gap: var(--spacing-8);
-    display: grid;
-    grid-template-columns: 32px 32px 40px 32px 32px;
+    display: flex;
 
     &.no-close {
       grid-template-columns: 32px 32px 40px 32px;
@@ -96,6 +95,12 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .scrollbar-content {
+  display: flex;
+}
+
+.navigation-arrow {
+  column-gap: var(--spacing-8);
+  direction: ltr;
   display: flex;
 }
 

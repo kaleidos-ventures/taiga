@@ -97,12 +97,12 @@ tg-project-card {
 .workspace-detail {
   display: flex;
   gap: var(--spacing-16);
-  min-block-size: 100%;
+  min-block-size: calc(100% - 79px);
 }
 
 .wks-detail-nav {
   background-color: var(--color-gray10);
-  block-size: calc(100vh - 48px);
+  block-size: 100%;
   max-inline-size: var(--menu-size);
   min-inline-size: var(--menu-size);
 }

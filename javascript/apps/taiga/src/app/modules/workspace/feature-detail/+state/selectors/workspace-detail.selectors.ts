@@ -18,5 +18,9 @@ export const {
   selectMembersLoading,
   selectTotalMembers,
   selectMembersOffset,
+  selectNonMembers,
+  selectNonMembersLoading,
+  selectTotalNonMembers,
+  selectNonMembersOffset,
   selectAnimationDisabled,
 } = workspaceDetailFeature;

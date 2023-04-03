@@ -39,7 +39,6 @@ export class AppComponent {
     private router: Router,
     private authService: AuthService,
     private wsService: WsService,
-    private localStorageService: LocalStorageService,
     private store: Store,
     private routeHistoryService: RouteHistoryService,
     private translocoService: TranslocoService,

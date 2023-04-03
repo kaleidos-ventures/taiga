@@ -66,15 +66,35 @@ export const workspaceDetailApiActions = createActionGroup({
       project: Project[];
       role: string;
     }>(),
-    'Init workspace members': props<{
+    'Init workspace people': props<{
       id: Workspace['id'];
-      offset: number;
+    }>(),
+    'Init workspace people success': props<{
+      members: {
+        members: WorkspaceMembership[];
+        totalMembers: number;
+        offset: number;
+      };
+      nonMembers: {
+        members: WorkspaceMembership[];
+        totalMembers: number;
+        offset: number;
+      };
     }>(),
     'Get workspace members': props<{
       id: Workspace['id'];
       offset: number;
     }>(),
     'Get workspace members success': props<{
+      members: WorkspaceMembership[];
+      totalMembers: number;
+      offset: number;
+    }>(),
+    'Get workspace non members': props<{
+      id: Workspace['id'];
+      offset: number;
+    }>(),
+    'Get workspace non members success': props<{
       members: WorkspaceMembership[];
       totalMembers: number;
       offset: number;

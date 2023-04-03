@@ -99,4 +99,30 @@ export class WorkspaceApiService {
         })
       );
   }
+
+  public getWorkspaceNonMembers(
+    id: Workspace['id'],
+    offset = 0,
+    limit = 10
+  ): Observable<{ totalMembers: number; members: WorkspaceMembership[] }> {
+    return this.http
+      .get<WorkspaceMembership[]>(
+        `${this.config.apiUrl}/workspaces/${id}/non-members`,
+        {
+          observe: 'response',
+          params: {
+            offset,
+            limit,
+          },
+        }
+      )
+      .pipe(
+        map((response) => {
+          return {
+            totalMembers: Number(response.headers.get('pagination-total')),
+            members: response.body ?? [],
+          };
+        })
+      );
+  }
 }

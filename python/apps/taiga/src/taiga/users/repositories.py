@@ -32,6 +32,7 @@ from taiga.projects.projects.models import Project
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import AuthData, User
 from taiga.users.tokens import VerifyUserToken
+from taiga.workspaces.workspaces.models import Workspace
 
 ##########################################################
 # USER - filters and querysets
@@ -49,6 +50,7 @@ class UserFilters(TypedDict, total=False):
     username_or_email: str
     is_active: bool
     guest_in_ws_for_project: Project
+    guests_in_workspace: Workspace
 
 
 def _apply_filters_to_queryset(
@@ -78,6 +80,13 @@ def _apply_filters_to_queryset(
         )
         qs = qs.filter(pj_members | pj_invitees)
         qs = qs.exclude(workspaces=project.workspace).distinct()  # type: ignore[attr-defined]
+
+    if "guests_in_workspace" in filter_data:
+        workspace = filter_data.pop("guests_in_workspace")
+        # exclude workspace members
+        qs = qs.exclude(workspaces=workspace)
+        # filter members of any project in the workspace
+        qs = qs.filter(projects__workspace=workspace).distinct()
 
     return qs.filter(**filter_data)
 
@@ -319,6 +328,14 @@ def clean_expired_users() -> None:
         .exclude(id__in=OutstandingToken.objects.filter(token_type=VerifyUserToken.token_type).values_list("object_id"))
         .delete()
     )
+
+
+@sync_to_async
+def get_total_users(
+    filters: UserFilters = {},
+) -> int:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    return qs.count()
 
 
 @sync_to_async

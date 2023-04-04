@@ -18,3 +18,11 @@ class WorkspaceMembershipDetailSerializer(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class WorkspaceNonMemberDetailSerializer(BaseModel):
+    user: UserNestedSerializer
+    projects: list[ProjectNestedSerializer]
+
+    class Config:
+        orm_mode = True

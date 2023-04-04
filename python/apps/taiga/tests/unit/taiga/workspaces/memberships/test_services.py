@@ -59,6 +59,41 @@ async def test_list_paginated_workspace_memberships():
         )
 
 
+async def test_list_paginated_workspace_non_members():
+    user = await f.create_user()
+    workspace = await f.create_workspace()
+    project = await f.create_project(created_by=workspace.created_by, workspace=workspace)
+    await f.create_project_membership(user=user, project=project)
+    offset = 0
+    limit = 10
+
+    with (
+        patch("taiga.workspaces.memberships.services.users_repositories", autospec=True) as fake_users_repos,
+        patch("taiga.workspaces.memberships.services.serializer_services", autospec=True) as fake_serializer_services,
+        patch("taiga.workspaces.memberships.services.projects_repositories", autospec=True) as fake_pj_repositories,
+    ):
+        fake_users_repos.list_users.return_value = [user]
+        fake_users_repos.get_total_users.return_value = 1
+        fake_pj_repositories.list_projects.return_value = [project]
+
+        await services.list_paginated_workspace_non_members(workspace=workspace, offset=offset, limit=limit)
+        fake_users_repos.list_users.assert_awaited_once_with(
+            filters={"guests_in_workspace": workspace},
+            offset=offset,
+            limit=limit,
+        )
+        fake_users_repos.get_total_users.assert_awaited_once_with(
+            filters={"guests_in_workspace": workspace},
+        )
+        fake_serializer_services.serialize_workspace_non_member_detail.assert_called_once_with(
+            user=user,
+            projects=[project],
+        )
+        fake_pj_repositories.list_projects.assert_awaited_once_with(
+            filters={"workspace_id": workspace.id, "project_member_id": user.id}
+        )
+
+
 ##########################################################
 # misc - get_workspace_role_name
 ##########################################################

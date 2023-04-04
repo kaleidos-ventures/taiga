@@ -16,14 +16,19 @@ from taiga.exceptions.api.errors import ERROR_404, ERROR_422
 from taiga.permissions import IsWorkspaceAdmin
 from taiga.routers import routes
 from taiga.workspaces.memberships import services as memberships_services
-from taiga.workspaces.memberships.serializers import WorkspaceMembershipDetailSerializer
+from taiga.workspaces.memberships.serializers import (
+    WorkspaceMembershipDetailSerializer,
+    WorkspaceNonMemberDetailSerializer,
+)
 from taiga.workspaces.workspaces.api import get_workspace_or_404
 
 # PERMISSIONS
 LIST_WORKSPACE_MEMBERSHIPS = IsWorkspaceAdmin()
+LIST_WORKSPACE_NON_MEMBERS = IsWorkspaceAdmin()
 
 # HTTP 200 RESPONSES
 LIST_WS_MEMBERSHIP_DETAIL_200 = responses.http_status_200(model=list[WorkspaceMembershipDetailSerializer])
+LIST_WS_NON_MEMBERS_DETAIL_200 = responses.http_status_200(model=list[WorkspaceNonMemberDetailSerializer])
 
 
 ##########################################################
@@ -55,3 +60,34 @@ async def list_workspace_memberships(
     api_pagination.set_pagination(response=response, pagination=pagination)
 
     return memberships
+
+
+##########################################################
+# list workspace non members
+##########################################################
+
+
+@routes.workspaces.get(
+    "/{id}/non-members",
+    name="workspace.non-members.list",
+    summary="List workspace non members",
+    responses=LIST_WS_NON_MEMBERS_DETAIL_200 | ERROR_404 | ERROR_422,
+)
+async def list_workspace_non_members(
+    request: AuthRequest,
+    response: Response,
+    pagination_params: PaginationQuery = Depends(),
+    id: B64UUID = Query(None, description="the workspace id (B64UUID)"),
+) -> list[WorkspaceNonMemberDetailSerializer]:
+    """
+    List workspace non members
+    """
+    workspace = await get_workspace_or_404(id)
+    await check_permissions(permissions=LIST_WORKSPACE_NON_MEMBERS, user=request.user, obj=workspace)
+
+    pagination, non_members = await memberships_services.list_paginated_workspace_non_members(
+        workspace=workspace, offset=pagination_params.offset, limit=pagination_params.limit
+    )
+    api_pagination.set_pagination(response=response, pagination=pagination)
+
+    return non_members

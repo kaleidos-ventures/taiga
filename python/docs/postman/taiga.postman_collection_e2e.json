@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "5a763800-95a1-4953-9114-3299adf9fb7a",
+		"_postman_id": "93aabb2f-2c5c-4b11-91d1-acb9536fe286",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -6287,6 +6286,108 @@
 								"workspaces",
 								"{{ws-id}}",
 								"memberships"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 workspaces.{w}.non-members",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    var non_member = jsonRes[0];",
+									"",
+									"    pm.response.to.have.header(\"Pagination-Offset\");",
+									"    pm.response.to.have.header(\"Pagination-Limit\");",
+									"    pm.response.to.have.header(\"Pagination-Total\");",
+									"",
+									"    pm.expect(non_member).to.have.property(\"user\");",
+									"    pm.expect(non_member).to.have.property(\"projects\");",
+									"",
+									"    var user = jsonRes[0].user;",
+									"   \tvar projects = jsonRes[0].projects[0];",
+									"    ",
+									"    pm.expect(user).to.have.property(\"username\");",
+									"    pm.expect(user).to.have.property(\"fullName\");",
+									"    pm.expect(user).to.have.property(\"color\");",
+									"",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(non_member).length;",
+									"    var numOfReturnedUserFields = Object.keys(user).length;",
+									"    ",
+									"\tpm.expect(numOfReturnedFields).not.to.equal(0);",
+									"\tpm.expect(numOfReturnedUserFields).to.equal(3);",
+									"",
+									"    pm.expect(projects).to.have.property(\"logo\");",
+									"    pm.expect(projects).to.have.property(\"logoSmall\");",
+									"    pm.expect(projects).to.have.property(\"logoLarge\");",
+									"    pm.expect(projects).to.have.property(\"id\");",
+									"    pm.expect(projects).to.have.property(\"name\");",
+									"    pm.expect(projects).to.have.property(\"slug\");",
+									"    pm.expect(projects).to.have.property(\"description\");",
+									"    pm.expect(projects).to.have.property(\"color\");",
+									"",
+									"    ",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/non-members?offset={{offset}}&limit={{limit}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"workspaces",
+								"{{ws-id}}",
+								"non-members"
 							],
 							"query": [
 								{

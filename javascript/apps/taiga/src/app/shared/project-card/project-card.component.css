@@ -61,10 +61,6 @@ Copyright (c) 2023-present Kaleidos INC
 
       margin: 0;
     }
-
-    &.is-admin {
-      padding-right: var(--spacing-24);
-    }
   }
   /* stylelint-enable */
 

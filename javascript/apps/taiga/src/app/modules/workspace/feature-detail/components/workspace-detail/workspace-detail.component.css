@@ -19,8 +19,14 @@ Copyright (c) 2023-present Kaleidos INC
   display: flex;
   flex-direction: column;
   inline-size: 100%;
-  padding-block: var(--spacing-16);
-  padding-inline: var(--spacing-32);
+  padding: var(--spacing-16);
+}
+
+.workspace-detail-wrapper {
+  margin-block: 0;
+  margin-inline: auto;
+  max-inline-size: 1440px;
+  min-inline-size: 1440px;
 }
 
 .workspace-detail-top {

@@ -8,6 +8,7 @@ Copyright (c) 2023-present Kaleidos INC
 /* stylelint-disable declaration-no-important */
 
 @import "tools/typography.css";
+@import "shared/option-list.css";
 
 :host {
   background-color: var(--color-gray10);
@@ -146,59 +147,5 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .view-options-list {
-  border: 0;
-  inline-size: 238px;
-  padding: var(--spacing-8) !important;
-
-  & .view-option {
-    align-items: center;
-    display: flex;
-  }
-
-  & .option-name {
-    @mixin font-inline;
-
-    color: var(--color-gray100);
-    transition: ease-in-out 0.3s color;
-  }
-
-  & .option-icon {
-    block-size: var(--spacing-16);
-    color: var(--color-secondary);
-    inline-size: var(--spacing-16);
-    margin-inline-end: var(--spacing-8);
-  }
-
-  & .shortcut {
-    @mixin font-small;
-
-    color: var(--color-gray80);
-  }
-
-  & .view-option-btn:hover,
-  & .view-option-btn.selected {
-    & .option-name {
-      color: var(--color-secondary);
-    }
-
-    & .shortcut {
-      color: var(--color-gray100);
-    }
-  }
-
-  & .view-option-delete {
-    & .option-name {
-      color: var(--color-red);
-    }
-
-    & .option-icon {
-      color: var(--color-red);
-    }
-  }
-
-  & .view-option-delete:hover {
-    & .option-name {
-      color: var(--color-red80);
-    }
-  }
+  @mixin option-list;
 }

@@ -88,33 +88,37 @@ Copyright (c) 2023-present Kaleidos INC
             <button
               role="menuitem"
               data-test="edit-ws-button"
-              class="ws-option"
+              class="option-btn"
               tuiOption
               type="button"
               (click)="editWorkspaceModal()">
-              <tui-svg
-                aria-hidden="true"
-                class="ws-option-icon"
-                src="pen"></tui-svg>
-              <span class="ws-option-name">{{
-                t('workspace.edit_workspace_name')
-              }}</span>
+              <div class="option-container">
+                <tui-svg
+                  aria-hidden="true"
+                  class="option-icon"
+                  src="pen"></tui-svg>
+                <span class="option-name">{{
+                  t('workspace.edit_workspace_name')
+                }}</span>
+              </div>
             </button>
             <hr class="separator" />
             <button
-              class="ws-option delete"
+              class="option-btn option-delete"
               role="menuitem"
               data-test="delete-ws-button"
               tuiOption
               type="button"
               (click)="handleDeleteWorkspace()">
-              <tui-svg
-                class="ws-option-icon"
-                aria-hidden="true"
-                src="trash"></tui-svg>
-              <span class="ws-option-name delete">{{
-                t('workspace.delete.delete_workspace')
-              }}</span>
+              <div class="option-container">
+                <tui-svg
+                  class="option-icon"
+                  aria-hidden="true"
+                  src="trash"></tui-svg>
+                <span class="option-name option-delete">{{
+                  t('workspace.delete.delete_workspace')
+                }}</span>
+              </div>
             </button>
           </tui-data-list>
         </ng-template>

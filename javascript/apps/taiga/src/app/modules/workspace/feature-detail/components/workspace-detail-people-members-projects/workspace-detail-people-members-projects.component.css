@@ -1,0 +1,90 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import "tools/typography.css";
+
+.display-project-list {
+  @mixin font-small;
+
+  appearance: none;
+  background-color: var(--color-gray10);
+  border: none;
+  border-radius: 3px;
+  box-shadow: none;
+  padding: var(--spacing-4);
+  padding-inline-end: var(--spacing-8);
+}
+
+.display-project-list:not(button) {
+  color: var(--color-gray80);
+  font-style: italic;
+}
+
+.display-project-list:is(button) {
+  color: var(--color-secondary);
+
+  &:active,
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.project-list-dropdown-wrapper {
+  min-inline-size: 272px;
+  padding: var(--spacing-8);
+}
+
+.title-area {
+  @mixin font-small;
+
+  border-block-end: 1px solid var(--color-gray30);
+  color: var(--color-gray100);
+  padding-block: var(--spacing-4) var(--spacing-8);
+  padding-inline: var(--spacing-4);
+  text-transform: uppercase;
+}
+
+.project-list {
+  --tui-data-list-margin: 0;
+  --tui-data-list-padding: 0;
+
+  border: none;
+}
+
+.project-list-listmenu {
+  list-style-type: none;
+  margin: 0;
+  max-block-size: calc(50px * 8);
+  overflow: auto;
+  padding: 0;
+}
+
+.project-list-listmenu-item {
+  margin: 0;
+}
+
+.project-data {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-8);
+  justify-content: flex-start;
+}
+
+.project-data-name {
+  @mixin font-inline;
+
+  /* stylelint-disable */
+  color: var(--color-gray90);
+  display: -webkit-box;
+  font-weight: var(--font-weight-medium);
+  overflow: hidden;
+  text-align: start;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  /* stylelint-enable */
+}

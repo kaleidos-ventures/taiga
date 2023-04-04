@@ -40,6 +40,7 @@ import { WorkspaceDetailEffects } from './+state/effects/workspace-detail.effect
 import { workspaceDetailFeature } from './+state/reducers/workspace-detail.reducer';
 import { DeleteWorkspaceComponent } from './components/workspace-delete-modal/workspace-delete-modal.component';
 import { WorkspaceDetailEditModalComponent } from './components/workspace-detail-edit-modal/workspace-detail-edit-modal.component';
+import { WorkspaceDetailPeopleMembersProjectsComponent } from './components/workspace-detail-people-members-projects/workspace-detail-people-members-projects.component';
 import { WorkspaceDetailPeopleMembersComponent } from './components/workspace-detail-people-members/workspace-detail-people-members.component';
 import { WorkspaceDetailPeopleNonMembersComponent } from './components/workspace-detail-people-non-members/workspace-detail-people-non-members.component';
 import { WorkspaceDetailPeoplePendingComponent } from './components/workspace-detail-people-pending/workspace-detail-people-pending.component';
@@ -59,6 +60,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     WorkspaceDetailPeopleMembersComponent,
     WorkspaceDetailPeoplePendingComponent,
     WorkspaceDetailPeopleNonMembersComponent,
+    WorkspaceDetailPeopleMembersProjectsComponent,
   ],
   imports: [
     TitleDirective,

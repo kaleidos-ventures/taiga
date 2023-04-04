@@ -94,14 +94,8 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       if (workspace) {
         const url = window.location.href;
         if (url.includes('/projects')) {
-          this.location.go(
-            `workspace/${workspace.id}/${workspace.slug}/projects`
-          );
           this.menuItemActive = 'projects';
         } else if (url.includes('/people')) {
-          this.location.go(
-            `workspace/${workspace.id}/${workspace.slug}/people`
-          );
           this.menuItemActive = 'people';
         }
       }

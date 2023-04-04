@@ -9,6 +9,48 @@ Copyright (c) 2023-present Kaleidos INC
 @import "tools/typography.css";
 @import "taiga-ui/mixins/wrapper.css";
 
+/********* BUTTON APPEARANCES ********
+** WARNING: If you add an appearance list it here and ensure is on the design system with the same name
+
+data-appearance
+----------------
+
+PRIMARY
+Default primary buttons
+Used across all Taiga
+
+SECONDARY
+Default secondary buttons
+Used across all Taiga
+
+TERTIARY
+Default secondary buttons
+Used across all Taiga
+
+DESTRUCTIVE
+Default buttons for remove or destroy something
+Used across all Taiga
+
+MAIN-NAV
+Used on some buttons on the top navigation bar
+
+HOME BUTTON
+Used for the logo of the APP
+
+BUTTON FORM
+Used for the cancel button in the modal
+Used only in some modal
+
+ACTION BUTTON
+Default close buttons in modals (X icon)
+Used across all Taiga
+
+ACTION BUTTON 2
+Used only on the three dots of the kanban cards (icon more-vertical)
+Used across all Taiga
+
+***************************************/
+
 /* stylelint-disable selector-max-type */
 /* stylelint-disable declaration-no-important */
 
@@ -188,7 +230,7 @@ Copyright (c) 2023-present Kaleidos INC
     }
 
     @mixin wrapper-active {
-      background-color: var(--tui-link-hover);
+      background-color: var(--color-red80);
     }
   }
 }

@@ -193,6 +193,10 @@
     "pending_tab": "Pending",
     "non_members_tab": "Non-members",
     "column_user": "User",
+    "column_projects": {
+      "projects_number": "{projectsNum, plural, =0 {0 projects} one {1 project} other {# projects}}",
+      "projects_list_title": "Projects in this workspace"
+    },
     "column_actions": "Actions",
     "no_pending": "There are no pending invitations to accept."
   }

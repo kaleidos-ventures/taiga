@@ -7,21 +7,21 @@
  */
 
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { WorkspaceMembership, Workspace } from '@taiga/data';
-import { RxState } from '@rx-angular/state';
-import {
-  selectWorkspace,
-  selectMembers,
-  selectMembersLoading,
-  selectTotalMembers,
-  selectMembersOffset,
-  selectAnimationDisabled,
-} from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { Store } from '@ngrx/store';
-import { filterNil } from '~/app/shared/utils/operators';
-import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
+import { RxState } from '@rx-angular/state';
+import { Workspace, WorkspaceMembership } from '@taiga/data';
 import { map } from 'rxjs/operators';
 import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
+import {
+  selectAnimationDisabled,
+  selectMembers,
+  selectMembersLoading,
+  selectMembersOffset,
+  selectTotalMembers,
+  selectWorkspace,
+} from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
+import { filterNil } from '~/app/shared/utils/operators';
 
 @Component({
   selector: 'tg-workspace-detail-people-members',

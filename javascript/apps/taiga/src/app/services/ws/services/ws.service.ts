@@ -26,7 +26,7 @@ import { wsMessage } from '../ws.actions';
 import { WSResponse, WSResponseAction, WSResponseEvent } from '../ws.model';
 
 const MAX_RETRY = 5;
-const RETRY_TIME = 5000;
+const RETRY_TIME = 10000;
 const PING_PONG_INTERVAL = 60000;
 
 @Injectable({
@@ -152,7 +152,7 @@ export class WsService {
             this.listen(this.token);
             this.retry++;
           }
-        }, RETRY_TIME);
+        }, this.getRandomRetryTime());
       });
     }
   }
@@ -229,5 +229,11 @@ export class WsService {
       }),
       take(1)
     );
+  }
+
+  private getRandomRetryTime() {
+    const max = RETRY_TIME;
+    const min = RETRY_TIME / 3;
+    return Math.trunc(Math.floor(Math.random() * (max - min + 1)) + min);
   }
 }

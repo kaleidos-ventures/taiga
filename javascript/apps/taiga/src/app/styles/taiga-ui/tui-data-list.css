@@ -24,7 +24,6 @@ tui-data-list {
     margin: 0 !important;
     min-block-size: var(--spacing-24) !important;
     padding: var(--spacing-8) !important;
-    transition: color 0.3s ease-in-out, background 0.3 ease-in-out !important;
 
     /* stylelint-disable-next-line selector-max-type */
     &.active-option {

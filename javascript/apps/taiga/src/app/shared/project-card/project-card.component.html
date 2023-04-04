@@ -151,11 +151,11 @@ Copyright (c) 2023-present Kaleidos INC
   <ng-template #projectActionsDropdown>
     <tui-data-list class="view-options-list">
       <button
-        class="view-option-btn view-option-delete"
+        class="option-btn option-delete"
         tuiOption
         type="button"
         (click)="openModalEvent('deleteModal')">
-        <span class="view-option">
+        <div class="option-container">
           <tui-svg
             aria-hidden="true"
             class="option-icon"
@@ -163,7 +163,7 @@ Copyright (c) 2023-present Kaleidos INC
           <span class="option-name">{{
             t('common_project.delete_project')
           }}</span>
-        </span>
+        </div>
       </button>
     </tui-data-list>
   </ng-template>

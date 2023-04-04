@@ -11,6 +11,71 @@ Copyright (c) 2021-present Kaleidos Ventures SL
   inline-size: $size;
   /* stylelint-disable-next-line declaration-no-important */
   padding: var(--spacing-8) !important;
+
+  & .option-container {
+    align-items: center;
+    display: flex;
+  }
+
+  & .option-name {
+    @mixin option-name;
+  }
+
+  & .option-icon {
+    @mixin option-icon;
+  }
+
+  & .shortcut {
+    @mixin font-small;
+
+    color: var(--color-gray80);
+  }
+
+  & .option-btn {
+    /* stylelint-disable-next-line declaration-no-important */
+    transition: color 0.3s ease-in-out, background 0.3 ease-in-out !important;
+  }
+
+  & .option-btn:hover,
+  & .option-btn.selected {
+    & .option-name {
+      color: var(--color-secondary80);
+    }
+
+    & .option-icon {
+      color: var(--color-secondary80);
+    }
+
+    & .shortcut {
+      color: var(--color-gray100);
+    }
+  }
+
+  & .option-delete {
+    & .option-name {
+      color: var(--color-red);
+    }
+
+    & .option-icon {
+      color: var(--color-red);
+    }
+  }
+
+  & .option-delete:hover {
+    & .option-name {
+      color: var(--color-red80);
+    }
+
+    & .option-icon {
+      color: var(--color-red80);
+    }
+  }
+
+  & .separator {
+    background: var(--color-gray30);
+    margin-block: var(--spacing-8);
+    margin-inline: var(--spacing-8);
+  }
 }
 
 @define-mixin option-icon {

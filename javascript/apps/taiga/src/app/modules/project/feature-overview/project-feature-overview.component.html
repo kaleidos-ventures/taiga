@@ -133,12 +133,12 @@ Copyright (c) 2023-present Kaleidos INC
       "
       role="menu">
       <button
-        class="view-option-btn"
+        class="option-btn"
         tuiOption
         data-test="edit-project"
         type="button"
         (click)="showEditProjectModal = true">
-        <span class="view-option">
+        <div class="option-container">
           <tui-svg
             aria-hidden="true"
             class="option-icon"
@@ -146,38 +146,38 @@ Copyright (c) 2023-present Kaleidos INC
           <span class="option-name">{{
             t('common_project.edit_project')
           }}</span>
-        </span>
+        </div>
       </button>
       <!-- <button
-        class="view-option-btn"
+        class="option-btn"
         tuiOption
         type="button"
         (click)="showEditProjectModal = true">
-        <span class="view-option">
+        <div class="option-container">
           <tui-svg
             aria-hidden="true"
             class="option-icon"
             src="duplicate"></tui-svg>
           <span class="option-name">{{ t('common_project.duplicate') }}</span>
-        </span>
+        </div>
       </button>
       <button
-        class="view-option-btn"
+        class="option-btn"
         tuiOption
         type="button">
-        <span class="view-option">
+        <div class="option-container">
           <tui-svg
             aria-hidden="true"
             class="option-icon"
             src="folder"></tui-svg>
           <span class="option-name">{{ t('common_project.share') }}</span>
-        </span>
+        </div>
       </button>
       <button
-        class="view-option-btn"
+        class="option-btn"
         tuiOption
         type="button">
-        <span class="view-option">
+        <div class="option-container">
           <tui-svg
             aria-hidden="true"
             class="option-icon"
@@ -185,15 +185,15 @@ Copyright (c) 2023-present Kaleidos INC
           <span class="option-name">{{
             t('common_project.save_template')
           }}</span>
-        </span>
+        </div>
       </button> -->
       <hr class="separator" />
       <button
-        class="view-option-btn view-option-delete"
+        class="option-btn option-delete"
         tuiOption
         type="button"
         (click)="showDeleteProjectModal = true">
-        <span class="view-option">
+        <div class="option-container">
           <tui-svg
             aria-hidden="true"
             class="option-icon"
@@ -201,7 +201,7 @@ Copyright (c) 2023-present Kaleidos INC
           <span class="option-name">{{
             t('common_project.delete_project')
           }}</span>
-        </span>
+        </div>
       </button>
     </tui-data-list>
   </ng-template>

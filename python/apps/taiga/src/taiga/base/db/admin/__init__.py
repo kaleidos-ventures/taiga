@@ -11,6 +11,7 @@ from django.contrib.admin import ModelAdmin as DjangoModelAdmin
 from django.contrib.admin import StackedInline as DjangoStackedInline
 from django.contrib.admin import TabularInline as DjangoTabularInline
 from django.contrib.admin import display, register, site  # noqa
+from nonrelated_inlines.admin import NonrelatedTabularInline  # type: ignore  # noqa
 from taiga.base.db.admin.forms import PrettyJSONWidget
 from taiga.base.db.models import JSONField, Model
 

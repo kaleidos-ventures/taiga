@@ -17,8 +17,8 @@ export class TitleDirective implements AfterContentInit {
   constructor(private el: ElementRef, private titleService: Title) {}
 
   public ngAfterContentInit() {
-    this.titleService.setTitle(
-      (this.el.nativeElement as HTMLElement).innerHTML
-    );
+    const title = (this.el.nativeElement as HTMLElement).innerHTML;
+    const suffix = '- Taiga';
+    this.titleService.setTitle(`${title} ${suffix}`);
   }
 }

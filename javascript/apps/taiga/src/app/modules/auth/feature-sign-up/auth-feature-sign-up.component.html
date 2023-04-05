@@ -6,6 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 -->
 <ng-container *transloco="let t; read: 'auth'">
+  <tg-title [title]="t('signup.create_account')"></tg-title>
   <ng-container *ngIf="!displayVerifyEmail">
     <main
       class="signup"

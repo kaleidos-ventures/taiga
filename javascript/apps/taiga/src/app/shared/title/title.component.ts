@@ -35,7 +35,7 @@ export class TitleComponent implements OnChanges {
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes.title) {
-      this.titleService.setTitle(this.title);
+      this.titleService.setTitle(`${this.title} - Taiga`);
     }
   }
 }

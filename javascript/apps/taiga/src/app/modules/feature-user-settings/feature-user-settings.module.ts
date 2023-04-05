@@ -6,17 +6,18 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TRANSLOCO_SCOPE, TranslocoModule } from '@ngneat/transloco';
+import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { WatchElementDirective } from '~/app/shared/directives/watch-element/watch-element.directive';
+import { TitleComponent } from '~/app/shared/title/title.component';
+import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
+import { PreferencesComponent } from './components/preferences/preferences.component';
+import { DataAccessUserSettingsModule } from './data-access/user-settings-data-access.module';
 import { FeatureUserSettingsRoutingModule } from './feature-user-settings-routing.module';
 import { FeatureUserSettingsComponent } from './feature-user-settings.component';
-import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { PreferencesComponent } from './components/preferences/preferences.component';
-import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
-import { WatchElementDirective } from '~/app/shared/directives/watch-element/watch-element.directive';
-import { DataAccessUserSettingsModule } from './data-access/user-settings-data-access.module';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     WatchElementDirective,
     DataAccessUserSettingsModule,
     InputsModule,
+    TitleComponent,
   ],
   providers: [
     {

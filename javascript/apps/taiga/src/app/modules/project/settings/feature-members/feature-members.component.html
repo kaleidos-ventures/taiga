@@ -7,10 +7,15 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
+    <tg-title
+      [title]="
+        t('project_settings.members.page_title', {
+          projectName: vm.project.name
+        })
+      "></tg-title>
     <section class="member-settings">
       <div class="header">
         <h3
-          tgTitle
           data-test="members-settings-title"
           mainFocus
           id="main-area-title"

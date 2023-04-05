@@ -8,6 +8,12 @@ Copyright (c) 2023-present Kaleidos INC
 
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
+    <ng-container *ngIf="project$ | async as project">
+      <tg-title
+        [title]="
+          t('kanban.page_title', { projectName: vm.project.name })
+        "></tg-title>
+    </ng-container>
     <ng-container *ngIf="vm.storyView">
       <div
         (resized)="onResized($event)"
@@ -15,7 +21,6 @@ Copyright (c) 2023-present Kaleidos INC
         <div class="kanban">
           <h1
             id="main-area-title"
-            tgTitle
             data-test="kanban-title">
             {{ t('kanban.title') }}
           </h1>

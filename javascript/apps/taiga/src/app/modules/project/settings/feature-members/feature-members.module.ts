@@ -28,12 +28,12 @@ import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
-import { TitleDirective } from '~/app/shared/title/title.directive';
+import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
+import { TitleComponent } from '~/app/shared/title/title.component';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { MembersEffects } from './+state/effects/members.effects';
 import { membersFeature } from './+state/reducers/members.reducer';
 import { MembersListComponent } from './components/members-list/members-list.component';
-import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
 import { PendingMembersListComponent } from './components/pending-members-list/pending-members-list.component';
 import { RevokeInvitationComponent } from './components/revoke-invitation/revoke-invitation.component';
 import { RoleSelectComponent } from './components/role-select/role-select.component';
@@ -96,7 +96,7 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
         ],
       },
     ]),
-    TitleDirective,
+    TitleComponent,
   ],
 })
 export class ProjectsSettingsFeatureMembersModule {}

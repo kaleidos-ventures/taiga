@@ -18,6 +18,7 @@ import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/butt
 import { ExternalLinkModule } from '~/app/shared/directives/external-link/external-link.module';
 import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
 import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
+import { TitleComponent } from '~/app/shared/title/title.component';
 import { SocialLoginComponent } from '../components/social-login/social-login.component';
 import { SocialSignupGuard } from '../guards/social-signup.guard';
 import { VerifyEmailGuard } from '../guards/verify-email.guard';
@@ -71,6 +72,7 @@ const routes: Routes = [
     SocialLoginComponent,
     SignupComponent,
     CommonTemplateModule,
+    TitleComponent,
   ],
   exports: [],
   providers: [

@@ -34,6 +34,7 @@ import { PaginationComponent } from '~/app/shared/pagination/pagination.componen
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
+import { TitleComponent } from '~/app/shared/title/title.component';
 import { TitleDirective } from '~/app/shared/title/title.directive';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { WorkspaceDetailEffects } from './+state/effects/workspace-detail.effects';
@@ -93,6 +94,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     DynamicTableModule,
     UserCardComponent,
     PaginationComponent,
+    TitleComponent,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

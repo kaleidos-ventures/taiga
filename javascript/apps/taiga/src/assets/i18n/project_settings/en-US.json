@@ -10,6 +10,7 @@
   "external_members": "The external users have more permissions than project members.",
   "see_more": "See more",
   "roles_permissions": {
+    "page_title": "{{projectName}} - {{project_settings.roles_and_permissions}}",
     "project_administrators": "Administrators",
     "number_admins": "{admins, plural, one {1 admin} other {# admins}}",
     "number_members": "{members, plural, one {1 member} other {# members}}",
@@ -44,6 +45,7 @@
     "close": "Close"
   },
   "members": {
+    "page_title": "{{projectName}} - {{project_settings.members.title}}",
     "title": "Project members",
     "invite": "Invite people",
     "column_role": "Role",

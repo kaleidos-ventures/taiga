@@ -7,6 +7,13 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 
 <ng-container *transloco="let t; read: 'user_settings.sections'">
+  <tg-title
+    [title]="
+      t('page_title', {
+        pageName: t('preferences')
+      })
+    ">
+  </tg-title>
   <div class="menu-wrapper">
     <div
       *ngIf="model$ | async as vm"

@@ -17,7 +17,7 @@ import { ContextNotificationModule } from '@taiga/ui/context-notification/contex
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
-import { TitleDirective } from '~/app/shared/title/title.directive';
+import { TitleComponent } from '~/app/shared/title/title.component';
 import { RolesPermissionsEffects } from './+state/effects/roles-permissions.effects';
 import { rolesPermissionsFeature } from './+state/reducers/roles-permissions.reducer';
 import { ModalPermissionComparisonModule } from './components/modal-permission-comparison/modal-permission-comparison.module';
@@ -48,7 +48,7 @@ import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles
     InputsModule,
     StoreModule.forFeature(rolesPermissionsFeature),
     EffectsModule.forFeature([RolesPermissionsEffects]),
-    TitleDirective,
+    TitleComponent,
   ],
   providers: [
     {

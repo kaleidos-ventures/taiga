@@ -29,6 +29,7 @@ import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
+import { TitleComponent } from '~/app/shared/title/title.component';
 import { TitleDirective } from '~/app/shared/title/title.directive';
 import { WorkspaceEffects } from './+state/effects/workspace.effects';
 import { workspaceFeature } from './+state/reducers/workspace.reducer';
@@ -67,6 +68,7 @@ import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-rout
     ProjectCardComponent,
     WorkspaceFeatureListRoutingModule,
     CapitalizePipeModule,
+    TitleComponent,
   ],
   providers: [
     {

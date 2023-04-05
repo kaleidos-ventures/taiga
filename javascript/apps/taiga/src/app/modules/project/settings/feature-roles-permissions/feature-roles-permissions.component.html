@@ -7,9 +7,15 @@ Copyright (c) 2023-present Kaleidos INC
 
 <ng-container *ngIf="model$ | async as vm">
   <ng-container *transloco="let t">
+    <tg-title
+      [title]="
+        t('project_settings.roles_permissions.page_title', {
+          projectName: vm.project.name
+        })
+      ">
+    </tg-title>
     <div class="settings-permissions-wrapper">
       <h3
-        tgTitle
         mainFocus
         id="main-area-title"
         class="settings-title">

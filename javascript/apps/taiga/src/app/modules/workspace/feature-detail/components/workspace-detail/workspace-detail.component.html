@@ -12,6 +12,7 @@ Copyright (c) 2023-present Kaleidos INC
       <tg-workspace-detail-skeleton *ngIf="!vm.workspace">
       </tg-workspace-detail-skeleton>
       <ng-container *ngIf="vm.workspace">
+        <tg-title [title]="vm.workspace.name"></tg-title>
         <div class="workspace-detail-top">
           <div class="workspace-detail-avatar">
             <tg-ui-avatar
@@ -35,8 +36,7 @@ Copyright (c) 2023-present Kaleidos INC
                   })
                 "
                 data-test="workspace-detail-name"
-                class="workspace-detail-name"
-                tgTitle>
+                class="workspace-detail-name">
                 {{ vm.workspace.name }}
               </h1>
               <tg-ui-badge

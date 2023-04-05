@@ -15,6 +15,7 @@ import { ContextNotificationModule } from '@taiga/ui/context-notification/contex
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+import { TitleComponent } from '~/app/shared/title/title.component';
 import { AuthForestComponent } from '../components/auth-forest/auth-forest.component';
 import { SocialLoginComponent } from '../components/social-login/social-login.component';
 import { AuthFeatureLoginComponent } from './auth-feature-login.component';
@@ -43,6 +44,7 @@ const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
     ButtonLoadingModule,
     AuthForestComponent,
     SocialLoginComponent,
+    TitleComponent,
   ],
 })
 export class AuthFeatureLoginModule {}

@@ -7,12 +7,12 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 <ng-container *ngIf="model$ | async as vm">
   <ng-container *transloco="let t">
+    <tg-title [title]="t('commons.home')"></tg-title>
     <div class="workspace-wrapper">
       <div class="workspace-title-container">
         <h2
           class="workspace-title"
-          id="main-area-title"
-          tgTitle>
+          id="main-area-title">
           {{ t('commons.projects') }}
         </h2>
         <div class="workspace-title-actions">

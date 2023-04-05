@@ -17,6 +17,7 @@ import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
 import { InternalLinkModule } from '~/app/shared/directives/internal-link/internal-link.module';
 import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
+import { TitleComponent } from '~/app/shared/title/title.component';
 import { AuthForestComponent } from '../components/auth-forest/auth-forest.component';
 import { AuthFeatureResetPasswordComponent } from './auth-feature-reset-password.component';
 import { NewPasswordComponent } from './components/new-password.component';
@@ -47,6 +48,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ContextNotificationModule,
     AuthForestComponent,
+    TitleComponent,
   ],
   exports: [],
   providers: [

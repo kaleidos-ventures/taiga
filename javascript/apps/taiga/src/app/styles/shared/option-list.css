@@ -31,11 +31,6 @@ Copyright (c) 2021-present Kaleidos Ventures SL
     color: var(--color-gray80);
   }
 
-  & .option-btn {
-    /* stylelint-disable-next-line declaration-no-important */
-    transition: color 0.3s ease-in-out, background 0.3 ease-in-out !important;
-  }
-
   & .option-btn:hover,
   & .option-btn.selected {
     & .option-name {

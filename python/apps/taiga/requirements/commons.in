@@ -9,6 +9,7 @@ httpx
 Django
 psycopg2
 easy-thumbnails # Images and thumbnails
+django-nonrelated-inlines # admin
 
 # Mailing module
 Fastapi-Mailman # Email sender

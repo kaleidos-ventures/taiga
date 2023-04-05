@@ -20,6 +20,7 @@ Copyright (c) 2023-present Kaleidos INC
           *ngIf="
             workspace.userRole === 'admin' || workspace.userRole === 'member'
           "
+          class="workspace-item-title-active"
           data-test="workspace-item-title"
           [routerLink]="[
             '/workspace/',
@@ -28,7 +29,7 @@ Copyright (c) 2023-present Kaleidos INC
             'projects'
           ]">
           <h2
-            class="workspace-item-title workspace-item-title-active"
+            class="workspace-item-title"
             [attr.aria-label]="
               t('workspace.a11y.workspace_title', {
                 workspace: workspace.name,

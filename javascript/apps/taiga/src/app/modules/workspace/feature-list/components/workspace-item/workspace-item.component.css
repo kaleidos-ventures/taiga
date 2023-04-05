@@ -34,6 +34,16 @@ Copyright (c) 2023-present Kaleidos INC
   min-inline-size: 0;
 }
 
+.workspace-item-title-active {
+  display: inline-block;
+
+  &:focus,
+  &:focus-visible {
+    outline: solid 1px var(--color-secondary);
+    text-decoration: none;
+  }
+}
+
 .workspace-item-title {
   @mixin ellipsis;
   @mixin font-heading-4;
@@ -46,22 +56,15 @@ Copyright (c) 2023-present Kaleidos INC
     color: var(--color-gray70);
     font-weight: var(--font-weight-regular);
   }
+
+  &:hover {
+    color: var(--color-secondary);
+  }
 }
 
 .workspace-show-all {
   margin-block-start: var(--spacing-16);
   margin-inline-start: var(--spacing-8);
-}
-
-.workspace-item-title-active {
-  &:hover {
-    color: var(--color-secondary);
-  }
-
-  &:focus {
-    outline: solid 1px var(--color-secondary);
-    text-underline: none;
-  }
 }
 
 tg-project-card {

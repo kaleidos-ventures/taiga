@@ -23,7 +23,6 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, StoryDetail } from '@taiga/data';
 import { map } from 'rxjs';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { StoryDetailForm } from '~/app/modules/project/story-detail/story-detail.component';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
@@ -33,7 +32,7 @@ import {
 } from '~/app/shared/utils/has-changes.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import editorLanguages from '~/assets/editor/languages.json';
+import { LanguageService } from '~/app/services/language/language.service';
 
 export interface StoryDetailDescriptionState {
   projectId: Project['id'];
@@ -123,7 +122,8 @@ export class StoryDetailDescriptionComponent
     private hasChangesService: HasChangesService,
     private hasPermissions: PermissionsService,
     private store: Store,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private languageService: LanguageService
   ) {
     this.hasChangesService.addComponent(this);
 
@@ -140,22 +140,7 @@ export class StoryDetailDescriptionComponent
       )
     );
 
-    this.state.connect(
-      'lan',
-      this.store.select(selectUser).pipe(
-        filterNil(),
-        map((user) => {
-          const lanCode = user?.lang.split('-')[0];
-
-          const editorLan = this.getEditorLan(lanCode);
-
-          return {
-            url: `/assets/editor/langs/${editorLan}.js`,
-            code: editorLan,
-          };
-        })
-      )
-    );
+    this.state.connect('lan', this.languageService.getEditorLanguage());
 
     this.state.hold(this.state.select('hasPermissionToEdit'), () => {
       if (this.state.get('edit')) {
@@ -271,16 +256,6 @@ export class StoryDetailDescriptionComponent
   private reset() {
     this.setConflict(false);
     this.setDescription(this.form.get('description')!.value ?? '');
-  }
-
-  private getEditorLan(userLang: string) {
-    const editorLan = editorLanguages.includes(userLang);
-
-    if (editorLan) {
-      return userLang;
-    }
-
-    return 'en';
   }
 
   private getLocalStorageKey() {

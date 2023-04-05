@@ -16,10 +16,10 @@ import { hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { selectLanguages } from '~/app/modules/feature-user-settings/data-access/+state/selectors/user-settings.selectors';
-import { UtilsService } from '~/app/shared/utils/utils-service.service';
 import { userSettingsActions } from '~/app/modules/feature-user-settings/data-access/+state/actions/user-settings.actions';
 
 import { PreferencesComponent } from './preferences.component';
+import { LanguageService } from '~/app/services/language/language.service';
 
 describe('PreferencesComponent', () => {
   let spectator: Spectator<PreferencesComponent>;
@@ -35,7 +35,7 @@ describe('PreferencesComponent', () => {
       provideMockActions(() => actions$),
       provideMockStore({ initialState: {} }),
     ],
-    mocks: [UtilsService],
+    mocks: [LanguageService],
   });
 
   beforeEach(() => {
@@ -47,8 +47,8 @@ describe('PreferencesComponent', () => {
       detectChanges: false,
     });
 
-    const utilsService = spectator.inject(UtilsService);
-    utilsService.navigatorLanguage.mockReturnValue('en-US');
+    const languageService = spectator.inject(LanguageService);
+    languageService.navigatorLanguage.mockReturnValue('en-US');
 
     store = spectator.inject(MockStore);
   });
@@ -62,8 +62,8 @@ describe('PreferencesComponent', () => {
     store.overrideSelector(selectUser, user);
     store.overrideSelector(selectLanguages, languagesList);
 
-    const utilsService = spectator.inject(UtilsService);
-    utilsService.navigatorLanguage.mockReturnValue('en-US');
+    const languageService = spectator.inject(LanguageService);
+    languageService.navigatorLanguage.mockReturnValue('en-US');
 
     store.refreshState();
     spectator.detectChanges();
@@ -85,8 +85,8 @@ describe('PreferencesComponent', () => {
     store.overrideSelector(selectUser, user);
     store.overrideSelector(selectLanguages, languagesList);
 
-    const utilsService = spectator.inject(UtilsService);
-    utilsService.navigatorLanguage.mockReturnValue('en-US');
+    const languageService = spectator.inject(LanguageService);
+    languageService.navigatorLanguage.mockReturnValue('en-US');
 
     store.refreshState();
     spectator.detectChanges();
@@ -111,9 +111,8 @@ describe('PreferencesComponent', () => {
 
       user.lang = 'en-US';
 
-      const utilsService = spectator.inject(UtilsService);
-
-      utilsService.navigatorLanguage.mockReturnValue('en-US');
+      const languageService = spectator.inject(LanguageService);
+      languageService.navigatorLanguage.mockReturnValue('en-US');
 
       store.overrideSelector(selectUser, user);
       store.overrideSelector(selectLanguages, languagesList);
@@ -136,9 +135,8 @@ describe('PreferencesComponent', () => {
 
       user.lang = 'es-ES';
 
-      const utilsService = spectator.inject(UtilsService);
-
-      utilsService.navigatorLanguage.mockReturnValue('en-US');
+      const languageService = spectator.inject(LanguageService);
+      languageService.navigatorLanguage.mockReturnValue('en-US');
 
       store.overrideSelector(selectUser, user);
       store.overrideSelector(selectLanguages, languagesList);
@@ -162,9 +160,8 @@ describe('PreferencesComponent', () => {
 
       user.lang = 'es-ES';
 
-      const utilsService = spectator.inject(UtilsService);
-
-      utilsService.navigatorLanguage.mockReturnValue('pt');
+      const languageService = spectator.inject(LanguageService);
+      languageService.navigatorLanguage.mockReturnValue('pt');
 
       store.overrideSelector(selectUser, user);
       store.overrideSelector(selectLanguages, languagesList);
@@ -189,9 +186,8 @@ describe('PreferencesComponent', () => {
 
       user.lang = 'en-US';
 
-      const utilsService = spectator.inject(UtilsService);
-
-      utilsService.navigatorLanguage.mockReturnValue('en');
+      const languageService = spectator.inject(LanguageService);
+      languageService.navigatorLanguage.mockReturnValue('en');
 
       store.overrideSelector(selectUser, user);
       store.overrideSelector(selectLanguages, languagesList);
@@ -214,9 +210,8 @@ describe('PreferencesComponent', () => {
 
       user.lang = 'es-ES';
 
-      const utilsService = spectator.inject(UtilsService);
-
-      utilsService.navigatorLanguage.mockReturnValue('xx-fake');
+      const languageService = spectator.inject(LanguageService);
+      languageService.navigatorLanguage.mockReturnValue('xx-fake');
 
       store.overrideSelector(selectUser, user);
       store.overrideSelector(selectLanguages, languagesList);

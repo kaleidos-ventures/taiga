@@ -53,6 +53,7 @@ import {
 } from '../actions/auth.actions';
 import { selectUser } from '../selectors/auth.selectors';
 import { AuthEffects } from './auth.effects';
+import { LanguageService } from '~/app/services/language/language.service';
 
 const signupData = {
   email: randEmail(),
@@ -87,6 +88,7 @@ describe('AuthEffects', () => {
       AppService,
       AuthService,
       ProjectApiService,
+      LanguageService,
     ],
   });
 
@@ -219,10 +221,10 @@ describe('AuthEffects', () => {
     const authApiService = spectator.inject(AuthApiService);
     const effects = spectator.inject(AuthEffects);
     const buttonLoadingService = spectator.inject(ButtonLoadingService);
-    const authService = spectator.inject(AuthService);
+    const languageService = spectator.inject(LanguageService);
 
     authApiService.signUp.mockReturnValue(cold('-b|', { b: response }));
-    authService.getUserRegistrationLang.mockReturnValue(
+    languageService.getUserLanguage.mockReturnValue(
       cold('-b|', { b: 'en-US' })
     );
 
@@ -251,9 +253,9 @@ describe('AuthEffects', () => {
     const effects = spectator.inject(AuthEffects);
     const authApiService = spectator.inject(AuthApiService);
     const buttonLoadingService = spectator.inject(ButtonLoadingService);
-    const authService = spectator.inject(AuthService);
+    const languageService = spectator.inject(LanguageService);
 
-    authService.getUserRegistrationLang.mockReturnValue(
+    languageService.getUserLanguage.mockReturnValue(
       cold('-b|', { b: 'en-US' })
     );
 
@@ -407,6 +409,7 @@ describe('AuthEffects', () => {
 
     const authApiService = spectator.inject(AuthApiService);
     const authService = spectator.inject(AuthService);
+    const languageService = spectator.inject(LanguageService);
     const usersApiService = spectator.inject(UsersApiService);
     const effects = spectator.inject(AuthEffects);
     const auth = AuthMockFactory();
@@ -414,7 +417,7 @@ describe('AuthEffects', () => {
 
     authApiService.socialSignUp.mockReturnValue(cold('-b|', { b: auth }));
     usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
-    authService.getUserRegistrationLang.mockReturnValue(
+    languageService.getUserLanguage.mockReturnValue(
       cold('-b|', { b: 'en-US' })
     );
 
@@ -449,9 +452,9 @@ describe('AuthEffects', () => {
     const authApiService = spectator.inject(AuthApiService);
     const router = spectator.inject(Router);
     const effects = spectator.inject(AuthEffects);
-    const authService = spectator.inject(AuthService);
+    const languageService = spectator.inject(LanguageService);
 
-    authService.getUserRegistrationLang.mockReturnValue(
+    languageService.getUserLanguage.mockReturnValue(
       cold('-b|', { b: 'en-US' })
     );
 

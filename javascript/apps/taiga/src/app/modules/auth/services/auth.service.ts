@@ -10,9 +10,8 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AuthApiService } from '@taiga/api';
-import { ConfigService, selectLanguages } from '@taiga/core';
+import { ConfigService } from '@taiga/core';
 import { Auth, User } from '@taiga/data';
-import { filter, map, take } from 'rxjs';
 import { WsService } from '~/app/services/ws';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
@@ -92,31 +91,6 @@ export class AuthService {
         });
       }
     }, 1000 * 3600 * 3);
-  }
-
-  public getUserRegistrationLang() {
-    return this.store.select(selectLanguages).pipe(
-      filter((langs) => !!langs.length),
-      take(1),
-      map((langs) => {
-        const userNavLang = this.utilsService.navigatorLanguage();
-        let userLang = langs.find((it) => it.code === userNavLang);
-
-        if (userLang) {
-          return userLang;
-        }
-
-        userLang = langs.find((it) =>
-          it.code.startsWith(userNavLang.slice(0, 2))
-        );
-
-        if (userLang) {
-          return userLang;
-        }
-
-        return langs.find((it) => it.isDefault)!;
-      })
-    );
   }
 
   public anyAvailableSocialLogins(availableLogins: string[]) {

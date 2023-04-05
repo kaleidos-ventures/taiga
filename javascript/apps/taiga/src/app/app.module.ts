@@ -26,13 +26,12 @@ import {
   TUI_ANIMATIONS_DURATION,
   TUI_SANITIZER,
 } from '@taiga-ui/core';
-import { TUI_ENGLISH_LANGUAGE, TUI_LANGUAGE } from '@taiga-ui/i18n';
+import { TUI_LANGUAGE } from '@taiga-ui/i18n';
 import { tuiToggleOptionsProvider } from '@taiga-ui/kit';
 import { ApiModule, SystemApiService } from '@taiga/api';
 import { ConfigService, CoreModule, coreActions } from '@taiga/core';
 import { PROMPT_PROVIDER } from '@taiga/ui/modal/services/modal.service';
 import { paramCase } from 'change-case';
-import { of } from 'rxjs';
 import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
 import { WsModule } from '~/app/services/ws';
 import { environment } from '../environments/environment';
@@ -43,6 +42,7 @@ import { EnvironmentService } from './services/environment.service';
 import { ApiRestInterceptorModule } from './shared/api-rest-interceptor/api-rest-interceptor.module';
 import { NavigationModule } from './shared/navigation/navigation.module';
 import { TranslocoRootModule } from './transloco/transloco-root.module';
+import { LanguageService } from './services/language/language.service';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -176,8 +176,9 @@ export function prefersReducedMotion(): boolean {
     {
       provide: TUI_LANGUAGE,
       useFactory: () => {
-        // TODO: Get user language from service
-        return of(TUI_ENGLISH_LANGUAGE);
+        const lang = inject(LanguageService);
+
+        return lang.getTuiLanguage();
       },
     },
     {

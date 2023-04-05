@@ -27,6 +27,7 @@ import {
 } from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { AppService } from '~/app/services/app.service';
+import { LanguageService } from '~/app/services/language/language.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -250,7 +251,7 @@ export class AuthEffects {
           projectInvitationToken,
         }) => {
           this.buttonLoadingService.start();
-          return this.authService.getUserRegistrationLang().pipe(
+          return this.languageService.getUserLanguage().pipe(
             switchMap((lang) => {
               return this.authApiService
                 .signUp({
@@ -444,7 +445,7 @@ export class AuthEffects {
           projectInvitationToken,
           acceptProjectInvitation,
         }) => {
-          return this.authService.getUserRegistrationLang().pipe(
+          return this.languageService.getUserLanguage().pipe(
             switchMap((lang) => {
               return this.authApiService
                 .socialSignUp(code, social, lang.code)
@@ -528,6 +529,7 @@ export class AuthEffects {
     private actions$: Actions,
     private authApiService: AuthApiService,
     private authService: AuthService,
+    private languageService: LanguageService,
     private usersApiService: UsersApiService,
     private projectApiService: ProjectApiService,
     private appService: AppService,

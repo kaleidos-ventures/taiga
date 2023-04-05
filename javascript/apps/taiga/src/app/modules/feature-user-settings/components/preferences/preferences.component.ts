@@ -16,8 +16,8 @@ import { combineLatest, map, take } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { userSettingsActions } from '~/app/modules/feature-user-settings/data-access/+state/actions/user-settings.actions';
 import { selectLanguages } from '~/app/modules/feature-user-settings/data-access/+state/selectors/user-settings.selectors';
+import { LanguageService } from '~/app/services/language/language.service';
 import { filterNil } from '~/app/shared/utils/operators';
-import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 @Component({
   selector: 'tg-preferences',
@@ -31,7 +31,7 @@ export class PreferencesComponent implements OnInit {
   public language = new FormControl('');
 
   constructor(
-    private utilsService: UtilsService,
+    private languageService: LanguageService,
     private store: Store,
     private state: RxState<{
       langLabel: Language['englishName'];
@@ -48,7 +48,7 @@ export class PreferencesComponent implements OnInit {
       map((user) => user.lang)
     );
 
-    const userNavLang = this.utilsService.navigatorLanguage();
+    const userNavLang = this.languageService.navigatorLanguage();
 
     this.state.connect(
       'languages',
